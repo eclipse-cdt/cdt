@@ -20,25 +20,26 @@ import org.eclipse.core.runtime.IPath;
 public class ProviderBasedRcDesHolder extends ResourceDescriptionHolder {
 	private IProxyProvider fProvider;
 
-	public ProviderBasedRcDesHolder(IProxyProvider provider, PathSettingsContainer pathContainer, boolean includeCurrent) {
+	public ProviderBasedRcDesHolder(IProxyProvider provider, PathSettingsContainer pathContainer,
+			boolean includeCurrent) {
 		super(pathContainer, includeCurrent);
 		fProvider = provider;
 	}
 
 	@Override
-	public ICResourceDescription getResourceDescription(IPath path, boolean exactPath){
+	public ICResourceDescription getResourceDescription(IPath path, boolean exactPath) {
 		fProvider.cacheValues();
 		return super.getResourceDescription(path, exactPath);
 	}
 
 	@Override
-	public void addResourceDescription(IPath path, ICResourceDescription des){
+	public void addResourceDescription(IPath path, ICResourceDescription des) {
 		fProvider.cacheValues();
 		super.addResourceDescription(path, des);
 	}
-	
+
 	@Override
-	public ICResourceDescription[] getResourceDescriptions(final int kind){
+	public ICResourceDescription[] getResourceDescriptions(final int kind) {
 		fProvider.cacheValues();
 		return super.getResourceDescriptions(kind);
 	}
@@ -61,9 +62,9 @@ public class ProviderBasedRcDesHolder extends ResourceDescriptionHolder {
 		return super.getDirectChildren();
 	}
 
-//	public ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, IPath[] paths) {
-//		fProvider.cacheValues();
-//		return super.calculateSourceEntriesFromPaths(project, paths);
-//	}
-	
+	//	public ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, IPath[] paths) {
+	//		fProvider.cacheValues();
+	//		return super.calculateSourceEntriesFromPaths(project, paths);
+	//	}
+
 }

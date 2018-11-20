@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
@@ -23,7 +23,7 @@ interface ITokenSequence {
 	 * Returns the current token
 	 */
 	Token currentToken();
-	
+
 	/**
 	 * Consumes the current token and returns the next one.
 	 */

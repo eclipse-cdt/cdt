@@ -32,39 +32,29 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 public class TestCfgDataProvider extends CDefaultConfigurationDataProvider {
 	public static final String PROVIDER_ID = CTestPlugin.PLUGIN_ID + ".testCfgDataProvider";
 
-	
 	// Overriden so it supports saving Library file and Library path entries
 	private static final class TestDataFactory extends CDataFactory {
 
 		@Override
-		public CLanguageData createLanguageData(CConfigurationData cfg, 
-				CResourceData rcBase,
-				CLanguageData base,
-				String id,
-				boolean clone){
-				if(id == null)
-					id = clone ? base.getId() : CDataUtil.genId(rcBase.getId());
+		public CLanguageData createLanguageData(CConfigurationData cfg, CResourceData rcBase, CLanguageData base,
+				String id, boolean clone) {
+			if (id == null)
+				id = clone ? base.getId() : CDataUtil.genId(rcBase.getId());
 			return new CDefaultLanguageData(id, base);
 		}
 
 		@Override
-		public CLanguageData createLanguageData(CConfigurationData cfg, 
-				CResourceData rcBase,
-				String id,
-				String name,
-				String languageId,
-				int supportedEntryKinds,
-				String[] rcTypes,
-				boolean isContentTypes) {
-			return super.createLanguageData(cfg, rcBase, id, name, languageId, 
-					supportedEntryKinds | ICSettingEntry.LIBRARY_FILE | ICSettingEntry.LIBRARY_PATH, 
-					rcTypes, isContentTypes);
+		public CLanguageData createLanguageData(CConfigurationData cfg, CResourceData rcBase, String id, String name,
+				String languageId, int supportedEntryKinds, String[] rcTypes, boolean isContentTypes) {
+			return super.createLanguageData(cfg, rcBase, id, name, languageId,
+					supportedEntryKinds | ICSettingEntry.LIBRARY_FILE | ICSettingEntry.LIBRARY_PATH, rcTypes,
+					isContentTypes);
 		}
 
 	}
 
 	@Override
-	protected CDataFactory getDataFactory(){
+	protected CDataFactory getDataFactory() {
 		return new TestDataFactory();
 	}
 

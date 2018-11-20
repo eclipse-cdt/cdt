@@ -41,7 +41,7 @@ public interface IASTInitializerExpression extends IASTEqualsInitializer {
 	 *            <code>IASTExpression</code>
 	 */
 	public void setExpression(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

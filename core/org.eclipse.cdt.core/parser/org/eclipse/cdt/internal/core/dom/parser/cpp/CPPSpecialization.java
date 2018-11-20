@@ -72,16 +72,15 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 	@Override
 	public void addDeclaration(IASTNode node) {
 		if (declarations == null) {
-	        declarations = new IASTNode[] { node };
+			declarations = new IASTNode[] { node };
 		} else {
-	        // Keep the lowest offset declaration in [0]
-			if (declarations.length > 0 &&
-					((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
+			// Keep the lowest offset declaration in [0]
+			if (declarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = ArrayUtil.prepend(IASTNode.class, declarations, node);
 			} else {
 				declarations = ArrayUtil.append(IASTNode.class, declarations, node);
 			}
-	    }
+		}
 	}
 
 	@Override

@@ -42,8 +42,8 @@ public class PDOMCPPVariableInstance extends PDOMCPPSpecialization implements IC
 
 	private IType type;
 
-	public PDOMCPPVariableInstance(PDOMCPPLinkage linkage, PDOMNode parent,
-			ICPPVariableInstance specialization, IPDOMBinding orig) throws CoreException {
+	public PDOMCPPVariableInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPVariableInstance specialization,
+			IPDOMBinding orig) throws CoreException {
 		super(linkage, parent, specialization, orig);
 
 		final long argListRec = PDOMCPPArgumentList.putArguments(this, specialization.getTemplateArguments());
@@ -107,7 +107,7 @@ public class PDOMCPPVariableInstance extends PDOMCPPSpecialization implements IC
 
 	@Override
 	public boolean isRegister() {
-		return false;  // We don't care whether the parameter has register storage class specifier or not.
+		return false; // We don't care whether the parameter has register storage class specifier or not.
 	}
 
 	@Override

@@ -70,7 +70,8 @@ public class QMLModelBuilder {
 
 	boolean ensureNode(IQmlASTNode actual, Class<? extends IQmlASTNode> expected) {
 		if (!expected.isInstance(actual)) {
-			Activator.log("[QmlTypes] Expected node '" + expected + "', but was '" + actual.getClass().getInterfaces()[0] + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Activator.log("[QmlTypes] Expected node '" + expected + "', but was '" //$NON-NLS-1$//$NON-NLS-2$
+					+ actual.getClass().getInterfaces()[0] + "'"); //$NON-NLS-1$
 			return false;
 		}
 		return true;

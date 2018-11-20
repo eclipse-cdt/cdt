@@ -23,15 +23,13 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-public class EnvVarBuildPath implements
-		IEnvVarBuildPath {
+public class EnvVarBuildPath implements IEnvVarBuildPath {
 
 	private int fType;
 	private String fVariableNames[];
 	private String fPathDelimiter;
 	private IBuildPathResolver fBuildPathResolver;
 	private IConfigurationElement fBuildPathResolverElement;
-
 
 	/**
 	 * Constructor to create an EnvVarBuildPath based on an element from the plugin
@@ -59,7 +57,7 @@ public class EnvVarBuildPath implements
 		// Store the configuration element IFF there is a build path resolver defined
 		String buildPathResolver = element.getAttribute(BUILD_PATH_RESOLVER);
 		if (buildPathResolver != null && element instanceof DefaultManagedConfigElement) {
-			fBuildPathResolverElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+			fBuildPathResolverElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
 	}
 
@@ -68,7 +66,7 @@ public class EnvVarBuildPath implements
 		return fType;
 	}
 
-	public void setType(int type){
+	public void setType(int type) {
 		this.fType = type;
 	}
 
@@ -77,17 +75,17 @@ public class EnvVarBuildPath implements
 		return fVariableNames;
 	}
 
-	public void setVariableNames(String names[]){
+	public void setVariableNames(String names[]) {
 		fVariableNames = names;
 		fVariableNames = SafeStringInterner.safeIntern(fVariableNames);
 	}
 
-	public void setVariableNames(String names){
+	public void setVariableNames(String names) {
 		setVariableNames(getNamesFromString(names));
 	}
 
-	public String[] getNamesFromString(String names){
-		if(names == null)
+	public String[] getNamesFromString(String names) {
+		if (names == null)
 			return null;
 		return names.split(NAME_SEPARATOR);
 	}
@@ -98,25 +96,27 @@ public class EnvVarBuildPath implements
 	}
 
 	public void setPathDelimiter(String delimiter) {
-		if(delimiter == null)
+		if (delimiter == null)
 			delimiter = ManagedBuildManager.getEnvironmentVariableProvider().getDefaultDelimiter();
 		fPathDelimiter = SafeStringInterner.safeIntern(delimiter);
 	}
 
-	private int convertPathTypeToInt(String pathType){
-		if(pathType != null && TYPE_LIBRARY.equals(pathType))
+	private int convertPathTypeToInt(String pathType) {
+		if (pathType != null && TYPE_LIBRARY.equals(pathType))
 			return BUILDPATH_LIBRARY;
 		return BUILDPATH_INCLUDE;
 	}
 
 	@Override
 	public IBuildPathResolver getBuildPathResolver() {
-		if(fBuildPathResolver == null && fBuildPathResolverElement != null){
+		if (fBuildPathResolver == null && fBuildPathResolverElement != null) {
 			try {
 				if (fBuildPathResolverElement.getAttribute(BUILD_PATH_RESOLVER) != null) {
-					fBuildPathResolver = (IBuildPathResolver) fBuildPathResolverElement.createExecutableExtension(BUILD_PATH_RESOLVER);
+					fBuildPathResolver = (IBuildPathResolver) fBuildPathResolverElement
+							.createExecutableExtension(BUILD_PATH_RESOLVER);
 				}
-			} catch (CoreException e) {}
+			} catch (CoreException e) {
+			}
 		}
 		return fBuildPathResolver;
 	}

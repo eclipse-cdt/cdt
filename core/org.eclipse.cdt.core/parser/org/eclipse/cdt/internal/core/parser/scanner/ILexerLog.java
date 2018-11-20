@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.parser.IProblem;
@@ -22,9 +22,12 @@ import org.eclipse.cdt.core.parser.IProblem;
 public interface ILexerLog {
 	ILexerLog NULL = new ILexerLog() {
 		@Override
-		public void handleComment(boolean isBlockComment, int offset, int endOffset, AbstractCharArray input) {}
+		public void handleComment(boolean isBlockComment, int offset, int endOffset, AbstractCharArray input) {
+		}
+
 		@Override
-		public void handleProblem(int problemID, char[] info, int offset, int endOffset) {}
+		public void handleProblem(int problemID, char[] info, int offset, int endOffset) {
+		}
 	};
 
 	/**

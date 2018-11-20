@@ -19,7 +19,7 @@ class SwitchFlowInfo extends FlowInfo {
 	private boolean fHasNullCaseInfo;
 
 	public SwitchFlowInfo() {
-		fCases= new GenericConditionalFlowInfo();
+		fCases = new GenericConditionalFlowInfo();
 	}
 
 	public void mergeTest(FlowInfo info, FlowContext context) {
@@ -30,7 +30,7 @@ class SwitchFlowInfo extends FlowInfo {
 
 	public void mergeCase(FlowInfo info, FlowContext context) {
 		if (info == null) {
-			fHasNullCaseInfo= true;
+			fHasNullCaseInfo = true;
 			return;
 		}
 		fCases.mergeConditional(info, context);
@@ -42,4 +42,3 @@ class SwitchFlowInfo extends FlowInfo {
 		mergeSequential(fCases, context);
 	}
 }
-

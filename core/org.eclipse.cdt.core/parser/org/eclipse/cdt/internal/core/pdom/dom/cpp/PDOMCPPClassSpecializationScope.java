@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -35,7 +35,7 @@ public class PDOMCPPClassSpecializationScope extends AbstractCPPClassSpecializat
 	public IIndexBinding getScopeBinding() {
 		return (IIndexBinding) getClassType();
 	}
-	
+
 	@Override
 	public IIndexScope getParent() {
 		try {
@@ -52,6 +52,6 @@ public class PDOMCPPClassSpecializationScope extends AbstractCPPClassSpecializat
 
 	@Override
 	public IBinding[] find(String name, IASTTranslationUnit tu) {
-	    return CPPSemantics.findBindingsInScope(this, name, tu);
+		return CPPSemantics.findBindingsInScope(this, name, tu);
 	}
 }

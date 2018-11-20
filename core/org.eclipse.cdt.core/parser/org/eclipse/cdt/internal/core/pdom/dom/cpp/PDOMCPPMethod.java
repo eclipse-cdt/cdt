@@ -50,12 +50,12 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunction.RECORD_SIZE + 1;
 
-	private byte methodAnnotation= -1;
+	private byte methodAnnotation = -1;
 
-	public PDOMCPPMethod(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method) 
+	public PDOMCPPMethod(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method)
 			throws CoreException, DOMException {
 		super(linkage, parent, method, true);
-		methodAnnotation= PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
+		methodAnnotation = PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
 		getDB().putByte(record + METHOD_ANNOTATION, methodAnnotation);
 	}
 
@@ -66,17 +66,17 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	@Override
 	public final void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPMethod) {
-			ICPPMethod method= (ICPPMethod) newBinding;
+			ICPPMethod method = (ICPPMethod) newBinding;
 			super.update(linkage, newBinding);
-			methodAnnotation= -1;
+			methodAnnotation = -1;
 			byte annot = PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
 			getDB().putByte(record + METHOD_ANNOTATION, annot);
-			methodAnnotation= annot;
+			methodAnnotation = annot;
 		} else if (newBinding == null && isImplicit()) {
 			// Clear the implicit flag, such that the binding will no longer be picked up.
-			byte annot= PDOMCPPAnnotations.clearImplicitMethodFlag(getMethodAnnotation());
+			byte annot = PDOMCPPAnnotations.clearImplicitMethodFlag(getMethodAnnotation());
 			getDB().putByte(record + METHOD_ANNOTATION, annot);
-			methodAnnotation= annot;
+			methodAnnotation = annot;
 		}
 	}
 
@@ -97,7 +97,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	private byte getMethodAnnotation() {
 		if (methodAnnotation == -1)
-			methodAnnotation= getByte(record + METHOD_ANNOTATION);
+			methodAnnotation = getByte(record + METHOD_ANNOTATION);
 		return methodAnnotation;
 	}
 
@@ -120,7 +120,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	public boolean isImplicit() {
 		return PDOMCPPAnnotations.isImplicitMethod(getMethodAnnotation());
 	}
-	
+
 	@Override
 	public boolean isExplicit() {
 		return PDOMCPPAnnotations.isExplicitMethod(getMethodAnnotation());
@@ -166,19 +166,19 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	@Override
 	public Object clone() {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
 		if ((standardFlags & PDOMName.IS_REFERENCE) == PDOMName.IS_REFERENCE) {
-			IASTNode parent= name.getParent();
+			IASTNode parent = name.getParent();
 			if (parent instanceof ICPPASTQualifiedName) {
 				// When taking the address of a method it will be called without suppressing
 				// the virtual mechanism
-				parent= parent.getParent();
+				parent = parent.getParent();
 				if (parent instanceof IASTIdExpression) {
-					parent= parent.getParent();
+					parent = parent.getParent();
 					if (parent instanceof IASTUnaryExpression) {
 						if (((IASTUnaryExpression) parent).getOperator() == IASTUnaryExpression.op_amper)
 							return PDOMName.COULD_BE_POLYMORPHIC_METHOD_CALL;
@@ -186,8 +186,8 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 				}
 			} else if (parent instanceof ICPPASTFieldReference) {
 				// The name is not qualified
-				ICPPASTFieldReference fr= (ICPPASTFieldReference) parent;
-				parent= parent.getParent();
+				ICPPASTFieldReference fr = (ICPPASTFieldReference) parent;
+				parent = parent.getParent();
 				if (parent instanceof IASTFunctionCallExpression) {
 					// v->member()
 					if (fr.isPointerDereference()) {
@@ -196,11 +196,11 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 					// v.member()
 					IASTExpression fieldOwner = fr.getFieldOwner();
 					if (fieldOwner.getValueCategory().isGLValue()) {
-						while (fieldOwner instanceof IASTUnaryExpression
-								&& ((IASTUnaryExpression) fieldOwner).getOperator() == IASTUnaryExpression.op_bracketedPrimary)
+						while (fieldOwner instanceof IASTUnaryExpression && ((IASTUnaryExpression) fieldOwner)
+								.getOperator() == IASTUnaryExpression.op_bracketedPrimary)
 							fieldOwner = ((IASTUnaryExpression) fieldOwner).getOperand();
 						if (fieldOwner instanceof IASTIdExpression) {
-							IBinding b= ((IASTIdExpression) fieldOwner).getName().resolveBinding();
+							IBinding b = ((IASTIdExpression) fieldOwner).getName().resolveBinding();
 							if (b instanceof IVariable) {
 								IType t = ((IVariable) b).getType();
 								if (!(t instanceof ICPPReferenceType)) {
@@ -220,7 +220,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public IType[] getExceptionSpecification() {
 		if (isImplicit()) {

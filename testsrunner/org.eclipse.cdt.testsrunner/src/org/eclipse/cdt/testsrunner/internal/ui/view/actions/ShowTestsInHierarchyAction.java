@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.internal.ui.view.TestsHierarchyViewer;
 import org.eclipse.jface.action.Action;
@@ -25,7 +24,6 @@ import org.eclipse.jface.action.Action;
 public class ShowTestsInHierarchyAction extends Action {
 
 	private TestsHierarchyViewer testsHierarchyViewer;
-
 
 	public ShowTestsInHierarchyAction(TestsHierarchyViewer testsHierarchyViewer) {
 		super(ActionsMessages.ShowTestsInHierarchyAction_text, AS_CHECK_BOX);

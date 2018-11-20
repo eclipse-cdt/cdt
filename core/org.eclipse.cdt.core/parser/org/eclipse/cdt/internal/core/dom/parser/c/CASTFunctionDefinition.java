@@ -32,19 +32,19 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefinition, IASTAmbiguityParent {
 
-    private IASTDeclSpecifier declSpecifier;
-    private IASTFunctionDeclarator declarator;
-    private IASTStatement bodyStatement;
-    private ICFunctionScope scope;
+	private IASTDeclSpecifier declSpecifier;
+	private IASTFunctionDeclarator declarator;
+	private IASTStatement bodyStatement;
+	private ICFunctionScope scope;
 
-    public CASTFunctionDefinition() {
+	public CASTFunctionDefinition() {
 	}
 
 	public CASTFunctionDefinition(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
 			IASTStatement bodyStatement) {
-    	setDeclSpecifier(declSpecifier);
-    	setDeclarator(declarator);
-    	setBody(bodyStatement);
+		setDeclSpecifier(declSpecifier);
+		setDeclarator(declarator);
+		setBody(bodyStatement);
 	}
 
 	@Override
@@ -69,49 +69,49 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
 
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
-        return declSpecifier;
-    }
+		return declSpecifier;
+	}
 
-    @Override
+	@Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
-        assertNotFrozen();
-        declSpecifier = declSpec;
-        if (declSpec != null) {
+		assertNotFrozen();
+		declSpecifier = declSpec;
+		if (declSpec != null) {
 			declSpec.setParent(this);
 			declSpec.setPropertyInParent(DECL_SPECIFIER);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTFunctionDeclarator getDeclarator() {
-        return declarator;
-    }
+		return declarator;
+	}
 
-    @Override
+	@Override
 	public void setDeclarator(IASTFunctionDeclarator declarator) {
-        assertNotFrozen();
-        this.declarator = declarator;
-        if (declarator != null) {
-        	IASTDeclarator outerDtor= ASTQueries.findOutermostDeclarator(declarator);
-        	outerDtor.setParent(this);
-        	outerDtor.setPropertyInParent(DECLARATOR);
+		assertNotFrozen();
+		this.declarator = declarator;
+		if (declarator != null) {
+			IASTDeclarator outerDtor = ASTQueries.findOutermostDeclarator(declarator);
+			outerDtor.setParent(this);
+			outerDtor.setPropertyInParent(DECLARATOR);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTStatement getBody() {
-        return bodyStatement;
-    }
+		return bodyStatement;
+	}
 
-    @Override
+	@Override
 	public void setBody(IASTStatement statement) {
-        assertNotFrozen();
-        bodyStatement = statement;
-        if (statement != null) {
+		assertNotFrozen();
+		bodyStatement = statement;
+		if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(FUNCTION_BODY);
 		}
-    }
+	}
 
 	@Override
 	public IScope getScope() {
@@ -120,37 +120,46 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
 		return scope;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclarations) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (declSpecifier != null && !declSpecifier.accept(action)) return false;
-        final IASTDeclarator outerDtor= ASTQueries.findOutermostDeclarator(declarator);
-        if (outerDtor != null && !outerDtor.accept(action)) return false;
-        if (bodyStatement != null && !bodyStatement.accept(action)) return false;
+		if (declSpecifier != null && !declSpecifier.accept(action))
+			return false;
+		final IASTDeclarator outerDtor = ASTQueries.findOutermostDeclarator(declarator);
+		if (outerDtor != null && !outerDtor.accept(action))
+			return false;
+		if (bodyStatement != null && !bodyStatement.accept(action))
+			return false;
 
-        if (action.shouldVisitDeclarations) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (bodyStatement == child) {
-            other.setPropertyInParent(bodyStatement.getPropertyInParent());
-            other.setParent(bodyStatement.getParent());
-            bodyStatement = (IASTStatement) other;
-        }
-    }
+		if (bodyStatement == child) {
+			other.setPropertyInParent(bodyStatement.getPropertyInParent());
+			other.setParent(bodyStatement.getParent());
+			bodyStatement = (IASTStatement) other;
+		}
+	}
 }

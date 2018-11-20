@@ -16,47 +16,42 @@
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
 
-
 /** Represents single core of a CPU. */
-public class VisualizerCore
-	implements Comparable<VisualizerCore>, IVisualizerModelObject
-{
+public class VisualizerCore implements Comparable<VisualizerCore>, IVisualizerModelObject {
 	// --- members ---
-	
+
 	/** CPU this core is part of. */
 	public VisualizerCPU m_cpu = null;
-	
+
 	/** Linux CPU ID of this core. */
 	public int m_id = 0;
-	
+
 	/** Load information associated to this core */
 	protected VisualizerLoadInfo m_loadinfo;
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor */
 	public VisualizerCore(VisualizerCPU cpu, int id) {
 		m_cpu = cpu;
 		m_id = id;
 	}
-	
+
 	/** Dispose method */
 	public void dispose() {
 		m_loadinfo = null;
 	}
-	
-	
+
 	// --- Object methods ---
-	
+
 	/** Returns string representation. */
 	@Override
 	public String toString() {
 		return m_cpu + ",Core:" + m_id; //$NON-NLS-1$
 	}
 
-	
 	// --- accessors ---
-	
+
 	/** Gets CPU this core is part of. */
 	public VisualizerCPU getCPU() {
 		return m_cpu;
@@ -67,35 +62,32 @@ public class VisualizerCore
 	public int getID() {
 		return m_id;
 	}
-	
+
 	/**  Return CPU this core is on. */
 	@Override
 	public IVisualizerModelObject getParent() {
 		return getCPU();
 	}
-	
+
 	/** Sets the load object associated to this core */
-	public synchronized void setLoadInfo (VisualizerLoadInfo info) {
+	public synchronized void setLoadInfo(VisualizerLoadInfo info) {
 		m_loadinfo = info;
 	}
-	
+
 	/** Gets the load value of this core */
 	public synchronized Integer getLoad() {
 		return (m_loadinfo == null) ? null : m_loadinfo.getLoad();
 	}
-	
+
 	/** Get the highest recorded load value for this core */
 	public synchronized Integer getHighLoadWatermark() {
 		return (m_loadinfo == null) ? null : m_loadinfo.getHighLoadWaterMark();
 	}
 
-	
 	// --- methods ---
-	
-	
-	
+
 	// --- Comparable implementation ---
-	
+
 	/** Compares this item to the specified item. */
 	@Override
 	public int compareTo(VisualizerCore o) {
@@ -103,8 +95,7 @@ public class VisualizerCore
 		if (o != null) {
 			if (m_id < o.m_id) {
 				result = -1;
-			}
-			else if (m_id > o.m_id) {
+			} else if (m_id > o.m_id) {
 				result = 1;
 			}
 		}
@@ -116,10 +107,10 @@ public class VisualizerCore
 	public int compareTo(IVisualizerModelObject o) {
 		if (o != null) {
 			if (o.getClass() == this.getClass()) {
-				return compareTo((VisualizerCore)o);
+				return compareTo((VisualizerCore) o);
 			}
 		}
 		return 1;
 	}
-	
+
 }

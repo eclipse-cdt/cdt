@@ -51,7 +51,8 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class CBuildConfigurationManager implements ICBuildConfigurationManager, ICBuildConfigurationManager2, IResourceChangeListener {
+public class CBuildConfigurationManager
+		implements ICBuildConfigurationManager, ICBuildConfigurationManager2, IResourceChangeListener {
 
 	private static class Provider {
 		private String id;
@@ -127,7 +128,7 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 		Provider provider = providers.get(id);
 		return provider != null ? provider.getProvider() : null;
 	}
-	
+
 	public ICBuildConfigurationProvider getProvider(String id, IProject project) {
 		initProviders();
 		Provider provider = getProviderDelegate(id);
@@ -148,15 +149,15 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	}
 
 	@Override
-	public boolean hasConfiguration(ICBuildConfigurationProvider provider, IProject project,
-			String configName) throws CoreException {
+	public boolean hasConfiguration(ICBuildConfigurationProvider provider, IProject project, String configName)
+			throws CoreException {
 		String name = provider.getId() + '/' + configName;
 		return project.hasBuildConfig(name);
 	}
 
 	@Override
-	public IBuildConfiguration createBuildConfiguration(ICBuildConfigurationProvider provider,
-			IProject project, String configName, IProgressMonitor monitor) throws CoreException {
+	public IBuildConfiguration createBuildConfiguration(ICBuildConfigurationProvider provider, IProject project,
+			String configName, IProgressMonitor monitor) throws CoreException {
 		String name = provider.getId() + '/' + configName;
 
 		Set<String> names = new HashSet<>();
@@ -227,14 +228,14 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 
 			}
 		}
-		
+
 		for (IProject project : projects) {
 			// Do this outside of the synchronized block to avoid deadlock with
 			// BinaryRunner
 			CModelManager.getDefault().resetBinaryParser(project);
 		}
 	}
-	
+
 	@Override
 	public ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) throws CoreException {
 		initProviders();
@@ -296,8 +297,8 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	}
 
 	@Override
-	public ICBuildConfiguration getBuildConfiguration(IProject project, IToolChain toolChain,
-			String launchMode, IProgressMonitor monitor) throws CoreException {
+	public ICBuildConfiguration getBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+			IProgressMonitor monitor) throws CoreException {
 		// First see if we have one
 		for (IBuildConfiguration config : project.getBuildConfigs()) {
 			ICBuildConfiguration cconfig = getBuildConfiguration(config);
@@ -332,8 +333,7 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
-		if (event.getType() == IResourceChangeEvent.PRE_CLOSE
-				|| event.getType() == IResourceChangeEvent.PRE_DELETE) {
+		if (event.getType() == IResourceChangeEvent.PRE_CLOSE || event.getType() == IResourceChangeEvent.PRE_DELETE) {
 			if (event.getResource().getType() == IResource.PROJECT) {
 				IProject project = event.getResource().getProject();
 				try {
@@ -378,15 +378,13 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 				try {
 					Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
 						@Override
-						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-								throws IOException {
+						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 							Files.delete(file);
 							return FileVisitResult.CONTINUE;
 						}
 
 						@Override
-						public FileVisitResult postVisitDirectory(Path dir, IOException exc)
-								throws IOException {
+						public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 							Files.delete(dir);
 							return FileVisitResult.CONTINUE;
 						}

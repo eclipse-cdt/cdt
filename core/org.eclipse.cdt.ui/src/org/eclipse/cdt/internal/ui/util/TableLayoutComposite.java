@@ -37,7 +37,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
  */
 public class TableLayoutComposite extends Composite {
 
-	private List<ColumnLayoutData> columns= new ArrayList<ColumnLayoutData>();
+	private List<ColumnLayoutData> columns = new ArrayList<ColumnLayoutData>();
 
 	/**
 	 * Creates a new <code>TableLayoutComposite</code>.
@@ -47,10 +47,10 @@ public class TableLayoutComposite extends Composite {
 		addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
-				Rectangle area= getClientArea();
-				Table table= (Table)getChildren()[0];
-				Point preferredSize= computeTableSize(table);
-				int width= area.width - 2 * table.getBorderWidth();
+				Rectangle area = getClientArea();
+				Table table = (Table) getChildren()[0];
+				Point preferredSize = computeTableSize(table);
+				int width = area.width - 2 * table.getBorderWidth();
 				if (preferredSize.y > area.height) {
 					// Subtract the scrollbar width from the total column width
 					// if a vertical scrollbar will be required
@@ -61,7 +61,7 @@ public class TableLayoutComposite extends Composite {
 			}
 		});
 	}
-	
+
 	/**
 	 * Adds a new column of data to this table layout.
 	 *
@@ -70,31 +70,31 @@ public class TableLayoutComposite extends Composite {
 	public void addColumnData(ColumnLayoutData data) {
 		columns.add(data);
 	}
-	
+
 	//---- Helpers -------------------------------------------------------------------------------------
-	
+
 	Point computeTableSize(Table table) {
-		Point result= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		
-		int width= 0;
-		int size= columns.size();
-		for (int i= 0; i < size; ++i) {
-			ColumnLayoutData layoutData= columns.get(i);
+		Point result = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+		int width = 0;
+		int size = columns.size();
+		for (int i = 0; i < size; ++i) {
+			ColumnLayoutData layoutData = columns.get(i);
 			if (layoutData instanceof ColumnPixelData) {
-				ColumnPixelData col= (ColumnPixelData) layoutData;
+				ColumnPixelData col = (ColumnPixelData) layoutData;
 				width += col.width;
 			} else if (layoutData instanceof ColumnWeightData) {
-				ColumnWeightData col= (ColumnWeightData) layoutData;
+				ColumnWeightData col = (ColumnWeightData) layoutData;
 				width += col.minimumWidth;
 			} else {
 				Assert.isTrue(false, "Unknown column layout data"); //$NON-NLS-1$
 			}
 		}
 		if (width > result.x)
-			result.x= width;
+			result.x = width;
 		return result;
 	}
-	
+
 	void layoutTable(Table table, int width, Rectangle area, boolean increase) {
 		// XXX: Layout is being called with an invalid value the first time
 		// it is being called on Linux. This method resets the
@@ -103,26 +103,26 @@ public class TableLayoutComposite extends Composite {
 		if (width <= 1)
 			return;
 
-		TableColumn[] tableColumns= table.getColumns();
-		int size= Math.min(columns.size(), tableColumns.length);
-		int[] widths= new int[size];
-		int fixedWidth= 0;
-		int numberOfWeightColumns= 0;
-		int totalWeight= 0;
+		TableColumn[] tableColumns = table.getColumns();
+		int size = Math.min(columns.size(), tableColumns.length);
+		int[] widths = new int[size];
+		int fixedWidth = 0;
+		int numberOfWeightColumns = 0;
+		int totalWeight = 0;
 
 		// First calc space occupied by fixed columns
-		for (int i= 0; i < size; i++) {
-			ColumnLayoutData col= columns.get(i);
+		for (int i = 0; i < size; i++) {
+			ColumnLayoutData col = columns.get(i);
 			if (col instanceof ColumnPixelData) {
-				int pixels= ((ColumnPixelData) col).width;
-				widths[i]= pixels;
+				int pixels = ((ColumnPixelData) col).width;
+				widths[i] = pixels;
 				fixedWidth += pixels;
 			} else if (col instanceof ColumnWeightData) {
-				ColumnWeightData cw= (ColumnWeightData) col;
+				ColumnWeightData cw = (ColumnWeightData) col;
 				numberOfWeightColumns++;
 				// first time, use the weight specified by the column data, otherwise use the actual width as the weight
 				// int weight = firstTime ? cw.weight : tableColumns[i].getWidth();
-				int weight= cw.weight;
+				int weight = cw.weight;
 				totalWeight += weight;
 			} else {
 				Assert.isTrue(false, "Unknown column layout data"); //$NON-NLS-1$
@@ -132,40 +132,40 @@ public class TableLayoutComposite extends Composite {
 		// Do we have columns that have a weight
 		if (numberOfWeightColumns > 0) {
 			// Now distribute the rest to the columns with weight.
-			int rest= width - fixedWidth;
-			int totalDistributed= 0;
-			for (int i= 0; i < size; ++i) {
-				ColumnLayoutData col= columns.get(i);
+			int rest = width - fixedWidth;
+			int totalDistributed = 0;
+			for (int i = 0; i < size; ++i) {
+				ColumnLayoutData col = columns.get(i);
 				if (col instanceof ColumnWeightData) {
-					ColumnWeightData cw= (ColumnWeightData) col;
+					ColumnWeightData cw = (ColumnWeightData) col;
 					// calculate weight as above
 					// int weight = firstTime ? cw.weight : tableColumns[i].getWidth();
-					int weight= cw.weight;
-					int pixels= totalWeight == 0 ? 0 : weight * rest / totalWeight;
+					int weight = cw.weight;
+					int pixels = totalWeight == 0 ? 0 : weight * rest / totalWeight;
 					if (pixels < cw.minimumWidth)
-						pixels= cw.minimumWidth;
+						pixels = cw.minimumWidth;
 					totalDistributed += pixels;
-					widths[i]= pixels;
+					widths[i] = pixels;
 				}
 			}
 
 			// Distribute any remaining pixels to columns with weight.
-			int diff= rest - totalDistributed;
-			for (int i= 0; diff > 0; ++i) {
+			int diff = rest - totalDistributed;
+			for (int i = 0; diff > 0; ++i) {
 				if (i == size)
-					i= 0;
-				ColumnLayoutData col= columns.get(i);
+					i = 0;
+				ColumnLayoutData col = columns.get(i);
 				if (col instanceof ColumnWeightData) {
 					++widths[i];
 					--diff;
 				}
 			}
 		}
-		
+
 		if (increase) {
 			table.setSize(area.width, area.height);
 		}
-		for (int i= 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			tableColumns[i].setWidth(widths[i]);
 		}
 		if (!increase) {

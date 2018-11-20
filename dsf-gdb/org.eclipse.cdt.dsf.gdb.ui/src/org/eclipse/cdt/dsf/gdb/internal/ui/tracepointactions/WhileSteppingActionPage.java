@@ -44,7 +44,7 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 	 * Create the composite
 	 */
 	private Composite createWhileSteppingActionComposite(Composite parent, int style) {
-		
+
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout(2, false));
 
@@ -58,7 +58,7 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 
 		final Label actionsTriggeredWhenLabel = new Label(composite, SWT.NONE);
 		actionsTriggeredWhenLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		actionsTriggeredWhenLabel.setText(MessagesForTracepointActions.TracepointActions_WhileStepping_Sub_Actions);		
+		actionsTriggeredWhenLabel.setText(MessagesForTracepointActions.TracepointActions_WhileStepping_Sub_Actions);
 
 		actionsList = new TracepointActionsList(composite, SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
@@ -122,19 +122,19 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 	 */
 	protected void HandleDeleteButton() {
 		// attached actions are now handled by the GlobalActionsList
-		
+
 		globalActionsList.HandleDeleteButton();
 	}
-	
+
 	public WhileSteppingAction getWhileSteppingAction() {
 		return fWhileSteppingAction;
 	}
 
-    @Override
+	@Override
 	public void actionDialogCanceled() {
 	}
 
-    @Override
+	@Override
 	public void actionDialogOK() {
 		// Make sure we are dealing with an int
 		int count = 1;
@@ -148,13 +148,13 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 		fWhileSteppingAction.setSubActionsContent(actionsList.getActionNames());
 	}
 
-    @Override
+	@Override
 	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
-		fWhileSteppingAction = (WhileSteppingAction)action;
+		fWhileSteppingAction = (WhileSteppingAction) action;
 		return createWhileSteppingActionComposite(composite, style);
 	}
-    
-    void setParentGlobalList(TracepointGlobalActionsList list) {
-    	parentGlobalActionsList = list;
-    }
+
+	void setParentGlobalList(TracepointGlobalActionsList list) {
+		parentGlobalActionsList = list;
+	}
 }

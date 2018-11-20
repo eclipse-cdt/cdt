@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.BitSet;
@@ -40,20 +40,20 @@ public class IndexFileSet implements IIndexFileSet {
 	public static boolean sDEBUG; // Initialized in the PDOMManager.
 
 	private IIndexFileSet fInverse;
-	private final HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets= new HashMap<>();
+	private final HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets = new HashMap<>();
 	private final Map<IBinding, Boolean> fDeclarationContainmentCache = new HashMap<>();
 	private long timingContainsDeclarationNanos;
 
 	public IndexFileSet() {
 	}
-	
+
 	@Override
 	public void add(IIndexFile indexFile) {
 		final IIndexFragmentFile fragFile = (IIndexFragmentFile) indexFile;
-		final IIndexFragment frag= fragFile.getIndexFragment();
-		IIndexFragmentFileSet subSet= fSubSets.get(frag);
+		final IIndexFragment frag = fragFile.getIndexFragment();
+		IIndexFragmentFileSet subSet = fSubSets.get(frag);
 		if (subSet == null) {
-			subSet= frag.createFileSet();
+			subSet = frag.createFileSet();
 			fSubSets.put(frag, subSet);
 		}
 		subSet.add(fragFile);
@@ -64,7 +64,7 @@ public class IndexFileSet implements IIndexFileSet {
 	public void remove(IIndexFile indexFile) {
 		final IIndexFragmentFile fragmentFile = (IIndexFragmentFile) indexFile;
 		final IIndexFragment fragment = fragmentFile.getIndexFragment();
-		IIndexFragmentFileSet subSet = fSubSets.get(fragment);		
+		IIndexFragmentFileSet subSet = fSubSets.get(fragment);
 		if (subSet != null) {
 			subSet.remove(fragmentFile);
 			fDeclarationContainmentCache.clear();
@@ -108,11 +108,9 @@ public class IndexFileSet implements IIndexFileSet {
 						long fileRecord = PDOMName.getFileRecord(db, nameRecord);
 						if (pdomFileSet.containsFile(fileRecord)) {
 							if (sDEBUG && iterationCount >= 200) {
-								System.out.println(
-										String.format("IndexFileSet: %s (%s) found after %d iterations", //$NON-NLS-1$
-												String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
-												binding.getClass().getSimpleName(),
-												iterationCount));
+								System.out.println(String.format("IndexFileSet: %s (%s) found after %d iterations", //$NON-NLS-1$
+										String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
+										binding.getClass().getSimpleName(), iterationCount));
 							}
 							return true;
 						}
@@ -129,11 +127,9 @@ public class IndexFileSet implements IIndexFileSet {
 			}
 		}
 		if (sDEBUG && iterationCount >= 200) {
-			System.out.println(
-					String.format("IndexFileSet: %s (%s) not found after %d iterations", //$NON-NLS-1$
-							String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
-							binding.getClass().getSimpleName(),
-							iterationCount));
+			System.out.println(String.format("IndexFileSet: %s (%s) not found after %d iterations", //$NON-NLS-1$
+					String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
+					binding.getClass().getSimpleName(), iterationCount));
 		}
 		return false;
 	}
@@ -141,11 +137,12 @@ public class IndexFileSet implements IIndexFileSet {
 	private void logInvalidNameChain(PDOM pdom, IIndexBinding binding) {
 		try {
 			PDOMBinding pdomBinding = (PDOMBinding) binding;
-			for (String listType : new String[] {"declarations", "definitions"}) {  //$NON-NLS-1$//$NON-NLS-2$
+			for (String listType : new String[] { "declarations", "definitions" }) { //$NON-NLS-1$//$NON-NLS-2$
 				StringBuilder nameChain = new StringBuilder();
 				Set<PDOMName> visited = new HashSet<>();
-				PDOMName first = listType.equals("declarations") ? pdomBinding.getFirstDeclaration() : pdomBinding.getFirstDefinition(); //$NON-NLS-1$
-				for (PDOMName name = first; name != null; name= name.getNextInBinding()) {
+				PDOMName first = listType.equals("declarations") ? pdomBinding.getFirstDeclaration() //$NON-NLS-1$
+						: pdomBinding.getFirstDefinition();
+				for (PDOMName name = first; name != null; name = name.getNextInBinding()) {
 					if (nameChain.length() != 0)
 						nameChain.append('\n');
 					nameChain.append(String.format("%s @%d", String.valueOf(name.getSimpleID()), name.getRecord())); //$NON-NLS-1$
@@ -153,15 +150,12 @@ public class IndexFileSet implements IIndexFileSet {
 					if (!nameBinding.equals(binding)) {
 						nameChain.append(String.format(" belongs to %s (%s) @%d", //$NON-NLS-1$
 								String.join("::", nameBinding.getQualifiedName()), //$NON-NLS-1$
-								nameBinding.getClass().getSimpleName(),
-								((PDOMNode) nameBinding).getRecord()));
+								nameBinding.getClass().getSimpleName(), ((PDOMNode) nameBinding).getRecord()));
 					}
 					if (!visited.add(name)) {
 						CCorePlugin.log(String.format("IndexFileSet: %s (%s) @%d - list of %s contains a cycle:\n%s", //$NON-NLS-1$
 								String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
-								binding.getClass().getSimpleName(),
-								pdomBinding.getRecord(),
-								listType,
+								binding.getClass().getSimpleName(), pdomBinding.getRecord(), listType,
 								nameChain.toString()));
 						return;
 					}
@@ -183,8 +177,8 @@ public class IndexFileSet implements IIndexFileSet {
 				final IIndexFragment fragment = entry.getKey();
 				final IIndexFragmentFileSet subset = entry.getValue();
 				if (fragment != ignore) {
-					IIndexFragmentName[] names =
-							fragment.findNames(binding, IIndexFragment.FIND_DECLARATIONS_DEFINITIONS | IIndexFragment.FIND_NON_LOCAL_ONLY);
+					IIndexFragmentName[] names = fragment.findNames(binding,
+							IIndexFragment.FIND_DECLARATIONS_DEFINITIONS | IIndexFragment.FIND_NON_LOCAL_ONLY);
 					for (IIndexFragmentName name : names) {
 						try {
 							if (subset.contains((IIndexFragmentFile) name.getFile())) {
@@ -207,8 +201,8 @@ public class IndexFileSet implements IIndexFileSet {
 			try {
 				final IIndexFragment fragment = entry.getKey();
 				final IIndexFragmentFileSet subset = entry.getValue();
-				IIndexFragmentName[] names =
-						fragment.findNames(binding, IIndexFragment.FIND_DECLARATIONS_DEFINITIONS | IIndexFragment.FIND_NON_LOCAL_ONLY);
+				IIndexFragmentName[] names = fragment.findNames(binding,
+						IIndexFragment.FIND_DECLARATIONS_DEFINITIONS | IIndexFragment.FIND_NON_LOCAL_ONLY);
 				for (IIndexFragmentName name : names) {
 					try {
 						IIndexFile file = name.getFile();
@@ -230,28 +224,28 @@ public class IndexFileSet implements IIndexFileSet {
 	public IBinding[] filterFileLocalBindings(IBinding[] bindings) {
 		return filterFileLocalBindings(bindings, false);
 	}
-	
+
 	public IBinding[] filterFileLocalBindings(IBinding[] bindings, boolean invert) {
 		if (bindings == null || bindings.length == 0) {
 			return bindings;
 		}
-		BitSet ok= new BitSet(bindings.length);
+		BitSet ok = new BitSet(bindings.length);
 		if (invert) {
 			ok.set(0, bindings.length);
 		}
-		
+
 		for (int i = 0; i < bindings.length; i++) {
 			IBinding binding = bindings[i];
 			if (binding != null) {
 				IIndexFragmentBinding fb;
 				if (binding instanceof IIndexFragmentBinding) {
-					fb= (IIndexFragmentBinding) binding;
+					fb = (IIndexFragmentBinding) binding;
 				} else {
-					fb= binding.getAdapter(IIndexFragmentBinding.class);
+					fb = binding.getAdapter(IIndexFragmentBinding.class);
 				}
 				try {
 					if (fb != null && fb.isFileLocal()) {
-						IIndexFragmentFileSet subSet= fSubSets.get(fb.getFragment());
+						IIndexFragmentFileSet subSet = fSubSets.get(fb.getFragment());
 						if (subSet != null && subSet.containsFileOfLocalBinding(fb)) {
 							ok.set(i);
 						}
@@ -263,7 +257,7 @@ public class IndexFileSet implements IIndexFileSet {
 				}
 			}
 		}
-		
+
 		if (invert) {
 			ok.flip(0, bindings.length);
 		}
@@ -272,11 +266,11 @@ public class IndexFileSet implements IIndexFileSet {
 			return bindings;
 		}
 
-		IBinding[] result= new IBinding[cardinality];
-		int j= ok.nextSetBit(0);
+		IBinding[] result = new IBinding[cardinality];
+		int j = ok.nextSetBit(0);
 		for (int i = 0; i < result.length; i++) {
-			result[i]= bindings[j];
-			j= ok.nextSetBit(j + 1);
+			result[i] = bindings[j];
+			j = ok.nextSetBit(j + 1);
 		}
 		return result;
 	}
@@ -285,13 +279,13 @@ public class IndexFileSet implements IIndexFileSet {
 	public boolean contains(IIndexFile file) throws CoreException {
 		return contains(file, false);
 	}
-	
+
 	public boolean contains(IIndexFile file, boolean invert) throws CoreException {
 		if (!(file instanceof IIndexFragmentFile))
 			return invert;
-		
-		IIndexFragmentFile fragmentFile= (IIndexFragmentFile) file;
-		IIndexFragmentFileSet subSet= fSubSets.get(fragmentFile.getIndexFragment());
+
+		IIndexFragmentFile fragmentFile = (IIndexFragmentFile) file;
+		IIndexFragmentFileSet subSet = fSubSets.get(fragmentFile.getIndexFragment());
 		if (subSet != null && subSet.contains(fragmentFile)) {
 			return !invert;
 		}
@@ -301,17 +295,17 @@ public class IndexFileSet implements IIndexFileSet {
 	@Override
 	public IIndexFileSet invert() {
 		if (fInverse == null) {
-			fInverse= new IIndexFileSet() {
+			fInverse = new IIndexFileSet() {
 				@Override
 				public IIndexFileSet invert() {
 					return IndexFileSet.this;
 				}
-				
+
 				@Override
 				public IBinding[] filterFileLocalBindings(IBinding[] bindings) {
 					return IndexFileSet.this.filterFileLocalBindings(bindings, true);
 				}
-				
+
 				@Override
 				public boolean containsDeclaration(IIndexBinding binding) {
 					throw new UnsupportedOperationException();
@@ -321,12 +315,12 @@ public class IndexFileSet implements IIndexFileSet {
 				public boolean containsNonLocalDeclaration(IBinding binding, IIndexFragment ignore) {
 					throw new UnsupportedOperationException();
 				}
-				
+
 				@Override
 				public boolean contains(IIndexFile file) throws CoreException {
 					return IndexFileSet.this.contains(file, true);
 				}
-				
+
 				@Override
 				public void add(IIndexFile indexFile) {
 					Assert.isLegal(false);

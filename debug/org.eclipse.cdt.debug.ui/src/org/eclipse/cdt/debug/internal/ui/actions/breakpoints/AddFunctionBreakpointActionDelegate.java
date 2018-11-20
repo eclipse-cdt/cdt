@@ -12,7 +12,7 @@
  * QNX Software Systems - Initial API and implementation
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
 *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions.breakpoints; 
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionDelegate;
- 
+
 /**
  * A delegate for the "Add Function Breakpoint" action.
  */
@@ -34,13 +34,13 @@ public class AddFunctionBreakpointActionDelegate extends ActionDelegate implemen
 	private IViewPart fView;
 	private ISelection fSelection;
 	private ToggleBreakpointAdapter fDefaultToggleTarget = new ToggleBreakpointAdapter();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	@Override
-	public void init( IViewPart view ) {
-		setView( view );
+	public void init(IViewPart view) {
+		setView(view);
 	}
 
 	private void setView(IViewPart view) {
@@ -50,29 +50,30 @@ public class AddFunctionBreakpointActionDelegate extends ActionDelegate implemen
 	protected IViewPart getView() {
 		return fView;
 	}
-	
+
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-	    fSelection = selection;
+		fSelection = selection;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
-	    IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fView, fSelection);
-	    IToggleBreakpointsTargetCExtension cToggleTarget = null;
-	    if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
-	        cToggleTarget = (IToggleBreakpointsTargetCExtension)toggleTarget;
-	    } else { 
-	        cToggleTarget = fDefaultToggleTarget;
-	    }
-	        
-        try {
-            cToggleTarget.createFunctionBreakpointInteractive(fView, fSelection);
-        } catch (CoreException e) {
-            CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddFunctionBreakpointActionDelegate.0" ), e ); //$NON-NLS-1$
-        }
+	public void run(IAction action) {
+		IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager()
+				.getToggleBreakpointsTarget(fView, fSelection);
+		IToggleBreakpointsTargetCExtension cToggleTarget = null;
+		if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
+			cToggleTarget = (IToggleBreakpointsTargetCExtension) toggleTarget;
+		} else {
+			cToggleTarget = fDefaultToggleTarget;
+		}
+
+		try {
+			cToggleTarget.createFunctionBreakpointInteractive(fView, fSelection);
+		} catch (CoreException e) {
+			CDebugUIPlugin.errorDialog(ActionMessages.getString("AddFunctionBreakpointActionDelegate.0"), e); //$NON-NLS-1$
+		}
 	}
 }

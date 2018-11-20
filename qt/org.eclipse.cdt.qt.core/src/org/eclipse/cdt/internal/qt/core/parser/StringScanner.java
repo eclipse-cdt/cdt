@@ -50,7 +50,7 @@ public class StringScanner implements IScanner {
 	public StringScanner(String str) {
 		this.lexer = new Lexer(str.toCharArray(), new LexerOptions(), ILexerLog.NULL, null);
 		keywords = new CharArrayIntMap(40, -1);
-    	Keywords.addKeywordsCpp(keywords);
+		Keywords.addKeywordsCpp(keywords);
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class StringScanner implements IScanner {
 		if (token.getType() != IToken.tIDENTIFIER)
 			return token;
 
-    	char[] name= token.getCharImage();
+		char[] name = token.getCharImage();
 		int tokenType = keywords.get(name);
 		if (tokenType != keywords.undefined)
 			token.setType(tokenType);
@@ -88,7 +88,7 @@ public class StringScanner implements IScanner {
 
 	@Override
 	public void setTrackIncludeExport(IncludeExportPatterns patterns) {
-    }
+	}
 
 	@Override
 	public void setContentAssistMode(int offset) {

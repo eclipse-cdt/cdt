@@ -25,10 +25,10 @@ package org.eclipse.cdt.managedbuilder.core;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IInputOrder {
-	public static final String INPUT_ORDER_ELEMENT_NAME = "inputOrder";	//$NON-NLS-1$
-	public static final String PATH = "path";	//$NON-NLS-1$
-	public static final String ORDER = "order";	//$NON-NLS-1$
-	public static final String EXCLUDED = "excluded";	//$NON-NLS-1$
+	public static final String INPUT_ORDER_ELEMENT_NAME = "inputOrder"; //$NON-NLS-1$
+	public static final String PATH = "path"; //$NON-NLS-1$
+	public static final String ORDER = "order"; //$NON-NLS-1$
+	public static final String EXCLUDED = "excluded"; //$NON-NLS-1$
 
 	/**
 	 * Returns the InputType parent of this InputOrder.
@@ -50,7 +50,7 @@ public interface IInputOrder {
 	 * Sets the relative or absolute path of the resource to which this element applies.
 	 */
 	public void setPath(String path);
-	
+
 	/**
 	 * Returns a comma-separated list of integer values that specify the order of this resource.  
 	 * In most cases, only a single integer value will be specified.  A list is supported 
@@ -64,7 +64,7 @@ public interface IInputOrder {
 	 * @return String
 	 */
 	public String getOrder();
-	
+
 	/**
 	 * Sets the comma-separated list of integer values that specify the order of this resource.
 	 */
@@ -89,10 +89,10 @@ public interface IInputOrder {
 	 * @return boolean 
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
 	 */
 	public void setDirty(boolean isDirty);
-	
+
 }

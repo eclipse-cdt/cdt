@@ -42,7 +42,7 @@ import org.eclipse.cdt.core.model.ICElement;
  * This is internal in case some IBinding's do not have ICElement constants in future
  */
 public class IndexModelUtil {
-	private static final String[] EMPTY_STRING_ARRAY= {};
+	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
 	 * Returns whether the binding is of any of the specified CElement type constants
@@ -55,18 +55,15 @@ public class IndexModelUtil {
 		for (int kind : kinds) {
 			switch (kind) {
 			case ICElement.C_STRUCT:
-				if (binding instanceof ICompositeType
-						&& ((ICompositeType) binding).getKey() == ICompositeType.k_struct)
+				if (binding instanceof ICompositeType && ((ICompositeType) binding).getKey() == ICompositeType.k_struct)
 					return true;
 				break;
 			case ICElement.C_UNION:
-				if (binding instanceof ICompositeType
-						&& ((ICompositeType) binding).getKey() == ICompositeType.k_union)
+				if (binding instanceof ICompositeType && ((ICompositeType) binding).getKey() == ICompositeType.k_union)
 					return true;
 				break;
 			case ICElement.C_CLASS:
-				if (binding instanceof ICompositeType
-						&& ((ICompositeType) binding).getKey() == ICPPClassType.k_class)
+				if (binding instanceof ICompositeType && ((ICompositeType) binding).getKey() == ICPPClassType.k_class)
 					return true;
 				break;
 			case ICElement.C_NAMESPACE:
@@ -78,15 +75,15 @@ public class IndexModelUtil {
 					return true;
 				break;
 			case ICElement.C_TYPEDEF:
-				if(binding instanceof ITypedef)
+				if (binding instanceof ITypedef)
 					return true;
 				break;
 			case ICElement.C_FUNCTION:
-				if(binding instanceof IFunction)
+				if (binding instanceof IFunction)
 					return true;
 				break;
 			case ICElement.C_VARIABLE:
-				if(binding instanceof IVariable)
+				if (binding instanceof IVariable)
 					return true;
 				break;
 			case ICElement.C_ENUMERATOR:
@@ -97,7 +94,7 @@ public class IndexModelUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the CElement type constant for the specified binding
 	 * @param binding
@@ -108,7 +105,7 @@ public class IndexModelUtil {
 
 		if (binding instanceof ICompositeType) {
 			ICompositeType classType = (ICompositeType) binding;
-			switch(classType.getKey()) {
+			switch (classType.getKey()) {
 			case ICPPClassType.k_class:
 				elementType = ICElement.C_CLASS;
 				break;
@@ -134,13 +131,13 @@ public class IndexModelUtil {
 			elementType = ICElement.C_FUNCTION;
 		}
 		if (binding instanceof IVariable) {
-			IScope scope= null;
+			IScope scope = null;
 			try {
 				scope = binding.getScope();
 			} catch (DOMException e) {
 			}
 			if (scope != null && scope.getKind() == EScopeKind.eLocal) {
-				elementType= ICElement.C_VARIABLE_LOCAL;
+				elementType = ICElement.C_VARIABLE_LOCAL;
 			} else {
 				elementType = ICElement.C_VARIABLE;
 			}
@@ -149,10 +146,10 @@ public class IndexModelUtil {
 			elementType = ICElement.C_ENUMERATOR;
 		}
 		if (binding instanceof IMacroBinding || binding instanceof IIndexMacroContainer) {
-			elementType= ICElement.C_MACRO;
+			elementType = ICElement.C_MACRO;
 		}
 		if (binding instanceof IParameter) {
-			elementType= ICElement.C_VARIABLE_LOCAL;
+			elementType = ICElement.C_VARIABLE_LOCAL;
 		}
 		return elementType;
 	}
@@ -164,16 +161,16 @@ public class IndexModelUtil {
 	 * @throws DOMException
 	 */
 	public static String[] extractParameterTypes(IFunction function) throws DOMException {
-		IParameter[] params= function.getParameters();
+		IParameter[] params = function.getParameters();
 		boolean vararg = function.takesVarArgs();
 		int paramCount = params.length + (vararg ? 1 : 0);
-		String[] parameterTypes= new String[paramCount];
+		String[] parameterTypes = new String[paramCount];
 		for (int i = 0; i < params.length; i++) {
 			IParameter param = params[i];
-			parameterTypes[i]= ASTTypeUtil.getType(param.getType(), false);
+			parameterTypes[i] = ASTTypeUtil.getType(param.getType(), false);
 		}
 		if (vararg) {
-			parameterTypes[paramCount - 1] = "...";  //$NON-NLS-1$
+			parameterTypes[paramCount - 1] = "..."; //$NON-NLS-1$
 		}
 		if (parameterTypes.length == 1 && parameterTypes[0].equals("void")) { //$NON-NLS-1$
 			return EMPTY_STRING_ARRAY;

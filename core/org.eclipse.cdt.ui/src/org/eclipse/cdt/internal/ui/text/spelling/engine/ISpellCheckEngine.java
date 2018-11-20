@@ -82,5 +82,5 @@ public interface ISpellCheckEngine {
 	 * @param dictionary the dictionary to unregister
 	 */
 	void unregisterDictionary(ISpellDictionary dictionary);
-	
+
 }

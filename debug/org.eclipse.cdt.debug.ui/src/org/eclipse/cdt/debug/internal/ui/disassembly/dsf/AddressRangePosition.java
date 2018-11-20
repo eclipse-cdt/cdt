@@ -42,7 +42,8 @@ public class AddressRangePosition extends Position {
 	 * @param length
 	 * @param valid
 	 */
-	public AddressRangePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength, boolean valid) {
+	public AddressRangePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength,
+			boolean valid) {
 		super(offset, length);
 		fAddressOffset = addressOffset;
 		fAddressLength = addressLength;
@@ -54,8 +55,7 @@ public class AddressRangePosition extends Position {
 	 * @return
 	 */
 	public boolean containsAddress(BigInteger address) {
-		return address.compareTo(fAddressOffset) >= 0
-			&& address.compareTo(fAddressOffset.add(fAddressLength)) < 0;
+		return address.compareTo(fAddressOffset) >= 0 && address.compareTo(fAddressOffset.add(fAddressLength)) < 0;
 	}
 
 	/* (non-Javadoc)
@@ -66,15 +66,15 @@ public class AddressRangePosition extends Position {
 		// identity comparison
 		return this == other;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.Position#toString()
 	 */
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + '@' + Integer.toHexString(System.identityHashCode(this)) 
-			+ (fValid ? "" : "[INVALID]") //$NON-NLS-1$ //$NON-NLS-2$
-			+ '[' + offset + ':' + length + "]->[" + fAddressOffset.toString(16) //$NON-NLS-1$
-			+ ':' + fAddressLength.toString(16) + ']';
+		return getClass().getSimpleName() + '@' + Integer.toHexString(System.identityHashCode(this))
+				+ (fValid ? "" : "[INVALID]") //$NON-NLS-1$ //$NON-NLS-2$
+				+ '[' + offset + ':' + length + "]->[" + fAddressOffset.toString(16) //$NON-NLS-1$
+				+ ':' + fAddressLength.toString(16) + ']';
 	}
 }

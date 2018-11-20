@@ -47,7 +47,7 @@ public interface IASTCompoundStatement extends IASTStatement {
 	 * @return the {@code IScope}
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

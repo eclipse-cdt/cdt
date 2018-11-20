@@ -39,7 +39,8 @@ public class CSearchProviderManager {
 
 	public static CSearchProviderManager INSTANCE = new CSearchProviderManager();
 
-	private CSearchProviderManager() {}
+	private CSearchProviderManager() {
+	}
 
 	public List<IExternalSearchProvider> getExternalSearchProviders() {
 		if (externalSearchProviders == null) {
@@ -50,14 +51,15 @@ public class CSearchProviderManager {
 				try {
 					for (IConfigurationElement element : extension.getConfigurationElements()) {
 						if (ELEMENT_PROVIDER.equals(element.getName())) {
-		                    Object provider = element.createExecutableExtension(ATTRIBUTE_CLASS);
-		                    if (provider instanceof IExternalSearchProvider) {
-		                    	externalSearchProviders.add((IExternalSearchProvider) provider);
-		                    } else {
-		                        CUIPlugin.logError(NLS.bind(CSearchMessages.CSearchProviderManager_InvalidSearchProvider,
-		                                extension.getContributor().getName()));
-		                    }
-		                }
+							Object provider = element.createExecutableExtension(ATTRIBUTE_CLASS);
+							if (provider instanceof IExternalSearchProvider) {
+								externalSearchProviders.add((IExternalSearchProvider) provider);
+							} else {
+								CUIPlugin
+										.logError(NLS.bind(CSearchMessages.CSearchProviderManager_InvalidSearchProvider,
+												extension.getContributor().getName()));
+							}
+						}
 					}
 				} catch (CoreException e) {
 					CUIPlugin.log(e);

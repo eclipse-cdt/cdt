@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,9 +34,9 @@ import org.eclipse.ui.PlatformUI;
  * Use this class when you want to present IStorage objects in a viewer.
  */
 public class StorageLabelProvider extends LabelProvider {
-	
-	private IEditorRegistry fEditorRegistry= PlatformUI.getWorkbench().getEditorRegistry();
-	private Map<String, Image> fJarImageMap= new HashMap<String, Image>(10);
+
+	private IEditorRegistry fEditorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
+	private Map<String, Image> fJarImageMap = new HashMap<String, Image>(10);
 	private Image fDefaultImage;
 
 	/* (non-Javadoc)
@@ -45,8 +44,8 @@ public class StorageLabelProvider extends LabelProvider {
 	 */
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof IStorage) 
-			return getImageForJarEntry((IStorage)element);
+		if (element instanceof IStorage)
+			return getImageForJarEntry((IStorage) element);
 
 		return super.getImage(element);
 	}
@@ -57,7 +56,7 @@ public class StorageLabelProvider extends LabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof IStorage)
-			return ((IStorage)element).getName();
+			return ((IStorage) element).getName();
 
 		return super.getText(element);
 	}
@@ -69,22 +68,22 @@ public class StorageLabelProvider extends LabelProvider {
 	@Override
 	public void dispose() {
 		if (fJarImageMap != null) {
-			Iterator<Image> each= fJarImageMap.values().iterator();
+			Iterator<Image> each = fJarImageMap.values().iterator();
 			while (each.hasNext()) {
-				Image image= each.next();
+				Image image = each.next();
 				image.dispose();
 			}
-			fJarImageMap= null;
+			fJarImageMap = null;
 		}
 		if (fDefaultImage != null)
 			fDefaultImage.dispose();
-		fDefaultImage= null;
+		fDefaultImage = null;
 	}
-	
+
 	/*
 	 * Gets and caches an image for a JarEntryFile.
 	 * The image for a JarEntryFile is retrieved from the EditorRegistry.
-	 */ 
+	 */
 	private Image getImageForJarEntry(IStorage element) {
 		if (fJarImageMap == null)
 			return getDefaultImage();
@@ -93,43 +92,43 @@ public class StorageLabelProvider extends LabelProvider {
 			return getDefaultImage();
 
 		// Try to find icon for full name
-		String name= element.getName();
-		Image image= fJarImageMap.get(name);
-		if (image != null) 
+		String name = element.getName();
+		Image image = fJarImageMap.get(name);
+		if (image != null)
 			return image;
-		IFileEditorMapping[] mappings= fEditorRegistry.getFileEditorMappings();
-		int i= 0;
+		IFileEditorMapping[] mappings = fEditorRegistry.getFileEditorMappings();
+		int i = 0;
 		while (i < mappings.length) {
 			if (mappings[i].getLabel().equals(name))
 				break;
 			i++;
 		}
-		String key= name;
+		String key = name;
 		if (i == mappings.length) {
 			// Try to find icon for extension
-			IPath path= element.getFullPath();
+			IPath path = element.getFullPath();
 			if (path == null)
 				return getDefaultImage();
-			key= path.getFileExtension();
+			key = path.getFileExtension();
 			if (key == null)
 				return getDefaultImage();
-			image= fJarImageMap.get(key);
-			if (image != null) 
+			image = fJarImageMap.get(key);
+			if (image != null)
 				return image;
 		}
 
 		// Get the image from the editor registry	
-		ImageDescriptor desc= fEditorRegistry.getImageDescriptor(name);
-		image= desc.createImage();
+		ImageDescriptor desc = fEditorRegistry.getImageDescriptor(name);
+		image = desc.createImage();
 
 		fJarImageMap.put(key, image);
 
 		return image;
 	}
-	
+
 	private Image getDefaultImage() {
 		if (fDefaultImage == null)
-			fDefaultImage= fEditorRegistry.getImageDescriptor((String)null).createImage();
+			fDefaultImage = fEditorRegistry.getImageDescriptor((String) null).createImage();
 		return fDefaultImage;
 	}
 }

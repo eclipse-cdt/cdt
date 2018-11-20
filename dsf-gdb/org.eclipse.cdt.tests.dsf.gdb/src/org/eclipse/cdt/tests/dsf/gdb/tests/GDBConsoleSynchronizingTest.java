@@ -77,72 +77,73 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 
 	private List<IDMEvent<? extends IDMContext>> fEventsReceived = new ArrayList<IDMEvent<? extends IDMContext>>();
 
-    @Override
-    protected void setLaunchAttributes() {
-    	super.setLaunchAttributes();
-    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
-    }
+	@Override
+	protected void setLaunchAttributes() {
+		super.setLaunchAttributes();
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
+	}
 
-    @Override
-    public void doBeforeTest() throws Exception {
-    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
-    	super.doBeforeTest();
+	@Override
+	public void doBeforeTest() throws Exception {
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
+		super.doBeforeTest();
 
-    	fSession = getGDBLaunch().getSession();
-        Runnable runnable = new Runnable() {
-            @Override
+		fSession = getGDBLaunch().getSession();
+		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
-                fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-                Assert.assertTrue(fServicesTracker != null);
+				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+				Assert.assertTrue(fServicesTracker != null);
 
-                fCommandControl = fServicesTracker.getService(IGDBControl.class);
-                Assert.assertTrue(fCommandControl != null);
+				fCommandControl = fServicesTracker.getService(IGDBControl.class);
+				Assert.assertTrue(fCommandControl != null);
 
-                fMemoryService = fServicesTracker.getService(IMemory.class);
-                Assert.assertTrue(fMemoryService != null);
+				fMemoryService = fServicesTracker.getService(IMemory.class);
+				Assert.assertTrue(fMemoryService != null);
 
-                fExprService = fServicesTracker.getService(IExpressions.class);
-                Assert.assertTrue(fExprService != null);
+				fExprService = fServicesTracker.getService(IExpressions.class);
+				Assert.assertTrue(fExprService != null);
 
-                fRunControl = fServicesTracker.getService(IRunControl.class);
-                Assert.assertTrue(fRunControl != null);
+				fRunControl = fServicesTracker.getService(IRunControl.class);
+				Assert.assertTrue(fRunControl != null);
 
-                // Register to breakpoint events
-                fSession.addServiceEventListener(GDBConsoleSynchronizingTest.this, null);
-            }
-        };
-        fSession.getExecutor().submit(runnable).get();
-    }
+				// Register to breakpoint events
+				fSession.addServiceEventListener(GDBConsoleSynchronizingTest.this, null);
+			}
+		};
+		fSession.getExecutor().submit(runnable).get();
+	}
 
-    @Override
-    public void doAfterTest() throws Exception {
+	@Override
+	public void doAfterTest() throws Exception {
 		if (fSession != null) {
 			fSession.getExecutor().submit(() -> fSession.removeServiceEventListener(GDBConsoleSynchronizingTest.this))
 					.get();
 		}
-        fEventsReceived.clear();
-        if (fServicesTracker!=null) fServicesTracker.dispose();
-        super.doAfterTest();
-    }
+		fEventsReceived.clear();
+		if (fServicesTracker != null)
+			fServicesTracker.dispose();
+		super.doAfterTest();
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	// Start of tests
 	//////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * This test verifies that setting a variable from the console
-     * using the set command will properly trigger a DSF event to
-     * indicate the change.  This test makes sure the value that
-     * changes is in the memory cache also.
-     */
+	/**
+	 * This test verifies that setting a variable from the console
+	 * using the set command will properly trigger a DSF event to
+	 * indicate the change.  This test makes sure the value that
+	 * changes is in the memory cache also.
+	 */
 	@Test
 	public void testSettingVariableWithSetWithMemory() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testMemoryChanges");
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testMemoryChanges");
 
-        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
+		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
 
-        // Read the memory that will change first, or else there will be no event for it
+		// Read the memory that will change first, or else there will be no event for it
 		Query<IExpressionDMAddress> query = new Query<IExpressionDMAddress>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMAddress> rm) {
@@ -153,32 +154,32 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		fSession.getExecutor().execute(query);
 		IExpressionDMAddress data = query.get();
 
-        IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
+		IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
+		SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
 
-        fEventsReceived.clear();
+		fEventsReceived.clear();
 
-        String newValue = NEW_VAR_VALUE;
-        queueConsoleCommand("set variable i=" + newValue);
+		String newValue = NEW_VAR_VALUE;
+		queueConsoleCommand("set variable i=" + newValue);
 
-        IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
-        assertEquals(1, memoryEvent.getAddresses().length);
-        assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
+		IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
+		assertEquals(1, memoryEvent.getAddresses().length);
+		assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
 
-        // Now verify the memory service knows the new memory value
-        MemoryByte[] memory = SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
-        assertEquals(NEW_VAR_SIZE, memory.length);
-        for (int i=0; i<NEW_VAR_SIZE; i++) {
-        	if (memory[0].isBigEndian()) {
-        		assertEquals(NEW_MEM[i], memory[i].getValue());
-        	} else {
-        		assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
-        	}
-        }
+		// Now verify the memory service knows the new memory value
+		MemoryByte[] memory = SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
+		assertEquals(NEW_VAR_SIZE, memory.length);
+		for (int i = 0; i < NEW_VAR_SIZE; i++) {
+			if (memory[0].isBigEndian()) {
+				assertEquals(NEW_MEM[i], memory[i].getValue());
+			} else {
+				assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE - 1 - i].getValue());
+			}
+		}
 
-        // Now verify the expressions service knows the new value
-        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
-        assertEquals(newValue, exprValue);
+		// Now verify the expressions service knows the new value
+		String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
+		assertEquals(newValue, exprValue);
 	}
 
 	private void testSettingVariableWithCommon(String commandPrefix) throws Throwable {
@@ -211,11 +212,11 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
 		MemoryByte[] memory = SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
 		assertEquals(NEW_VAR_SIZE, memory.length);
-		for (int i=0; i<NEW_VAR_SIZE; i++) {
+		for (int i = 0; i < NEW_VAR_SIZE; i++) {
 			if (memory[0].isBigEndian()) {
 				assertEquals(NEW_MEM[i], memory[i].getValue());
 			} else {
-				assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
+				assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE - 1 - i].getValue());
 			}
 		}
 
@@ -224,39 +225,39 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		assertEquals(newValue, exprValue);
 	}
 
-    /**
-     * This test verifies that setting a variable from the console
-     * using the set command will properly trigger a DSF event to
-     * indicate the change, when the address is not in the memory cache.
-     */
+	/**
+	 * This test verifies that setting a variable from the console
+	 * using the set command will properly trigger a DSF event to
+	 * indicate the change, when the address is not in the memory cache.
+	 */
 	@Test
 	public void testSettingVariableWithSet() throws Throwable {
 		testSettingVariableWithCommon("set variable i");
 	}
 
-    /**
-     * This test verifies that setting a variable from the console
-     * using the print command will properly trigger a DSF event
-     * to indicate the change.
-     */
+	/**
+	 * This test verifies that setting a variable from the console
+	 * using the print command will properly trigger a DSF event
+	 * to indicate the change.
+	 */
 	@Test
 	public void testSettingVariableWithPrint() throws Throwable {
 		testSettingVariableWithCommon("print i");
 	}
 
 	/**
-     * This test verifies that setting a memory location from the
-     * console will properly trigger a DSF event to indicate the change.
-     */
+	 * This test verifies that setting a memory location from the
+	 * console will properly trigger a DSF event to indicate the change.
+	 */
 	@Test
 	public void testSettingMemory() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testMemoryChanges");
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testMemoryChanges");
 
-        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
+		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
 
-        // Read the memory that will change first, or else there will be no event for it
-        Query<IExpressionDMAddress> query = new Query<IExpressionDMAddress>() {
+		// Read the memory that will change first, or else there will be no event for it
+		Query<IExpressionDMAddress> query = new Query<IExpressionDMAddress>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMAddress> rm) {
 				fExprService.getExpressionAddressData(exprDmc, rm);
@@ -266,41 +267,41 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		fSession.getExecutor().execute(query);
 		IExpressionDMAddress data = query.get();
 
-        fEventsReceived.clear();
+		fEventsReceived.clear();
 
-        final String newValue = NEW_VAR_VALUE;
-        queueConsoleCommand("set {int}&i=" + newValue);
+		final String newValue = NEW_VAR_VALUE;
+		queueConsoleCommand("set {int}&i=" + newValue);
 
-        IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
-        assertEquals(1, memoryEvent.getAddresses().length);
-        assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
+		IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
+		assertEquals(1, memoryEvent.getAddresses().length);
+		assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
 
-        // Now verify the memory service knows the new memory value
-        IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        MemoryByte[] memory = SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
-        assertEquals(NEW_VAR_SIZE, memory.length);
-        for (int i=0; i<NEW_VAR_SIZE; i++) {
-        	if (memory[0].isBigEndian()) {
-        		assertEquals(NEW_MEM[i], memory[i].getValue());
-        	} else {
-        		assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
-        	}
-        }
+		// Now verify the memory service knows the new memory value
+		IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
+		MemoryByte[] memory = SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
+		assertEquals(NEW_VAR_SIZE, memory.length);
+		for (int i = 0; i < NEW_VAR_SIZE; i++) {
+			if (memory[0].isBigEndian()) {
+				assertEquals(NEW_MEM[i], memory[i].getValue());
+			} else {
+				assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE - 1 - i].getValue());
+			}
+		}
 
-        // Now verify the expressions service knows the new value
-        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
-        assertEquals(newValue, exprValue);
+		// Now verify the expressions service knows the new value
+		String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
+		assertEquals(newValue, exprValue);
 	}
 
 	/**
-     * This test verifies that enabling reverse debugging from the
-     * console will properly trigger a DSF event to indicate the change and
-     * will be processed by the service.
-     */
+	 * This test verifies that enabling reverse debugging from the
+	 * console will properly trigger a DSF event to indicate the change and
+	 * will be processed by the service.
+	 */
 	@Test
 	public void testEnableRecord() throws Throwable {
 		assertTrue("Reverse debugging is not supported", fRunControl instanceof IReverseRunControl);
-		final IReverseRunControl reverseService = (IReverseRunControl)fRunControl;
+		final IReverseRunControl reverseService = (IReverseRunControl) fRunControl;
 
 		SyncUtil.runToLocation("testMemoryChanges");
 
@@ -316,16 +317,16 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		Boolean enabled = query.get();
 		assertTrue("Reverse debugging should not be enabled", !enabled);
 
-        fEventsReceived.clear();
+		fEventsReceived.clear();
 
-        queueConsoleCommand("record");
+		queueConsoleCommand("record");
 
-        // Wait for the event
-        IReverseModeChangedDMEvent event = waitForEvent(IReverseModeChangedDMEvent.class);
-        assertEquals(true, event.isReverseModeEnabled());
+		// Wait for the event
+		IReverseModeChangedDMEvent event = waitForEvent(IReverseModeChangedDMEvent.class);
+		assertEquals(true, event.isReverseModeEnabled());
 
-        // Check the service
-        query = new Query<Boolean>() {
+		// Check the service
+		query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm);
@@ -337,14 +338,14 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 	}
 
 	/**
-     * This test verifies that disabling reverse debugging from the
-     * console will properly trigger a DSF event to indicate the change and
-     * will be processed by the service.
-     */
+	 * This test verifies that disabling reverse debugging from the
+	 * console will properly trigger a DSF event to indicate the change and
+	 * will be processed by the service.
+	 */
 	@Test
 	public void testDisableRecord() throws Throwable {
 		assertTrue("Reverse debugging is not supported", fRunControl instanceof IReverseRunControl);
-		final IReverseRunControl reverseService = (IReverseRunControl)fRunControl;
+		final IReverseRunControl reverseService = (IReverseRunControl) fRunControl;
 
 		SyncUtil.runToLocation("testMemoryChanges");
 
@@ -354,8 +355,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
-				reverseService.enableReverseMode(fCommandControl.getContext(), true,
-						                         new ImmediateRequestMonitor(rm) {
+				reverseService.enableReverseMode(fCommandControl.getContext(), true, new ImmediateRequestMonitor(rm) {
 					@Override
 					protected void handleSuccess() {
 						reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm);
@@ -368,19 +368,19 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		Boolean enabled = query.get();
 		assertTrue("Reverse debugging should be enabled", enabled);
 
-        // Wait for the event to avoid confusing it with the next one
-        IReverseModeChangedDMEvent event = waitForEvent(IReverseModeChangedDMEvent.class);
-        assertEquals(true, event.isReverseModeEnabled());
+		// Wait for the event to avoid confusing it with the next one
+		IReverseModeChangedDMEvent event = waitForEvent(IReverseModeChangedDMEvent.class);
+		assertEquals(true, event.isReverseModeEnabled());
 		fEventsReceived.clear();
 
-        queueConsoleCommand("record stop");
+		queueConsoleCommand("record stop");
 
-        // Wait for the event
-        event = waitForEvent(IReverseModeChangedDMEvent.class);
-        assertEquals(false, event.isReverseModeEnabled());
+		// Wait for the event
+		event = waitForEvent(IReverseModeChangedDMEvent.class);
+		assertEquals(false, event.isReverseModeEnabled());
 
-        // Check the service
-        query = new Query<Boolean>() {
+		// Check the service
+		query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm);
@@ -395,46 +395,43 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 	// End of tests
 	//////////////////////////////////////////////////////////////////////////////////////
 
-  	@DsfServiceEventHandler
+	@DsfServiceEventHandler
 	public void eventDispatched(IDMEvent<? extends IDMContext> e) {
-  		synchronized(this) {
-  			fEventsReceived.add(e);
-  			notifyAll();
-  		}
-  	}
+		synchronized (this) {
+			fEventsReceived.add(e);
+			notifyAll();
+		}
+	}
 
-  	private void queueConsoleCommand(String command) throws Throwable {
-  		queueConsoleCommand(command, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
-  	}
+	private void queueConsoleCommand(String command) throws Throwable {
+		queueConsoleCommand(command, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
+	}
 
-  	private void queueConsoleCommand(final String command, int timeout, TimeUnit unit) throws Throwable {
+	private void queueConsoleCommand(final String command, int timeout, TimeUnit unit) throws Throwable {
 		Query<MIInfo> query = new Query<MIInfo>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
-				fCommandControl.queueCommand(
-					fCommandControl.getCommandFactory().createMIInterpreterExecConsole(
-						fCommandControl.getContext(),
-						command),
-					rm);
+				fCommandControl.queueCommand(fCommandControl.getCommandFactory()
+						.createMIInterpreterExecConsole(fCommandControl.getContext(), command), rm);
 			}
 		};
 		fSession.getExecutor().execute(query);
 		query.get(timeout, unit);
-  	}
+	}
 
-  	private <V extends IDMEvent<? extends IDMContext>> V waitForEvent(Class<V> eventType) throws Exception {
-  		return waitForEvent(eventType, DEFAULT_TIMEOUT);
-  	}
+	private <V extends IDMEvent<? extends IDMContext>> V waitForEvent(Class<V> eventType) throws Exception {
+		return waitForEvent(eventType, DEFAULT_TIMEOUT);
+	}
 
-  	@SuppressWarnings("unchecked")
-	private <V extends IDMEvent<? extends IDMContext>> V waitForEvent(Class<V> eventType, int timeout) throws Exception {
-  		IDMEvent<?> event = getEvent(eventType);
-  		if (event == null) {
-			synchronized(this) {
+	@SuppressWarnings("unchecked")
+	private <V extends IDMEvent<? extends IDMContext>> V waitForEvent(Class<V> eventType, int timeout)
+			throws Exception {
+		IDMEvent<?> event = getEvent(eventType);
+		if (event == null) {
+			synchronized (this) {
 				try {
 					wait(timeout);
-				}
-				catch (InterruptedException ex) {
+				} catch (InterruptedException ex) {
 				}
 			}
 			event = getEvent(eventType);
@@ -442,18 +439,18 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 				throw new Exception(String.format("Timed out waiting for '%s' to occur.", eventType.getName()));
 			}
 		}
-  		return (V)event;
+		return (V) event;
 	}
 
-  	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	private synchronized <V extends IDMEvent<? extends IDMContext>> V getEvent(Class<V> eventType) {
 		for (IDMEvent<?> e : fEventsReceived) {
 			if (eventType.isAssignableFrom(e.getClass())) {
 				fEventsReceived.remove(e);
-				return (V)e;
+				return (V) e;
 			}
 		}
 		return null;
-  	}
+	}
 
 }

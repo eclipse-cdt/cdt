@@ -31,4 +31,3 @@ public interface IRequiredInclude {
 	 */
 	boolean isStandard();
 }
-

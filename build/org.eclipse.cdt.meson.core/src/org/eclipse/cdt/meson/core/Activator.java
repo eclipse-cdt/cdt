@@ -33,9 +33,8 @@ public class Activator implements BundleActivator {
 	//The shared instance.
 	private static Activator plugin;
 	private ResourceBundle resourceBundle;
-	
-	public static final String PLUGIN_ID = "org.eclipse.cdt.meson.core"; //$NON-NLS-1$
 
+	public static final String PLUGIN_ID = "org.eclipse.cdt.meson.core"; //$NON-NLS-1$
 
 	public Activator() {
 		Assert.isTrue(plugin == null);
@@ -46,11 +45,11 @@ public class Activator implements BundleActivator {
 			resourceBundle = null;
 		}
 	}
-	
+
 	public static String getPluginId() {
 		return PLUGIN_ID;
 	}
-	
+
 	public static String getUniqueIdentifier() {
 		if (getDefault() == null) {
 			// If the default instance is not yet initialized,
@@ -60,7 +59,7 @@ public class Activator implements BundleActivator {
 		}
 		return context.getBundle().getSymbolicName();
 	}
-	
+
 	public Bundle getBundle() {
 		return context.getBundle();
 	}
@@ -71,7 +70,7 @@ public class Activator implements BundleActivator {
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
 	/**
 	 * Return the OSGi service with the given service interface.
 	 * 
@@ -86,7 +85,7 @@ public class Activator implements BundleActivator {
 		}
 		return null;
 	}
-	
+
 	public static void error(String message, Throwable cause) {
 		log(errorStatus(message, cause));
 	}
@@ -120,7 +119,7 @@ public class Activator implements BundleActivator {
 	 * @return the resource bundle message
 	 */
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), (Object[])args);
+		return MessageFormat.format(getResourceString(key), (Object[]) args);
 	}
 
 	/**
@@ -151,8 +150,6 @@ public class Activator implements BundleActivator {
 		log(status);
 	}
 
-
-	
 	static BundleContext getContext() {
 		return context;
 	}

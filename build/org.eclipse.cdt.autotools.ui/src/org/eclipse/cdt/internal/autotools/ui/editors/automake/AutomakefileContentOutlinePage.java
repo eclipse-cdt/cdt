@@ -46,9 +46,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
-
 public class AutomakefileContentOutlinePage extends ContentOutlinePage {
-	
+
 	protected IMakefile makefile;
 	protected IMakefile nullMakefile = new NullMakefile();
 	private LexicalSortingAction sortAction;
@@ -78,7 +77,7 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 			if (element instanceof IMakefile) {
 				return fInput;
 			} else if (element instanceof IDirective) {
-				return ((IDirective)element).getParent();
+				return ((IDirective) element).getParent();
 			}
 			return fInput;
 		}
@@ -103,12 +102,12 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 			if (inputElement == fInput) {
 				directives = makefile.getDirectives();
 			} else if (inputElement instanceof IRule) {
-				directives = ((IRule)inputElement).getCommands();
+				directives = ((IRule) inputElement).getCommands();
 			} else if (inputElement instanceof IParent) {
 				if (inputElement instanceof IInclude && !showIncludeChildren) {
 					directives = new IDirective[0];
 				} else {
-					directives = ((IParent)inputElement).getDirectives();
+					directives = ((IParent) inputElement).getDirectives();
 				}
 			} else {
 				directives = new IDirective[0];
@@ -124,9 +123,8 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 				} else if (showTargetRule && directives[i] instanceof AutomakeIfElse) {
 					list.add(directives[i]);
 				} else {
-					boolean irrelevant = (directives[i] instanceof IComment ||
-							directives[i] instanceof IEmptyLine ||
-							directives[i] instanceof ITerminal); 
+					boolean irrelevant = (directives[i] instanceof IComment || directives[i] instanceof IEmptyLine
+							|| directives[i] instanceof ITerminal);
 					if (!irrelevant) {
 						list.add(directives[i]);
 					}
@@ -146,7 +144,7 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 			}
 
 			if (newInput != null) {
-				IWorkingCopyManager manager= AutomakeEditorFactory.getDefault().getWorkingCopyManager();
+				IWorkingCopyManager manager = AutomakeEditorFactory.getDefault().getWorkingCopyManager();
 				makefile = manager.getWorkingCopy((IEditorInput) newInput);
 				if (makefile == null) {
 					makefile = nullMakefile;
@@ -196,7 +194,7 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 				} else
 					name = "else";
 			} else if (element instanceof AutomakeConfigMacro) {
-				AutomakeConfigMacro macro = (AutomakeConfigMacro)element;
+				AutomakeConfigMacro macro = (AutomakeConfigMacro) element;
 				name = macro.getName();
 			} else {
 				name = super.getText(element);
@@ -211,15 +209,15 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 		}
 
 	}
-	
+
 	protected AutomakeEditor fEditor;
 	protected Object fInput;
-	
+
 	public AutomakefileContentOutlinePage(AutomakeEditor editor) {
 		super();
 		fEditor = editor;
 	}
-	
+
 	/**
 	 * Sets the input of the outline page
 	 */
@@ -227,7 +225,7 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 		fInput = input;
 		update();
 	}
-	
+
 	/**
 	 * Updates the outline page.
 	 */
@@ -260,15 +258,15 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 		}
 		sortAction.setTreeViewer(viewer);
 	}
-	
+
 	public void inputChanged(Object oldInput, Object newInput) {
 		if (oldInput != null) {
 			makefile = nullMakefile;
 		}
 
 		if (newInput != null) {
-			IWorkingCopyManager manager= AutomakeEditorFactory.getDefault().getWorkingCopyManager();
-			makefile = manager.getWorkingCopy((IEditorInput)newInput);
+			IWorkingCopyManager manager = AutomakeEditorFactory.getDefault().getWorkingCopyManager();
+			makefile = manager.getWorkingCopy((IEditorInput) newInput);
 			if (makefile == null) {
 				makefile = nullMakefile;
 			}

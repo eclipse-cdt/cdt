@@ -30,68 +30,68 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 	private boolean isExtern;
 	private boolean isRegister;
 	private boolean isStatic;
-	
+
 	private String name;
 	private IType type;
-	
+
 	private IScope scope;
-	
+
 	public C99Variable() {
 	}
-	
+
 	public C99Variable(String name) {
 		this.name = name;
 	}
-	
+
 	public void setType(IType type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public IType getType() {
 		return type;
 	}
-	
+
 	public void setAuto(boolean auto) {
 		this.isAuto = auto;
 	}
-	
+
 	@Override
 	public boolean isAuto() {
 		return isAuto;
 	}
-	
+
 	public void setExtern(boolean extern) {
 		this.isExtern = extern;
 	}
-	
+
 	@Override
 	public boolean isExtern() {
 		return isExtern;
 	}
-	
+
 	public void setRegister(boolean isRegister) {
 		this.isRegister = isRegister;
 	}
-	
+
 	@Override
 	public boolean isRegister() {
 		return isRegister;
 	}
-	
+
 	public void setStatic(boolean isStatic) {
 		this.isStatic = isStatic;
 	}
-	
+
 	@Override
-	public boolean isStatic()  {
+	public boolean isStatic() {
 		return isStatic;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -101,7 +101,7 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 	public char[] getNameCharArray() {
 		return name.toCharArray();
 	}
-	
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
@@ -121,7 +121,7 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 	public IBinding getOwner() {
 		if (scope == null)
 			return null;
-		
+
 		return CVisitor.findDeclarationOwner((IASTNode) scope.getScopeName(), true);
 	}
 

@@ -14,21 +14,19 @@
 
 package org.eclipse.cdt.dsf.debug.internal.provisional.model;
 
-
 /**
  * This interface is EXPERIMENTAL.
  * 
  * @since 1.1
  */
-public interface IMemoryBlockUpdatePolicyProvider 
-{
+public interface IMemoryBlockUpdatePolicyProvider {
 	public String[] getUpdatePolicies();
 
 	public String getUpdatePolicyDescription(String id);
-	
+
 	public String getUpdatePolicy();
-	
+
 	public void setUpdatePolicy(String id);
-	
+
 	public void clearCache();
 }

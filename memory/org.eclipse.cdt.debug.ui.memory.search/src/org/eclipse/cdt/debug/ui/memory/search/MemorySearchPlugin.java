@@ -19,14 +19,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-public class MemorySearchPlugin extends AbstractUIPlugin 
-{
+public class MemorySearchPlugin extends AbstractUIPlugin {
 	private static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui.memory.search"; //$NON-NLS-1$
-	
+
 	private static MemorySearchPlugin plugin;
-	
-	public MemorySearchPlugin() 
-	{
+
+	public MemorySearchPlugin() {
 		super();
 		plugin = this;
 	}
@@ -37,19 +35,17 @@ public class MemorySearchPlugin extends AbstractUIPlugin
 	public static MemorySearchPlugin getDefault() {
 		return plugin;
 	}
-	
+
 	/**
 	 * Returns the unique identifier for this plugin.
 	 */
 	public static String getUniqueIdentifier() {
 		return PLUGIN_ID;
 	}
-	
-	protected static void logError(String message, Exception e)
-    {
-        Status status = new Status(IStatus.ERROR, PLUGIN_ID,
-            DebugException.INTERNAL_ERROR, message, e);
 
-       getDefault().getLog().log(status);
-    }
+	protected static void logError(String message, Exception e) {
+		Status status = new Status(IStatus.ERROR, PLUGIN_ID, DebugException.INTERNAL_ERROR, message, e);
+
+		getDefault().getLog().log(status);
+	}
 }

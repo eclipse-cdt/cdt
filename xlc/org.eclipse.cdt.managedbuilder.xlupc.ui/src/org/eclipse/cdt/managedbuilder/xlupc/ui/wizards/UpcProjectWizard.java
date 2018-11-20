@@ -29,7 +29,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-
 @SuppressWarnings({ "nls", "serial" })
 public class UpcProjectWizard extends CDTCommonProjectWizard {
 
@@ -44,34 +43,32 @@ public class UpcProjectWizard extends CDTCommonProjectWizard {
 
 	private final static String PAGE_NAME = "org.eclipse.cdt.managedbuilder.xlupc.ui.mainpage";
 
-
-	private static final Set<String> ALL_TYPES = new HashSet<String>() {{
-		add(ARTIFACT_TYPE_UPC_EXE);
-		add(ARTIFACT_TYPE_UPC_EXE_DEFAULT);
-		add(ARTIFACT_TYPE_UPC_SO);
-		add(ARTIFACT_TYPE_UPC_SO_DEFAULT);
-		add(ARTIFACT_TYPE_UPC_LIB);
-		add(ARTIFACT_TYPE_UPC_LIB_DEFAULT);
-	}};
-
-
+	private static final Set<String> ALL_TYPES = new HashSet<String>() {
+		{
+			add(ARTIFACT_TYPE_UPC_EXE);
+			add(ARTIFACT_TYPE_UPC_EXE_DEFAULT);
+			add(ARTIFACT_TYPE_UPC_SO);
+			add(ARTIFACT_TYPE_UPC_SO_DEFAULT);
+			add(ARTIFACT_TYPE_UPC_LIB);
+			add(ARTIFACT_TYPE_UPC_LIB_DEFAULT);
+		}
+	};
 
 	public UpcProjectWizard() {
 		super(Messages.UpcProjectWizard_0, Messages.UpcProjectWizard_1);
 	}
 
-
 	@Override
-	public void addPages()  {
+	public void addPages() {
 		fMainPage = new CDTMainWizardPage(PAGE_NAME) {
 			@Override
-			public List<EntryDescriptor> filterItems(List<EntryDescriptor> items)  {
+			public List<EntryDescriptor> filterItems(List<EntryDescriptor> items) {
 				// filter out all non-UPC project types
 				if (items != null) {
 					Iterator<EntryDescriptor> iter = items.iterator();
 					while (iter.hasNext()) {
 						EntryDescriptor entryDescriptor = iter.next();
-						if(!ALL_TYPES.contains(entryDescriptor.getId()))
+						if (!ALL_TYPES.contains(entryDescriptor.getId()))
 							iter.remove();
 					}
 				}
@@ -84,23 +81,24 @@ public class UpcProjectWizard extends CDTCommonProjectWizard {
 		addPage(fMainPage);
 	}
 
-
 	@Override
 	protected IProject continueCreation(IProject prj) {
 		try {
 			CProjectNature.addCNature(prj, new NullProgressMonitor());
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 		return prj;
 	}
 
-
 	@Override
 	public String[] getNatures() {
-		return new String[] { CProjectNature.C_NATURE_ID/*, CCProjectNature.CC_NATURE_ID, RemoteNature.REMOTE_NATURE_ID*/};
+		return new String[] {
+				CProjectNature.C_NATURE_ID/*, CCProjectNature.CC_NATURE_ID, RemoteNature.REMOTE_NATURE_ID*/ };
 	}
 
 	@Override
 	public String[] getContentTypeIDs() {
-		return new String[] { CCorePlugin.CONTENT_TYPE_CSOURCE, CCorePlugin.CONTENT_TYPE_CHEADER, UPCLanguage.UPC_CONTENT_TYPE_ID };
+		return new String[] { CCorePlugin.CONTENT_TYPE_CSOURCE, CCorePlugin.CONTENT_TYPE_CHEADER,
+				UPCLanguage.UPC_CONTENT_TYPE_ID };
 	}
 }

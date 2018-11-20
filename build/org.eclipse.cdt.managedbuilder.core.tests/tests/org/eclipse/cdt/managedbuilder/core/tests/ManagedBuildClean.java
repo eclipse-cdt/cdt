@@ -73,8 +73,7 @@ public class ManagedBuildClean extends AbstractBuilderTest {
 				// Only files are removed by clean, not folders
 				continue;
 			}
-			if (externalBuilder
-					&& (resource.getName().endsWith(".mk") || resource.getName().equals("makefile"))) {
+			if (externalBuilder && (resource.getName().endsWith(".mk") || resource.getName().equals("makefile"))) {
 				// makefiles are not removed when cleaning
 				continue;
 			}

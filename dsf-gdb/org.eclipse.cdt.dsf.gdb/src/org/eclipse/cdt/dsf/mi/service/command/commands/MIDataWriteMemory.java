@@ -46,76 +46,64 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class MIDataWriteMemory extends MICommand<MIDataWriteMemoryInfo> {
 
-	public MIDataWriteMemory(
-	        IDMContext ctx, 
-			long offset,
-			String address,
-			int wordFormat,
-			int wordSize,
-			String value)
-	{
+	public MIDataWriteMemory(IDMContext ctx, long offset, String address, int wordFormat, int wordSize, String value) {
 		super(ctx, "-data-write-memory"); //$NON-NLS-1$
 
 		if (offset != 0) {
-			setOptions(new String[] { "-o", Long.toString(offset)}); //$NON-NLS-1$
+			setOptions(new String[] { "-o", Long.toString(offset) }); //$NON-NLS-1$
 		}
 
 		String format = "x"; //$NON-NLS-1$
 		switch (wordFormat) {
-			case MIFormat.UNSIGNED :
-				format = "u"; //$NON-NLS-1$
-				break;
+		case MIFormat.UNSIGNED:
+			format = "u"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.FLOAT :
-				format = "f"; //$NON-NLS-1$
-				break;
+		case MIFormat.FLOAT:
+			format = "f"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.ADDRESS :
-				format = "a"; //$NON-NLS-1$
-				break;
+		case MIFormat.ADDRESS:
+			format = "a"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.INSTRUCTION :
-				format = "i"; //$NON-NLS-1$
-				break;
+		case MIFormat.INSTRUCTION:
+			format = "i"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.CHAR :
-				format = "c"; //$NON-NLS-1$
-				break;
+		case MIFormat.CHAR:
+			format = "c"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.STRING :
-				format = "s"; //$NON-NLS-1$
-				break;
+		case MIFormat.STRING:
+			format = "s"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.DECIMAL :
-			case MIFormat.NATURAL :
-				format = "d"; //$NON-NLS-1$
-				break;
+		case MIFormat.DECIMAL:
+		case MIFormat.NATURAL:
+			format = "d"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.BINARY :
-				format = "t"; //$NON-NLS-1$
-				break;
+		case MIFormat.BINARY:
+			format = "t"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.OCTAL :
-				format = "o"; //$NON-NLS-1$
-				break;
+		case MIFormat.OCTAL:
+			format = "o"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.HEXADECIMAL :
-			case MIFormat.RAW :
-			default :
-				format = "x"; //$NON-NLS-1$
-				break;
+		case MIFormat.HEXADECIMAL:
+		case MIFormat.RAW:
+		default:
+			format = "x"; //$NON-NLS-1$
+			break;
 		}
 
-		setParameters(
-			new String[] {
-				address,
-				format,
-				Integer.toString(wordSize),
-				value});
+		setParameters(new String[] { address, format, Integer.toString(wordSize), value });
 	}
 
-    @Override
-    public MIDataWriteMemoryInfo getResult(MIOutput out)  {
-        return new MIDataWriteMemoryInfo(out);
-    }
+	@Override
+	public MIDataWriteMemoryInfo getResult(MIOutput out) {
+		return new MIDataWriteMemoryInfo(out);
+	}
 }

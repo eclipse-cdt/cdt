@@ -88,8 +88,8 @@ public class LinkedNamesFinder {
 				return;
 			}
 
-			if (target instanceof ICPPConstructor ||
-					target instanceof ICPPMethod && ((ICPPMethod) target).isDestructor()) {
+			if (target instanceof ICPPConstructor
+					|| target instanceof ICPPMethod && ((ICPPMethod) target).isDestructor()) {
 				target = ((ICPPMethod) target).getClassOwner();
 			}
 
@@ -108,11 +108,11 @@ public class LinkedNamesFinder {
 					}
 				}
 			} else if (target instanceof ICPPMethod) {
-	        	ICPPMethod method= (ICPPMethod) target;
-        		for (ICPPMethod m : ClassTypeHelper.findOverridden(method)) {
+				ICPPMethod method = (ICPPMethod) target;
+				for (ICPPMethod m : ClassTypeHelper.findOverridden(method)) {
 					findBinding(m);
 				}
-        		try {
+				try {
 					for (ICPPMethod m : findOverridersInAST(method)) {
 						findBinding(m);
 					}
@@ -127,7 +127,7 @@ public class LinkedNamesFinder {
 				return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
 			final ICPPClassType ownerClass = method.getClassOwner();
-			if (ownerClass  == null) 
+			if (ownerClass == null)
 				return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
 			SubclassFinder subclassFinder = new SubclassFinder(ownerClass);
@@ -143,13 +143,13 @@ public class LinkedNamesFinder {
 		}
 
 		private void findBinding(IBinding target) {
-			IASTName[] names= root.getDeclarationsInAST(target);
+			IASTName[] names = root.getDeclarationsInAST(target);
 			for (IASTName candidate : names) {
 				if (candidate.isPartOfTranslationUnitFile()) {
 					addLocation(candidate);
 				}
 			}
-			names= root.getReferences(target);
+			names = root.getReferences(target);
 			for (IASTName candidate : names) {
 				if (candidate.isPartOfTranslationUnitFile()) {
 					addLocation(candidate);
@@ -161,15 +161,15 @@ public class LinkedNamesFinder {
 			IBinding binding = name.resolveBinding();
 			if (binding != null) {
 				if (name instanceof ICPPASTTemplateId) {
-					name= ((ICPPASTTemplateId) name).getTemplateName();
+					name = ((ICPPASTTemplateId) name).getTemplateName();
 				}
-				IASTFileLocation fileLocation= name.getImageLocation();
+				IASTFileLocation fileLocation = name.getImageLocation();
 				if (fileLocation == null || !root.getFilePath().equals(fileLocation.getFileName())) {
-					fileLocation= name.getFileLocation();
+					fileLocation = name.getFileLocation();
 				}
 				if (fileLocation != null) {
-					int offset= fileLocation.getNodeOffset();
-					int length= fileLocation.getNodeLength();
+					int offset = fileLocation.getNodeOffset();
+					int length = fileLocation.getNodeLength();
 					if (binding instanceof ICPPMethod && ((ICPPMethod) binding).isDestructor()) {
 						// Skip tilde.
 						offset++;
@@ -246,8 +246,8 @@ public class LinkedNamesFinder {
 		private void findInStatementComment(char[] nameChars, IASTPreprocessorStatement statement) {
 			IASTFileLocation location = statement.getFileLocation();
 			IASTComment comment = findComment(location.getNodeOffset() + location.getNodeLength());
-			if (comment != null &&
-					comment.getFileLocation().getStartingLineNumber() == location.getStartingLineNumber()) {
+			if (comment != null
+					&& comment.getFileLocation().getStartingLineNumber() == location.getStartingLineNumber()) {
 				findInComment(nameChars, comment);
 			}
 		}
@@ -281,16 +281,15 @@ public class LinkedNamesFinder {
 		 */
 		private void findInComment(char[] name, IASTComment comment) {
 			char[] text = comment.getComment();
-	    	int j = 0;
-	    	// First two characters are either /* or //
-	    	for (int i = 2; i <= text.length - name.length + j; i++) {
-	    		char c = text[i];
+			int j = 0;
+			// First two characters are either /* or //
+			for (int i = 2; i <= text.length - name.length + j; i++) {
+				char c = text[i];
 				if (!Character.isJavaIdentifierPart(c)) {
 					j = 0;
 				} else if (j >= 0 && j < name.length && name[j] == c) {
 					j++;
-					if (j == name.length &&
-							(i + 1 == text.length || !Character.isJavaIdentifierPart(text[i + 1]))) {
+					if (j == name.length && (i + 1 == text.length || !Character.isJavaIdentifierPart(text[i + 1]))) {
 						int offset = comment.getFileLocation().getNodeOffset() + i + 1 - name.length;
 						locations.add(new Region(offset, name.length));
 						j = 0;
@@ -298,7 +297,7 @@ public class LinkedNamesFinder {
 				} else {
 					j = -1;
 				}
-	    	}
+			}
 		}
 	}
 
@@ -307,13 +306,13 @@ public class LinkedNamesFinder {
 	 */
 	static class SubclassFinder extends ASTVisitor {
 		{
-			shouldVisitNames= true;
+			shouldVisitNames = true;
 		}
 
 		private final ICPPClassType baseClass;
 		private Set<ICPPClassType> subclasses = new HashSet<ICPPClassType>();
 		private Set<IBinding> seenClasses = new HashSet<IBinding>();
-		
+
 		SubclassFinder(ICPPClassType baseClass) {
 			this.baseClass = baseClass;
 		}

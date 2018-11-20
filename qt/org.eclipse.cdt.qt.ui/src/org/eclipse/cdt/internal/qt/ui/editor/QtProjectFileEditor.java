@@ -37,9 +37,11 @@ public class QtProjectFileEditor extends TextEditor {
 		super.configureSourceViewerDecorationSupport(support);
 
 		// Setup bracket matching with default color being gray
-		ICharacterPairMatcher matcher = new DefaultCharacterPairMatcher(BRACKETS, IDocumentExtension3.DEFAULT_PARTITIONING);
+		ICharacterPairMatcher matcher = new DefaultCharacterPairMatcher(BRACKETS,
+				IDocumentExtension3.DEFAULT_PARTITIONING);
 		support.setCharacterPairMatcher(matcher);
-		support.setMatchingCharacterPainterPreferenceKeys(BRACKET_MATCHING_PREFERENCE, BRACKET_MATCHING_COLOR_PREFERENCE);
+		support.setMatchingCharacterPainterPreferenceKeys(BRACKET_MATCHING_PREFERENCE,
+				BRACKET_MATCHING_COLOR_PREFERENCE);
 
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault(BRACKET_MATCHING_PREFERENCE, true);

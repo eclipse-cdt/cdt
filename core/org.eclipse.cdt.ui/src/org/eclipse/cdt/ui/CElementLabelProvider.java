@@ -64,7 +64,7 @@ public class CElementLabelProvider extends LabelProvider {
 	 * 
 	 * @since 2.0
 	 */
-	public final static int SHOW_QUALIFIED=				0x400;
+	public final static int SHOW_QUALIFIED = 0x400;
 
 	/**
 	 * Flag (bit mask) indicating that Compilation Units, Class Files, Types, Declarations and Members
@@ -73,18 +73,16 @@ public class CElementLabelProvider extends LabelProvider {
 	 * 
 	 * @since 2.0
 	 */
-	public final static int SHOW_POST_QUALIFIED=	0x800;	
-	
-	
+	public final static int SHOW_POST_QUALIFIED = 0x800;
+
 	/**
 	 * Constant (value <code>0</code>) indicating that the label should show 
 	 * the basic images only.
 	 */
-	public final static int SHOW_BASICS= 0x000;
-	
-	
-	public final static int SHOW_DEFAULT= Integer.valueOf(SHOW_PARAMETERS | SHOW_OVERLAY_ICONS).intValue();
-	
+	public final static int SHOW_BASICS = 0x000;
+
+	public final static int SHOW_DEFAULT = Integer.valueOf(SHOW_PARAMETERS | SHOW_OVERLAY_ICONS).intValue();
+
 	private volatile WorkbenchLabelProvider fWorkbenchLabelProvider;
 	protected CElementImageProvider fImageLabelProvider;
 	private CUILabelProvider fCElementLabelProvider;
@@ -101,21 +99,23 @@ public class CElementLabelProvider extends LabelProvider {
 		// WorkbenchLabelProvider may only be initialized on the UI thread
 		// http://bugs.eclipse.org/247274
 		if (Display.getCurrent() != null) {
-			fWorkbenchLabelProvider= new WorkbenchLabelProvider();
+			fWorkbenchLabelProvider = new WorkbenchLabelProvider();
 		} else {
 			// Delay initialization
 			CUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
 					if (fCElementLabelProvider != null) {
-						fWorkbenchLabelProvider= new WorkbenchLabelProvider();
+						fWorkbenchLabelProvider = new WorkbenchLabelProvider();
 					}
-				}});
+				}
+			});
 		}
-		fImageLabelProvider= new CElementImageProvider();
+		fImageLabelProvider = new CElementImageProvider();
 
 		fFlags = flags;
-		fCElementLabelProvider= new CUILabelProvider(getTextFlags() | CElementLabels.TEMPLATE_PARAMETERS, getImageFlags());
+		fCElementLabelProvider = new CUILabelProvider(getTextFlags() | CElementLabels.TEMPLATE_PARAMETERS,
+				getImageFlags());
 	}
 
 	@Override
@@ -133,18 +133,18 @@ public class CElementLabelProvider extends LabelProvider {
 	public Image getImage(Object element) {
 		return fImageLabelProvider.getImageLabel(element, getImageFlags());
 	}
-	
+
 	@Override
 	public void dispose() {
 		if (fCElementLabelProvider != null) {
 			fCElementLabelProvider.dispose();
-			fCElementLabelProvider= null;
+			fCElementLabelProvider = null;
 		}
 		if (fWorkbenchLabelProvider != null) {
 			fWorkbenchLabelProvider.dispose();
-			fWorkbenchLabelProvider= null;
+			fWorkbenchLabelProvider = null;
 		}
-		if(fImageLabelProvider != null) {
+		if (fImageLabelProvider != null) {
 			fImageLabelProvider.dispose();
 		}
 	}

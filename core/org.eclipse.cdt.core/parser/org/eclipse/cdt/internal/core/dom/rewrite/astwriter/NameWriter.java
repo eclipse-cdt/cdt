@@ -45,24 +45,24 @@ public class NameWriter extends NodeWriter {
 	public NameWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
-	
+
 	protected void writeName(IASTName name) {
 		if (name instanceof ICPPASTTemplateId) {
 			writeTempalteId((ICPPASTTemplateId) name);
 		} else if (name instanceof ICPPASTConversionName) {
 			scribe.print(OPERATOR);
 			((ICPPASTConversionName) name).getTypeId().accept(visitor);
-		} else if (name instanceof ICPPASTQualifiedName){
+		} else if (name instanceof ICPPASTQualifiedName) {
 			writeQualifiedName((ICPPASTQualifiedName) name);
 		} else {
 			scribe.print(name.toString());
 		}
-		
+
 		if (hasTrailingComments(name)) {
-			writeTrailingComments(name);			
-		}		
+			writeTrailingComments(name);
+		}
 	}
-	
+
 	private void writeTempalteId(ICPPASTTemplateId tempId) {
 		if (needsTemplateQualifier(tempId)) {
 			scribe.printStringSpace(Keywords.TEMPLATE);
@@ -81,10 +81,10 @@ public class NameWriter extends NodeWriter {
 			scribe.printSpace();
 		}
 	}
-	
-	private boolean needsTemplateQualifier(ICPPASTTemplateId templId){
+
+	private boolean needsTemplateQualifier(ICPPASTTemplateId templId) {
 		if (templId.getParent() instanceof ICPPASTQualifiedName) {
-			ICPPASTQualifiedName qName = (ICPPASTQualifiedName)  templId.getParent();
+			ICPPASTQualifiedName qName = (ICPPASTQualifiedName) templId.getParent();
 			return !isPartOfFunctionDeclarator(qName) && isDependentName(qName, templId);
 		}
 		return false;
@@ -96,8 +96,8 @@ public class NameWriter extends NodeWriter {
 
 	private boolean isDependentName(ICPPASTQualifiedName qname, ICPPASTTemplateId tempId) {
 		ICPPASTNameSpecifier[] segments = qname.getAllSegments();
-		for (int i = 0; i < segments.length; ++i){
-			if (segments[i] == tempId){
+		for (int i = 0; i < segments.length; ++i) {
+			if (segments[i] == tempId) {
 				return isDependentName(qname, tempId, i);
 			}
 		}
@@ -105,7 +105,7 @@ public class NameWriter extends NodeWriter {
 	}
 
 	private boolean isDependentName(ICPPASTQualifiedName qname, ICPPASTTemplateId tempId, int i) {
-		if (i <= 0){
+		if (i <= 0) {
 			return false;
 		}
 		if (qname.getQualifier()[i - 1] instanceof ICPPASTTemplateId) {

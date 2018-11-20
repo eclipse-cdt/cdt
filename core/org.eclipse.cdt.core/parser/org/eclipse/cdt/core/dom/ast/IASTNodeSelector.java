@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
@@ -25,7 +25,7 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTNodeSelector {
 	/**
 	 * Returns the name for the exact given range, or {@code null} if there is no such node.
-     * Will not return an implicit name.
+	 * Will not return an implicit name.
 	 */
 	IASTName findName(int offset, int length);
 
@@ -51,7 +51,7 @@ public interface IASTNodeSelector {
 	 * @since 5.1
 	 */
 	IASTImplicitName findImplicitName(int offset, int length);
-	
+
 	/**
 	 * Returns the first implicit name enclosing the given range.
 	 * 
@@ -61,7 +61,7 @@ public interface IASTNodeSelector {
 	 * @since 5.1
 	 */
 	IASTImplicitName findEnclosingImplicitName(int offset, int length);
-	
+
 	/**
 	 * Returns the node for the exact given range, or {@code null} if there is no such node.
 	 * <p>
@@ -78,7 +78,7 @@ public interface IASTNodeSelector {
 	 * are preferred over c/c++-nodes nodes and children are preferred over their parents.
 	 */
 	IASTNode findEnclosingNode(int offset, int length);
-	
+
 	/**
 	 * Returns the smallest node strictly enclosing the given range, or {@code null} if there
 	 * is no such node.
@@ -97,7 +97,7 @@ public interface IASTNodeSelector {
 	 * are preferred over c/c++-nodes nodes and children are preferred over their parents.
 	 */
 	IASTNode findFirstContainedNode(int offset, int length);
-	
+
 	/**
 	 * Returns the node for the exact given range, or {@code null} if there is no such node.
 	 * <p>

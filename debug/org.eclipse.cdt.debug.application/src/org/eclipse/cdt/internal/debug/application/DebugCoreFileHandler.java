@@ -33,13 +33,14 @@ public class DebugCoreFileHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+
 		CoreFileDialog dialog = new CoreFileDialog(new Shell());
-		
+
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			CoreFileInfo info = dialog.getCoreFileInfo();
 			try {
-				final ILaunchConfiguration config = DebugCoreFile.createLaunchConfig(new NullProgressMonitor(), null, info.getHostPath(), info.getCoreFilePath());
+				final ILaunchConfiguration config = DebugCoreFile.createLaunchConfig(new NullProgressMonitor(), null,
+						info.getHostPath(), info.getCoreFilePath());
 				if (config != null) {
 					Display.getDefault().syncExec(new Runnable() {
 

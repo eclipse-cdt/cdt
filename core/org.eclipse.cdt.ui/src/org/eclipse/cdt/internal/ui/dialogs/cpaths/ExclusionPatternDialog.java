@@ -56,12 +56,12 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 public class ExclusionPatternDialog extends StatusDialog {
-	
+
 	private static class ExclusionPatternLabelProvider extends LabelProvider {
-				
+
 		@Override
 		public Image getImage(Object element) {
-			ImageDescriptorRegistry registry= CUIPlugin.getImageDescriptorRegistry();
+			ImageDescriptorRegistry registry = CUIPlugin.getImageDescriptorRegistry();
 			return registry.get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_EXCLUSION_FILTER_ATTRIB));
 		}
 
@@ -71,53 +71,49 @@ public class ExclusionPatternDialog extends StatusDialog {
 		}
 
 	}
-	
-	
+
 	private ListDialogField<String> fExclusionPatternList;
 	private CPElement fCurrElement;
 	private IProject fCurrProject;
-	
+
 	private IContainer fCurrSourceFolder;
-	
-	private static final int IDX_ADD= 0;
-	private static final int IDX_ADD_MULTIPLE= 1;
-	private static final int IDX_EDIT= 2;
-	private static final int IDX_REMOVE= 4;
-	
-		
+
+	private static final int IDX_ADD = 0;
+	private static final int IDX_ADD_MULTIPLE = 1;
+	private static final int IDX_EDIT = 2;
+	private static final int IDX_REMOVE = 4;
+
 	public ExclusionPatternDialog(Shell parent, CPElement entryToEdit) {
 		super(parent);
-		fCurrElement= entryToEdit;
-		setTitle(CPathEntryMessages.ExclusionPatternDialog_title); 
+		fCurrElement = entryToEdit;
+		setTitle(CPathEntryMessages.ExclusionPatternDialog_title);
 
-		String label= NLS.bind(CPathEntryMessages.ExclusionPatternDialog_pattern_label, entryToEdit.getPath().makeRelative().toString()); 
-		
-		String[] buttonLabels= new String[] {
-			CPathEntryMessages.ExclusionPatternDialog_pattern_add, 
-			CPathEntryMessages.ExclusionPatternDialog_pattern_add_multiple, 
-			CPathEntryMessages.ExclusionPatternDialog_pattern_edit, 
-			null,
-			CPathEntryMessages.ExclusionPatternDialog_pattern_remove
-		};
+		String label = NLS.bind(CPathEntryMessages.ExclusionPatternDialog_pattern_label,
+				entryToEdit.getPath().makeRelative().toString());
 
-		ExclusionPatternAdapter adapter= new ExclusionPatternAdapter();
+		String[] buttonLabels = new String[] { CPathEntryMessages.ExclusionPatternDialog_pattern_add,
+				CPathEntryMessages.ExclusionPatternDialog_pattern_add_multiple,
+				CPathEntryMessages.ExclusionPatternDialog_pattern_edit, null,
+				CPathEntryMessages.ExclusionPatternDialog_pattern_remove };
 
-		fExclusionPatternList= new ListDialogField<String>(adapter, buttonLabels, new ExclusionPatternLabelProvider());
+		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
+
+		fExclusionPatternList = new ListDialogField<String>(adapter, buttonLabels, new ExclusionPatternLabelProvider());
 		fExclusionPatternList.setDialogFieldListener(adapter);
 		fExclusionPatternList.setLabelText(label);
 		fExclusionPatternList.setRemoveButtonIndex(IDX_REMOVE);
 		fExclusionPatternList.enableButton(IDX_EDIT, false);
-	
-		fCurrProject= entryToEdit.getCProject().getProject();
-		IWorkspaceRoot root= fCurrProject.getWorkspace().getRoot();
-		IResource res= root.findMember(entryToEdit.getPath());
+
+		fCurrProject = entryToEdit.getCProject().getProject();
+		IWorkspaceRoot root = fCurrProject.getWorkspace().getRoot();
+		IResource res = root.findMember(entryToEdit.getPath());
 		if (res instanceof IContainer) {
-			fCurrSourceFolder= (IContainer) res;
-		}				
-		
-		IPath[] pattern= (IPath[]) entryToEdit.getAttribute(CPElement.EXCLUSION);
-		
-		ArrayList<String> elements= new ArrayList<String>(pattern.length);
+			fCurrSourceFolder = (IContainer) res;
+		}
+
+		IPath[] pattern = (IPath[]) entryToEdit.getAttribute(CPElement.EXCLUSION);
+
+		ArrayList<String> elements = new ArrayList<String>(pattern.length);
 		for (IPath element : pattern) {
 			elements.add(element.toString());
 		}
@@ -127,26 +123,25 @@ public class ExclusionPatternDialog extends StatusDialog {
 
 		setHelpAvailable(false);
 	}
-	
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite composite= (Composite)super.createDialogArea(parent);
+		Composite composite = (Composite) super.createDialogArea(parent);
 
-		Composite inner= new Composite(composite, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		layout.numColumns= 2;
+		Composite inner = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
 		inner.setLayout(layout);
-		
+
 		fExclusionPatternList.doFillIntoGrid(inner, 3);
 		LayoutUtil.setHorizontalSpan(fExclusionPatternList.getLabelControl(null), 2);
-		
-		applyDialogFont(composite);		
+
+		applyDialogFont(composite);
 		return composite;
 	}
-	
+
 	protected void doCustomButtonPressed(ListDialogField<String> field, int index) {
 		if (index == IDX_ADD) {
 			addEntry();
@@ -156,44 +151,42 @@ public class ExclusionPatternDialog extends StatusDialog {
 			addMultipleEntries();
 		}
 	}
-	
+
 	protected void doDoubleClicked(ListDialogField<String> field) {
 		editEntry();
 	}
-	
+
 	protected void doSelectionChanged(ListDialogField<String> field) {
-		List<String> selected= field.getSelectedElements();
+		List<String> selected = field.getSelectedElements();
 		fExclusionPatternList.enableButton(IDX_EDIT, canEdit(selected));
 	}
-	
+
 	private boolean canEdit(List<String> selected) {
 		return selected.size() == 1;
 	}
-	
+
 	private void editEntry() {
-		
-		List<String> selElements= fExclusionPatternList.getSelectedElements();
+
+		List<String> selElements = fExclusionPatternList.getSelectedElements();
 		if (selElements.size() != 1) {
 			return;
 		}
-		List<String> existing= fExclusionPatternList.getElements();
-		String entry= selElements.get(0);
-		ExclusionPatternEntryDialog dialog= new ExclusionPatternEntryDialog(getShell(), entry, existing, fCurrElement);
+		List<String> existing = fExclusionPatternList.getElements();
+		String entry = selElements.get(0);
+		ExclusionPatternEntryDialog dialog = new ExclusionPatternEntryDialog(getShell(), entry, existing, fCurrElement);
 		if (dialog.open() == Window.OK) {
 			fExclusionPatternList.replaceElement(entry, dialog.getExclusionPattern());
 		}
 	}
-	
+
 	private void addEntry() {
-		List<String> existing= fExclusionPatternList.getElements();
-		ExclusionPatternEntryDialog dialog= new ExclusionPatternEntryDialog(getShell(), null, existing, fCurrElement);
+		List<String> existing = fExclusionPatternList.getElements();
+		ExclusionPatternEntryDialog dialog = new ExclusionPatternEntryDialog(getShell(), null, existing, fCurrElement);
 		if (dialog.open() == Window.OK) {
 			fExclusionPatternList.addElement(dialog.getExclusionPattern());
 		}
-	}	
-	
-	
-		
+	}
+
 	// -------- ExclusionPatternAdapter --------
 
 	private class ExclusionPatternAdapter implements IListAdapter<String>, IDialogFieldListener {
@@ -215,69 +208,68 @@ public class ExclusionPatternDialog extends StatusDialog {
 		@Override
 		public void dialogFieldChanged(DialogField field) {
 		}
-		
+
 	}
-	
+
 	protected void doStatusLineUpdate() {
-	}		
-	
+	}
+
 	protected void checkIfPatternValid() {
 	}
-	
-		
+
 	public IPath[] getExclusionPattern() {
-		IPath[] res= new IPath[fExclusionPatternList.getSize()];
-		for (int i= 0; i < res.length; i++) {
-			String entry= fExclusionPatternList.getElement(i);
-			res[i]= new Path(entry);
+		IPath[] res = new IPath[fExclusionPatternList.getSize()];
+		for (int i = 0; i < res.length; i++) {
+			String entry = fExclusionPatternList.getElement(i);
+			res[i] = new Path(entry);
 		}
 		return res;
 	}
-		
+
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-//		WorkbenchHelp.setHelp(newShell, ICHelpContextIds.EXCLUSION_PATTERN_DIALOG);
+		//		WorkbenchHelp.setHelp(newShell, ICHelpContextIds.EXCLUSION_PATTERN_DIALOG);
 	}
-	
+
 	private void addMultipleEntries() {
-		Class<?>[] acceptedClasses= new Class<?>[] { IFolder.class, IFile.class };
-		ISelectionStatusValidator validator= new TypedElementSelectionValidator(acceptedClasses, true);
-		ViewerFilter filter= new TypedViewerFilter(acceptedClasses);
+		Class<?>[] acceptedClasses = new Class<?>[] { IFolder.class, IFile.class };
+		ISelectionStatusValidator validator = new TypedElementSelectionValidator(acceptedClasses, true);
+		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
 
-		ILabelProvider lp= new WorkbenchLabelProvider();
-		ITreeContentProvider cp= new WorkbenchContentProvider();
-		
-		IResource initialElement= null;	
+		ILabelProvider lp = new WorkbenchLabelProvider();
+		ITreeContentProvider cp = new WorkbenchContentProvider();
 
-		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), lp, cp);
-		dialog.setTitle(CPathEntryMessages.ExclusionPatternDialog_ChooseExclusionPattern_title); 
+		IResource initialElement = null;
+
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), lp, cp);
+		dialog.setTitle(CPathEntryMessages.ExclusionPatternDialog_ChooseExclusionPattern_title);
 		dialog.setValidator(validator);
-		dialog.setMessage(CPathEntryMessages.ExclusionPatternDialog_ChooseExclusionPattern_description); 
+		dialog.setMessage(CPathEntryMessages.ExclusionPatternDialog_ChooseExclusionPattern_description);
 		dialog.addFilter(filter);
 		dialog.setInput(fCurrSourceFolder);
 		dialog.setInitialSelection(initialElement);
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 
 		if (dialog.open() == Window.OK) {
-			Object[] objects= dialog.getResult();
-			int existingSegments= fCurrSourceFolder.getFullPath().segmentCount();
-			
+			Object[] objects = dialog.getResult();
+			int existingSegments = fCurrSourceFolder.getFullPath().segmentCount();
+
 			for (Object object : objects) {
-				IResource curr= (IResource) object;
-				IPath path= curr.getFullPath().removeFirstSegments(existingSegments).makeRelative();
+				IResource curr = (IResource) object;
+				IPath path = curr.getFullPath().removeFirstSegments(existingSegments).makeRelative();
 				String res;
 				if (curr instanceof IContainer) {
-					res= path.addTrailingSeparator().toString();
+					res = path.addTrailingSeparator().toString();
 				} else {
-					res= path.toString();
+					res = path.toString();
 				}
 				fExclusionPatternList.addElement(res);
 			}
 		}
-	}	
-	
+	}
+
 }

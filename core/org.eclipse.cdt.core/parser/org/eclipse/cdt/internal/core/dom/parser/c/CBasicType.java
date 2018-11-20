@@ -36,12 +36,12 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	public CBasicType(Kind kind, int modifiers, IASTExpression value) {
 		if (kind == Kind.eUnspecified) {
 			if ((modifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
-				fKind= Kind.eFloat;
+				fKind = Kind.eFloat;
 			} else {
-				fKind= Kind.eInt;
+				fKind = Kind.eInt;
 			}
 		} else {
-			fKind= kind;
+			fKind = kind;
 		}
 		fModifiers = modifiers;
 		this.value = value;
@@ -52,17 +52,13 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	}
 
 	public CBasicType(ICASTSimpleDeclSpecifier sds) {
-		this (getKind(sds), getQualifiers(sds), null);
+		this(getKind(sds), getQualifiers(sds), null);
 	}
 
 	private static int getQualifiers(ICASTSimpleDeclSpecifier sds) {
-		return (sds.isLong() ? IS_LONG  : 0) |
-				(sds.isShort() ? IS_SHORT : 0) |
-				(sds.isSigned() ? IS_SIGNED: 0) |
-				(sds.isUnsigned() ? IS_UNSIGNED : 0) |
-				(sds.isLongLong() ? IS_LONG_LONG : 0) |
-				(sds.isComplex() ? IS_COMPLEX : 0) |
-				(sds.isImaginary() ? IS_IMAGINARY : 0);
+		return (sds.isLong() ? IS_LONG : 0) | (sds.isShort() ? IS_SHORT : 0) | (sds.isSigned() ? IS_SIGNED : 0)
+				| (sds.isUnsigned() ? IS_UNSIGNED : 0) | (sds.isLongLong() ? IS_LONG_LONG : 0)
+				| (sds.isComplex() ? IS_COMPLEX : 0) | (sds.isImaginary() ? IS_IMAGINARY : 0);
 	}
 
 	private static Kind getKind(ICASTSimpleDeclSpecifier sds) {
@@ -153,18 +149,18 @@ public class CBasicType implements ICBasicType, ISerializableType {
 		}
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen
+		}
+		return t;
+	}
 
-    @Override
+	@Override
 	@Deprecated
 	public IASTExpression getValue() {
 		return value;
@@ -182,9 +178,9 @@ public class CBasicType implements ICBasicType, ISerializableType {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		final int kind= getKind().ordinal();
-		final int shiftedKind=  kind * ITypeMarshalBuffer.FIRST_FLAG;
-		final int modifiers= getModifiers();
+		final int kind = getKind().ordinal();
+		final int shiftedKind = kind * ITypeMarshalBuffer.FIRST_FLAG;
+		final int modifiers = getModifiers();
 		if (modifiers == 0) {
 			buffer.putShort((short) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind));
 		} else {
@@ -194,11 +190,11 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean haveModifiers= (firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0;
-		int modifiers= 0;
-		int kind= (firstBytes & (ITypeMarshalBuffer.LAST_FLAG-1))/ITypeMarshalBuffer.FIRST_FLAG;
+		final boolean haveModifiers = (firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0;
+		int modifiers = 0;
+		int kind = (firstBytes & (ITypeMarshalBuffer.LAST_FLAG - 1)) / ITypeMarshalBuffer.FIRST_FLAG;
 		if (haveModifiers) {
-			modifiers= buffer.getByte();
+			modifiers = buffer.getByte();
 		}
 		return new CBasicType(Kind.values()[kind], modifiers);
 	}

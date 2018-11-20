@@ -50,8 +50,7 @@ public class QtProjectFileUpdateJob extends Job {
 
 	private IFile findQtProjectFile(IProject project) throws CoreException {
 		for (IResource member : project.members()) {
-			if (member.getType() == IResource.FILE
-					&& member.getFileExtension().equals("pro")) { //$NON-NLS-1$
+			if (member.getType() == IResource.FILE && member.getFileExtension().equals("pro")) { //$NON-NLS-1$
 				return (IFile) member;
 			}
 		}

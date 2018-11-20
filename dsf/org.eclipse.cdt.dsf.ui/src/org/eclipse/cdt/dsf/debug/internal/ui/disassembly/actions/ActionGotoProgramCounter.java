@@ -22,6 +22,7 @@ public final class ActionGotoProgramCounter extends AbstractDisassemblyAction {
 		setText(DisassemblyMessages.Disassembly_action_GotoPC_label);
 		setToolTipText(DisassemblyMessages.Disassembly_action_GotoPC_tooltip);
 	}
+
 	@Override
 	public void run() {
 		getDisassemblyPart().gotoProgramCounter();

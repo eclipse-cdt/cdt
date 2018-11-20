@@ -15,7 +15,6 @@
 
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-
 /**
  * Holds the result of a name validation, used by the IdentifierHelper.
  * 
@@ -30,20 +29,19 @@ public class IdentifierResult {
 	public static final int DIGIT_FIRST = 3;
 	public static final int KEYWORD = 4;
 	public static final int UNKNOWN = 5;
-	
-	
+
 	private final int result;
 	private final String message;
-	
-	public boolean isCorrect(){
+
+	public boolean isCorrect() {
 		return result == VALID;
 	}
-	
-	public int getResult(){
+
+	public int getResult() {
 		return result;
 	}
-	
-	public String getMessage(){
+
+	public String getMessage() {
 		return message;
 	}
 

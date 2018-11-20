@@ -28,14 +28,14 @@ public class C99Label extends PlatformObject implements IC99Binding, ILabel {
 
 	private String name;
 	private IScope scope;
-	
+
 	public C99Label() {
 	}
-	
+
 	public C99Label(String name) {
 		this.name = name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -50,13 +50,11 @@ public class C99Label extends PlatformObject implements IC99Binding, ILabel {
 		return name.toCharArray();
 	}
 
-	
-
 	@Override
 	public IASTLabelStatement getLabelStatement() {
 		return null;
 	}
-	
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;

@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  */
 public class MITargetDisconnect extends MICommand<MIInfo> {
 
-    public MITargetDisconnect(ICommandControlDMContext ctx) {
-        super(ctx, "-target-disconnect"); //$NON-NLS-1$
-    }
+	public MITargetDisconnect(ICommandControlDMContext ctx) {
+		super(ctx, "-target-disconnect"); //$NON-NLS-1$
+	}
 }

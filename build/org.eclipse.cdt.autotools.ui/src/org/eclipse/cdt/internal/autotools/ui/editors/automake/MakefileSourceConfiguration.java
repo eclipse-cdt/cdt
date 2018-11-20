@@ -35,7 +35,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
-
 public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 
 	private ColorManager colorManager;
@@ -62,14 +61,11 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer v) {
-		return new String[] {
-			IDocument.DEFAULT_CONTENT_TYPE,
-			MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION,
-			MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION,
-			MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION,
-			MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION,
-			MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION,
-		};
+		return new String[] { IDocument.DEFAULT_CONTENT_TYPE, MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION,
+				MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION,
+				MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION,
+				MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION,
+				MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION, };
 
 	}
 
@@ -77,11 +73,16 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant = new ContentAssistant();
 		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor),
+				MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor),
+				MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor),
+				MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor),
+				MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor),
+				MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
 
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);
@@ -140,7 +141,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fEditor != null && fEditor.isEditable()) {
-			MonoReconciler reconciler= new MonoReconciler(new MakefileReconcilingStrategy(fEditor), false);
+			MonoReconciler reconciler = new MonoReconciler(new MakefileReconcilingStrategy(fEditor), false);
 			reconciler.setDelay(1000);
 			reconciler.setProgressMonitor(new NullProgressMonitor());
 			return reconciler;
@@ -150,13 +151,14 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 
 	@Override
 	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
-		return new String[]{"#"}; //$NON-NLS-1$
+		return new String[] { "#" }; //$NON-NLS-1$
 	}
 
 	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return new MakefileTextHover(fEditor);
 	}
+
 	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new MakefileAnnotationHover(fEditor);

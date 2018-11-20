@@ -13,27 +13,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.xlc.preferences;
 
-
 public enum XlcPref {
 
-	
-	SUPPORT_VECTOR_TYPES("true"),
-	SUPPORT_DECIMAL_FLOATING_POINT_TYPES("true"),
-	SUPPORT_COMPLEX_IN_CPP("true"),
-	SUPPORT_RESTRICT_IN_CPP("true"),
-	SUPPORT_STATIC_ASSERT("true");
+	SUPPORT_VECTOR_TYPES("true"), SUPPORT_DECIMAL_FLOATING_POINT_TYPES("true"), SUPPORT_COMPLEX_IN_CPP("true"),
+	SUPPORT_RESTRICT_IN_CPP("true"), SUPPORT_STATIC_ASSERT("true");
 
-	
 	private final String defaultVal;
-	
+
 	private XlcPref(String defaultVal) {
 		this.defaultVal = defaultVal;
 	}
-	
+
 	public String getDefaultValue() {
 		return defaultVal;
 	}
 }
-
-
-

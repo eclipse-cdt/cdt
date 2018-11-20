@@ -35,8 +35,8 @@ public final class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 	public CPPTemplateTypeArgument(IType simplifiedType, IType originalType) {
 		Assert.isNotNull(simplifiedType);
 		Assert.isNotNull(originalType);
-		fType= simplifiedType;
-		fOriginalType= originalType;
+		fType = simplifiedType;
+		fOriginalType = originalType;
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public final class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 	@Override
 	public ICPPTemplateArgument getExpansionPattern() {
 		if (fType instanceof ICPPParameterPackType) {
-			IType t= ((ICPPParameterPackType) fType).getType();
+			IType t = ((ICPPParameterPackType) fType).getType();
 			if (t != null) {
 				return new CPPTemplateTypeArgument(t);
 			}

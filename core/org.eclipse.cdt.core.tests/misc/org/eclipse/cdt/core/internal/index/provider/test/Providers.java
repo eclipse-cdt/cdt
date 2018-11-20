@@ -17,14 +17,24 @@ import org.eclipse.cdt.core.index.provider.IPDOMDescriptor;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 
 public class Providers {
-	public static class Dummy1 extends AbstractDummyProvider {}
-	public static class Dummy2 extends AbstractDummyProvider {}
-	public static class Dummy3 extends AbstractDummyProvider {}
-	public static class Dummy4 extends AbstractDummyProvider {}
-	public static class Dummy5 extends AbstractDummyProvider {}
-	
-	public static class Counter extends AbstractDummyProvider{
+	public static class Dummy1 extends AbstractDummyProvider {
+	}
+
+	public static class Dummy2 extends AbstractDummyProvider {
+	}
+
+	public static class Dummy3 extends AbstractDummyProvider {
+	}
+
+	public static class Dummy4 extends AbstractDummyProvider {
+	}
+
+	public static class Dummy5 extends AbstractDummyProvider {
+	}
+
+	public static class Counter extends AbstractDummyProvider {
 		public static int fCounter;
+
 		@Override
 		public IPDOMDescriptor[] getDescriptors(ICConfigurationDescription config) {
 			fCounter++;

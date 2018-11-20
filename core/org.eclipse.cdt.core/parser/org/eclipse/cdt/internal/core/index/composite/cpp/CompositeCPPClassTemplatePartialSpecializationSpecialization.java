@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -26,8 +26,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPClassTemplatePartialSpecializationSpecialization extends
-		CompositeCPPClassSpecialization implements ICPPClassTemplatePartialSpecializationSpecialization, ICPPInstanceCache {
+public class CompositeCPPClassTemplatePartialSpecializationSpecialization extends CompositeCPPClassSpecialization
+		implements ICPPClassTemplatePartialSpecializationSpecialization, ICPPInstanceCache {
 
 	public CompositeCPPClassTemplatePartialSpecializationSpecialization(ICompositesFactory cf,
 			ICPPClassTemplatePartialSpecializationSpecialization rbinding) {
@@ -46,12 +46,12 @@ public class CompositeCPPClassTemplatePartialSpecializationSpecialization extend
 
 	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
-		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);	
+		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);
 	}
 
 	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
-		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);	
+		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);
 	}
 
 	@Override
@@ -61,7 +61,9 @@ public class CompositeCPPClassTemplatePartialSpecializationSpecialization extend
 
 	@Override
 	public ICPPClassTemplate getPrimaryClassTemplate() {
-		return (ICPPClassTemplate) cf.getCompositeBinding((IIndexFragmentBinding) ((ICPPClassTemplatePartialSpecializationSpecialization) rbinding).getPrimaryClassTemplate());
+		return (ICPPClassTemplate) cf.getCompositeBinding(
+				(IIndexFragmentBinding) ((ICPPClassTemplatePartialSpecializationSpecialization) rbinding)
+						.getPrimaryClassTemplate());
 	}
 
 	@Override
@@ -71,11 +73,11 @@ public class CompositeCPPClassTemplatePartialSpecializationSpecialization extend
 
 	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() {
-		CompositeInstanceCache cache= CompositeInstanceCache.getCache(cf, rbinding);
+		CompositeInstanceCache cache = CompositeInstanceCache.getCache(cf, rbinding);
 		synchronized (cache) {
-			ICPPDeferredClassInstance dci= cache.getDeferredInstance();
+			ICPPDeferredClassInstance dci = cache.getDeferredInstance();
 			if (dci == null) {
-				dci= CPPTemplates.createDeferredInstance(this);
+				dci = CPPTemplates.createDeferredInstance(this);
 				cache.putDeferredInstance(dci);
 			}
 			return dci;

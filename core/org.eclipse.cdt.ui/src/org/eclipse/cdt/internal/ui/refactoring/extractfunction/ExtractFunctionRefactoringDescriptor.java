@@ -38,16 +38,16 @@ public class ExtractFunctionRefactoringDescriptor extends CRefactoringDescriptor
 
 	public ExtractFunctionRefactoringDescriptor(String project, String description, String comment,
 			Map<String, String> arguments) {
-		super(ExtractFunctionRefactoring.ID, project, description, comment,
-				RefactoringDescriptor.MULTI_CHANGE, arguments);
+		super(ExtractFunctionRefactoring.ID, project, description, comment, RefactoringDescriptor.MULTI_CHANGE,
+				arguments);
 	}
 
 	@Override
 	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		ISelection selection = getSelection();
 		ICProject project = getCProject();
-		ExtractFunctionRefactoring refactoring =
-				new ExtractFunctionRefactoring(getTranslationUnit(), selection, project);
+		ExtractFunctionRefactoring refactoring = new ExtractFunctionRefactoring(getTranslationUnit(), selection,
+				project);
 		ExtractFunctionInformation info = refactoring.getRefactoringInfo();
 		info.setMethodName(arguments.get(NAME));
 		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(arguments.get(VISIBILITY)));

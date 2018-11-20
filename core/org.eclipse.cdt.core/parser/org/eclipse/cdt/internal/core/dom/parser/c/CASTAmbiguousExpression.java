@@ -22,35 +22,34 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 
 public class CASTAmbiguousExpression extends ASTAmbiguousNode implements IASTAmbiguousExpression {
 
-    private IASTExpression [] expressions = new IASTExpression[2];
-    private int expressionsPos=-1;
+	private IASTExpression[] expressions = new IASTExpression[2];
+	private int expressionsPos = -1;
 
-
-    public CASTAmbiguousExpression(IASTExpression... expressions) {
+	public CASTAmbiguousExpression(IASTExpression... expressions) {
 		for (IASTExpression e : expressions)
 			addExpression(e);
 	}
 
 	@Override
 	public void addExpression(IASTExpression e) {
-        assertNotFrozen();
-    	if (e != null) {
-    		expressions = ArrayUtil.appendAt(IASTExpression.class, expressions, ++expressionsPos, e);
-    		e.setParent(this);
+		assertNotFrozen();
+		if (e != null) {
+			expressions = ArrayUtil.appendAt(IASTExpression.class, expressions, ++expressionsPos, e);
+			e.setParent(this);
 			e.setPropertyInParent(SUBEXPRESSION);
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public IASTExpression[] getExpressions() {
-    	expressions = ArrayUtil.trimAt(IASTExpression.class, expressions, expressionsPos);
-        return expressions;
-    }
+		expressions = ArrayUtil.trimAt(IASTExpression.class, expressions, expressionsPos);
+		return expressions;
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getNodes() {
-        return getExpressions();
-    }
+		return getExpressions();
+	}
 
 	@Override
 	public IASTExpression copy() {

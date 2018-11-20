@@ -19,7 +19,7 @@ package org.eclipse.cdt.core.envvar;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IEnvironmentVariable{
+public interface IEnvironmentVariable {
 	public static final int ENVVAR_REPLACE = 1;
 	public static final int ENVVAR_REMOVE = 2;
 	public static final int ENVVAR_PREPEND = 3;
@@ -69,6 +69,6 @@ public interface IEnvironmentVariable{
 	 * 
 	 * To specify that no delimiter should be used, the getDelimiter() method should
 	 * return null or an empty string
- 	 */
+	 */
 	public String getDelimiter();
 }

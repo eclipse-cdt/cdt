@@ -32,14 +32,14 @@ public class HSL {
 		double red = rgb.red / 255.0;
 		double green = rgb.green / 255.0;
 		double blue = rgb.blue / 255.0;
-		double cmax= Math.max(Math.max(red, green), blue);
-		double cmin= Math.min(Math.min(red, green), blue);
-		luminance = (cmax+cmin)/2;
+		double cmax = Math.max(Math.max(red, green), blue);
+		double cmin = Math.min(Math.min(red, green), blue);
+		luminance = (cmax + cmin) / 2;
 		if (cmax == cmin) {
 			hue = 0;
 			saturation = 0;
 		} else {
-			double delta = cmax-cmin;
+			double delta = cmax - cmin;
 			if (luminance < 0.5) {
 				saturation = delta / (cmax + cmin);
 			} else {
@@ -62,9 +62,9 @@ public class HSL {
 	}
 
 	public RGB toRGB() {
-		int red,green,blue;
+		int red, green, blue;
 		if (saturation == 0) {
-			red = (int)Math.round(255*luminance);
+			red = (int) Math.round(255 * luminance);
 			green = red;
 			blue = red;
 		} else {
@@ -75,9 +75,9 @@ public class HSL {
 				m2 = luminance + saturation - luminance * saturation;
 			}
 			m1 = 2 * luminance - m2;
-			red = hueToColorValue(hue + 1./3., m1, m2);
+			red = hueToColorValue(hue + 1. / 3., m1, m2);
 			green = hueToColorValue(hue, m1, m2);
-			blue = hueToColorValue(hue - 1./3., m1, m2);
+			blue = hueToColorValue(hue - 1. / 3., m1, m2);
 		}
 		return new RGB(red, green, blue);
 	}
@@ -89,16 +89,16 @@ public class HSL {
 		} else if (hue > 1) {
 			hue -= 1;
 		}
-		if (6*hue < 1) {
-			v = m1 + (m2-m1) * hue * 6;
-		} else if (2*hue < 1) {
+		if (6 * hue < 1) {
+			v = m1 + (m2 - m1) * hue * 6;
+		} else if (2 * hue < 1) {
 			v = m2;
-		} else if (3*hue < 2) {
-			v = m1 + (m2-m1) * (2./3. - hue) * 6;
+		} else if (3 * hue < 2) {
+			v = m1 + (m2 - m1) * (2. / 3. - hue) * 6;
 		} else {
 			v = m1;
 		}
-		return (int)Math.round(255 * v);
+		return (int) Math.round(255 * v);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class HSL {
 	 * @return a string representation of the <code>HSL</code>
 	 */
 	@Override
-	public String toString () {
+	public String toString() {
 		return "HSL {" + hue + ", " + saturation + ", " + luminance + "}"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 }

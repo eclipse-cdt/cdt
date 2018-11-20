@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class FieldInfo extends SourceManipulationInfo {
@@ -24,33 +23,33 @@ public class FieldInfo extends SourceManipulationInfo {
 	boolean isMutable = false;
 	boolean isStatic = false;
 	ASTAccessVisibility visibility;
-	
-	protected FieldInfo (CElement element) {
+
+	protected FieldInfo(CElement element) {
 		super(element);
 		visibility = ASTAccessVisibility.PRIVATE;
 	}
 
-	protected String getTypeName(){
+	protected String getTypeName() {
 		return typeStr;
 	}
-	
-	protected void setTypeName(String type){
+
+	protected void setTypeName(String type) {
 		typeStr = type;
 	}
-	
-	protected boolean isConst(){
+
+	protected boolean isConst() {
 		return isConst;
 	}
 
-	protected void setConst(boolean isConst){
+	protected void setConst(boolean isConst) {
 		this.isConst = isConst;
 	}
 
-	protected boolean isVolatile(){
+	protected boolean isVolatile() {
 		return isVolatile;
 	}
 
-	protected void setVolatile(boolean isVolatile){
+	protected void setVolatile(boolean isVolatile) {
 		this.isVolatile = isVolatile;
 	}
 
@@ -62,13 +61,14 @@ public class FieldInfo extends SourceManipulationInfo {
 		this.isStatic = isStatic;
 	}
 
-	protected boolean isMutable(){
+	protected boolean isMutable() {
 		return isMutable;
 	}
 
-	protected void setMutable(boolean mutable){
+	protected void setMutable(boolean mutable) {
 		this.isMutable = mutable;
 	}
+
 	/**
 	 * Returns the visibility.
 	 * @return int
@@ -86,16 +86,12 @@ public class FieldInfo extends SourceManipulationInfo {
 	}
 
 	@Override
-	public boolean hasSameContentsAs( SourceManipulationInfo info){
-		
-		return( super.hasSameContentsAs(info)
-		&&  (typeStr.equals(((FieldInfo)info).getTypeName())) 
-		&&  (isConst == ((FieldInfo)info).isConst())
-		&&  (isVolatile == ((FieldInfo)info).isVolatile())
-		&& 	(isMutable == ((FieldInfo)info).isMutable())
-		&& 	(visibility == ((FieldInfo)info).getVisibility())
-		&& 	(isStatic == ((FieldInfo)info).isStatic())
-		);
+	public boolean hasSameContentsAs(SourceManipulationInfo info) {
+
+		return (super.hasSameContentsAs(info) && (typeStr.equals(((FieldInfo) info).getTypeName()))
+				&& (isConst == ((FieldInfo) info).isConst()) && (isVolatile == ((FieldInfo) info).isVolatile())
+				&& (isMutable == ((FieldInfo) info).isMutable()) && (visibility == ((FieldInfo) info).getVisibility())
+				&& (isStatic == ((FieldInfo) info).isStatic()));
 	}
-	
+
 }

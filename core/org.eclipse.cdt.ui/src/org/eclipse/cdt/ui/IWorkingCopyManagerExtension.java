@@ -34,7 +34,7 @@ public interface IWorkingCopyManagerExtension {
 	 * @param workingCopy the working copy
 	 */
 	void setWorkingCopy(IEditorInput input, IWorkingCopy workingCopy);
-	
+
 	/**
 	 * Removes the working copy set for the given editor input. If there is no
 	 * working copy set for this input or this input is not connected to this

@@ -32,10 +32,11 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 public class MakefileDocumentProvider extends TextFileDocumentProvider implements IMakefileDocumentProvider {
 	IMakefile fMakefile;
 
-	protected class MakefileAnnotationModel extends ResourceMarkerAnnotationModel /*implements IProblemRequestor */{
+	protected class MakefileAnnotationModel extends ResourceMarkerAnnotationModel /*implements IProblemRequestor */ {
 		public MakefileAnnotationModel(IResource resource) {
 			super(resource);
 		}
+
 		public void setMakefile(IMakefile makefile) {
 			fMakefile = makefile;
 		}
@@ -49,8 +50,9 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 	}
 
 	public MakefileDocumentProvider() {
-		IDocumentProvider provider= new TextFileDocumentProvider(new MakefileStorageDocumentProvider());
-		provider= new ForwardingDocumentProvider(MakefileDocumentSetupParticipant.MAKEFILE_PARTITIONING, new MakefileDocumentSetupParticipant(), provider);
+		IDocumentProvider provider = new TextFileDocumentProvider(new MakefileStorageDocumentProvider());
+		provider = new ForwardingDocumentProvider(MakefileDocumentSetupParticipant.MAKEFILE_PARTITIONING,
+				new MakefileDocumentSetupParticipant(), provider);
 		setParentDocumentProvider(provider);
 	}
 
@@ -74,24 +76,24 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 			return null;
 		}
 
-		IFileEditorInput input= (IFileEditorInput) element;
-		IMakefile original= createMakefile(input.getFile());
+		IFileEditorInput input = (IFileEditorInput) element;
+		IMakefile original = createMakefile(input.getFile());
 		if (original == null) {
 			return null;
 		}
 
-		FileInfo info= super.createFileInfo(element);
+		FileInfo info = super.createFileInfo(element);
 		if (!(info instanceof MakefileFileInfo)) {
 			return null;
 		}
 
-		MakefileFileInfo makefileInfo= (MakefileFileInfo) info;
+		MakefileFileInfo makefileInfo = (MakefileFileInfo) info;
 		setUpSynchronization(makefileInfo);
 
 		makefileInfo.fCopy = original;
 
-		if (makefileInfo.fModel instanceof MakefileAnnotationModel)   {
-			MakefileAnnotationModel model= (MakefileAnnotationModel) makefileInfo.fModel;
+		if (makefileInfo.fModel instanceof MakefileAnnotationModel) {
+			MakefileAnnotationModel model = (MakefileAnnotationModel) makefileInfo.fModel;
 			model.setMakefile(makefileInfo.fCopy);
 		}
 		return makefileInfo;
@@ -100,7 +102,7 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 	@Override
 	protected void disposeFileInfo(Object element, FileInfo info) {
 		if (info instanceof MakefileFileInfo) {
-			MakefileFileInfo makefileInfo= (MakefileFileInfo) info;
+			MakefileFileInfo makefileInfo = (MakefileFileInfo) info;
 			if (makefileInfo.fCopy != null) {
 				makefileInfo.fCopy = null;
 			}
@@ -115,9 +117,9 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 
 	@Override
 	public IMakefile getWorkingCopy(Object element) {
-		FileInfo fileInfo= getFileInfo(element);
+		FileInfo fileInfo = getFileInfo(element);
 		if (fileInfo instanceof MakefileFileInfo) {
-			MakefileFileInfo info= (MakefileFileInfo) fileInfo;
+			MakefileFileInfo info = (MakefileFileInfo) fileInfo;
 			return info.fCopy;
 		}
 		return null;
@@ -125,7 +127,7 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 
 	@Override
 	public void shutdown() {
-		Iterator<?> e= getConnectedElementsIterator();
+		Iterator<?> e = getConnectedElementsIterator();
 		while (e.hasNext()) {
 			disconnect(e.next());
 		}

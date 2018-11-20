@@ -21,11 +21,11 @@ package org.eclipse.cdt.debug.ui.disassembly;
  */
 public interface IDocumentElementAnnotationProvider {
 
-    /**
-     * Updates the annotations of the specified source elements.
-     * 
-     * @param updates each update specifies the element and context 
-     * for which annotations are requested and stores the results
-     */
-    public void update( IDocumentElementAnnotationUpdate[] updates );
+	/**
+	 * Updates the annotations of the specified source elements.
+	 * 
+	 * @param updates each update specifies the element and context 
+	 * for which annotations are requested and stores the results
+	 */
+	public void update(IDocumentElementAnnotationUpdate[] updates);
 }

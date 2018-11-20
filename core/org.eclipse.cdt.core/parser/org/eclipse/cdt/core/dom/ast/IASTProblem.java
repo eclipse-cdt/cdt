@@ -33,14 +33,14 @@ public interface IASTProblem extends IProblem, IASTNode {
 	 */
 	@Override
 	public IASTProblem copy(CopyStyle style);
-	
+
 	/**
 	 * If this problem was triggered by another problem, returns that problem,
 	 * otherwise returns null.
 	 * @since 6.4
 	 */
 	public IASTProblem getOriginalProblem();
-	
+
 	/**
 	 * Record another problem as being the original cause of this one.
 	 * @since 6.4

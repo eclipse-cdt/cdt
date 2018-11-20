@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 
-
 /**
  *
  * This interface is used to represent the build action
@@ -33,7 +32,7 @@ public interface IBuildStep {
 	 * @return IBuildIOType[]
 	 */
 	IBuildIOType[] getInputIOTypes();
-	
+
 	/**
 	 * Returns an array of output types for this step
 	 * @see IBuildIOType
@@ -48,7 +47,7 @@ public interface IBuildStep {
 	 * @return boolean
 	 */
 	boolean needsRebuild();
-	
+
 	/**
 	 * Returns the complete set of input resources for this step
 	 * 
@@ -62,7 +61,7 @@ public interface IBuildStep {
 	 * @return IBuildResource[]
 	 */
 	IBuildResource[] getOutputResources();
-	
+
 	/**
 	 * Returns true if the step is removed (due to removal 
 	 * of the project resources that were ised in thie action)
@@ -70,14 +69,14 @@ public interface IBuildStep {
 	 * @return boolean
 	 */
 	boolean isRemoved();
-	
+
 	/**
 	 * returns a build description that holds this step
 	 * 
 	 * @return IBuildDescription
 	 */
 	IBuildDescription getBuildDescription();
-	
+
 	/**
 	 * @return the set of commands used for building the step
 	 * NOTE: This is a preliminary method

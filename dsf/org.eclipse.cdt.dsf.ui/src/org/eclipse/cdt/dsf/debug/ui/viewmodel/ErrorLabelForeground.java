@@ -35,29 +35,29 @@ import org.eclipse.ui.themes.IThemeManager;
  */
 public class ErrorLabelForeground extends LabelForeground {
 
-    private static final RGB DEFAULT_COLOR = new RGB(255, 0, 0); 
-    
-    public ErrorLabelForeground() {
-        super(DEFAULT_COLOR);
-    }
-    
-    @Override
-    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-        return !status.isOK() && status.getCode() >= IDsfStatusConstants.NOT_SUPPORTED;
-    }
-    
-    @Override
-    public RGB getForeground() {
-        IThemeManager themeManager = PlatformUI.getWorkbench().getThemeManager();
-        ITheme currentTheme = themeManager.getCurrentTheme();
-         
-        ColorRegistry colorRegistry = currentTheme.getColorRegistry();
-        
-        Color color = colorRegistry.get(JFacePreferences.ERROR_COLOR);
-        
-        if (color != null) {
-            return color.getRGB();
-        }
-        return super.getForeground();
-    }
+	private static final RGB DEFAULT_COLOR = new RGB(255, 0, 0);
+
+	public ErrorLabelForeground() {
+		super(DEFAULT_COLOR);
+	}
+
+	@Override
+	public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
+		return !status.isOK() && status.getCode() >= IDsfStatusConstants.NOT_SUPPORTED;
+	}
+
+	@Override
+	public RGB getForeground() {
+		IThemeManager themeManager = PlatformUI.getWorkbench().getThemeManager();
+		ITheme currentTheme = themeManager.getCurrentTheme();
+
+		ColorRegistry colorRegistry = currentTheme.getColorRegistry();
+
+		Color color = colorRegistry.get(JFacePreferences.ERROR_COLOR);
+
+		if (color != null) {
+			return color.getRGB();
+		}
+		return super.getForeground();
+	}
 }

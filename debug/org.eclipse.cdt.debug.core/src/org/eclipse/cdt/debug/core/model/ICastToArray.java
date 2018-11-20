@@ -35,5 +35,5 @@ public interface ICastToArray extends ICastToType {
 	 * @param length tha array size
 	 * @throws DebugException
 	 */
-	void castToArray( int startIndex, int length ) throws DebugException;
+	void castToArray(int startIndex, int length) throws DebugException;
 }

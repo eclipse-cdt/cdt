@@ -32,7 +32,6 @@ import org.eclipse.cdt.ui.templateengine.event.PatternEventListener;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
-
 /**
  * UIWizardPage provides implementation IWizardPage. UIWizardPage is a
  * WizardPage.
@@ -168,7 +167,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 
 	@Override
 	public void setNextPage(IWizardPage page) {
-		nextPage  = page;
+		nextPage = page;
 	}
 
 	/**
@@ -344,4 +343,3 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 		return message;
 	}
 }
-

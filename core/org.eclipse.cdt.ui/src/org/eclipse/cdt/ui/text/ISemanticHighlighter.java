@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.ui.text;
 
-
 /**
  * Interface that must be implemented by contributors to the org.eclipse.cdt.ui.semanticHighlighting extension
  * point.

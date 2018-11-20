@@ -30,8 +30,9 @@ public class MITraceStatus extends MICommand<MITraceStatusInfo> {
 	public MITraceStatus(ITraceTargetDMContext ctx) {
 		super(ctx, "-trace-status"); //$NON-NLS-1$
 	}
-    @Override
-    public MITraceStatusInfo getResult(MIOutput out) {
-        return new MITraceStatusInfo(out);
-    }
+
+	@Override
+	public MITraceStatusInfo getResult(MIOutput out) {
+		return new MITraceStatusInfo(out);
+	}
 }

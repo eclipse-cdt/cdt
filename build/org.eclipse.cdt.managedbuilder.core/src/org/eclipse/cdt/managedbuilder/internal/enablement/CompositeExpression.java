@@ -22,25 +22,26 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 
 public abstract class CompositeExpression implements IBooleanExpression {
 	private IBooleanExpression fChildren[];
-	protected CompositeExpression(IManagedConfigElement element){
+
+	protected CompositeExpression(IManagedConfigElement element) {
 		IManagedConfigElement childElement[] = element.getChildren();
 		IBooleanExpression children[] = new IBooleanExpression[childElement.length];
 		int num = 0;
-		for(int i = 0; i < childElement.length; i++){
+		for (int i = 0; i < childElement.length; i++) {
 			IBooleanExpression child = createExpression(childElement[i]);
-			if(child != null)
+			if (child != null)
 				children[num++] = child;
 		}
-		
-		if(num < children.length){
+
+		if (num < children.length) {
 			IBooleanExpression tmp[] = new IBooleanExpression[num];
-			System.arraycopy(children,0,tmp,0,num);
+			System.arraycopy(children, 0, tmp, 0, num);
 			children = tmp;
 		}
 		fChildren = children;
 	}
-	
-	protected IBooleanExpression createExpression(IManagedConfigElement element){
+
+	protected IBooleanExpression createExpression(IManagedConfigElement element) {
 		String name = element.getName();
 		if (AndExpression.NAME.equals(name))
 			return new AndExpression(element);
@@ -51,7 +52,7 @@ public abstract class CompositeExpression implements IBooleanExpression {
 		else if (CheckOptionExpression.NAME.equals(name))
 			return new CheckOptionExpression(element);
 		else if (CheckStringExpression.NAME.equals(name))
-				return new CheckStringExpression(element);
+			return new CheckStringExpression(element);
 		else if (FalseExpression.NAME.equals(name))
 			return new FalseExpression(element);
 		else if (CheckHolderExpression.NAME.equals(name))
@@ -62,28 +63,27 @@ public abstract class CompositeExpression implements IBooleanExpression {
 			return new HasNatureExpression(element);
 		return null;
 	}
-	
-	public IBooleanExpression[] getChildren(){
+
+	public IBooleanExpression[] getChildren() {
 		return fChildren;
 	}
-	
-	public Map<String, Set<String>> getReferencedProperties(Map<String, Set<String>> map){
+
+	public Map<String, Set<String>> getReferencedProperties(Map<String, Set<String>> map) {
 		IBooleanExpression children[] = getChildren();
-		if(map == null)
+		if (map == null)
 			map = new HashMap<String, Set<String>>();
 
-		for(int i = 0; i < children.length; i++){
+		for (int i = 0; i < children.length; i++) {
 			IBooleanExpression child = children[i];
-			if(child instanceof CompositeExpression){
-				((CompositeExpression)child).getReferencedProperties(map);
-			} else if(child instanceof CheckBuildPropertyExpression){
-				CheckBuildPropertyExpression bp = (CheckBuildPropertyExpression)child;
+			if (child instanceof CompositeExpression) {
+				((CompositeExpression) child).getReferencedProperties(map);
+			} else if (child instanceof CheckBuildPropertyExpression) {
+				CheckBuildPropertyExpression bp = (CheckBuildPropertyExpression) child;
 				String prop = bp.getPropertyId();
 				String val = bp.getValueId();
-				if(prop != null && prop.length() != 0  
-						&& val != null && val.length() != 0){
+				if (prop != null && prop.length() != 0 && val != null && val.length() != 0) {
 					Set<String> set = map.get(prop);
-					if(set == null){
+					if (set == null) {
 						set = new HashSet<String>();
 						map.put(prop, set);
 					}

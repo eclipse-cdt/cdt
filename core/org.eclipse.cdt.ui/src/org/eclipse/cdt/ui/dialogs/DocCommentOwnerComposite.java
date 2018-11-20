@@ -34,34 +34,36 @@ public class DocCommentOwnerComposite extends Composite {
 	protected DocCommentOwnerCombo fDocCombo;
 	protected Label desc, comboLabel;
 	protected Group group;
-	
+
 	public DocCommentOwnerComposite(Composite parent, IDocCommentOwner initialOwner, String description, String label) {
 		super(parent, SWT.NONE);
-		GridLayout gl= new GridLayout();
-		gl.marginHeight= gl.marginWidth= 0;
+		GridLayout gl = new GridLayout();
+		gl.marginHeight = gl.marginWidth = 0;
 		setLayout(gl);
-		
-		group = ControlFactory.createGroup(this, DialogsMessages.DocCommentOwnerComposite_DocumentationToolGroupTitle, 2);
+
+		group = ControlFactory.createGroup(this, DialogsMessages.DocCommentOwnerComposite_DocumentationToolGroupTitle,
+				2);
 		group.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		
-		desc= new Label(group, SWT.WRAP);
+
+		desc = new Label(group, SWT.WRAP);
 		GridData gd = GridDataFactory.fillDefaults().grab(false, false).span(2, 1).create();
-		gd.widthHint= 150;
+		gd.widthHint = 150;
 		desc.setText(description);
 		desc.setLayoutData(gd);
-		
-		comboLabel= new Label(group, SWT.NONE);
+
+		comboLabel = new Label(group, SWT.NONE);
 		comboLabel.setText(label);
-		
-		fDocCombo= new DocCommentOwnerCombo(group, SWT.NONE, initialOwner) {};
+
+		fDocCombo = new DocCommentOwnerCombo(group, SWT.NONE, initialOwner) {
+		};
 		gd = GridDataFactory.fillDefaults().grab(true, false).create();
 		fDocCombo.setLayoutData(gd);
 	}
-	
+
 	public IDocCommentOwner getSelectedDocCommentOwner() {
 		return fDocCombo.getSelectedDocCommentOwner();
 	}
-	
+
 	@Override
 	public void setEnabled(boolean enabled) {
 		desc.setEnabled(enabled);

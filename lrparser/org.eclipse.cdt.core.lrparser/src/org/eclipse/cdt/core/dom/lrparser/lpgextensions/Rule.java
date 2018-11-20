@@ -46,11 +46,11 @@ class Rule<RULE_DATA> {
 	public String toString() {
 		return String.valueOf(ruleNumber);
 	}
-	
+
 	public RULE_DATA getData() {
 		return data;
 	}
-	
+
 	public void setData(RULE_DATA data) {
 		this.data = data;
 	}

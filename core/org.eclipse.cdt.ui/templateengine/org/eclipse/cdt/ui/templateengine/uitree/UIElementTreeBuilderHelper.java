@@ -83,7 +83,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 		UIAttributes uiAttributes = new UIAttributes(templateInfo);
 
 		NamedNodeMap list = element.getAttributes();
-		for (int i=0; i<list.getLength(); i++) {
+		for (int i = 0; i < list.getLength(); i++) {
 			Node attribute = list.item(i);
 			uiAttributes.put(attribute.getNodeName(), attribute.getNodeValue());
 		}
@@ -100,9 +100,9 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	 * @return UIElement.
 	 */
 	private UIElement getUIWidget(Element element, UIAttributes uiAttributes) {
-		UIElement widgetElement= null;
-		String id= uiAttributes.get(UIElement.ID);
-		String type= uiAttributes.get(UIElement.TYPE);
+		UIElement widgetElement = null;
+		String id = uiAttributes.get(UIElement.ID);
+		String type = uiAttributes.get(UIElement.TYPE);
 
 		if (type == null || type.length() == 0) {
 			return null;
@@ -117,32 +117,36 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 		} else if (type.equalsIgnoreCase(InputUIElement.MULTILINETYPE)) {
 			widgetElement = new UITextWidget(uiAttributes);
 		} else if (type.equalsIgnoreCase(InputUIElement.SELECTTYPE)) {
-			String defaultValue= element.getAttribute(InputUIElement.DEFAULT);
+			String defaultValue = element.getAttribute(InputUIElement.DEFAULT);
 
-			Map<String, String> value2name= new LinkedHashMap<>();
+			Map<String, String> value2name = new LinkedHashMap<>();
 			for (Element item : TemplateEngine.getChildrenOfElement(element)) {
-				String label= item.getAttribute(InputUIElement.COMBOITEM_LABEL); // item displayed in Combo
-				String value= item.getAttribute(InputUIElement.COMBOITEM_NAME); // value stored when its selected
+				String label = item.getAttribute(InputUIElement.COMBOITEM_LABEL); // item displayed in Combo
+				String value = item.getAttribute(InputUIElement.COMBOITEM_NAME); // value stored when its selected
 				if (value.length() == 0) {
-					value= item.getAttribute(InputUIElement.COMBOITEM_VALUE);
+					value = item.getAttribute(InputUIElement.COMBOITEM_VALUE);
 				}
 				if (label == null || value == null) {
-					String msg = MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.InvalidEmptyLabel"), //$NON-NLS-1$
-							new Object[] {id});
-					CUIPlugin.log(TEMPLATE_ENGINE_ERROR, new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
+					String msg = MessageFormat.format(
+							Messages.getString("UIElementTreeBuilderHelper.InvalidEmptyLabel"), //$NON-NLS-1$
+							new Object[] { id });
+					CUIPlugin.log(TEMPLATE_ENGINE_ERROR,
+							new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 				} else {
 					if (value2name.put(value, label) != null) {
-						String msg = MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.InvalidNonUniqueValue"), //$NON-NLS-1$
-								new Object[] {value, id});
-						CUIPlugin.log(TEMPLATE_ENGINE_ERROR, new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
+						String msg = MessageFormat.format(
+								Messages.getString("UIElementTreeBuilderHelper.InvalidNonUniqueValue"), //$NON-NLS-1$
+								new Object[] { value, id });
+						CUIPlugin.log(TEMPLATE_ENGINE_ERROR,
+								new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 					}
 				}
 			}
 
 			widgetElement = new UISelectWidget(uiAttributes, value2name, defaultValue);
 		} else if (type.equalsIgnoreCase(InputUIElement.BOOLEANTYPE)) {
-			String defaultValue= element.getAttribute(InputUIElement.DEFAULT);
-			boolean b= Boolean.parseBoolean(defaultValue);
+			String defaultValue = element.getAttribute(InputUIElement.DEFAULT);
+			boolean b = Boolean.parseBoolean(defaultValue);
 			widgetElement = new UIBooleanWidget(uiAttributes, b);
 		} else if (type.equalsIgnoreCase(InputUIElement.BROWSETYPE)) {
 			widgetElement = new UIBrowseWidget(uiAttributes, false);
@@ -158,8 +162,10 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 			// Note: This is not implemented now as we haven't found a use case
 			// for generating UI pages as TABS in a single page.
 		} else {
-			String msg= MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.UnknownWidgetType0"), new Object[] {type}); //$NON-NLS-1$
-			CUIPlugin.log(TEMPLATE_ENGINE_ERROR, new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
+			String msg = MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.UnknownWidgetType0"), //$NON-NLS-1$
+					new Object[] { type });
+			CUIPlugin.log(TEMPLATE_ENGINE_ERROR,
+					new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 		}
 
 		return widgetElement;

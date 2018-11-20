@@ -33,5 +33,5 @@ public interface IOptionPathConverter {
 	 * or null, if the conversion fails. 
 	 */
 	IPath convertToPlatformLocation(String toolSpecificPath, IOption option, ITool tool);
-	
+
 }

@@ -102,7 +102,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		private String fStrikethroughKey;
 		/** Underline preference key */
 		private String fUnderlineKey;
-		
+
 		/**
 		 * Initialize the item with the given values.
 		 * @param displayName the display name
@@ -112,50 +112,51 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		 * @param strikethroughKey the strikethrough preference key
 		 * @param underlineKey the underline preference key
 		 */
-		public HighlightingColorListItem(String displayName, String colorKey, String boldKey, String italicKey, String strikethroughKey, String underlineKey) {
-			fDisplayName= displayName;
-			fColorKey= colorKey;
-			fBoldKey= boldKey;
-			fItalicKey= italicKey;
-			fStrikethroughKey= strikethroughKey;
-			fUnderlineKey= underlineKey;
+		public HighlightingColorListItem(String displayName, String colorKey, String boldKey, String italicKey,
+				String strikethroughKey, String underlineKey) {
+			fDisplayName = displayName;
+			fColorKey = colorKey;
+			fBoldKey = boldKey;
+			fItalicKey = italicKey;
+			fStrikethroughKey = strikethroughKey;
+			fUnderlineKey = underlineKey;
 		}
-		
+
 		/**
 		 * @return the bold preference key
 		 */
 		public String getBoldKey() {
 			return fBoldKey;
 		}
-		
+
 		/**
 		 * @return the bold preference key
 		 */
 		public String getItalicKey() {
 			return fItalicKey;
 		}
-		
+
 		/**
 		 * @return the strikethrough preference key
 		 */
 		public String getStrikethroughKey() {
 			return fStrikethroughKey;
 		}
-		
+
 		/**
 		 * @return the underline preference key
 		 */
 		public String getUnderlineKey() {
 			return fUnderlineKey;
 		}
-		
+
 		/**
 		 * @return the color preference key
 		 */
 		public String getColorKey() {
 			return fColorKey;
 		}
-		
+
 		/**
 		 * @return the display name
 		 */
@@ -163,11 +164,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			return fDisplayName;
 		}
 	}
-	
+
 	private static class SemanticHighlightingColorListItem extends HighlightingColorListItem {
 		/** Enablement preference key */
 		private final String fEnableKey;
-		
+
 		/**
 		 * Initialize the item with the given values.
 		 * @param displayName the display name
@@ -178,12 +179,12 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		 * @param underlineKey the underlineKey preference key
 		 * @param enableKey the enable preference key
 		 */
-		public SemanticHighlightingColorListItem(String displayName, String colorKey, String boldKey,
-				String italicKey, String strikethroughKey, String underlineKey, String enableKey) {
+		public SemanticHighlightingColorListItem(String displayName, String colorKey, String boldKey, String italicKey,
+				String strikethroughKey, String underlineKey, String enableKey) {
 			super(displayName, colorKey, boldKey, italicKey, strikethroughKey, underlineKey);
-			fEnableKey= enableKey;
+			fEnableKey = enableKey;
 		}
-	
+
 		/**
 		 * @return the enablement preference key
 		 */
@@ -200,7 +201,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		public String getText(Object element) {
 			if (element instanceof String)
 				return (String) element;
-			return ((HighlightingColorListItem)element).getDisplayName();
+			return ((HighlightingColorListItem) element).getDisplayName();
 		}
 
 		@Override
@@ -225,13 +226,14 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	private class ColorListContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return new String[] {fCodeCategory, fAssemblyCategory, fCommentsCategory, fPreprocessorCategory, fDoxygenCategory};
+			return new String[] { fCodeCategory, fAssemblyCategory, fCommentsCategory, fPreprocessorCategory,
+					fDoxygenCategory };
 		}
-	
+
 		@Override
 		public void dispose() {
 		}
-	
+
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
@@ -239,7 +241,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof String) {
-				String entry= (String) parentElement;
+				String entry = (String) parentElement;
 				if (fCodeCategory.equals(entry))
 					return fListModel.subList(11, fListModel.size()).toArray();
 				if (fAssemblyCategory.equals(entry))
@@ -258,7 +260,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		public Object getParent(Object element) {
 			if (element instanceof String)
 				return null;
-			int index= fListModel.indexOf(element);
+			int index = fListModel.indexOf(element);
 			if (index >= 11)
 				return fCodeCategory;
 			if (index >= 8)
@@ -279,51 +281,67 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	/**
 	 * Preference key suffix for bold preferences.
 	 */
-	private static final String BOLD= PreferenceConstants.EDITOR_BOLD_SUFFIX;
+	private static final String BOLD = PreferenceConstants.EDITOR_BOLD_SUFFIX;
 	/**
 	 * Preference key suffix for italic preferences.
 	 */
-	private static final String ITALIC= PreferenceConstants.EDITOR_ITALIC_SUFFIX;
+	private static final String ITALIC = PreferenceConstants.EDITOR_ITALIC_SUFFIX;
 	/**
 	 * Preference key suffix for strikethrough preferences.
 	 */
-	private static final String STRIKETHROUGH= PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX;
+	private static final String STRIKETHROUGH = PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX;
 	/**
 	 * Preference key suffix for underline preferences.
 	 */
-	private static final String UNDERLINE= PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
-	
+	private static final String UNDERLINE = PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
+
 	/**
 	 * The keys of the overlay store.
 	 */
-	private final String[][] fSyntaxColorListModel= new String[][] {
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_MultiLine, PreferenceConstants.EDITOR_MULTI_LINE_COMMENT_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_singleLine, PreferenceConstants.EDITOR_SINGLE_LINE_COMMENT_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_cCommentTaskTags, PreferenceConstants.EDITOR_TASK_TAG_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppDirectives, PreferenceConstants.EDITOR_PP_DIRECTIVE_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppOthers, PreferenceConstants.EDITOR_PP_DEFAULT_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppHeaders, PreferenceConstants.EDITOR_PP_HEADER_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmLabels, PreferenceConstants.EDITOR_ASM_LABEL_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmDirectives, PreferenceConstants.EDITOR_ASM_DIRECTIVE_COLOR },
-         	{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenTagRecognized, PreferenceConstants.DOXYGEN_TAG_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenSingleLineComment, PreferenceConstants.DOXYGEN_SINGLE_LINE_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenMultiLineComment, PreferenceConstants.DOXYGEN_MULTI_LINE_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_keywords, PreferenceConstants.EDITOR_C_KEYWORD_COLOR },
-//			{ PreferencesMessages.CEditorColoringConfigurationBlock_returnKeyword, PreferenceConstants.EDITOR_C_KEYWORD_RETURN_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_builtInTypes, PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_operators, PreferenceConstants.EDITOR_C_OPERATOR_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_strings, PreferenceConstants.EDITOR_C_STRING_COLOR },
+	private final String[][] fSyntaxColorListModel = new String[][] {
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_MultiLine,
+					PreferenceConstants.EDITOR_MULTI_LINE_COMMENT_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_singleLine,
+					PreferenceConstants.EDITOR_SINGLE_LINE_COMMENT_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_cCommentTaskTags,
+					PreferenceConstants.EDITOR_TASK_TAG_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppDirectives,
+					PreferenceConstants.EDITOR_PP_DIRECTIVE_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppOthers,
+					PreferenceConstants.EDITOR_PP_DEFAULT_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppHeaders,
+					PreferenceConstants.EDITOR_PP_HEADER_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmLabels,
+					PreferenceConstants.EDITOR_ASM_LABEL_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmDirectives,
+					PreferenceConstants.EDITOR_ASM_DIRECTIVE_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenTagRecognized,
+					PreferenceConstants.DOXYGEN_TAG_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenSingleLineComment,
+					PreferenceConstants.DOXYGEN_SINGLE_LINE_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenMultiLineComment,
+					PreferenceConstants.DOXYGEN_MULTI_LINE_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_keywords,
+					PreferenceConstants.EDITOR_C_KEYWORD_COLOR },
+			//			{ PreferencesMessages.CEditorColoringConfigurationBlock_returnKeyword, PreferenceConstants.EDITOR_C_KEYWORD_RETURN_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_builtInTypes,
+					PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_operators,
+					PreferenceConstants.EDITOR_C_OPERATOR_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_strings,
+					PreferenceConstants.EDITOR_C_STRING_COLOR },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_braces, PreferenceConstants.EDITOR_C_BRACES_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_numbers, PreferenceConstants.EDITOR_C_NUMBER_COLOR },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_others, PreferenceConstants.EDITOR_C_DEFAULT_COLOR },
-	};
-		
-	private final String fCodeCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_code;
-	private final String fCommentsCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_comments;
-	private final String fPreprocessorCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_preprocessor;
-	private final String fAssemblyCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_assembly;
-	private final String fDoxygenCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_doxygen;
-	
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_numbers,
+					PreferenceConstants.EDITOR_C_NUMBER_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_others,
+					PreferenceConstants.EDITOR_C_DEFAULT_COLOR }, };
+
+	private final String fCodeCategory = PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_code;
+	private final String fCommentsCategory = PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_comments;
+	private final String fPreprocessorCategory = PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_preprocessor;
+	private final String fAssemblyCategory = PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_assembly;
+	private final String fDoxygenCategory = PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_doxygen;
+
 	private ColorSelector fSyntaxForegroundColorEditor;
 	private Label fColorEditorLabel;
 	private Button fEnableSemanticHighlightingCheckbox;
@@ -344,7 +362,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	/**
 	 * Highlighting color list
 	 */
-	private final java.util.List<HighlightingColorListItem> fListModel= new ArrayList<HighlightingColorListItem>();
+	private final java.util.List<HighlightingColorListItem> fListModel = new ArrayList<HighlightingColorListItem>();
 	/**
 	 * Highlighting color list viewer
 	 */
@@ -373,56 +391,52 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 
 	public CEditorColoringConfigurationBlock(OverlayPreferenceStore store) {
 		super(store);
-		
-		fColorManager= new CColorManager(false);
-		
-		for (String[] element : fSyntaxColorListModel)
-			fListModel.add(new HighlightingColorListItem (
-					element[0],
-					element[1],
-					element[1] + BOLD,
-					element[1] + ITALIC,
-					element[1] + STRIKETHROUGH,
-					element[1] + UNDERLINE));
 
-		SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
+		fColorManager = new CColorManager(false);
+
+		for (String[] element : fSyntaxColorListModel)
+			fListModel.add(new HighlightingColorListItem(element[0], element[1], element[1] + BOLD, element[1] + ITALIC,
+					element[1] + STRIKETHROUGH, element[1] + UNDERLINE));
+
+		SemanticHighlighting[] semanticHighlightings = SemanticHighlightings.getSemanticHighlightings();
 		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
 			if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
-				SemanticHighlightingWithOwnPreference highlighting = (SemanticHighlightingWithOwnPreference) semanticHighlighting; 
-				fListModel.add(
-						new SemanticHighlightingColorListItem(
-								highlighting.getDisplayName(),
-								SemanticHighlightings.getColorPreferenceKey(highlighting),
-								SemanticHighlightings.getBoldPreferenceKey(highlighting),
-								SemanticHighlightings.getItalicPreferenceKey(highlighting),
-								SemanticHighlightings.getStrikethroughPreferenceKey(highlighting),
-								SemanticHighlightings.getUnderlinePreferenceKey(highlighting),
-								SemanticHighlightings.getEnabledPreferenceKey(highlighting)
-						));
+				SemanticHighlightingWithOwnPreference highlighting = (SemanticHighlightingWithOwnPreference) semanticHighlighting;
+				fListModel.add(new SemanticHighlightingColorListItem(highlighting.getDisplayName(),
+						SemanticHighlightings.getColorPreferenceKey(highlighting),
+						SemanticHighlightings.getBoldPreferenceKey(highlighting),
+						SemanticHighlightings.getItalicPreferenceKey(highlighting),
+						SemanticHighlightings.getStrikethroughPreferenceKey(highlighting),
+						SemanticHighlightings.getUnderlinePreferenceKey(highlighting),
+						SemanticHighlightings.getEnabledPreferenceKey(highlighting)));
 			}
 		}
-		
+
 		store.addKeys(createOverlayStoreKeys());
 	}
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		List<OverlayPreferenceStore.OverlayKey> overlayKeys= new ArrayList<OverlayPreferenceStore.OverlayKey>();
+		List<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<OverlayPreferenceStore.OverlayKey>();
 
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED));
-		
-		for (int i= 0, n= fListModel.size(); i < n; i++) {
-			HighlightingColorListItem item= fListModel.get(i);
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED));
+
+		for (int i = 0, n = fListModel.size(); i < n; i++) {
+			HighlightingColorListItem item = fListModel.get(i);
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, item.getColorKey()));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, item.getBoldKey()));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, item.getItalicKey()));
-			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, item.getStrikethroughKey()));
-			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, item.getUnderlineKey()));
-			
+			overlayKeys.add(
+					new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, item.getStrikethroughKey()));
+			overlayKeys
+					.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, item.getUnderlineKey()));
+
 			if (item instanceof SemanticHighlightingColorListItem)
-				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ((SemanticHighlightingColorListItem) item).getEnableKey()));
+				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+						((SemanticHighlightingColorListItem) item).getEnableKey()));
 		}
-		
-		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
+
+		OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return keys;
 	}
@@ -438,55 +452,55 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		initializeDialogUnits(parent);
 		return createSyntaxPage(parent);
 	}
-	
-	/**
-     * Returns the number of pixels corresponding to the width of the given
-     * number of characters.
-     * <p>
-     * This method may only be called after <code>initializeDialogUnits</code>
-     * has been called.
-     * </p>
-     * <p>
-     * Clients may call this framework method, but should not override it.
-     * </p>
-     * 
-     * @param chars
-     *            the number of characters
-     * @return the number of pixels
-     */
-    private int convertWidthInCharsToPixels(int chars) {
-        // test for failure to initialize for backward compatibility
-        if (fFontMetrics == null)
-            return 0;
-        return Dialog.convertWidthInCharsToPixels(fFontMetrics, chars);
-    }
 
 	/**
-     * Returns the number of pixels corresponding to the height of the given
-     * number of characters.
-     * <p>
-     * This method may only be called after <code>initializeDialogUnits</code>
-     * has been called.
-     * </p>
-     * <p>
-     * Clients may call this framework method, but should not override it.
-     * </p>
-     * 
-     * @param chars
-     *            the number of characters
-     * @return the number of pixels
-     */
-    private int convertHeightInCharsToPixels(int chars) {
-        // test for failure to initialize for backward compatibility
-        if (fFontMetrics == null)
-            return 0;
-        return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
-    }
-    
+	 * Returns the number of pixels corresponding to the width of the given
+	 * number of characters.
+	 * <p>
+	 * This method may only be called after <code>initializeDialogUnits</code>
+	 * has been called.
+	 * </p>
+	 * <p>
+	 * Clients may call this framework method, but should not override it.
+	 * </p>
+	 * 
+	 * @param chars
+	 *            the number of characters
+	 * @return the number of pixels
+	 */
+	private int convertWidthInCharsToPixels(int chars) {
+		// test for failure to initialize for backward compatibility
+		if (fFontMetrics == null)
+			return 0;
+		return Dialog.convertWidthInCharsToPixels(fFontMetrics, chars);
+	}
+
+	/**
+	 * Returns the number of pixels corresponding to the height of the given
+	 * number of characters.
+	 * <p>
+	 * This method may only be called after <code>initializeDialogUnits</code>
+	 * has been called.
+	 * </p>
+	 * <p>
+	 * Clients may call this framework method, but should not override it.
+	 * </p>
+	 * 
+	 * @param chars
+	 *            the number of characters
+	 * @return the number of pixels
+	 */
+	private int convertHeightInCharsToPixels(int chars) {
+		// test for failure to initialize for backward compatibility
+		if (fFontMetrics == null)
+			return 0;
+		return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
+	}
+
 	@Override
 	public void initialize() {
 		super.initialize();
-		
+
 		fListViewer.setInput(fListModel);
 		fListViewer.setSelection(new StructuredSelection(fCodeCategory));
 	}
@@ -494,7 +508,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	@Override
 	public void performDefaults() {
 		super.performDefaults();
-		
+
 		fListViewer.refresh();
 
 		handleSyntaxColorListSelection();
@@ -517,7 +531,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	}
 
 	private void handleSyntaxColorListSelection() {
-		HighlightingColorListItem item= getHighlightingColorListItem();
+		HighlightingColorListItem item = getHighlightingColorListItem();
 		if (item == null) {
 			fEnableCheckbox.setEnabled(false);
 			fSyntaxForegroundColorEditor.getButton().setEnabled(false);
@@ -528,16 +542,18 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			fUnderlineCheckBox.setEnabled(false);
 			return;
 		}
-		RGB rgb= PreferenceConverter.getColor(getPreferenceStore(), item.getColorKey());
+		RGB rgb = PreferenceConverter.getColor(getPreferenceStore(), item.getColorKey());
 		fSyntaxForegroundColorEditor.setColorValue(rgb);
 		fBoldCheckBox.setSelection(getPreferenceStore().getBoolean(item.getBoldKey()));
 		fItalicCheckBox.setSelection(getPreferenceStore().getBoolean(item.getItalicKey()));
 		fStrikethroughCheckBox.setSelection(getPreferenceStore().getBoolean(item.getStrikethroughKey()));
 		fUnderlineCheckBox.setSelection(getPreferenceStore().getBoolean(item.getUnderlineKey()));
 		if (item instanceof SemanticHighlightingColorListItem) {
-			boolean semanticHighlightingEnabled= getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED);
+			boolean semanticHighlightingEnabled = getPreferenceStore()
+					.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED);
 			fEnableCheckbox.setEnabled(semanticHighlightingEnabled);
-			boolean enable= semanticHighlightingEnabled && getPreferenceStore().getBoolean(((SemanticHighlightingColorListItem) item).getEnableKey());
+			boolean enable = semanticHighlightingEnabled
+					&& getPreferenceStore().getBoolean(((SemanticHighlightingColorListItem) item).getEnableKey());
 			fEnableCheckbox.setSelection(enable);
 			fSyntaxForegroundColorEditor.getButton().setEnabled(enable);
 			fColorEditorLabel.setEnabled(enable);
@@ -556,15 +572,15 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			fEnableCheckbox.setSelection(true);
 		}
 	}
-	
+
 	private Control createSyntaxPage(final Composite parent) {
-		Composite colorComposite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
+		Composite colorComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		colorComposite.setLayout(layout);
 
-		Link link= new Link(colorComposite, SWT.NONE);
+		Link link = new Link(colorComposite, SWT.NONE);
 		link.setText(PreferencesMessages.CEditorColoringConfigurationBlock_link);
 		link.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -574,34 +590,34 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		});
 		// TODO replace by link-specific tooltips when
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 gets fixed
-//		link.setToolTipText(PreferencesMessages.CEditorColoringConfigurationBlock_link_tooltip);
-		
-		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-		gridData.widthHint= 150; // only expand further if anyone else requires it
-		gridData.horizontalSpan= 2;
+		//		link.setToolTipText(PreferencesMessages.CEditorColoringConfigurationBlock_link_tooltip);
+
+		GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+		gridData.widthHint = 150; // only expand further if anyone else requires it
+		gridData.horizontalSpan = 2;
 		link.setLayoutData(gridData);
 
 		addFiller(colorComposite, 1);
 
-		fEnableSemanticHighlightingCheckbox= addCheckBox(colorComposite,
+		fEnableSemanticHighlightingCheckbox = addCheckBox(colorComposite,
 				PreferencesMessages.CEditorColoringConfigurationBlock_enable_semantic_highlighting,
 				PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, 0);
-		
+
 		Label label;
-		label= new Label(colorComposite, SWT.LEFT);
+		label = new Label(colorComposite, SWT.LEFT);
 		label.setText(PreferencesMessages.CEditorColoringConfigurationBlock_coloring_element);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	
-		Composite editorComposite= new Composite(colorComposite, SWT.NONE);
-		layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
+
+		Composite editorComposite = new Composite(colorComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		editorComposite.setLayout(layout);
-		GridData gd= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+		GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		editorComposite.setLayoutData(gd);
-	
-		fListViewer= new TreeViewer(editorComposite, SWT.SINGLE | SWT.BORDER);
+
+		fListViewer = new TreeViewer(editorComposite, SWT.SINGLE | SWT.BORDER);
 		fListViewer.setLabelProvider(new ColorListLabelProvider());
 		fListViewer.setContentProvider(new ColorListContentProvider());
 		fListViewer.setComparator(new ViewerComparator(Collator.getInstance()) {
@@ -621,122 +637,126 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 				return 0;
 			}
 		});
-		gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, true);
-		gd.heightHint= convertHeightInCharsToPixels(9);
-		int maxWidth= 0;
+		gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, true);
+		gd.heightHint = convertHeightInCharsToPixels(9);
+		int maxWidth = 0;
 		for (HighlightingColorListItem item : fListModel) {
-			maxWidth= Math.max(maxWidth, convertWidthInCharsToPixels(item.getDisplayName().length()));
+			maxWidth = Math.max(maxWidth, convertWidthInCharsToPixels(item.getDisplayName().length()));
 		}
-		ScrollBar vBar= ((Scrollable) fListViewer.getControl()).getVerticalBar();
+		ScrollBar vBar = ((Scrollable) fListViewer.getControl()).getVerticalBar();
 		if (vBar != null)
 			maxWidth += vBar.getSize().x * 3; // scrollbars and tree indentation guess
-		gd.widthHint= maxWidth;
-		
+		gd.widthHint = maxWidth;
+
 		fListViewer.getControl().setLayoutData(gd);
-		
-		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
-		layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		layout.numColumns= 2;
+
+		Composite stylesComposite = new Composite(editorComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
 		stylesComposite.setLayout(layout);
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		fEnableCheckbox= new Button(stylesComposite, SWT.CHECK);
+
+		fEnableCheckbox = new Button(stylesComposite, SWT.CHECK);
 		fEnableCheckbox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_enable);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment = GridData.BEGINNING;
+		gd.horizontalSpan = 2;
 		fEnableCheckbox.setLayoutData(gd);
-		
-		fColorEditorLabel= new Label(stylesComposite, SWT.LEFT);
+
+		fColorEditorLabel = new Label(stylesComposite, SWT.LEFT);
 		fColorEditorLabel.setText(PreferencesMessages.CEditorColoringConfigurationBlock_color);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= 20;
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = 20;
 		fColorEditorLabel.setLayoutData(gd);
-	
-		fSyntaxForegroundColorEditor= new ColorSelector(stylesComposite);
-		Button foregroundColorButton= fSyntaxForegroundColorEditor.getButton();
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+
+		fSyntaxForegroundColorEditor = new ColorSelector(stylesComposite);
+		Button foregroundColorButton = fSyntaxForegroundColorEditor.getButton();
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		foregroundColorButton.setLayoutData(gd);
-		
-		fBoldCheckBox= new Button(stylesComposite, SWT.CHECK);
+
+		fBoldCheckBox = new Button(stylesComposite, SWT.CHECK);
 		fBoldCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_bold);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= 20;
-		gd.horizontalSpan= 2;
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = 20;
+		gd.horizontalSpan = 2;
 		fBoldCheckBox.setLayoutData(gd);
-		
-		fItalicCheckBox= new Button(stylesComposite, SWT.CHECK);
+
+		fItalicCheckBox = new Button(stylesComposite, SWT.CHECK);
 		fItalicCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_italic);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= 20;
-		gd.horizontalSpan= 2;
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = 20;
+		gd.horizontalSpan = 2;
 		fItalicCheckBox.setLayoutData(gd);
-		
-		fStrikethroughCheckBox= new Button(stylesComposite, SWT.CHECK);
+
+		fStrikethroughCheckBox = new Button(stylesComposite, SWT.CHECK);
 		fStrikethroughCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_strikethrough);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= 20;
-		gd.horizontalSpan= 2;
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = 20;
+		gd.horizontalSpan = 2;
 		fStrikethroughCheckBox.setLayoutData(gd);
-		
-		fUnderlineCheckBox= new Button(stylesComposite, SWT.CHECK);
+
+		fUnderlineCheckBox = new Button(stylesComposite, SWT.CHECK);
 		fUnderlineCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_underline);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= 20;
-		gd.horizontalSpan= 2;
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = 20;
+		gd.horizontalSpan = 2;
 		fUnderlineCheckBox.setLayoutData(gd);
-		
-		label= new Label(colorComposite, SWT.LEFT);
+
+		label = new Label(colorComposite, SWT.LEFT);
 		label.setText(PreferencesMessages.CEditorColoringConfigurationBlock_preview);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Control previewer= createPreviewer(colorComposite);
-		gd= new GridData(GridData.FILL_BOTH);
-		gd.widthHint= convertWidthInCharsToPixels(20);
-		gd.heightHint= convertHeightInCharsToPixels(5);
+
+		Control previewer = createPreviewer(colorComposite);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = convertWidthInCharsToPixels(20);
+		gd.heightHint = convertHeightInCharsToPixels(5);
 		previewer.setLayoutData(gd);
-		
+
 		fListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSyntaxColorListSelection();
 			}
 		});
-		
+
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				HighlightingColorListItem item= getHighlightingColorListItem();
-				PreferenceConverter.setValue(getPreferenceStore(), item.getColorKey(), fSyntaxForegroundColorEditor.getColorValue());
+				HighlightingColorListItem item = getHighlightingColorListItem();
+				PreferenceConverter.setValue(getPreferenceStore(), item.getColorKey(),
+						fSyntaxForegroundColorEditor.getColorValue());
 			}
 		});
-	
+
 		fBoldCheckBox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				HighlightingColorListItem item= getHighlightingColorListItem();
+				HighlightingColorListItem item = getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getBoldKey(), fBoldCheckBox.getSelection());
 			}
 		});
-				
+
 		fItalicCheckBox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				HighlightingColorListItem item= getHighlightingColorListItem();
+				HighlightingColorListItem item = getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getItalicKey(), fItalicCheckBox.getSelection());
 			}
 		});
@@ -745,35 +765,38 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				HighlightingColorListItem item= getHighlightingColorListItem();
+				HighlightingColorListItem item = getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getStrikethroughKey(), fStrikethroughCheckBox.getSelection());
 			}
 		});
-		
+
 		fUnderlineCheckBox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				HighlightingColorListItem item= getHighlightingColorListItem();
+				HighlightingColorListItem item = getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getUnderlineKey(), fUnderlineCheckBox.getSelection());
 			}
 		});
-				
+
 		fEnableCheckbox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				HighlightingColorListItem item= getHighlightingColorListItem();
+				HighlightingColorListItem item = getHighlightingColorListItem();
 				if (item instanceof SemanticHighlightingColorListItem) {
-					boolean enable= fEnableCheckbox.getSelection();
+					boolean enable = fEnableCheckbox.getSelection();
 					getPreferenceStore().setValue(((SemanticHighlightingColorListItem) item).getEnableKey(), enable);
 					fEnableCheckbox.setSelection(enable);
 					fSyntaxForegroundColorEditor.getButton().setEnabled(enable);
@@ -787,16 +810,17 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 				}
 			}
 		});
-		
+
 		fEnableSemanticHighlightingCheckbox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fListViewer.refresh(true);
-				HighlightingColorListItem item= getHighlightingColorListItem();
+				HighlightingColorListItem item = getHighlightingColorListItem();
 				if (item instanceof SemanticHighlightingColorListItem) {
 					handleSyntaxColorListSelection();
 					uninstallSemanticHighlighting();
@@ -804,61 +828,62 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 				}
 			}
 		});
-		
+
 		colorComposite.layout(false);
-				
+
 		return colorComposite;
 	}
-	
+
 	private void addFiller(Composite composite, int horizontalSpan) {
-		PixelConverter pixelConverter= new PixelConverter(composite);
-		Label filler= new Label(composite, SWT.LEFT );
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= horizontalSpan;
-		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
+		PixelConverter pixelConverter = new PixelConverter(composite);
+		Label filler = new Label(composite, SWT.LEFT);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = horizontalSpan;
+		gd.heightHint = pixelConverter.convertHeightInCharsToPixels(1) / 2;
 		filler.setLayoutData(gd);
 	}
 
 	private Control createPreviewer(Composite parent) {
-		IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore();
+		IPreferenceStore generalTextStore = EditorsUI.getPreferenceStore();
 		// Task tags can have their own coloring, and to demonstrate this, the preview code
 		// contains a "TODO" task tag. In order for the comment scanner to recognize this 
 		// as a task tag and apply the coloring, "TODO" needs to be present under the
 		// TODO_TASK_TAGS preference key. Normally this is contained in the core preference
 		// store, but since the user can override the set of task tags, we provide a custom
 		// preference store that always has "TODO" under that key.
-		IPreferenceStore taskTagPreferenceStore= new PreferenceStore();
-		taskTagPreferenceStore.setValue(CCorePreferenceConstants.TODO_TASK_TAGS, "TODO");  //$NON-NLS-1$
-		IPreferenceStore store= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), 
-				taskTagPreferenceStore, generalTextStore });
+		IPreferenceStore taskTagPreferenceStore = new PreferenceStore();
+		taskTagPreferenceStore.setValue(CCorePreferenceConstants.TODO_TASK_TAGS, "TODO"); //$NON-NLS-1$
+		IPreferenceStore store = new ChainedPreferenceStore(
+				new IPreferenceStore[] { getPreferenceStore(), taskTagPreferenceStore, generalTextStore });
 		fPreviewViewer = new CSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, store);
-		SimpleCSourceViewerConfiguration configuration = new SimpleCSourceViewerConfiguration(fColorManager, store, null, ICPartitions.C_PARTITIONING, false);
+		SimpleCSourceViewerConfiguration configuration = new SimpleCSourceViewerConfiguration(fColorManager, store,
+				null, ICPartitions.C_PARTITIONING, false);
 		fPreviewViewer.configure(configuration);
-		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+		Font font = JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 		fPreviewViewer.getTextWidget().setFont(font);
 		CSourcePreviewerUpdater.registerPreviewer(fPreviewViewer, configuration, store);
 		fPreviewViewer.setEditable(false);
-		
-		String libraryDecls= loadPreviewContentFromFile("ColorSettingPreviewLibraryDecls.txt"); //$NON-NLS-1$
-		fPreviewerLibraryDecls= libraryDecls;
-		String content= loadPreviewContentFromFile("ColorSettingPreviewCode.txt"); //$NON-NLS-1$
-		IDocument document= new Document(content);
+
+		String libraryDecls = loadPreviewContentFromFile("ColorSettingPreviewLibraryDecls.txt"); //$NON-NLS-1$
+		fPreviewerLibraryDecls = libraryDecls;
+		String content = loadPreviewContentFromFile("ColorSettingPreviewCode.txt"); //$NON-NLS-1$
+		IDocument document = new Document(content);
 		CUIPlugin.getDefault().getTextTools().setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING, null);
 		fPreviewViewer.setDocument(document);
-	
+
 		installSemanticHighlighting();
-		
+
 		return fPreviewViewer.getControl();
 	}
 
 	private String loadPreviewContentFromFile(String filename) {
 		String line;
-		String separator= System.getProperty("line.separator"); //$NON-NLS-1$
-		StringBuilder buffer= new StringBuilder(512);
-		BufferedReader reader= null;
+		String separator = System.getProperty("line.separator"); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder(512);
+		BufferedReader reader = null;
 		try {
-			reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
-			while ((line= reader.readLine()) != null) {
+			reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
+			while ((line = reader.readLine()) != null) {
 				buffer.append(line);
 				buffer.append(separator);
 			}
@@ -866,7 +891,10 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			CUIPlugin.log(io);
 		} finally {
 			if (reader != null) {
-				try { reader.close(); } catch (IOException e) {}
+				try {
+					reader.close();
+				} catch (IOException e) {
+				}
 			}
 		}
 		return buffer.toString();
@@ -877,7 +905,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 */
 	private void installSemanticHighlighting() {
 		if (fSemanticHighlightingManager == null) {
-			fSemanticHighlightingManager= new SemanticHighlightingManager();
+			fSemanticHighlightingManager = new SemanticHighlightingManager();
 			fSemanticHighlightingManager.install(fPreviewViewer, fColorManager, getPreferenceStore(),
 					fPreviewerLibraryDecls);
 		}
@@ -889,7 +917,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	private void uninstallSemanticHighlighting() {
 		if (fSemanticHighlightingManager != null) {
 			fSemanticHighlightingManager.uninstall();
-			fSemanticHighlightingManager= null;
+			fSemanticHighlightingManager = null;
 		}
 	}
 
@@ -899,29 +927,29 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * @return the current highlighting color list item
 	 */
 	private HighlightingColorListItem getHighlightingColorListItem() {
-		IStructuredSelection selection= (IStructuredSelection) fListViewer.getSelection();
-		Object element= selection.getFirstElement();
+		IStructuredSelection selection = (IStructuredSelection) fListViewer.getSelection();
+		Object element = selection.getFirstElement();
 		if (element instanceof String)
 			return null;
 		return (HighlightingColorListItem) element;
 	}
-	
+
 	/**
-     * Initializes the computation of horizontal and vertical dialog units based
-     * on the size of current font.
-     * <p>
-     * This method must be called before any of the dialog unit based conversion
-     * methods are called.
-     * </p>
-     * 
-     * @param testControl
-     *            a control from which to obtain the current font
-     */
-    private void initializeDialogUnits(Control testControl) {
-        // Compute and store a font metric
-        GC gc = new GC(testControl);
-        gc.setFont(JFaceResources.getDialogFont());
-        fFontMetrics = gc.getFontMetrics();
-        gc.dispose();
-    }
+	 * Initializes the computation of horizontal and vertical dialog units based
+	 * on the size of current font.
+	 * <p>
+	 * This method must be called before any of the dialog unit based conversion
+	 * methods are called.
+	 * </p>
+	 * 
+	 * @param testControl
+	 *            a control from which to obtain the current font
+	 */
+	private void initializeDialogUnits(Control testControl) {
+		// Compute and store a font metric
+		GC gc = new GC(testControl);
+		gc.setFont(JFaceResources.getDialogFont());
+		fFontMetrics = gc.getFontMetrics();
+		gc.dispose();
+	}
 }

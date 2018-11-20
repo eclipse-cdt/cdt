@@ -12,7 +12,7 @@
  * QNX Software Systems - Initial API and implementation
  * Ericsson             - Updated with the latest platform changes of RetargetAction (302273)
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -26,15 +26,15 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
- 
+
 /**
  * Global retargettable resume at line action.
  */
 public class RetargetResumeAtLineAction extends RetargetAction {
-	
+
 	private DebugContextListener fContextListener = new DebugContextListener();
 	private ISuspendResume fTargetElement = null;
-	
+
 	class DebugContextListener implements IDebugContextListener {
 
 		protected void contextActivated(ISelection selection) {
@@ -42,8 +42,8 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if (ss.size() == 1) {
-                    fTargetElement = (ISuspendResume)
-                        DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
+					fTargetElement = (ISuspendResume) DebugPlugin.getAdapter(ss.getFirstElement(),
+							ISuspendResume.class);
 				}
 			}
 			IAction action = getAction();
@@ -57,7 +57,7 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 			contextActivated(event.getContext());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
@@ -66,6 +66,7 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 		DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(fContextListener);
 		super.dispose();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
@@ -77,36 +78,37 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 		ISelection activeContext = service.getActiveContext();
 		fContextListener.contextActivated(activeContext);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
-	protected boolean canPerformAction(Object target, ISelection selection,	IWorkbenchPart part) {
-		return fTargetElement != null &&
-			((IResumeAtLineTarget)target).canResumeAtLine(part, selection, fTargetElement);
+	protected boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part) {
+		return fTargetElement != null
+				&& ((IResumeAtLineTarget) target).canResumeAtLine(part, selection, fTargetElement);
 	}
-	
+
 	@Override
 	protected Class<?> getAdapterClass() {
 		return IResumeAtLineTarget.class;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
 	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
-		((IResumeAtLineTarget)target).resumeAtLine(part, selection, fTargetElement);
+		((IResumeAtLineTarget) target).resumeAtLine(part, selection, fTargetElement);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
 	 */
 	@Override
 	protected String getOperationUnavailableMessage() {
 		return ActionMessages.getString("RetargetResumeAtLineAction.0"); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

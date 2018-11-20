@@ -91,13 +91,13 @@ import org.eclipse.core.runtime.IStatus;
  * Performs evaluation of an expression.
  */
 public class EvalBinary extends CPPDependentEvaluation {
-	public final static int op_arrayAccess= Byte.MAX_VALUE;
+	public final static int op_arrayAccess = Byte.MAX_VALUE;
 	private final int fOperator;
 
 	private final ICPPEvaluation fArg1;
 	private final ICPPEvaluation fArg2;
 
-	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
+	private ICPPFunction fOverload = CPPFunction.UNINITIALIZED_FUNCTION;
 	private ICPPEvaluation fOverloadCall;
 	private IType fType;
 	private boolean fCheckedIsConstantExpression;
@@ -109,9 +109,9 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 	public EvalBinary(int operator, ICPPEvaluation arg1, ICPPEvaluation arg2, IBinding templateDefinition) {
 		super(templateDefinition);
-		fOperator= operator;
-		fArg1= arg1;
-		fArg2= arg2;
+		fOperator = operator;
+		fArg1 = arg1;
+		fArg2 = arg2;
 	}
 
 	public int getOperator() {
@@ -140,30 +140,32 @@ public class EvalBinary extends CPPDependentEvaluation {
 	public IType getType() {
 		if (fType == null) {
 			if (isTypeDependent()) {
-				fType= new TypeOfDependentExpression(this);
+				fType = new TypeOfDependentExpression(this);
 			} else {
 				ICPPFunction overload = getOverload();
 				if (overload != null) {
-					fType= ExpressionTypes.restoreTypedefs(
-							ExpressionTypes.typeFromFunctionCall(overload), fArg1.getType(), fArg2.getType());
+					fType = ExpressionTypes.restoreTypedefs(ExpressionTypes.typeFromFunctionCall(overload),
+							fArg1.getType(), fArg2.getType());
 				} else {
-					fType= computeType();
+					fType = computeType();
 				}
 			}
 		}
 		return fType;
 	}
 
-	private ICPPEvaluation createOperatorOverloadEvaluation(ICPPFunction overload, ICPPEvaluation arg1, ICPPEvaluation arg2) {
+	private ICPPEvaluation createOperatorOverloadEvaluation(ICPPFunction overload, ICPPEvaluation arg1,
+			ICPPEvaluation arg2) {
 		EvalFunctionCall operatorCall;
 		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		if (overload instanceof ICPPMethod) {
-			EvalMemberAccess opAccess = new EvalMemberAccess(arg1.getType(), ValueCategory.LVALUE, overload, arg1, false, point);
-			ICPPEvaluation[] args = new ICPPEvaluation[]{opAccess, arg2};
+			EvalMemberAccess opAccess = new EvalMemberAccess(arg1.getType(), ValueCategory.LVALUE, overload, arg1,
+					false, point);
+			ICPPEvaluation[] args = new ICPPEvaluation[] { opAccess, arg2 };
 			operatorCall = new EvalFunctionCall(args, arg1, point);
 		} else {
 			EvalBinding op = new EvalBinding(overload, overload.getType(), point);
-			ICPPEvaluation[] args = new ICPPEvaluation[]{op, arg1, arg2};
+			ICPPEvaluation[] args = new ICPPEvaluation[] { op, arg1, arg2 };
 			operatorCall = new EvalFunctionCall(args, null, point);
 		}
 		return operatorCall;
@@ -186,7 +188,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 				arg2 = maybeApplyConversion(fArg2, parameterTypes[1], allowContextualConversion);
 			} else {
 				CCorePlugin.log(IStatus.ERROR, "Unexpected overload for binary operator " + fOperator //$NON-NLS-1$
-						+ ": '" + overload.getName() + "'");  //$NON-NLS-1$//$NON-NLS-2$
+						+ ": '" + overload.getName() + "'"); //$NON-NLS-1$//$NON-NLS-2$
 			}
 
 			if (!(overload instanceof CPPImplicitFunction)) {
@@ -259,22 +261,18 @@ public class EvalBinary extends CPPDependentEvaluation {
 		}
 		return fIsConstantExpression;
 	}
-	
+
 	@Override
 	public boolean isEquivalentTo(ICPPEvaluation other) {
 		if (!(other instanceof EvalBinary)) {
 			return false;
 		}
 		EvalBinary o = (EvalBinary) other;
-		return fOperator == o.fOperator
-			&& fArg1.isEquivalentTo(o.fArg1)
-			&& fArg2.isEquivalentTo(o.fArg2);
+		return fOperator == o.fOperator && fArg1.isEquivalentTo(o.fArg1) && fArg2.isEquivalentTo(o.fArg2);
 	}
 
 	private boolean computeIsConstantExpression() {
-		return fArg1.isConstantExpression()
-			&& fArg2.isConstantExpression()
-			&& isNullOrConstexprFunc(getOverload());
+		return fArg1.isConstantExpression() && fArg2.isConstantExpression() && isNullOrConstexprFunc(getOverload());
 	}
 
 	@Override
@@ -317,7 +315,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 	public ICPPFunction getOverload() {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {
-			fOverload= computeOverload();
+			fOverload = computeOverload();
 		}
 		return fOverload;
 	}
@@ -328,24 +326,23 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 		if (fOperator == op_arrayAccess) {
 			IType type = fArg1.getType();
-			type= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
-    		if (type instanceof ICPPClassType) {
-    			return CPPSemantics.findOverloadedBinaryOperator(getTemplateDefinitionScope(),
-    					OverloadableOperator.BRACKET, fArg1, fArg2);
-    		}
+			type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
+			if (type instanceof ICPPClassType) {
+				return CPPSemantics.findOverloadedBinaryOperator(getTemplateDefinitionScope(),
+						OverloadableOperator.BRACKET, fArg1, fArg2);
+			}
 		} else {
 			final OverloadableOperator op = OverloadableOperator.fromBinaryExpression(fOperator);
 			if (op != null) {
-				return CPPSemantics.findOverloadedBinaryOperator(getTemplateDefinitionScope(),
-						op, fArg1, fArg2);
+				return CPPSemantics.findOverloadedBinaryOperator(getTemplateDefinitionScope(), op, fArg1, fArg2);
 			}
 		}
-    	return null;
+		return null;
 	}
 
 	public IType computeType() {
 		// Check for overloaded operator.
-		ICPPFunction o= getOverload();
+		ICPPFunction o = getOverload();
 		if (o != null)
 			return typeFromFunctionCall(o);
 
@@ -355,69 +352,69 @@ public class EvalBinary extends CPPDependentEvaluation {
 			return type1;
 		}
 
-    	final IType originalType2 = fArg2.getType();
+		final IType originalType2 = fArg2.getType();
 		final IType type2 = prvalueTypeWithResolvedTypedefs(originalType2);
 		if (type2 instanceof ISemanticProblem) {
 			return type2;
 		}
 
-    	IType type= CPPArithmeticConversion.convertCppOperandTypes(fOperator, type1, type2);
-    	if (type != null) {
-    		return ExpressionTypes.restoreTypedefs(type, originalType1, originalType2);
-    	}
+		IType type = CPPArithmeticConversion.convertCppOperandTypes(fOperator, type1, type2);
+		if (type != null) {
+			return ExpressionTypes.restoreTypedefs(type, originalType1, originalType2);
+		}
 
-    	switch (fOperator) {
-    	case op_arrayAccess:
-    		if (type1 instanceof IPointerType) {
-    			return glvalueType(((IPointerType) type1).getType());
-    		}
-    		if (type2 instanceof IPointerType) {
-    			return glvalueType(((IPointerType) type2).getType());
-    		}
-    		return ProblemType.UNKNOWN_FOR_EXPRESSION;
+		switch (fOperator) {
+		case op_arrayAccess:
+			if (type1 instanceof IPointerType) {
+				return glvalueType(((IPointerType) type1).getType());
+			}
+			if (type2 instanceof IPointerType) {
+				return glvalueType(((IPointerType) type2).getType());
+			}
+			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 
-    	case op_lessEqual:
-    	case op_lessThan:
-    	case op_greaterEqual:
-    	case op_greaterThan:
-    	case op_logicalAnd:
-    	case op_logicalOr:
-    	case op_equals:
-    	case op_notequals:
-    		return CPPBasicType.BOOLEAN;
+		case op_lessEqual:
+		case op_lessThan:
+		case op_greaterEqual:
+		case op_greaterThan:
+		case op_logicalAnd:
+		case op_logicalOr:
+		case op_equals:
+		case op_notequals:
+			return CPPBasicType.BOOLEAN;
 
-    	case op_plus:
-    		if (type1 instanceof IPointerType) {
-        		return ExpressionTypes.restoreTypedefs(type1, originalType1);
-    		}
-    		if (type2 instanceof IPointerType) {
-        		return ExpressionTypes.restoreTypedefs(type2, originalType2);
-    		}
-    		break;
+		case op_plus:
+			if (type1 instanceof IPointerType) {
+				return ExpressionTypes.restoreTypedefs(type1, originalType1);
+			}
+			if (type2 instanceof IPointerType) {
+				return ExpressionTypes.restoreTypedefs(type2, originalType2);
+			}
+			break;
 
-    	case op_minus:
-    		if (type1 instanceof IPointerType) {
-    			if (type2 instanceof IPointerType) {
-    				return CPPVisitor.getPointerDiffType();
-    			}
-    			return originalType1;
-    		}
-    		break;
+		case op_minus:
+			if (type1 instanceof IPointerType) {
+				if (type2 instanceof IPointerType) {
+					return CPPVisitor.getPointerDiffType();
+				}
+				return originalType1;
+			}
+			break;
 
-    	case op_pmarrow:
-    	case op_pmdot:
-    		if (type2 instanceof ICPPPointerToMemberType) {
-    			IType t= ((ICPPPointerToMemberType) type2).getType();
-    			if (t instanceof ICPPFunctionType)
-    				return t;
-    			if (fOperator == op_pmdot && fArg1.getValueCategory() == PRVALUE) {
-    				return prvalueType(t);
-    			}
-    			return glvalueType(t);
-    		}
-    		return ProblemType.UNKNOWN_FOR_EXPRESSION;
-    	}
-    	return type1;
+		case op_pmarrow:
+		case op_pmdot:
+			if (type2 instanceof ICPPPointerToMemberType) {
+				IType t = ((ICPPPointerToMemberType) type2).getType();
+				if (t instanceof ICPPFunctionType)
+					return t;
+				if (fOperator == op_pmdot && fArg1.getValueCategory() == PRVALUE) {
+					return prvalueType(t);
+				}
+				return glvalueType(t);
+			}
+			return ProblemType.UNKNOWN_FOR_EXPRESSION;
+		}
+		return type1;
 	}
 
 	@Override
@@ -430,10 +427,10 @@ public class EvalBinary extends CPPDependentEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		int op= buffer.getByte();
-		ICPPEvaluation arg1= buffer.unmarshalEvaluation();
-		ICPPEvaluation arg2= buffer.unmarshalEvaluation();
-		IBinding templateDefinition= buffer.unmarshalBinding();
+		int op = buffer.getByte();
+		ICPPEvaluation arg1 = buffer.unmarshalEvaluation();
+		ICPPEvaluation arg2 = buffer.unmarshalEvaluation();
+		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalBinary(op, arg1, arg2, templateDefinition);
 	}
 
@@ -459,7 +456,8 @@ public class EvalBinary extends CPPDependentEvaluation {
 		final ICPPEvaluation fixed1 = vp1.getSecond();
 		Pair<ICPPEvaluation, ICPPEvaluation> vp2 = EvalUtil.getValuePair(fArg2, record, context);
 		final ICPPEvaluation fixed2 = vp2.getSecond();
-		ICPPEvaluation eval = fixed1 == fArg1 && fixed2 == fArg2 ? this : new EvalBinary(fOperator, fixed1, fixed2, getTemplateDefinition());
+		ICPPEvaluation eval = fixed1 == fArg1 && fixed2 == fArg2 ? this
+				: new EvalBinary(fOperator, fixed1, fixed2, getTemplateDefinition());
 
 		if (isBinaryOperationWithAssignment(fOperator)) {
 			if (isPointerToArray(fixed1) && hasIntType(fixed2)) {
@@ -479,7 +477,8 @@ public class EvalBinary extends CPPDependentEvaluation {
 					return EvalFixed.INCOMPLETE;
 				int binaryOperator = getBinaryOperatorWithoutAssignment(fOperator);
 				EvalBinary binaryOpEval = new EvalBinary(binaryOperator, fixed1, fixed2, getTemplateDefinition());
-				EvalBinary assignmentEval = new EvalBinary(op_assign, updateable1, binaryOpEval, getTemplateDefinition());
+				EvalBinary assignmentEval = new EvalBinary(op_assign, updateable1, binaryOpEval,
+						getTemplateDefinition());
 				return assignmentEval.computeForFunctionCall(record, context);
 			}
 		} else if (fOperator == op_assign) {
@@ -519,11 +518,15 @@ public class EvalBinary extends CPPDependentEvaluation {
 			}
 			return new EvalCompositeAccess(composite, arrayIndex);
 		} else if ((isArray(fixed1) || isArray(fixed2)) && (hasIntType(fixed1) || hasIntType(fixed2))) {
-			int offset = hasIntType(fixed1) ? fixed1.getValue().numberValue().intValue() : fixed2.getValue().numberValue().intValue();
-			EvalCompositeAccess evalCompositeAccess = new EvalCompositeAccess(isArray(fixed1) ? fixed1 : fixed2, offset);
+			int offset = hasIntType(fixed1) ? fixed1.getValue().numberValue().intValue()
+					: fixed2.getValue().numberValue().intValue();
+			EvalCompositeAccess evalCompositeAccess = new EvalCompositeAccess(isArray(fixed1) ? fixed1 : fixed2,
+					offset);
 			return new EvalPointer(record, evalCompositeAccess, evalCompositeAccess.getTemplateDefinition());
-		} else if ((isPointerToArray(fixed1) || isPointerToArray(fixed2)) && (hasIntType(fixed1) || hasIntType(fixed2))) {
-			final EvalPointer pointer = isPointerToArray(fixed1) ? ((EvalPointer) fixed1).copy() : ((EvalPointer) fixed2).copy();
+		} else if ((isPointerToArray(fixed1) || isPointerToArray(fixed2))
+				&& (hasIntType(fixed1) || hasIntType(fixed2))) {
+			final EvalPointer pointer = isPointerToArray(fixed1) ? ((EvalPointer) fixed1).copy()
+					: ((EvalPointer) fixed2).copy();
 			pointer.setPosition(eval.getValue().numberValue().intValue());
 			return pointer;
 		}
@@ -551,46 +554,46 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 	private static boolean isBinaryOperationWithAssignment(int operator) {
 		switch (operator) {
-			case op_binaryAndAssign:
-			case op_binaryOrAssign:
-			case op_binaryXorAssign:
-			case op_divideAssign:
-			case op_plusAssign:
-			case op_minusAssign:
-			case op_multiplyAssign:
-			case op_moduloAssign:
-			case op_shiftLeftAssign:
-			case op_shiftRightAssign:
-				return true;
-			default:
-				return false;
+		case op_binaryAndAssign:
+		case op_binaryOrAssign:
+		case op_binaryXorAssign:
+		case op_divideAssign:
+		case op_plusAssign:
+		case op_minusAssign:
+		case op_multiplyAssign:
+		case op_moduloAssign:
+		case op_shiftLeftAssign:
+		case op_shiftRightAssign:
+			return true;
+		default:
+			return false;
 		}
 	}
 
 	private static int getBinaryOperatorWithoutAssignment(int operator) {
 		switch (operator) {
-			case op_binaryAndAssign:
-				return op_binaryAnd;
-			case op_binaryOrAssign:
-				return op_binaryOr;
-			case op_binaryXorAssign:
-				return op_binaryXor;
-			case op_divideAssign:
-				return op_divide;
-			case op_plusAssign:
-				return op_plus;
-			case op_minusAssign:
-				return op_minus;
-			case op_multiplyAssign:
-				return op_multiply;
-			case op_moduloAssign:
-				return op_modulo;
-			case op_shiftLeftAssign:
-				return op_shiftLeft;
-			case op_shiftRightAssign:
-				return op_shiftRight;
-			default:
-				throw new IllegalArgumentException("Operator must be binary operation with assignment"); //$NON-NLS-1$
+		case op_binaryAndAssign:
+			return op_binaryAnd;
+		case op_binaryOrAssign:
+			return op_binaryOr;
+		case op_binaryXorAssign:
+			return op_binaryXor;
+		case op_divideAssign:
+			return op_divide;
+		case op_plusAssign:
+			return op_plus;
+		case op_minusAssign:
+			return op_minus;
+		case op_multiplyAssign:
+			return op_multiply;
+		case op_moduloAssign:
+			return op_modulo;
+		case op_shiftLeftAssign:
+			return op_shiftLeft;
+		case op_shiftRightAssign:
+			return op_shiftRight;
+		default:
+			throw new IllegalArgumentException("Operator must be binary operation with assignment"); //$NON-NLS-1$
 		}
 	}
 

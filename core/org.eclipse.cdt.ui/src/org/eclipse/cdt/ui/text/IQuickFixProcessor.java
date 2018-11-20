@@ -45,6 +45,6 @@ public interface IQuickFixProcessor {
 	 * 			can be offered
 	 * @throws CoreException CoreException can be thrown if the operation fails
 	 */
-	ICCompletionProposal[] getCorrections(IInvocationContext context,
-			IProblemLocation[] locations) throws CoreException;
+	ICCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations)
+			throws CoreException;
 }

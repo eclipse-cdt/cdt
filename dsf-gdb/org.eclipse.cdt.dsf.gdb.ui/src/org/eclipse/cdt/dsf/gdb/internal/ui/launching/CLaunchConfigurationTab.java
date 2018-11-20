@@ -57,9 +57,10 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		try {
 			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String) null);
-	        if (programName != null) {
-	        	programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
-	        }
+			if (programName != null) {
+				programName = VariablesPlugin.getDefault().getStringVariableManager()
+						.performStringSubstitution(programName);
+			}
 		} catch (CoreException e) {
 		}
 
@@ -73,7 +74,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			if (page != null) {
 				ISelection selection = page.getSelection();
 				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection ss = (IStructuredSelection)selection;
+					IStructuredSelection ss = (IStructuredSelection) selection;
 					if (!ss.isEmpty()) {
 						obj = ss.getFirstElement();
 					}
@@ -81,9 +82,9 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			}
 		}
 		if (obj instanceof IResource) {
-			ICElement ce = CoreModel.getDefault().create((IResource)obj);
+			ICElement ce = CoreModel.getDefault().create((IResource) obj);
 			if (ce == null) {
-				IProject pro = ((IResource)obj).getProject();
+				IProject pro = ((IResource) obj).getProject();
 				ce = CoreModel.getDefault().create(pro);
 			}
 			obj = ce;
@@ -92,8 +93,8 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			if (platform != null && !platform.equals("*")) { //$NON-NLS-1$
 				ICDescriptor descriptor;
 				try {
-					descriptor = CCorePlugin.getDefault().getCProjectDescription( ((ICElement)obj).getCProject().getProject(),
-							false);
+					descriptor = CCorePlugin.getDefault()
+							.getCProjectDescription(((ICElement) obj).getCProject().getProject(), false);
 					if (descriptor != null) {
 						String projectPlatform = descriptor.getPlatform();
 						if (!projectPlatform.equals(platform) && !projectPlatform.equals("*")) { //$NON-NLS-1$
@@ -105,17 +106,17 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			}
 			if (obj != null) {
 				if (programName == null || programName.isEmpty()) {
-					return (ICElement)obj;
+					return (ICElement) obj;
 				}
-				ICElement ce = (ICElement)obj;
+				ICElement ce = (ICElement) obj;
 				IProject project;
-				project = (IProject)ce.getCProject().getResource();
+				project = (IProject) ce.getCProject().getResource();
 				IPath programFile = project.getFile(programName).getLocation();
 				ce = CCorePlugin.getDefault().getCoreModel().create(programFile);
 				if (ce != null && ce.exists()) {
 					return ce;
 				}
-				return (ICElement)obj;
+				return (ICElement) obj;
 			}
 		}
 		if (page != null) {
@@ -123,7 +124,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			if (part != null) {
 				IEditorInput input = part.getEditorInput();
 				if (input instanceof IFileEditorInput) {
-					IFile file = ((IFileEditorInput)input).getFile();
+					IFile file = ((IFileEditorInput) input).getFile();
 					if (file != null) {
 						ICElement ce = CoreModel.getDefault().create(file);
 						if (ce == null) {
@@ -146,7 +147,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		String name = null;
 		if (cProject != null && cProject.exists()) {
 			name = cProject.getElementName();
-			config.setMappedResources(new IResource[] {cProject.getProject()});
+			config.setMappedResources(new IResource[] { cProject.getProject() });
 
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(cProject.getProject());
 			String buildConfigID = projDes.getActiveConfiguration().getId();

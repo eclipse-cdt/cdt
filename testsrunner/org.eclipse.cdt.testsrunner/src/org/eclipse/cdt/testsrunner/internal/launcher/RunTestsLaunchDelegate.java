@@ -15,16 +15,15 @@ package org.eclipse.cdt.testsrunner.internal.launcher;
 
 import org.eclipse.cdt.testsrunner.launcher.BaseTestsLaunchDelegate;
 
-
 /**
  * Launch delegate implementation that is used for Run mode.
  * @since 8.0
  */
 public class RunTestsLaunchDelegate extends BaseTestsLaunchDelegate {
-	
-    @Override
-    public String getPreferredDelegateId() {
-        return "org.eclipse.cdt.cdi.launch.localCLaunch"; //$NON-NLS-1$
-    }
-	
+
+	@Override
+	public String getPreferredDelegateId() {
+		return "org.eclipse.cdt.cdi.launch.localCLaunch"; //$NON-NLS-1$
+	}
+
 }

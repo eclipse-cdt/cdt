@@ -21,14 +21,14 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 public class CEntriesSet {
 	private LinkedHashMap<Object, ICSettingEntry> fEntriesMap = new LinkedHashMap<Object, ICSettingEntry>();
 
-	public CEntriesSet(){
+	public CEntriesSet() {
 	}
 
-	public CEntriesSet(List<ICSettingEntry> list){
+	public CEntriesSet(List<ICSettingEntry> list) {
 		setEntries(list);
 	}
 
-	public CEntriesSet(ICSettingEntry entries[]){
+	public CEntriesSet(ICSettingEntry entries[]) {
 		setEntries(entries);
 	}
 
@@ -36,18 +36,18 @@ public class CEntriesSet {
 		return fEntriesMap.size();
 	}
 
-/*	public ICLanguageSettingEntry removeEntry(String name) {
-		ICLanguageSettingEntry entry = (ICLanguageSettingEntry)fMap.remove(name);
-		if(entry != null)
-			fList.remove(entry);
-		return entry;
-	}
-*/
+	/*	public ICLanguageSettingEntry removeEntry(String name) {
+			ICLanguageSettingEntry entry = (ICLanguageSettingEntry)fMap.remove(name);
+			if(entry != null)
+				fList.remove(entry);
+			return entry;
+		}
+	*/
 	public ICSettingEntry[] toArray() {
 		return fEntriesMap.values().toArray(new ICSettingEntry[fEntriesMap.size()]);
 	}
 
-	protected Object getKey(ICSettingEntry entry){
+	protected Object getKey(ICSettingEntry entry) {
 		return entry;
 	}
 
@@ -69,7 +69,7 @@ public class CEntriesSet {
 	public void setEntries(ICSettingEntry[] entries) {
 		clear();
 		for (ICSettingEntry entry : entries) {
-			if(entry != null){
+			if (entry != null) {
 				addEntry(entry);
 			}
 		}

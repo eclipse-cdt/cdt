@@ -35,41 +35,43 @@ import org.eclipse.core.runtime.Platform;
  * @since 1.0
  */
 abstract public class AbstractVMContext implements IVMContext {
-    protected final IVMNode fNode;
-    
-    public AbstractVMContext(IVMNode node) {
-        fNode = node;
-    }
-    
-    @Override
-	public IVMNode getVMNode() { return fNode; }
+	protected final IVMNode fNode;
 
-    @SuppressWarnings("unchecked")
+	public AbstractVMContext(IVMNode node) {
+		fNode = node;
+	}
+
 	@Override
-    public <T> T getAdapter(Class<T> adapter) {
-        // If the context implements the given adapter directly, it always takes
-        // precedence.
-        if (adapter.isInstance(this)) {
-            return (T)this;
-        }
-        
-        IVMProvider vmProvider = getVMNode().getVMProvider();
-        IVMAdapter vmAdapter = vmProvider.getVMAdapter();
-        if (adapter.isInstance(vmAdapter)) {
-            return (T)vmAdapter;
-        } else if (adapter.isInstance(vmProvider)) {
-            return (T)vmProvider;
-        } else if (adapter.isInstance(getVMNode())) {
-            return (T)getVMNode();
-        }
-        return Platform.getAdapterManager().getAdapter(this, adapter);
-    }
+	public IVMNode getVMNode() {
+		return fNode;
+	}
 
-    /** Deriving classes must override. */
-    @Override
-    abstract public boolean equals(Object obj);
-    
-    /** Deriving classes must override. */
-    @Override
-    abstract public int hashCode();
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		// If the context implements the given adapter directly, it always takes
+		// precedence.
+		if (adapter.isInstance(this)) {
+			return (T) this;
+		}
+
+		IVMProvider vmProvider = getVMNode().getVMProvider();
+		IVMAdapter vmAdapter = vmProvider.getVMAdapter();
+		if (adapter.isInstance(vmAdapter)) {
+			return (T) vmAdapter;
+		} else if (adapter.isInstance(vmProvider)) {
+			return (T) vmProvider;
+		} else if (adapter.isInstance(getVMNode())) {
+			return (T) getVMNode();
+		}
+		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
+	/** Deriving classes must override. */
+	@Override
+	abstract public boolean equals(Object obj);
+
+	/** Deriving classes must override. */
+	@Override
+	abstract public int hashCode();
 }

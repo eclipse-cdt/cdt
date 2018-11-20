@@ -25,11 +25,11 @@ public class XlcLRCompleteParser2Tests extends LRCompleteParser2Tests {
 	public static TestSuite suite() {
 		return suite(XlcLRCompleteParser2Tests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

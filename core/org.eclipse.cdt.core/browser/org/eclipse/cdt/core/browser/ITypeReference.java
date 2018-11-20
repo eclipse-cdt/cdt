@@ -63,13 +63,13 @@ public interface ITypeReference {
 	 * Returns the length.
 	 */
 	public int getLength();
-	
+
 	/**
 	 * Returns the CElements located at the stored offset and length,
 	 * or <code>null</code> if not found.
 	 */
 	public ICElement[] getCElements();
-	
+
 	/**
 	 * Returns a translation unit for this location.
 	 */
@@ -92,6 +92,6 @@ public interface ITypeReference {
 	 * given path.
 	 */
 	public IPath getRelativePath(IPath relativeToPath);
-    
-    boolean isLineNumber();
+
+	boolean isLineNumber();
 }

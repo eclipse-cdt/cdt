@@ -59,7 +59,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTExpressionStatement) {
 				IASTExpression expression = ((IASTExpressionStatement) stmt).getExpression();
-				if (hasNoEffect(expression) ) {
+				if (hasNoEffect(expression)) {
 					if (isLastExpressionInStatementExpression(expression))
 						return PROCESS_SKIP;
 					if (!shouldReportInMacro() && CxxAstUtils.isInMacro(expression))
@@ -89,7 +89,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 					if (parentStmtExpr instanceof IGNUASTCompoundStatementExpression) {
 						// Are we evaluating the last statement in the list?
 						IASTStatement childlist[] = ((IASTCompoundStatement) parentComp).getStatements();
-						if (stmt == childlist[childlist.length-1])
+						if (stmt == childlist[childlist.length - 1])
 							return true;
 					}
 				}
@@ -113,9 +113,9 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				if (usesOverloadedOperator(binExpr))
 					return false;
 				switch (binExpr.getOperator()) {
-					case IASTBinaryExpression.op_logicalOr:
-					case IASTBinaryExpression.op_logicalAnd:
-						return hasNoEffect(binExpr.getOperand1()) && hasNoEffect(binExpr.getOperand2());
+				case IASTBinaryExpression.op_logicalOr:
+				case IASTBinaryExpression.op_logicalAnd:
+					return hasNoEffect(binExpr.getOperand1()) && hasNoEffect(binExpr.getOperand2());
 				}
 				return true;
 			}
@@ -125,14 +125,14 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 					return false;
 				int operator = unaryExpr.getOperator();
 				switch (operator) {
-					case IASTUnaryExpression.op_postFixDecr:
-					case IASTUnaryExpression.op_prefixDecr:
-					case IASTUnaryExpression.op_postFixIncr:
-					case IASTUnaryExpression.op_prefixIncr:
-					case IASTUnaryExpression.op_throw:
-						return false;
-					case IASTUnaryExpression.op_bracketedPrimary:
-						return hasNoEffect(unaryExpr.getOperand());
+				case IASTUnaryExpression.op_postFixDecr:
+				case IASTUnaryExpression.op_prefixDecr:
+				case IASTUnaryExpression.op_postFixIncr:
+				case IASTUnaryExpression.op_prefixIncr:
+				case IASTUnaryExpression.op_throw:
+					return false;
+				case IASTUnaryExpression.op_bracketedPrimary:
+					return hasNoEffect(unaryExpr.getOperand());
 				}
 				return true;
 			}
@@ -147,7 +147,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_MACRO_ID, CheckersMessages.StatementHasNoEffectChecker_ParameterMacro, Boolean.TRUE);
+		addPreference(problem, PARAM_MACRO_ID, CheckersMessages.StatementHasNoEffectChecker_ParameterMacro,
+				Boolean.TRUE);
 		addListPreference(problem, PARAM_EXCEPT_ARG_LIST, CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}
@@ -165,22 +166,22 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 
 	public boolean isPossibleAssignment(IASTBinaryExpression expr) {
 		switch (expr.getOperator()) {
-			case IASTBinaryExpression.op_assign:
-			case IASTBinaryExpression.op_binaryAndAssign:
-			case IASTBinaryExpression.op_binaryOrAssign:
-			case IASTBinaryExpression.op_binaryXorAssign:
-			case IASTBinaryExpression.op_divideAssign:
-			case IASTBinaryExpression.op_minusAssign:
-			case IASTBinaryExpression.op_moduloAssign:
-			case IASTBinaryExpression.op_multiplyAssign:
-			case IASTBinaryExpression.op_plusAssign:
-			case IASTBinaryExpression.op_shiftLeftAssign:
-			case IASTBinaryExpression.op_shiftRightAssign:
-				return true;
+		case IASTBinaryExpression.op_assign:
+		case IASTBinaryExpression.op_binaryAndAssign:
+		case IASTBinaryExpression.op_binaryOrAssign:
+		case IASTBinaryExpression.op_binaryXorAssign:
+		case IASTBinaryExpression.op_divideAssign:
+		case IASTBinaryExpression.op_minusAssign:
+		case IASTBinaryExpression.op_moduloAssign:
+		case IASTBinaryExpression.op_multiplyAssign:
+		case IASTBinaryExpression.op_plusAssign:
+		case IASTBinaryExpression.op_shiftLeftAssign:
+		case IASTBinaryExpression.op_shiftRightAssign:
+			return true;
 		}
 		return false;
 	}
-	
+
 	private boolean usesOverloadedOperator(IASTBinaryExpression expr) {
 		if (expr instanceof IASTImplicitNameOwner) {
 			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) expr).getImplicitNames();
@@ -192,13 +193,14 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			// false negative than a false positive warning. 
 			if (operand1 == null || operand2 == null)
 				return true;
-			if (!(operand1.getExpressionType() instanceof IBasicType && operand2.getExpressionType() instanceof IBasicType)) {
+			if (!(operand1.getExpressionType() instanceof IBasicType
+					&& operand2.getExpressionType() instanceof IBasicType)) {
 				return true; // must be overloaded but parser could not find it
 			}
 		}
 		return false;
 	}
-	
+
 	private boolean usesOverloadedOperator(IASTUnaryExpression expr) {
 		if (expr instanceof IASTImplicitNameOwner) {
 			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) expr).getImplicitNames();

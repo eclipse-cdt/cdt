@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
@@ -18,27 +18,27 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class THMemberContentProvider implements IStructuredContentProvider {
-	private static final Object[] NO_CHILDREN= new Object[0];
-	private THHierarchyModel fModel; 
+	private static final Object[] NO_CHILDREN = new Object[0];
+	private THHierarchyModel fModel;
 
 	public THMemberContentProvider() {
 	}
-    
-    @Override
+
+	@Override
 	final public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    	fModel= (THHierarchyModel) newInput;
-    }
+		fModel = (THHierarchyModel) newInput;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-    	fModel= null;
-    }
+		fModel = null;
+	}
 
-    @Override
+	@Override
 	final public Object[] getElements(Object inputElement) {
-    	if (fModel == null) {
-    		return NO_CHILDREN;
-    	}
-        return fModel.getMembers();
-    }
+		if (fModel == null) {
+			return NO_CHILDREN;
+		}
+		return fModel.getMembers();
+	}
 }

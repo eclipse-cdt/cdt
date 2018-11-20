@@ -29,15 +29,15 @@ public class UserAndDiscoveredEntryDataSerializer extends CDataSerializer {
 
 	private static UserAndDiscoveredEntryDataSerializer fInstance;
 
-	public static CDataSerializer getDefault(){
-		if(fInstance == null)
+	public static CDataSerializer getDefault() {
+		if (fInstance == null)
 			fInstance = new UserAndDiscoveredEntryDataSerializer();
 		return fInstance;
 	}
 
 	@Override
 	public void loadEntries(CLanguageData data, ICStorageElement el) {
-		UserAndDiscoveredEntryLanguageData lData = (UserAndDiscoveredEntryLanguageData)data;
+		UserAndDiscoveredEntryLanguageData lData = (UserAndDiscoveredEntryLanguageData) data;
 
 		List<ICSettingEntry> entries = LanguageSettingEntriesSerializer.loadEntriesList(el);
 		EntryStore store = new EntryStore();
@@ -45,7 +45,7 @@ public class UserAndDiscoveredEntryDataSerializer extends CDataSerializer {
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		ICLanguageSettingEntry[] sortedEntries;
 		for (int kind : kinds) {
-			if(store.containsEntriesList(kind)){
+			if (store.containsEntriesList(kind)) {
 				sortedEntries = store.getEntries(kind);
 				lData.setEntriesToStore(kind, sortedEntries);
 			}
@@ -54,24 +54,24 @@ public class UserAndDiscoveredEntryDataSerializer extends CDataSerializer {
 		ICStorageElement[] children = el.getChildren();
 		for (ICStorageElement child : children) {
 			String name = child.getName();
-			if(DISABLED_DISCOVERED_ENTRIES.equals(name)){
+			if (DISABLED_DISCOVERED_ENTRIES.equals(name)) {
 				loadDisabledEntriesInfo(lData, child);
 			}
 		}
 	}
 
-	protected void loadDisabledEntriesInfo(UserAndDiscoveredEntryLanguageData lData, ICStorageElement el){
+	protected void loadDisabledEntriesInfo(UserAndDiscoveredEntryLanguageData lData, ICStorageElement el) {
 		ICStorageElement[] children = el.getChildren();
 		for (ICStorageElement child : children) {
 			String name = child.getName();
-			if(NAME.equals(name)){
+			if (NAME.equals(name)) {
 				String tmp = child.getAttribute(KIND);
 				int kind = LanguageSettingEntriesSerializer.stringToKind(tmp);
-				if(kind != 0){
+				if (kind != 0) {
 					tmp = child.getAttribute(VALUE);
-					if(tmp != null){
+					if (tmp != null) {
 						Set<String> set = lData.getDisabledSet(kind);
-						if(set == null)
+						if (set == null)
 							set = new HashSet<String>();
 						set.add(tmp);
 						lData.setDisabledSet(kind, set);
@@ -83,12 +83,12 @@ public class UserAndDiscoveredEntryDataSerializer extends CDataSerializer {
 
 	@Override
 	public void storeEntries(CLanguageData data, ICStorageElement el) {
-		UserAndDiscoveredEntryLanguageData lData = (UserAndDiscoveredEntryLanguageData)data;
+		UserAndDiscoveredEntryLanguageData lData = (UserAndDiscoveredEntryLanguageData) data;
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		ICLanguageSettingEntry[] sortedEntries;
 		for (int kind : kinds) {
 			sortedEntries = lData.getEntriesFromStore(kind);
-			if(sortedEntries != null && sortedEntries.length != 0){
+			if (sortedEntries != null && sortedEntries.length != 0) {
 				LanguageSettingEntriesSerializer.serializeEntries(sortedEntries, el);
 			}
 		}
@@ -98,11 +98,11 @@ public class UserAndDiscoveredEntryDataSerializer extends CDataSerializer {
 		storeDisabledEntriesInfo(lData, disabledNamesEl);
 	}
 
-	protected void storeDisabledEntriesInfo(UserAndDiscoveredEntryLanguageData lData, ICStorageElement el){
+	protected void storeDisabledEntriesInfo(UserAndDiscoveredEntryLanguageData lData, ICStorageElement el) {
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		for (int kind : kinds) {
 			Set<String> set = lData.getDisabledSet(kind);
-			if(set != null && set.size() != 0){
+			if (set != null && set.size() != 0) {
 				for (String string : set) {
 					ICStorageElement child = el.createChild(NAME);
 					child.setAttribute(KIND, LanguageSettingEntriesSerializer.kindToString(kind));

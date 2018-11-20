@@ -35,7 +35,7 @@ public class REDDocument extends AbstractDocument {
 	public void dispose() {
 		ITextStore store = getStore();
 		if (store instanceof REDTextStore) {
-			((REDTextStore)store).dispose();
+			((REDTextStore) store).dispose();
 			setTextStore(new StringTextStore());
 			getTracker().set(""); //$NON-NLS-1$
 		}

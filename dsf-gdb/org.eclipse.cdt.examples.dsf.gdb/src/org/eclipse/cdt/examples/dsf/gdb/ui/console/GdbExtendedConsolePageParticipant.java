@@ -44,7 +44,7 @@ public class GdbExtendedConsolePageParticipant implements IConsolePageParticipan
 		if (fConsole instanceof GdbBasicCliConsole) {
 			action = new GdbExtendedSpecialBackgroundToggle(fConsole);
 		} else if (fPage instanceof GdbFullCliConsolePage) {
-			ITerminalViewControl terminalControl = ((GdbFullCliConsolePage)fPage).getTerminalViewControl();
+			ITerminalViewControl terminalControl = ((GdbFullCliConsolePage) fPage).getTerminalViewControl();
 			action = new GdbExtendedInfoThreadsAction(terminalControl);
 		}
 		toolBarManager.appendToGroup(IConsoleConstants.OUTPUT_GROUP, action);

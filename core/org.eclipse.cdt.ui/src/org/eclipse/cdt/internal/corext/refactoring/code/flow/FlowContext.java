@@ -46,19 +46,19 @@ public class FlowContext extends LocalVariableIndex {
 
 	public FlowContext(IASTFunctionDefinition functionDefinition) {
 		super(functionDefinition);
-		fExceptionStack= new ArrayList<ICPPASTCatchHandler[]>(3);
+		fExceptionStack = new ArrayList<ICPPASTCatchHandler[]>(3);
 	}
 
 	public void setConsiderAccessMode(boolean b) {
-		fConsiderAccessMode= b;
+		fConsiderAccessMode = b;
 	}
 
 	public void setComputeMode(ComputeMode mode) {
-		fComputeMode= mode;
+		fComputeMode = mode;
 	}
 
 	void setLoopReentranceMode(boolean b) {
-		fLoopReentranceMode= b;
+		fLoopReentranceMode = b;
 	}
 
 	int getArrayLength() {
@@ -99,7 +99,7 @@ public class FlowContext extends LocalVariableIndex {
 		int index = getIndexFromLocal(localVariable);
 		if (index >= 0) {
 			if (fLocals == null)
-				fLocals= new IVariable[getNumLocalVariables()];
+				fLocals = new IVariable[getNumLocalVariables()];
 			fLocals[index] = localVariable;
 		}
 	}
@@ -121,7 +121,7 @@ public class FlowContext extends LocalVariableIndex {
 			for (ICPPASTCatchHandler catchHandler : catchHandlers) {
 				if (catchHandler.isCatchAll())
 					return true;
-				IASTDeclaration caughtException= catchHandler.getDeclaration();
+				IASTDeclaration caughtException = catchHandler.getDeclaration();
 				if (caughtException instanceof IASTSimpleDeclaration) {
 					IASTDeclarator[] declarators = ((IASTSimpleDeclaration) caughtException).getDeclarators();
 					IType caughtType = CPPVisitor.createType(declarators[0]);

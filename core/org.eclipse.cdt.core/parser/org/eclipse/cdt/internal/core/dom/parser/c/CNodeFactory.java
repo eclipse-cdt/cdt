@@ -137,7 +137,8 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	}
 
 	@Override
-	public IASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript) {
+	public IASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr,
+			IASTExpression subscript) {
 		return new CASTArraySubscriptExpression(arrayExpr, subscript);
 	}
 
@@ -150,6 +151,7 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	public IASTAttribute newAttribute(char[] name, IASTToken argumentClause) {
 		return new CASTAttribute(name, argumentClause);
 	}
+
 	@Override
 	public IASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2) {
 		return new CASTBinaryExpression(op, expr1, expr2);
@@ -184,7 +186,8 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	}
 
 	@Override
-	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive, IASTExpression negative) {
+	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive,
+			IASTExpression negative) {
 		return new CASTConditionalExpression(condition, positive, negative);
 	}
 
@@ -281,18 +284,19 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	@Deprecated
 	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList) {
 		CASTFunctionCallExpression result = new CASTFunctionCallExpression(idExpr, null);
-        if (argList == null) {
-        	result.setArguments(null);
-        } else if (argList instanceof IASTExpressionList) {
-        	result.setArguments(((IASTExpressionList) argList).getExpressions());
-        } else {
-        	result.setArguments(new IASTExpression[] {argList});
-        }
+		if (argList == null) {
+			result.setArguments(null);
+		} else if (argList instanceof IASTExpressionList) {
+			result.setArguments(((IASTExpressionList) argList).getExpressions());
+		} else {
+			result.setArguments(new IASTExpression[] { argList });
+		}
 		return result;
 	}
 
 	@Override
-	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTInitializerClause[] arguments) {
+	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr,
+			IASTInitializerClause[] arguments) {
 		return new CASTFunctionCallExpression(idExpr, arguments);
 	}
 
@@ -308,7 +312,8 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	}
 
 	@Override
-	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement) {
+	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(
+			IASTCompoundStatement compoundStatement) {
 		return new CASTCompoundStatementExpression(compoundStatement);
 	}
 
@@ -339,7 +344,7 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 
 	@Override
 	@Deprecated
-	public  org.eclipse.cdt.core.dom.ast.IASTInitializerExpression newInitializerExpression(IASTExpression expression) {
+	public org.eclipse.cdt.core.dom.ast.IASTInitializerExpression newInitializerExpression(IASTExpression expression) {
 		return new CASTInitializerExpression(expression);
 	}
 
@@ -349,7 +354,8 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	}
 
 	@Override
-	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames, IASTDeclaration[] parameterDeclarations) {
+	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames,
+			IASTDeclaration[] parameterDeclarations) {
 		return new CASTKnRFunctionDeclarator(parameterNames, parameterDeclarations);
 	}
 
@@ -430,7 +436,8 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 
 	@Override
 	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression) {
+	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(
+			IASTExpression typeofExpression) {
 		return new GCCASTSimpleDeclSpecifier(typeofExpression);
 	}
 
@@ -482,7 +489,8 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	}
 
 	@Override
-	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
+	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId,
+			IASTInitializer initializer) {
 		return new CASTTypeIdInitializerExpression(typeId, initializer);
 	}
 

@@ -43,14 +43,14 @@ public class TemplateParameterWriter extends NodeWriter {
 	public TemplateParameterWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
-	
+
 	protected void writeTemplateParameter(ICPPASTTemplateParameter parameter) {
 		if (parameter instanceof ICPPASTParameterDeclaration) {
-			((IASTParameterDeclaration)((ICPPASTParameterDeclaration) parameter)).accept(visitor);
+			((IASTParameterDeclaration) ((ICPPASTParameterDeclaration) parameter)).accept(visitor);
 		} else if (parameter instanceof ICPPASTSimpleTypeTemplateParameter) {
 			ICPPASTSimpleTypeTemplateParameter simple = (ICPPASTSimpleTypeTemplateParameter) parameter;
 			writeTemplateParameter(simple.getParameterType() == ICPPASTSimpleTypeTemplateParameter.st_class,
-			simple.isParameterPack(), simple.getName(), simple.getDefaultType());
+					simple.isParameterPack(), simple.getName(), simple.getDefaultType());
 		} else if (parameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
 			writeTemplatedTypeTemplateParameter((ICPPASTTemplatedTypeTemplateParameter) parameter);
 		}
@@ -67,7 +67,8 @@ public class TemplateParameterWriter extends NodeWriter {
 				templated.isParameterPack(), templated.getName(), templated.getDefaultValue());
 	}
 
-	private void writeTemplateParameter(boolean usesClass, boolean isVariadic, IASTName name, IASTNode defaultArgument) {
+	private void writeTemplateParameter(boolean usesClass, boolean isVariadic, IASTName name,
+			IASTNode defaultArgument) {
 		scribe.print(usesClass ? Keywords.CLASS : Keywords.TYPENAME);
 		if (isVariadic) {
 			scribe.print(VAR_ARGS);
@@ -75,7 +76,7 @@ public class TemplateParameterWriter extends NodeWriter {
 		scribe.printSpace();
 		visitNodeIfNotNull(name);
 
-		if (defaultArgument != null){
+		if (defaultArgument != null) {
 			scribe.print(EQUALS);
 			defaultArgument.accept(visitor);
 		}

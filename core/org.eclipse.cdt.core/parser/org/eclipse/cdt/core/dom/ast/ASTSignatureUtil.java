@@ -198,14 +198,14 @@ public class ASTSignatureUtil {
 							needSpace = true;
 						}
 						if (ptr.isVolatile()) {
-							if (needSpace) { 
+							if (needSpace) {
 								result.append(SPACE);
 							}
 							result.append(Keywords.VOLATILE);
 							needSpace = true;
 						}
 						if (ptr.isRestrict()) {
-							if (needSpace) { 
+							if (needSpace) {
 								result.append(SPACE);
 							}
 							result.append(Keywords.RESTRICT);
@@ -407,8 +407,7 @@ public class ASTSignatureUtil {
 
 		// append the declarator's signature (without specifier)
 		String decltorString = getDeclaratorSignature(declarator);
-		if (specString != null && specString.length() > 0 && decltorString != null
-				&& decltorString.length() > 0) {
+		if (specString != null && specString.length() > 0 && decltorString != null && decltorString.length() > 0) {
 			result.append(SPACE);
 		}
 		result.append(decltorString);
@@ -549,7 +548,7 @@ public class ASTSignatureUtil {
 				result.append(Keywords.VIRTUAL);
 				needSpace = true;
 			}
-		} 
+		}
 
 		// handle complex cases
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
@@ -845,43 +844,43 @@ public class ASTSignatureUtil {
 	 * @param expression
 	 * @return a string representation for the given IASTExpression
 	 */
-	public static String getExpressionString( IASTExpression expression ){
+	public static String getExpressionString(IASTExpression expression) {
 		if (expression instanceof IASTArraySubscriptExpression)
-			return getArraySubscriptExpression((IASTArraySubscriptExpression)expression);
+			return getArraySubscriptExpression((IASTArraySubscriptExpression) expression);
 		else if (expression instanceof IASTBinaryExpression)
-			return getBinaryExpression( (IASTBinaryExpression)expression );
+			return getBinaryExpression((IASTBinaryExpression) expression);
 		else if (expression instanceof IASTCastExpression)
-			return getCastExpression((IASTCastExpression)expression);
+			return getCastExpression((IASTCastExpression) expression);
 		else if (expression instanceof IASTConditionalExpression)
-			return getConditionalExpression((IASTConditionalExpression)expression);
+			return getConditionalExpression((IASTConditionalExpression) expression);
 		else if (expression instanceof IASTExpressionList)
-			return getExpressionList((IASTExpressionList)expression);
+			return getExpressionList((IASTExpressionList) expression);
 		else if (expression instanceof IASTFieldReference)
-			return getFieldReference((IASTFieldReference)expression);
+			return getFieldReference((IASTFieldReference) expression);
 		else if (expression instanceof IASTFunctionCallExpression)
-			return getFunctionCallExpression((IASTFunctionCallExpression)expression);
+			return getFunctionCallExpression((IASTFunctionCallExpression) expression);
 		else if (expression instanceof IASTIdExpression)
-			return getIdExpression((IASTIdExpression)expression);
+			return getIdExpression((IASTIdExpression) expression);
 		else if (expression instanceof IASTLiteralExpression)
-			return getLiteralExpression((IASTLiteralExpression)expression);
+			return getLiteralExpression((IASTLiteralExpression) expression);
 		else if (expression instanceof IASTTypeIdExpression)
-			return getTypeIdExpression( (IASTTypeIdExpression)expression );
+			return getTypeIdExpression((IASTTypeIdExpression) expression);
 		else if (expression instanceof IASTUnaryExpression)
-			return getUnaryExpression( (IASTUnaryExpression)expression );
+			return getUnaryExpression((IASTUnaryExpression) expression);
 		else if (expression instanceof ICASTTypeIdInitializerExpression)
-			return getTypeIdInitializerExpression((ICASTTypeIdInitializerExpression)expression);
+			return getTypeIdInitializerExpression((ICASTTypeIdInitializerExpression) expression);
 		else if (expression instanceof ICPPASTDeleteExpression)
-			return getDeleteExpression((ICPPASTDeleteExpression)expression);
+			return getDeleteExpression((ICPPASTDeleteExpression) expression);
 		else if (expression instanceof ICPPASTNewExpression)
-			return getNewExpression((ICPPASTNewExpression)expression);
+			return getNewExpression((ICPPASTNewExpression) expression);
 		else if (expression instanceof ICPPASTSimpleTypeConstructorExpression)
-			return getSimpleTypeConstructorExpression((ICPPASTSimpleTypeConstructorExpression)expression);
+			return getSimpleTypeConstructorExpression((ICPPASTSimpleTypeConstructorExpression) expression);
 		else if (expression instanceof IGNUASTCompoundStatementExpression)
-			return getCompoundStatementExpression((IGNUASTCompoundStatementExpression)expression);
+			return getCompoundStatementExpression((IGNUASTCompoundStatementExpression) expression);
 		else if (expression instanceof ICPPASTPackExpansionExpression)
 			return getPackExpansionExpression((ICPPASTPackExpansionExpression) expression);
 
-		return getEmptyExpression( expression );
+		return getEmptyExpression(expression);
 	}
 
 	private static String getArraySubscriptExpression(IASTArraySubscriptExpression expression) {
@@ -935,7 +934,7 @@ public class ASTSignatureUtil {
 		result.append(getExpressionString(expression.getFunctionNameExpression()));
 		result.append(Keywords.cpLPAREN);
 		IASTInitializerClause[] clauses = expression.getArguments();
-		for (int i= 0; i < clauses.length; i++) {
+		for (int i = 0; i < clauses.length; i++) {
 			if (i > 0) {
 				result.append(COMMA_SPACE);
 			}
@@ -1166,7 +1165,7 @@ public class ASTSignatureUtil {
 				opString = Keywords.TYPEID;
 				break;
 			}
-		} 
+		}
 		if (!opString.equals(EMPTY_STRING))
 			return opString;
 
@@ -1367,8 +1366,8 @@ public class ASTSignatureUtil {
 	 * Returns the String representation of the pack expansion expression.
 	 */
 	private static String getPackExpansionExpression(ICPPASTPackExpansionExpression expression) {
-		return new StringBuilder().append(getExpressionString(expression.getPattern())).append(
-				Keywords.cpELLIPSIS).toString();
+		return new StringBuilder().append(getExpressionString(expression.getPattern())).append(Keywords.cpELLIPSIS)
+				.toString();
 	}
 
 	public static String getProblemMessage(int problemID, String detail) {

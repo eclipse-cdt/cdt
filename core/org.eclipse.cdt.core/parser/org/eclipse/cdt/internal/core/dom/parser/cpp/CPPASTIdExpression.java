@@ -42,7 +42,7 @@ public class CPPASTIdExpression extends ASTNode
 	private ICPPEvaluation fEvaluation;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTIdExpression() {
+	public CPPASTIdExpression() {
 	}
 
 	public CPPASTIdExpression(IASTName name) {
@@ -62,18 +62,18 @@ public class CPPASTIdExpression extends ASTNode
 
 	@Override
 	public IASTName getName() {
-        return fName;
-    }
+		return fName;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.fName = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.fName = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(ID_NAME);
 		}
-    }
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -84,30 +84,37 @@ public class CPPASTIdExpression extends ASTNode
 		return fImplicitDestructorNames;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (fName != null && !fName.accept(action)) return false;
+		if (fName != null && !fName.accept(action))
+			return false;
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
@@ -134,7 +141,7 @@ public class CPPASTIdExpression extends ASTNode
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			fEvaluation= EvalID.create(this);
+			fEvaluation = EvalID.create(this);
 		}
 		return fEvaluation;
 	}
@@ -143,9 +150,9 @@ public class CPPASTIdExpression extends ASTNode
 	public IType getExpressionType() {
 		CPPSemantics.pushLookupPoint(this);
 		try {
-			IType type= getEvaluation().getType();
+			IType type = getEvaluation().getType();
 			if (type instanceof FunctionSetType) {
-				IBinding binding= fName.resolveBinding();
+				IBinding binding = fName.resolveBinding();
 				if (binding instanceof IFunction) {
 					return SemanticUtil.mapToAST(((IFunction) binding).getType());
 				}
@@ -164,6 +171,6 @@ public class CPPASTIdExpression extends ASTNode
 
 	@Override
 	public ValueCategory getValueCategory() {
-    	return CPPEvaluation.getValueCategory(this);
+		return CPPEvaluation.getValueCategory(this);
 	}
 }

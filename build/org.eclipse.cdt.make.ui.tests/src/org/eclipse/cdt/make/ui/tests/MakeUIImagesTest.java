@@ -38,7 +38,8 @@ public class MakeUIImagesTest {
 	// sample image (IMG_ETOOL_MAKEFILE) from MakeUIPlugin bundle
 	private static final String KEY_ETOOL_MAKEFILE = MakeUIImages.IMG_ETOOL_MAKEFILE;
 	private static final IPath PATH_ETOOL_MAKEFILE = new Path("icons/etool16/makefile.gif");
-	private static final URL URL_ETOOL_MAKEFILE= FileLocator.find(MakeUIPlugin.getDefault().getBundle(), PATH_ETOOL_MAKEFILE, null);
+	private static final URL URL_ETOOL_MAKEFILE = FileLocator.find(MakeUIPlugin.getDefault().getBundle(),
+			PATH_ETOOL_MAKEFILE, null);
 
 	/**
 	 * Handling of missing keys.
@@ -93,7 +94,8 @@ public class MakeUIImagesTest {
 			String[] overlayKeys = new String[5];
 			overlayKeys[IDecoration.BOTTOM_LEFT] = MakeUIImages.IMG_OVR_AUTOMATIC;
 			Image imageOver1 = MakeUIImages.getImageOverlaid(KEY_ETOOL_MAKEFILE, overlayKeys);
-			Image imageOver2 = MakeUIImages.getImageOverlaid(KEY_ETOOL_MAKEFILE, MakeUIImages.IMG_OVR_AUTOMATIC, IDecoration.BOTTOM_LEFT);
+			Image imageOver2 = MakeUIImages.getImageOverlaid(KEY_ETOOL_MAKEFILE, MakeUIImages.IMG_OVR_AUTOMATIC,
+					IDecoration.BOTTOM_LEFT);
 			assertSame(imageOver1, imageOver2);
 		}
 	}
@@ -109,12 +111,15 @@ public class MakeUIImagesTest {
 		for (Field field : fields) {
 			String name = field.getName();
 			if (name.startsWith("IMG_")) {
-				assertEquals("MakeUIImages."+name+" is not a String", String.class, field.getType());
-				assertTrue("MakeUIImages."+name+" is not a static field", (field.getModifiers() & Modifier.STATIC) != 0);
-				assertTrue("MakeUIImages."+name+" is not a public field", (field.getModifiers() & Modifier.PUBLIC) != 0);
+				assertEquals("MakeUIImages." + name + " is not a String", String.class, field.getType());
+				assertTrue("MakeUIImages." + name + " is not a static field",
+						(field.getModifiers() & Modifier.STATIC) != 0);
+				assertTrue("MakeUIImages." + name + " is not a public field",
+						(field.getModifiers() & Modifier.PUBLIC) != 0);
 				String imageKey = (String) field.get(null);
 				ImageDescriptor descriptor = MakeUIImages.getImageDescriptor(imageKey);
-				assertTrue("Missing image MakeUIImages."+name+"=\""+imageKey+"\"", descriptor!=MISSING_IMAGE_DESCRIPTOR);
+				assertTrue("Missing image MakeUIImages." + name + "=\"" + imageKey + "\"",
+						descriptor != MISSING_IMAGE_DESCRIPTOR);
 			}
 		}
 	}

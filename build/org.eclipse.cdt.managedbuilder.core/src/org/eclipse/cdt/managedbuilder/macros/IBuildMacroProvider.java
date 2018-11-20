@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IBuildMacroProvider{
+public interface IBuildMacroProvider {
 	public final static int CONTEXT_FILE = 1;
 	public final static int CONTEXT_OPTION = 2;
 	public final static int CONTEXT_CONFIGURATION = 3;
@@ -59,48 +59,36 @@ public interface IBuildMacroProvider{
 	 * @param includeParentContexts specifies whether lower-precedence context macros should 
 	 *     be included
 	 */
-	public IBuildMacro getMacro(String macroName,
-					int contextType, 
-					Object contextData, 
-					boolean includeParentContexts);
+	public IBuildMacro getMacro(String macroName, int contextType, Object contextData, boolean includeParentContexts);
 
 	/**
 	 * 
 	 * @return the array of the IBuildMacro representing all available macros 
 	 */
-	public IBuildMacro[] getMacros(int contextType, 
-					Object contextData, 
-					boolean includeParentContexts);
+	public IBuildMacro[] getMacros(int contextType, Object contextData, boolean includeParentContexts);
 
+	public ICdtVariable getVariable(String macroName, int contextType, Object contextData,
+			boolean includeParentContexts);
 
-	public ICdtVariable getVariable(String macroName,
-				int contextType, 
-				Object contextData, 
-				boolean includeParentContexts);
-	
 	/**
 	* 
 	* @return the array of the IBuildMacro representing all available macros 
 	*/
-	public ICdtVariable[] getVariables(int contextType, 
-				Object contextData, 
-				boolean includeParentContexts);
+	public ICdtVariable[] getVariables(int contextType, Object contextData, boolean includeParentContexts);
 
 	/**
 	 * This method is defined to be used primarily by the UI classes and should not be used by the
 	 * tool-integrator
 	 * @return the array of the provider-internal suppliers for the given context
 	 */
-	public IBuildMacroSupplier[] getSuppliers(int contextType, 
-					Object contextData);
-
+	public IBuildMacroSupplier[] getSuppliers(int contextType, Object contextData);
 
 	/**
 	 * 
 	 * converts StringList value into String of the following format:
 	 * "<value_1>< listDelimiter ><value_2>< listDelimiter > ... <value_n>"
 	 */
-	public String convertStringListToString (String value[], String listDelimiter);
+	public String convertStringListToString(String value[], String listDelimiter);
 
 	/**
 	 * 
@@ -116,11 +104,8 @@ public interface IBuildMacroProvider{
 	 * @param contextType context from which the macro search should be started
 	 * @param contextData context data
 	 */
-	public String resolveValue(String value, 
-					String nonexistentMacrosValue,
-					String listDelimiter, 
-					int contextType, 
-					Object contextData) throws BuildMacroException;
+	public String resolveValue(String value, String nonexistentMacrosValue, String listDelimiter, int contextType,
+			Object contextData) throws BuildMacroException;
 
 	/**
 	 * 
@@ -128,11 +113,8 @@ public interface IBuildMacroProvider{
 	 * otherwise throws the BuildMacroException exception
 	 * @see #isStringListValue
 	 */
-	public String[] resolveStringListValue(String value, 
-					String nonexistentMacrosValue,
-					String listDelimiter,
-					int contextType, 
-					Object contextData) throws BuildMacroException;
+	public String[] resolveStringListValue(String value, String nonexistentMacrosValue, String listDelimiter,
+			int contextType, Object contextData) throws BuildMacroException;
 
 	/**
 	 * 
@@ -140,11 +122,8 @@ public interface IBuildMacroProvider{
 	 * 
 	 * @see #isStringListValue
 	 */
-	public String[] resolveStringListValues(String value[], 
-					String nonexistentMacrosValue,
-					String listDelimiter,
-					int contextType, 
-					Object contextData) throws BuildMacroException;
+	public String[] resolveStringListValues(String value[], String nonexistentMacrosValue, String listDelimiter,
+			int contextType, Object contextData) throws BuildMacroException;
 
 	/**
 	 * 
@@ -166,11 +145,8 @@ public interface IBuildMacroProvider{
 	 * @param contextType context from which the macro search should be started
 	 * @param contextData context data
 	 */
-	public String resolveValueToMakefileFormat(String value, 
-					String nonexistentMacrosValue,
-					String listDelimiter, 
-					int contextType, 
-					Object contextData) throws BuildMacroException;
+	public String resolveValueToMakefileFormat(String value, String nonexistentMacrosValue, String listDelimiter,
+			int contextType, Object contextData) throws BuildMacroException;
 
 	/**
 	 * 
@@ -181,11 +157,8 @@ public interface IBuildMacroProvider{
 	 * environment macro references unresolved and converted to the buildfile format otherwise
 	 * @see #isStringListValue
 	 */
-	public String[] resolveStringListValueToMakefileFormat(String value, 
-					String nonexistentMacrosValue,
-					String listDelimiter,
-					int contextType, 
-					Object contextData) throws BuildMacroException;
+	public String[] resolveStringListValueToMakefileFormat(String value, String nonexistentMacrosValue,
+			String listDelimiter, int contextType, Object contextData) throws BuildMacroException;
 
 	/**
 	 * resolves macros in the array of string-list values
@@ -193,20 +166,15 @@ public interface IBuildMacroProvider{
 	 * 
 	 * @see #isStringListValue
 	 */
-	public String[] resolveStringListValuesToMakefileFormat(String value[], 
-					String nonexistentMacrosValue,
-					String listDelimiter,
-					int contextType, 
-					Object contextData) throws BuildMacroException;
-
+	public String[] resolveStringListValuesToMakefileFormat(String value[], String nonexistentMacrosValue,
+			String listDelimiter, int contextType, Object contextData) throws BuildMacroException;
 
 	/**
 	 * 
 	 * @return true if the specified expression can be treated as StringList
 	 * 1. The string value is "${<some_StringList_Macro_name>}"
 	 */
-	public boolean isStringListValue(String value, int contextType, Object contextData)
-							throws BuildMacroException;
+	public boolean isStringListValue(String value, int contextType, Object contextData) throws BuildMacroException;
 
 	/**
 	 * 
@@ -219,7 +187,5 @@ public interface IBuildMacroProvider{
 	 * the macro inconsistencies (see also the "User interface for viewing and editing Build Macros"
 	 * section of this design)
 	 */
-	public void checkIntegrity(int contextType,
-					Object contextData) throws BuildMacroException;
+	public void checkIntegrity(int contextType, Object contextData) throws BuildMacroException;
 }
-

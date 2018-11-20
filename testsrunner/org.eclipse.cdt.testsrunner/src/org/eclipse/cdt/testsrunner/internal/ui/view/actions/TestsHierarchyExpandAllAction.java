@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 
@@ -24,7 +23,6 @@ public class TestsHierarchyExpandAllAction extends Action {
 
 	private AbstractTreeViewer testsHierarchyTreeViewer;
 
-
 	public TestsHierarchyExpandAllAction(AbstractTreeViewer testsHierarchyTreeViewer) {
 		setText(ActionsMessages.TestsHierarchyExpandAllAction_text);
 		setToolTipText(ActionsMessages.TestsHierarchyExpandAllAction_tooltip);
@@ -32,9 +30,8 @@ public class TestsHierarchyExpandAllAction extends Action {
 	}
 
 	@Override
-	public void run(){
+	public void run() {
 		testsHierarchyTreeViewer.expandAll();
 	}
-	
-}
 
+}

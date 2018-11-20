@@ -85,8 +85,7 @@ public class ExclusionInstance {
 		String resourcePath = instanceElement.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
 
 		if (resourcePath != null) {
-			newInstance.fResource = ResourcesPlugin.getWorkspace().getRoot()
-					.findMember(resourcePath);
+			newInstance.fResource = ResourcesPlugin.getWorkspace().getRoot().findMember(resourcePath);
 		}
 
 		// load display string
@@ -172,8 +171,7 @@ public class ExclusionInstance {
 
 		// persist resource path
 		if (fResource != null) {
-			instanceElement.setAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME, fResource.getFullPath()
-					.toString());
+			instanceElement.setAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME, fResource.getFullPath().toString());
 		}
 
 		// persist display string

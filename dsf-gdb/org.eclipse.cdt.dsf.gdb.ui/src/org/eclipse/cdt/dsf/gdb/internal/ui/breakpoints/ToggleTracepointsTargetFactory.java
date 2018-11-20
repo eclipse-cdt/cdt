@@ -45,7 +45,7 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 	 *       for the editor.
 	 */
 	public static final String TOGGLE_C_TRACEPOINT_TARGET_ID = CDebugUIPlugin.PLUGIN_ID + ".toggleCTracepointTarget"; //$NON-NLS-1$
-	
+
 	private static final Set<String> TOGGLE_TARGET_IDS_ALL = new HashSet<String>(1);
 	static {
 		TOGGLE_TARGET_IDS_ALL.add(TOGGLE_C_TRACEPOINT_TARGET_ID);
@@ -56,7 +56,7 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 	public ToggleTracepointsTargetFactory() {
 	}
 
-    @Override
+	@Override
 	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
 		if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
 			return fgDisassemblyToggleTracepointsTarget;
@@ -64,12 +64,12 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 		return null;
 	}
 
-    @Override
+	@Override
 	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
 		return null;
 	}
 
-    @Override
+	@Override
 	public String getToggleTargetDescription(String targetID) {
 		if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
 			return Messages.ToggleTracepointsTargetFactory_description;
@@ -77,7 +77,7 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 		return null;
 	}
 
-    @Override
+	@Override
 	public String getToggleTargetName(String targetID) {
 		if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
 			return Messages.ToggleTracepointsTargetFactory_name;
@@ -85,7 +85,7 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 		return null;
 	}
 
-    @Override
+	@Override
 	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
 		if (part instanceof IDisassemblyPart) {
 			return TOGGLE_TARGET_IDS_ALL;

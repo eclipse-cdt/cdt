@@ -28,9 +28,9 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationConte
  */
 public interface IDocumentPresentation extends IPresentationContext {
 
-    /**
-     * Temporary attribute for testing.
-     */
-    public static final String ATTR_LINE_LABEL = "lineLabel"; //$NON-NLS-1$
+	/**
+	 * Temporary attribute for testing.
+	 */
+	public static final String ATTR_LINE_LABEL = "lineLabel"; //$NON-NLS-1$
 
 }

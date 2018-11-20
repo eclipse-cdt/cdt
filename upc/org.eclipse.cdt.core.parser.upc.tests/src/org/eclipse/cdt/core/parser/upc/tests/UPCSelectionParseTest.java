@@ -19,10 +19,13 @@ import org.eclipse.cdt.core.model.ILanguage;
 
 public class UPCSelectionParseTest extends LRSelectionParseTest {
 
-	public UPCSelectionParseTest() { }
-	public UPCSelectionParseTest(String name) { super(name); }
+	public UPCSelectionParseTest() {
+	}
 
-	
+	public UPCSelectionParseTest(String name) {
+		super(name);
+	}
+
 	@Override
 	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();

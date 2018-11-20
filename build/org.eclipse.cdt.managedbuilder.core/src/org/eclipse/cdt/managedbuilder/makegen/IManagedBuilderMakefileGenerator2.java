@@ -17,9 +17,8 @@ import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public interface IManagedBuilderMakefileGenerator2 extends
-		IManagedBuilderMakefileGenerator {
+public interface IManagedBuilderMakefileGenerator2 extends IManagedBuilderMakefileGenerator {
 
-	public void initialize(int buildKind, IConfiguration cfg, IBuilder builder, IProgressMonitor monitor);	
+	public void initialize(int buildKind, IConfiguration cfg, IBuilder builder, IProgressMonitor monitor);
 
 }

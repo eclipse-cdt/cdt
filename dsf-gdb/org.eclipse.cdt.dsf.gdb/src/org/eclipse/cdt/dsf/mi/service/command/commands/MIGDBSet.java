@@ -24,16 +24,15 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *     -gdb-set
  * 
  */
-public class MIGDBSet extends MICommand<MIInfo> 
-{
-    public MIGDBSet(IDMContext ctx, String[] params) {
-        super(ctx, "-gdb-set", null, params); //$NON-NLS-1$
-    }
+public class MIGDBSet extends MICommand<MIInfo> {
+	public MIGDBSet(IDMContext ctx, String[] params) {
+		super(ctx, "-gdb-set", null, params); //$NON-NLS-1$
+	}
 
-    /**
+	/**
 	 * @since 5.2
 	 */
-    public MIGDBSet(IDMContext ctx, String[] params, Function<String, Adjustable> paramToAdjustable) {
-        super(ctx, "-gdb-set", null, params, paramToAdjustable); //$NON-NLS-1$
-    }
+	public MIGDBSet(IDMContext ctx, String[] params, Function<String, Adjustable> paramToAdjustable) {
+		super(ctx, "-gdb-set", null, params, paramToAdjustable); //$NON-NLS-1$
+	}
 }

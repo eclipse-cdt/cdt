@@ -27,10 +27,10 @@ public class WindowsRegistry {
 
 	private static boolean failed = false;
 	private static WindowsRegistry registry;
-	
+
 	private WindowsRegistry() {
 	}
-	
+
 	public static WindowsRegistry getRegistry() {
 		if (registry == null && !failed) {
 			if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -44,10 +44,10 @@ public class WindowsRegistry {
 			} else
 				failed = true;
 		}
-		
+
 		return registry;
 	}
-	
+
 	/**
 	 * Gets the registry value for the subkey of HKEY_LOCAL_MACHINE with the
 	 * given name. If problems occur, like the name is not found, null is returned.
@@ -69,7 +69,7 @@ public class WindowsRegistry {
 	 * @return name of registry value or null if not found
 	 */
 	public native String getLocalMachineValueName(String subkey, int index);
-	
+
 	/**
 	 * Given a subkey of HKEY_LOCAL_MACHINE, and an index (starting from 0)
 	 * to the key's array of sub keys, return the name of the indexed key. 
@@ -81,7 +81,7 @@ public class WindowsRegistry {
 	 * @return name of registry value or null if not found
 	 */
 	public native String getLocalMachineKeyName(String subkey, int index);
-	
+
 	/**
 	 * Gets the registry value for the subkey of HKEY_CURRENT_USER with the
 	 * given name. If problems occur, like the name is not found, null is returned.
@@ -103,7 +103,7 @@ public class WindowsRegistry {
 	 * @return name of registry value or null if not found
 	 */
 	public native String getCurrentUserValueName(String subkey, int index);
-	
+
 	/**
 	 * Given a subkey of HKEY_CURRENT_USER, and an index (starting from 0)
 	 * to the key's array of sub keys, return the name of the indexed key. 

@@ -15,15 +15,14 @@ package org.eclipse.cdt.testsrunner.internal.launcher;
 
 import org.eclipse.cdt.testsrunner.launcher.BaseTestsLaunchDelegate;
 
-
 /**
  * Launch delegate implementation that redirects its queries to DSF.
  */
 public class DsfGdbRunTestsLaunchDelegate extends BaseTestsLaunchDelegate {
-	
-    @Override
-    public String getPreferredDelegateId() {
-        return "org.eclipse.cdt.dsf.gdb.launch.localCLaunch"; //$NON-NLS-1$
-    }
-	
+
+	@Override
+	public String getPreferredDelegateId() {
+		return "org.eclipse.cdt.dsf.gdb.launch.localCLaunch"; //$NON-NLS-1$
+	}
+
 }

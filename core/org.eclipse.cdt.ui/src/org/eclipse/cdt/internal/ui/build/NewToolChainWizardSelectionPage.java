@@ -64,8 +64,8 @@ public class NewToolChainWizardSelectionPage extends WizardPage {
 
 				String iconFile = element.getAttribute("icon"); //$NON-NLS-1$
 				if (iconFile != null) {
-					ImageDescriptor desc = CUIPlugin
-							.imageDescriptorFromPlugin(element.getNamespaceIdentifier(), iconFile);
+					ImageDescriptor desc = CUIPlugin.imageDescriptorFromPlugin(element.getNamespaceIdentifier(),
+							iconFile);
 					if (desc != null) {
 						item.setImage(desc.createImage());
 					}
@@ -109,8 +109,7 @@ public class NewToolChainWizardSelectionPage extends WizardPage {
 		if (descImage == null) {
 			return null;
 		}
-		return AbstractUIPlugin.imageDescriptorFromPlugin(element.getNamespaceIdentifier(),
-				descImage);
+		return AbstractUIPlugin.imageDescriptorFromPlugin(element.getNamespaceIdentifier(), descImage);
 	}
 
 	@Override

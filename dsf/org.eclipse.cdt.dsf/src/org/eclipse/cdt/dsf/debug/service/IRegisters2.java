@@ -45,8 +45,7 @@ public interface IRegisters2 extends IRegisters {
 	 * 
 	 * @param rm - monitor encapsulating the response
 	 */
-	public void canEditRegisterGroup(IRegisterGroupDMContext group,
-			DataRequestMonitor<Boolean> rm);
+	public void canEditRegisterGroup(IRegisterGroupDMContext group, DataRequestMonitor<Boolean> rm);
 
 	/**
 	 * Edit the given register group and update its name and associated registers
@@ -56,16 +55,15 @@ public interface IRegisters2 extends IRegisters {
 	 * @param registers - new list of registers for this group or null if the list of registers is not be changed
 	 * @param rm - request monitor
 	 */
-	public void editRegisterGroup(IRegisterGroupDMContext group, String groupName,
-			IRegisterDMContext[] registers, RequestMonitor rm);
+	public void editRegisterGroup(IRegisterGroupDMContext group, String groupName, IRegisterDMContext[] registers,
+			RequestMonitor rm);
 
 	/**
 	 * Returns a boolean indicating if it is allowed to remove the given registers groups
 	 * @param groups - list of register group contexts to be removed
 	 * @param rm
 	 */
-	public void canRemoveRegisterGroups(IRegisterGroupDMContext[] groups,
-			DataRequestMonitor<Boolean> rm);
+	public void canRemoveRegisterGroups(IRegisterGroupDMContext[] groups, DataRequestMonitor<Boolean> rm);
 
 	/**
 	 * Remove the given register groups

@@ -32,18 +32,18 @@ public class Location {
 
 	// chunk management
 	public int lastNumberOfNewLines;
-	
+
 	// edits management
 	int editsIndex;
 	OptimizedReplaceEdit textEdit;
-	
+
 	public Runnable tailFormatter;
 
-	public Location(Scribe scribe, int sourceRestart){
+	public Location(Scribe scribe, int sourceRestart) {
 		update(scribe, sourceRestart);
 	}
-	
-	public void update(Scribe scribe, int sourceRestart){
+
+	public void update(Scribe scribe, int sourceRestart) {
 		this.inputOffset = sourceRestart;
 		this.outputLine = scribe.line;
 		this.outputColumn = scribe.column;

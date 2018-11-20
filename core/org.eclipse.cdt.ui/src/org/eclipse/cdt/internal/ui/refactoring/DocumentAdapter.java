@@ -66,14 +66,14 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	 */
 	protected class DocumentSetCommand implements Runnable {
 		private String fContents;
-		
+
 		@Override
 		public void run() {
 			fDocument.set(fContents);
 		}
-	
+
 		public void set(String contents) {
-			fContents= contents;
+			fContents = contents;
 			Display.getDefault().syncExec(this);
 		}
 	}
@@ -85,7 +85,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 		private int fOffset;
 		private int fLength;
 		private String fText;
-		
+
 		@Override
 		public void run() {
 			try {
@@ -94,76 +94,125 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 				// ignore
 			}
 		}
-		
+
 		public void replace(int offset, int length, String text) {
-			fOffset= offset;
-			fLength= length;
-			fText= text;
+			fOffset = offset;
+			fLength = length;
+			fText = text;
 			Display.getDefault().syncExec(this);
 		}
 	}
 
-	private static final boolean DEBUG_LINE_DELIMITERS= true;
+	private static final boolean DEBUG_LINE_DELIMITERS = true;
 	public static final IBuffer NULL_BUFFER = new IBuffer() {
 		@Override
-		public void addBufferChangedListener(IBufferChangedListener listener) {}
+		public void addBufferChangedListener(IBufferChangedListener listener) {
+		}
+
 		@Override
-		public void append(char[] text) {}
+		public void append(char[] text) {
+		}
+
 		@Override
-		public void append(String text) {}
+		public void append(String text) {
+		}
+
 		@Override
-		public void close() {}
+		public void close() {
+		}
+
 		@Override
-		public char getChar(int position) { return 0; }
+		public char getChar(int position) {
+			return 0;
+		}
+
 		@Override
-		public char[] getCharacters() { return new char[0]; }
+		public char[] getCharacters() {
+			return new char[0];
+		}
+
 		@Override
-		public String getContents() { return ""; } //$NON-NLS-1$
+		public String getContents() {
+			return ""; //$NON-NLS-1$
+		}
+
 		@Override
-		public int getLength() { return 0; }
+		public int getLength() {
+			return 0;
+		}
+
 		@Override
-		public IOpenable getOwner() {return null;}
+		public IOpenable getOwner() {
+			return null;
+		}
+
 		@Override
-		public String getText(int offset, int length) { return ""; } //$NON-NLS-1$
+		public String getText(int offset, int length) {
+			return ""; //$NON-NLS-1$
+		}
+
 		@Override
-		public IResource getUnderlyingResource() { return null; }
+		public IResource getUnderlyingResource() {
+			return null;
+		}
+
 		@Override
-		public boolean hasUnsavedChanges() { return false; }
+		public boolean hasUnsavedChanges() {
+			return false;
+		}
+
 		@Override
-		public boolean isClosed() { return false; }
+		public boolean isClosed() {
+			return false;
+		}
+
 		@Override
-		public boolean isReadOnly() { return true; }
+		public boolean isReadOnly() {
+			return true;
+		}
+
 		@Override
-		public void removeBufferChangedListener(IBufferChangedListener listener) {}
+		public void removeBufferChangedListener(IBufferChangedListener listener) {
+		}
+
 		@Override
-		public void replace(int position, int length, char[] text) {}
+		public void replace(int position, int length, char[] text) {
+		}
+
 		@Override
-		public void replace(int position, int length, String text) {}
+		public void replace(int position, int length, String text) {
+		}
+
 		@Override
-		public void save(IProgressMonitor progress, boolean force) throws CModelException {}
+		public void save(IProgressMonitor progress, boolean force) throws CModelException {
+		}
+
 		@Override
-		public void setContents(char[] contents) {}
+		public void setContents(char[] contents) {
+		}
+
 		@Override
-		public void setContents(String contents) {}
+		public void setContents(String contents) {
+		}
 	};
 
-    public static IBufferFactory FACTORY= new IBufferFactory() {
-        @Override
+	public static IBufferFactory FACTORY = new IBufferFactory() {
+		@Override
 		public IBuffer createBuffer(IOpenable owner) {
-        	if (owner instanceof IWorkingCopy) {
-        		IWorkingCopy wc= (IWorkingCopy) owner;
-        		ITranslationUnit tu= wc.getOriginalElement();
-        		if (tu != null) {
-        			IResource r= tu.getResource();
-        			if (r instanceof IFile) {
-        				return new DocumentAdapter(wc, (IFile) r);
-        			}
-        		}
-        	}
-        	assert false;
-        	return DocumentAdapter.NULL_BUFFER;
-        }
-    };
+			if (owner instanceof IWorkingCopy) {
+				IWorkingCopy wc = (IWorkingCopy) owner;
+				ITranslationUnit tu = wc.getOriginalElement();
+				if (tu != null) {
+					IResource r = tu.getResource();
+					if (r instanceof IFile) {
+						return new DocumentAdapter(wc, (IFile) r);
+					}
+				}
+			}
+			assert false;
+			return DocumentAdapter.NULL_BUFFER;
+		}
+	};
 
 	private ITranslationUnit fTranslationUnit;
 	private IWorkingCopy fOwner;
@@ -171,35 +220,34 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	private ITextFileBuffer fTextFileBuffer;
 	IDocument fDocument;
 
-	private DocumentSetCommand fSetCmd= new DocumentSetCommand();
-	private DocumentReplaceCommand fReplaceCmd= new DocumentReplaceCommand();
+	private DocumentSetCommand fSetCmd = new DocumentSetCommand();
+	private DocumentReplaceCommand fReplaceCmd = new DocumentReplaceCommand();
 
 	private Set<String> fLegalLineDelimiters;
 
-	private List<IBufferChangedListener> fBufferListeners= new ArrayList<IBufferChangedListener>(3);
+	private List<IBufferChangedListener> fBufferListeners = new ArrayList<IBufferChangedListener>(3);
 	private IStatus fStatus;
 
-	
 	public DocumentAdapter(IWorkingCopy owner, IFile file) {
-		fOwner= owner;
-		fFile= file;
-		fTranslationUnit= owner.getOriginalElement();
+		fOwner = owner;
+		fFile = file;
+		fTranslationUnit = owner.getOriginalElement();
 		if (fTranslationUnit != null) {
 			addBufferChangedListener(fTranslationUnit);
 		}
-		initialize();			
+		initialize();
 	}
 
 	private void initialize() {
-		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		IPath location= fFile.getFullPath();
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+		IPath location = fFile.getFullPath();
 		try {
 			manager.connect(location, LocationKind.IFILE, new NullProgressMonitor());
-			fTextFileBuffer= manager.getTextFileBuffer(location, LocationKind.IFILE);
-			fDocument= fTextFileBuffer.getDocument();
+			fTextFileBuffer = manager.getTextFileBuffer(location, LocationKind.IFILE);
+			fDocument = fTextFileBuffer.getDocument();
 		} catch (CoreException x) {
-			fStatus= x.getStatus();
-			fDocument= manager.createEmptyDocument(location, LocationKind.IFILE);
+			fStatus = x.getStatus();
+			fDocument = manager.createEmptyDocument(location, LocationKind.IFILE);
 		}
 		fDocument.addPrenotifiedDocumentListener(this);
 	}
@@ -214,7 +262,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 			return fTextFileBuffer.getStatus();
 		return null;
 	}
-	
+
 	/**
 	 * Returns the adapted document.
 	 * 
@@ -233,7 +281,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 		if (!fBufferListeners.contains(listener))
 			fBufferListeners.add(listener);
 	}
-	
+
 	/*
 	 * @see IBuffer#removeBufferChangedListener(IBufferChangedListener)
 	 */
@@ -242,14 +290,13 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 		Assert.isNotNull(listener);
 		fBufferListeners.remove(listener);
 	}
-	
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#append(char[])
 	 */
 	@Override
 	public void append(char[] text) {
-		append(new String(text));		
+		append(new String(text));
 	}
 
 	/**
@@ -260,9 +307,8 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 		if (DEBUG_LINE_DELIMITERS) {
 			validateLineDelimiters(text);
 		}
-		fReplaceCmd.replace(fDocument.getLength(), 0, text);		
+		fReplaceCmd.replace(fDocument.getLength(), 0, text);
 	}
-
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#close()
@@ -271,21 +317,21 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	public void close() {
 		if (isClosed())
 			return;
-			
-		IDocument d= fDocument;
-		fDocument= null;
+
+		IDocument d = fDocument;
+		fDocument = null;
 		d.removePrenotifiedDocumentListener(this);
-		
+
 		if (fTextFileBuffer != null) {
-			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			try {
 				manager.disconnect(fTextFileBuffer.getLocation(), LocationKind.IFILE, new NullProgressMonitor());
 			} catch (CoreException x) {
 				// ignore
 			}
-			fTextFileBuffer= null;
+			fTextFileBuffer = null;
 		}
-		
+
 		fireBufferChanged(new BufferChangedEvent(this, 0, 0, null));
 		fBufferListeners.clear();
 	}
@@ -307,7 +353,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	 */
 	@Override
 	public char[] getCharacters() {
-		String content= getContents();
+		String content = getContents();
 		return content == null ? null : content.toCharArray();
 	}
 
@@ -376,14 +422,14 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	 */
 	@Override
 	public boolean isReadOnly() {
-		IResource resource= getUnderlyingResource();
+		IResource resource = getUnderlyingResource();
 		if (resource != null) {
 			ResourceAttributes attributes = resource.getResourceAttributes();
 			if (attributes != null) {
 				return attributes.isReadOnly();
 			}
 		}
-		return false;		
+		return false;
 	}
 
 	/**
@@ -391,7 +437,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	 */
 	@Override
 	public void replace(int position, int length, char[] text) {
-		replace(position, length, new String(text));		
+		replace(position, length, new String(text));
 	}
 
 	/**
@@ -423,7 +469,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	 */
 	@Override
 	public void setContents(char[] contents) {
-		setContents(new String(contents));		
+		setContents(new String(contents));
 	}
 
 	/**
@@ -431,8 +477,8 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	 */
 	@Override
 	public void setContents(String contents) {
-		int oldLength= fDocument.getLength();
-		
+		int oldLength = fDocument.getLength();
+
 		if (contents == null) {
 			if (oldLength != 0)
 				fSetCmd.set(""); //$NON-NLS-1$
@@ -441,8 +487,8 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 			if (DEBUG_LINE_DELIMITERS) {
 				validateLineDelimiters(contents);
 			}
-			
-			int newLength= contents.length();
+
+			int newLength = contents.length();
 			if (oldLength != newLength || !contents.equals(fDocument.get()))
 				fSetCmd.set(contents);
 		}
@@ -451,11 +497,11 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	private void validateLineDelimiters(String contents) {
 		if (fLegalLineDelimiters == null) {
 			// collect all line delimiters in the document
-			HashSet<String> existingDelimiters= new HashSet<String>();
+			HashSet<String> existingDelimiters = new HashSet<String>();
 
-			for (int i= fDocument.getNumberOfLines() - 1; i >= 0; i-- ) {
+			for (int i = fDocument.getNumberOfLines() - 1; i >= 0; i--) {
 				try {
-					String curr= fDocument.getLineDelimiter(i);
+					String curr = fDocument.getLineDelimiter(i);
 					if (curr != null) {
 						existingDelimiters.add(curr);
 					}
@@ -466,29 +512,29 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 			if (existingDelimiters.isEmpty()) {
 				return; // first insertion of a line delimiter: no test
 			}
-			fLegalLineDelimiters= existingDelimiters;
-			
+			fLegalLineDelimiters = existingDelimiters;
+
 		}
-		
-		DefaultLineTracker tracker= new DefaultLineTracker();
+
+		DefaultLineTracker tracker = new DefaultLineTracker();
 		tracker.set(contents);
-		
-		int lines= tracker.getNumberOfLines();
+
+		int lines = tracker.getNumberOfLines();
 		if (lines <= 1)
 			return;
-		
-		for (int i= 0; i < lines; i++) {
+
+		for (int i = 0; i < lines; i++) {
 			try {
-				String curr= tracker.getLineDelimiter(i);
+				String curr = tracker.getLineDelimiter(i);
 				if (curr != null && !fLegalLineDelimiters.contains(curr)) {
-					StringBuilder buf= new StringBuilder("New line delimiter added to new code: "); //$NON-NLS-1$
-					for (int k= 0; k < curr.length(); k++) {
+					StringBuilder buf = new StringBuilder("New line delimiter added to new code: "); //$NON-NLS-1$
+					for (int k = 0; k < curr.length(); k++) {
 						buf.append(String.valueOf((int) curr.charAt(k)));
 					}
 					CUIPlugin.log(new Exception(buf.toString()));
 				}
 			} catch (BadLocationException e) {
-                CUIPlugin.log(e);
+				CUIPlugin.log(e);
 			}
 		}
 	}
@@ -508,10 +554,10 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	public void documentChanged(DocumentEvent event) {
 		fireBufferChanged(new BufferChangedEvent(this, event.getOffset(), event.getLength(), event.getText()));
 	}
-	
+
 	private void fireBufferChanged(BufferChangedEvent event) {
 		if (fBufferListeners != null && fBufferListeners.size() > 0) {
-			Iterator<IBufferChangedListener> e= new ArrayList<IBufferChangedListener>(fBufferListeners).iterator();
+			Iterator<IBufferChangedListener> e = new ArrayList<IBufferChangedListener>(fBufferListeners).iterator();
 			while (e.hasNext())
 				e.next().bufferChanged(event);
 		}

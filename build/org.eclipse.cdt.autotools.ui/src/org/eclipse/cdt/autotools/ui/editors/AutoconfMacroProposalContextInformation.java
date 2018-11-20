@@ -51,41 +51,43 @@ public class AutoconfMacroProposalContextInformation implements IContextInformat
 	 * @param informationDisplayString the string to be displayed when presenting the context information,
 	 *		may not be <code>null</code>
 	 */
-	public AutoconfMacroProposalContextInformation(Image image, String contextDisplayString, String informationDisplayString) {
+	public AutoconfMacroProposalContextInformation(Image image, String contextDisplayString,
+			String informationDisplayString) {
 		//Assert.isNotNull(informationDisplayString);
-		fImage= image;
-		fContextDisplayString= contextDisplayString;
-		fInformationDisplayString= informationDisplayString;
+		fImage = image;
+		fContextDisplayString = contextDisplayString;
+		fInformationDisplayString = informationDisplayString;
 	}
 
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IContextInformation) {
-			IContextInformation contextInformation= (IContextInformation) object;
-			boolean equals= fInformationDisplayString.equalsIgnoreCase(contextInformation.getInformationDisplayString());
-			if (fContextDisplayString != null) 
-				equals= equals && fContextDisplayString.equalsIgnoreCase(contextInformation.getContextDisplayString());
+			IContextInformation contextInformation = (IContextInformation) object;
+			boolean equals = fInformationDisplayString
+					.equalsIgnoreCase(contextInformation.getInformationDisplayString());
+			if (fContextDisplayString != null)
+				equals = equals && fContextDisplayString.equalsIgnoreCase(contextInformation.getContextDisplayString());
 			return equals;
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		String combined = fInformationDisplayString.toLowerCase().concat(fContextDisplayString.toLowerCase());
 		return combined.hashCode();
 	}
-	
+
 	@Override
 	public String getInformationDisplayString() {
 		return fInformationDisplayString;
 	}
-	
+
 	@Override
 	public Image getImage() {
 		return fImage;
 	}
-	
+
 	@Override
 	public String getContextDisplayString() {
 		if (fContextDisplayString != null)
@@ -97,8 +99,8 @@ public class AutoconfMacroProposalContextInformation implements IContextInformat
 	public int getContextInformationPosition() {
 		return fInformationPosition;
 	}
-	
-	public void setContextInformationPosition( int pos ){
+
+	public void setContextInformationPosition(int pos) {
 		fInformationPosition = pos;
 	}
 }

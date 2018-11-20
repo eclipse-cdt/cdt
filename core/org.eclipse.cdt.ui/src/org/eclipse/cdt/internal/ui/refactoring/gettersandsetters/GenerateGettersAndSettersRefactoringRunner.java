@@ -41,10 +41,9 @@ public class GenerateGettersAndSettersRefactoringRunner extends RefactoringRunne
 	@Override
 	public void run() {
 		if (getActiveEditor() instanceof ITextEditor) {
-			GenerateGettersAndSettersRefactoring refactoring =
-					new GenerateGettersAndSettersRefactoring(element, selection, project);
-			RefactoringWizard wizard =
-					new GenerateGettersAndSettersWizard(refactoring);
+			GenerateGettersAndSettersRefactoring refactoring = new GenerateGettersAndSettersRefactoring(element,
+					selection, project);
+			RefactoringWizard wizard = new GenerateGettersAndSettersWizard(refactoring);
 			run(wizard, refactoring, RefactoringSaveHelper.SAVE_REFACTORING);
 		}
 	}

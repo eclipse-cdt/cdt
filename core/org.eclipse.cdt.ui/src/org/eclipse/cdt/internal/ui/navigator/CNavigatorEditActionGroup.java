@@ -46,7 +46,7 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 
 	private DeleteResourceAction deleteAction;
 
-	private PasteAction pasteAction; 
+	private PasteAction pasteAction;
 
 	private TextActionHandler textActionHandler;
 
@@ -56,7 +56,7 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 	 * @param aShell
 	 */
 	public CNavigatorEditActionGroup(Shell aShell) {
-		shell = aShell; 
+		shell = aShell;
 		makeActions();
 	}
 
@@ -73,9 +73,8 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
-		boolean anyResourceSelected = !selection.isEmpty()
-				&& ResourceSelectionUtil.allResourcesAreOfType(selection,
-						IResource.PROJECT | IResource.FOLDER | IResource.FILE);
+		boolean anyResourceSelected = !selection.isEmpty() && ResourceSelectionUtil.allResourcesAreOfType(selection,
+				IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 
 		copyAction.selectionChanged(selection);
 		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, copyAction);
@@ -101,14 +100,14 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 		//renameAction.setTextActionHandler(textActionHandler);
 		updateActionBars();
 
-//		textActionHandler.updateActionBars();
+		//		textActionHandler.updateActionBars();
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), pasteAction);
 		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), deleteAction);
 	}
 
 	protected void makeActions() {
-		final SameShellProvider shellProvider= new SameShellProvider(shell);
+		final SameShellProvider shellProvider = new SameShellProvider(shell);
 		clipboard = new Clipboard(shell.getDisplay());
 
 		pasteAction = new PasteAction(shell, clipboard);
@@ -121,10 +120,9 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 		copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
- 
+
 		deleteAction = new DeleteResourceAction(shellProvider);
-		deleteAction.setDisabledImageDescriptor(
-				images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 	}
@@ -135,6 +133,6 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 
 		copyAction.selectionChanged(selection);
 		pasteAction.selectionChanged(selection);
-		deleteAction.selectionChanged(selection); 
+		deleteAction.selectionChanged(selection);
 	}
 }

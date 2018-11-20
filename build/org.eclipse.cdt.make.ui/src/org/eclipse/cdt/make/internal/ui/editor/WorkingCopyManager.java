@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.make.internal.ui.editor;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +23,6 @@ import org.eclipse.cdt.make.ui.IWorkingCopyManagerExtension;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
-
 
 /**
  * This working copy manager works together with a given compilation unit document provider and
@@ -43,7 +41,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	 */
 	public WorkingCopyManager(IMakefileDocumentProvider provider) {
 		Assert.isNotNull(provider);
-		fDocumentProvider= provider;
+		fDocumentProvider = provider;
 	}
 
 	@Override
@@ -59,22 +57,22 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	@Override
 	public void shutdown() {
 		if (!fIsShuttingDown) {
-			fIsShuttingDown= true;
+			fIsShuttingDown = true;
 			try {
 				if (fMap != null) {
 					fMap.clear();
-					fMap= null;
+					fMap = null;
 				}
 				fDocumentProvider.shutdown();
 			} finally {
-				fIsShuttingDown= false;
+				fIsShuttingDown = false;
 			}
 		}
 	}
 
 	@Override
 	public IMakefile getWorkingCopy(IEditorInput input) {
-		IMakefile unit= fMap == null ? null : (IMakefile) fMap.get(input);
+		IMakefile unit = fMap == null ? null : (IMakefile) fMap.get(input);
 		return unit != null ? unit : fDocumentProvider.getWorkingCopy(input);
 	}
 
@@ -82,7 +80,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	public void setWorkingCopy(IEditorInput input, IMakefile workingCopy) {
 		if (fDocumentProvider.getDocument(input) != null) {
 			if (fMap == null) {
-				fMap= new HashMap<IEditorInput, IMakefile>();
+				fMap = new HashMap<IEditorInput, IMakefile>();
 			}
 			fMap.put(input, workingCopy);
 		}
@@ -92,7 +90,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	public void removeWorkingCopy(IEditorInput input) {
 		fMap.remove(input);
 		if (fMap.isEmpty()) {
-			fMap= null;
+			fMap = null;
 		}
 	}
 }

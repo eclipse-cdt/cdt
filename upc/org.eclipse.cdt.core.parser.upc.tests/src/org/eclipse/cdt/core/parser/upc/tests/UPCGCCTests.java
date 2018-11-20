@@ -18,10 +18,10 @@ import org.eclipse.cdt.core.lrparser.tests.LRGCCTests;
 import org.eclipse.cdt.core.model.ILanguage;
 
 public class UPCGCCTests extends LRGCCTests {
-	
+
 	public UPCGCCTests() {
 	}
-	
+
 	public UPCGCCTests(String message) {
 		super(message);
 	}

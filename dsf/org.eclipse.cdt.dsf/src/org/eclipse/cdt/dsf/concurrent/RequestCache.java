@@ -10,9 +10,9 @@
  *   
  * Contributors: 
  *     Wind River Systems - initial API and implementation 
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
- 
+
 import org.eclipse.core.runtime.IStatus;
 
 /** 
@@ -26,31 +26,30 @@ import org.eclipse.core.runtime.IStatus;
  * access to the cache state and data.   
  * </p>
  * @since 2.2
- */ 
-@ConfinedToDsfExecutor("fExecutor") 
-public abstract class RequestCache<V> extends AbstractCache<V> { 
+ */
+@ConfinedToDsfExecutor("fExecutor")
+public abstract class RequestCache<V> extends AbstractCache<V> {
 
-    protected DataRequestMonitor<V> fRm;
+	protected DataRequestMonitor<V> fRm;
 
-    
-    public RequestCache(ImmediateInDsfExecutor executor) {
-        super(executor);
-    }
-    
-    @Override
-    protected final void retrieve() {
-        // Make sure to cancel the previous rm.  This may lead to the rm being 
-        // canceled twice, but that's not harmful.
-        if (fRm != null) {
-            fRm.cancel();
-        }
-        
-        fRm = new DataRequestMonitor<V>(getImmediateInDsfExecutor(), null) {
-            
-            @Override 
-            protected void handleCompleted() {
-                if (this == fRm) {
-                    fRm = null;
+	public RequestCache(ImmediateInDsfExecutor executor) {
+		super(executor);
+	}
+
+	@Override
+	protected final void retrieve() {
+		// Make sure to cancel the previous rm.  This may lead to the rm being 
+		// canceled twice, but that's not harmful.
+		if (fRm != null) {
+			fRm.cancel();
+		}
+
+		fRm = new DataRequestMonitor<V>(getImmediateInDsfExecutor(), null) {
+
+			@Override
+			protected void handleCompleted() {
+				if (this == fRm) {
+					fRm = null;
 					// If the requester canceled the request, then leave the
 					// cache as is, regardless of how the retrieval completes.
 					// We want the cache to stay in the invalid state so that
@@ -59,50 +58,50 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
 					// that case, but that opens up a can of worms. We'll follow
 					// the behavior in RequestMonitor: when an RM is canceled,
 					// it's canceled; period.
-                    if (!isCanceled()) {
-                    	set(getData(), getStatus());                    	
-                    }
-                }
-            } 
-            
-            @Override
-            public boolean isCanceled() {
-                return super.isCanceled() || RequestCache.this.isCanceled();
-            };
-        }; 
-        retrieve(fRm);
-    }     
+					if (!isCanceled()) {
+						set(getData(), getStatus());
+					}
+				}
+			}
 
-    /** 
-     * Sub-classes should override this method to retrieve the cache data 
-     * from its source. 
-     * 
-     * @param rm Request monitor for completion of data retrieval.
-     */ 
-    protected abstract void retrieve(DataRequestMonitor<V> rm); 
+			@Override
+			public boolean isCanceled() {
+				return super.isCanceled() || RequestCache.this.isCanceled();
+			};
+		};
+		retrieve(fRm);
+	}
 
-    @Override
-    protected synchronized void canceled() {
-        if (fRm != null) { 
-            fRm.cancel(); 
-        } 
-    }    
+	/** 
+	 * Sub-classes should override this method to retrieve the cache data 
+	 * from its source. 
+	 * 
+	 * @param rm Request monitor for completion of data retrieval.
+	 */
+	protected abstract void retrieve(DataRequestMonitor<V> rm);
 
-    @Override
-    protected void set(V data, IStatus status) {
-        if (fRm != null) { 
-            fRm.cancel(); 
-            fRm = null; 
-        } 
-        super.set(data, status);
-    }
-    
-    @Override
-    protected void reset() {
-        if (fRm != null) { 
-            fRm.cancel(); 
-            fRm = null; 
-        } 
-        super.reset();
-    }
-} 
+	@Override
+	protected synchronized void canceled() {
+		if (fRm != null) {
+			fRm.cancel();
+		}
+	}
+
+	@Override
+	protected void set(V data, IStatus status) {
+		if (fRm != null) {
+			fRm.cancel();
+			fRm = null;
+		}
+		super.set(data, status);
+	}
+
+	@Override
+	protected void reset() {
+		if (fRm != null) {
+			fRm.cancel();
+			fRm = null;
+		}
+		super.reset();
+	}
+}

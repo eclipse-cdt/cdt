@@ -54,42 +54,38 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 
-
-
 public class OpenIncludeAction extends Action {
 
+	private static final String PREFIX = "OpenIncludeAction."; //$NON-NLS-1$
 
-	private static final String PREFIX= "OpenIncludeAction."; //$NON-NLS-1$
-	
-	private static final String DIALOG_TITLE= PREFIX + "dialog.title"; //$NON-NLS-1$
-	private static final String DIALOG_MESSAGE= PREFIX + "dialog.message"; //$NON-NLS-1$
-	
+	private static final String DIALOG_TITLE = PREFIX + "dialog.title"; //$NON-NLS-1$
+	private static final String DIALOG_MESSAGE = PREFIX + "dialog.message"; //$NON-NLS-1$
+
 	private ISelectionProvider fSelectionProvider;
-
 
 	public OpenIncludeAction(ISelectionProvider provider) {
 		super(CUIPlugin.getResourceString(PREFIX + "label")); //$NON-NLS-1$
 		setDescription(CUIPlugin.getResourceString(PREFIX + "description")); //$NON-NLS-1$
 		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip")); //$NON-NLS-1$
-		
+
 		MakeUIImages.setImageDescriptors(this, MakeUIImages.T_LCL, MakeUIImages.IMG_MENU_OPEN_INCLUDE);
-		
-		fSelectionProvider= provider;
+
+		fSelectionProvider = provider;
 	}
-			
+
 	@Override
 	public void run() {
-		IInclude include= getIncludeStatement(fSelectionProvider.getSelection());
+		IInclude include = getIncludeStatement(fSelectionProvider.getSelection());
 		if (include == null) {
 			return;
 		}
-		
+
 		try {
 			IResource res = include.getUnderlyingResource();
 			ArrayList<Object> filesFound = new ArrayList<>(4);
-			String fullFileName= include.getFullFileName();
+			String fullFileName = include.getFullFileName();
 			if (fullFileName != null) {
-				IPath fullPath= new Path(fullFileName);
+				IPath fullPath = new Path(fullFileName);
 				if (fullPath.isAbsolute() && fullPath.toFile().exists()) {
 					filesFound.add(fullPath);
 				}
@@ -98,7 +94,7 @@ public class OpenIncludeAction extends Action {
 				IProject proj = res.getProject();
 				String includeName = include.getElementName();
 				// Search in the scannerInfo information
-				IScannerInfoProvider provider =  CCorePlugin.getDefault().getScannerInfoProvider(proj);
+				IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(proj);
 				if (provider != null) {
 					IScannerInfo info = provider.getScannerInformation(res);
 					// XXXX this should fall back to project by itself
@@ -107,14 +103,14 @@ public class OpenIncludeAction extends Action {
 					}
 					if (info != null) {
 						IExtendedScannerInfo scanInfo = new ExtendedScannerInfo(info);
-						
+
 						boolean isSystemInclude = include.isStandard();
-						
+
 						if (!isSystemInclude) {
 							// search in current directory
-							IPath location= include.getTranslationUnit().getLocation();
+							IPath location = include.getTranslationUnit().getLocation();
 							if (location != null) {
-								String currentDir= location.removeLastSegments(1).toOSString();
+								String currentDir = location.removeLastSegments(1).toOSString();
 								findFile(new String[] { currentDir }, includeName, filesFound);
 							}
 							if (filesFound.isEmpty()) {
@@ -123,14 +119,14 @@ public class OpenIncludeAction extends Action {
 								findFile(localIncludePaths, includeName, filesFound);
 							}
 						}
-	
+
 						if (filesFound.isEmpty()) {
 							// search in <...> include directories
 							String[] includePaths = scanInfo.getIncludePaths();
 							findFile(includePaths, includeName, filesFound);
 						}
 					}
-					
+
 					if (filesFound.isEmpty()) {
 						// Fall back and search the project
 						findFile(proj, new Path(includeName), filesFound);
@@ -138,19 +134,19 @@ public class OpenIncludeAction extends Action {
 				}
 			}
 			IPath fileToOpen;
-			int nElementsFound= filesFound.size();
+			int nElementsFound = filesFound.size();
 			if (nElementsFound == 0) {
 				noElementsFound();
-				fileToOpen= null;
+				fileToOpen = null;
 			} else if (nElementsFound == 1) {
-				fileToOpen= (IPath) filesFound.get(0);
+				fileToOpen = (IPath) filesFound.get(0);
 			} else {
-				fileToOpen= chooseFile(filesFound);
+				fileToOpen = chooseFile(filesFound);
 			}
-			
+
 			if (fileToOpen != null) {
 				EditorUtility.openInEditor(fileToOpen, include);
-			} 
+			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e.getStatus());
 		}
@@ -162,14 +158,14 @@ public class OpenIncludeAction extends Action {
 	private void noElementsFound() {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CUIPlugin.getResourceString("OpenIncludeAction.error")); //$NON-NLS-1$
-		errorMsg.setMessage (CUIPlugin.getResourceString("OpenIncludeAction.error.description")); //$NON-NLS-1$
+		errorMsg.setMessage(CUIPlugin.getResourceString("OpenIncludeAction.error.description")); //$NON-NLS-1$
 		errorMsg.open();
 	}
-	
+
 	private boolean isInProject(IPath path) {
-		return getWorkspaceRoot().getFileForLocation(path) != null;		
+		return getWorkspaceRoot().getFileForLocation(path) != null;
 	}
-	
+
 	/**
 	 * Returns the path as is, if it points to a workspace resource. If the path
 	 * does not point to a workspace resource, but there are linked workspace
@@ -182,22 +178,22 @@ public class OpenIncludeAction extends Action {
 			if (files.length > 0) {
 				IPath[] paths = new IPath[files.length];
 				for (int i = 0; i < files.length; i++) {
-					paths[i] = files[i].getFullPath(); 
+					paths[i] = files[i].getFullPath();
 				}
 				return paths;
 			}
 		}
-		
+
 		return new IPath[] { path };
 	}
 
 	private IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-	
+
 	private void findFile(String[] includePaths, String name, List<Object> list) {
 		// in case it is an absolute path
-		IPath includeFile= new Path(name);		
+		IPath includeFile = new Path(name);
 		if (includeFile.isAbsolute()) {
 			includeFile = PathUtil.getCanonicalPath(includeFile);
 			if (includeFile.toFile().exists()) {
@@ -217,7 +213,7 @@ public class OpenIncludeAction extends Action {
 						list.add(p);
 					}
 				}
-			} 
+			}
 		}
 	}
 
@@ -245,53 +241,52 @@ public class OpenIncludeAction extends Action {
 		}, 0);
 	}
 
-
 	private IPath chooseFile(ArrayList<Object> filesFound) {
-		ILabelProvider renderer= new LabelProvider() {
+		ILabelProvider renderer = new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IPath) {
-					IPath file= (IPath)element;
-					return file.lastSegment() + " - "  + file.toString(); //$NON-NLS-1$
+					IPath file = (IPath) element;
+					return file.lastSegment() + " - " + file.toString(); //$NON-NLS-1$
 				}
 				return super.getText(element);
 			}
 		};
-		
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(CUIPlugin.getActiveWorkbenchShell(), renderer, false, false);
+
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(CUIPlugin.getActiveWorkbenchShell(),
+				renderer, false, false);
 		dialog.setTitle(CUIPlugin.getResourceString(DIALOG_TITLE));
 		dialog.setMessage(CUIPlugin.getResourceString(DIALOG_MESSAGE));
 		dialog.setElements(filesFound);
-		
+
 		if (dialog.open() == Window.OK) {
 			return (IPath) dialog.getSelectedElement();
 		}
 		return null;
 	}
 
-
 	private static IInclude getIncludeStatement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			List<?> list = ((IStructuredSelection) sel).toList();
 			if (list.size() == 1) {
-				Object element= list.get(0);
+				Object element = list.get(0);
 				if (element instanceof IInclude) {
-					return (IInclude)element;
+					return (IInclude) element;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	public static boolean canActionBeAdded(ISelection selection) {
 		ICElement include = getIncludeStatement(selection);
 		if (include != null) {
 			IResource res = include.getUnderlyingResource();
 			if (res != null) {
-				return true; 
+				return true;
 			}
 		}
 		return false;
-	}	
+	}
 
 }

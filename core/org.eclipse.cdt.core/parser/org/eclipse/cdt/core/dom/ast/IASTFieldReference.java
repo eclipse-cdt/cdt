@@ -79,7 +79,7 @@ public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 	 * @param value the new value
 	 */
 	public void setIsPointerDereference(boolean value);
-	
+
 	/**
 	 * @since 5.1
 	 */

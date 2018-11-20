@@ -34,10 +34,9 @@ import org.eclipse.ui.texteditor.spelling.SpellingService;
  */
 public class CSpellingService extends SpellingService {
 	private static CSpellingService fInstance;
-	
+
 	private IPreferenceStore fPreferences;
 	private ISpellingEngine fEngine;
-	
 
 	public static CSpellingService getInstance() {
 		if (fInstance == null) {
@@ -55,21 +54,22 @@ public class CSpellingService extends SpellingService {
 				if (fEngine == null) {
 					fEngine = new CSpellingEngine();
 				}
-				ISafeRunnable runnable= new ISafeRunnable() {
-					@Override
-					public void run() throws Exception {
-						fEngine.check(document, regions, context, collector, monitor);
-					}
-					@Override
-					public void handleException(Throwable x) {
-					}
-				};
-				SafeRunner.run(runnable);
+			ISafeRunnable runnable = new ISafeRunnable() {
+				@Override
+				public void run() throws Exception {
+					fEngine.check(document, regions, context, collector, monitor);
+				}
+
+				@Override
+				public void handleException(Throwable x) {
+				}
+			};
+			SafeRunner.run(runnable);
 		} finally {
 			collector.endCollecting();
 		}
 	}
-	
+
 	private CSpellingService(IPreferenceStore preferences) {
 		super(preferences);
 		fPreferences = preferences;

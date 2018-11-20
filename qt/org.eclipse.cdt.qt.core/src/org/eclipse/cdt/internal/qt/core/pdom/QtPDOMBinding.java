@@ -24,6 +24,7 @@ public abstract class QtPDOMBinding extends PDOMBinding {
 	// the QtPDOMBinding record because the enum will not be initialized until it is needed.
 	// The record size is retrieved as the offset of the special terminal enumerator Last.
 	private static int offsetInitializer = RECORD_SIZE;
+
 	protected static enum Field {
 		Last(0);
 

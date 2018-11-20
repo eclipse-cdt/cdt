@@ -49,7 +49,7 @@ public class ResultsPanel {
 
 	/** Parent for the child widgets (messages & tests hierarchy viewer). */
 	private SashForm sashForm;
-	
+
 	/** Child widget: messages viewer. */
 	private MessagesViewer messagesViewer;
 
@@ -70,8 +70,8 @@ public class ResultsPanel {
 	Action warningFilterAction;
 	Action infoFilterAction;
 
-
-	public ResultsPanel(Composite parent, TestingSessionsManager sessionsManager, IWorkbench workbench, IViewSite site, Clipboard clipboard) {
+	public ResultsPanel(Composite parent, TestingSessionsManager sessionsManager, IWorkbench workbench, IViewSite site,
+			Clipboard clipboard) {
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 
 		// Configure tests hierarchy viewer
@@ -82,8 +82,10 @@ public class ResultsPanel {
 			protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 				return new Point(1, 1); // (0, 0) does not work with super-intelligent ViewForm
 			}
+
 			@Override
-			protected void layout(Composite composite, boolean flushCache) {}
+			protected void layout(Composite composite, boolean flushCache) {
+			}
 		});
 		top.setTopLeft(empty); // makes ViewForm draw the horizontal separator line ...
 		testsHierarchyViewer = new TestsHierarchyViewer(top, site, clipboard);
@@ -118,22 +120,22 @@ public class ResultsPanel {
 		bottom.setTopCenter(rightMessagesToolBar);
 		bottom.setContent(messagesViewer.getTableViewer().getControl());
 
-		sashForm.setWeights(new int[]{50, 50});
-	
+		sashForm.setWeights(new int[] { 50, 50 });
+
 		testsHierarchyViewer.getTreeViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleTestItemSelected();
 			}
 		});
-		
+
 		// Initialize default value
 		setShowFailedOnly(false);
-		
+
 		// Data for parent (view's) layout
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
-	
+
 	/**
 	 * Provides access to the tests hierarchy viewer.
 	 * 
@@ -158,11 +160,11 @@ public class ResultsPanel {
 	 * items.
 	 */
 	private void handleTestItemSelected() {
-		IStructuredSelection selection = (IStructuredSelection)testsHierarchyViewer.getTreeViewer().getSelection();
+		IStructuredSelection selection = (IStructuredSelection) testsHierarchyViewer.getTreeViewer().getSelection();
 		ITestItem[] testItems = new ITestItem[selection.size()];
 		int index = 0;
 		for (Iterator<?> it = selection.iterator(); it.hasNext();) {
-			testItems[index] = (ITestItem)it.next();
+			testItems[index] = (ITestItem) it.next();
 			++index;
 		}
 		messagesViewer.showItemsMessages(testItems);
@@ -187,7 +189,7 @@ public class ResultsPanel {
 	public boolean getShowFailedOnly() {
 		return messagesViewer.getShowFailedOnly();
 	}
-	
+
 	/**
 	 * Sets whether only failed tests (and messages for them) should be shown.
 	 * 
@@ -197,7 +199,7 @@ public class ResultsPanel {
 		testsHierarchyViewer.setShowFailedOnly(showFailedOnly);
 		messagesViewer.setShowFailedOnly(showFailedOnly);
 	}
-	
+
 	/**
 	 * Restores the value of the checkable action.
 	 * 
@@ -222,7 +224,7 @@ public class ResultsPanel {
 		Integer weight0 = memento.getInteger(TAG_WEIGHT0);
 		Integer weight1 = memento.getInteger(TAG_WEIGHT1);
 		if (weight0 != null && weight1 != null) {
-			sashForm.setWeights(new int[] {weight0, weight1});
+			sashForm.setWeights(new int[] { weight0, weight1 });
 		}
 		restoreActionChecked(memento, TAG_MESSAGES_ORDERING_ACTION, messagesOrderingAction);
 		restoreActionChecked(memento, TAG_ERROR_FILTER_ACTION, errorFilterAction);

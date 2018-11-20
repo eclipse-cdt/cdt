@@ -38,7 +38,7 @@ public interface ICodeReaderCache {
 	 * @return the CodeReader corresponding to the path specified by the key
 	 */
 	public CodeReader get(String key);
-	
+
 	/**
 	 * Retrieves the CodeReader corresponding to the key specified that represents the 
 	 * path for that CodeReader.  If no CodeReader is found in the cache then a new CodeReader

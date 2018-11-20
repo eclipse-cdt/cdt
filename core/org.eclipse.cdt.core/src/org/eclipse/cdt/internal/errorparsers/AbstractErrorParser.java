@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.errorparsers.ErrorPattern;
  * this class is moved to public package
  */
 @Deprecated
-public class AbstractErrorParser extends org.eclipse.cdt.core.errorparsers.AbstractErrorParser{
+public class AbstractErrorParser extends org.eclipse.cdt.core.errorparsers.AbstractErrorParser {
 	protected AbstractErrorParser(ErrorPattern[] patterns) {
 		super(patterns);
 	}

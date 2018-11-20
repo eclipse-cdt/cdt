@@ -29,32 +29,32 @@ import org.eclipse.swt.widgets.Text;
  * additional information about the current element chosen.
  */
 public class StringButtonStatusDialogField extends StringButtonDialogField {
-		
+
 	private Label fStatusLabelControl;
-	private Object fStatus;  // String or ImageDescriptor
-	
+	private Object fStatus; // String or ImageDescriptor
+
 	private String fWidthHintString;
-	private int fWidthHint;	
-	
+	private int fWidthHint;
+
 	public StringButtonStatusDialogField(IStringButtonAdapter adapter) {
 		super(adapter);
-		fStatus= null;
-		fWidthHintString= null;
-		fWidthHint= -1;
+		fStatus = null;
+		fWidthHintString = null;
+		fWidthHint = -1;
 	}
-	
+
 	// ------ set status
 
 	/**
 	 * Sets the status string.
-	 */	
+	 */
 	public void setStatus(String status) {
 		if (isOkToUse(fStatusLabelControl)) {
 			fStatusLabelControl.setText(status);
 		}
-		fStatus= status;		
+		fStatus = status;
 	}
-	
+
 	/**
 	 * Sets the status image.
 	 * Caller is responsible to dispose image
@@ -67,106 +67,106 @@ public class StringButtonStatusDialogField extends StringButtonDialogField {
 				fStatusLabelControl.setImage(image);
 			}
 		}
-		fStatus= image;		
-	}	
+		fStatus = image;
+	}
 
 	/**
 	 * Sets the staus string hint of the status label.
 	 * The string is used to calculate the size of the status label.
-	 */		
+	 */
 	public void setStatusWidthHint(String widthHintString) {
-		fWidthHintString= widthHintString;
-		fWidthHint= -1;
+		fWidthHintString = widthHintString;
+		fWidthHint = -1;
 	}
-	
+
 	/**
 	 * Sets the width hint of the status label.
 	 */
 	public void setStatusWidthHint(int widthHint) {
-		fWidthHint= widthHint;
-		fWidthHintString= null;
+		fWidthHint = widthHint;
+		fWidthHintString = null;
 	}
-	
+
 	// ------- layout helpers	
 
 	/*
 	 * @see DialogField#doFillIntoGrid
-	 */		
+	 */
 	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		assertEnoughColumns(nColumns);
-		
-		Label label= getLabelControl(parent);
+
+		Label label = getLabelControl(parent);
 		label.setLayoutData(gridDataForLabel(1));
-		Text text= getTextControl(parent);
+		Text text = getTextControl(parent);
 		text.setLayoutData(gridDataForText(nColumns - 3));
-		Label status= getStatusLabelControl(parent);
+		Label status = getStatusLabelControl(parent);
 		status.setLayoutData(gridDataForStatusLabel(parent, 1));
-		Button button= getChangeControl(parent);
+		Button button = getChangeControl(parent);
 		button.setLayoutData(gridDataForButton(button, 1));
-		
+
 		return new Control[] { label, text, status, button };
 	}
-	
+
 	/*
 	 * @see DialogField#getNumberOfControls
 	 */
 	@Override
 	public int getNumberOfControls() {
-		return 4;	
+		return 4;
 	}
-	
+
 	protected GridData gridDataForStatusLabel(Control aControl, int span) {
-		GridData gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.grabExcessHorizontalSpace= false;
-		gd.horizontalIndent= 0;
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
+		gd.grabExcessHorizontalSpace = false;
+		gd.horizontalIndent = 0;
 		if (fWidthHintString != null) {
-			GC gc= new GC(aControl);
-			gd.widthHint= gc.textExtent(fWidthHintString).x;
+			GC gc = new GC(aControl);
+			gd.widthHint = gc.textExtent(fWidthHintString).x;
 			gc.dispose();
 		} else if (fWidthHint != -1) {
-			gd.widthHint= fWidthHint;
+			gd.widthHint = fWidthHint;
 		} else {
-			gd.widthHint= SWT.DEFAULT;
-		}		
+			gd.widthHint = SWT.DEFAULT;
+		}
 		return gd;
 	}
-	
+
 	// ------- ui creation	
 
 	/**
 	 * Creates or returns the created status label widget.
 	 * @param parent The parent composite or <code>null</code> when the widget has
 	 * already been created.
-	 */			
+	 */
 	public Label getStatusLabelControl(Composite parent) {
 		if (fStatusLabelControl == null) {
-			assertCompositeNotNull(parent);			
-			fStatusLabelControl= new Label(parent, SWT.LEFT);
+			assertCompositeNotNull(parent);
+			fStatusLabelControl = new Label(parent, SWT.LEFT);
 			fStatusLabelControl.setFont(parent.getFont());
 			fStatusLabelControl.setEnabled(isEnabled());
 			if (fStatus instanceof Image) {
-				fStatusLabelControl.setImage((Image)fStatus);
+				fStatusLabelControl.setImage((Image) fStatus);
 			} else if (fStatus instanceof String) {
-				fStatusLabelControl.setText((String)fStatus);
+				fStatusLabelControl.setText((String) fStatus);
 			} else {
 				// must be null
 			}
 		}
 		return fStatusLabelControl;
 	}
-	
+
 	// ------ enable / disable management
 
 	/*
 	 * @see DialogField#updateEnableState
-	 */	
+	 */
 	@Override
 	protected void updateEnableState() {
 		super.updateEnableState();
 		if (isOkToUse(fStatusLabelControl)) {
 			fStatusLabelControl.setEnabled(isEnabled());
 		}
-	}	
+	}
 }

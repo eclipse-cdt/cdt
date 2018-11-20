@@ -32,7 +32,6 @@ public interface ICommandLauncher {
 	public final static int ILLEGAL_COMMAND = -1;
 	public final static int OK = 0;
 
-
 	/**
 	 * Sets the project that this launcher is associated with, or <code>null</code> if there is no such
 	 * project.
@@ -60,7 +59,7 @@ public interface ICommandLauncher {
 	 * @return A String corresponding to the error, or <code>null</code> if there has been no error.
 	 *   The message could be multi-line, however it is NOT guaranteed that it ends with end of line.
 	 */
-	public  String getErrorMessage();
+	public String getErrorMessage();
 
 	/**
 	 * Sets the human readable error message corresponding to the last error encountered during command
@@ -69,7 +68,7 @@ public interface ICommandLauncher {
 	 * @param error A String corresponding to the error message, or <code>null</code> if the error state is
 	 * intended to be cleared.
 	 */
-	public  void setErrorMessage(String error);
+	public void setErrorMessage(String error);
 
 	/**
 	 * Returns an array of the command line arguments that were last used to execute a command.
@@ -77,7 +76,7 @@ public interface ICommandLauncher {
 	 * @return an array of type String[] corresponding to the arguments.  The array can be empty, but should not
 	 * be null.
 	 */
-	public  String[] getCommandArgs();
+	public String[] getCommandArgs();
 
 	/**
 	 * Returns the set of environment variables in the context of which
@@ -85,14 +84,14 @@ public interface ICommandLauncher {
 	 *
 	 * @return Properties
 	 */
-	public  Properties getEnvironment();
+	public Properties getEnvironment();
 
 	/**
 	 * Returns the constructed command line of the last command executed.
 	 *
 	 * @return String
 	 */
-	public  String getCommandLine();
+	public String getCommandLine();
 
 	/**
 	 * Execute a command

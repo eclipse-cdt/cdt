@@ -22,24 +22,24 @@ package org.eclipse.cdt.managedbuilder.core;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IManagedConfigElement {
-	
+
 	/**
 	 * @return the name of this config element (i.e. tag name of the 
 	 * corresponding xml element)
 	 */
 	String getName();
-	
+
 	/**
 	 * @return the value of the attribute with the given name, or null
 	 * if the attribute is unset.
 	 */
 	String getAttribute(String name);
-	
+
 	/**
 	 * @return all child elements of the current config element.
 	 */
 	IManagedConfigElement[] getChildren();
-	
+
 	/**
 	 * @return all child elements of the current config element, such that
 	 * <code>child.getName().equals(elementName)</code>.

@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-
 /**
  * Adds a Link to the Project.
  */
@@ -38,13 +37,14 @@ public class AddLink extends ProcessRunner {
 	 * This method Adds a Link to the Project.
 	 */
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		String fileSourcePath = args[1].getSimpleValue();
 		String targetPath = args[2].getSimpleValue();
 
 		File sourceFile = new java.io.File(fileSourcePath);
-		
+
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 
 		try {
@@ -52,7 +52,8 @@ public class AddLink extends ProcessRunner {
 			if (!file.getParent().exists()) {
 				ProcessHelper.mkdirs(projectHandle, projectHandle.getFolder(file.getParent().getProjectRelativePath()));
 			}
-			file.createLink(Path.fromOSString(sourceFile.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL | IResource.BACKGROUND_REFRESH, null);
+			file.createLink(Path.fromOSString(sourceFile.getAbsolutePath()),
+					IResource.ALLOW_MISSING_LOCAL | IResource.BACKGROUND_REFRESH, null);
 			file.refreshLocal(IResource.DEPTH_ONE, null);
 			projectHandle.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {

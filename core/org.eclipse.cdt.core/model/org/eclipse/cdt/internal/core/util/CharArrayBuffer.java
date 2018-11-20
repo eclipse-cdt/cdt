@@ -151,10 +151,8 @@ public class CharArrayBuffer {
 			if (length > 0) {
 				if (fEnd == fSize) {
 					int size2 = fSize * 2;
-					System.arraycopy(fBuffer, 0, (fBuffer = new char[size2][]),
-							0, fSize);
-					System.arraycopy(fRanges, 0, (fRanges = new int[size2][]),
-							0, fSize);
+					System.arraycopy(fBuffer, 0, (fBuffer = new char[size2][]), 0, fSize);
+					System.arraycopy(fRanges, 0, (fRanges = new int[size2][]), 0, fSize);
 					fSize *= 2;
 				}
 				fBuffer[fEnd] = src;

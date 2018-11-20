@@ -40,7 +40,7 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fOutputParser= new GCCScannerInfoConsoleParser();
+		fOutputParser = new GCCScannerInfoConsoleParser();
 		fOutputParser.startup(null, null, fCollector, null);
 	}
 
@@ -55,15 +55,16 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 	 * Only tests parsing of the input (make build output)
 	 */
 	public void testParsingIncludePaths() {
-		fOutputParser.processLine("gcc -I /dir/include -I c:\\dir\\include -ID:/dir/include -c test.c");	// absolute paths //$NON-NLS-1$
-		fOutputParser.processLine("gcc -I -I /dir2/include -c test.c");	// empty -I //$NON-NLS-1$
+		fOutputParser.processLine("gcc -I /dir/include -I c:\\dir\\include -ID:/dir/include -c test.c"); // absolute paths //$NON-NLS-1$
+		fOutputParser.processLine("gcc -I -I /dir2/include -c test.c"); // empty -I //$NON-NLS-1$
 		fOutputParser.processLine("gcc -I../back_dir/include -I./cur_dir/include -c test.c"); // relative paths //$NON-NLS-1$
 		fOutputParser.processLine("gcc '-I /squoted/dir1' -I '/squoted/dir2' -I'/squoted/dir3' -c test.c"); // single quote dirs //$NON-NLS-1$
 		fOutputParser.processLine("gcc \"-I /dquoted/dir1\" -I \"/dquoted/dir2\" -I\"/dquoted/dir3\" -c test.c"); // double quote dirs //$NON-NLS-1$
 		fOutputParser.processLine("gcc '-I /with spaces 1' -I'/with spaces 2' -c test.c"); // dirs with spaces 1,2 //$NON-NLS-1$
 		fOutputParser.processLine("gcc \"-I /with spaces 3\" -I \"/with spaces 4\" -c test.c"); // dirs with spaces 3,4 //$NON-NLS-1$
 		fOutputParser.processLine("gcc -I /with\\ spaces\\ 5 -c test.c"); // dirs with spaces 5 //$NON-NLS-1$
-		fOutputParser.processLine("gcc -I '\\\\server1\\include' '-I\\\\server2\\include' -I \"\\\\\\\\server3\\\\include\" -c test.c"); // UNC paths //$NON-NLS-1$
+		fOutputParser.processLine(
+				"gcc -I '\\\\server1\\include' '-I\\\\server2\\include' -I \"\\\\\\\\server3\\\\include\" -c test.c"); // UNC paths //$NON-NLS-1$
 		fOutputParser.processLine("gcc -I //server4/include -I '//server5/include' '-I//server6/include' -c test.c"); // UNC paths //$NON-NLS-1$
 		fOutputParser.processLine("gcc -I \\"); //$NON-NLS-1$
 		fOutputParser.processLine("/multiline\\"); //$NON-NLS-1$

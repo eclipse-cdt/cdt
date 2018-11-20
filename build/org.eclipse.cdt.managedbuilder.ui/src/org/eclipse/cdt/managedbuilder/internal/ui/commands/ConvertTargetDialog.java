@@ -55,8 +55,8 @@ public class ConvertTargetDialog extends Dialog {
 	private IConfigurationElement selectedConversionElement;
 	private static boolean isConversionSuccessful = false;
 
-	public static final String PREFIX = "ProjectConvert";	//$NON-NLS-1$
-	public static final String CONVERTERS_LIST = PREFIX + ".convertersList";	//$NON-NLS-1$
+	public static final String PREFIX = "ProjectConvert"; //$NON-NLS-1$
+	public static final String CONVERTERS_LIST = PREFIX + ".convertersList"; //$NON-NLS-1$
 
 	/**
 	 * @param parentShell the parent shell
@@ -92,14 +92,14 @@ public class ConvertTargetDialog extends Dialog {
 			handleConverterSelection();
 			IConvertManagedBuildObject convertBuildObject = null;
 			try {
-				convertBuildObject =
-						(IConvertManagedBuildObject) getSelectedConversionElement().createExecutableExtension("class");	//$NON-NLS-1$
+				convertBuildObject = (IConvertManagedBuildObject) getSelectedConversionElement()
+						.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				ManagedBuilderUIPlugin.log(e);
 			}
 			if (convertBuildObject != null) {
-				String fromId = getSelectedConversionElement().getAttribute("fromId");	//$NON-NLS-1$
-				String toId = getSelectedConversionElement().getAttribute("toId");	//$NON-NLS-1$
+				String fromId = getSelectedConversionElement().getAttribute("fromId"); //$NON-NLS-1$
+				String toId = getSelectedConversionElement().getAttribute("toId"); //$NON-NLS-1$
 
 				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 				if (info != null) {
@@ -123,7 +123,6 @@ public class ConvertTargetDialog extends Dialog {
 		super.buttonPressed(buttonId);
 	}
 
-
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -146,7 +145,8 @@ public class ConvertTargetDialog extends Dialog {
 		convertersListGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Create the current config List
-		convertersList = new org.eclipse.swt.widgets.List(convertersListGroup, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
+		convertersList = new org.eclipse.swt.widgets.List(convertersListGroup,
+				SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		convertersList.setFont(convertersListGroup.getFont());
 		GridData data = new GridData(GridData.FILL_BOTH);
 		convertersList.setLayoutData(data);
@@ -156,20 +156,20 @@ public class ConvertTargetDialog extends Dialog {
 				convertersList = null;
 			}
 		});
-		convertersList.addListener (SWT.Selection, new Listener () {
+		convertersList.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				validateState();
 			}
 		});
-		Object [] objs = getConversionElements().keySet().toArray();
-		String [] names = new String[objs.length];
+		Object[] objs = getConversionElements().keySet().toArray();
+		String[] names = new String[objs.length];
 		for (int i = 0; i < objs.length; i++) {
 			Object object = objs[i];
-			names[i] = (String)object;
+			names[i] = (String) object;
 		}
-	    convertersList.setItems(names);
-	    validateState();
+		convertersList.setItems(names);
+		validateState();
 		return comp;
 	}
 
@@ -177,8 +177,7 @@ public class ConvertTargetDialog extends Dialog {
 		// Determine which configuration was selected
 		int selectionIndex = convertersList.getSelectionIndex();
 
-		String selectedConverterName = convertersList
-				.getItem(selectionIndex);
+		String selectedConverterName = convertersList.getItem(selectionIndex);
 
 		IConfigurationElement selectedElement = getConversionElements().get(selectedConverterName);
 		setSelectedConversionElement(selectedElement);
@@ -205,7 +204,7 @@ public class ConvertTargetDialog extends Dialog {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (info != null) {
 			IManagedProject managedProject = info.getManagedProject();
-			if ( managedProject != null) {
+			if (managedProject != null) {
 				projectType = managedProject.getProjectType();
 			}
 		}
@@ -224,8 +223,7 @@ public class ConvertTargetDialog extends Dialog {
 		return selectedConversionElement;
 	}
 
-	public void setSelectedConversionElement(
-			IConfigurationElement selectedConversionElement) {
+	public void setSelectedConversionElement(IConfigurationElement selectedConversionElement) {
 		this.selectedConversionElement = selectedConversionElement;
 	}
 
@@ -236,7 +234,7 @@ public class ConvertTargetDialog extends Dialog {
 	public void setConversionSuccessful(boolean isConversionSuccessful) {
 		ConvertTargetDialog.isConversionSuccessful = isConversionSuccessful;
 	}
-	
+
 	private List<IBuildObject> getProjectToolchains() {
 		List<IBuildObject> projectToolchains = new ArrayList<>();
 
@@ -254,4 +252,3 @@ public class ConvertTargetDialog extends Dialog {
 		return projectToolchains;
 	}
 }
-

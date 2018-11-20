@@ -13,6 +13,7 @@
  *     Ed Swartz (NOKIA Inc) - support standalone parser
  *******************************************************************************/
 package org.eclipse.cdt.autotools.ui.editors.parser;
+
 /**
  * A call to a macro.
  * <p>
@@ -32,6 +33,7 @@ public class AutoconfMacroElement extends AutoconfElement {
 		else
 			return null;
 	}
+
 	public int getParameterCount() {
 		return children.size();
 	}
@@ -47,7 +49,7 @@ public class AutoconfMacroElement extends AutoconfElement {
 	 * @param verions Autoconf to be used to validate this macro.
 	 * @throws InvalidMacroException 
 	 */
-	public void validate (String version) throws InvalidMacroException {}
+	public void validate(String version) throws InvalidMacroException {
+	}
 
-	
 }

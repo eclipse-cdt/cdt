@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.ui.view.MessagesViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
@@ -26,9 +25,9 @@ public class MessageLevelFilterAction extends Action {
 
 	private MessagesViewer.LevelFilter levelFilter;
 	private MessagesViewer messagesViewer;
-	
-	
-	public MessageLevelFilterAction(MessagesViewer messagePanel, MessagesViewer.LevelFilter levelFilter, boolean checked) {
+
+	public MessageLevelFilterAction(MessagesViewer messagePanel, MessagesViewer.LevelFilter levelFilter,
+			boolean checked) {
 		super("", AS_CHECK_BOX); //$NON-NLS-1$
 		this.levelFilter = levelFilter;
 		this.messagesViewer = messagePanel;

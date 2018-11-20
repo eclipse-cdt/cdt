@@ -24,29 +24,29 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
  */
 public interface IBreakpointsExtension extends IBreakpoints {
 
-    /**
-     * Event indicating that a given thread or container was suspended
-     * by the given breakpoint(s).
-     */
-    public interface IBreakpointHitDMEvent extends ISuspendedDMEvent {
-        
-        /**
-         * Returns the breakpoints that suspended the thread.
-         */
-        IBreakpointDMContext[] getBreakpoints();
-    }
+	/**
+	 * Event indicating that a given thread or container was suspended
+	 * by the given breakpoint(s).
+	 */
+	public interface IBreakpointHitDMEvent extends ISuspendedDMEvent {
 
-    /**
-     * If a given execution context was suspended due to hitting a breakpoint, 
-     * this method should return the breakpoints which caused the thread or 
-     * container to suspend.
-     * <p>
-     * If the given thread is not suspended or is not suspended at a 
-     * breakpoint, an empty array or an error with an INVALID_STATE code 
-     * will be returned. 
-     * 
-     * @param ctx Thread or container to get breakpoints for.
-     * @param rm Breakpoints that the thread or container is suspended on.
-     */
-    public void getExecutionContextBreakpoints(IExecutionDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm);
+		/**
+		 * Returns the breakpoints that suspended the thread.
+		 */
+		IBreakpointDMContext[] getBreakpoints();
+	}
+
+	/**
+	 * If a given execution context was suspended due to hitting a breakpoint, 
+	 * this method should return the breakpoints which caused the thread or 
+	 * container to suspend.
+	 * <p>
+	 * If the given thread is not suspended or is not suspended at a 
+	 * breakpoint, an empty array or an error with an INVALID_STATE code 
+	 * will be returned. 
+	 * 
+	 * @param ctx Thread or container to get breakpoints for.
+	 * @param rm Breakpoints that the thread or container is suspended on.
+	 */
+	public void getExecutionContextBreakpoints(IExecutionDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm);
 }

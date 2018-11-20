@@ -66,27 +66,27 @@ import org.eclipse.core.runtime.Status;
 public class PDOMFile implements IIndexFragmentFile {
 	private final PDOMLinkage fLinkage;
 	private final long record;
-	private IIndexFileLocation location;  // No need to make volatile, all fields of IndexFileLocation are final.
-	private ISignificantMacros sigMacros;  // No need to make volatile, all fields of SignificantMacros are either final or atomically updated.
+	private IIndexFileLocation location; // No need to make volatile, all fields of IndexFileLocation are final.
+	private ISignificantMacros sigMacros; // No need to make volatile, all fields of SignificantMacros are either final or atomically updated.
 
 	private static final int FIRST_NAME = 0;
 	private static final int FIRST_INCLUDE = FIRST_NAME + Database.PTR_SIZE;
 	private static final int FIRST_INCLUDED_BY = FIRST_INCLUDE + Database.PTR_SIZE;
 	private static final int FIRST_MACRO = FIRST_INCLUDED_BY + Database.PTR_SIZE;
 	private static final int LOCATION_REPRESENTATION = FIRST_MACRO + Database.PTR_SIZE;
-	private static final int LINKAGE_ID= LOCATION_REPRESENTATION + Database.PTR_SIZE;  // size 3
-	private static final int FLAGS= LINKAGE_ID + 3;  // size 1
-	private static final int TIME_STAMP= FLAGS + 1;  // long
-	private static final int SOURCE_READ_TIME= TIME_STAMP + 8;  // long
-	private static final int CONTENT_HASH= SOURCE_READ_TIME + 8;  // long
-	private static final int SIZE_AND_ENCODING_HASH= CONTENT_HASH + 8;
-	private static final int LAST_USING_DIRECTIVE= SIZE_AND_ENCODING_HASH + 4;
-	private static final int FIRST_MACRO_REFERENCE= LAST_USING_DIRECTIVE + Database.PTR_SIZE;
-	private static final int SIGNIFICANT_MACROS= FIRST_MACRO_REFERENCE + Database.PTR_SIZE;
+	private static final int LINKAGE_ID = LOCATION_REPRESENTATION + Database.PTR_SIZE; // size 3
+	private static final int FLAGS = LINKAGE_ID + 3; // size 1
+	private static final int TIME_STAMP = FLAGS + 1; // long
+	private static final int SOURCE_READ_TIME = TIME_STAMP + 8; // long
+	private static final int CONTENT_HASH = SOURCE_READ_TIME + 8; // long
+	private static final int SIZE_AND_ENCODING_HASH = CONTENT_HASH + 8;
+	private static final int LAST_USING_DIRECTIVE = SIZE_AND_ENCODING_HASH + 4;
+	private static final int FIRST_MACRO_REFERENCE = LAST_USING_DIRECTIVE + Database.PTR_SIZE;
+	private static final int SIGNIFICANT_MACROS = FIRST_MACRO_REFERENCE + Database.PTR_SIZE;
 	private static final int REPLACEMENT_HEADER = SIGNIFICANT_MACROS + Database.PTR_SIZE;
-	private static final int RECORD_SIZE= REPLACEMENT_HEADER + Database.PTR_SIZE;   // 9*PTR_SIZE + 3+1+8+8+8+4 = 68
+	private static final int RECORD_SIZE = REPLACEMENT_HEADER + Database.PTR_SIZE; // 9*PTR_SIZE + 3+1+8+8+8+4 = 68
 
-	private static final int FLAG_PRAGMA_ONCE_SEMANTICS	= 0x01;
+	private static final int FLAG_PRAGMA_ONCE_SEMANTICS = 0x01;
 
 	public static class Comparator implements IBTreeComparator {
 		private Database db;
@@ -99,24 +99,24 @@ public class PDOMFile implements IIndexFragmentFile {
 		public int compare(long record1, long record2) throws CoreException {
 			IString name1 = db.getString(db.getRecPtr(record1 + LOCATION_REPRESENTATION));
 			IString name2 = db.getString(db.getRecPtr(record2 + LOCATION_REPRESENTATION));
-			int cmp= name1.compare(name2, true);
+			int cmp = name1.compare(name2, true);
 			if (cmp == 0) {
-				cmp= db.get3ByteUnsignedInt(record1 + LINKAGE_ID) - db.get3ByteUnsignedInt(record2 + LINKAGE_ID);
+				cmp = db.get3ByteUnsignedInt(record1 + LINKAGE_ID) - db.get3ByteUnsignedInt(record2 + LINKAGE_ID);
 				if (cmp == 0) {
-					IString sm1= getString(record1 + SIGNIFICANT_MACROS);
-					IString sm2= getString(record2 + SIGNIFICANT_MACROS);
+					IString sm1 = getString(record1 + SIGNIFICANT_MACROS);
+					IString sm2 = getString(record2 + SIGNIFICANT_MACROS);
 					if (sm1 == null) {
-						cmp= sm2 == null ? 0 : -1;
+						cmp = sm2 == null ? 0 : -1;
 					} else if (sm2 == null) {
-						cmp= 1;
+						cmp = 1;
 					} else {
-						cmp= sm1.compare(sm2, true);
+						cmp = sm1.compare(sm2, true);
 					}
 				}
 			}
 			return cmp;
 		}
-		
+
 		private IString getString(long offset) throws CoreException {
 			long rec = db.getRecPtr(offset);
 			return rec != 0 ? db.getString(rec) : null;
@@ -128,14 +128,16 @@ public class PDOMFile implements IIndexFragmentFile {
 		this.record = record;
 	}
 
-	public PDOMFile(PDOMLinkage linkage, IIndexFileLocation location, int linkageID, ISignificantMacros macros) throws CoreException {
+	public PDOMFile(PDOMLinkage linkage, IIndexFileLocation location, int linkageID, ISignificantMacros macros)
+			throws CoreException {
 		fLinkage = linkage;
-		this.location= location;
+		this.location = location;
 		Database db = fLinkage.getDB();
 		record = db.malloc(RECORD_SIZE);
 		String locationString = fLinkage.getPDOM().getLocationConverter().toInternalFormat(location);
 		if (locationString == null)
-			throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toInternalProblem") + location.getURI())); //$NON-NLS-1$
+			throw new CoreException(
+					CCorePlugin.createStatus(Messages.getString("PDOMFile.toInternalProblem") + location.getURI())); //$NON-NLS-1$
 		IString locationDBString = db.newString(locationString);
 		db.putRecPtr(record + LOCATION_REPRESENTATION, locationDBString.getRecord());
 		db.put3ByteUnsignedInt(record + LINKAGE_ID, linkageID);
@@ -182,7 +184,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		// Link in the includes, replace the owner.
 		PDOMInclude include = sourceFile.getFirstInclude();
 		setFirstInclude(include);
-		for (; include != null; include= include.getNextInIncludes()) {
+		for (; include != null; include = include.getNextInIncludes()) {
 			include.setIncludedBy(this);
 		}
 
@@ -206,7 +208,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		// Replace all the names in this file
 		PDOMName name = sourceFile.getFirstName();
 		setFirstName(name);
-		for (; name != null; name= name.getNextInFile()) {
+		for (; name != null; name = name.getNextInFile()) {
 			name.setFile(this);
 		}
 
@@ -216,7 +218,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		setContentsHash(sourceFile.getContentsHash());
 
 		// Transfer the flags. 
-		Database db= fLinkage.getDB();
+		Database db = fLinkage.getDB();
 		db.putByte(record + FLAGS, db.getByte(sourceFile.record + FLAGS));
 
 		// Transfer the replacement header.
@@ -229,22 +231,22 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public void transferIncluders(IIndexFragmentFile sourceFile) throws CoreException {
-		PDOMFile source= (PDOMFile) sourceFile;
+		PDOMFile source = (PDOMFile) sourceFile;
 		PDOMInclude include = source.getFirstIncludedBy();
 		if (include != null) {
 			// Detach the includes
 			source.setFirstIncludedBy(null);
 			// Adjust the includes
-			for (PDOMInclude i= include; i != null; i= i.getNextInIncludedBy()) {
+			for (PDOMInclude i = include; i != null; i = i.getNextInIncludedBy()) {
 				i.setIncludes(this);
 			}
 			// Append the includes
-			PDOMInclude last= getFirstIncludedBy();
+			PDOMInclude last = getFirstIncludedBy();
 			if (last == null) {
 				setFirstIncludedBy(include);
 			} else {
-				for (PDOMInclude i= last; i != null; i= i.getNextInIncludedBy()) {
-					last= i;
+				for (PDOMInclude i = last; i != null; i = i.getNextInIncludedBy()) {
+					last = i;
 				}
 				last.setNextInIncludedBy(include);
 				include.setPrevInIncludedBy(last);
@@ -254,7 +256,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public void transferContext(IIndexFragmentFile sourceFile) throws CoreException {
-		PDOMFile source= (PDOMFile) sourceFile;
+		PDOMFile source = (PDOMFile) sourceFile;
 		PDOMInclude include = source.getFirstIncludedBy();
 		if (include != null) {
 			// Detach the include
@@ -263,7 +265,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			source.setFirstIncludedBy(next);
 			if (next != null)
 				next.setPrevInIncludedBy(null);
-			
+
 			// Adjust the include
 			include.setIncludes(this);
 
@@ -299,7 +301,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		if (oldRecord != 0)
 			db.getString(oldRecord).delete();
 		db.putRecPtr(record + LOCATION_REPRESENTATION, db.newString(internalLocation).getRecord());
-		location= null;
+		location = null;
 	}
 
 	@Override
@@ -316,7 +318,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public void setTimestamp(long timestamp) throws CoreException {
-		Database db= fLinkage.getDB();
+		Database db = fLinkage.getDB();
 		db.putLong(record + TIME_STAMP, timestamp);
 	}
 
@@ -328,7 +330,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public void setSourceReadTime(long time) throws CoreException {
-		Database db= fLinkage.getDB();
+		Database db = fLinkage.getDB();
 		db.putLong(record + SOURCE_READ_TIME, time);
 	}
 
@@ -340,7 +342,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public void setContentsHash(long hash) throws CoreException {
-		Database db= fLinkage.getDB();
+		Database db = fLinkage.getDB();
 		db.putLong(record + CONTENT_HASH, hash);
 	}
 
@@ -363,7 +365,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public void setSizeAndEncodingHashcode(int hashcode) throws CoreException {
-		Database db= fLinkage.getDB();
+		Database db = fLinkage.getDB();
 		db.putInt(record + SIZE_AND_ENCODING_HASH, hashcode);
 	}
 
@@ -442,17 +444,17 @@ public class PDOMFile implements IIndexFragmentFile {
 	public void addMacros(IASTPreprocessorStatement[] macros) throws CoreException {
 		assert getFirstMacro() == null;
 
-		PDOMMacro lastMacro= null;
+		PDOMMacro lastMacro = null;
 		final PDOMLinkage linkage = getLinkage();
 		for (IASTPreprocessorStatement stmt : macros) {
-			PDOMMacro pdomMacro= null;
+			PDOMMacro pdomMacro = null;
 			if (stmt instanceof IASTPreprocessorMacroDefinition) {
-				IASTPreprocessorMacroDefinition macro= (IASTPreprocessorMacroDefinition) stmt;
-				PDOMMacroContainer container= linkage.getMacroContainer(macro.getName().getSimpleID());
+				IASTPreprocessorMacroDefinition macro = (IASTPreprocessorMacroDefinition) stmt;
+				PDOMMacroContainer container = linkage.getMacroContainer(macro.getName().getSimpleID());
 				pdomMacro = new PDOMMacro(fLinkage, container, macro, this);
 			} else if (stmt instanceof IASTPreprocessorUndefStatement) {
-				IASTPreprocessorUndefStatement undef= (IASTPreprocessorUndefStatement) stmt;
-				PDOMMacroContainer container= linkage.getMacroContainer(undef.getMacroName().getSimpleID());
+				IASTPreprocessorUndefStatement undef = (IASTPreprocessorUndefStatement) stmt;
+				PDOMMacroContainer container = linkage.getMacroContainer(undef.getMacroName().getSimpleID());
 				pdomMacro = new PDOMMacro(fLinkage, container, undef, this);
 			}
 			if (pdomMacro != null) {
@@ -461,7 +463,7 @@ public class PDOMFile implements IIndexFragmentFile {
 				} else {
 					lastMacro.setNextMacro(pdomMacro);
 				}
-				lastMacro= pdomMacro;
+				lastMacro = pdomMacro;
 			}
 		}
 	}
@@ -473,17 +475,17 @@ public class PDOMFile implements IIndexFragmentFile {
 	public void addNames(IASTName[][] names, YieldableIndexLock lock) throws CoreException, InterruptedException {
 		assert getFirstName() == null;
 		assert getFirstMacroReference() == null;
-		final PDOMLinkage linkage= getLinkage();
-		HashMap<IASTName, PDOMName> nameCache= new HashMap<IASTName, PDOMName>();
-		PDOMName lastName= null;
-		PDOMMacroReferenceName lastMacroName= null;
+		final PDOMLinkage linkage = getLinkage();
+		HashMap<IASTName, PDOMName> nameCache = new HashMap<IASTName, PDOMName>();
+		PDOMName lastName = null;
+		PDOMMacroReferenceName lastMacroName = null;
 		for (IASTName[] name : names) {
 			if (name[0] != null) {
 				if (lock != null) {
 					lock.yield();
 				}
-				PDOMName caller= nameCache.get(name[1]);
-				IIndexFragmentName fname= createPDOMName(linkage, name[0], caller);
+				PDOMName caller = nameCache.get(name[1]);
+				IIndexFragmentName fname = createPDOMName(linkage, name[0], caller);
 				if (fname instanceof PDOMName) {
 					PDOMName pdomName = (PDOMName) fname;
 					nameCache.put(name[0], pdomName);
@@ -492,7 +494,7 @@ public class PDOMFile implements IIndexFragmentFile {
 					} else {
 						lastName.setNextInFile(pdomName);
 					}
-					lastName= pdomName;
+					lastName = pdomName;
 				} else if (fname instanceof PDOMMacroReferenceName) {
 					PDOMMacroReferenceName macroName = (PDOMMacroReferenceName) fname;
 					if (lastMacroName == null) {
@@ -500,13 +502,14 @@ public class PDOMFile implements IIndexFragmentFile {
 					} else {
 						lastMacroName.setNextInFile(macroName);
 					}
-					lastMacroName= macroName;
+					lastMacroName = macroName;
 				}
 			}
 		}
 	}
 
-	private IIndexFragmentName createPDOMName(PDOMLinkage linkage, IASTName name, PDOMName caller) throws CoreException {
+	private IIndexFragmentName createPDOMName(PDOMLinkage linkage, IASTName name, PDOMName caller)
+			throws CoreException {
 		final IBinding binding = name.getBinding();
 		if (binding instanceof IParameter) {
 			return null;
@@ -518,7 +521,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 			PDOMBinding pdomBinding = linkage.addBinding(name);
 			if (pdomBinding != null) {
-				final PDOMName result= new PDOMName(fLinkage, name, this, pdomBinding, caller, 
+				final PDOMName result = new PDOMName(fLinkage, name, this, pdomBinding, caller,
 						false /* exact match */);
 				linkage.onCreateName(this, name, result);
 				return result;
@@ -551,14 +554,14 @@ public class PDOMFile implements IIndexFragmentFile {
 		return null;
 	}
 
-	private IIndexFragmentName createPDOMMacroReferenceName(PDOMLinkage linkage, IASTName name,
-			PDOMName caller) throws CoreException {
-		PDOMMacroContainer cont= linkage.getMacroContainer(name.getSimpleID());
+	private IIndexFragmentName createPDOMMacroReferenceName(PDOMLinkage linkage, IASTName name, PDOMName caller)
+			throws CoreException {
+		PDOMMacroContainer cont = linkage.getMacroContainer(name.getSimpleID());
 		return new PDOMMacroReferenceName(fLinkage, name, this, cont, caller);
 	}
 
 	public void clear() throws CoreException {
-		ICPPUsingDirective[] directives= getUsingDirectives();
+		ICPPUsingDirective[] directives = getUsingDirectives();
 		for (ICPPUsingDirective ud : directives) {
 			if (ud instanceof IPDOMNode) {
 				((IPDOMNode) ud).delete(null);
@@ -570,16 +573,16 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMInclude include = getFirstInclude();
 		while (include != null) {
 			PDOMInclude nextInclude = include.getNextInIncludes();
-//			if (contextsRemoved != null && include.getPrevInIncludedByRecord() == 0) {
-//				contextsRemoved.add(include.getIncludesLocation());
-//			}
+			//			if (contextsRemoved != null && include.getPrevInIncludedByRecord() == 0) {
+			//				contextsRemoved.add(include.getIncludesLocation());
+			//			}
 			include.delete();
 			include = nextInclude;
 		}
 		setFirstInclude(null);
 
 		// Delete all the macros in this file
-		PDOMLinkage linkage= getLinkage();
+		PDOMLinkage linkage = getLinkage();
 		PDOMMacro macro = getFirstMacro();
 		while (macro != null) {
 			PDOMMacro nextMacro = macro.getNextMacro();
@@ -589,12 +592,12 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstMacro(null);
 
 		// Delete all the names in this file
-		ArrayList<PDOMName> names= new ArrayList<PDOMName>();
+		ArrayList<PDOMName> names = new ArrayList<PDOMName>();
 		PDOMName name = getFirstName();
 		while (name != null) {
 			names.add(name);
 			linkage.onDeleteName(name);
-			name= name.getNextInFile();
+			name = name.getNextInFile();
 		}
 		for (Iterator<PDOMName> iterator = names.iterator(); iterator.hasNext();) {
 			name = iterator.next();
@@ -603,11 +606,11 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstName(null);
 
 		// Delete all macro references
-		ArrayList<PDOMMacroReferenceName> mrefs= new ArrayList<PDOMMacroReferenceName>();
+		ArrayList<PDOMMacroReferenceName> mrefs = new ArrayList<PDOMMacroReferenceName>();
 		PDOMMacroReferenceName mref = getFirstMacroReference();
 		while (mref != null) {
 			mrefs.add(mref);
-			mref= mref.getNextInFile();
+			mref = mref.getNextInFile();
 		}
 		for (PDOMMacroReferenceName m : mrefs) {
 			m.delete();
@@ -640,9 +643,9 @@ public class PDOMFile implements IIndexFragmentFile {
 	public void addIncludesTo(IncludeInformation[] includeInfos) throws CoreException {
 		assert getFirstInclude() == null;
 
-		PDOMInclude lastInclude= null;
+		PDOMInclude lastInclude = null;
 		for (final IncludeInformation info : includeInfos) {
-			final PDOMFile targetFile= (PDOMFile) info.fTargetFile;
+			final PDOMFile targetFile = (PDOMFile) info.fTargetFile;
 
 			PDOMInclude pdomInclude = new PDOMInclude(fLinkage, info.fStatement, this, targetFile);
 			assert targetFile == null || targetFile.getIndexFragment() instanceof IWritableIndexFragment;
@@ -654,7 +657,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			} else {
 				lastInclude.setNextInIncludes(pdomInclude);
 			}
-			lastInclude= pdomInclude;
+			lastInclude = pdomInclude;
 		}
 	}
 
@@ -666,7 +669,7 @@ public class PDOMFile implements IIndexFragmentFile {
 				include.setNextInIncludedBy(firstIncludedBy);
 				firstIncludedBy.setPrevInIncludedBy(include);
 			} else {
-				PDOMInclude secondIncludedBy= firstIncludedBy.getNextInIncludedBy();
+				PDOMInclude secondIncludedBy = firstIncludedBy.getNextInIncludedBy();
 				if (secondIncludedBy != null) {
 					include.setNextInIncludedBy(secondIncludedBy);
 					secondIncludedBy.setPrevInIncludedBy(include);
@@ -681,7 +684,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public IIndexInclude[] getIncludes() throws CoreException {
-		List<PDOMInclude> result= new ArrayList<PDOMInclude>();
+		List<PDOMInclude> result = new ArrayList<PDOMInclude>();
 		PDOMInclude include = getFirstInclude();
 		while (include != null) {
 			result.add(include);
@@ -703,7 +706,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public IIndexMacro[] getMacros() throws CoreException {
-		List<PDOMMacro> result= new ArrayList<PDOMMacro>();
+		List<PDOMMacro> result = new ArrayList<PDOMMacro>();
 		PDOMMacro macro = getFirstMacro();
 		while (macro != null) {
 			result.add(macro);
@@ -719,9 +722,9 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public IIndexName[] findNames(int offset, int length) throws CoreException {
-		ArrayList<IIndexName> result= new ArrayList<IIndexName>();
-		for (PDOMName name= getFirstName(); name != null; name= name.getNextInFile()) {
-			int nameOffset=  name.getNodeOffset();
+		ArrayList<IIndexName> result = new ArrayList<IIndexName>();
+		for (PDOMName name = getFirstName(); name != null; name = name.getNextInFile()) {
+			int nameOffset = name.getNodeOffset();
 			if (nameOffset >= offset) {
 				if (nameOffset + name.getNodeLength() <= offset + length) {
 					result.add(name);
@@ -732,11 +735,11 @@ public class PDOMFile implements IIndexFragmentFile {
 				}
 			}
 		}
-		for (PDOMMacro macro= getFirstMacro(); macro != null; macro= macro.getNextMacro()) {
-			int nameOffset=  macro.getNodeOffset();
+		for (PDOMMacro macro = getFirstMacro(); macro != null; macro = macro.getNextMacro()) {
+			int nameOffset = macro.getNodeOffset();
 			if (nameOffset >= offset) {
 				if (nameOffset + macro.getNodeLength() <= offset + length) {
-					IIndexFragmentName name= macro.getDefinition();
+					IIndexFragmentName name = macro.getDefinition();
 					if (name != null) {
 						result.add(name);
 					}
@@ -745,8 +748,8 @@ public class PDOMFile implements IIndexFragmentFile {
 				}
 			}
 		}
-		for (PDOMMacroReferenceName name= getFirstMacroReference(); name != null; name= name.getNextInFile()) {
-			int nameOffset=  name.getNodeOffset();
+		for (PDOMMacroReferenceName name = getFirstMacroReference(); name != null; name = name.getNextInFile()) {
+			int nameOffset = name.getNodeOffset();
 			if (nameOffset >= offset) {
 				if (nameOffset + name.getNodeLength() <= offset + length) {
 					result.add(name);
@@ -760,14 +763,14 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	public static IIndexFragmentFile[] findFiles(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
 			IIndexLocationConverter strategy) throws CoreException {
-		String internalRepresentation= strategy.toInternalFormat(location);
+		String internalRepresentation = strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
 			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(), null);
 			btree.accept(finder);
-			long[] records= finder.getRecords();
-			IIndexFragmentFile[] result= new IIndexFragmentFile[records.length];
+			long[] records = finder.getRecords();
+			IIndexFragmentFile[] result = new IIndexFragmentFile[records.length];
 			for (int i = 0; i < result.length; i++) {
-				result[i]= new PDOMFile(linkage, records[i]);
+				result[i] = new PDOMFile(linkage, records[i]);
 			}
 			return result;
 		}
@@ -801,12 +804,12 @@ public class PDOMFile implements IIndexFragmentFile {
 	 */
 	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
 			IIndexLocationConverter strategy, ISignificantMacros macroDictionary) throws CoreException {
-		String internalRepresentation= strategy.toInternalFormat(location);
+		String internalRepresentation = strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
 			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(),
 					macroDictionary);
 			btree.accept(finder);
-			long record= finder.getRecord();
+			long record = finder.getRecord();
 			if (record != 0) {
 				return new PDOMFile(linkage, record);
 			}
@@ -816,12 +819,12 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	public static IIndexFragmentFile[] findFiles(PDOM pdom, BTree btree, IIndexFileLocation location,
 			IIndexLocationConverter strategy) throws CoreException {
-		String internalRepresentation= strategy.toInternalFormat(location);
+		String internalRepresentation = strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
 			Finder finder = new Finder(pdom.getDB(), internalRepresentation, -1, null);
 			btree.accept(finder);
-			long[] records= finder.getRecords();
-			PDOMFile[] result= new PDOMFile[records.length];
+			long[] records = finder.getRecords();
+			PDOMFile[] result = new PDOMFile[records.length];
 			for (int i = 0; i < result.length; i++) {
 				result[i] = recreateFile(pdom, records[i]);
 			}
@@ -831,9 +834,9 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	public static PDOMFile recreateFile(PDOM pdom, final long record) throws CoreException {
-		final Database db= pdom.getDB();
-		final int linkageID= db.get3ByteUnsignedInt(record + LINKAGE_ID);
-		PDOMLinkage linkage= pdom.getLinkage(linkageID);
+		final Database db = pdom.getDB();
+		final int linkageID = db.get3ByteUnsignedInt(record + LINKAGE_ID);
+		PDOMLinkage linkage = pdom.getLinkage(linkageID);
 		if (linkage == null)
 			throw new CoreException(createStatus("Invalid linkage ID in database")); //$NON-NLS-1$
 		return new PDOMFile(linkage, record);
@@ -854,7 +857,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		public Finder(Database db, String internalRepresentation, int linkageID, ISignificantMacros sigMacros) {
 			this.db = db;
 			this.rawKey = internalRepresentation;
-			this.linkageID= linkageID;
+			this.linkageID = linkageID;
 			this.rawSignificantMacros = sigMacros == null ? null : sigMacros.encode();
 			assert linkageID >= 0 || rawSignificantMacros == null;
 		}
@@ -872,9 +875,9 @@ public class PDOMFile implements IIndexFragmentFile {
 		@Override
 		public int compare(long record) throws CoreException {
 			IString name = db.getString(db.getRecPtr(record + PDOMFile.LOCATION_REPRESENTATION));
-			int cmp= name.compare(rawKey, true);
+			int cmp = name.compare(rawKey, true);
 			if (cmp == 0 && linkageID >= 0) {
-				cmp= db.get3ByteUnsignedInt(record + PDOMFile.LINKAGE_ID) - linkageID;
+				cmp = db.get3ByteUnsignedInt(record + PDOMFile.LINKAGE_ID) - linkageID;
 				if (cmp == 0 && rawSignificantMacros != null) {
 					IString significantMacrosStr = getString(record + SIGNIFICANT_MACROS);
 					if (significantMacrosStr != null) {
@@ -896,19 +899,19 @@ public class PDOMFile implements IIndexFragmentFile {
 		public boolean visit(long record) throws CoreException {
 			if (rawSignificantMacros != null) {
 				this.record = record;
-				return false; 
+				return false;
 				// Stop searching.
 			}
-			
+
 			if (this.record == 0) {
-				this.record= record;
+				this.record = record;
 			} else if (this.records == null) {
-				this.records= new long[] { this.record, record };
+				this.records = new long[] { this.record, record };
 			} else {
-				long[] cpy= new long[this.records.length + 1];
+				long[] cpy = new long[this.records.length + 1];
 				System.arraycopy(this.records, 0, cpy, 0, this.records.length);
-				cpy[cpy.length - 1]= record;
-				this.records= cpy;
+				cpy[cpy.length - 1] = record;
+				this.records = cpy;
 			}
 			// Continue search.
 			return true;
@@ -924,28 +927,27 @@ public class PDOMFile implements IIndexFragmentFile {
 		if (location == null) {
 			Database db = fLinkage.getDB();
 			String raw = db.getString(db.getRecPtr(record + LOCATION_REPRESENTATION)).getString();
-			location= fLinkage.getPDOM().getLocationConverter().fromInternalFormat(raw);
+			location = fLinkage.getPDOM().getLocationConverter().fromInternalFormat(raw);
 			if (location == null) {
 				URI uri;
 				try {
-					int idx= raw.lastIndexOf('>');
-					uri= new URI("file", null, raw.substring(idx + 1), null); //$NON-NLS-1$
+					int idx = raw.lastIndexOf('>');
+					uri = new URI("file", null, raw.substring(idx + 1), null); //$NON-NLS-1$
 				} catch (URISyntaxException e) {
-					uri= URI.create("file:/unknown-location"); //$NON-NLS-1$
+					uri = URI.create("file:/unknown-location"); //$NON-NLS-1$
 				}
-				location= new IndexFileLocation(uri, null);
+				location = new IndexFileLocation(uri, null);
 			}
 		}
 		return location;
 	}
 
-	
 	@Override
 	public ISignificantMacros getSignificantMacros() throws CoreException {
 		if (sigMacros == null) {
-			Database db= fLinkage.getDB();
+			Database db = fLinkage.getDB();
 			final IString encoded = db.getString(db.getRecPtr(record + SIGNIFICANT_MACROS));
-			sigMacros= encoded == null ? ISignificantMacros.NONE : new SignificantMacros(encoded.getChars());
+			sigMacros = encoded == null ? ISignificantMacros.NONE : new SignificantMacros(encoded.getChars());
 		}
 		return sigMacros;
 	}

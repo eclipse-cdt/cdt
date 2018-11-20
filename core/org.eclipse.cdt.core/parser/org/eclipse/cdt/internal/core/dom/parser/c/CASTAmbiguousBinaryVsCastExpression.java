@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousBinaryVsCastExpressi
 
 public class CASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousBinaryVsCastExpression {
 
-    public CASTAmbiguousBinaryVsCastExpression(IASTBinaryExpression binaryExpr, IASTCastExpression castExpr) {
-    	super(binaryExpr, castExpr);
+	public CASTAmbiguousBinaryVsCastExpression(IASTBinaryExpression binaryExpr, IASTCastExpression castExpr) {
+		super(binaryExpr, castExpr);
 	}
 }

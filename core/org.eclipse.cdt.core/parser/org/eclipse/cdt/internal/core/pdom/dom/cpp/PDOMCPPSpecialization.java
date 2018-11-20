@@ -76,7 +76,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		if (fSpecializedCache == null) {
 			try {
 				long specializedRec = getDB().getRecPtr(record + SPECIALIZED);
-				fSpecializedCache= loadSpecializedBinding(specializedRec);
+				fSpecializedCache = loadSpecializedBinding(specializedRec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
@@ -93,17 +93,17 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		if (fArgMap == null) {
 			try {
 				if (this instanceof ICPPTemplateInstance) {
-					fArgMap= PDOMCPPTemplateParameterMap.getMap(this, getDB().getRecPtr(record + ARGMAP));
+					fArgMap = PDOMCPPTemplateParameterMap.getMap(this, getDB().getRecPtr(record + ARGMAP));
 				} else {
 					// Specializations that are not instances have the same template parameter map as their
 					// owner.
-					IBinding owner= getOwner();
+					IBinding owner = getOwner();
 					if (owner instanceof ICPPSpecialization) {
-						fArgMap= ((ICPPSpecialization) owner).getTemplateParameterMap();
+						fArgMap = ((ICPPSpecialization) owner).getTemplateParameterMap();
 					} else {
 						// Friend functions declared inside a class template are not owned by the template,
 						// but have their own template parameter maps.
-						fArgMap= PDOMCPPTemplateParameterMap.getMap(this, getDB().getRecPtr(record + ARGMAP));
+						fArgMap = PDOMCPPTemplateParameterMap.getMap(this, getDB().getRecPtr(record + ARGMAP));
 					}
 				}
 			} catch (CoreException e) {
@@ -118,7 +118,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		try {
 			// fArgMap here is the temporarily stored, possibly non-PDOM map stored by the constructor.
 			// Construct the PDOM map and store it.
-			long rec= PDOMCPPTemplateParameterMap.putMap(this, fArgMap);
+			long rec = PDOMCPPTemplateParameterMap.putMap(this, fArgMap);
 			getDB().putRecPtr(record + ARGMAP, rec);
 
 			// Read the stored map next time getTemplateParameterMap() is called.

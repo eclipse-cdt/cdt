@@ -25,8 +25,8 @@ import org.eclipse.text.edits.ReplaceEdit;
  */
 public class MacroExpansionTracker {
 	public class MacroInfo {
-		private TokenList fMacroCall= new TokenList();
-		private ArrayList<TokenList> fArguments= new ArrayList<TokenList>();
+		private TokenList fMacroCall = new TokenList();
+		private ArrayList<TokenList> fArguments = new ArrayList<TokenList>();
 
 		public MacroInfo(Token identifier) {
 			fMacroCall.append(identifier);
@@ -45,14 +45,14 @@ public class MacroExpansionTracker {
 	private IMacroBinding fMacroDefinition;
 
 	private char[] fInput;
-	private String fReplacementText= ""; //$NON-NLS-1$
-	private LinkedList<MacroInfo> fMacroStack= new LinkedList<MacroInfo>();
+	private String fReplacementText = ""; //$NON-NLS-1$
+	private LinkedList<MacroInfo> fMacroStack = new LinkedList<MacroInfo>();
 
 	private IToken fReplaceFrom;
 	private IToken fReplaceTo;
 
 	public MacroExpansionTracker(int stepToTrack) {
-		fStepToTrack= stepToTrack;
+		fStepToTrack = stepToTrack;
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class MacroExpansionTracker {
 	 * Informs the tracker that macro expansion is started.
 	 */
 	void start(char[] input) {
-		fInput= input;
+		fInput = input;
 	}
 
 	/**
@@ -115,24 +115,24 @@ public class MacroExpansionTracker {
 		if (!isDone()) {
 			// special case we compute the entire expansion as one step, the result contains the
 			// expanded text
-			StringBuilder replacementText= new StringBuilder();
+			StringBuilder replacementText = new StringBuilder();
 			toString(result, lexInput, replacementText, replacementText, replacementText);
-			fPreStep= new String(lexInput);
-			fReplacement= new ReplaceEdit(0, endOffset, replacementText.toString());
+			fPreStep = new String(lexInput);
+			fReplacement = new ReplaceEdit(0, endOffset, replacementText.toString());
 		} else {
 			// the regular case the result contains the text before the step
-			StringBuilder before= new StringBuilder();
-			StringBuilder replace= new StringBuilder();
-			StringBuilder after= new StringBuilder();
+			StringBuilder before = new StringBuilder();
+			StringBuilder replace = new StringBuilder();
+			StringBuilder after = new StringBuilder();
 			toString(result, lexInput, before, replace, after);
-			int offset= before.length();
+			int offset = before.length();
 			// workaround bug 220158
-			final CharSequence csr= replace;
-			final CharSequence csa= after;
+			final CharSequence csr = replace;
+			final CharSequence csa = after;
 			before.append(csr).append(csa);
-			before.append(lexInput, endOffset, lexInput.length-endOffset);
-			fPreStep= before.toString();
-			fReplacement= new ReplaceEdit(offset, replace.length(), fReplacementText);
+			before.append(lexInput, endOffset, lexInput.length - endOffset);
+			fPreStep = before.toString();
+			fReplacement = new ReplaceEdit(offset, replace.length(), fReplacementText);
 		}
 	}
 
@@ -140,23 +140,23 @@ public class MacroExpansionTracker {
 	 * There was no macro at the beginning of the input.
 	 */
 	void fail() {
-		fPreStep= new String(fInput);
-		fReplacement= new ReplaceEdit(0, 0, ""); //$NON-NLS-1$
+		fPreStep = new String(fInput);
+		fReplacement = new ReplaceEdit(0, 0, ""); //$NON-NLS-1$
 	}
 
-	private void toString(TokenList tokenList, char[] rootInput, StringBuilder before,
-			StringBuilder replace, StringBuilder after) {
-		StringBuilder buf= before;
-		Token t= tokenList.first();
+	private void toString(TokenList tokenList, char[] rootInput, StringBuilder before, StringBuilder replace,
+			StringBuilder after) {
+		StringBuilder buf = before;
+		Token t = tokenList.first();
 		if (t == null) {
-			return ;
+			return;
 		}
-		Token l= null;
+		Token l = null;
 		Token n;
-		for (; t != null; l= t, t= n) {
-			n= (Token) t.getNext();
+		for (; t != null; l = t, t = n) {
+			n = (Token) t.getNext();
 			if (l != null && MacroExpander.hasImplicitSpace(l, t)) {
-				char[] input= getInputForSource(l.fSource, rootInput);
+				char[] input = getInputForSource(l.fSource, rootInput);
 				if (input == null) {
 					buf.append(' ');
 				} else {
@@ -166,16 +166,16 @@ public class MacroExpansionTracker {
 				}
 			}
 			if (t == fReplaceFrom) {
-				buf= replace;
+				buf = replace;
 			}
-			char[] input= getInputForSource(t.fSource, rootInput);
+			char[] input = getInputForSource(t.fSource, rootInput);
 			if (input == null) {
 				buf.append(t.getCharImage());
 			} else {
 				buf.append(input, t.getOffset(), t.getLength());
 			}
 			if (t == fReplaceTo) {
-				buf= after;
+				buf = after;
 			}
 		}
 	}
@@ -224,28 +224,28 @@ public class MacroExpansionTracker {
 	 * @param result a list to store the macro call with the arguments substituted in.
 	 */
 	public void storeFunctionStyleMacroReplacement(PreprocessorMacro macro, TokenList replacement, TokenList result) {
-		MacroInfo minfo= fMacroStack.getLast();
-		fMacroDefinition= macro;
-		fReplaceFrom= minfo.fMacroCall.first();
+		MacroInfo minfo = fMacroStack.getLast();
+		fMacroDefinition = macro;
+		fReplaceFrom = minfo.fMacroCall.first();
 		appendFunctionStyleMacro(result);
-		fReplaceTo= result.last();
-		StringBuilder buf= new StringBuilder();
+		fReplaceTo = result.last();
+		StringBuilder buf = new StringBuilder();
 		toString(replacement, fInput, buf, buf, buf);
-		fReplacementText= buf.toString();
+		fReplacementText = buf.toString();
 	}
 
 	/**
 	 * Append the current function-style macro with the arguments substituted.
 	 */
 	public void appendFunctionStyleMacro(TokenList result) {
-		MacroInfo minfo= fMacroStack.getLast();
-		boolean active= true;
-		int nesting= -1;
-		int pcount= 0;
+		MacroInfo minfo = fMacroStack.getLast();
+		boolean active = true;
+		int nesting = -1;
+		int pcount = 0;
 
 		Token n;
-		Token l= null;
-		for (Token t = minfo.fMacroCall.first(); t != null; l= t, t= n) {
+		Token l = null;
+		for (Token t = minfo.fMacroCall.first(); t != null; l = t, t = n) {
 			n = (Token) t.getNext();
 			switch (t.getType()) {
 			case IToken.tLPAREN:
@@ -271,7 +271,7 @@ public class MacroExpansionTracker {
 			case IToken.tRPAREN:
 				if (!active && nesting == 0) {
 					MacroExpander.addSpacemarker(l, t, result);
-					active= true;
+					active = true;
 				}
 				if (active) {
 					result.append(t);
@@ -325,14 +325,14 @@ public class MacroExpansionTracker {
 	 * @param replacement the replacement
 	 * @param result a list to store the macro in.
 	 */
-	public void storeObjectStyleMacroReplacement(PreprocessorMacro macro, Token identifier,
-			TokenList replacement, TokenList result) {
-		fMacroDefinition= macro;
-		fReplaceFrom= fReplaceTo= identifier;
+	public void storeObjectStyleMacroReplacement(PreprocessorMacro macro, Token identifier, TokenList replacement,
+			TokenList result) {
+		fMacroDefinition = macro;
+		fReplaceFrom = fReplaceTo = identifier;
 		result.append(identifier);
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		toString(replacement, fInput, buf, buf, buf);
-		fReplacementText= buf.toString();
+		fReplacementText = buf.toString();
 	}
 
 	/**

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
@@ -22,32 +22,32 @@ import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 public class IBWorkingSetFilter extends ViewerFilter {
 
-    private WorkingSetFilterUI fWorkingSetFilter;
-    
-    public IBWorkingSetFilter(WorkingSetFilterUI wsFilter) {
-        fWorkingSetFilter= wsFilter;
-    }
-    
-    @Override
+	private WorkingSetFilterUI fWorkingSetFilter;
+
+	public IBWorkingSetFilter(WorkingSetFilterUI wsFilter) {
+		fWorkingSetFilter = wsFilter;
+	}
+
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-        if (parentElement instanceof IBNode && element instanceof IBNode) {
-            IBNode node= (IBNode) element;
-            if (!fWorkingSetFilter.isPartOfWorkingSet(node.getRepresentedTranslationUnit())) {
-                return false;
-            }
-        }
-        return true;
-    }
+		if (parentElement instanceof IBNode && element instanceof IBNode) {
+			IBNode node = (IBNode) element;
+			if (!fWorkingSetFilter.isPartOfWorkingSet(node.getRepresentedTranslationUnit())) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    public WorkingSetFilterUI getUI() {
-        return fWorkingSetFilter;
-    }
+	public WorkingSetFilterUI getUI() {
+		return fWorkingSetFilter;
+	}
 
-    public String getLabel() {
-        IWorkingSet ws= fWorkingSetFilter.getWorkingSet();
-        if (ws != null) {
-            return ws.getLabel();
-        }
-        return IBMessages.IBViewPart_workspaceScope;
-    }
+	public String getLabel() {
+		IWorkingSet ws = fWorkingSetFilter.getWorkingSet();
+		if (ws != null) {
+			return ws.getLabel();
+		}
+		return IBMessages.IBViewPart_workspaceScope;
+	}
 }

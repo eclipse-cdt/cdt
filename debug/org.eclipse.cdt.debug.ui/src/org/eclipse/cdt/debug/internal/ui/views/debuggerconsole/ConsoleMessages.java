@@ -16,12 +16,12 @@ public class ConsoleMessages extends NLS {
 	public static String ConsoleMessages_no_console;
 	public static String ConsoleDropDownAction_name;
 	public static String ConsoleDropDownAction_description;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(ConsoleMessages.class.getName(), ConsoleMessages.class);
 	}
-	
+
 	private ConsoleMessages() {
 	}
 }

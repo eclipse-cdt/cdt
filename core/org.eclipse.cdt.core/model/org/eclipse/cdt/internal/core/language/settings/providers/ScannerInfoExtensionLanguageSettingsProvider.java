@@ -40,7 +40,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettingsBaseProvider {
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
+			String languageId) {
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		IScannerInfoProvider scannerInfoProvider = getScannerInfoProvider(cfgDescription);
 		if (scannerInfoProvider != null) {
@@ -49,15 +50,15 @@ public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettin
 				if (si instanceof IExtendedScannerInfo) {
 					addLocalIncludePaths(entries, (IExtendedScannerInfo) si);
 				}
-	
+
 				addSystemIncludePaths(entries, si);
 				addDefinedSymbols(entries, si);
-	
+
 				if (si instanceof IExtendedScannerInfo) {
 					addIncludeFiles(entries, (IExtendedScannerInfo) si);
 					addMacroFiles(entries, (IExtendedScannerInfo) si);
 				}
-	
+
 				if (!entries.isEmpty()) {
 					return LanguageSettingsSerializableStorage.getPooledList(entries);
 				}
@@ -84,7 +85,7 @@ public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettin
 			try {
 				AbstractCExtension cExtension = null;
 				IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(ref, "cextension", false); //$NON-NLS-1$
-				cExtension = (AbstractCExtension)el.createExecutableExtension("run"); //$NON-NLS-1$
+				cExtension = (AbstractCExtension) el.createExecutableExtension("run"); //$NON-NLS-1$
 				cExtension.setExtensionReference(ref);
 				cExtension.setProject(ref.getConfiguration().getProjectDescription().getProject());
 				if (cExtension instanceof IScannerInfoProvider) {

@@ -51,15 +51,14 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 
 	@Override
 	public ICLanguageSettingEntry doAdd() {
-		IncludeDialog dlg = new IncludeDialog(
-				usercomp.getShell(), IncludeDialog.NEW_DIR,
-				Messages.LibraryPathTab_1,
+		IncludeDialog dlg = new IncludeDialog(usercomp.getShell(), IncludeDialog.NEW_DIR, Messages.LibraryPathTab_1,
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
-		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
+		if (dlg.open() && dlg.text1.trim().length() > 0) {
 			toAllCfgs = dlg.check1;
 			toAllLang = dlg.check3;
 			int flags = 0;
-			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
+			if (dlg.check2)
+				flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			return CDataUtil.createCLibraryPathEntry(dlg.text1, flags);
 		}
 		return null;
@@ -67,14 +66,13 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 
 	@Override
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
-		IncludeDialog dlg = new IncludeDialog(
-				usercomp.getShell(), IncludeDialog.OLD_DIR,
-				Messages.LibraryPathTab_2,
+		IncludeDialog dlg = new IncludeDialog(usercomp.getShell(), IncludeDialog.OLD_DIR, Messages.LibraryPathTab_2,
 				ent.getValue(), getResDesc().getConfiguration(),
 				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
-		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
+		if (dlg.open() && dlg.text1.trim().length() > 0) {
 			int flags = 0;
-			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
+			if (dlg.check2)
+				flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			return CDataUtil.createCLibraryPathEntry(dlg.text1, flags);
 		}
 		return null;

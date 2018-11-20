@@ -24,7 +24,7 @@ public class ResizableGraphicCanvas extends GraphicCanvas {
 		super(parent);
 		m_problemVisualizer = problemVisualizer;
 	}
-	
+
 	@Override
 	public void resized(Rectangle bounds) {
 		m_problemVisualizer.refresh();

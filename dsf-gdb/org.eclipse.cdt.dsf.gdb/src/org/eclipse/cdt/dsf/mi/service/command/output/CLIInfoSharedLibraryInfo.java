@@ -33,7 +33,7 @@ public class CLIInfoSharedLibraryInfo extends MIInfo {
 		boolean isread;
 		String name;
 
-		public DsfMISharedInfo (String start, String end, boolean read, String location) {
+		public DsfMISharedInfo(String start, String end, boolean read, String location) {
 			from = start;
 			to = end;
 			isread = read;
@@ -59,7 +59,7 @@ public class CLIInfoSharedLibraryInfo extends MIInfo {
 		public void setSymbolsRead(boolean read) {
 			isread = read;
 		}
-	}	
+	}
 
 	public CLIInfoSharedLibraryInfo(MIOutput out) {
 		super(out);
@@ -93,15 +93,15 @@ public class CLIInfoSharedLibraryInfo extends MIInfo {
 	void parseShared(String str, List<DsfMISharedInfo> aList) {
 		if (!str.isEmpty()) {
 			// Parsing pattern of type ~"0x40000970  0x4001331f  Yes         /lib/ld-linux.so.2\n"
-            Pattern pattern = Pattern.compile("(0x.*)(0x.*)(Yes|No)(\\s*)(.*)",  Pattern.MULTILINE); //$NON-NLS-1$
-            Matcher matcher = pattern.matcher(str);
-            if (matcher.find()) {
+			Pattern pattern = Pattern.compile("(0x.*)(0x.*)(Yes|No)(\\s*)(.*)", Pattern.MULTILINE); //$NON-NLS-1$
+			Matcher matcher = pattern.matcher(str);
+			if (matcher.find()) {
 				DsfMISharedInfo s = new DsfMISharedInfo(matcher.group(1), matcher.group(2),
-													   (matcher.group(3).equals("Yes"))?true:false,  //$NON-NLS-1$
-														matcher.group(5));
+						(matcher.group(3).equals("Yes")) ? true : false, //$NON-NLS-1$
+						matcher.group(5));
 				aList.add(s);
 
-            }
+			}
 		}
 	}
 

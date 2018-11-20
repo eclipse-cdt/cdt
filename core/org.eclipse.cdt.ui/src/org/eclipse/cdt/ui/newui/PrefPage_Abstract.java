@@ -26,14 +26,14 @@ import org.eclipse.cdt.core.model.CoreModel;
  *    to be updated
  */
 public class PrefPage_Abstract extends AbstractPrefPage {
-	
+
 	static public boolean isChanged;
-	
+
 	public PrefPage_Abstract() {
 		super();
 		isChanged = false;
 	}
-	
+
 	protected void doSave(IProgressMonitor monitor) throws CoreException {
 		if (isChanged) {
 			CoreModel.getDefault().updateProjectDescriptions(null, monitor);
@@ -41,7 +41,12 @@ public class PrefPage_Abstract extends AbstractPrefPage {
 	}
 
 	@Override
-	protected String getHeader() { return null;	}
+	protected String getHeader() {
+		return null;
+	}
+
 	@Override
-	protected boolean isSingle() { return true; }
+	protected boolean isSingle() {
+		return true;
+	}
 }

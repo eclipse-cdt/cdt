@@ -19,21 +19,19 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPConstructorTemplateSpecialization
-	extends CompositeCPPMethodTemplateSpecialization
-	implements ICPPConstructor {
-	
-	public CompositeCPPConstructorTemplateSpecialization(ICompositesFactory cf,
-			ICPPFunction ft) {
+public class CompositeCPPConstructorTemplateSpecialization extends CompositeCPPMethodTemplateSpecialization
+		implements ICPPConstructor {
+
+	public CompositeCPPConstructorTemplateSpecialization(ICompositesFactory cf, ICPPFunction ft) {
 		super(cf, ft);
 	}
-	
+
 	@Override
 	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution();
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution() {
 		return ((ICPPConstructor) rbinding).getConstructorChainExecution();

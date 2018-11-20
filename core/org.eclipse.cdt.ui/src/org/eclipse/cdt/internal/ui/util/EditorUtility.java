@@ -114,7 +114,7 @@ public class EditorUtility {
 	 */
 	public static final String DEFAULT_TEXT_EDITOR_ID = EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 
-	private EditorUtility () {
+	private EditorUtility() {
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class EditorUtility {
 		}
 
 		if (input != null) {
-			IWorkbenchPage p= CUIPlugin.getActivePage();
+			IWorkbenchPage p = CUIPlugin.getActivePage();
 			if (p != null) {
 				return p.findEditor(input);
 			}
@@ -180,9 +180,9 @@ public class EditorUtility {
 			((CEditor) part).setSelection(element);
 		} else if (part instanceof ITextEditor) {
 			if (element instanceof ISourceReference && !(element instanceof ITranslationUnit)) {
-				ISourceReference reference= (ISourceReference) element;
+				ISourceReference reference = (ISourceReference) element;
 				try {
-					ISourceRange range= reference.getSourceRange();
+					ISourceRange range = reference.getSourceRange();
 					((ITextEditor) part).selectAndReveal(range.getIdStartPos(), range.getIdLength());
 				} catch (CModelException exc) {
 					CUIPlugin.log(exc.getStatus());
@@ -257,16 +257,17 @@ public class EditorUtility {
 	private static void closedProject(IProject project) {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CUIPlugin.getResourceString("EditorUtility.closedproject")); //$NON-NLS-1$
-		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
+		String desc = CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
 		errorMsg.setMessage(MessageFormat.format(desc, new Object[] { project.getName() }));
 		errorMsg.open();
 	}
 
-	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
+	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate)
+			throws PartInitException {
 		if (input != null) {
-			IWorkbenchPage p= CUIPlugin.getActivePage();
+			IWorkbenchPage p = CUIPlugin.getActivePage();
 			if (p != null) {
-				IEditorPart editorPart= p.openEditor(input, editorID, activate);
+				IEditorPart editorPart = p.openEditor(input, editorID, activate);
 				return editorPart;
 			}
 		}
@@ -275,18 +276,18 @@ public class EditorUtility {
 
 	private static IEditorInput getEditorInput(ICElement element) throws CModelException {
 		while (element != null) {
- 			if (element instanceof ISourceReference) {
- 				ITranslationUnit tu = ((ISourceReference) element).getTranslationUnit();
- 				if (tu != null) {
- 					element = tu;
- 				}
- 			}
+			if (element instanceof ISourceReference) {
+				ITranslationUnit tu = ((ISourceReference) element).getTranslationUnit();
+				if (tu != null) {
+					element = tu;
+				}
+			}
 			if (element instanceof IWorkingCopy && ((IWorkingCopy) element).isWorkingCopy())
-				element= ((IWorkingCopy) element).getOriginalElement();
+				element = ((IWorkingCopy) element).getOriginalElement();
 
 			if (element instanceof ITranslationUnit) {
-				ITranslationUnit unit= (ITranslationUnit) element;
-				IResource resource= unit.getResource();
+				ITranslationUnit unit = (ITranslationUnit) element;
+				IResource resource = unit.getResource();
 				if (resource instanceof IFile) {
 					return new FileEditorInput((IFile) resource);
 				}
@@ -294,13 +295,13 @@ public class EditorUtility {
 			}
 
 			if (element instanceof IBinary) {
-				IResource resource= element.getResource();
+				IResource resource = element.getResource();
 				if (resource instanceof IFile) {
 					return new FileEditorInput((IFile) resource);
 				}
 			}
 
-			element= element.getParent();
+			element = element.getParent();
 		}
 
 		return null;
@@ -314,7 +315,7 @@ public class EditorUtility {
 			return new FileEditorInput((IFile) input);
 		}
 		if (input instanceof IStorage) {
-			final IPath location= ((IStorage)input).getFullPath();
+			final IPath location = ((IStorage) input).getFullPath();
 			if (location != null) {
 				return new ExternalEditorInput(location);
 			}
@@ -335,13 +336,14 @@ public class EditorUtility {
 		return openInEditor(location, element, true);
 	}
 
-	public static IEditorPart openInEditor(IPath location, ICElement element, boolean activate) throws PartInitException {
-		IEditorInput input= getEditorInputForLocation(location, element);
+	public static IEditorPart openInEditor(IPath location, ICElement element, boolean activate)
+			throws PartInitException {
+		IEditorInput input = getEditorInputForLocation(location, element);
 		return EditorUtility.openInEditor(input, getEditorID(input, element), activate);
 	}
 
 	public static IEditorPart openInEditor(URI locationURI, ICElement element) throws PartInitException {
-		IEditorInput input= getEditorInputForLocation(locationURI, element);
+		IEditorInput input = getEditorInputForLocation(locationURI, element);
 		return EditorUtility.openInEditor(input, getEditorID(input, element), true);
 	}
 
@@ -358,7 +360,7 @@ public class EditorUtility {
 	 * @return an editor input
 	 */
 	public static IEditorInput getEditorInputForLocation(URI locationURI, ICElement context) {
-		IFile resource= getWorkspaceFileAtLocation(locationURI, context);
+		IFile resource = getWorkspaceFileAtLocation(locationURI, context);
 		if (resource != null) {
 			return new FileEditorInput(resource);
 		}
@@ -386,7 +388,7 @@ public class EditorUtility {
 				}
 				if (context == null && projects.length > 0) {
 					// last resort: just take any of them
-					context= projects[0];
+					context = projects[0];
 				}
 			} catch (CModelException e) {
 			}
@@ -394,7 +396,7 @@ public class EditorUtility {
 
 		if (context != null) {
 			// try to get a translation unit from the location and associated element
-			ICProject cproject= context.getCProject();
+			ICProject cproject = context.getCProject();
 			if (cproject != null) {
 				ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, locationURI);
 				if (unit != null) {
@@ -412,7 +414,7 @@ public class EditorUtility {
 				}
 				// no translation unit - still try to get a sensible marker resource
 				// from the associated element
-				IResource markerResource= cproject.getProject();
+				IResource markerResource = cproject.getProject();
 				return new ExternalEditorInput(locationURI, markerResource);
 			}
 		}
@@ -420,7 +422,7 @@ public class EditorUtility {
 	}
 
 	public static IEditorInput getEditorInputForLocation(IPath location, ICElement context) {
-		IFile resource= getWorkspaceFileAtLocation(location, context);
+		IFile resource = getWorkspaceFileAtLocation(location, context);
 		if (resource != null) {
 			return new FileEditorInput(resource);
 		}
@@ -444,7 +446,7 @@ public class EditorUtility {
 				}
 				if (context == null && projects.length > 0) {
 					// last resort: just take any of them
-					context= projects[0];
+					context = projects[0];
 				}
 			} catch (CModelException e) {
 			}
@@ -452,7 +454,7 @@ public class EditorUtility {
 
 		if (context != null) {
 			// try to get a translation unit from the location and associated element
-			ICProject cproject= context.getCProject();
+			ICProject cproject = context.getCProject();
 			if (cproject != null) {
 				ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, location);
 				if (unit != null) {
@@ -460,7 +462,7 @@ public class EditorUtility {
 				}
 				// no translation unit - still try to get a sensible marker resource
 				// from the associated element
-				IResource markerResource= cproject.getProject();
+				IResource markerResource = cproject.getProject();
 				return new ExternalEditorInput(location, markerResource);
 			}
 		}
@@ -477,27 +479,27 @@ public class EditorUtility {
 	 * @return an {@code IFile} or {@code null}
 	 */
 	public static IFile getWorkspaceFileAtLocation(IPath location, ICElement context) {
-		IProject project= null;
+		IProject project = null;
 		if (context != null) {
-			ICProject cProject= context.getCProject();
+			ICProject cProject = context.getCProject();
 			if (cProject != null) {
-				project= cProject.getProject();
+				project = cProject.getProject();
 			}
 		}
-		IFile file= ResourceLookup.selectFileForLocation(location, project);
+		IFile file = ResourceLookup.selectFileForLocation(location, project);
 		if (file != null && file.isAccessible())
 			return file;
 
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		// workaround http://bugs.eclipse.org/233939
-		file= root.getFileForLocation(location);
+		file = root.getFileForLocation(location);
 		if (file != null && file.isAccessible())
 			return file;
 
 		// try workspace relative path
 		if (location.segmentCount() >= 2) {
 			// @see IContainer#getFile for the required number of segments
-			file= root.getFile(location);
+			file = root.getFile(location);
 			if (file != null && file.isAccessible())
 				return file;
 		}
@@ -514,15 +516,15 @@ public class EditorUtility {
 	 * @return an {@code IFile} or {@code null}
 	 */
 	public static IFile getWorkspaceFileAtLocation(URI locationURI, ICElement context) {
-		IProject project= null;
+		IProject project = null;
 		if (context != null) {
-			ICProject cProject= context.getCProject();
+			ICProject cProject = context.getCProject();
 			if (cProject != null) {
-				project= cProject.getProject();
+				project = cProject.getProject();
 			}
 		}
 
-		IFile file= ResourceLookup.selectFileForLocationURI(locationURI, project);
+		IFile file = ResourceLookup.selectFileForLocationURI(locationURI, project);
 		if (file != null && file.isAccessible())
 			return file;
 
@@ -534,9 +536,9 @@ public class EditorUtility {
 	 * return null
 	 */
 	public static ICElement getActiveEditorCInput() {
-		IWorkbenchPage page= CUIPlugin.getActivePage();
+		IWorkbenchPage page = CUIPlugin.getActivePage();
 		if (page != null) {
-			IEditorPart part= page.getActiveEditor();
+			IEditorPart part = page.getActiveEditor();
 			if (part != null) {
 				return getEditorInputCElement(part);
 			}
@@ -545,7 +547,7 @@ public class EditorUtility {
 	}
 
 	public static ICElement getEditorInputCElement(IEditorPart part) {
-		IEditorInput editorInput= part.getEditorInput();
+		IEditorInput editorInput = part.getEditorInput();
 		if (editorInput == null) {
 			return null;
 		}
@@ -598,9 +600,9 @@ public class EditorUtility {
 	 * @return a valid editor id, never {@code null}
 	 */
 	public static String getEditorID(IEditorInput input, Object inputObject) {
-		ICElement cElement= null;
+		ICElement cElement = null;
 		if (input instanceof IFileEditorInput) {
-			IFileEditorInput editorInput = (IFileEditorInput)input;
+			IFileEditorInput editorInput = (IFileEditorInput) input;
 			IFile file = editorInput.getFile();
 			// Try file specific editor.
 			try {
@@ -617,45 +619,45 @@ public class EditorUtility {
 			}
 			cElement = CoreModel.getDefault().create(file);
 		} else if (input instanceof ITranslationUnitEditorInput) {
-			ITranslationUnitEditorInput editorInput = (ITranslationUnitEditorInput)input;
+			ITranslationUnitEditorInput editorInput = (ITranslationUnitEditorInput) input;
 			cElement = editorInput.getTranslationUnit();
 		} else if (inputObject instanceof ICElement) {
-			cElement= (ICElement)inputObject;
+			cElement = (ICElement) inputObject;
 		}
 
 		// Choose an editor based on the content type
-		IContentType contentType= null;
+		IContentType contentType = null;
 		if (cElement instanceof ITranslationUnit) {
-			String contentTypeId= ((ITranslationUnit)cElement).getContentTypeId();
+			String contentTypeId = ((ITranslationUnit) cElement).getContentTypeId();
 			if (contentTypeId != null) {
-				contentType= Platform.getContentTypeManager().getContentType(contentTypeId);
+				contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
 			}
 		}
 		if (contentType == null) {
-			IProject project= null;
+			IProject project = null;
 			if (cElement != null) {
-				project= cElement.getCProject().getProject();
+				project = cElement.getCProject().getProject();
 			} else {
-				IFile file= ResourceUtil.getFile(input);
+				IFile file = ResourceUtil.getFile(input);
 				if (file != null) {
-					project= file.getProject();
+					project = file.getProject();
 				}
 			}
-			contentType= CCorePlugin.getContentType(project, input.getName());
+			contentType = CCorePlugin.getContentType(project, input.getName());
 		}
 		// handle binary files without content-type (e.g. executables without extension)
 		if (contentType == null && cElement != null) {
-			final int elementType= cElement.getElementType();
+			final int elementType = cElement.getElementType();
 			if (elementType == ICElement.C_ARCHIVE || elementType == ICElement.C_BINARY) {
-				contentType= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE);
+				contentType = Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE);
 			}
 		}
 		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-		IEditorDescriptor desc= registry.getDefaultEditor(input.getName(), contentType);
+		IEditorDescriptor desc = registry.getDefaultEditor(input.getName(), contentType);
 		if (desc != null) {
-			String editorID= desc.getId();
+			String editorID = desc.getId();
 			if (input instanceof IFileEditorInput) {
-				IFile file= ((IFileEditorInput)input).getFile();
+				IFile file = ((IFileEditorInput) input).getFile();
 				IDE.setDefaultEditor(file, editorID);
 			}
 			return editorID;
@@ -695,15 +697,15 @@ public class EditorUtility {
 	 * @since 2.1.1
 	 */
 	public static String getModifierString(int stateMask) {
-		String modifierString= ""; //$NON-NLS-1$
+		String modifierString = ""; //$NON-NLS-1$
 		if ((stateMask & SWT.CTRL) == SWT.CTRL)
-			modifierString= appendModifierString(modifierString, SWT.CTRL);
+			modifierString = appendModifierString(modifierString, SWT.CTRL);
 		if ((stateMask & SWT.ALT) == SWT.ALT)
-			modifierString= appendModifierString(modifierString, SWT.ALT);
+			modifierString = appendModifierString(modifierString, SWT.ALT);
 		if ((stateMask & SWT.SHIFT) == SWT.SHIFT)
-			modifierString= appendModifierString(modifierString, SWT.SHIFT);
+			modifierString = appendModifierString(modifierString, SWT.SHIFT);
 		if ((stateMask & SWT.COMMAND) == SWT.COMMAND)
-			modifierString= appendModifierString(modifierString,  SWT.COMMAND);
+			modifierString = appendModifierString(modifierString, SWT.COMMAND);
 
 		return modifierString;
 	}
@@ -719,11 +721,12 @@ public class EditorUtility {
 	 */
 	private static String appendModifierString(String modifierString, int modifier) {
 		if (modifierString == null)
-			modifierString= ""; //$NON-NLS-1$
-		String newModifierString= Action.findModifierString(modifier);
+			modifierString = ""; //$NON-NLS-1$
+		String newModifierString = Action.findModifierString(modifier);
 		if (modifierString.length() == 0)
 			return newModifierString;
-		return NLS.bind(CEditorMessages.EditorUtility_concatModifierStrings, new String[] {modifierString, newModifierString});
+		return NLS.bind(CEditorMessages.EditorUtility_concatModifierStrings,
+				new String[] { modifierString, newModifierString });
 	}
 
 	public static IStorage getStorage(IBinary bin) {
@@ -731,7 +734,7 @@ public class EditorUtility {
 		try {
 			IBuffer buffer = bin.getBuffer();
 			if (buffer != null) {
-				store = new FileStorage (new ByteArrayInputStream(buffer.getContents().getBytes()), bin.getPath());
+				store = new FileStorage(new ByteArrayInputStream(buffer.getContents().getBytes()), bin.getPath());
 			}
 		} catch (CModelException e) {
 			// nothing;
@@ -749,22 +752,22 @@ public class EditorUtility {
 	 * @since 5.0
 	 */
 	public static ICProject getCProject(IEditorInput input) {
-		ICProject cProject= null;
+		ICProject cProject = null;
 		if (input instanceof IFileEditorInput) {
-			IProject project= ((IFileEditorInput) input).getFile().getProject();
+			IProject project = ((IFileEditorInput) input).getFile().getProject();
 			if (project != null) {
-				cProject= CoreModel.getDefault().create(project);
+				cProject = CoreModel.getDefault().create(project);
 				if (!cProject.exists())
-					cProject= null;
+					cProject = null;
 			}
 		} else if (input instanceof ITranslationUnitEditorInput) {
-			final ITranslationUnit tu= ((ITranslationUnitEditorInput) input).getTranslationUnit();
+			final ITranslationUnit tu = ((ITranslationUnitEditorInput) input).getTranslationUnit();
 			if (tu != null) {
-				cProject= tu.getCProject();
+				cProject = tu.getCProject();
 			} else if (input instanceof ExternalEditorInput) {
-				IResource resource= ((ExternalEditorInput) input).getMarkerResource();
+				IResource resource = ((ExternalEditorInput) input).getMarkerResource();
 				if (resource instanceof IProject) {
-					cProject= CoreModel.getDefault().create((IProject) resource);
+					cProject = CoreModel.getDefault().create((IProject) resource);
 				}
 			}
 		}
@@ -781,16 +784,16 @@ public class EditorUtility {
 	 * @since 5.3
 	 */
 	public static IEditorPart[] getDirtyEditors(boolean skipNonResourceEditors) {
-		Set<IEditorInput> inputs= new HashSet<>();
-		List<IEditorPart> result= new ArrayList<>();
-		IWorkbench workbench= PlatformUI.getWorkbench();
-		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+		Set<IEditorInput> inputs = new HashSet<>();
+		List<IEditorPart> result = new ArrayList<>();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
-			IWorkbenchPage[] pages= window.getPages();
+			IWorkbenchPage[] pages = window.getPages();
 			for (IWorkbenchPage page : pages) {
-				IEditorPart[] editors= page.getDirtyEditors();
+				IEditorPart[] editors = page.getDirtyEditors();
 				for (IEditorPart ep : editors) {
-					IEditorInput input= ep.getEditorInput();
+					IEditorInput input = ep.getEditorInput();
 					if (inputs.add(input)) {
 						if (!skipNonResourceEditors || isResourceEditorInput(input)) {
 							result.add(ep);
@@ -804,7 +807,7 @@ public class EditorUtility {
 
 	private static boolean isResourceEditorInput(IEditorInput input) {
 		if (input instanceof MultiEditorInput) {
-			IEditorInput[] inputs= ((MultiEditorInput) input).getInput();
+			IEditorInput[] inputs = ((MultiEditorInput) input).getInput();
 			for (IEditorInput input2 : inputs) {
 				if (input2.getAdapter(IResource.class) != null) {
 					return true;
@@ -825,17 +828,17 @@ public class EditorUtility {
 	 * @since 5.3
 	 */
 	public static IEditorPart[] getDirtyEditorsToSave(boolean saveUnknownEditors) {
-		Set<IEditorInput> inputs= new HashSet<>();
-		List<IEditorPart> result= new ArrayList<>();
-		IWorkbench workbench= PlatformUI.getWorkbench();
-		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+		Set<IEditorInput> inputs = new HashSet<>();
+		List<IEditorPart> result = new ArrayList<>();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
-			IWorkbenchPage[] pages= window.getPages();
+			IWorkbenchPage[] pages = window.getPages();
 			for (IWorkbenchPage page : pages) {
-				IEditorPart[] editors= page.getDirtyEditors();
+				IEditorPart[] editors = page.getDirtyEditors();
 				for (IEditorPart editor : editors) {
-					IEditorPart ep= editor;
-					IEditorInput input= ep.getEditorInput();
+					IEditorPart ep = editor;
+					IEditorInput input = ep.getEditorInput();
 					if (!mustSaveDirtyEditor(ep, input, saveUnknownEditors))
 						continue;
 
@@ -858,13 +861,13 @@ public class EditorUtility {
 		 * If {@code saveUnknownEditors} is {@code true}, save all editors
 		 * whose implementation is probably not based on file buffers.
 		 */
-		IResource resource= input.getAdapter(IResource.class);
+		IResource resource = input.getAdapter(IResource.class);
 		if (resource == null)
 			return saveUnknownEditors;
 
-		ICElement element= CCorePlugin.getDefault().getCoreModel().create(resource);
+		ICElement element = CCorePlugin.getDefault().getCoreModel().create(resource);
 		if (element instanceof ITranslationUnit) {
-			ITranslationUnit tu= (ITranslationUnit) element;
+			ITranslationUnit tu = (ITranslationUnit) element;
 			if (getWorkingCopy(tu) == null) {
 				return true;
 			}
@@ -874,7 +877,7 @@ public class EditorUtility {
 		if (textEditor == null)
 			return saveUnknownEditors;
 
-		IDocumentProvider documentProvider= textEditor.getDocumentProvider();
+		IDocumentProvider documentProvider = textEditor.getDocumentProvider();
 		if (!(documentProvider instanceof TextFileDocumentProvider))
 			return saveUnknownEditors;
 
@@ -893,10 +896,10 @@ public class EditorUtility {
 	 * @throws CoreException
 	 * @since 5.1
 	 */
-	public static IRegion[] calculateChangedLineRegions(final ITextFileBuffer buffer,
-			final IProgressMonitor monitor) throws CoreException {
-		final IRegion[][] result= new IRegion[1][];
-		final IStatus[] errorStatus= new IStatus[] { Status.OK_STATUS };
+	public static IRegion[] calculateChangedLineRegions(final ITextFileBuffer buffer, final IProgressMonitor monitor)
+			throws CoreException {
+		final IRegion[][] result = new IRegion[1][];
+		final IStatus[] errorStatus = new IStatus[] { Status.OK_STATUS };
 
 		try {
 			SafeRunner.run(new ISafeRunnable() {
@@ -905,26 +908,26 @@ public class EditorUtility {
 					CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
 							ICStatusConstants.EDITOR_CHANGED_REGION_CALCULATION, exception.getLocalizedMessage(),
 							exception));
-					String msg= Messages.EditorUtility_error_calculatingChangedRegions;
-					errorStatus[0]= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+					String msg = Messages.EditorUtility_error_calculatingChangedRegions;
+					errorStatus[0] = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
 							ICStatusConstants.EDITOR_CHANGED_REGION_CALCULATION, msg, exception);
-					result[0]= null;
+					result[0] = null;
 				}
 
 				@Override
 				public void run() throws Exception {
-					SubMonitor progress =
-							SubMonitor.convert(monitor, Messages.EditorUtility_calculatingChangedRegions_message, 4);
-					IFileStore fileStore= buffer.getFileStore();
+					SubMonitor progress = SubMonitor.convert(monitor,
+							Messages.EditorUtility_calculatingChangedRegions_message, 4);
+					IFileStore fileStore = buffer.getFileStore();
 
-					ITextFileBufferManager fileBufferManager= FileBuffers.createTextFileBufferManager();
+					ITextFileBufferManager fileBufferManager = FileBuffers.createTextFileBufferManager();
 					fileBufferManager.connectFileStore(fileStore, progress.split(3));
 					try {
-						IDocument currentDocument= buffer.getDocument();
-						IDocument oldDocument=
-								((ITextFileBuffer) fileBufferManager.getFileStoreFileBuffer(fileStore)).getDocument();
+						IDocument currentDocument = buffer.getDocument();
+						IDocument oldDocument = ((ITextFileBuffer) fileBufferManager.getFileStoreFileBuffer(fileStore))
+								.getDocument();
 
-						result[0]= getChangedLineRegions(oldDocument, currentDocument);
+						result[0] = getChangedLineRegions(oldDocument, currentDocument);
 					} finally {
 						fileBufferManager.disconnectFileStore(fileStore, progress.split(1));
 					}
@@ -945,10 +948,11 @@ public class EditorUtility {
 					 * here in order to prevent loading of the Compare plug-in at load
 					 * time of this class.
 					 */
-					Object leftSide= new LineComparator(oldDocument);
-					Object rightSide= new LineComparator(currentDocument);
+					Object leftSide = new LineComparator(oldDocument);
+					Object rightSide = new LineComparator(currentDocument);
 
-					RangeDifference[] differences= RangeDifferencer.findDifferences((IRangeComparator) leftSide, (IRangeComparator) rightSide);
+					RangeDifference[] differences = RangeDifferencer.findDifferences((IRangeComparator) leftSide,
+							(IRangeComparator) rightSide);
 
 					// It holds that:
 					// 1. Ranges are sorted:
@@ -956,12 +960,12 @@ public class EditorUtility {
 					// 2. Successive changed lines are merged into on RangeDifference
 					//     forAll r1,r2 element differences: r1.rightStart() < r2.rightStart() -> r1.rightEnd() < r2.rightStart
 
-					List<IRegion> regions= new ArrayList<>();
-					final int numberOfLines= currentDocument.getNumberOfLines();
+					List<IRegion> regions = new ArrayList<>();
+					final int numberOfLines = currentDocument.getNumberOfLines();
 					for (RangeDifference curr : differences) {
 						if (curr.kind() == RangeDifference.CHANGE) {
-							int startLine= Math.min(curr.rightStart(), numberOfLines - 1);
-							int endLine= curr.rightEnd() - 1;
+							int startLine = Math.min(curr.rightStart(), numberOfLines - 1);
+							int endLine = curr.rightEnd() - 1;
 
 							IRegion startLineRegion;
 							try {
@@ -969,14 +973,14 @@ public class EditorUtility {
 								if (startLine >= endLine) {
 									// startLine > endLine indicates a deletion of one or more lines.
 									// Deletions are ignored except at the end of the document.
-									if (startLine == endLine ||
-											startLineRegion.getOffset() + startLineRegion.getLength() == currentDocument.getLength()) {
+									if (startLine == endLine || startLineRegion.getOffset()
+											+ startLineRegion.getLength() == currentDocument.getLength()) {
 										regions.add(startLineRegion);
 									}
 								} else {
-									IRegion endLineRegion= currentDocument.getLineInformation(endLine);
-									int startOffset= startLineRegion.getOffset();
-									int endOffset= endLineRegion.getOffset() + endLineRegion.getLength();
+									IRegion endLineRegion = currentDocument.getLineInformation(endLine);
+									int startOffset = startLineRegion.getOffset();
+									int endOffset = endLineRegion.getOffset() + endLineRegion.getLength();
 									regions.add(new Region(startOffset, endOffset - startOffset));
 								}
 							} catch (BadLocationException e) {

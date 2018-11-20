@@ -75,7 +75,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 				path = underlyingResource.getFullPath();
 			}
 		} else {
-			path= Path.EMPTY;
+			path = Path.EMPTY;
 		}
 		((CElement) getParent()).getHandleMemento(buff);
 		buff.append(getHandleMementoDelimiter());

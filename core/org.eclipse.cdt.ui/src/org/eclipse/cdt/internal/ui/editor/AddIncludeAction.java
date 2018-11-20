@@ -65,7 +65,8 @@ public class AddIncludeAction extends TextEditorAction {
 	 */
 	public AddIncludeAction(ITextEditor editor) {
 		super(CEditorMessages.getBundleForConstructedKeys(), "AddInclude.", editor); //$NON-NLS-1$
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this,
+				ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
 		final Shell shell = editor.getEditorSite().getShell();
 		fAmbiguityResolver = new IElementSelector() {
 			@SuppressWarnings("unchecked")
@@ -75,11 +76,10 @@ public class AddIncludeAction extends TextEditorAction {
 				runInUIThread(new Runnable() {
 					@Override
 					public void run() {
-						ElementListSelectionDialog dialog=
-								new ElementListSelectionDialog(shell, new LabelProvider());
+						ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider());
 						dialog.setElements(elements.toArray());
-						dialog.setTitle(CEditorMessages.AddInclude_label); 
-						dialog.setMessage(CEditorMessages.AddInclude_description); 
+						dialog.setTitle(CEditorMessages.AddInclude_label);
+						dialog.setMessage(CEditorMessages.AddInclude_description);
 						if (dialog.open() == Window.OK)
 							result[0] = dialog.getFirstResult();
 					}
@@ -96,7 +96,7 @@ public class AddIncludeAction extends TextEditorAction {
 		if (tu == null) {
 			return;
 		}
-		final ISelection selection= getTextEditor().getSelectionProvider().getSelection();
+		final ISelection selection = getTextEditor().getSelectionProvider().getSelection();
 		if (selection.isEmpty() || !(selection instanceof ITextSelection)) {
 			return;
 		}
@@ -112,7 +112,7 @@ public class AddIncludeAction extends TextEditorAction {
 			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				try {
-					IIndex index= CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
+					IIndex index = CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
 							IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
 					try {
 						index.acquireReadLock();
@@ -141,7 +141,7 @@ public class AddIncludeAction extends TextEditorAction {
 				// Apply text edits.
 				IEditorInput editorInput = editor.getEditorInput();
 				IDocument document = editor.getDocumentProvider().getDocument(editorInput);
-				IDocumentUndoManager manager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
+				IDocumentUndoManager manager = DocumentUndoManagerRegistry.getDocumentUndoManager(document);
 				manager.beginCompoundChange();
 				try {
 					edit.apply(document);
@@ -151,8 +151,7 @@ public class AddIncludeAction extends TextEditorAction {
 				manager.endCompoundChange();
 			}
 		} else if (status.matches(IStatus.ERROR)) {
-			ErrorDialog.openError(editor.getEditorSite().getShell(),
-					CEditorMessages.AddInclude_error_title,
+			ErrorDialog.openError(editor.getEditorSite().getShell(), CEditorMessages.AddInclude_error_title,
 					CEditorMessages.AddInclude_insertion_failed, status);
 		}
 	}

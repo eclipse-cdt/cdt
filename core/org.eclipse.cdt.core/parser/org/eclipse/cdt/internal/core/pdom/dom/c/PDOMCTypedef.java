@@ -37,14 +37,13 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IIndexType {
 	private static final int TYPE_OFFSET = PDOMBinding.RECORD_SIZE + 0;
-	
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = TYPE_OFFSET + Database.TYPE_SIZE;
-	
-	public PDOMCTypedef(PDOMLinkage linkage, PDOMNode parent, ITypedef typedef)
-			throws CoreException {
+
+	public PDOMCTypedef(PDOMLinkage linkage, PDOMNode parent, ITypedef typedef) throws CoreException {
 		super(linkage, parent, typedef.getNameCharArray());
-		
+
 		try {
 			IType type = typedef.getType();
 			setType(parent.getLinkage(), type);
@@ -60,7 +59,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ITypedef) {
-			ITypedef td= (ITypedef) newBinding;
+			ITypedef td = (ITypedef) newBinding;
 			try {
 				setType(linkage, td.getType());
 			} catch (DOMException e) {
@@ -68,28 +67,28 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 			}
 		}
 	}
-	
+
 	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
-		linkage.storeType(record+TYPE_OFFSET, newType);
+		linkage.storeType(record + TYPE_OFFSET, newType);
 		if (introducesRecursion(getType(), getNameCharArray())) {
-			linkage.storeType(record+TYPE_OFFSET, null);
+			linkage.storeType(record + TYPE_OFFSET, null);
 		}
 	}
 
 	private boolean introducesRecursion(IType type, char[] tdname) throws DOMException {
-		int maxDepth= 50;
+		int maxDepth = 50;
 		while (--maxDepth > 0) {
 			if (type instanceof ITypedef && CharArrayUtils.equals(((ITypedef) type).getNameCharArray(), tdname)) {
 				return true;
 			}
 			if (type instanceof ITypeContainer) {
-				type= ((ITypeContainer) type).getType();
+				type = ((ITypeContainer) type).getType();
 			} else if (type instanceof IFunctionType) {
-				IFunctionType ft= (IFunctionType) type;
+				IFunctionType ft = (IFunctionType) type;
 				if (introducesRecursion(ft.getReturnType(), tdname)) {
 					return true;
 				}
-				IType[] params= ft.getParameterTypes();
+				IType[] params = ft.getParameterTypes();
 				for (IType param : params) {
 					if (introducesRecursion(param, tdname)) {
 						return true;
@@ -107,7 +106,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CTYPEDEF;
@@ -128,9 +127,9 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		IType myrtype = getType();
 		if (myrtype == null)
 			return false;
-		
+
 		if (type instanceof ITypedef) {
-			type= ((ITypedef)type).getType();
+			type = ((ITypedef) type).getType();
 		}
 		return myrtype.isSameType(type);
 	}
@@ -142,11 +141,11 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 
 	@Override
 	public void setType(IType type) {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public Object clone() {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
 }

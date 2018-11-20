@@ -30,8 +30,7 @@ public class TestSuite extends TestItem implements ITestSuite {
 	 * @note Children order is important.
 	 */
 	private List<TestItem> children = new ArrayList<TestItem>();
-	
-	
+
 	public TestSuite(String name, TestSuite parent) {
 		super(name, parent);
 	}
@@ -56,7 +55,7 @@ public class TestSuite extends TestItem implements ITestSuite {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public boolean hasChildren() {
 		return !children.isEmpty();
@@ -84,5 +83,5 @@ public class TestSuite extends TestItem implements ITestSuite {
 	public List<TestItem> getChildrenList() {
 		return children;
 	}
-	
+
 }

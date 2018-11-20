@@ -71,7 +71,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	@Override
 	public void addTarget(IContainer container, IMakeTarget target) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+					MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
 		ProjectTargets projectTargets = projectMap.get(target.getProject());
 		if (projectTargets == null) {
@@ -91,7 +92,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	@Override
 	public void setTargets(IContainer container, IMakeTarget[] targets) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+					MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
 		ProjectTargets projectTargets = projectMap.get(targets[0].getProject());
 		if (projectTargets == null) {
@@ -251,39 +253,45 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			}
 			IResource resource = delta.getResource();
 			if (resource.getType() == IResource.PROJECT) {
-				IProject project = (IProject)resource;
+				IProject project = (IProject) resource;
 				int flags = delta.getFlags();
 				int deltaKind = delta.getKind();
 				if (deltaKind == IResourceDelta.ADDED) {
 					if (hasTargetBuilder(project) && !fProjects.contains(project)) {
 						fProjects.add(project);
-						notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
+						notifyListeners(
+								new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
 					}
 				} else if (deltaKind == IResourceDelta.REMOVED) {
 					if (fProjects.contains(project)) {
 						deleteTargets(project);
 						fProjects.remove(project);
-						notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
+						notifyListeners(
+								new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
 					}
 				} else if (deltaKind == IResourceDelta.CHANGED) {
 					if (0 != (flags & IResourceDelta.DESCRIPTION)) {
 						if (fProjects.contains(project) && !hasTargetBuilder(project)) {
 							fProjects.remove(project);
 							projectMap.remove(project);
-							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
+							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED,
+									project));
 						} else if (!fProjects.contains(project) && hasTargetBuilder(project)) {
 							fProjects.add(project);
-							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
+							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED,
+									project));
 						}
 					}
 					if (0 != (flags & IResourceDelta.OPEN)) {
 						if (!project.isOpen() && fProjects.contains(project)) {
 							fProjects.remove(project);
 							projectMap.remove(project);
-							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
+							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED,
+									project));
 						} else if (project.isOpen() && hasTargetBuilder(project) && !fProjects.contains(project)) {
 							fProjects.add(project);
-							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
+							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED,
+									project));
 						}
 					}
 				}
@@ -294,14 +302,14 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected void updateTarget(IMakeTarget target) throws CoreException {
-	    if  (target.getContainer() != null ) { // target has not been added to manager.
+		if (target.getContainer() != null) { // target has not been added to manager.
 			ProjectTargets projectTargets = projectMap.get(target.getProject());
-	    	if (projectTargets == null || !projectTargets.contains(target)) {
-	    		return; // target has not been added to manager.
-	    	}
-	    	writeTargets(projectTargets);
-	    	notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_CHANGED, target));
-	    }
+			if (projectTargets == null || !projectTargets.contains(target)) {
+				return; // target has not been added to manager.
+			}
+			writeTargets(projectTargets);
+			notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_CHANGED, target));
+		}
 	}
 
 	protected void writeTargets(ProjectTargets projectTargets) throws CoreException {
@@ -316,8 +324,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	protected void deleteTargets(IProject project) {
 		//Historical: We clean up after all other parts.
-		IPath targetFilePath =
-			MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(TARGETS_EXT);
+		IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName())
+				.addFileExtension(TARGETS_EXT);
 		File targetFile = targetFilePath.toFile();
 		if (targetFile.exists()) {
 			targetFile.delete();
@@ -327,7 +335,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	protected void initializeBuilders() {
 		builderMap = new HashMap<String, String>();
-        IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.PLUGIN_ID, MakeTargetManager.TARGET_BUILD_EXT);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.PLUGIN_ID,
+				MakeTargetManager.TARGET_BUILD_EXT);
 		IExtension[] extensions = point.getExtensions();
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] cfgElements = extension.getConfigurationElements();
@@ -343,7 +352,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	protected void notifyListeners(MakeTargetEvent event) {
 		for (Object listener : listeners.getListeners()) {
-			((IMakeTargetListener)listener).targetChanged(event);
+			((IMakeTargetListener) listener).targetChanged(event);
 		}
 	}
 

@@ -29,7 +29,7 @@ public interface IModificationOperation {
 	 * to be replaced with the system tool
 	 */
 	ITool getReplacementTool();
-	
+
 	/**
 	 * returns the containing {@link IToolModification}
 	 */

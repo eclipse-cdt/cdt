@@ -17,7 +17,7 @@ import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
 	public static String ControlFlowGraphBuilder_unsupported_statement_type;
-	
+
 	private Messages() {
 		// Do not instantiate
 	}

@@ -23,13 +23,12 @@ import org.eclipse.core.runtime.IPath;
 public interface IConflict {
 	int INCOMPATIBLE = 1;
 	int SOURCE_EXT_CONFLICT = 1 << 1;
-	
+
 	int getConflictType();
-	
+
 	int getObjectType();
-	
+
 	IBuildObject getBuildObject();
-	
-	
+
 	IPath[] getPaths();
 }

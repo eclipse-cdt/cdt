@@ -34,13 +34,13 @@ public abstract class AbstractCWizard extends CNewWizard {
 
 	protected Composite parent;
 	protected IWizardItemsListListener listener;
-	
+
 	@Override
 	public void setDependentControl(Composite _parent, IWizardItemsListListener _listener) {
 		parent = _parent;
 		listener = _listener;
 	}
-	
+
 	/**
 	 * Checks whether toolchain can be displayed 
 	 * @param tc
@@ -50,15 +50,15 @@ public abstract class AbstractCWizard extends CNewWizard {
 		// Check for langiuage compatibility first in any case
 		if (!isLanguageCompatible(tc, w))
 			return false;
-		
+
 		// Do not do further check if all toolchains are permitted	
-		if (!supportedOnly) 
+		if (!supportedOnly)
 			return true;
-		
+
 		// Filter off unsupported and system toolchains
-		if (tc == null || !tc.isSupported() || tc.isAbstract() || tc.isSystemObject()) 
+		if (tc == null || !tc.isSupported() || tc.isAbstract() || tc.isSystemObject())
 			return false;
-		
+
 		// Check for platform compatibility
 		return ManagedBuildManager.isPlatformOk(tc);
 	}
@@ -72,26 +72,26 @@ public abstract class AbstractCWizard extends CNewWizard {
 	 * @return
 	 */
 	protected boolean isLanguageCompatible(IToolChain tc, IWizard w) {
-		if (w == null) 
+		if (w == null)
 			return true;
 		if (!(w instanceof ICDTCommonProjectWizard))
 			return true;
 
-		ITool[] tools = tc.getTools(); 
-		ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard)w;
-		String[] langIDs = wz.getLanguageIDs(); 
+		ITool[] tools = tc.getTools();
+		ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard) w;
+		String[] langIDs = wz.getLanguageIDs();
 		String[] ctypeIDs = wz.getContentTypeIDs();
 		String[] exts = wz.getExtensions();
-		
+
 		// nothing requied ?   
 		if (empty(langIDs) && empty(ctypeIDs) && empty(exts))
 			return true;
-		
-		for (int i=0; i<tools.length; i++) {
+
+		for (int i = 0; i < tools.length; i++) {
 			IInputType[] its = tools[i].getInputTypes();
-			
+
 			// no input types - check only extensions
-			if (empty(its)) {  
+			if (empty(its)) {
 				if (!empty(exts)) {
 					String[] s = tools[i].getAllInputExtensions();
 					if (contains(exts, s))
@@ -100,11 +100,11 @@ public abstract class AbstractCWizard extends CNewWizard {
 				continue;
 			}
 			// normal tool with existing input type(s)
-			for (int j = 0; j<its.length; j++) {
+			for (int j = 0; j < its.length; j++) {
 				// Check language IDs
 				if (!empty(langIDs)) {
 					String lang = its[j].getLanguageId(tools[i]);
-					if (contains(langIDs, new String[] {lang})) {
+					if (contains(langIDs, new String[] { lang })) {
 						return true; // Language ID fits
 					}
 				}
@@ -112,18 +112,15 @@ public abstract class AbstractCWizard extends CNewWizard {
 				if (!empty(ctypeIDs)) {
 					String[] ct1 = its[j].getSourceContentTypeIds();
 					String[] ct2 = its[j].getHeaderContentTypeIds();
-					if (contains(ctypeIDs, ct1) ||
-						contains(ctypeIDs, ct2)) 
-					{
+					if (contains(ctypeIDs, ct1) || contains(ctypeIDs, ct2)) {
 						return true; // content type fits
 					}
-				}					
+				}
 				// Check extensions
 				if (!empty(exts)) {
-					String[] ex1 =its[j].getHeaderExtensions(tools[i]);
-					String[] ex2 =its[j].getSourceExtensions(tools[i]);
-					if (contains(exts, ex1) ||
-						contains(exts, ex2)) {
+					String[] ex1 = its[j].getHeaderExtensions(tools[i]);
+					String[] ex2 = its[j].getSourceExtensions(tools[i]);
+					if (contains(exts, ex1) || contains(exts, ex2)) {
 						return true; // extension fits fits
 					}
 				}
@@ -131,15 +128,15 @@ public abstract class AbstractCWizard extends CNewWizard {
 		}
 		return false; // no one value fits to required
 	}
-	
+
 	private boolean empty(Object[] s) {
 		return (s == null || s.length == 0);
 	}
-	
+
 	private boolean contains(String[] s1, String[] s2) {
-		for (int i=0; i<s1.length; i++) 
-			for (int j=0; j<s2.length; j++) 
-				if (s1[i].equals(s2[j])) 
+		for (int i = 0; i < s1.length; i++)
+			for (int j = 0; j < s2.length; j++)
+				if (s1[i].equals(s2[j]))
 					return true;
 		return false;
 	}
@@ -158,7 +155,6 @@ public abstract class AbstractCWizard extends CNewWizard {
 			return true;
 		}
 	}
-*/	
-	
+	*/
 
 }

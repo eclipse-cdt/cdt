@@ -25,84 +25,84 @@ public interface IPreprocessorDirective {
 	/**
 	 * Special constant indicating to ignore the preprocessor directive.
 	 */
-	public static final int ppIgnore= -2;
+	public static final int ppIgnore = -2;
 
 	/**
 	 * Special constant indicating to mark the preprocessor directive as invalid.
 	 */
-	public static final int ppInvalid= -1;
+	public static final int ppInvalid = -1;
 
 	/**
 	 * Standard preprocessor directive <code>#if</code>.
 	 */
-	public static final int ppIf= 0;
+	public static final int ppIf = 0;
 
 	/**
 	 * Standard preprocessor directive <code>#ifdef</code>.
 	 */
-	public static final int ppIfdef= 1;
+	public static final int ppIfdef = 1;
 
 	/**
 	 * Standard preprocessor directive <code>#ifndef</code>.
 	 */
-	public static final int ppIfndef= 2;
+	public static final int ppIfndef = 2;
 
 	/**
 	 * Standard preprocessor directive <code>#elif</code>.
 	 */
-	public static final int ppElif= 3;
+	public static final int ppElif = 3;
 
 	/**
 	 * Standard preprocessor directive <code>#else</code>.
 	 */
-	public static final int ppElse= 4;
+	public static final int ppElse = 4;
 
 	/**
 	 * Standard preprocessor directive <code>#endif</code>.
 	 */
-	public static final int ppEndif= 5;
+	public static final int ppEndif = 5;
 
 	/**
 	 * Standard preprocessor directive <code>#include</code>.
 	 */
-	public static final int ppInclude= 6;
+	public static final int ppInclude = 6;
 
 	/**
 	 * Standard preprocessor directive <code>#define</code>.
 	 */
-	public static final int ppDefine= 7;
+	public static final int ppDefine = 7;
 
 	/**
 	 * Standard preprocessor directive <code>#undef</code>.
 	 */
-	public static final int ppUndef= 8;
+	public static final int ppUndef = 8;
 
 	/**
 	 * Standard preprocessor directive <code>#error</code>.
 	 */
-	public static final int ppError= 9;
+	public static final int ppError = 9;
 
 	/**
 	 * Standard preprocessor directive <code>#pragma</code>.
 	 */
-	public static final int ppPragma= 10;
+	public static final int ppPragma = 10;
 
 	/**
 	 * GNU preprocessor extension <code>#include_next</code>.
 	 * Search include file after the directory of the current file.
 	 */
-	public static final int ppInclude_next= 11;
+	public static final int ppInclude_next = 11;
 
 	/**
 	 * GNU preprocessor extension <code>#import</code>.
 	 * Include only once.
 	 */
-	public static final int ppImport= 12;
+	public static final int ppImport = 12;
 
 	/**
 	 * GNU preprocessor extension <code>#warning</code>.
 	 * Similar to <code>#error</code>.
 	 */
-	public static final int ppWarning= 13;
+	public static final int ppWarning = 13;
 
 }

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.ui.dialogs;
 
@@ -34,26 +34,27 @@ abstract public class PreferenceScopeBlock {
 	private Button fStoreWithProject;
 	private String fPrefPageID;
 	private Link fLink;
-	
-	public PreferenceScopeBlock(String linkedPrefPageID) {
-		fPrefPageID= linkedPrefPageID;
-	}
-	
-	public void createControl(final Composite parent) {
-		Composite group= ControlFactory.createComposite(parent,2);
-		GridLayout layout = (GridLayout)group.getLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		GridData gd = (GridData) group.getLayoutData();
-		gd.horizontalIndent= 0; 
 
-		fUseProjectSettings= ControlFactory.createCheckBox(group, DialogsMessages.PreferenceScopeBlock_enableProjectSettings);
-		
-		Composite two= ControlFactory.createComposite(group, 1);
+	public PreferenceScopeBlock(String linkedPrefPageID) {
+		fPrefPageID = linkedPrefPageID;
+	}
+
+	public void createControl(final Composite parent) {
+		Composite group = ControlFactory.createComposite(parent, 2);
+		GridLayout layout = (GridLayout) group.getLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		GridData gd = (GridData) group.getLayoutData();
+		gd.horizontalIndent = 0;
+
+		fUseProjectSettings = ControlFactory.createCheckBox(group,
+				DialogsMessages.PreferenceScopeBlock_enableProjectSettings);
+
+		Composite two = ControlFactory.createComposite(group, 1);
 		two.setLayout(new TabFolderLayout());
-		fStoreWithProject= ControlFactory.createCheckBox(two, DialogsMessages.PreferenceScopeBlock_storeWithProject);
-		
-		SelectionListener sl= new SelectionAdapter() {
+		fStoreWithProject = ControlFactory.createCheckBox(two, DialogsMessages.PreferenceScopeBlock_storeWithProject);
+
+		SelectionListener sl = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateEnablement();
@@ -62,11 +63,11 @@ abstract public class PreferenceScopeBlock {
 		};
 		fUseProjectSettings.addSelectionListener(sl);
 		fStoreWithProject.addSelectionListener(sl);
-		
-		fLink= new Link(two, SWT.NONE);
+
+		fLink = new Link(two, SWT.NONE);
 		fLink.setText(DialogsMessages.PreferenceScopeBlock_preferenceLink);
 		fLink.setLayoutData(new GridData());
-		sl= new SelectionAdapter() {
+		sl = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), fPrefPageID, null, null).open();
@@ -74,8 +75,8 @@ abstract public class PreferenceScopeBlock {
 			}
 		};
 		fLink.addSelectionListener(sl);
-		
-		Label horizontalLine= new Label(group, SWT.SEPARATOR | SWT.HORIZONTAL);
+
+		Label horizontalLine = new Label(group, SWT.SEPARATOR | SWT.HORIZONTAL);
 		horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
 		horizontalLine.setFont(group.getFont());
 	}
@@ -86,8 +87,7 @@ abstract public class PreferenceScopeBlock {
 		if (fUseProjectSettings.getSelection()) {
 			fLink.setVisible(false);
 			fStoreWithProject.setVisible(true);
-		}
-		else {
+		} else {
 			fStoreWithProject.setVisible(false);
 			fLink.setVisible(true);
 		}
@@ -119,7 +119,7 @@ abstract public class PreferenceScopeBlock {
 	public boolean isProjectScope() {
 		return fUseProjectSettings.getSelection() && fStoreWithProject.getSelection();
 	}
-	
+
 	public boolean isInstanceScope() {
 		return !fUseProjectSettings.getSelection();
 	}

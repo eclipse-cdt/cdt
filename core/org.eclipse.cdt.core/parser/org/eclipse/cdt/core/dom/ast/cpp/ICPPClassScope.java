@@ -33,7 +33,7 @@ public interface ICPPClassScope extends ICPPScope {
 	 * constructor, copy constructor, copy assignment operator, and destructor
 	 */
 	public ICPPMethod[] getImplicitMethods();
-	
+
 	/**
 	 * Returns the array of constructors, including implicit ones.
 	 * @since 5.1

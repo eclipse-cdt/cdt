@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
-
 /**
  * Clients implement this interface to identify what identifiers represent 
  * macros for the autoconf tree.

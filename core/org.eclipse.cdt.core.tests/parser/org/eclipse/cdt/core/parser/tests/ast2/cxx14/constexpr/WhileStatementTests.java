@@ -17,15 +17,25 @@ import junit.framework.TestSuite;
 
 public class WhileStatementTests extends TestBase {
 	public static class NonIndexing extends WhileStatementTests {
-		public NonIndexing() {setStrategy(new NonIndexingTestStrategy());}
-		public static TestSuite suite() {return suite(NonIndexing.class);}
+		public NonIndexing() {
+			setStrategy(new NonIndexingTestStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(NonIndexing.class);
+		}
 	}
-	
+
 	public static class SingleProject extends WhileStatementTests {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true, false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(true, false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
-	
+
 	// constexpr int f(int n) {
 	//   int sum { 0 };
 	//   while (n > 0) {
@@ -34,12 +44,12 @@ public class WhileStatementTests extends TestBase {
 	// 	 }
 	//   return sum;
 	// }
-	
+
 	// constexpr int x = f(10);
 	public void testWhileLoopWithConditionalExpression() throws Exception {
 		assertEvaluationEquals(55);
 	}
-	
+
 	// constexpr int f(int n) {
 	//   int sum { 0 };
 	//   while (true) {
@@ -48,12 +58,12 @@ public class WhileStatementTests extends TestBase {
 	// 	 }
 	//   return sum;
 	// }
-	
+
 	// constexpr int x = f(10);
 	public void testEvalShouldAbortOnWhileWitInfiniteLoop() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
-	
+
 	// constexpr int f(int n) {
 	//   int sum { 0 };
 	//   while (true) {
@@ -62,36 +72,36 @@ public class WhileStatementTests extends TestBase {
 	// 	 }
 	//   return sum;
 	// }
-	
+
 	// constexpr int x = f(10);
 	public void testReturnInWhileStatement() throws Exception {
 		assertEvaluationEquals(42);
 	}
-	
+
 	// constexpr int f(int n) {
 	//   int sum { 0 };
 	//   while (n > 0)
 	// 	   sum += n--;
 	//   return sum;
 	// }
-	
+
 	// constexpr int x = f(10);
 	public void testWhileLoopWithNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(55);
 	}
-	
+
 	// constexpr int f(int n) {
 	//   int sum { 0 };
 	//   while (n > 0)
 	//		return 42;
 	//   return sum;
 	// }
-	
+
 	// constexpr int x = f(10);
 	public void testWhileLoopWithReturnInNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(42);
 	}
-	
+
 	//	constexpr int triple(int x) {
 	//	  return x * 3;
 	//	}
@@ -102,7 +112,7 @@ public class WhileStatementTests extends TestBase {
 	//	  }
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f(4);
 	public void testDeclarationInWhileStatementCondition1() throws Exception {
 		assertEvaluationEquals(30);

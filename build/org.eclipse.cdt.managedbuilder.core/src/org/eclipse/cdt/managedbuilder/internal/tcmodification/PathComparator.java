@@ -26,15 +26,15 @@ import org.eclipse.core.runtime.IPath;
 
 public class PathComparator implements Comparator<IPath> {
 	public static PathComparator INSTANCE = new PathComparator();
-//	public static final SortedSet EMPTY_SET = Collections.unmodifiableSortedSet(new TreeSet(INSTANCE));
-//	public static final SortedMap EMPTY_MAP = Collections.unmodifiableSortedMap(new TreeMap(INSTANCE));
+	//	public static final SortedSet EMPTY_SET = Collections.unmodifiableSortedSet(new TreeSet(INSTANCE));
+	//	public static final SortedMap EMPTY_MAP = Collections.unmodifiableSortedMap(new TreeMap(INSTANCE));
 
-	private PathComparator(){
+	private PathComparator() {
 	}
 
 	@Override
 	public int compare(IPath arg0, IPath arg1) {
-		if(arg0 == arg1)
+		if (arg0 == arg1)
 			return 0;
 
 		IPath path1 = arg0;
@@ -43,19 +43,19 @@ public class PathComparator implements Comparator<IPath> {
 		int length1 = path1.segmentCount();
 		int length2 = path2.segmentCount();
 		int i = 0;
-		for(; i < length1; i++){
-			if(i >= length2){
+		for (; i < length1; i++) {
+			if (i >= length2) {
 				//path2 is a prefix of path1
 				return 1;
 			}
 			int comparison = path1.segment(i).compareTo(path2.segment(i));
-			if(comparison == 0)
+			if (comparison == 0)
 				continue;
 			//
 			return comparison;
 		}
 
-		if(length1 == length2){
+		if (length1 == length2) {
 			//equal
 			return 0;
 		}
@@ -63,36 +63,40 @@ public class PathComparator implements Comparator<IPath> {
 		return -1;
 	}
 
-	public static IPath getNext(IPath path){
-		if(path.segmentCount() == 0)
+	public static IPath getNext(IPath path) {
+		if (path.segmentCount() == 0)
 			return null;
 		String newLast = path.lastSegment() + '\0';
 		return path.removeLastSegments(1).append(newLast);
 	}
 
-	public static IPath getFirstChild(IPath path){
+	public static IPath getFirstChild(IPath path) {
 		return path.append("\0"); //$NON-NLS-1$
 	}
 
-	public static SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> getChildPathMap(SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> map, IPath path, boolean includeThis, boolean copy){
+	public static SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> getChildPathMap(
+			SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> map, IPath path, boolean includeThis,
+			boolean copy) {
 		IPath start = includeThis ? path : getFirstChild(path);
 		IPath next = getNext(path);
-		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = next != null ? map.subMap(start, next) : map.tailMap(start);
-		if(copy)
+		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = next != null ? map.subMap(start, next)
+				: map.tailMap(start);
+		if (copy)
 			result = new TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>(result);
 		return result;
 	}
 
-	public static SortedSet<IPath> getChildPathSet(SortedSet<IPath> set, IPath path, boolean includeThis, boolean copy){
+	public static SortedSet<IPath> getChildPathSet(SortedSet<IPath> set, IPath path, boolean includeThis,
+			boolean copy) {
 		IPath start = includeThis ? path : getFirstChild(path);
 		IPath next = getNext(path);
 		SortedSet<IPath> result = next != null ? set.subSet(start, next) : set.tailSet(start);
-		if(copy)
+		if (copy)
 			result = new TreeSet<IPath>(result);
 		return result;
 	}
 
-	public static SortedSet<IPath> getDirectChildPathSet(SortedSet<IPath> set, IPath path){
+	public static SortedSet<IPath> getDirectChildPathSet(SortedSet<IPath> set, IPath path) {
 		//all children
 		SortedSet<IPath> children = getChildPathSet(set, path, false, false);
 		SortedSet<IPath> result = new TreeSet<IPath>(INSTANCE);
@@ -104,12 +108,16 @@ public class PathComparator implements Comparator<IPath> {
 		return result;
 	}
 
-	public static SortedMap<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>> getDirectChildPathMap(SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> map, IPath path){
+	public static SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> getDirectChildPathMap(
+			SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> map, IPath path) {
 		//all children
-		SortedMap<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>> children = getChildPathMap(map, path, false, false);
-		SortedMap<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>(INSTANCE);
-		for(Iterator<Map.Entry<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>>> iter = children.entrySet().iterator(); iter.hasNext(); iter = children.entrySet().iterator()){
-			Map.Entry<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>> entry = iter.next();
+		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> children = getChildPathMap(map, path, false,
+				false);
+		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>(
+				INSTANCE);
+		for (Iterator<Map.Entry<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>> iter = children.entrySet()
+				.iterator(); iter.hasNext(); iter = children.entrySet().iterator()) {
+			Map.Entry<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> entry = iter.next();
 			IPath childPath = entry.getKey();
 			result.put(childPath, entry.getValue());
 

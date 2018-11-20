@@ -24,44 +24,42 @@ import lpg.lpgjavaruntime.PrsStream;
  * Base class for parser action classes which support trial, undo and
  * final actions.
  */
-public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends PrsStream implements ITrialUndoActionProvider<RULE_DATA> {
+public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends PrsStream
+		implements ITrialUndoActionProvider<RULE_DATA> {
 	/**
 	 * An action that does nothing.
 	 */
 	public static final Action<Object, Object> EMPTY_ACTION = new Action<Object, Object>();
-	
+
 	/**
 	 * The parser table interpreter.
 	 */
 	protected TrialUndoParser btParser;
-	
-	
-	
+
 	public AbstractTrialUndoActionProvider() {
 		super();
 	}
-	
 
 	public AbstractTrialUndoActionProvider(LexStream lexStream) {
 		super(lexStream);
 	}
-	
+
 	/**
 	 * Actions for reduction rules.
 	 */
 	protected Action<ACT, RULE_DATA>[] ruleAction;
 
 	protected ACT parserAction;
-	
+
 	public void setParserAction(ACT parserAction) {
 		this.parserAction = parserAction;
 	}
-	
+
 	/**
 	 * The reduction rule which is currently being processed.
 	 */
 	protected Rule<RULE_DATA> activeRule;
-	
+
 	/**
 	 * Returns the number of tokens in the rule being reduced.
 	 */
@@ -74,9 +72,10 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 	 */
 	@SuppressWarnings("unchecked")
 	public List<IToken> getRuleTokens() {
-		return Collections.unmodifiableList(getTokens().subList(getFirstRealToken(activeRule.getStartTokenOffset()), activeRule.getEndTokenOffset() + 1));
+		return Collections.unmodifiableList(getTokens().subList(getFirstRealToken(activeRule.getStartTokenOffset()),
+				activeRule.getEndTokenOffset() + 1));
 	}
-	
+
 	public void backtrack() {
 		btParser.backtrack();
 	}
@@ -85,12 +84,12 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 	public void setActiveRule(Rule<RULE_DATA> rule) {
 		activeRule = rule;
 	}
-	
+
 	@Override
 	public Rule<RULE_DATA> getActiveRule() {
 		return activeRule;
 	}
-	
+
 	@Override
 	public final boolean trialAction(int rule_number) {
 		return ruleAction[rule_number].doTrial(this, parserAction);
@@ -140,17 +139,17 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 	public IToken getRightIToken() {
 		return super.getIToken(getRightSpan());
 	}
-	
+
 	public static <ACT, RULE_DATA> Action<ACT, RULE_DATA> emptyAction() {
 		return new Action<ACT, RULE_DATA>();
 	}
 
 	@SuppressWarnings("unused")
 	public static class Action<ACT, RULE_DATA> {
-		
+
 		public void doFinal(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			// convenience method, can be overridden
-			
+
 		}
 
 		public boolean doTrial(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
@@ -164,51 +163,48 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 			// convenience method, can be overridden
 		}
 	}
-	
-	
+
 	public static class DeclaredAction<ACT, RULE_DATA> extends Action<ACT, RULE_DATA> {
 		protected boolean hasUndo = false;
+
 		@Override
-		@SuppressWarnings("unused") 
+		@SuppressWarnings("unused")
 		public boolean doTrial(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			return true;
 		}
 	}
 
-
 	/**	
 	 * Action for a null rule
-	 */	
+	 */
 	static final class NullAction<ACT, RULE_DATA> extends Action<ACT, RULE_DATA> {
 		@Override
-		@SuppressWarnings("unused") 
+		@SuppressWarnings("unused")
 		public void doFinal(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			// do nothing
 		}
 	}
-	
 
 	static final class BadAction<ACT, RULE_DATA> extends Action<ACT, RULE_DATA> {
 		@Override
-		@SuppressWarnings("unused") 
+		@SuppressWarnings("unused")
 		public void doFinal(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			throw new Error(new BadActionException());
 		}
 
 		@Override
-		@SuppressWarnings("unused") 
+		@SuppressWarnings("unused")
 		public boolean doTrial(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			throw new Error(new BadActionException());
 		}
 
 		@Override
-		@SuppressWarnings("unused") 
+		@SuppressWarnings("unused")
 		public void doUndo(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			throw new Error(new BadActionException());
 		}
 	}
-	
-	
+
 	static public class BadActionException extends Exception {
 		private static final long serialVersionUID = 1L;
 	}

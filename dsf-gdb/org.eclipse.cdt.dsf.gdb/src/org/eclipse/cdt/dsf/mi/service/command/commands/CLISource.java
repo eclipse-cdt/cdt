@@ -24,10 +24,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * 
  */
 public class CLISource extends CLICommand<MIInfo> {
-    /**
-     * @since 1.1
-     */
-    public CLISource(ICommandControlDMContext ctx, String file) {
-        super(ctx, "source " + file); //$NON-NLS-1$
-    }
+	/**
+	 * @since 1.1
+	 */
+	public CLISource(ICommandControlDMContext ctx, String file) {
+		super(ctx, "source " + file); //$NON-NLS-1$
+	}
 }

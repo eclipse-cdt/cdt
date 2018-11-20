@@ -31,12 +31,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAVarCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAVarCommand(PDAThreadDMContext thread, int frameId, String name) {
-        super(thread, "var " + thread.getID() + " " + frameId + " " + name);
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAVarCommand(PDAThreadDMContext thread, int frameId, String name) {
+		super(thread, "var " + thread.getID() + " " + frameId + " " + name);
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

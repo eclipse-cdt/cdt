@@ -39,7 +39,8 @@ public class CHProviderManager {
 
 	public static CHProviderManager INSTANCE = new CHProviderManager();
 
-	private CHProviderManager() {}
+	private CHProviderManager() {
+	}
 
 	public List<ICallHierarchyProvider> getCallHierarchyProviders() {
 		if (callHierarchyProviders == null) {
@@ -50,14 +51,14 @@ public class CHProviderManager {
 				try {
 					for (IConfigurationElement element : extension.getConfigurationElements()) {
 						if (ELEMENT_PROVIDER.equals(element.getName())) {
-		                    Object provider = element.createExecutableExtension(ATTRIBUTE_CLASS);
-		                    if (provider instanceof ICallHierarchyProvider) {
-		                    	callHierarchyProviders.add((ICallHierarchyProvider) provider);
-		                    } else {
-		                        CUIPlugin.logError(NLS.bind(CHMessages.CHProviderManager_InvalidCallHierarchyProvider,
-		                                extension.getContributor().getName()));
-		                    }
-		                }
+							Object provider = element.createExecutableExtension(ATTRIBUTE_CLASS);
+							if (provider instanceof ICallHierarchyProvider) {
+								callHierarchyProviders.add((ICallHierarchyProvider) provider);
+							} else {
+								CUIPlugin.logError(NLS.bind(CHMessages.CHProviderManager_InvalidCallHierarchyProvider,
+										extension.getContributor().getName()));
+							}
+						}
 					}
 				} catch (CoreException e) {
 					CUIPlugin.log(e);

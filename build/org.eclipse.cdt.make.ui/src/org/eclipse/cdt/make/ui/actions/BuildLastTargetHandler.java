@@ -32,9 +32,9 @@ public class BuildLastTargetHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final BuildLastTargetAction buildAction= new BuildLastTargetAction();
-		ISelection selection = HandlerUtil.getCurrentSelection( event );
-		IWorkbenchPart part = HandlerUtil.getActivePart( event );
+		final BuildLastTargetAction buildAction = new BuildLastTargetAction();
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		buildAction.setActivePart(null, part);
 		buildAction.selectionChanged(null, selection);
 

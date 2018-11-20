@@ -19,15 +19,15 @@ import org.eclipse.cdt.internal.qt.core.index.QtIndex;
 public class QmlRegistrationTests extends BaseQtTestCase {
 
 	// #include "junit-QObject.hh"
-    // class B : public QObject
-    // {
-    // Q_OBJECT
-    // };
+	// class B : public QObject
+	// {
+	// Q_OBJECT
+	// };
 	//
-    // class D : public B
-    // {
-    // Q_OBJECT
-    // };
+	// class D : public B
+	// {
+	// Q_OBJECT
+	// };
 	//
 	// static void func()
 	// {
@@ -45,7 +45,7 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject b_qobj = qtIndex.findQObject(new String[]{ "B" });
+		IQObject b_qobj = qtIndex.findQObject(new String[] { "B" });
 		if (!isIndexOk("B", b_qobj))
 			return;
 		assertNotNull(b_qobj);
@@ -54,7 +54,7 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 		assertNotNull(qmlRegistrations);
 		assertEquals(3, qmlRegistrations.size());
 
-		for(IQmlRegistration qmlRegistration : qmlRegistrations) {
+		for (IQmlRegistration qmlRegistration : qmlRegistrations) {
 			IQObject qobj = qmlRegistration.getQObject();
 			assertNotNull(qobj);
 
@@ -65,13 +65,13 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 				assertNotNull(qmlName);
 				if ("B".equals(qmlName)) {
 					assertEquals(IQmlRegistration.Kind.Type, qmlRegistration.getKind());
-					assertEquals("b-uri",         qmlRegistration.getURI());
+					assertEquals("b-uri", qmlRegistration.getURI());
 					assertEquals(Long.valueOf(1), qmlRegistration.getMajor());
 					assertEquals(Long.valueOf(2), qmlRegistration.getMinor());
 					assertNull(qmlRegistration.getReason());
 				} else if ("B34".equals(qmlName)) {
 					assertEquals(IQmlRegistration.Kind.Type, qmlRegistration.getKind());
-					assertEquals("b-uri.34",      qmlRegistration.getURI());
+					assertEquals("b-uri.34", qmlRegistration.getURI());
 					assertEquals(Long.valueOf(3), qmlRegistration.getMajor());
 					assertEquals(Long.valueOf(4), qmlRegistration.getMinor());
 					assertNull(qmlRegistration.getReason());
@@ -79,7 +79,7 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 					fail("unexpected uri for B " + qmlName);
 				}
 
-			// the values for D are not expected to be resolved (yet), but it does have a Revision
+				// the values for D are not expected to be resolved (yet), but it does have a Revision
 			} else if (qobj.getName().equals("D")) {
 				assertEquals(IQmlRegistration.Kind.Type, qmlRegistration.getKind());
 				assertEquals(Long.valueOf(1), qmlRegistration.getVersion());
@@ -126,15 +126,15 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 	}
 
 	// #include "junit-QObject.hh"
-    // class B : public QObject
-    // {
-    // Q_OBJECT
-    // };
+	// class B : public QObject
+	// {
+	// Q_OBJECT
+	// };
 	//
-    // class D : public B
-    // {
-    // Q_OBJECT
-    // };
+	// class D : public B
+	// {
+	// Q_OBJECT
+	// };
 	//
 	// static void func()
 	// {
@@ -153,7 +153,7 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject b_qobj = qtIndex.findQObject(new String[]{ "B" });
+		IQObject b_qobj = qtIndex.findQObject(new String[] { "B" });
 		if (!isIndexOk("B", b_qobj))
 			return;
 		assertNotNull(b_qobj);
@@ -162,7 +162,7 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 		assertNotNull(qmlRegistrations);
 		assertEquals(3, qmlRegistrations.size());
 
-		for(IQmlRegistration qmlRegistration : qmlRegistrations) {
+		for (IQmlRegistration qmlRegistration : qmlRegistrations) {
 			IQObject qobj = qmlRegistration.getQObject();
 			assertNotNull(qobj);
 
@@ -173,21 +173,21 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 				assertNotNull(qmlName);
 				if ("B".equals(qmlName)) {
 					assertEquals(IQmlRegistration.Kind.Uncreatable, qmlRegistration.getKind());
-					assertEquals("b-uri",         qmlRegistration.getURI());
+					assertEquals("b-uri", qmlRegistration.getURI());
 					assertEquals(Long.valueOf(1), qmlRegistration.getMajor());
 					assertEquals(Long.valueOf(2), qmlRegistration.getMinor());
-					assertEquals(null/*"msg1"*/,          qmlRegistration.getReason());
+					assertEquals(null/*"msg1"*/, qmlRegistration.getReason());
 				} else if ("B34".equals(qmlName)) {
 					assertEquals(IQmlRegistration.Kind.Uncreatable, qmlRegistration.getKind());
-					assertEquals("b-uri.34",      qmlRegistration.getURI());
+					assertEquals("b-uri.34", qmlRegistration.getURI());
 					assertEquals(Long.valueOf(3), qmlRegistration.getMajor());
 					assertEquals(Long.valueOf(4), qmlRegistration.getMinor());
-					assertEquals(null/*"msg2"*/,          qmlRegistration.getReason());
+					assertEquals(null/*"msg2"*/, qmlRegistration.getReason());
 				} else {
 					fail("unexpected uri for B " + qmlName);
 				}
 
-			// the values for D are not expected to be resolved (yet), but it does have a Revision
+				// the values for D are not expected to be resolved (yet), but it does have a Revision
 			} else if (qobj.getName().equals("D")) {
 				assertEquals(IQmlRegistration.Kind.Uncreatable, qmlRegistration.getKind());
 				assertNull(qmlRegistration.getVersion());
@@ -203,15 +203,15 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 	}
 
 	// #include "junit-QObject.hh"
-    // class B : public QObject
-    // {
-    // Q_OBJECT
-    // };
+	// class B : public QObject
+	// {
+	// Q_OBJECT
+	// };
 	//
-    // class D : public B
-    // {
-    // Q_OBJECT
-    // };
+	// class D : public B
+	// {
+	// Q_OBJECT
+	// };
 	//
 	// static void func()
 	// {
@@ -225,7 +225,7 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject b_qobj = qtIndex.findQObject(new String[]{ "B" });
+		IQObject b_qobj = qtIndex.findQObject(new String[] { "B" });
 		if (!isIndexOk("B", b_qobj))
 			return;
 		assertNotNull(b_qobj);
@@ -233,28 +233,30 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 		Collection<IQmlRegistration> b_qmlRegistrations = b_qobj.getQmlRegistrations();
 		assertNotNull(b_qmlRegistrations);
 		assertEquals(2, b_qmlRegistrations.size());
-		for(IQmlRegistration qmlRegistration : b_qmlRegistrations)
+		for (IQmlRegistration qmlRegistration : b_qmlRegistrations)
 			if ("B".equals(qmlRegistration.getQmlName()))
 				assert_checkQmlRegistration(qmlRegistration, IQmlRegistration.Kind.Type, null, "b-uri", 1L, 2L, null);
-			else if("B34".equals(qmlRegistration.getQmlName()))
-				assert_checkQmlRegistration(qmlRegistration, IQmlRegistration.Kind.Type, null, "b-uri.34", 3L, 4L, null);
+			else if ("B34".equals(qmlRegistration.getQmlName()))
+				assert_checkQmlRegistration(qmlRegistration, IQmlRegistration.Kind.Type, null, "b-uri.34", 3L, 4L,
+						null);
 			else
 				fail("unexpected QmlRegistration with qmlName '" + qmlRegistration.getQmlName() + '\'');
 
-		IQObject d_qobj = qtIndex.findQObject(new String[]{ "D" });
+		IQObject d_qobj = qtIndex.findQObject(new String[] { "D" });
 		assertNotNull(d_qobj);
 
 		Collection<IQmlRegistration> d_qmlRegistrations = d_qobj.getQmlRegistrations();
 		assertNotNull(d_qmlRegistrations);
 		assertEquals(1, d_qmlRegistrations.size());
-		for(IQmlRegistration qmlRegistration : d_qmlRegistrations)
-			if("D".equals(qmlRegistration.getQmlName()))
+		for (IQmlRegistration qmlRegistration : d_qmlRegistrations)
+			if ("D".equals(qmlRegistration.getQmlName()))
 				assert_checkQmlRegistration(qmlRegistration, IQmlRegistration.Kind.Type, 1L, "d-uri", 2L, 3L, null);
 			else
 				fail("unexpected QmlRegistration with qmlName '" + qmlRegistration.getQmlName() + '\'');
 	}
 
-	private static void assert_checkQmlRegistration(IQmlRegistration qmlRegistration, IQmlRegistration.Kind eKind, Long eVersion, String eUri, Long eMaj, Long eMin, String reason) throws Exception {
+	private static void assert_checkQmlRegistration(IQmlRegistration qmlRegistration, IQmlRegistration.Kind eKind,
+			Long eVersion, String eUri, Long eMaj, Long eMin, String reason) throws Exception {
 		assertNotNull(qmlRegistration);
 		assertEquals(eKind, qmlRegistration.getKind());
 		assertEquals(eVersion, qmlRegistration.getVersion());

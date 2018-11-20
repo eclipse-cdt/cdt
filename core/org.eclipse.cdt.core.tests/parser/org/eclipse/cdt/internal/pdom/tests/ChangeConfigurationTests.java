@@ -41,22 +41,24 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public class ChangeConfigurationTests extends PDOMTestBase {
-	
+
 	public static Test suite() {
 		return suite(ChangeConfigurationTests.class);
 	}
-	
+
 	private void changeConfigRelations(ICProject project, int option) throws CoreException, InterruptedException {
-		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project.getProject());
+		ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(project.getProject());
 		pd.setConfigurationRelations(option);
 		CCorePlugin.getDefault().setProjectDescription(project.getProject(), pd);
 		waitForIndexer(project);
 	}
-	
+
 	// Emulates ChangeConfigAction
-	private void changeProjectConfiguration(IProject project, String configName) throws CoreException, InterruptedException {
-		ICProjectDescription prjd = CCorePlugin.getDefault().getProjectDescriptionManager().getProjectDescription(project);
-		ICConfigurationDescription[] configs = prjd.getConfigurations(); 
+	private void changeProjectConfiguration(IProject project, String configName)
+			throws CoreException, InterruptedException {
+		ICProjectDescription prjd = CCorePlugin.getDefault().getProjectDescriptionManager()
+				.getProjectDescription(project);
+		ICConfigurationDescription[] configs = prjd.getConfigurations();
 		if (configs != null && configs.length > 0) {
 			for (ICConfigurationDescription config : configs) {
 				if (config.getName().equals(configName)) {
@@ -76,33 +78,36 @@ public class ChangeConfigurationTests extends PDOMTestBase {
 	//#endif
 	public void testRepeatedlyChangeConfig_bug375226() throws Exception {
 		ModelJoiner mj = new ModelJoiner();
-		ICProject cProject = CProjectHelper.createNewStyleCProject("testChangeConfiguration", IPDOMManager.ID_FAST_INDEXER);
+		ICProject cProject = CProjectHelper.createNewStyleCProject("testChangeConfiguration",
+				IPDOMManager.ID_FAST_INDEXER);
 		IProject project = cProject.getProject();
-		StringBuilder[] contents= TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), 1);
-		IFile file= TestSourceReader.createFile(cProject.getProject(), new Path("test.c"), contents[0].toString());
+		StringBuilder[] contents = TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser",
+				getClass(), getName(), 1);
+		IFile file = TestSourceReader.createFile(cProject.getProject(), new Path("test.c"), contents[0].toString());
 		mj.join();
 		mj.dispose();
 		changeConfigRelations(cProject, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
-		
-		ICProjectDescription prjd = CCorePlugin.getDefault().getProjectDescriptionManager().getProjectDescription(project);
+
+		ICProjectDescription prjd = CCorePlugin.getDefault().getProjectDescriptionManager()
+				.getProjectDescription(project);
 		ICConfigurationDescription configuration1 = prjd.getConfigurations()[0];
 		String firstConfigName = configuration1.getName();
-		for(ICLanguageSetting languageSetting : configuration1.getRootFolderDescription().getLanguageSettings())
-		{
-			languageSetting.setSettingEntries(ICSettingEntry.MACRO, new ICLanguageSettingEntry[] { CDataUtil.createCMacroEntry("MACRO1", null, 0)});
+		for (ICLanguageSetting languageSetting : configuration1.getRootFolderDescription().getLanguageSettings()) {
+			languageSetting.setSettingEntries(ICSettingEntry.MACRO,
+					new ICLanguageSettingEntry[] { CDataUtil.createCMacroEntry("MACRO1", null, 0) });
 		}
 
 		ICConfigurationDescription configuration2 = prjd.createConfiguration("id2", "Configuration2", configuration1);
 		String secondConfigName = configuration2.getName();
-		for(ICLanguageSetting languageSetting : configuration2.getRootFolderDescription().getLanguageSettings())
-		{
-			languageSetting.setSettingEntries(ICSettingEntry.MACRO, new ICLanguageSettingEntry[] { CDataUtil.createCMacroEntry("MACRO2", null, 0)} );
+		for (ICLanguageSetting languageSetting : configuration2.getRootFolderDescription().getLanguageSettings()) {
+			languageSetting.setSettingEntries(ICSettingEntry.MACRO,
+					new ICLanguageSettingEntry[] { CDataUtil.createCMacroEntry("MACRO2", null, 0) });
 		}
-		
+
 		CoreModel.getDefault().setProjectDescription(project, prjd);
 		CCorePlugin.getIndexManager().reindex(cProject);
 		waitForIndexer(cProject);
-		
+
 		Pattern testFunc1 = Pattern.compile("testFunc1");
 		Pattern testFunc2 = Pattern.compile("testFunc2");
 		int i = 0, noTrials = 50;
@@ -111,18 +116,20 @@ public class ChangeConfigurationTests extends PDOMTestBase {
 			IIndex index = CCorePlugin.getIndexManager().getIndex(cProject);
 			index.acquireReadLock();
 			try {
-				IBinding[] bindings = index.findBindings(isFirstConfig ? testFunc1 : testFunc2, true, IndexFilter.ALL, new NullProgressMonitor());
-				IBinding[] noBindings = index.findBindings(isFirstConfig ? testFunc2 : testFunc1, true, IndexFilter.ALL, new NullProgressMonitor());
+				IBinding[] bindings = index.findBindings(isFirstConfig ? testFunc1 : testFunc2, true, IndexFilter.ALL,
+						new NullProgressMonitor());
+				IBinding[] noBindings = index.findBindings(isFirstConfig ? testFunc2 : testFunc1, true, IndexFilter.ALL,
+						new NullProgressMonitor());
 				assertEquals(1, bindings.length);
 				assertEquals(0, noBindings.length);
 			} finally {
 				index.releaseReadLock();
 			}
-			
+
 			String nextConfig = isFirstConfig ? secondConfigName : firstConfigName;
 			changeProjectConfiguration(project, nextConfig);
 			waitForIndexer(cProject);
-			
+
 			i++;
 		} while (i < noTrials);
 	}

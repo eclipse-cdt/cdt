@@ -27,10 +27,9 @@ import org.eclipse.core.runtime.CoreException;
 public class QtPDOMQEnum extends QtPDOMBinding {
 
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
+
 	protected static enum Field {
-		Flags(1),
-		CppRecord(Database.PTR_SIZE),
-		Last(0);
+		Flags(1), CppRecord(Database.PTR_SIZE), Last(0);
 
 		public final int offset;
 
@@ -50,7 +49,8 @@ public class QtPDOMQEnum extends QtPDOMBinding {
 		super(linkage, record);
 	}
 
-	public QtPDOMQEnum(QtPDOMLinkage linkage, PDOMBinding parent, IASTName qtName, IASTName cppName) throws CoreException {
+	public QtPDOMQEnum(QtPDOMLinkage linkage, PDOMBinding parent, IASTName qtName, IASTName cppName)
+			throws CoreException {
 		super(linkage, parent, qtName);
 
 		getDB().putRecPtr(Field.CppRecord.getRecord(record), linkage.getCPPRecord(cppName));
@@ -58,14 +58,13 @@ public class QtPDOMQEnum extends QtPDOMBinding {
 		// The flags are set in several sections, and then written to the Database in one operation.
 		byte flags = 0;
 
-		if (qtName instanceof QtEnumName
-		 && ((QtEnumName) qtName).isFlag())
+		if (qtName instanceof QtEnumName && ((QtEnumName) qtName).isFlag())
 			flags |= IS_FLAG_MASK;
 
 		// Write the flags to the database.
 		getDB().putByte(Field.Flags.getRecord(record), flags);
 
-		if(parent instanceof AbstractQtPDOMClass)
+		if (parent instanceof AbstractQtPDOMClass)
 			((AbstractQtPDOMClass) parent).addChild(this);
 	}
 

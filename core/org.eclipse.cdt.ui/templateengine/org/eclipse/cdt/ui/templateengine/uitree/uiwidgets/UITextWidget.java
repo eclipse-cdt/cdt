@@ -35,7 +35,6 @@ import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
-
 /**
  * This gives a Label and Text widget. The Text widget can be SINGLE type of
  * MULTI type. This depends on the input type in TemplateDescriptor. The data
@@ -135,7 +134,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 			label.setLayoutData(gd);
 		}
 
-		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null) {
 			String tipText = uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			label.setToolTipText(tipText);
@@ -204,9 +203,8 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 
 		if (patternName == null) {
 			patternValue = null;
-		} else if (patternName.equals(IPatternMatchingTable.FREETEXT) ||
-				 patternName.equals(IPatternMatchingTable.TEXT) ||
-				 patternName.equals(IPatternMatchingTable.FILENAME)) {
+		} else if (patternName.equals(IPatternMatchingTable.FREETEXT) || patternName.equals(IPatternMatchingTable.TEXT)
+				|| patternName.equals(IPatternMatchingTable.FILENAME)) {
 
 			patternValue = getPatternValue(patternName);
 		} else {
@@ -267,8 +265,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
 
 		if (((mandatory != null) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE)))
-				&& ((textValue == null) || (textValue.isEmpty()) ||
-				(textValue.trim().length() < 1))) {
+				&& ((textValue == null) || (textValue.isEmpty()) || (textValue.trim().length() < 1))) {
 
 			retVal = false;
 		}

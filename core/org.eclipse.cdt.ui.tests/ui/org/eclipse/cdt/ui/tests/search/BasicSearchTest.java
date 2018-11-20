@@ -70,50 +70,51 @@ public class BasicSearchTest extends SearchTestBase {
 	// }
 	public void testExternalPathRenderedCorrectly_79193() throws Exception {
 		// make an external file
-		File dir= CProjectHelper.freshDir();
-		File externalFile= new File(dir, "extHead.h");
+		File dir = CProjectHelper.freshDir();
+		File externalFile = new File(dir, "extHead.h");
 		externalFile.deleteOnExit();
-		FileWriter fw= new FileWriter(externalFile);
+		FileWriter fw = new FileWriter(externalFile);
 		fw.write("void foo() {}\n");
 		fw.close();
-		
+
 		// rebuild the index
-		TestScannerProvider.sIncludes= new String[] {dir.getAbsolutePath()};
+		TestScannerProvider.sIncludes = new String[] { dir.getAbsolutePath() };
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		waitForIndexer(fCProject);
-		
+
 		// open a query
-		CSearchQuery query= makeProjectQuery("foo");
-		CSearchResult result= runQuery(query);
+		CSearchQuery query = makeProjectQuery("foo");
+		CSearchResult result = runQuery(query);
 		assertEquals(2, result.getElements().length);
-		
-		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
-		ISearchResultPage page= vp.getActivePage();
+
+		ISearchResultViewPart vp = NewSearchUI.getSearchResultView();
+		ISearchResultPage page = vp.getActivePage();
 		assertTrue(String.valueOf(page), page instanceof CSearchViewPage);
-		
-		CSearchViewPage pdomsvp= (CSearchViewPage) page;
-		StructuredViewer viewer= pdomsvp.getViewer();
-		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
-		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
+
+		CSearchViewPage pdomsvp = (CSearchViewPage) page;
+		StructuredViewer viewer = pdomsvp.getViewer();
+		ILabelProvider labpv = (ILabelProvider) viewer.getLabelProvider();
+		IStructuredContentProvider scp = (IStructuredContentProvider) viewer.getContentProvider();
 
 		// project results are in a project node, containing directories and files
 		Object[] resultElements = scp.getElements(result);
-		String label0= labpv.getText(resultElements[0]);
-		String label1= labpv.getText(resultElements[1]);
+		String label0 = labpv.getText(resultElements[0]);
+		String label1 = labpv.getText(resultElements[1]);
 		// external results are in a tree, directory containing files
 		Object externalResult = resultElements[1];
-		String path1= labpv.getText(externalResult);
-		String file1= labpv.getText(scp.getElements(externalResult)[0]);
+		String path1 = labpv.getText(externalResult);
+		String file1 = labpv.getText(scp.getElements(externalResult)[0]);
 
 		externalResult = resultElements[0];
-		String path2= labpv.getText(externalResult);
-		String file2= labpv.getText(scp.getElements(externalResult)[0]);
-		
+		String path2 = labpv.getText(externalResult);
+		String file2 = labpv.getText(scp.getElements(externalResult)[0]);
+
 		// check the results are rendered
-		String expected0= fCProject.getProject().getName();
-		String expected1= new Path(externalFile.getAbsolutePath()).toString();
+		String expected0 = fCProject.getProject().getName();
+		String expected1 = new Path(externalFile.getAbsolutePath()).toString();
 		assertTrue(expected0.equals(label0) || expected0.equals(label1));
-		assertTrue(expected1.equals(new Path(path1).append(file1).toString()) || expected1.equals(new Path(path2).append(file2).toString()));
+		assertTrue(expected1.equals(new Path(path1).append(file1).toString())
+				|| expected1.equals(new Path(path2).append(file2).toString()));
 	}
 
 	// int x, y, xx, yy;
@@ -124,75 +125,75 @@ public class BasicSearchTest extends SearchTestBase {
 		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_NO_INDEXER);
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		waitForIndexer(fCProject);
-		
+
 		// open a query
-		CSearchQuery query= makeProjectQuery("x");
-		CSearchResult result= runQuery(query);
+		CSearchQuery query = makeProjectQuery("x");
+		CSearchResult result = runQuery(query);
 		assertEquals(0, result.getElements().length);
-		
-		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
-		ISearchResultPage page= vp.getActivePage();
+
+		ISearchResultViewPart vp = NewSearchUI.getSearchResultView();
+		ISearchResultPage page = vp.getActivePage();
 		assertTrue("" + page, page instanceof CSearchViewPage);
-		
-		CSearchViewPage pdomsvp= (CSearchViewPage) page;
-		StructuredViewer viewer= pdomsvp.getViewer();
-		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
-		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
+
+		CSearchViewPage pdomsvp = (CSearchViewPage) page;
+		StructuredViewer viewer = pdomsvp.getViewer();
+		ILabelProvider labpv = (ILabelProvider) viewer.getLabelProvider();
+		IStructuredContentProvider scp = (IStructuredContentProvider) viewer.getContentProvider();
 
 		// first result is a project node
 		Object firstRootNode = scp.getElements(result)[0];
-		String label0= labpv.getText(firstRootNode);
+		String label0 = labpv.getText(firstRootNode);
 		// ... containing a status message
-		IStatus firstRootChildNode= (IStatus) scp.getElements(firstRootNode)[0];
-		
+		IStatus firstRootChildNode = (IStatus) scp.getElements(firstRootNode)[0];
+
 		assertEquals(IStatus.WARNING, firstRootChildNode.getSeverity());
 		// can't really verify text in case message is localized...
 	}
 
 	final int INDEXER_IN_PROGRESS_FILE_COUNT = 10;
 	final int INDEXER_IN_PROGRESS_STRUCT_COUNT = 100;
-	
+
 	// #include "hugeHeader0.h"
 
 	// // empty
 	public void testIndexerInProgress() throws Exception {
 		// make an external file
-		File dir= CProjectHelper.freshDir();
-		
+		File dir = CProjectHelper.freshDir();
+
 		// make other project files so we can get incomplete results during indexing
 		for (int i = 1; i < 10; i++) {
-			TestSourceReader.createFile(fCProject.getProject(), new Path("references" + i + ".cpp"), 
+			TestSourceReader.createFile(fCProject.getProject(), new Path("references" + i + ".cpp"),
 					"#include \"hugeHeader" + i + ".h\"\n");
 		}
-		
+
 		for (int f = 0; f < INDEXER_IN_PROGRESS_FILE_COUNT; f++) {
-			File externalFile= new File(dir, "hugeHeader" + f + ".h");
+			File externalFile = new File(dir, "hugeHeader" + f + ".h");
 			externalFile.deleteOnExit();
-			FileWriter fw= new FileWriter(externalFile);
+			FileWriter fw = new FileWriter(externalFile);
 			for (int i = 0; i < INDEXER_IN_PROGRESS_STRUCT_COUNT; i++) {
 				fw.write("typedef struct confusingType_" + f + "_" + i + " {\n");
 				if (i == 0)
 					fw.write("   void *data" + i + ";\n");
 				else
-					fw.write("   myConfusingType_" + f + "_" + (i-1) +" *data" + i + ";\n");
+					fw.write("   myConfusingType_" + f + "_" + (i - 1) + " *data" + i + ";\n");
 				fw.write("   int a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z;\n");
 				fw.write("} myConfusingType_" + f + "_" + i + ";\n");
 			}
 			fw.close();
 		}
-		
+
 		// rebuild the index and DO NOT JOIN
-		TestScannerProvider.sIncludes= new String[] {dir.getAbsolutePath()};
+		TestScannerProvider.sIncludes = new String[] { dir.getAbsolutePath() };
 		CCorePlugin.getIndexManager().reindex(fCProject);
 
 		// immediate test, likely 0 matches
 		coreTestIndexerInProgress(false);
-		
+
 		// wait some amount of time to get non-zero and hopefully non-complete results
 		Thread.sleep(500);
 		if (!CCorePlugin.getIndexManager().isIndexerIdle())
 			coreTestIndexerInProgress(false);
-		
+
 		// now join and test again to get the full results
 		waitForIndexer(fCProject);
 
@@ -201,25 +202,25 @@ public class BasicSearchTest extends SearchTestBase {
 
 	private void coreTestIndexerInProgress(boolean expectComplete) {
 		// open a query
-		CSearchQuery query= makeProjectQuery("data*");
-		CSearchResult result= runQuery(query);
-		
+		CSearchQuery query = makeProjectQuery("data*");
+		CSearchResult result = runQuery(query);
+
 		final int maximumHits = INDEXER_IN_PROGRESS_FILE_COUNT * INDEXER_IN_PROGRESS_STRUCT_COUNT;
 		Object[] elements = result.getElements();
 		if (expectComplete) {
 			assertEquals(maximumHits, elements.length);
 		} else {
-			assertTrue(maximumHits >= elements.length);	// >= because may still be done
+			assertTrue(maximumHits >= elements.length); // >= because may still be done
 		}
 
-		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
-		ISearchResultPage page= vp.getActivePage();
-		assertTrue(""+page, page instanceof CSearchViewPage);
-		
-		CSearchViewPage pdomsvp= (CSearchViewPage) page;
-		StructuredViewer viewer= pdomsvp.getViewer();
-		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
-		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
+		ISearchResultViewPart vp = NewSearchUI.getSearchResultView();
+		ISearchResultPage page = vp.getActivePage();
+		assertTrue("" + page, page instanceof CSearchViewPage);
+
+		CSearchViewPage pdomsvp = (CSearchViewPage) page;
+		StructuredViewer viewer = pdomsvp.getViewer();
+		ILabelProvider labpv = (ILabelProvider) viewer.getLabelProvider();
+		IStructuredContentProvider scp = (IStructuredContentProvider) viewer.getContentProvider();
 
 		if (!expectComplete) {
 			// even if we don't think the indexer is complete, we can't be 100% sure
@@ -232,7 +233,7 @@ public class BasicSearchTest extends SearchTestBase {
 				if (!(node instanceof IStatus))
 					node = nodeElements[1];
 				if (node instanceof IStatus) {
-					IStatus firstRootNode = (IStatus) node;				
+					IStatus firstRootNode = (IStatus) node;
 					assertEquals(IStatus.WARNING, firstRootNode.getSeverity());
 					// can't really verify text in case message is localized...
 				} else {
@@ -242,7 +243,7 @@ public class BasicSearchTest extends SearchTestBase {
 		} else {
 			// must NOT have the IStatus
 			Object firstRootNode = scp.getElements(result)[0];
-			
+
 			assertFalse(firstRootNode instanceof IStatus);
 		}
 	}
@@ -252,24 +253,29 @@ public class BasicSearchTest extends SearchTestBase {
 	 * the search page will have been opened.
 	 */
 	protected CSearchResult runQuery(CSearchQuery query) {
-		final ISearchResult result[]= new ISearchResult[1];
-		IQueryListener listener= new IQueryListener() {
+		final ISearchResult result[] = new ISearchResult[1];
+		IQueryListener listener = new IQueryListener() {
 			@Override
-			public void queryAdded(ISearchQuery query) {}
+			public void queryAdded(ISearchQuery query) {
+			}
+
 			@Override
 			public void queryFinished(ISearchQuery query) {
-				result[0]= query.getSearchResult();
+				result[0] = query.getSearchResult();
 			}
+
 			@Override
-			public void queryRemoved(ISearchQuery query) {}
+			public void queryRemoved(ISearchQuery query) {
+			}
+
 			@Override
-			public void queryStarting(ISearchQuery query) {}
+			public void queryStarting(ISearchQuery query) {
+			}
 		};
 		NewSearchUI.addQueryListener(listener);
 		NewSearchUI.runQueryInForeground(new IRunnableContext() {
 			@Override
-			public void run(boolean fork, boolean cancelable,
-					IRunnableWithProgress runnable)
+			public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 					throws InvocationTargetException, InterruptedException {
 				runnable.run(npm());
 			}
@@ -280,10 +286,11 @@ public class BasicSearchTest extends SearchTestBase {
 	}
 
 	private CSearchQuery makeProjectQuery(String pattern) {
-		String scope1= "Human Readable Description";
-		return new CSearchPatternQuery(new ICElement[] {fCProject}, scope1, pattern, true, CSearchQuery.FIND_ALL_OCCURRENCES | CSearchPatternQuery.FIND_ALL_TYPES);
+		String scope1 = "Human Readable Description";
+		return new CSearchPatternQuery(new ICElement[] { fCProject }, scope1, pattern, true,
+				CSearchQuery.FIND_ALL_OCCURRENCES | CSearchPatternQuery.FIND_ALL_TYPES);
 	}
-	
+
 	// void foo() {}
 
 	//	#include "header.h"
@@ -291,45 +298,45 @@ public class BasicSearchTest extends SearchTestBase {
 	//   foo();
 	// }
 	public void testNewResultsOnSearchAgainA() throws Exception {
-		CSearchQuery query= makeProjectQuery("foo");
+		CSearchQuery query = makeProjectQuery("foo");
 		assertOccurrences(query, 2);
 		assertOccurrences(query, 2);
-		
-		String newContent= "void bar() {}";
+
+		String newContent = "void bar() {}";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
 		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, npm());
 		waitForIndexer(fCProject);
 
 		assertOccurrences(query, 1);
 	}
-	
+
 	// void foo() {}
 
 	//	#include "header.h"
 	// void bar() {foo();foo();foo();}
 	public void testNewResultsOnSearchAgainB() throws Exception {
-		CSearchQuery query= makeProjectQuery("foo");
+		CSearchQuery query = makeProjectQuery("foo");
 		assertOccurrences(query, 4);
 		assertOccurrences(query, 4);
-		
+
 		// whitespace s.t. new match offset is same as older 
-		String newContent= "#include \"header.h\"\nvoid bar() {      foo();      }";
+		String newContent = "#include \"header.h\"\nvoid bar() {      foo();      }";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
 		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, npm());
 		runEventQueue(1000);
 		IIndexManager indexManager = CCorePlugin.getIndexManager();
-		indexManager.update(new ICElement[] {fCProject}, IIndexManager.UPDATE_ALL);
+		indexManager.update(new ICElement[] { fCProject }, IIndexManager.UPDATE_ALL);
 		waitForIndexer(fCProject);
 
 		assertOccurrences(query, 2);
-		
-		String newContent2= "#include \"header.h\"\nvoid bar() {foo(); foo();}";
+
+		String newContent2 = "#include \"header.h\"\nvoid bar() {foo(); foo();}";
 		file.setContents(new ByteArrayInputStream(newContent2.getBytes()), IResource.FORCE, npm());
 		waitForIndexer(fCProject);
 
 		assertOccurrences(query, 3);
 	}
-	
+
 	//	template<typename T> class CT {};
 	//	template<typename T> class CT<T*> {};
 	//	template<typename T> void f(T) {};
@@ -348,16 +355,16 @@ public class BasicSearchTest extends SearchTestBase {
 	//	  f<int>(&a);
 	//	}
 	public void testSearchAndTemplateIDs() throws Exception {
-		CSearchQuery query= makeProjectQuery("CT");
-		assertOccurrences(query, 5); 
-		query= makeProjectQuery("f");
+		CSearchQuery query = makeProjectQuery("CT");
+		assertOccurrences(query, 5);
+		query = makeProjectQuery("f");
 		assertOccurrences(query, 6);
 	}
-	
+
 	//	struct S {
 	//		bool operator<(const S&, const S&);
 	//	};
-	
+
 	//	// empty
 	public void testOverloadedOperatorNoSpace_408870() throws Exception {
 		CSearchQuery query = makeProjectQuery("operator<");

@@ -15,10 +15,9 @@ package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-
 public class Ifdef extends Conditional {
-    private static final String EMPTY = ""; //$NON-NLS-1$
-    
+	private static final String EMPTY = ""; //$NON-NLS-1$
+
 	public Ifdef(Directive parent, String var) {
 		super(parent, var, EMPTY, EMPTY);
 	}

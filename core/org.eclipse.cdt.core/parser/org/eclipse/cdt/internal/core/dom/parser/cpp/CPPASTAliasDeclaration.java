@@ -30,8 +30,10 @@ public class CPPASTAliasDeclaration extends CPPASTAttributeOwner implements ICPP
 
 	@Override
 	public int getRoleForName(IASTName name) {
-		if (aliasName == name) return r_definition;
-		if (mappingTypeId == name) return r_reference;
+		if (aliasName == name)
+			return r_definition;
+		if (mappingTypeId == name)
+			return r_reference;
 		return r_unclear;
 	}
 
@@ -72,8 +74,7 @@ public class CPPASTAliasDeclaration extends CPPASTAttributeOwner implements ICPP
 
 	@Override
 	public ICPPASTAliasDeclaration copy(CopyStyle style) {
-		CPPASTAliasDeclaration copy = new CPPASTAliasDeclaration(
-				aliasName == null ? null : aliasName.copy(style),
+		CPPASTAliasDeclaration copy = new CPPASTAliasDeclaration(aliasName == null ? null : aliasName.copy(style),
 				mappingTypeId == null ? null : mappingTypeId.copy(style));
 		return copy(copy, style);
 	}
@@ -82,21 +83,30 @@ public class CPPASTAliasDeclaration extends CPPASTAttributeOwner implements ICPP
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclarations) {
 			switch (action.visit(this)) {
-			case ASTVisitor.PROCESS_ABORT: return false;
-			case ASTVisitor.PROCESS_SKIP: return true;
-			default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 
-		if (aliasName != null && !aliasName.accept(action)) return false;
-		if (!acceptByAttributeSpecifiers(action)) return false;
-		if (mappingTypeId != null && !mappingTypeId.accept(action)) return false;
+		if (aliasName != null && !aliasName.accept(action))
+			return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (mappingTypeId != null && !mappingTypeId.accept(action))
+			return false;
 
 		if (action.shouldVisitDeclarations) {
 			switch (action.leave(this)) {
-			case ASTVisitor.PROCESS_ABORT: return false;
-			case ASTVisitor.PROCESS_SKIP: return true;
-			default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 		return true;

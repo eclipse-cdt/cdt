@@ -38,16 +38,15 @@ import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 
 public class CPathContainerSelectionPage extends WizardPage {
 
-	private static final String DIALOGSTORE_SECTION= "CPathContainerSelectionPage"; //$NON-NLS-1$
-	private static final String DIALOGSTORE_CONTAINER_IDX= "index"; //$NON-NLS-1$
-
+	private static final String DIALOGSTORE_SECTION = "CPathContainerSelectionPage"; //$NON-NLS-1$
+	private static final String DIALOGSTORE_CONTAINER_IDX = "index"; //$NON-NLS-1$
 
 	private static class CPathContainerLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
 			return ((IContainerDescriptor) element).getName();
 		}
-		
+
 		@Override
 		public Image getImage(Object element) {
 			return ((IContainerDescriptor) element).getImage();
@@ -55,10 +54,10 @@ public class CPathContainerSelectionPage extends WizardPage {
 	}
 
 	private static class CPathContainerSorter extends ViewerSorter {
-		
+
 		@Override
 		public int category(Object element) {
-			if ( element instanceof ProjectContainerDescriptor) {
+			if (element instanceof ProjectContainerDescriptor) {
 				return 0;
 			}
 			return 1;
@@ -75,16 +74,16 @@ public class CPathContainerSelectionPage extends WizardPage {
 	 */
 	protected CPathContainerSelectionPage(IContainerDescriptor[] containerPages) {
 		super("CPathContainerWizardPage"); //$NON-NLS-1$
-		setTitle(CPathEntryMessages.CPathContainerSelectionPage_title); 
-		setDescription(CPathEntryMessages.CPathContainerSelectionPage_description); 
+		setTitle(CPathEntryMessages.CPathContainerSelectionPage_title);
+		setDescription(CPathEntryMessages.CPathContainerSelectionPage_description);
 		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 
-		fContainers= containerPages;
+		fContainers = containerPages;
 
-		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings();
-		fDialogSettings= settings.getSection(DIALOGSTORE_SECTION);
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings();
+		fDialogSettings = settings.getSection(DIALOGSTORE_SECTION);
 		if (fDialogSettings == null) {
-			fDialogSettings= settings.addNewSection(DIALOGSTORE_SECTION);
+			fDialogSettings = settings.addNewSection(DIALOGSTORE_SECTION);
 			fDialogSettings.put(DIALOGSTORE_CONTAINER_IDX, 0);
 		}
 		validatePage();
@@ -95,7 +94,7 @@ public class CPathContainerSelectionPage extends WizardPage {
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		fListViewer= new TableViewer(parent, SWT.SINGLE | SWT.BORDER);
+		fListViewer = new TableViewer(parent, SWT.SINGLE | SWT.BORDER);
 		fListViewer.setLabelProvider(new CPathContainerLabelProvider());
 		fListViewer.setContentProvider(new ListContentProvider());
 		fListViewer.setSorter(new CPathContainerSorter());
@@ -111,11 +110,11 @@ public class CPathContainerSelectionPage extends WizardPage {
 			public void doubleClick(DoubleClickEvent event) {
 				doDoubleClick();
 			}
-		});		
-		
-		int selectionIndex= fDialogSettings.getInt(DIALOGSTORE_CONTAINER_IDX);
+		});
+
+		int selectionIndex = fDialogSettings.getInt(DIALOGSTORE_CONTAINER_IDX);
 		if (selectionIndex >= fContainers.length) {
-			selectionIndex= 0;
+			selectionIndex = 0;
 		}
 		fListViewer.getTable().select(selectionIndex);
 		validatePage();
@@ -130,24 +129,23 @@ public class CPathContainerSelectionPage extends WizardPage {
 		setPageComplete(getSelected() != null);
 	}
 
-
 	public IContainerDescriptor getSelected() {
 		if (fListViewer != null) {
-			ISelection selection= fListViewer.getSelection();
+			ISelection selection = fListViewer.getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
-				if (ss.size() == 1) 
+				if (ss.size() == 1)
 					return (IContainerDescriptor) ss.getFirstElement();
 			}
 		}
 		return null;
 	}
-	
+
 	protected void doDoubleClick() {
 		if (canFlipToNextPage()) {
 			getContainer().showPage(getNextPage());
 		}
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see IWizardPage#canFlipToNextPage()

@@ -32,16 +32,16 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarEvaluateExpressionInfo
  * 
  */
 public class MIVarEvaluateExpression extends MICommand<MIVarEvaluateExpressionInfo> {
-    
-    /**
-     * @since 1.1
-     */
-    public MIVarEvaluateExpression(ICommandControlDMContext dmc, String name) {
-        super(dmc, "-var-evaluate-expression", new String[] { name }); //$NON-NLS-1$
-    }
-    
-    @Override
-    public MIVarEvaluateExpressionInfo getResult(MIOutput out) {
-        return new MIVarEvaluateExpressionInfo(out);
-    }
+
+	/**
+	 * @since 1.1
+	 */
+	public MIVarEvaluateExpression(ICommandControlDMContext dmc, String name) {
+		super(dmc, "-var-evaluate-expression", new String[] { name }); //$NON-NLS-1$
+	}
+
+	@Override
+	public MIVarEvaluateExpressionInfo getResult(MIOutput out) {
+		return new MIVarEvaluateExpressionInfo(out);
+	}
 }

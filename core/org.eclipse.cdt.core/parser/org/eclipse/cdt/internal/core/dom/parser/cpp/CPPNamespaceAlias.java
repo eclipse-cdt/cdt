@@ -29,70 +29,70 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAlias, ICPPInternalBinding {
-    private ICPPNamespace namespace;
-    private IASTName alias;
+	private ICPPNamespace namespace;
+	private IASTName alias;
 
 	public CPPNamespaceAlias(IASTName aliasName, ICPPNamespace namespace) {
-        super();
-        this.namespace = namespace;
-        this.alias = aliasName;
-    }
+		super();
+		this.namespace = namespace;
+		this.alias = aliasName;
+	}
 
-    @Override
+	@Override
 	public ICPPNamespaceScope getNamespaceScope() {
-        return namespace.getNamespaceScope();
-    }
+		return namespace.getNamespaceScope();
+	}
 
-    @Override
+	@Override
 	public IBinding getBinding() {
-        return namespace;
-    }
+		return namespace;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-    	return new String(getNameCharArray());
-    }
+		return new String(getNameCharArray());
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return alias.getSimpleID();
-    }
+		return alias.getSimpleID();
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName(this);
-    }
+		return CPPVisitor.getQualifiedName(this);
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray(this);
-    }
+		return CPPVisitor.getQualifiedNameCharArray(this);
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return CPPVisitor.getContainingScope(alias);
-    }
+		return CPPVisitor.getContainingScope(alias);
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
-        IScope scope = getScope();
-        while (scope != null) {
-            if (scope instanceof ICPPBlockScope)
-                return false;
-            scope = scope.getParent();
-        }
-        return true;
-    }
+		IScope scope = getScope();
+		while (scope != null) {
+			if (scope instanceof ICPPBlockScope)
+				return false;
+			scope = scope.getParent();
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getDeclarations() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public IASTNode getDefinition() {
-        return alias;
-    }
+		return alias;
+	}
 
 	@Override
 	public void addDefinition(IASTNode node) {

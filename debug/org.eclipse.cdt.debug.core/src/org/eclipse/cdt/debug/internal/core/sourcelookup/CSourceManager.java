@@ -52,7 +52,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 			return getCSourceLocator().getLineNumber(frame);
 		}
 		if (frame instanceof ICStackFrame) {
-			return ((ICStackFrame)frame).getFrameLineNumber();
+			return ((ICStackFrame) frame).getFrameLineNumber();
 		}
 		return 0;
 	}
@@ -114,7 +114,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 
 	protected ICSourceLocator getCSourceLocator() {
 		if (getSourceLocator() instanceof ICSourceLocator)
-			return (ICSourceLocator)getSourceLocator();
+			return (ICSourceLocator) getSourceLocator();
 		return null;
 	}
 
@@ -175,7 +175,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 
 	private IPersistableSourceLocator getPersistableSourceLocator() {
 		if (fSourceLocator instanceof IPersistableSourceLocator)
-			return (IPersistableSourceLocator)fSourceLocator;
+			return (IPersistableSourceLocator) fSourceLocator;
 		return null;
 	}
 

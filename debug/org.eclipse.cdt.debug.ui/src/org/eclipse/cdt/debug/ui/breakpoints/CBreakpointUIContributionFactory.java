@@ -58,104 +58,97 @@ public class CBreakpointUIContributionFactory {
 		Map<String, Object> attributes = Collections.emptyMap();
 		String markerType = CDIDebugModel.calculateMarkerType(breakpoint);
 		if (bmarker != null) {
-		    Map<String, Object> _attributes = bmarker.getAttributes();
-		    attributes = _attributes;
-	        markerType = bmarker.getType();
+			Map<String, Object> _attributes = bmarker.getAttributes();
+			attributes = _attributes;
+			markerType = bmarker.getType();
 		}
 		return getBreakpointUIContributions(debugModelId, markerType, attributes);
 	}
 
-    /**
-     * Calculates the breakpoint contributions for the given breakpoint.
-     * 
-     * @param breakpoint Breakpoint to find UI contributions for.
-     * @param attributes Attributes of the breakpoint
-     * @return non-null array of ICBreakpointsUIContribution 
-     * @throws CoreException if cannot get marker attributes from bearkpoint
-     * @since 7.2
-     */
-	public ICBreakpointsUIContribution[] getBreakpointUIContributions(String[] debugModelIDs, IBreakpoint breakpoint, 
-	    Map<String, Object> attributes) throws CoreException 
-	{
-        IMarker bmarker = breakpoint.getMarker();
-        String markerType = CDIDebugModel.calculateMarkerType(breakpoint);
-        if (bmarker != null) {
-            markerType = bmarker.getType();
-        }
-        return getBreakpointUIContributions(debugModelIDs, markerType, attributes);
-    }
-	
+	/**
+	 * Calculates the breakpoint contributions for the given breakpoint.
+	 * 
+	 * @param breakpoint Breakpoint to find UI contributions for.
+	 * @param attributes Attributes of the breakpoint
+	 * @return non-null array of ICBreakpointsUIContribution 
+	 * @throws CoreException if cannot get marker attributes from bearkpoint
+	 * @since 7.2
+	 */
+	public ICBreakpointsUIContribution[] getBreakpointUIContributions(String[] debugModelIDs, IBreakpoint breakpoint,
+			Map<String, Object> attributes) throws CoreException {
+		IMarker bmarker = breakpoint.getMarker();
+		String markerType = CDIDebugModel.calculateMarkerType(breakpoint);
+		if (bmarker != null) {
+			markerType = bmarker.getType();
+		}
+		return getBreakpointUIContributions(debugModelIDs, markerType, attributes);
+	}
+
 	/**
 	 * Default debug model ID list which will cause only the general UI contributions to be returned.
 	 * @since 7.2
 	 */
 	public final static String[] DEBUG_MODEL_IDS_DEFAULT = new String[] {};
-	
-    /**
-     * Calculates the breakpoint UI contributions for the given breakpoint.
-     * 
-     * @param debugModelId The debug model ID of the active debug context for 
-     * which to calculate contributions.
-     * @param breakpoint Breakpoint to find UI contributions for.
-     * @param markerType Marker type of the breakpoint.
-     * @param attributes Attributes of the breakpoint
-     * @return non-null array of ICBreakpointsUIContribution 
-     * @throws CoreException 
-     * @throws CoreException if cannot get marker attributes from berakpoint
-     */
+
+	/**
+	 * Calculates the breakpoint UI contributions for the given breakpoint.
+	 * 
+	 * @param debugModelId The debug model ID of the active debug context for 
+	 * which to calculate contributions.
+	 * @param breakpoint Breakpoint to find UI contributions for.
+	 * @param markerType Marker type of the breakpoint.
+	 * @param attributes Attributes of the breakpoint
+	 * @return non-null array of ICBreakpointsUIContribution 
+	 * @throws CoreException 
+	 * @throws CoreException if cannot get marker attributes from berakpoint
+	 */
 	public ICBreakpointsUIContribution[] getBreakpointUIContributions(String debugModelId, String markerType,
-			Map<String, Object> attributes) 
-	{
-	    return getBreakpointUIContributions(
-	        debugModelId != null ? new String[] { debugModelId } : null,
-	        markerType, 
-	        attributes);
-	    
+			Map<String, Object> attributes) {
+		return getBreakpointUIContributions(debugModelId != null ? new String[] { debugModelId } : null, markerType,
+				attributes);
+
 	}
 
-    /**
-     * Calculates the breakpoint UI contributions for the given breakpoint.
-     * 
-     * @param debugModelId The debug model IDs of the active debug context for 
-     * which to calculate contributions.
-     * @param breakpoint Breakpoint to find UI contributions for.
-     * @param markerType Marker type of the breakpoint.
-     * @param attributes Attributes of the breakpoint
-     * @return non-null array of ICBreakpointsUIContribution 
-     * @throws CoreException 
-     * @throws CoreException if cannot get marker attributes from berakpoint
-     * 
-     * @since 7.2
-     */
-    public ICBreakpointsUIContribution[] getBreakpointUIContributions(String[] debugModelIds, String markerType,
-            Map<String, Object> attributes) 
-    {
-        List<String> debugModelIdsList = null;
-        if (debugModelIds != null ) {
-        	debugModelIdsList = Arrays.asList(debugModelIds);
-        }
-        ArrayList<ICBreakpointsUIContribution> list = new ArrayList<ICBreakpointsUIContribution>();
-        for (ICBreakpointsUIContribution con : contributions) {
-            try {
-                if (con.getDebugModelId() == null || 
-                    ((debugModelIdsList == null || debugModelIdsList.contains(con.getDebugModelId()))))
-                {
-                    String contributedMarkerType = con.getMarkerType();
-                    if (isMarkerSubtypeOf(markerType, contributedMarkerType)) {
-                        if (attributes == null || con.isApplicable(attributes)) {
-                            list.add(con);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                CDebugUIPlugin.log(e);
-            }
+	/**
+	 * Calculates the breakpoint UI contributions for the given breakpoint.
+	 * 
+	 * @param debugModelId The debug model IDs of the active debug context for 
+	 * which to calculate contributions.
+	 * @param breakpoint Breakpoint to find UI contributions for.
+	 * @param markerType Marker type of the breakpoint.
+	 * @param attributes Attributes of the breakpoint
+	 * @return non-null array of ICBreakpointsUIContribution 
+	 * @throws CoreException 
+	 * @throws CoreException if cannot get marker attributes from berakpoint
+	 * 
+	 * @since 7.2
+	 */
+	public ICBreakpointsUIContribution[] getBreakpointUIContributions(String[] debugModelIds, String markerType,
+			Map<String, Object> attributes) {
+		List<String> debugModelIdsList = null;
+		if (debugModelIds != null) {
+			debugModelIdsList = Arrays.asList(debugModelIds);
+		}
+		ArrayList<ICBreakpointsUIContribution> list = new ArrayList<ICBreakpointsUIContribution>();
+		for (ICBreakpointsUIContribution con : contributions) {
+			try {
+				if (con.getDebugModelId() == null
+						|| ((debugModelIdsList == null || debugModelIdsList.contains(con.getDebugModelId())))) {
+					String contributedMarkerType = con.getMarkerType();
+					if (isMarkerSubtypeOf(markerType, contributedMarkerType)) {
+						if (attributes == null || con.isApplicable(attributes)) {
+							list.add(con);
+						}
+					}
+				}
+			} catch (Exception e) {
+				CDebugUIPlugin.log(e);
+			}
 
-        }
-        return list.toArray(new ICBreakpointsUIContribution[list.size()]);
-    }
+		}
+		return list.toArray(new ICBreakpointsUIContribution[list.size()]);
+	}
 
-	
 	public boolean isMarkerSubtypeOf(String currentType, String type) throws CoreException {
 		return getWorkspace().getMarkerManager().isSubtype(currentType, type);
 	}
@@ -173,17 +166,16 @@ public class CBreakpointUIContributionFactory {
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement configurationElement = elements[i];
-			if (configurationElement.getName().equals(ICBreakpointsUIContribution.BREAKPOINT_LABELS) || 
-			    configurationElement.getName().equals(ICBreakpointsUIContribution.BREAKPOINT_EDITORS)) 
-			{
-                String mainElement = configurationElement.getName(); 
+			if (configurationElement.getName().equals(ICBreakpointsUIContribution.BREAKPOINT_LABELS)
+					|| configurationElement.getName().equals(ICBreakpointsUIContribution.BREAKPOINT_EDITORS)) {
+				String mainElement = configurationElement.getName();
 				String modelId = configurationElement.getAttribute("debugModelId"); //$NON-NLS-1$
 				String markerType = getRequired(configurationElement, "markerType"); //$NON-NLS-1$
 				if (markerType == null)
 					continue;
 				IConfigurationElement[] children = configurationElement.getChildren("attribute"); //$NON-NLS-1$
 				for (IConfigurationElement att : children) {
-				    
+
 					DefaultCBreakpointUIContribution adapter = new DefaultCBreakpointUIContribution(att);
 					adapter.setMainElement(mainElement);
 					adapter.setMarkerType(markerType);
@@ -197,13 +189,11 @@ public class CBreakpointUIContributionFactory {
 		}
 	}
 
-	private boolean processAttribute(IConfigurationElement attrElement, 
-	    DefaultCBreakpointUIContribution adapter) 
-	{
+	private boolean processAttribute(IConfigurationElement attrElement, DefaultCBreakpointUIContribution adapter) {
 		String attrId = getRequired(attrElement, "name"); //$NON-NLS-1$
 		String attrLabel = getRequired(attrElement, "label"); //$NON-NLS-1$
 		String fieldEditorClass = attrElement.getAttribute("fieldEditor"); //$NON-NLS-1$
-        String fieldEditorFactoryClass = attrElement.getAttribute("fieldEditorFactory"); //$NON-NLS-1$
+		String fieldEditorFactoryClass = attrElement.getAttribute("fieldEditorFactory"); //$NON-NLS-1$
 		String type = attrElement.getAttribute("type"); //$NON-NLS-1$
 		String svisible = attrElement.getAttribute("visible"); //$NON-NLS-1$
 
@@ -223,7 +213,7 @@ public class CBreakpointUIContributionFactory {
 		adapter.setId(attrId);
 		adapter.setLabel(attrLabel);
 		adapter.setControlClass(fieldEditorClass);
-        adapter.setFieldEditorFactory(fieldEditorFactoryClass);
+		adapter.setFieldEditorFactory(fieldEditorFactoryClass);
 		adapter.setType(type);
 		adapter.setVisible(visible);
 		addContribution(adapter);
@@ -276,7 +266,8 @@ public class CBreakpointUIContributionFactory {
 			CDebugUIPlugin.log(new Status(IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),
 					DebugPlugin.INTERNAL_ERROR, "Extension " //$NON-NLS-1$
 							+ configurationElement.getDeclaringExtension().getUniqueIdentifier()
-							+ " missing required attribute: " + name, null)); //$NON-NLS-1$
+							+ " missing required attribute: " + name, //$NON-NLS-1$
+					null));
 		return elementValue;
 	}
 

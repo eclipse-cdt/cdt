@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.gdb.service.SessionType;
  * @since 2.0
  */
 public class CoreFileDebuggerTab extends CDebuggerTab {
-    public CoreFileDebuggerTab() {
-        super(SessionType.CORE, false);
-    }
+	public CoreFileDebuggerTab() {
+		super(SessionType.CORE, false);
+	}
 }

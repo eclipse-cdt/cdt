@@ -29,52 +29,42 @@ import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 
 public class CheckStringExpression implements IBooleanExpression {
-	public static final String NAME = "checkString"; 	//$NON-NLS-1$
+	public static final String NAME = "checkString"; //$NON-NLS-1$
 
-	public static final String STRING = "string"; 	//$NON-NLS-1$
-	public static final String VALUE = "value"; 	//$NON-NLS-1$
-	public static final String IS_REGEX = "isRegex"; 	//$NON-NLS-1$
+	public static final String STRING = "string"; //$NON-NLS-1$
+	public static final String VALUE = "value"; //$NON-NLS-1$
+	public static final String IS_REGEX = "isRegex"; //$NON-NLS-1$
 
 	private String fString;
 	private String fValue;
 	private boolean fIsRegex;
 
-	public CheckStringExpression(IManagedConfigElement element){
+	public CheckStringExpression(IManagedConfigElement element) {
 		fString = element.getAttribute(STRING);
-		if(fString == null)
+		if (fString == null)
 			fString = ""; //$NON-NLS-1$
 
 		fValue = element.getAttribute(VALUE);
-		if(fValue == null)
+		if (fValue == null)
 			fValue = ""; //$NON-NLS-1$
 
 		fIsRegex = OptionEnablementExpression.getBooleanValue(element.getAttribute(IS_REGEX));
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo,
-            IHoldsOptions holder,
-            IOption option) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOption option) {
 
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 		IEnvironmentVariableProvider env = ManagedBuildManager.getEnvironmentVariableProvider();
 		String delimiter = env.getDefaultDelimiter();
 		try {
-			String resolvedString = provider.resolveValue(fString,
-					" ",	//$NON-NLS-1$
-					delimiter,
-					IBuildMacroProvider.CONTEXT_OPTION,
-					new OptionContextData(option,holder)
-					);
+			String resolvedString = provider.resolveValue(fString, " ", //$NON-NLS-1$
+					delimiter, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(option, holder));
 
-			String resolvedValue =  provider.resolveValue(fValue,
-					" ",	//$NON-NLS-1$
-					delimiter,
-					IBuildMacroProvider.CONTEXT_OPTION,
-					new OptionContextData(option,holder)
-					);
+			String resolvedValue = provider.resolveValue(fValue, " ", //$NON-NLS-1$
+					delimiter, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(option, holder));
 
-			if(fIsRegex){
+			if (fIsRegex) {
 				Pattern pattern = Pattern.compile(resolvedValue);
 				Matcher matcher = pattern.matcher(resolvedString);
 				return matcher.matches();
@@ -86,29 +76,19 @@ public class CheckStringExpression implements IBooleanExpression {
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo,
-            IHoldsOptions holder,
-            IOptionCategory category) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
 
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 		IEnvironmentVariableProvider env = ManagedBuildManager.getEnvironmentVariableProvider();
 		String delimiter = env.getDefaultDelimiter();
 		try {
-			String resolvedString = provider.resolveValue(fString,
-					" ",	//$NON-NLS-1$
-					delimiter,
-					IBuildMacroProvider.CONTEXT_OPTION,
-					new OptionContextData(category,holder)
-					);
+			String resolvedString = provider.resolveValue(fString, " ", //$NON-NLS-1$
+					delimiter, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(category, holder));
 
-			String resolvedValue =  provider.resolveValue(fValue,
-					" ",	//$NON-NLS-1$
-					delimiter,
-					IBuildMacroProvider.CONTEXT_OPTION,
-					new OptionContextData(category,holder)
-					);
+			String resolvedValue = provider.resolveValue(fValue, " ", //$NON-NLS-1$
+					delimiter, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(category, holder));
 
-			if(fIsRegex){
+			if (fIsRegex) {
 				Pattern pattern = Pattern.compile(resolvedValue);
 				Matcher matcher = pattern.matcher(resolvedString);
 				return matcher.matches();

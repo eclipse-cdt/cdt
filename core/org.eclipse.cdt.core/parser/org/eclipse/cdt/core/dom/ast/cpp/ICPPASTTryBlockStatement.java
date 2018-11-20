@@ -62,7 +62,7 @@ public interface ICPPASTTryBlockStatement extends IASTStatement {
 	 * @return {@code ICPPASTCatchHandler[]}
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();
-	
+
 	/**
 	 * @since 5.1
 	 */

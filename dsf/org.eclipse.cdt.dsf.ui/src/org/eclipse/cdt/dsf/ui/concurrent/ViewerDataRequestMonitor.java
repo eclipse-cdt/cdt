@@ -33,46 +33,44 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  */
 public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
 
-    /**
-     * Same as {@link DsfExecutable#DEBUG_MONITORS} 
-     */
-    static private boolean DEBUG_MONITORS = DsfPlugin.DEBUG && Boolean.parseBoolean(
-            Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$
-    
+	/**
+	 * Same as {@link DsfExecutable#DEBUG_MONITORS} 
+	 */
+	static private boolean DEBUG_MONITORS = DsfPlugin.DEBUG
+			&& Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$
 
-    private final IViewerUpdate fUpdate;
+	private final IViewerUpdate fUpdate;
 
+	public ViewerDataRequestMonitor(Executor executor, IViewerUpdate update) {
+		super(executor, null);
+		fUpdate = update;
 
-    public ViewerDataRequestMonitor(Executor executor, IViewerUpdate update) {
-        super(executor, null);
-        fUpdate = update;
-        
-        if (DEBUG_MONITORS) {
-        	createMonitorBacktrace();
-        }
-    }
-    
-    @Override
-    public synchronized boolean isCanceled() { 
-        return fUpdate.isCanceled() || super.isCanceled();
-    }
-    
-    @Override
-    protected void handleSuccess() {
-        fUpdate.done();
-    }
+		if (DEBUG_MONITORS) {
+			createMonitorBacktrace();
+		}
+	}
 
-    @Override
-    protected void handleErrorOrWarning() {
-        fUpdate.setStatus(getStatus());
-        fUpdate.done();
-    }
-    
-    @Override
-    protected void handleCancel() {
-        fUpdate.setStatus(getStatus());
-        fUpdate.done();
-    }
+	@Override
+	public synchronized boolean isCanceled() {
+		return fUpdate.isCanceled() || super.isCanceled();
+	}
+
+	@Override
+	protected void handleSuccess() {
+		fUpdate.done();
+	}
+
+	@Override
+	protected void handleErrorOrWarning() {
+		fUpdate.setStatus(getStatus());
+		fUpdate.done();
+	}
+
+	@Override
+	protected void handleCancel() {
+		fUpdate.setStatus(getStatus());
+		fUpdate.done();
+	}
 
 	/**
 	 * Instrument this object with a backtrace of the monitors this instance is
@@ -81,61 +79,57 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
 	 * not production code. This stuff will only ever run when tracing is turned
 	 * on.
 	 */
-    private void createMonitorBacktrace() {
-    	StringBuilder str = new StringBuilder();
-    	
-    	RequestMonitor nextrm = this;
-    	VMViewerUpdate nextupdate = null; 
-    	String type = null;
-    	while (true) {
-    		StackTraceElement topFrame = null;
-    		if (nextupdate != null) {
-    			type = "update "; //$NON-NLS-1$  extra space to match length of 'monitor'  
-    			topFrame = getCreatedAtTopFrame(nextupdate);
-    			nextrm = getMonitor(nextupdate);
-    			nextupdate = null;
-    		}
-    		else if (nextrm != null) {
+	private void createMonitorBacktrace() {
+		StringBuilder str = new StringBuilder();
+
+		RequestMonitor nextrm = this;
+		VMViewerUpdate nextupdate = null;
+		String type = null;
+		while (true) {
+			StackTraceElement topFrame = null;
+			if (nextupdate != null) {
+				type = "update "; //$NON-NLS-1$  extra space to match length of 'monitor'  
+				topFrame = getCreatedAtTopFrame(nextupdate);
+				nextrm = getMonitor(nextupdate);
+				nextupdate = null;
+			} else if (nextrm != null) {
 				type = "monitor"; //$NON-NLS-1$
-    			topFrame = getCreatedAtTopFrame(nextrm);
-    			if (nextrm instanceof ViewerDataRequestMonitor<?>) {
-    				ViewerDataRequestMonitor<?> vdrm = (ViewerDataRequestMonitor<?>)nextrm;
-    				nextupdate = (vdrm.fUpdate instanceof VMViewerUpdate) ? (VMViewerUpdate)vdrm.fUpdate : null;
-    				nextrm = null;
-    			}
-    			else {
-    				nextrm = getParentMonitor(nextrm);
-    				nextupdate = null;
-    			}
-    		}
-    		else { 
-    			break;
-    		}
+				topFrame = getCreatedAtTopFrame(nextrm);
+				if (nextrm instanceof ViewerDataRequestMonitor<?>) {
+					ViewerDataRequestMonitor<?> vdrm = (ViewerDataRequestMonitor<?>) nextrm;
+					nextupdate = (vdrm.fUpdate instanceof VMViewerUpdate) ? (VMViewerUpdate) vdrm.fUpdate : null;
+					nextrm = null;
+				} else {
+					nextrm = getParentMonitor(nextrm);
+					nextupdate = null;
+				}
+			} else {
+				break;
+			}
 			if (topFrame != null) {
 				str.append('[').append(type).append("] ").append(topFrame).append('\n'); //$NON-NLS-1$
-			}
-			else {
+			} else {
 				str.append("<unknown>\n"); //$NON-NLS-1$
 			}
-    	}
+		}
 
 		Field field;
 		try {
 			field = RequestMonitor.class.getDeclaredField("fMonitorBacktrace"); //$NON-NLS-1$
 			field.setAccessible(true);
 			field.set(this, str.toString());
-		} catch (IllegalAccessException e) {			
+		} catch (IllegalAccessException e) {
 		} catch (SecurityException e) {
 		} catch (NoSuchFieldException e) {
 		}
-    }
+	}
 
 	/**
 	 * Utility used by {@link #createMonitorBacktrace()}. Subverts access
 	 * protection.
 	 */
-    private static RequestMonitor getMonitor(VMViewerUpdate update) {
-    	try {
+	private static RequestMonitor getMonitor(VMViewerUpdate update) {
+		try {
 			Field field = VMViewerUpdate.class.getDeclaredField("fRequestMonitor"); //$NON-NLS-1$
 			field.setAccessible(true);
 			return (RequestMonitor) field.get(update);
@@ -145,14 +139,14 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
 		} catch (ClassCastException e) {
 		}
 		return null;
-    }
+	}
 
 	/**
 	 * Utility used by {@link #createMonitorBacktrace()}. Subverts access
 	 * protection.
 	 */
-    private static RequestMonitor getParentMonitor(RequestMonitor rm) {
-    	try {
+	private static RequestMonitor getParentMonitor(RequestMonitor rm) {
+		try {
 			Field field = RequestMonitor.class.getDeclaredField("fParentRequestMonitor"); //$NON-NLS-1$
 			field.setAccessible(true);
 			return (RequestMonitor) field.get(rm);
@@ -160,21 +154,21 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
 		} catch (NoSuchFieldException e) {
 		}
 		return null;
-    }
+	}
 
 	/**
 	 * Utility used by {@link #createMonitorBacktrace()}. Subverts access
 	 * protection.
 	 */
-    private static <T extends DsfExecutable> StackTraceElement getCreatedAtTopFrame(T dsfExecutable) {
-    	try {
+	private static <T extends DsfExecutable> StackTraceElement getCreatedAtTopFrame(T dsfExecutable) {
+		try {
 			Field field_fCreatedAt = DsfExecutable.class.getDeclaredField("fCreatedAt"); //$NON-NLS-1$
 			field_fCreatedAt.setAccessible(true);
 			Object obj_fCreatedAt = field_fCreatedAt.get(dsfExecutable);
 			Class<?> class_StackTraceElement = Class.forName("org.eclipse.cdt.dsf.concurrent.StackTraceWrapper"); //$NON-NLS-1$
 			Field field_fStackTraceElements = class_StackTraceElement.getDeclaredField("fStackTraceElements"); //$NON-NLS-1$
 			field_fStackTraceElements.setAccessible(true);
-			StackTraceElement[] frames = (StackTraceElement[])field_fStackTraceElements.get(obj_fCreatedAt);
+			StackTraceElement[] frames = (StackTraceElement[]) field_fStackTraceElements.get(obj_fCreatedAt);
 			if (frames != null && frames.length > 0) {
 				return frames[0];
 			}
@@ -183,5 +177,5 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
 		} catch (ClassNotFoundException e) {
 		}
 		return null;
-    }
+	}
 }

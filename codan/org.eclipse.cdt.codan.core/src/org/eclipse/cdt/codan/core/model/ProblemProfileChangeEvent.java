@@ -48,7 +48,8 @@ public final class ProblemProfileChangeEvent extends EventObject {
 	 * @param oldValue the old preference value
 	 * @param newValue the new preference value
 	 */
-	public ProblemProfileChangeEvent(IProblemProfile profile, Object resource, String key, Object oldValue, Object newValue) {
+	public ProblemProfileChangeEvent(IProblemProfile profile, Object resource, String key, Object oldValue,
+			Object newValue) {
 		super(resource);
 		this.key = key;
 		this.newValue = newValue;

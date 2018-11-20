@@ -171,7 +171,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 		if (result.contains(start))
 			return;
 		if (liveNodes.contains(start))
-			return;  // a live node is by definition not dead
+			return; // a live node is by definition not dead
 		result.add(start);
 		for (IBasicBlock bb : start.getOutgoingNodes()) {
 			getDeadNodes(bb, result, liveNodes);

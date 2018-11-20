@@ -48,8 +48,7 @@ import org.eclipse.core.runtime.IPath;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class DefaultGCCDependencyCalculator3 implements
-		IManagedDependencyGenerator2 {
+public class DefaultGCCDependencyCalculator3 implements IManagedDependencyGenerator2 {
 
 	/*
 	 * (non-Javadoc)
@@ -73,7 +72,8 @@ public class DefaultGCCDependencyCalculator3 implements
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#getDependencySourceInfo(org.eclipse.core.runtime.IPath, org.eclipse.core.resources.IResource, org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)
 	 */
 	@Override
-	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
+	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IResource resource, IBuildObject buildContext,
+			ITool tool, IPath topBuildDirectory) {
 		return new DefaultGCCDependencyCalculator3Commands(source, resource, buildContext, tool, topBuildDirectory);
 	}
 
@@ -81,7 +81,8 @@ public class DefaultGCCDependencyCalculator3 implements
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#getDependencySourceInfo(org.eclipse.core.runtime.IPath, org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)
 	 */
 	@Override
-	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
+	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IBuildObject buildContext, ITool tool,
+			IPath topBuildDirectory) {
 		return new DefaultGCCDependencyCalculator3Commands(source, buildContext, tool, topBuildDirectory);
 	}
 
@@ -90,7 +91,8 @@ public class DefaultGCCDependencyCalculator3 implements
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#postProcessDependencyFile(org.eclipse.core.runtime.IPath, org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)
 	 */
 	@Override
-	public boolean postProcessDependencyFile(IPath dependencyFile, IConfiguration buildContext, ITool tool, IPath topBuildDirectory) {
+	public boolean postProcessDependencyFile(IPath dependencyFile, IConfiguration buildContext, ITool tool,
+			IPath topBuildDirectory) {
 		try {
 			IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
 			IFile makefile;
@@ -106,7 +108,7 @@ public class DefaultGCCDependencyCalculator3 implements
 			}
 			makefile = root.getFile(makefilePath);
 			IResourceInfo rcInfo = tool.getParentResourceInfo();
-			if(rcInfo != null)
+			if (rcInfo != null)
 				return GnuMakefileGenerator.populateDummyTargets(rcInfo, makefile, false);
 			return GnuMakefileGenerator.populateDummyTargets(buildContext, makefile, false);
 		} catch (CoreException e) {

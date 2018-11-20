@@ -12,7 +12,7 @@
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -33,29 +33,29 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 4.0
  */
 public interface IWritableIndex extends IIndex {
-	
+
 	static class IncludeInformation {
 		public final IASTPreprocessorIncludeStatement fStatement;
 		public final IIndexFileLocation fLocation;
 		public final ISignificantMacros fSignificantMacros;
 		public final boolean fIsContext;
 		public IIndexFragmentFile fTargetFile;
-		
-		public IncludeInformation(IASTPreprocessorIncludeStatement stmt, 
-				IIndexFileLocation location, ISignificantMacros sig, boolean isContext) {
-			fStatement= stmt;
-			fSignificantMacros= sig;
-			fLocation= location;
-			fIsContext= isContext;
+
+		public IncludeInformation(IASTPreprocessorIncludeStatement stmt, IIndexFileLocation location,
+				ISignificantMacros sig, boolean isContext) {
+			fStatement = stmt;
+			fSignificantMacros = sig;
+			fLocation = location;
+			fIsContext = isContext;
 		}
 	}
-	
+
 	/**
 	 * Returns a writable file for the given location, linkage, and the set of macro definitions,
 	 * or null. This method returns file objects without content, also.
 	 */
-	IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location,
-			ISignificantMacros macroDictionary) throws CoreException;
+	IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location, ISignificantMacros macroDictionary)
+			throws CoreException;
 
 	/**
 	 * Returns the writable files for the given location and linkage. This method
@@ -85,8 +85,8 @@ public interface IWritableIndex extends IIndex {
 	 *     variants of the file contents corresponding to different inclusion points.
 	 * @return A created or an existing file.  
 	 */
-	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
-			ISignificantMacros macroDictionary) throws CoreException;
+	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location, ISignificantMacros macroDictionary)
+			throws CoreException;
 
 	/**
 	 * Creates a uncommitted file object for the given location.
@@ -114,10 +114,9 @@ public interface IWritableIndex extends IIndex {
 	/**
 	 * Adds content to the given file.
 	 */
-	void setFileContent(IIndexFragmentFile sourceFile, 
-			int linkageID, IncludeInformation[] includes, 
-			IASTPreprocessorStatement[] macros, IASTName[][] names,
-			ASTFilePathResolver resolver, YieldableIndexLock lock) throws CoreException, InterruptedException;
+	void setFileContent(IIndexFragmentFile sourceFile, int linkageID, IncludeInformation[] includes,
+			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver,
+			YieldableIndexLock lock) throws CoreException, InterruptedException;
 
 	/**
 	 * Clears the entire index.
@@ -141,17 +140,17 @@ public interface IWritableIndex extends IIndex {
 	 * @param flushDatabase when true the changes are flushed to disk.
 	 */
 	void releaseWriteLock(boolean flushDatabase);
-	
+
 	/**
 	 * Resets the counters for cache-hits
 	 */
 	void resetCacheCounters();
-	
+
 	/**
 	 * Returns cache hits since last reset of counters.
 	 */
 	long getCacheHits();
-	
+
 	/**
 	 * Returns cache misses since last reset of counters.
 	 */

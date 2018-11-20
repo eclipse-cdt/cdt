@@ -36,41 +36,29 @@ public class IncludeGroupStyle implements Comparable<IncludeGroupStyle> {
 
 	public enum IncludeKind {
 		RELATED(PreferencesMessages.IncludeCategoriesBlock_related_headers_node,
-				PreferencesMessages.IncludeCategoriesBlock_related_headers_node_description,
-				null),
+				PreferencesMessages.IncludeCategoriesBlock_related_headers_node_description, null),
 		PARTNER(PreferencesMessages.IncludeCategoriesBlock_partner_header_node,
-				PreferencesMessages.IncludeCategoriesBlock_partner_header_node_description,
-				RELATED),
+				PreferencesMessages.IncludeCategoriesBlock_partner_header_node_description, RELATED),
 		IN_SAME_FOLDER(PreferencesMessages.IncludeCategoriesBlock_same_folder_header_node,
-				PreferencesMessages.IncludeCategoriesBlock_same_folder_header_node_description,
-				RELATED),
+				PreferencesMessages.IncludeCategoriesBlock_same_folder_header_node_description, RELATED),
 		IN_SUBFOLDER(PreferencesMessages.IncludeCategoriesBlock_subfolder_header_node,
-				PreferencesMessages.IncludeCategoriesBlock_subfolder_header_node_description,
-				RELATED),
+				PreferencesMessages.IncludeCategoriesBlock_subfolder_header_node_description, RELATED),
 		SYSTEM(PreferencesMessages.IncludeCategoriesBlock_system_headers_node,
-				PreferencesMessages.IncludeCategoriesBlock_system_headers_node_description,
-				null),
+				PreferencesMessages.IncludeCategoriesBlock_system_headers_node_description, null),
 		SYSTEM_WITH_EXTENSION(PreferencesMessages.IncludeCategoriesBlock_system_headers_with_extension_node,
-				PreferencesMessages.IncludeCategoriesBlock_system_headers_with_extension_node_description,
-				SYSTEM),
+				PreferencesMessages.IncludeCategoriesBlock_system_headers_with_extension_node_description, SYSTEM),
 		SYSTEM_WITHOUT_EXTENSION(PreferencesMessages.IncludeCategoriesBlock_system_headers_without_extension_node,
-				PreferencesMessages.IncludeCategoriesBlock_system_headers_without_extension_node_description,
-				SYSTEM),
+				PreferencesMessages.IncludeCategoriesBlock_system_headers_without_extension_node_description, SYSTEM),
 		OTHER(PreferencesMessages.IncludeCategoriesBlock_unrelated_headers_node,
-				PreferencesMessages.IncludeCategoriesBlock_unrelated_headers_node_description,
-				null),
+				PreferencesMessages.IncludeCategoriesBlock_unrelated_headers_node_description, null),
 		IN_SAME_PROJECT(PreferencesMessages.IncludeCategoriesBlock_same_project_headers_node,
-				PreferencesMessages.IncludeCategoriesBlock_same_project_headers_node_description,
-				OTHER),
+				PreferencesMessages.IncludeCategoriesBlock_same_project_headers_node_description, OTHER),
 		IN_OTHER_PROJECT(PreferencesMessages.IncludeCategoriesBlock_other_project_headers_node,
-				PreferencesMessages.IncludeCategoriesBlock_other_project_headers_node_description,
-				OTHER),
+				PreferencesMessages.IncludeCategoriesBlock_other_project_headers_node_description, OTHER),
 		EXTERNAL(PreferencesMessages.IncludeCategoriesBlock_external_headers_node,
-				PreferencesMessages.IncludeCategoriesBlock_external_headers_node_description,
-				OTHER),
+				PreferencesMessages.IncludeCategoriesBlock_external_headers_node_description, OTHER),
 		MATCHING_PATTERN(PreferencesMessages.IncludeCategoriesBlock_user_defined_categories_node,
-				PreferencesMessages.IncludeCategoriesBlock_user_defined_categories_node_description,
-				null);
+				PreferencesMessages.IncludeCategoriesBlock_user_defined_categories_node_description, null);
 
 		public final String name;
 		public final String description;
@@ -194,7 +182,7 @@ public class IncludeGroupStyle implements Comparable<IncludeGroupStyle> {
 			style = new IncludeGroupStyle(name, Pattern.compile(pattern));
 		} else {
 			style = new IncludeGroupStyle(includeKind);
-		}		
+		}
 		style.setKeepTogether(nullToFalse(memento.getBoolean(TAG_KEEP_TOGETHER)));
 		style.setBlankLineBefore(nullToFalse(memento.getBoolean(TAG_BLANK_LINE_BEFORE)));
 		if (!includeKind.hasChildren()) {
@@ -298,8 +286,7 @@ public class IncludeGroupStyle implements Comparable<IncludeGroupStyle> {
 			return true;
 		IncludeGroupStyle parentStyle = groupingStyle.getParentStyle(stylesMap);
 		IncludeGroupStyle previousParentStyle = previousGroupingStyle.getParentStyle(stylesMap);
-		return parentStyle != null && previousParentStyle != null &&
-				parentStyle != previousParentStyle && parentStyle.isKeepTogether() &&
-				parentStyle.isBlankLineBefore();
+		return parentStyle != null && previousParentStyle != null && parentStyle != previousParentStyle
+				&& parentStyle.isKeepTogether() && parentStyle.isBlankLineBefore();
 	}
 }

@@ -33,7 +33,8 @@ public class DoxygenMultilineConfiguration extends AbstractGenericTagDocCommentV
 	 * Default constructor
 	 */
 	public DoxygenMultilineConfiguration() {
-		super(DoxygenHelper.getDoxygenTags(), new char[] {'@','\\'}, PreferenceConstants.DOXYGEN_MULTI_LINE_COLOR, PreferenceConstants.DOXYGEN_TAG_COLOR);
+		super(DoxygenHelper.getDoxygenTags(), new char[] { '@', '\\' }, PreferenceConstants.DOXYGEN_MULTI_LINE_COLOR,
+				PreferenceConstants.DOXYGEN_TAG_COLOR);
 	}
 
 	/**
@@ -44,7 +45,8 @@ public class DoxygenMultilineConfiguration extends AbstractGenericTagDocCommentV
 	 * @param tagToken the scanner token to use to mark used by this configuration
 	 * @see AbstractGenericTagDocCommentViewerConfiguration
 	 */
-	protected DoxygenMultilineConfiguration(GenericDocTag[] tags, char[] tagMarkers, String defaultToken, String tagToken) {
+	protected DoxygenMultilineConfiguration(GenericDocTag[] tags, char[] tagMarkers, String defaultToken,
+			String tagToken) {
 		super(tags, tagMarkers, defaultToken, tagToken);
 	}
 
@@ -62,11 +64,11 @@ public class DoxygenMultilineConfiguration extends AbstractGenericTagDocCommentV
 	@Override
 	public boolean isDocumentationComment(IDocument doc, int offset, int length) {
 		try {
-			if(offset+2 < doc.getLength()) {
-				char c= doc.getChar(offset+2);
+			if (offset + 2 < doc.getLength()) {
+				char c = doc.getChar(offset + 2);
 				return c == '*' || c == '!';
 			}
-		} catch(BadLocationException ble) {
+		} catch (BadLocationException ble) {
 			CUIPlugin.log(ble);
 		}
 		return false;

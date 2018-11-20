@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 @Deprecated
 public class CPPASTInitializerExpression extends CPPASTEqualsInitializer implements IASTInitializerExpression {
 
-    public CPPASTInitializerExpression() {
+	public CPPASTInitializerExpression() {
 	}
 
 	public CPPASTInitializerExpression(IASTExpression expression) {

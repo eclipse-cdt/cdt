@@ -62,11 +62,8 @@ public final class CProjectDescriptionEvent {
 	private ICDescriptionDelta fIndexCfgDelta;
 	private final IProject fProject;
 
-	public CProjectDescriptionEvent(int type,
-			ICDescriptionDelta delta,
-			ICProjectDescription newDes,
-			ICProjectDescription oldDes,
-			ICProjectDescription appliedDes) {
+	public CProjectDescriptionEvent(int type, ICDescriptionDelta delta, ICProjectDescription newDes,
+			ICProjectDescription oldDes, ICProjectDescription appliedDes) {
 		fType = type;
 		fProjDelta = delta;
 		fNewDescription = newDes;
@@ -109,7 +106,7 @@ public final class CProjectDescriptionEvent {
 
 	private ICDescriptionDelta getDelta(boolean active) {
 		ICDescriptionDelta delta = null;
-		switch(getEventType()) {
+		switch (getEventType()) {
 		case LOADED:
 		case ABOUT_TO_APPLY:
 		case APPLIED:

@@ -32,7 +32,7 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, IType type, IValue defaultValue,
 			ICPPTemplateParameterMap tpmap) {
 		super(orig, owner, tpmap);
-		fType= type;
+		fType = type;
 		fDefaultValue = defaultValue;
 	}
 
@@ -55,25 +55,25 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 		return false;
 	}
 
-    @Override
+	@Override
 	public boolean isExtern() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isAuto() {
-        return getParameter().isAuto();
-    }
+		return getParameter().isAuto();
+	}
 
-    @Override
+	@Override
 	public boolean isRegister() {
-        return getParameter().isRegister();
-    }
+		return getParameter().isRegister();
+	}
 
-    @Override
+	@Override
 	public boolean isMutable() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public boolean isConstexpr() {

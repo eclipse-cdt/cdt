@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -42,7 +42,7 @@ public class CompositeCPPUnknownField extends CPPUnknownField implements IIndexB
 	public IIndexFragmentBinding getOwner() {
 		return (IIndexFragmentBinding) super.getOwner();
 	}
-	
+
 	@Override
 	public IIndexScope getScope() {
 		try {

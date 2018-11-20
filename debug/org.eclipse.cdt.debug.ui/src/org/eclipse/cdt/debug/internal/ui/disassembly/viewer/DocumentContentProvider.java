@@ -40,430 +40,428 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class DocumentContentProvider implements IModelChangedListener {
 
-    private VirtualSourceViewer fViewer;    
-    private VirtualDocument fDocument;
+	private VirtualSourceViewer fViewer;
+	private VirtualDocument fDocument;
 
-    private Object fRoot;
-    private Object fBase;
-    private Object fInput;
-    
-    private IModelProxy fRootProxy;
-    private IModelProxy fBaseProxy;
-    private List<IModelProxy> fLineProxies = new ArrayList<IModelProxy>( 50 );
-    private Map<Object, Integer> fLineElements = new HashMap<Object, Integer>( 20 );
+	private Object fRoot;
+	private Object fBase;
+	private Object fInput;
 
-    private DocumentUpdate fUpdateInProgress;
+	private IModelProxy fRootProxy;
+	private IModelProxy fBaseProxy;
+	private List<IModelProxy> fLineProxies = new ArrayList<IModelProxy>(50);
+	private Map<Object, Integer> fLineElements = new HashMap<Object, Integer>(20);
 
-    public DocumentContentProvider( VirtualDocument document ) {
-        super();
-        fDocument = document;
-    }
+	private DocumentUpdate fUpdateInProgress;
 
-    protected void init( Object root ) {
-        fRoot = root;
-        installRootProxy( fRoot );
-    }
+	public DocumentContentProvider(VirtualDocument document) {
+		super();
+		fDocument = document;
+	}
 
-    public void update( IDocumentPresentation presentationContext, int lineCount, int offset, boolean reveal ) {
-        IDocumentElementContentProvider contentAdapter = getContentAdapter( getInput() );
-        if ( contentAdapter != null && getRoot() != null && getBase() != null ) {
-            DocumentContentUpdate update = new DocumentContentUpdate( this, contentAdapter, presentationContext, getRoot(), getBase(), getInput(), lineCount, offset, reveal );
-            schedule( update );
-        }
-        else {
-            updateCompleted( new DocumentContentUpdate( this, contentAdapter, presentationContext, getRoot(), getBase(), getInput(), lineCount, offset, reveal ) );
-        }
-    }
+	protected void init(Object root) {
+		fRoot = root;
+		installRootProxy(fRoot);
+	}
 
-    public synchronized void updateCompleted( DocumentContentUpdate update ) {
-        if ( fUpdateInProgress == update ) {
-            fUpdateInProgress = null;
-        }
-        if ( !update.isCanceled() ) {
-            disposeLineProxies();
-            fLineElements.clear();
-            getDocument().setCurrentOffset( update.getOffset() );
-            Object[] elements = update.getElements();
-            for ( int i = 0; i < elements.length; ++i ) {
-                fLineElements.put( elements[i], Integer.valueOf( i ) );
-                installLineProxy( i, elements[i] );
-                getDocument().updateElement( getInput(), i, elements[i] );
-            }
-        }
-        // TODO: display error content if status is not OK
-    }
+	public void update(IDocumentPresentation presentationContext, int lineCount, int offset, boolean reveal) {
+		IDocumentElementContentProvider contentAdapter = getContentAdapter(getInput());
+		if (contentAdapter != null && getRoot() != null && getBase() != null) {
+			DocumentContentUpdate update = new DocumentContentUpdate(this, contentAdapter, presentationContext,
+					getRoot(), getBase(), getInput(), lineCount, offset, reveal);
+			schedule(update);
+		} else {
+			updateCompleted(new DocumentContentUpdate(this, contentAdapter, presentationContext, getRoot(), getBase(),
+					getInput(), lineCount, offset, reveal));
+		}
+	}
 
-    protected IDocumentElementContentProvider getContentAdapter( Object element ) {
-        IDocumentElementContentProvider adapter = null;
-        if ( element instanceof IDocumentElementContentProvider ) {
-            adapter = (IDocumentElementContentProvider)element;
-        }
-        else if ( element instanceof IAdaptable ) {
-            IAdaptable adaptable = (IAdaptable)element;
-            adapter = adaptable.getAdapter( IDocumentElementContentProvider.class );
-        }
-        return adapter;
-    }
+	public synchronized void updateCompleted(DocumentContentUpdate update) {
+		if (fUpdateInProgress == update) {
+			fUpdateInProgress = null;
+		}
+		if (!update.isCanceled()) {
+			disposeLineProxies();
+			fLineElements.clear();
+			getDocument().setCurrentOffset(update.getOffset());
+			Object[] elements = update.getElements();
+			for (int i = 0; i < elements.length; ++i) {
+				fLineElements.put(elements[i], Integer.valueOf(i));
+				installLineProxy(i, elements[i]);
+				getDocument().updateElement(getInput(), i, elements[i]);
+			}
+		}
+		// TODO: display error content if status is not OK
+	}
 
-    protected VirtualDocument getDocument() {
-        return fDocument;
-    }
+	protected IDocumentElementContentProvider getContentAdapter(Object element) {
+		IDocumentElementContentProvider adapter = null;
+		if (element instanceof IDocumentElementContentProvider) {
+			adapter = (IDocumentElementContentProvider) element;
+		} else if (element instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) element;
+			adapter = adaptable.getAdapter(IDocumentElementContentProvider.class);
+		}
+		return adapter;
+	}
 
-    public Object getRoot() {
-        return fRoot;
-    }
+	protected VirtualDocument getDocument() {
+		return fDocument;
+	}
 
-    public Object getInput() {
-        return fInput;
-    }
-    
-    public Object getBase() {
-        return fBase;
-    }
+	public Object getRoot() {
+		return fRoot;
+	}
 
-    public void dispose() {
-        synchronized( this ) {
-            if ( fUpdateInProgress != null ) {
-                fUpdateInProgress.cancel();
-            }
-        }
-        disposeRootProxy();
-        fDocument = null;
-        fInput = null;
-        fViewer = null;
-    }
+	public Object getInput() {
+		return fInput;
+	}
 
-    public void changeInput( VirtualSourceViewer viewer, IDocumentPresentation presentationContext, Object oldInput, Object newInput, int offset ) {
-        fViewer = viewer;
-        fInput = newInput;
-        IDocumentElementContentProvider contentAdapter = getContentAdapter( getInput() );
-        if ( contentAdapter != null ) {
-            DocumentBaseChangeUpdate update = new DocumentBaseChangeUpdate( this, contentAdapter, presentationContext, getRoot(), getBase(), getInput(), offset );
-            schedule( update );
-        }
-        else {
-            inputChanged( new DocumentBaseChangeUpdate( this, contentAdapter, presentationContext, getRoot(), getBase(), getInput(), offset ) );
-        }
-    }
+	public Object getBase() {
+		return fBase;
+	}
 
-    public synchronized void inputChanged( DocumentBaseChangeUpdate update ) {
-        if ( fUpdateInProgress == update ) {
-            fUpdateInProgress = null;
-        }
-        Object newBase = update.getBaseElement();
-        int newOffset = update.getOffset();
-        VirtualDocument document = getDocument();
-        if ( document != null ) {
-            boolean needsUpdate = false;
-            if ( newBase != getBase() ) {
-                fBase = newBase;
-                disposeBaseProxy();
-                installBaseProxy( fBase );
-                needsUpdate = true;
-            }
-            if ( newOffset != document.getCurrentOffset() ) {
-                document.setCurrentOffset( newOffset );
-                needsUpdate = true;
-            }
-            if ( needsUpdate ) {
-                WorkbenchJob job = new WorkbenchJob( "refresh content" ) { //$NON-NLS-1$
-                    
-                    /* (non-Javadoc)
-                     * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-                     */
-                    @Override
-                    public IStatus runInUIThread( IProgressMonitor monitor ) {
-                        getViewer().refresh( true );
-                        return Status.OK_STATUS;
-                    }
-                };
-                job.setSystem( true );
-                job.schedule();
-            }
-        }
-    }
+	public void dispose() {
+		synchronized (this) {
+			if (fUpdateInProgress != null) {
+				fUpdateInProgress.cancel();
+			}
+		}
+		disposeRootProxy();
+		fDocument = null;
+		fInput = null;
+		fViewer = null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta, org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy)
-     */
-    @Override
-	public void modelChanged( final IModelDelta delta, final IModelProxy proxy ) {
-        WorkbenchJob job = new WorkbenchJob( "process model delta" ) { //$NON-NLS-1$
-            
-            /* (non-Javadoc)
-             * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-             */
-            @Override
-            public IStatus runInUIThread( IProgressMonitor monitor ) {
-                if ( !proxy.isDisposed() ) {
-                    handleModelChanges( delta );
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        job.setSystem( true );
-        job.schedule();
-    }
+	public void changeInput(VirtualSourceViewer viewer, IDocumentPresentation presentationContext, Object oldInput,
+			Object newInput, int offset) {
+		fViewer = viewer;
+		fInput = newInput;
+		IDocumentElementContentProvider contentAdapter = getContentAdapter(getInput());
+		if (contentAdapter != null) {
+			DocumentBaseChangeUpdate update = new DocumentBaseChangeUpdate(this, contentAdapter, presentationContext,
+					getRoot(), getBase(), getInput(), offset);
+			schedule(update);
+		} else {
+			inputChanged(new DocumentBaseChangeUpdate(this, contentAdapter, presentationContext, getRoot(), getBase(),
+					getInput(), offset));
+		}
+	}
 
-    protected void handleModelChanges( IModelDelta delta ) {
-        updateNodes( new IModelDelta[] { delta } );
-    }
+	public synchronized void inputChanged(DocumentBaseChangeUpdate update) {
+		if (fUpdateInProgress == update) {
+			fUpdateInProgress = null;
+		}
+		Object newBase = update.getBaseElement();
+		int newOffset = update.getOffset();
+		VirtualDocument document = getDocument();
+		if (document != null) {
+			boolean needsUpdate = false;
+			if (newBase != getBase()) {
+				fBase = newBase;
+				disposeBaseProxy();
+				installBaseProxy(fBase);
+				needsUpdate = true;
+			}
+			if (newOffset != document.getCurrentOffset()) {
+				document.setCurrentOffset(newOffset);
+				needsUpdate = true;
+			}
+			if (needsUpdate) {
+				WorkbenchJob job = new WorkbenchJob("refresh content") { //$NON-NLS-1$
 
-    protected void updateNodes( IModelDelta[] nodes ) {
-        for( int i = 0; i < nodes.length; i++ ) {
-            IModelDelta node = nodes[i];
-            int flags = node.getFlags();
+					/* (non-Javadoc)
+					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						getViewer().refresh(true);
+						return Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
+			}
+		}
+	}
 
-            if ( (flags & IModelDelta.ADDED) != 0 ) {
-                handleAdd( node );
-            }
-            if ( (flags & IModelDelta.REMOVED) != 0 ) {
-                handleRemove( node );
-            }
-            if ( (flags & IModelDelta.CONTENT) != 0 ) {
-                handleContent( node );
-            }
-            if ( (flags & IModelDelta.SELECT) != 0 ) {
-                handleSelect( node );
-            }
-            if ( (flags & IModelDelta.STATE) != 0 ) {
-                handleState( node );
-            }
-            if ( (flags & IModelDelta.INSERTED) != 0 ) {
-                handleInsert( node );
-            }
-            if ( (flags & IModelDelta.REPLACED) != 0 ) {
-                handleReplace( node );
-            }
-            if ( (flags & IModelDelta.INSTALL) != 0 ) {
-                handleInstall( node );
-            }
-            if ( (flags & IModelDelta.UNINSTALL) != 0 ) {
-                handleUninstall( node );
-            }
-            if ( (flags & IModelDelta.REVEAL) != 0 ) {
-                handleReveal( node );
-            }
-            updateNodes( node.getChildDeltas() );
-        }
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta, org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy)
+	 */
+	@Override
+	public void modelChanged(final IModelDelta delta, final IModelProxy proxy) {
+		WorkbenchJob job = new WorkbenchJob("process model delta") { //$NON-NLS-1$
 
-    protected void handleState( IModelDelta delta ) {
-        int index = getElementIndex( delta.getElement() );
-        if ( index >= 0 ) {
-            getDocument().updateElement( getInput(), index, delta.getElement() );
-        }
-    }
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if (!proxy.isDisposed()) {
+					handleModelChanges(delta);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
+	}
 
-    protected void handleSelect( IModelDelta delta ) {
+	protected void handleModelChanges(IModelDelta delta) {
+		updateNodes(new IModelDelta[] { delta });
+	}
 
-    }
+	protected void updateNodes(IModelDelta[] nodes) {
+		for (int i = 0; i < nodes.length; i++) {
+			IModelDelta node = nodes[i];
+			int flags = node.getFlags();
 
-    protected void handleContent( IModelDelta delta ) {
-        if ( delta.getElement().equals( getRoot() ) || delta.getElement().equals( getBase() ) ) {
-            getViewer().refresh();
-        }
-    }
+			if ((flags & IModelDelta.ADDED) != 0) {
+				handleAdd(node);
+			}
+			if ((flags & IModelDelta.REMOVED) != 0) {
+				handleRemove(node);
+			}
+			if ((flags & IModelDelta.CONTENT) != 0) {
+				handleContent(node);
+			}
+			if ((flags & IModelDelta.SELECT) != 0) {
+				handleSelect(node);
+			}
+			if ((flags & IModelDelta.STATE) != 0) {
+				handleState(node);
+			}
+			if ((flags & IModelDelta.INSERTED) != 0) {
+				handleInsert(node);
+			}
+			if ((flags & IModelDelta.REPLACED) != 0) {
+				handleReplace(node);
+			}
+			if ((flags & IModelDelta.INSTALL) != 0) {
+				handleInstall(node);
+			}
+			if ((flags & IModelDelta.UNINSTALL) != 0) {
+				handleUninstall(node);
+			}
+			if ((flags & IModelDelta.REVEAL) != 0) {
+				handleReveal(node);
+			}
+			updateNodes(node.getChildDeltas());
+		}
+	}
 
-    protected void handleRemove( IModelDelta delta ) {
+	protected void handleState(IModelDelta delta) {
+		int index = getElementIndex(delta.getElement());
+		if (index >= 0) {
+			getDocument().updateElement(getInput(), index, delta.getElement());
+		}
+	}
 
-    }
+	protected void handleSelect(IModelDelta delta) {
 
-    protected void handleAdd( IModelDelta delta ) {
+	}
 
-    }
+	protected void handleContent(IModelDelta delta) {
+		if (delta.getElement().equals(getRoot()) || delta.getElement().equals(getBase())) {
+			getViewer().refresh();
+		}
+	}
 
-    protected void handleInsert( IModelDelta delta ) {
+	protected void handleRemove(IModelDelta delta) {
 
-    }
+	}
 
-    protected void handleReplace( IModelDelta delta ) {
+	protected void handleAdd(IModelDelta delta) {
 
-    }
+	}
 
-    protected void handleReveal( IModelDelta delta ) {
+	protected void handleInsert(IModelDelta delta) {
 
-    }
+	}
 
-    protected void handleInstall( IModelDelta delta ) {
-    }
+	protected void handleReplace(IModelDelta delta) {
 
-    protected void handleUninstall( IModelDelta delta ) {
-    }   
+	}
 
-    protected synchronized void installRootProxy( Object element ) {
-        if ( element != null && (!element.equals( getRoot()) || fRootProxy == null) ) {
-            disposeRootProxy();
-            IModelProxyFactory modelProxyFactory = getModelProxyFactoryAdapter( element );
-            if ( modelProxyFactory != null ) {
-                final IModelProxy proxy = modelProxyFactory.createModelProxy( element, getPresentationContext() );
-                if ( proxy != null ) {
-                    fRootProxy = proxy;
-                    Job job = new Job( "Model Proxy installed notification job" ) {//$NON-NLS-1$
-                        
-                        /* (non-Javadoc)
-                         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-                         */
-                        @Override
-                        protected IStatus run( IProgressMonitor monitor ) {
-                            if ( !monitor.isCanceled() ) {
-                                proxy.init( getPresentationContext() );
-                                proxy.addModelChangedListener( DocumentContentProvider.this );
-                                proxy.installed( getViewer() );
-                            }
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    job.setSystem( true );
-                    job.schedule();
-                }
-            }
-        }
-    }
+	protected void handleReveal(IModelDelta delta) {
 
-    protected synchronized void installBaseProxy( Object element ) {
-        if ( element != null && (!element.equals( getBase()) || fBaseProxy == null) ) {
-            IModelProxyFactory modelProxyFactory = getModelProxyFactoryAdapter( element );
-            if ( modelProxyFactory != null ) {
-                final IModelProxy proxy = modelProxyFactory.createModelProxy( element, getPresentationContext() );
-                if ( proxy != null ) {
-                    fBaseProxy = proxy;
-                    Job job = new Job( "Model Proxy installed notification job" ) {//$NON-NLS-1$
-                        
-                        /* (non-Javadoc)
-                         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-                         */
-                        @Override
-                        protected IStatus run( IProgressMonitor monitor ) {
-                            if ( !monitor.isCanceled() ) {
-                                proxy.init( getPresentationContext() );
-                                proxy.addModelChangedListener( DocumentContentProvider.this );
-                                proxy.installed( getViewer() );
-                            }
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    job.setSystem( true );
-                    job.schedule();
-                }
-            }
-        }
-    }
+	}
 
-    protected synchronized void installLineProxy( int index, Object element ) {
-        IModelProxyFactory modelProxyFactory = getModelProxyFactoryAdapter( element );
-        if ( modelProxyFactory != null ) {
-            final IModelProxy proxy = modelProxyFactory.createModelProxy( element, getPresentationContext() );
-            if ( proxy != null ) {
-                fLineProxies.add( index, proxy );
-                Job job = new Job( "Model Proxy installed notification job" ) {//$NON-NLS-1$
-                    
-                    /* (non-Javadoc)
-                     * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-                     */
-                    @Override
-                    protected IStatus run( IProgressMonitor monitor ) {
-                        if ( !monitor.isCanceled() ) {
-                            proxy.init( getPresentationContext() );
-                            proxy.addModelChangedListener( DocumentContentProvider.this );
-                            proxy.installed( getViewer() );
-                        }
-                        return Status.OK_STATUS;
-                    }
-                };
-                job.setSystem( true );
-                job.schedule();
-            }
-        }
-    }
+	protected void handleInstall(IModelDelta delta) {
+	}
 
-    protected IModelProxyFactory getModelProxyFactoryAdapter( Object element ) {
-        IModelProxyFactory adapter = null;
-        if ( element instanceof IModelProxyFactory ) {
-            adapter = (IModelProxyFactory)element;
-        }
-        else if ( element instanceof IAdaptable ) {
-            IAdaptable adaptable = (IAdaptable)element;
-            adapter = adaptable.getAdapter( IModelProxyFactory.class );
-        }
-        return adapter;
-    }
+	protected void handleUninstall(IModelDelta delta) {
+	}
 
-    protected IPresentationContext getPresentationContext() {
-        return getDocument().getPresentationContext();
-    }
+	protected synchronized void installRootProxy(Object element) {
+		if (element != null && (!element.equals(getRoot()) || fRootProxy == null)) {
+			disposeRootProxy();
+			IModelProxyFactory modelProxyFactory = getModelProxyFactoryAdapter(element);
+			if (modelProxyFactory != null) {
+				final IModelProxy proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
+				if (proxy != null) {
+					fRootProxy = proxy;
+					Job job = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
 
-    protected synchronized void disposeRootProxy() {
-        disposeBaseProxy();
-        if ( fRootProxy != null ) {
-            fRootProxy.dispose();
-        }
-        fRootProxy = null;
-    }
+						/* (non-Javadoc)
+						 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+						 */
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							if (!monitor.isCanceled()) {
+								proxy.init(getPresentationContext());
+								proxy.addModelChangedListener(DocumentContentProvider.this);
+								proxy.installed(getViewer());
+							}
+							return Status.OK_STATUS;
+						}
+					};
+					job.setSystem(true);
+					job.schedule();
+				}
+			}
+		}
+	}
 
-    protected synchronized void disposeBaseProxy() {
-        disposeLineProxies();
-        if ( fBaseProxy != null ) {
-            fBaseProxy.dispose();
-        }
-        fBaseProxy = null;
-    }
+	protected synchronized void installBaseProxy(Object element) {
+		if (element != null && (!element.equals(getBase()) || fBaseProxy == null)) {
+			IModelProxyFactory modelProxyFactory = getModelProxyFactoryAdapter(element);
+			if (modelProxyFactory != null) {
+				final IModelProxy proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
+				if (proxy != null) {
+					fBaseProxy = proxy;
+					Job job = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
 
-    protected synchronized void disposeLineProxies() {
-        for ( IModelProxy proxy : fLineProxies ) {
-            proxy.dispose();
-        }
-        fLineProxies.clear();
-    }
+						/* (non-Javadoc)
+						 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+						 */
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							if (!monitor.isCanceled()) {
+								proxy.init(getPresentationContext());
+								proxy.addModelChangedListener(DocumentContentProvider.this);
+								proxy.installed(getViewer());
+							}
+							return Status.OK_STATUS;
+						}
+					};
+					job.setSystem(true);
+					job.schedule();
+				}
+			}
+		}
+	}
 
-    protected VirtualSourceViewer getViewer() {
-        return fViewer;
-    }
+	protected synchronized void installLineProxy(int index, Object element) {
+		IModelProxyFactory modelProxyFactory = getModelProxyFactoryAdapter(element);
+		if (modelProxyFactory != null) {
+			final IModelProxy proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
+			if (proxy != null) {
+				fLineProxies.add(index, proxy);
+				Job job = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
 
-    synchronized void schedule( DocumentUpdate update ) {
-        if ( fUpdateInProgress != null ) {
-            if ( update instanceof DocumentBaseChangeUpdate ) {
-                // cancel the earlier update and start the latest
-                fUpdateInProgress.cancel();
-                fUpdateInProgress.done();
-                fUpdateInProgress = update;
-                fUpdateInProgress.start();
-            }
-            else if ( fUpdateInProgress instanceof DocumentBaseChangeUpdate 
-                      && update instanceof DocumentContentUpdate ) {
-                    // cancel the content update because the base change update 
-                    // will start a new one
-                    update.cancel();
-                    update.done();
-            }
-            else if ( fUpdateInProgress instanceof DocumentContentUpdate 
-                      && update instanceof DocumentBaseChangeUpdate ) {
-                    // cancel the content update and start the base change update
-                    fUpdateInProgress.cancel();
-                    fUpdateInProgress.done();
-                    fUpdateInProgress = update;
-                    fUpdateInProgress.start();
-            }
-        }
-        else {
-            fUpdateInProgress = update;
-            fUpdateInProgress.start();
-        }
-    }
+					/* (non-Javadoc)
+					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						if (!monitor.isCanceled()) {
+							proxy.init(getPresentationContext());
+							proxy.addModelChangedListener(DocumentContentProvider.this);
+							proxy.installed(getViewer());
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
+			}
+		}
+	}
 
-    private int getElementIndex( Object element ) {
-        Integer index = fLineElements.get( element );
-        return ( index != null ) ? index.intValue() : -1;
-    }
+	protected IModelProxyFactory getModelProxyFactoryAdapter(Object element) {
+		IModelProxyFactory adapter = null;
+		if (element instanceof IModelProxyFactory) {
+			adapter = (IModelProxyFactory) element;
+		} else if (element instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) element;
+			adapter = adaptable.getAdapter(IModelProxyFactory.class);
+		}
+		return adapter;
+	}
 
-    protected Object getElementAtLine( int lineNumber ) {
-        synchronized( fLineElements ) {
-            for ( Object element : fLineElements.keySet() ) {
-                if ( fLineElements.get( element ).intValue() == lineNumber ) {
-                    return element;
-                }
-            }
-        }
-        return null;
-    }
+	protected IPresentationContext getPresentationContext() {
+		return getDocument().getPresentationContext();
+	}
+
+	protected synchronized void disposeRootProxy() {
+		disposeBaseProxy();
+		if (fRootProxy != null) {
+			fRootProxy.dispose();
+		}
+		fRootProxy = null;
+	}
+
+	protected synchronized void disposeBaseProxy() {
+		disposeLineProxies();
+		if (fBaseProxy != null) {
+			fBaseProxy.dispose();
+		}
+		fBaseProxy = null;
+	}
+
+	protected synchronized void disposeLineProxies() {
+		for (IModelProxy proxy : fLineProxies) {
+			proxy.dispose();
+		}
+		fLineProxies.clear();
+	}
+
+	protected VirtualSourceViewer getViewer() {
+		return fViewer;
+	}
+
+	synchronized void schedule(DocumentUpdate update) {
+		if (fUpdateInProgress != null) {
+			if (update instanceof DocumentBaseChangeUpdate) {
+				// cancel the earlier update and start the latest
+				fUpdateInProgress.cancel();
+				fUpdateInProgress.done();
+				fUpdateInProgress = update;
+				fUpdateInProgress.start();
+			} else if (fUpdateInProgress instanceof DocumentBaseChangeUpdate
+					&& update instanceof DocumentContentUpdate) {
+				// cancel the content update because the base change update 
+				// will start a new one
+				update.cancel();
+				update.done();
+			} else if (fUpdateInProgress instanceof DocumentContentUpdate
+					&& update instanceof DocumentBaseChangeUpdate) {
+				// cancel the content update and start the base change update
+				fUpdateInProgress.cancel();
+				fUpdateInProgress.done();
+				fUpdateInProgress = update;
+				fUpdateInProgress.start();
+			}
+		} else {
+			fUpdateInProgress = update;
+			fUpdateInProgress.start();
+		}
+	}
+
+	private int getElementIndex(Object element) {
+		Integer index = fLineElements.get(element);
+		return (index != null) ? index.intValue() : -1;
+	}
+
+	protected Object getElementAtLine(int lineNumber) {
+		synchronized (fLineElements) {
+			for (Object element : fLineElements.keySet()) {
+				if (fLineElements.get(element).intValue() == lineNumber) {
+					return element;
+				}
+			}
+		}
+		return null;
+	}
 }

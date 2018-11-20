@@ -38,68 +38,67 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class DisassemblyDisplayModeHandler extends AbstractHandler implements IElementUpdater {
 
-    private static final String ID_PARAMETER_MODE = "org.eclipse.cdt.debug.command.disassemblyDisplayMode.parameterMode"; //$NON-NLS-1$
+	private static final String ID_PARAMETER_MODE = "org.eclipse.cdt.debug.command.disassemblyDisplayMode.parameterMode"; //$NON-NLS-1$
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-     */
-    @Override
-	public Object execute( ExecutionEvent event ) throws ExecutionException {
-        DisassemblyEditorPresentation presentation = getEditorPresentation( event );
-        if ( presentation != null ) {
-            String param = event.getParameter( ID_PARAMETER_MODE );
-            if ( IInternalCDebugUIConstants.DISASM_DISPLAY_MODE_INSTRUCTIONS.equals( param ) ) {
-                presentation.setShowIntstructions( !presentation.showIntstructions() );
-            }
-            else if ( IInternalCDebugUIConstants.DISASM_DISPLAY_MODE_SOURCE.equals( param ) ) {
-                presentation.setShowSource( !presentation.showSource() );
-            }
-        }
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		DisassemblyEditorPresentation presentation = getEditorPresentation(event);
+		if (presentation != null) {
+			String param = event.getParameter(ID_PARAMETER_MODE);
+			if (IInternalCDebugUIConstants.DISASM_DISPLAY_MODE_INSTRUCTIONS.equals(param)) {
+				presentation.setShowIntstructions(!presentation.showIntstructions());
+			} else if (IInternalCDebugUIConstants.DISASM_DISPLAY_MODE_SOURCE.equals(param)) {
+				presentation.setShowSource(!presentation.showSource());
+			}
+		}
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
+	 */
+	@Override
 	@SuppressWarnings("rawtypes")
-    public void updateElement( UIElement element, Map parameters ) {
-        IWorkbenchPartSite site = element.getServiceLocator().getService( IWorkbenchPartSite.class );
-        if ( site != null ) {
-            IWorkbenchPart part = site.getPart();
-            if ( part instanceof ITextEditor ) {
-                IEditorInput input = ((ITextEditor)part).getEditorInput();
-                if ( input instanceof DisassemblyEditorInput ) {
-                    IDocumentProvider dp = ((ITextEditor)part).getDocumentProvider();
-                    if ( dp instanceof DisassemblyDocumentProvider ) {
-                        IDocumentPresentation p = ((DisassemblyDocumentProvider)dp).getDocumentPresentation( input );
-                        if ( p instanceof DisassemblyEditorPresentation ) {
-                            DisassemblyEditorPresentation presentation = (DisassemblyEditorPresentation)p;
-                            String param = (String)parameters.get( ID_PARAMETER_MODE );
-                            if ( IInternalCDebugUIConstants.DISASM_DISPLAY_MODE_INSTRUCTIONS.equals( param ) ) {
-                                element.setChecked( presentation.showIntstructions() );
-                            }
-                            else if ( IInternalCDebugUIConstants.DISASM_DISPLAY_MODE_SOURCE.equals( param ) ) {
-                                element.setChecked( presentation.showSource() );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+	public void updateElement(UIElement element, Map parameters) {
+		IWorkbenchPartSite site = element.getServiceLocator().getService(IWorkbenchPartSite.class);
+		if (site != null) {
+			IWorkbenchPart part = site.getPart();
+			if (part instanceof ITextEditor) {
+				IEditorInput input = ((ITextEditor) part).getEditorInput();
+				if (input instanceof DisassemblyEditorInput) {
+					IDocumentProvider dp = ((ITextEditor) part).getDocumentProvider();
+					if (dp instanceof DisassemblyDocumentProvider) {
+						IDocumentPresentation p = ((DisassemblyDocumentProvider) dp).getDocumentPresentation(input);
+						if (p instanceof DisassemblyEditorPresentation) {
+							DisassemblyEditorPresentation presentation = (DisassemblyEditorPresentation) p;
+							String param = (String) parameters.get(ID_PARAMETER_MODE);
+							if (IInternalCDebugUIConstants.DISASM_DISPLAY_MODE_INSTRUCTIONS.equals(param)) {
+								element.setChecked(presentation.showIntstructions());
+							} else if (IInternalCDebugUIConstants.DISASM_DISPLAY_MODE_SOURCE.equals(param)) {
+								element.setChecked(presentation.showSource());
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
-    private DisassemblyEditorPresentation getEditorPresentation( ExecutionEvent event ) throws ExecutionException {
-        ISelection s = HandlerUtil.getActiveMenuEditorInputChecked( event );
-        if ( s instanceof IStructuredSelection ) {
-            Object o = ((IStructuredSelection)s).getFirstElement();
-            if ( o instanceof DisassemblyEditorInput ) {
-            	DisassemblyDocumentProvider dp = CDebugUIPlugin.getDefault().getDisassemblyEditorManager().getDocumentProvider();
-                if ( dp != null ) {
-                    return (DisassemblyEditorPresentation)dp.getDocumentPresentation( o );
-                }
-            }
-        }
-        return null;
-    }
+	private DisassemblyEditorPresentation getEditorPresentation(ExecutionEvent event) throws ExecutionException {
+		ISelection s = HandlerUtil.getActiveMenuEditorInputChecked(event);
+		if (s instanceof IStructuredSelection) {
+			Object o = ((IStructuredSelection) s).getFirstElement();
+			if (o instanceof DisassemblyEditorInput) {
+				DisassemblyDocumentProvider dp = CDebugUIPlugin.getDefault().getDisassemblyEditorManager()
+						.getDocumentProvider();
+				if (dp != null) {
+					return (DisassemblyEditorPresentation) dp.getDocumentPresentation(o);
+				}
+			}
+		}
+		return null;
+	}
 }

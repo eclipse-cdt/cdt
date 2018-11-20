@@ -40,7 +40,7 @@ public class ErrorPosition extends AddressRangePosition {
 	public int hashCode() {
 		return fHashCode;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition#toString()
 	 */

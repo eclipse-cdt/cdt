@@ -12,7 +12,6 @@
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
 
-
 package org.eclipse.cdt.debug.ui.memory.traditional;
 
 import java.util.Map;
@@ -35,13 +34,12 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = TraditionalRenderingPlugin.getDefault()
-				.getPreferenceStore();
-		
+		IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_TEXT, true);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND, true);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION, true);
-		
+
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED, "255,0,0");
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_ITALIC, false);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOLD, false);
@@ -51,39 +49,39 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_ITALIC, true);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOLD, false);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOX, true);
-		
+
 		Color systemSelection = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_SELECTION, systemSelection.getRed()
-				+ "," + systemSelection.getGreen() + "," + systemSelection.getBlue());
-		
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_SELECTION,
+				systemSelection.getRed() + "," + systemSelection.getGreen() + "," + systemSelection.getBlue());
+
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS, "5");
-		
+
 		Color systemText = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_TEXT, systemText.getRed()
-				+ "," + systemText.getGreen() + "," + systemText.getBlue());
-		
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_TEXT,
+				systemText.getRed() + "," + systemText.getGreen() + "," + systemText.getBlue());
+
 		Color systemBackground = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, systemBackground.getRed()
-				+ "," + systemBackground.getGreen() + "," + systemBackground.getBlue());
-		
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND,
+				systemBackground.getRed() + "," + systemBackground.getGreen() + "," + systemBackground.getBlue());
+
 		// Set the default background colors, for known memory spaces 
 		IMemorySpacePreferencesHelper util = TraditionalMemoryRenderingFactory.getMemorySpacesPreferencesHelper();
 		Map<String, String> prefKeyToColor = util.getMemorySpaceDefaultColors();
-		
+
 		if (prefKeyToColor.size() > 0) {
-		    // If there are memory spaces present, set no global background as default
+			// If there are memory spaces present, set no global background as default
 			store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND, false);
 			for (String key : prefKeyToColor.keySet()) {
 				store.setDefault(key, prefKeyToColor.get(key));
 			}
 		}
-		
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, 
+
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE,
 				TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY);
-		
+
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "1");
 
-        store.setDefault(TraditionalRenderingPreferenceConstants.MEM_CROSS_REFERENCE_INFO, true);
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_CROSS_REFERENCE_INFO, true);
 	}
 
 }

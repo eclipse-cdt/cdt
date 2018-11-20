@@ -11,7 +11,7 @@
  * Contributors: 
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.core.resources.IFile;
@@ -44,129 +44,129 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
  * can be calculated from the AST.
  */
 public class CRefactoringArgument {
-    private int fOffset;
-    private int fLength;
-    private String fText= ""; //$NON-NLS-1$
-    private int fKind= CRefactory.ARGUMENT_UNKNOWN;
-    private IFile fFile;
-    
-    private IBinding fBinding;
-    private IScope fScope;
-    private IASTTranslationUnit fTranslationUnit;
+	private int fOffset;
+	private int fLength;
+	private String fText = ""; //$NON-NLS-1$
+	private int fKind = CRefactory.ARGUMENT_UNKNOWN;
+	private IFile fFile;
 
-    public CRefactoringArgument(IFile file, int offset, int length) {
-        fKind= CRefactory.ARGUMENT_UNKNOWN;
-        fFile= file;
-        fOffset= offset;
-        fLength= length;
-    }
-    
-    public CRefactoringArgument(ICElement elem) {
-        fKind= CRefactory.ARGUMENT_UNKNOWN;
-        if (elem instanceof ISourceReference) {
-        	ISourceReference sref= (ISourceReference) elem;
-        	ISourceRange sr;
+	private IBinding fBinding;
+	private IScope fScope;
+	private IASTTranslationUnit fTranslationUnit;
+
+	public CRefactoringArgument(IFile file, int offset, int length) {
+		fKind = CRefactory.ARGUMENT_UNKNOWN;
+		fFile = file;
+		fOffset = offset;
+		fLength = length;
+	}
+
+	public CRefactoringArgument(ICElement elem) {
+		fKind = CRefactory.ARGUMENT_UNKNOWN;
+		if (elem instanceof ISourceReference) {
+			ISourceReference sref = (ISourceReference) elem;
+			ISourceRange sr;
 			try {
 				sr = sref.getSourceRange();
-	        	fFile= (IFile) sref.getTranslationUnit().getResource();
-	        	fOffset= sr.getIdStartPos();
-	        	fLength= sr.getIdLength();
+				fFile = (IFile) sref.getTranslationUnit().getResource();
+				fOffset = sr.getIdStartPos();
+				fLength = sr.getIdLength();
 			} catch (CModelException e) {
 				CUIPlugin.log(e);
 			}
-        }
-    }
-        
-    public String getName() {
-        return fText;
-    }
+		}
+	}
 
-    public IFile getSourceFile() {
-        return fFile;
-    }
+	public String getName() {
+		return fText;
+	}
 
-    public int getArgumentKind() {
-        return fKind;
-    }
+	public IFile getSourceFile() {
+		return fFile;
+	}
 
-    public int getOffset() {
-        return fOffset;
-    }
-    
-    public int getLength() {
-    	return fLength;
-    }
+	public int getArgumentKind() {
+		return fKind;
+	}
 
-    public void setName(String name) {
-        fText= name.toString();
-    }
-    
-    public void setName(IASTName name) {
-    	setName(name.toString());
-    }
-    
-    public void setBinding(IASTTranslationUnit tu, IBinding binding, IScope scope) {
-        fTranslationUnit= tu;
-        fBinding= binding;
-        fScope= scope;
-        if (binding instanceof IVariable) {
-            IVariable var= (IVariable) binding;
-            if (binding instanceof IField) {
-                fKind= CRefactory.ARGUMENT_FIELD;
-            } else if (binding instanceof IParameter) {
-                fKind= CRefactory.ARGUMENT_PARAMETER;
-            } else {
-                if (ASTManager.isLocalVariable(var, scope)) {
-                    fKind= CRefactory.ARGUMENT_LOCAL_VAR;
-                } else {
-                    boolean isStatic= false;
-                    isStatic= var.isStatic();
-                    if (isStatic) {
-                        fKind= CRefactory.ARGUMENT_FILE_LOCAL_VAR;
-                    } else {
-                        fKind= CRefactory.ARGUMENT_GLOBAL_VAR;
-                    }
-                }
-            }
-        } else if (binding instanceof IEnumerator) {
-            fKind= CRefactory.ARGUMENT_ENUMERATOR;
-        } else if (binding instanceof IFunction) {
-            fKind= CRefactory.ARGUMENT_NON_VIRTUAL_METHOD;
-            IFunction func= (IFunction) binding;
-            if (binding instanceof ICPPMethod) {
-                ICPPMethod method= (ICPPMethod) binding;
-                if (ClassTypeHelper.isVirtual(method)) {
-                	fKind= CRefactory.ARGUMENT_VIRTUAL_METHOD;
-                }
-            } else {
-                boolean isStatic= false;
-                isStatic= func.isStatic();
-                if (isStatic) {
-                    fKind= CRefactory.ARGUMENT_FILE_LOCAL_FUNCTION;
-                } else {
-                    fKind= CRefactory.ARGUMENT_GLOBAL_FUNCTION;
-                }
-            }
-        } else if (binding instanceof ICompositeType) {
-            fKind= CRefactory.ARGUMENT_CLASS_TYPE;
-        } else if (binding instanceof IEnumeration || binding instanceof ITypedef) {
-            fKind= CRefactory.ARGUMENT_TYPE;
-        } else if (binding instanceof ICPPNamespace) {
-            fKind= CRefactory.ARGUMENT_NAMESPACE;
-        } else if (binding instanceof IMacroBinding) {
-            fKind= CRefactory.ARGUMENT_MACRO;
-        }
-    }
+	public int getOffset() {
+		return fOffset;
+	}
 
-    public IScope getScope() {
-        return fScope;
-    }
+	public int getLength() {
+		return fLength;
+	}
 
-    public IBinding getBinding() {
-        return fBinding;
-    }
+	public void setName(String name) {
+		fText = name.toString();
+	}
 
-    public IASTTranslationUnit getTranslationUnit() {
-        return fTranslationUnit;
-    }
+	public void setName(IASTName name) {
+		setName(name.toString());
+	}
+
+	public void setBinding(IASTTranslationUnit tu, IBinding binding, IScope scope) {
+		fTranslationUnit = tu;
+		fBinding = binding;
+		fScope = scope;
+		if (binding instanceof IVariable) {
+			IVariable var = (IVariable) binding;
+			if (binding instanceof IField) {
+				fKind = CRefactory.ARGUMENT_FIELD;
+			} else if (binding instanceof IParameter) {
+				fKind = CRefactory.ARGUMENT_PARAMETER;
+			} else {
+				if (ASTManager.isLocalVariable(var, scope)) {
+					fKind = CRefactory.ARGUMENT_LOCAL_VAR;
+				} else {
+					boolean isStatic = false;
+					isStatic = var.isStatic();
+					if (isStatic) {
+						fKind = CRefactory.ARGUMENT_FILE_LOCAL_VAR;
+					} else {
+						fKind = CRefactory.ARGUMENT_GLOBAL_VAR;
+					}
+				}
+			}
+		} else if (binding instanceof IEnumerator) {
+			fKind = CRefactory.ARGUMENT_ENUMERATOR;
+		} else if (binding instanceof IFunction) {
+			fKind = CRefactory.ARGUMENT_NON_VIRTUAL_METHOD;
+			IFunction func = (IFunction) binding;
+			if (binding instanceof ICPPMethod) {
+				ICPPMethod method = (ICPPMethod) binding;
+				if (ClassTypeHelper.isVirtual(method)) {
+					fKind = CRefactory.ARGUMENT_VIRTUAL_METHOD;
+				}
+			} else {
+				boolean isStatic = false;
+				isStatic = func.isStatic();
+				if (isStatic) {
+					fKind = CRefactory.ARGUMENT_FILE_LOCAL_FUNCTION;
+				} else {
+					fKind = CRefactory.ARGUMENT_GLOBAL_FUNCTION;
+				}
+			}
+		} else if (binding instanceof ICompositeType) {
+			fKind = CRefactory.ARGUMENT_CLASS_TYPE;
+		} else if (binding instanceof IEnumeration || binding instanceof ITypedef) {
+			fKind = CRefactory.ARGUMENT_TYPE;
+		} else if (binding instanceof ICPPNamespace) {
+			fKind = CRefactory.ARGUMENT_NAMESPACE;
+		} else if (binding instanceof IMacroBinding) {
+			fKind = CRefactory.ARGUMENT_MACRO;
+		}
+	}
+
+	public IScope getScope() {
+		return fScope;
+	}
+
+	public IBinding getBinding() {
+		return fBinding;
+	}
+
+	public IASTTranslationUnit getTranslationUnit() {
+		return fTranslationUnit;
+	}
 }

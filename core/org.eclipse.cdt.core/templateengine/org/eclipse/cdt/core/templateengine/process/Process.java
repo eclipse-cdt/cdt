@@ -66,12 +66,12 @@ public class Process {
 		ProcessParameter[] params = processRunner.getProcessParameters();
 		List<ProcessArgument> list = new ArrayList<ProcessArgument>(params.length);
 		int childIndex = 0;
-		for (int i= 0; i < params.length; i++) {
+		for (int i = 0; i < params.length; i++) {
 			ProcessParameter param = params[i];
 			boolean childrenRemain = childIndex < children.size();
 			Element child = (childrenRemain ? children.get(childIndex) : null);
-			if (param.isExternal() &&
-					(child == null || !param.getName().equals(child.getAttribute(ProcessArgument.ELEM_NAME)))) {
+			if (param.isExternal()
+					&& (child == null || !param.getName().equals(child.getAttribute(ProcessArgument.ELEM_NAME)))) {
 				list.add(new ProcessArgument(templateCore, param));
 			} else if (childrenRemain) {
 				list.add(new ProcessArgument(templateCore, child));
@@ -89,8 +89,8 @@ public class Process {
 	 * @return boolean, true if the Process is Ready.
 	 */
 	public boolean isReadyToProcess() {
-		if (processRunner == null || !processRunner.areArgumentsMatchingRequiredParameters(args) ||
-				!areAllMacrosExpandable()) {
+		if (processRunner == null || !processRunner.areArgumentsMatchingRequiredParameters(args)
+				|| !areAllMacrosExpandable()) {
 			return false;
 		}
 		return true;
@@ -102,7 +102,7 @@ public class Process {
 	 */
 	private boolean areAllMacrosExpandable() {
 		if (args != null) {
-			for (int i= 0; i < args.length; i++) {
+			for (int i = 0; i < args.length; i++) {
 				ProcessArgument arg = args[i];
 				if (!arg.areAllMacrosExpandable()) {
 					return false;
@@ -118,7 +118,7 @@ public class Process {
 	private String getFirstNonExpandableMacroMessage(ProcessArgument[] args2) {
 		if (args != null) {
 			String macro;
-			for (int i= 0; i < args.length; i++) {
+			for (int i = 0; i < args.length; i++) {
 				ProcessArgument arg = args[i];
 				if ((macro = arg.getFirstNonExpandableMacro()) != null) {
 					return Messages.getString("Process.argument") + arg.getName() + //$NON-NLS-1$
@@ -147,7 +147,7 @@ public class Process {
 	}
 
 	/**
-     * Executes this process
+	 * Executes this process
 	 * @param monitor
 	 * @return the result of executing this process
 	 * @throws ProcessFailureException
@@ -160,16 +160,19 @@ public class Process {
 			throw new ProcessFailureException(processRunner.getArgumentsMismatchMessage(args));
 		}
 		if (!areAllMacrosExpandable()) {
-			throw new ProcessFailureException(getProcessMessage(IStatus.ERROR, getFirstNonExpandableMacroMessage(args)));
+			throw new ProcessFailureException(
+					getProcessMessage(IStatus.ERROR, getFirstNonExpandableMacroMessage(args)));
 		}
 		resolve();
 		processRunner.process(template, args, id, monitor);
-		return new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, IStatus.OK, getProcessMessage(IStatus.OK, Messages.getString("Process.executedSuccessfully") + Arrays.asList(args)), null); //$NON-NLS-1$
+		return new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, IStatus.OK,
+				getProcessMessage(IStatus.OK, Messages.getString("Process.executedSuccessfully") + Arrays.asList(args)), //$NON-NLS-1$
+				null);
 	}
 
 	private void resolve() {
 		if (args != null) {
-			for (int i= 0; i < args.length; i++) {
+			for (int i = 0; i < args.length; i++) {
 				ProcessArgument arg = args[i];
 				if (!arg.isResolved()) {
 					arg.resolve();
@@ -184,7 +187,7 @@ public class Process {
 	public Set<String> getMacros() {
 		Set<String> set = null;
 		if (args != null) {
-			for (int i= 0; i < args.length; i++) {
+			for (int i = 0; i < args.length; i++) {
 				ProcessArgument arg = args[i];
 				Set<String> subSet = arg.getMacros();
 				if (subSet != null) {

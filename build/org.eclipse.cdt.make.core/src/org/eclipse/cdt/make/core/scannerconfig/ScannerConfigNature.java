@@ -91,7 +91,7 @@ public class ScannerConfigNature implements IProjectNature {
 	 * @see IProjectNature#getProject
 	 */
 	@Override
-	public IProject getProject()  {
+	public IProject getProject() {
 		return fProject;
 	}
 
@@ -99,7 +99,7 @@ public class ScannerConfigNature implements IProjectNature {
 	 * @see IProjectNature#setProject
 	 */
 	@Override
-	public void setProject(IProject project)  {
+	public void setProject(IProject project) {
 		fProject = project;
 	}
 
@@ -159,8 +159,7 @@ public class ScannerConfigNature implements IProjectNature {
 			newCommands = new ICommand[oldCommands.length + 1];
 			System.arraycopy(oldCommands, 0, newCommands, 0, oldCommands.length);
 			newCommands[oldCommands.length] = newCommand;
-		}
-		else {
+		} else {
 			for (int i = 0; i < oldCommands.length; i++) {
 				if (oldCommands[i] == oldCommand) {
 					oldCommands[i] = newCommand;
@@ -177,11 +176,11 @@ public class ScannerConfigNature implements IProjectNature {
 
 	public static void initializeDiscoveryOptions(IProject project) {
 		try {
-			IScannerConfigBuilderInfo2 scPrefInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
-					MakeCorePlugin.getDefault().getPluginPreferences(), false);
+			IScannerConfigBuilderInfo2 scPrefInfo = ScannerConfigProfileManager
+					.createScannerConfigBuildInfo2(MakeCorePlugin.getDefault().getPluginPreferences(), false);
 			String selectedProfile = scPrefInfo.getSelectedProfileId();
-			IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
-					project, selectedProfile);
+			IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project,
+					selectedProfile);
 
 			scProjInfo.setAutoDiscoveryEnabled(scPrefInfo.isAutoDiscoveryEnabled());
 			scProjInfo.setProblemReportingEnabled(scPrefInfo.isProblemReportingEnabled());
@@ -190,18 +189,19 @@ public class ScannerConfigNature implements IProjectNature {
 			scProjInfo.setBuildOutputFileActionEnabled(scPrefInfo.isBuildOutputFileActionEnabled());
 			scProjInfo.setBuildOutputFilePath(scPrefInfo.getBuildOutputFilePath());
 
-			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(selectedProfile);
+			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance()
+					.getSCProfileConfiguration(selectedProfile);
 			List<String> providerIdList = scPrefInfo.getProviderIdList();
 			for (Iterator<String> i = providerIdList.iterator(); i.hasNext();) {
 				String providerId = i.next();
 
-				scProjInfo.setProviderOutputParserEnabled(providerId, scPrefInfo.isProviderOutputParserEnabled(providerId));
-				if (profile.getScannerInfoProviderElement(providerId).getProviderKind().equals(
-						ScannerConfigProfile.ScannerInfoProvider.RUN)) {
+				scProjInfo.setProviderOutputParserEnabled(providerId,
+						scPrefInfo.isProviderOutputParserEnabled(providerId));
+				if (profile.getScannerInfoProviderElement(providerId).getProviderKind()
+						.equals(ScannerConfigProfile.ScannerInfoProvider.RUN)) {
 					scProjInfo.setProviderRunCommand(providerId, scPrefInfo.getProviderRunCommand(providerId));
 					scProjInfo.setProviderRunArguments(providerId, scPrefInfo.getProviderRunArguments(providerId));
-				}
-				else {
+				} else {
 					scProjInfo.setProviderOpenFilePath(providerId, scPrefInfo.getProviderOpenFilePath(providerId));
 				}
 			}
@@ -223,19 +223,19 @@ public class ScannerConfigNature implements IProjectNature {
 			if (!found) {
 				IPathEntry[] newRawPathEntries = new IPathEntry[rawPathEntries.length + 1];
 				System.arraycopy(rawPathEntries, 0, newRawPathEntries, 0, rawPathEntries.length);
-				newRawPathEntries[rawPathEntries.length] = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
+				newRawPathEntries[rawPathEntries.length] = CoreModel
+						.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
 				CoreModel.setRawPathEntries(cProject, newRawPathEntries, null);
 			}
-//			if (profile.getProfileScope().equals(ScannerConfigScope.PROJECT_SCOPE)) {
-//				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
-//						new DiscoveredPathContainer(project), null);
-//			}
-//			else {	// file scope
-//				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
-//						new PerFileDiscoveredPathContainer(project), null);
-//			}
-		}
-		catch (CoreException e) {
+			//			if (profile.getProfileScope().equals(ScannerConfigScope.PROJECT_SCOPE)) {
+			//				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
+			//						new DiscoveredPathContainer(project), null);
+			//			}
+			//			else {	// file scope
+			//				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
+			//						new PerFileDiscoveredPathContainer(project), null);
+			//			}
+		} catch (CoreException e) {
 			MakeCorePlugin.log(e);
 		}
 	}

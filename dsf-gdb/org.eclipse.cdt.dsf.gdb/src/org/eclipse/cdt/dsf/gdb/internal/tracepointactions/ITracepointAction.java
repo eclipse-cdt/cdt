@@ -15,7 +15,6 @@ package org.eclipse.cdt.dsf.gdb.internal.tracepointactions;
 
 import org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction;
 
-
 /**
  * Marker interface to differentiate between different breakpoint actions
  * @since 3.0

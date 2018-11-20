@@ -24,7 +24,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTImplicitName extends IASTName {
-	public static final IASTImplicitName[] EMPTY_NAME_ARRAY = {}; 
+	public static final IASTImplicitName[] EMPTY_NAME_ARRAY = {};
 
 	/**
 	 * {@inheritDoc}

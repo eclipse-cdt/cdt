@@ -29,75 +29,75 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class DocumentAnnotationProvider {
 
-    private VirtualDocument fDocument;
+	private VirtualDocument fDocument;
 
-    public DocumentAnnotationProvider( VirtualDocument document ) {
-        fDocument = document;
-    }
+	public DocumentAnnotationProvider(VirtualDocument document) {
+		fDocument = document;
+	}
 
-    public void dispose() {
-        fDocument = null;
-    }
+	public void dispose() {
+		fDocument = null;
+	}
 
-    public void update( Object parent, Object[] elements, IDocumentPresentation context ) {
-        IDocumentElementAnnotationProvider annotationProvider = getAnnotationAdapter( parent );
-        if ( annotationProvider != null ) {
-            Object root = getDocument().getContentProvider().getRoot();
-            Object base = getDocument().getContentProvider().getBase();
-            DocumentAnnotationUpdate[] updates = new DocumentAnnotationUpdate[elements.length];
-            for ( int i = 0; i < elements.length; ++i ) {
-                updates[i] = new DocumentAnnotationUpdate( this, context, root, base, elements[i], i );
-            }
-            annotationProvider.update( updates );
-        }
-    }
+	public void update(Object parent, Object[] elements, IDocumentPresentation context) {
+		IDocumentElementAnnotationProvider annotationProvider = getAnnotationAdapter(parent);
+		if (annotationProvider != null) {
+			Object root = getDocument().getContentProvider().getRoot();
+			Object base = getDocument().getContentProvider().getBase();
+			DocumentAnnotationUpdate[] updates = new DocumentAnnotationUpdate[elements.length];
+			for (int i = 0; i < elements.length; ++i) {
+				updates[i] = new DocumentAnnotationUpdate(this, context, root, base, elements[i], i);
+			}
+			annotationProvider.update(updates);
+		}
+	}
 
-    public void update( Object parent, Object element, int index, IDocumentPresentation context ) {
-        IDocumentElementAnnotationProvider annotationProvider = getAnnotationAdapter( element );
-        if ( annotationProvider != null ) {
-            Object root = getDocument().getContentProvider().getRoot();
-            Object base = getDocument().getContentProvider().getBase();
-            annotationProvider.update( new DocumentAnnotationUpdate[] { new DocumentAnnotationUpdate( this, context, root, base, element, index ) } );
-        }
-    }
+	public void update(Object parent, Object element, int index, IDocumentPresentation context) {
+		IDocumentElementAnnotationProvider annotationProvider = getAnnotationAdapter(element);
+		if (annotationProvider != null) {
+			Object root = getDocument().getContentProvider().getRoot();
+			Object base = getDocument().getContentProvider().getBase();
+			annotationProvider.update(new DocumentAnnotationUpdate[] {
+					new DocumentAnnotationUpdate(this, context, root, base, element, index) });
+		}
+	}
 
-    public void completed( DocumentAnnotationUpdate update ) {
-        if ( update.isCanceled() )
-            return;
-        
-        final int index = update.getIndex();
-        final Annotation[] annotations = update.getAnnotations();
-        UIJob uiJob = new UIJob( "Add annotations" ) { //$NON-NLS-1$
-            
-            /* (non-Javadoc)
-             * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-             */
-            @Override
-            public IStatus runInUIThread( IProgressMonitor monitor ) {
-                VirtualDocument document = getDocument();
-                if ( document != null ) {
-                    getDocument().updateAnnotations( index, annotations );
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        uiJob.setSystem( true );
-        uiJob.schedule();
-    }
+	public void completed(DocumentAnnotationUpdate update) {
+		if (update.isCanceled())
+			return;
 
-    protected IDocumentElementAnnotationProvider getAnnotationAdapter( Object element ) {
-        IDocumentElementAnnotationProvider adapter = null;
-        if ( element instanceof IDocumentElementAnnotationProvider ) {
-            adapter = (IDocumentElementAnnotationProvider)element;
-        }
-        else if ( element instanceof IAdaptable ) {
-            IAdaptable adaptable = (IAdaptable)element;
-            adapter = adaptable.getAdapter( IDocumentElementAnnotationProvider.class );
-        }
-        return adapter;
-    }
+		final int index = update.getIndex();
+		final Annotation[] annotations = update.getAnnotations();
+		UIJob uiJob = new UIJob("Add annotations") { //$NON-NLS-1$
 
-    protected VirtualDocument getDocument() {
-        return fDocument;
-    }
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				VirtualDocument document = getDocument();
+				if (document != null) {
+					getDocument().updateAnnotations(index, annotations);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		uiJob.setSystem(true);
+		uiJob.schedule();
+	}
+
+	protected IDocumentElementAnnotationProvider getAnnotationAdapter(Object element) {
+		IDocumentElementAnnotationProvider adapter = null;
+		if (element instanceof IDocumentElementAnnotationProvider) {
+			adapter = (IDocumentElementAnnotationProvider) element;
+		} else if (element instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) element;
+			adapter = adaptable.getAdapter(IDocumentElementAnnotationProvider.class);
+		}
+		return adapter;
+	}
+
+	protected VirtualDocument getDocument() {
+		return fDocument;
+	}
 }

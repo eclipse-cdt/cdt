@@ -24,46 +24,47 @@ import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer
 
 public class CExternalSettingSerializer {
 	static final String ELEMENT_SETTING_INFO = "externalSetting"; //$NON-NLS-1$
-//	private static final String ATTRIBUTE_ID = "id";
+	//	private static final String ATTRIBUTE_ID = "id";
 	private static final String ATTRIBUTE_EXTENSIONS = "extensions"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CONTENT_TYPE_IDS = "contentTypes"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_LANGUAGE_IDS = "languages"; //$NON-NLS-1$
-//	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+	//	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private static final String SEPARATOR = ":"; //$NON-NLS-1$
 
-	public static CExternalSetting load(ICStorageElement element){
+	public static CExternalSetting load(ICStorageElement element) {
 		String langIds[] = null;
 		String cTypeIds[] = null;
 		String exts[] = null;
 		String tmp = element.getAttribute(ATTRIBUTE_LANGUAGE_IDS);
-		if(tmp != null)
+		if (tmp != null)
 			langIds = CDataUtil.stringToArray(tmp, SEPARATOR);
-		
+
 		tmp = element.getAttribute(ATTRIBUTE_CONTENT_TYPE_IDS);
-		if(tmp != null )
+		if (tmp != null)
 			cTypeIds = CDataUtil.stringToArray(tmp, SEPARATOR);
-		
+
 		tmp = element.getAttribute(ATTRIBUTE_EXTENSIONS);
-		if(tmp != null)
+		if (tmp != null)
 			exts = CDataUtil.stringToArray(tmp, SEPARATOR);
 
-		List<ICSettingEntry> entriesList = LanguageSettingEntriesSerializer.loadEntriesList(element, KindBasedStore.ORED_LANG_ENTRY_KINDS);
+		List<ICSettingEntry> entriesList = LanguageSettingEntriesSerializer.loadEntriesList(element,
+				KindBasedStore.ORED_LANG_ENTRY_KINDS);
 		ICSettingEntry[] entries = entriesList.toArray(new ICSettingEntry[entriesList.size()]);
 		return new CExternalSetting(langIds, cTypeIds, exts, entries);
 	}
-	
-	public static void store(CExternalSetting setting, ICStorageElement el){
+
+	public static void store(CExternalSetting setting, ICStorageElement el) {
 		String[] tmp;
-		tmp = setting.getCompatibleLanguageIds(); 
-		if(tmp != null)
+		tmp = setting.getCompatibleLanguageIds();
+		if (tmp != null)
 			el.setAttribute(ATTRIBUTE_LANGUAGE_IDS, CDataUtil.arrayToString(tmp, SEPARATOR));
-		
+
 		tmp = setting.getCompatibleContentTypeIds();
-		if(tmp != null)
+		if (tmp != null)
 			el.setAttribute(ATTRIBUTE_CONTENT_TYPE_IDS, CDataUtil.arrayToString(tmp, SEPARATOR));
 
 		tmp = setting.getCompatibleExtensions();
-		if(tmp != null)
+		if (tmp != null)
 			el.setAttribute(ATTRIBUTE_EXTENSIONS, CDataUtil.arrayToString(tmp, SEPARATOR));
 
 		LanguageSettingEntriesSerializer.serializeEntries(setting.getEntries(), el);

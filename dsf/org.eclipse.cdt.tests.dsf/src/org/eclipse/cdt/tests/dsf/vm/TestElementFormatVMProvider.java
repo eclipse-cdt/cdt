@@ -34,14 +34,13 @@ class TestElementFormatVMProvider extends TestModelCachingVMProvider implements 
 	public int elementFormatApplyDepth = 1;
 	String myPersistId = "org.eclipse.cdt.tests.dsf.vm.testElementFormatVMProvider";
 
-	public TestElementFormatVMProvider(AbstractVMAdapter adapter,
-			IPresentationContext context, DsfSession session) {
+	public TestElementFormatVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
 		super(adapter, context, session);
 	}
 
 	@Override
-	public void getActiveFormat(IPresentationContext context, IVMNode node,
-			Object viewerInput, TreePath elementPath, DataRequestMonitor<String> rm) {
+	public void getActiveFormat(IPresentationContext context, IVMNode node, Object viewerInput, TreePath elementPath,
+			DataRequestMonitor<String> rm) {
 		Object p = context.getProperty(myPersistId);
 		if (p instanceof TestPersistable == false) {
 			rm.setData(null);
@@ -75,8 +74,8 @@ class TestElementFormatVMProvider extends TestModelCachingVMProvider implements 
 	}
 
 	@Override
-	public void setActiveFormat(IPresentationContext context, IVMNode[] node,
-			Object viewerInput, TreePath[] elementPath, String format) {
+	public void setActiveFormat(IPresentationContext context, IVMNode[] node, Object viewerInput,
+			TreePath[] elementPath, String format) {
 		Object p = context.getProperty(myPersistId);
 		TestPersistable persistable = null;
 		if (p instanceof TestPersistable) {
@@ -95,7 +94,7 @@ class TestElementFormatVMProvider extends TestModelCachingVMProvider implements 
 			}
 		}
 		if (changed.size() > 0) {
-//			this.refresh();
+			//			this.refresh();
 			handleEvent(new ElementFormatEvent(changed, elementFormatApplyDepth));
 		}
 	}

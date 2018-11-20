@@ -18,7 +18,5 @@ package org.eclipse.cdt.core.parser.ast;
  * Use compareTo() to order access restriction.
  */
 public enum ASTAccessVisibility {
-	PUBLIC,  
-	PROTECTED,  
-	PRIVATE,
+	PUBLIC, PROTECTED, PRIVATE,
 }

@@ -40,7 +40,7 @@ import org.eclipse.ui.IViewPart;
  * the view has no CDT content.
  */
 public abstract class ViewFilterAction extends ViewerFilter implements IViewActionDelegate, IActionDelegate2 {
-	
+
 	private IViewPart fView;
 	private IAction fAction;
 
@@ -118,8 +118,8 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 * 
 	 * For the Debug view case, we check debugTargets in the base method to
 	 * be backwards compatible as this was the criteria from the start.
- 	 * A specific action can specialize this method but should call super.selectionChanged
- 	 * to maintain backwards compatibility.
+	 * A specific action can specialize this method but should call super.selectionChanged
+	 * to maintain backwards compatibility.
 	 * 
 	 *  @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
@@ -128,7 +128,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enable = false;
 		IDebugView view = getView().getAdapter(IDebugView.class);
-		
+
 		// Debug view
 		if (view instanceof LaunchView) {
 			ILaunchManager launchmgr = DebugPlugin.getDefault().getLaunchManager();
@@ -161,7 +161,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	protected IPreferenceStore getPreferenceStore() {
 		return CDebugUIPlugin.getDefault().getPreferenceStore();
 	}
-	
+
 	/**
 	 * Returns the value of this filters preference (on/off) for the given
 	 * view.
@@ -173,29 +173,29 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		String key = part.getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
 		return getPreferenceStore().getBoolean(key);
 	}
-	
+
 	/**
 	 * Returns the key for this action's preference
 	 * 
 	 * @return String
 	 */
-	protected abstract String getPreferenceKey(); 
+	protected abstract String getPreferenceKey();
 
 	protected IViewPart getView() {
 		return fView;
 	}
-	
+
 	protected StructuredViewer getStructuredViewer() {
 		IDebugView view = getView().getAdapter(IDebugView.class);
 		if (view != null) {
 			Viewer viewer = view.getViewer();
 			if (viewer instanceof StructuredViewer) {
-				return (StructuredViewer)viewer;
+				return (StructuredViewer) viewer;
 			}
-		}		
+		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether this action is selected/checked.
 	 * 
@@ -204,7 +204,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	protected boolean getValue() {
 		return fAction.isChecked();
 	}
-	
+
 	/**
 	 * Sets whether the action should be enabled or not.
 	 * 

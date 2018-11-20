@@ -28,14 +28,14 @@ import org.eclipse.core.runtime.IPath;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBuildDescription {
-	
+
 	/**
 	 * Returns the main input step
 	 * 
 	 * @return IBuildStep
 	 */
 	IBuildStep getInputStep();
-	
+
 	/**
 	 * Returns the main output step
 	 * 
@@ -63,21 +63,21 @@ public interface IBuildDescription {
 	 * @return IBuildResource[]
 	 */
 	IBuildResource[] getResources();
-	
+
 	/**
 	 * Returns all build steps used in the build
 	 * 
 	 * @return IBuildResource[]
 	 */
 	IBuildStep[] getSteps();
-	
+
 	/**
 	 * Returns the build configuration this representation was created for
 	 * 
 	 * @return IProject
 	 */
 	IConfiguration getConfiguration();
-	
+
 	/**
 	 * Returns the default build directory location
 	 * @return IPath

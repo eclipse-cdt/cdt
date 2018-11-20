@@ -22,10 +22,9 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.UserAndDiscoveredEntryDataSerializer;
 import org.eclipse.cdt.core.settings.model.util.UserAndDiscoveredEntryLanguageData;
 
-public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends
-		CDefaultConfigurationDataProvider {
+public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends CDefaultConfigurationDataProvider {
 	private static DataFactory fDataFactory;
-	
+
 	protected class LanguageData extends UserAndDiscoveredEntryLanguageData {
 
 		public LanguageData() {
@@ -36,11 +35,10 @@ public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends
 			super(id, base);
 		}
 
-		public LanguageData(String id, String languageId, String[] ids,
-				boolean isContentTypes) {
+		public LanguageData(String id, String languageId, String[] ids, boolean isContentTypes) {
 			super(id, languageId, ids, isContentTypes);
 		}
-		
+
 		public LanguageData(String id, String name, String languageId, int kinds, String[] ids,
 				boolean isContentTypes) {
 			super(id, languageId, ids, isContentTypes);
@@ -53,27 +51,26 @@ public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends
 			return UserAndDiscoveredEntryConfigurationDataProvider.this.getAllDiscoveredEntries(this, kind);
 		}
 	}
-	
+
 	protected class DataFactory extends CDataFactory {
 		@Override
-		public CLanguageData createLanguageData(CConfigurationData cfg,
-				CResourceData rcBase, CLanguageData base, String id, boolean clone) {
-			if(id == null)
+		public CLanguageData createLanguageData(CConfigurationData cfg, CResourceData rcBase, CLanguageData base,
+				String id, boolean clone) {
+			if (id == null)
 				id = clone ? base.getId() : CDataUtil.genId(rcBase.getId());
 			return new LanguageData(id, base);
 		}
 
 		@Override
-		public CLanguageData createLanguageData(CConfigurationData cfg,
-				CResourceData rcBase, String id, String name, String languageId,
-				int supportedKinds, String[] rcTypes, boolean isContentTypes) {
-			if(id == null)
+		public CLanguageData createLanguageData(CConfigurationData cfg, CResourceData rcBase, String id, String name,
+				String languageId, int supportedKinds, String[] rcTypes, boolean isContentTypes) {
+			if (id == null)
 				id = CDataUtil.genId(rcBase.getId());
 			LanguageData lData = new LanguageData(id, name, languageId, supportedKinds, rcTypes, isContentTypes);
 			return lData;
-		}		
+		}
 	}
-	
+
 	@Override
 	protected CDataSerializer getDataSerializer() {
 		return UserAndDiscoveredEntryDataSerializer.getDefault();
@@ -81,12 +78,12 @@ public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends
 
 	@Override
 	protected CDataFactory getDataFactory() {
-		if(fDataFactory == null){
+		if (fDataFactory == null) {
 			fDataFactory = new DataFactory();
 		}
 		return fDataFactory;
 	}
-	
+
 	protected abstract ICLanguageSettingEntry[] getAllDiscoveredEntries(LanguageData data, int kind);
 
 }

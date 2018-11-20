@@ -25,22 +25,22 @@ import org.eclipse.core.runtime.CoreException;
 public class DBProperties {
 	static final int PROP_INDEX = 0;
 	static final int RECORD_SIZE = 4;
-	
+
 	protected BTree index;
 	protected Database db;
 	protected long record;
-	
+
 	/**
 	 * Allocate storage for a new DBProperties record in the specified database
 	 * @param db
 	 * @throws CoreException
 	 */
 	public DBProperties(Database db) throws CoreException {
-		this.record= db.malloc(RECORD_SIZE);
-		this.index= new BTree(db, record + PROP_INDEX, DBProperty.getComparator(db));
-		this.db= db;
+		this.record = db.malloc(RECORD_SIZE);
+		this.index = new BTree(db, record + PROP_INDEX, DBProperty.getComparator(db));
+		this.db = db;
 	}
-	
+
 	/**
 	 * Creates an object for accessing an existing DBProperties record at the specified location
 	 * of the specified database.
@@ -49,11 +49,11 @@ public class DBProperties {
 	 * @throws CoreException
 	 */
 	public DBProperties(Database db, long record) throws CoreException {
-		this.record= record;
-		this.index= new BTree(db, record + PROP_INDEX, DBProperty.getComparator(db));
-		this.db= db;
+		this.record = record;
+		this.index = new BTree(db, record + PROP_INDEX, DBProperty.getComparator(db));
+		this.db = db;
 	}
-	
+
 	/**
 	 * Reads the named property from this properties storage.
 	 * @param key a case-sensitive identifier for a property, or null
@@ -63,14 +63,14 @@ public class DBProperties {
 	 */
 	public String getProperty(String key) throws CoreException {
 		if (key != null) {
-			DBProperty existing= DBProperty.search(db, index, key);
+			DBProperty existing = DBProperty.search(db, index, key);
 			if (existing != null) {
 				return existing.getValue().getString();
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Reads the named property from this properties storage, returning the default value if there
 	 * is no such property.
@@ -81,7 +81,7 @@ public class DBProperties {
 	 * @throws CoreException
 	 */
 	public String getProperty(String key, String defaultValue) throws CoreException {
-		String val= getProperty(key);
+		String val = getProperty(key);
 		return (val == null) ? defaultValue : val;
 	}
 
@@ -104,7 +104,7 @@ public class DBProperties {
 	 */
 	public void setProperty(String key, String value) throws CoreException {
 		removeProperty(key);
-		DBProperty newProperty= new DBProperty(db, key, value);
+		DBProperty newProperty = new DBProperty(db, key, value);
 		index.insert(newProperty.getRecord());
 	}
 
@@ -117,7 +117,7 @@ public class DBProperties {
 	 */
 	public boolean removeProperty(String key) throws CoreException {
 		if (key != null) {
-			DBProperty existing= DBProperty.search(db, index, key);
+			DBProperty existing = DBProperty.search(db, index, key);
 			if (existing != null) {
 				index.delete(existing.getRecord());
 				existing.delete();
@@ -126,18 +126,19 @@ public class DBProperties {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Deletes all properties, does not delete the record associated with the object itself
 	 * - that is it can be re-populated.
 	 * @throws CoreException
 	 */
 	public void clear() throws CoreException {
-		index.accept(new IBTreeVisitor(){
+		index.accept(new IBTreeVisitor() {
 			@Override
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
+
 			@Override
 			public boolean visit(long record) throws CoreException {
 				new DBProperty(db, record).delete();
@@ -145,7 +146,7 @@ public class DBProperties {
 			}
 		});
 	}
-	
+
 	/**
 	 * Deletes all properties stored in this object and the record associated with this object
 	 * itself.
@@ -161,20 +162,20 @@ public class DBProperties {
 	public long getRecord() {
 		return record;
 	}
-	
+
 	private static class DBProperty {
 		static final int KEY = 0;
 		static final int VALUE = 4;
 		@SuppressWarnings("hiding")
 		static final int RECORD_SIZE = 8;
-		
+
 		Database db;
 		long record;
-		
+
 		public long getRecord() {
 			return record;
 		}
-		
+
 		/**
 		 * Allocates and initializes a record in the specified database for a DBProperty record
 		 * @param db
@@ -185,14 +186,14 @@ public class DBProperties {
 		DBProperty(Database db, String key, String value) throws CoreException {
 			assert key != null;
 			assert value != null;
-			IString dbkey= db.newString(key);
-			IString dbvalue= db.newString(value);
-			this.record= db.malloc(RECORD_SIZE);
+			IString dbkey = db.newString(key);
+			IString dbvalue = db.newString(value);
+			this.record = db.malloc(RECORD_SIZE);
 			db.putRecPtr(record + KEY, dbkey.getRecord());
 			db.putRecPtr(record + VALUE, dbvalue.getRecord());
-			this.db= db;
+			this.db = db;
 		}
-		
+
 		/**
 		 * Returns an object for accessing an existing DBProperty record at the specified location
 		 * in the specified database.
@@ -200,32 +201,32 @@ public class DBProperties {
 		 * @param record
 		 */
 		DBProperty(Database db, long record) {
-			this.record= record;
-			this.db= db;
+			this.record = record;
+			this.db = db;
 		}
-		
+
 		public IString getKey() throws CoreException {
 			return db.getString(db.getRecPtr(record + KEY));
 		}
-		
+
 		public IString getValue() throws CoreException {
 			return db.getString(db.getRecPtr(record + VALUE));
 		}
-		
+
 		public static IBTreeComparator getComparator(final Database db) {
 			return new IBTreeComparator() {
 				@Override
 				public int compare(long record1, long record2) throws CoreException {
-					IString left= db.getString(db.getRecPtr(record1 + KEY));
-					IString right= db.getString(db.getRecPtr(record2 + KEY));
+					IString left = db.getString(db.getRecPtr(record1 + KEY));
+					IString right = db.getString(db.getRecPtr(record2 + KEY));
 					return left.compare(right, true);
 				}
 			};
 		}
-		
+
 		public static DBProperty search(final Database db, final BTree index, final String key) throws CoreException {
-			final DBProperty[] result= new DBProperty[1];
-			index.accept(new IBTreeVisitor(){
+			final DBProperty[] result = new DBProperty[1];
+			index.accept(new IBTreeVisitor() {
 				@Override
 				public int compare(long record) throws CoreException {
 					return db.getString(db.getRecPtr(record + KEY)).compare(key, true);
@@ -239,10 +240,10 @@ public class DBProperties {
 			});
 			return result[0];
 		}
-		
+
 		public static Set<String> getKeySet(final Database db, final BTree index) throws CoreException {
-			final Set<String> result= new HashSet<String>();
-			index.accept(new IBTreeVisitor(){
+			final Set<String> result = new HashSet<String>();
+			index.accept(new IBTreeVisitor() {
 				@Override
 				public int compare(long record) throws CoreException {
 					return 0;
@@ -256,7 +257,7 @@ public class DBProperties {
 			});
 			return result;
 		}
-		
+
 		public void delete() throws CoreException {
 			db.getString(db.getRecPtr(record + KEY)).delete();
 			db.getString(db.getRecPtr(record + VALUE)).delete();

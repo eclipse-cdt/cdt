@@ -31,12 +31,13 @@ public class DisassemblyPosition extends AddressRangePosition {
 	 * @param functionOffset
 	 * @param opcodes
 	 */
-	public DisassemblyPosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength, String functionOffset, BigInteger opcodes) {
+	public DisassemblyPosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength,
+			String functionOffset, BigInteger opcodes) {
 		super(offset, length, addressOffset, addressLength);
 		fOpcodes = opcodes;
 		fFunction = functionOffset.toCharArray();
-	}	
-	
+	}
+
 	/**
 	 * @return source file
 	 */

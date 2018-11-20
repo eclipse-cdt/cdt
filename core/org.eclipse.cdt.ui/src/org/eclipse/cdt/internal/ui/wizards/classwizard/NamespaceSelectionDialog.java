@@ -18,15 +18,15 @@ import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 import org.eclipse.swt.widgets.Shell;
 
 public class NamespaceSelectionDialog extends TypeSelectionDialog {
-    private static final String DIALOG_SETTINGS = NamespaceSelectionDialog.class.getName();
-    private static final int[] VISIBLE_TYPES = { ICElement.C_NAMESPACE };
-    
-    public NamespaceSelectionDialog(Shell parent) {
-        super(parent);
-        setTitle(NewClassWizardMessages.NamespaceSelectionDialog_title); 
-        setMessage(NewClassWizardMessages.NamespaceSelectionDialog_message); 
-        setDialogSettings(DIALOG_SETTINGS);
-        setVisibleTypes(VISIBLE_TYPES);
-        setFilter("*", true); //$NON-NLS-1$
-    }
+	private static final String DIALOG_SETTINGS = NamespaceSelectionDialog.class.getName();
+	private static final int[] VISIBLE_TYPES = { ICElement.C_NAMESPACE };
+
+	public NamespaceSelectionDialog(Shell parent) {
+		super(parent);
+		setTitle(NewClassWizardMessages.NamespaceSelectionDialog_title);
+		setMessage(NewClassWizardMessages.NamespaceSelectionDialog_message);
+		setDialogSettings(DIALOG_SETTINGS);
+		setVisibleTypes(VISIBLE_TYPES);
+		setFilter("*", true); //$NON-NLS-1$
+	}
 }

@@ -56,29 +56,30 @@ public class FilesOnReindexTests extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
-			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 	}
-	
+
 	public void testFilesOnReindex() throws CoreException, InterruptedException {
 		IFile file = project.getProject().getFile("simple.cpp");
 		performAssertions(file);
 		pdom.releaseReadLock();
 		CCoreInternals.getPDOMManager().reindex(project);
-		
+
 		// wait until the indexer is done
-        waitForIndexer(project);
+		waitForIndexer(project);
 		pdom.acquireReadLock();
 		performAssertions(file);
 	}
-	
+
 	void performAssertions(IFile file) throws CoreException {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(project);
 		assertTrue(index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file)).length != 0);
-		
+
 		IBinding[] bs = index.findBindings(Pattern.compile("C"), true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bs.length);
-		
+
 		IIndexBinding binding = (IIndexBinding) bs[0];
 		IIndexFile file2 = index.findDefinitions(binding)[0].getFile();
 		assertEquals(file.getLocationURI(), file2.getLocation().getURI());

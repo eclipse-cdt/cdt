@@ -40,17 +40,17 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 		implements IPDOMMemberOwner, ICPPTemplateNonTypeParameter, IPDOMCPPTemplateParameter {
-	private static final int TYPE_OFFSET= PDOMCPPBinding.RECORD_SIZE;
-	private static final int PARAMETERID= TYPE_OFFSET + Database.TYPE_SIZE;
-	private static final int DEFAULTVAL= PARAMETERID + 4;
+	private static final int TYPE_OFFSET = PDOMCPPBinding.RECORD_SIZE;
+	private static final int PARAMETERID = TYPE_OFFSET + Database.TYPE_SIZE;
+	private static final int DEFAULTVAL = PARAMETERID + 4;
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = DEFAULTVAL + Database.VALUE_SIZE;
 
-	private int fCachedParamID= -1;
+	private int fCachedParamID = -1;
 	private volatile IType fType;
 
-	public PDOMCPPTemplateNonTypeParameter(PDOMLinkage linkage, PDOMNode parent,
-			ICPPTemplateNonTypeParameter param) throws CoreException {
+	public PDOMCPPTemplateNonTypeParameter(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateNonTypeParameter param)
+			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
 		final Database db = getDB();
 		db.putInt(record + PARAMETERID, param.getParameterID());
@@ -69,12 +69,12 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_TEMPLATE_NON_TYPE_PARAMETER;
 	}
-	
+
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
-			IValue val= getLinkage().loadValue(record + DEFAULTVAL);
-			if (val == null) 
+			IValue val = getLinkage().loadValue(record + DEFAULTVAL);
+			if (val == null)
 				return null;
 			return new CPPTemplateNonTypeArgument(val, getType());
 		} catch (CoreException e) {
@@ -82,15 +82,15 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 			return null;
 		}
 	}
-	
+
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPTemplateNonTypeParameter) {
-			ICPPTemplateNonTypeParameter ntp= (ICPPTemplateNonTypeParameter) newBinding;
+			ICPPTemplateNonTypeParameter ntp = (ICPPTemplateNonTypeParameter) newBinding;
 			updateName(newBinding.getNameCharArray());
 			final Database db = getDB();
 			try {
-				IType newType= ntp.getType();
+				IType newType = ntp.getType();
 				setType(linkage, newType);
 				setDefaultValue(db, ntp);
 			} catch (DOMException e) {
@@ -110,13 +110,13 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 	public short getParameterPosition() {
 		return (short) getParameterID();
 	}
-	
+
 	@Override
 	public short getTemplateNestingLevel() {
 		readParamID();
 		return (short) (getParameterID() >> 16);
 	}
-	
+
 	@Override
 	public boolean isParameterPack() {
 		return getType() instanceof ICPPParameterPackType;
@@ -127,19 +127,19 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 		readParamID();
 		return fCachedParamID;
 	}
-	
+
 	private void readParamID() {
 		if (fCachedParamID == -1) {
 			try {
 				final Database db = getDB();
-				fCachedParamID= db.getInt(record + PARAMETERID);
+				fCachedParamID = db.getInt(record + PARAMETERID);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fCachedParamID= Integer.MAX_VALUE;
+				fCachedParamID = Integer.MAX_VALUE;
 			}
 		}
 	}
-	
+
 	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
 		linkage.storeType(record + TYPE_OFFSET, newType);
 	}
@@ -148,11 +148,11 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 	public void configure(ICPPTemplateParameter param) {
 		try {
 			if (param instanceof ICPPTemplateNonTypeParameter) {
-				ICPPTemplateNonTypeParameter nonTypeParm= (ICPPTemplateNonTypeParameter) param;
+				ICPPTemplateNonTypeParameter nonTypeParm = (ICPPTemplateNonTypeParameter) param;
 				setType(getLinkage(), nonTypeParm.getType());
-				final Database db= getDB();
+				final Database db = getDB();
 				setDefaultValue(db, nonTypeParm);
-			} 
+			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		} catch (DOMException e) {
@@ -161,9 +161,9 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 	}
 
 	private void setDefaultValue(Database db, ICPPTemplateNonTypeParameter nonTypeParm) throws CoreException {
-		ICPPTemplateArgument val= nonTypeParm.getDefaultValue();
+		ICPPTemplateArgument val = nonTypeParm.getDefaultValue();
 		if (val != null) {
-			IValue sval= val.getNonTypeValue();
+			IValue sval = val.getNonTypeValue();
 			if (sval != null) {
 				getLinkage().storeValue(record + DEFAULTVAL, sval);
 			}
@@ -174,7 +174,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 	public IType getType() {
 		if (fType == null) {
 			try {
-				fType= getLinkage().loadType(record + TYPE_OFFSET);
+				fType = getLinkage().loadType(record + TYPE_OFFSET);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
@@ -206,6 +206,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 	public boolean isStatic() {
 		return false;
 	}
+
 	@Override
 	public boolean isExternC() {
 		return false;
@@ -216,14 +217,14 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 		return false;
 	}
 
-    @Override
+	@Override
 	public boolean isConstexpr() {
-        return false;
-    }
-	
+		return false;
+	}
+
 	@Override
 	public Object clone() {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
 
 	/**

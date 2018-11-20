@@ -34,12 +34,11 @@ import com.ibm.icu.text.MessageFormat;
  * @since 4.0
  */
 public class InferiorRuntimeProcess extends RuntimeProcess {
-	
-	public InferiorRuntimeProcess(ILaunch launch, Process process, String name,
-			Map<String, String> attributes) {
+
+	public InferiorRuntimeProcess(ILaunch launch, Process process, String name, Map<String, String> attributes) {
 		super(launch, process, name, attributes);
 	}
-	
+
 	@Override
 	protected void terminated() {
 		// We must set the console label before calling super.terminated()
@@ -47,10 +46,10 @@ public class InferiorRuntimeProcess extends RuntimeProcess {
 		// the console, and we find ourselves in a race condition
 		// where we may miss setting the label here (bug 463977)
 		setConsoleTerminatedLabel();
-		
+
 		super.terminated();
 	}
-	
+
 	private void setConsoleTerminatedLabel() {
 		if (getAttribute(IGdbDebugConstants.INFERIOR_EXITED_ATTR) != null) {
 			// Add the exit code to the title of the console if the inferior properly exited.

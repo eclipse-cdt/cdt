@@ -34,21 +34,17 @@ import org.eclipse.swt.graphics.Image;
  * @since 2.4
  * */
 public class ContentLabelProviderWrapper<U extends ITableLabelProvider & IStructuredContentProvider>
-implements ITableLabelProvider, IStructuredContentProvider
-{
+		implements ITableLabelProvider, IStructuredContentProvider {
 
-	public ContentLabelProviderWrapper(U realProvider)
-	{
+	public ContentLabelProviderWrapper(U realProvider) {
 		this.realProvider = realProvider;
 	}
 
-	public void setData(U realProvider)
-	{
+	public void setData(U realProvider) {
 		this.realProvider = realProvider;
 	}
 
-	public U getData()
-	{
+	public U getData() {
 		return realProvider;
 	}
 

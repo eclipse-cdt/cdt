@@ -38,7 +38,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 
 public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
-	
+
 	private Combo fConfiguration;
 	private ICConfigurationDescription[] fConfigurations;
 	private String[] fContentTypesIDs;
@@ -47,13 +47,13 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 	public ProjectContentTypeMappingDialog(Shell parentShell, ICConfigurationDescription[] configurations) {
 		super(parentShell);
 		fConfigurations = configurations;
-		
+
 		fContentTypesIDs = LanguageManager.getInstance().getRegisteredContentTypeIds();
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 
 		for (int i = 0; i < fContentTypesIDs.length; i++) {
 			String name = contentTypeManager.getContentType(fContentTypesIDs[i]).getName();
-			
+
 			// keep track of what ID this name corresponds to so that when
 			// we setup the mapping
 			// later based upon user selection, we'll know what ID to use
@@ -89,11 +89,11 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
 					return;
 				}
-				
+
 				// Shift index by one because of "All configurations" entry. 
 				int configurationIndex = index - 1;
 				ICConfigurationDescription configuration = fConfigurations[configurationIndex];
-				
+
 				fSelectedConfigurationName = configuration.getName();
 				fSelectedConfigurationID = configuration.getId();
 				configureContentTypes(fContentType, configuration);
@@ -102,13 +102,13 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 			}
 		});
 		fConfiguration.select(0);
-		
+
 		Label contentTypeLabel = new Label(area, SWT.TRAIL);
 		contentTypeLabel.setText(PreferencesMessages.ContentTypeMappingsDialog_contentType);
 
 		fContentType = new Combo(area, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fContentType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
+
 		fContentType.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
@@ -136,16 +136,16 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 
 		return area;
 	}
-	
+
 	private void configureContentTypes(Combo combo, ICConfigurationDescription configuration) {
 		combo.removeAll();
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		List<String> names = new LinkedList<String>();
-		
+
 		for (int i = 0; i < fContentTypesIDs.length; i++) {
 			String contentTypeId = fContentTypesIDs[i];
 			String name = contentTypeManager.getContentType(contentTypeId).getName();
-			
+
 			if (configuration != null) {
 				String key = ProjectLanguageMappingWidget.createFilterKey(configuration.getId(), contentTypeId);
 				if (!fFilteredContentTypes.contains(key)) {
@@ -155,16 +155,17 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 				names.add(name);
 			}
 		}
-		
+
 		Collections.sort(names);
-		for(String name : names) {
+		for (String name : names) {
 			combo.add(name);
 		}
 	}
 
 	@Override
 	protected boolean isValidSelection() {
-		return fContentType.getSelectionIndex() != -1 && fLanguage.getSelectionIndex() != -1 && fConfiguration.getSelectionIndex() != -1;
+		return fContentType.getSelectionIndex() != -1 && fLanguage.getSelectionIndex() != -1
+				&& fConfiguration.getSelectionIndex() != -1;
 	}
 
 	public void setContentTypeFilter(Set<String> contentTypeFilter) {

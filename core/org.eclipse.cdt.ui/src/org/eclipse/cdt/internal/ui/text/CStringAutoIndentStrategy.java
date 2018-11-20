@@ -77,36 +77,36 @@ public class CStringAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
 			}
 
 			StringBuilder tokenBuffer = new StringBuilder();
-			for (int i = 0; i < token.length(); i++){
+			for (int i = 0; i < token.length(); i++) {
 				char c = token.charAt(i);
 				switch (c) {
-					case '\r' :
-						tokenBuffer.append("\\r"); //$NON-NLS-1$
-						break;
-					case '\n' :
-						tokenBuffer.append("\\n"); //$NON-NLS-1$
-						break;
-					case '\b' :
-						tokenBuffer.append("\\b"); //$NON-NLS-1$
-						break;
-					case '\t' :
-						// keep tabs verbatim
-						tokenBuffer.append("\t"); //$NON-NLS-1$
-						break;
-					case '\f' :
-						tokenBuffer.append("\\f"); //$NON-NLS-1$
-						break;
-					case '\"' :
-						tokenBuffer.append("\\\""); //$NON-NLS-1$
-						break;
-					case '\'' :
-						tokenBuffer.append("\\'"); //$NON-NLS-1$
-						break;
-					case '\\' :
-						tokenBuffer.append("\\\\"); //$NON-NLS-1$
-						break;
-					default :
-						tokenBuffer.append(c);
+				case '\r':
+					tokenBuffer.append("\\r"); //$NON-NLS-1$
+					break;
+				case '\n':
+					tokenBuffer.append("\\n"); //$NON-NLS-1$
+					break;
+				case '\b':
+					tokenBuffer.append("\\b"); //$NON-NLS-1$
+					break;
+				case '\t':
+					// keep tabs verbatim
+					tokenBuffer.append("\t"); //$NON-NLS-1$
+					break;
+				case '\f':
+					tokenBuffer.append("\\f"); //$NON-NLS-1$
+					break;
+				case '\"':
+					tokenBuffer.append("\\\""); //$NON-NLS-1$
+					break;
+				case '\'':
+					tokenBuffer.append("\\'"); //$NON-NLS-1$
+					break;
+				case '\\':
+					tokenBuffer.append("\\\\"); //$NON-NLS-1$
+					break;
+				default:
+					tokenBuffer.append(c);
 				}
 			}
 			buffer.append(tokenBuffer);
@@ -126,7 +126,7 @@ public class CStringAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
 	}
 
 	private boolean isLineDelimiter(IDocument document, String text) {
-		String[] delimiters= document.getLegalLineDelimiters();
+		String[] delimiters = document.getLegalLineDelimiters();
 		if (delimiters != null)
 			return TextUtilities.equals(delimiters, text) > -1;
 		return false;
@@ -137,39 +137,39 @@ public class CStringAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
 	}
 
 	private void indentStringAfterNewLine(IDocument document, DocumentCommand command) throws BadLocationException {
-		ITypedRegion partition= TextUtilities.getPartition(document, fPartitioning, command.offset, true);
-		int offset= partition.getOffset();
-		int length= partition.getLength();
+		ITypedRegion partition = TextUtilities.getPartition(document, fPartitioning, command.offset, true);
+		int offset = partition.getOffset();
+		int length = partition.getLength();
 
 		if (command.offset == offset + length && document.getChar(offset + length - 1) == '\"')
 			return;
 
-		if (offset > 0 && document.getChar(offset - 1) == 'R')  // raw string
+		if (offset > 0 && document.getChar(offset - 1) == 'R') // raw string
 			return;
-		
+
 		CHeuristicScanner scanner = new CHeuristicScanner(document);
 		CIndenter indenter = new CIndenter(document, scanner, fProject);
 		StringBuilder indentation = indenter.computeContinuationLineIndentation(offset);
 		if (indentation == null)
 			indentation = new StringBuilder();
 
-		String delimiter= TextUtilities.getDefaultLineDelimiter(document);
-		IPreferenceStore preferenceStore= CUIPlugin.getDefault().getPreferenceStore();
+		String delimiter = TextUtilities.getDefaultLineDelimiter(document);
+		IPreferenceStore preferenceStore = CUIPlugin.getDefault().getPreferenceStore();
 		if (isLineDelimiter(document, command.text))
-			command.text= "\"" + command.text + indentation + "\"";  //$NON-NLS-1$//$NON-NLS-2$
+			command.text = "\"" + command.text + indentation + "\""; //$NON-NLS-1$//$NON-NLS-2$
 		else if (command.text.length() > 1 && preferenceStore.getBoolean(PreferenceConstants.EDITOR_ESCAPE_STRINGS))
-			command.text= getModifiedText(command.text, indentation, delimiter);
+			command.text = getModifiedText(command.text, indentation, delimiter);
 	}
 
 	private boolean isSmartMode() {
-		IWorkbenchPage page= CUIPlugin.getActivePage();
-		if (page != null)  {
-			IEditorPart part= page.getActiveEditor();
+		IWorkbenchPage page = CUIPlugin.getActivePage();
+		if (page != null) {
+			IEditorPart part = page.getActiveEditor();
 			if (part instanceof MultiPageEditorPart) {
-				part= (IEditorPart)part.getAdapter(ITextEditorExtension3.class);
+				part = (IEditorPart) part.getAdapter(ITextEditorExtension3.class);
 			}
 			if (part instanceof ITextEditorExtension3) {
-				ITextEditorExtension3 extension= (ITextEditorExtension3) part;
+				ITextEditorExtension3 extension = (ITextEditorExtension3) part;
 				return extension.getInsertMode() == ITextEditorExtension3.SMART_INSERT;
 			}
 		}
@@ -185,7 +185,7 @@ public class CStringAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
 			if (command.length != 0 || command.text == null)
 				return;
 
-			IPreferenceStore preferenceStore= CUIPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore preferenceStore = CUIPlugin.getDefault().getPreferenceStore();
 
 			if (preferenceStore.getBoolean(PreferenceConstants.EDITOR_WRAP_STRINGS) && isSmartMode()) {
 				indentStringAfterNewLine(document, command);

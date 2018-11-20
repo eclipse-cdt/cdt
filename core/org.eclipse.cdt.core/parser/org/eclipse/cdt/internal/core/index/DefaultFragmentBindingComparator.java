@@ -23,24 +23,24 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class DefaultFragmentBindingComparator implements IIndexFragmentBindingComparator {
 	@Override
 	public int compare(IIndexFragmentBinding a, IIndexFragmentBinding b) {
-		int cmp= compareQualifiedNames(CPPVisitor.getQualifiedName(a), CPPVisitor.getQualifiedName(b));
+		int cmp = compareQualifiedNames(CPPVisitor.getQualifiedName(a), CPPVisitor.getQualifiedName(b));
 		if (cmp == 0) {
-			int ac= a.getBindingConstant(), bc= b.getBindingConstant();
-			cmp= ac < bc ? -1 : (ac > bc ? 1 : 0);
+			int ac = a.getBindingConstant(), bc = b.getBindingConstant();
+			cmp = ac < bc ? -1 : (ac > bc ? 1 : 0);
 			if (cmp == 0) {
-				cmp= IndexCPPSignatureUtil.compareSignatures(a, b);
+				cmp = IndexCPPSignatureUtil.compareSignatures(a, b);
 			}
 		}
 		return cmp;
 	}
-	
+
 	private int compareQualifiedNames(String[] a, String[] b) {
 		if (a.length < b.length)
 			return -1;
 		if (a.length > b.length)
 			return 1;
-		for (int i= 0; i < a.length; i++) {
-			int cmp= a[i].compareTo(b[i]);
+		for (int i = 0; i < a.length; i++) {
+			int cmp = a[i].compareTo(b[i]);
 			if (cmp != 0)
 				return cmp;
 		}

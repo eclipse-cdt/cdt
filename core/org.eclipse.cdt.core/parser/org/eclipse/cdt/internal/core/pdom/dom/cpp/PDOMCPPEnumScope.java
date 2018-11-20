@@ -11,7 +11,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.lang.ref.Reference;
@@ -48,9 +48,9 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 	private final IPDOMCPPEnumType fBinding;
 
 	public PDOMCPPEnumScope(IPDOMCPPEnumType binding) {
-		fBinding= binding;
+		fBinding = binding;
 	}
-	
+
 	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eEnumeration;
@@ -69,7 +69,7 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
-			CharArrayObjectMap<IPDOMCPPEnumerator> map= getBindingMap(fBinding);
+			CharArrayObjectMap<IPDOMCPPEnumerator> map = getBindingMap(fBinding);
 			return map.get(name.toCharArray());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -77,7 +77,8 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 		}
 	}
 
-	@Deprecated	@Override
+	@Deprecated
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
@@ -85,10 +86,10 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
 		try {
-			CharArrayObjectMap<IPDOMCPPEnumerator> map= getBindingMap(fBinding);
+			CharArrayObjectMap<IPDOMCPPEnumerator> map = getBindingMap(fBinding);
 			if (lookup.isPrefixLookup()) {
-				final List<IBinding> result= new ArrayList<IBinding>();
-				final char[] nc= lookup.getLookupKey();
+				final List<IBinding> result = new ArrayList<IBinding>();
+				final char[] nc = lookup.getLookupKey();
 				IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(nc);
 				for (char[] key : map.keys()) {
 					if (matcher.match(key)) {
@@ -96,10 +97,10 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 					}
 				}
 				return result.toArray(new IBinding[result.size()]);
-			} 
-			IBinding b= map.get(lookup.getLookupKey());
+			}
+			IBinding b = map.get(lookup.getLookupKey());
 			if (b != null) {
-				return new IBinding[] {b};
+				return new IBinding[] { b };
 			}
 		} catch (Exception e) {
 			CCorePlugin.log(e);
@@ -109,14 +110,15 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 
 	@Override
 	public IBinding[] find(String name, IASTTranslationUnit tu) {
-	    return CPPSemantics.findBindingsInScope(this, name, tu);
+		return CPPSemantics.findBindingsInScope(this, name, tu);
 	}
 
-	@Override @Deprecated
+	@Override
+	@Deprecated
 	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings(this, name, false);
 	}
-	
+
 	@Override
 	public IIndexBinding getScopeBinding() {
 		return fBinding;
@@ -144,13 +146,14 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 		return fBinding.hashCode();
 	}
 
-	private static CharArrayObjectMap<IPDOMCPPEnumerator> getBindingMap(IPDOMCPPEnumType enumeration) throws CoreException {
-		final Long key= enumeration.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
+	private static CharArrayObjectMap<IPDOMCPPEnumerator> getBindingMap(IPDOMCPPEnumType enumeration)
+			throws CoreException {
+		final Long key = enumeration.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
 		final PDOM pdom = enumeration.getPDOM();
 		@SuppressWarnings("unchecked")
-		Reference<CharArrayObjectMap<IPDOMCPPEnumerator>> cached=
-				(Reference<CharArrayObjectMap<IPDOMCPPEnumerator>>) pdom.getCachedResult(key);
-		CharArrayObjectMap<IPDOMCPPEnumerator> map= cached == null ? null : cached.get();
+		Reference<CharArrayObjectMap<IPDOMCPPEnumerator>> cached = (Reference<CharArrayObjectMap<IPDOMCPPEnumerator>>) pdom
+				.getCachedResult(key);
+		CharArrayObjectMap<IPDOMCPPEnumerator> map = cached == null ? null : cached.get();
 
 		if (map == null) {
 			// there is no cache, build it:
@@ -166,12 +169,12 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 	}
 
 	public static void updateCache(IPDOMCPPEnumType enumType, IPDOMCPPEnumerator enumItem) {
-		final Long key= enumType.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
+		final Long key = enumType.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
 		final PDOM pdom = enumType.getPDOM();
 		@SuppressWarnings("unchecked")
-		Reference<CharArrayObjectMap<IPDOMCPPEnumerator>> cached=
-				(Reference<CharArrayObjectMap<IPDOMCPPEnumerator>>) pdom.getCachedResult(key);
-		CharArrayObjectMap<IPDOMCPPEnumerator> map= cached == null ? null : cached.get();
+		Reference<CharArrayObjectMap<IPDOMCPPEnumerator>> cached = (Reference<CharArrayObjectMap<IPDOMCPPEnumerator>>) pdom
+				.getCachedResult(key);
+		CharArrayObjectMap<IPDOMCPPEnumerator> map = cached == null ? null : cached.get();
 		if (map != null) {
 			map.put(enumItem.getNameCharArray(), enumItem);
 		}
@@ -184,7 +187,7 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 			// loses the order.
 			List<IPDOMCPPEnumerator> enumerators = new ArrayList<>();
 			enumType.loadEnumerators(enumerators);
-			List<IEnumerator> result= new ArrayList<IEnumerator>();
+			List<IEnumerator> result = new ArrayList<IEnumerator>();
 			for (IEnumerator value : enumerators) {
 				if (IndexFilter.ALL_DECLARED.acceptBinding(value)) {
 					result.add(value);

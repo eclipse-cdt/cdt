@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
  * with the variable.
  */
 public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
-	private static CVariableReadWriteFlags INSTANCE= new CVariableReadWriteFlags();
+	private static CVariableReadWriteFlags INSTANCE = new CVariableReadWriteFlags();
 
 	public static int getReadWriteFlags(IASTName variable) {
 		return INSTANCE.rwAnyNode(variable, 0);
@@ -39,9 +39,9 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 
 	@Override
 	protected int rwAnyNode(IASTNode node, int indirection) {
-		final IASTNode parent= node.getParent();
+		final IASTNode parent = node.getParent();
 		if (parent instanceof ICASTFieldDesignator) {
-			return WRITE;	// node is initialized via designated initializer
+			return WRITE; // node is initialized via designated initializer
 		}
 		return super.rwAnyNode(node, indirection);
 	}
@@ -76,7 +76,7 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 			return READ;
 		}
 		while (indirection > 0 && (type instanceof IPointerType)) {
-			type= ((IPointerType) type).getType();
+			type = ((IPointerType) type).getType();
 			indirection--;
 		}
 		if (indirection == 0) {
@@ -86,6 +86,6 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 				return ((IPointerType) type).isConst() ? READ : READ | WRITE;
 			}
 		}
-		return READ | WRITE;	// fallback
+		return READ | WRITE; // fallback
 	}
 }

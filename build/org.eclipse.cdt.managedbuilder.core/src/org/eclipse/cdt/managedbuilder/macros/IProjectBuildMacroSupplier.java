@@ -40,10 +40,8 @@ public interface IProjectBuildMacroSupplier {
 	 * @return the reference to the IBuildMacro interface representing 
 	 * the build macro of a given name or null if the macro of  that name is not defined
 	 */
-	IBuildMacro getMacro(String macroName, 
-			IManagedProject project,
-			IBuildMacroProvider provider);
- 
+	IBuildMacro getMacro(String macroName, IManagedProject project, IBuildMacroProvider provider);
+
 	/**
 	 *
 	 * @param project the instance of the managed project
@@ -59,6 +57,5 @@ public interface IProjectBuildMacroSupplier {
 	 * about the build macros defined for the higher levels.
 	 * @return the IBuildMacro[] array representing defined macros 
 	 */
-	IBuildMacro[] getMacros(IManagedProject project,
-			IBuildMacroProvider provider);
+	IBuildMacro[] getMacros(IManagedProject project, IBuildMacroProvider provider);
 }

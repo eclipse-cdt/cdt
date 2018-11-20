@@ -96,7 +96,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 	}
 
 	public IMesonToolChainFile getToolChainFile() {
-	    return toolChainFile;
+		return toolChainFile;
 	}
 
 	private boolean isLocal() throws CoreException {
@@ -111,9 +111,9 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 			throws CoreException {
 		return build(kind, args, null, null, console, monitor);
 	}
-	
-	public IProject[] build(int kind, Map<String, String> args, String[] ninjaEnv, String[] ninjaArgs, IConsole console, IProgressMonitor monitor)
-			throws CoreException {
+
+	public IProject[] build(int kind, Map<String, String> args, String[] ninjaEnv, String[] ninjaArgs, IConsole console,
+			IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 
 		try {
@@ -140,7 +140,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 			boolean runMeson = !Files.exists(buildDir.resolve("build.ninja")); //$NON-NLS-1$
 			if (runMeson) { // $NON-NLS-1$
 				List<String> commandList = new ArrayList<>();
-				
+
 				String envStr = getProperty(IMesonConstants.MESON_ENV);
 				List<IEnvironmentVariable> envVars = new ArrayList<>();
 				if (envStr != null) {
@@ -154,7 +154,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 						}
 					}
 				}
-				
+
 				commandList.add("meson"); //$NON-NLS-1$
 
 				String userArgs = getProperty(IMesonConstants.MESON_ARGUMENTS);
@@ -171,18 +171,21 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				outStream.write(String.join(" ", envStr != null ? ("env " + envStr) : "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						"sh -c \"meson", userArgs != null ? userArgs : "", projOptions != null ? projOptions : "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-								getBuildDirectory().getParent().getParent().toString() + "\"\n")); //$NON-NLS-1$
-				
-				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().getParent().getParent().toString());
-				Process p = startBuildProcess(commandList, envVars.toArray(new IEnvironmentVariable[0]), workingDir, console, monitor);
+						getBuildDirectory().getParent().getParent().toString() + "\"\n")); //$NON-NLS-1$
+
+				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
+						getBuildDirectory().getParent().getParent().toString());
+				Process p = startBuildProcess(commandList, envVars.toArray(new IEnvironmentVariable[0]), workingDir,
+						console, monitor);
 				if (p == null) {
-					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningMesonFailure, "")); //$NON-NLS-1$
+					console.getErrorStream()
+							.write(String.format(Messages.MesonBuildConfiguration_RunningMesonFailure, "")); //$NON-NLS-1$
 					return null;
 				}
-				
+
 				watchProcess(p, console);
 			}
-			
+
 			if (!Files.exists(buildDir.resolve("build.ninja"))) { //$NON-NLS-1$
 				console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_NoNinjaFile, "")); //$NON-NLS-1$
 				return null;
@@ -197,11 +200,10 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					buildCommand = "ninja"; //$NON-NLS-1$
 				}
 
-
 				monitor.subTask(Messages.MesonBuildConfiguration_RunningNinja);
 
 				List<String> commandList = new ArrayList<>();
-				
+
 				List<IEnvironmentVariable> envList = new ArrayList<>();
 				if (ninjaEnv != null) {
 					for (String s : ninjaEnv) {
@@ -225,15 +227,17 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 						}
 					}
 				}
-				
-				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+
+				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
+						getBuildDirectory().toString());
 
 				Process p = startBuildProcess(commandList, env, workingDir, console, monitor);
 				if (p == null) {
-					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningNinjaFailure, "")); //$NON-NLS-1$
+					console.getErrorStream()
+							.write(String.format(Messages.MesonBuildConfiguration_RunningNinjaFailure, "")); //$NON-NLS-1$
 					return null;
 				}
-				
+
 				watchProcess(p, new IConsoleParser[] { epm });
 			}
 
@@ -246,7 +250,8 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 			return new IProject[] { project };
 		} catch (IOException e) {
-			throw new CoreException(Activator.errorStatus(String.format(Messages.MesonBuildConfiguration_Building, project.getName()), e));
+			throw new CoreException(Activator
+					.errorStatus(String.format(Messages.MesonBuildConfiguration_Building, project.getName()), e));
 		}
 	}
 
@@ -257,11 +262,11 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
 			ConsoleOutputStream outStream = console.getOutputStream();
-			
+
 			Path buildDir = getBuildDirectory();
-			
+
 			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingIn, buildDir.toString()));
-			
+
 			if (!Files.exists(buildDir.resolve("build.ninja"))) { //$NON-NLS-1$
 				console.getOutputStream().write(Messages.MesonBuildConfiguration_NoNinjaFileToClean);
 				return;
@@ -288,18 +293,20 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				outStream.write(String.join(" ", commandList) + '\n'); //$NON-NLS-1$
 				Process p = startBuildProcess(commandList, env, workingDir, console, monitor);
 				if (p == null) {
-					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningNinjaFailure, "")); //$NON-NLS-1$
+					console.getErrorStream()
+							.write(String.format(Messages.MesonBuildConfiguration_RunningNinjaFailure, "")); //$NON-NLS-1$
 					return;
 				}
-				
+
 				watchProcess(p, console);
 			}
-			
+
 			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingComplete, buildDir.toString()));
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {
-			throw new CoreException(Activator.errorStatus(String.format(Messages.MesonBuildConfiguration_Cleaning, project.getName()), e));
+			throw new CoreException(Activator
+					.errorStatus(String.format(Messages.MesonBuildConfiguration_Cleaning, project.getName()), e));
 		}
 	}
 
@@ -319,7 +326,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 		// TODO: should this have a scheduling rule??
 		job.schedule();
 	}
-	
+
 	private void processCompileCommandsFile(IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		Path commandsFile = getBuildDirectory().resolve("compile_commands.json"); //$NON-NLS-1$
@@ -345,11 +352,10 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				}
 				shutdown();
 			} catch (IOException e) {
-				throw new CoreException(
-						Activator.errorStatus(String.format(Messages.MesonBuildConfiguration_ProcCompCmds, project.getName()), e));
+				throw new CoreException(Activator.errorStatus(
+						String.format(Messages.MesonBuildConfiguration_ProcCompCmds, project.getName()), e));
 			}
 		}
 	}
-	
 
 }

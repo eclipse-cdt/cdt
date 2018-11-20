@@ -19,15 +19,12 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-
 class LargePipedInputStream extends PipedInputStream {
-	
+
 	private static final int LARGE_BUF_SIZE = 1024 * 1024; // 1M
-	
-	public LargePipedInputStream(PipedOutputStream pipedoutputstream)
-        throws IOException
-    {
+
+	public LargePipedInputStream(PipedOutputStream pipedoutputstream) throws IOException {
 		super(pipedoutputstream, LARGE_BUF_SIZE);
-    }
+	}
 
 }

@@ -41,68 +41,68 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 public class CHHistoryListAction extends Action {
-	
+
 	private class HistoryListDialog extends StatusDialog {
 		private ListDialogField<ICElement> fHistoryList;
 		private IStatus fHistoryStatus;
 		private ICElement fResult;
-		
+
 		private HistoryListDialog(Shell shell, ICElement[] historyEntries) {
 			super(shell);
-			setHelpAvailable(false);			
-			setTitle(CHMessages.CHHistoryListAction_HistoryDialog_title); 
-			String[] buttonLabels= new String[] { 
-				CHMessages.CHHistoryListAction_Remove_label, 
-			};
-					
-			IListAdapter<ICElement> adapter= new IListAdapter<ICElement>() {
+			setHelpAvailable(false);
+			setTitle(CHMessages.CHHistoryListAction_HistoryDialog_title);
+			String[] buttonLabels = new String[] { CHMessages.CHHistoryListAction_Remove_label, };
+
+			IListAdapter<ICElement> adapter = new IListAdapter<ICElement>() {
 				@Override
 				public void customButtonPressed(ListDialogField<ICElement> field, int index) {
 					doCustomButtonPressed();
 				}
+
 				@Override
 				public void selectionChanged(ListDialogField<ICElement> field) {
 					doSelectionChanged();
 				}
-				
+
 				@Override
 				public void doubleClicked(ListDialogField<ICElement> field) {
 					doDoubleClicked();
-				}				
+				}
 			};
-		
-			ILabelProvider labelProvider= new CUILabelProvider(CHHistoryAction.LABEL_OPTIONS, CElementImageProvider.OVERLAY_ICONS);
-			
-			fHistoryList= new ListDialogField<ICElement>(adapter, buttonLabels, labelProvider);
-			fHistoryList.setLabelText(CHMessages.CHHistoryListAction_HistoryList_label); 
+
+			ILabelProvider labelProvider = new CUILabelProvider(CHHistoryAction.LABEL_OPTIONS,
+					CElementImageProvider.OVERLAY_ICONS);
+
+			fHistoryList = new ListDialogField<ICElement>(adapter, buttonLabels, labelProvider);
+			fHistoryList.setLabelText(CHMessages.CHHistoryListAction_HistoryList_label);
 			fHistoryList.setElements(Arrays.asList(historyEntries));
-			
+
 			ISelection sel;
 			if (historyEntries.length > 0) {
-				sel= new StructuredSelection(historyEntries[0]);
+				sel = new StructuredSelection(historyEntries[0]);
 			} else {
-				sel= new StructuredSelection();
+				sel = new StructuredSelection();
 			}
-			
+
 			fHistoryList.selectElements(sel);
 		}
-			
+
 		@Override
 		protected Control createDialogArea(Composite parent) {
 			initializeDialogUnits(parent);
-			
-			Composite composite= (Composite) super.createDialogArea(parent);
-			
-			Composite inner= new Composite(composite, SWT.NONE);
+
+			Composite composite = (Composite) super.createDialogArea(parent);
+
+			Composite inner = new Composite(composite, SWT.NONE);
 			inner.setFont(parent.getFont());
-			
+
 			inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 			LayoutUtil.doDefaultLayout(inner, new DialogField[] { fHistoryList }, true, 0, 0);
 			LayoutUtil.setHeightHint(fHistoryList.getListControl(null), convertHeightInCharsToPixels(12));
 			LayoutUtil.setHorizontalGrabbing(fHistoryList.getListControl(null), true);
 
-			applyDialogFont(composite);		
+			applyDialogFont(composite);
 			return composite;
 		}
 
@@ -112,7 +112,7 @@ public class CHHistoryListAction extends Action {
 		private void doCustomButtonPressed() {
 			fHistoryList.removeElements(fHistoryList.getSelectedElements());
 		}
-		
+
 		private void doDoubleClicked() {
 			if (fHistoryStatus.isOK()) {
 				okPressed();
@@ -120,32 +120,32 @@ public class CHHistoryListAction extends Action {
 		}
 
 		private void doSelectionChanged() {
-			StatusInfo status= new StatusInfo();
-			List<ICElement> selected= fHistoryList.getSelectedElements();
+			StatusInfo status = new StatusInfo();
+			List<ICElement> selected = fHistoryList.getSelectedElements();
 			if (selected.size() != 1) {
 				status.setError(""); //$NON-NLS-1$
-				fResult= null;
+				fResult = null;
 			} else {
-				fResult= selected.get(0);
+				fResult = selected.get(0);
 			}
-			fHistoryList.enableButton(0, fHistoryList.getSize() > selected.size() && selected.size() != 0);			
-			fHistoryStatus= status;
-			updateStatus(status);	
+			fHistoryList.enableButton(0, fHistoryList.getSize() > selected.size() && selected.size() != 0);
+			fHistoryStatus = status;
+			updateStatus(status);
 		}
-				
+
 		public ICElement getResult() {
 			return fResult;
 		}
-		
+
 		public ICElement[] getRemaining() {
-			List<ICElement> elems= fHistoryList.getElements();
+			List<ICElement> elems = fHistoryList.getElements();
 			return elems.toArray(new ICElement[elems.size()]);
-		}	
-		
+		}
+
 		@Override
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
-//			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, ...);
+			//			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, ...);
 		}
 
 		@Override
@@ -154,22 +154,21 @@ public class CHHistoryListAction extends Action {
 			super.create();
 		}
 	}
-	
+
 	private CHViewPart fView;
-	
+
 	public CHHistoryListAction(CHViewPart view) {
-		fView= view;
-		setText(CHMessages.CHHistoryListAction_OpenHistory_label); 
+		fView = view;
+		setText(CHMessages.CHHistoryListAction_OpenHistory_label);
 	}
-		
+
 	@Override
 	public void run() {
-		ICElement[] historyEntries= CallHierarchyUI.getHistoryEntries();
-		HistoryListDialog dialog= new HistoryListDialog(fView.getSite().getShell(), historyEntries);
+		ICElement[] historyEntries = CallHierarchyUI.getHistoryEntries();
+		HistoryListDialog dialog = new HistoryListDialog(fView.getSite().getShell(), historyEntries);
 		if (dialog.open() == Window.OK) {
 			CallHierarchyUI.setHistoryEntries(dialog.getRemaining());
 			fView.setInput(dialog.getResult());
 		}
 	}
 }
-

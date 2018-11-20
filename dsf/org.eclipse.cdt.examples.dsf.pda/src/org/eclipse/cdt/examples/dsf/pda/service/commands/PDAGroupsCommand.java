@@ -27,12 +27,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAGroupsCommand extends AbstractPDACommand<PDAListResult> {
 
-    public PDAGroupsCommand(PDAVirtualMachineDMContext context) {
-        super(context, "groups");
-    }
-    
-    @Override
-    public PDAListResult createResult(String resultText) {
-        return new PDAListResult(resultText);
-    }
+	public PDAGroupsCommand(PDAVirtualMachineDMContext context) {
+		super(context, "groups");
+	}
+
+	@Override
+	public PDAListResult createResult(String resultText) {
+		return new PDAListResult(resultText);
+	}
 }

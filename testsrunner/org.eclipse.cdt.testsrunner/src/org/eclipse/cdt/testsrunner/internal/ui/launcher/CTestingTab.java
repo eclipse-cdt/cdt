@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-
 /**
  * A launch configuration tab that displays and edits different testing options
  * (e.g. Tests Runner provider plug-in).
@@ -43,7 +42,7 @@ import org.eclipse.swt.widgets.Label;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CTestingTab extends CLaunchConfigurationTab {
-	
+
 	/**
 	 * Tab identifier used for ordering of tabs added using the 
 	 * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
@@ -55,7 +54,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 
 	/** Shows the list of available Tests Runner provider plug-ins. */
 	private Combo testsRunnerProviderCombo;
-	
+
 	/** Shows the description for the currently selected Tests Runner provider plug-in. */
 	private Label testsRunnerProviderDescriptionLabel;
 
@@ -71,36 +70,38 @@ public class CTestingTab extends CLaunchConfigurationTab {
 		testsRunnerProviderCombo = new Combo(pageComposite, SWT.READ_ONLY | SWT.DROP_DOWN);
 		testsRunnerProviderCombo.add(UILauncherMessages.CTestingTab_tests_runner_is_not_set);
 		testsRunnerProviderCombo.setData("0", null); //$NON-NLS-1$
-		
+
 		// Add all the tests runners
-    	for (TestsRunnerProviderInfo testsRunnerProviderInfo : TestsRunnerPlugin.getDefault().getTestsRunnerProvidersManager().getTestsRunnersProviderInfo()) {
-    		testsRunnerProviderCombo.setData(Integer.toString(testsRunnerProviderCombo.getItemCount()), testsRunnerProviderInfo);
-    		testsRunnerProviderCombo.add(testsRunnerProviderInfo.getName());
-    	}
-		
+		for (TestsRunnerProviderInfo testsRunnerProviderInfo : TestsRunnerPlugin.getDefault()
+				.getTestsRunnerProvidersManager().getTestsRunnersProviderInfo()) {
+			testsRunnerProviderCombo.setData(Integer.toString(testsRunnerProviderCombo.getItemCount()),
+					testsRunnerProviderInfo);
+			testsRunnerProviderCombo.add(testsRunnerProviderInfo.getName());
+		}
+
 		testsRunnerProviderCombo.addModifyListener(new ModifyListener() {
-			
+
 			@Override
 			public void modifyText(ModifyEvent e) {
 				testsRunnerProviderDescriptionLabel.setText(getCurrentTestsRunnerDescription());
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		// Create a tests runner description label 
 		testsRunnerProviderDescriptionLabel = new Label(pageComposite, SWT.WRAP);
 		GridData testsRunnerProviderLabelGD = new GridData(GridData.FILL_BOTH);
 		testsRunnerProviderLabelGD.horizontalSpan = 2;
 		testsRunnerProviderLabelGD.horizontalAlignment = GridData.FILL;
 		testsRunnerProviderDescriptionLabel.setLayoutData(testsRunnerProviderLabelGD);
-		
+
 		GridData pageCompositeGD = new GridData(GridData.FILL_BOTH);
 		pageCompositeGD.horizontalAlignment = GridData.FILL;
 		pageCompositeGD.grabExcessHorizontalSpace = true;
 		pageComposite.setLayoutData(pageCompositeGD);
 		setControl(pageComposite);
 	}
-	
+
 	/**
 	 * Returns the information for the currently selected Tests Runner provider
 	 * plug-in.
@@ -119,7 +120,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 	 * @return Tests Runner provide plug-in information
 	 */
 	private ITestsRunnerProviderInfo getTestsRunnerProviderInfo(int comboIndex) {
-		return (ITestsRunnerProviderInfo)testsRunnerProviderCombo.getData(Integer.toString(comboIndex));
+		return (ITestsRunnerProviderInfo) testsRunnerProviderCombo.getData(Integer.toString(comboIndex));
 	}
 
 	/**
@@ -151,7 +152,8 @@ public class CTestingTab extends CLaunchConfigurationTab {
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			String testsRunnerId = configuration.getAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_RUNNER, (String) null);
+			String testsRunnerId = configuration.getAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_RUNNER,
+					(String) null);
 			int comboIndex = 0;
 			for (int i = 1; i < testsRunnerProviderCombo.getItemCount(); i++) {
 				if (getTestsRunnerProviderInfo(i).getId().equals(testsRunnerId)) {
@@ -160,7 +162,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 				}
 			}
 			testsRunnerProviderCombo.select(comboIndex);
-			
+
 		} catch (CoreException e) {
 			TestsRunnerPlugin.log(e);
 		}
@@ -181,7 +183,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 
 	@Override
 	public String getName() {
-		return UILauncherMessages.CTestingTab_tab_name; 
+		return UILauncherMessages.CTestingTab_tab_name;
 	}
 
 	@Override

@@ -18,20 +18,20 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFunctionType extends IType {
-    /**
-     * Returns the return type of this function type
-     */
-    public IType getReturnType();
-    
-    /**
-     * Returns the adjusted parameter types
-     * ISO C99 6.7.5.3, ISO C++98 8.3.4-3 
-     */
-    public IType[] getParameterTypes();
-    
-    /**
-     * Whether the function type takes variable number of arguments.
-     * @since 5.10
-     */
-    public boolean takesVarArgs();
+	/**
+	 * Returns the return type of this function type
+	 */
+	public IType getReturnType();
+
+	/**
+	 * Returns the adjusted parameter types
+	 * ISO C99 6.7.5.3, ISO C++98 8.3.4-3 
+	 */
+	public IType[] getParameterTypes();
+
+	/**
+	 * Whether the function type takes variable number of arguments.
+	 * @since 5.10
+	 */
+	public boolean takesVarArgs();
 }

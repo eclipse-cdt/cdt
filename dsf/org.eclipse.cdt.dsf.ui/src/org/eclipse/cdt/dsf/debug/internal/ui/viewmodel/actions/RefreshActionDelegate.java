@@ -28,32 +28,32 @@ import org.eclipse.ui.IViewPart;
  */
 public class RefreshActionDelegate extends AbstractVMProviderActionDelegate {
 
-    @Override
+	@Override
 	public void run(IAction action) {
-        IVMProvider provider = VMHandlerUtils.getVMProviderForPart(getView());
-        if (provider instanceof ICachingVMProvider) {
-            ((ICachingVMProvider)provider).refresh();
-        }
-    }
-    
-    @Override
-    public void init(IViewPart view) {
-        super.init(view);
-        IVMProvider vp = VMHandlerUtils.getVMProviderForPart(getView());
-        getAction().setEnabled(vp instanceof ICachingVMProvider);
-    }
-    
-    @Override
-    public void debugContextChanged(DebugContextEvent event) {
-        super.debugContextChanged(event);
-        IVMProvider vp = VMHandlerUtils.getVMProviderForPart(getView());
-        getAction().setEnabled(vp instanceof ICachingVMProvider);
-    }
+		IVMProvider provider = VMHandlerUtils.getVMProviderForPart(getView());
+		if (provider instanceof ICachingVMProvider) {
+			((ICachingVMProvider) provider).refresh();
+		}
+	}
 
-    @Override
-    public void selectionChanged(IAction action, ISelection selection) {
-        super.selectionChanged(action, selection);
-        IVMProvider vp = VMHandlerUtils.getVMProviderForPart(getView());
-        getAction().setEnabled(vp instanceof ICachingVMProvider);
-    }
+	@Override
+	public void init(IViewPart view) {
+		super.init(view);
+		IVMProvider vp = VMHandlerUtils.getVMProviderForPart(getView());
+		getAction().setEnabled(vp instanceof ICachingVMProvider);
+	}
+
+	@Override
+	public void debugContextChanged(DebugContextEvent event) {
+		super.debugContextChanged(event);
+		IVMProvider vp = VMHandlerUtils.getVMProviderForPart(getView());
+		getAction().setEnabled(vp instanceof ICachingVMProvider);
+	}
+
+	@Override
+	public void selectionChanged(IAction action, ISelection selection) {
+		super.selectionChanged(action, selection);
+		IVMProvider vp = VMHandlerUtils.getVMProviderForPart(getView());
+		getAction().setEnabled(vp instanceof ICachingVMProvider);
+	}
 }

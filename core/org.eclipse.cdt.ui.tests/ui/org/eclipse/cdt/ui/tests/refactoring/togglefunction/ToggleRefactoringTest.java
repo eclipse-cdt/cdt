@@ -813,7 +813,8 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//}
 	//
 	//}
-	public void testTestSimpleNamespaceInHeaderToImplementationWithNamespaceDefinitionInImplementation() throws Exception {
+	public void testTestSimpleNamespaceInHeaderToImplementationWithNamespaceDefinitionInImplementation()
+			throws Exception {
 		assertRefactoringSuccess();
 	}
 

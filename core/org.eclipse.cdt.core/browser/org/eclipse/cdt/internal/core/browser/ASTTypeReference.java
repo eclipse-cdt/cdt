@@ -29,12 +29,12 @@ public class ASTTypeReference extends IndexTypeReference {
 
 	public ASTTypeReference(IIndexFileLocation ifl, IBinding binding, IFile file, int offset, int length) {
 		super(binding, file, file.getProject(), offset, length);
-		fIfl= ifl;
+		fIfl = ifl;
 	}
 
 	public ASTTypeReference(IIndexFileLocation ifl, IBinding binding, IPath location, int offset, int length) {
 		super(binding, location, null, offset, length);
-		fIfl= ifl;
+		fIfl = ifl;
 	}
 
 	public IIndexFileLocation getIFL() {

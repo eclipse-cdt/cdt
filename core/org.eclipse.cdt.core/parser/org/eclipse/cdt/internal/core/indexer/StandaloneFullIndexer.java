@@ -13,7 +13,7 @@
  * Markus Schorn (Wind River Systems)
  * IBM Corporation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.internal.core.indexer;
 
 import java.io.File;
@@ -43,10 +43,10 @@ import org.eclipse.core.runtime.CoreException;
  * @since 4.0
  */
 @SuppressWarnings("deprecation")
-public class StandaloneFullIndexer extends StandaloneIndexer{
-	
+public class StandaloneFullIndexer extends StandaloneIndexer {
+
 	private AbstractCodeReaderFactory fCodeReaderFactory;
-	
+
 	/**
 	 * Create a full indexer.
 	 * @param writableIndexFile - the file where the PDOM index is stored
@@ -61,13 +61,15 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 * @deprecated
 	 */
 	@Deprecated
-	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IScannerInfo scanner, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
-		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), 
-				false, mapper, log, scanner, fileEncodingRegistry);
+	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter,
+			Map<String, IPDOMLinkageFactory> linkageFactoryMappings, IScannerInfo scanner,
+			FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log,
+			AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), false, mapper,
+				log, scanner, fileEncodingRegistry);
 		fCodeReaderFactory = codeReaderFactory;
 	}
-	
+
 	/**
 	 * Create a full indexer.
 	 * @param writableIndexFile - the file where the PDOM index is stored
@@ -80,14 +82,15 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 *                    		  by the source code being parsed.
 	 * @throws CoreException
 	 */
-	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IStandaloneScannerInfoProvider scannerProvider, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
-		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), 
-				false, mapper, log, scannerProvider, fileEncodingRegistry);
+	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter,
+			Map<String, IPDOMLinkageFactory> linkageFactoryMappings, IStandaloneScannerInfoProvider scannerProvider,
+			FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log,
+			AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), false, mapper,
+				log, scannerProvider, fileEncodingRegistry);
 		fCodeReaderFactory = codeReaderFactory;
 	}
-	
-	
+
 	/**
 	 * Returns the factory that provides CodeReaders for files included
 	 * by the source code being parsed.
@@ -95,7 +98,7 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	public AbstractCodeReaderFactory getCodeReaderFactory() {
 		return fCodeReaderFactory;
 	}
-	
+
 	/**
 	 * Creates a delegate standalone indexing task
 	 */

@@ -17,8 +17,6 @@ package org.eclipse.cdt.utils.debug.stabs;
 import java.io.IOException;
 import java.io.Reader;
 
-
-
 public class TypeInformation {
 	TypeNumber typeNumber;
 	char typeDescriptor;
@@ -29,15 +27,15 @@ public class TypeInformation {
 	}
 
 	public TypeNumber getTypeNumber() {
-	    return typeNumber;
+		return typeNumber;
 	}
 
 	public char getTypeDescriptor() {
-	    return typeDescriptor;
+		return typeDescriptor;
 	}
 
 	public boolean isTypeDefinition() {
-	    return isTypeDefinition;
+		return isTypeDefinition;
 	}
 
 	/**
@@ -58,8 +56,8 @@ public class TypeInformation {
 				isTypeDefinition = true;
 				reader.mark(1);
 				c = reader.read();
-				if (isTypeDescriptor((char)c)) {
-					typeDescriptor = (char)c;
+				if (isTypeDescriptor((char) c)) {
+					typeDescriptor = (char) c;
 				} else {
 					reader.reset();
 				}
@@ -71,8 +69,6 @@ public class TypeInformation {
 	}
 
 	boolean isTypeDescriptor(char c) {
-		return Character.isLetter(c) || c == '=' || c == '#' || c =='*'
-			|| c == '&' || c == '@';
+		return Character.isLetter(c) || c == '=' || c == '#' || c == '*' || c == '&' || c == '@';
 	}
 }
-

@@ -12,11 +12,11 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems - flexible hierarchy Signals view (bug 338908)
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.views.signals; 
+package org.eclipse.cdt.debug.internal.ui.views.signals;
 
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy;
- 
+
 /**
  * Default update for Signals view.
  */
@@ -27,14 +27,14 @@ public class SignalsViewModelProxy extends EventHandlerModelProxy {
 	/** 
 	 * Constructor for SignalesViewModelProxy. 
 	 */
-	public SignalsViewModelProxy( Object target ) {
+	public SignalsViewModelProxy(Object target) {
 		super();
 		fTarget = target;
 	}
 
 	@Override
 	protected DebugEventHandler[] createEventHandlers() {
-		return new DebugEventHandler[] { new FlexibleSignalsViewEventHandler( this, fTarget ) };
+		return new DebugEventHandler[] { new FlexibleSignalsViewEventHandler(this, fTarget) };
 	}
 
 	@Override

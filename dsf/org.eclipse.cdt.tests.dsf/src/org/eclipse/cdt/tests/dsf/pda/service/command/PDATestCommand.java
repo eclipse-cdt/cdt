@@ -21,12 +21,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.commands.PDACommandResult;
  * 
  */
 class PDATestCommand extends AbstractPDACommand<PDACommandResult> {
-    PDATestCommand(PDAVirtualMachineDMContext context, String command) {
-        super(context, command);
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	PDATestCommand(PDAVirtualMachineDMContext context, String command) {
+		super(context, command);
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

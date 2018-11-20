@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 public class AutotoolsNewProjectNature implements IProjectNature {
 
-	public static final String AUTOTOOLS_NATURE_ID = "org.eclipse.cdt.autotools.core.autotoolsNatureV2";  //$NON-NLS-1$
+	public static final String AUTOTOOLS_NATURE_ID = "org.eclipse.cdt.autotools.core.autotoolsNatureV2"; //$NON-NLS-1$
 	public static final String OLD_AUTOTOOLS_NATURE_ID = "org.eclipse.linuxtools.cdt.autotools.core.autotoolsNatureV2"; //$NON-NLS-1$
 	public static final String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".genmakebuilder"; //$NON-NLS-1$
 	/**
@@ -49,7 +49,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 	public static final String OLD_AUTOTOOLS_BUILDER_ID = "org.eclipse.linuxtools.cdt.autotools.genmakebuilder"; //$NON-NLS-1$
 
 	private IProject project;
-	
+
 	@Override
 	public void configure() throws CoreException {
 		addAutotoolsBuilder(project, new NullProgressMonitor());
@@ -59,17 +59,17 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 	public void deconfigure() throws CoreException {
 		// TODO remove builder from here
 	}
-	
+
 	@Override
 	public IProject getProject() {
 		return project;
 	}
-	
+
 	@Override
 	public void setProject(IProject project) {
 		this.project = project;
 	}
-	
+
 	/**
 	 * Add the Autotools builder to the project
 	 * @param project
@@ -80,7 +80,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 		// Add the builder to the project
 		IProjectDescription description = project.getDescription();
 		ICommand[] commands = description.getBuildSpec();
-		if(checkEquals(commands,getBuildCommandsList(description, commands))){
+		if (checkEquals(commands, getBuildCommandsList(description, commands))) {
 			return;
 		}
 		final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot();
@@ -101,21 +101,21 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 							//Other pieces of wizard might have contributed new builder commands;
 							//need to make sure we are using the most recent ones
 							ICommand[] currentCommands = prDescription.getBuildSpec();
-							ICommand[] newCommands = getBuildCommandsList(prDescription, currentCommands); 
-							if(!checkEquals(currentCommands,newCommands)){
+							ICommand[] newCommands = getBuildCommandsList(prDescription, currentCommands);
+							if (!checkEquals(currentCommands, newCommands)) {
 								prDescription.setBuildSpec(newCommands);
 								proj.setDescription(prDescription, new NullProgressMonitor());
 							}
 							restoreAutoBuild(workspace);
 						}
-						
+
 						protected final void turnOffAutoBuild(IWorkspace workspace) throws CoreException {
 							IWorkspaceDescription workspaceDesc = workspace.getDescription();
 							savedAutoBuildingValue = workspaceDesc.isAutoBuilding();
 							workspaceDesc.setAutoBuilding(false);
 							workspace.setDescription(workspaceDesc);
 						}
-						
+
 						protected final void restoreAutoBuild(IWorkspace workspace) throws CoreException {
 							IWorkspaceDescription workspaceDesc = workspace.getDescription();
 							workspaceDesc.setAutoBuilding(savedAutoBuildingValue);
@@ -134,21 +134,19 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 		backgroundJob.schedule();
 	}
 
-	static boolean checkEquals(ICommand[] commands,
-			ICommand[] newCommands) {
-			if (newCommands.length != commands.length){
+	static boolean checkEquals(ICommand[] commands, ICommand[] newCommands) {
+		if (newCommands.length != commands.length) {
+			return false;
+		}
+		for (int j = 0; j < commands.length; ++j) {
+			if (!commands[j].getBuilderName().equals(newCommands[j].getBuilderName())) {
 				return false;
 			}
-			for (int j = 0; j < commands.length; ++j) {
-				if (!commands[j].getBuilderName().equals(newCommands[j].getBuilderName())) {
-					return false;
-				}
-			}
-			return true;
+		}
+		return true;
 	}
 
-	static ICommand[] getBuildCommandsList(IProjectDescription description,
-			ICommand[] commands) {
+	static ICommand[] getBuildCommandsList(IProjectDescription description, ICommand[] commands) {
 		ArrayList<ICommand> commandList = new ArrayList<>();
 
 		// Make sure the Autotools Configuration builder just precedes the Common Builder
@@ -164,8 +162,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 				}
 				// Make sure that the Autotools builder precedes the Managed builder
 				// or the Remote Synchronized builder.
-				if (command.getBuilderName().equals(BUILDER_ID) ||
-						command.getBuilderName().equals(REMOTE_BUILDER_ID)) {
+				if (command.getBuilderName().equals(BUILDER_ID) || command.getBuilderName().equals(REMOTE_BUILDER_ID)) {
 					// add Autotools Configuration builder just before builder
 					ICommand newCommand = description.newCommand();
 					newCommand.setBuilderName(AutotoolsConfigurationBuilder.BUILDER_ID);
@@ -209,7 +206,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 		description.setNatureIds(newNatures);
 		project.setDescription(description, monitor);
 	}
-	
+
 	/**
 	 * Utility method to remove the autotools nature from a project.
 	 * 

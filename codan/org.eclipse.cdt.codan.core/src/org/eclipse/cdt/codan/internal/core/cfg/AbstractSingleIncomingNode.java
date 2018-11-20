@@ -37,7 +37,7 @@ public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock impl
 
 	@Override
 	public int getIncomingSize() {
-		return prev!=null?1:0;
+		return prev != null ? 1 : 0;
 	}
 
 	@Override

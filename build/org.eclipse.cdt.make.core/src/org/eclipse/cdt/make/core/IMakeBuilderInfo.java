@@ -31,8 +31,9 @@ public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 	/** @deprecated as of CDT 4.0 */
 	@Deprecated
 	public final static String BUILD_TARGET_FULL = ARGS_PREFIX + ".build.target.full"; //$NON-NLS-1$
-	
+
 	boolean isAutoBuildEnable();
+
 	void setAutoBuildEnable(boolean enabled) throws CoreException;
 
 	String getAutoBuildTarget();
@@ -44,6 +45,7 @@ public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 	void setAutoBuildTarget(String target) throws CoreException;
 
 	boolean isIncrementalBuildEnabled();
+
 	void setIncrementalBuildEnable(boolean enabled) throws CoreException;
 
 	String getIncrementalBuildTarget();
@@ -55,6 +57,7 @@ public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 	void setIncrementalBuildTarget(String target) throws CoreException;
 
 	boolean isFullBuildEnabled();
+
 	void setFullBuildEnable(boolean enabled) throws CoreException;
 
 	String getFullBuildTarget();
@@ -74,6 +77,7 @@ public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 	void setCleanBuildTarget(String target) throws CoreException;
 
 	boolean isCleanBuildEnabled();
+
 	void setCleanBuildEnable(boolean enabled) throws CoreException;
 
 }

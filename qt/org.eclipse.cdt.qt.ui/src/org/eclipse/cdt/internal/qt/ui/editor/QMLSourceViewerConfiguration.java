@@ -183,18 +183,18 @@ public class QMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	private TextAttribute createTextAttribute(IColorManager colorManager, String colorKey) {
 		Color color = colorManager.getColor(colorKey);
 		if (color == null) {
-			RGB rgb= PreferenceConverter.getColor(fPreferenceStore, colorKey);
+			RGB rgb = PreferenceConverter.getColor(fPreferenceStore, colorKey);
 			colorManager.unbindColor(colorKey);
 			colorManager.bindColor(colorKey, rgb);
 			color = colorManager.getColor(colorKey);
 		}
 
-		String boldKey= colorKey + PreferenceConstants.EDITOR_BOLD_SUFFIX;
-		String italicKey= colorKey + PreferenceConstants.EDITOR_ITALIC_SUFFIX;
-		String strikethroughKey= colorKey + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX;
-		String underlineKey= colorKey + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
-		
-		int style= fPreferenceStore.getBoolean(boldKey) ? SWT.BOLD : SWT.NORMAL;
+		String boldKey = colorKey + PreferenceConstants.EDITOR_BOLD_SUFFIX;
+		String italicKey = colorKey + PreferenceConstants.EDITOR_ITALIC_SUFFIX;
+		String strikethroughKey = colorKey + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX;
+		String underlineKey = colorKey + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
+
+		int style = fPreferenceStore.getBoolean(boldKey) ? SWT.BOLD : SWT.NORMAL;
 		if (fPreferenceStore.getBoolean(italicKey))
 			style |= SWT.ITALIC;
 
@@ -231,9 +231,8 @@ public class QMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		String property = event.getProperty();
 		return property.startsWith(ICColorConstants.C_MULTI_LINE_COMMENT)
 				|| property.startsWith(ICColorConstants.C_SINGLE_LINE_COMMENT)
-				|| property.startsWith(ICColorConstants.C_KEYWORD)
-				|| property.startsWith(ICColorConstants.C_STRING)
+				|| property.startsWith(ICColorConstants.C_KEYWORD) || property.startsWith(ICColorConstants.C_STRING)
 				|| property.startsWith(ICColorConstants.TASK_TAG);
 	}
-	
+
 }

@@ -32,37 +32,37 @@ import org.eclipse.ui.IPersistableElement;
  * 
  * @since 2.5
  */
-public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable  {
+public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable {
 
-    private static final String KEY_TYPE = "type"; //$NON-NLS-1$
-    private static final String KEY_NAME = "name"; //$NON-NLS-1$
-    private static final String KEY_VALUE = "value"; //$NON-NLS-1$
+	private static final String KEY_TYPE = "type"; //$NON-NLS-1$
+	private static final String KEY_NAME = "name"; //$NON-NLS-1$
+	private static final String KEY_VALUE = "value"; //$NON-NLS-1$
 
-    private Class<V> fType;
+	private Class<V> fType;
 	private Map<String, V> fValues = new TreeMap<String, V>();
 
 	@SuppressWarnings("unchecked")
 	public SimpleMapPersistable(IMemento memento) throws CoreException {
-	    IMemento type = memento.getChild(KEY_TYPE);
-	    if (type == null) {
-            throw new CoreException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
-            								   "Missing key for type.", null)); //$NON-NLS-1$
-	    }
-	    
-    	try {
-			fType = (Class<V>)Class.forName(type.getTextData());
-		} catch (ClassNotFoundException e) {
-            throw new CoreException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
-            								   e.getMessage(), e));
+		IMemento type = memento.getChild(KEY_TYPE);
+		if (type == null) {
+			throw new CoreException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE,
+					"Missing key for type.", null)); //$NON-NLS-1$
 		}
-	    
+
+		try {
+			fType = (Class<V>) Class.forName(type.getTextData());
+		} catch (ClassNotFoundException e) {
+			throw new CoreException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE,
+					e.getMessage(), e));
+		}
+
 		IMemento[] list = memento.getChildren(KEY_NAME);
 		Map<String, V> values = new TreeMap<String, V>();
 		for (IMemento elem : list) {
-		    values.put(elem.getID(), getValue(elem));
+			values.put(elem.getID(), getValue(elem));
 		}
-		
-		synchronized(fValues) {
+
+		synchronized (fValues) {
 			// We should not assign 'values' directly to 'fValues'
 			// if we want synchronization to work.  Instead, we must use
 			// the same map as before for 'fValues'
@@ -72,51 +72,49 @@ public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable 
 	}
 
 	public SimpleMapPersistable(Class<V> type) {
-	    fType = type;
+		fType = type;
 	}
-	
+
 	@Override
-    public void saveState(IMemento memento) {
+	public void saveState(IMemento memento) {
 		Map<String, V> values = null;
 		synchronized (fValues) {
 			values = new TreeMap<String, V>(fValues);
 		}
 
-        IMemento type = memento.createChild(KEY_TYPE);
-	    synchronized (fType) {			
-	    	type.putTextData(fType.getName());
-	    }
-		for (Map.Entry<String, V> entry : values.entrySet()) { 
-            IMemento value = memento.createChild(KEY_NAME, entry.getKey());
-            putValue(value, entry.getValue());
+		IMemento type = memento.createChild(KEY_TYPE);
+		synchronized (fType) {
+			type.putTextData(fType.getName());
+		}
+		for (Map.Entry<String, V> entry : values.entrySet()) {
+			IMemento value = memento.createChild(KEY_NAME, entry.getKey());
+			putValue(value, entry.getValue());
 		}
 	}
 
 	private void putValue(IMemento memento, Object value) {
-	    if (value instanceof String) {
-	        memento.putString(KEY_VALUE, (String)value);
-	    } else if (value instanceof Integer) {
-	        memento.putInteger(KEY_VALUE, (Integer)value);
-	    }
-	    else {
-	    	assert false;
-	    }
+		if (value instanceof String) {
+			memento.putString(KEY_VALUE, (String) value);
+		} else if (value instanceof Integer) {
+			memento.putInteger(KEY_VALUE, (Integer) value);
+		} else {
+			assert false;
+		}
 	}
 
-   @SuppressWarnings("unchecked")
-    private V getValue(IMemento memento) {
-	    synchronized (fType) {			
-	    	if (String.class.equals(fType)) {
-	    		return (V)memento.getString(KEY_VALUE);
-	    	} else if (Integer.class.equals(fType)) {
-	    		return (V)memento.getInteger(KEY_VALUE);
-	    	} else {
-	    		assert false;
-	    	}
-	    }
-        return null;
-    }
-    
+	@SuppressWarnings("unchecked")
+	private V getValue(IMemento memento) {
+		synchronized (fType) {
+			if (String.class.equals(fType)) {
+				return (V) memento.getString(KEY_VALUE);
+			} else if (Integer.class.equals(fType)) {
+				return (V) memento.getInteger(KEY_VALUE);
+			} else {
+				assert false;
+			}
+		}
+		return null;
+	}
 
 	public V getValue(String key) {
 		if (key == null)
@@ -144,9 +142,9 @@ public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-    	if (adapter.isInstance(this)) {
-			return (T)this;
-    	}
+		if (adapter.isInstance(this)) {
+			return (T) this;
+		}
 		return null;
 	}
 }

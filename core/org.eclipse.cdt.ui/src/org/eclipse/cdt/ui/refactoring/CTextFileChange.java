@@ -40,69 +40,69 @@ import org.eclipse.cdt.internal.ui.refactoring.changes.UndoCTextFileChange;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CTextFileChange extends TextFileChange {
-    // "c2" is the extension which the CContentViewerCreator is registered
-    // with the extension point "org.eclipse.compare.contentMergeViewers"
-    private static final String TEXT_TYPE = "c2"; //$NON-NLS-1$
+	// "c2" is the extension which the CContentViewerCreator is registered
+	// with the extension point "org.eclipse.compare.contentMergeViewers"
+	private static final String TEXT_TYPE = "c2"; //$NON-NLS-1$
 	private ITranslationUnit fTranslationUnit;
-    private IWorkingCopy fWorkingCopy;
-    private int fAcquireCount;
-    
-    public CTextFileChange(String name, IFile file) {
-        super(name, file);
-        ICElement element = CoreModel.getDefault().create(file);
-        if (element instanceof ITranslationUnit) {
-            fTranslationUnit = (ITranslationUnit) element;
-            setTextType(TEXT_TYPE);
-        }
-    }
-    
-    /**
+	private IWorkingCopy fWorkingCopy;
+	private int fAcquireCount;
+
+	public CTextFileChange(String name, IFile file) {
+		super(name, file);
+		ICElement element = CoreModel.getDefault().create(file);
+		if (element instanceof ITranslationUnit) {
+			fTranslationUnit = (ITranslationUnit) element;
+			setTextType(TEXT_TYPE);
+		}
+	}
+
+	/**
 	 * @since 5.1
 	 */
-    public CTextFileChange(String name, ITranslationUnit tu) {
-        super(name, tu.getFile());
-        fTranslationUnit = tu;
-        if (tu instanceof IWorkingCopy)
-        	fWorkingCopy = (IWorkingCopy) tu;
-        setTextType(TEXT_TYPE);
-    }
+	public CTextFileChange(String name, ITranslationUnit tu) {
+		super(name, tu.getFile());
+		fTranslationUnit = tu;
+		if (tu instanceof IWorkingCopy)
+			fWorkingCopy = (IWorkingCopy) tu;
+		setTextType(TEXT_TYPE);
+	}
 
-    @Override
+	@Override
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
-        IDocument doc= super.acquireDocument(pm);
-        if (++fAcquireCount == 1) {
-            if (fWorkingCopy == null && fTranslationUnit instanceof TranslationUnit) {
-                fWorkingCopy= ((TranslationUnit) fTranslationUnit).getWorkingCopy(null, DocumentAdapter.FACTORY);
-                if (!fTranslationUnit.isOpen()) {
-                    fTranslationUnit.open(null);
-                }
-            }
-        }
-        return doc;
-    }
-       
-    @Override
-	protected void commit(final IDocument document, final IProgressMonitor pm) throws CoreException {
-        if (fWorkingCopy == null) {
-        	super.commit(document, pm);
-        } else if (needsSaving()) {
-        	fWorkingCopy.commit(false, pm);
-        }
-    }
-    
-    @Override
-	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
-        super.releaseDocument(document, pm);
-        if (--fAcquireCount == 0) {
-            if (fWorkingCopy != null && fWorkingCopy != fTranslationUnit) {
-                fWorkingCopy.destroy();
-                fWorkingCopy= null;
-            }
-        }
-    }
+		IDocument doc = super.acquireDocument(pm);
+		if (++fAcquireCount == 1) {
+			if (fWorkingCopy == null && fTranslationUnit instanceof TranslationUnit) {
+				fWorkingCopy = ((TranslationUnit) fTranslationUnit).getWorkingCopy(null, DocumentAdapter.FACTORY);
+				if (!fTranslationUnit.isOpen()) {
+					fTranslationUnit.open(null);
+				}
+			}
+		}
+		return doc;
+	}
 
-    @Override
+	@Override
+	protected void commit(final IDocument document, final IProgressMonitor pm) throws CoreException {
+		if (fWorkingCopy == null) {
+			super.commit(document, pm);
+		} else if (needsSaving()) {
+			fWorkingCopy.commit(false, pm);
+		}
+	}
+
+	@Override
+	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
+		super.releaseDocument(document, pm);
+		if (--fAcquireCount == 0) {
+			if (fWorkingCopy != null && fWorkingCopy != fTranslationUnit) {
+				fWorkingCopy.destroy();
+				fWorkingCopy = null;
+			}
+		}
+	}
+
+	@Override
 	protected Change createUndoChange(UndoEdit edit, ContentStamp stampToRestore) {
-        return new UndoCTextFileChange(getName(), getFile(), edit, stampToRestore, getSaveMode());
-    }
+		return new UndoCTextFileChange(getName(), getFile(), edit, stampToRestore, getSaveMode());
+	}
 }

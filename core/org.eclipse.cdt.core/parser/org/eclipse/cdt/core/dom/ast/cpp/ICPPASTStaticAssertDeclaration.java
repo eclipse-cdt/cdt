@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -34,7 +34,7 @@ public interface ICPPASTStaticAssertDeclaration extends IASTDeclaration {
 	 * Returns the condition of the assertion
 	 */
 	IASTExpression getCondition();
-	
+
 	/**
 	 * Returns the message of the assertion. Potentially <code>null</code> when message is omitted 
 	 * or using content assist.

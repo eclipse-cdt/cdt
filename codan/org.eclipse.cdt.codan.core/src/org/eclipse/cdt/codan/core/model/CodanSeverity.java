@@ -82,15 +82,15 @@ public enum CodanSeverity {
 	 */
 	public String toTranslatableString() {
 		switch (this) {
-			case Info:
+		case Info:
 			return Messages.CodanSeverity_Info;
 
-			case Warning:
-				return Messages.CodanSeverity_Warning;
+		case Warning:
+			return Messages.CodanSeverity_Warning;
 
-			case Error:
-			default:
-				return Messages.CodanSeverity_Error;
+		case Error:
+		default:
+			return Messages.CodanSeverity_Error;
 		}
 	}
 }

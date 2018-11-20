@@ -152,7 +152,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 		// If the launch configuration is the only environment the inferior should see, just use that
 		boolean append = config.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		boolean environmentCollectedFromProject = false;
-		
+
 		if (append && project != null && project.isAccessible()) {
 			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, false);
 			if (projDesc != null) {
@@ -198,13 +198,13 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 				}
 			}
 		}
-		
+
 		if (!environmentCollectedFromProject) {
 			// we haven't collected any environment variables from the project settings,
 			// therefore simply use the launch settings
-			return DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);			
+			return DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
 		}
-		
+
 		// Now that we have the environment from the project, update it with 
 		// the environment settings the user has explicitly set in the launch
 		// configuration. There is no API in the launch manager to do this,
@@ -222,7 +222,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 				}
 			}
 		}
-		
+
 		// Turn it into an envp format
 		List<String> strings = new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {

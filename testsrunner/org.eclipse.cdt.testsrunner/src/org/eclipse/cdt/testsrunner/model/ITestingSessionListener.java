@@ -27,21 +27,21 @@ public interface ITestingSessionListener {
 	 * @param testSuite the started test suite
 	 */
 	public void enterTestSuite(ITestSuite testSuite);
-	
+
 	/**
 	 * Notifies the listener that the test suite running is finished.
 	 *
 	 * @param testSuite the finished test suite
 	 */
 	public void exitTestSuite(ITestSuite testSuite);
-	
+
 	/**
 	 * Notifies the listener that the new test case running is started.
 	 *
 	 * @param testCase the started test case
 	 */
 	public void enterTestCase(ITestCase testCase);
-	
+
 	/**
 	 * Notifies the listener that the test case running is finished.
 	 *
@@ -55,7 +55,7 @@ public interface ITestingSessionListener {
 	 * @param testSuite the test suite which require children update
 	 */
 	public void childrenUpdate(ITestSuite testSuite);
-	
+
 	/**
 	 * Notifies the listener that the testing process is started.
 	 */
@@ -65,5 +65,5 @@ public interface ITestingSessionListener {
 	 * Notifies the listener that the testing process is finished.
 	 */
 	public void testingFinished();
-	
+
 }

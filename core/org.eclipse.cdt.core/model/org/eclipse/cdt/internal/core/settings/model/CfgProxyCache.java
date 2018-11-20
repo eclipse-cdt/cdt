@@ -26,13 +26,13 @@ public class CfgProxyCache implements IProxyCache {
 	private HashMap<String, CDataProxy> fProxyMap = new HashMap<String, CDataProxy>();
 	private PathSettingsContainer fPathContainer;
 
-	CfgProxyCache(PathSettingsContainer pathDesContainer){
+	CfgProxyCache(PathSettingsContainer pathDesContainer) {
 		fPathContainer = pathDesContainer;
-		fPathContainer.addContainerListener(new IPathSettingsContainerListener(){
+		fPathContainer.addContainerListener(new IPathSettingsContainerListener() {
 			@Override
 			public void aboutToRemove(PathSettingsContainer container) {
-				CDataProxy proxy = (CDataProxy)container.getValue();
-				if(proxy != null)
+				CDataProxy proxy = (CDataProxy) container.getValue();
+				if (proxy != null)
 					fProxyMap.remove(proxy.getId());
 			}
 
@@ -42,10 +42,10 @@ public class CfgProxyCache implements IProxyCache {
 
 			@Override
 			public void containerValueChanged(PathSettingsContainer container, Object oldValue) {
-				CDataProxy proxy = (CDataProxy)container.getValue();
-				if(proxy != null)
-					fProxyMap.put(proxy.getId(),proxy);
-				else if(oldValue != null){
+				CDataProxy proxy = (CDataProxy) container.getValue();
+				if (proxy != null)
+					fProxyMap.put(proxy.getId(), proxy);
+				else if (oldValue != null) {
 					fProxyMap.remove(oldValue);
 				}
 			}
@@ -60,8 +60,8 @@ public class CfgProxyCache implements IProxyCache {
 
 	@Override
 	public void addCachedProxy(CDataProxy proxy) {
-		if(proxy instanceof IInternalResourceDescription){
-			IInternalResourceDescription des = (IInternalResourceDescription)proxy;
+		if (proxy instanceof IInternalResourceDescription) {
+			IInternalResourceDescription des = (IInternalResourceDescription) proxy;
 			IPath path = des.getPath();
 			PathSettingsContainer cr = fPathContainer.getChildContainer(path, true, true);
 			cr.setValue(des);
@@ -97,7 +97,7 @@ public class CfgProxyCache implements IProxyCache {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<String, CDataProxy> getCachedProxiesMap() {
-		return (Map<String, CDataProxy>)fProxyMap.clone();
+		return (Map<String, CDataProxy>) fProxyMap.clone();
 	}
 
 	@Override
@@ -107,38 +107,37 @@ public class CfgProxyCache implements IProxyCache {
 
 	@Override
 	public void removeCachedProxy(CDataProxy proxy) {
-		if(proxy instanceof IInternalResourceDescription){
-			fPathContainer.removeChildContainer(((IInternalResourceDescription)proxy).getCachedPath());
+		if (proxy instanceof IInternalResourceDescription) {
+			fPathContainer.removeChildContainer(((IInternalResourceDescription) proxy).getCachedPath());
 		} else {
 			fProxyMap.remove(proxy.getId());
 		}
 	}
 
-//	public Map reuseProxies(List dataList, Map freeProxyMap) {
-//		Collection proxies = freeProxyMap.values();
-//		CDataProxy proxy;
-//		CDataObject data;
-//		Map result;
-//		for(Iterator dataIter = dataList.iterator(); dataIter.hasNext();){
-//			data = (CDataObject)dataIter.next();
-//			for(Iterator proxyIter = proxies.iterator(); proxyIter.hasNext();){
-//				proxy = (CDataProxy)proxyIter.next();
-//				if(data.getType() != proxy.getType())
-//					continue;
-//
-//				switch(data.getType()){
-//				case ICSettingBase.SETTING_TARGET_PLATFORM:
-//				case ICSettingBase.SETTING_FILE:
-//				case ICSettingBase.SETTING_FOLDER:
-////					if(((CResourceData)data).getPath().equals(((CResourceDescription)proxy).getPath()))
-//				}
-//
-//				if(result == null)
-//					result = new HashMap();
-//
-//
-//			}
-//		}
-//	}
+	//	public Map reuseProxies(List dataList, Map freeProxyMap) {
+	//		Collection proxies = freeProxyMap.values();
+	//		CDataProxy proxy;
+	//		CDataObject data;
+	//		Map result;
+	//		for(Iterator dataIter = dataList.iterator(); dataIter.hasNext();){
+	//			data = (CDataObject)dataIter.next();
+	//			for(Iterator proxyIter = proxies.iterator(); proxyIter.hasNext();){
+	//				proxy = (CDataProxy)proxyIter.next();
+	//				if(data.getType() != proxy.getType())
+	//					continue;
+	//
+	//				switch(data.getType()){
+	//				case ICSettingBase.SETTING_TARGET_PLATFORM:
+	//				case ICSettingBase.SETTING_FILE:
+	//				case ICSettingBase.SETTING_FOLDER:
+	////					if(((CResourceData)data).getPath().equals(((CResourceDescription)proxy).getPath()))
+	//				}
+	//
+	//				if(result == null)
+	//					result = new HashMap();
+	//
+	//
+	//			}
+	//		}
+	//	}
 }
-

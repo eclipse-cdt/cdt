@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-
 /**
  *  TemplateListSelectionPage
  */
@@ -110,14 +109,14 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 
 		boolean useTree = parentWizard.showTemplatesInTreeView();
 
-		if (useTree)
-		{
+		if (useTree) {
 			wizardSelectionTreeViewer = new TreeViewer(sashForm, SWT.BORDER);
 			wizardSelectionTreeViewer.setContentProvider(parentWizard);
 			wizardSelectionTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
 				@Override
 				public void doubleClick(DoubleClickEvent event) {
-					selectionChanged(new SelectionChangedEvent(wizardSelectionTreeViewer, wizardSelectionTreeViewer.getSelection()));
+					selectionChanged(new SelectionChangedEvent(wizardSelectionTreeViewer,
+							wizardSelectionTreeViewer.getSelection()));
 					moveToNextPage();
 				}
 			});
@@ -126,15 +125,14 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 			wizardSelectionTreeViewer.getTree().setData("name", "templates"); //$NON-NLS-1$ //$NON-NLS-2$
 			wizardSelectionViewer = wizardSelectionTreeViewer;
 
-		}
-		else
-		{
+		} else {
 			wizardSelectionTableViewer = new TableViewer(sashForm, SWT.BORDER);
 			wizardSelectionTableViewer.setContentProvider(parentWizard);
 			wizardSelectionTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 				@Override
 				public void doubleClick(DoubleClickEvent event) {
-					selectionChanged(new SelectionChangedEvent(wizardSelectionTableViewer, wizardSelectionTableViewer.getSelection()));
+					selectionChanged(new SelectionChangedEvent(wizardSelectionTableViewer,
+							wizardSelectionTableViewer.getSelection()));
 					moveToNextPage();
 				}
 			});
@@ -147,7 +145,7 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 		wizardSelectionViewer.getControl().setData(".uid", "wizardSelectionViewer"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		createDescriptionIn(sashForm);
-		sashForm.setWeights(new int[] {75, 25});
+		sashForm.setWeights(new int[] { 75, 25 });
 
 		Dialog.applyDialogFont(container);
 		setControl(container);
@@ -179,7 +177,7 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 	public Template getTemplate() {
 		IWizardNode selectedNode = getSelectedNode();
 		if (selectedNode != null) {
-			return ((WizardNode)selectedNode).getTemplate();
+			return ((WizardNode) selectedNode).getTemplate();
 		}
 		return null;
 	}
@@ -204,7 +202,7 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 
 	@Override
 	public boolean canFlipToNextPage() {
-		IStructuredSelection ssel = (IStructuredSelection)wizardSelectionViewer.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) wizardSelectionViewer.getSelection();
 		return ssel != null && !ssel.isEmpty() && (ssel.getFirstElement() instanceof Template);
 	}
 
@@ -222,10 +220,12 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 
 				// select the first element by default
 				if (wizardSelectionTableViewer != null) {
-					wizardSelectionTableViewer.setSelection(new StructuredSelection(wizardSelectionTableViewer.getElementAt(0)), true);
+					wizardSelectionTableViewer
+							.setSelection(new StructuredSelection(wizardSelectionTableViewer.getElementAt(0)), true);
 				}
 				if (wizardSelectionTreeViewer != null) {
-					wizardSelectionTreeViewer.setSelection(new StructuredSelection(wizardSelectionTreeViewer.getTree().getItem(0).getData()), true);
+					wizardSelectionTreeViewer.setSelection(
+							new StructuredSelection(wizardSelectionTreeViewer.getTree().getItem(0).getData()), true);
 				}
 			}
 		}
@@ -246,7 +246,7 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 		// just need to compare the template info.
 		boolean changed = false;
 		if (newTemplates != null && templates != null && newTemplates.length == templates.length) {
-			for (int i=0; i<templates.length; i++) {
+			for (int i = 0; i < templates.length; i++) {
 				if (!newTemplates[i].getTemplateInfo().equals(templates[i].getTemplateInfo())) {
 					changed = true;
 					break;
@@ -263,13 +263,12 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 		return parentWizard.getAllDataInNonTemplatePages();
 	}
 
-	public IWizardDataPage[] getPagesAfterTemplatePages()
-	{
+	public IWizardDataPage[] getPagesAfterTemplatePages() {
 		return parentWizard.getPagesAfterTemplatePages();
 	}
 
-	public IWizardDataPage[] getPagesAfterTemplateSelection() throws InstantiationException, IllegalAccessException, ClassNotFoundException
-	{
+	public IWizardDataPage[] getPagesAfterTemplateSelection()
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		return parentWizard.getPagesAfterTemplateSelectionWithExtraPages(getTemplate());
 	}
 

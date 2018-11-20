@@ -15,9 +15,8 @@ package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import org.eclipse.core.resources.IProject;
 
-
 public interface IConfigurationBuildState extends IResourceRebuildStateContainer {
 	String getConfigurationId();
-	
+
 	IProject getProject();
 }

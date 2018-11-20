@@ -59,7 +59,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 	private static final int CONTENT_TYPE_COLUMN = 1;
 
 	private static final int LANGUAGE_COLUMN = 2;
-	
+
 	private Map<String, Map<String, String>> fConfigurationContentTypeMappings;
 
 	public void setMappings(Map<String, Map<String, String>> contentTypeMappings) {
@@ -95,7 +95,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 
 		TableColumn configurationColumn = new TableColumn(fTable, SWT.LEAD);
 		configurationColumn.setText(PreferencesMessages.ProjectLanguagesPropertyPage_configurationColumn);
-		
+
 		TableColumn contentTypeColumn = new TableColumn(fTable, SWT.LEAD);
 		contentTypeColumn.setText(PreferencesMessages.ProjectLanguagesPropertyPage_contentTypeColumn);
 
@@ -121,8 +121,9 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 				IProject project = getElement().getAdapter(IProject.class);
 				ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project, false);
 				ICConfigurationDescription[] configurations = description.getConfigurations();
-				ProjectContentTypeMappingDialog dialog = new ProjectContentTypeMappingDialog(fContents.getShell(), configurations);
-				
+				ProjectContentTypeMappingDialog dialog = new ProjectContentTypeMappingDialog(fContents.getShell(),
+						configurations);
+
 				dialog.setContentTypeFilter(createContentTypeFilter(fConfigurationContentTypeMappings));
 				dialog.setBlockOnOpen(true);
 
@@ -140,7 +141,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 					}
 					contentTypeMappings.put(contentType, language);
 					setChanged(true);
-					
+
 					IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 					fAffectedContentTypes.add(contentTypeManager.getContentType(contentType));
 					refreshMappings();
@@ -167,7 +168,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 					} else {
 						configurationId = data.configuration.getId();
 					}
-					
+
 					Map<String, String> contentTypeMappings = fConfigurationContentTypeMappings.get(configurationId);
 					if (contentTypeMappings != null) {
 						contentTypeMappings.remove(contentType);
@@ -176,7 +177,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 					IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 					fAffectedContentTypes.add(contentTypeManager.getContentType(contentType));
 				}
-				
+
 				if (selection.length > 0) {
 					setChanged(true);
 				}
@@ -204,13 +205,13 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		}
 		return filter;
 	}
-	
+
 	@Override
 	public void refreshMappings() {
 		if (fTable == null) {
 			return;
 		}
-		
+
 		fTable.removeAll();
 		Iterator<Entry<String, Map<String, String>>> mappings = fConfigurationContentTypeMappings.entrySet().iterator();
 
@@ -226,24 +227,25 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 			while (contentTypeMappings.hasNext()) {
 				Entry<String, String> entry = contentTypeMappings.next();
 				TableItem item = new TableItem(fTable, SWT.NONE);
-	
+
 				String contentType = entry.getKey();
 				String contentTypeName = contentTypeManager.getContentType(contentType).getName();
 				String languageId = entry.getValue();
 				String languageName = LanguageManager.getInstance().getLanguage(languageId).getName();
-				
+
 				ICConfigurationDescription configuration = description.getConfigurationById(configurationId);
-				
+
 				item.setData(new LanguageTableData(configuration, contentType, languageId));
-				
+
 				if (configuration == null) {
 					item.setText(CONFIGURATION_COLUMN, PreferencesMessages.ContentTypeMappingsDialog_allConfigurations);
 				} else {
 					item.setText(CONFIGURATION_COLUMN, configuration.getName());
 				}
-				
+
 				if (fOverriddenContentTypes.contains(contentType)) {
-					item.setText(CONTENT_TYPE_COLUMN, Messages.format(PreferencesMessages.ProjectLanguagesPropertyPage_overriddenContentType, contentTypeName));
+					item.setText(CONTENT_TYPE_COLUMN, Messages.format(
+							PreferencesMessages.ProjectLanguagesPropertyPage_overriddenContentType, contentTypeName));
 					item.setFont(fOverriddenFont);
 				} else {
 					item.setText(CONTENT_TYPE_COLUMN, contentTypeName);
@@ -251,15 +253,17 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 				item.setText(LANGUAGE_COLUMN, languageName);
 			}
 		}
-		
+
 		if (fChild != null) {
-			Set<String> overrides = new HashSet<String>(createWorkspaceContentTypeFilter(fConfigurationContentTypeMappings));
+			Set<String> overrides = new HashSet<String>(
+					createWorkspaceContentTypeFilter(fConfigurationContentTypeMappings));
 			fChild.setOverriddenContentTypes(overrides);
 			fChild.refreshMappings();
 		}
 	}
-	
-	private Set<String> createWorkspaceContentTypeFilter(Map<String, Map<String, String>> configurationContentTypeMappings) {
+
+	private Set<String> createWorkspaceContentTypeFilter(
+			Map<String, Map<String, String>> configurationContentTypeMappings) {
 		Map<String, String> contentTypeMappings = configurationContentTypeMappings.get(ALL_CONFIGURATIONS);
 		if (contentTypeMappings == null) {
 			return Collections.emptySet();
@@ -270,11 +274,11 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 	static String createFilterKey(String configurationId, String contentTypeId) {
 		return configurationId + CONTENT_TYPE_KEY_DELIMITER + contentTypeId;
 	}
-	
+
 	private static class LanguageTableData {
 		ICConfigurationDescription configuration;
 		String contentTypeId;
-		
+
 		LanguageTableData(ICConfigurationDescription configuration, String contentTypeId, String languageId) {
 			this.configuration = configuration;
 			this.contentTypeId = contentTypeId;

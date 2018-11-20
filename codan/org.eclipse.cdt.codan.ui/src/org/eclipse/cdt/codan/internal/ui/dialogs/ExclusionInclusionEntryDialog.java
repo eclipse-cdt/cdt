@@ -90,7 +90,8 @@ public class ExclusionInclusionEntryDialog extends StatusDialog {
 			fExistingPatterns.remove(patternToEdit);
 		}
 		IProject currProject = entryToEdit.getProject();
-		IWorkspaceRoot root = currProject != null ? currProject.getWorkspace().getRoot() : ResourcesPlugin.getWorkspace().getRoot();
+		IWorkspaceRoot root = currProject != null ? currProject.getWorkspace().getRoot()
+				: ResourcesPlugin.getWorkspace().getRoot();
 		IResource res = root.findMember(entryToEdit.getPath());
 		if (res instanceof IContainer) {
 			fCurrSourceFolder = (IContainer) res;
@@ -214,8 +215,8 @@ public class ExclusionInclusionEntryDialog extends StatusDialog {
 		return res[0];
 	}
 
-	public static IPath[] chooseExclusionPattern(Shell shell, IContainer currentSourceFolder, String title, String message,
-			IPath initialPath, boolean multiSelection) {
+	public static IPath[] chooseExclusionPattern(Shell shell, IContainer currentSourceFolder, String title,
+			String message, IPath initialPath, boolean multiSelection) {
 		Class[] acceptedClasses = new Class[] { IFolder.class, IFile.class, IProject.class };
 		ISelectionStatusValidator validator = new TypedElementSelectionValidator(acceptedClasses, multiSelection);
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);

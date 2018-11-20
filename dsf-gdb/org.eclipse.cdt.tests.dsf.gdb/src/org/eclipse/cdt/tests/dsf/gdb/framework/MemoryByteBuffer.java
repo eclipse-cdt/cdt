@@ -22,8 +22,7 @@ public class MemoryByteBuffer {
 	final private ByteBuffer fBuffer;
 	final private int fWordSize;
 
-	public MemoryByteBuffer(MemoryByte[] memoryByteArr, ByteOrder bo,
-			int wordSize) {
+	public MemoryByteBuffer(MemoryByte[] memoryByteArr, ByteOrder bo, int wordSize) {
 		assert (memoryByteArr != null);
 
 		fWordSize = wordSize;

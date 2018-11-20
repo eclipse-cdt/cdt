@@ -22,8 +22,8 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  * @since 7.0
  */
 public class UncallCommandHandler extends DebugCommandHandler {
-    @Override
-    protected Class<?> getCommandType() {
-        return IUncallHandler.class;
-    }
+	@Override
+	protected Class<?> getCommandType() {
+		return IUncallHandler.class;
+	}
 }

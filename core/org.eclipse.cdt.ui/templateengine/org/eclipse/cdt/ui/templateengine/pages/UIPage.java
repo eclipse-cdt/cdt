@@ -82,7 +82,8 @@ public abstract class UIPage extends DialogPage {
 		try {
 			String imageLoc = element.getAttributes().get(UIElement.IMAGELOCATION);
 			if (imageLoc != null) {
-				URL url = FileLocator.toFileURL(FileLocator.find(CCorePlugin.getDefault().getBundle(), new Path(imageLoc), null));
+				URL url = FileLocator
+						.toFileURL(FileLocator.find(CCorePlugin.getDefault().getBundle(), new Path(imageLoc), null));
 				imageDescriptor = ImageDescriptor.createFromURL(url);
 			}
 		} catch (Exception e) {

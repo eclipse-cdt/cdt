@@ -17,43 +17,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToolListElement {
-	
+
 	private List<ToolListElement> children;
 	private ToolListElement parent;
 	private String name;
 	private int type;
-	
+
 	public ToolListElement(String name, int type) {
 		this.name = name;
 		this.type = type;
 		this.children = new ArrayList<>();
 	}
-	
+
 	public void setParent(ToolListElement p) {
 		parent = p;
 	}
-	
+
 	public ToolListElement getParent() {
 		return parent;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public int getType() {
 		return type;
 	}
-	
+
 	public void addChild(ToolListElement e) {
 		children.add(e);
 		e.setParent(this);
 	}
-	
+
 	public boolean hasChildren() {
 		return children.size() > 0;
 	}
-	
+
 	public Object[] getChildren() {
 		return children.toArray();
 	}

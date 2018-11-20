@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.core.runtime.IPath;
 
-
 public class SOMBinaryExecutable extends SOMBinaryObject implements IBinaryExecutable {
 
 	public SOMBinaryExecutable(IBinaryParser parser, IPath path) {

@@ -31,13 +31,13 @@ public interface IStepVisitor {
 	 * to tell the visitor mechanism to continue step visiting process
 	 */
 	public static final int VISIT_CONTINUE = 1;
-	
+
 	/**
 	 * This constant can is returneed by the step visitor
 	 * to tell the visitor mechanism to stop step visiting process
 	 */
 	public static final int VISIT_STOP = 2;
-	
+
 	/**
 	 * this call-back method is called by the build description
 	 * visitor mechanism for each step in the build description

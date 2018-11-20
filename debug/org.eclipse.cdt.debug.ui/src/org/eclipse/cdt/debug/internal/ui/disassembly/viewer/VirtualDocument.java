@@ -33,247 +33,236 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * Converts the model elements into the text content
  */
 public class VirtualDocument extends Document {
-    
-    public class LinePosition extends Position {
 
-        private int fDistance = 0;
+	public class LinePosition extends Position {
 
-        LinePosition( int offset, int distance ) {
-            super( offset );
-            fDistance = distance;
-        }
+		private int fDistance = 0;
 
-        LinePosition( int offset, int length, int distance ) {
-            super( offset, length );
-            fDistance = distance;
-        }
+		LinePosition(int offset, int distance) {
+			super(offset);
+			fDistance = distance;
+		}
 
-        int getDistance() {
-            return fDistance;
-        }
+		LinePosition(int offset, int length, int distance) {
+			super(offset, length);
+			fDistance = distance;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.text.Position#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals( Object other ) {
-            if ( !(other instanceof LinePosition) )
-                return false;
-            return ( getDistance() == ((LinePosition)other).getDistance() );
-        }
-    }
+		int getDistance() {
+			return fDistance;
+		}
 
-    public final static String CATEGORY_LINE = "category_line"; // "category_line"; //$NON-NLS-1$
-    private static final String PENDING_LINE = ".............................."; //$NON-NLS-1$
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.Position#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object other) {
+			if (!(other instanceof LinePosition))
+				return false;
+			return (getDistance() == ((LinePosition) other).getDistance());
+		}
+	}
 
-    private Object fRoot;
-    private int fCurrentOffset = 0;
+	public final static String CATEGORY_LINE = "category_line"; // "category_line"; //$NON-NLS-1$
+	private static final String PENDING_LINE = ".............................."; //$NON-NLS-1$
 
-    private IDocumentPresentation fPresentationContext;
-    private AnnotationModel fAnnotationModel;
-    private DocumentContentProvider fContentProvider;
-    private DocumentLabelProvider fLabelProvider;
-    private DocumentAnnotationProvider fAnnotationProvider;
-    
-    public VirtualDocument( AnnotationModel annotationModel, IDocumentPresentation presentationContext, Object root ) {
-        super();
-        fRoot = root;
-        fPresentationContext = presentationContext;
-        fAnnotationModel = annotationModel;
-        fContentProvider = new DocumentContentProvider( this );
-        fLabelProvider = new DocumentLabelProvider( this );
-        fAnnotationProvider = new DocumentAnnotationProvider( this );
-        getContentProvider().init( fRoot );
-    }
+	private Object fRoot;
+	private int fCurrentOffset = 0;
 
-    public void dispose() {
-        getContentProvider().dispose();
-        getLabelProvider().dispose();
-        getAnnotationProvider().dispose();
-        fRoot = null;
-    }
+	private IDocumentPresentation fPresentationContext;
+	private AnnotationModel fAnnotationModel;
+	private DocumentContentProvider fContentProvider;
+	private DocumentLabelProvider fLabelProvider;
+	private DocumentAnnotationProvider fAnnotationProvider;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.AbstractDocument#completeInitialization()
-     */
-    @Override
-    protected void completeInitialization() {
-        super.completeInitialization();
-        addPositionCategory( CATEGORY_LINE );
-        addPositionUpdater( new DefaultPositionUpdater( CATEGORY_LINE ) );
-    }
+	public VirtualDocument(AnnotationModel annotationModel, IDocumentPresentation presentationContext, Object root) {
+		super();
+		fRoot = root;
+		fPresentationContext = presentationContext;
+		fAnnotationModel = annotationModel;
+		fContentProvider = new DocumentContentProvider(this);
+		fLabelProvider = new DocumentLabelProvider(this);
+		fAnnotationProvider = new DocumentAnnotationProvider(this);
+		getContentProvider().init(fRoot);
+	}
 
-    public IDocumentPresentation getPresentationContext() {
-        return fPresentationContext;
-    }
+	public void dispose() {
+		getContentProvider().dispose();
+		getLabelProvider().dispose();
+		getAnnotationProvider().dispose();
+		fRoot = null;
+	}
 
-    public AnnotationModel getAnnotationModel() {
-        return fAnnotationModel;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.AbstractDocument#completeInitialization()
+	 */
+	@Override
+	protected void completeInitialization() {
+		super.completeInitialization();
+		addPositionCategory(CATEGORY_LINE);
+		addPositionUpdater(new DefaultPositionUpdater(CATEGORY_LINE));
+	}
 
-    public DocumentContentProvider getContentProvider() {
-        return fContentProvider;
-    }
+	public IDocumentPresentation getPresentationContext() {
+		return fPresentationContext;
+	}
 
-    protected DocumentLabelProvider getLabelProvider() {
-        return fLabelProvider;
-    }
+	public AnnotationModel getAnnotationModel() {
+		return fAnnotationModel;
+	}
 
-    protected DocumentAnnotationProvider getAnnotationProvider() {
-        return fAnnotationProvider;
-    }
+	public DocumentContentProvider getContentProvider() {
+		return fContentProvider;
+	}
 
-    private String createPendingContent( int lineCount, int oldOffset, int offset ) {
-        int oldLineCount = getNumberOfLines() - 1;
-        int intersectStart = Math.max( oldOffset, offset );
-        int intersectEnd = Math.min( oldOffset + oldLineCount, offset + lineCount );
-        int intersectCount = intersectEnd - intersectStart;
-        StringBuilder sb = new StringBuilder();
-        int line = 0;
-        if ( oldOffset > offset ) { // scrolling up
-            for ( int i = 0; i < oldOffset - offset; ++i ) {
-                try {
-                    addPosition( CATEGORY_LINE, new LinePosition( sb.length(), offset - i ) );
-                    sb.append( PENDING_LINE ).append( '\n' );
-                    ++line;
-                }
-                catch( BadLocationException e ) {
-                    // shouldn't happen
-                }
-                catch( BadPositionCategoryException e ) {
-                    // shouldn't happen
-                }
-            }
-        }
-        else { // scrolling down
-            line += offset - oldOffset;
-        }
-        for ( int i = 0; i < intersectCount; ++i ) {
-            try {
-                IRegion region = getLineInformation( line++ );
-                sb.append( get( region.getOffset(), region.getLength() ) ).append( '\n' );
-            }
-            catch( BadLocationException e ) {
-                // shouldn't happen
-            }
-        }
-        // Assuming the offset isn't changed when resizing
-        int pendingLines = 0;
-        if ( oldLineCount < lineCount ) { // resizing
-            pendingLines = lineCount - oldLineCount;
-        }
-        else if ( offset > oldOffset ) { // scrolling down
-            pendingLines = offset - oldOffset;
-        }
-        for ( int i = 0; i < pendingLines; ++i ) {
-            sb.append( PENDING_LINE ).append( '\n' );
-            ++line;
-        }
-        return sb.toString();
-    }
+	protected DocumentLabelProvider getLabelProvider() {
+		return fLabelProvider;
+	}
 
-    public int getCurrentOffset() {
-        return fCurrentOffset;
-    }
+	protected DocumentAnnotationProvider getAnnotationProvider() {
+		return fAnnotationProvider;
+	}
 
-    public void setCurrentOffset( int offset ) {
-        fCurrentOffset = offset;
-    }
+	private String createPendingContent(int lineCount, int oldOffset, int offset) {
+		int oldLineCount = getNumberOfLines() - 1;
+		int intersectStart = Math.max(oldOffset, offset);
+		int intersectEnd = Math.min(oldOffset + oldLineCount, offset + lineCount);
+		int intersectCount = intersectEnd - intersectStart;
+		StringBuilder sb = new StringBuilder();
+		int line = 0;
+		if (oldOffset > offset) { // scrolling up
+			for (int i = 0; i < oldOffset - offset; ++i) {
+				try {
+					addPosition(CATEGORY_LINE, new LinePosition(sb.length(), offset - i));
+					sb.append(PENDING_LINE).append('\n');
+					++line;
+				} catch (BadLocationException e) {
+					// shouldn't happen
+				} catch (BadPositionCategoryException e) {
+					// shouldn't happen
+				}
+			}
+		} else { // scrolling down
+			line += offset - oldOffset;
+		}
+		for (int i = 0; i < intersectCount; ++i) {
+			try {
+				IRegion region = getLineInformation(line++);
+				sb.append(get(region.getOffset(), region.getLength())).append('\n');
+			} catch (BadLocationException e) {
+				// shouldn't happen
+			}
+		}
+		// Assuming the offset isn't changed when resizing
+		int pendingLines = 0;
+		if (oldLineCount < lineCount) { // resizing
+			pendingLines = lineCount - oldLineCount;
+		} else if (offset > oldOffset) { // scrolling down
+			pendingLines = offset - oldOffset;
+		}
+		for (int i = 0; i < pendingLines; ++i) {
+			sb.append(PENDING_LINE).append('\n');
+			++line;
+		}
+		return sb.toString();
+	}
 
-    public Object getElementAtLine( int line ) {
-        return getContentProvider().getElementAtLine( line );
-    }
+	public int getCurrentOffset() {
+		return fCurrentOffset;
+	}
 
-    public void updateContent( int lineCount, int offset, boolean revealInput ) {
-        int oldOffset = fCurrentOffset;
-        fCurrentOffset = offset;
-        removePositions();
-        getAnnotationModel().removeAllAnnotations();
-        set( createPendingContent( lineCount, oldOffset, offset ) );
-        setPositions();
-        getContentProvider().update( getPresentationContext(), lineCount, offset, revealInput );
-    }
+	public void setCurrentOffset(int offset) {
+		fCurrentOffset = offset;
+	}
 
-    protected void updateElement( Object input, int index, Object element ) {
-        getLabelProvider().update( input, element, index, getPresentationContext() );
-        getAnnotationProvider().update( getContentProvider().getInput(), element, index, getPresentationContext() );
-    }
+	public Object getElementAtLine(int line) {
+		return getContentProvider().getElementAtLine(line);
+	}
 
-    @SuppressWarnings("rawtypes")
-    protected void updateAnnotations( int lineNumber, Annotation[] annotations ) {
-        IAnnotationModel annotationModel = getAnnotationModel();
-        try {
-            Position[] positions = getPositions( CATEGORY_LINE );
-            if ( lineNumber < positions.length ) {
-                Iterator it = annotationModel.getAnnotationIterator();
-                ArrayList<Annotation> oldAnnotations = new ArrayList<Annotation>( 3 );
-                while( it.hasNext() ) {
-                    Annotation ann = (Annotation)it.next();
-                    if ( positions[lineNumber].equals( annotationModel.getPosition( ann ) ) ) {
-                        oldAnnotations.add( ann );
-                    }
-                }
-                for ( Annotation ann : oldAnnotations ) {
-                    annotationModel.removeAnnotation( ann );
-                }
-                for ( Annotation ann : annotations ) {
-                    annotationModel.addAnnotation( ann, positions[lineNumber] );
-                }
-            }
-        }
-        catch( BadPositionCategoryException e ) {
-        }
-    }
+	public void updateContent(int lineCount, int offset, boolean revealInput) {
+		int oldOffset = fCurrentOffset;
+		fCurrentOffset = offset;
+		removePositions();
+		getAnnotationModel().removeAllAnnotations();
+		set(createPendingContent(lineCount, oldOffset, offset));
+		setPositions();
+		getContentProvider().update(getPresentationContext(), lineCount, offset, revealInput);
+	}
 
-    final void labelDone( Object element, int lineNumber, Properties labels ) {
-        try {
-            String line = labels.getProperty( IDocumentPresentation.ATTR_LINE_LABEL );
-            IRegion region = getLineInformation( lineNumber );
-            if ( get( region.getOffset(), region.getLength() ).compareTo( line ) != 0 )
-                replace( region.getOffset(), region.getLength(), line );
-        }
-        catch( BadLocationException e ) {
-        }
-    }
+	protected void updateElement(Object input, int index, Object element) {
+		getLabelProvider().update(input, element, index, getPresentationContext());
+		getAnnotationProvider().update(getContentProvider().getInput(), element, index, getPresentationContext());
+	}
 
-    protected void removeLine( int lineNumber ) {
-        try {
-            IRegion region = getLineInformation( lineNumber );
-            replace( region.getOffset(), region.getLength(), "" ); //$NON-NLS-1$
-        }
-        catch( BadLocationException e ) {
-        }
-    }
+	@SuppressWarnings("rawtypes")
+	protected void updateAnnotations(int lineNumber, Annotation[] annotations) {
+		IAnnotationModel annotationModel = getAnnotationModel();
+		try {
+			Position[] positions = getPositions(CATEGORY_LINE);
+			if (lineNumber < positions.length) {
+				Iterator it = annotationModel.getAnnotationIterator();
+				ArrayList<Annotation> oldAnnotations = new ArrayList<Annotation>(3);
+				while (it.hasNext()) {
+					Annotation ann = (Annotation) it.next();
+					if (positions[lineNumber].equals(annotationModel.getPosition(ann))) {
+						oldAnnotations.add(ann);
+					}
+				}
+				for (Annotation ann : oldAnnotations) {
+					annotationModel.removeAnnotation(ann);
+				}
+				for (Annotation ann : annotations) {
+					annotationModel.addAnnotation(ann, positions[lineNumber]);
+				}
+			}
+		} catch (BadPositionCategoryException e) {
+		}
+	}
 
-    private void removePositions() {
-        try {
-            Position[] oldPositions = getPositions( CATEGORY_LINE );
-            for ( Position p : oldPositions ) {
-                removePosition( CATEGORY_LINE, p );
-            }
-        }
-        catch( BadPositionCategoryException e ) {
-        }
-    }
+	final void labelDone(Object element, int lineNumber, Properties labels) {
+		try {
+			String line = labels.getProperty(IDocumentPresentation.ATTR_LINE_LABEL);
+			IRegion region = getLineInformation(lineNumber);
+			if (get(region.getOffset(), region.getLength()).compareTo(line) != 0)
+				replace(region.getOffset(), region.getLength(), line);
+		} catch (BadLocationException e) {
+		}
+	}
 
-    private void setPositions() {
-        try {
-            Position[] oldPositions = getPositions( CATEGORY_LINE );
-            int offset = getCurrentOffset();
-            int lines = getNumberOfLines();
-            for ( Position p : oldPositions ) {
-                removePosition( CATEGORY_LINE, p );
-            }
-            for ( int i = 0; i < lines; ++i ) {
-                IRegion info = getLineInformation( i );
-                addPosition( CATEGORY_LINE, new LinePosition( info.getOffset(), info.getLength(), offset + i ) );
-            }
-        }
-        catch( BadPositionCategoryException e ) {
-            // shouldn't happen
-        }
-        catch( BadLocationException e ) {
-            // shouldn't happen
-        }
-    }
+	protected void removeLine(int lineNumber) {
+		try {
+			IRegion region = getLineInformation(lineNumber);
+			replace(region.getOffset(), region.getLength(), ""); //$NON-NLS-1$
+		} catch (BadLocationException e) {
+		}
+	}
+
+	private void removePositions() {
+		try {
+			Position[] oldPositions = getPositions(CATEGORY_LINE);
+			for (Position p : oldPositions) {
+				removePosition(CATEGORY_LINE, p);
+			}
+		} catch (BadPositionCategoryException e) {
+		}
+	}
+
+	private void setPositions() {
+		try {
+			Position[] oldPositions = getPositions(CATEGORY_LINE);
+			int offset = getCurrentOffset();
+			int lines = getNumberOfLines();
+			for (Position p : oldPositions) {
+				removePosition(CATEGORY_LINE, p);
+			}
+			for (int i = 0; i < lines; ++i) {
+				IRegion info = getLineInformation(i);
+				addPosition(CATEGORY_LINE, new LinePosition(info.getOffset(), info.getLength(), offset + i));
+			}
+		} catch (BadPositionCategoryException e) {
+			// shouldn't happen
+		} catch (BadLocationException e) {
+			// shouldn't happen
+		}
+	}
 }

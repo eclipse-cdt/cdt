@@ -23,9 +23,9 @@ import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
  * @since 2.0
  */
 public class ToggleLinkingAction extends AbstractToggleLinkingAction {
-	
-    CView fCView;
-    
+
+	CView fCView;
+
 	/**
 	 * Constructs a new action.
 	 */
@@ -39,7 +39,7 @@ public class ToggleLinkingAction extends AbstractToggleLinkingAction {
 	 */
 	@Override
 	public void run() {
-	    fCView.setLinkingEnabled(isChecked());
+		fCView.setLinkingEnabled(isChecked());
 	}
 
 }

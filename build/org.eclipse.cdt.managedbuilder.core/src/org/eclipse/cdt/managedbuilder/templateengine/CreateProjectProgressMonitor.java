@@ -28,12 +28,12 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	public CreateProjectProgressMonitor() {
 		super();
 	}
-	
+
 	public CreateProjectProgressMonitor(String taskName) {
 		super();
 		super.setTaskName(taskName);
 	}
-	
+
 	/**
 	 * Override this method to do something
 	 * with the name of the task.
@@ -67,7 +67,5 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	public boolean isCanceled() {
 		return super.isCanceled();
 	}
-
-
 
 }

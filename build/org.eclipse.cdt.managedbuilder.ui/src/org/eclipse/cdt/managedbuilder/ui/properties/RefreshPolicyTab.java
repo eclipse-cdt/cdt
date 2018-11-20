@@ -70,13 +70,12 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * @since 8.0
  */
 @SuppressWarnings("restriction")
-public class RefreshPolicyTab extends AbstractCBuildPropertyTab { 
+public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 
 	private final Image IMG_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FOLDER);
 	private final Image IMG_FILE = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_FILE_OBJ);
 	private final Image IMG_RESOURCE = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_FILE_FOLDER_OBJ);
 	private final Image IMG_EXCEPTION = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_ERROR);
-
 
 	private final static int IDX_ADD_RESOURCE = 0;
 	private final static int IDX_ADD_EXCEPTION = 1;
@@ -93,40 +92,42 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		fManager = RefreshScopeManager.getInstance();
 	}
 
-	private  HashMap<IResource, List<RefreshExclusion>> getResourcesToExclusionsMap(String configName) {
-		 HashMap<IResource, List<RefreshExclusion>> resourceMap = fConfigurationToResourcesToExclusionsMap.get(configName);
-		 if (resourceMap == null) {
-			 resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
-			 resourceMap.put(fProject, new ArrayList<RefreshExclusion>());
-			 fConfigurationToResourcesToExclusionsMap.put(configName, resourceMap);
-		 }
-		 
-		 return resourceMap;
+	private HashMap<IResource, List<RefreshExclusion>> getResourcesToExclusionsMap(String configName) {
+		HashMap<IResource, List<RefreshExclusion>> resourceMap = fConfigurationToResourcesToExclusionsMap
+				.get(configName);
+		if (resourceMap == null) {
+			resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
+			resourceMap.put(fProject, new ArrayList<RefreshExclusion>());
+			fConfigurationToResourcesToExclusionsMap.put(configName, resourceMap);
+		}
+
+		return resourceMap;
 	}
 
 	private String getConfigName() {
 		return this.getCfg().getName();
 	}
-	
-	private HashMap<String, HashMap<IResource, List<RefreshExclusion>>> copyHashMap(HashMap<String, HashMap<IResource, List<RefreshExclusion>>> source) {
-		
+
+	private HashMap<String, HashMap<IResource, List<RefreshExclusion>>> copyHashMap(
+			HashMap<String, HashMap<IResource, List<RefreshExclusion>>> source) {
+
 		HashMap<String, HashMap<IResource, List<RefreshExclusion>>> target = new HashMap<String, HashMap<IResource, List<RefreshExclusion>>>();
-		
+
 		if (source.isEmpty())
 			return target;
-		
+
 		Iterator<String> config_iterator = source.keySet().iterator();
 		// for each Configuration ...
 		while (config_iterator.hasNext()) {
 			String configName = config_iterator.next();
-			
+
 			HashMap<IResource, List<RefreshExclusion>> source_resourceMap = source.get(configName);
 			HashMap<IResource, List<RefreshExclusion>> target_resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
-			
+
 			Iterator<IResource> resource_iterator = source_resourceMap.keySet().iterator();
 			while (resource_iterator.hasNext()) {
 				IResource source_resource = resource_iterator.next();
-				List<RefreshExclusion> source_exclusions = source_resourceMap.get(source_resource);	
+				List<RefreshExclusion> source_exclusions = source_resourceMap.get(source_resource);
 				List<RefreshExclusion> target_exclusions = new LinkedList<RefreshExclusion>();
 				for (RefreshExclusion exclusion : source_exclusions) {
 					// ADD each exclusion to the target exclusion list.
@@ -137,27 +138,28 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 				// ADD the exclusion list for this resource
 				target_resourceMap.put(source_resource, target_exclusions);
 			}
-			
+
 			// ADD each resource.
 			target.put(configName, target_resourceMap);
-			
+
 		}
-		
+
 		return target;
 	}
-	
+
 	private void loadInfo() {
-			HashMap<String, HashMap<IResource, List<RefreshExclusion>>> configMap = fManager.getConfigurationToResourcesMap(fProject);
-			fConfigurationToResourcesToExclusionsMap = copyHashMap(configMap);
+		HashMap<String, HashMap<IResource, List<RefreshExclusion>>> configMap = fManager
+				.getConfigurationToResourcesMap(fProject);
+		fConfigurationToResourcesToExclusionsMap = copyHashMap(configMap);
 	}
 
 	private List<RefreshExclusion> getExclusions(String configName, IResource resource) {
 		HashMap<IResource, List<RefreshExclusion>> resourceMap = getResourcesToExclusionsMap(configName);
 		List<RefreshExclusion> exclusions = resourceMap.get(resource);
-		if(exclusions == null) {
+		if (exclusions == null) {
 			exclusions = new LinkedList<RefreshExclusion>();
 			resourceMap.put(resource, exclusions);
-			
+
 		}
 		return resourceMap.get(resource);
 	}
@@ -183,7 +185,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 
 		_Entry(IResource _ent) {
 			resourceToRefresh = _ent;
-			if (getExclusions(getConfigName(),resourceToRefresh) != null && getExclusions(getConfigName(),resourceToRefresh).size() > 0)
+			if (getExclusions(getConfigName(), resourceToRefresh) != null
+					&& getExclusions(getConfigName(), resourceToRefresh).size() > 0)
 				exceptions_node = new _Exception_Node(this);
 		}
 
@@ -200,7 +203,6 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 				}
 			}
 		}
-
 
 		@Override
 		public String toString() {
@@ -219,7 +221,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			}
 
 			if (exceptions_node != null)
-				return new Object[] {exceptions_node};
+				return new Object[] { exceptions_node };
 
 			return null;
 		}
@@ -273,10 +275,10 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	}
 
 	class _Exception_Node {
-		_Entry parent;	//can be IResource or RefreshExclusion - must not be null
+		_Entry parent; //can be IResource or RefreshExclusion - must not be null
 
 		//list of refresh exclusions under this Exceptions node
-		List <_Entry> exceptions = new ArrayList<_Entry>();
+		List<_Entry> exceptions = new ArrayList<_Entry>();
 
 		_Exception_Node(_Entry ent) {
 			parent = ent;
@@ -286,8 +288,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 				if (parent.exclusion.getNestedExclusions() != null)
 					iterator = parent.exclusion.getNestedExclusions().iterator();
 			} else {
-				if (getExclusions(getConfigName(),parent.resourceToRefresh) != null)
-					iterator = getExclusions(getConfigName(),parent.resourceToRefresh).iterator();
+				if (getExclusions(getConfigName(), parent.resourceToRefresh) != null)
+					iterator = getExclusions(getConfigName(), parent.resourceToRefresh).iterator();
 			}
 
 			if (iterator != null) {
@@ -303,11 +305,11 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			if (parent.isExclusion()) {
 				parent.exclusion.addNestedExclusion(exclusion);
 			} else {
-				List<RefreshExclusion> exclusions = getExclusions(getConfigName(),parent.resourceToRefresh);
+				List<RefreshExclusion> exclusions = getExclusions(getConfigName(), parent.resourceToRefresh);
 				if (exclusions == null) {
 					exclusions = new LinkedList<RefreshExclusion>();
 					getResourcesToExclusionsMap(getConfigName()).put(parent.resourceToRefresh, exclusions);
-					
+
 				}
 				exclusions.add(exclusion);
 			}
@@ -357,8 +359,6 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		}
 	}
 
-
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#createControls(org.eclipse.swt.widgets.Composite)
 	 */
@@ -367,31 +367,27 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		super.createControls(parent);
 		fProject = page.getProject();
 		loadInfo();
-		initButtons(new String[] {
-				Messages.RefreshPolicyTab_addResourceButtonLabel,
-				Messages.RefreshPolicyTab_addExceptionButtonLabel,
-				Messages.RefreshPolicyTab_editExceptionButtonLabel,
-				Messages.RefreshPolicyTab_deleteButtonLabel}, 120);
+		initButtons(new String[] { Messages.RefreshPolicyTab_addResourceButtonLabel,
+				Messages.RefreshPolicyTab_addExceptionButtonLabel, Messages.RefreshPolicyTab_editExceptionButtonLabel,
+				Messages.RefreshPolicyTab_deleteButtonLabel }, 120);
 		usercomp.setLayout(new GridLayout(1, false));
-
 
 		Label topLabel = new Label(usercomp, SWT.NONE);
 		topLabel.setText(Messages.RefreshPolicyTab_tabLabel);
-		Group g1 = setupGroup(usercomp, Messages.RefreshPolicyTab_resourcesGroupLabel, 2, GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		Group g1 = setupGroup(usercomp, Messages.RefreshPolicyTab_resourcesGroupLabel, 2,
+				GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 
 		fSrc = new ArrayList<_Entry>();
-		generateTreeContent(); 
+		generateTreeContent();
 
 		fTree = new TreeViewer(g1);
 		fTree.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-		fTree.getTree().getAccessible().addAccessibleListener(
-            new AccessibleAdapter() {
-                @Override
-				public void getName(AccessibleEvent e) {
-                	e.result = Messages.RefreshPolicyTab_resourcesTreeLabel;
-                }
-            }
-        );
+		fTree.getTree().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = Messages.RefreshPolicyTab_resourcesTreeLabel;
+			}
+		});
 
 		fTree.setContentProvider(new ITreeContentProvider() {
 			@Override
@@ -400,33 +396,40 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 					return ((_Entry) parentElement).getChildren();
 				}
 				if (parentElement instanceof _Exception_Node) {
-					return ((_Exception_Node)parentElement).getChildren();
+					return ((_Exception_Node) parentElement).getChildren();
 				}
 				return null;
 			}
+
 			@Override
 			public Object getParent(Object element) {
 				if (element instanceof _Entry)
-					return ((_Entry)element).parent;
+					return ((_Entry) element).parent;
 				if (element instanceof _Exception_Node)
-					return ((_Exception_Node)element).parent;
+					return ((_Exception_Node) element).parent;
 				if (element instanceof _Exclusion_Instance)
-					return ((_Exclusion_Instance)element).parent;
+					return ((_Exclusion_Instance) element).parent;
 				return null;
 			}
+
 			@Override
 			public boolean hasChildren(Object element) {
 				return (element instanceof _Entry || element instanceof _Exception_Node);
 			}
+
 			@Override
 			public Object[] getElements(Object inputElement) {
 				return fSrc.toArray(new _Entry[fSrc.size()]);
 			}
+
 			@Override
-			public void dispose() {}
+			public void dispose() {
+			}
+
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}});
+			}
+		});
 
 		fTree.setLabelProvider(new LabelProvider() {
 			@Override
@@ -441,10 +444,9 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 					return getImageForResource(entry.resourceToRefresh);
 				}
 
-				else if (element instanceof _Exclusion_Instance){
+				else if (element instanceof _Exclusion_Instance) {
 					return getImageForExclusionType(((_Exclusion_Instance) element).instance.getExclusionType());
-				}
-				else
+				} else
 					return null;
 			}
 		});
@@ -455,8 +457,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection instanceof TreeSelection) {
-					Object sel = ((TreeSelection)selection).getFirstElement();
-					if ( sel != null && sel instanceof _Exception_Node) {
+					Object sel = ((TreeSelection) selection).getFirstElement();
+					if (sel != null && sel instanceof _Exception_Node) {
 						fTree.setSelection(null);
 					}
 				}
@@ -506,7 +508,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		// Just clear the fSrc.
 		fSrc.clear();
 	}
-	
+
 	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		performOK();
@@ -533,7 +535,6 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		}
 	}
 
-
 	/**
 	 * @since 8.2
 	 */
@@ -546,9 +547,11 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	protected void updateButtons() {
 		TreeItem[] sel = fTree.getTree().getSelection();
 		buttonSetEnabled(IDX_ADD_RESOURCE, true);
-    	buttonSetEnabled(IDX_ADD_EXCEPTION, sel.length == 1 && sel[0].getData() instanceof _Entry);
-    	buttonSetEnabled(IDX_EDIT_EXCEPTION, sel.length == 1 && sel[0].getData() instanceof _Entry && ((_Entry) sel[0].getData()).isExclusion());
-    	buttonSetEnabled(IDX_DELETE, sel.length == 1 && (sel[0].getData() instanceof _Entry || sel[0].getData() instanceof _Exclusion_Instance));
+		buttonSetEnabled(IDX_ADD_EXCEPTION, sel.length == 1 && sel[0].getData() instanceof _Entry);
+		buttonSetEnabled(IDX_EDIT_EXCEPTION,
+				sel.length == 1 && sel[0].getData() instanceof _Entry && ((_Entry) sel[0].getData()).isExclusion());
+		buttonSetEnabled(IDX_DELETE, sel.length == 1
+				&& (sel[0].getData() instanceof _Entry || sel[0].getData() instanceof _Exclusion_Instance));
 	}
 
 	class FilteredContainerContentProvider extends ContainerContentProvider {
@@ -559,8 +562,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		@Override
 		public Object[] getChildren(Object element) {
 			ArrayList<Object> filteredChildren = new ArrayList<Object>(Arrays.asList(super.getChildren(element)));
-			Iterator<IResource> iterator = getResourcesToExclusionsMap(getConfigName()).keySet().iterator(); 
-			
+			Iterator<IResource> iterator = getResourcesToExclusionsMap(getConfigName()).keySet().iterator();
+
 			while (iterator.hasNext()) {
 				filteredChildren.remove(iterator.next());
 			}
@@ -580,20 +583,20 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		switch (x) {
 		case IDX_ADD_RESOURCE:
 			//TODO: Phase one implementation - folders only - need to change this for Phase two
-			
-			CheckedTreeSelectionDialog addResourceDialog = new CheckedTreeSelectionDialog(shell, new WorkbenchLabelProvider(),
-					new FilteredContainerContentProvider());
+
+			CheckedTreeSelectionDialog addResourceDialog = new CheckedTreeSelectionDialog(shell,
+					new WorkbenchLabelProvider(), new FilteredContainerContentProvider());
 			addResourceDialog.setInput(ResourcesPlugin.getWorkspace());
 			addResourceDialog.setTitle(Messages.RefreshPolicyTab_addResourceDialogTitle);
 			addResourceDialog.setMessage(Messages.RefreshPolicyTab_addResourceDialogDescription);
 			if (addResourceDialog.open() == Window.OK) {
 				Object[] result = addResourceDialog.getResult();
 				for (int i = 0; i < result.length; i++) {
-					 IResource resource = (IResource) result[i];
+					IResource resource = (IResource) result[i];
 					_Entry newResource = new _Entry(resource);
 					//update the model element in this tab
-					getResourcesToExclusionsMap(getConfigName()).put(resource,new LinkedList<RefreshExclusion>());
-					
+					getResourcesToExclusionsMap(getConfigName()).put(resource, new LinkedList<RefreshExclusion>());
+
 					//update tree
 					fSrc.add(newResource);
 				}
@@ -610,7 +613,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			if (sel.isExclusion()) {
 				addExceptionDialog = new RefreshPolicyExceptionDialog(shell, sel.exclusion, true);
 			} else {
-				addExceptionDialog = new RefreshPolicyExceptionDialog(shell, sel.resourceToRefresh, getExclusions(getConfigName(),sel.resourceToRefresh), true);
+				addExceptionDialog = new RefreshPolicyExceptionDialog(shell, sel.resourceToRefresh,
+						getExclusions(getConfigName(), sel.resourceToRefresh), true);
 			}
 			if (addExceptionDialog.open() == Window.OK) {
 				RefreshExclusion newExclusion = addExceptionDialog.getResult();
@@ -624,7 +628,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			fTree.expandAll();
 			break;
 
-		case IDX_EDIT_EXCEPTION:	//can only edit a refresh exclusion
+		case IDX_EDIT_EXCEPTION: //can only edit a refresh exclusion
 			if (selection == null)
 				break;
 			_Entry selectedExclusion = (_Entry) selection.getFirstElement();
@@ -656,7 +660,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 					} else {
 						question = Messages.RefreshPolicyTab_deleteConfirmationDialog_question_resource;
 					}
-					if (MessageDialog.openQuestion(shell, Messages.RefreshPolicyTab_deleteConfirmationDialog_title, question)) {
+					if (MessageDialog.openQuestion(shell, Messages.RefreshPolicyTab_deleteConfirmationDialog_title,
+							question)) {
 						remove = true;
 					}
 				} else {
@@ -671,9 +676,11 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			} else { //exclusion instance
 				_Exclusion_Instance sel1 = (_Exclusion_Instance) selection.getFirstElement();
 				boolean remove = false;
-				if (sel1.parent.exclusion.supportsExclusionInstances() && sel1.parent.exclusion_instances.size() == 1 && sel1.parent.exceptions_node != null) {
+				if (sel1.parent.exclusion.supportsExclusionInstances() && sel1.parent.exclusion_instances.size() == 1
+						&& sel1.parent.exceptions_node != null) {
 					//this is the only exclusion instance for an exclusion and the exclusion has nested exclusions
-					if (MessageDialog.openQuestion(shell, Messages.RefreshPolicyTab_deleteConfirmationDialog_title, Messages.RefreshPolicyTab_deleteConfirmationDialog_question_exception)) {
+					if (MessageDialog.openQuestion(shell, Messages.RefreshPolicyTab_deleteConfirmationDialog_title,
+							Messages.RefreshPolicyTab_deleteConfirmationDialog_question_exception)) {
 						remove = true;
 					}
 				} else
@@ -697,15 +704,14 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	 */
 	@Override
 	protected void performOK() {
-		
-		
+
 		Iterator<String> config_iterator = fConfigurationToResourcesToExclusionsMap.keySet().iterator();
-		
+
 		while (config_iterator.hasNext()) {
 			String configName = config_iterator.next();
-		
-			fManager.setResourcesToExclusionsMap(fProject, configName, getResourcesToExclusionsMap(configName)); 
-	
+
+			fManager.setResourcesToExclusionsMap(fProject, configName, getResourcesToExclusionsMap(configName));
+
 		}
 		try {
 			fManager.persistSettings(getResDesc().getConfiguration().getProjectDescription());

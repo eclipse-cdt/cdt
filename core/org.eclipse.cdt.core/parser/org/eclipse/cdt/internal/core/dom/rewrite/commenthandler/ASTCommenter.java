@@ -71,11 +71,11 @@ public class ASTCommenter {
 			IASTFileLocation nodeLocation = node.getFileLocation();
 			if (nodeLocation == null)
 				return PROCESS_SKIP;
-				
+
 			int nodeEndOffset = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 
-			boolean nodeInBetweenCommentAndPpStmt =
-					nodeEndOffset > commentLocation.getNodeOffset() && nodeEndOffset < ppStmtOffset;
+			boolean nodeInBetweenCommentAndPpStmt = nodeEndOffset > commentLocation.getNodeOffset()
+					&& nodeEndOffset < ppStmtOffset;
 			if (isCommentOnSameLine(node) || nodeInBetweenCommentAndPpStmt) {
 				isPrePpStmtComment = false;
 				return PROCESS_ABORT;
@@ -84,20 +84,21 @@ public class ASTCommenter {
 			} else if (nodeLocation.getNodeOffset() > ppStmtOffset) {
 				return PROCESS_ABORT;
 			}
-			
+
 			return PROCESS_CONTINUE;
 		}
 
 		private boolean isCommentOnSameLine(IASTNode node) {
 			IASTFileLocation fileLocation = node.getFileLocation();
-			return fileLocation != null && commentLocation.getStartingLineNumber() == fileLocation.getEndingLineNumber();
+			return fileLocation != null
+					&& commentLocation.getStartingLineNumber() == fileLocation.getEndingLineNumber();
 		}
 
 		@Override
 		public int visit(ICPPASTBaseSpecifier baseSpecifier) {
 			return checkOffsets(baseSpecifier);
 		}
-		
+
 		@Override
 		public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
 			return checkOffsets(namespaceDefinition);
@@ -235,13 +236,13 @@ public class ASTCommenter {
 	public static boolean isInWorkspace(IASTNode node) {
 		return node.isPartOfTranslationUnitFile();
 	}
-	
+
 	/**
 	 * Puts leading and trailing comments to {@code commentMap} and removes them from
 	 * the {@code comments} list. 
 	 */
-	private static void assignPreprocessorComments(NodeCommentMap commentMap,
-			List<IASTComment> comments, IASTTranslationUnit tu) {
+	private static void assignPreprocessorComments(NodeCommentMap commentMap, List<IASTComment> comments,
+			IASTTranslationUnit tu) {
 		IASTPreprocessorStatement[] preprocessorStatementsArray = tu.getAllPreprocessorStatements();
 		if (preprocessorStatementsArray == null) {
 			return;

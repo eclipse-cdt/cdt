@@ -23,48 +23,50 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * @since 1.1
  */
 public interface ICommandControlService extends ICommandControl, IDsfService {
-    
-    /**
-     * Context representing a command control service.  All contexts which
-     * originate from a given command control service, should have that 
-     * control's context in their hierarchy.
-     * 
-     * @see ICommandControlService#getContext()
-     */
-    public interface ICommandControlDMContext extends IDMContext {
-        /**
-         * Returns the ID of the command control that this context
-         * represents.
-         */
-        public String getCommandControlId();
-    } 
-    
-    /**
-     * Event indicating that the back end process has started.
-     */
-    public interface ICommandControlInitializedDMEvent extends IDMEvent<ICommandControlDMContext> {};
-    
-    /**
-     * Event indicating that the back end process has terminated.
-     */
-    public interface ICommandControlShutdownDMEvent extends IDMEvent<ICommandControlDMContext> {};
 
-    /**
-     * Returns the identifier of this command control service.  It can be used 
-     * to distinguish between multiple instances of command control services.   
-     */
-    public String getId();
+	/**
+	 * Context representing a command control service.  All contexts which
+	 * originate from a given command control service, should have that 
+	 * control's context in their hierarchy.
+	 * 
+	 * @see ICommandControlService#getContext()
+	 */
+	public interface ICommandControlDMContext extends IDMContext {
+		/**
+		 * Returns the ID of the command control that this context
+		 * represents.
+		 */
+		public String getCommandControlId();
+	}
 
-    /**
-     * returns the context representing this command control.
-     */
-    public ICommandControlDMContext getContext();
+	/**
+	 * Event indicating that the back end process has started.
+	 */
+	public interface ICommandControlInitializedDMEvent extends IDMEvent<ICommandControlDMContext> {
+	};
 
-    /**
-     * Returns whether this command control is currently active.  A command 
-     * control service is active if it has been initialized and has not yet
-     * shut down.
-     * @return
-     */
-    public boolean isActive();
+	/**
+	 * Event indicating that the back end process has terminated.
+	 */
+	public interface ICommandControlShutdownDMEvent extends IDMEvent<ICommandControlDMContext> {
+	};
+
+	/**
+	 * Returns the identifier of this command control service.  It can be used 
+	 * to distinguish between multiple instances of command control services.   
+	 */
+	public String getId();
+
+	/**
+	 * returns the context representing this command control.
+	 */
+	public ICommandControlDMContext getContext();
+
+	/**
+	 * Returns whether this command control is currently active.  A command 
+	 * control service is active if it has been initialized and has not yet
+	 * shut down.
+	 * @return
+	 */
+	public boolean isActive();
 }

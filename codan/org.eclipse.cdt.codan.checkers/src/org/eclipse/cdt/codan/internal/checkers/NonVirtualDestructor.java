@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  */
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	public static final String PROBLEM_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
-	
+
 	// Prevent stack overflow in case: class A: public A {};
 	private static HashSet<ICPPClassType> checkedClassTypes = new HashSet<ICPPClassType>();
 
@@ -66,7 +66,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 		if (destructor != null && destructor.isVirtual()) {
 			return true;
 		}
-		ICPPBase[] bases = classType.getBases();   
+		ICPPBase[] bases = classType.getBases();
 		for (ICPPBase base : bases) {
 			IBinding baseClass = base.getBaseClass();
 			if (baseClass instanceof ICPPClassType) {
@@ -111,13 +111,12 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 						return PROCESS_SKIP;
 					}
 					ICPPMethod destructor = getDestructor(classType);
-					if (destructor != null &&
-							destructor.getVisibility() != ICPPASTVisibilityLabel.v_public &&
-							classType.getFriends().length == 0) {
+					if (destructor != null && destructor.getVisibility() != ICPPASTVisibilityLabel.v_public
+							&& classType.getFriends().length == 0) {
 						// No error if the destructor is protected or private and there are no friends.
 						return PROCESS_SKIP;
 					}
-	
+
 					IASTNode node = decl;
 					if (destructor instanceof ICPPInternalBinding) {
 						IASTNode[] decls = ((ICPPInternalBinding) destructor).getDeclarations();
@@ -125,8 +124,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 							node = decls[0];
 						}
 					}
-					reportProblem(PROBLEM_ID, node, new String(className.getSimpleID()),
-							virtualMethod.getName());
+					reportProblem(PROBLEM_ID, node, new String(className.getSimpleID()), virtualMethod.getName());
 					return PROCESS_SKIP;
 				} finally {
 					CPPSemantics.popLookupPoint();

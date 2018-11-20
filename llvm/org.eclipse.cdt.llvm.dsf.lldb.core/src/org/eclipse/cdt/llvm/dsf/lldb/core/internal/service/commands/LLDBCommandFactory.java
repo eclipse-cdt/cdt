@@ -78,9 +78,11 @@ public class LLDBCommandFactory extends CommandFactory {
 			boolean isHardware, String condition, int ignoreCount, String location, String tid, boolean disabled,
 			boolean isTracepoint) {
 		if (LLDBTrait.MISSING_GDB_SET_BREAKPOINT_PENDING.isTraitOf(fSession)) {
-			return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled, isTracepoint, true);
+			return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled,
+					isTracepoint, true);
 		}
-		return super.createMIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled, isTracepoint);
+		return super.createMIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled,
+				isTracepoint);
 	}
 
 	/**

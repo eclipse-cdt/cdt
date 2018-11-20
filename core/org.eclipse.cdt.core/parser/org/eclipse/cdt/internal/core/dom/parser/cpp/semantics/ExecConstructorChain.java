@@ -34,8 +34,7 @@ public class ExecConstructorChain implements ICPPExecution {
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
 		Map<IBinding, ICPPEvaluation> instantiatedInitializers = new HashMap<>();
 		for (Entry<IBinding, ICPPEvaluation> initializer : ccInitializers.entrySet()) {
-			instantiatedInitializers.put(
-					CPPEvaluation.instantiateBinding(initializer.getKey(), context, maxDepth),
+			instantiatedInitializers.put(CPPEvaluation.instantiateBinding(initializer.getKey(), context, maxDepth),
 					initializer.getValue().instantiate(context, maxDepth));
 		}
 		return new ExecConstructorChain(instantiatedInitializers);

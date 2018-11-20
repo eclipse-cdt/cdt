@@ -28,8 +28,7 @@ public class IncludeExportPatterns {
 	private final Pattern includeBeginExportsPattern;
 	private final Pattern includeEndExportsPattern;
 
-	public IncludeExportPatterns(String exportPattern, String beginExportsPattern,
-			String endExportsPattern) {
+	public IncludeExportPatterns(String exportPattern, String beginExportsPattern, String endExportsPattern) {
 		this.includeExportPattern = compilePattern(exportPattern);
 		this.includeBeginExportsPattern = compilePattern(beginExportsPattern);
 		this.includeEndExportsPattern = compilePattern(endExportsPattern);

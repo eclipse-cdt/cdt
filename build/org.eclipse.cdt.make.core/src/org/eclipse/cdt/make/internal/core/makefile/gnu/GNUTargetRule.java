@@ -26,7 +26,8 @@ public class GNUTargetRule extends TargetRule {
 	String[] orderOnlyPrerequisites;
 	boolean doubleColon;
 
-	public GNUTargetRule(Directive parent, Target target, boolean double_colon, String[] normal_prereqs, String[] order_prereqs, Command[] commands) {
+	public GNUTargetRule(Directive parent, Target target, boolean double_colon, String[] normal_prereqs,
+			String[] order_prereqs, Command[] commands) {
 		super(parent, target, normal_prereqs, commands);
 		orderOnlyPrerequisites = order_prereqs;
 		doubleColon = double_colon;
@@ -43,7 +44,6 @@ public class GNUTargetRule extends TargetRule {
 	public String[] getOrderOnlyPrerequisites() {
 		return orderOnlyPrerequisites;
 	}
-
 
 	/**
 	 * @see java.lang.Object#toString()

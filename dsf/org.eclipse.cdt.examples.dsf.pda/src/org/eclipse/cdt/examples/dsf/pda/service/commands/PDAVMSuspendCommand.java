@@ -31,12 +31,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAVMSuspendCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAVMSuspendCommand(PDAVirtualMachineDMContext context) {
-        super(context, "vmsuspend");
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAVMSuspendCommand(PDAVirtualMachineDMContext context) {
+		super(context, "vmsuspend");
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

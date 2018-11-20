@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * Defines a simple interface in order to provide
  * a level of abstraction between the Core and UI

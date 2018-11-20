@@ -33,17 +33,17 @@ import org.eclipse.core.runtime.CoreException;
 
 class PDOMCPPUsingDeclarationSpecialization extends PDOMCPPSpecialization implements ICPPUsingDeclaration {
 	private static final int TARGET_BINDINGS = PDOMCPPSpecialization.RECORD_SIZE;
-		
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = TARGET_BINDINGS + Database.PTR_SIZE;
-	
+
 	private volatile IBinding[] delegates;
-	
-	public PDOMCPPUsingDeclarationSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPUsingDeclaration using, PDOMBinding specialized)
-			throws CoreException {
+
+	public PDOMCPPUsingDeclarationSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPUsingDeclaration using,
+			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) using, specialized);
 
-		Set<PDOMBinding> targets= new LinkedHashSet<PDOMBinding>();
+		Set<PDOMBinding> targets = new LinkedHashSet<PDOMBinding>();
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + TARGET_BINDINGS);
 		for (IBinding delegate : using.getDelegates()) {
 			PDOMBinding target = getLinkage().adaptBinding(delegate);
@@ -70,8 +70,8 @@ class PDOMCPPUsingDeclarationSpecialization extends PDOMCPPSpecialization implem
 	@Override
 	public IBinding[] getDelegates() {
 		if (delegates == null) {
-			PDOMNodeLinkedList list= new PDOMNodeLinkedList(getLinkage(), record+  TARGET_BINDINGS);
-			final List<IBinding> result= new ArrayList<IBinding>();
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + TARGET_BINDINGS);
+			final List<IBinding> result = new ArrayList<IBinding>();
 			try {
 				list.accept(new IPDOMVisitor() {
 					@Override

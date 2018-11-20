@@ -54,27 +54,26 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	private Set<ICProject> fProjectsWithSpecifics;
 
 	// sizing constants
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT= 250;
-	private final static int SIZING_SELECTION_WIDGET_WIDTH= 300;
-	
-	private final static String DIALOG_SETTINGS_SHOW_ALL= "ProjectSelectionDialog.show_all"; //$NON-NLS-1$
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
+	private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
+
+	private final static String DIALOG_SETTINGS_SHOW_ALL = "ProjectSelectionDialog.show_all"; //$NON-NLS-1$
 
 	private ViewerFilter fFilter;
 
 	public ProjectSelectionDialog(Shell parentShell, Set<ICProject> projectsWithSpecifics) {
 		super(parentShell);
-		setTitle(PreferencesMessages.ProjectSelectionDialog_title);  
-		setMessage(PreferencesMessages.ProjectSelectionDialog_desciption); 
-		fProjectsWithSpecifics= projectsWithSpecifics;
-		
-		fFilter= new ViewerFilter() {
+		setTitle(PreferencesMessages.ProjectSelectionDialog_title);
+		setMessage(PreferencesMessages.ProjectSelectionDialog_desciption);
+		fProjectsWithSpecifics = projectsWithSpecifics;
+
+		fFilter = new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return fProjectsWithSpecifics.contains(element);
 			}
 		};
 	}
-	
 
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
@@ -82,14 +81,14 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
-		Composite composite= (Composite) super.createDialogArea(parent);
+		Composite composite = (Composite) super.createDialogArea(parent);
 
-		Font font= parent.getFont();
+		Font font = parent.getFont();
 		composite.setFont(font);
 
 		createMessageArea(composite);
 
-		fTableViewer= new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		fTableViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -99,12 +98,12 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-                okPressed();
+				okPressed();
 			}
 		});
-		GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint= SIZING_SELECTION_WIDGET_HEIGHT;
-		data.widthHint= SIZING_SELECTION_WIDGET_WIDTH;
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
+		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		fTableViewer.getTable().setLayoutData(data);
 
 		fTableViewer.setLabelProvider(new CElementLabelProvider());
@@ -112,32 +111,33 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		fTableViewer.setComparator(new CElementSorter());
 		fTableViewer.getControl().setFont(font);
 
-		Button checkbox= new Button(composite, SWT.CHECK);
-		checkbox.setText(PreferencesMessages.ProjectSelectionDialog_filter); 
+		Button checkbox = new Button(composite, SWT.CHECK);
+		checkbox.setText(PreferencesMessages.ProjectSelectionDialog_filter);
 		checkbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
 		checkbox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}
 		});
-		IDialogSettings dialogSettings= CUIPlugin.getDefault().getDialogSettings();
-		boolean doFilter= !dialogSettings.getBoolean(DIALOG_SETTINGS_SHOW_ALL) && !fProjectsWithSpecifics.isEmpty();
+		IDialogSettings dialogSettings = CUIPlugin.getDefault().getDialogSettings();
+		boolean doFilter = !dialogSettings.getBoolean(DIALOG_SETTINGS_SHOW_ALL) && !fProjectsWithSpecifics.isEmpty();
 		checkbox.setSelection(doFilter);
 		updateFilter(doFilter);
-		
-		ICModel input= CoreModel.getDefault().getCModel();
+
+		ICModel input = CoreModel.getDefault().getCModel();
 		fTableViewer.setInput(input);
-		
+
 		doSelectionChanged(new Object[0]);
 		Dialog.applyDialogFont(composite);
 		return composite;
 	}
-	
+
 	protected void updateFilter(boolean selected) {
 		if (selected) {
 			fTableViewer.addFilter(fFilter);
@@ -152,7 +152,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 			updateStatus(new StatusInfo(IStatus.ERROR, "")); //$NON-NLS-1$
 			setSelectionResult(null);
 		} else {
-			updateStatus(new StatusInfo()); 
+			updateStatus(new StatusInfo());
 			setSelectionResult(objects);
 		}
 	}

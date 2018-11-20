@@ -22,17 +22,17 @@ public interface IEnvVarBuildPath {
 	public static final int BUILDPATH_INCLUDE = 1;
 	public static final int BUILDPATH_LIBRARY = 2;
 
-	public static final String BUILD_PATH_ELEMENT_NAME = "envVarBuildPath";	//$NON-NLS-1$
-	public static final String TYPE = "pathType";	//$NON-NLS-1$
-	public static final String LIST = "variableList";	//$NON-NLS-1$
-	public static final String PATH_DELIMITER = "pathDelimiter";	//$NON-NLS-1$
-	public static final String BUILD_PATH_RESOLVER = "buildPathResolver";	//$NON-NLS-1$
-	
-	public static final String TYPE_INCLUDE = "buildpathInclude";	//$NON-NLS-1$
-	public static final String TYPE_LIBRARY = "buildpathLibrary";	//$NON-NLS-1$
-	
-	public static final String NAME_SEPARATOR = ",";	//$NON-NLS-1$
-	
+	public static final String BUILD_PATH_ELEMENT_NAME = "envVarBuildPath"; //$NON-NLS-1$
+	public static final String TYPE = "pathType"; //$NON-NLS-1$
+	public static final String LIST = "variableList"; //$NON-NLS-1$
+	public static final String PATH_DELIMITER = "pathDelimiter"; //$NON-NLS-1$
+	public static final String BUILD_PATH_RESOLVER = "buildPathResolver"; //$NON-NLS-1$
+
+	public static final String TYPE_INCLUDE = "buildpathInclude"; //$NON-NLS-1$
+	public static final String TYPE_LIBRARY = "buildpathLibrary"; //$NON-NLS-1$
+
+	public static final String NAME_SEPARATOR = ","; //$NON-NLS-1$
+
 	/**
 	 *
 	 * @return one of the ITool.BUILDPATH _xxx
@@ -62,4 +62,3 @@ public interface IEnvVarBuildPath {
 	 */
 	public IBuildPathResolver getBuildPathResolver();
 }
-

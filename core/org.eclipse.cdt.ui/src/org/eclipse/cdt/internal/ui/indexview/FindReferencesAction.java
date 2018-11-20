@@ -39,26 +39,24 @@ public class FindReferencesAction extends IndexAction {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
 			return null;
-		Object[] objs = ((IStructuredSelection)selection).toArray();
+		Object[] objs = ((IStructuredSelection) selection).toArray();
 		if (objs.length == 1 && objs[0] instanceof IndexNode) {
-			IndexNode node= (IndexNode) objs[0];
+			IndexNode node = (IndexNode) objs[0];
 			if (node.fObject instanceof IIndexBinding) {
 				return node;
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void run() {
 		IndexNode binding = getBindingNode();
 		if (binding != null) {
-			ICProject cproject= binding.getProject();
+			ICProject cproject = binding.getProject();
 			if (cproject != null) {
-				IndexViewSearchQuery query = new IndexViewSearchQuery(
-						null,
-						cproject, indexView.getLastWriteAccess(cproject),
-						(IIndexBinding) binding.fObject, binding.fText,
+				IndexViewSearchQuery query = new IndexViewSearchQuery(null, cproject,
+						indexView.getLastWriteAccess(cproject), (IIndexBinding) binding.fObject, binding.fText,
 						CSearchQuery.FIND_REFERENCES);
 
 				NewSearchUI.activateSearchResultView();
@@ -66,7 +64,7 @@ public class FindReferencesAction extends IndexAction {
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean valid() {
 		return getBindingNode() != null;

@@ -28,8 +28,8 @@ public class MemoryBrowserPreferenceInitializer extends AbstractPreferenceInitia
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = MemoryBrowserPlugin.getDefault().getPreferenceStore();		
-		
+		IPreferenceStore store = MemoryBrowserPlugin.getDefault().getPreferenceStore();
+
 		// The following preferences should be kept in the store
 		store.setDefault(MemoryBrowser.PREF_DEFAULT_RENDERING, "");
 	}

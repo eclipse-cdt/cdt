@@ -58,33 +58,33 @@ public class CLIInfoBreakInfo extends MIInfo {
 
 	private Map<String, String[]> fBreakpointToGroupMap = new HashMap<String, String[]>();
 
-	public CLIInfoBreakInfo(MIOutput out) {		
+	public CLIInfoBreakInfo(MIOutput out) {
 		super(out);
 		parse();
 	}
-	
+
 	/**
 	 * Returns the map of breakpoint to groupId array indicating to which thread-group
 	 * each breakpoint applies.  If there is only a single thread-group being debugged, an
 	 * empty map will be returned.
 	 */
 	public Map<String, String[]> getBreakpointToGroupMap() {
-		return fBreakpointToGroupMap; 
+		return fBreakpointToGroupMap;
 	}
-	
+
 	protected void parse() {
 		final String INFERIOR_PREFIX = " inf "; //$NON-NLS-1$
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			for (MIOOBRecord oob : out.getMIOOBRecords()) {
 				if (oob instanceof MIConsoleStreamOutput) {
-					String line = ((MIConsoleStreamOutput)oob).getString().trim();
+					String line = ((MIConsoleStreamOutput) oob).getString().trim();
 					int loc = line.indexOf(INFERIOR_PREFIX);
 					if (loc >= 0) {
 						// Get the breakpoint id by extracting the first element before a white space
 						// or before a period.  We can set a limit of 2 since we only need the first element
 						String bpIdStr = line.split("[\\s\\.]", 2)[0]; //$NON-NLS-1$
-						
+
 						String[] groups = fBreakpointToGroupMap.get(bpIdStr);
 						Set<String> groupIdList = new HashSet<String>();
 						if (groups != null) {
@@ -92,15 +92,15 @@ public class CLIInfoBreakInfo extends MIInfo {
 							// we have been building
 							groupIdList.addAll(Arrays.asList(groups));
 						}
-						
+
 						// Get the comma-separated list of inferiors
 						// Split the list into individual ids
 						String inferiorIdStr = line.substring(loc + INFERIOR_PREFIX.length()).trim();
 						for (String id : inferiorIdStr.split(",")) { //$NON-NLS-1$
 							// Add the 'i' prefix as GDB does for MI commands
-							groupIdList.add("i" + id.trim());  //$NON-NLS-1$						
+							groupIdList.add("i" + id.trim()); //$NON-NLS-1$						
 						}
-						
+
 						fBreakpointToGroupMap.put(bpIdStr, groupIdList.toArray(new String[groupIdList.size()]));
 					}
 				}

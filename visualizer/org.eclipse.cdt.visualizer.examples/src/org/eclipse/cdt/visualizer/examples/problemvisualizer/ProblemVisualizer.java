@@ -41,10 +41,9 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	private static final int BAR_VIRTUAL_WIDTH = 1;
 	private static final int BAR_VIRTUAL_HEIGHT = 4;
 	/** Virtual bounds of each of the bars, relative to their container */
-	private static final int[][] BARS_VIRTUAL_BOUNDS = {
-		{ 0, 13, BAR_VIRTUAL_WIDTH, BAR_VIRTUAL_HEIGHT }, // infos
-		{ 0,  7, BAR_VIRTUAL_WIDTH, BAR_VIRTUAL_HEIGHT },  // warnings
-		{ 0,  1, BAR_VIRTUAL_WIDTH, BAR_VIRTUAL_HEIGHT }   // errors
+	private static final int[][] BARS_VIRTUAL_BOUNDS = { { 0, 13, BAR_VIRTUAL_WIDTH, BAR_VIRTUAL_HEIGHT }, // infos
+			{ 0, 7, BAR_VIRTUAL_WIDTH, BAR_VIRTUAL_HEIGHT }, // warnings
+			{ 0, 1, BAR_VIRTUAL_WIDTH, BAR_VIRTUAL_HEIGHT } // errors
 	};
 
 	/** The canvas on which we'll draw our bars */
@@ -60,16 +59,12 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	private int[] m_markerCount = new int[NUM_SEVERITY];
 
 	/** Labels for the different marker severity levels*/
-	private String[] m_markerSeverityLabels = {
-			Messages.ProblemCountVisualizer_Infos,
-			Messages.ProblemCountVisualizer_Warnings,
-			Messages.ProblemCountVisualizer_Errors,
-	};
+	private String[] m_markerSeverityLabels = { Messages.ProblemCountVisualizer_Infos,
+			Messages.ProblemCountVisualizer_Warnings, Messages.ProblemCountVisualizer_Errors, };
 
 	public ProblemVisualizer() {
-		super(Messages.ProblemCountVisualizer_Name,
-			  Messages.ProblemCountVisualizer_DisplayName,
-			  Messages.ProblemCountVisualizer_Description);
+		super(Messages.ProblemCountVisualizer_Name, Messages.ProblemCountVisualizer_DisplayName,
+				Messages.ProblemCountVisualizer_Description);
 	}
 
 	@Override
@@ -85,8 +80,7 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	}
 
 	@Override
-	public void disposeCanvas()
-	{
+	public void disposeCanvas() {
 		if (m_canvas != null) {
 			m_canvas.dispose();
 			m_canvas = null;
@@ -119,7 +113,8 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		// Find the maximum marker count to dictate the width
 		int maxCount = Math.max(m_markerCount[0], m_markerCount[1]);
 		maxCount = Math.max(maxCount, m_markerCount[2]);
-		if (maxCount == 0) maxCount = 1; // Set to anything but 0.  It will be multiplied by 0 and not matter.
+		if (maxCount == 0)
+			maxCount = 1; // Set to anything but 0.  It will be multiplied by 0 and not matter.
 
 		// go from high severity to low
 		for (int severity = IMarker.SEVERITY_ERROR; severity >= IMarker.SEVERITY_INFO; severity--) {
@@ -165,7 +160,7 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 			try {
 				Object attrValue = problem.getAttribute(IMarker.SEVERITY);
 				if (attrValue != null && attrValue instanceof Integer) {
-					int severity = (Integer)attrValue;
+					int severity = (Integer) attrValue;
 					m_markerCount[severity]++;
 				}
 			} catch (CoreException e) {
@@ -210,7 +205,7 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		for (Object sel : selections) {
 			if (sel instanceof IResource) {
 				// Update the data
-				addToMarkerCount((IResource)sel);
+				addToMarkerCount((IResource) sel);
 			}
 		}
 

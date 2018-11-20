@@ -17,19 +17,19 @@ import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.core.runtime.CoreException;
 
 public class ExceptionFactory {
-	public static WriteAccessException createIsReadOnlyException(){
+	public static WriteAccessException createIsReadOnlyException() {
 		return new WriteAccessException();
 	}
 
-	public static CoreException createCoreException(String message){
+	public static CoreException createCoreException(String message) {
 		return new CoreException(new DescriptionStatus(message));
 	}
 
-	public static CoreException createCoreException(Throwable e){
+	public static CoreException createCoreException(Throwable e) {
 		return new CoreException(new DescriptionStatus(e));
 	}
 
-	public static CoreException createCoreException(String message, Exception exception){
+	public static CoreException createCoreException(String message, Exception exception) {
 		return new CoreException(new DescriptionStatus(message, exception));
 	}
 

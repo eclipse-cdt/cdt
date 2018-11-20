@@ -340,11 +340,9 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			((ProblemProfile) wp).setResource(ResourcesPlugin.getWorkspace());
 			// load default values
 			CodanPreferencesLoader loader = new CodanPreferencesLoader(wp);
-	    	Preferences[] preferences = {
-					InstanceScope.INSTANCE.getNode(CodanCorePlugin.PLUGIN_ID),
+			Preferences[] preferences = { InstanceScope.INSTANCE.getNode(CodanCorePlugin.PLUGIN_ID),
 					ConfigurationScope.INSTANCE.getNode(CodanCorePlugin.PLUGIN_ID),
-					DefaultScope.INSTANCE.getNode(CodanCorePlugin.PLUGIN_ID),
-				};
+					DefaultScope.INSTANCE.getNode(CodanCorePlugin.PLUGIN_ID), };
 			loader.load(preferences);
 			profiles.put(ResourcesPlugin.getWorkspace(), wp);
 		}
@@ -371,8 +369,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 				// Load default values
 				CodanPreferencesLoader loader = new CodanPreferencesLoader(prof);
 				Preferences projectNode = CodanPreferencesLoader.getProjectNode((IProject) element);
-				if (projectNode != null &&
-						!projectNode.getBoolean(PreferenceConstants.P_USE_PARENT, true)) {
+				if (projectNode != null && !projectNode.getBoolean(PreferenceConstants.P_USE_PARENT, true)) {
 					loader.load(projectNode);
 				}
 				profiles.put(element, prof);
@@ -421,8 +418,8 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			if (problem == null)
 				throw new IllegalArgumentException(p.getId() + " is not registered"); //$NON-NLS-1$
 			if (problem.isEnabled() && checker instanceof AbstractCheckerWithProblemPreferences) {
-				LaunchModeProblemPreference pref =
-						((AbstractCheckerWithProblemPreferences) checker).getLaunchModePreference(problem);
+				LaunchModeProblemPreference pref = ((AbstractCheckerWithProblemPreferences) checker)
+						.getLaunchModePreference(problem);
 				if (pref.isRunningInMode(mode)) {
 					return true;
 				}

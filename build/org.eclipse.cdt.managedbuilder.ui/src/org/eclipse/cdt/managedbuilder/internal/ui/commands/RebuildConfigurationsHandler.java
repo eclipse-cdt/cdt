@@ -35,8 +35,8 @@ public class RebuildConfigurationsHandler extends AbstractResourceActionHandler 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<IProject> projects = getSelectedCdtProjects(getSelection(event));
 		if (!projects.isEmpty()) {
-			RebuildConfigurationsDialog dialog =
-					new RebuildConfigurationsDialog(projects.toArray(new IProject[projects.size()]));
+			RebuildConfigurationsDialog dialog = new RebuildConfigurationsDialog(
+					projects.toArray(new IProject[projects.size()]));
 			dialog.open();
 		}
 		return null;

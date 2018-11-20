@@ -41,7 +41,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	String currentCU;
 
-	public DebugDump(OutputStream stream){
+	public DebugDump(OutputStream stream) {
 		bwriter = new BufferedWriter(new OutputStreamWriter(stream));
 	}
 
@@ -65,7 +65,7 @@ public class DebugDump implements IDebugEntryRequestor {
 		}
 		bwriter.flush();
 	}
-	
+
 	void write(String s) {
 		try {
 			bwriter.write(s, 0, s.length());
@@ -114,7 +114,8 @@ public class DebugDump implements IDebugEntryRequestor {
 			write(currentCU + " address " + Long.toHexString(address)); //$NON-NLS-1$
 		}
 		write(" */"); //$NON-NLS-1$
-		newLine();newLine();
+		newLine();
+		newLine();
 		currentCU = null;
 	}
 
@@ -176,7 +177,8 @@ public class DebugDump implements IDebugEntryRequestor {
 			write("}"); //$NON-NLS-1$
 		}
 		write(" /* Exit Func address " + Long.toHexString(address) + " */"); //$NON-NLS-1$ //$NON-NLS-2$
-		newLine();newLine();
+		newLine();
+		newLine();
 	}
 
 	/*
@@ -306,8 +308,8 @@ public class DebugDump implements IDebugEntryRequestor {
 		if (!name.equals(type.toString())) {
 			write("typedef " + type.toString() + " " + name + ";"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			newLine();
-		} else if (type instanceof DebugBaseType){
-			DebugBaseType baseType =(DebugBaseType)type;
+		} else if (type instanceof DebugBaseType) {
+			DebugBaseType baseType = (DebugBaseType) type;
 			write("/* " + name + ": " + baseType.sizeof() + " bytes */"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			newLine();
 		} else {

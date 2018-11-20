@@ -124,7 +124,7 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 	@Override
 	protected void saveProperties(Map<String, String> properties) {
 		super.saveProperties(properties);
-		
+
 		try {
 			ICBuildConfiguration buildConfig = getBuildConfiguration();
 			if (buildConfig instanceof StandardBuildConfiguration) {
@@ -194,14 +194,14 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 				} else if (!defaultProject && projectButton.getSelection()) {
 					stdConfig.setBuildContainer(stdConfig.getProject());
 				}
-				
+
 				String buildCommand = buildCmdText.getText().trim();
 				if (!buildCommand.isEmpty()) {
 					stdConfig.setBuildCommand(buildCommand.split(" ")); //$NON-NLS-1$
 				} else {
 					stdConfig.setBuildCommand(null);
 				}
-	
+
 				String cleanCommand = cleanCmdText.getText().trim();
 				if (!cleanCommand.isEmpty()) {
 					stdConfig.setCleanCommand(cleanCommand.split(" ")); //$NON-NLS-1$

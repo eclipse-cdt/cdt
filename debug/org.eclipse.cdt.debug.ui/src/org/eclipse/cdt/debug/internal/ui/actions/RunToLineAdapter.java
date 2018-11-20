@@ -51,105 +51,105 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	@Override
-	public void runToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException {
+	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		String errorMessage = null;
-		if ( part instanceof ITextEditor ) {
-			ITextEditor textEditor = (ITextEditor)part;
+		if (part instanceof ITextEditor) {
+			ITextEditor textEditor = (ITextEditor) part;
 			IEditorInput input = textEditor.getEditorInput();
-			if ( input == null ) {
-				errorMessage = ActionMessages.getString( "RunToLineAdapter.Empty_editor_1" ); //$NON-NLS-1$
-			}
-			else {
-				IDocument document = textEditor.getDocumentProvider().getDocument( input );
-				if ( document == null ) {
-					errorMessage = ActionMessages.getString( "RunToLineAdapter.Missing_document_1" ); //$NON-NLS-1$
-				}
-				else {
-					final String fileName = getFileName( input ); // actually, absolute path, not just file name
-					final IPath path = new Path( fileName );
-					ITextSelection textSelection = (ITextSelection)selection;
+			if (input == null) {
+				errorMessage = ActionMessages.getString("RunToLineAdapter.Empty_editor_1"); //$NON-NLS-1$
+			} else {
+				IDocument document = textEditor.getDocumentProvider().getDocument(input);
+				if (document == null) {
+					errorMessage = ActionMessages.getString("RunToLineAdapter.Missing_document_1"); //$NON-NLS-1$
+				} else {
+					final String fileName = getFileName(input); // actually, absolute path, not just file name
+					final IPath path = new Path(fileName);
+					ITextSelection textSelection = (ITextSelection) selection;
 					final int lineNumber = textSelection.getStartLine() + 1;
-					if ( target instanceof IAdaptable ) {
-						final IRunToLine runToLine = ((IAdaptable)target).getAdapter( IRunToLine.class );
-						if ( runToLine != null && runToLine.canRunToLine( path.toPortableString(), lineNumber ) ) {
+					if (target instanceof IAdaptable) {
+						final IRunToLine runToLine = ((IAdaptable) target).getAdapter(IRunToLine.class);
+						if (runToLine != null && runToLine.canRunToLine(path.toPortableString(), lineNumber)) {
 							Runnable r = new Runnable() {
-								
+
 								@Override
 								public void run() {
 									try {
-										runToLine.runToLine( path.toPortableString(), lineNumber, DebugUITools.getPreferenceStore().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
+										runToLine.runToLine(path.toPortableString(), lineNumber,
+												DebugUITools.getPreferenceStore().getBoolean(
+														IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE));
+									} catch (DebugException e) {
+										failed(e);
 									}
-									catch( DebugException e ) {
-										failed( e );
-									}								
 								}
 							};
-							runInBackground( r );
+							runInBackground(r);
 						}
 					}
 					return;
 				}
 			}
+		} else {
+			errorMessage = ActionMessages.getString("RunToLineAdapter.Operation_is_not_supported_1"); //$NON-NLS-1$
 		}
-		else {
-			errorMessage = ActionMessages.getString( "RunToLineAdapter.Operation_is_not_supported_1" ); //$NON-NLS-1$
-		}
-		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
+		throw new CoreException(new Status(IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),
+				IInternalCDebugUIConstants.INTERNAL_ERROR, errorMessage, null));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	@Override
-	public boolean canRunToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
-		if ( target instanceof IAdaptable ) {			
-			if ( part instanceof IEditorPart ) {
-				IRunToLine runToLine = ((IAdaptable)target).getAdapter( IRunToLine.class );
-				if ( runToLine == null )
+	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
+		if (target instanceof IAdaptable) {
+			if (part instanceof IEditorPart) {
+				IRunToLine runToLine = ((IAdaptable) target).getAdapter(IRunToLine.class);
+				if (runToLine == null)
 					return false;
-				IEditorPart editorPart = (IEditorPart)part;
+				IEditorPart editorPart = (IEditorPart) part;
 				IEditorInput input = editorPart.getEditorInput();
-				if ( input == null ) {
+				if (input == null) {
 					return false;
 				}
-				if ( !(editorPart instanceof ITextEditor) ) {
+				if (!(editorPart instanceof ITextEditor)) {
 					return false;
 				}
-				ITextEditor textEditor = (ITextEditor)editorPart;
-				IDocument document = textEditor.getDocumentProvider().getDocument( input );
-				if ( document == null ) {
+				ITextEditor textEditor = (ITextEditor) editorPart;
+				IDocument document = textEditor.getDocumentProvider().getDocument(input);
+				if (document == null) {
 					return false;
 				}
 				String fileName = null; // actually, absolute path, not just file name
 				try {
-					fileName = getFileName( input );
-				}
-				catch( CoreException e ) {
+					fileName = getFileName(input);
+				} catch (CoreException e) {
 				}
 				if (fileName == null) {
 					return false;
 				}
-				final IPath path = new Path( fileName );
-				
-				ITextSelection textSelection = (ITextSelection)selection;
+				final IPath path = new Path(fileName);
+
+				ITextSelection textSelection = (ITextSelection) selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				return runToLine.canRunToLine( path.toPortableString(), lineNumber );
+				return runToLine.canRunToLine(path.toPortableString(), lineNumber);
 			}
 		}
 		return false;
 	}
 
-	private String getFileName( IEditorInput input ) throws CoreException {
+	private String getFileName(IEditorInput input) throws CoreException {
 		return CDebugUIUtils.getEditorFilePath(input);
 	}
 
-	private void runInBackground( Runnable r ) {
-		DebugPlugin.getDefault().asyncExec( r );
+	private void runInBackground(Runnable r) {
+		DebugPlugin.getDefault().asyncExec(r);
 	}
 
-	protected void failed( Throwable e ) {
-		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "RunToLineAdapter.0" ), null ); //$NON-NLS-1$
-		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
-		CDebugUtils.error( ms, this );
+	protected void failed(Throwable e) {
+		MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString("RunToLineAdapter.0"), null); //$NON-NLS-1$
+		ms.add(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e));
+		CDebugUtils.error(ms, this);
 	}
 }

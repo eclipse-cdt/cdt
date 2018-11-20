@@ -39,8 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExp
 /**
  * Binding for a non-type template parameter.
  */
-public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
-		implements ICPPTemplateNonTypeParameter {
+public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements ICPPTemplateNonTypeParameter {
 	private IType type;
 
 	public CPPTemplateNonTypeParameter(IASTName name) {
@@ -49,7 +48,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 
 	@Override
 	public IASTExpression getDefault() {
-		IASTInitializerClause def= getDefaultClause();
+		IASTInitializerClause def = getDefaultClause();
 		if (def instanceof IASTExpression) {
 			return (IASTExpression) def;
 		}
@@ -60,7 +59,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 	public IASTInitializerClause getDefaultClause() {
 		IASTName[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
-		    return null;
+			return null;
 
 		for (IASTName name : nds) {
 			if (name != null) {
@@ -80,19 +79,19 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
-		IASTInitializerClause dc= getDefault();
-		IASTExpression d= null;
+		IASTInitializerClause dc = getDefault();
+		IASTExpression d = null;
 		if (dc instanceof IASTExpression) {
-			d= (IASTExpression) dc;
+			d = (IASTExpression) dc;
 		} else if (dc instanceof ICPPASTInitializerList) {
-			ICPPASTInitializerList list= (ICPPASTInitializerList) dc;
+			ICPPASTInitializerList list = (ICPPASTInitializerList) dc;
 			switch (list.getSize()) {
 			case 0:
 				return new CPPTemplateNonTypeArgument(IntegralValue.create(0), getType());
 			case 1:
-				dc= list.getClauses()[0];
+				dc = list.getClauses()[0];
 				if (dc instanceof IASTExpression) {
-					d= (IASTExpression) dc;
+					d = (IASTExpression) dc;
 				}
 			}
 		}
@@ -100,21 +99,21 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 		if (d == null)
 			return null;
 
-		IValue val= ValueFactory.create(d);
-		IType t= getType();
+		IValue val = ValueFactory.create(d);
+		IType t = getType();
 		return new CPPTemplateNonTypeArgument(val, t);
 	}
 
 	@Override
 	public IType getType() {
 		if (type == null) {
-			IASTNode parent= getPrimaryDeclaration().getParent();
+			IASTNode parent = getPrimaryDeclaration().getParent();
 			while (parent != null) {
 				if (parent instanceof ICPPASTParameterDeclaration) {
-					type= CPPVisitor.createType((ICPPASTParameterDeclaration) parent, true);
+					type = CPPVisitor.createType((ICPPASTParameterDeclaration) parent, true);
 					break;
 				}
-				parent= parent.getParent();
+				parent = parent.getParent();
 			}
 
 			// C++17 template<auto>

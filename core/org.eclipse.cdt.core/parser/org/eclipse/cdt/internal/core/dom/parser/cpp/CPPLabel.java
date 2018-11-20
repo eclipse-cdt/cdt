@@ -26,70 +26,70 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPLabel extends PlatformObject implements ILabel, ICPPInternalBinding {
-    private IASTName name;
+	private IASTName name;
 
-    public CPPLabel(IASTName name) {
-        this.name = name;
-        name.setBinding(this);
-    }
+	public CPPLabel(IASTName name) {
+		this.name = name;
+		name.setBinding(this);
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getDeclarations() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public IASTNode getDefinition() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IASTLabelStatement getLabelStatement() {
-    	IASTNode statement = name.getParent();
-        if (statement instanceof IASTLabelStatement)
-            return (IASTLabelStatement) statement;
+		IASTNode statement = name.getParent();
+		if (statement instanceof IASTLabelStatement)
+			return (IASTLabelStatement) statement;
 
-        // TODO find label statement
-        return null;
-    }
+		// TODO find label statement
+		return null;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return new String(getNameCharArray());
-    }
+		return new String(getNameCharArray());
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return name.getSimpleID();
-    }
+		return name.getSimpleID();
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return CPPVisitor.getContainingScope(name);
-    }
+		return CPPVisitor.getContainingScope(name);
+	}
 
-    public IASTNode getPhysicalNode() {
-        return name;
-    }
+	public IASTNode getPhysicalNode() {
+		return name;
+	}
 
-    public void setLabelStatement(IASTName labelStatement) {
-        name = labelStatement;
-    }
+	public void setLabelStatement(IASTName labelStatement) {
+		name = labelStatement;
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        return new String[] { getName() };
-    }
+		return new String[] { getName() };
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        return new char[][] { getNameCharArray() };
-    }
+		return new char[][] { getNameCharArray() };
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public void addDefinition(IASTNode node) {

@@ -20,17 +20,17 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class AST2CPPTestBase extends AST2TestBase {
 	public AST2CPPTestBase() {
 	}
-	
+
 	public AST2CPPTestBase(String name) {
 		super(name);
 	}
-	
+
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
 		return parseAndCheckBindings(code, CPP);
 	}
 
 	protected IASTTranslationUnit parseAndCheckBindings() throws Exception {
-		String code= getAboveComment();
+		String code = getAboveComment();
 		return parseAndCheckBindings(code);
 	}
 

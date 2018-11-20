@@ -29,8 +29,7 @@ import org.eclipse.core.resources.IProject;
  * @since 6.0
  * 
  */
-public class MBSProjectConfigurationFactory extends
-		IWorkingSetProjectConfigurationFactory.Registry.Default {
+public class MBSProjectConfigurationFactory extends IWorkingSetProjectConfigurationFactory.Registry.Default {
 
 	/**
 	 * Initializes me.
@@ -40,16 +39,14 @@ public class MBSProjectConfigurationFactory extends
 	}
 
 	@Override
-	protected WorkingSetProjectConfiguration createProjectConfiguration(
-			IWorkingSetConfiguration parent) {
+	protected WorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent) {
 
 		return new MBSProjectConfiguration(parent);
 	}
 
 	@Override
-	public ProjectState createProjectState(IProject project,
-			ICProjectDescription desc) {
-		
+	public ProjectState createProjectState(IProject project, ICProjectDescription desc) {
+
 		return new MBSProjectState(project, desc);
 	}
 }

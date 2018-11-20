@@ -22,14 +22,14 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
  * A pointer operator of a declarator
  */
 public class CPPASTPointer extends CPPASTAttributeOwner implements IASTPointer {
-    private boolean isConst;
-    private boolean isVolatile;
-    private boolean isRestrict;
+	private boolean isConst;
+	private boolean isVolatile;
+	private boolean isRestrict;
 
-    public CPPASTPointer() {
-    }
+	public CPPASTPointer() {
+	}
 
-    @Override
+	@Override
 	public CPPASTPointer copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -43,46 +43,48 @@ public class CPPASTPointer extends CPPASTAttributeOwner implements IASTPointer {
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public boolean isConst() {
-        return isConst;
-    }
+		return isConst;
+	}
 
-    @Override
+	@Override
 	public boolean isVolatile() {
-        return isVolatile;
-    }
+		return isVolatile;
+	}
 
-    @Override
+	@Override
 	public boolean isRestrict() {
-        return isRestrict;
-    }
+		return isRestrict;
+	}
 
-    @Override
+	@Override
 	public void setConst(boolean value) {
-        assertNotFrozen();
-        isConst = value;
-    }
+		assertNotFrozen();
+		isConst = value;
+	}
 
-    @Override
+	@Override
 	public void setVolatile(boolean value) {
-        assertNotFrozen();
-        isVolatile = value;
-    }
+		assertNotFrozen();
+		isVolatile = value;
+	}
 
-    @Override
+	@Override
 	public void setRestrict(boolean value) {
-        assertNotFrozen();
-        isRestrict = value;
-    }
+		assertNotFrozen();
+		isRestrict = value;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitPointerOperators) {
 			switch (action.visit(this)) {
-    		case ASTVisitor.PROCESS_ABORT: return false;
-    		case ASTVisitor.PROCESS_SKIP: return true;
-    		}
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			}
 		}
 
 		if (!acceptByAttributeSpecifiers(action))
@@ -91,7 +93,7 @@ public class CPPASTPointer extends CPPASTAttributeOwner implements IASTPointer {
 		if (action.shouldVisitPointerOperators) {
 			if (action.leave(this) == ASTVisitor.PROCESS_ABORT)
 				return false;
-    	}
+		}
 		return true;
-    }
+	}
 }

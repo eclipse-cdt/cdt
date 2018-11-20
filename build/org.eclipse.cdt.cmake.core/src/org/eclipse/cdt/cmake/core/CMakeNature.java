@@ -30,7 +30,7 @@ public class CMakeNature implements IProjectNature {
 		CBuilder.setupBuilder(command);
 		projDesc.setBuildSpec(new ICommand[] { command });
 	}
-	
+
 	@Override
 	public void configure() throws CoreException {
 		IProjectDescription projDesc = project.getDescription();

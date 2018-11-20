@@ -33,7 +33,7 @@ public class HTMLAnnotationHover extends DefaultAnnotationHover {
 	 */
 	@Override
 	protected String formatSingleMessage(String message) {
-		StringBuilder buffer= new StringBuilder();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.addPageProlog(buffer);
 		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(message));
 		HTMLPrinter.addPageEpilog(buffer);
@@ -46,12 +46,13 @@ public class HTMLAnnotationHover extends DefaultAnnotationHover {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected String formatMultipleMessages(List messages) {
-		StringBuilder buffer= new StringBuilder();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.addPageProlog(buffer);
-		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(CUIMessages.CAnnotationHover_multipleMarkers)); 
+		HTMLPrinter.addParagraph(buffer,
+				HTMLPrinter.convertToHTMLContent(CUIMessages.CAnnotationHover_multipleMarkers));
 
 		HTMLPrinter.startBulletList(buffer);
-		Iterator<String> e= messages.iterator();
+		Iterator<String> e = messages.iterator();
 		while (e.hasNext())
 			HTMLPrinter.addBullet(buffer, HTMLPrinter.convertToHTMLContent(e.next()));
 		HTMLPrinter.endBulletList(buffer);

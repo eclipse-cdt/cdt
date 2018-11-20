@@ -55,7 +55,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 	public TypeSearchScope(ITypeSearchScope scope) {
 		add(scope);
 	}
-	
+
 	public TypeSearchScope(ICProject project) {
 		add(project);
 	}
@@ -64,14 +64,17 @@ public class TypeSearchScope implements ITypeSearchScope {
 	public Collection<IPath> pathSet() {
 		return fPathSet;
 	}
+
 	@Override
 	public Collection<IPath> containerSet() {
 		return fContainerSet;
 	}
+
 	@Override
 	public Collection<ICProject> projectSet() {
 		return fProjectSet;
 	}
+
 	@Override
 	public Collection<ICProject> enclosingProjectSet() {
 		return fEnclosingProjectSet;
@@ -81,19 +84,19 @@ public class TypeSearchScope implements ITypeSearchScope {
 	public boolean encloses(ITypeSearchScope scope) {
 		if (isWorkspaceScope())
 			return true;
-		
+
 		if (!scope.pathSet().isEmpty()) {
 			// check if this scope encloses the other scope's paths
-			for (Iterator<IPath> i = scope.pathSet().iterator(); i.hasNext(); ) {
+			for (Iterator<IPath> i = scope.pathSet().iterator(); i.hasNext();) {
 				IPath path = i.next();
 				if (!encloses(path))
 					return false;
 			}
 		}
-		
+
 		if (!scope.containerSet().isEmpty()) {
 			// check if this scope encloses the other scope's containers
-			for (Iterator<IPath> i = scope.containerSet().iterator(); i.hasNext(); ) {
+			for (Iterator<IPath> i = scope.containerSet().iterator(); i.hasNext();) {
 				IPath path = i.next();
 				if (!encloses(path))
 					return false;
@@ -102,7 +105,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 
 		if (!scope.projectSet().isEmpty()) {
 			// check if this scope encloses the other scope's projects
-			for (Iterator<ICProject> i = scope.projectSet().iterator(); i.hasNext(); ) {
+			for (Iterator<ICProject> i = scope.projectSet().iterator(); i.hasNext();) {
 				ICProject project = i.next();
 				if (!encloses(project))
 					return false;
@@ -116,14 +119,14 @@ public class TypeSearchScope implements ITypeSearchScope {
 	public boolean encloses(ICProject project) {
 		if (isWorkspaceScope())
 			return true;
-		
+
 		// check projects that were explicity added to scope
 		if (fProjectSet.contains(project))
 			return true;
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public boolean encloses(IPath path) {
 		if (isWorkspaceScope())
@@ -139,7 +142,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 			return true;
 		if (fContainerPaths == null) {
 			fContainerPaths = fContainerSet.toArray(new IPath[fContainerSet.size()]);
-//			java.util.Arrays.sort(fContainerPaths);
+			//			java.util.Arrays.sort(fContainerPaths);
 		}
 		for (int i = 0; i < fContainerPaths.length; ++i) {
 			if (fContainerPaths[i].isPrefixOf(path)) {
@@ -161,7 +164,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -179,7 +182,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 	public boolean encloses(IWorkingCopy workingCopy) {
 		return encloses(workingCopy.getOriginalElement().getPath());
 	}
-	
+
 	@Override
 	public ICProject[] getEnclosingProjects() {
 		if (isWorkspaceScope()) {
@@ -187,22 +190,22 @@ public class TypeSearchScope implements ITypeSearchScope {
 		}
 		return fEnclosingProjectSet.toArray(new ICProject[fEnclosingProjectSet.size()]);
 	}
-	
+
 	private static boolean projectContainsPath(ICProject project, IPath path, boolean checkIncludePaths) {
 		IPath projectPath = project.getProject().getFullPath();
 		if (projectPath.isPrefixOf(path)) {
-//			ISourceRoot[] sourceRoots = null;
-//			try {
-//				sourceRoots = cProject.getSourceRoots();
-//			} catch (CModelException ex) {
-//			}
-//			if (sourceRoots != null) {
-//				for (int j = 0; j < sourceRoots.length; ++j) {
-//					ISourceRoot root = sourceRoots[j];
-//					if (root.isOnSourceEntry(path))
-//						return true;
-//				}
-//			}
+			//			ISourceRoot[] sourceRoots = null;
+			//			try {
+			//				sourceRoots = cProject.getSourceRoots();
+			//			} catch (CModelException ex) {
+			//			}
+			//			if (sourceRoots != null) {
+			//				for (int j = 0; j < sourceRoots.length; ++j) {
+			//					ISourceRoot root = sourceRoots[j];
+			//					if (root.isOnSourceEntry(path))
+			//						return true;
+			//				}
+			//			}
 			return true;
 		}
 
@@ -217,7 +220,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -232,7 +235,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 					for (int i = 0; i < includes.length; ++i) {
 						includePaths[i] = new Path(includes[i]);
 					}
-//					java.util.Arrays.sort(includePaths);
+					//					java.util.Arrays.sort(includePaths);
 					return includePaths;
 				}
 			}
@@ -246,7 +249,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 			projects = new ICProject[0];
 		return projects;
 	}
-	
+
 	private static ICProject[] getCProjects() {
 		try {
 			return CoreModel.getDefault().getCModel().getCProjects();
@@ -255,7 +258,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 			return new ICProject[0];
 		}
 	}
-	
+
 	@Override
 	public boolean isPathScope() {
 		return !fPathSet.isEmpty();
@@ -275,7 +278,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 	public boolean isEmpty() {
 		return (!isWorkspaceScope() && fPathSet.isEmpty() && fContainerSet.isEmpty() && fProjectSet.isEmpty());
 	}
-	
+
 	@Override
 	public void add(IWorkingCopy workingCopy) {
 		IPath path = workingCopy.getOriginalElement().getPath();
@@ -327,48 +330,48 @@ public class TypeSearchScope implements ITypeSearchScope {
 		fProjects = null;
 		fAllProjects = null;
 	}
-	
+
 	@Override
 	public void add(ICElement elem) {
 		if (elem == null)
 			return;
 
 		switch (elem.getElementType()) {
-			case ICElement.C_MODEL: {
-				addWorkspace();
-				break;
-			}
-			
-			case ICElement.C_PROJECT: {
-				ICProject project = ((ICProject)elem);
-				add(project);
-				break;
-			}
-			
-			case ICElement.C_CCONTAINER: {
-				ICProject project = elem.getCProject();
-				add(elem.getPath(), true, project);
-				break;
-			}
+		case ICElement.C_MODEL: {
+			addWorkspace();
+			break;
+		}
 
-			case ICElement.C_UNIT: {
-				ICProject project = elem.getCProject();
-				add(elem.getPath(), false, project);
-				break;
-			}
-			
-			case ICElement.C_INCLUDE:
-			case ICElement.C_NAMESPACE:
-			case ICElement.C_TEMPLATE_CLASS:
-			case ICElement.C_CLASS:
-			case ICElement.C_STRUCT:
-			case ICElement.C_UNION:
-			case ICElement.C_ENUMERATION:
-			case ICElement.C_TYPEDEF: {
-				ICProject project = elem.getCProject();
-				add(elem.getPath(), false, project);
-				break;
-			}
+		case ICElement.C_PROJECT: {
+			ICProject project = ((ICProject) elem);
+			add(project);
+			break;
+		}
+
+		case ICElement.C_CCONTAINER: {
+			ICProject project = elem.getCProject();
+			add(elem.getPath(), true, project);
+			break;
+		}
+
+		case ICElement.C_UNIT: {
+			ICProject project = elem.getCProject();
+			add(elem.getPath(), false, project);
+			break;
+		}
+
+		case ICElement.C_INCLUDE:
+		case ICElement.C_NAMESPACE:
+		case ICElement.C_TEMPLATE_CLASS:
+		case ICElement.C_CLASS:
+		case ICElement.C_STRUCT:
+		case ICElement.C_UNION:
+		case ICElement.C_ENUMERATION:
+		case ICElement.C_TYPEDEF: {
+			ICProject project = elem.getCProject();
+			add(elem.getPath(), false, project);
+			break;
+		}
 		}
 	}
 
@@ -383,7 +386,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		fContainerPaths = null;
 		fWorkspaceScope |= scope.isWorkspaceScope();
 	}
-	
+
 	@Override
 	public void clear() {
 		fPathSet.clear();

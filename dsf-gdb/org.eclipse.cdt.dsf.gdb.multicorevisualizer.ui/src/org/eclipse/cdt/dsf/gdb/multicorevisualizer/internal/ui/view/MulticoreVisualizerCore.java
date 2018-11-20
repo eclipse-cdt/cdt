@@ -29,35 +29,35 @@ import org.eclipse.swt.graphics.GC;
 /**
  * MulticoreVisualizer CPU core object.
  */
-public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
-{
+public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject {
 	// --- members ---
-	
+
 	/** Parent CPU. */
 	protected MulticoreVisualizerCPU m_cpu = null;
-	
+
 	/** Core ID. */
 	protected int m_id;
-	
+
 	/** List of threads currently on this core. */
 	protected ArrayList<MulticoreVisualizerThread> m_threads;
-	
+
 	/** Load meter associated to this core */
 	protected MulticoreVisualizerLoadMeter m_loadMeter;
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor */
 	public MulticoreVisualizerCore(MulticoreVisualizerCPU cpu, int id) {
 		m_cpu = cpu;
-		if (m_cpu != null) m_cpu.addCore(this);
+		if (m_cpu != null)
+			m_cpu.addCore(this);
 		m_id = id;
 		m_threads = new ArrayList<MulticoreVisualizerThread>();
-		
+
 		// default load meter
 		m_loadMeter = new MulticoreVisualizerLoadMeter(null, null);
 	}
-	
+
 	/** Dispose method */
 	@Override
 	public void dispose() {
@@ -70,10 +70,9 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 			m_loadMeter.dispose();
 		}
 	}
-	
-	
+
 	// --- accessors ---
-	
+
 	/** Gets parent CPU. */
 	public MulticoreVisualizerCPU getCPU() {
 		return m_cpu;
@@ -84,38 +83,33 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 		return m_id;
 	}
 
-	
 	// --- methods ---
-	
+
 	/** Adds child thread. */
-	public void addThread(MulticoreVisualizerThread thread)
-	{
+	public void addThread(MulticoreVisualizerThread thread) {
 		m_threads.add(thread);
 	}
-	
+
 	/** Removes child thread. */
-	public void removeThread(MulticoreVisualizerThread thread)
-	{
+	public void removeThread(MulticoreVisualizerThread thread) {
 		m_threads.remove(thread);
 	}
-	
+
 	/** Removes all child threads. */
-	public void removeAllThreads()
-	{
+	public void removeAllThreads() {
 		m_threads.clear();
 	}
-	
+
 	/** Gets list of child threads. */
-	public List<MulticoreVisualizerThread> getThreads()
-	{
+	public List<MulticoreVisualizerThread> getThreads() {
 		return m_threads;
 	}
-	
+
 	/** Sets the load meter associated to this core */
-	public void setLoadMeter (MulticoreVisualizerLoadMeter meter) {
+	public void setLoadMeter(MulticoreVisualizerLoadMeter meter) {
 		m_loadMeter = meter;
 	}
-	
+
 	/** Gets the load meter associated to this core */
 	public MulticoreVisualizerLoadMeter getLoadMeter() {
 		return m_loadMeter;
@@ -129,7 +123,7 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 	 */
 	protected VisualizerExecutionState getCoreState() {
 		VisualizerExecutionState state = VisualizerExecutionState.RUNNING;
-		
+
 		for (MulticoreVisualizerThread thread : m_threads) {
 			switch (thread.getState()) {
 			case CRASHED:
@@ -145,53 +139,54 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 				break;
 			}
 		}
-		
+
 		return state;
 	}
-	
+
 	/** Returns core color for current state. */
 	protected Color getCoreStateColor(boolean foreground) {
 		VisualizerExecutionState state = getCoreState();
-		
+
 		switch (state) {
 		case RUNNING:
-			if (foreground) return IMulticoreVisualizerConstants.COLOR_RUNNING_CORE_FG;
+			if (foreground)
+				return IMulticoreVisualizerConstants.COLOR_RUNNING_CORE_FG;
 			return IMulticoreVisualizerConstants.COLOR_RUNNING_CORE_BG;
 		case SUSPENDED:
-			if (foreground) return IMulticoreVisualizerConstants.COLOR_SUSPENDED_CORE_FG;
+			if (foreground)
+				return IMulticoreVisualizerConstants.COLOR_SUSPENDED_CORE_FG;
 			return IMulticoreVisualizerConstants.COLOR_SUSPENDED_CORE_BG;
 		case CRASHED:
-			if (foreground) return IMulticoreVisualizerConstants.COLOR_CRASHED_CORE_FG;
+			if (foreground)
+				return IMulticoreVisualizerConstants.COLOR_CRASHED_CORE_FG;
 			return IMulticoreVisualizerConstants.COLOR_CRASHED_CORE_BG;
 		}
-		
+
 		assert false;
 		return Colors.BLACK;
 	}
-	
+
 	// --- paint methods ---
-	
+
 	/** Invoked to allow element to paint itself on the viewer canvas */
 	@Override
 	public void paintContent(GC gc) {
 		Color bg = getCoreStateColor(false);
-		
+
 		gc.setBackground(bg);
 		// We want the load meter to share the same BG color
 		m_loadMeter.setParentBgColor(bg);
 
 		// highlight in a different color if selected
-		if (m_selected)
-		{
+		if (m_selected) {
 			gc.setForeground(IMulticoreVisualizerConstants.COLOR_SELECTED);
-		}
-		else {
+		} else {
 			gc.setForeground(getCoreStateColor(true));
 		}
 
 		gc.fillRectangle(m_bounds);
 		gc.drawRectangle(m_bounds);
-		
+
 		if (m_bounds.height > 16) {
 			int text_indent = 3;
 			int tx = m_bounds.x + m_bounds.width - text_indent;

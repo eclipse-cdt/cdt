@@ -20,6 +20,8 @@ public class AutotoolsHeadPropertyPage extends AbstractPage {
 	}
 
 	@Override
-	protected boolean showsConfig() { return false;	}
+	protected boolean showsConfig() {
+		return false;
+	}
 
 }

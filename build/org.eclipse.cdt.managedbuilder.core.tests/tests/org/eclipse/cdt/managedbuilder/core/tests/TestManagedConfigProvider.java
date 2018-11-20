@@ -36,7 +36,7 @@ public class TestManagedConfigProvider implements IManagedConfigElementProvider 
 			Iterator it = props.keySet().iterator();
 			int i = 0;
 			while (it.hasNext()) {
-				String targetId = (String)it.next();
+				String targetId = (String) it.next();
 				String command = props.getProperty(targetId);
 				ret[i++] = createTarget(targetId, command);
 			}
@@ -48,30 +48,21 @@ public class TestManagedConfigProvider implements IManagedConfigElementProvider 
 	}
 
 	private IManagedConfigElement createTarget(String targetId, String command) {
-		IManagedConfigElement toolRef = new TestConfigElement(
-			IConfigurationV2.TOOLREF_ELEMENT_NAME,
-			new String[][] {
-					{ITool.ID, "test.forward.tool"},
-					{ITool.COMMAND, command}},
-			new IManagedConfigElement[0]);
+		IManagedConfigElement toolRef = new TestConfigElement(IConfigurationV2.TOOLREF_ELEMENT_NAME,
+				new String[][] { { ITool.ID, "test.forward.tool" }, { ITool.COMMAND, command } },
+				new IManagedConfigElement[0]);
 
-		IManagedConfigElement config = new TestConfigElement(
-				IConfigurationV2.CONFIGURATION_ELEMENT_NAME,
-				new String[][] {
-						{IConfigurationV2.ID, targetId + ".config"},
-						{IConfigurationV2.NAME, "test.forward.config"}},
-				new IManagedConfigElement[] {toolRef});
+		IManagedConfigElement config = new TestConfigElement(IConfigurationV2.CONFIGURATION_ELEMENT_NAME,
+				new String[][] { { IConfigurationV2.ID, targetId + ".config" },
+						{ IConfigurationV2.NAME, "test.forward.config" } },
+				new IManagedConfigElement[] { toolRef });
 
-		IManagedConfigElement target = new TestConfigElement(
-			ITarget.TARGET_ELEMENT_NAME,
-			new String[][] {
-					{ITarget.ID, targetId},
-					{ITarget.NAME, targetId.substring(targetId.lastIndexOf('.')+1).
-						replace('_', ' ')},
-					{ITarget.PARENT, "test.forward.parent.target"},
-					{ITarget.IS_TEST, "true"},
-					{ITarget.OS_LIST, "win32,linux,solaris"}},
-			new IManagedConfigElement[] {config});
+		IManagedConfigElement target = new TestConfigElement(ITarget.TARGET_ELEMENT_NAME,
+				new String[][] { { ITarget.ID, targetId },
+						{ ITarget.NAME, targetId.substring(targetId.lastIndexOf('.') + 1).replace('_', ' ') },
+						{ ITarget.PARENT, "test.forward.parent.target" }, { ITarget.IS_TEST, "true" },
+						{ ITarget.OS_LIST, "win32,linux,solaris" } },
+				new IManagedConfigElement[] { config });
 
 		return target;
 	}

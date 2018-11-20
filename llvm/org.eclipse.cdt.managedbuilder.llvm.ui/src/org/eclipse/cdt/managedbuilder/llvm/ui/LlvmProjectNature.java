@@ -32,8 +32,8 @@ public class LlvmProjectNature implements IProjectNature {
 	@Override
 	public void configure() throws CoreException {
 		// Add nature-specific information
-        // for the project, such as adding a builder
-        // to a project's build spec.
+		// for the project, such as adding a builder
+		// to a project's build spec.
 	}
 
 	/**

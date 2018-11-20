@@ -34,9 +34,8 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	private static final int NAMESPACE_BINDING = PDOMCPPBinding.RECORD_SIZE;
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + Database.PTR_SIZE;
-	
-	public PDOMCPPNamespaceAlias(PDOMLinkage linkage, PDOMNode parent, ICPPNamespaceAlias alias)
-			throws CoreException {
+
+	public PDOMCPPNamespaceAlias(PDOMLinkage linkage, PDOMNode parent, ICPPNamespaceAlias alias) throws CoreException {
 		super(linkage, parent, alias.getNameCharArray());
 		setTargetBinding(parent.getLinkage(), alias.getBinding());
 	}
@@ -48,12 +47,12 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPNamespaceAlias) {
-			ICPPNamespaceAlias alias= (ICPPNamespaceAlias) newBinding;
-			IBinding newTarget= alias.getBinding();
+			ICPPNamespaceAlias alias = (ICPPNamespaceAlias) newBinding;
+			IBinding newTarget = alias.getBinding();
 			setTargetBinding(linkage, newTarget);
 		}
 	}
-	
+
 	private void setTargetBinding(PDOMLinkage linkage, IBinding target) throws CoreException {
 		PDOMBinding namespace = getLinkage().adaptBinding(target);
 		getDB().putRecPtr(record + NAMESPACE_BINDING, namespace != null ? namespace.getRecord() : 0);
@@ -68,30 +67,30 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPNAMESPACEALIAS;
 	}
-	
+
 	@Override
 	public ICPPNamespaceScope getNamespaceScope() {
 		// Avoid an infinite loop.
-		ICPPNamespaceAlias ns= this;
+		ICPPNamespaceAlias ns = this;
 		for (int i = 0; i < 20; i++) {
-			IBinding binding= ns.getBinding();
+			IBinding binding = ns.getBinding();
 			if (binding instanceof ICPPNamespaceScope)
 				return (ICPPNamespaceScope) binding;
 			if (!(binding instanceof ICPPNamespaceAlias))
 				break;
-			ns= (ICPPNamespaceAlias) binding;
+			ns = (ICPPNamespaceAlias) binding;
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IBinding[] getMemberBindings() {
-		ICPPNamespace ns= this;
+		ICPPNamespace ns = this;
 		for (int i = 0; i < 20; i++) {
-			IBinding b= ((ICPPNamespaceAlias) ns).getBinding();
+			IBinding b = ((ICPPNamespaceAlias) ns).getBinding();
 			if (!(b instanceof ICPPNamespace))
 				return IBinding.EMPTY_BINDING_ARRAY;
-			ns= (ICPPNamespace) b;
+			ns = (ICPPNamespace) b;
 			if (!(ns instanceof ICPPNamespaceAlias))
 				break;
 		}

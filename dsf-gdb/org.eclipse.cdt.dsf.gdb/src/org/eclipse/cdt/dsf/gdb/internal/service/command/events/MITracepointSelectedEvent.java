@@ -40,48 +40,50 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 public class MITracepointSelectedEvent extends MIBreakpointHitEvent {
 
 	private int fRecNo;
-	
-    protected MITracepointSelectedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String trptno, int recordno) {
-        super(ctx, token, results, frame, trptno);
-        fRecNo = recordno;
-    }
+
+	protected MITracepointSelectedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame,
+			String trptno, int recordno) {
+		super(ctx, token, results, frame, trptno);
+		fRecNo = recordno;
+	}
 
 	/**
 	 * Returns a text to display for the reason why we show the debug view as stopped.
 	 */
 	public String getReason() {
 		return EventMessages.Tracepoint + " " + getNumber() + //$NON-NLS-1$
-		       ", " + EventMessages.Record + " " + fRecNo; //$NON-NLS-1$ //$NON-NLS-2$
+				", " + EventMessages.Record + " " + fRecNo; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
-    @ConfinedToDsfExecutor("")    
-    public static MITracepointSelectedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
-       String trptno = ""; //$NON-NLS-1$
-       int recordno = -1;
 
-       for (int i = 0; i < results.length; i++) {
-           String var = results[i].getVariable();
-           MIValue value = results[i].getMIValue();
-           String str = ""; //$NON-NLS-1$
-           if (value != null && value instanceof MIConst) {
-               str = ((MIConst)value).getString();
-           }
+	@ConfinedToDsfExecutor("")
+	public static MITracepointSelectedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
+		String trptno = ""; //$NON-NLS-1$
+		int recordno = -1;
 
-           if (var.equals("tracepoint")) { //$NON-NLS-1$
-               try {
-            	   trptno = str.trim();
-               } catch (NumberFormatException e) {
-               }
-           } else if (var.equals("traceframe")) { //$NON-NLS-1$
-               try {
-            	   recordno = Integer.parseInt(str.trim());
-               } catch (NumberFormatException e) {
-               }
-           }
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue value = results[i].getMIValue();
+			String str = ""; //$NON-NLS-1$
+			if (value != null && value instanceof MIConst) {
+				str = ((MIConst) value).getString();
+			}
 
-       }
+			if (var.equals("tracepoint")) { //$NON-NLS-1$
+				try {
+					trptno = str.trim();
+				} catch (NumberFormatException e) {
+				}
+			} else if (var.equals("traceframe")) { //$NON-NLS-1$
+				try {
+					recordno = Integer.parseInt(str.trim());
+				} catch (NumberFormatException e) {
+				}
+			}
 
-       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
-       return new MITracepointSelectedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), trptno, recordno);
-    }
+		}
+
+		MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+		return new MITracepointSelectedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(),
+				trptno, recordno);
+	}
 }

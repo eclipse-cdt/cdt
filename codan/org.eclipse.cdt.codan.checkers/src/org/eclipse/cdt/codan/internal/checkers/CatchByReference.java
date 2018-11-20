@@ -76,7 +76,8 @@ public class CatchByReference extends AbstractIndexAstChecker {
 									IASTName tname = ((IASTNamedTypeSpecifier) spec).getName();
 									IType typeName = (IType) tname.resolveBinding();
 									typeName = CxxAstUtils.unwindTypedef(typeName);
-									if (typeName instanceof IBasicType || typeName instanceof IPointerType || typeName == null)
+									if (typeName instanceof IBasicType || typeName instanceof IPointerType
+											|| typeName == null)
 										continue;
 									if (typeName instanceof IProblemBinding && !shouldReportForUnknownType())
 										continue;
@@ -127,7 +128,8 @@ public class CatchByReference extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_UNKNOWN_TYPE, CheckersMessages.CatchByReference_ReportForUnknownType, Boolean.FALSE);
+		addPreference(problem, PARAM_UNKNOWN_TYPE, CheckersMessages.CatchByReference_ReportForUnknownType,
+				Boolean.FALSE);
 		addListPreference(problem, PARAM_EXCEPT_ARG_LIST, CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}

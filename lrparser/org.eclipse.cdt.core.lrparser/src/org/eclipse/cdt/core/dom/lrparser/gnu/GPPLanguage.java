@@ -36,15 +36,15 @@ import org.eclipse.cdt.internal.core.dom.lrparser.gpp.GPPParser;
 public class GPPLanguage extends BaseExtensibleLanguage {
 
 	public static final String ID = "org.eclipse.cdt.core.lrparser.gpp"; //$NON-NLS-1$ 
-	
+
 	private static GPPLanguage DEFAULT = new GPPLanguage();
-	
+
 	public static GPPLanguage getDefault() {
 		return DEFAULT;
 	}
-	
+
 	@Override
-	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String, String> properties) {
 		return new GPPParser(scanner, DOMToGPPTokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, properties);
 	}
 

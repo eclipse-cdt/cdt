@@ -93,8 +93,8 @@ public class SizeofCalculator {
 	 */
 	public static SizeAndAlignment getSizeAndAlignment(IType type) {
 		IASTNode point = CPPSemantics.getCurrentLookupPoint();
-		SizeofCalculator calc = point == null ?
-				getDefault() : ((ASTTranslationUnit) point.getTranslationUnit()).getSizeofCalculator();
+		SizeofCalculator calc = point == null ? getDefault()
+				: ((ASTTranslationUnit) point.getTranslationUnit()).getSizeofCalculator();
 		return calc.sizeAndAlignment(type);
 	}
 
@@ -147,11 +147,11 @@ public class SizeofCalculator {
 		sizeof_complex_double = getSizeOfPair(sizeof_double);
 		sizeof_long_double = getSize(sizeofMacros, "__SIZEOF_LONG_DOUBLE__", maxAlignment); //$NON-NLS-1$
 		sizeof_complex_long_double = getSizeOfPair(sizeof_long_double);
-		sizeof_float128 = size_16;  // GCC does not define __SIZEOF_FLOAT128__
+		sizeof_float128 = size_16; // GCC does not define __SIZEOF_FLOAT128__
 		sizeof_complex_float128 = getSizeOfPair(sizeof_float128);
-		sizeof_decimal32 = size_4;  // GCC does not define __SIZEOF_DECIMAL32__
-		sizeof_decimal64 = size_8;  // GCC does not define __SIZEOF_DECIMAL64__
-		sizeof_decimal128 = size_16;  // GCC does not define __SIZEOF_DECIMAL128__
+		sizeof_decimal32 = size_4; // GCC does not define __SIZEOF_DECIMAL32__
+		sizeof_decimal64 = size_8; // GCC does not define __SIZEOF_DECIMAL64__
+		sizeof_decimal128 = size_16; // GCC does not define __SIZEOF_DECIMAL128__
 	}
 
 	private SizeofCalculator() {
@@ -232,16 +232,15 @@ public class SizeofCalculator {
 		case eChar:
 			return SIZE_1;
 		case eInt:
-			return type.isShort() ?	sizeof_short : type.isLong() ? sizeof_long :
-					type.isLongLong() ? sizeof_long_long : sizeof_int;
+			return type.isShort() ? sizeof_short
+					: type.isLong() ? sizeof_long : type.isLongLong() ? sizeof_long_long : sizeof_int;
 		case eInt128:
 			return sizeof_int128;
 		case eFloat:
 			return type.isComplex() ? sizeof_complex_float : sizeof_float;
 		case eDouble:
-			return type.isComplex() ?
-					(type.isLong() ? sizeof_complex_long_double : sizeof_complex_double) :
-					(type.isLong() ? sizeof_long_double : sizeof_double);
+			return type.isComplex() ? (type.isLong() ? sizeof_complex_long_double : sizeof_complex_double)
+					: (type.isLong() ? sizeof_long_double : sizeof_double);
 		case eFloat128:
 			return type.isComplex() ? sizeof_complex_float128 : sizeof_float128;
 		case eDecimal32:
@@ -301,7 +300,7 @@ public class SizeofCalculator {
 				ICPPClassType classType = (ICPPClassType) type;
 				for (ICPPBase base : classType.getBases()) {
 					if (base.isVirtual())
-						return null;  // Don't know how to calculate size when there are virtual bases.
+						return null; // Don't know how to calculate size when there are virtual bases.
 					IBinding baseClass = base.getBaseClass();
 					if (!(baseClass instanceof IType))
 						return null;
@@ -355,14 +354,13 @@ public class SizeofCalculator {
 			if (maxAlignment < info.alignment)
 				maxAlignment = info.alignment;
 		}
-		if (size == 0)  // a structure cannot have size 0
+		if (size == 0) // a structure cannot have size 0
 			size = 1;
 		size += maxAlignment - (size - 1) % maxAlignment - 1;
 		return new SizeAndAlignment(size, maxAlignment);
 	}
 
-	private static SizeAndAlignment getSize(Map<String, String> macros, String name,
-			int maxAlignment) {
+	private static SizeAndAlignment getSize(Map<String, String> macros, String name, int maxAlignment) {
 		String value = macros.get(name);
 		if (value == null)
 			return null;
@@ -375,7 +373,7 @@ public class SizeofCalculator {
 	}
 
 	private SizeAndAlignment getSizeOfPair(SizeAndAlignment sizeAndAlignment) {
-		return sizeAndAlignment == null ?
-				null : new SizeAndAlignment(sizeAndAlignment.size * 2, sizeAndAlignment.alignment);
+		return sizeAndAlignment == null ? null
+				: new SizeAndAlignment(sizeAndAlignment.size * 2, sizeAndAlignment.alignment);
 	}
 }

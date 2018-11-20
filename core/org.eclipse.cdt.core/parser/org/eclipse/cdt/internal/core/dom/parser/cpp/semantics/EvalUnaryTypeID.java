@@ -70,8 +70,8 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 
 	public EvalUnaryTypeID(int operator, IType type, IBinding templateDefinition) {
 		super(templateDefinition);
-		fOperator= operator;
-		fOrigType= type;
+		fOperator = operator;
+		fOrigType = type;
 	}
 
 	public int getOperator() {
@@ -145,14 +145,13 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 			return false;
 		}
 		EvalUnaryTypeID o = (EvalUnaryTypeID) other;
-		return fOperator == o.fOperator
-			&& fOrigType.isSameType(o.fOrigType);
+		return fOperator == o.fOperator && fOrigType.isSameType(o.fOrigType);
 	}
-	
+
 	@Override
 	public IType getType() {
 		if (fType == null)
-			fType= computeType();
+			fType = computeType();
 		return fType;
 	}
 
@@ -203,7 +202,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	@Override
 	public ValueCategory getValueCategory() {
 		return fOperator == op_typeid ? LVALUE : PRVALUE;
-    }
+	}
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
@@ -214,9 +213,9 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		int op= buffer.getByte();
-		IType arg= buffer.unmarshalType();
-		IBinding templateDefinition= buffer.unmarshalBinding();
+		int op = buffer.getByte();
+		IType arg = buffer.unmarshalType();
+		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalUnaryTypeID(op, arg, templateDefinition);
 	}
 
@@ -242,14 +241,14 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return CPPTemplates.isDependentType(fOrigType);
 	}
-	
+
 	private ICPPEvaluation instantiateBySubstitution(InstantiationContext context) {
 		IType type = CPPTemplates.instantiateType(fOrigType, context);
 		if (type == fOrigType)
 			return this;
 		return new EvalUnaryTypeID(fOperator, type, getTemplateDefinition());
 	}
-	
+
 	private ICPPEvaluation instantiateSizeofParameterPack(InstantiationContext context) {
 		if (fOrigType instanceof ICPPTemplateParameter) {
 			ICPPTemplateParameter pack = (ICPPTemplateParameter) fOrigType;

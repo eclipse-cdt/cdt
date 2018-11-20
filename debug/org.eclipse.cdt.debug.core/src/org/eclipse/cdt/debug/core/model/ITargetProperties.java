@@ -28,7 +28,7 @@ public interface ITargetProperties {
 	 *
 	 * @param listener a property change listener
 	 */
-	void addPropertyChangeListener( Preferences.IPropertyChangeListener listener );
+	void addPropertyChangeListener(Preferences.IPropertyChangeListener listener);
 
 	/**
 	 * Removes the given listener from this target.
@@ -36,5 +36,5 @@ public interface ITargetProperties {
 	 *
 	 * @param listener a property change listener
 	 */
-	void removePropertyChangeListener( Preferences.IPropertyChangeListener listener );
+	void removePropertyChangeListener(Preferences.IPropertyChangeListener listener);
 }

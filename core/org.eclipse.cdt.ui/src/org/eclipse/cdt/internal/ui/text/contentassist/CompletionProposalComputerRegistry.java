@@ -59,11 +59,11 @@ import org.eclipse.cdt.internal.ui.util.Messages;
  */
 public final class CompletionProposalComputerRegistry {
 
-	private static final String EXTENSION_POINT= "completionProposalComputer"; //$NON-NLS-1$
-	
+	private static final String EXTENSION_POINT = "completionProposalComputer"; //$NON-NLS-1$
+
 	/** The singleton instance. */
-	private static CompletionProposalComputerRegistry fgSingleton= null;
-	
+	private static CompletionProposalComputerRegistry fgSingleton = null;
+
 	/**
 	 * Returns the default computer registry.
 	 * <p>
@@ -74,41 +74,42 @@ public final class CompletionProposalComputerRegistry {
 	 */
 	public static synchronized CompletionProposalComputerRegistry getDefault() {
 		if (fgSingleton == null) {
-			fgSingleton= new CompletionProposalComputerRegistry();
+			fgSingleton = new CompletionProposalComputerRegistry();
 		}
-		
+
 		return fgSingleton;
 	}
-	
+
 	/**
 	 * The sets of descriptors, grouped by partition type (key type:
 	 * {@link String}, value type:
 	 * {@linkplain List List&lt;CompletionProposalComputerDescriptor&gt;}).
 	 */
-	private final Map<String, List<CompletionProposalComputerDescriptor>> fDescriptorsByPartition= new HashMap<String, List<CompletionProposalComputerDescriptor>>();
+	private final Map<String, List<CompletionProposalComputerDescriptor>> fDescriptorsByPartition = new HashMap<String, List<CompletionProposalComputerDescriptor>>();
 	/**
 	 * Unmodifiable versions of the sets stored in
 	 * <code>fDescriptorsByPartition</code> (key type: {@link String},
 	 * value type:
 	 * {@linkplain List List&lt;CompletionProposalComputerDescriptor&gt;}).
 	 */
-	private final Map<String, List<CompletionProposalComputerDescriptor>> fPublicDescriptorsByPartition= new HashMap<String, List<CompletionProposalComputerDescriptor>>();
+	private final Map<String, List<CompletionProposalComputerDescriptor>> fPublicDescriptorsByPartition = new HashMap<String, List<CompletionProposalComputerDescriptor>>();
 	/**
 	 * All descriptors (element type:
 	 * {@link CompletionProposalComputerDescriptor}).
 	 */
-	private final List<CompletionProposalComputerDescriptor> fDescriptors= new ArrayList<CompletionProposalComputerDescriptor>();
+	private final List<CompletionProposalComputerDescriptor> fDescriptors = new ArrayList<CompletionProposalComputerDescriptor>();
 	/**
 	 * Unmodifiable view of <code>fDescriptors</code>
 	 */
-	private final List<CompletionProposalComputerDescriptor> fPublicDescriptors= Collections.unmodifiableList(fDescriptors);
-	
-	private final List<CompletionProposalCategory> fCategories= new ArrayList<CompletionProposalCategory>();
-	private final List<CompletionProposalCategory> fPublicCategories= Collections.unmodifiableList(fCategories);
+	private final List<CompletionProposalComputerDescriptor> fPublicDescriptors = Collections
+			.unmodifiableList(fDescriptors);
+
+	private final List<CompletionProposalCategory> fCategories = new ArrayList<CompletionProposalCategory>();
+	private final List<CompletionProposalCategory> fPublicCategories = Collections.unmodifiableList(fCategories);
 	/**
 	 * <code>true</code> if this registry has been loaded.
 	 */
-	private boolean fLoaded= false;
+	private boolean fLoaded = false;
 
 	/**
 	 * Creates a new instance.
@@ -142,8 +143,8 @@ public final class CompletionProposalComputerRegistry {
 	 */
 	List<CompletionProposalComputerDescriptor> getProposalComputerDescriptors(String partition) {
 		ensureExtensionPointRead();
-		List<CompletionProposalComputerDescriptor> result= fPublicDescriptorsByPartition.get(partition);
-		if (result == null) 
+		List<CompletionProposalComputerDescriptor> result = fPublicDescriptorsByPartition.get(partition);
+		if (result == null)
 			return Collections.emptyList();
 		return result;
 	}
@@ -167,7 +168,7 @@ public final class CompletionProposalComputerRegistry {
 		ensureExtensionPointRead();
 		return fPublicDescriptors;
 	}
-	
+
 	/**
 	 * Returns the list of proposal categories contributed to the
 	 * <code>completionProposalComputer</code> extension point.
@@ -194,8 +195,8 @@ public final class CompletionProposalComputerRegistry {
 	private void ensureExtensionPointRead() {
 		boolean reload;
 		synchronized (this) {
-			reload= !fLoaded;
-			fLoaded= true;
+			reload = !fLoaded;
+			fLoaded = true;
 		}
 		if (reload)
 			reload();
@@ -209,51 +210,54 @@ public final class CompletionProposalComputerRegistry {
 	 * </p>
 	 */
 	public void reload() {
-		IExtensionRegistry registry= Platform.getExtensionRegistry();
-		List<IConfigurationElement> elements= new ArrayList<IConfigurationElement>(Arrays.asList(registry.getConfigurationElementsFor(CUIPlugin.getPluginId(), EXTENSION_POINT)));
-		
-		Map<String, List<CompletionProposalComputerDescriptor>> map= new HashMap<String, List<CompletionProposalComputerDescriptor>>();
-		List<CompletionProposalComputerDescriptor> all= new ArrayList<CompletionProposalComputerDescriptor>();
-		
-		List<CompletionProposalCategory> categories= getCategories(elements);
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		List<IConfigurationElement> elements = new ArrayList<IConfigurationElement>(
+				Arrays.asList(registry.getConfigurationElementsFor(CUIPlugin.getPluginId(), EXTENSION_POINT)));
+
+		Map<String, List<CompletionProposalComputerDescriptor>> map = new HashMap<String, List<CompletionProposalComputerDescriptor>>();
+		List<CompletionProposalComputerDescriptor> all = new ArrayList<CompletionProposalComputerDescriptor>();
+
+		List<CompletionProposalCategory> categories = getCategories(elements);
 		for (IConfigurationElement element : elements) {
 			try {
-				CompletionProposalComputerDescriptor desc= new CompletionProposalComputerDescriptor(element, this, categories);
-				Set<String> partitions= desc.getPartitions();
+				CompletionProposalComputerDescriptor desc = new CompletionProposalComputerDescriptor(element, this,
+						categories);
+				Set<String> partitions = desc.getPartitions();
 				for (Object element2 : partitions) {
-					String partition= (String) element2;
-					List<CompletionProposalComputerDescriptor> list= map.get(partition);
+					String partition = (String) element2;
+					List<CompletionProposalComputerDescriptor> list = map.get(partition);
 					if (list == null) {
-						list= new ArrayList<CompletionProposalComputerDescriptor>();
+						list = new ArrayList<CompletionProposalComputerDescriptor>();
 						map.put(partition, list);
 					}
 					list.add(desc);
 				}
 				all.add(desc);
-				
+
 			} catch (CoreException x) {
 				/*
 				 * Element is not valid any longer as the contributing plug-in was unloaded or for
 				 * some other reason. Do not include the extension in the list and inform the user
 				 * about it.
 				 */
-				Object[] args= {element.toString()};
-				String message= Messages.format(ContentAssistMessages.CompletionProposalComputerRegistry_invalid_message, args);
-				IStatus status= new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, x);
+				Object[] args = { element.toString() };
+				String message = Messages
+						.format(ContentAssistMessages.CompletionProposalComputerRegistry_invalid_message, args);
+				IStatus status = new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, x);
 				informUser(status);
 			}
 		}
-		
+
 		synchronized (this) {
 			fCategories.clear();
 			fCategories.addAll(categories);
-			
-			Set<String> partitions= map.keySet();
+
+			Set<String> partitions = map.keySet();
 			fDescriptorsByPartition.keySet().retainAll(partitions);
 			fPublicDescriptorsByPartition.keySet().retainAll(partitions);
 			for (String partition : partitions) {
-				List<CompletionProposalComputerDescriptor> old= fDescriptorsByPartition.get(partition);
-				List<CompletionProposalComputerDescriptor> current= map.get(partition);
+				List<CompletionProposalComputerDescriptor> old = fDescriptorsByPartition.get(partition);
+				List<CompletionProposalComputerDescriptor> current = map.get(partition);
 				if (old != null) {
 					old.clear();
 					old.addAll(current);
@@ -262,43 +266,43 @@ public final class CompletionProposalComputerRegistry {
 					fPublicDescriptorsByPartition.put(partition, Collections.unmodifiableList(current));
 				}
 			}
-			
+
 			fDescriptors.clear();
 			fDescriptors.addAll(all);
 		}
 	}
 
 	private List<CompletionProposalCategory> getCategories(List<IConfigurationElement> elements) {
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
-		String preference= store.getString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES);
-		Set<String> disabled= new HashSet<String>();
-		StringTokenizer tok= new StringTokenizer(preference, "\0");  //$NON-NLS-1$
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+		String preference = store.getString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES);
+		Set<String> disabled = new HashSet<String>();
+		StringTokenizer tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
 		while (tok.hasMoreTokens())
 			disabled.add(tok.nextToken());
-		Map<String, Integer> ordered= new HashMap<String, Integer>();
-		preference= store.getString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER);
-		tok= new StringTokenizer(preference, "\0"); //$NON-NLS-1$
+		Map<String, Integer> ordered = new HashMap<String, Integer>();
+		preference = store.getString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER);
+		tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
-			StringTokenizer inner= new StringTokenizer(tok.nextToken(), ":"); //$NON-NLS-1$
-			String id= inner.nextToken();
-			int rank= Integer.parseInt(inner.nextToken());
+			StringTokenizer inner = new StringTokenizer(tok.nextToken(), ":"); //$NON-NLS-1$
+			String id = inner.nextToken();
+			int rank = Integer.parseInt(inner.nextToken());
 			ordered.put(id, Integer.valueOf(rank));
 		}
-		
-		List<CompletionProposalCategory> categories= new ArrayList<CompletionProposalCategory>();
-		for (Iterator<IConfigurationElement> iter= elements.iterator(); iter.hasNext();) {
-			IConfigurationElement element= iter.next();
+
+		List<CompletionProposalCategory> categories = new ArrayList<CompletionProposalCategory>();
+		for (Iterator<IConfigurationElement> iter = elements.iterator(); iter.hasNext();) {
+			IConfigurationElement element = iter.next();
 			try {
 				if (element.getName().equals("proposalCategory")) { //$NON-NLS-1$
 					iter.remove(); // remove from list to leave only computers
-					
-					CompletionProposalCategory category= new CompletionProposalCategory(element, this);
+
+					CompletionProposalCategory category = new CompletionProposalCategory(element, this);
 					categories.add(category);
 					category.setIncluded(!disabled.contains(category.getId()));
-					Integer rank= ordered.get(category.getId());
+					Integer rank = ordered.get(category.getId());
 					if (rank != null) {
-						int r= rank.intValue();
-						boolean separate= r < 0xffff;
+						int r = rank.intValue();
+						boolean separate = r < 0xffff;
 						category.setSeparateCommand(separate);
 						category.setSortOrder(r);
 					}
@@ -309,9 +313,10 @@ public final class CompletionProposalComputerRegistry {
 				 * some other reason. Do not include the extension in the list and inform the user
 				 * about it.
 				 */
-				Object[] args= {element.toString()};
-				String message= Messages.format(ContentAssistMessages.CompletionProposalComputerRegistry_invalid_message, args);
-				IStatus status= new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, x);
+				Object[] args = { element.toString() };
+				String message = Messages
+						.format(ContentAssistMessages.CompletionProposalComputerRegistry_invalid_message, args);
+				IStatus status = new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, x);
 				informUser(status);
 			}
 		}
@@ -326,42 +331,49 @@ public final class CompletionProposalComputerRegistry {
 	 */
 	void informUser(CompletionProposalComputerDescriptor descriptor, IStatus status) {
 		CUIPlugin.log(status);
-        String title= ContentAssistMessages.CompletionProposalComputerRegistry_error_dialog_title;
-        CompletionProposalCategory category= descriptor.getCategory();
-        IContributor culprit= descriptor.getContributor();
-        Set<String> affectedPlugins= getAffectedContributors(category, culprit);
-        
+		String title = ContentAssistMessages.CompletionProposalComputerRegistry_error_dialog_title;
+		CompletionProposalCategory category = descriptor.getCategory();
+		IContributor culprit = descriptor.getContributor();
+		Set<String> affectedPlugins = getAffectedContributors(category, culprit);
+
 		final String avoidHint;
-		final String culpritName= culprit == null ? null : culprit.getName();
+		final String culpritName = culprit == null ? null : culprit.getName();
 		if (affectedPlugins.isEmpty()) {
 			if (CUIPlugin.PLUGIN_ID.equals(culpritName)) {
 				// don't warn about internal computers
 				return;
 			}
-			avoidHint= Messages.format(ContentAssistMessages.CompletionProposalComputerRegistry_messageAvoidanceHint, new Object[] {culpritName, category.getDisplayName()});
+			avoidHint = Messages.format(ContentAssistMessages.CompletionProposalComputerRegistry_messageAvoidanceHint,
+					new Object[] { culpritName, category.getDisplayName() });
 		} else {
-			avoidHint= Messages.format(ContentAssistMessages.CompletionProposalComputerRegistry_messageAvoidanceHintWithWarning, new Object[] {culpritName, category.getDisplayName(), toString(affectedPlugins)});
-		}        
-		String message= status.getMessage();
-        // inlined from MessageDialog.openError
-        MessageDialog dialog = new MessageDialog(CUIPlugin.getActiveWorkbenchShell(), title, null /* default image */, message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0) {
-        	@Override
+			avoidHint = Messages.format(
+					ContentAssistMessages.CompletionProposalComputerRegistry_messageAvoidanceHintWithWarning,
+					new Object[] { culpritName, category.getDisplayName(), toString(affectedPlugins) });
+		}
+		String message = status.getMessage();
+		// inlined from MessageDialog.openError
+		MessageDialog dialog = new MessageDialog(CUIPlugin.getActiveWorkbenchShell(), title, null /* default image */,
+				message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0) {
+			@Override
 			protected Control createCustomArea(Composite parent) {
-        		Link link= new Link(parent, SWT.NONE);
-        		link.setText(avoidHint);
-        		link.addSelectionListener(new SelectionAdapter() {
-        			@Override
+				Link link = new Link(parent, SWT.NONE);
+				link.setText(avoidHint);
+				link.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
-        				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.cdt.ui.preferences.CodeAssistPreferenceAdvanced", null, null).open(); //$NON-NLS-1$
-        			}
-        		});
-        		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-        		gridData.widthHint= this.getMinimumMessageWidth();
+						PreferencesUtil
+								.createPreferenceDialogOn(getShell(),
+										"org.eclipse.cdt.ui.preferences.CodeAssistPreferenceAdvanced", null, null) //$NON-NLS-1$
+								.open();
+					}
+				});
+				GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+				gridData.widthHint = this.getMinimumMessageWidth();
 				link.setLayoutData(gridData);
-        		return link;
-        	}
-        };
-        dialog.open();
+				return link;
+			}
+		};
+		dialog.open();
 	}
 
 	/**
@@ -372,28 +384,28 @@ public final class CompletionProposalComputerRegistry {
 	 * @return the names of the contributors other than <code>culprit</code> that contribute to <code>category</code> (element type: {@link String})
 	 */
 	private Set<String> getAffectedContributors(CompletionProposalCategory category, IContributor culprit) {
-	    Set<String> affectedPlugins= new HashSet<String>();
-        for (CompletionProposalComputerDescriptor desc : getProposalComputerDescriptors()) {
-	        CompletionProposalCategory cat= desc.getCategory();
-	        if (cat.equals(category)) {
-	        	IContributor contributor= desc.getContributor();
-	        	if (contributor != null && !culprit.equals(contributor))
-	        		affectedPlugins.add(contributor.getName());
-	        }
-        }
-	    return affectedPlugins;
-    }
+		Set<String> affectedPlugins = new HashSet<String>();
+		for (CompletionProposalComputerDescriptor desc : getProposalComputerDescriptors()) {
+			CompletionProposalCategory cat = desc.getCategory();
+			if (cat.equals(category)) {
+				IContributor contributor = desc.getContributor();
+				if (contributor != null && !culprit.equals(contributor))
+					affectedPlugins.add(contributor.getName());
+			}
+		}
+		return affectedPlugins;
+	}
 
-    private Object toString(Collection<String> collection) {
-    	// strip brackets off AbstractCollection.toString()
-    	String string= collection.toString();
-    	return string.substring(1, string.length() - 1);
-    }
+	private Object toString(Collection<String> collection) {
+		// strip brackets off AbstractCollection.toString()
+		String string = collection.toString();
+		return string.substring(1, string.length() - 1);
+	}
 
 	private void informUser(IStatus status) {
 		CUIPlugin.log(status);
-		String title= ContentAssistMessages.CompletionProposalComputerRegistry_error_dialog_title;
-		String message= status.getMessage();
+		String title = ContentAssistMessages.CompletionProposalComputerRegistry_error_dialog_title;
+		String message = status.getMessage();
 		MessageDialog.openError(CUIPlugin.getActiveWorkbenchShell(), title, message);
 	}
 }

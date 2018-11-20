@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -31,12 +31,12 @@ public abstract class ASTFilePathResolver {
 	 * @return an index file location or <code>null</code> if the file does not exist.
 	 */
 	public abstract IIndexFileLocation resolveIncludeFile(String includePath);
-	
+
 	/**
 	 * Check for existence of an inclusion as computed by the preprocessor.
 	 */
 	public abstract boolean doesIncludeFileExist(String includePath);
-	
+
 	/**
 	 * Convert an index file location to the path as it will be stored in the AST.
 	 */
@@ -46,12 +46,12 @@ public abstract class ASTFilePathResolver {
 	 * Answers whether this file is considered to be a source file (vs. a header file).
 	 */
 	public abstract boolean isSource(String astFilePath);
-	
+
 	/**
 	 * Returns the size of the file in bytes, or -1 if it cannot be determined
 	 */
 	public abstract long getFileSize(String astFilePath);
-	
+
 	/**
 	 * Returns whether the file-system is case insensitive.
 	 */

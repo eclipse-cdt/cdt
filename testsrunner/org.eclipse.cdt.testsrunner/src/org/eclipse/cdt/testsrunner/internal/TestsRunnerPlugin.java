@@ -42,22 +42,21 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/** The plug-in ID. */
 	private static final String PLUGIN_ID = "org.eclipse.cdt.testsrunner"; //$NON-NLS-1$
-	
+
 	/** The path to the plugin icons */
 	private static final IPath ICONS_PATH = new Path("$nl$/icons"); //$NON-NLS-1$
 
 	/** Plug-in instance. */
 	private static TestsRunnerPlugin plugin;
-	
+
 	private TestsRunnerProvidersManager testsRunnerProvidersManager = new TestsRunnerProvidersManager();
 	private TestingSessionsManager testingSessionsManager = new TestingSessionsManager(testsRunnerProvidersManager);
 
-	
 	public TestsRunnerPlugin() {
 		super();
 		plugin = this;
 	}
-	
+
 	/**
 	 * Returns the Tests Runner Plug-in instance
 	 * 
@@ -80,7 +79,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * Logs an internal error with the specified message.
 	 * 
@@ -100,14 +99,14 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 	}
 
 	@Override
-    public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		setDefaultLaunchDelegates();
 	}
 
 	@Override
-    public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 	}
 
@@ -200,7 +199,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Setup the launch delegate with id <code>delegateId</code> as default for
 	 * launch configuration type <code>cfgType</code> for <code>mode</code>
@@ -227,16 +226,19 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 			log(e);
 		}
 	}
-	
+
 	/**
 	 * Sets up the default launch delegates for the Tests Runner's launch configuration type.
 	 */
 	private void setDefaultLaunchDelegates() {
 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType configurationType = launchMgr.getLaunchConfigurationType(ITestsRunnerConstants.LAUNCH_CONFIGURATION_TYPE_ID);
-		
-		setDefaultLaunchDelegate(configurationType, ITestsRunnerConstants.PREFERRED_DEBUG_TESTS_LAUNCH_DELEGATE, ILaunchManager.DEBUG_MODE);
-		setDefaultLaunchDelegate(configurationType, ITestsRunnerConstants.PREFERRED_RUN_TESTS_LAUNCH_DELEGATE, ILaunchManager.RUN_MODE);
+		ILaunchConfigurationType configurationType = launchMgr
+				.getLaunchConfigurationType(ITestsRunnerConstants.LAUNCH_CONFIGURATION_TYPE_ID);
+
+		setDefaultLaunchDelegate(configurationType, ITestsRunnerConstants.PREFERRED_DEBUG_TESTS_LAUNCH_DELEGATE,
+				ILaunchManager.DEBUG_MODE);
+		setDefaultLaunchDelegate(configurationType, ITestsRunnerConstants.PREFERRED_RUN_TESTS_LAUNCH_DELEGATE,
+				ILaunchManager.RUN_MODE);
 	}
-	
+
 }

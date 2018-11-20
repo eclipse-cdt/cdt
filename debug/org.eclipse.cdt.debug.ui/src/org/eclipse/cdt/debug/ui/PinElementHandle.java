@@ -27,7 +27,7 @@ public class PinElementHandle extends PlatformObject implements IPinElementHandl
 	private Object fDebugContext;
 	private String fLabel;
 	private IPinElementColorDescriptor fColorDescriptor;
-	
+
 	public PinElementHandle(Object debugContext, String label, IPinElementColorDescriptor colorDescriptor) {
 		fDebugContext = debugContext;
 		fLabel = label;
@@ -41,8 +41,8 @@ public class PinElementHandle extends PlatformObject implements IPinElementHandl
 	@Override
 	public synchronized Object getDebugContext() {
 		return fDebugContext;
-	}	
-	
+	}
+
 	/**
 	 * Sets the debug context.
 	 * 
@@ -51,7 +51,7 @@ public class PinElementHandle extends PlatformObject implements IPinElementHandl
 	public synchronized void setDebugContext(Object debugContext) {
 		fDebugContext = debugContext;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IPinProvider.IHandleLabelProvider#getLabel()
@@ -60,7 +60,7 @@ public class PinElementHandle extends PlatformObject implements IPinElementHandl
 	public String getLabel() {
 		return fLabel;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle#getPinElementColorDescriptor()
@@ -69,7 +69,7 @@ public class PinElementHandle extends PlatformObject implements IPinElementHandl
 	public IPinElementColorDescriptor getPinElementColorDescriptor() {
 		return fColorDescriptor;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

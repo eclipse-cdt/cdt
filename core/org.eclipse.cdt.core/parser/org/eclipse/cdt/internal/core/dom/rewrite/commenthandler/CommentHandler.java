@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTComment;
  */
 public class CommentHandler {
 	private final List<IASTComment> comments;
-	
+
 	public CommentHandler(List<IASTComment> comments) {
 		super();
 		this.comments = comments;

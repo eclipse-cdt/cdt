@@ -36,8 +36,8 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class SymbolDialog extends AbstractPropertyDialog {
-	private String  data1;
-	private String  data2;
+	private String data1;
+	private String data2;
 	private Button b_add2conf;
 	private Button b_add2lang;
 	private Text txt1;
@@ -48,9 +48,8 @@ public class SymbolDialog extends AbstractPropertyDialog {
 	private boolean newAction;
 	private ICResourceDescription cfgd;
 
-	public SymbolDialog(Shell parent, boolean _newAction,
-		String title, String _data1, String _data2,
-		ICResourceDescription _cfgd) {
+	public SymbolDialog(Shell parent, boolean _newAction, String title, String _data1, String _data2,
+			ICResourceDescription _cfgd) {
 		super(parent, title);
 		data1 = _data1;
 		data2 = _data2;
@@ -76,7 +75,8 @@ public class SymbolDialog extends AbstractPropertyDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				setButtons();
-			}});
+			}
+		});
 
 		Label l2 = new Label(c, SWT.NONE);
 		l2.setText(Messages.SymbolDialog_1);
@@ -91,7 +91,8 @@ public class SymbolDialog extends AbstractPropertyDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				setButtons();
-			}});
+			}
+		});
 
 		b_vars = setupButton(c, AbstractCPropertyTab.VARIABLESBUTTON_NAME);
 
@@ -149,7 +150,8 @@ public class SymbolDialog extends AbstractPropertyDialog {
 			shell.dispose();
 		} else if (e.widget.equals(b_vars)) {
 			String s = AbstractCPropertyTab.getVariableDialog(shell, cfgd.getConfiguration());
-			if (s != null) txt2.insert(s);
+			if (s != null)
+				txt2.insert(s);
 		}
 	}
 }

@@ -27,10 +27,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class MIGDBVersion extends MICommand<MIGDBVersionInfo> {
 	private static final String COMMAND = "-gdb-version"; //$NON-NLS-1$
-	
+
 	public MIGDBVersion(ICommandControlDMContext ctx) {
-        super(ctx, COMMAND);
-    }
+		super(ctx, COMMAND);
+	}
 
 	@Override
 	public MIInfo getResult(MIOutput out) {

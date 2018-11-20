@@ -59,9 +59,9 @@ public final class BindingCollector extends NamedNodeCollector {
 	public BindingCollector(PDOMLinkage linkage, char[] name, IndexFilter filter, boolean prefixLookup,
 			boolean contentAssistLookup, boolean caseSensitive) {
 		super(linkage, name, prefixLookup, contentAssistLookup, caseSensitive);
-		this.filter= filter;
+		this.filter = filter;
 	}
-		
+
 	@Override
 	public boolean addNode(PDOMNamedNode tBinding) throws CoreException {
 		if (tBinding instanceof PDOMBinding) {
@@ -87,13 +87,13 @@ public final class BindingCollector extends NamedNodeCollector {
 		}
 		return true; // look for more
 	}
-	
+
 	public PDOMBinding[] getBindings() {
-		List<PDOMNamedNode> bindings= getNodeList();
+		List<PDOMNamedNode> bindings = getNodeList();
 		return bindings.toArray(new PDOMBinding[bindings.size()]);
 	}
 
 	public void setSkipGlobalEnumerators(boolean b) {
-		fSkipGlobalEnumerators= b;
+		fSkipGlobalEnumerators = b;
 	}
 }

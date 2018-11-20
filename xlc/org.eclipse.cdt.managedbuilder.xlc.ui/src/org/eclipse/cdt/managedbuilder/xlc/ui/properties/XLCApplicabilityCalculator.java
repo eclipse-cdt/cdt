@@ -44,8 +44,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  *
  */
 
-public class XLCApplicabilityCalculator implements IOptionApplicability
-{
+public class XLCApplicabilityCalculator implements IOptionApplicability {
 	private static final String BUNDLE_NAME = "org/eclipse/cdt/managedbuilder/xlc/ui/properties/applicability.properties";
 	private static final String PROP_NAME_VERSION_ORDER = "xlc.applicability.version.order";
 	private static final String PROP_VALUE_PLUS = "+";
@@ -54,10 +53,8 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 	private static List versionOrder;
 	private static Map applicabilityMap;
 
-	public XLCApplicabilityCalculator()
-	{
-		if (!initialized)
-		{
+	public XLCApplicabilityCalculator() {
+		if (!initialized) {
 			Properties props = null;
 
 			ClassLoader loader = this.getClass().getClassLoader();
@@ -69,17 +66,14 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 			if (input == null)
 				input = ClassLoader.getSystemResourceAsStream(BUNDLE_NAME);
 
-			try
-			{
-				if (input != null)
-				{
+			try {
+				if (input != null) {
 					props = new Properties();
 					props.load(input);
 
 					Set entrySet = props.entrySet();
 					Iterator iterator = entrySet.iterator();
-					while (iterator.hasNext())
-					{
+					while (iterator.hasNext()) {
 						Map.Entry entry = (Map.Entry) iterator.next();
 
 						String key = (String) entry.getKey();
@@ -88,45 +82,36 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 						if (value == null)
 							value = "";
 
-						if (key.equals(PROP_NAME_VERSION_ORDER))
-						{
+						if (key.equals(PROP_NAME_VERSION_ORDER)) {
 							versionOrder = new ArrayList();
 							String[] versions = value.split(",");
 
-							if (versions != null)
-							{
-								for (int i = 0; i < versions.length; i ++)
-								{
+							if (versions != null) {
+								for (int i = 0; i < versions.length; i++) {
 									versionOrder.add(versions[i].trim());
 								}
 							}
-						}
-						else
-						{
+						} else {
 							if (applicabilityMap == null)
 								applicabilityMap = new HashMap();
 
 							List applicList = (List) applicabilityMap.get(key);
-							if (applicList == null)
-							{
+							if (applicList == null) {
 								applicList = new ArrayList();
 								applicabilityMap.put(key, applicList);
 							}
 
 							boolean hasGreaterOption = false;
 							//find if ends with + and set as separate option
-							if (value.endsWith(PROP_VALUE_PLUS))
-							{
+							if (value.endsWith(PROP_VALUE_PLUS)) {
 								hasGreaterOption = true;
 								value = value.substring(0, value.length() - PROP_VALUE_PLUS.length());
 							}
 
 							String[] versions = value.split(",");
 
-							if (versions != null)
-							{
-								for (int i = 0; i < versions.length; i ++)
-								{
+							if (versions != null) {
+								for (int i = 0; i < versions.length; i++) {
 									applicList.add(versions[i].trim());
 								}
 
@@ -137,21 +122,13 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 						}
 					}
 				}
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			finally
-			{
-				if (input != null)
-				{
-					try
-					{
+			} finally {
+				if (input != null) {
+					try {
 						input.close();
-					}
-					catch (IOException e)
-					{
+					} catch (IOException e) {
 						// ignore
 					}
 				}
@@ -162,19 +139,15 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 		}
 	}
 
-	private boolean isApplicable(IBuildObject configuration, IHoldsOptions holder, IOption option)
-	{
+	private boolean isApplicable(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		// first we check the preference for this project, if it exists
 		IProject project = null;
-		if(configuration instanceof IConfiguration)
-		{
+		if (configuration instanceof IConfiguration) {
 			IConfiguration config = (IConfiguration) configuration;
 			IManagedProject managedProject = config.getManagedProject();
 
 			project = (IProject) managedProject.getOwner();
-		}
-		else if(configuration instanceof IFolderInfo)
-		{
+		} else if (configuration instanceof IFolderInfo) {
 			IFolderInfo folderInfo = (IFolderInfo) configuration;
 
 			IConfiguration config = folderInfo.getParent();
@@ -190,14 +163,13 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 
 		String currentVersion = null;
 		try {
-			currentVersion = project.getPersistentProperty(new QualifiedName("",
-					PreferenceConstants.P_XLC_COMPILER_VERSION));
+			currentVersion = project
+					.getPersistentProperty(new QualifiedName("", PreferenceConstants.P_XLC_COMPILER_VERSION));
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 
-		if(currentVersion == null)
-		{
+		if (currentVersion == null) {
 			// if the property isn't set, then use the workbench preference
 			IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 			currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
@@ -220,8 +192,7 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 		//then we need to find out if current version is greater than the last valid in the list
 		String lastOption = (String) applicList.get(applicList.size() - 1);
 
-		if (lastOption != null && lastOption.equals(PROP_VALUE_PLUS))
-		{
+		if (lastOption != null && lastOption.equals(PROP_VALUE_PLUS)) {
 			//if 'greater than' option is specified but no version order exists, consider config error and return false
 			if (versionOrder == null)
 				return false;
@@ -229,12 +200,10 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 			//check for the last valid version in applicability list
 			String validVersion = null;
 			//start with element before the +
-			for (int k = applicList.size() - 2; k >= 0; k --)
-			{
+			for (int k = applicList.size() - 2; k >= 0; k--) {
 				String version = (String) applicList.get(k);
 
-				if (versionOrder.contains(version))
-				{
+				if (versionOrder.contains(version)) {
 					validVersion = version;
 					break;
 				}
@@ -249,7 +218,6 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 				return true;
 		}
 
-
 		return false;
 
 	}
@@ -258,8 +226,7 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionEnabled(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
 	@Override
-	public boolean isOptionEnabled(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionEnabled(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return isApplicable(configuration, holder, option);
 	}
 
@@ -267,8 +234,7 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionUsedInCommandLine(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
 	@Override
-	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionUsedInCommandLine(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return isApplicable(configuration, holder, option);
 	}
 
@@ -276,8 +242,7 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionVisible(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
 	@Override
-	public boolean isOptionVisible(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionVisible(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return isApplicable(configuration, holder, option);
 	}
 

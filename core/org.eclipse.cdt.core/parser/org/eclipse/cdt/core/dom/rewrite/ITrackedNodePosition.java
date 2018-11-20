@@ -30,7 +30,7 @@ public interface ITrackedNodePosition {
 	 * @return the original or modified start position of the tracked node
 	 */
 	public int getStartPosition();
-	
+
 	/**
 	 * Returns the original or modified length of the tracked node depending if called before
 	 * or after the rewrite is applied. <code>-1</code> is returned for removed nodes.

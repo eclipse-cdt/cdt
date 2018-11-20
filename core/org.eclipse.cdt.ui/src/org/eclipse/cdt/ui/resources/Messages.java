@@ -26,7 +26,7 @@ public class Messages extends NLS {
 	public static String RefreshPolicyExceptionDialog_SelectResourceDialogMessage;
 	public static String RefreshPolicyExceptionDialog_SelectResourceDialogTitle;
 	public static String RefreshPolicyExceptionDialog_deleteButtonLabel;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

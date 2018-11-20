@@ -39,7 +39,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class CUIHelp {
 
 	public static void setHelp(CEditor editor, StyledText text, String contextId) {
-		CUIHelpListener listener= new CUIHelpListener(editor, contextId);
+		CUIHelpListener listener = new CUIHelpListener(editor, contextId);
 		text.addHelpListener(listener);
 	}
 
@@ -49,8 +49,8 @@ public class CUIHelp {
 		private CEditor fEditor;
 
 		public CUIHelpListener(CEditor editor, String contextId) {
-			fContextId= contextId;
-			fEditor= editor;
+			fContextId = contextId;
+			fEditor = editor;
 		}
 
 		/*
@@ -81,7 +81,7 @@ public class CUIHelp {
 		 * @param editor
 		 */
 		public CUIHelpContextProvider(ITextEditor editor) {
-			fEditor= editor;
+			fEditor = editor;
 		}
 
 		/*
@@ -90,18 +90,18 @@ public class CUIHelp {
 		@Override
 		public IContext getContext(Object target) {
 			String selected = getSelectedString(fEditor);
-			IContext context= HelpSystem.getContext(ICHelpContextIds.CEDITOR_VIEW);
+			IContext context = HelpSystem.getContext(ICHelpContextIds.CEDITOR_VIEW);
 			if (context != null) {
 				if (selected != null && selected.length() > 0) {
 					try {
-						context= new CHelpDisplayContext(context, fEditor, selected);
+						context = new CHelpDisplayContext(context, fEditor, selected);
 					} catch (CoreException exc) {
 					}
 				}
 			}
 			return context;
 		}
-	
+
 		/*
 		 * @see org.eclipse.help.IContextProvider#getContextChangeMask()
 		 */
@@ -109,7 +109,7 @@ public class CUIHelp {
 		public int getContextChangeMask() {
 			return SELECTION;
 		}
-	
+
 		/*
 		 * @see org.eclipse.help.IContextProvider#getSearchExpression(java.lang.Object)
 		 */
@@ -117,21 +117,20 @@ public class CUIHelp {
 		public String getSearchExpression(Object target) {
 			return getSelectedString(fEditor);
 		}
-	
-		private static String getSelectedString(ITextEditor editor){
+
+		private static String getSelectedString(ITextEditor editor) {
 			String expression = null;
-			try{
-				ITextSelection selection = (ITextSelection)editor.getSite().getSelectionProvider().getSelection();
+			try {
+				ITextSelection selection = (ITextSelection) editor.getSite().getSelectionProvider().getSelection();
 				IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 				IRegion region = CWordFinder.findWord(document, selection.getOffset());
 				if (region != null)
 					expression = document.get(region.getOffset(), region.getLength());
-			}
-			catch(Exception e){
+			} catch (Exception e) {
 			}
 			return expression;
 		}
-	
+
 	}
 
 }

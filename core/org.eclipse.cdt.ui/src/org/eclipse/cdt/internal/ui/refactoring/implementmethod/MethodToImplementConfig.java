@@ -21,13 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
  *
  */
 public class MethodToImplementConfig {
-	
+
 	private IASTSimpleDeclaration declaration;
 	private ParameterHandler paraHandler;
 	private boolean checked;
-	
-	public MethodToImplementConfig(IASTSimpleDeclaration declaration,
-			ParameterHandler paraHandler) {
+
+	public MethodToImplementConfig(IASTSimpleDeclaration declaration, ParameterHandler paraHandler) {
 		super();
 		this.declaration = declaration;
 		this.paraHandler = paraHandler;
@@ -40,12 +39,12 @@ public class MethodToImplementConfig {
 	public ParameterHandler getParaHandler() {
 		return paraHandler;
 	}
-	
+
 	@Override
 	public String toString() {
 		return declaration.getRawSignature();
 	}
-	
+
 	public boolean isChecked() {
 		return checked;
 	}

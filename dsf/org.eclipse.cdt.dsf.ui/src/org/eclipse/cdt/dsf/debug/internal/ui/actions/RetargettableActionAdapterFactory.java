@@ -32,13 +32,13 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType == IRunToLineTarget.class) {
-			return (T)new DisassemblyRunToLineAdapter();
-		} 
+			return (T) new DisassemblyRunToLineAdapter();
+		}
 		if (adapterType == IMoveToLineTarget.class) {
-			return (T)new DisassemblyMoveToLineAdapter();
-		} 
+			return (T) new DisassemblyMoveToLineAdapter();
+		}
 		if (adapterType == IResumeAtLineTarget.class) {
-			return (T)new DisassemblyResumeAtLineAdapter();
+			return (T) new DisassemblyResumeAtLineAdapter();
 		}
 		return null;
 	}
@@ -48,6 +48,6 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 	 */
 	@Override
 	public Class<?>[] getAdapterList() {
-		return new Class[]{ IRunToLineTarget.class, IResumeAtLineTarget.class, IMoveToLineTarget.class };
+		return new Class[] { IRunToLineTarget.class, IResumeAtLineTarget.class, IMoveToLineTarget.class };
 	}
 }

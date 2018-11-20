@@ -79,10 +79,10 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	/** Offset of the function body execution for constexpr functions. */
 	private static final int FUNCTION_BODY = REQUIRED_ARG_COUNT + 2; // Database.EXECUTION_SIZE
-	
+
 	/** Offset of the function's declared type. */
-	private static final int DECLARED_TYPE = FUNCTION_BODY + Database.EXECUTION_SIZE;  // Database.TYPE_SIZE
-	
+	private static final int DECLARED_TYPE = FUNCTION_BODY + Database.EXECUTION_SIZE; // Database.TYPE_SIZE
+
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
@@ -94,8 +94,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	private ICPPFunctionType fType; // No need for volatile, all fields of ICPPFunctionTypes are final.
 	private ICPPFunctionType fDeclaredType;
 
-	public PDOMCPPFunction(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction function,
-			boolean setTypes) throws CoreException, DOMException {
+	public PDOMCPPFunction(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction function, boolean setTypes)
+			throws CoreException, DOMException {
 		super(linkage, parent, function.getNameCharArray());
 		Database db = getDB();
 		Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
@@ -217,7 +217,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		fType = null;
 		getLinkage().storeType(record + FUNCTION_TYPE, ft);
 	}
-	
+
 	private void setDeclaredType(ICPPFunctionType ft) throws CoreException {
 		fType = null;
 		getLinkage().storeType(record + DECLARED_TYPE, ft);
@@ -331,7 +331,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 		return fDeclaredType;
 	}
-	
+
 	@Override
 	public final ICPPFunctionType getType() {
 		if (fType == null) {

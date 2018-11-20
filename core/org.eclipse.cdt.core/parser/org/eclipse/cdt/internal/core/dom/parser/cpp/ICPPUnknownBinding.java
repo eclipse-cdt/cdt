@@ -27,5 +27,5 @@ public interface ICPPUnknownBinding extends ICPPBinding {
 	 * Returns the scope this binding represents.
 	 * @throws DOMException
 	 */
-    public ICPPScope asScope() throws DOMException;
+	public ICPPScope asScope() throws DOMException;
 }

@@ -23,60 +23,60 @@ import java.util.List;
  */
 public class MIDataListRegisterNamesInfo extends MIInfo {
 
-    String[] names;
-    protected int realNameCount = 0;
+	String[] names;
+	protected int realNameCount = 0;
 
-    public MIDataListRegisterNamesInfo(MIOutput rr) {
-        super(rr);
-        names = null;
-        List<String> aList = new ArrayList<String>();
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord outr = out.getMIResultRecord();
-            if (outr != null) {
-                MIResult[] results = outr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    if (var.equals("register-names")) { //$NON-NLS-1$
-                        MIValue value = results[i].getMIValue();
-                        if (value instanceof MIList) {
-                            parseRegisters((MIList) value, aList);
-                        }
-                    }
-                }
-            }
-        }
-        names = aList.toArray(new String[aList.size()]);
-    }
+	public MIDataListRegisterNamesInfo(MIOutput rr) {
+		super(rr);
+		names = null;
+		List<String> aList = new ArrayList<String>();
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord outr = out.getMIResultRecord();
+			if (outr != null) {
+				MIResult[] results = outr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("register-names")) { //$NON-NLS-1$
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MIList) {
+							parseRegisters((MIList) value, aList);
+						}
+					}
+				}
+			}
+		}
+		names = aList.toArray(new String[aList.size()]);
+	}
 
-    /*
-     * Returns the register names. 
-     */
-    public String[] getRegisterNames() {
-        
-        /*
-         * The expectation is that we return an empty list. The
-         * constructor quarantees this so we are good here.
-         */
-        return names;
-    }
+	/*
+	 * Returns the register names. 
+	 */
+	public String[] getRegisterNames() {
 
-    private void parseRegisters(MIList list, List<String> aList) {
-        MIValue[] values = list.getMIValues();
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] instanceof MIConst) {
-                String str = ((MIConst) values[i]).getCString();
+		/*
+		 * The expectation is that we return an empty list. The
+		 * constructor quarantees this so we are good here.
+		 */
+		return names;
+	}
 
-                /* this cannot filter nulls because index is critical in retreival 
-                 * and index is assigned in the layers above. The MI spec allows 
-                 * empty returns, for some register names. */
-                if (str != null && !str.isEmpty()) {
-                    realNameCount++;
-                    aList.add(str);
-                } else {
-                    aList.add(""); //$NON-NLS-1$
-                }
-            }
-        }
-    }
+	private void parseRegisters(MIList list, List<String> aList) {
+		MIValue[] values = list.getMIValues();
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] instanceof MIConst) {
+				String str = ((MIConst) values[i]).getCString();
+
+				/* this cannot filter nulls because index is critical in retreival 
+				 * and index is assigned in the layers above. The MI spec allows 
+				 * empty returns, for some register names. */
+				if (str != null && !str.isEmpty()) {
+					realNameCount++;
+					aList.add(str);
+				} else {
+					aList.add(""); //$NON-NLS-1$
+				}
+			}
+		}
+	}
 }

@@ -15,15 +15,25 @@ import junit.framework.TestSuite;
 
 public class BinaryOperatorOverloadingTests extends TestBase {
 	public static class NonIndexing extends BinaryOperatorOverloadingTests {
-		public NonIndexing() {setStrategy(new NonIndexingTestStrategy());}
-		public static TestSuite suite() {return suite(NonIndexing.class);}
+		public NonIndexing() {
+			setStrategy(new NonIndexingTestStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(NonIndexing.class);
+		}
 	}
-	
+
 	public static class SingleProject extends BinaryOperatorOverloadingTests {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true, false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(true, false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
-	
+
 	//	struct S {
 	//		constexpr S(int x):x{x} {}
 	//		constexpr int operator+(S const& other) {
@@ -42,9 +52,9 @@ public class BinaryOperatorOverloadingTests extends TestBase {
 
 	//	constexpr int x = f();
 	public void testOverloadedPlusOperatorAsMemberFunction() throws Exception {
-	  assertEvaluationEquals(12);
+		assertEvaluationEquals(12);
 	}
-	
+
 	//	struct S {
 	//		constexpr S(int x):x{x} {}
 	//		constexpr S operator*(S const& other) {
@@ -62,9 +72,9 @@ public class BinaryOperatorOverloadingTests extends TestBase {
 
 	//	constexpr int x = f();
 	public void testOverloadedMultiplicationOperatorAsMemberFunction() throws Exception {
-	  assertEvaluationEquals(12);
+		assertEvaluationEquals(12);
 	}
-	
+
 	//	struct S {
 	//		constexpr S(int x, int y):x{x}, y{y} {}
 	//		int x, y;
@@ -82,9 +92,9 @@ public class BinaryOperatorOverloadingTests extends TestBase {
 
 	//	constexpr int x = f();
 	public void testOverloadedPlusOperatorAsNonMemberFunction() throws Exception {
-	  assertEvaluationEquals(14);
+		assertEvaluationEquals(14);
 	}
-	
+
 	//	struct S {
 	//		constexpr S(int x, int y):x{x*2}, y{y+1} {
 	//		}
@@ -100,7 +110,7 @@ public class BinaryOperatorOverloadingTests extends TestBase {
 	//		S result{s1 + s2};
 	//		return result.y;
 	//	}
-	
+
 	//  constexpr int x = f();
 	public void testOverloadedOperatorPlusComplex1() throws Exception {
 		assertEvaluationEquals(24);
@@ -121,12 +131,12 @@ public class BinaryOperatorOverloadingTests extends TestBase {
 	//		S result = s1 + s2;
 	//		return result.x;
 	//	}
-	
+
 	//  constexpr int x = f();
 	public void testOverloadedOperatorPlusComplex2() throws Exception {
 		assertEvaluationEquals(24);
 	}
-	
+
 	//	struct S {
 	//		constexpr S(int x, int y):x{x*2}, y{y+1} {
 	//		}
@@ -141,12 +151,12 @@ public class BinaryOperatorOverloadingTests extends TestBase {
 	//		S result{s1 + s2};
 	//		return result.y;
 	//	}
-	
+
 	//  constexpr int x = f();
 	public void testOverloadedOperatorPlusComplex3() throws Exception {
 		assertEvaluationEquals(24);
 	}
-	
+
 	//	class Point {
 	//		int x, y;
 	//	public:
@@ -160,12 +170,12 @@ public class BinaryOperatorOverloadingTests extends TestBase {
 	//		Point p2{2,4};
 	//		return p1 == p2 ? 20 : 40;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testOverloadedOperatorEquals() throws Exception {
 		assertEvaluationEquals(20);
 	}
-	
+
 	//	class Point {
 	//		int x, y;
 	//	public:
@@ -183,7 +193,7 @@ public class BinaryOperatorOverloadingTests extends TestBase {
 	//		p1 = p2;
 	//		return p1.getY();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testOverloadedOperatorAssign() throws Exception {
 		assertEvaluationEquals(10);

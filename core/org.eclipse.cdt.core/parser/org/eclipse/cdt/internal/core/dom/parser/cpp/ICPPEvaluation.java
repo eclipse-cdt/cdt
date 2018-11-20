@@ -31,6 +31,7 @@ public interface ICPPEvaluation {
 	public static final ICPPEvaluation[] EMPTY_ARRAY = {};
 
 	boolean isInitializerList();
+
 	boolean isFunctionSet();
 
 	/**
@@ -49,8 +50,7 @@ public interface ICPPEvaluation {
 	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
 	boolean isConstantExpression();
-	
-	
+
 	/**
 	 * Returns {@code true} if this expression is equivalent to 'other' for
 	 * declaration matching purposes.
@@ -161,7 +161,7 @@ public interface ICPPEvaluation {
 	 * Otherwise returns {@code null}.
 	 */
 	IBinding getTemplateDefinition();
-	
+
 	/**
 	 * Marshals an ICPPEvaluation object for storage in the index.
 	 *

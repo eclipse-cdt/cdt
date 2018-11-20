@@ -43,7 +43,7 @@ public interface ICProjectDescriptionPreferences {
 	 * @return int
 	 */
 	int getConfigurationRelations();
-	
+
 	/**
 	 * sets the configuration relation status. can be an integer value containing the
 	 * CONFIG_xxx status
@@ -54,7 +54,7 @@ public interface ICProjectDescriptionPreferences {
 	 * @param status
 	 */
 	void setConfigurationRelations(int status);
-	
+
 	/**
 	 * specifies that the default configuration relations should be used
 	 * When called for the project description, specifies that the workspace preferences settings
@@ -63,7 +63,7 @@ public interface ICProjectDescriptionPreferences {
 	 * which is CONFIGS_INDEPENDENT
 	 */
 	void useDefaultConfigurationRelations();
-	
+
 	/**
 	 * specifies whether default configuration relations are used
 	 */

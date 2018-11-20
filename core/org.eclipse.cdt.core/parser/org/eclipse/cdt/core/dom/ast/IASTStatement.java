@@ -22,7 +22,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTStatement extends IASTAttributeOwner {
 	public static final IASTStatement[] EMPTY_STATEMENT_ARRAY = {};
-	
+
 	/**
 	 * @since 5.1
 	 */

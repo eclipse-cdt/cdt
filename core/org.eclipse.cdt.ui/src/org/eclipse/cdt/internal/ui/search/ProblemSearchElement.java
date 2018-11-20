@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -25,10 +25,10 @@ public class ProblemSearchElement extends CSearchElement {
 
 	public ProblemSearchElement(int problemID, String detail, IIndexFileLocation floc) {
 		super(floc);
-		fProblemID= problemID;
-		fDetail= detail;
+		fProblemID = problemID;
+		fDetail = detail;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -62,11 +62,11 @@ public class ProblemSearchElement extends CSearchElement {
 			return false;
 		return true;
 	}
-	
+
 	public final int getProblemID() {
 		return fProblemID;
 	}
-	
+
 	public final String getDetail() {
 		return fDetail;
 	}

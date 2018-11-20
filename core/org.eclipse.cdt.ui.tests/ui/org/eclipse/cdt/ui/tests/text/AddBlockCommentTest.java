@@ -39,13 +39,14 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
  */
 public class AddBlockCommentTest extends BaseUITestCase {
 	private ICProject fCProject;
+
 	public static TestSuite suite() {
 		return suite(AddBlockCommentTest.class, "_");
 	}
 
 	private CEditor fEditor;
 	private IDocument fDocument;
-	
+
 	/*
 	 * The class describes a position on a line counting in ordinary people way,
 	 * starting from 1.
@@ -54,7 +55,7 @@ public class AddBlockCommentTest extends BaseUITestCase {
 		private int line;
 		private int position;
 		private IDocument fDoc;
-		
+
 		LinePosition(int line, int positionOnLine, IDocument doc) {
 			this.line = line;
 			this.position = positionOnLine;
@@ -69,14 +70,14 @@ public class AddBlockCommentTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
-		final String PROJECT= "BlockComment";
+
+		final String PROJECT = "BlockComment";
 		// Using any existing file just to open CEditor, the content is not used
-		final String filename= "/BlockComment/src/sample/Before.cpp";
-		fCProject= EditorTestHelper.createCProject(PROJECT, "resources/formatter");
+		final String filename = "/BlockComment/src/sample/Before.cpp";
+		fCProject = EditorTestHelper.createCProject(PROJECT, "resources/formatter");
 		fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
-		fDocument= EditorTestHelper.getSourceViewer(fEditor).getDocument();
+		fEditor = (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
+		fDocument = EditorTestHelper.getSourceViewer(fEditor).getDocument();
 		// Delete contents
 		fDocument.set("");
 	}
@@ -87,7 +88,7 @@ public class AddBlockCommentTest extends BaseUITestCase {
 
 		if (fCProject != null)
 			CProjectHelper.delete(fCProject);
-		
+
 		super.tearDown();
 	}
 
@@ -102,25 +103,25 @@ public class AddBlockCommentTest extends BaseUITestCase {
 	 */
 	protected void assertFormatterResult(LinePosition startLinePosition, LinePosition endLinePosition)
 			throws Exception {
-		StringBuilder[] contents= getContentsForTest(2);
+		StringBuilder[] contents = getContentsForTest(2);
 		String before = contents[0].toString();
-		String after  = contents[1].toString();
-		
+		String after = contents[1].toString();
+
 		fDocument.set(before);
 
 		SourceRange range = new SourceRange(startLinePosition.getOffset(),
 				endLinePosition.getOffset() - startLinePosition.getOffset());
 		fEditor.setSelection(range, true);
-		
-		IAction commentAction= fEditor.getAction("AddBlockComment");
+
+		IAction commentAction = fEditor.getAction("AddBlockComment");
 		assertNotNull("No AddBlockComment action", commentAction);
 		commentAction.setEnabled(true);
 		commentAction.run();
-		
-		String expected= after;
+
+		String expected = after;
 		assertEquals(expected, fDocument.get());
 	}
-	
+
 	/**
 	 * Run an action to comment block defined by line positions
 	 * and assert that the result matches the expected result.
@@ -132,25 +133,25 @@ public class AddBlockCommentTest extends BaseUITestCase {
 	 * @param after expected editor contents after the operation
 	 * @throws Exception
 	 */
-	protected void assertFormatterResult(LinePosition startLinePosition, LinePosition endLinePosition,
-			String before, String after) throws Exception {
+	protected void assertFormatterResult(LinePosition startLinePosition, LinePosition endLinePosition, String before,
+			String after) throws Exception {
 		fDocument.set(before);
-		
+
 		SourceRange range = new SourceRange(startLinePosition.getOffset(),
 				endLinePosition.getOffset() - startLinePosition.getOffset());
 		fEditor.setSelection(range, true);
-		
-		IAction commentAction= fEditor.getAction("AddBlockComment");
+
+		IAction commentAction = fEditor.getAction("AddBlockComment");
 		assertNotNull("No AddBlockComment action", commentAction);
 		commentAction.setEnabled(true);
 		commentAction.run();
-		
-		String expected= after;
+
+		String expected = after;
 		assertEquals(expected, fDocument.get());
 	}
-	
+
 	//int i, j, k;
-	
+
 	//int i, /*j,*/ k;
 	public void testCommentPlain() throws Exception {
 		LinePosition startSelection = new LinePosition(1, 8, fDocument);
@@ -161,47 +162,47 @@ public class AddBlockCommentTest extends BaseUITestCase {
 	//int i,
 	//    j,
 	//    k;
-	
+
 	//int /*i,
 	//    j,*/
 	//    k;
 	public void testCommentPartialLines1() throws Exception {
 		LinePosition startSelection = new LinePosition(1, 5, fDocument);
-		LinePosition endSelection   = new LinePosition(2, 7, fDocument);
+		LinePosition endSelection = new LinePosition(2, 7, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//int i,
 	//    j,
 	//    k;
-	
+
 	//int i,
 	///*    j,
 	//    k*/;
 	public void testCommentPartialLines2() throws Exception {
 		LinePosition startSelection = new LinePosition(2, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(3, 6, fDocument);
+		LinePosition endSelection = new LinePosition(3, 6, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//int i;
 	//int j;
 	//int k;
-	
+
 	//int i;
 	///*int j;*/
 	//int k;
 	public void testCommentExactlyOneLine() throws Exception {
 		LinePosition startSelection = new LinePosition(2, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(3, 1, fDocument);
+		LinePosition endSelection = new LinePosition(3, 1, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//int i;
 	//int j;
 	//int k;
 	//int l;
-	
+
 	//int i;
 	///*
 	//int j;
@@ -210,41 +211,41 @@ public class AddBlockCommentTest extends BaseUITestCase {
 	//int l;
 	public void testCommentTwoOrMoreLines() throws Exception {
 		LinePosition startSelection = new LinePosition(2, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(4, 1, fDocument);
+		LinePosition endSelection = new LinePosition(4, 1, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//const int i;
-	
+
 	///*const*/ int i;
 	public void testCommentFirstCharacterInFile() throws Exception {
 		LinePosition startSelection = new LinePosition(1, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(1, 6, fDocument);
+		LinePosition endSelection = new LinePosition(1, 6, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//#include <x>
 	//#include <y>
-	
+
 	///*#include <x>*/
 	//#include <y>
 	public void testCommentPreprocessorFirstLine() throws Exception {
 		LinePosition startSelection = new LinePosition(1, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(1, 6, fDocument);
+		LinePosition endSelection = new LinePosition(1, 6, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//int i; // comment
 	//int j;
-	
+
 	//int i; /*// comment*/
 	//int j;
 	public void testCommentCppComment() throws Exception {
 		LinePosition startSelection = new LinePosition(1, 10, fDocument);
-		LinePosition endSelection   = new LinePosition(1, 12, fDocument);
+		LinePosition endSelection = new LinePosition(1, 12, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//#include <x>
 	//#include <y>
 	//#include <z>
@@ -254,15 +255,15 @@ public class AddBlockCommentTest extends BaseUITestCase {
 	//#include <z>
 	public void testCommentSpecialPartition() throws Exception {
 		LinePosition startSelection = new LinePosition(2, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(3, 1, fDocument);
+		LinePosition endSelection = new LinePosition(3, 1, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//#include <x>
 	//   #include \
 	//      <y>
 	//#include <z>
-	
+
 	//#include <x>
 	///*
 	//   #include \
@@ -271,63 +272,63 @@ public class AddBlockCommentTest extends BaseUITestCase {
 	//#include <z>
 	public void testCommentSpecialPartitionExtra() throws Exception {
 		LinePosition startSelection = new LinePosition(2, 8, fDocument);
-		LinePosition endSelection   = new LinePosition(2, 10, fDocument);
+		LinePosition endSelection = new LinePosition(2, 10, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	///*comment*/
 	//int i;
-	
+
 	///*comment*/
 	//int i;
 	public void testCommentCommentNoScrewUp() throws Exception {
 		LinePosition startSelection = new LinePosition(1, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(2, 1, fDocument);
+		LinePosition endSelection = new LinePosition(2, 1, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//int i;
 	///*comment*/
 	//int j;
-	
+
 	///*int i;
 	//comment*/
 	//int j;
 	public void testCommentMergeUp() throws Exception {
 		LinePosition startSelection = new LinePosition(1, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(2, 5, fDocument);
+		LinePosition endSelection = new LinePosition(2, 5, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//int i;
 	///*comment*/
 	//int j;
-	
+
 	//int i;
 	///*comment
 	//int j;*/
 	public void testCommentMergeDown() throws Exception {
 		LinePosition startSelection = new LinePosition(2, 5, fDocument);
-		LinePosition endSelection   = new LinePosition(3, 7, fDocument);
+		LinePosition endSelection = new LinePosition(3, 7, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	///*comment1*/
 	///*comment2*/
 	//int i;
-	
+
 	///*comment1
 	//comment2*/
 	//int i;
 	public void testCommentMergeComments() throws Exception {
 		LinePosition startSelection = new LinePosition(1, 5, fDocument);
-		LinePosition endSelection   = new LinePosition(2, 5, fDocument);
+		LinePosition endSelection = new LinePosition(2, 5, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	//
 	//
-	
+
 	//
 	///*
 	//
@@ -335,39 +336,31 @@ public class AddBlockCommentTest extends BaseUITestCase {
 	public void testCommentEndOfFileNoLoopingPlease() throws Exception {
 		// Don't care much about formatting but no looping please
 		LinePosition startSelection = new LinePosition(2, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(3, 1, fDocument);
+		LinePosition endSelection = new LinePosition(3, 1, fDocument);
 		assertFormatterResult(startSelection, endSelection);
 	}
-	
+
 	public void testCommentLastCharacterNoEOL() throws Exception {
 		String before = "int i;";
 		String after = "/*int i;*/";
 		LinePosition startSelection = new LinePosition(1, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(1, 7, fDocument);
+		LinePosition endSelection = new LinePosition(1, 7, fDocument);
 		assertFormatterResult(startSelection, endSelection, before, after);
 	}
-	
+
 	public void testCommentLastCppCommentNoEOL() throws Exception {
 		String before = "//int i;";
 		String after = "/*//int i;*/";
 		LinePosition startSelection = new LinePosition(1, 3, fDocument);
-		LinePosition endSelection   = new LinePosition(1, 7, fDocument);
+		LinePosition endSelection = new LinePosition(1, 7, fDocument);
 		assertFormatterResult(startSelection, endSelection, before, after);
 	}
-	
+
 	public void testMixedEOLs() throws Exception {
-		String before =
-			  "int i;\r\n"
-			+ "int j;\n"
-			+ "int k;";
-		String after =
-			  "/*\r\n"
-			+ "int i;\r\n"
-			+ "int j;\n"
-			+ "*/\n"
-			+ "int k;";
+		String before = "int i;\r\n" + "int j;\n" + "int k;";
+		String after = "/*\r\n" + "int i;\r\n" + "int j;\n" + "*/\n" + "int k;";
 		LinePosition startSelection = new LinePosition(1, 1, fDocument);
-		LinePosition endSelection   = new LinePosition(3, 1, fDocument);
+		LinePosition endSelection = new LinePosition(3, 1, fDocument);
 		assertFormatterResult(startSelection, endSelection, before, after);
 	}
 }

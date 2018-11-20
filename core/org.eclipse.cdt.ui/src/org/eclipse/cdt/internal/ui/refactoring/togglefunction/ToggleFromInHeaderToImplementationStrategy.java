@@ -103,6 +103,7 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 			return super.leave(namespaceDefinition);
 		}
 	}
+
 	private IASTTranslationUnit implAst;
 	private ToggleRefactoringContext context;
 	private TextEditGroup infoText;
@@ -129,10 +130,10 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 		if (includeNode != null) {
 			implRewrite.insertBefore(implAst, null, includeNode, infoText);
 		}
-		
+
 		IASTNode insertionParent = implAst.getTranslationUnit();
 		List<ICPPASTNamespaceDefinition> namespaces = getSurroundingNamespaces();
-		
+
 		if (!namespaces.isEmpty()) {
 			IASTNode namespaceInImplementation = searchNamespaceInImplementation(namespaces);
 			if (namespaceInImplementation != null) {
@@ -147,14 +148,13 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 				insertionParent = newNamespace;
 			}
 		}
-		
+
 		newDefinition.setParent(insertionParent);
-		
-		IASTNode insertionPoint = findInsertionPoint(insertionParent, 
-				context.getDeclarationAST());
-		ASTRewrite newRewriter = implRewrite.insertBefore(insertionParent, 
-				insertionPoint, newDefinition, infoText);
-		copyCommentsToNewFile(newDefinition, newRewriter, collector.rewriterForTranslationUnit(context.getDefinitionAST()));
+
+		IASTNode insertionPoint = findInsertionPoint(insertionParent, context.getDeclarationAST());
+		ASTRewrite newRewriter = implRewrite.insertBefore(insertionParent, insertionPoint, newDefinition, infoText);
+		copyCommentsToNewFile(newDefinition, newRewriter,
+				collector.rewriterForTranslationUnit(context.getDefinitionAST()));
 		restoreLeadingComments(newDefinition, newRewriter, collector);
 	}
 
@@ -322,15 +322,15 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 		if (declarator == null) {
 			declarator = context.getDefinition().getDeclarator();
 		}
-		IASTNode insertion_point = InsertionPointFinder.findInsertionPoint(
-				unit, insertionParent.getTranslationUnit(), declarator);
+		IASTNode insertion_point = InsertionPointFinder.findInsertionPoint(unit, insertionParent.getTranslationUnit(),
+				declarator);
 		return insertion_point;
 	}
 
-	private void restoreLeadingComments(ICPPASTFunctionDefinition newDefinition,
-			ASTRewrite newRewriter, ModificationCollector collector) {
+	private void restoreLeadingComments(ICPPASTFunctionDefinition newDefinition, ASTRewrite newRewriter,
+			ModificationCollector collector) {
 		ASTRewrite rw = collector.rewriterForTranslationUnit(context.getDefinitionAST());
-		List<IASTComment>comments = rw.getComments(context.getDefinition(), CommentPosition.leading);
+		List<IASTComment> comments = rw.getComments(context.getDefinition(), CommentPosition.leading);
 		if (comments != null) {
 			for (IASTComment comment : comments) {
 				newRewriter.addComment(newDefinition, comment, CommentPosition.leading);
@@ -342,24 +342,22 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	}
 
 	private void replaceDefinitionWithDeclaration(ModificationCollector collector) {
-		IASTSimpleDeclaration newdeclarator =
-				ToggleNodeHelper.createDeclarationFromDefinition(context.getDefinition());
+		IASTSimpleDeclaration newdeclarator = ToggleNodeHelper.createDeclarationFromDefinition(context.getDefinition());
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(context.getDefinitionAST());
 		rewrite.replace(context.getDefinition(), newdeclarator, infoText);
 	}
 
 	private ICPPASTFunctionDefinition getNewDefinition() {
-		ICPPASTFunctionDefinition newDefinition =
-				ToggleNodeHelper.createFunctionSignatureWithEmptyBody(
-						context.getDefinition().getDeclSpecifier().copy(CopyStyle.withLocations),
-						context.getDefinition().getDeclarator().copy(CopyStyle.withLocations),
-						context.getDefinition().copy(CopyStyle.withLocations));
+		ICPPASTFunctionDefinition newDefinition = ToggleNodeHelper.createFunctionSignatureWithEmptyBody(
+				context.getDefinition().getDeclSpecifier().copy(CopyStyle.withLocations),
+				context.getDefinition().getDeclarator().copy(CopyStyle.withLocations),
+				context.getDefinition().copy(CopyStyle.withLocations));
 		newDefinition.getDeclSpecifier().setInline(false);
 		newDefinition.setBody(context.getDefinition().getBody().copy(CopyStyle.withLocations));
 		if (newDefinition instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTFunctionWithTryBlock newTryFun = (ICPPASTFunctionWithTryBlock) newDefinition;
 			ICPPASTFunctionWithTryBlock oldTryFun = (ICPPASTFunctionWithTryBlock) context.getDefinition();
-			for (ICPPASTCatchHandler catchHandler : oldTryFun.getCatchHandlers()) {				
+			for (ICPPASTCatchHandler catchHandler : oldTryFun.getCatchHandlers()) {
 				newTryFun.addCatchHandler(catchHandler.copy(CopyStyle.withLocations));
 			}
 		}
@@ -397,8 +395,7 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	}
 
 	private void removeDefinitionFromHeader(ModificationCollector collector) {
-		ASTRewrite header_rewrite = collector.rewriterForTranslationUnit(
-				context.getDefinitionAST());
+		ASTRewrite header_rewrite = collector.rewriterForTranslationUnit(context.getDefinitionAST());
 		header_rewrite.remove(ToggleNodeHelper.getParentRemovePoint(context.getDefinition()), infoText);
 	}
 

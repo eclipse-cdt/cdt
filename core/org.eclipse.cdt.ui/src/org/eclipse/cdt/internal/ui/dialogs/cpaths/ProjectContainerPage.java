@@ -52,8 +52,8 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 
 	protected ProjectContainerPage(int[] filterType) {
 		super("projectContainerPage"); //$NON-NLS-1$
-		setTitle(CPathEntryMessages.ProjectContainerPage_title); 
-		setDescription(CPathEntryMessages.ProjectContainerPage_description); 
+		setTitle(CPathEntryMessages.ProjectContainerPage_title);
+		setDescription(CPathEntryMessages.ProjectContainerPage_description);
 		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 		fFilterType = filterType;
 		validatePage();
@@ -73,7 +73,7 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 	public IContainerEntry[] getNewContainers() {
 		return new IContainerEntry[0];
 	}
-	
+
 	IProjectEntry getProjectEntry() {
 		if (viewer != null) {
 			ISelection selection = viewer.getSelection();
@@ -87,13 +87,13 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 		}
 		return null;
 	}
-	
+
 	void setProjectEntry(IProjectEntry entry) {
 		if (entry != null) {
 			viewer.setSelection(new StructuredSelection(entry));
 		}
 	}
-	
+
 	@Override
 	public void setSelection(IContainerEntry containerEntry) {
 	}
@@ -106,7 +106,7 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(CPathEntryMessages.ProjectContainerPage_label); 
+		label.setText(CPathEntryMessages.ProjectContainerPage_label);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -145,7 +145,8 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 			ICProject[] cProjects = CoreModel.getDefault().getCModel().getCProjects();
 			for (int i = 0; i < cProjects.length; i++) {
 				boolean added = false;
-				if (!cProjects[i].equals(fCProject) && !current.contains(CoreModel.newProjectEntry(cProjects[i].getPath()))) {
+				if (!cProjects[i].equals(fCProject)
+						&& !current.contains(CoreModel.newProjectEntry(cProjects[i].getPath()))) {
 					IPathEntry[] projEntries = cProjects[i].getRawPathEntries();
 					for (IPathEntry projEntrie : projEntries) {
 						for (int element : fFilterType) {

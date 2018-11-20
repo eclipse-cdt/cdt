@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.propertypages; 
+package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -58,25 +58,25 @@ public class ModulePropertyPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	protected Control createContents( Composite parent ) {
+	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
-		Composite composite = new Composite( parent, SWT.NONE );
+		Composite composite = new Composite(parent, SWT.NONE);
 		Font font = parent.getFont();
-		composite.setFont( font );
+		composite.setFont(font);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
-		composite.setLayout( topLayout );
-		composite.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-		
-		createFields( composite );
+		composite.setLayout(topLayout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		createFields(composite);
 		initializeFields();
 
-		setValid( true );
+		setValid(true);
 		return composite;
 	}
 
 	protected ICModule getModule() {
-		return (ICModule)getElement();
+		return (ICModule) getElement();
 	}
 
 	/* (non-Javadoc)
@@ -84,153 +84,156 @@ public class ModulePropertyPage extends PropertyPage {
 	 */
 	@Override
 	public boolean performOk() {
-		if ( getModuleProperties() != null && getModuleProperties().isDirty() ) {
-			final IPath path = (IPath)getModuleProperties().getProperty( ModuleProperties.SYMBOLS_FILE );
-			final ICModule module = getModule(); 
-			if ( module != null ) {
-				
-				DebugPlugin.getDefault().asyncExec( 
-						new Runnable() {
-							@Override
-							public void run() {
-								try {
-									module.setSymbolsFileName( path );
-								}
-								catch( DebugException e ) {
-									failed( PropertyPageMessages.getString( "ModulePropertyPage.15" ), e ); //$NON-NLS-1$
-								}
-							}
-						} );
+		if (getModuleProperties() != null && getModuleProperties().isDirty()) {
+			final IPath path = (IPath) getModuleProperties().getProperty(ModuleProperties.SYMBOLS_FILE);
+			final ICModule module = getModule();
+			if (module != null) {
+
+				DebugPlugin.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							module.setSymbolsFileName(path);
+						} catch (DebugException e) {
+							failed(PropertyPageMessages.getString("ModulePropertyPage.15"), e); //$NON-NLS-1$
+						}
+					}
+				});
 			}
 		}
 		return super.performOk();
 	}
 
 	protected ModuleProperties getModuleProperties() {
-		if ( fProperties == null ) {
-			fProperties = ModuleProperties.create( getModule() );
+		if (fProperties == null) {
+			fProperties = ModuleProperties.create(getModule());
 		}
 		return fProperties;
 	}
 
-	protected void failed( String message, Throwable e ) {
-		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
-		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), null ) );
-		CDebugUtils.error( ms, getModule() );
+	protected void failed(String message, Throwable e) {
+		MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR, message, null);
+		ms.add(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), null));
+		CDebugUtils.error(ms, getModule());
 	}
 
-	private void createFields( Composite parent ) {
-		fTypeField = createField( parent, PropertyPageMessages.getString( "ModulePropertyPage.0" ) ); //$NON-NLS-1$
-		fCPUField = createField( parent, PropertyPageMessages.getString( "ModulePropertyPage.4" ) ); //$NON-NLS-1$
-		fBaseAddressField = createField( parent, PropertyPageMessages.getString( "ModulePropertyPage.6" ) ); //$NON-NLS-1$
-		fSizeField = createField( parent, PropertyPageMessages.getString( "ModulePropertyPage.8" ) ); //$NON-NLS-1$
-		fSymbolsField = createField( parent, PropertyPageMessages.getString( "ModulePropertyPage.10" ) ); //$NON-NLS-1$
-		createSymbolsFileField( parent );
+	private void createFields(Composite parent) {
+		fTypeField = createField(parent, PropertyPageMessages.getString("ModulePropertyPage.0")); //$NON-NLS-1$
+		fCPUField = createField(parent, PropertyPageMessages.getString("ModulePropertyPage.4")); //$NON-NLS-1$
+		fBaseAddressField = createField(parent, PropertyPageMessages.getString("ModulePropertyPage.6")); //$NON-NLS-1$
+		fSizeField = createField(parent, PropertyPageMessages.getString("ModulePropertyPage.8")); //$NON-NLS-1$
+		fSymbolsField = createField(parent, PropertyPageMessages.getString("ModulePropertyPage.10")); //$NON-NLS-1$
+		createSymbolsFileField(parent);
 	}
 
-	private Label createField( Composite parent, String label ) {
+	private Label createField(Composite parent, String label) {
 		Font font = parent.getFont();
-		Label l = new Label( parent, SWT.LEFT );
-		l.setText( label );
-		GridData gd = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
-		l.setLayoutData( gd );
-		l.setFont( font );
-		Label v = new Label( parent, SWT.LEFT );
-		gd = new GridData( GridData.HORIZONTAL_ALIGN_FILL );
-		v.setLayoutData( gd );
-		v.setFont( font );
+		Label l = new Label(parent, SWT.LEFT);
+		l.setText(label);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		l.setLayoutData(gd);
+		l.setFont(font);
+		Label v = new Label(parent, SWT.LEFT);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		v.setLayoutData(gd);
+		v.setFont(font);
 		return v;
 	}
 
-	private void createSymbolsFileField( Composite parent ) {
+	private void createSymbolsFileField(Composite parent) {
 		Font font = parent.getFont();
 
 		// Separator
-		Label l = new Label( parent, SWT.LEFT );
-		GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+		Label l = new Label(parent, SWT.LEFT);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		l.setLayoutData( gd );
+		l.setLayoutData(gd);
 
-		l = new Label( parent, SWT.LEFT );
-		l.setText( PropertyPageMessages.getString( "ModulePropertyPage.13" ) ); //$NON-NLS-1$
-		gd = new GridData( GridData.FILL_HORIZONTAL );
+		l = new Label(parent, SWT.LEFT);
+		l.setText(PropertyPageMessages.getString("ModulePropertyPage.13")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		l.setLayoutData( gd );
-		l.setFont( font );
-		Composite composite = new Composite( parent, SWT.NONE );
-		composite.setFont( font );
+		l.setLayoutData(gd);
+		l.setFont(font);
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setFont(font);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 5;
-		composite.setLayout( layout );
-		gd = new GridData( GridData.FILL_BOTH );
+		composite.setLayout(layout);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		composite.setLayoutData( gd );
+		composite.setLayoutData(gd);
 
 		// Text
-		fSymbolsFileField = new Text( composite, SWT.SINGLE | SWT.BORDER );
-		gd = new GridData( GridData.FILL_HORIZONTAL );
+		fSymbolsFileField = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
-		fSymbolsFileField.setLayoutData( gd );
+		fSymbolsFileField.setLayoutData(gd);
 
-		fBrowseButton = new Button( composite, SWT.PUSH );
-		fBrowseButton.setText( PropertyPageMessages.getString( "ModulePropertyPage.3" ) ); //$NON-NLS-1$
-		fBrowseButton.addSelectionListener( 
-			new SelectionListener() {
+		fBrowseButton = new Button(composite, SWT.PUSH);
+		fBrowseButton.setText(PropertyPageMessages.getString("ModulePropertyPage.3")); //$NON-NLS-1$
+		fBrowseButton.addSelectionListener(new SelectionListener() {
 
-				@Override
-				public void widgetSelected( SelectionEvent e ) {
-					FileDialog dialog = new FileDialog( fBrowseButton.getShell() );
-					dialog.setFileName( ((IPath)getModuleProperties().getProperty( ModuleProperties.SYMBOLS_FILE )).toOSString() );
-					String fn = dialog.open();
-					if ( fn != null ) {
-						IPath path = new Path( fn );
-						fSymbolsFileField.setText( path.toOSString() );
-						getModuleProperties().setProperty( ModuleProperties.SYMBOLS_FILE, path );
-					}
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(fBrowseButton.getShell());
+				dialog.setFileName(
+						((IPath) getModuleProperties().getProperty(ModuleProperties.SYMBOLS_FILE)).toOSString());
+				String fn = dialog.open();
+				if (fn != null) {
+					IPath path = new Path(fn);
+					fSymbolsFileField.setText(path.toOSString());
+					getModuleProperties().setProperty(ModuleProperties.SYMBOLS_FILE, path);
 				}
+			}
 
-				@Override
-				public void widgetDefaultSelected( SelectionEvent e ) {
-				}
-			} );
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 	}
 
 	private void initializeFields() {
 		// Type
-		Integer type = (Integer)getModuleProperties().getProperty( ModuleProperties.TYPE );
-		String value = PropertyPageMessages.getString( "ModulePropertyPage.16" ); //$NON-NLS-1$
-		if ( type.intValue() == ICModule.EXECUTABLE ) {
-			value = PropertyPageMessages.getString( "ModulePropertyPage.1" ); //$NON-NLS-1$
+		Integer type = (Integer) getModuleProperties().getProperty(ModuleProperties.TYPE);
+		String value = PropertyPageMessages.getString("ModulePropertyPage.16"); //$NON-NLS-1$
+		if (type.intValue() == ICModule.EXECUTABLE) {
+			value = PropertyPageMessages.getString("ModulePropertyPage.1"); //$NON-NLS-1$
 		}
-		if ( type.intValue() == ICModule.SHARED_LIBRARY ) {
-			value = PropertyPageMessages.getString( "ModulePropertyPage.2" ); //$NON-NLS-1$
+		if (type.intValue() == ICModule.SHARED_LIBRARY) {
+			value = PropertyPageMessages.getString("ModulePropertyPage.2"); //$NON-NLS-1$
 		}
-		fTypeField.setText( value );
+		fTypeField.setText(value);
 
 		// CPU
-		String cpu = (String)getModuleProperties().getProperty( ModuleProperties.CPU );
-		value = ( cpu != null ) ? cpu : PropertyPageMessages.getString( "ModulePropertyPage.5" ); //$NON-NLS-1$
-		fCPUField.setText( value );
-	
+		String cpu = (String) getModuleProperties().getProperty(ModuleProperties.CPU);
+		value = (cpu != null) ? cpu : PropertyPageMessages.getString("ModulePropertyPage.5"); //$NON-NLS-1$
+		fCPUField.setText(value);
+
 		// Base address
-		IAddress address = (IAddress)getModuleProperties().getProperty( ModuleProperties.BASE_ADDRESS );
-		value = ( address != null && !address.isZero() ) ? address.toHexAddressString() : PropertyPageMessages.getString( "ModulePropertyPage.7" ); //$NON-NLS-1$
-		fBaseAddressField.setText( value );
+		IAddress address = (IAddress) getModuleProperties().getProperty(ModuleProperties.BASE_ADDRESS);
+		value = (address != null && !address.isZero()) ? address.toHexAddressString()
+				: PropertyPageMessages.getString("ModulePropertyPage.7"); //$NON-NLS-1$
+		fBaseAddressField.setText(value);
 
 		// Size
-		Long size = (Long)getModuleProperties().getProperty( ModuleProperties.SIZE );
-		value = ( size != null && size.longValue() > 0 ) ? size.toString() : PropertyPageMessages.getString( "ModulePropertyPage.9" ); //$NON-NLS-1$
-		fSizeField.setText( value );
+		Long size = (Long) getModuleProperties().getProperty(ModuleProperties.SIZE);
+		value = (size != null && size.longValue() > 0) ? size.toString()
+				: PropertyPageMessages.getString("ModulePropertyPage.9"); //$NON-NLS-1$
+		fSizeField.setText(value);
 
 		// Symbols flag
-		Boolean loaded = (Boolean)getModuleProperties().getProperty( ModuleProperties.SYMBOLS_LOADED );
-		value = ( loaded != null && loaded.booleanValue() ) ? PropertyPageMessages.getString( "ModulePropertyPage.11" ) : PropertyPageMessages.getString( "ModulePropertyPage.12" ); //$NON-NLS-1$ //$NON-NLS-2$
-		fSymbolsField.setText( value );
-	
+		Boolean loaded = (Boolean) getModuleProperties().getProperty(ModuleProperties.SYMBOLS_LOADED);
+		value = (loaded != null && loaded.booleanValue()) ? PropertyPageMessages.getString("ModulePropertyPage.11") //$NON-NLS-1$
+				: PropertyPageMessages.getString("ModulePropertyPage.12"); //$NON-NLS-1$
+		fSymbolsField.setText(value);
+
 		// Symbols file:
-		IPath path = (IPath)getModuleProperties().getProperty( ModuleProperties.SYMBOLS_FILE );
-		value = ( path != null ) ? path.toOSString() : PropertyPageMessages.getString( "ModulePropertyPage.14" ); //$NON-NLS-1$
-		fSymbolsFileField.setText( value );
+		IPath path = (IPath) getModuleProperties().getProperty(ModuleProperties.SYMBOLS_FILE);
+		value = (path != null) ? path.toOSString() : PropertyPageMessages.getString("ModulePropertyPage.14"); //$NON-NLS-1$
+		fSymbolsFileField.setText(value);
 	}
 
 	/* (non-Javadoc)
@@ -238,7 +241,7 @@ public class ModulePropertyPage extends PropertyPage {
 	 */
 	@Override
 	public void dispose() {
-		if ( getModuleProperties() != null ) {
+		if (getModuleProperties() != null) {
 			getModuleProperties().dispose();
 		}
 		super.dispose();

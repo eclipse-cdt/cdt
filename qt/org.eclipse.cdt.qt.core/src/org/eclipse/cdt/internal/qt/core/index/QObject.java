@@ -46,7 +46,7 @@ public class QObject implements IQObject {
 		List<IQProperty> baseProps = new ArrayList<IQProperty>();
 
 		this.bases = new ArrayList<IQObject>();
-		for(QtPDOMQObject base : pdomQObject.findBases()) {
+		for (QtPDOMQObject base : pdomQObject.findBases()) {
 			QObject baseQObj = new QObject(qtIndex, cdtIndex, base);
 			this.bases.add(baseQObj);
 			baseSlots.addAll(baseQObj.getSlots().all());
@@ -60,8 +60,8 @@ public class QObject implements IQObject {
 		List<IQMethod> slots = new ArrayList<IQMethod>();
 		List<IQMethod> signals = new ArrayList<IQMethod>();
 		List<IQMethod> invokables = new ArrayList<IQMethod>();
-		for(QtPDOMQMethod pdom : pdomQObject.getChildren(QtPDOMQMethod.class))
-			switch(pdom.getKind()) {
+		for (QtPDOMQMethod pdom : pdomQObject.getChildren(QtPDOMQMethod.class))
+			switch (pdom.getKind()) {
 			case Slot:
 				slots.add(new QMethod(this, pdom));
 				break;
@@ -80,20 +80,20 @@ public class QObject implements IQObject {
 		this.invokables = QObjectMembers.create(invokables, baseInvokables);
 
 		this.enums = new ArrayList<IQEnum>();
-		for(QtPDOMQEnum pdom : pdomQObject.getChildren(QtPDOMQEnum.class))
+		for (QtPDOMQEnum pdom : pdomQObject.getChildren(QtPDOMQEnum.class))
 			this.enums.add(new QEnum(pdom.getName(), pdom.isFlag(), pdom.getEnumerators()));
 
 		List<IQProperty> props = new ArrayList<IQProperty>();
-		for(QtPDOMProperty pdom : pdomQObject.getChildren(QtPDOMProperty.class)) {
+		for (QtPDOMProperty pdom : pdomQObject.getChildren(QtPDOMProperty.class)) {
 			QProperty qProp = new QProperty(this, pdom.getType(), pdom.getName());
-			for(QtPDOMProperty.Attribute attr : pdom.getAttributes())
+			for (QtPDOMProperty.Attribute attr : pdom.getAttributes())
 				qProp.setAttribute(attr.attr, attr.value);
 			props.add(qProp);
 		}
 		this.properties = QObjectMembers.create(props, baseProps);
 
 		this.qmlRegistrations = new ArrayList<IQmlRegistration>();
-		for(QtPDOMQmlRegistration pdom : QtPDOMQmlRegistration.findFor(pdomQObject))
+		for (QtPDOMQmlRegistration pdom : QtPDOMQmlRegistration.findFor(pdomQObject))
 			this.qmlRegistrations.add(QmlRegistration.create(qtIndex, pdom));
 	}
 
@@ -143,7 +143,7 @@ public class QObject implements IQObject {
 		if (value != null)
 			return value;
 
-		for(IQObject base : bases) {
+		for (IQObject base : bases) {
 			value = base.getClassInfo(key);
 			if (value != null)
 				return value;

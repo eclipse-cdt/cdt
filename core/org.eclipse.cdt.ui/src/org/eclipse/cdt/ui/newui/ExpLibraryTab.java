@@ -50,5 +50,3 @@ public class ExpLibraryTab extends AbstractExportTab implements IPathEntryStoreL
 		return false;
 	}
 }
-
-

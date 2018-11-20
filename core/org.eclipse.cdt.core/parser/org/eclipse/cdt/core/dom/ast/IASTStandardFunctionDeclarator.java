@@ -65,7 +65,7 @@ public interface IASTStandardFunctionDeclarator extends IASTFunctionDeclarator {
 	 *            boolean
 	 */
 	public void setVarArgs(boolean value);
-	
+
 	/**
 	 * @since 5.1
 	 */

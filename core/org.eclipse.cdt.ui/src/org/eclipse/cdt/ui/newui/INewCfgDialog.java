@@ -29,10 +29,13 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 public interface INewCfgDialog {
 	// Project to work with (set before open() !)
 	void setProject(ICProjectDescription prj);
+
 	// Title of dialog box (set before open() !)
 	void setTitle(String title);
+
 	// Shell to create dialog (set before open() !)
 	void setShell(Shell shell);
+
 	// Opens dialog and (after user presses OK)
 	// creates new configuration. 
 	// Returns Windows.OK on success. 

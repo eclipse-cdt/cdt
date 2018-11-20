@@ -27,15 +27,15 @@ public abstract class RefactoringModifications {
 	private ResourceModifications fResourceModifications;
 
 	public RefactoringModifications() {
-		fResourceModifications= new ResourceModifications();
+		fResourceModifications = new ResourceModifications();
 	}
 
 	public ResourceModifications getResourceModifications() {
 		return fResourceModifications;
 	}
 
-	public abstract RefactoringParticipant[] loadParticipants(RefactoringStatus status,
-			RefactoringProcessor owner, String[] natures, SharableParticipants shared);
+	public abstract RefactoringParticipant[] loadParticipants(RefactoringStatus status, RefactoringProcessor owner,
+			String[] natures, SharableParticipants shared);
 
 	public abstract void buildDelta(IResourceChangeDescriptionFactory builder);
 

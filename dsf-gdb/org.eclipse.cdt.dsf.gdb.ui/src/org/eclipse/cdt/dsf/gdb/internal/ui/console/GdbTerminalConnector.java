@@ -67,16 +67,15 @@ public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 		// to this implementation, possibly making use of the hard disk instead of in memory.
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		int prefBufferLines = store.getInt(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES);
-		int history_buffer_size = prefBufferLines < HIST_BUFFER_MAX_SIZE ? prefBufferLines
-				: HIST_BUFFER_MAX_SIZE;
+		int history_buffer_size = prefBufferLines < HIST_BUFFER_MAX_SIZE ? prefBufferLines : HIST_BUFFER_MAX_SIZE;
 
 		fHistoryBuffer = new ConsoleHistoryLinesBuffer(history_buffer_size);
-		
+
 		// Start the jobs that read the GDB process output streams
 		String jobSuffix = ""; //$NON-NLS-1$
 		fOutputStreamJob = new OutputReadJob(process.getInputStream(), jobSuffix);
 		fOutputStreamJob.schedule();
-		
+
 		jobSuffix = "-Error"; //$NON-NLS-1$
 		fErrorStreamJob = new OutputReadJob(process.getErrorStream(), jobSuffix);
 		fErrorStreamJob.schedule();
@@ -111,13 +110,14 @@ public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 		 */
 		private class HistorySnapShot {
 			private final String[] fHistoryLinesSnapShot;
-			private final String	fHistoryRemainderSnapShot;
+			private final String fHistoryRemainderSnapShot;
+
 			private HistorySnapShot(String[] historyLines, String historyRemainder) {
 				fHistoryLinesSnapShot = historyLines;
 				fHistoryRemainderSnapShot = historyRemainder;
 			}
 		}
-		
+
 		@Override
 		public synchronized int size() {
 			return super.size();
@@ -191,7 +191,7 @@ public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 		}
 
 		@Override
-		public synchronized String[] toArray()  {
+		public synchronized String[] toArray() {
 			return super.toArray(new String[size()]);
 		}
 	}

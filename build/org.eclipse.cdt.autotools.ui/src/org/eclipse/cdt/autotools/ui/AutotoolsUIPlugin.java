@@ -39,9 +39,9 @@ public class AutotoolsUIPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static AutotoolsUIPlugin plugin;
-	
+
 	private ResourceBundle resourceBundle;
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -59,7 +59,7 @@ public class AutotoolsUIPlugin extends AbstractUIPlugin {
 	public static String getPluginId() {
 		return PLUGIN_ID;
 	}
-	
+
 	public static String getUniqueIdentifier() {
 		if (getDefault() == null) {
 			// If the default instance is not yet initialized,
@@ -146,7 +146,7 @@ public class AutotoolsUIPlugin extends AbstractUIPlugin {
 	 * Returns the active workbench page or <code>null</code> if none.
 	 */
 	public static IWorkbenchPage getActivePage() {
-		IWorkbenchWindow window= getActiveWorkbenchWindow();
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
 			return window.getActivePage();
 		}

@@ -23,8 +23,9 @@ public interface IBuildObject {
 	// Schema element names
 	public static final String ID = "id"; //$NON-NLS-1$
 	public static final String NAME = "name"; //$NON-NLS-1$
-	
+
 	public String getId();
+
 	public String getName();
 
 	/**
@@ -34,7 +35,9 @@ public interface IBuildObject {
 
 	/** @since 8.0 */
 	public Version getVersion();
+
 	/** @since 8.0 */
 	public void setVersion(Version version);
+
 	public String getManagedBuildRevision();
 }

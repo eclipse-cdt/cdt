@@ -21,7 +21,7 @@ package org.eclipse.cdt.utils.debug;
 public class DebugUnknownType extends DebugType {
 
 	String name;
-	
+
 	/**
 	 * 
 	 */

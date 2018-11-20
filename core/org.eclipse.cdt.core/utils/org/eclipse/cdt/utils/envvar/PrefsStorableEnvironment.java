@@ -77,8 +77,9 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	private boolean fAppendChanged = false;
 	private boolean fAppendContributedChanged = false;
 
-	private static ListenerList<IEnvironmentChangeListener> fEnvironmentChangeListeners = new ListenerList<>(ListenerList.IDENTITY);
-	
+	private static ListenerList<IEnvironmentChangeListener> fEnvironmentChangeListeners = new ListenerList<>(
+			ListenerList.IDENTITY);
+
 	/** A listener for changes in the backing store */
 	private static class PrefListener implements IPreferenceChangeListener, INodeChangeListener {
 
@@ -94,7 +95,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 
 		public PrefListener(PrefsStorableEnvironment parent, ISerializeInfo info) {
 			this.parentRef = new WeakReference<PrefsStorableEnvironment>(parent);
-			register (info);
+			register(info);
 		}
 
 		/**
@@ -119,7 +120,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		private void register(ISerializeInfo info) {
 			if (root != null)
 				return;
-			root = (IEclipsePreferences)info.getNode();
+			root = (IEclipsePreferences) info.getNode();
 			if (root != null)
 				addListener(root);
 			prefsChanged = true;
@@ -141,8 +142,9 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 				CCorePlugin.log(e);
 			}
 		}
+
 		private void removeListener() {
-			synchronized(registeredOn) {
+			synchronized (registeredOn) {
 				for (IEclipsePreferences pref : registeredOn) {
 					try {
 						// {environment/{project|workspace/}config_name/variable/...
@@ -177,27 +179,30 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 			if (parentRef.get() == null)
 				removeListener();
 		}
+
 		@Override
 		public void added(NodeChangeEvent event) {
 			prefsChanged = true;
 			if (parentRef.get() == null)
 				removeListener();
 			else
-				addListener((IEclipsePreferences)event.getChild());
+				addListener((IEclipsePreferences) event.getChild());
 		}
+
 		@Override
 		public void removed(NodeChangeEvent event) {
 			prefsChanged = true;
 		}
 	}
+
 	private PrefListener fPrefsChangedListener;
 
 	/**
 	 * The set of variables which have been 'deleted' by the user.
 	 * @return the live removed {@link IEnvironmentVariable} map
 	 */
-	private Set<String> getDeletedSet(){
-		if(fDeletedVariables == null)
+	private Set<String> getDeletedSet() {
+		if (fDeletedVariables == null)
 			fDeletedVariables = new HashSet<String>();
 		return fDeletedVariables;
 	}
@@ -223,14 +228,14 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 
 		// If base is a PrefsStorableEnv, add other internal data
 		if (env instanceof PrefsStorableEnvironment) {
-			PrefsStorableEnvironment other = (PrefsStorableEnvironment)env;
+			PrefsStorableEnvironment other = (PrefsStorableEnvironment) env;
 			fAppendChanged = other.fAppendChanged;
 			fAppendContributedChanged = other.fAppendContributedChanged;
 
 			// If this environemnt is a *copy* of another environment
 			// then copy over *all* variables into our live variable map
-			if (serializeInfo == null || other.fSerialEnv == null ||
-					!serializeInfo.getPrefName().equals(other.fSerialEnv.getPrefName()))
+			if (serializeInfo == null || other.fSerialEnv == null
+					|| !serializeInfo.getPrefName().equals(other.fSerialEnv.getPrefName()))
 				fVariables = env.getAllVariablesMap();
 			else {
 				// Just a runtime copy using existing ISerializeInfo Store, just clone runtime
@@ -242,7 +247,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 			}
 		} else {
 			// add all variables
-			if(env.fVariables != null)
+			if (env.fVariables != null)
 				fVariables = env.getAllVariablesMap();
 			// Assume the append & appendContributed are changed
 			fAppendChanged = true;
@@ -272,8 +277,8 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	private void setSerializeInfo(ISerializeInfo serializeInfo) {
 		if (fPrefsChangedListener != null)
 			fPrefsChangedListener.remove();
- 		fSerialEnv = serializeInfo;
- 		fPrefsChangedListener = new PrefListener(this, fSerialEnv);
+		fSerialEnv = serializeInfo;
+		fPrefsChangedListener = new PrefListener(this, fSerialEnv);
 
 		// Update the cached state
 		checkBackingSerializeInfo();
@@ -316,7 +321,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 				// Remove deleted items no longer in the map
 				if (fDeletedVariables != null) {
 					Iterator<String> it = fDeletedVariables.iterator();
-					while(it.hasNext()) {
+					while (it.hasNext()) {
 						String name = it.next();
 						if (!fCachedSerialEnv.containsKey(name))
 							it.remove();
@@ -361,7 +366,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 			Preferences newNode = fSerialEnv.getNode().node(fSerialEnv.getPrefName());
 			StorableEnvironment oldEnv = new StorableEnvironment(element, false);
 			for (Map.Entry<String, IEnvironmentVariable> e : oldEnv.getMap().entrySet())
-					((StorableEnvVar)e.getValue()).serialize(newNode.node(e.getKey()));
+				((StorableEnvVar) e.getValue()).serialize(newNode.node(e.getKey()));
 			fCachedSerialEnv.putAll(oldEnv.getMap());
 			if (!fAppendChanged)
 				fAppend = oldEnv.fAppend;
@@ -382,16 +387,16 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	 */
 	@Deprecated
 	@Override
-	public void serialize(ICStorageElement element){
+	public void serialize(ICStorageElement element) {
 		checkBackingSerializeInfo();
 		Map<String, IEnvironmentVariable> map = getAllVariablesMap();
 
 		element.setAttribute(ATTRIBUTE_APPEND, String.valueOf(fAppend));
 		element.setAttribute(ATTRIBUTE_APPEND_CONTRIBUTED, String.valueOf(fAppendContributedEnv));
-		if(!map.isEmpty()){
+		if (!map.isEmpty()) {
 			Iterator<IEnvironmentVariable> iter = map.values().iterator();
-			while(iter.hasNext()){
-				StorableEnvVar var = (StorableEnvVar)iter.next();
+			while (iter.hasNext()) {
+				StorableEnvVar var = (StorableEnvVar) iter.next();
 				ICStorageElement varEl = element.createChild(StorableEnvVar.VARIABLE_ELEMENT_NAME);
 				var.serialize(varEl);
 			}
@@ -429,9 +434,9 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 			CCorePlugin.log(e);
 		}
 		// Only need to serialize the 'changed' elements
-		if(fVariables != null) {
+		if (fVariables != null) {
 			for (Map.Entry<String, IEnvironmentVariable> e : fVariables.entrySet())
-				((StorableEnvVar)e.getValue()).serialize(element.node(e.getKey()));
+				((StorableEnvVar) e.getValue()).serialize(element.node(e.getKey()));
 			fCachedSerialEnv.putAll(fVariables);
 			fVariables.clear();
 		}
@@ -448,7 +453,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	}
 
 	@Override
-	public IEnvironmentVariable createVariable(String name, String value, int op, String delimiter){
+	public IEnvironmentVariable createVariable(String name, String value, int op, String delimiter) {
 		IEnvironmentVariable var = super.createVariable(name, value, op, delimiter);
 		if (var != null) {
 			if (fDeletedVariables != null)
@@ -465,7 +470,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	 * @return the environment variable with the given name, or null
 	 */
 	@Override
-	public IEnvironmentVariable getVariable(String name){
+	public IEnvironmentVariable getVariable(String name) {
 		name = getNameForMap(name);
 		IEnvironmentVariable var = super.getVariable(name);
 		if (var != null)
@@ -508,7 +513,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	}
 
 	@Override
-	public boolean deleteAll(){
+	public boolean deleteAll() {
 		boolean change = super.deleteAll();
 
 		// Change should include any cached variables we're overwriting
@@ -521,7 +526,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	}
 
 	@Override
-	public void setAppendEnvironment(boolean append){
+	public void setAppendEnvironment(boolean append) {
 		boolean prevVal = fAppend;
 		super.setAppendEnvironment(append);
 		if (prevVal != fAppend)
@@ -529,7 +534,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	}
 
 	@Override
-	public void setAppendContributedEnvironment(boolean append){
+	public void setAppendContributedEnvironment(boolean append) {
 		boolean prevVal = fAppendContributedEnv;
 		super.setAppendContributedEnvironment(append);
 		if (prevVal != fAppendContributedEnv)
@@ -537,7 +542,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	}
 
 	@Override
-	public void restoreDefaults(){
+	public void restoreDefaults() {
 		super.restoreDefaults();
 		fAppendChanged = false;
 		fAppendContributedChanged = false;
@@ -545,9 +550,8 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 
 	@Override
 	public boolean isDirty() {
-		return fAppendChanged || fAppendContributedChanged ||
-					(fVariables != null && !fVariables.isEmpty()) ||
-					(fDeletedVariables != null && !fDeletedVariables.isEmpty());
+		return fAppendChanged || fAppendContributedChanged || (fVariables != null && !fVariables.isEmpty())
+				|| (fDeletedVariables != null && !fDeletedVariables.isEmpty());
 	}
 
 	/**

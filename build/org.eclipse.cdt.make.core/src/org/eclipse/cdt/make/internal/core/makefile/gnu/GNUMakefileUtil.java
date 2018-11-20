@@ -23,30 +23,39 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 
 	public static boolean isInclude(String line) {
 		line = line.trim();
-		boolean isInclude = line.startsWith(GNUMakefileConstants.DIRECTIVE_INCLUDE) && line.length() > 7 && Character.isWhitespace(line.charAt(7));
-		boolean isDashInclude = line.startsWith("-" + GNUMakefileConstants.DIRECTIVE_INCLUDE) && line.length() > 8 && Character.isWhitespace(line.charAt(8)); //$NON-NLS-1$
-		boolean isSInclude = line.startsWith("s" + GNUMakefileConstants.DIRECTIVE_INCLUDE) && line.length() > 8 && Character.isWhitespace(line.charAt(8)); //$NON-NLS-1$
+		boolean isInclude = line.startsWith(GNUMakefileConstants.DIRECTIVE_INCLUDE) && line.length() > 7
+				&& Character.isWhitespace(line.charAt(7));
+		boolean isDashInclude = line.startsWith("-" + GNUMakefileConstants.DIRECTIVE_INCLUDE) && line.length() > 8 //$NON-NLS-1$
+				&& Character.isWhitespace(line.charAt(8));
+		boolean isSInclude = line.startsWith("s" + GNUMakefileConstants.DIRECTIVE_INCLUDE) && line.length() > 8 //$NON-NLS-1$
+				&& Character.isWhitespace(line.charAt(8));
 		return isInclude || isDashInclude || isSInclude;
 	}
 
 	public static boolean isVPath(String line) {
 		line = line.trim();
-		return line.equals(GNUMakefileConstants.DIRECTIVE_VPATH) || line.startsWith(GNUMakefileConstants.DIRECTIVE_VPATH) && line.length() > 5 && Character.isWhitespace(line.charAt(5));
+		return line.equals(GNUMakefileConstants.DIRECTIVE_VPATH)
+				|| line.startsWith(GNUMakefileConstants.DIRECTIVE_VPATH) && line.length() > 5
+						&& Character.isWhitespace(line.charAt(5));
 	}
 
 	public static boolean isExport(String line) {
 		line = line.trim();
-		return line.equals(GNUMakefileConstants.VARIABLE_EXPORT) || line.startsWith(GNUMakefileConstants.VARIABLE_EXPORT) && line.length() > 6 && Character.isWhitespace(line.charAt(6));
+		return line.equals(GNUMakefileConstants.VARIABLE_EXPORT)
+				|| line.startsWith(GNUMakefileConstants.VARIABLE_EXPORT) && line.length() > 6
+						&& Character.isWhitespace(line.charAt(6));
 	}
 
 	public static boolean isUnExport(String line) {
 		line = line.trim();
-		return line.startsWith(GNUMakefileConstants.DIRECTIVE_UNEXPORT) && line.length() > 8 && Character.isWhitespace(line.charAt(8));
+		return line.startsWith(GNUMakefileConstants.DIRECTIVE_UNEXPORT) && line.length() > 8
+				&& Character.isWhitespace(line.charAt(8));
 	}
 
 	public static boolean isDefine(String line) {
 		line = line.trim();
-		return line.startsWith(GNUMakefileConstants.VARIABLE_DEFINE) && line.length() > 6 && Character.isWhitespace(line.charAt(6));
+		return line.startsWith(GNUMakefileConstants.VARIABLE_DEFINE) && line.length() > 6
+				&& Character.isWhitespace(line.charAt(6));
 	}
 
 	public static boolean isEndef(String line) {
@@ -55,27 +64,32 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 
 	public static boolean isOverride(String line) {
 		line = line.trim();
-		return line.startsWith(GNUMakefileConstants.VARIABLE_OVERRIDE) && line.length() > 8 && Character.isWhitespace(line.charAt(8));
+		return line.startsWith(GNUMakefileConstants.VARIABLE_OVERRIDE) && line.length() > 8
+				&& Character.isWhitespace(line.charAt(8));
 	}
 
 	public static boolean isIfeq(String line) {
 		line = line.trim();
-		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFEQ) && line.length() > 4 && Character.isWhitespace(line.charAt(4));
+		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFEQ) && line.length() > 4
+				&& Character.isWhitespace(line.charAt(4));
 	}
 
 	public static boolean isIfneq(String line) {
 		line = line.trim();
-		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFNEQ) && line.length() > 5 && Character.isWhitespace(line.charAt(5));
+		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFNEQ) && line.length() > 5
+				&& Character.isWhitespace(line.charAt(5));
 	}
 
 	public static boolean isIfdef(String line) {
 		line = line.trim();
-		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFDEF) && line.length() > 5 && Character.isWhitespace(line.charAt(5));
+		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFDEF) && line.length() > 5
+				&& Character.isWhitespace(line.charAt(5));
 	}
 
 	public static boolean isIfndef(String line) {
 		line = line.trim();
-		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFNDEF) && line.length() > 6 && Character.isWhitespace(line.charAt(6));
+		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFNDEF) && line.length() > 6
+				&& Character.isWhitespace(line.charAt(6));
 	}
 
 	public static boolean isElse(String line) {
@@ -90,7 +104,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		line = line.trim();
 		if (line.startsWith(GNUMakefileConstants.VARIABLE_OVERRIDE)) {
 			int i = 8;
-			while(i < line.length() && Character.isWhitespace(line.charAt(i))) {
+			while (i < line.length() && Character.isWhitespace(line.charAt(i))) {
 				i++;
 			}
 			if (line.startsWith(GNUMakefileConstants.VARIABLE_DEFINE, i)) {
@@ -114,12 +128,8 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 	}
 
 	public static boolean isVariableDefinition(String line) {
-		return isOverrideDefine(line)
-			|| isTargetVariable(line)
-			|| isDefine(line)
-			|| isOverride(line)
-			|| isExport(line)
-			|| isMacroDefinition(line);
+		return isOverrideDefine(line) || isTargetVariable(line) || isDefine(line) || isOverride(line) || isExport(line)
+				|| isMacroDefinition(line);
 	}
 
 	public static boolean isStaticTargetRule(String line) {
@@ -128,7 +138,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		if (colon1 > 0) {
 			// move pass colon1
 			line = line.substring(colon1 + 1);
-			int colon2 =  Util.indexOf(line, ':');
+			int colon2 = Util.indexOf(line, ':');
 			// Catch operator "::" not a static pattern rule
 			return (colon2 > 0);
 		}

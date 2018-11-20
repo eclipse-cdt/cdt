@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IVariableSubstitutor {
-	
+
 	/**
 	 * called to resolve to String the macro reference of the specified name
 	 * 
@@ -45,7 +45,7 @@ public interface IVariableSubstitutor {
 	 * @throws CdtVariableException
 	 */
 	public String[] resolveToStringList(String macroName) throws CdtVariableException;
-	
+
 	/**
 	 * called to set the context type and context info to be used
 	 * 
@@ -53,12 +53,12 @@ public interface IVariableSubstitutor {
 	 * @param contextData the context data
 	 * @throws BuildMacroException
 	 */
-//	public void setMacroContextInfo(int contextType, Object contextData) throws BuildMacroException;
+	//	public void setMacroContextInfo(int contextType, Object contextData) throws BuildMacroException;
 
 	/**
 	 * returns the macro conttext info used 
 	 * @return IMacroContextInfo
 	 */
-//	public IMacroContextInfo getMacroContextInfo();
+	//	public IMacroContextInfo getMacroContextInfo();
 
 }

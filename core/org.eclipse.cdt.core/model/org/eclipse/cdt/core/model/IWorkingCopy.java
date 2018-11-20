@@ -95,9 +95,9 @@ public interface IWorkingCopy extends ITranslationUnit {
 	/**
 	 * Returns the original element this working copy was created from,
 	 * or <code>null</code> if this is not a working copy.
-	 */ 
+	 */
 	ITranslationUnit getOriginalElement();
-		
+
 	/**
 	 * Returns whether this working copy's original element's content
 	 * has not changed since the inception of this working copy.
@@ -106,7 +106,7 @@ public interface IWorkingCopy extends ITranslationUnit {
 	 * has not changed since the inception of this working copy, false otherwise
 	 */
 	boolean isBasedOn(IResource resource);
-	
+
 	/**
 	 * Reconciles the contents of this working copy.
 	 * It performs the reconciliation by locally caching the contents of 
@@ -117,9 +117,9 @@ public interface IWorkingCopy extends ITranslationUnit {
 	 * If the working copy hasn't changed, then no problem will be detected,
 	 * this is equivalent to <code>IWorkingCopy#reconcile(false, null)</code>.
 	 * <p>
-	 */	
+	 */
 	IMarker[] reconcile() throws CModelException;
-	
+
 	/**
 	 * Reconciles the contents of this working copy.
 	 * It performs the reconciliation by locally caching the contents of 
@@ -162,12 +162,13 @@ public interface IWorkingCopy extends ITranslationUnit {
 	 * 
 	 * @since 4.0
 	 */
-	IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException;
+	IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor)
+			throws CModelException;
 
 	/**
 	 * Restores the contents of this working copy to the current contents of
 	 * this working copy's original element. Has no effect if this element
 	 * is not a working copy.
-	 */	
+	 */
 	void restore() throws CModelException;
 }

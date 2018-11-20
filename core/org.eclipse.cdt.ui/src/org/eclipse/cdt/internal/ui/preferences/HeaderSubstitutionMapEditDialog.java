@@ -82,8 +82,7 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private static final String TAG_HEADER_SUBSTITUTION_MAP = "header_substitution_map"; //$NON-NLS-1$
 	private static final Collator COLLATOR = Collator.getInstance();
-	private static final Comparator<HeaderSubstitutionRule> SOURCE_COMPARATOR =
-			new Comparator<HeaderSubstitutionRule>() {
+	private static final Comparator<HeaderSubstitutionRule> SOURCE_COMPARATOR = new Comparator<HeaderSubstitutionRule>() {
 		@Override
 		public int compare(HeaderSubstitutionRule r1, HeaderSubstitutionRule r2) {
 			return COLLATOR.compare(r1.getSource(), r2.getSource());
@@ -127,11 +126,10 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 			if (!isOkToUse(fTableControl))
 				return false;
 
-			int[] indc= fTable.getTable().getSelectionIndices();
-			for (int i= 0; i < indc.length; i++) {
+			int[] indc = fTable.getTable().getSelectionIndices();
+			for (int i = 0; i < indc.length; i++) {
 				int index = indc[i];
-				if (index == 0 ||
-						SOURCE_COMPARATOR.compare(fElements.get(index), fElements.get(index - 1)) != 0) {
+				if (index == 0 || SOURCE_COMPARATOR.compare(fElements.get(index), fElements.get(index - 1)) != 0) {
 					return false;
 				}
 			}
@@ -143,12 +141,11 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 			if (!isOkToUse(fTableControl))
 				return false;
 
-			int k= fElements.size() - 1;
-			int[] indc= fTable.getTable().getSelectionIndices();
-			for (int i= 0; i < indc.length; i++) {
+			int k = fElements.size() - 1;
+			int[] indc = fTable.getTable().getSelectionIndices();
+			for (int i = 0; i < indc.length; i++) {
 				int index = indc[i];
-				if (index == k ||
-						SOURCE_COMPARATOR.compare(fElements.get(index), fElements.get(index + 1)) != 0) {
+				if (index == k || SOURCE_COMPARATOR.compare(fElements.get(index), fElements.get(index + 1)) != 0) {
 					return false;
 				}
 			}
@@ -263,39 +260,33 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 		fNameField.setLabelText(PreferencesMessages.HeaderSubstitutionMapEditDialog_name);
 		fNameField.setDialogFieldListener(adapter);
 
-		String[] items = new String[] {
-			PreferencesMessages.HeaderSubstitutionMapEditDialog_c_and_cpp,
-			PreferencesMessages.HeaderSubstitutionMapEditDialog_cpp_only,
-		};
+		String[] items = new String[] { PreferencesMessages.HeaderSubstitutionMapEditDialog_c_and_cpp,
+				PreferencesMessages.HeaderSubstitutionMapEditDialog_cpp_only, };
 
 		fAppliesToField = new ComboDialogField(SWT.READ_ONLY);
 		fAppliesToField.setLabelText(PreferencesMessages.HeaderSubstitutionMapEditDialog_applies_to);
 		fAppliesToField.setItems(items);
 
-		String[] buttons = new String[] {
-				PreferencesMessages.HeaderSubstitutionMapEditDialog_add_button,
+		String[] buttons = new String[] { PreferencesMessages.HeaderSubstitutionMapEditDialog_add_button,
 				PreferencesMessages.HeaderSubstitutionMapEditDialog_edit_button,
-				PreferencesMessages.HeaderSubstitutionMapEditDialog_remove_button,
-			};
+				PreferencesMessages.HeaderSubstitutionMapEditDialog_remove_button, };
 		fUnconditionalSubstitutionsField = new HeaderSubstitutionListField(adapter, buttons);
-		fUnconditionalSubstitutionsField.setLabelText(PreferencesMessages.HeaderSubstitutionMapEditDialog_required_substitution);
+		fUnconditionalSubstitutionsField
+				.setLabelText(PreferencesMessages.HeaderSubstitutionMapEditDialog_required_substitution);
 		fUnconditionalSubstitutionsField.setDialogFieldListener(adapter);
 
-		final String[] columnsHeaders = new String[] {
-				PreferencesMessages.HeaderSubstitutionMapEditDialog_header,
-				PreferencesMessages.HeaderSubstitutionMapEditDialog_replacement,
-			};
+		final String[] columnsHeaders = new String[] { PreferencesMessages.HeaderSubstitutionMapEditDialog_header,
+				PreferencesMessages.HeaderSubstitutionMapEditDialog_replacement, };
 		fUnconditionalSubstitutionsField.setTableColumns(new ListDialogField.ColumnsDescription(columnsHeaders, true));
 
-		buttons = new String[] {
-				PreferencesMessages.HeaderSubstitutionMapEditDialog_add_button2,
+		buttons = new String[] { PreferencesMessages.HeaderSubstitutionMapEditDialog_add_button2,
 				PreferencesMessages.HeaderSubstitutionMapEditDialog_edit_button2,
 				PreferencesMessages.HeaderSubstitutionMapEditDialog_remove_button2,
 				PreferencesMessages.HeaderSubstitutionMapEditDialog_up_button,
-				PreferencesMessages.HeaderSubstitutionMapEditDialog_down_button,
-			};
+				PreferencesMessages.HeaderSubstitutionMapEditDialog_down_button, };
 		fOptionalSubstitutionsField = new HeaderSubstitutionListField(adapter, buttons);
-		fOptionalSubstitutionsField.setLabelText(PreferencesMessages.HeaderSubstitutionMapEditDialog_optional_substitution);
+		fOptionalSubstitutionsField
+				.setLabelText(PreferencesMessages.HeaderSubstitutionMapEditDialog_optional_substitution);
 		fOptionalSubstitutionsField.setDialogFieldListener(adapter);
 		fOptionalSubstitutionsField.enableButton(IDX_EDIT, false);
 
@@ -313,7 +304,8 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 		fAppliesToField.selectItem(map != null && map.isCppOnly() ? 1 : 0);
 
 		if (map != null) {
-			List<HeaderSubstitutionRule> substitutionRules = getSubstitutionRules(map.getUnconditionalSubstitutionMap());
+			List<HeaderSubstitutionRule> substitutionRules = getSubstitutionRules(
+					map.getUnconditionalSubstitutionMap());
 			fUnconditionalSubstitutionsField.setElements(substitutionRules);
 			substitutionRules = getSubstitutionRules(map.getOptionalSubstitutionMap());
 			fOptionalSubstitutionsField.setElements(substitutionRules);
@@ -321,7 +313,7 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 	}
 
 	private String createUniqueName() {
-		for (int i = 1; ; i++) {
+		for (int i = 1;; i++) {
 			String name = NLS.bind(PreferencesMessages.HeaderSubstitutionMapEditDialog_default_map_name, i);
 			if (!fExistingNames.contains(name))
 				return name;
@@ -334,8 +326,8 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 			String source = stripQuotes(entry.getKey().toString());
 			for (IncludeInfo target : entry.getValue()) {
 				boolean unconditional = map.isUnconditionalSubstitution();
-				HeaderSubstitutionRule rule =
-						new HeaderSubstitutionRule(source, stripQuotes(target.toString()), unconditional);
+				HeaderSubstitutionRule rule = new HeaderSubstitutionRule(source, stripQuotes(target.toString()),
+						unconditional);
 				result.add(rule);
 			}
 
@@ -408,26 +400,26 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 		Separator separator = new Separator(SWT.NONE);
 		separator.doFillIntoGrid(inner, 4, conv.convertHeightInCharsToPixels(1));
 
-	    int minHeight = convertHeightInCharsToPixels(12);
+		int minHeight = convertHeightInCharsToPixels(12);
 
 		fUnconditionalSubstitutionsField.doFillIntoGrid(inner, 4);
 		LayoutUtil.setHeightHint(fUnconditionalSubstitutionsField.getListControl(null), minHeight);
 
 		fOptionalSubstitutionsField.doFillIntoGrid(inner, 4);
-	    LayoutUtil.setHeightHint(fOptionalSubstitutionsField.getListControl(null), minHeight);
+		LayoutUtil.setHeightHint(fOptionalSubstitutionsField.getListControl(null), minHeight);
 
-	    applyDialogFont(composite);
+		applyDialogFont(composite);
 
 		return composite;
 	}
 
 	private void importFromFile() {
-		FileDialog dialog= new FileDialog(getShell(), SWT.OPEN);
+		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
 		dialog.setText(PreferencesMessages.HeaderSubstitutionMapEditDialog_import_title);
 		// TODO(sprigogin): Add import from .imp files
 		// (see http://code.google.com/p/include-what-you-use/wiki/IWYUMappings)
-		dialog.setFilterExtensions(new String[] { "*.xml" });  //$NON-NLS-1$
-		String path= dialog.open();
+		dialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$
+		String path = dialog.open();
 
 		if (path == null)
 			return;
@@ -446,17 +438,16 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 				}
 			}
 		} catch (IOException e) {
-			String title= PreferencesMessages.HeaderSubstitutionMapEditDialog_import_title;
-			String message= e.getLocalizedMessage();
+			String title = PreferencesMessages.HeaderSubstitutionMapEditDialog_import_title;
+			String message = e.getLocalizedMessage();
 			if (message != null) {
-				message= NLS.bind(PreferencesMessages.HeaderSubstitutionMapEditDialog_error_parse_message, message);
+				message = NLS.bind(PreferencesMessages.HeaderSubstitutionMapEditDialog_error_parse_message, message);
 			} else {
-				message= NLS.bind(PreferencesMessages.HeaderSubstitutionMapEditDialog_error_read_message, path);
+				message = NLS.bind(PreferencesMessages.HeaderSubstitutionMapEditDialog_error_read_message, path);
 			}
 			MessageDialog.openError(getShell(), title, message);
 		} catch (CoreException e) {
-			MessageDialog.openError(getShell(),
-					PreferencesMessages.HeaderSubstitutionMapEditDialog_import_title,
+			MessageDialog.openError(getShell(), PreferencesMessages.HeaderSubstitutionMapEditDialog_import_title,
 					e.getLocalizedMessage());
 		}
 
@@ -466,12 +457,12 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 	private void exportToFile() {
 		HeaderSubstitutionMap map = getResult();
 
-		FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
+		FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
 		dialog.setText(PreferencesMessages.HeaderSubstitutionMapEditDialog_export_title);
-		dialog.setFilterExtensions(new String[] { "*.xml" });  //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$
 		dialog.setFileName(map.getName() + ".xml"); //$NON-NLS-1$
 		dialog.setOverwrite(true);
-		String path= dialog.open();
+		String path = dialog.open();
 
 		if (path == null)
 			return;
@@ -492,12 +483,10 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 				}
 			}
 		} catch (IOException e) {
-			MessageDialog.openError(getShell(),
-					PreferencesMessages.HeaderSubstitutionMapEditDialog_export_title,
+			MessageDialog.openError(getShell(), PreferencesMessages.HeaderSubstitutionMapEditDialog_export_title,
 					PreferencesMessages.HeaderSubstitutionMapEditDialog_error_write_message);
 		} catch (CoreException e) {
-			MessageDialog.openError(getShell(),
-					PreferencesMessages.HeaderSubstitutionMapEditDialog_export_title,
+			MessageDialog.openError(getShell(), PreferencesMessages.HeaderSubstitutionMapEditDialog_export_title,
 					e.getLocalizedMessage());
 		}
 	}
@@ -505,7 +494,8 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, ICHelpContextIds.HEADER_SUBSTITUTION_MAP_EDIT_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
+				ICHelpContextIds.HEADER_SUBSTITUTION_MAP_EDIT_DIALOG);
 	}
 
 	private void onButtonPressed(ListDialogField<HeaderSubstitutionRule> field, int buttonId) {
@@ -524,8 +514,9 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 				break;
 
 			HeaderSubstitutionRule newRule = dialog.getResult();
-			ListDialogField<HeaderSubstitutionRule> newField = newRule.isUnconditionalSubstitution() ?
-					fUnconditionalSubstitutionsField : fOptionalSubstitutionsField;
+			ListDialogField<HeaderSubstitutionRule> newField = newRule.isUnconditionalSubstitution()
+					? fUnconditionalSubstitutionsField
+					: fOptionalSubstitutionsField;
 			if (buttonId == IDX_ADD) {
 				newField.addElement(newRule);
 			} else {
@@ -572,9 +563,10 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 		if (name.isEmpty()) {
 			status = new StatusInfo(IStatus.WARNING, PreferencesMessages.HeaderSubstitutionMapEditDialog_enter_name);
 		} else if (fExistingNames.contains(name)) {
-			status = new StatusInfo(IStatus.WARNING, PreferencesMessages.HeaderSubstitutionMapEditDialog_duplicate_name);
-		} else if (fUnconditionalSubstitutionsField.getElements().isEmpty() &&
-				fOptionalSubstitutionsField.getElements().isEmpty()) {
+			status = new StatusInfo(IStatus.WARNING,
+					PreferencesMessages.HeaderSubstitutionMapEditDialog_duplicate_name);
+		} else if (fUnconditionalSubstitutionsField.getElements().isEmpty()
+				&& fOptionalSubstitutionsField.getElements().isEmpty()) {
 			status = new StatusInfo(IStatus.WARNING, PreferencesMessages.HeaderSubstitutionMapEditDialog_map_is_empty);
 		}
 		updateStatus(status);

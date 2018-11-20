@@ -55,11 +55,11 @@ public class DeclaratorWriter extends NodeWriter {
 	private static final String AMPERSAND_AMPERSAND = "&&"; //$NON-NLS-1$
 	private static final String PURE_VIRTUAL = " = 0"; //$NON-NLS-1$
 	private static final String ARROW_OPERATOR = "->"; //$NON-NLS-1$
-	
+
 	public DeclaratorWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
-	
+
 	protected void writeDeclarator(IASTDeclarator declarator) {
 		if (declarator instanceof IASTStandardFunctionDeclarator) {
 			writeFunctionDeclarator((IASTStandardFunctionDeclarator) declarator);
@@ -100,7 +100,7 @@ public class DeclaratorWriter extends NodeWriter {
 	}
 
 	private void writeParameterPack(IASTDeclarator declarator) {
-		if (declarator instanceof ICPPASTDeclarator) {			
+		if (declarator instanceof ICPPASTDeclarator) {
 			if (((ICPPASTDeclarator) declarator).declaresParameterPack()) {
 				scribe.print(VAR_ARGS);
 			}
@@ -221,7 +221,8 @@ public class DeclaratorWriter extends NodeWriter {
 		}
 	}
 
-	protected void writeParameterDeclarations(IASTStandardFunctionDeclarator funcDec, IASTParameterDeclaration[] paramDecls) {
+	protected void writeParameterDeclarations(IASTStandardFunctionDeclarator funcDec,
+			IASTParameterDeclaration[] paramDecls) {
 		writeNodeList(paramDecls);
 		if (funcDec.takesVarArgs()) {
 			if (paramDecls.length > 0) {
@@ -230,7 +231,7 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.print(VAR_ARGS);
 		}
 	}
-	
+
 	private void writePointer(IASTPointer operator) {
 		if (operator instanceof ICPPASTPointerToMember) {
 			ICPPASTPointerToMember pointerToMemberOp = (ICPPASTPointerToMember) operator;
@@ -273,7 +274,7 @@ public class DeclaratorWriter extends NodeWriter {
 		name.accept(visitor);
 
 		writeNestedDeclarator(arrDecl);
-		
+
 		IASTArrayModifier[] arrMods = arrDecl.getArrayModifiers();
 		writeArrayModifiers(arrDecl, arrMods);
 		IASTInitializer initializer = getInitializer(arrDecl);
@@ -294,7 +295,7 @@ public class DeclaratorWriter extends NodeWriter {
 
 	protected void writeArrayModifier(IASTArrayModifier modifier) {
 		scribe.print('[');
-		IASTExpression ex= modifier.getConstantExpression();
+		IASTExpression ex = modifier.getConstantExpression();
 		if (ex != null) {
 			ex.accept(visitor);
 		}

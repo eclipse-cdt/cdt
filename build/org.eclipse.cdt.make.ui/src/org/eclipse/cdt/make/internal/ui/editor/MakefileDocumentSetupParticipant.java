@@ -25,11 +25,11 @@ import org.eclipse.jface.text.rules.FastPartitioner;
  * MakefileDocumentSetupParticipant
  * The document setup participant for Makefile.
  */
-public class MakefileDocumentSetupParticipant  implements IDocumentSetupParticipant {
+public class MakefileDocumentSetupParticipant implements IDocumentSetupParticipant {
 	/**
 	 * The name of the Makefiile partitioning.
 	 */
-	public final static String MAKEFILE_PARTITIONING= "___makefile_partitioning";  //$NON-NLS-1$
+	public final static String MAKEFILE_PARTITIONING = "___makefile_partitioning"; //$NON-NLS-1$
 
 	public MakefileDocumentSetupParticipant() {
 	}
@@ -37,7 +37,7 @@ public class MakefileDocumentSetupParticipant  implements IDocumentSetupParticip
 	@Override
 	public void setup(IDocument document) {
 		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			IDocumentExtension3 extension3 = (IDocumentExtension3) document;
 			IDocumentPartitioner partitioner = createDocumentPartitioner();
 			extension3.setDocumentPartitioner(MAKEFILE_PARTITIONING, partitioner);
 			partitioner.connect(document);
@@ -45,7 +45,6 @@ public class MakefileDocumentSetupParticipant  implements IDocumentSetupParticip
 	}
 
 	private IDocumentPartitioner createDocumentPartitioner() {
-		return new FastPartitioner(
-				new MakefilePartitionScanner(), MakefilePartitionScanner.MAKE_PARTITIONS);
+		return new FastPartitioner(new MakefilePartitionScanner(), MakefilePartitionScanner.MAKE_PARTITIONS);
 	}
 }

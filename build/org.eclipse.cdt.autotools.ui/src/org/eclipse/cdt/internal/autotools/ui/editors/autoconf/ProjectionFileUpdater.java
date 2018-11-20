@@ -50,53 +50,51 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
-
 /**
  * ProjectionMakefileUpdater
  */
 public class ProjectionFileUpdater implements IProjectionListener {
 
 	private static class AutoconfProjectionAnnotation extends ProjectionAnnotation {
-		
+
 		private AutoconfElement fElement;
 		private boolean fIsComment;
-		
+
 		public AutoconfProjectionAnnotation(AutoconfElement element, boolean isCollapsed, boolean isComment) {
 			super(isCollapsed);
 			fElement = element;
 			fIsComment = isComment;
 		}
-		
+
 		public AutoconfElement getElement() {
 			return fElement;
 		}
-		
+
 		public void setElement(AutoconfElement element) {
 			fElement = element;
 		}
-		
+
 		public boolean isComment() {
 			return fIsComment;
 		}
-		
+
 	}
-	
 
 	public void install(AutoconfEditor editor, ProjectionViewer viewer) {
-		fEditor= editor;
-		fViewer= viewer;
+		fEditor = editor;
+		fViewer = viewer;
 		fViewer.addProjectionListener(this);
 	}
-	
+
 	public void uninstall() {
 		if (isInstalled()) {
 			projectionDisabled();
 			fViewer.removeProjectionListener(this);
-			fViewer= null;
-			fEditor= null;
+			fViewer = null;
+			fEditor = null;
 		}
 	}
-	
+
 	protected boolean isInstalled() {
 		return fEditor != null;
 	}
@@ -128,49 +126,49 @@ public class ProjectionFileUpdater implements IProjectionListener {
 		// we have to make sure that we disable first when getting an enable
 		// message.
 		projectionDisabled();
-		
-		initialize();			
-		fParticipant= new ReconcilerParticipant();
+
+		initialize();
+		fParticipant = new ReconcilerParticipant();
 		fEditor.addReconcilingParticipant(fParticipant);
 	}
-	
+
 	@Override
 	public void projectionDisabled() {
-		fCachedDocument= null;
+		fCachedDocument = null;
 		if (fParticipant != null) {
 			fEditor.addReconcilingParticipant(fParticipant);
-			fParticipant= null;
+			fParticipant = null;
 		}
 	}
-		
+
 	public void initialize() {
-		
+
 		if (!isInstalled())
 			return;
-		
+
 		initializePreferences();
-		
+
 		try {
-			
-			IDocumentProvider provider= fEditor.getDocumentProvider();
-			fCachedDocument= provider.getDocument(fEditor.getEditorInput());
-			fAllowCollapsing= true;
-			
-//			IWorkingCopyManager manager= AutomakeEditorFactory.getDefault().getWorkingCopyManager();
-			AutoconfElement fInput= fEditor.getRootElement();
-			
+
+			IDocumentProvider provider = fEditor.getDocumentProvider();
+			fCachedDocument = provider.getDocument(fEditor.getEditorInput());
+			fAllowCollapsing = true;
+
+			//			IWorkingCopyManager manager= AutomakeEditorFactory.getDefault().getWorkingCopyManager();
+			AutoconfElement fInput = fEditor.getRootElement();
+
 			if (fInput != null) {
 				ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 				if (model != null) {
-					Map<AutoconfProjectionAnnotation, Position> additions= computeAdditions(fInput);
+					Map<AutoconfProjectionAnnotation, Position> additions = computeAdditions(fInput);
 					model.removeAllAnnotations();
 					model.replaceAnnotations(null, additions);
 				}
 			}
-			
+
 		} finally {
-			fCachedDocument= null;
-			fAllowCollapsing= false;
+			fCachedDocument = null;
+			fAllowCollapsing = false;
 		}
 	}
 
@@ -184,55 +182,52 @@ public class ProjectionFileUpdater implements IProjectionListener {
 	}
 
 	private Map<AutoconfProjectionAnnotation, Position> computeAdditions(AutoconfElement root) {
-		Map<AutoconfProjectionAnnotation, Position> map= new HashMap<>();
+		Map<AutoconfProjectionAnnotation, Position> map = new HashMap<>();
 		if (root instanceof AutoconfRootElement)
 			computeAdditions(root.getChildren(), map);
 		return map;
 	}
 
 	private void computeAdditions(Object[] elements, Map<AutoconfProjectionAnnotation, Position> map) {
-		for (int i= 0; i < elements.length; i++) {
-			AutoconfElement element= (AutoconfElement)elements[i];
-			
+		for (int i = 0; i < elements.length; i++) {
+			AutoconfElement element = (AutoconfElement) elements[i];
+
 			computeAdditions(element, map);
-			
-			if (element.hasChildren()) {				
+
+			if (element.hasChildren()) {
 				computeAdditions(element.getChildren(), map);
 			}
 		}
 	}
 
 	private void computeAdditions(AutoconfElement element, Map<AutoconfProjectionAnnotation, Position> map) {
-		
-		boolean createProjection= false;
-		
+
+		boolean createProjection = false;
+
 		@SuppressWarnings("unused")
-		boolean collapse= false;
-			
-		if (element instanceof AutoconfIfElement ||
-				element instanceof AutoconfElseElement ||
-				element instanceof AutoconfElifElement) {
-			collapse= fAllowCollapsing && fCollapseConditional;
-			createProjection= true;
+		boolean collapse = false;
+
+		if (element instanceof AutoconfIfElement || element instanceof AutoconfElseElement
+				|| element instanceof AutoconfElifElement) {
+			collapse = fAllowCollapsing && fCollapseConditional;
+			createProjection = true;
 		} else if (element instanceof AutoconfMacroElement) {
-			collapse= fAllowCollapsing && fCollapseMacroDef;
-			createProjection= true;
+			collapse = fAllowCollapsing && fCollapseMacroDef;
+			createProjection = true;
 		} else if (element instanceof AutoconfMacroArgumentElement) {
-			collapse= fAllowCollapsing && fCollapseMacroDef;
-			createProjection= true;
+			collapse = fAllowCollapsing && fCollapseMacroDef;
+			createProjection = true;
 		} else if (element instanceof AutoconfCaseElement) {
-			collapse= fAllowCollapsing && fCollapseCase;
-			createProjection= true;
-		} else if (element instanceof AutoconfForElement ||
-				element instanceof AutoconfWhileElement ||
-				element instanceof AutoconfUntilElement ||
-				element instanceof AutoconfSelectElement) {
+			collapse = fAllowCollapsing && fCollapseCase;
+			createProjection = true;
+		} else if (element instanceof AutoconfForElement || element instanceof AutoconfWhileElement
+				|| element instanceof AutoconfUntilElement || element instanceof AutoconfSelectElement) {
 			collapse = fAllowCollapsing && fCollapseLoop;
 			createProjection = true;
 		}
-	
+
 		if (createProjection) {
-			Position position= createProjectionPosition(element);
+			Position position = createProjectionPosition(element);
 			if (position != null) {
 				map.put(new AutoconfProjectionAnnotation(element, fAllowCollapsing, true), position);
 			}
@@ -250,7 +245,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 			endLine = fCachedDocument.getLineOfOffset(element.getEndOffset());
 
 			if (startLine != endLine) {
-				offset= fCachedDocument.getLineOffset(startLine);
+				offset = fCachedDocument.getLineOffset(startLine);
 				int endOffset = fCachedDocument.getLineOffset(endLine) + fCachedDocument.getLineLength(endLine);
 				return new Position(offset, endOffset - offset);
 			}
@@ -264,40 +259,39 @@ public class ProjectionFileUpdater implements IProjectionListener {
 	public void processReconcile() {
 		if (!isInstalled())
 			return;
-		
-		ProjectionAnnotationModel model= fEditor.getAdapter(ProjectionAnnotationModel.class);
+
+		ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 		if (model == null)
 			return;
-		
+
 		try {
-			IDocumentProvider provider= fEditor.getDocumentProvider();
-			fCachedDocument= provider.getDocument(fEditor.getEditorInput());
-			fAllowCollapsing= false;
-			
-			Map<AutoconfProjectionAnnotation, Position> additions= new HashMap<>();
-			List<AutoconfProjectionAnnotation> deletions= new ArrayList<>();
+			IDocumentProvider provider = fEditor.getDocumentProvider();
+			fCachedDocument = provider.getDocument(fEditor.getEditorInput());
+			fAllowCollapsing = false;
+
+			Map<AutoconfProjectionAnnotation, Position> additions = new HashMap<>();
+			List<AutoconfProjectionAnnotation> deletions = new ArrayList<>();
 			List<AutoconfProjectionAnnotation> updates = new ArrayList<>();
-			
-			Map<AutoconfProjectionAnnotation, Position> updated= computeAdditions(fEditor.getRootElement());
-			
-			Map<AutoconfElement, List<AutoconfProjectionAnnotation>> previous= createAnnotationMap(model);
-			
-			
-			Iterator<AutoconfProjectionAnnotation> e= updated.keySet().iterator();
+
+			Map<AutoconfProjectionAnnotation, Position> updated = computeAdditions(fEditor.getRootElement());
+
+			Map<AutoconfElement, List<AutoconfProjectionAnnotation>> previous = createAnnotationMap(model);
+
+			Iterator<AutoconfProjectionAnnotation> e = updated.keySet().iterator();
 			while (e.hasNext()) {
-				AutoconfProjectionAnnotation annotation= e.next();
-				AutoconfElement element= annotation.getElement();
-				Position position= updated.get(annotation);
-				
-				List<AutoconfProjectionAnnotation> annotations= previous.get(element);
+				AutoconfProjectionAnnotation annotation = e.next();
+				AutoconfElement element = annotation.getElement();
+				Position position = updated.get(annotation);
+
+				List<AutoconfProjectionAnnotation> annotations = previous.get(element);
 				if (annotations == null) {
 					additions.put(annotation, position);
 				} else {
-					Iterator<AutoconfProjectionAnnotation> x= annotations.iterator();
+					Iterator<AutoconfProjectionAnnotation> x = annotations.iterator();
 					while (x.hasNext()) {
-						AutoconfProjectionAnnotation a= x.next();
+						AutoconfProjectionAnnotation a = x.next();
 						if (annotation.isComment() == a.isComment()) {
-							Position p= model.getPosition(a);
+							Position p = model.getPosition(a);
 							if (p != null && !position.equals(p)) {
 								p.setOffset(position.getOffset());
 								p.setLength(position.getLength());
@@ -307,108 +301,109 @@ public class ProjectionFileUpdater implements IProjectionListener {
 							break;
 						}
 					}
-										
+
 					if (annotations.isEmpty())
 						previous.remove(element);
 				}
 			}
-			
+
 			Iterator<List<AutoconfProjectionAnnotation>> e2 = previous.values().iterator();
 			while (e2.hasNext()) {
-				List<AutoconfProjectionAnnotation> list= e2.next();
-				int size= list.size();
-				for (int i= 0; i < size; i++)
+				List<AutoconfProjectionAnnotation> list = e2.next();
+				int size = list.size();
+				for (int i = 0; i < size; i++)
 					deletions.add(list.get(i));
 			}
 
 			match(model, deletions, additions, updates);
 
-			Annotation[] removals= new Annotation[deletions.size()];
+			Annotation[] removals = new Annotation[deletions.size()];
 			deletions.toArray(removals);
-			Annotation[] changes= new Annotation[updates.size()];
+			Annotation[] changes = new Annotation[updates.size()];
 			updates.toArray(changes);
 			model.modifyAnnotations(removals, additions, changes);
-			
+
 		} finally {
-			fCachedDocument= null;
-			fAllowCollapsing= true;
+			fCachedDocument = null;
+			fAllowCollapsing = true;
 		}
 	}
 
-	private void match(ProjectionAnnotationModel model, List<AutoconfProjectionAnnotation> deletions, Map<AutoconfProjectionAnnotation, Position> additions, List<AutoconfProjectionAnnotation> changes) {
+	private void match(ProjectionAnnotationModel model, List<AutoconfProjectionAnnotation> deletions,
+			Map<AutoconfProjectionAnnotation, Position> additions, List<AutoconfProjectionAnnotation> changes) {
 		if (deletions.isEmpty() || (additions.isEmpty() && changes.isEmpty()))
 			return;
-		
-		List<AutoconfProjectionAnnotation> newDeletions= new ArrayList<>();
-		List<AutoconfProjectionAnnotation> newChanges= new ArrayList<>();
-		
-		Iterator<AutoconfProjectionAnnotation> deletionIterator= deletions.iterator();
+
+		List<AutoconfProjectionAnnotation> newDeletions = new ArrayList<>();
+		List<AutoconfProjectionAnnotation> newChanges = new ArrayList<>();
+
+		Iterator<AutoconfProjectionAnnotation> deletionIterator = deletions.iterator();
 		outer: while (deletionIterator.hasNext()) {
-			AutoconfProjectionAnnotation deleted= deletionIterator.next();
-			Position deletedPosition= model.getPosition(deleted);
+			AutoconfProjectionAnnotation deleted = deletionIterator.next();
+			Position deletedPosition = model.getPosition(deleted);
 			if (deletedPosition == null)
 				continue;
-			
-			Iterator<AutoconfProjectionAnnotation> changesIterator= changes.iterator();
+
+			Iterator<AutoconfProjectionAnnotation> changesIterator = changes.iterator();
 			while (changesIterator.hasNext()) {
-				AutoconfProjectionAnnotation changed= changesIterator.next();
+				AutoconfProjectionAnnotation changed = changesIterator.next();
 				if (deleted.isComment() == changed.isComment()) {
-					Position changedPosition= model.getPosition(changed);
+					Position changedPosition = model.getPosition(changed);
 					if (changedPosition == null)
 						continue;
-					
+
 					if (deletedPosition.getOffset() == changedPosition.getOffset()) {
-						
+
 						deletedPosition.setLength(changedPosition.getLength());
 						deleted.setElement(changed.getElement());
-						
+
 						deletionIterator.remove();
 						newChanges.add(deleted);
-						
+
 						changesIterator.remove();
 						newDeletions.add(changed);
-						
+
 						continue outer;
 					}
 				}
 			}
-			
-			Iterator<AutoconfProjectionAnnotation> additionsIterator= additions.keySet().iterator();
+
+			Iterator<AutoconfProjectionAnnotation> additionsIterator = additions.keySet().iterator();
 			while (additionsIterator.hasNext()) {
-				AutoconfProjectionAnnotation added= additionsIterator.next();
+				AutoconfProjectionAnnotation added = additionsIterator.next();
 				if (deleted.isComment() == added.isComment()) {
-					Position addedPosition= additions.get(added);
-					
+					Position addedPosition = additions.get(added);
+
 					if (deletedPosition.getOffset() == addedPosition.getOffset()) {
-						
+
 						deletedPosition.setLength(addedPosition.getLength());
 						deleted.setElement(added.getElement());
-						
+
 						deletionIterator.remove();
 						newChanges.add(deleted);
-						
+
 						additionsIterator.remove();
-						
+
 						break;
 					}
 				}
 			}
 		}
-		
+
 		deletions.addAll(newDeletions);
 		changes.addAll(newChanges);
 	}
 
 	private Map<AutoconfElement, List<AutoconfProjectionAnnotation>> createAnnotationMap(IAnnotationModel model) {
-		Map<AutoconfElement, List<AutoconfProjectionAnnotation>> map= new HashMap<>();
+		Map<AutoconfElement, List<AutoconfProjectionAnnotation>> map = new HashMap<>();
 		Iterator<Annotation> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation annotation = e.next();
 			if (annotation instanceof AutoconfProjectionAnnotation) {
-				AutoconfProjectionAnnotation directive= (AutoconfProjectionAnnotation) annotation;
-				List<AutoconfProjectionAnnotation> list= map.get(directive.getElement());
+				AutoconfProjectionAnnotation directive = (AutoconfProjectionAnnotation) annotation;
+				List<AutoconfProjectionAnnotation> list = map.get(directive.getElement());
 				if (list == null) {
-					list= new ArrayList<>(2);
+					list = new ArrayList<>(2);
 					map.put(directive.getElement(), list);
 				}
 				list.add(directive);

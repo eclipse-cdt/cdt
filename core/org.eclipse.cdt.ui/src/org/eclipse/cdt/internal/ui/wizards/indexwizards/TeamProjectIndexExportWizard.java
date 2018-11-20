@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.wizards.indexwizards;
 
@@ -30,32 +30,32 @@ public class TeamProjectIndexExportWizard extends Wizard implements IExportWizar
 	private IStructuredSelection fSelection;
 
 	public TeamProjectIndexExportWizard() {
-        IDialogSettings workbenchSettings = CUIPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_SECTION);
-        if (section == null) {
+		IDialogSettings workbenchSettings = CUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_SECTION);
+		if (section == null) {
 			section = workbenchSettings.addNewSection(DIALOG_SETTINGS_SECTION);
 		}
-        setDialogSettings(section);
+		setDialogSettings(section);
 	}
 
-    @Override
+	@Override
 	public void addPages() {
-        super.addPages();
-        fMainPage = new TeamProjectIndexExportWizardPage(fSelection);
-        addPage(fMainPage);
-    }
+		super.addPages();
+		fMainPage = new TeamProjectIndexExportWizardPage(fSelection);
+		addPage(fMainPage);
+	}
 
 	@Override
 	public boolean performFinish() {
-        return fMainPage.finish();
-    }
+		return fMainPage.finish();
+	}
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-        fSelection= selection;
-        setWindowTitle(Messages.TeamProjectIndexExportWizard_title);
-        setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_EXPORTINDEX);
-        setNeedsProgressMonitor(true);
+		fSelection = selection;
+		setWindowTitle(Messages.TeamProjectIndexExportWizard_title);
+		setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_EXPORTINDEX);
+		setNeedsProgressMonitor(true);
 	}
 
 }

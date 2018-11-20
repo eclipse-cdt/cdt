@@ -25,28 +25,28 @@ import java.util.concurrent.Executor;
  */
 public class ImmediateInDsfExecutor implements Executor {
 
-    final private DsfExecutor fDsfExecutor;
-    
-    public DsfExecutor getDsfExecutor() {
-        return fDsfExecutor;
-    }
-    
-    public ImmediateInDsfExecutor(DsfExecutor dsfExecutor) {
-        fDsfExecutor = dsfExecutor;
-    }
-    
-    @Override
-    public void execute(final Runnable command) {
-        if (fDsfExecutor.isInExecutorThread()) {
-            command.run();
-        } else {
-            fDsfExecutor.execute(new DsfRunnable() {
-                @Override
-                public void run() {
-                    command.run();
-                }
-            });
-        }
-    }
+	final private DsfExecutor fDsfExecutor;
+
+	public DsfExecutor getDsfExecutor() {
+		return fDsfExecutor;
+	}
+
+	public ImmediateInDsfExecutor(DsfExecutor dsfExecutor) {
+		fDsfExecutor = dsfExecutor;
+	}
+
+	@Override
+	public void execute(final Runnable command) {
+		if (fDsfExecutor.isInExecutorThread()) {
+			command.run();
+		} else {
+			fDsfExecutor.execute(new DsfRunnable() {
+				@Override
+				public void run() {
+					command.run();
+				}
+			});
+		}
+	}
 
 }

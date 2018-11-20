@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecCase;
 public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCaseStatement, ICPPExecutionOwner {
 	private IASTExpression expression;
 
-    public CPPASTCaseStatement() {
+	public CPPASTCaseStatement() {
 	}
 
 	public CPPASTCaseStatement(IASTExpression expression) {
@@ -41,59 +41,66 @@ public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCas
 
 	@Override
 	public CPPASTCaseStatement copy(CopyStyle style) {
-		CPPASTCaseStatement copy =
-				new CPPASTCaseStatement(expression == null ? null : expression.copy(style));
+		CPPASTCaseStatement copy = new CPPASTCaseStatement(expression == null ? null : expression.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public IASTExpression getExpression() {
-        return expression;
-    }
+		return expression;
+	}
 
-    @Override
+	@Override
 	public void setExpression(IASTExpression expression) {
-        assertNotFrozen();
-        this.expression = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		this.expression = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(EXPRESSION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (expression != null && !expression.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (expression != null && !expression.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-        	switch (action.leave(this)) {
-        		case ASTVisitor.PROCESS_ABORT : return false;
-        		case ASTVisitor.PROCESS_SKIP  : return true;
-        		default : break;
-        	}
-        }
-        return true;
-    }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == expression) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            expression  = (IASTExpression) other;
-            return;
-        }
-        super.replace(child, other);
-    }
+		if (child == expression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			expression = (IASTExpression) other;
+			return;
+		}
+		super.replace(child, other);
+	}
 
 	@Override
 	public ICPPExecution getExecution() {

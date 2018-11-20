@@ -34,9 +34,9 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class AbstractQtPDOMClass extends QtPDOMBinding {
 
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
+
 	protected static enum Field {
-		CppRecord(Database.PTR_SIZE),
-		Children(4 /* From PDOMNodeLinkedList.RECORD_SIZE, which is protected */),
+		CppRecord(Database.PTR_SIZE), Children(4 /* From PDOMNodeLinkedList.RECORD_SIZE, which is protected */),
 		Last(0);
 
 		public final int offset;
@@ -66,7 +66,7 @@ public abstract class AbstractQtPDOMClass extends QtPDOMBinding {
 			IPDOMBinding cppPDOMBinding = (IPDOMBinding) cppBinding.getAdapter(IPDOMBinding.class);
 			if (cppPDOMBinding != null) {
 				if (cppPDOMBinding.getLinkage() != null
-				 && cppPDOMBinding.getLinkage().getLinkageID() == ILinkage.CPP_LINKAGE_ID)
+						&& cppPDOMBinding.getLinkage().getLinkageID() == ILinkage.CPP_LINKAGE_ID)
 					getDB().putRecPtr(Field.CppRecord.getRecord(record), cppPDOMBinding.getRecord());
 			}
 		}
@@ -108,7 +108,7 @@ public abstract class AbstractQtPDOMClass extends QtPDOMBinding {
 		QtPDOMVisitor.All<T> collector = new QtPDOMVisitor.All<T>(cls);
 		try {
 			children.accept(collector);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			Activator.log(e);
 			return Collections.emptyList();
 		}

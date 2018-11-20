@@ -72,7 +72,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		private OptionStringValue fBsResolvedValue;
 		private List<UserEntryInfo> fSequense;
 
-		UserEntryInfo(ICLanguageSettingEntry entry, OptionStringValue originalValue, OptionStringValue bsResolvedValue, List<UserEntryInfo> sequense) {
+		UserEntryInfo(ICLanguageSettingEntry entry, OptionStringValue originalValue, OptionStringValue bsResolvedValue,
+				List<UserEntryInfo> sequense) {
 			fEntry = entry;
 			fOriginalValue = originalValue;
 			fBsResolvedValue = bsResolvedValue;
@@ -91,7 +92,6 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			fPosition = position;
 		}
 	}
-
 
 	public BuildEntryStorage(int kind, BuildLanguageData lData) {
 		super(kind);
@@ -144,13 +144,13 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 				EntryInfo infos[] = level.getInfos();
 				UserEntryInfo[] userInfos = new UserEntryInfo[infos.length];
 				for (int i = 0; i < infos.length; i++) {
-					UserEntryInfo uei = (UserEntryInfo)infos[i].getCustomInfo();
+					UserEntryInfo uei = (UserEntryInfo) infos[i].getCustomInfo();
 					if (uei == null)
 						uei = new UserEntryInfo(infos[i].getEntry(), null, null, null);
 					userInfos[i] = uei;
 				}
 				@SuppressWarnings("unchecked")
-				List<EmptyEntryInfo> context = (List<EmptyEntryInfo>)level.getContext();
+				List<EmptyEntryInfo> context = (List<EmptyEntryInfo>) level.getContext();
 				setUserEntries(userInfos, context);
 				setUserUndefinedStringSet(level.containsOverrideInfo() ? level.getOverrideSet() : null);
 			}
@@ -200,7 +200,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	 * @return scanner discovered entries (level 2)
 	 */
 	private ICLanguageSettingEntry[] getDiscoveredEntries(int flags) {
-		ICLanguageSettingEntry[] entries = ProfileInfoProvider.getInstance().getEntryValues(fLangData, getKind(), flags);
+		ICLanguageSettingEntry[] entries = ProfileInfoProvider.getInstance().getEntryValues(fLangData, getKind(),
+				flags);
 		if (entries == null || entries.length == 0) {
 			UserEntryInfo[] infos = getUserEntries(flags, false, null);
 			if (infos.length != 0) {
@@ -217,9 +218,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		OptionContextData ocd = new OptionContextData(option, fLangData.getTool());
 		DefaultMacroContextInfo ci = new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_OPTION, ocd);
 
-		return bsVarsOnly ?
-				new BuildSystemSpecificVariableSubstitutor(ci) :
-				new SupplierBasedCdtVariableSubstitutor(ci, "", " "); //$NON-NLS-1$ //$NON-NLS-2$
+		return bsVarsOnly ? new BuildSystemSpecificVariableSubstitutor(ci)
+				: new SupplierBasedCdtVariableSubstitutor(ci, "", " "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -235,10 +235,11 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		if (options.length > 0) {
 			List<UserEntryInfo> entryList = new ArrayList<UserEntryInfo>();
 			for (IOption opt : options) {
-				Option option = (Option)opt;
+				Option option = (Option) opt;
 				try {
 					@SuppressWarnings("unchecked")
-					List<OptionStringValue> list = usr ? (List<OptionStringValue>)option.getExactValue() : (List<OptionStringValue>)option.getExactBuiltinsList();
+					List<OptionStringValue> list = usr ? (List<OptionStringValue>) option.getExactValue()
+							: (List<OptionStringValue>) option.getExactBuiltinsList();
 					if (list != null) {
 						SupplierBasedCdtVariableSubstitutor subst = createSubstitutor(option, false);
 						SupplierBasedCdtVariableSubstitutor bSVarsSubst = createSubstitutor(option, true);
@@ -253,7 +254,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 							} else {
 								// If resolved, add each resolved entry as a separate UserEntryInfo
 								boolean isMultiple = rVes.length > 1;
-								List<UserEntryInfo> sequense = isMultiple ? new ArrayList<UserEntryInfo>(rVes.length) : null;
+								List<UserEntryInfo> sequense = isMultiple ? new ArrayList<UserEntryInfo>(rVes.length)
+										: null;
 								for (OptionStringValue rVe : rVes) {
 									ICLanguageSettingEntry entry = createUserEntry(option, rVe, flags, subst);
 									entryList.add(new UserEntryInfo(entry, ve, rVe, sequense));
@@ -271,15 +273,15 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return new UserEntryInfo[0];
 	}
 
-//	private static OptionStringValue stripQuotes(OptionStringValue ov) {
-//		String value = ov.getValue();
-//		value = stripQuotes(value, true);
-//		if (value != null) {
-//			value = value.substring(1, value.length() - 1);
-//			ov = substituteValue(ov, value);
-//		}
-//		return ov;
-//	}
+	//	private static OptionStringValue stripQuotes(OptionStringValue ov) {
+	//		String value = ov.getValue();
+	//		value = stripQuotes(value, true);
+	//		if (value != null) {
+	//			value = value.substring(1, value.length() - 1);
+	//			ov = substituteValue(ov, value);
+	//		}
+	//		return ov;
+	//	}
 
 	private static String stripQuotes(String value, boolean nullIfNone) {
 		if (value.indexOf('"') == 0 && value.lastIndexOf('"') == value.length() - 1 && value.length() != 1) {
@@ -290,14 +292,15 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 
 	private static OptionStringValue substituteValue(OptionStringValue ov, String value) {
-		return new OptionStringValue(value, ov.isBuiltIn(), ov.getSourceAttachmentPath(), ov.getSourceAttachmentRootPath(), ov.getSourceAttachmentPrefixMapping());
+		return new OptionStringValue(value, ov.isBuiltIn(), ov.getSourceAttachmentPath(),
+				ov.getSourceAttachmentRootPath(), ov.getSourceAttachmentPrefixMapping());
 	}
 
 	private HashSet<String> getUserUndefinedStringSet() {
 		HashSet<String> set = null;
 		for (IOption option : fLangData.getUndefOptionsForKind(getKind())) {
 			@SuppressWarnings("unchecked")
-			List<String> list = (List<String>)option.getValue();
+			List<String> list = (List<String>) option.getValue();
 			if (list.size() != 0) {
 				if (set == null)
 					set = new HashSet<String>();
@@ -342,8 +345,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return new PathInfo(projPath, info.isWorkspacePath(), info.getSubstitutor());
 	}
 
-//	private String[] resolve(String v, IOption option, IPath[] buildLocation) {
-//	}
+	//	private String[] resolve(String v, IOption option, IPath[] buildLocation) {
+	//	}
 
 	private String[] resolve(String v, IOption option, SupplierBasedCdtVariableSubstitutor sub) {
 		try {
@@ -373,21 +376,22 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		int kind = getKind();
 		switch (kind) {
 		case ICSettingEntry.INCLUDE_PATH: {
-				IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
-				paths = provider.getBuildPaths(fLangData.getConfiguration(), IEnvVarBuildPath.BUILDPATH_INCLUDE);
-			}
+			IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
+			paths = provider.getBuildPaths(fLangData.getConfiguration(), IEnvVarBuildPath.BUILDPATH_INCLUDE);
+		}
 			break;
 		case ICSettingEntry.LIBRARY_PATH: {
-				IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
-				paths = provider.getBuildPaths(fLangData.getConfiguration(), IEnvVarBuildPath.BUILDPATH_LIBRARY);
-			}
+			IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
+			paths = provider.getBuildPaths(fLangData.getConfiguration(), IEnvVarBuildPath.BUILDPATH_LIBRARY);
+		}
 			break;
 		}
 
 		if (paths != null && paths.length != 0) {
 			ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[paths.length];
 			for (int i = 0; i < paths.length; i++) {
-				entries[i] = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, paths[i].toString(), null, null, flags);
+				entries[i] = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, paths[i].toString(), null, null,
+						flags);
 			}
 
 			return entries;
@@ -398,7 +402,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	/**
 	 * Create an ICLanguageSettingEntry based on the passed in Option
 	 */
-	private ICLanguageSettingEntry createUserEntry(Option option, OptionStringValue optionValue, int flags, SupplierBasedCdtVariableSubstitutor subst) {
+	private ICLanguageSettingEntry createUserEntry(Option option, OptionStringValue optionValue, int flags,
+			SupplierBasedCdtVariableSubstitutor subst) {
 		final int kind = getKind();
 
 		if (kind == ICSettingEntry.MACRO) {
@@ -415,7 +420,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		if (pInfo.isWorkspacePath()) {
 			flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
 		} else if (optionPathConverter != null) {
-			IPath path = optionPathConverter.convertToPlatformLocation(pInfo.getUnresolvedPath(), option, fLangData.getTool());
+			IPath path = optionPathConverter.convertToPlatformLocation(pInfo.getUnresolvedPath(), option,
+					fLangData.getTool());
 			if (path != null) {
 				pInfo = new PathInfo(path.toString(), false, subst);
 			}
@@ -448,23 +454,24 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 				srcPrefixMapping = new Path(tmp);
 		}
 
-		return (ICLanguageSettingEntry)CDataUtil.createEntry(kind, pInfo.getUnresolvedPath(), null, null, flags, srcPath, srcRootPath, srcPrefixMapping);
+		return (ICLanguageSettingEntry) CDataUtil.createEntry(kind, pInfo.getUnresolvedPath(), null, null, flags,
+				srcPath, srcRootPath, srcPrefixMapping);
 	}
 
-	private OptionStringValue createOptionValue(IOption option, UserEntryInfo info, SupplierBasedCdtVariableSubstitutor subst) {
+	private OptionStringValue createOptionValue(IOption option, UserEntryInfo info,
+			SupplierBasedCdtVariableSubstitutor subst) {
 		if (info.fOriginalValue != null)
 			return info.fOriginalValue;
 
 		return entryValueToOption(option, info.fEntry, subst);
 	}
 
-	private OptionStringValue entryValueToOption(IOption option, ICLanguageSettingEntry entry, SupplierBasedCdtVariableSubstitutor subst) {
+	private OptionStringValue entryValueToOption(IOption option, ICLanguageSettingEntry entry,
+			SupplierBasedCdtVariableSubstitutor subst) {
 		String optionValue = entryValueToOptionStringValue(option, entry, subst);
 		if (entry.getKind() == ICSettingEntry.LIBRARY_FILE) {
-			ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
-			return new OptionStringValue(optionValue,
-					false,
-					pathToString(libFile.getSourceAttachmentPath()),
+			ICLibraryFileEntry libFile = (ICLibraryFileEntry) entry;
+			return new OptionStringValue(optionValue, false, pathToString(libFile.getSourceAttachmentPath()),
 					pathToString(libFile.getSourceAttachmentRootPath()),
 					pathToString(libFile.getSourceAttachmentPrefixMapping()));
 		}
@@ -475,7 +482,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return path != null ? path.toString() : null;
 	}
 
-	private String entryValueToOptionStringValue(IOption option, ICLanguageSettingEntry entry, SupplierBasedCdtVariableSubstitutor subst) {
+	private String entryValueToOptionStringValue(IOption option, ICLanguageSettingEntry entry,
+			SupplierBasedCdtVariableSubstitutor subst) {
 		String result;
 		boolean checkQuote = true;
 		if (entry.getKind() == ICSettingEntry.MACRO && entry.getValue().length() > 0) {
@@ -483,10 +491,11 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		} else if (entry instanceof ICLanguageSettingPathEntry) {
 			IOptionPathConverter converter = fLangData.getTool().getOptionPathConverter();
 			if (converter instanceof IReverseOptionPathConverter) {
-				result = ((IReverseOptionPathConverter)converter).convertToOptionValue(entry, option, fLangData.getTool());
+				result = ((IReverseOptionPathConverter) converter).convertToOptionValue(entry, option,
+						fLangData.getTool());
 				checkQuote = false;
 			} else {
-				ICLanguageSettingPathEntry pathEntry = (ICLanguageSettingPathEntry)entry;
+				ICLanguageSettingPathEntry pathEntry = (ICLanguageSettingPathEntry) entry;
 				result = doConvertToOptionValue(option, pathEntry, subst);
 			}
 		} else {
@@ -499,7 +508,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return result;
 	}
 
-	private String doConvertToOptionValue(IOption option, ICLanguageSettingPathEntry pathEntry, SupplierBasedCdtVariableSubstitutor subst) {
+	private String doConvertToOptionValue(IOption option, ICLanguageSettingPathEntry pathEntry,
+			SupplierBasedCdtVariableSubstitutor subst) {
 		boolean isWsp = pathEntry.isValueWorkspacePath();
 		PathInfo pInfo = new PathInfo(pathEntry.getName(), isWsp, subst);
 		String result;
@@ -543,7 +553,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return IOption.STRING;
 	}
 
-	private static String doubleQuotePath(String pathName, boolean nullIfNone)	{
+	private static String doubleQuotePath(String pathName, boolean nullIfNone) {
 		/* Trim */
 		pathName = pathName.trim();
 
@@ -554,8 +564,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		boolean quoted = false;
 
 		/* Check for spaces, backslashes or macros */
-		int i = pathName.indexOf(' ') + pathName.indexOf('\\')
-			+ pathName.indexOf("${"); //$NON-NLS-1$
+		int i = pathName.indexOf(' ') + pathName.indexOf('\\') + pathName.indexOf("${"); //$NON-NLS-1$
 
 		/* If indexOf didn't fail all three times, double-quote path */
 		if (i != -3) {
@@ -587,12 +596,12 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return nv;
 	}
 
-//	private static Object[] optionPathValueToEntry(String value) {
-//		String wspPath = ManagedBuildManager.locationToFullPath(value);
-//		if (wspPath != null)
-//			return new Object[] { wspPath, Boolean.valueOf(true) };
-//		return new Object[] { value, Boolean.valueOf(false) };
-//	}
+	//	private static Object[] optionPathValueToEntry(String value) {
+	//		String wspPath = ManagedBuildManager.locationToFullPath(value);
+	//		if (wspPath != null)
+	//			return new Object[] { wspPath, Boolean.valueOf(true) };
+	//		return new Object[] { value, Boolean.valueOf(false) };
+	//	}
 
 	/**
 	 * Returns a string representing the workspace relative path with ${workspace_loc: stripped
@@ -600,14 +609,13 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	 * @param path String path to have workspace_loc removed
 	 * @return workspace path or null
 	 */
-	private static String locationToFullPath(String path){
+	private static String locationToFullPath(String path) {
 		path = path.trim();
 		// A path starting from "${workspace_loc}" is always a filesystem path.
 		// Only ${workspace_loc:/thing} is treated here as workspace path
-		if(!path.startsWith("${workspace_loc:"))  //$NON-NLS-1$
+		if (!path.startsWith("${workspace_loc:")) //$NON-NLS-1$
 			return null;
-		
-	
+
 		int index = -1;
 		int depth = 1;
 		for (int i = "${workspace_loc:".length(); i < path.length(); i++) { //$NON-NLS-1$
@@ -618,21 +626,21 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 					index = i;
 					break;
 				}
-			} else if (c == '{' && path.charAt(i-1) == '$') {
+			} else if (c == '{' && path.charAt(i - 1) == '$') {
 				depth++;
 			}
 		}
-		
-		if(index == -1)
+
+		if (index == -1)
 			return null;
 
 		String varName = "workspace_loc"; //$NON-NLS-1$
 		String str1 = path.substring(2, index);
 		String result = null;
-		if(str1.startsWith(varName)){
-			String str2= str1.substring(varName.length());
-			if(str2.length() != 0){
-				if(str2.startsWith(":")){ //$NON-NLS-1$
+		if (str1.startsWith(varName)) {
+			String str2 = str1.substring(varName.length());
+			if (str2.length() != 0) {
+				if (str2.startsWith(":")) { //$NON-NLS-1$
 					result = str2.substring(1);
 				}
 			} else {
@@ -667,10 +675,11 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		// We don't expect more than one option to manage a particular entry kind, though it
 		// is theoretically possible... Add a trace for Toolchain developers
 		if (options.length > 1)
-			ManagedBuilderCorePlugin.error("Unexpected error: Warning more than one options found for kind " + getKind()); //$NON-NLS-1$
+			ManagedBuilderCorePlugin
+					.error("Unexpected error: Warning more than one options found for kind " + getKind()); //$NON-NLS-1$
 		if (options.length != 0) {
 			IOption option = options[0];
-			OptionStringValue[]  optValue;
+			OptionStringValue[] optValue;
 			if (entries.length != 0) {
 				entries = combineSequenses(entries);
 
@@ -778,7 +787,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			if (set != null && set.size() == 0)
 				set = null;
 
-			String[] optValue = set != null ? (String[])set.toArray(new String[set.size()]) : new String[0];
+			String[] optValue = set != null ? (String[]) set.toArray(new String[set.size()]) : new String[0];
 			IOption option = options[0];
 			ITool tool = fLangData.getTool();
 			IResourceInfo rcInfo = tool.getParentResourceInfo();

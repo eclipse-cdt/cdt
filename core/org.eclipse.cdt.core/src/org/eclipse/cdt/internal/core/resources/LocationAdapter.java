@@ -11,7 +11,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.resources;
 
 import java.net.URI;
@@ -26,10 +26,13 @@ import org.eclipse.core.runtime.IPath;
  * Provides common functionality for URI and IPath
  */
 abstract class LocationAdapter<T> {
-	
+
 	public abstract String extractName(T location);
+
 	public abstract IFile[] platformsFindFilesForLocation(T location);
+
 	public abstract String getCanonicalPath(T location);
+
 	public abstract T getLocation(IFile file);
 
 	public static final LocationAdapter<IPath> PATH = new LocationAdapter<IPath>() {
@@ -61,8 +64,8 @@ abstract class LocationAdapter<T> {
 	public static final LocationAdapter<URI> URI = new LocationAdapter<URI>() {
 		@Override
 		public String extractName(URI location) {
-			String path= location.getPath();
-			int idx= path.lastIndexOf('/');
+			String path = location.getPath();
+			int idx = path.lastIndexOf('/');
 			return path.substring(idx + 1);
 		}
 

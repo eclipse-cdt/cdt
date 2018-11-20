@@ -46,25 +46,24 @@ public class EvaluateActionPage extends PlatformObject implements IBreakpointAct
 		fEvalString = new Text(composite, SWT.BORDER);
 		fEvalString.setText(fEvalAction.getEvalString());
 		fEvalString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		return composite;
 	}
-
 
 	public EvaluateAction getEvalAction() {
 		return fEvalAction;
 	}
 
-    @Override
+	@Override
 	public void actionDialogCanceled() {
 	}
 
-    @Override
+	@Override
 	public void actionDialogOK() {
 		fEvalAction.setEvalString(fEvalString.getText());
 	}
 
-    @Override
+	@Override
 	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
 		fEvalAction = (EvaluateAction) action;
 		return createEvaluateActionComposite(composite, style);

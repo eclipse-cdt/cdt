@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CMakeUtils {
-	
+
 	/**
 	 * Parse a string containing environment variables into individual VAR=VALUE pairs.
 	 * 
@@ -34,7 +34,7 @@ public class CMakeUtils {
 		while (!finished) {
 			Matcher m1 = p1.matcher(envString);
 			if (m1.matches()) {
-				envString = envString.replaceFirst("\\w+[=]\\\".*?\\\"","").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+				envString = envString.replaceFirst("\\w+[=]\\\".*?\\\"", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
 				String s = m1.group(1).trim();
 				envVars.add(s.replaceAll("\\\"", "")); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {

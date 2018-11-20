@@ -67,16 +67,16 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 	private static final int TICKS_REFRESH_PROJECT = 1 * PROGRESS_MONITOR_SCALE;
 
 	@Override
-	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
-			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
-			IncrementalProjectBuilder projectBuilder, IProgressMonitor monitor) throws CoreException {
-		return invokeExternalBuild(kind, project, configuration, builder, console,
-				markerGenerator, projectBuilder, monitor);
+	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration, IBuilder builder,
+			IConsole console, IMarkerGenerator markerGenerator, IncrementalProjectBuilder projectBuilder,
+			IProgressMonitor monitor) throws CoreException {
+		return invokeExternalBuild(kind, project, configuration, builder, console, markerGenerator, projectBuilder,
+				monitor);
 	}
 
-	protected boolean invokeExternalBuild(int kind, IProject project, IConfiguration configuration,
-			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
-			IncrementalProjectBuilder projectBuilder, IProgressMonitor monitor) throws CoreException {
+	protected boolean invokeExternalBuild(int kind, IProject project, IConfiguration configuration, IBuilder builder,
+			IConsole console, IMarkerGenerator markerGenerator, IncrementalProjectBuilder projectBuilder,
+			IProgressMonitor monitor) throws CoreException {
 
 		boolean isClean = false;
 
@@ -85,8 +85,10 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Make_Builder") + project.getName(), //$NON-NLS-1$
-					TICKS_STREAM_PROGRESS_MONITOR + TICKS_DELETE_MARKERS + TICKS_EXECUTE_COMMAND + TICKS_REFRESH_PROJECT);
+			monitor.beginTask(
+					ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Make_Builder") + project.getName(), //$NON-NLS-1$
+					TICKS_STREAM_PROGRESS_MONITOR + TICKS_DELETE_MARKERS + TICKS_EXECUTE_COMMAND
+							+ TICKS_REFRESH_PROJECT);
 
 			IPath buildCommand = builder.getBuildCommand();
 			if (buildCommand != null) {
@@ -109,28 +111,34 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				String[] envp = BuildRunnerHelper.envMapToEnvp(envMap);
 
 				String[] errorParsers = builder.getErrorParsers();
-				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, markerGenerator, errorParsers);
+				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, markerGenerator,
+						errorParsers);
 
 				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
 				if (!isOnlyClean) {
-					ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(configuration);
+					ICConfigurationDescription cfgDescription = ManagedBuildManager
+							.getDescriptionForConfiguration(configuration);
 					ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
 					if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription)) {
-						collectScannerInfoConsoleParsers(project, configuration, workingDirectoryURI, markerGenerator, parsers);
+						collectScannerInfoConsoleParsers(project, configuration, workingDirectoryURI, markerGenerator,
+								parsers);
 					}
 				}
 
 				buildRunnerHelper.setLaunchParameters(launcher, buildCommand, args, workingDirectoryURI, envp);
-				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
+				buildRunnerHelper.prepareStreams(epm, parsers, console,
+						new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
-				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS,
+						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 				buildRunnerHelper.greeting(kind, cfgName, toolchainName, isSupported);
-				
+
 				int state;
 				epm.deferDeDuplication();
 				try {
-					state = buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					state = buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND,
+							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				} finally {
 					epm.deDuplicate();
 				}
@@ -138,11 +146,14 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				buildRunnerHelper.goodbye();
 
 				if (state != ICommandLauncher.ILLEGAL_COMMAND) {
-					buildRunnerHelper.refreshProject(cfgName, new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					buildRunnerHelper.refreshProject(cfgName, new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT,
+							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				}
 			} else {
-				String msg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.undefined.build.command", builder.getId()); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, new Exception()));
+				String msg = ManagedMakeMessages
+						.getFormattedString("ManagedMakeBuilder.message.undefined.build.command", builder.getId()); //$NON-NLS-1$
+				throw new CoreException(
+						new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, new Exception()));
 			}
 		} catch (Exception e) {
 			String msg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.error.build", //$NON-NLS-1$
@@ -170,20 +181,19 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 	protected String[] getTargets(int kind, IBuilder builder) {
 		String targets = ""; //$NON-NLS-1$
 		switch (kind) {
-		case IncrementalProjectBuilder.AUTO_BUILD :
+		case IncrementalProjectBuilder.AUTO_BUILD:
 			targets = builder.getAutoBuildTarget();
 			break;
-		case IncrementalProjectBuilder.INCREMENTAL_BUILD : // now treated as the same!
-		case IncrementalProjectBuilder.FULL_BUILD :
+		case IncrementalProjectBuilder.INCREMENTAL_BUILD: // now treated as the same!
+		case IncrementalProjectBuilder.FULL_BUILD:
 			targets = builder.getIncrementalBuildTarget();
 			break;
-		case IncrementalProjectBuilder.CLEAN_BUILD :
+		case IncrementalProjectBuilder.CLEAN_BUILD:
 			targets = builder.getCleanBuildTarget();
 			break;
 		}
 
 		String targetsArray[] = CommandLineUtil.argumentsToArray(targets);
-
 
 		return targetsArray;
 	}
@@ -191,7 +201,8 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 	protected Map<String, String> getEnvironment(IBuilder builder) throws CoreException {
 		Map<String, String> envMap = new HashMap<String, String>();
 		if (builder.appendEnvironment()) {
-			ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(builder.getParent().getParent());
+			ICConfigurationDescription cfgDes = ManagedBuildManager
+					.getDescriptionForConfiguration(builder.getParent().getParent());
 			IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
 			IEnvironmentVariable[] vars = mngr.getVariables(cfgDes, true);
 			for (IEnvironmentVariable var : vars) {
@@ -210,9 +221,9 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 	@Deprecated
 	protected static String[] getEnvStrings(Map<String, String> env) {
 		// Convert into env strings
-		List<String> strings= new ArrayList<String>(env.size());
+		List<String> strings = new ArrayList<String>(env.size());
 		for (Entry<String, String> entry : env.entrySet()) {
-			StringBuilder buffer= new StringBuilder(entry.getKey());
+			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}
@@ -226,7 +237,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> map = container.getInfoMap();
 
 		String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
-		if(pathFromURI == null) {
+		if (pathFromURI == null) {
 			// fallback to CWD
 			pathFromURI = System.getProperty("user.dir"); //$NON-NLS-1$
 		}
@@ -234,28 +245,30 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 
 		int oldSize = parsers.size();
 
-		if(container.isPerRcTypeDiscovery()){
+		if (container.isPerRcTypeDiscovery()) {
 			for (IResourceInfo rcInfo : cfg.getResourceInfos()) {
 				ITool tools[];
-				if(rcInfo instanceof IFileInfo){
-					tools = ((IFileInfo)rcInfo).getToolsToInvoke();
+				if (rcInfo instanceof IFileInfo) {
+					tools = ((IFileInfo) rcInfo).getToolsToInvoke();
 				} else {
-					tools = ((IFolderInfo)rcInfo).getFilteredTools();
+					tools = ((IFolderInfo) rcInfo).getFilteredTools();
 				}
 				for (ITool tool : tools) {
 					IInputType[] types = tool.getInputTypes();
 
-					if(types.length != 0){
+					if (types.length != 0) {
 						for (IInputType type : types) {
 							CfgInfoContext context = new CfgInfoContext(rcInfo, tool, type);
-							IScannerInfoConsoleParser parser = getScannerInfoConsoleParser(project, map, context, workingDirectory, markerGenerator);
+							IScannerInfoConsoleParser parser = getScannerInfoConsoleParser(project, map, context,
+									workingDirectory, markerGenerator);
 							if (parser != null) {
 								parsers.add(parser);
 							}
 						}
 					} else {
 						CfgInfoContext context = new CfgInfoContext(rcInfo, tool, null);
-						IScannerInfoConsoleParser parser = getScannerInfoConsoleParser(project, map, context, workingDirectory, markerGenerator);
+						IScannerInfoConsoleParser parser = getScannerInfoConsoleParser(project, map, context,
+								workingDirectory, markerGenerator);
 						if (parser != null) {
 							parsers.add(parser);
 						}
@@ -264,17 +277,20 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			}
 		}
 
-		if(parsers.size() == oldSize){
+		if (parsers.size() == oldSize) {
 			CfgInfoContext context = new CfgInfoContext(cfg);
-			IScannerInfoConsoleParser parser = getScannerInfoConsoleParser(project, map, context, workingDirectory, markerGenerator);
+			IScannerInfoConsoleParser parser = getScannerInfoConsoleParser(project, map, context, workingDirectory,
+					markerGenerator);
 			if (parser != null) {
 				parsers.add(parser);
 			}
 		}
 	}
 
-	private static IScannerInfoConsoleParser getScannerInfoConsoleParser(IProject project, Map<CfgInfoContext, IScannerConfigBuilderInfo2> map,
-			CfgInfoContext context, IPath workingDirectory, IMarkerGenerator markerGenerator) {
-		return ScannerInfoConsoleParserFactory.getScannerInfoConsoleParser(project, context.toInfoContext(), workingDirectory, map.get(context), markerGenerator, null);
+	private static IScannerInfoConsoleParser getScannerInfoConsoleParser(IProject project,
+			Map<CfgInfoContext, IScannerConfigBuilderInfo2> map, CfgInfoContext context, IPath workingDirectory,
+			IMarkerGenerator markerGenerator) {
+		return ScannerInfoConsoleParserFactory.getScannerInfoConsoleParser(project, context.toInfoContext(),
+				workingDirectory, map.get(context), markerGenerator, null);
 	}
 }

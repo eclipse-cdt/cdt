@@ -36,35 +36,37 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 
 	public StructureTemplateHandle(ICElement parent, ICPPClassTemplate classTemplate) throws DOMException {
 		super(parent, classTemplate);
-		fTemplate= new Template(classTemplate.getName());
+		fTemplate = new Template(classTemplate.getName());
 		ICPPTemplateParameter[] tpars = classTemplate.getTemplateParameters();
-		String[] args= new String[tpars.length];
+		String[] args = new String[tpars.length];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= tpars[i].getName();
+			args[i] = tpars[i].getName();
 		}
 		fTemplate.setTemplateInfo(null, args);
 	}
 
-	public StructureTemplateHandle(ICElement parent, ICPPClassTemplatePartialSpecialization classTemplate) throws DOMException {
+	public StructureTemplateHandle(ICElement parent, ICPPClassTemplatePartialSpecialization classTemplate)
+			throws DOMException {
 		super(parent, classTemplate);
-		fTemplate= new Template(classTemplate.getName());
+		fTemplate = new Template(classTemplate.getName());
 		ICPPTemplateArgument[] targs = classTemplate.getTemplateArguments();
-		String[] args= new String[targs.length];
+		String[] args = new String[targs.length];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= ASTTypeUtil.getArgumentString(targs[i], false);
+			args[i] = ASTTypeUtil.getArgumentString(targs[i], false);
 		}
 		fTemplate.setTemplateInfo(null, args);
 	}
 
-	public StructureTemplateHandle(ICElement parent, ICPPClassSpecialization classBinding, ICPPClassTemplate ct) throws DOMException {
+	public StructureTemplateHandle(ICElement parent, ICPPClassSpecialization classBinding, ICPPClassTemplate ct)
+			throws DOMException {
 		super(parent, classBinding);
-		fTemplate= new Template(classBinding.getName());
+		fTemplate = new Template(classBinding.getName());
 		ICPPTemplateParameterMap map = classBinding.getTemplateParameterMap();
 		ICPPTemplateParameter[] tpars = ct.getTemplateParameters();
-		List<String> args= new ArrayList<String>(tpars.length);
+		List<String> args = new ArrayList<String>(tpars.length);
 		for (ICPPTemplateParameter par : tpars) {
 			if (par.isParameterPack()) {
-				ICPPTemplateArgument[] pack= map.getPackExpansion(par);
+				ICPPTemplateArgument[] pack = map.getPackExpansion(par);
 				if (pack != null) {
 					for (ICPPTemplateArgument p : pack) {
 						args.add(ASTTypeUtil.getArgumentString(p, false));
@@ -90,7 +92,7 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 
 	@Override
 	public String[] getTemplateArguments() {
-		return  fTemplate.getTemplateArguments();
+		return fTemplate.getTemplateArguments();
 	}
 
 	@Override

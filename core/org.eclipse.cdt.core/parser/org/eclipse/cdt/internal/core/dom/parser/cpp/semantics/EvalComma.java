@@ -48,7 +48,7 @@ public class EvalComma extends CPPDependentEvaluation {
 
 	public EvalComma(ICPPEvaluation[] evals, IBinding templateDefinition) {
 		super(templateDefinition);
-		fArguments= evals;
+		fArguments = evals;
 	}
 
 	public ICPPEvaluation[] getArguments() {
@@ -107,10 +107,10 @@ public class EvalComma extends CPPDependentEvaluation {
 		EvalComma o = (EvalComma) other;
 		return areEquivalentEvaluations(fArguments, o.fArguments);
 	}
-	
+
 	public ICPPFunction[] getOverloads() {
 		if (fOverloads == null) {
-			fOverloads= computeOverloads();
+			fOverloads = computeOverloads();
 		}
 		return fOverloads;
 	}
@@ -123,17 +123,18 @@ public class EvalComma extends CPPDependentEvaluation {
 			return NO_FUNCTIONS;
 
 		ICPPFunction[] overloads = new ICPPFunction[fArguments.length - 1];
-		ICPPEvaluation e1= fArguments[0];
+		ICPPEvaluation e1 = fArguments[0];
 		for (int i = 1; i < fArguments.length; i++) {
 			ICPPEvaluation e2 = fArguments[i];
 			ICPPFunction overload = CPPSemantics.findOverloadedOperatorComma(getTemplateDefinitionScope(), e1, e2);
 			if (overload == null) {
-				e1= e2;
+				e1 = e2;
 			} else {
 				overloads[i - 1] = overload;
-				e1= new EvalFixed(typeFromFunctionCall(overload), valueCategoryFromFunctionCall(overload), IntegralValue.UNKNOWN);
+				e1 = new EvalFixed(typeFromFunctionCall(overload), valueCategoryFromFunctionCall(overload),
+						IntegralValue.UNKNOWN);
 				if (e1.getType() instanceof ISemanticProblem) {
-					e1= e2;
+					e1 = e2;
 				}
 			}
 		}
@@ -143,7 +144,7 @@ public class EvalComma extends CPPDependentEvaluation {
 	@Override
 	public IType getType() {
 		if (fType == null) {
-			fType= computeType();
+			fType = computeType();
 		}
 		return fType;
 	}
@@ -196,10 +197,10 @@ public class EvalComma extends CPPDependentEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		int len= buffer.getInt();
+		int len = buffer.getInt();
 		ICPPEvaluation[] args = new ICPPEvaluation[len];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= buffer.unmarshalEvaluation();
+			args[i] = buffer.unmarshalEvaluation();
 		}
 		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalComma(args, templateDefinition);

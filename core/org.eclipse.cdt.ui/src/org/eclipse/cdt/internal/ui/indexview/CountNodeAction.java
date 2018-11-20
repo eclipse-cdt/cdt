@@ -50,7 +50,7 @@ public class CountNodeAction extends IndexAction {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
 			return false;
-		Object[] objs = ((IStructuredSelection)selection).toArray();
+		Object[] objs = ((IStructuredSelection) selection).toArray();
 		for (int i = 0; i < objs.length; ++i)
 			if (objs[i] instanceof ICProject)
 				return true;
@@ -73,13 +73,13 @@ public class CountNodeAction extends IndexAction {
 			if (!(selection instanceof IStructuredSelection))
 				return;
 
-			Object[] objs = ((IStructuredSelection)selection).toArray();
+			Object[] objs = ((IStructuredSelection) selection).toArray();
 			for (int i = 0; i < objs.length; ++i) {
 				if (!(objs[i] instanceof ICProject))
 					continue;
 
-				ICProject project = (ICProject)objs[i];
-				IPDOM ipdom= CCoreInternals.getPDOMManager().getPDOM(project);
+				ICProject project = (ICProject) objs[i];
+				IPDOM ipdom = CCoreInternals.getPDOMManager().getPDOM(project);
 				if (!(ipdom instanceof PDOM)) {
 					continue;
 				}
@@ -110,25 +110,19 @@ public class CountNodeAction extends IndexAction {
 					});
 					pdom.accept(new IPDOMVisitor() {
 						@Override
-						public boolean visit(IPDOMNode node)
-								throws CoreException {
+						public boolean visit(IPDOMNode node) throws CoreException {
 							++count[SYMBOLS];
 							if (node instanceof PDOMBinding) {
 								PDOMBinding binding = (PDOMBinding) node;
-								for (PDOMName name = binding
-										.getFirstReference(); name != null; name = name
+								for (PDOMName name = binding.getFirstReference(); name != null; name = name
 										.getNextInBinding())
 									++count[REFS];
-								for (IPDOMIterator<PDOMName> i = binding.getExternalReferences();
-									 i.hasNext();
-									 i.next())
+								for (IPDOMIterator<PDOMName> i = binding.getExternalReferences(); i.hasNext(); i.next())
 									++count[REFS];
-								for (PDOMName name = binding
-										.getFirstDeclaration(); name != null; name = name
+								for (PDOMName name = binding.getFirstDeclaration(); name != null; name = name
 										.getNextInBinding())
 									++count[DECLS];
-								for (PDOMName name = binding
-										.getFirstDefinition(); name != null; name = name
+								for (PDOMName name = binding.getFirstDefinition(); name != null; name = name
 										.getNextInBinding())
 									++count[DEFS];
 							}
@@ -150,17 +144,10 @@ public class CountNodeAction extends IndexAction {
 			return;
 		}
 
-		MessageDialog.openInformation(null,
-				CUIPlugin.getResourceString("IndexView.CountSymbols.title"), //$NON-NLS-1$
+		MessageDialog.openInformation(null, CUIPlugin.getResourceString("IndexView.CountSymbols.title"), //$NON-NLS-1$
 				CUIPlugin.getFormattedString("IndexView.CountSymbols.message", //$NON-NLS-1$
-						new String[] {
-							String.valueOf(count[0]),
-							String.valueOf(count[1]),
-							String.valueOf(count[2]),
-							String.valueOf(count[3]),
-							String.valueOf(count[4]),
-							String.valueOf(count[5])
-						}));
+						new String[] { String.valueOf(count[0]), String.valueOf(count[1]), String.valueOf(count[2]),
+								String.valueOf(count[3]), String.valueOf(count[4]), String.valueOf(count[5]) }));
 	}
 
 }

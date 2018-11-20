@@ -77,7 +77,8 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	 * 
 	 * @see CSourceFinder#getLocator(ILaunchConfiguration)
 	 */
-	private Map<String, ISourceLocator> fConfigLocators = Collections.synchronizedMap(new HashMap<String, ISourceLocator>());
+	private Map<String, ISourceLocator> fConfigLocators = Collections
+			.synchronizedMap(new HashMap<String, ISourceLocator>());
 
 	/**
 	 * We use this when we don't have an ILaunch or ILaunchConfiguration
@@ -95,17 +96,17 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	 *            locally
 	 */
 	public CSourceFinder(IBinary binary) {
-		assert(binary != null);
+		assert (binary != null);
 		fBinary = binary;
-		
-		fRelativePathContainer = new ProgramRelativePathSourceContainer(binary); 
-		
+
+		fRelativePathContainer = new ProgramRelativePathSourceContainer(binary);
+
 		ILaunchManager lmgr = DebugPlugin.getDefault().getLaunchManager();
 		lmgr.addLaunchConfigurationListener(this);
 		lmgr.addLaunchListener(this);
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ISourceFinder#toLocalPath(java.lang.String)
 	 */
@@ -113,11 +114,11 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	synchronized public String toLocalPath(String compilationPath) {
 		try {
 			Object foundElement = null;
-			
+
 			// Find a suitable launch/config locator if we haven't found one yet
 			if (fLaunchLocator == null) {
 				ILaunchManager lmgr = DebugPlugin.getDefault().getLaunchManager();
-			
+
 				// See if there are any active debug sessions (running, or
 				// terminated but still in the Debug view) that are targeting
 				// our executable. If there are then use the first one to
@@ -129,42 +130,41 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 						ISourceLocator launchLocator = launch.getSourceLocator();
 						// in practice, a launch locator is always an ISourceLookupDirector
 						if (launchLocator instanceof ISourceLookupDirector) {
-							fLaunchLocator = (ISourceLookupDirector)launchLocator;
+							fLaunchLocator = (ISourceLookupDirector) launchLocator;
 							break;
 						}
 					}
 				}
-				
+
 				// If there were no matching launches or none of them
 				// provided a locator, search the launch configurations
 				if (fLaunchLocator == null) {
 					for (ILaunchConfiguration config : lmgr.getLaunchConfigurations()) {
 						if (isMatch(config)) {
 							String configName = config.getName();
-							
+
 							// Search our cache of locators that we
 							// instantiate for configurations. Create one if
 							// not found
 							ISourceLocator configLocator = fConfigLocators.get(configName);
 							if (configLocator == null) {
-								configLocator = getLocator(config);	// heavy operation
-								fConfigLocators.put(configName, configLocator);	// cache to avoid next time
+								configLocator = getLocator(config); // heavy operation
+								fConfigLocators.put(configName, configLocator); // cache to avoid next time
 							}
 							// In practice, a config's locator is always an ISourceLookupDirector
 							if (configLocator instanceof ISourceLookupDirector) {
-								fLaunchLocator = (ISourceLookupDirector)configLocator;
+								fLaunchLocator = (ISourceLookupDirector) configLocator;
 								break;
 							}
 						}
 					}
 				}
 			}
-			
+
 			// Search for the file using the launch/config locator
 			if (fLaunchLocator != null) {
 				foundElement = fLaunchLocator.getSourceElement(compilationPath);
-			}
-			else {
+			} else {
 				// If there isn't a launch/config locator, we need to explicitly
 				// try to resolve relative paths...relative to the binary
 				// location.
@@ -186,26 +186,25 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 			}
 
 			return foundElementToPath(foundElement);
-		}
-		catch (CoreException exc) {
-			CDebugCorePlugin.log(exc);			
+		} catch (CoreException exc) {
+			CDebugCorePlugin.log(exc);
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ISourceFinder#toLocalPath(org.eclipse.core.runtime.IAdaptable, java.lang.String)
 	 */
 	@Override
 	public String toLocalPath(IAdaptable _launch, String compilationPath) {
 		Object foundElement = null;
-		
+
 		ILaunch launch = _launch.getAdapter(ILaunch.class);
 		if (launch != null) {
 			ISourceLocator locator = launch.getSourceLocator();
 			// in practice, a launch locator is always an ISourceLookupDirector
 			if (locator instanceof ISourceLookupDirector) {
-				foundElement = ((ISourceLookupDirector)locator).getSourceElement(compilationPath);
+				foundElement = ((ISourceLookupDirector) locator).getSourceElement(compilationPath);
 			}
 		}
 
@@ -214,7 +213,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 			CSourceLookupDirector locator = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector();
 			foundElement = locator.getSourceElement(compilationPath);
 		}
-		
+
 		return foundElementToPath(foundElement);
 	}
 
@@ -230,23 +229,21 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 		if (foundElement != null) {
 			try {
 				if (foundElement instanceof IFile) {
-					IPath path = ((IFile)foundElement).getLocation();
+					IPath path = ((IFile) foundElement).getLocation();
 					if (path != null) {
 						File file = path.toFile();
 						if (file != null) {
-								return file.getCanonicalPath();
+							return file.getCanonicalPath();
 						}
 					}
-					
-				}
-				else if (foundElement instanceof LocalFileStorage) {
-					File file = ((LocalFileStorage)foundElement).getFile();
+
+				} else if (foundElement instanceof LocalFileStorage) {
+					File file = ((LocalFileStorage) foundElement).getFile();
 					if (file != null) {
 						return file.getCanonicalPath();
 					}
-				}
-				else if (foundElement instanceof ExternalTranslationUnit) {
-					URI uri = ((ExternalTranslationUnit)foundElement).getLocationURI();
+				} else if (foundElement instanceof ExternalTranslationUnit) {
+					URI uri = ((ExternalTranslationUnit) foundElement).getLocationURI();
 					if (uri != null) {
 						IPath path = URIUtil.toPath(uri);
 						if (path != null) {
@@ -261,10 +258,10 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 				CDebugCorePlugin.log(e);
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Utility method to determine if the given launch configuration targets the Binary we are associated with
 	 * @param config
@@ -279,7 +276,8 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 				String programNameConfig = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
 				IProject project = resource.getProject();
 				if (project != null && project.getName().equals(projectNameConfig)) {
-					programNameConfig = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programNameConfig);
+					programNameConfig = VariablesPlugin.getDefault().getStringVariableManager()
+							.performStringSubstitution(programNameConfig);
 					Path path = new Path(programNameConfig);
 					if (!path.isEmpty()) {
 						IFile file = project.getFile(path);
@@ -294,7 +292,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 				CDebugCorePlugin.log(e);
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -310,18 +308,18 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	 * @throws CoreException
 	 */
 	static private ISourceLocator getLocator(ILaunchConfiguration config) throws CoreException {
-		String type = config.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
+		String type = config.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
 		if (type == null) {
 			type = config.getType().getSourceLocatorId();
 		}
 		if (type != null) {
 			IPersistableSourceLocator locator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(type);
-			String memento = config.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
+			String memento = config.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String) null);
 			if (memento == null) {
 				locator.initializeDefaults(config);
 			} else {
-				if(locator instanceof IPersistableSourceLocator2)
-					((IPersistableSourceLocator2)locator).initializeFromMemento(memento, config);
+				if (locator instanceof IPersistableSourceLocator2)
+					((IPersistableSourceLocator2) locator).initializeFromMemento(memento, config);
 				else
 					locator.initializeFromMemento(memento);
 			}
@@ -347,7 +345,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 		if (config.isWorkingCopy()) {
 			return;
 		}
-		
+
 		// the source locator attribute may have changed
 		fConfigLocators.remove(config.getName());
 		if ((fLaunchLocator != null) && (fLaunchLocator.getLaunchConfiguration().getName() == config.getName())) {
@@ -364,7 +362,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 		if (config.isWorkingCopy()) {
 			return;
 		}
-		
+
 		fConfigLocators.remove(config.getName());
 		if ((fLaunchLocator != null) && (fLaunchLocator.getLaunchConfiguration().getName() == config.getName())) {
 			fLaunchLocator = null;
@@ -396,7 +394,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 		for (ILaunch launch : launches) {
 			ILaunchConfiguration config = launch.getLaunchConfiguration();
 			if (config != null && isMatch(config)) {
-				synchronized(this) {
+				synchronized (this) {
 					fLaunchLocator = null;
 				}
 			}

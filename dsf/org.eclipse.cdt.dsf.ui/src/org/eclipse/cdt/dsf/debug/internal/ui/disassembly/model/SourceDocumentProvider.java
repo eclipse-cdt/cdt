@@ -43,7 +43,7 @@ public class SourceDocumentProvider extends StorageDocumentProvider {
 	 */
 	public void dispose() {
 		Iterator<?> it = getConnectedElements();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			Object element = it.next();
 			ElementInfo info = getElementInfo(element);
 			// force refcount to 1
@@ -88,7 +88,7 @@ public class SourceDocumentProvider extends StorageDocumentProvider {
 		super.disposeElementInfo(element, info);
 		IDocument doc = info.fDocument;
 		if (doc instanceof REDDocument) {
-			((REDDocument)doc).dispose();
+			((REDDocument) doc).dispose();
 		}
 	}
 
@@ -99,16 +99,16 @@ public class SourceDocumentProvider extends StorageDocumentProvider {
 	public long getModificationStamp(Object element) {
 		try {
 			if (element instanceof IStorageEditorInput) {
-				IStorage file= ((IStorageEditorInput)element).getStorage();
+				IStorage file = ((IStorageEditorInput) element).getStorage();
 				if (file instanceof IFile) {
-					return ((IFile)file).getLocalTimeStamp();
+					return ((IFile) file).getLocalTimeStamp();
 				} else if (file instanceof IFileState) {
-					return ((IFileState)file).getModificationTime();
+					return ((IFileState) file).getModificationTime();
 				} else if (file instanceof LocalFileStorage) {
-					return ((LocalFileStorage)file).getFile().lastModified();
+					return ((LocalFileStorage) file).getFile().lastModified();
 				}
 			} else if (element instanceof IURIEditorInput) {
-				return EFS.getStore(((IURIEditorInput)element).getURI()).fetchInfo().getLastModified();
+				return EFS.getStore(((IURIEditorInput) element).getURI()).fetchInfo().getLastModified();
 			}
 		} catch (CoreException e) {
 			// ignore

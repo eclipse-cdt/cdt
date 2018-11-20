@@ -53,7 +53,7 @@ public class Activator extends AbstractUIPlugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
 	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 

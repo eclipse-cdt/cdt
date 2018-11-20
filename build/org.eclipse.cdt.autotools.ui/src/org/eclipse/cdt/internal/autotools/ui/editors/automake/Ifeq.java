@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 public class Ifeq extends Conditional {
 
 	public Ifeq(Directive parent, String cond) {

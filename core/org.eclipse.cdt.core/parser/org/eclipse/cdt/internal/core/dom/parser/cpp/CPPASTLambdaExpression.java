@@ -49,7 +49,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	private ICPPEvaluation fEvaluation;
 
 	public CPPASTLambdaExpression() {
-		fCaptureDefault= CaptureDefault.UNSPECIFIED;
+		fCaptureDefault = CaptureDefault.UNSPECIFIED;
 	}
 
 	@Override
@@ -81,36 +81,36 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	@Override
 	public IASTImplicitName getClosureTypeName() {
 		if (fClosureTypeName == null) {
-    		final CPPClosureType closureType = getExpressionType();
+			final CPPClosureType closureType = getExpressionType();
 			CPPASTImplicitName name = new CPPASTImplicitName(closureType.getNameCharArray(), this);
 			name.setBinding(closureType);
 			name.setIsDefinition(true);
 
 			name.setOffsetAndLength(getOffset(), 1);
-			fClosureTypeName= name;
-    	}
+			fClosureTypeName = name;
+		}
 		return fClosureTypeName;
 	}
 
 	@Override
 	public IASTImplicitName getFunctionCallOperatorName() {
 		if (fImplicitFunctionCallName == null) {
-    		final CPPClosureType closureType = getExpressionType();
-			ICPPFunction callOperator= closureType.getFunctionCallOperator();
+			final CPPClosureType closureType = getExpressionType();
+			ICPPFunction callOperator = closureType.getFunctionCallOperator();
 
 			CPPASTImplicitName name = new CPPASTImplicitName(closureType.getNameCharArray(), this);
 			name.setBinding(callOperator);
 			name.setIsDefinition(true);
 
 			if (fBody instanceof ASTNode) {
-				ASTNode bodyNode= (ASTNode) fBody;
+				ASTNode bodyNode = (ASTNode) fBody;
 				name.setOffsetAndLength(bodyNode.getOffset(), 1);
 			}
-			fImplicitFunctionCallName= name;
-    	}
+			fImplicitFunctionCallName = name;
+		}
 		return fImplicitFunctionCallName;
 	}
-	
+
 	private IASTImplicitName getConversionOperatorName() {
 		if (fImplicitConversionOperatorName == null) {
 			final CPPClosureType closureType = getExpressionType();
@@ -119,7 +119,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 				CPPASTImplicitName name = new CPPASTImplicitName(closureType.getNameCharArray(), this);
 				name.setBinding(conversionOperator);
 				name.setIsDefinition(true);
-				
+
 				if (fBody instanceof ASTNode) {
 					name.setOffsetAndLength(((ASTNode) fBody).getOffset(), 1);
 				}
@@ -129,14 +129,14 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		return fImplicitConversionOperatorName;
 	}
 
-    @Override
+	@Override
 	public IASTImplicitName[] getImplicitNames() {
-    	IASTImplicitName conversionOperatorName = getConversionOperatorName();
-    	if (conversionOperatorName == null) {
-    		return new IASTImplicitName[] { getFunctionCallOperatorName() };
-    	}
-    	return new IASTImplicitName[] { getFunctionCallOperatorName(), getConversionOperatorName() }; 
-    }
+		IASTImplicitName conversionOperatorName = getConversionOperatorName();
+		if (conversionOperatorName == null) {
+			return new IASTImplicitName[] { getFunctionCallOperatorName() };
+		}
+		return new IASTImplicitName[] { getFunctionCallOperatorName(), getConversionOperatorName() };
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -145,12 +145,15 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 
 	@Override
 	public boolean accept(ASTVisitor visitor) {
-        if (visitor.shouldVisitExpressions) {
-		    switch (visitor.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (visitor.shouldVisitExpressions) {
+			switch (visitor.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (visitor.shouldVisitImplicitNames && !getClosureTypeName().accept(visitor))
@@ -179,8 +182,8 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		if (visitor.shouldVisitExpressions && visitor.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public IASTCompoundStatement getBody() {
@@ -196,7 +199,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	public ICPPASTCapture[] getCaptures() {
 		if (fCaptures == null)
 			return NO_CAPTURES;
-		return fCaptures= ArrayUtil.trim(fCaptures);
+		return fCaptures = ArrayUtil.trim(fCaptures);
 	}
 
 	@Override
@@ -210,9 +213,9 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		capture.setParent(this);
 		capture.setPropertyInParent(CAPTURE);
 		if (fCaptures == null) {
-			fCaptures= new ICPPASTCapture[] {capture, null};
+			fCaptures = new ICPPASTCapture[] { capture, null };
 		} else {
-			fCaptures= ArrayUtil.append(fCaptures, capture);
+			fCaptures = ArrayUtil.append(fCaptures, capture);
 		}
 	}
 
@@ -221,12 +224,12 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		assertNotFrozen();
 		body.setParent(this);
 		body.setPropertyInParent(BODY);
-		fBody= body;
+		fBody = body;
 	}
 
 	@Override
 	public void setCaptureDefault(CaptureDefault value) {
-		fCaptureDefault= value;
+		fCaptureDefault = value;
 	}
 
 	@Override
@@ -234,20 +237,20 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		assertNotFrozen();
 		dtor.setParent(this);
 		dtor.setPropertyInParent(DECLARATOR);
-		fDeclarator= dtor;
+		fDeclarator = dtor;
 	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			fEvaluation= new EvalFixed(new CPPClosureType(this), PRVALUE, IntegralValue.UNKNOWN);
+			fEvaluation = new EvalFixed(new CPPClosureType(this), PRVALUE, IntegralValue.UNKNOWN);
 		}
 		return fEvaluation;
 	}
 
 	@Override
 	public CPPClosureType getExpressionType() {
-    	return (CPPClosureType) CPPEvaluation.getType(this);
+		return (CPPClosureType) CPPEvaluation.getType(this);
 	}
 
 	@Override

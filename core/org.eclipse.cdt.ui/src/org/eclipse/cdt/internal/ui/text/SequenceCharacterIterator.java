@@ -17,7 +17,6 @@ import java.text.CharacterIterator;
 
 import org.eclipse.core.runtime.Assert;
 
-
 /**
  * A <code>CharSequence</code> based implementation of <code>CharacterIterator</code>.
  *
@@ -25,7 +24,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class SequenceCharacterIterator implements CharacterIterator {
 
-	private int fIndex= -1;
+	private int fIndex = -1;
 	private final CharSequence fSequence;
 	private final int fFirst;
 	private final int fLast;
@@ -70,10 +69,10 @@ public class SequenceCharacterIterator implements CharacterIterator {
 			throw new IllegalArgumentException();
 		if (last > sequence.length())
 			throw new IllegalArgumentException();
-		fSequence= sequence;
-		fFirst= first;
-		fLast= last;
-		fIndex= first;
+		fSequence = sequence;
+		fFirst = first;
+		fLast = last;
+		fIndex = first;
 		invariant();
 	}
 
@@ -130,7 +129,7 @@ public class SequenceCharacterIterator implements CharacterIterator {
 	@Override
 	public char setIndex(int position) {
 		if (position >= getBeginIndex() && position <= getEndIndex())
-			fIndex= position;
+			fIndex = position;
 		else
 			throw new IllegalArgumentException();
 

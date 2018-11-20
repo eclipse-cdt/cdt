@@ -48,7 +48,8 @@ public class HeadlessBuilderExternalSettingsProvider extends CExternalSettingPro
 	public CExternalSetting[] getSettings(IProject project, ICConfigurationDescription cfg) {
 		if (additionalSettings.isEmpty())
 			return new CExternalSetting[0];
-		return new CExternalSetting[] { new CExternalSetting(null, null, null, additionalSettings.toArray(new ICSettingEntry[additionalSettings.size()])) };
+		return new CExternalSetting[] { new CExternalSetting(null, null, null,
+				additionalSettings.toArray(new ICSettingEntry[additionalSettings.size()])) };
 	}
 
 	/**
@@ -90,7 +91,8 @@ public class HeadlessBuilderExternalSettingsProvider extends CExternalSettingPro
 			if (desc == null)
 				continue;
 			for (ICConfigurationDescription cfg : desc.getConfigurations()) {
-				ArrayList<String> extSettingIds = new ArrayList<String>(Arrays.asList(cfg.getExternalSettingsProviderIds()));
+				ArrayList<String> extSettingIds = new ArrayList<String>(
+						Arrays.asList(cfg.getExternalSettingsProviderIds()));
 				for (Iterator<String> it = extSettingIds.iterator(); it.hasNext();)
 					if (ID.equals(it.next()))
 						it.remove();

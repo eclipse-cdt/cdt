@@ -21,7 +21,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTImplicitDestructorName extends IASTImplicitName {
-	public static final IASTImplicitDestructorName[] EMPTY_NAME_ARRAY = {}; 
+	public static final IASTImplicitDestructorName[] EMPTY_NAME_ARRAY = {};
 
 	/**
 	 * Returns the name corresponding to the constructor call.

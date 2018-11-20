@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
-
 import lpg.lpgjavaruntime.PrsStream;
 
 /**
@@ -27,16 +26,15 @@ import lpg.lpgjavaruntime.PrsStream;
  * @author Mike Kucera
  */
 public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
-	
+
 	/** The token object that is being wrapped */
 	private final org.eclipse.cdt.core.parser.IToken token;
-	
-	
+
 	private int tokenIndex;
 	private int adjunctIndex;
-	
+
 	private int kind;
-	
+
 	public LPGTokenAdapter(org.eclipse.cdt.core.parser.IToken token, int parserKind) {
 		this.token = token;
 		this.kind = parserKind;
@@ -45,7 +43,7 @@ public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
 	public org.eclipse.cdt.core.parser.IToken getWrappedToken() {
 		return token;
 	}
-	
+
 	@Override
 	public int getAdjunctIndex() {
 		return adjunctIndex;
@@ -138,9 +136,9 @@ public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
 		this.tokenIndex = tokenIndex;
 	}
 
-	@Override 
+	@Override
 	public String toString() {
 		return token.toString();
 	}
-	
+
 }

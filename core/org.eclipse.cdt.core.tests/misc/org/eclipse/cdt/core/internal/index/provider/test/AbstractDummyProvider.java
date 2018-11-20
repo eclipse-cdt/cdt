@@ -24,8 +24,9 @@ import org.eclipse.core.runtime.CoreException;
  * project lifecycles.
  */
 public class AbstractDummyProvider implements IReadOnlyPDOMProvider {
-	public AbstractDummyProvider() {}
-	
+	public AbstractDummyProvider() {
+	}
+
 	@Override
 	public IPDOMDescriptor[] getDescriptors(ICConfigurationDescription config) {
 		if (!DummyProviderTraces.getInstance().enabled)
@@ -33,7 +34,7 @@ public class AbstractDummyProvider implements IReadOnlyPDOMProvider {
 		DummyProviderTraces.getInstance().getCfgsTrace(getClass()).add(config);
 		return new IPDOMDescriptor[0];
 	}
-	
+
 	@Override
 	public boolean providesFor(ICProject project) throws CoreException {
 		if (!DummyProviderTraces.getInstance().enabled)

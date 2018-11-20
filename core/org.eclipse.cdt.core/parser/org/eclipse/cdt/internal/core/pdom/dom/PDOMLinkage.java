@@ -69,7 +69,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage, IIndexBindingConstants {
 	// Record offsets.
-	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
+	private static final int ID_OFFSET = PDOMNamedNode.RECORD_SIZE + 0;
 	private static final int NEXT_OFFSET = PDOMNamedNode.RECORD_SIZE + 4;
 	private static final int INDEX_OFFSET = PDOMNamedNode.RECORD_SIZE + 8;
 	private static final int NESTED_BINDINGS_INDEX = PDOMNamedNode.RECORD_SIZE + 12;
@@ -79,7 +79,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
 	protected static final long[] FILE_LOCAL_REC_DUMMY = new long[] { 0 };
 
-	private BTree fMacroIndex= null;  // No need for volatile, all fields of BTree are final.
+	private BTree fMacroIndex = null; // No need for volatile, all fields of BTree are final.
 	private final PDOM fPDOM;
 	private final Database fDatabase;
 
@@ -93,19 +93,19 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return new HashSet<>();
 		}
 	};
-	
+
 	public PDOMLinkage(PDOM pdom, long record) {
 		super(null, record);
-		fPDOM= pdom;
-		fDatabase= pdom.getDB();
+		fPDOM = pdom;
+		fDatabase = pdom.getDB();
 	}
 
 	protected PDOMLinkage(PDOM pdom, String linkageID, char[] name) throws CoreException {
 		super(pdom.getDB(), name);
-		final Database db= pdom.getDB();
+		final Database db = pdom.getDB();
 
-		fPDOM= pdom;
-		fDatabase= db;
+		fPDOM = pdom;
+		fDatabase = db;
 		db.putRecPtr(record + ID_OFFSET, db.newString(linkageID).getRecord());
 		pdom.insertLinkage(this);
 	}
@@ -121,7 +121,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	@Override
-	public final Database getDB()  {
+	public final Database getDB() {
 		return fDatabase;
 	}
 
@@ -171,9 +171,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				public int compare(long record) throws CoreException {
 					return 0;
 				}
+
 				@Override
 				public boolean visit(long record) throws CoreException {
-					PDOMNode node= PDOMNode.load(fPDOM, record);
+					PDOMNode node = PDOMNode.load(fPDOM, record);
 					if (node != null) {
 						if (visitor.visit(node))
 							node.accept(visitor);
@@ -191,7 +192,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public final PDOMBinding getBinding(long record) throws CoreException {
-		final PDOMNode node= PDOMNode.load(fPDOM, record);
+		final PDOMNode node = PDOMNode.load(fPDOM, record);
 		if (node instanceof PDOMBinding)
 			return (PDOMBinding) node;
 		return null;
@@ -221,7 +222,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	protected final PDOMBinding attemptFastAdaptBinding(final IBinding binding) throws CoreException {
-		PDOMBinding pdomBinding= binding.getAdapter(PDOMBinding.class);
+		PDOMBinding pdomBinding = binding.getAdapter(PDOMBinding.class);
 		// There is no guarantee, that the binding is from the same PDOM object.
 		if (pdomBinding != null && pdomBinding.getPDOM() == fPDOM) {
 			return pdomBinding;
@@ -238,14 +239,14 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 
 	final protected long getLocalToFileRec(PDOMNode parent, IBinding binding, PDOMBinding glob) throws CoreException {
-		long rec= 0;
+		long rec = 0;
 		if (parent instanceof PDOMBinding) {
-			rec= ((PDOMBinding) parent).getLocalToFileRec();
+			rec = ((PDOMBinding) parent).getLocalToFileRec();
 		}
 		if (rec == 0) {
-			PDOMFile file= getLocalToFile(binding, glob);
+			PDOMFile file = getLocalToFile(binding, glob);
 			if (file != null) {
-				rec= file.getRecord();
+				rec = file.getRecord();
 			}
 		}
 		return rec;
@@ -253,26 +254,27 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	protected PDOMFile getLocalToFile(IBinding binding, PDOMBinding glob) throws CoreException {
 		if (fPDOM instanceof WritablePDOM) {
-			final WritablePDOM wpdom= (WritablePDOM) fPDOM;
+			final WritablePDOM wpdom = (WritablePDOM) fPDOM;
 			if (binding instanceof IField) {
 				return null;
 			}
-			boolean checkIfInSourceOnly= false;
-			boolean requireDefinition= false;
+			boolean checkIfInSourceOnly = false;
+			boolean requireDefinition = false;
 			if (binding instanceof IVariable) {
 				if (!(binding instanceof IField)) {
-					checkIfInSourceOnly= ((IVariable) binding).isStatic();
+					checkIfInSourceOnly = ((IVariable) binding).isStatic();
 				}
 			} else if (binding instanceof IFunction) {
-				IFunction f= (IFunction) binding;
-				checkIfInSourceOnly= ASTInternal.isStatic(f, false);
-			} else if (binding instanceof ITypedef || binding instanceof ICompositeType || binding instanceof IEnumeration) {
-				checkIfInSourceOnly= true;
-				requireDefinition= true;
+				IFunction f = (IFunction) binding;
+				checkIfInSourceOnly = ASTInternal.isStatic(f, false);
+			} else if (binding instanceof ITypedef || binding instanceof ICompositeType
+					|| binding instanceof IEnumeration) {
+				checkIfInSourceOnly = true;
+				requireDefinition = true;
 			}
 
 			if (checkIfInSourceOnly) {
-				IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(getPDOM(), binding, requireDefinition, glob);
+				IASTNode node = ASTInternal.getDeclaredInSourceFileOnly(getPDOM(), binding, requireDefinition, glob);
 				if (node != null) {
 					return wpdom.getFileForASTNode(getLinkageID(), node);
 				}
@@ -307,9 +309,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * @since 4.0
 	 */
 	public void onCreateName(PDOMFile file, IASTName name, PDOMName pdomName) throws CoreException {
-		IASTNode parentNode= name.getParent();
+		IASTNode parentNode = name.getParent();
 		if (parentNode instanceof IASTDeclSpecifier) {
-			IASTDeclSpecifier ds= (IASTDeclSpecifier) parentNode;
+			IASTDeclSpecifier ds = (IASTDeclSpecifier) parentNode;
 			if (ds.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 				if (pdomName.getEnclosingDefinitionRecord() != 0) {
 					pdomName.setIsBaseSpecifier();
@@ -358,7 +360,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	public BTree getMacroIndex() {
 		if (fMacroIndex == null) {
-			fMacroIndex= new BTree(getDB(), record + MACRO_BTREE, new FindBinding.MacroBTreeComparator(fDatabase));
+			fMacroIndex = new BTree(getDB(), record + MACRO_BTREE, new FindBinding.MacroBTreeComparator(fDatabase));
 		}
 		return fMacroIndex;
 	}
@@ -368,15 +370,15 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	private PDOMMacroContainer findMacroContainer(final char[] name, final String key) throws CoreException {
-		Object result= fPDOM.getCachedResult(key);
+		Object result = fPDOM.getCachedResult(key);
 		if (result instanceof PDOMMacroContainer) {
 			return ((PDOMMacroContainer) result);
 		}
-		assert result==null;
+		assert result == null;
 
 		MacroContainerFinder visitor = new MacroContainerFinder(this, name);
 		getMacroIndex().accept(visitor);
-		PDOMMacroContainer container= visitor.getMacroContainer();
+		PDOMMacroContainer container = visitor.getMacroContainer();
 		if (container != null) {
 			fPDOM.putCachedResult(key, container);
 		}
@@ -384,10 +386,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public PDOMMacroContainer getMacroContainer(char[] name) throws CoreException {
-		String key= fPDOM.createKeyForCache(record, name);
-		PDOMMacroContainer result= findMacroContainer(name, key);
+		String key = fPDOM.createKeyForCache(record, name);
+		PDOMMacroContainer result = findMacroContainer(name, key);
 		if (result == null) {
-			result= new PDOMMacroContainer(this, name);
+			result = new PDOMMacroContainer(this, name);
 			getMacroIndex().insert(result.getRecord());
 			fPDOM.putCachedResult(key, result);
 		}
@@ -395,7 +397,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public void removeMacroContainer(PDOMMacroContainer container) throws CoreException {
-		String key= fPDOM.createKeyForCache(record, container.getNameCharArray());
+		String key = fPDOM.createKeyForCache(record, container.getNameCharArray());
 		fPDOM.putCachedResult(key, null);
 		getMacroIndex().delete(container.getRecord());
 	}
@@ -415,7 +417,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public PDOMBinding[] getBindingsViaCache(char[] name, IProgressMonitor monitor) throws CoreException {
 		CharArrayMap<PDOMBinding[]> map = getBindingMap();
 		synchronized (map) {
-			PDOMBinding[] result= map.get(name);
+			PDOMBinding[] result = map.get(name);
 			if (result != null)
 				return result;
 		}
@@ -423,7 +425,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		BindingCollector visitor = new BindingCollector(this, name, null, false, false, true);
 		visitor.setMonitor(monitor);
 		getIndex().accept(visitor);
-		PDOMBinding[] result= visitor.getBindings();
+		PDOMBinding[] result = visitor.getBindings();
 		synchronized (map) {
 			map.put(name, result);
 		}
@@ -431,40 +433,45 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	private CharArrayMap<PDOMBinding[]> getBindingMap() {
-		final Long key= getRecord();
+		final Long key = getRecord();
 		final PDOM pdom = getPDOM();
 		@SuppressWarnings("unchecked")
-		Reference<CharArrayMap<PDOMBinding[]>> cached= (Reference<CharArrayMap<PDOMBinding[]>>) pdom.getCachedResult(key);
-		CharArrayMap<PDOMBinding[]> map= cached == null ? null : cached.get();
+		Reference<CharArrayMap<PDOMBinding[]>> cached = (Reference<CharArrayMap<PDOMBinding[]>>) pdom
+				.getCachedResult(key);
+		CharArrayMap<PDOMBinding[]> map = cached == null ? null : cached.get();
 		if (map == null) {
-			map= new CharArrayMap<PDOMBinding[]>();
+			map = new CharArrayMap<PDOMBinding[]>();
 			pdom.putCachedResult(key, new SoftReference<CharArrayMap<?>>(map));
 		}
 		return map;
 	}
 
 	public abstract PDOMBinding addTypeBinding(IBinding binding) throws CoreException;
+
 	public abstract IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException;
+
 	public abstract IBinding unmarshalBinding(ITypeMarshalBuffer buffer) throws CoreException;
+
 	public abstract ICPPEvaluation unmarshalEvaluation(ITypeMarshalBuffer typeMarshalBuffer) throws CoreException;
+
 	public abstract ICPPExecution unmarshalExecution(ITypeMarshalBuffer typeMarhsalBuffer) throws CoreException;
 
 	public void storeType(long offset, IType type) throws CoreException {
-		final Database db= getDB();
+		final Database db = getDB();
 		deleteType(db, offset);
 		storeType(db, offset, type);
 	}
 
 	private void storeType(Database db, long offset, IType type) throws CoreException {
 		if (type != null) {
-			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			TypeMarshalBuffer bc = new TypeMarshalBuffer(this);
 			bc.marshalType(type);
 			storeBuffer(db, offset, bc, Database.TYPE_SIZE);
 		}
 	}
 
 	private void storeBuffer(Database db, long offset, TypeMarshalBuffer buf, int maxInlineSize) throws CoreException {
-		int len= buf.getPosition();
+		int len = buf.getPosition();
 		if (len > 0) {
 			if (len <= maxInlineSize) {
 				db.putBytes(offset, buf.getBuffer(), len);
@@ -504,7 +511,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	private byte[] loadLinkedSerializedData(final Database db, long offset) throws CoreException {
-		long ptr= db.getRecPtr(offset);
+		long ptr = db.getRecPtr(offset);
 		// Read the length in variable-length base-128 encoding, see ITypeMarshalBuffer.putInt(int).
 		int pos = 0;
 		int b = db.getByte(ptr + pos++);
@@ -514,14 +521,14 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			len |= (b & 0x7F) << shift;
 		}
 
-		byte[] data= new byte[len];
+		byte[] data = new byte[len];
 		int bufferPos = 0;
 		while (bufferPos < len) {
 			int chunkLength = len + pos - bufferPos;
 			long chunkPtr = ptr + pos;
 			if (chunkLength > Database.MAX_MALLOC_SIZE) {
 				chunkLength = Database.MAX_MALLOC_SIZE;
-				ptr= db.getRecPtr(chunkPtr);
+				ptr = db.getRecPtr(chunkPtr);
 				chunkPtr += Database.PTR_SIZE;
 				chunkLength -= Database.PTR_SIZE;
 			}
@@ -534,9 +541,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	private void deleteSerializedData(Database db, long offset, int maxInlineSize) throws CoreException {
-		byte firstByte= db.getByte(offset);
+		byte firstByte = db.getByte(offset);
 		if (firstByte == TypeMarshalBuffer.INDIRECT_TYPE) {
-			long chunkPtr= db.getRecPtr(offset + 1);
+			long chunkPtr = db.getRecPtr(offset + 1);
 			long ptr = chunkPtr;
 			// Read the length in variable-length base-128 encoding, see ITypeMarshalBuffer.putInt(int).
 			int b = db.getByte(ptr++);
@@ -551,7 +558,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				int chunkLength = len;
 				if (chunkLength > Database.MAX_MALLOC_SIZE) {
 					chunkLength = Database.MAX_MALLOC_SIZE;
-					ptr= db.getRecPtr(ptr);
+					ptr = db.getRecPtr(ptr);
 					chunkLength -= Database.PTR_SIZE;
 				}
 				db.free(chunkPtr);
@@ -572,9 +579,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return ProblemType.NOT_PERSISTED;
 		}
 		try {
-			final Database db= getDB();
-			final byte firstByte= db.getByte(offset);
-			byte[] data= null;
+			final Database db = getDB();
+			final byte firstByte = db.getByte(offset);
+			byte[] data = null;
 			switch (firstByte) {
 			case TypeMarshalBuffer.INDIRECT_TYPE:
 				data = loadLinkedSerializedData(db, offset + 1);
@@ -584,7 +591,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			case TypeMarshalBuffer.NULL_TYPE:
 				return null;
 			default:
-				data= new byte[Database.TYPE_SIZE];
+				data = new byte[Database.TYPE_SIZE];
 				db.getBytes(offset, data);
 				break;
 			}
@@ -595,14 +602,14 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public void storeBinding(long offset, IBinding binding) throws CoreException {
-		final Database db= getDB();
+		final Database db = getDB();
 		deleteBinding(db, offset);
 		storeBinding(db, offset, binding);
 	}
 
 	private void storeBinding(Database db, long offset, IBinding binding) throws CoreException {
 		if (binding != null) {
-			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			TypeMarshalBuffer bc = new TypeMarshalBuffer(this);
 			bc.marshalBinding(binding);
 			storeBuffer(db, offset, bc, Database.TYPE_SIZE);
 		}
@@ -613,9 +620,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public IBinding loadBinding(long offset) throws CoreException {
-		final Database db= getDB();
-		final byte firstByte= db.getByte(offset);
-		byte[] data= null;
+		final Database db = getDB();
+		final byte firstByte = db.getByte(offset);
+		byte[] data = null;
 		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
 			data = loadLinkedSerializedData(db, offset + 1);
@@ -625,7 +632,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		case TypeMarshalBuffer.NULL_TYPE:
 			return null;
 		default:
-			data= new byte[Database.TYPE_SIZE];
+			data = new byte[Database.TYPE_SIZE];
 			db.getBytes(offset, data);
 			break;
 		}
@@ -633,14 +640,14 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public void storeTemplateArgument(long offset, ICPPTemplateArgument arg) throws CoreException {
-		final Database db= getDB();
+		final Database db = getDB();
 		deleteArgument(db, offset);
 		storeArgument(db, offset, arg);
 	}
 
 	private void storeArgument(Database db, long offset, ICPPTemplateArgument arg) throws CoreException {
 		if (arg != null) {
-			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			TypeMarshalBuffer bc = new TypeMarshalBuffer(this);
 			bc.marshalTemplateArgument(arg);
 			storeBuffer(db, offset, bc, Database.ARGUMENT_SIZE);
 		}
@@ -651,9 +658,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public ICPPTemplateArgument loadTemplateArgument(long offset) throws CoreException {
-		final Database db= getDB();
-		final byte firstByte= db.getByte(offset);
-		byte[] data= null;
+		final Database db = getDB();
+		final byte firstByte = db.getByte(offset);
+		byte[] data = null;
 		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
 			data = loadLinkedSerializedData(db, offset + 1);
@@ -662,7 +669,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		case TypeMarshalBuffer.NULL_TYPE:
 			return null;
 		default:
-			data= new byte[Database.ARGUMENT_SIZE];
+			data = new byte[Database.ARGUMENT_SIZE];
 			db.getBytes(offset, data);
 			break;
 		}
@@ -670,14 +677,14 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public void storeValue(long offset, IValue value) throws CoreException {
-		final Database db= getDB();
+		final Database db = getDB();
 		deleteValue(db, offset);
 		storeValue(db, offset, value);
 	}
 
 	private void storeValue(Database db, long offset, IValue value) throws CoreException {
 		if (value != null) {
-			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			TypeMarshalBuffer bc = new TypeMarshalBuffer(this);
 			bc.marshalValue(value);
 			storeBuffer(db, offset, bc, Database.VALUE_SIZE);
 		}
@@ -697,20 +704,20 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		if (buffer == null)
 			return null;
 		value = buffer.unmarshalValue();
-		if (value!= null)
+		if (value != null)
 			fPDOM.putCachedVariableResult(cacheKey, value);
 		return value;
 	}
 
 	public void storeEvaluation(long offset, ICPPEvaluation eval) throws CoreException {
-		final Database db= getDB();
+		final Database db = getDB();
 		deleteEvaluation(db, offset);
 		storeEvaluation(db, offset, eval);
 	}
 
 	private void storeEvaluation(Database db, long offset, ICPPEvaluation eval) throws CoreException {
 		if (eval != null) {
-			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			TypeMarshalBuffer bc = new TypeMarshalBuffer(this);
 			bc.marshalEvaluation(eval, true);
 			storeBuffer(db, offset, bc, Database.EVALUATION_SIZE);
 		}
@@ -753,8 +760,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	private TypeMarshalBuffer loadBuffer(long offset, int size) throws CoreException {
-		final Database db= getDB();
-		final byte firstByte= db.getByte(offset);
+		final Database db = getDB();
+		final byte firstByte = db.getByte(offset);
 		byte[] data;
 		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
@@ -763,7 +770,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		case TypeMarshalBuffer.NULL_TYPE:
 			return null;
 		default:
-			data= new byte[size];
+			data = new byte[size];
 			db.getBytes(offset, data);
 			break;
 		}

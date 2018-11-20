@@ -29,11 +29,12 @@ public class FileContextData implements IFileContextData {
 	private IPath fOutputFileLocation;
 	private IOptionContextData fOptionContextData;
 
-	public FileContextData(IPath inputFileLocation, IPath outputFileLocation, IOption option, IBuildObject optionParent){
-		this(inputFileLocation, outputFileLocation, new OptionContextData(option,optionParent));
+	public FileContextData(IPath inputFileLocation, IPath outputFileLocation, IOption option,
+			IBuildObject optionParent) {
+		this(inputFileLocation, outputFileLocation, new OptionContextData(option, optionParent));
 	}
 
-	public FileContextData(IPath inputFileLocation, IPath outputFileLocation, IOptionContextData optionContextData){
+	public FileContextData(IPath inputFileLocation, IPath outputFileLocation, IOptionContextData optionContextData) {
 		fInputFileLocation = inputFileLocation;
 		fOutputFileLocation = outputFileLocation;
 		fOptionContextData = optionContextData;

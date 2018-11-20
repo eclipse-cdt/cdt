@@ -26,8 +26,7 @@ import org.eclipse.cdt.managedbuilder.tcmodification.IFileInfoModification;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
-public class FileInfoModification extends
-		ToolListModification implements IFileInfoModification {
+public class FileInfoModification extends ToolListModification implements IFileInfoModification {
 	private String fFileExt;
 	private Set<IPath> fApplPathSet;
 	private IProject fProject;
@@ -59,7 +58,7 @@ public class FileInfoModification extends
 
 	@Override
 	protected Set<IPath> getToolApplicabilityPathSet(Tool realTool, boolean isProject) {
-		if(fApplPathSet == null){
+		if (fApplPathSet == null) {
 			Set<IPath> s = new HashSet<IPath>(1);
 			s.add(getResourceInfo().getPath());
 			fApplPathSet = Collections.unmodifiableSet(s);
@@ -77,17 +76,17 @@ public class FileInfoModification extends
 		return tools;
 	}
 
-	private String getFileExtension(){
-		if(fFileExt == null){
+	private String getFileExtension() {
+		if (fFileExt == null) {
 			fFileExt = getResourceInfo().getPath().getFileExtension();
-			if(fFileExt == null)
+			if (fFileExt == null)
 				fFileExt = ""; //$NON-NLS-1$
 		}
 		return fFileExt;
 	}
 
-	private IProject getProject(){
-		if(fProject == null){
+	private IProject getProject() {
+		if (fProject == null) {
 			fProject = getResourceInfo().getParent().getOwner().getProject();
 		}
 		return fProject;
@@ -95,12 +94,12 @@ public class FileInfoModification extends
 
 	@Override
 	public void restoreDefaults() {
-//		3.per-file : change to the tool from the parent folder's tool-chain suitable
-//		for the given file. NOTE: the custom build step tool should be preserved!
-		ResourceConfiguration rcInfo = (ResourceConfiguration)getResourceInfo();
+		//		3.per-file : change to the tool from the parent folder's tool-chain suitable
+		//		for the given file. NOTE: the custom build step tool should be preserved!
+		ResourceConfiguration rcInfo = (ResourceConfiguration) getResourceInfo();
 		IFolderInfo parentFo = rcInfo.getParentFolderInfo();
 		String ext = rcInfo.getPath().getFileExtension();
-		if(ext == null)
+		if (ext == null)
 			ext = ""; //$NON-NLS-1$
 
 		ITool tool = parentFo.getToolFromInputExtension(ext);
@@ -108,16 +107,16 @@ public class FileInfoModification extends
 		boolean add = true;
 
 		ITool[] curTools = getProjectTools();
-		for(int i = 0; i < curTools.length; i++){
+		for (int i = 0; i < curTools.length; i++) {
 			ITool cur = curTools[i];
-			if(ManagedBuildManager.getRealTool(cur) == realTool){
+			if (ManagedBuildManager.getRealTool(cur) == realTool) {
 				add = false;
-			} else if (!cur.getCustomBuildStep()){
+			} else if (!cur.getCustomBuildStep()) {
 				changeProjectTools(cur, null);
 			}
 		}
 
-		if(add && tool != null)
+		if (add && tool != null)
 			changeProjectTools(null, tool);
 	}
 }

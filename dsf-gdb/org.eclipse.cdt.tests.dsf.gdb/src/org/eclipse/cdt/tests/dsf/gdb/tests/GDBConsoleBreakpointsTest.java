@@ -79,7 +79,7 @@ import org.junit.runners.Parameterized;
  * This test case verifies whether breakpoints or watchpoints set from GDB console
  * are properly synchronized with platform breakpoints.
  */
-@SuppressWarnings( "restriction" )
+@SuppressWarnings("restriction")
 @RunWith(Parameterized.class)
 public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 
@@ -108,7 +108,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 
 	private DsfSession fSession;
 	private DsfServicesTracker fServicesTracker;
-    protected IBreakpointsTargetDMContext fBreakpointsDmc;
+	protected IBreakpointsTargetDMContext fBreakpointsDmc;
 	private IGDBControl fCommandControl;
 	private IBreakpoints fBreakpointService;
 	private MIBreakpointsSynchronizer fBreakpointsSynchronizer;
@@ -119,34 +119,34 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	@Before
 	public void doBeforeTest() throws Exception {
 		deleteAllPlatformBreakpoints();
-		
+
 		super.doBeforeTest();
-        
+
 		Runnable runnable = new Runnable() {
-            @Override
+			@Override
 			public void run() {
-                fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-                Assert.assertTrue(fServicesTracker != null);
-        		    
-                fCommandControl = fServicesTracker.getService(IGDBControl.class);
-                Assert.assertTrue(fCommandControl != null);
+				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+				Assert.assertTrue(fServicesTracker != null);
 
-                fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
-                Assert.assertTrue(fBreakpointService != null);
-                
-                fBreakpointsSynchronizer = fServicesTracker.getService(MIBreakpointsSynchronizer.class);
-                Assert.assertTrue(fBreakpointsSynchronizer != null);
+				fCommandControl = fServicesTracker.getService(IGDBControl.class);
+				Assert.assertTrue(fCommandControl != null);
 
-                // Register to breakpoint events
-                fSession.addServiceEventListener(GDBConsoleBreakpointsTest.this, null);
-            }
-        };
+				fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
+				Assert.assertTrue(fBreakpointService != null);
+
+				fBreakpointsSynchronizer = fServicesTracker.getService(MIBreakpointsSynchronizer.class);
+				Assert.assertTrue(fBreakpointsSynchronizer != null);
+
+				// Register to breakpoint events
+				fSession.addServiceEventListener(GDBConsoleBreakpointsTest.this, null);
+			}
+		};
 		fSession = getGDBLaunch().getSession();
-        fSession.getExecutor().submit(runnable).get();
+		fSession.getExecutor().submit(runnable).get();
 
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-        fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
-        Assert.assertTrue(fBreakpointsDmc != null);
+		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+		Assert.assertTrue(fBreakpointsDmc != null);
 	}
 
 	@Override
@@ -158,34 +158,29 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		}
 
 		fBreakpointEvents.clear();
-        if (fServicesTracker != null) {
-            fServicesTracker.dispose();
-        	fServicesTracker = null;
-        }
-		
-        super.doAfterTest();
-		
+		if (fServicesTracker != null) {
+			fServicesTracker.dispose();
+			fServicesTracker = null;
+		}
+
+		super.doAfterTest();
+
 		deleteAllPlatformBreakpoints();
 	}
 
 	@Test
 	public void testValidLineBreakpoints() throws Throwable {
-		testConsoleBreakpoint(
-				ICLineBreakpoint.class, 
-				getLocationBreakpointAttributes(ICLineBreakpoint.class, true));
+		testConsoleBreakpoint(ICLineBreakpoint.class, getLocationBreakpointAttributes(ICLineBreakpoint.class, true));
 	}
 
 	@Test
 	public void testInvalidLineBreakpoints() throws Throwable {
-		testConsoleBreakpoint(
-				ICLineBreakpoint.class, 
-				getLocationBreakpointAttributes(ICLineBreakpoint.class, false));
+		testConsoleBreakpoint(ICLineBreakpoint.class, getLocationBreakpointAttributes(ICLineBreakpoint.class, false));
 	}
 
 	@Test
 	public void testValidFunctionBreakpoints() throws Throwable {
-		testConsoleBreakpoint(
-				ICFunctionBreakpoint.class, 
+		testConsoleBreakpoint(ICFunctionBreakpoint.class,
 				getLocationBreakpointAttributes(ICFunctionBreakpoint.class, true));
 	}
 
@@ -193,15 +188,12 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	public void testValidFunctionNameOnlyBreakpoints() throws Throwable {
 		Map<String, Object> breakpointAttributes = getLocationBreakpointAttributes(ICFunctionBreakpoint.class, true);
 		breakpointAttributes.remove(ATTR_FILE_NAME);
-		testConsoleBreakpoint(
-				ICFunctionBreakpoint.class, 
-				breakpointAttributes);
+		testConsoleBreakpoint(ICFunctionBreakpoint.class, breakpointAttributes);
 	}
 
 	@Test
 	public void testInvalidFunctionBreakpoints() throws Throwable {
-		testConsoleBreakpoint(
-				ICFunctionBreakpoint.class, 
+		testConsoleBreakpoint(ICFunctionBreakpoint.class,
 				getLocationBreakpointAttributes(ICFunctionBreakpoint.class, false));
 	}
 
@@ -209,52 +201,42 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	public void testInvalidFunctionNameOnlyBreakpoints() throws Throwable {
 		Map<String, Object> breakpointAttributes = getLocationBreakpointAttributes(ICFunctionBreakpoint.class, false);
 		breakpointAttributes.remove(ATTR_FILE_NAME);
-		testConsoleBreakpoint(
-				ICFunctionBreakpoint.class, 
-				breakpointAttributes);
+		testConsoleBreakpoint(ICFunctionBreakpoint.class, breakpointAttributes);
 	}
 
 	@Test
 	public void testValidAddressBreakpoints() throws Throwable {
-		testConsoleBreakpoint(
-				ICAddressBreakpoint.class, 
+		testConsoleBreakpoint(ICAddressBreakpoint.class,
 				getLocationBreakpointAttributes(ICAddressBreakpoint.class, true));
 	}
 
 	@Test
 	public void testAddressBreakpointsAtZeroAddress() throws Throwable {
-		testConsoleBreakpoint(
-				ICAddressBreakpoint.class, 
+		testConsoleBreakpoint(ICAddressBreakpoint.class,
 				getLocationBreakpointAttributes(ICAddressBreakpoint.class, false));
 	}
 
 	@Test
 	public void testWriteWatchpoints() throws Throwable {
-		testConsoleBreakpoint(
-				ICWatchpoint.class, 
-				getWatchpointAttributes(ICWatchpoint.class, false, true));
+		testConsoleBreakpoint(ICWatchpoint.class, getWatchpointAttributes(ICWatchpoint.class, false, true));
 	}
 
 	@Test
 	public void testReadWatchpoints() throws Throwable {
-		testConsoleBreakpoint(
-				ICWatchpoint.class, 
-				getWatchpointAttributes(ICWatchpoint.class, true, false));
+		testConsoleBreakpoint(ICWatchpoint.class, getWatchpointAttributes(ICWatchpoint.class, true, false));
 	}
 
 	@Test
 	public void testAccessWatchpoints() throws Throwable {
-		testConsoleBreakpoint(
-				ICWatchpoint.class, 
-				getWatchpointAttributes(ICWatchpoint.class, true, true));
+		testConsoleBreakpoint(ICWatchpoint.class, getWatchpointAttributes(ICWatchpoint.class, true, true));
 	}
-	
+
 	/**
 	 * Shortcut to CDIDebugModel.createFunctionBreakpoint
 	 */
 	private static void createFunctionBreakpoint(String filename, String function) throws CoreException {
-		CDIDebugModel.createFunctionBreakpoint(filename, ResourcesPlugin.getWorkspace().getRoot(), 0,
-				function, -1, -1, -1, true, 0, "", true);
+		CDIDebugModel.createFunctionBreakpoint(filename, ResourcesPlugin.getWorkspace().getRoot(), 0, function, -1, -1,
+				-1, true, 0, "", true);
 	}
 
 	private List<IBreakpoint> getPlatformBreakpoints(Predicate<IBreakpoint> predicate) {
@@ -405,7 +387,6 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		assertEquals(0, getTargetBreakpoints().length);
 	}
 
-
 	/**
 	 * Check that console inserted breakpoint with explicit file shares platform breakpoint
 	 * with a file. This means that when the 1 platform breakpoint is deleted, both
@@ -496,10 +477,10 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 
 	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsChangedEvent e) {
-  		synchronized(this) {
-  			fBreakpointEvents.add(e);
-  			notifyAll();
-  		}
+		synchronized (this) {
+			fBreakpointEvents.add(e);
+			notifyAll();
+		}
 	}
 
 	/**
@@ -527,7 +508,8 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		}
 	}
 
-	private void testConsoleBreakpointStandard(Class<? extends ICBreakpoint> type, Map<String, Object> attributes, Runnable flushCache) throws Throwable {
+	private void testConsoleBreakpointStandard(Class<? extends ICBreakpoint> type, Map<String, Object> attributes,
+			Runnable flushCache) throws Throwable {
 		// Set a console breakpoint and verify that 
 		// the corresponding platform breakpoint is created 
 		// and its install count is 1 if the breakpoint is installed
@@ -546,13 +528,12 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		if (!miBpts[0].isPending()) {
 			// If the target breakpoint is not pending wait
 			// until the install count becomes 1.
-			waitForInstallCountChange((CBreakpoint)plBpt, 1);
-		}
-		else {
+			waitForInstallCountChange((CBreakpoint) plBpt, 1);
+		} else {
 			// For pending breakpoints the install count is expected to remain 
 			// unchanged. Give it some time and verify that it is 0.
 			Thread.sleep(1000);
-			Assert.assertTrue(((CBreakpoint)plBpt).getInstallCount() == 0);
+			Assert.assertTrue(((CBreakpoint) plBpt).getInstallCount() == 0);
 		}
 
 		// Disable the console breakpoint and verify that 
@@ -593,15 +574,14 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		Assert.assertTrue(getPlatformBreakpointCount() == 1);
 		plBpt = findPlatformBreakpoint(type, attributes);
 		Assert.assertTrue(plBpt instanceof CBreakpoint);
-		waitForInstallCountChange((CBreakpoint)plBpt, 0);
-		
+		waitForInstallCountChange((CBreakpoint) plBpt, 0);
+
 		// Make sure the breakpoint does not get re-installed
 		// once it gets a notification that the platform bp changed
 		// (through its install count changing) Bug 433044
 		// Give it some time and verify that it is still 0.
-		Thread.sleep(3000);  // One second was not enough
-		Assert.assertTrue("Install count no longer 0",
-				          ((CBreakpoint)plBpt).getInstallCount() == 0);
+		Thread.sleep(3000); // One second was not enough
+		Assert.assertTrue("Install count no longer 0", ((CBreakpoint) plBpt).getInstallCount() == 0);
 
 		// Set the console breakpoint again and verify that 
 		// the install count of the platform breakpoint is 1 
@@ -612,7 +592,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
 		Assert.assertTrue(getPlatformBreakpointCount() == 1);
-		
+
 		// Give a little delay to allow queued Executor operations
 		// to complete before deleting the breakpoint again.
 		// If we don't we may delete it so fast that the MIBreakpointsManager
@@ -623,19 +603,18 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		plBpt = findPlatformBreakpoint(type, attributes);
 		Assert.assertTrue(plBpt instanceof CBreakpoint);
 		if (!miBpts[0].isPending()) {
-			waitForInstallCountChange((CBreakpoint)plBpt, 1);
-		}
-		else {
+			waitForInstallCountChange((CBreakpoint) plBpt, 1);
+		} else {
 			// For pending breakpoints the install count is expected to remain 
 			// unchanged. Give it some time and verify that it is 0.
 			Thread.sleep(1000);
-			Assert.assertTrue(((CBreakpoint)plBpt).getInstallCount() == 0);
+			Assert.assertTrue(((CBreakpoint) plBpt).getInstallCount() == 0);
 		}
 
 		// Remove the platform breakpoint and verify that 
 		// the target breakpoint is deleted.
 		deletePlatformBreakpoint(plBpt);
-		
+
 		// Don't fail right away if we don't get the breakpoint event
 		// as we can't tell the true cause.
 		// Let further checks happen to help figure things out.
@@ -646,25 +625,27 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		} catch (Exception e) {
 			failure += e.getMessage();
 		}
-		
+
 		int platformBp = getPlatformBreakpointCount();
 		if (platformBp != 0) {
-			if (!failure.isEmpty()) failure += ", "; 
+			if (!failure.isEmpty())
+				failure += ", ";
 			failure += "Platform breakpoints remaining: " + platformBp;
 		}
-		
+
 		miBpts = getTargetBreakpoints();
 		if (miBpts.length != 0) {
-			if (!failure.isEmpty()) failure += ", "; 
+			if (!failure.isEmpty())
+				failure += ", ";
 			failure += "Target breakpoints remaining: " + miBpts.length;
 		}
-		
+
 		Assert.assertTrue(failure, failure.isEmpty());
 	}
 
-  	private void setConsoleLineBreakpoint(String fileName, int lineNumber) throws Throwable {
-  		queueConsoleCommand(String.format("break %s:%d", fileName, lineNumber));
-  	}
+	private void setConsoleLineBreakpoint(String fileName, int lineNumber) throws Throwable {
+		queueConsoleCommand(String.format("break %s:%d", fileName, lineNumber));
+	}
 
 	private void setConsoleFunctionBreakpoint(String fileName, String function) throws Throwable {
 		if (fileName == null) {
@@ -674,39 +655,38 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		}
 	}
 
-  	private void setConsoleAddressBreakpoint(String address) throws Throwable {
-  		queueConsoleCommand(String.format("break *%s", address));
-  	}
+	private void setConsoleAddressBreakpoint(String address) throws Throwable {
+		queueConsoleCommand(String.format("break *%s", address));
+	}
 
-  	private void setConsoleWatchpoint(String expression, boolean read, boolean write) throws Throwable {
-  		String command = (write) ? ((read) ? "awatch" : "watch") : "rwatch";
-  		queueConsoleCommand(String.format("%s %s", command, expression));
-  	}
+	private void setConsoleWatchpoint(String expression, boolean read, boolean write) throws Throwable {
+		String command = (write) ? ((read) ? "awatch" : "watch") : "rwatch";
+		queueConsoleCommand(String.format("%s %s", command, expression));
+	}
 
-  	private void deleteConsoleBreakpoint(String bpId) throws Throwable {
-  		queueConsoleCommand(String.format("delete %s", bpId));
-  	}
+	private void deleteConsoleBreakpoint(String bpId) throws Throwable {
+		queueConsoleCommand(String.format("delete %s", bpId));
+	}
 
-  	private void enableConsoleBreakpoint(String bpId, boolean enable) throws Throwable {
-  		String cmd = (enable) ? "enable" : "disable";
-  		queueConsoleCommand(String.format("%s %s", cmd, bpId));
-  	}
+	private void enableConsoleBreakpoint(String bpId, boolean enable) throws Throwable {
+		String cmd = (enable) ? "enable" : "disable";
+		queueConsoleCommand(String.format("%s %s", cmd, bpId));
+	}
 
-  	private void setConsoleBreakpointCondition(String bpId, String condition) throws Throwable {
-  		queueConsoleCommand(String.format("condition %s %s", bpId, condition));
-  	}
+	private void setConsoleBreakpointCondition(String bpId, String condition) throws Throwable {
+		queueConsoleCommand(String.format("condition %s %s", bpId, condition));
+	}
 
-  	private MIBreakpoint[] getTargetBreakpoints() throws Throwable {
-  		return getTargetBreakpoints(DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
-  	}
+	private MIBreakpoint[] getTargetBreakpoints() throws Throwable {
+		return getTargetBreakpoints(DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
+	}
 
-  	private MIBreakpoint[] getTargetBreakpoints(int timeout, TimeUnit unit) throws Throwable {
+	private MIBreakpoint[] getTargetBreakpoints(int timeout, TimeUnit unit) throws Throwable {
 		Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakListInfo> rm) {
-				fCommandControl.queueCommand(
-					fCommandControl.getCommandFactory().createMIBreakList(fBreakpointsDmc), 
-					rm);
+				fCommandControl.queueCommand(fCommandControl.getCommandFactory().createMIBreakList(fBreakpointsDmc),
+						rm);
 			}
 		};
 		fSession.getExecutor().execute(query);
@@ -733,196 +713,176 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		}
 	}
 
-  	private void queueConsoleCommand(String command) throws Throwable {
-  		queueConsoleCommand(command, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
-  	}
+	private void queueConsoleCommand(String command) throws Throwable {
+		queueConsoleCommand(command, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
+	}
 
-  	private void queueConsoleCommand(final String command, int timeout, TimeUnit unit) throws Throwable {
+	private void queueConsoleCommand(final String command, int timeout, TimeUnit unit) throws Throwable {
 		Query<MIInfo> query = new Query<MIInfo>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
-				fCommandControl.queueCommand(
-					fCommandControl.getCommandFactory().createMIInterpreterExecConsole(
-						fCommandControl.getContext(), 
-						command),
-					rm);
+				fCommandControl.queueCommand(fCommandControl.getCommandFactory()
+						.createMIInterpreterExecConsole(fCommandControl.getContext(), command), rm);
 			}
 		};
 		fSession.getExecutor().execute(query);
 		query.get(timeout, unit);
-  	}
+	}
 
-  	private ICLineBreakpoint findPlatformLineBreakpoint(String fileName, int lineNumber) throws Throwable {
-  		for(IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
-  			if (b instanceof ICLineBreakpoint 
-  				&& fileName.equals(((ICLineBreakpoint)b).getSourceHandle()) 
-  				&& lineNumber == ((ICLineBreakpoint)b).getLineNumber()) {
-  				return (ICLineBreakpoint)b;
-  			}
-  		}
-  		return null;
-  	}
+	private ICLineBreakpoint findPlatformLineBreakpoint(String fileName, int lineNumber) throws Throwable {
+		for (IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
+			if (b instanceof ICLineBreakpoint && fileName.equals(((ICLineBreakpoint) b).getSourceHandle())
+					&& lineNumber == ((ICLineBreakpoint) b).getLineNumber()) {
+				return (ICLineBreakpoint) b;
+			}
+		}
+		return null;
+	}
 
-  	private ICFunctionBreakpoint findPlatformFunctionBreakpoint(String fileName, String function) throws Throwable {
-  		for(IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
-  			if (b instanceof ICFunctionBreakpoint 
-  				&& Objects.equals(fileName, ((ICLineBreakpoint)b).getSourceHandle())
-  				&& function.equals(((ICLineBreakpoint)b).getFunction())) {
-  				return (ICFunctionBreakpoint)b;
-  			}
-  		}
-  		return null;
-  	}
+	private ICFunctionBreakpoint findPlatformFunctionBreakpoint(String fileName, String function) throws Throwable {
+		for (IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
+			if (b instanceof ICFunctionBreakpoint && Objects.equals(fileName, ((ICLineBreakpoint) b).getSourceHandle())
+					&& function.equals(((ICLineBreakpoint) b).getFunction())) {
+				return (ICFunctionBreakpoint) b;
+			}
+		}
+		return null;
+	}
 
-  	private ICAddressBreakpoint findPlatformAddressBreakpoint(String address) throws Throwable {
-  		Addr64 a = new Addr64(address);
-  		for(IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
-  			if (b instanceof ICAddressBreakpoint 
-  				&& a.toHexAddressString().equals(((ICAddressBreakpoint)b).getAddress())) {
-  				return (ICAddressBreakpoint)b;
-  			}
-  		}
-  		return null;
-  	}
+	private ICAddressBreakpoint findPlatformAddressBreakpoint(String address) throws Throwable {
+		Addr64 a = new Addr64(address);
+		for (IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
+			if (b instanceof ICAddressBreakpoint
+					&& a.toHexAddressString().equals(((ICAddressBreakpoint) b).getAddress())) {
+				return (ICAddressBreakpoint) b;
+			}
+		}
+		return null;
+	}
 
-  	private ICWatchpoint findPlatformWatchpoint(String expression, boolean read, boolean write) throws Throwable {
-  		for(IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
-  			if (b instanceof ICWatchpoint 
-  				&& ((ICWatchpoint)b).isReadType() == read
-  				&& ((ICWatchpoint)b).isWriteType() == write) {
-  				return (ICWatchpoint)b;
-  			}
-  		}
-  		return null;
-  	}
+	private ICWatchpoint findPlatformWatchpoint(String expression, boolean read, boolean write) throws Throwable {
+		for (IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
+			if (b instanceof ICWatchpoint && ((ICWatchpoint) b).isReadType() == read
+					&& ((ICWatchpoint) b).isWriteType() == write) {
+				return (ICWatchpoint) b;
+			}
+		}
+		return null;
+	}
 
-  	private void deletePlatformBreakpoint(final IBreakpoint plBpt) throws Throwable {
-  		new Job("") {
-			
+	private void deletePlatformBreakpoint(final IBreakpoint plBpt) throws Throwable {
+		new Job("") {
+
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-		  		IStatus result = Status.OK_STATUS;
+				IStatus result = Status.OK_STATUS;
 				try {
 					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(plBpt, true);
-				}
-				catch(CoreException e) {
+				} catch (CoreException e) {
 					result = e.getStatus();
 				}
 				return result;
 			}
 		}.schedule();
-  	}
+	}
 
-  	private int getPlatformBreakpointCount() {
-  		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length;
-  	}
+	private int getPlatformBreakpointCount() {
+		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length;
+	}
 
-  	private void waitForInstallCountChange(CBreakpoint plBpt, int expected) throws Throwable {
-  		waitForInstallCountChange(plBpt, expected, DEFAULT_TIMEOUT);
-  	}
+	private void waitForInstallCountChange(CBreakpoint plBpt, int expected) throws Throwable {
+		waitForInstallCountChange(plBpt, expected, DEFAULT_TIMEOUT);
+	}
 
-  	private void waitForInstallCountChange(CBreakpoint plBpt, int expected, long timeout) throws Throwable {
+	private void waitForInstallCountChange(CBreakpoint plBpt, int expected, long timeout) throws Throwable {
 		long startMs = System.currentTimeMillis();
-		while(plBpt.getInstallCount() != expected) {
-			synchronized(this) {
+		while (plBpt.getInstallCount() != expected) {
+			synchronized (this) {
 				try {
 					wait(30);
-				} 
-				catch (InterruptedException ex) {
+				} catch (InterruptedException ex) {
 				}
 				if (System.currentTimeMillis() - startMs > timeout) {
 					throw new Exception("Timed out waiting for breakpoint's install count to change");
 				}
 			}
 		}
-  	}
+	}
 
-  	private synchronized boolean breakpointEventReceived(Class<? extends IBreakpointsChangedEvent> eventType) {
+	private synchronized boolean breakpointEventReceived(Class<? extends IBreakpointsChangedEvent> eventType) {
 		for (IBreakpointsChangedEvent e : fBreakpointEvents) {
 			if (eventType.isAssignableFrom(e.getClass())) {
 				return fBreakpointEvents.remove(e);
 			}
 		}
 		return false;
-  	}
+	}
 
-  	private Map<String, Object> getLocationBreakpointAttributes(Class<? extends ICBreakpoint> type, boolean valid) {
-  		Map<String, Object> map = new HashMap<String, Object>();
-  		if (ICFunctionBreakpoint.class.equals(type)) {
-  			map.put(ATTR_FILE_NAME, (valid) ? SOURCE_NAME_VALID : SOURCE_NAME_INVALID);
-  			map.put(ATTR_FUNCTION, (valid) ? FUNCTION_VALID : FUNCTION_INVALID);
-  		}
-  		else if (ICAddressBreakpoint.class.equals(type)) {
-  			// '0x0" is not invalid address
-  			map.put(ATTR_ADDRESS, (valid) ? 
-  					getInitialStoppedEvent().getFrame().getAddress() : 
-  					new Addr64("0x0").toHexAddressString());
-  		}
-  		else if (ICLineBreakpoint.class.equals(type)) {
-  			map.put(ATTR_FILE_NAME, (valid) ? SOURCE_NAME_VALID : SOURCE_NAME_INVALID);
-  			map.put(ATTR_LINE_NUMBER, (valid) ? LINE_NUMBER_VALID : LINE_NUMBER_INVALID);
-  		}
-  		return map;
-  	}
+	private Map<String, Object> getLocationBreakpointAttributes(Class<? extends ICBreakpoint> type, boolean valid) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (ICFunctionBreakpoint.class.equals(type)) {
+			map.put(ATTR_FILE_NAME, (valid) ? SOURCE_NAME_VALID : SOURCE_NAME_INVALID);
+			map.put(ATTR_FUNCTION, (valid) ? FUNCTION_VALID : FUNCTION_INVALID);
+		} else if (ICAddressBreakpoint.class.equals(type)) {
+			// '0x0" is not invalid address
+			map.put(ATTR_ADDRESS, (valid) ? getInitialStoppedEvent().getFrame().getAddress()
+					: new Addr64("0x0").toHexAddressString());
+		} else if (ICLineBreakpoint.class.equals(type)) {
+			map.put(ATTR_FILE_NAME, (valid) ? SOURCE_NAME_VALID : SOURCE_NAME_INVALID);
+			map.put(ATTR_LINE_NUMBER, (valid) ? LINE_NUMBER_VALID : LINE_NUMBER_INVALID);
+		}
+		return map;
+	}
 
-	public Map<String, Object> getWatchpointAttributes(Class<? extends ICWatchpoint> type, boolean read, boolean write) throws Throwable {
-  		Assert.assertTrue(read || write);
-  		Map<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getWatchpointAttributes(Class<? extends ICWatchpoint> type, boolean read, boolean write)
+			throws Throwable {
+		Assert.assertTrue(read || write);
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put(ATTR_EXPRESSION, EXPRESSION_VALID);
 		map.put(ATTR_READ, Boolean.valueOf(read));
 		map.put(ATTR_WRITE, Boolean.valueOf(write));
-  		return map;
-  	}
+		return map;
+	}
 
-  	private void setConsoleBreakpoint(Class<? extends ICBreakpoint> type, Map<String, Object> attributes) throws Throwable {
-  		if (ICFunctionBreakpoint.class.equals(type)) {
-  			setConsoleFunctionBreakpoint(
-  				(String)attributes.get(ATTR_FILE_NAME), 
-  				(String)attributes.get(ATTR_FUNCTION));
-  		}
-  		else if (ICAddressBreakpoint.class.equals(type)) {
-  			setConsoleAddressBreakpoint((String)attributes.get(ATTR_ADDRESS));
-  		}
-  		else if (ICLineBreakpoint.class.equals(type)) {
-  			setConsoleLineBreakpoint(
-  				(String)attributes.get(ATTR_FILE_NAME), 
-  				((Integer)attributes.get(ATTR_LINE_NUMBER)).intValue());
-  		}
-  		else if (ICWatchpoint.class.equals(type)) {
-  			setConsoleWatchpoint(
-  				(String)attributes.get(ATTR_EXPRESSION), 
-  	  			((Boolean)attributes.get(ATTR_READ)).booleanValue(),
-  	  			((Boolean)attributes.get(ATTR_WRITE)).booleanValue());
-  		}
-  	}
+	private void setConsoleBreakpoint(Class<? extends ICBreakpoint> type, Map<String, Object> attributes)
+			throws Throwable {
+		if (ICFunctionBreakpoint.class.equals(type)) {
+			setConsoleFunctionBreakpoint((String) attributes.get(ATTR_FILE_NAME),
+					(String) attributes.get(ATTR_FUNCTION));
+		} else if (ICAddressBreakpoint.class.equals(type)) {
+			setConsoleAddressBreakpoint((String) attributes.get(ATTR_ADDRESS));
+		} else if (ICLineBreakpoint.class.equals(type)) {
+			setConsoleLineBreakpoint((String) attributes.get(ATTR_FILE_NAME),
+					((Integer) attributes.get(ATTR_LINE_NUMBER)).intValue());
+		} else if (ICWatchpoint.class.equals(type)) {
+			setConsoleWatchpoint((String) attributes.get(ATTR_EXPRESSION),
+					((Boolean) attributes.get(ATTR_READ)).booleanValue(),
+					((Boolean) attributes.get(ATTR_WRITE)).booleanValue());
+		}
+	}
 
-  	private ICBreakpoint findPlatformBreakpoint(Class<? extends ICBreakpoint> type, Map<String, Object> attributes) throws Throwable {
-  		if (ICFunctionBreakpoint.class.equals(type)) {
-  			return findPlatformFunctionBreakpoint(
-  				(String)attributes.get(ATTR_FILE_NAME), 
-  				(String)attributes.get(ATTR_FUNCTION));
-  		}
-  		else if (ICAddressBreakpoint.class.equals(type)) {
-  			return findPlatformAddressBreakpoint((String)attributes.get(ATTR_ADDRESS));
-  		}
-  		else if (ICLineBreakpoint.class.equals(type)) {
-  			return findPlatformLineBreakpoint(
-  				(String)attributes.get(ATTR_FILE_NAME), 
-  				((Integer)attributes.get(ATTR_LINE_NUMBER)).intValue());
-  		}
-  		else if (ICWatchpoint.class.equals(type)) {
-  			return findPlatformWatchpoint(
-  				(String)attributes.get(ATTR_EXPRESSION), 
-  				((Boolean)attributes.get(ATTR_READ)).booleanValue(),
-  				((Boolean)attributes.get(ATTR_WRITE)).booleanValue());
-  		}
-  		throw new Exception(String.format("Invalid breakpoint type: %s", type.getName()));
-  	}
+	private ICBreakpoint findPlatformBreakpoint(Class<? extends ICBreakpoint> type, Map<String, Object> attributes)
+			throws Throwable {
+		if (ICFunctionBreakpoint.class.equals(type)) {
+			return findPlatformFunctionBreakpoint((String) attributes.get(ATTR_FILE_NAME),
+					(String) attributes.get(ATTR_FUNCTION));
+		} else if (ICAddressBreakpoint.class.equals(type)) {
+			return findPlatformAddressBreakpoint((String) attributes.get(ATTR_ADDRESS));
+		} else if (ICLineBreakpoint.class.equals(type)) {
+			return findPlatformLineBreakpoint((String) attributes.get(ATTR_FILE_NAME),
+					((Integer) attributes.get(ATTR_LINE_NUMBER)).intValue());
+		} else if (ICWatchpoint.class.equals(type)) {
+			return findPlatformWatchpoint((String) attributes.get(ATTR_EXPRESSION),
+					((Boolean) attributes.get(ATTR_READ)).booleanValue(),
+					((Boolean) attributes.get(ATTR_WRITE)).booleanValue());
+		}
+		throw new Exception(String.format("Invalid breakpoint type: %s", type.getName()));
+	}
 
-  	private void deleteAllPlatformBreakpoints() throws Exception {
-  		IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
-  		for (IBreakpoint b : bm.getBreakpoints()) {
-  			bm.removeBreakpoint(b, true);
-  		}
-  	}
+	private void deleteAllPlatformBreakpoints() throws Exception {
+		IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
+		for (IBreakpoint b : bm.getBreakpoints()) {
+			bm.removeBreakpoint(b, true);
+		}
+	}
 }

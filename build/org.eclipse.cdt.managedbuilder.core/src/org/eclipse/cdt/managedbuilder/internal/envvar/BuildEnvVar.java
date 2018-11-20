@@ -24,31 +24,31 @@ import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
  * @since 3.0
  */
 public class BuildEnvVar extends EnvironmentVariable implements IBuildEnvironmentVariable {
-	protected BuildEnvVar(){
+	protected BuildEnvVar() {
 
 	}
 
-	public BuildEnvVar(String name){
+	public BuildEnvVar(String name) {
 		super(name);
 	}
 
-	public BuildEnvVar(String name, String value){
+	public BuildEnvVar(String name, String value) {
 		super(name, value);
 	}
 
-	public BuildEnvVar(String name, String value, String delimiter){
+	public BuildEnvVar(String name, String value, String delimiter) {
 		super(name, value, delimiter);
 	}
 
-	public BuildEnvVar(String name, String value, int op){
+	public BuildEnvVar(String name, String value, int op) {
 		super(name, value, op, EnvironmentVariableManager.getDefault().getDefaultDelimiter());
 	}
 
-	public BuildEnvVar(String name, String value, int op, String delimiter){
+	public BuildEnvVar(String name, String value, int op, String delimiter) {
 		super(name, value, op, delimiter);
 	}
 
-	public BuildEnvVar(IEnvironmentVariable var){
+	public BuildEnvVar(IEnvironmentVariable var) {
 		super(var);
 	}
 }

@@ -20,11 +20,10 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation
  * @deprecated Replaced by {@link CPPASTExplicitTemplateInstantiation}.
  */
 @Deprecated
-public class GPPASTExplicitTemplateInstantiation extends
-        CPPASTExplicitTemplateInstantiation implements
-        IGPPASTExplicitTemplateInstantiation {
+public class GPPASTExplicitTemplateInstantiation extends CPPASTExplicitTemplateInstantiation
+		implements IGPPASTExplicitTemplateInstantiation {
 
-    public GPPASTExplicitTemplateInstantiation() {
+	public GPPASTExplicitTemplateInstantiation() {
 		super();
 	}
 

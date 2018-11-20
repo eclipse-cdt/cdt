@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.content.IContentType;
  */
 public interface ILanguageDescriptor extends ICExtensionDescriptor {
 	ILanguage getLanguage();
-	
+
 	String[] getContentTypeIds();
 
 	IContentType[] getContentTypes();

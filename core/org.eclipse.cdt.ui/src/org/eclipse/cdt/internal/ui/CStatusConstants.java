@@ -21,19 +21,18 @@ package org.eclipse.cdt.internal.ui;
  * C UI plug-in use the codes defined in this interface.
  */
 public class CStatusConstants {
-	
+
 	// Prevent instantiation
 	private CStatusConstants() {
 	}
 
 	/** Status code describing an internal error */
-	public static final int INTERNAL_ERROR= 1;
-	
+	public static final int INTERNAL_ERROR = 1;
+
 	/**
 	 * Status constant indicating that an exception occured on
 	 * storing or loading templates.
 	 */
 	public static final int TEMPLATE_IO_EXCEPTION = 2;
-	
-}
 
+}

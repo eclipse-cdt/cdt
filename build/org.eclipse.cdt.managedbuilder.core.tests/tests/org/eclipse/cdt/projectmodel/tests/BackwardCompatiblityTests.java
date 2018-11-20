@@ -30,30 +30,30 @@ import org.eclipse.core.resources.IProject;
 
 public class BackwardCompatiblityTests extends TestCase {
 	private static final String TEST_3X_STD_MAKE_PROJECTS = "test3xStdMakeProjects";
-	
+
 	private List<IProject> projList = new LinkedList<IProject>();
-	
+
 	public static Test suite() {
 		return new TestSuite(BackwardCompatiblityTests.class);
 	}
-	
-	public void test3xStdMakeProject(){
+
+	public void test3xStdMakeProject() {
 		String PROJ_NAME = "std_cpp_1";
-		
-//		String[] BIN_PARSERS = new String[]{
-//				"org.eclipse.cdt.core.ELF",
-//				"org.eclipse.cdt.core.PE",
-//				"org.eclipse.cdt.core.GNU_ELF",
-//				"org.eclipse.cdt.core.MachO"
-//		};
-//		
-//		String[] ERR_PARSERS = new String[]{
-//				"org.eclipse.cdt.core.CWDLocator",
-//				"org.eclipse.cdt.core.GASErrorParser",
-//				"org.eclipse.cdt.core.VCErrorParser",
-//				"org.eclipse.cdt.core.GmakeErrorParser",
-//		};
-		
+
+		//		String[] BIN_PARSERS = new String[]{
+		//				"org.eclipse.cdt.core.ELF",
+		//				"org.eclipse.cdt.core.PE",
+		//				"org.eclipse.cdt.core.GNU_ELF",
+		//				"org.eclipse.cdt.core.MachO"
+		//		};
+		//		
+		//		String[] ERR_PARSERS = new String[]{
+		//				"org.eclipse.cdt.core.CWDLocator",
+		//				"org.eclipse.cdt.core.GASErrorParser",
+		//				"org.eclipse.cdt.core.VCErrorParser",
+		//				"org.eclipse.cdt.core.GmakeErrorParser",
+		//		};
+
 		IProject project = loadStdProject(PROJ_NAME);
 		projList.add(project);
 
@@ -64,19 +64,19 @@ public class BackwardCompatiblityTests extends TestCase {
 
 		des = mngr.getProjectDescription(project, true);
 		checkDescription(des);
-		
+
 	}
-	
-	private void checkDescription(ICProjectDescription des){
+
+	private void checkDescription(ICProjectDescription des) {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 
 		assertFalse(mngr.isNewStyleProject(des));
 		assertFalse(des.isCdtProjectCreating());
 		assertEquals(1, des.getConfigurations().length);
-		
+
 	}
-	
-	private IProject loadStdProject(String name){
+
+	private IProject loadStdProject(String name) {
 		return ManagedBuildTestHelper.loadProject(name, TEST_3X_STD_MAKE_PROJECTS);
 	}
 
@@ -88,16 +88,15 @@ public class BackwardCompatiblityTests extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.cleanUp(getName());
-		for(Iterator<IProject> iter = projList.iterator(); iter.hasNext();){
+		for (Iterator<IProject> iter = projList.iterator(); iter.hasNext();) {
 			IProject proj = iter.next();
 			try {
 				proj.delete(true, null);
-			} catch (Exception e){
+			} catch (Exception e) {
 			}
 			iter.remove();
 		}
 		super.tearDown();
 	}
-	
-	
+
 }

@@ -24,12 +24,12 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  * @since 2.1
  */
 public class GdbUncallCommand extends GdbAbstractReverseStepCommand implements IUncallHandler {
-    public GdbUncallCommand(DsfSession session, DsfSteppingModeTarget steppingMode) {
+	public GdbUncallCommand(DsfSession session, DsfSteppingModeTarget steppingMode) {
 		super(session, steppingMode);
-    }
-    
-    @Override
-    protected final StepType getStepType() {
-    	return StepType.STEP_RETURN;
-    }
+	}
+
+	@Override
+	protected final StepType getStepType() {
+		return StepType.STEP_RETURN;
+	}
 }

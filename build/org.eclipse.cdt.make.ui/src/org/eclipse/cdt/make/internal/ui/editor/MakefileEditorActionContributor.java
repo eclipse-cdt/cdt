@@ -96,14 +96,15 @@ public class MakefileEditorActionContributor extends TextEditorActionContributor
 			editMenu.add(fOpenDeclarationAction);
 		}
 
-		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
+		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY,
+				fTogglePresentation);
 		// there is a global action in the toolbar, that is retargeted,
 		// there is no need to add another one.
-//		IToolBarManager toolBarManager = bars.getToolBarManager();
-//		if (toolBarManager != null) {
-//			toolBarManager.add(new Separator());
-//			toolBarManager.add(fTogglePresentation);
-//		}
+		//		IToolBarManager toolBarManager = bars.getToolBarManager();
+		//		if (toolBarManager != null) {
+		//			toolBarManager.add(new Separator());
+		//			toolBarManager.add(fTogglePresentation);
+		//		}
 	}
 
 }

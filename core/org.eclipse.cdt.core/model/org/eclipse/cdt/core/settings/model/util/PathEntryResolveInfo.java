@@ -17,16 +17,16 @@ import java.util.List;
 
 public class PathEntryResolveInfo {
 	private PathEntryResolveInfoElement[] fElements;
-	
-	public PathEntryResolveInfo(List<PathEntryResolveInfoElement> list){
-		if(list != null){
+
+	public PathEntryResolveInfo(List<PathEntryResolveInfoElement> list) {
+		if (list != null) {
 			fElements = list.toArray(new PathEntryResolveInfoElement[list.size()]);
 		} else {
 			fElements = new PathEntryResolveInfoElement[0];
 		}
 	}
-	
-	public PathEntryResolveInfoElement[] getElements(){
+
+	public PathEntryResolveInfoElement[] getElements() {
 		return fElements.clone();
 	}
 }

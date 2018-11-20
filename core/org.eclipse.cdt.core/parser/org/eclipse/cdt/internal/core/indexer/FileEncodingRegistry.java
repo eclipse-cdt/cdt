@@ -37,14 +37,13 @@ public class FileEncodingRegistry implements Serializable {
 		fFilePathToEncodingMap = new TreeMap<String, String>();
 	}
 
-	
 	public void setDefaultEncoding(String newDefaultEncoding) {
 		defaultEncoding = newDefaultEncoding;
 
 	}
 
 	public void registerFileEncoding(String filename, String encoding) {
-		if(defaultEncoding.equals(encoding)){
+		if (defaultEncoding.equals(encoding)) {
 			return;
 		}
 		if (fFilePathToEncodingMap != null) {

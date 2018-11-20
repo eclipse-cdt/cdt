@@ -67,24 +67,18 @@ public class RefsTab extends AbstractCPropertyTab {
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		initButtons(new String[] {
-				Messages.RefsTab_ExpandAll,
-				Messages.RefsTab_CollapseAll,
-				null,
-				MOVEUP_STR,
-				MOVEDOWN_STR}, 120);
+		initButtons(new String[] { Messages.RefsTab_ExpandAll, Messages.RefsTab_CollapseAll, null, MOVEUP_STR,
+				MOVEDOWN_STR }, 120);
 		usercomp.setLayout(new GridLayout(1, false));
 
 		tree = new Tree(usercomp, SWT.SINGLE | SWT.CHECK | SWT.BORDER);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		tree.getAccessible().addAccessibleListener(
-            new AccessibleAdapter() {
-                @Override
-				public void getName(AccessibleEvent e) {
-                	e.result = Messages.RefsTab_ProjectsList;
-                }
-            }
-        );
+		tree.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = Messages.RefsTab_ProjectsList;
+			}
+		});
 
 		// Populate the tree
 		initData();
@@ -93,7 +87,7 @@ public class RefsTab extends AbstractCPropertyTab {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if ((e.detail & SWT.CHECK) == SWT.CHECK && e.item != null && (e.item instanceof TreeItem)) {
-					TreeItem sel = (TreeItem)e.item;
+					TreeItem sel = (TreeItem) e.item;
 					Object data = sel.getData();
 
 					// If data is not a configuration ID, then the user isn't allowed to select this...
@@ -121,18 +115,18 @@ public class RefsTab extends AbstractCPropertyTab {
 						}
 					} else {
 						// Configuration selected (it has a parent)
-		    			if (parent.getChecked()) {
-		    				// Deselect other configs already selected
-		    				for (TreeItem obj : parent.getItems())
-	    						obj.setChecked(false);
-		    				sel.setChecked(checked);
-		    			}
-			    		parent.setChecked(checked);
+						if (parent.getChecked()) {
+							// Deselect other configs already selected
+							for (TreeItem obj : parent.getItems())
+								obj.setChecked(false);
+							sel.setChecked(checked);
+						}
+						parent.setChecked(checked);
 					}
 
 					// Save the checked configurations
 					saveChecked();
-			    }
+				}
 				updateButtons();
 			}
 		});
@@ -142,50 +136,51 @@ public class RefsTab extends AbstractCPropertyTab {
 			public void treeCollapsed(TreeEvent e) {
 				updateExpandButtons(e, false, true);
 			}
+
 			@Override
 			public void treeExpanded(TreeEvent e) {
 				updateExpandButtons(e, true, false);
-			}});
+			}
+		});
 
 	}
 
-    @Override
+	@Override
 	public void buttonPressed(int n) {
-    	switch (n)
-    	{
-    	case COLLAPSE_ALL_BUTTON:
-    	case EXPAND_ALL_BUTTON:
-       		for (TreeItem item : tree.getItems())
-       			item.setExpanded(n==EXPAND_ALL_BUTTON);
-       		updateButtons();
-       		break;
-    	case MOVEUP_BUTTON:
-    	case MOVEDOWN_BUTTON:
-    		// TODO cache this...
-    		Map<String, String> oldMapping = getResDesc().getConfiguration().getReferenceInfo();
-    		TreeItem ti = tree.getSelection()[0];
-    		String projectName = ti.getText();
-    		List<String> projNames = new ArrayList<String>(oldMapping.keySet());
-    		int index = projNames.indexOf(projectName);
-    		if (n == MOVEUP_BUTTON) {
-    			if (index > 0) {
-	    			projNames.set(index, projNames.get(index - 1));
-	    			projNames.set(index - 1, projectName);
-    			}
-    		} else {
-    			if (index < projNames.size() - 1) {
-	    			projNames.set(index, projNames.get(index + 1));
-	    			projNames.set(index + 1, projectName);
-    			}
-    		}
-    		Map<String, String> newMapping = new LinkedHashMap<String, String>(oldMapping.size());
-    		for (String name : projNames)
-    			newMapping.put(name, oldMapping.get(name));
-    		getResDesc().getConfiguration().setReferenceInfo(newMapping);
-    		initData();
-    		break;
-    	}
-    }
+		switch (n) {
+		case COLLAPSE_ALL_BUTTON:
+		case EXPAND_ALL_BUTTON:
+			for (TreeItem item : tree.getItems())
+				item.setExpanded(n == EXPAND_ALL_BUTTON);
+			updateButtons();
+			break;
+		case MOVEUP_BUTTON:
+		case MOVEDOWN_BUTTON:
+			// TODO cache this...
+			Map<String, String> oldMapping = getResDesc().getConfiguration().getReferenceInfo();
+			TreeItem ti = tree.getSelection()[0];
+			String projectName = ti.getText();
+			List<String> projNames = new ArrayList<String>(oldMapping.keySet());
+			int index = projNames.indexOf(projectName);
+			if (n == MOVEUP_BUTTON) {
+				if (index > 0) {
+					projNames.set(index, projNames.get(index - 1));
+					projNames.set(index - 1, projectName);
+				}
+			} else {
+				if (index < projNames.size() - 1) {
+					projNames.set(index, projNames.get(index + 1));
+					projNames.set(index + 1, projectName);
+				}
+			}
+			Map<String, String> newMapping = new LinkedHashMap<String, String>(oldMapping.size());
+			for (String name : projNames)
+				newMapping.put(name, oldMapping.get(name));
+			getResDesc().getConfiguration().setReferenceInfo(newMapping);
+			initData();
+			break;
+		}
+	}
 
 	@Override
 	protected void updateData(ICResourceDescription cfgd) {
@@ -211,14 +206,14 @@ public class RefsTab extends AbstractCPropertyTab {
 		for (TreeItem project : tree.getItems()) {
 			if (project.getChecked()) {
 				if (project.getData() instanceof String) {
-					assert(project.getData() != null);
+					assert (project.getData() != null);
 					// Project is missing from the workspace, maintain references
-					refs.put(project.getText(), (String)project.getData());
+					refs.put(project.getText(), (String) project.getData());
 				} else {
 					for (TreeItem config : project.getItems()) {
 						if (config.getChecked()) {
-							assert(config.getData() != null);
-							refs.put(project.getText(), (String)config.getData());
+							assert (config.getData() != null);
+							refs.put(project.getText(), (String) config.getData());
 							break; // only one configuration can be selected a time in a project
 						}
 					}
@@ -241,13 +236,13 @@ public class RefsTab extends AbstractCPropertyTab {
 	 *   {IProject.getName()}    , {String cfgId}
 	 *
 	 */
-    private void initData() {
-    	// Persist the current select / expand state to restore...
-    	String currentSelection = tree.getSelectionCount() == 1 ? tree.getSelection()[0].getText() : null;
-    	Set<String> currentExpanded = new HashSet<String>();
-    	for (TreeItem ti : tree.getItems())
-    		if (ti.getExpanded())
-    			currentExpanded.add(ti.getText());
+	private void initData() {
+		// Persist the current select / expand state to restore...
+		String currentSelection = tree.getSelectionCount() == 1 ? tree.getSelection()[0].getText() : null;
+		Set<String> currentExpanded = new HashSet<String>();
+		for (TreeItem ti : tree.getItems())
+			if (ti.getExpanded())
+				currentExpanded.add(ti.getText());
 
 		tree.removeAll();
 		IProject p = page.getProject();
@@ -255,7 +250,7 @@ public class RefsTab extends AbstractCPropertyTab {
 			return;
 
 		// Get all the CDT references
-		Map<String,String> refs = getResDesc().getConfiguration().getReferenceInfo();
+		Map<String, String> refs = getResDesc().getConfiguration().getReferenceInfo();
 
 		// Preserve project order. All linked to projects occur before others
 		Set<String> projects = new LinkedHashSet<String>(refs.keySet());
@@ -271,7 +266,7 @@ public class RefsTab extends AbstractCPropertyTab {
 				prj = p.getWorkspace().getRoot().getProject(pname);
 				cfgs = page.getCfgsReadOnly(prj);
 			} catch (Exception e) {
-				CUIPlugin.log(Messages.RefsTab_ConfigurationsAccessError+pname, e);
+				CUIPlugin.log(Messages.RefsTab_ConfigurationsAccessError + pname, e);
 				continue;
 			}
 			if (cfgs == null || cfgs.length == 0) {
@@ -373,14 +368,14 @@ public class RefsTab extends AbstractCPropertyTab {
 	private void updateExpandButtons(TreeEvent e, boolean stateE, boolean stateC) {
 		boolean cntE = stateE;
 		boolean cntC = stateC;
-   		for (TreeItem item : tree.getItems()) {
-   			if (e != null && e.widget.equals(item))
-   				continue;
-   			if (item.getExpanded())
-   				cntE = true;
-   			else
-   				cntC = true;
-   		}
+		for (TreeItem item : tree.getItems()) {
+			if (e != null && e.widget.equals(item))
+				continue;
+			if (item.getExpanded())
+				cntE = true;
+			else
+				cntC = true;
+		}
 		buttonSetEnabled(EXPAND_ALL_BUTTON, cntC); // Expand All
 		buttonSetEnabled(COLLAPSE_ALL_BUTTON, cntE); // Collapse all
 	}
@@ -404,4 +399,3 @@ public class RefsTab extends AbstractCPropertyTab {
 	}
 
 }
-

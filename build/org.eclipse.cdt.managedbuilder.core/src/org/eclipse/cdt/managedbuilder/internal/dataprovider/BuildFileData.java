@@ -21,11 +21,12 @@ import org.eclipse.core.runtime.IPath;
 
 public class BuildFileData extends CFileData {
 	private ResourceConfiguration fFileInfo;
-	public BuildFileData(IFileInfo fileInfo){
-		fFileInfo = (ResourceConfiguration)fileInfo;
+
+	public BuildFileData(IFileInfo fileInfo) {
+		fFileInfo = (ResourceConfiguration) fileInfo;
 	}
-	
-	public IFileInfo getFileInfo(){
+
+	public IFileInfo getFileInfo() {
 		return fFileInfo;
 	}
 
@@ -34,13 +35,13 @@ public class BuildFileData extends CFileData {
 		return fFileInfo.getPath();
 	}
 
-//	public boolean isExcluded() {
-//		return fFileInfo.isExcluded();
-//	}
-//
-//	public void setExcluded(boolean excluded) {
-//		fFileInfo.setExclude(excluded);
-//	}
+	//	public boolean isExcluded() {
+	//		return fFileInfo.isExcluded();
+	//	}
+	//
+	//	public void setExcluded(boolean excluded) {
+	//		fFileInfo.setExclude(excluded);
+	//	}
 
 	@Override
 	public void setPath(IPath path) {
@@ -58,7 +59,7 @@ public class BuildFileData extends CFileData {
 	}
 
 	public void setName(String name) {
-//		fFileInfo.setN
+		//		fFileInfo.setN
 	}
 
 	@Override
@@ -69,7 +70,7 @@ public class BuildFileData extends CFileData {
 	@Override
 	public CLanguageData getLanguageData() {
 		CLanguageData datas[] = fFileInfo.getCLanguageDatas();
-		if(datas.length > 0)
+		if (datas.length > 0)
 			return datas[0];
 		return null;
 	}
@@ -78,10 +79,10 @@ public class BuildFileData extends CFileData {
 	public boolean hasCustomSettings() {
 		return fFileInfo.hasCustomSettings();
 	}
-	
-	void clearCachedData(){
-		BuildLanguageData lData = (BuildLanguageData)getLanguageData();
-		if(lData != null)
+
+	void clearCachedData() {
+		BuildLanguageData lData = (BuildLanguageData) getLanguageData();
+		if (lData != null)
 			lData.clearCachedData();
 	}
 

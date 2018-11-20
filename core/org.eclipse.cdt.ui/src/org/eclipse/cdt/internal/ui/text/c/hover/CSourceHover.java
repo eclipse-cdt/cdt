@@ -150,11 +150,11 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @param selection the text of the selected region without 
 		 */
 		public ComputeSourceRunnable(ITranslationUnit tUnit, IRegion textRegion, String selection) {
-			fTU= tUnit;
-			fTextRegion= textRegion;
+			fTU = tUnit;
+			fTextRegion = textRegion;
 			fSelection = selection;
-			fMonitor= new NullProgressMonitor();
-			fSource= null;
+			fMonitor = new NullProgressMonitor();
+			fSource = null;
 		}
 
 		@Override
@@ -169,13 +169,14 @@ public class CSourceHover extends AbstractCEditorTextHover {
 						if (type != null && !(type instanceof IProblemType))
 							fSource = ASTTypeUtil.getType(type, false);
 					} else {
-						IASTName name= nodeSelector.findEnclosingName(fTextRegion.getOffset(), fTextRegion.getLength());
+						IASTName name = nodeSelector.findEnclosingName(fTextRegion.getOffset(),
+								fTextRegion.getLength());
 						if (name != null) {
 							IASTNode parent = name.getParent();
 							if (parent instanceof ICPPASTTemplateId) {
 								name = (IASTName) parent;
 							}
-							IBinding binding= name.resolveBinding();
+							IBinding binding = name.resolveBinding();
 							if (binding != null) {
 								// Check for implicit names first, could be an implicit constructor call.
 								if (name.getParent() instanceof IASTImplicitNameOwner) {
@@ -203,18 +204,18 @@ public class CSourceHover extends AbstractCEditorTextHover {
 								if (binding instanceof IProblemBinding) {
 									// Report problem as source comment.
 									if (DEBUG) {
-										IProblemBinding problem= (IProblemBinding) binding;
-										fSource= "/* Problem:\n" + //$NON-NLS-1$
-												" * " + problem.getMessage() +  //$NON-NLS-1$
+										IProblemBinding problem = (IProblemBinding) binding;
+										fSource = "/* Problem:\n" + //$NON-NLS-1$
+												" * " + problem.getMessage() + //$NON-NLS-1$
 												"\n */"; //$NON-NLS-1$
 									}
 								} else if (binding instanceof IMacroBinding) {
-									fSource= computeSourceForMacro(ast, name, binding);
+									fSource = computeSourceForMacro(ast, name, binding);
 								} else if (binding instanceof IEnumerator) {
 									// Show integer value for enumerators (bug 285126).
-									fSource= computeSourceForEnumerator(ast, (IEnumerator) binding);
+									fSource = computeSourceForEnumerator(ast, (IEnumerator) binding);
 								} else {
-									fSource= computeSourceForBinding(ast, binding);
+									fSource = computeSourceForBinding(ast, binding);
 								}
 							}
 						}
@@ -247,7 +248,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			// Search for the macro definition
 			IName[] defs = ast.getDefinitions(binding);
 			for (IName def : defs) {
-				String source= computeSourceForName(def, binding);
+				String source = computeSourceForName(def, binding);
 				if (source != null) {
 					return source;
 				}
@@ -265,8 +266,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @return the enumerator value, source or {@code null}
 		 * @throws CoreException
 		 */
-		private String computeSourceForEnumerator(IASTTranslationUnit ast, IEnumerator binding)
-				throws CoreException {
+		private String computeSourceForEnumerator(IASTTranslationUnit ast, IEnumerator binding) throws CoreException {
 			Number numValue = binding.getValue().numberValue();
 			if (numValue != null) {
 				return numValue.toString();
@@ -274,7 +274,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				// Search for the enumerator definition
 				IName[] defs = ast.getDefinitions(binding);
 				for (IName def : defs) {
-					String source= computeSourceForName(def, binding);
+					String source = computeSourceForName(def, binding);
 					if (source != null) {
 						return source;
 					}
@@ -298,7 +298,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		private String computeSourceForBinding(IASTTranslationUnit ast, IBinding binding)
 				throws CoreException, DOMException {
 			IName[] names = findDefsOrDecls(ast, binding);
-			
+
 			// In case the binding is a non-explicit specialization we need
 			// to consider the original binding (bug 281396).
 			while (names.length == 0 && binding instanceof ICPPSpecialization) {
@@ -306,13 +306,13 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				if (specializedBinding == null || specializedBinding instanceof IProblemBinding) {
 					break;
 				}
-				
+
 				names = findDefsOrDecls(ast, specializedBinding);
 				binding = specializedBinding;
 			}
 			if (names.length > 0) {
 				for (IName name : names) {
-					String source= computeSourceForName(name, binding);
+					String source = computeSourceForName(name, binding);
 					if (source != null) {
 						return source;
 					}
@@ -322,9 +322,9 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		}
 
 		private IName[] findDefsOrDecls(IASTTranslationUnit ast, IBinding binding) throws CoreException {
-			IName[] names= findDefinitions(ast, binding);
+			IName[] names = findDefinitions(ast, binding);
 			if (names.length == 0) {
-				names= findDeclarations(ast, binding);
+				names = findDeclarations(ast, binding);
 			}
 			return names;
 		}
@@ -338,88 +338,92 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @throws CoreException  if the file could not be loaded
 		 */
 		private String computeSourceForName(IName name, IBinding binding) throws CoreException {
-			IASTFileLocation fileLocation= name.getFileLocation();
+			IASTFileLocation fileLocation = name.getFileLocation();
 			if (fileLocation == null) {
 				return null;
 			}
-			int nodeOffset= fileLocation.getNodeOffset();
-			int nodeLength= fileLocation.getNodeLength();
-			
-			String fileName= fileLocation.getFileName();
-			if (DEBUG) System.out.println("[CSourceHover] Computing source for " + name + " in " + fileName);  //$NON-NLS-1$//$NON-NLS-2$
-			IPath location= Path.fromOSString(fileName);
-			LocationKind locationKind= LocationKind.LOCATION;
+			int nodeOffset = fileLocation.getNodeOffset();
+			int nodeLength = fileLocation.getNodeLength();
+
+			String fileName = fileLocation.getFileName();
+			if (DEBUG)
+				System.out.println("[CSourceHover] Computing source for " + name + " in " + fileName); //$NON-NLS-1$//$NON-NLS-2$
+			IPath location = Path.fromOSString(fileName);
+			LocationKind locationKind = LocationKind.LOCATION;
 			if (name instanceof IASTName && !name.isReference()) {
-				IASTName astName= (IASTName) name;
+				IASTName astName = (IASTName) name;
 				if (astName.getTranslationUnit().getFilePath().equals(fileName)) {
 					int hoverOffset = fTextRegion.getOffset();
-					if (hoverOffset <= nodeOffset && nodeOffset < hoverOffset + fTextRegion.getLength() ||
-							hoverOffset >= nodeOffset && hoverOffset < nodeOffset + nodeLength) {
+					if (hoverOffset <= nodeOffset && nodeOffset < hoverOffset + fTextRegion.getLength()
+							|| hoverOffset >= nodeOffset && hoverOffset < nodeOffset + nodeLength) {
 						// Bug 359352 - don't show source if its the same we are hovering on.
 						return computeHoverForDeclaration(astName);
 					}
 					if (fTU.getResource() != null) {
 						// Reuse editor buffer for names local to the translation unit
-						location= fTU.getResource().getFullPath();
-						locationKind= LocationKind.IFILE;
+						location = fTU.getResource().getFullPath();
+						locationKind = LocationKind.IFILE;
 					}
 				}
 			} else {
 				// Try to resolve path to a resource for proper encoding (bug 221029)
-				IFile file= EditorUtility.getWorkspaceFileAtLocation(location, fTU);
+				IFile file = EditorUtility.getWorkspaceFileAtLocation(location, fTU);
 				if (file != null) {
-					location= file.getFullPath();
-					locationKind= LocationKind.IFILE;
+					location = file.getFullPath();
+					locationKind = LocationKind.IFILE;
 					if (name instanceof IIndexName) {
 						// Need to adjust index offsets to current offsets
 						// in case file has been modified since last index time.
-						IIndexName indexName= (IIndexName) name;
-						long timestamp= indexName.getFile().getTimestamp();
-						IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(file, timestamp);
+						IIndexName indexName = (IIndexName) name;
+						long timestamp = indexName.getFile().getTimestamp();
+						IPositionConverter converter = CCorePlugin.getPositionTrackerManager()
+								.findPositionConverter(file, timestamp);
 						if (converter != null) {
-							IRegion currentLocation= converter.historicToActual(new Region(nodeOffset, nodeLength));
-							nodeOffset= currentLocation.getOffset();
-							nodeLength= currentLocation.getLength();
+							IRegion currentLocation = converter.historicToActual(new Region(nodeOffset, nodeLength));
+							nodeOffset = currentLocation.getOffset();
+							nodeLength = currentLocation.getLength();
 						}
 					}
 				}
 			}
-			ITextFileBufferManager mgr= FileBuffers.getTextFileBufferManager();
+			ITextFileBufferManager mgr = FileBuffers.getTextFileBufferManager();
 			mgr.connect(location, locationKind, fMonitor);
-			ITextFileBuffer buffer= mgr.getTextFileBuffer(location, locationKind);
+			ITextFileBuffer buffer = mgr.getTextFileBuffer(location, locationKind);
 			try {
-				IRegion nameRegion= new Region(nodeOffset, nodeLength);
-				final int nameOffset= nameRegion.getOffset();
+				IRegion nameRegion = new Region(nodeOffset, nodeLength);
+				final int nameOffset = nameRegion.getOffset();
 				final int sourceStart;
 				final int sourceEnd;
-				IDocument doc= buffer.getDocument();
+				IDocument doc = buffer.getDocument();
 				if (nameOffset >= doc.getLength() || nodeLength <= 0) {
 					return null;
 				}
 				if (binding instanceof IMacroBinding) {
-					ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, nameOffset, false);
+					ITypedRegion partition = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, nameOffset,
+							false);
 					if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
-						int directiveStart= partition.getOffset();
-						int commentStart= searchCommentBackward(doc, directiveStart, -1);
+						int directiveStart = partition.getOffset();
+						int commentStart = searchCommentBackward(doc, directiveStart, -1);
 						if (commentStart >= 0) {
-							sourceStart= commentStart;
+							sourceStart = commentStart;
 						} else {
-							sourceStart= directiveStart;
+							sourceStart = directiveStart;
 						}
-						sourceEnd= directiveStart + partition.getLength();
+						sourceEnd = directiveStart + partition.getLength();
 					} else {
 						return null;
 					}
 				} else {
 					// Expand source range to include preceding comment, if any
-					boolean isKnR= isKnRSource(name);
-					sourceStart= computeSourceStart(doc, nameOffset, binding, isKnR);
+					boolean isKnR = isKnRSource(name);
+					sourceStart = computeSourceStart(doc, nameOffset, binding, isKnR);
 					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 						return null;
 					}
-					sourceEnd= computeSourceEnd(doc, nameOffset + nameRegion.getLength(), binding, name.isDefinition(), isKnR);
+					sourceEnd = computeSourceEnd(doc, nameOffset + nameRegion.getLength(), binding, name.isDefinition(),
+							isKnR);
 				}
-				String source= buffer.getDocument().get(sourceStart, sourceEnd - sourceStart);
+				String source = buffer.getDocument().get(sourceStart, sourceEnd - sourceStart);
 				return source;
 			} catch (BadLocationException e) {
 				CUIPlugin.log(e);
@@ -448,8 +452,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			} else if (declaration instanceof IASTParameterDeclaration) {
 				declSpec = ((IASTParameterDeclaration) declaration).getDeclSpecifier();
 			}
-			if (!(declSpec instanceof ICPPASTSimpleDeclSpecifier) ||
-					((ICPPASTSimpleDeclSpecifier) declSpec).getType() != IASTSimpleDeclSpecifier.t_auto) {
+			if (!(declSpec instanceof ICPPASTSimpleDeclSpecifier)
+					|| ((ICPPASTSimpleDeclSpecifier) declSpec).getType() != IASTSimpleDeclSpecifier.t_auto) {
 				return null;
 			}
 			IType type = CPPVisitor.createType(declarator);
@@ -466,105 +470,114 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 */
 		private boolean isKnRSource(IName name) {
 			if (name instanceof IASTName) {
-				IASTNode node= (IASTNode)name;
+				IASTNode node = (IASTNode) name;
 				while (node.getParent() != null) {
 					if (node instanceof ICASTKnRFunctionDeclarator) {
 						return node.getParent() instanceof IASTFunctionDefinition;
 					}
-					node= node.getParent();
+					node = node.getParent();
 				}
 			}
 			return false;
 		}
 
-		private int computeSourceStart(IDocument doc, int nameOffset, IBinding binding, boolean isKnR) throws BadLocationException {
-			int sourceStart= nameOffset;
-			CHeuristicScanner scanner= new CHeuristicScanner(doc);
+		private int computeSourceStart(IDocument doc, int nameOffset, IBinding binding, boolean isKnR)
+				throws BadLocationException {
+			int sourceStart = nameOffset;
+			CHeuristicScanner scanner = new CHeuristicScanner(doc);
 			if (binding instanceof IParameter) {
 				if (isKnR) {
-					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { ')', ';' });
+					sourceStart = scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { ')', ';' });
 				} else {
-					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '>', '(', ',' });
+					sourceStart = scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND,
+							new char[] { '>', '(', ',' });
 					if (sourceStart > 0 && doc.getChar(sourceStart) == '>') {
-						sourceStart= scanner.findOpeningPeer(sourceStart - 1, '<', '>');
+						sourceStart = scanner.findOpeningPeer(sourceStart - 1, '<', '>');
 						if (sourceStart > 0) {
-							sourceStart= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '(', ',' });
+							sourceStart = scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND,
+									new char[] { '(', ',' });
 						}
 					}
 				}
 				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 					return sourceStart;
 				}
-				sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
+				sourceStart = scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
 				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 					sourceStart = nameOffset;
 				}
 			} else if (binding instanceof ICPPTemplateParameter) {
-				sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '>', '<', ',' });
+				sourceStart = scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '>', '<', ',' });
 				if (sourceStart > 0 && doc.getChar(sourceStart) == '>') {
-					sourceStart= scanner.findOpeningPeer(sourceStart - 1, '<', '>');
+					sourceStart = scanner.findOpeningPeer(sourceStart - 1, '<', '>');
 					if (sourceStart > 0) {
-						sourceStart= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '<', ',' });
+						sourceStart = scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND,
+								new char[] { '<', ',' });
 					}
 				}
 				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 					return sourceStart;
 				}
-				sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
+				sourceStart = scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
 				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 					sourceStart = nameOffset;
 				}
 			} else if (binding instanceof IEnumerator) {
-				sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '{', ',' });
+				sourceStart = scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '{', ',' });
 				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 					return sourceStart;
 				}
-				sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
+				sourceStart = scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
 				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 					sourceStart = nameOffset;
 				}
 			} else {
 				final boolean expectClosingBrace;
-				IType type= null;
+				IType type = null;
 				if (binding instanceof ITypedef) {
-					type= ((ITypedef)binding).getType();
+					type = ((ITypedef) binding).getType();
 				} else if (binding instanceof IVariable) {
-					type= ((IVariable)binding).getType();
+					type = ((IVariable) binding).getType();
 				}
-				expectClosingBrace= (type instanceof ICompositeType || type instanceof IEnumeration) && !(binding instanceof IVariable);
-				final int nameLine= doc.getLineOfOffset(nameOffset);
-				sourceStart= nameOffset;
+				expectClosingBrace = (type instanceof ICompositeType || type instanceof IEnumeration)
+						&& !(binding instanceof IVariable);
+				final int nameLine = doc.getLineOfOffset(nameOffset);
+				sourceStart = nameOffset;
 				int commentBound;
 				if (isKnR) {
-					commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { ')', ';' });
+					commentBound = scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND,
+							new char[] { ')', ';' });
 				} else {
-					commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+					commentBound = scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND,
+							new char[] { '{', '}', ';' });
 				}
 				while (expectClosingBrace && commentBound > 0 && doc.getChar(commentBound) == '}') {
-					int openingBrace= scanner.findOpeningPeer(commentBound - 1, '{', '}');
+					int openingBrace = scanner.findOpeningPeer(commentBound - 1, '{', '}');
 					if (openingBrace != CHeuristicScanner.NOT_FOUND) {
-						sourceStart= openingBrace - 1;
+						sourceStart = openingBrace - 1;
 					}
 					if (isKnR) {
-						commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { ')', ';' });
+						commentBound = scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND,
+								new char[] { ')', ';' });
 					} else {
-						commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+						commentBound = scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND,
+								new char[] { '{', '}', ';' });
 					}
 				}
 				if (commentBound == CHeuristicScanner.NOT_FOUND) {
-					commentBound= -1; // unbound
+					commentBound = -1; // unbound
 				}
-				sourceStart= Math.min(sourceStart, doc.getLineOffset(nameLine));
-				int commentStart= searchCommentBackward(doc, sourceStart, commentBound);
+				sourceStart = Math.min(sourceStart, doc.getLineOffset(nameLine));
+				int commentStart = searchCommentBackward(doc, sourceStart, commentBound);
 				if (commentStart >= 0) {
-					sourceStart= commentStart;
+					sourceStart = commentStart;
 				} else {
-					int nextNonWS= scanner.findNonWhitespaceForward(commentBound+1, sourceStart);
+					int nextNonWS = scanner.findNonWhitespaceForward(commentBound + 1, sourceStart);
 					if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
-						int nextNonWSLine= doc.getLineOfOffset(nextNonWS);
-						int lineOffset= doc.getLineOffset(nextNonWSLine);
+						int nextNonWSLine = doc.getLineOfOffset(nextNonWS);
+						int lineOffset = doc.getLineOffset(nextNonWSLine);
 						if (doc.get(lineOffset, nextNonWS - lineOffset).trim().isEmpty()) {
-							sourceStart= doc.getLineOffset(nextNonWSLine);
+							sourceStart = doc.getLineOffset(nextNonWSLine);
 						}
 					}
 				}
@@ -572,79 +585,82 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			return sourceStart;
 		}
 
-		private int computeSourceEnd(IDocument doc, int start, IBinding binding, boolean isDefinition, boolean isKnR) throws BadLocationException {
-			int sourceEnd= start;
-			CHeuristicScanner scanner= new CHeuristicScanner(doc);
+		private int computeSourceEnd(IDocument doc, int start, IBinding binding, boolean isDefinition, boolean isKnR)
+				throws BadLocationException {
+			int sourceEnd = start;
+			CHeuristicScanner scanner = new CHeuristicScanner(doc);
 			// Expand forward to the end of the definition/declaration
-			boolean searchBrace= false;
-			boolean searchSemi= false;
-			boolean searchComma= false;
+			boolean searchBrace = false;
+			boolean searchSemi = false;
+			boolean searchComma = false;
 			if (binding instanceof ICompositeType && isDefinition || binding instanceof IEnumeration) {
-				searchBrace= true;
+				searchBrace = true;
 			} else if (binding instanceof ICPPTemplateDefinition) {
-				searchBrace= true;
+				searchBrace = true;
 			} else if (binding instanceof IFunction && isDefinition) {
-				searchBrace= true;
+				searchBrace = true;
 			} else if (binding instanceof IParameter) {
 				if (isKnR) {
-					searchSemi= true;
+					searchSemi = true;
 				} else {
-					searchComma= true;
+					searchComma = true;
 				}
 			} else if (binding instanceof IEnumerator || binding instanceof ICPPTemplateParameter) {
-				searchComma= true;
+				searchComma = true;
 			} else if (binding instanceof IVariable || binding instanceof ITypedef) {
-				searchSemi= true;
+				searchSemi = true;
 			} else if (!isDefinition) {
-				searchSemi= true;
+				searchSemi = true;
 			}
 			if (searchBrace) {
-				int brace= scanner.scanForward(start, CHeuristicScanner.UNBOUND, '{');
+				int brace = scanner.scanForward(start, CHeuristicScanner.UNBOUND, '{');
 				if (brace != CHeuristicScanner.NOT_FOUND) {
-					sourceEnd= scanner.findClosingPeer(brace + 1, '{', '}');
+					sourceEnd = scanner.findClosingPeer(brace + 1, '{', '}');
 					if (sourceEnd == CHeuristicScanner.NOT_FOUND) {
-						sourceEnd= doc.getLength();
+						sourceEnd = doc.getLength();
 					}
 				}
 				// Expand region to include whole line
-				IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
-				sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
+				IRegion lineRegion = doc.getLineInformationOfOffset(sourceEnd);
+				sourceEnd = lineRegion.getOffset() + lineRegion.getLength();
 			} else if (searchSemi) {
-				int semi= scanner.scanForward(start, CHeuristicScanner.UNBOUND, ';');
+				int semi = scanner.scanForward(start, CHeuristicScanner.UNBOUND, ';');
 				if (semi != CHeuristicScanner.NOT_FOUND) {
-					sourceEnd= semi+1;
+					sourceEnd = semi + 1;
 				}
 				// Expand region to include whole line
-				IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
-				sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
+				IRegion lineRegion = doc.getLineInformationOfOffset(sourceEnd);
+				sourceEnd = lineRegion.getOffset() + lineRegion.getLength();
 			} else if (searchComma) {
 				int bound;
 				if (binding instanceof IParameter) {
-					bound= scanner.findClosingPeer(start, '(', ')');
+					bound = scanner.findClosingPeer(start, '(', ')');
 				} else if (binding instanceof ICPPTemplateParameter) {
-					bound= scanner.findClosingPeer(start, '<', '>');
+					bound = scanner.findClosingPeer(start, '<', '>');
 				} else if (binding instanceof IEnumerator) {
-					bound= scanner.findClosingPeer(start, '{', '}');
+					bound = scanner.findClosingPeer(start, '{', '}');
 				} else {
 					bound = CHeuristicScanner.NOT_FOUND;
 				}
 				if (bound == CHeuristicScanner.NOT_FOUND) {
-					bound= Math.min(doc.getLength(), start + 100);
+					bound = Math.min(doc.getLength(), start + 100);
 				}
-				int comma= scanner.scanForward(start, bound, ',');
+				int comma = scanner.scanForward(start, bound, ',');
 				if (comma == CHeuristicScanner.NOT_FOUND) {
 					// last argument
-					sourceEnd= bound;
+					sourceEnd = bound;
 				} else {
-					sourceEnd= comma;
+					sourceEnd = comma;
 					// expand region to include whole line if rest is comment
-					IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
-					int lineEnd= lineRegion.getOffset() + lineRegion.getLength();
-					int nextNonWS= scanner.findNonWhitespaceForwardInAnyPartition(sourceEnd + 1, lineEnd);
+					IRegion lineRegion = doc.getLineInformationOfOffset(sourceEnd);
+					int lineEnd = lineRegion.getOffset() + lineRegion.getLength();
+					int nextNonWS = scanner.findNonWhitespaceForwardInAnyPartition(sourceEnd + 1, lineEnd);
 					if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
-						String contentType= TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, nextNonWS, false);
-						if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType) || ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)) {
-							sourceEnd= lineEnd;
+						String contentType = TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, nextNonWS,
+								false);
+						if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType)
+								|| ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)) {
+							sourceEnd = lineEnd;
 						}
 					}
 				}
@@ -664,10 +680,11 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			if (binding instanceof ICPPAliasTemplateInstance) {
 				binding = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
 			}
-			IName[] declNames= ast.getDefinitionsInAST(binding);
+			IName[] declNames = ast.getDefinitionsInAST(binding);
 			if (declNames.length == 0 && ast.getIndex() != null) {
 				// search definitions in index
-				declNames = ast.getIndex().findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+				declNames = ast.getIndex().findNames(binding,
+						IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 			}
 			return declNames;
 		}
@@ -681,10 +698,11 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @throws CoreException
 		 */
 		private IName[] findDeclarations(IASTTranslationUnit ast, IBinding binding) throws CoreException {
-			IName[] declNames= ast.getDeclarationsInAST(binding);
+			IName[] declNames = ast.getDeclarationsInAST(binding);
 			if (declNames.length == 0 && ast.getIndex() != null) {
 				// search declarations in index
-				declNames= ast.getIndex().findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+				declNames = ast.getIndex().findNames(binding,
+						IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 			}
 			return declNames;
 		}
@@ -708,8 +726,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		IEditorPart editor = getEditor();
 		if (editor != null) {
-			IEditorInput input= editor.getEditorInput();
-			IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
+			IEditorInput input = editor.getEditorInput();
+			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
 			IWorkingCopy workingCopy = manager.getWorkingCopy(input);
 			try {
 				if (workingCopy == null || !workingCopy.isConsistent()) {
@@ -718,7 +736,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			} catch (CModelException e) {
 				return null;
 			}
-			
+
 			String expression;
 			try {
 				expression = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
@@ -732,19 +750,19 @@ public class CSourceHover extends AbstractCEditorTextHover {
 					return null;
 
 				// Try with the indexer.
-				String source= searchInIndex(workingCopy, hoverRegion, expression);
+				String source = searchInIndex(workingCopy, hoverRegion, expression);
 
 				if (source == null || source.trim().isEmpty())
 					return null;
 
 				// We are actually interested in the comments, too.
-//				source= removeLeadingComments(source);
+				//				source= removeLeadingComments(source);
 
-				String delim= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				String delim = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-				String[] sourceLines= Strings.convertIntoLines(source);
-				String firstLine= sourceLines[0];
-				boolean ignoreFirstLine= firstLine.length() > 0 && !Character.isWhitespace(firstLine.charAt(0));
+				String[] sourceLines = Strings.convertIntoLines(source);
+				String firstLine = sourceLines[0];
+				boolean ignoreFirstLine = firstLine.length() > 0 && !Character.isWhitespace(firstLine.charAt(0));
 				Strings.trimIndentation(sourceLines, getTabWidth(), getTabWidth(), !ignoreFirstLine);
 
 				source = Strings.concatenate(sourceLines, delim);
@@ -767,34 +785,34 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 * @throws BadLocationException 
 	 */
 	private static int searchCommentBackward(IDocument doc, int start, int bound) throws BadLocationException {
-		int firstLine= doc.getLineOfOffset(start);
+		int firstLine = doc.getLineOfOffset(start);
 		if (firstLine == 0) {
 			return 0;
 		}
-		ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, start, true);
-		int currentOffset= Math.max(doc.getLineOffset(firstLine - 1), partition.getOffset() - 1);
-		int commentOffset= -1;
+		ITypedRegion partition = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, start, true);
+		int currentOffset = Math.max(doc.getLineOffset(firstLine - 1), partition.getOffset() - 1);
+		int commentOffset = -1;
 		while (currentOffset > bound) {
-			partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, currentOffset, true);
-			currentOffset= partition.getOffset() - 1;
-			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType()) 
+			partition = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, currentOffset, true);
+			currentOffset = partition.getOffset() - 1;
+			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())
 					|| ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(partition.getType())) {
-				final int partitionOffset= partition.getOffset();
-				final int startLine= doc.getLineOfOffset(partitionOffset);
-				final int lineOffset= doc.getLineOffset(startLine);
-				if (partitionOffset == lineOffset || 
-						doc.get(lineOffset, partitionOffset - lineOffset).trim().isEmpty()) {
+				final int partitionOffset = partition.getOffset();
+				final int startLine = doc.getLineOfOffset(partitionOffset);
+				final int lineOffset = doc.getLineOffset(startLine);
+				if (partitionOffset == lineOffset
+						|| doc.get(lineOffset, partitionOffset - lineOffset).trim().isEmpty()) {
 					return lineOffset;
 				}
 				return commentOffset;
 			} else if (ICPartitions.C_SINGLE_LINE_COMMENT.equals(partition.getType())
 					|| ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(partition.getType())) {
-				final int partitionOffset= partition.getOffset();
-				final int startLine= doc.getLineOfOffset(partitionOffset);
-				final int lineOffset= doc.getLineOffset(startLine);
-				if (partitionOffset == lineOffset || 
-						doc.get(lineOffset, partitionOffset - lineOffset).trim().isEmpty()) {
-					commentOffset= lineOffset;
+				final int partitionOffset = partition.getOffset();
+				final int startLine = doc.getLineOfOffset(partitionOffset);
+				final int lineOffset = doc.getLineOffset(startLine);
+				if (partitionOffset == lineOffset
+						|| doc.get(lineOffset, partitionOffset - lineOffset).trim().isEmpty()) {
+					commentOffset = lineOffset;
 					continue;
 				}
 				return commentOffset;
@@ -823,19 +841,19 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 * @return  the source string without leading comments
 	 */
 	protected static String removeLeadingComments(String source) {
-		CCodeReader reader= new CCodeReader();
-		IDocument document= new Document(source);
+		CCodeReader reader = new CCodeReader();
+		IDocument document = new Document(source);
 		int i;
 		try {
 			reader.configureForwardReader(document, 0, document.getLength(), true, false);
-			int c= reader.read();
+			int c = reader.read();
 			while (c != -1 && (c == '\r' || c == '\n')) {
-				c= reader.read();
+				c = reader.read();
 			}
-			i= reader.getOffset();
+			i = reader.getOffset();
 			reader.close();
 		} catch (IOException e) {
-			i= 0;
+			i = 0;
 		} finally {
 			try {
 				reader.close();
@@ -850,13 +868,13 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	}
 
 	protected String searchInIndex(final ITranslationUnit tUnit, IRegion textRegion, String selection) {
-		final ComputeSourceRunnable computer= new ComputeSourceRunnable(tUnit, textRegion, selection);
-		Job job= new Job(CHoverMessages.CSourceHover_jobTitle) {
+		final ComputeSourceRunnable computer = new ComputeSourceRunnable(tUnit, textRegion, selection);
+		Job job = new Job(CHoverMessages.CSourceHover_jobTitle) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY,
-							monitor, computer);
+					return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor,
+							computer);
 				} catch (Throwable t) {
 					CUIPlugin.log(t);
 				}
@@ -887,7 +905,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 *         name is not considered a keyword
 	 */
 	private boolean selectionIsKeyword(String name) {
-		Set<String> keywords= ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP);
+		Set<String> keywords = ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP);
 		return keywords.contains(name);
 	}
 
@@ -896,12 +914,11 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		return new IInformationControlCreator() {
 			@Override
 			public IInformationControl createInformationControl(Shell parent) {
-				IEditorPart editor= getEditor();
-				int orientation= SWT.NONE;
+				IEditorPart editor = getEditor();
+				int orientation = SWT.NONE;
 				if (editor instanceof IWorkbenchPartOrientation)
-					orientation= ((IWorkbenchPartOrientation) editor).getOrientation();
-				return new SourceViewerInformationControl(parent, false, orientation,
-						getTooltipAffordanceString());
+					orientation = ((IWorkbenchPartOrientation) editor).getOrientation();
+				return new SourceViewerInformationControl(parent, false, orientation, getTooltipAffordanceString());
 			}
 		};
 	}
@@ -911,10 +928,10 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		return new IInformationControlCreator() {
 			@Override
 			public IInformationControl createInformationControl(Shell parent) {
-				IEditorPart editor= getEditor();
-				int orientation= SWT.NONE;
+				IEditorPart editor = getEditor();
+				int orientation = SWT.NONE;
 				if (editor instanceof IWorkbenchPartOrientation)
-					orientation= ((IWorkbenchPartOrientation) editor).getOrientation();
+					orientation = ((IWorkbenchPartOrientation) editor).getOrientation();
 				return new SourceViewerInformationControl(parent, true, orientation, null);
 			}
 		};

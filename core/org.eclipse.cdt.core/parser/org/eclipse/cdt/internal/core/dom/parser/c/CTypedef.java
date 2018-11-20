@@ -38,10 +38,10 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
 		this.name = name;
 	}
 
-    @Override
+	@Override
 	public IASTNode getPhysicalNode() {
-        return name;
-    }
+		return name;
+	}
 
 	@Override
 	public IType getType() {
@@ -52,7 +52,7 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
 
 	@Override
 	public void setType(IType t) {
-	    type = t;
+		type = t;
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
 
 	@Override
 	public char[] getNameCharArray() {
-	    return name.toCharArray();
+		return name.toCharArray();
 	}
 
 	@Override
@@ -71,33 +71,33 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
 		return CVisitor.getContainingScope(declarator.getParent());
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            //not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			//not going to happen
+		}
+		return t;
+	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType t) {
-        if (t == this)
-            return true;
-	    if (t instanceof ITypedef) {
+		if (t == this)
+			return true;
+		if (t instanceof ITypedef) {
 			IType temp = getType();
 			if (temp != null)
-			    return temp.isSameType(((ITypedef) t).getType());
+				return temp.isSameType(((ITypedef) t).getType());
 			return false;
 		}
 
-	    IType temp = getType();
-	    if (temp != null)
-	        return temp.isSameType(t);
-	    return false;
-    }
+		IType temp = getType();
+		if (temp != null)
+			return temp.isSameType(t);
+		return false;
+	}
 
 	@Override
 	public ILinkage getLinkage() {

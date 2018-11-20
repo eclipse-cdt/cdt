@@ -71,13 +71,23 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 	}
 
 	public static class SingleProject extends IndexGPPBindingResolutionTest {
-		public SingleProject() { setStrategy(new GPPSinglePDOMTestStrategy()); }
-		public static TestSuite suite() { return suite(SingleProject.class); }
+		public SingleProject() {
+			setStrategy(new GPPSinglePDOMTestStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
 
 	public static class ProjectWithDepProj extends IndexGPPBindingResolutionTest {
-		public ProjectWithDepProj() { setStrategy(new GPPReferencedProject()); }
-		public static TestSuite suite() { return suite(ProjectWithDepProj.class); }
+		public ProjectWithDepProj() {
+			setStrategy(new GPPReferencedProject());
+		}
+
+		public static TestSuite suite() {
+			return suite(ProjectWithDepProj.class);
+		}
 	}
 
 	public static void addTests(TestSuite suite) {
@@ -93,7 +103,7 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 	//	  .f = 3.1
 	//	};
 	public void testDesignatedInitializer() throws Exception {
-		IField f= getBindingFromASTName("f", 0);
+		IField f = getBindingFromASTName("f", 0);
 	}
 
 	//	template <typename T>

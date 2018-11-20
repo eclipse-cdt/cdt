@@ -76,8 +76,9 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	 * <li> A container or element is read-only ({@code READ_ONLY}) 
 	 * </ul>
 	 */
-	void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings,
-			boolean replace, IProgressMonitor monitor) throws CModelException;
+	void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings, boolean replace,
+			IProgressMonitor monitor) throws CModelException;
+
 	/**
 	 * Deletes the given elements, forcing the operation if necessary and specified.
 	 *
@@ -139,8 +140,8 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	 *
 	 * @exception IllegalArgumentException any element or container is {@code null}
 	 */
-	void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings,
-			boolean replace, IProgressMonitor monitor) throws CModelException;
+	void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings, boolean replace,
+			IProgressMonitor monitor) throws CModelException;
 
 	/**
 	 * Renames the given elements as specified.

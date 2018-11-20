@@ -115,9 +115,8 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	public BinaryParserBlock() {
 		super(CUIPlugin.getResourceString(LABEL));
 		setDescription(CUIPlugin.getResourceString(DESC));
-		String[] buttonLabels = new String[]{
-		CUIMessages.BinaryParserBlock_button_up,
-				CUIMessages.BinaryParserBlock_button_down};
+		String[] buttonLabels = new String[] { CUIMessages.BinaryParserBlock_button_up,
+				CUIMessages.BinaryParserBlock_button_down };
 
 		IListAdapter<BinaryParserConfiguration> listAdapter = new IListAdapter<BinaryParserConfiguration>() {
 
@@ -135,7 +134,8 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			}
 		};
 
-		binaryList = new CheckedListDialogField<BinaryParserConfiguration>(listAdapter, buttonLabels, new BinaryParserLabelProvider()) {
+		binaryList = new CheckedListDialogField<BinaryParserConfiguration>(listAdapter, buttonLabels,
+				new BinaryParserLabelProvider()) {
 
 			@Override
 			protected int getListStyle() {
@@ -160,7 +160,8 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	}
 
 	private void initializeParserList() {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
 			configMap = new HashMap<String, BinaryParserConfiguration>(exts.length);
@@ -173,7 +174,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	}
 
 	private boolean isExtensionVisible(IExtension ext) {
- 		IConfigurationElement[] elements = ext.getConfigurationElements();
+		IConfigurationElement[] elements = ext.getConfigurationElements();
 		for (IConfigurationElement element : elements) {
 			IConfigurationElement[] children = element.getChildren(ATTR_FILTER);
 			for (IConfigurationElement element2 : children) {
@@ -201,7 +202,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.BINARY_PARSER_PAGE);
 
 		Composite listComposite = ControlFactory.createComposite(composite, 1);
-		LayoutUtil.doDefaultLayout(listComposite, new DialogField[]{binaryList}, true);
+		LayoutUtil.doDefaultLayout(listComposite, new DialogField[] { binaryList }, true);
 		LayoutUtil.setHorizontalGrabbing(binaryList.getListControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(15);
@@ -245,8 +246,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 					if (initialSelected == null || !selected.equals(initialSelected)) {
 						descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 						for (int i = 0; i < selected.size(); i++) {
-							descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID,
-									selected.get(i).getID());
+							descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, selected.get(i).getID());
 						}
 					}
 					monitor.worked(1);
@@ -262,7 +262,8 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 					}
 				}
 			};
-			CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(getContainer().getProject(), op, monitor);
+			CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(getContainer().getProject(), op,
+					monitor);
 		} else {
 			if (initialSelected == null || !selected.equals(initialSelected)) {
 				Preferences store = getContainer().getPreferences();
@@ -291,7 +292,8 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 		if (getContainer().getProject() != null) {
 			try {
-				ICConfigExtensionReference[] ref = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(getContainer().getProject());
+				ICConfigExtensionReference[] ref = CCorePlugin.getDefault()
+						.getDefaultBinaryParserExtensions(getContainer().getProject());
 				initialSelected = new ArrayList<BinaryParserConfiguration>(ref.length);
 				for (ICConfigExtensionReference element : ref) {
 					if (configMap.get(element.getID()) != null) {
@@ -301,7 +303,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 				}
 			} catch (CoreException e) {
 			}
-			for (Entry<String, BinaryParserConfiguration> entry: configMap.entrySet()) {
+			for (Entry<String, BinaryParserConfiguration> entry : configMap.entrySet()) {
 				if (!elements.contains(entry.getValue())) {
 					elements.add(entry.getValue());
 				}
@@ -327,7 +329,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 					}
 				}
 			}
-			for (Entry<String, BinaryParserConfiguration> entry: configMap.entrySet()) {
+			for (Entry<String, BinaryParserConfiguration> entry : configMap.entrySet()) {
 				if (!elements.contains(entry.getValue())) {
 					elements.add(entry.getValue());
 				}
@@ -340,6 +342,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			initialSelected = null;
 		}
 	}
+
 	private String arrayToString(Object[] array) {
 		StringBuilder buf = new StringBuilder();
 		for (Object element : array) {

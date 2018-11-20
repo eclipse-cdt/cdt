@@ -22,7 +22,7 @@ public class ConfigurationContentProvider implements IStructuredContentProvider 
 	@Override
 	public Object[] getElements(Object parent) {
 		// The content is an array of configurations
-		Object array[] = (Object[])parent;
+		Object array[] = (Object[]) parent;
 		return (array == null || array.length == 0) ? new Object[0] : array;
 	}
 
@@ -31,9 +31,6 @@ public class ConfigurationContentProvider implements IStructuredContentProvider 
 	}
 
 	@Override
-	public void inputChanged(
-		Viewer viewer,
-		Object oldInput,
-		Object newInput) {
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 }

@@ -172,7 +172,8 @@ public class QtProjectFileParserTest extends TestCase {
 
 	@Test
 	public void test_MultilineVariable_WithComment() {
-		IDocument document = new Document("SOURCES += main.cpp \\ # this is a comment \n          main2.cpp # this is a comment "); //$NON-NLS-1$
+		IDocument document = new Document(
+				"SOURCES += main.cpp \\ # this is a comment \n          main2.cpp # this is a comment "); //$NON-NLS-1$
 		QtProjectFileParser parser = new QtProjectFileParser(document);
 
 		QtProjectVariable sources = parser.getVariable("SOURCES"); //$NON-NLS-1$

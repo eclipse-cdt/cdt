@@ -44,9 +44,9 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 	private IASTInitializer fInitializer;
 	private ICPPEvaluation fEvaluation;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
-	private IASTImplicitName[] fImplicitNames;  // for class types: the constructor being called
+	private IASTImplicitName[] fImplicitNames; // for class types: the constructor being called
 
-    public CPPASTSimpleTypeConstructorExpression() {
+	public CPPASTSimpleTypeConstructorExpression() {
 	}
 
 	public CPPASTSimpleTypeConstructorExpression(ICPPASTDeclSpecifier declSpec, IASTInitializer init) {
@@ -79,47 +79,48 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 
 	@Override
 	public void setDeclSpecifier(ICPPASTDeclSpecifier declSpec) {
-    	assertNotFrozen();
-    	fDeclSpec = declSpec;
-    	if (declSpec != null) {
-    		declSpec.setParent(this);
-    		declSpec.setPropertyInParent(TYPE_SPECIFIER);
-    	}
-    }
+		assertNotFrozen();
+		fDeclSpec = declSpec;
+		if (declSpec != null) {
+			declSpec.setParent(this);
+			declSpec.setPropertyInParent(TYPE_SPECIFIER);
+		}
+	}
 
 	@Override
 	public void setInitializer(IASTInitializer initializer) {
-    	assertNotFrozen();
-    	fInitializer = initializer;
-    	if (initializer != null) {
-    		initializer.setParent(this);
-    		initializer.setPropertyInParent(INITIALIZER);
-    	}
-    }
+		assertNotFrozen();
+		fInitializer = initializer;
+		if (initializer != null) {
+			initializer.setParent(this);
+			initializer.setPropertyInParent(INITIALIZER);
+		}
+	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
 			final IType type = CPPVisitor.createType(fDeclSpec);
-			if (fInitializer instanceof ICPPASTConstructorInitializer || fInitializer instanceof ICPPASTInitializerList) {
+			if (fInitializer instanceof ICPPASTConstructorInitializer
+					|| fInitializer instanceof ICPPASTInitializerList) {
 				boolean usesBracedInitList = (fInitializer instanceof ICPPASTInitializerList);
-				fEvaluation= new EvalTypeId(type, this, usesBracedInitList,
+				fEvaluation = new EvalTypeId(type, this, usesBracedInitList,
 						EvalConstructor.extractArguments(fInitializer));
 			} else {
-				fEvaluation= EvalFixed.INCOMPLETE;
+				fEvaluation = EvalFixed.INCOMPLETE;
 			}
 		}
 		return fEvaluation;
 	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
-    }
+		return CPPEvaluation.getType(this);
+	}
 
 	@Override
 	public ValueCategory getValueCategory() {
-    	return CPPEvaluation.getValueCategory(this);
+		return CPPEvaluation.getValueCategory(this);
 	}
 
 	@Override
@@ -138,12 +139,15 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (fDeclSpec != null && !fDeclSpec.accept(action))
@@ -160,27 +164,30 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 		if (fInitializer != null && !fInitializer.accept(action))
 			return false;
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Deprecated
-    @Override
-    public int getSimpleType() {
-    	IType type= getExpressionType();
-    	if (type instanceof ICPPBasicType) {
-    		ICPPBasicType bt= (ICPPBasicType) type;
-    		Kind kind = bt.getKind();
-    		switch (kind) {
+	@Override
+	public int getSimpleType() {
+		IType type = getExpressionType();
+		if (type instanceof ICPPBasicType) {
+			ICPPBasicType bt = (ICPPBasicType) type;
+			Kind kind = bt.getKind();
+			switch (kind) {
 			case eBoolean:
 				return t_bool;
 			case eChar:
@@ -205,76 +212,76 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 				return t_wchar_t;
 			default:
 				break;
-    		}
-    	}
+			}
+		}
 		return t_unspecified;
-    }
+	}
 
 	@Deprecated
-    @Override
-    public void setSimpleType(int value) {
+	@Override
+	public void setSimpleType(int value) {
 		CPPASTSimpleDeclSpecifier declspec = new CPPASTSimpleDeclSpecifier();
-    	switch (value) {
-    	case t_bool:
-    		declspec.setType(Kind.eBoolean);
-    		break;
-    	case t_char:
-    		declspec.setType(Kind.eChar);
-    		break;
-    	case t_double:
-    		declspec.setType(Kind.eDouble);
-    		break;
-    	case t_float:
-    		declspec.setType(Kind.eFloat);
-    		break;
-    	case t_int:
-    		declspec.setType(Kind.eInt);
-    		break;
-    	case t_long:
-    		declspec.setType(Kind.eInt);
-    		declspec.setLong(true);
-    		break;
-    	case t_short:
-    		declspec.setType(Kind.eInt);
-    		declspec.setShort(true);
-    		break;
-    	case t_signed:
-    		declspec.setType(Kind.eInt);
-    		declspec.setSigned(true);
-    		break;
-    	case t_unsigned:
-    		declspec.setType(Kind.eInt);
-    		declspec.setUnsigned(true);
-    		break;
-    	case t_void:
-    		declspec.setType(Kind.eVoid);
-    		break;
-    	case t_wchar_t:
-    		declspec.setType(Kind.eWChar);
-    		break;
-    	default:
-    		declspec.setType(Kind.eUnspecified);
-    		break;
-    	}
-    	setDeclSpecifier(declspec);
-    }
+		switch (value) {
+		case t_bool:
+			declspec.setType(Kind.eBoolean);
+			break;
+		case t_char:
+			declspec.setType(Kind.eChar);
+			break;
+		case t_double:
+			declspec.setType(Kind.eDouble);
+			break;
+		case t_float:
+			declspec.setType(Kind.eFloat);
+			break;
+		case t_int:
+			declspec.setType(Kind.eInt);
+			break;
+		case t_long:
+			declspec.setType(Kind.eInt);
+			declspec.setLong(true);
+			break;
+		case t_short:
+			declspec.setType(Kind.eInt);
+			declspec.setShort(true);
+			break;
+		case t_signed:
+			declspec.setType(Kind.eInt);
+			declspec.setSigned(true);
+			break;
+		case t_unsigned:
+			declspec.setType(Kind.eInt);
+			declspec.setUnsigned(true);
+			break;
+		case t_void:
+			declspec.setType(Kind.eVoid);
+			break;
+		case t_wchar_t:
+			declspec.setType(Kind.eWChar);
+			break;
+		default:
+			declspec.setType(Kind.eUnspecified);
+			break;
+		}
+		setDeclSpecifier(declspec);
+	}
 
 	@Deprecated
-    @Override
-    public IASTExpression getInitialValue() {
-    	if (fInitializer instanceof ICPPASTConstructorInitializer) {
-    		return ((ICPPASTConstructorInitializer) fInitializer).getExpression();
-    	}
-    	return null;
-    }
+	@Override
+	public IASTExpression getInitialValue() {
+		if (fInitializer instanceof ICPPASTConstructorInitializer) {
+			return ((ICPPASTConstructorInitializer) fInitializer).getExpression();
+		}
+		return null;
+	}
 
 	@Deprecated
-    @Override
-    public void setInitialValue(IASTExpression expression) {
-    	ICPPASTConstructorInitializer init= new CPPASTConstructorInitializer();
-    	init.setExpression(expression);
-    	setInitializer(init);
-    }
+	@Override
+	public void setInitialValue(IASTExpression expression) {
+		ICPPASTConstructorInitializer init = new CPPASTConstructorInitializer();
+		init.setExpression(expression);
+		setInitializer(init);
+	}
 
 	@Override
 	public IASTImplicitName[] getImplicitNames() {

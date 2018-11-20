@@ -45,8 +45,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
 
 @SuppressWarnings("restriction")
-public class ContainerCommandLauncherFactory
-		implements ICommandLauncherFactory, ICommandLauncherFactory2 {
+public class ContainerCommandLauncherFactory implements ICommandLauncherFactory, ICommandLauncherFactory2 {
 
 	private IProject project;
 
@@ -55,16 +54,14 @@ public class ContainerCommandLauncherFactory
 	public ICommandLauncher getCommandLauncher(IProject project) {
 		this.project = project;
 		// check if container build enablement has been checked
-		ICConfigurationDescription cfgd = CoreModel.getDefault()
-				.getProjectDescription(project, false)
-					.getActiveConfiguration();
+		ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(project, false)
+				.getActiveConfiguration();
 
 		IConfiguration cfg = null;
 
 		try {
 			if (cfgd instanceof CConfigurationDescriptionCache) {
-				CConfigurationData data = ((CConfigurationDescriptionCache) cfgd)
-						.getConfigurationData();
+				CConfigurationData data = ((CConfigurationDescriptionCache) cfgd).getConfigurationData();
 				if (data instanceof BuildConfigurationData) {
 					cfg = ((BuildConfigurationData) data).getConfiguration();
 				}
@@ -83,11 +80,9 @@ public class ContainerCommandLauncherFactory
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
 
 		if (props != null) {
-			String enablementProperty = props.getProperty(
-					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+			String enablementProperty = props.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 			if (enablementProperty != null) {
-				boolean enableContainer = Boolean
-						.parseBoolean(enablementProperty);
+				boolean enableContainer = Boolean.parseBoolean(enablementProperty);
 				// enablement has occurred, we can return a
 				// ContainerCommandLauncher
 				if (enableContainer) {
@@ -99,11 +94,9 @@ public class ContainerCommandLauncherFactory
 	}
 
 	@Override
-	public ICommandLauncher getCommandLauncher(
-			ICConfigurationDescription cfgd) {
+	public ICommandLauncher getCommandLauncher(ICConfigurationDescription cfgd) {
 		// check if container build enablement has been checked
-		IConfiguration cfg = ManagedBuildManager
-				.getConfigurationForDescription(cfgd);
+		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
 		// TODO: figure out why this occurs
 		if (cfg == null) {
 			return null;
@@ -111,11 +104,9 @@ public class ContainerCommandLauncherFactory
 		this.project = (IProject) cfg.getManagedProject().getOwner();
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
 		if (props != null) {
-			String enablementProperty = props.getProperty(
-					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+			String enablementProperty = props.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 			if (enablementProperty != null) {
-				boolean enableContainer = Boolean
-						.parseBoolean(enablementProperty);
+				boolean enableContainer = Boolean.parseBoolean(enablementProperty);
 				// enablement has occurred, we can return a
 				// ContainerCommandLauncher
 				if (enableContainer) {
@@ -138,8 +129,7 @@ public class ContainerCommandLauncherFactory
 		try {
 			toolchain = cfgd.getToolChain();
 			if (toolchain != null) {
-				if (ContainerTargetTypeProvider.CONTAINER_LINUX
-						.equals(toolchain.getProperty(IToolChain.ATTR_OS))) {
+				if (ContainerTargetTypeProvider.CONTAINER_LINUX.equals(toolchain.getProperty(IToolChain.ATTR_OS))) {
 					return new ContainerCommandLauncher();
 				}
 			}
@@ -150,30 +140,23 @@ public class ContainerCommandLauncherFactory
 	}
 
 	@Override
-	public void registerLanguageSettingEntries(IProject project,
-			List<? extends ICLanguageSettingEntry> langEntries) {
+	public void registerLanguageSettingEntries(IProject project, List<? extends ICLanguageSettingEntry> langEntries) {
 		@SuppressWarnings("unchecked")
 		List<ICLanguageSettingEntry> entries = (List<ICLanguageSettingEntry>) langEntries;
-		ICConfigurationDescription cfgd = CoreModel.getDefault()
-				.getProjectDescription(project).getActiveConfiguration();
-		IConfiguration cfg = ManagedBuildManager
-				.getConfigurationForDescription(cfgd);
+		ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(project)
+				.getActiveConfiguration();
+		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
 		if (props != null) {
-			String enablementProperty = props.getProperty(
-					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+			String enablementProperty = props.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 			if (enablementProperty != null) {
-				boolean enableContainer = Boolean
-						.parseBoolean(enablementProperty);
+				boolean enableContainer = Boolean.parseBoolean(enablementProperty);
 				if (enableContainer) {
-					String connectionName = props.getProperty(
-							ContainerCommandLauncher.CONNECTION_ID);
-					String imageName = props
-							.getProperty(ContainerCommandLauncher.IMAGE_ID);
-					if (connectionName == null || connectionName.isEmpty()
-							|| imageName == null || imageName.isEmpty()) {
-						DockerLaunchUIPlugin.logErrorMessage(
-								Messages.ContainerCommandLauncher_invalid_values);
+					String connectionName = props.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+					String imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
+					if (connectionName == null || connectionName.isEmpty() || imageName == null
+							|| imageName.isEmpty()) {
+						DockerLaunchUIPlugin.logErrorMessage(Messages.ContainerCommandLauncher_invalid_values);
 						return;
 					}
 					ContainerLauncher launcher = new ContainerLauncher();
@@ -189,12 +172,10 @@ public class ContainerCommandLauncherFactory
 						// the directory name as the connection may be
 						// connected to a different repo using the same
 						// image name.
-						IPath pluginPath = Platform.getStateLocation(Platform
-								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
+						IPath pluginPath = Platform.getStateLocation(Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
 								.append("HEADERS"); //$NON-NLS-1$
 						pluginPath.toFile().mkdir();
-						pluginPath = pluginPath
-								.append(getCleanName(connectionName));
+						pluginPath = pluginPath.append(getCleanName(connectionName));
 						pluginPath.toFile().mkdir();
 						// To allow the user to later manage the headers, store
 						// the
@@ -204,16 +185,14 @@ public class ContainerCommandLauncherFactory
 						try {
 							f.createNewFile();
 							try (FileWriter writer = new FileWriter(f);
-									BufferedWriter bufferedWriter = new BufferedWriter(
-											writer);) {
+									BufferedWriter bufferedWriter = new BufferedWriter(writer);) {
 								bufferedWriter.write(connectionName);
 								bufferedWriter.newLine();
 							} catch (IOException e) {
 								DockerLaunchUIPlugin.log(e);
 								return;
 							}
-							pluginPath = pluginPath
-									.append(getCleanName(imageName));
+							pluginPath = pluginPath.append(getCleanName(imageName));
 							pluginPath.toFile().mkdir();
 							// To allow the user to later manage the headers,
 							// store the
@@ -222,8 +201,7 @@ public class ContainerCommandLauncherFactory
 							f = imageNamePath.toFile();
 							f.createNewFile();
 							try (FileWriter writer = new FileWriter(f);
-									BufferedWriter bufferedWriter = new BufferedWriter(
-											writer);) {
+									BufferedWriter bufferedWriter = new BufferedWriter(writer);) {
 								bufferedWriter.write(imageName);
 								bufferedWriter.newLine();
 							} catch (IOException e) {
@@ -238,9 +216,8 @@ public class ContainerCommandLauncherFactory
 						List<String> excludeList = new ArrayList<>();
 						excludeList.add(project.getLocation().toString());
 						@SuppressWarnings("unused")
-						int status = launcher.fetchContainerDirs(connectionName,
-								imageName,
-								paths, excludeList, hostDir);
+						int status = launcher.fetchContainerDirs(connectionName, imageName, paths, excludeList,
+								hostDir);
 					}
 				}
 			}
@@ -258,8 +235,7 @@ public class ContainerCommandLauncherFactory
 		try {
 			toolchain = cfgd.getToolChain();
 			if (toolchain != null) {
-				if (ContainerTargetTypeProvider.CONTAINER_LINUX
-						.equals(toolchain.getProperty(IToolChain.ATTR_OS))) {
+				if (ContainerTargetTypeProvider.CONTAINER_LINUX.equals(toolchain.getProperty(IToolChain.ATTR_OS))) {
 					isContainerEnabled = true;
 				}
 			}
@@ -268,14 +244,10 @@ public class ContainerCommandLauncherFactory
 		}
 
 		if (isContainerEnabled) {
-			String connectionName = toolchain
-					.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
-			String imageName = toolchain
-					.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
-			if (connectionName == null || connectionName.isEmpty()
-					|| imageName == null || imageName.isEmpty()) {
-				DockerLaunchUIPlugin.logErrorMessage(
-						Messages.ContainerCommandLauncher_invalid_values);
+			String connectionName = toolchain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
+			String imageName = toolchain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+			if (connectionName == null || connectionName.isEmpty() || imageName == null || imageName.isEmpty()) {
+				DockerLaunchUIPlugin.logErrorMessage(Messages.ContainerCommandLauncher_invalid_values);
 				return includePaths;
 			}
 			if (includePaths.size() > 0) {
@@ -285,9 +257,7 @@ public class ContainerCommandLauncherFactory
 				// the directory name as the connection may be
 				// connected to a different repo using the same
 				// image name.
-				IPath pluginPath = Platform
-						.getStateLocation(Platform
-								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
+				IPath pluginPath = Platform.getStateLocation(Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
 						.append("HEADERS"); //$NON-NLS-1$
 				pluginPath.toFile().mkdir();
 				pluginPath = pluginPath.append(getCleanName(connectionName));
@@ -300,8 +270,7 @@ public class ContainerCommandLauncherFactory
 				try {
 					f.createNewFile();
 					try (FileWriter writer = new FileWriter(f);
-							BufferedWriter bufferedWriter = new BufferedWriter(
-									writer);) {
+							BufferedWriter bufferedWriter = new BufferedWriter(writer);) {
 						bufferedWriter.write(connectionName);
 						bufferedWriter.newLine();
 					} catch (IOException e) {
@@ -317,8 +286,7 @@ public class ContainerCommandLauncherFactory
 					f = imageNamePath.toFile();
 					f.createNewFile();
 					try (FileWriter writer = new FileWriter(f);
-							BufferedWriter bufferedWriter = new BufferedWriter(
-									writer);) {
+							BufferedWriter bufferedWriter = new BufferedWriter(writer);) {
 						bufferedWriter.write(imageName);
 						bufferedWriter.newLine();
 					} catch (IOException e) {
@@ -333,11 +301,10 @@ public class ContainerCommandLauncherFactory
 				// exclude project directories from any copying operation
 				List<String> excludeList = new ArrayList<>();
 				excludeList.add(project.getLocation().toString());
-				int status = launcher.fetchContainerDirsSync(connectionName,
-						imageName, includePaths, excludeList, hostDir);
+				int status = launcher.fetchContainerDirsSync(connectionName, imageName, includePaths, excludeList,
+						hostDir);
 				if (status == 0) {
-					Set<String> copiedVolumes = launcher
-							.getCopiedVolumes(connectionName, imageName);
+					Set<String> copiedVolumes = launcher.getCopiedVolumes(connectionName, imageName);
 					List<String> newEntries = new ArrayList<>();
 
 					for (String path : includePaths) {
@@ -359,9 +326,7 @@ public class ContainerCommandLauncherFactory
 				// the headers will be recopied)
 				// TODO: fix this in a minor release to be an additional method
 				// that can be registered by the removal of the header files
-				IPath pluginPath = Platform
-						.getStateLocation(Platform
-								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
+				IPath pluginPath = Platform.getStateLocation(Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
 						.append("HEADERS").append(getCleanName(connectionName)) //$NON-NLS-1$
 						.append(getCleanName(imageName));
 				toolchain.setProperty("cdt.needScannerRefresh", //$NON-NLS-1$
@@ -372,53 +337,41 @@ public class ContainerCommandLauncherFactory
 	}
 
 	@Override
-	public List<ICLanguageSettingEntry> verifyLanguageSettingEntries(
-			IProject project, List<ICLanguageSettingEntry> entries) {
+	public List<ICLanguageSettingEntry> verifyLanguageSettingEntries(IProject project,
+			List<ICLanguageSettingEntry> entries) {
 		if (entries == null) {
 			return null;
 		}
-		ICConfigurationDescription cfgd = CoreModel.getDefault()
-				.getProjectDescription(project).getActiveConfiguration();
-		IConfiguration cfg = ManagedBuildManager
-				.getConfigurationForDescription(cfgd);
+		ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(project)
+				.getActiveConfiguration();
+		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
 		if (props != null) {
-			String enablementProperty = props.getProperty(
-					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+			String enablementProperty = props.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 			if (enablementProperty != null) {
-				boolean enableContainer = Boolean
-						.parseBoolean(enablementProperty);
+				boolean enableContainer = Boolean.parseBoolean(enablementProperty);
 				if (enableContainer) {
-					String connectionName = props.getProperty(
-							ContainerCommandLauncher.CONNECTION_ID);
-					String imageName = props
-							.getProperty(ContainerCommandLauncher.IMAGE_ID);
-					if (connectionName == null || connectionName.isEmpty()
-							|| imageName == null || imageName.isEmpty()) {
-						DockerLaunchUIPlugin.logErrorMessage(
-								Messages.ContainerCommandLauncher_invalid_values);
+					String connectionName = props.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+					String imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
+					if (connectionName == null || connectionName.isEmpty() || imageName == null
+							|| imageName.isEmpty()) {
+						DockerLaunchUIPlugin.logErrorMessage(Messages.ContainerCommandLauncher_invalid_values);
 						return entries;
 					}
 
 					ContainerLauncher launcher = new ContainerLauncher();
-					Set<String> copiedVolumes = launcher
-							.getCopiedVolumes(connectionName, imageName);
+					Set<String> copiedVolumes = launcher.getCopiedVolumes(connectionName, imageName);
 					List<ICLanguageSettingEntry> newEntries = new ArrayList<>();
-					IPath pluginPath = Platform.getStateLocation(
-							Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID));
+					IPath pluginPath = Platform.getStateLocation(Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID));
 					IPath hostDir = pluginPath.append("HEADERS") //$NON-NLS-1$
-							.append(getCleanName(connectionName))
-							.append(getCleanName(imageName));
+							.append(getCleanName(connectionName)).append(getCleanName(imageName));
 
 					for (ICLanguageSettingEntry entry : entries) {
 						if (entry instanceof ICIncludePathEntry) {
-							if (copiedVolumes
-									.contains(((ICIncludePathEntry) entry)
-											.getName().toString())) {
-																	// //$NON-NLS-2$
+							if (copiedVolumes.contains(((ICIncludePathEntry) entry).getName().toString())) {
+								// //$NON-NLS-2$
 								IPath newPath = hostDir.append(entry.getName());
-								CIncludePathEntry newEntry = new CIncludePathEntry(
-										newPath.toString(),
+								CIncludePathEntry newEntry = new CIncludePathEntry(newPath.toString(),
 										entry.getFlags());
 								newEntries.add(newEntry);
 								continue;

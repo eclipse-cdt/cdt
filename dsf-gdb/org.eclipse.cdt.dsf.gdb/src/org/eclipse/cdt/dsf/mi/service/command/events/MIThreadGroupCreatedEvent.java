@@ -17,7 +17,6 @@ package org.eclipse.cdt.dsf.mi.service.command.events;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 
-
 /**
  * This can only be detected by gdb/mi after GDB 6.8.
  * @since 1.1
@@ -26,13 +25,15 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 @Immutable
 public class MIThreadGroupCreatedEvent extends MIEvent<IProcessDMContext> {
 
-    final private String fGroupId;
+	final private String fGroupId;
 
-    public MIThreadGroupCreatedEvent(IProcessDMContext ctx, int token, String groupId) {
-        super(ctx, token, null);
-        fGroupId = groupId;
-    }
-    
-    public String getGroupId() { return fGroupId; }
+	public MIThreadGroupCreatedEvent(IProcessDMContext ctx, int token, String groupId) {
+		super(ctx, token, null);
+		fGroupId = groupId;
+	}
+
+	public String getGroupId() {
+		return fGroupId;
+	}
 
 }

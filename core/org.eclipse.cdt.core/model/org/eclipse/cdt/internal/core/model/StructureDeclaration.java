@@ -51,12 +51,12 @@ public class StructureDeclaration extends SourceManipulation implements IStructu
 		return getStructureInfo().isStruct();
 	}
 
-	public StructureInfo getStructureInfo() throws CModelException{
+	public StructureInfo getStructureInfo() throws CModelException {
 		return (StructureInfo) getElementInfo();
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new StructureInfo(this);
 	}
 

@@ -33,8 +33,9 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  * @since 8.4
  */
 public class GDBJtagDSFFinalLaunchSequence_7_7 extends GDBJtagDSFFinalLaunchSequence_7_2 {
-	
-	public GDBJtagDSFFinalLaunchSequence_7_7(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+
+	public GDBJtagDSFFinalLaunchSequence_7_7(DsfSession session, Map<String, Object> attributes,
+			RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
 	}
 
@@ -62,23 +63,21 @@ public class GDBJtagDSFFinalLaunchSequence_7_7 extends GDBJtagDSFFinalLaunchSequ
 		DsfServicesTracker tracker = new DsfServicesTracker(Activator.getBundleContext(), getSession().getId());
 		IGDBControl gdbControl = tracker.getService(IGDBControl.class);
 		tracker.dispose();
-		
-        if (gdbControl != null) {
-        	// For hardware debug the 'call' style does not work with GDB
-        	// Let's use the 'gdb' style instead
-        	gdbControl.queueCommand(
-        			gdbControl.getCommandFactory().createMIGDBSetDPrintfStyle(gdbControl.getContext(), 
-        					MIGDBSetDPrintfStyle.GDB_STYLE),
-        					new ImmediateDataRequestMonitor<MIInfo>(rm) {
-        				@Override
-        				protected void handleCompleted() {
-        					// We accept errors
-        					rm.done();
-        				}
-        			});
-        } else {
-        	// Should not happen but accept errors in this case
-        	rm.done();
-        }
+
+		if (gdbControl != null) {
+			// For hardware debug the 'call' style does not work with GDB
+			// Let's use the 'gdb' style instead
+			gdbControl.queueCommand(gdbControl.getCommandFactory().createMIGDBSetDPrintfStyle(gdbControl.getContext(),
+					MIGDBSetDPrintfStyle.GDB_STYLE), new ImmediateDataRequestMonitor<MIInfo>(rm) {
+						@Override
+						protected void handleCompleted() {
+							// We accept errors
+							rm.done();
+						}
+					});
+		} else {
+			// Should not happen but accept errors in this case
+			rm.done();
+		}
 	}
 }

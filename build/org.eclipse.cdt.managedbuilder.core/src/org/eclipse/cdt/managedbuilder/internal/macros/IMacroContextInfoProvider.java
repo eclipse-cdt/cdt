@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
-
 public interface IMacroContextInfoProvider {
 	IMacroContextInfo getMacroContextInfo(int type, Object context);
 }

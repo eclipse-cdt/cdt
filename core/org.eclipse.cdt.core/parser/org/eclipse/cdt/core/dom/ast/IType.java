@@ -28,14 +28,14 @@ public interface IType extends Cloneable {
 	public static final IType[] EMPTY_TYPE_ARRAY = {};
 	public static final ASTTypeMatcher TYPE_MATCHER = new ASTTypeMatcher();
 
-    public Object clone();
+	public Object clone();
 
-    /**
-     * Test whether this type is the same as the given one. A typedef is considered to be the same
-     * type as it's target type.
-     * See {@link ICPPTemplateTemplateParameter#isSameType(IType)} or
-     * {@link ICPPTemplateTypeParameter#isSameType(IType)} for the semantics of comparing template
-     * parameters denoting types.
-     */
-    public boolean isSameType(IType type);
+	/**
+	 * Test whether this type is the same as the given one. A typedef is considered to be the same
+	 * type as it's target type.
+	 * See {@link ICPPTemplateTemplateParameter#isSameType(IType)} or
+	 * {@link ICPPTemplateTypeParameter#isSameType(IType)} for the semantics of comparing template
+	 * parameters denoting types.
+	 */
+	public boolean isSameType(IType type);
 }

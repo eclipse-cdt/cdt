@@ -25,62 +25,43 @@ import org.eclipse.cdt.ui.tests.text.doctools.DocCommentTestSuite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-    // documentation tool extension tests
-    DocCommentTestSuite.class,
-    
-    // partitioning tests
-	PartitionTokenScannerTest.class,
-	CPartitionerTest.class,
-	AsmTextEditorTest.class,
-	AsmPartitionerTest.class,
+		// documentation tool extension tests
+		DocCommentTestSuite.class,
 
-    // smart edit tests
-	AlignConstActionTest.class,
-	CAutoIndentTest.class,
-	CHeuristicScannerTest.class,
-	BracketInserterTest.class,
-	IndentActionTest.class,
-	FormatActionTest.class,
-	ShiftActionTest.class,
-	CodeFormatterTest.class,
-	CIndenterTest.class,
-	TemplateFormatterTest.class,
-	
-	// Break iterator tests.
-	CBreakIteratorTest.class,
-	CWordIteratorTest.class,
+		// partitioning tests
+		PartitionTokenScannerTest.class, CPartitionerTest.class, AsmTextEditorTest.class, AsmPartitionerTest.class,
 
-	// highlighting tests
-	SemanticHighlightingTest.class,
-	InactiveCodeHighlightingTest.class,
-	CHeaderRuleTest.class,
-	NumberRuleTest.class,
-	PairMatcherTest.class,
-	MarkOccurrenceTest.class,
+		// smart edit tests
+		AlignConstActionTest.class, CAutoIndentTest.class, CHeuristicScannerTest.class, BracketInserterTest.class,
+		IndentActionTest.class, FormatActionTest.class, ShiftActionTest.class, CodeFormatterTest.class,
+		CIndenterTest.class, TemplateFormatterTest.class,
 
-	// folding tests
-	FoldingTest.class,
-	FoldingCommentsTest.class,
+		// Break iterator tests.
+		CBreakIteratorTest.class, CWordIteratorTest.class,
 
-	// basic editing tests
-	BasicCEditorTest.class,
-	
-	// editor hyperlink tests
-	HyperlinkTest.class,
+		// highlighting tests
+		SemanticHighlightingTest.class, InactiveCodeHighlightingTest.class, CHeaderRuleTest.class, NumberRuleTest.class,
+		PairMatcherTest.class, MarkOccurrenceTest.class,
 
-	// word detection
-	CWordFinderTest.class,
-	
-	// compare tests
-	CStructureCreatorTest.class,
-	
-	// source manipulation tests
-	AddBlockCommentTest.class,
-	RemoveBlockCommentTest.class,
-	SortLinesTest.class,
+		// folding tests
+		FoldingTest.class, FoldingCommentsTest.class,
 
-	// add include
-	AddIncludeTest.class,
-})
+		// basic editing tests
+		BasicCEditorTest.class,
+
+		// editor hyperlink tests
+		HyperlinkTest.class,
+
+		// word detection
+		CWordFinderTest.class,
+
+		// compare tests
+		CStructureCreatorTest.class,
+
+		// source manipulation tests
+		AddBlockCommentTest.class, RemoveBlockCommentTest.class, SortLinesTest.class,
+
+		// add include
+		AddIncludeTest.class, })
 public class TextTestSuite {
 }

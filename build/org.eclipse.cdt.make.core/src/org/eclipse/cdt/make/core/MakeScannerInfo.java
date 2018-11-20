@@ -70,6 +70,7 @@ public class MakeScannerInfo implements IScannerInfo {
 			getPathList().addAll(Arrays.asList(paths));
 		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 *

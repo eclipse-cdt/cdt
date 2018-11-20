@@ -11,7 +11,7 @@
  * Contributors:
  *    Veaceslav Bacu (Freescale Semiconductor Inc.) - initial API and implementation (bug 348884)
  *    
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.utils;
 
@@ -37,12 +37,12 @@ public class StorableCdtVariablesTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(StorableCdtVariablesTest.class);
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.cleanUp(getName());
 	}
-	
+
 	/**
 	 * Unit test for bug 348884
 	 */
@@ -57,12 +57,12 @@ public class StorableCdtVariablesTest extends TestCase {
 		StorableCdtVariable varA3 = new StorableCdtVariable("A3", ICdtVariable.VALUE_TEXT, "a3"); //$NON-NLS-1$ //$NON-NLS-2$
 		StorableCdtVariable varA4 = new StorableCdtVariable("A4", ICdtVariable.VALUE_TEXT, "a4"); //$NON-NLS-1$ //$NON-NLS-2$
 		StorableCdtVariable varA5 = new StorableCdtVariable("A5", ICdtVariable.VALUE_TEXT, "a5"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		IUserVarSupplier supplier = CCorePlugin.getUserVarSupplier();
-		
-		try{
-			supplier.setMacros(new ICdtVariable[]{varA1, varA2, varA3, varA4}, desc);
-		}catch(Throwable e){
+
+		try {
+			supplier.setMacros(new ICdtVariable[] { varA1, varA2, varA3, varA4 }, desc);
+		} catch (Throwable e) {
 			fail(e.toString());
 		}
 		{
@@ -77,10 +77,10 @@ public class StorableCdtVariablesTest extends TestCase {
 			assertTrue(macroStrings.contains(varA4.getName() + '=' + varA4.getStringValue()));
 			assertEquals(4, macroStrings.size());
 		}
-		
-		try{
-			supplier.setMacros(new ICdtVariable[]{varA1, varA2, varA5}, desc);
-		}catch(Exception e){
+
+		try {
+			supplier.setMacros(new ICdtVariable[] { varA1, varA2, varA5 }, desc);
+		} catch (Exception e) {
 			fail(e.toString());
 		}
 		{

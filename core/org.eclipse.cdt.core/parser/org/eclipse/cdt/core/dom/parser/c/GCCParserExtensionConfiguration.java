@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
  * Configures the parser for c-source code as accepted by gcc.
  */
 public class GCCParserExtensionConfiguration extends AbstractCParserExtensionConfiguration {
-	private static GCCParserExtensionConfiguration sInstance= new GCCParserExtensionConfiguration();
+	private static GCCParserExtensionConfiguration sInstance = new GCCParserExtensionConfiguration();
 
 	/**
 	 * @since 5.1
@@ -32,25 +32,25 @@ public class GCCParserExtensionConfiguration extends AbstractCParserExtensionCon
 		return sInstance;
 	}
 
-    @Override
+	@Override
 	public boolean supportStatementsInExpressions() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportGCCStyleDesignators() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportTypeofUnaryExpressions() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportAlignOfUnaryExpression() {
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public boolean supportKnRC() {
@@ -63,7 +63,7 @@ public class GCCParserExtensionConfiguration extends AbstractCParserExtensionCon
 	}
 
 	@Override
-	public boolean supportDeclspecSpecifiers() {		
+	public boolean supportDeclspecSpecifiers() {
 		return true;
 	}
 

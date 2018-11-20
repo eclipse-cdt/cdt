@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
  * this interface represents the given environment variable
  * @since 3.0
  */
-public interface IBuildEnvironmentVariable extends IEnvironmentVariable{
+public interface IBuildEnvironmentVariable extends IEnvironmentVariable {
 	public static final int ENVVAR_REPLACE = IEnvironmentVariable.ENVVAR_REPLACE;
 	public static final int ENVVAR_REMOVE = IEnvironmentVariable.ENVVAR_REMOVE;
 	public static final int ENVVAR_PREPEND = IEnvironmentVariable.ENVVAR_PREPEND;
@@ -72,7 +72,7 @@ public interface IBuildEnvironmentVariable extends IEnvironmentVariable{
 	 *
 	 * To specify that no delimiter should be used, the getDelimiter() method should
 	 * return null or an empty string
- 	 */
+	 */
 	@Override
 	public String getDelimiter();
 }

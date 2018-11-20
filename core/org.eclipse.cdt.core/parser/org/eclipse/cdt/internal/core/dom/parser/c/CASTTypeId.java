@@ -24,10 +24,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author jcamelon
  */
 public class CASTTypeId extends ASTNode implements IASTTypeId {
-    private IASTDeclSpecifier declSpecifier;
-    private IASTDeclarator declarator;
+	private IASTDeclSpecifier declSpecifier;
+	private IASTDeclarator declarator;
 
-    public CASTTypeId() {
+	public CASTTypeId() {
 	}
 
 	public CASTTypeId(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
@@ -50,54 +50,62 @@ public class CASTTypeId extends ASTNode implements IASTTypeId {
 
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
-        return declSpecifier;
-    }
+		return declSpecifier;
+	}
 
-    @Override
+	@Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
-        assertNotFrozen();
-        this.declSpecifier = declSpec;
-        if (declSpec != null) {
+		assertNotFrozen();
+		this.declSpecifier = declSpec;
+		if (declSpec != null) {
 			declSpec.setParent(this);
 			declSpec.setPropertyInParent(DECL_SPECIFIER);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTDeclarator getAbstractDeclarator() {
-        return declarator;
-    }
+		return declarator;
+	}
 
-    @Override
+	@Override
 	public void setAbstractDeclarator(IASTDeclarator abstractDeclarator) {
-        assertNotFrozen();
-        declarator = abstractDeclarator;
-        if (abstractDeclarator != null) {
+		assertNotFrozen();
+		declarator = abstractDeclarator;
+		if (abstractDeclarator != null) {
 			abstractDeclarator.setParent(this);
 			abstractDeclarator.setPropertyInParent(ABSTRACT_DECLARATOR);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitTypeIds) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitTypeIds) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (declSpecifier != null && !declSpecifier.accept(action)) return false;
-        if (declarator != null && !declarator.accept(action)) return false;
+		if (declSpecifier != null && !declSpecifier.accept(action))
+			return false;
+		if (declarator != null && !declarator.accept(action))
+			return false;
 
-        if (action.shouldVisitTypeIds) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitTypeIds) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 }

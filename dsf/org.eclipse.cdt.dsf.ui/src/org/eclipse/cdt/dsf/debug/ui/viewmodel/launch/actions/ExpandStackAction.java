@@ -40,36 +40,36 @@ public class ExpandStackAction extends AbstractVMProviderActionDelegate implemen
 	public void run(IAction action) {
 		Object element = getViewerInput();
 		if (element instanceof IncompleteStackVMContext) {
-		    IncompleteStackVMContext incStackVmc = ((IncompleteStackVMContext) element); 
+			IncompleteStackVMContext incStackVmc = ((IncompleteStackVMContext) element);
 			IVMNode node = incStackVmc.getVMNode();
 			if (incStackVmc.getVMNode() instanceof StackFramesVMNode) {
-				final IExecutionDMContext exeCtx= incStackVmc.getExecutionDMContext();
+				final IExecutionDMContext exeCtx = incStackVmc.getExecutionDMContext();
 				((StackFramesVMNode) node).incrementStackFrameLimit(exeCtx);
 				final ExpandStackEvent event = new ExpandStackEvent(exeCtx);
 				final AbstractLaunchVMProvider vmProvider = (AbstractLaunchVMProvider) getVMProvider();
 				vmProvider.getExecutor().execute(new DsfRunnable() {
-				    @Override
+					@Override
 					public void run() {
-				        vmProvider.handleEvent(event);
-				    }
+						vmProvider.handleEvent(event);
+					}
 				});
 			}
 		}
 	}
 
-    @Override
-    public void init(IViewPart view) {
-        super.init(view);
+	@Override
+	public void init(IViewPart view) {
+		super.init(view);
 		updateEnablement();
-    }
-    
-    @Override
-    public void debugContextChanged(DebugContextEvent event) {
-        super.debugContextChanged(event);
-		updateEnablement();
-    }
+	}
 
-    @Override
+	@Override
+	public void debugContextChanged(DebugContextEvent event) {
+		super.debugContextChanged(event);
+		updateEnablement();
+	}
+
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		super.selectionChanged(action, selection);
 		updateEnablement();

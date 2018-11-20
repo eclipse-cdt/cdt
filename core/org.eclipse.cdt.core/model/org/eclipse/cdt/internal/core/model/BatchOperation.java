@@ -39,10 +39,10 @@ public class BatchOperation extends CModelOperation {
 			this.runnable.run(fMonitor);
 		} catch (CoreException ce) {
 			if (ce instanceof CModelException) {
-				throw (CModelException)ce;
+				throw (CModelException) ce;
 			}
 			if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
-				Throwable e= ce.getStatus().getException();
+				Throwable e = ce.getStatus().getException();
 				if (e instanceof CModelException) {
 					throw (CModelException) e;
 				}
@@ -50,7 +50,7 @@ public class BatchOperation extends CModelOperation {
 			throw new CModelException(ce);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.core.JavaModelOperation#verify()
 	 */

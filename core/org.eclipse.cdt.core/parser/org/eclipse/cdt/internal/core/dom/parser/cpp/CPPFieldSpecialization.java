@@ -27,8 +27,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
  * Binding for a specialization of a field.
  */
 public class CPPFieldSpecialization extends CPPVariableSpecialization implements ICPPField {
-	public CPPFieldSpecialization(IBinding orig, ICPPClassType owner, ICPPTemplateParameterMap tpmap,
-			IType type, IValue value) {
+	public CPPFieldSpecialization(IBinding orig, ICPPClassType owner, ICPPTemplateParameterMap tpmap, IType type,
+			IValue value) {
 		super(orig, owner, tpmap, type, value);
 	}
 

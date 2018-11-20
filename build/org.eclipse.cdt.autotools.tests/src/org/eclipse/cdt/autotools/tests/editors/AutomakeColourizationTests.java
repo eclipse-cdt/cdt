@@ -40,39 +40,31 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class AutomakeColourizationTests {
-	
+
 	private ProjectTools tools;
 	private IProject project;
 	private IFile makefileAmFile;
-	
-	static String makefileAmContents =
-		"# This is a comment" + "\n" +
-		"if CONDITION" + "\n" +
-		"MACRO = case1" + "\n" +
-		"else" + "\n" +
-		"MACRO = case2" + "\n" +
-		"$(MACRO)" + "\n" +
-		"${MACRO}" + "\n" +
-		"";
+
+	static String makefileAmContents = "# This is a comment" + "\n" + "if CONDITION" + "\n" + "MACRO = case1" + "\n"
+			+ "else" + "\n" + "MACRO = case2" + "\n" + "$(MACRO)" + "\n" + "${MACRO}" + "\n" + "";
 	private IWorkbench workbench;
 	private AutomakefileCodeScanner codeScanner;
-	
+
 	@Before
-    public void setUp() throws Exception {
-        tools = new ProjectTools();
-        if (!ProjectTools.setup())
-        	fail("could not perform basic project workspace setup");
-        
-        project = ProjectTools.createProject("testProjectACT");
-        
-        if(project == null) {
-        	fail("Unable to create test project");
-        }
-        
-        project.open(new NullProgressMonitor());
-        
+	public void setUp() throws Exception {
+		tools = new ProjectTools();
+		if (!ProjectTools.setup())
+			fail("could not perform basic project workspace setup");
+
+		project = ProjectTools.createProject("testProjectACT");
+
+		if (project == null) {
+			fail("Unable to create test project");
+		}
+
+		project.open(new NullProgressMonitor());
+
 		Display.getDefault().syncExec(() -> {
 			try {
 				makefileAmFile = tools.createFile(project, "Makefile.am", makefileAmContents);
@@ -95,11 +87,12 @@ public class AutomakeColourizationTests {
 			}
 		});
 
-    }
-    
-    IToken getNextToken() {
-    	return codeScanner.nextToken();
-    }
+	}
+
+	IToken getNextToken() {
+		return codeScanner.nextToken();
+	}
+
 	@Test
 	public void testAutomakeEditorColourization() {
 		// # This is a comment
@@ -211,7 +204,7 @@ public class AutomakeColourizationTests {
 		token = (Token) token0;
 		attribute = (TextAttribute) token.getData();
 		assertNull(attribute);
-		
+
 		// ${MACRO}
 		token0 = getNextToken();
 		assertTrue(token0 instanceof Token);
@@ -222,6 +215,7 @@ public class AutomakeColourizationTests {
 		attribute = (TextAttribute) token.getData();
 		assertEquals(ColorManager.MAKE_MACRO_REF_RGB, attribute.getForeground().getRGB());
 	}
+
 	@After
 	public void tearDown() throws Exception {
 		project.delete(true, false, ProjectTools.getMonitor());

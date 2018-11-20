@@ -34,75 +34,75 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * Represents a C++ class, declaration of which is not yet available.
  */
 public class CPPUnknownMemberClass extends CPPUnknownMember implements ICPPUnknownMemberClass {
-    public CPPUnknownMemberClass(IType owner, char[] name) {
-    	super(owner, name);
-    }
+	public CPPUnknownMemberClass(IType owner, char[] name) {
+		super(owner, name);
+	}
 
-    @Override
+	@Override
 	public ICPPBase[] getBases() {
-        return ICPPBase.EMPTY_BASE_ARRAY;
-    }
+		return ICPPBase.EMPTY_BASE_ARRAY;
+	}
 
-    @Override
+	@Override
 	public IField[] getFields() {
-        return IField.EMPTY_FIELD_ARRAY;
-    }
+		return IField.EMPTY_FIELD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public IField findField(String name) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public ICPPField[] getDeclaredFields() {
-        return ICPPField.EMPTY_CPPFIELD_ARRAY;
-    }
+		return ICPPField.EMPTY_CPPFIELD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public ICPPMethod[] getMethods() {
-        return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-    }
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
-        return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-    }
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
-        return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-    }
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
 
-    @Override
+	@Override
 	public ICPPConstructor[] getConstructors() {
-        return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
-    }
+		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+	}
 
-    @Override
+	@Override
 	public IBinding[] getFriends() {
-        return IBinding.EMPTY_BINDING_ARRAY;
-    }
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
 
-    @Override
+	@Override
 	public int getKey() {
-        return 0;
-    }
+		return 0;
+	}
 
-    @Override
+	@Override
 	public final IScope getCompositeScope() {
-        return asScope();
-    }
+		return asScope();
+	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType type) {
-    	if (this == type)
-    		return true;
+		if (this == type)
+			return true;
 
 		if (type instanceof ITypedef)
 			return type.isSameType(this);
 
 		if (type instanceof ICPPUnknownMemberClass && !(type instanceof ICPPUnknownMemberClassInstance)) {
-			ICPPUnknownMemberClass rhs= (ICPPUnknownMemberClass) type;
+			ICPPUnknownMemberClass rhs = (ICPPUnknownMemberClass) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
 				final IType lhsContainer = getOwnerType();
 				final IType rhsContainer = rhs.getOwnerType();
@@ -112,13 +112,13 @@ public class CPPUnknownMemberClass extends CPPUnknownMember implements ICPPUnkno
 			}
 		}
 		return false;
-    }
+	}
 
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
@@ -141,6 +141,6 @@ public class CPPUnknownMemberClass extends CPPUnknownMember implements ICPPUnkno
 
 	@Override
 	public int getVisibility(IBinding member) {
-		throw new IllegalArgumentException(member.getName() + " is not a member of " + getName());  //$NON-NLS-1$
+		throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
 	}
 }

@@ -81,8 +81,8 @@ public class ScannerConfigInfoFactory {
 		 */
 		@Override
 		public boolean isMakeBuilderConsoleParserEnabled() {
-			if (getString(MAKE_BUILDER_PARSER_ENABLED) == null ||
-				getString(MAKE_BUILDER_PARSER_ENABLED).length() == 0) { // if no property then default to true
+			if (getString(MAKE_BUILDER_PARSER_ENABLED) == null
+					|| getString(MAKE_BUILDER_PARSER_ENABLED).length() == 0) { // if no property then default to true
 				return true;
 			}
 			return getBoolean(MAKE_BUILDER_PARSER_ENABLED);
@@ -103,13 +103,13 @@ public class ScannerConfigInfoFactory {
 		public String getMakeBuilderConsoleParserId() {
 			String parserId = getString(MAKE_BUILDER_PARSER_ID);
 			if (parserId == null || parserId.length() == 0) {
-				String[] parserIds = MakeCorePlugin.getDefault().
-					getScannerInfoConsoleParserIds("makeBuilder"); //$NON-NLS-1$
+				String[] parserIds = MakeCorePlugin.getDefault().getScannerInfoConsoleParserIds("makeBuilder"); //$NON-NLS-1$
 				// the default is the first one in the registry
 				parserId = parserIds[0];
 			}
 			return parserId;
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setMakeBuilderConsoleParserId(java.lang.String)
 		 */
@@ -123,8 +123,8 @@ public class ScannerConfigInfoFactory {
 		 */
 		@Override
 		public boolean isESIProviderCommandEnabled() {
-			if (getString(ESI_PROVIDER_COMMAND_ENABLED) == null ||
-				getString(ESI_PROVIDER_COMMAND_ENABLED).length() == 0) { // if no property then default to true
+			if (getString(ESI_PROVIDER_COMMAND_ENABLED) == null
+					|| getString(ESI_PROVIDER_COMMAND_ENABLED).length() == 0) { // if no property then default to true
 				return true;
 			}
 			return getBoolean(ESI_PROVIDER_COMMAND_ENABLED);
@@ -143,8 +143,8 @@ public class ScannerConfigInfoFactory {
 		 */
 		@Override
 		public boolean isDefaultESIProviderCmd() {
-			if (getString(USE_DEFAULT_ESI_PROVIDER_CMD) == null ||
-				getString(USE_DEFAULT_ESI_PROVIDER_CMD).length() == 0) { // if no property then default to true
+			if (getString(USE_DEFAULT_ESI_PROVIDER_CMD) == null
+					|| getString(USE_DEFAULT_ESI_PROVIDER_CMD).length() == 0) { // if no property then default to true
 				return true;
 			}
 			return getBoolean(USE_DEFAULT_ESI_PROVIDER_CMD);
@@ -211,8 +211,8 @@ public class ScannerConfigInfoFactory {
 		public String getESIProviderConsoleParserId() {
 			String parserId = getString(ESI_PROVIDER_PARSER_ID);
 			if (parserId == null || parserId.length() == 0) {
-				String[] parserIds = MakeCorePlugin.getDefault().
-					getScannerInfoConsoleParserIds("externalScannerInfoProvider"); //$NON-NLS-1$
+				String[] parserIds = MakeCorePlugin.getDefault()
+						.getScannerInfoConsoleParserIds("externalScannerInfoProvider"); //$NON-NLS-1$
 				// the default is the first one in the registry
 				parserId = parserIds[0];
 			}
@@ -232,9 +232,9 @@ public class ScannerConfigInfoFactory {
 		 */
 		@Override
 		public boolean isSIProblemGenerationEnabled() {
-			if (getString(SI_PROBLEM_GENERATION_ENABLED) == null ||
-					getString(SI_PROBLEM_GENERATION_ENABLED).length() == 0) { // if no property then default to true
-					return true;
+			if (getString(SI_PROBLEM_GENERATION_ENABLED) == null
+					|| getString(SI_PROBLEM_GENERATION_ENABLED).length() == 0) { // if no property then default to true
+				return true;
 			}
 			return getBoolean(SI_PROBLEM_GENERATION_ENABLED);
 		}
@@ -252,16 +252,16 @@ public class ScannerConfigInfoFactory {
 		}
 
 		protected abstract String getBuilderID();
+
 		protected abstract String getString(String property);
+
 		protected abstract void putString(String name, String value) throws CoreException;
 
 		protected String getESIProviderParameter(String name) {
-			IExtension extension =
-				Platform.getExtensionRegistry().getExtension(
-						MakeCorePlugin.getUniqueIdentifier(),
-						MakeCorePlugin.EXTERNAL_SI_PROVIDER_SIMPLE_ID,
-						// TODO VMIR make this configurable
-						MakeCorePlugin.DEFAULT_EXTERNAL_SI_PROVIDER_ID);
+			IExtension extension = Platform.getExtensionRegistry().getExtension(MakeCorePlugin.getUniqueIdentifier(),
+					MakeCorePlugin.EXTERNAL_SI_PROVIDER_SIMPLE_ID,
+					// TODO VMIR make this configurable
+					MakeCorePlugin.DEFAULT_EXTERNAL_SI_PROVIDER_ID);
 			if (extension == null)
 				return null;
 			IConfigurationElement[] configs = extension.getConfigurationElements();
@@ -322,12 +322,12 @@ public class ScannerConfigInfoFactory {
 			this.builderID = builderID;
 			ICommand builder = ScannerConfigNature.getBuildSpec(project.getDescription(), builderID);
 			if (builder == null) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						MakeCorePlugin.getUniqueIdentifier(), -1,
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
 						MakeMessages.getString("ScannerConfigInfoFactory.Missing_Builder")//$NON-NLS-1$
-							+ builderID, null));
+								+ builderID,
+						null));
 			}
-			Map<String,String> bArgs = builder.getArguments();
+			Map<String, String> bArgs = builder.getArguments();
 			args = bArgs;
 		}
 

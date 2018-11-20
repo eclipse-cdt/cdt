@@ -26,15 +26,14 @@ import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
-public class CBuildSettingCache extends CDefaultBuildData implements
-		ICBuildSetting, ICachedData {
+public class CBuildSettingCache extends CDefaultBuildData implements ICBuildSetting, ICachedData {
 	private CConfigurationDescriptionCache fCfgCache;
 	private StorableEnvironment fEnvironment;
 	private StorableEnvironment fResolvedEnvironment;
 	private ICOutputEntry[] fProjOutputEntries;
 	private ICOutputEntry[] fResolvedOutputEntries;
 
-	CBuildSettingCache(CBuildData base, CConfigurationDescriptionCache cfgCache){
+	CBuildSettingCache(CBuildData base, CConfigurationDescriptionCache cfgCache) {
 		super(/*base.getId(), base*/);
 
 		fId = base.getId();
@@ -46,21 +45,19 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 		copySettingsFrom(base);
 	}
 
-	void initEnvironmentCache(){
-		fEnvironment = new StorableEnvironment(
-				EnvironmentVariableManager.getDefault().getVariables(fCfgCache, false),
+	void initEnvironmentCache() {
+		fEnvironment = new StorableEnvironment(EnvironmentVariableManager.getDefault().getVariables(fCfgCache, false),
 				true);
 	}
 
-	public StorableEnvironment getCachedEnvironment(){
+	public StorableEnvironment getCachedEnvironment() {
 		return fEnvironment;
 	}
 
-	public StorableEnvironment getResolvedEnvironment(){
-		if(fResolvedEnvironment == null){
+	public StorableEnvironment getResolvedEnvironment() {
+		if (fResolvedEnvironment == null) {
 			fResolvedEnvironment = new StorableEnvironment(
-					EnvironmentVariableManager.getDefault().getVariables(fCfgCache, true),
-					true);
+					EnvironmentVariableManager.getDefault().getVariables(fCfgCache, true), true);
 		}
 		return fResolvedEnvironment;
 	}
@@ -106,7 +103,7 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 
 	@Override
 	public ICOutputEntry[] getResolvedOutputDirectories() {
-		if(fResolvedOutputEntries == null){
+		if (fResolvedOutputEntries == null) {
 			ICOutputEntry[] entries = getOutputDirectories();
 			return CDataUtil.resolveEntries(entries, getConfiguration());
 		}
@@ -119,17 +116,16 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 		return fProjOutputEntries.clone();
 	}
 
-	private void initOutputEntries(){
-		if(fProjOutputEntries == null){
+	private void initOutputEntries() {
+		if (fProjOutputEntries == null) {
 			IProject project = getProject();
 			fProjOutputEntries = CDataUtil.adjustEntries(fOutputEntries, true, project);
 		}
 	}
 
-	private IProject getProject(){
+	private IProject getProject() {
 		ICConfigurationDescription cfg = getConfiguration();
 		return cfg.isPreferenceConfiguration() ? null : cfg.getProjectDescription().getProject();
 	}
-
 
 }

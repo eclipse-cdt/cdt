@@ -62,7 +62,8 @@ public class BreakpointActionManager {
 	private IBreakpointAction createActionFromClassName(String name, String className) {
 
 		IBreakpointAction action = null;
-		IExtension[] actionExtensions = CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActionExtensions();
+		IExtension[] actionExtensions = CDebugCorePlugin.getDefault().getBreakpointActionManager()
+				.getBreakpointActionExtensions();
 
 		try {
 
@@ -99,15 +100,15 @@ public class BreakpointActionManager {
 		}
 		return false;
 	}
-	
+
 	public void executeActions(final IBreakpoint breakpoint, final IAdaptable context) {
 		if (breakpoint != null) {
 			IMarker marker = breakpoint.getMarker();
 			String actionNames = marker.getAttribute(BREAKPOINT_ACTION_ATTRIBUTE, ""); //$NON-NLS-1$
-			if (actionNames.length() > 0 ) {
+			if (actionNames.length() > 0) {
 				final String[] actions = actionNames.split(","); //$NON-NLS-1$
-				if (actions.length > 0){
-					Job job = new Job("Execute breakpoint actions") {  //$NON-NLS-1$
+				if (actions.length > 0) {
+					Job job = new Job("Execute breakpoint actions") { //$NON-NLS-1$
 						@Override
 						public IStatus run(final IProgressMonitor monitor) {
 							return doExecuteActions(breakpoint, context, actions, monitor);
@@ -117,8 +118,7 @@ public class BreakpointActionManager {
 					try {
 						// wait for actions to execute
 						job.join();
-					}catch (InterruptedException e)
-					{
+					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
@@ -126,7 +126,8 @@ public class BreakpointActionManager {
 		}
 	}
 
-	private IStatus doExecuteActions(final IBreakpoint breakpoint, final IAdaptable context, String[] actions, IProgressMonitor monitor) {
+	private IStatus doExecuteActions(final IBreakpoint breakpoint, final IAdaptable context, String[] actions,
+			IProgressMonitor monitor) {
 		try {
 			for (int i = 0; i < actions.length && !monitor.isCanceled(); i++) {
 				String actionName = actions[i];
@@ -134,7 +135,7 @@ public class BreakpointActionManager {
 				if (action != null) {
 					monitor.setTaskName(action.getSummary());
 					IStatus status = action.execute(breakpoint, context, monitor);
-					if (status.getCode() != IStatus.OK)	{
+					if (status.getCode() != IStatus.OK) {
 						// do not log status if user canceled.
 						if (status.getCode() != IStatus.CANCEL)
 							CDebugCorePlugin.log(status);
@@ -144,7 +145,8 @@ public class BreakpointActionManager {
 				monitor.worked(1);
 			}
 		} catch (Exception e) {
-			return new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(),  CDebugCorePlugin.INTERNAL_ERROR, "Internal Error", e ); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR,
+					"Internal Error", e); //$NON-NLS-1$
 		}
 		return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 	}
@@ -159,7 +161,8 @@ public class BreakpointActionManager {
 
 	public IExtension[] getBreakpointActionExtensions() {
 		if (breakpointActionExtensions == null) {
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugCorePlugin.PLUGIN_ID, CDebugCorePlugin.BREAKPOINT_ACTION_EXTENSION_POINT_ID);
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugCorePlugin.PLUGIN_ID,
+					CDebugCorePlugin.BREAKPOINT_ACTION_EXTENSION_POINT_ID);
 			if (point == null)
 				breakpointActionExtensions = new IExtension[0];
 			else {

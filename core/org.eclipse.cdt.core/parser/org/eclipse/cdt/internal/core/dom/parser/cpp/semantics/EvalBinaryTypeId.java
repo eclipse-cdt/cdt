@@ -48,9 +48,9 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 
 	public EvalBinaryTypeId(Operator kind, IType type1, IType type2, IBinding templateDefinition) {
 		super(templateDefinition);
-		fOperator= kind;
-		fType1= type1;
-		fType2= type2;
+		fOperator = kind;
+		fType1 = type1;
+		fType2 = type2;
 	}
 
 	public Operator getOperator() {
@@ -101,8 +101,8 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	@Override
 	public boolean isValueDependent() {
 		if (!fCheckedValueDependent) {
-			fIsValueDependent= CPPTemplates.isDependentType(fType1) || CPPTemplates.isDependentType(fType2);
-			fCheckedValueDependent= true;
+			fIsValueDependent = CPPTemplates.isDependentType(fType1) || CPPTemplates.isDependentType(fType2);
+			fCheckedValueDependent = true;
 		}
 		return fIsValueDependent;
 	}
@@ -111,16 +111,14 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	public boolean isConstantExpression() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isEquivalentTo(ICPPEvaluation other) {
 		if (!(other instanceof EvalBinaryTypeId)) {
 			return false;
 		}
 		EvalBinaryTypeId o = (EvalBinaryTypeId) other;
-		return fOperator == o.fOperator
-			&& fType1.isSameType(o.fType1)
-			&& fType2.isSameType(o.fType2);
+		return fOperator == o.fOperator && fType1.isSameType(o.fType1) && fType2.isSameType(o.fType2);
 	}
 
 	@Override
@@ -138,10 +136,10 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		int op= buffer.getByte();
-		IType arg1= buffer.unmarshalType();
-		IType arg2= buffer.unmarshalType();
-		IBinding templateDefinition= buffer.unmarshalBinding();
+		int op = buffer.getByte();
+		IType arg1 = buffer.unmarshalType();
+		IType arg2 = buffer.unmarshalType();
+		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalBinaryTypeId(Operator.values()[op], arg1, arg2, templateDefinition);
 	}
 

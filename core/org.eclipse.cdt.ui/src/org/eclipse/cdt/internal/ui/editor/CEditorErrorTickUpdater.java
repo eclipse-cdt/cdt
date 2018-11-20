@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Image;
@@ -46,11 +45,12 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 		CEditorImageProvider() {
 			super(0, CElementImageProvider.SMALL_ICONS);
 		}
+
 		@Override
 		protected int evaluateImageFlags(Object element) {
-			int flags= getImageFlags();
+			int flags = getImageFlags();
 			if (element instanceof ITranslationUnit) {
-				ITranslationUnit tUnit= (ITranslationUnit) element;
+				ITranslationUnit tUnit = (ITranslationUnit) element;
 				if (tUnit.getResource() == null) {
 					flags |= CElementImageProvider.OVERLAY_EXTERNAL;
 				}
@@ -64,13 +64,12 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 
 	public CEditorErrorTickUpdater(CEditor editor) {
 		Assert.isNotNull(editor);
-		fCEditor= editor;
-		fLabelProvider=  new CEditorImageProvider();
+		fCEditor = editor;
+		fLabelProvider = new CEditorImageProvider();
 		fLabelProvider.addLabelDecorator(new ProblemsLabelDecorator(null));
 		CUIPlugin.getDefault().getProblemMarkerManager().addListener(this);
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see IProblemChangedListener#problemsChanged(IResource[], boolean)
 	 */
@@ -79,15 +78,15 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 		if (!isMarkerChange) {
 			return;
 		}
-		IEditorInput input= fCEditor.getEditorInput();
+		IEditorInput input = fCEditor.getEditorInput();
 		if (input != null) { // might run async, tests needed
-			ICElement celement= fCEditor.getInputCElement();
+			ICElement celement = fCEditor.getInputCElement();
 			if (celement != null) {
-				IResource resource= celement.getResource();
+				IResource resource = celement.getResource();
 				if (resource == null) {
 					return;
 				}
-				for (int i = 0; i < resourcesChanged.length; i++){
+				for (int i = 0; i < resourcesChanged.length; i++) {
 					if (resource.equals(resourcesChanged[i])) {
 						updateEditorImage(celement);
 						return;
@@ -96,20 +95,20 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 			}
 		}
 	}
-			
+
 	public void updateEditorImage(ICElement celement) {
-		Image titleImage= fCEditor.getTitleImage();
+		Image titleImage = fCEditor.getTitleImage();
 		if (titleImage == null) {
 			return;
 		}
-		Image newImage= fLabelProvider.getImage(celement);
+		Image newImage = fLabelProvider.getImage(celement);
 		if (titleImage != newImage) {
 			postImageChange(newImage);
 		}
 	}
-	
+
 	private void postImageChange(final Image newImage) {
-		Shell shell= fCEditor.getEditorSite().getShell();
+		Shell shell = fCEditor.getEditorSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
 			shell.getDisplay().syncExec(new Runnable() {
 				@Override
@@ -119,7 +118,7 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 			});
 		}
 	}
-		
+
 	public void dispose() {
 		fLabelProvider.dispose();
 		CUIPlugin.getDefault().getProblemMarkerManager().removeListener(this);

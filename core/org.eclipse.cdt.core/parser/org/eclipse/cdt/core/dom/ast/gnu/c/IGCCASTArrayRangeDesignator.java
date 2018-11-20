@@ -70,7 +70,7 @@ public interface IGCCASTArrayRangeDesignator extends ICASTDesignator {
 	 *            <code>IASTExpression</code>
 	 */
 	public void setRangeCeiling(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

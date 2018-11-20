@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @author jcamelon
  */
 public class CPPASTArrayModifier extends CPPASTAttributeOwner implements IASTArrayModifier {
-    private IASTExpression exp;
+	private IASTExpression exp;
 
-    public CPPASTArrayModifier() {
+	public CPPASTArrayModifier() {
 	}
 
 	public CPPASTArrayModifier(IASTExpression exp) {
@@ -35,8 +35,8 @@ public class CPPASTArrayModifier extends CPPASTAttributeOwner implements IASTArr
 
 	@Override
 	public IASTExpression getConstantExpression() {
-        return exp;
-    }
+		return exp;
+	}
 
 	@Override
 	public CPPASTArrayModifier copy() {
@@ -49,27 +49,30 @@ public class CPPASTArrayModifier extends CPPASTAttributeOwner implements IASTArr
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public void setConstantExpression(IASTExpression expression) {
-        assertNotFrozen();
-        exp = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		exp = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(CONSTANT_EXPRESSION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitArrayModifiers) {
 			switch (action.visit(this)) {
-    		case ASTVisitor.PROCESS_ABORT: return false;
-    		case ASTVisitor.PROCESS_SKIP: return true;
-    		default: break;
-    		}
-    	}
-        if (exp != null && !exp.accept(action))
-        	return false;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		if (exp != null && !exp.accept(action))
+			return false;
 
 		if (!acceptByAttributeSpecifiers(action))
 			return false;
@@ -78,16 +81,16 @@ public class CPPASTArrayModifier extends CPPASTAttributeOwner implements IASTArr
 			return false;
 
 		return true;
-    }
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == exp) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            exp = (IASTExpression) other;
-            return;
-        }
-        super.replace(child, other);
-    }
+		if (child == exp) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			exp = (IASTExpression) other;
+			return;
+		}
+		super.replace(child, other);
+	}
 }

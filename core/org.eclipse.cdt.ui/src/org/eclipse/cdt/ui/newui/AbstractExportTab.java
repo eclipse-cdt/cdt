@@ -64,9 +64,9 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	protected static final LanguageManager lm = LanguageManager.getInstance();
 	protected static final IContentTypeManager ctm = Platform.getContentTypeManager();
 
-//	protected boolean showBI = false;
-//	boolean  savedShowBI  = false;
-//	List incs;
+	//	protected boolean showBI = false;
+	//	boolean  savedShowBI  = false;
+	//	List incs;
 
 	public static final Image IMG_FS = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FILESYSTEM);
 	public static final Image IMG_WS = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_WORKSPACE);
@@ -82,13 +82,13 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	static {
 		ILanguage[] ls = lm.getRegisteredLanguages();
 		names_ls = new String[ls.length];
-		for (int i=0; i<ls.length; i++) {
+		for (int i = 0; i < ls.length; i++) {
 			names_l.put(ls[i].getName(), ls[i].getId());
 			names_ls[i] = ls[i].getName();
 		}
 		String[] ids = lm.getRegisteredContentTypeIds();
 		names_ts = new String[ids.length];
-		for (int i=0; i<ids.length; i++) {
+		for (int i = 0; i < ids.length; i++) {
 			IContentType ct = ctm.getContentType(ids[i]);
 			names_t.put(ct.getName(), ct.getId());
 			names_ts[i] = ct.getName();
@@ -100,81 +100,90 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, false));
-	    table = new Table(usercomp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
-	    GridData gd = new GridData(GridData.FILL_BOTH);
-	    gd.minimumWidth = 255;
-	    table.setLayoutData(gd);
-  	    table.setHeaderVisible(true);
-  	    table.setLinesVisible(true);
+		table = new Table(usercomp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.minimumWidth = 255;
+		table.setLayoutData(gd);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 
-  	    tv = new TableViewer(table);
+		tv = new TableViewer(table);
 
 		tv.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
-				return (Object[])inputElement;
+				return (Object[]) inputElement;
 			}
+
 			@Override
-			public void dispose() {}
+			public void dispose() {
+			}
+
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
 		});
 
-  	    tv.setLabelProvider(new RichLabelProvider());
+		tv.setLabelProvider(new RichLabelProvider());
 
-	    table.addSelectionListener(new SelectionAdapter() {
-	    	@Override
+		table.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-	    		updateButtons();
-	    	}
-	    	@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-	    		if (buttonIsEnabled(1) && table.getSelectionIndex() != -1)
-    				buttonPressed(1);
-	    	}
-	    });
- 	    TableColumn c = new TableColumn(table, SWT.NONE);
-	    c.setWidth(hasValues() ? 100 : 200);
-	    c.setText(Messages.EnvDialog_0);
- 	    c = new TableColumn(table, SWT.NONE);
-	    c.setWidth(hasValues() ? 100 : 0);
-	    c.setText(Messages.EnvDialog_1);
- 	    c = new TableColumn(table, SWT.NONE);
-	    c.setWidth(100);
-	    c.setText(Messages.LanguagesTab_1);
- 	    c = new TableColumn(table, SWT.NONE);
-	    c.setWidth(100);
-	    c.setText(Messages.LanguagesTab_0);
+				updateButtons();
+			}
 
-	    initButtons(new String[] {ADD_STR, EDIT_STR, DEL_STR});
-	    updateData(getResDesc());
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if (buttonIsEnabled(1) && table.getSelectionIndex() != -1)
+					buttonPressed(1);
+			}
+		});
+		TableColumn c = new TableColumn(table, SWT.NONE);
+		c.setWidth(hasValues() ? 100 : 200);
+		c.setText(Messages.EnvDialog_0);
+		c = new TableColumn(table, SWT.NONE);
+		c.setWidth(hasValues() ? 100 : 0);
+		c.setText(Messages.EnvDialog_1);
+		c = new TableColumn(table, SWT.NONE);
+		c.setWidth(100);
+		c.setText(Messages.LanguagesTab_1);
+		c = new TableColumn(table, SWT.NONE);
+		c.setWidth(100);
+		c.setText(Messages.LanguagesTab_0);
+
+		initButtons(new String[] { ADD_STR, EDIT_STR, DEL_STR });
+		updateData(getResDesc());
 	}
 
-
-    /**
-     * Updates state of add/edit/delete buttons
-     * Called when table selection changes.
-     */
-    @Override
+	/**
+	 * Updates state of add/edit/delete buttons
+	 * Called when table selection changes.
+	 */
+	@Override
 	protected void updateButtons() {
-    	int i = table.getSelectionIndex();
+		int i = table.getSelectionIndex();
 		boolean x = i != -1;
 		boolean y = x;
 		if (x) {
-			ICSettingEntry ent = ((ExtData)(table.getItem(i).getData())).entry;
-			if (ent.isReadOnly()) x = false;
-			if (ent.isBuiltIn() || ent.isReadOnly()) y = false;
+			ICSettingEntry ent = ((ExtData) (table.getItem(i).getData())).entry;
+			if (ent.isReadOnly())
+				x = false;
+			if (ent.isBuiltIn() || ent.isReadOnly())
+				y = false;
 		}
-    	buttonSetEnabled(1, x);
-    	buttonSetEnabled(2, y);
-    }
+		buttonSetEnabled(1, x);
+		buttonSetEnabled(2, y);
+	}
 
 	/*
 	 * Methods to be implemented in descendants
 	 */
 	public abstract int getKind();
+
 	public abstract ICLanguageSettingEntry doAdd(String s1, String s2, boolean isWsp);
+
 	public abstract ICLanguageSettingEntry doEdit(String s1, String s2, boolean isWsp);
+
 	public abstract boolean hasValues();
 
 	/**
@@ -183,7 +192,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	 */
 	protected void update() {
 		int x = table.getSelectionIndex();
-		if (x == -1) x = 0;
+		if (x == -1)
+			x = 0;
 
 		namesList = new ArrayList<String>();
 		ArrayList<ExtData> lst = new ArrayList<ExtData>();
@@ -195,7 +205,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		}
 		for (ICExternalSetting v : vals) {
 			ICSettingEntry[] ents = v.getEntries(getKind());
-			if (ents == null || ents.length == 0) continue;
+			if (ents == null || ents.length == 0)
+				continue;
 			for (ICSettingEntry se : ents) {
 				lst.add(new ExtData(v, se));
 				namesList.add(se.getName());
@@ -203,8 +214,10 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		}
 		Collections.sort(lst, CDTListComparator.getInstance());
 		tv.setInput(lst.toArray(new Object[lst.size()]));
-		if (table.getItemCount() > x) table.select(x);
-		else if (table.getItemCount() > 0) table.select(0);
+		if (table.getItemCount() > x)
+			table.select(x);
+		else if (table.getItemCount() > 0)
+			table.select(0);
 		updateButtons();
 	}
 
@@ -214,7 +227,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	 */
 	@Override
 	public void updateData(ICResourceDescription rcfg) {
-		if (rcfg == null) return;
+		if (rcfg == null)
+			return;
 		if (page.isMultiCfg()) {
 			setAllVisible(false, null);
 		} else {
@@ -224,6 +238,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 			update();
 		}
 	}
+
 	/**
 	 * Unified "Add/Edit/Delete" buttons handler
 	 */
@@ -236,8 +251,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 
 		switch (i) {
 		case 0: // add
-			dlg = new ExpDialog(usercomp.getShell(), true,
-					Messages.AbstractExportTab_2, EMPTY_STR, EMPTY_STR, cfg,
+			dlg = new ExpDialog(usercomp.getShell(), true, Messages.AbstractExportTab_2, EMPTY_STR, EMPTY_STR, cfg,
 					null, null, getKind(), names_ls, names_ts, namesList, false);
 			if (dlg.open()) {
 				ent[0] = doAdd(dlg.text1.trim(), dlg.text2.trim(), dlg.check2);
@@ -245,19 +259,21 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 					if (dlg.check1) { // apply to all ?
 						ICConfigurationDescription[] cfgs = page.getCfgsEditable();
 						for (ICConfigurationDescription cfg2 : cfgs)
-							cfg2.createExternalSetting(name2id(dlg.sel_langs, names_l),
-									name2id(dlg.sel_types, names_t), null, ent);
+							cfg2.createExternalSetting(name2id(dlg.sel_langs, names_l), name2id(dlg.sel_types, names_t),
+									null, ent);
 					} else {
-						cfg.createExternalSetting(name2id(dlg.sel_langs, names_l),
-							name2id(dlg.sel_types, names_t), null, ent);
+						cfg.createExternalSetting(name2id(dlg.sel_langs, names_l), name2id(dlg.sel_types, names_t),
+								null, ent);
 					}
 				update();
 			}
 			break;
 		case 1: // edit
-			if (n == -1) return;
-			old = (ExtData)(table.getItem(n).getData());
-			if (old.entry.isReadOnly()) return;
+			if (n == -1)
+				return;
+			old = (ExtData) (table.getItem(n).getData());
+			if (old.entry.isReadOnly())
+				return;
 			String s1, s2;
 			if (getKind() == ICSettingEntry.MACRO) {
 				s1 = old.getName();
@@ -265,40 +281,44 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 			} else
 				s1 = s2 = old.getName();
 			boolean isWsp = (old.entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
-			dlg = new ExpDialog(usercomp.getShell(), false,
-					Messages.AbstractExportTab_3, s1, s2, cfg,
+			dlg = new ExpDialog(usercomp.getShell(), false, Messages.AbstractExportTab_3, s1, s2, cfg,
 					id2name(old.setting.getCompatibleLanguageIds(), names_l),
-					id2name(old.setting.getCompatibleContentTypeIds(), names_t),
-					getKind(), names_ls, names_ts, null, isWsp);
+					id2name(old.setting.getCompatibleContentTypeIds(), names_t), getKind(), names_ls, names_ts, null,
+					isWsp);
 			if (dlg.open()) {
 				ent[0] = doEdit(dlg.text1.trim(), dlg.text2.trim(), dlg.check2);
 				ICSettingEntry[] ls = old.setting.getEntries();
 				ICSettingEntry[] ls2 = new ICLanguageSettingEntry[ls.length];
-				for (int x=0; x<ls.length; x++)
-					if (ls[x].equals(old.entry)) ls2[x] = ent[0];
-					else ls2[x] = ls[x];
+				for (int x = 0; x < ls.length; x++)
+					if (ls[x].equals(old.entry))
+						ls2[x] = ent[0];
+					else
+						ls2[x] = ls[x];
 				cfg.removeExternalSetting(old.setting);
 				cfg.createExternalSetting(name2id(dlg.sel_langs, names_l), name2id(dlg.sel_types, names_t), null, ls2);
 				update();
 			}
 			break;
 		case 2: // delete
-			if (n == -1) return;
+			if (n == -1)
+				return;
 			TableItem[] its = table.getSelection();
 			boolean checked[] = new boolean[its.length];
-			for (int t=0; t<its.length; t++) {
-				if (checked[t] || its[t] == null) continue;
-				old = (ExtData)(its[t].getData());
-				if (old.entry.isReadOnly() || old.entry.isBuiltIn()) continue;
+			for (int t = 0; t < its.length; t++) {
+				if (checked[t] || its[t] == null)
+					continue;
+				old = (ExtData) (its[t].getData());
+				if (old.entry.isReadOnly() || old.entry.isBuiltIn())
+					continue;
 				ICSettingEntry[] ls = old.setting.getEntries(getKind());
 				ArrayList<ICSettingEntry> lst = new ArrayList<ICSettingEntry>();
-outer:
-				for (ICSettingEntry se : ls) {
-					for (int y=t; y<its.length; y++) {
-						if (its[y] == null) break;
+				outer: for (ICSettingEntry se : ls) {
+					for (int y = t; y < its.length; y++) {
+						if (its[y] == null)
+							break;
 						Object ob = its[y].getData();
 						if (ob != null && (ob instanceof ExtData)) {
-							ExtData ex = (ExtData)ob;
+							ExtData ex = (ExtData) ob;
 							if (se.equals(ex.entry)) {
 								checked[y] = true;
 								continue outer;
@@ -314,8 +334,7 @@ outer:
 				// Remove and re-add the particular setting entry
 				cfg.removeExternalSetting(old.setting);
 				cfg.createExternalSetting(old.setting.getCompatibleLanguageIds(),
-						old.setting.getCompatibleContentTypeIds(),
-						old.setting.getCompatibleExtensions(),
+						old.setting.getCompatibleContentTypeIds(), old.setting.getCompatibleExtensions(),
 						lst.toArray(new ICSettingEntry[lst.size()]));
 			}
 			update();
@@ -328,13 +347,14 @@ outer:
 
 	public static String[] name2id(String[] ein, Map<String, String> names) {
 		if (ein != null)
-			for (int k=0; k<ein.length; k++) ein[k] = names.get(ein[k]);
+			for (int k = 0; k < ein.length; k++)
+				ein[k] = names.get(ein[k]);
 		return ein;
 	}
 
 	public static String[] id2name(String[] ein, Map<String, String> names) {
 		if (ein != null)
-			for (int i=0; i<ein.length; i++) {
+			for (int i = 0; i < ein.length; i++) {
 				Iterator<String> it = names.keySet().iterator();
 				while (it.hasNext()) {
 					String s = it.next();
@@ -354,9 +374,8 @@ outer:
 		c2.removeExternalSettings();
 		ICExternalSetting[] v = c1.getExternalSettings();
 		for (ICExternalSetting element : v)
-			c2.createExternalSetting(element.getCompatibleLanguageIds(),
-				element.getCompatibleContentTypeIds(),
-				element.getCompatibleExtensions(), element.getEntries());
+			c2.createExternalSetting(element.getCompatibleLanguageIds(), element.getCompatibleContentTypeIds(),
+					element.getCompatibleExtensions(), element.getEntries());
 	}
 
 	@Override
@@ -367,34 +386,43 @@ outer:
 		//            setSourceEntries -> ... -> Configuration#setSourceEntries(...) -> Configuration#exportArtifactInfo()
 		try {
 			cfg.setSourceEntries(cfg.getSourceEntries());
-		} catch (CoreException e) {CUIPlugin.log(e);}
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
+		}
 		updateData(this.getResDesc());
 	}
 
 	// Extended label provider
-	private class RichLabelProvider extends LabelProvider implements IFontProvider, ITableLabelProvider /*, IColorProvider*/{
-		public RichLabelProvider(){}
+	private class RichLabelProvider extends LabelProvider
+			implements IFontProvider, ITableLabelProvider /*, IColorProvider*/ {
+		public RichLabelProvider() {
+		}
+
 		@Override
 		public Image getImage(Object element) {
 			return getColumnImage(element, 0);
 		}
+
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (columnIndex > 0) return null;
-			ExtData data = (ExtData)element;
+			if (columnIndex > 0)
+				return null;
+			ExtData data = (ExtData) element;
 			if (data.entry.getKind() == ICSettingEntry.MACRO)
 				return IMG_MK;
 			if ((data.entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0)
 				return IMG_WS;
 			return IMG_FS;
 		}
+
 		@Override
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
+
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			ExtData data = (ExtData)element;
+			ExtData data = (ExtData) element;
 			switch (columnIndex) {
 			case 0:
 				return data.getName();
@@ -411,9 +439,10 @@ outer:
 
 		@Override
 		public Font getFont(Object element) {
-			ExtData data = (ExtData)element;
-			if (data.entry.isBuiltIn()) return null;    // built in
-			if (data.entry.isReadOnly())                // read only
+			ExtData data = (ExtData) element;
+			if (data.entry.isBuiltIn())
+				return null; // built in
+			if (data.entry.isReadOnly()) // read only
 				return JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
 			return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 		}
@@ -421,7 +450,7 @@ outer:
 
 	@Override
 	public boolean canBeVisible() {
-		if (! page.isForProject() )
+		if (!page.isForProject())
 			return false;
 		return true;
 	}
@@ -437,20 +466,25 @@ outer:
 			setting = _s;
 			entry = _e;
 		}
+
 		protected String getName() {
 			return entry.getName();
 		}
+
 		protected String getValue() {
 			if (entry.getKind() == ICSettingEntry.MACRO)
 				return entry.getValue();
 			return EMPTY_STR;
 		}
+
 		protected String getLangStr() {
 			return getLabel(setting.getCompatibleLanguageIds(), names_l);
 		}
+
 		protected String getTypeStr() {
 			return getLabel(setting.getCompatibleContentTypeIds(), names_t);
 		}
+
 		@Override
 		public String toString() {
 			return getName();
@@ -458,8 +492,10 @@ outer:
 	}
 
 	static protected String getLabel(String[] lst, Map<String, String> names) {
-		if (lst == null || lst.length == 0) return ALL;
-		if (lst.length > 1) return LIST;
+		if (lst == null || lst.length == 0)
+			return ALL;
+		if (lst.length > 1)
+			return LIST;
 		Iterator<String> it = names.keySet().iterator();
 		while (it.hasNext()) {
 			String s = it.next();
@@ -468,15 +504,16 @@ outer:
 		}
 		return lst[0];
 	}
+
 	static protected String getList(String[] lst) {
 		String s = EMPTY_STR;
 		for (String element : lst)
 			s = s + element + '\n';
 		return s;
 	}
+
 	static public Image getWspImage(boolean isWsp) {
 		return isWsp ? AbstractExportTab.IMG_WS : AbstractExportTab.IMG_FS;
 	}
-
 
 }

@@ -56,8 +56,7 @@ public class LibraryTree extends FilteredTree {
 				return wordMatches((String) element);
 			} else if (element instanceof ArduinoLibrary) {
 				ArduinoLibrary lib = (ArduinoLibrary) element;
-				return wordMatches(lib.getName()) || wordMatches(lib.getSentence())
-						|| wordMatches(lib.getParagraph());
+				return wordMatches(lib.getName()) || wordMatches(lib.getSentence()) || wordMatches(lib.getParagraph());
 			} else {
 				return false;
 			}

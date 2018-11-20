@@ -23,12 +23,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class CPPASTInactiveCompletionName extends CPPASTName implements IASTInactiveCompletionName {
 	private IASTTranslationUnit fAst;
-	
+
 	public CPPASTInactiveCompletionName(char[] name, IASTTranslationUnit ast) {
 		super(name);
 		fAst = ast;
 	}
-	
+
 	@Override
 	public IASTCompletionContext getCompletionContext() {
 		return this;

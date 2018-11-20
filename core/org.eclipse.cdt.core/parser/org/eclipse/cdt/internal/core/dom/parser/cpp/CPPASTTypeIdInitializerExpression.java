@@ -37,12 +37,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
  */
 public class CPPASTTypeIdInitializerExpression extends ASTNode
 		implements IASTTypeIdInitializerExpression, ICPPASTExpression {
-    private IASTTypeId fTypeId;
-    private IASTInitializer fInitializer;
+	private IASTTypeId fTypeId;
+	private IASTInitializer fInitializer;
 	private ICPPEvaluation fEvaluation;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTTypeIdInitializerExpression() {
+	public CPPASTTypeIdInitializerExpression() {
 	}
 
 	public CPPASTTypeIdInitializerExpression(IASTTypeId t, IASTInitializer i) {
@@ -52,33 +52,33 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 
 	@Override
 	public IASTTypeId getTypeId() {
-        return fTypeId;
-    }
+		return fTypeId;
+	}
 
-    @Override
+	@Override
 	public void setTypeId(IASTTypeId typeId) {
-        assertNotFrozen();
-        this.fTypeId = typeId;
-        if (typeId != null) {
+		assertNotFrozen();
+		this.fTypeId = typeId;
+		if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(TYPE_ID);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTInitializer getInitializer() {
-        return fInitializer;
-    }
+		return fInitializer;
+	}
 
-    @Override
+	@Override
 	public void setInitializer(IASTInitializer initializer) {
-        assertNotFrozen();
-        this.fInitializer = initializer;
-        if (initializer != null) {
+		assertNotFrozen();
+		this.fInitializer = initializer;
+		if (initializer != null) {
 			initializer.setParent(this);
 			initializer.setPropertyInParent(INITIALIZER);
 		}
-    }
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -91,29 +91,37 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (fTypeId != null && !fTypeId.accept(action)) return false;
-        if (fInitializer != null && !fInitializer.accept(action)) return false;
+		if (fTypeId != null && !fTypeId.accept(action))
+			return false;
+		if (fInitializer != null && !fInitializer.accept(action))
+			return false;
 
 		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
 			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public final boolean isLValue() {
@@ -127,16 +135,15 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 
 	@Override
 	public IASTTypeIdInitializerExpression copy(CopyStyle style) {
-		CPPASTTypeIdInitializerExpression copy =new CPPASTTypeIdInitializerExpression(
-				fTypeId == null ? null : fTypeId.copy(style),
-				fInitializer == null ? null : fInitializer.copy(style));
+		CPPASTTypeIdInitializerExpression copy = new CPPASTTypeIdInitializerExpression(
+				fTypeId == null ? null : fTypeId.copy(style), fInitializer == null ? null : fInitializer.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null)
-			fEvaluation= computeEvaluation();
+			fEvaluation = computeEvaluation();
 
 		return fEvaluation;
 	}
@@ -146,7 +153,7 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 		if (!(initializer instanceof ICPPASTInitializerClause))
 			return EvalFixed.INCOMPLETE;
 
-		IType type= CPPVisitor.createType(getTypeId());
+		IType type = CPPVisitor.createType(getTypeId());
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
 

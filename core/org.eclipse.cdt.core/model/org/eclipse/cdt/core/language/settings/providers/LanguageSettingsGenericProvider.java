@@ -28,6 +28,7 @@ final public class LanguageSettingsGenericProvider extends LanguageSettingsSeria
 	public LanguageSettingsGenericProvider clone() throws CloneNotSupportedException {
 		return (LanguageSettingsGenericProvider) super.clone();
 	}
+
 	@Override
 	public LanguageSettingsGenericProvider cloneShallow() throws CloneNotSupportedException {
 		return (LanguageSettingsGenericProvider) super.cloneShallow();

@@ -34,23 +34,20 @@ public interface IUPCNodeFactory extends ICNodeFactory {
 
 	public IUPCASTKeywordExpression newKeywordExpression(int keywordKind);
 
-	public IUPCASTSynchronizationStatement newSyncronizationStatment(
-			IASTExpression barrierExpression, int statmentKind);
+	public IUPCASTSynchronizationStatement newSyncronizationStatment(IASTExpression barrierExpression,
+			int statmentKind);
 
-	public IUPCASTForallStatement newForallStatement(IASTStatement init,
-			IASTExpression condition, IASTExpression iterationExpression,
-			IASTStatement body, IASTExpression affinity);
+	public IUPCASTForallStatement newForallStatement(IASTStatement init, IASTExpression condition,
+			IASTExpression iterationExpression, IASTStatement body, IASTExpression affinity);
 
 	@Override
 	public IUPCASTSimpleDeclSpecifier newSimpleDeclSpecifier();
 
 	@Override
-	public IUPCASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key,
-			IASTName name);
+	public IUPCASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
 
 	@Override
-	public IUPCASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind,
-			IASTName name);
+	public IUPCASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
 
 	@Override
 	public IUPCASTEnumerationSpecifier newEnumerationSpecifier(IASTName name);

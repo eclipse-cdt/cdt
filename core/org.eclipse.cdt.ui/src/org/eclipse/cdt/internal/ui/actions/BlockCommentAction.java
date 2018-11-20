@@ -61,7 +61,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 	 * updated when other edits occur.
 	 */
 	static class Edit extends DocumentEvent {
-		
+
 		/**
 		 * Factory for edits which manages the creation, installation and destruction of 
 		 * position categories, position updaters etc. on a certain document. Once a factory has
@@ -71,27 +71,27 @@ public abstract class BlockCommentAction extends TextEditorAction {
 		 * used any more, so the positions can be discarded.</p>
 		 */
 		public static class EditFactory {
-	
+
 			/** The position category basename for this edits. */
-			private static final String CATEGORY= "__positionalEditPositionCategory"; //$NON-NLS-1$
-			
+			private static final String CATEGORY = "__positionalEditPositionCategory"; //$NON-NLS-1$
+
 			/** The count of factories. */
-			private static int fgCount= 0;
-		
+			private static int fgCount = 0;
+
 			/** This factory's category. */
 			private final String fCategory;
 			private IDocument fDocument;
 			private IPositionUpdater fUpdater;
-			
+
 			/**
 			 * Creates a new <code>EditFactory</code> with an unambiguous position category name.
 			 * @param document the document that is being edited.
 			 */
 			public EditFactory(IDocument document) {
-				fCategory= CATEGORY + fgCount++;
-				fDocument= document;
+				fCategory = CATEGORY + fgCount++;
+				fDocument = document;
 			}
-			
+
 			/**
 			 * Creates a new edition on the document of this factory.
 			 * 
@@ -101,14 +101,14 @@ public abstract class BlockCommentAction extends TextEditorAction {
 			 * @return an <code>Edit</code> reflecting the edition on the document
 			 */
 			public Edit createEdit(int offset, int length, String text) throws BadLocationException {
-				
+
 				if (!fDocument.containsPositionCategory(fCategory)) {
 					fDocument.addPositionCategory(fCategory);
-					fUpdater= new DefaultPositionUpdater(fCategory);
+					fUpdater = new DefaultPositionUpdater(fCategory);
 					fDocument.addPositionUpdater(fUpdater);
 				}
-				
-				Position position= new Position(offset);
+
+				Position position = new Position(offset);
 				try {
 					fDocument.addPosition(fCategory, position);
 				} catch (BadPositionCategoryException e) {
@@ -116,7 +116,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 				}
 				return new Edit(fDocument, length, text, position);
 			}
-			
+
 			/**
 			 * Releases the position category on the document and uninstalls the position updater. 
 			 * <code>Edit</code>s managed by this factory are not updated after this call.
@@ -129,15 +129,15 @@ public abstract class BlockCommentAction extends TextEditorAction {
 					} catch (BadPositionCategoryException e) {
 						Assert.isTrue(false);
 					}
-					fDocument= null;
-					fUpdater= null;
+					fDocument = null;
+					fUpdater = null;
 				}
 			}
 		}
-		
+
 		/** The position in the document where this edit be executed. */
 		private Position fPosition;
-		
+
 		/**
 		 * Creates a new edition on <code>document</code>, taking its offset from <code>position</code>.
 		 * 
@@ -148,9 +148,9 @@ public abstract class BlockCommentAction extends TextEditorAction {
 		 */
 		protected Edit(IDocument document, int length, String text, Position position) {
 			super(document, 0, length, text);
-			fPosition= position;
+			fPosition = position;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.DocumentEvent#getOffset()
 		 */
@@ -158,7 +158,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 		public int getOffset() {
 			return fPosition.getOffset();
 		}
-		
+
 		/**
 		 * Executes the edition on document. The offset is taken from the position.
 		 * 
@@ -167,59 +167,59 @@ public abstract class BlockCommentAction extends TextEditorAction {
 		public void perform() throws BadLocationException {
 			getDocument().replace(getOffset(), getLength(), getText());
 		}
-		
+
 	}
 
 	@Override
 	public void run() {
 		if (!isEnabled())
 			return;
-			
-		ITextEditor editor= getTextEditor();
+
+		ITextEditor editor = getTextEditor();
 		if (editor == null || !ensureEditable(editor))
 			return;
-			
-		ITextSelection selection= getCurrentSelection();
+
+		ITextSelection selection = getCurrentSelection();
 		if (!isValidSelection(selection))
 			return;
-		
+
 		if (!validateEditorInputState())
 			return;
-		
-		IDocumentProvider docProvider= editor.getDocumentProvider();
-		IEditorInput input= editor.getEditorInput();
+
+		IDocumentProvider docProvider = editor.getDocumentProvider();
+		IEditorInput input = editor.getEditorInput();
 		if (docProvider == null || input == null)
 			return;
-			
-		IDocument document= docProvider.getDocument(input);
+
+		IDocument document = docProvider.getDocument(input);
 		if (document == null)
 			return;
-			
+
 		IDocumentExtension3 docExtension;
 		if (document instanceof IDocumentExtension3)
-			docExtension= (IDocumentExtension3) document;
+			docExtension = (IDocumentExtension3) document;
 		else
 			return;
-		
-		IRewriteTarget target= editor.getAdapter(IRewriteTarget.class);
+
+		IRewriteTarget target = editor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
 			target.beginCompoundChange();
 		}
-		
-		Edit.EditFactory factory= new Edit.EditFactory(document);
-		
+
+		Edit.EditFactory factory = new Edit.EditFactory(document);
+
 		try {
 			runInternal(selection, docExtension, factory);
-	
+
 		} catch (BadLocationException e) {
 			// can happen on concurrent modification, deletion etc. of the document 
 			// -> don't complain, just bail out
 		} catch (BadPartitioningException e) {
 			// should not happen
-			Assert.isTrue(false, "bad partitioning");  //$NON-NLS-1$
+			Assert.isTrue(false, "bad partitioning"); //$NON-NLS-1$
 		} finally {
 			factory.release();
-			
+
 			if (target != null) {
 				target.endCompoundChange();
 			}
@@ -233,8 +233,8 @@ public abstract class BlockCommentAction extends TextEditorAction {
 	 * @throws BadLocationException if an <code>Edit</code> threw such an exception.
 	 */
 	protected void executeEdits(List<Edit> edits) throws BadLocationException {
-		for (Iterator<Edit> it= edits.iterator(); it.hasNext();) {
-			Edit edit= it.next();
+		for (Iterator<Edit> it = edits.iterator(); it.hasNext();) {
+			Edit edit = it.next();
 			edit.perform();
 		}
 	}
@@ -249,12 +249,12 @@ public abstract class BlockCommentAction extends TextEditorAction {
 	 */
 	protected boolean ensureEditable(ITextEditor editor) {
 		Assert.isNotNull(editor);
-	
+
 		if (editor instanceof ITextEditorExtension2) {
-			ITextEditorExtension2 ext= (ITextEditorExtension2) editor;
+			ITextEditorExtension2 ext = (ITextEditorExtension2) editor;
 			return ext.validateEditorInputState();
 		}
-		
+
 		return editor.isEditable();
 	}
 
@@ -264,7 +264,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 	@Override
 	public void update() {
 		super.update();
-		
+
 		if (isEnabled()) {
 			if (!canModifyEditor() || !isValidSelection(getCurrentSelection()))
 				setEnabled(false);
@@ -278,12 +278,12 @@ public abstract class BlockCommentAction extends TextEditorAction {
 	 * @return the selection of the action's editor, or <code>null</code>
 	 */
 	protected ITextSelection getCurrentSelection() {
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		if (editor != null) {
-			ISelectionProvider provider= editor.getSelectionProvider();
+			ISelectionProvider provider = editor.getSelectionProvider();
 			if (provider != null) {
-				ISelection selection= provider.getSelection();
-				if (selection instanceof ITextSelection) 
+				ISelection selection = provider.getSelection();
+				if (selection instanceof ITextSelection)
 					return (ITextSelection) selection;
 			}
 		}
@@ -299,7 +299,8 @@ public abstract class BlockCommentAction extends TextEditorAction {
 	 * @throws BadLocationException if an edition fails
 	 * @throws BadPartitioningException if a partitioning call fails
 	 */
-	protected abstract void runInternal(ITextSelection selection, IDocumentExtension3 docExtension, Edit.EditFactory factory) throws BadLocationException, BadPartitioningException;
+	protected abstract void runInternal(ITextSelection selection, IDocumentExtension3 docExtension,
+			Edit.EditFactory factory) throws BadLocationException, BadPartitioningException;
 
 	/**
 	 * Checks whether <code>selection</code> is valid.
@@ -328,6 +329,5 @@ public abstract class BlockCommentAction extends TextEditorAction {
 		// for now: no space story
 		return "*/"; //$NON-NLS-1$
 	}
-
 
 }

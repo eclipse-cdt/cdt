@@ -26,30 +26,30 @@ import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class CSearchTreeLabelProvider extends CSearchLabelProvider {
-	
+
 	public CSearchTreeLabelProvider(CSearchViewPage page) {
 		super(page);
 	}
-	
+
 	@Override
 	public String getText(Object element) {
-		final String text= super.getText(element);
-		final int count= getMatchCount(element);
+		final String text = super.getText(element);
+		final int count = getMatchCount(element);
 		if (count <= 1) {
 			return text;
 		}
 		return text + " " //$NON-NLS-1$
-				+ Messages.format(CSearchMessages.CSearchResultCollector_matches, Integer.valueOf(count)); 
+				+ Messages.format(CSearchMessages.CSearchResultCollector_matches, Integer.valueOf(count));
 	}
 
 	@Override
 	public StyledString getStyledText(Object element) {
 		if (element instanceof TranslationUnit) {
 			StyledString styled = new StyledString(super.getText(element));
-			final int count= getMatchCount(element);
+			final int count = getMatchCount(element);
 			if (count > 1) {
 				final String matchesCount = " " //$NON-NLS-1$
-					+ Messages.format(CSearchMessages.CSearchResultCollector_matches, Integer.valueOf(count));
+						+ Messages.format(CSearchMessages.CSearchResultCollector_matches, Integer.valueOf(count));
 				styled.append(matchesCount, StyledString.COUNTER_STYLER);
 				return styled;
 			}
@@ -72,7 +72,7 @@ public class CSearchTreeLabelProvider extends CSearchLabelProvider {
 	private String getElementDescription(ICElement element) {
 		ICElement parent = element.getParent();
 		if (parent instanceof IStructure) {
-			return parent.getElementName() + "::" + element.getElementName();  //$NON-NLS-1$
+			return parent.getElementName() + "::" + element.getElementName(); //$NON-NLS-1$
 		}
 		return element.getElementName();
 	}

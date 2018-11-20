@@ -153,7 +153,7 @@ public class MakeView extends ViewPart {
 		hookContextMenu();
 		contributeToActionBars();
 
-		updateActions((IStructuredSelection)fViewer.getSelection());
+		updateActions((IStructuredSelection) fViewer.getSelection());
 
 		bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
 		if (bindingService != null) {
@@ -165,20 +165,14 @@ public class MakeView extends ViewPart {
 	 * Initialize drag and drop operations.
 	 */
 	private void initDragAndDrop() {
-		int opers= DND.DROP_COPY | DND.DROP_MOVE;
+		int opers = DND.DROP_COPY | DND.DROP_MOVE;
 
 		// LocalSelectionTransfer is used inside Make Target View
 		// TextTransfer is used to drag outside the View or eclipse
-		Transfer[] dragTransfers= {
-			LocalSelectionTransfer.getTransfer(),
-			MakeTargetTransfer.getInstance(),
-			TextTransfer.getInstance(),
-		};
-		AbstractSelectionDragAdapter[] dragListeners = {
-			new LocalTransferDragSourceListener(fViewer),
-			new MakeTargetTransferDragSourceListener(fViewer),
-			new TextTransferDragSourceListener(fViewer),
-		};
+		Transfer[] dragTransfers = { LocalSelectionTransfer.getTransfer(), MakeTargetTransfer.getInstance(),
+				TextTransfer.getInstance(), };
+		AbstractSelectionDragAdapter[] dragListeners = { new LocalTransferDragSourceListener(fViewer),
+				new MakeTargetTransferDragSourceListener(fViewer), new TextTransferDragSourceListener(fViewer), };
 
 		DelegatingDragAdapter delegatingDragAdapter = new DelegatingDragAdapter();
 		for (AbstractSelectionDragAdapter dragListener : dragListeners) {
@@ -186,18 +180,11 @@ public class MakeView extends ViewPart {
 		}
 		fViewer.addDragSupport(opers, dragTransfers, delegatingDragAdapter);
 
-		Transfer[] dropTransfers= {
-			LocalSelectionTransfer.getTransfer(),
-			MakeTargetTransfer.getInstance(),
-			FileTransfer.getInstance(),
-			TextTransfer.getInstance(),
-		};
-		AbstractContainerAreaDropAdapter[] dropListeners = {
-			new LocalTransferDropTargetListener(fViewer),
-			new MakeTargetTransferDropTargetListener(fViewer),
-			new FileTransferDropTargetListener(fViewer),
-			new TextTransferDropTargetListener(fViewer),
-		};
+		Transfer[] dropTransfers = { LocalSelectionTransfer.getTransfer(), MakeTargetTransfer.getInstance(),
+				FileTransfer.getInstance(), TextTransfer.getInstance(), };
+		AbstractContainerAreaDropAdapter[] dropListeners = { new LocalTransferDropTargetListener(fViewer),
+				new MakeTargetTransferDropTargetListener(fViewer), new FileTransferDropTargetListener(fViewer),
+				new TextTransferDropTargetListener(fViewer), };
 		DelegatingDropAdapter delegatingDropAdapter = new DelegatingDropAdapter();
 		for (AbstractContainerAreaDropAdapter dropListener : dropListeners) {
 			delegatingDropAdapter.addDropTargetListener(dropListener);
@@ -219,6 +206,7 @@ public class MakeView extends ViewPart {
 		editTargetAction = new EditTargetAction(shell);
 		trimEmptyFolderAction = new FilterEmtpyFoldersAction(fViewer);
 	}
+
 	private void contributeToActionBars() {
 		IActionBars actionBars = getViewSite().getActionBars();
 		fillLocalPullDown(actionBars.getMenuManager());
@@ -252,7 +240,7 @@ public class MakeView extends ViewPart {
 			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				MakeView.this.fillContextMenu(manager);
-				updateActions((IStructuredSelection)fViewer.getSelection());
+				updateActions((IStructuredSelection) fViewer.getSelection());
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
@@ -282,7 +270,7 @@ public class MakeView extends ViewPart {
 	}
 
 	void handleSelectionChanged(SelectionChangedEvent event) {
-		IStructuredSelection sel = (IStructuredSelection)event.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateActions(sel);
 	}
 
@@ -320,25 +308,31 @@ public class MakeView extends ViewPart {
 		public void bindingManagerChanged(BindingManagerEvent event) {
 
 			if (event.isActiveBindingsChanged()) {
-				String keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.FILE_RENAME);
-				if (keyBinding != null) editTargetAction.setText(
-						MakeUIPlugin.getResourceString("EditTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				String keyBinding = bindingService
+						.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.FILE_RENAME);
+				if (keyBinding != null)
+					editTargetAction
+							.setText(MakeUIPlugin.getResourceString("EditTargetAction.label") + "\t" + keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 
 				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_COPY);
-				if (keyBinding != null) copyTargetAction.setText(
-						MakeUIPlugin.getResourceString("CopyTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				if (keyBinding != null)
+					copyTargetAction
+							.setText(MakeUIPlugin.getResourceString("CopyTargetAction.label") + "\t" + keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 
 				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_PASTE);
-				if (keyBinding != null) pasteTargetAction.setText(
-						MakeUIPlugin.getResourceString("PasteTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				if (keyBinding != null)
+					pasteTargetAction
+							.setText(MakeUIPlugin.getResourceString("PasteTargetAction.label") + "\t" + keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 
 				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_DELETE);
-				if (keyBinding != null) deleteTargetAction.setText(
-						MakeUIPlugin.getResourceString("DeleteTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				if (keyBinding != null)
+					deleteTargetAction
+							.setText(MakeUIPlugin.getResourceString("DeleteTargetAction.label") + "\t" + keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 
 				keyBinding = bindingService.getBestActiveBindingFormattedFor(TARGET_BUILD_LAST_COMMAND);
-				if (keyBinding != null) buildLastTargetAction.setText(
-						MakeUIPlugin.getResourceString("BuildLastTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				if (keyBinding != null)
+					buildLastTargetAction
+							.setText(MakeUIPlugin.getResourceString("BuildLastTargetAction.label") + "\t" + keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	};

@@ -34,7 +34,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-
 /**
  * This class Appends contents to Managed Build System String Option Value.
  *
@@ -47,7 +46,8 @@ public class AppendToMBSStringOptionValue extends ProcessRunner {
 	 * This method Appends contents to Managed Build System StringList Option Values.
 	 */
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -69,7 +69,8 @@ public class AppendToMBSStringOptionValue extends ProcessRunner {
 			try {
 				modified |= setOptionValue(projectHandle, id, value, path);
 			} catch (BuildException e) {
-				throw new ProcessFailureException(Messages.getString("AppendToMBSStringOptionValue.0") + e.getMessage(), e); //$NON-NLS-1$
+				throw new ProcessFailureException(Messages.getString("AppendToMBSStringOptionValue.0") + e.getMessage(), //$NON-NLS-1$
+						e);
 			}
 		}
 		if (modified) {
@@ -83,8 +84,10 @@ public class AppendToMBSStringOptionValue extends ProcessRunner {
 		}
 	}
 
-	private boolean setOptionValue(IProject projectHandle, String id, String value, String path) throws BuildException, ProcessFailureException {
-		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject().getConfigurations();
+	private boolean setOptionValue(IProject projectHandle, String id, String value, String path)
+			throws BuildException, ProcessFailureException {
+		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject()
+				.getConfigurations();
 
 		boolean resource = !(path == null || path.isEmpty() || path.equals("/")); //$NON-NLS-1$
 		boolean modified = false;
@@ -118,7 +121,8 @@ public class AppendToMBSStringOptionValue extends ProcessRunner {
 		return modified;
 	}
 
-	private boolean setOptionForResourceConfig(String id, String value, IResourceConfiguration resourceConfig, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
+	private boolean setOptionForResourceConfig(String id, String value, IResourceConfiguration resourceConfig,
+			IOption[] options, IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
 		for (IOption option : options) {
@@ -134,7 +138,8 @@ public class AppendToMBSStringOptionValue extends ProcessRunner {
 		return modified;
 	}
 
-	private boolean setOptionForConfig(String id, String value, IConfiguration config, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
+	private boolean setOptionForConfig(String id, String value, IConfiguration config, IOption[] options,
+			IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
 		for (IOption option : options) {

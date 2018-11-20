@@ -44,7 +44,8 @@ public class DebugRemoteExecutableHandler extends AbstractHandler {
 			boolean attach = info.isAttach();
 
 			try {
-				final ILaunchConfiguration config = DebugRemoteExecutable.createLaunchConfig(new NullProgressMonitor(), buildLog, executable, address, port, attach);
+				final ILaunchConfiguration config = DebugRemoteExecutable.createLaunchConfig(new NullProgressMonitor(),
+						buildLog, executable, address, port, attach);
 				if (config != null) {
 					Display.getDefault().syncExec(new Runnable() {
 

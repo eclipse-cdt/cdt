@@ -74,11 +74,11 @@ public abstract class IncludesTestBase extends BaseTestCase {
 	private boolean cpp = true;
 	private final Set<TestSourceFile> testFiles = new LinkedHashSet<>();
 
-    protected IncludesTestBase() {
+	protected IncludesTestBase() {
 		super();
 	}
 
-    protected IncludesTestBase(String name) {
+	protected IncludesTestBase(String name) {
 		super(name);
 	}
 
@@ -86,10 +86,12 @@ public abstract class IncludesTestBase extends BaseTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		resetPreferences();
-		
-		cproject = cpp ?
-				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
-				CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+
+		cproject = cpp
+				? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
+						IPDOMManager.ID_NO_INDEXER)
+				: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin",
+						IPDOMManager.ID_NO_INDEXER);
 		IProject project = cproject.getProject();
 		TestScannerProvider.sLocalIncludes = new String[] { project.getLocation().toOSString() };
 		QualifiedName scannerInfoProviderName = new QualifiedName(CCorePlugin.PLUGIN_ID, SCANNER_INFO_PROVIDER2_NAME);
@@ -107,7 +109,8 @@ public abstract class IncludesTestBase extends BaseTestCase {
 			while ((line = reader.readLine()) != null) {
 				String trimmedLine = line.trim();
 				if (testFile == null) {
-					assertTrue("Invalid file name \"" + trimmedLine + "\"", trimmedLine.matches("^(\\w+/)*\\w+\\.\\w+$"));
+					assertTrue("Invalid file name \"" + trimmedLine + "\"",
+							trimmedLine.matches("^(\\w+/)*\\w+\\.\\w+$"));
 					testFile = new TestSourceFile(trimmedLine);
 				} else if (isResultDelimiter(trimmedLine)) {
 					expectedResult = true;
@@ -119,15 +122,14 @@ public abstract class IncludesTestBase extends BaseTestCase {
 			}
 			reader.close();
 
-			sourceFile = TestSourceReader.createFile(project, new Path(testFile.getName()),
-					testFile.getSource());
+			sourceFile = TestSourceReader.createFile(project, new Path(testFile.getName()), testFile.getSource());
 			testFiles.add(testFile);
 			selectedFile = testFile;
 		}
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
 
-		index= CCorePlugin.getIndexManager().getIndex(cproject);
+		index = CCorePlugin.getIndexManager().getIndex(cproject);
 
 		index.acquireReadLock();
 		ast = TestSourceReader.createIndexBasedAST(index, cproject, sourceFile);

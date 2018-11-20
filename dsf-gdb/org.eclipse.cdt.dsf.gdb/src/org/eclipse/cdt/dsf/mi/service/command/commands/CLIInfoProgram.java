@@ -23,13 +23,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class CLIInfoProgram extends CLICommand<CLIInfoProgramInfo> {
 
-    public CLIInfoProgram(IContainerDMContext ctx) {
+	public CLIInfoProgram(IContainerDMContext ctx) {
 		super(ctx, "info program"); //$NON-NLS-1$
 	}
 
 	@Override
 	public CLIInfoProgramInfo getResult(MIOutput output) {
-		return (CLIInfoProgramInfo)getMIInfo(output);
+		return (CLIInfoProgramInfo) getMIInfo(output);
 	}
 
 	public MIInfo getMIInfo(MIOutput out) {

@@ -44,7 +44,7 @@ public class BuildConsole extends AbstractConsole {
 	/**
 	 * Property constant indicating the color of a stream has changed.
 	 */
-	public static final String P_STREAM_COLOR = CUIPlugin.PLUGIN_ID  + ".CONSOLE_P_STREAM_COLOR";	 //$NON-NLS-1$
+	public static final String P_STREAM_COLOR = CUIPlugin.PLUGIN_ID + ".CONSOLE_P_STREAM_COLOR"; //$NON-NLS-1$
 
 	/** The page containing this build console */
 	private BuildConsolePage fBuildConsolePage;
@@ -81,7 +81,7 @@ public class BuildConsole extends AbstractConsole {
 	 */
 	public BuildConsole(IBuildConsoleManager manager, String name, String contextId, URL iconUrl) {
 		super(name, CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_BUILD_CONSOLE));
-		if (iconUrl!=null) {
+		if (iconUrl != null) {
 			CDTSharedImages.register(iconUrl);
 			this.setImageDescriptor(CDTSharedImages.getImageDescriptor(iconUrl.toString()));
 		}
@@ -126,7 +126,7 @@ public class BuildConsole extends AbstractConsole {
 			if (background == null) {
 				return;
 			}
-		} else if (fBackground.equals(background)){
+		} else if (fBackground.equals(background)) {
 			return;
 		}
 		Color old = fBackground;

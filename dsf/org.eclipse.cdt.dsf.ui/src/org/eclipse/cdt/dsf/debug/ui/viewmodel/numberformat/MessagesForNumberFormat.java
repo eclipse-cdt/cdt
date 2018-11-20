@@ -20,25 +20,25 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MessagesForNumberFormat extends NLS {
-    public static String FormattedValueVMUtil_Natural_format__label;
-    public static String FormattedValueVMUtil_Decimal_format__label;
-    public static String FormattedValueVMUtil_Hex_format__label;
-    public static String FormattedValueVMUtil_Octal_format__label;
-    public static String FormattedValueVMUtil_Binary_format__label;
-    public static String FormattedValueVMUtil_String_format__label;
-    public static String FormattedValueVMUtil_Other_format__format_text;
+	public static String FormattedValueVMUtil_Natural_format__label;
+	public static String FormattedValueVMUtil_Decimal_format__label;
+	public static String FormattedValueVMUtil_Hex_format__label;
+	public static String FormattedValueVMUtil_Octal_format__label;
+	public static String FormattedValueVMUtil_Binary_format__label;
+	public static String FormattedValueVMUtil_String_format__label;
+	public static String FormattedValueVMUtil_Other_format__format_text;
 
-    public static String NumberFormatContribution_EmptyFormatsList_label;
-    public static String ElementNumberFormatContribution_RestoreToPreference_label;
-    
-    public static String FormattedValueLabelText__Value__text_format;
-    public static String FormattedValueLabelText__text_format;
+	public static String NumberFormatContribution_EmptyFormatsList_label;
+	public static String ElementNumberFormatContribution_RestoreToPreference_label;
 
-    static {
-        // initialize resource bundle
-        NLS.initializeMessages(MessagesForNumberFormat.class.getName(), MessagesForNumberFormat.class);
-    }
+	public static String FormattedValueLabelText__Value__text_format;
+	public static String FormattedValueLabelText__text_format;
 
-    private MessagesForNumberFormat() {
-    }
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(MessagesForNumberFormat.class.getName(), MessagesForNumberFormat.class);
+	}
+
+	private MessagesForNumberFormat() {
+	}
 }

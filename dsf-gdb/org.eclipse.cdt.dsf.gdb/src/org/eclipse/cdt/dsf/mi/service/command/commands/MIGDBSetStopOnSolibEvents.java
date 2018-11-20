@@ -25,9 +25,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * 
  * @since 1.1
  */
-public class MIGDBSetStopOnSolibEvents extends MIGDBSet 
-{
-    public MIGDBSetStopOnSolibEvents(ICommandControlDMContext ctx, boolean isSet) {
-		super(ctx, new String[] {"stop-on-solib-events", (isSet) ? "1" : "0"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+public class MIGDBSetStopOnSolibEvents extends MIGDBSet {
+	public MIGDBSetStopOnSolibEvents(ICommandControlDMContext ctx, boolean isSet) {
+		super(ctx, new String[] { "stop-on-solib-events", (isSet) ? "1" : "0" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 }

@@ -76,20 +76,15 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 	private SCMarkerGenerator markerGenerator = new SCMarkerGenerator();
 
 	@Override
-	public boolean invokeProvider(IProgressMonitor monitor, IResource resource,
-			String providerId, IScannerConfigBuilderInfo2 buildInfo,
-			IScannerInfoCollector collector) {
-		return invokeProvider(monitor, resource, new InfoContext(resource.getProject()), providerId, buildInfo, collector, null);
+	public boolean invokeProvider(IProgressMonitor monitor, IResource resource, String providerId,
+			IScannerConfigBuilderInfo2 buildInfo, IScannerInfoCollector collector) {
+		return invokeProvider(monitor, resource, new InfoContext(resource.getProject()), providerId, buildInfo,
+				collector, null);
 	}
 
 	@Override
-	public boolean invokeProvider(IProgressMonitor monitor,
-			IResource resource,
-			InfoContext context,
-			String providerId,
-			IScannerConfigBuilderInfo2 buildInfo,
-			IScannerInfoCollector collector,
-			Properties env) {
+	public boolean invokeProvider(IProgressMonitor monitor, IResource resource, InfoContext context, String providerId,
+			IScannerConfigBuilderInfo2 buildInfo, IScannerInfoCollector collector, Properties env) {
 		// initialize fields
 		this.resource = resource;
 		this.providerId = providerId;
@@ -113,9 +108,10 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 
 			ILanguage language = context.getLanguage();
 			IConsole console;
-			if (language!=null && isConsoleEnabled()) {
+			if (language != null && isConsoleEnabled()) {
 				String consoleId = MakeCorePlugin.PLUGIN_ID + '.' + providerId + '.' + language.getId();
-				String consoleName =  MakeMessages.getFormattedString("ExternalScannerInfoProvider.Console_Name", language.getName()); //$NON-NLS-1$
+				String consoleName = MakeMessages.getFormattedString("ExternalScannerInfoProvider.Console_Name", //$NON-NLS-1$
+						language.getName());
 				console = CCorePlugin.getDefault().getBuildConsole(consoleId, consoleName, null);
 			} else {
 				// that looks in extension points registry and won't find the id
@@ -127,24 +123,29 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 			launcher.setProject(project);
 
 			IPath program = getCommandToLaunch();
-			if (! program.isEmpty()) {
+			if (!program.isEmpty()) {
 				String[] comandLineOptions = getCommandLineOptions();
 				URI workingDirectoryURI = MakeBuilderUtil.getBuildDirectoryURI(project, MakeBuilder.BUILDER_ID);
 				String[] envp = setEnvironment(launcher, env);
-	
-				ErrorParserManager epm = new ErrorParserManager(project, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
-	
+
+				ErrorParserManager epm = new ErrorParserManager(project, markerGenerator,
+						new String[] { GMAKE_ERROR_PARSER_ID });
+
 				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
-				IConsoleParser parser = ScannerInfoConsoleParserFactory.getESIConsoleParser(project, context, providerId, buildInfo, collector, markerGenerator);
+				IConsoleParser parser = ScannerInfoConsoleParserFactory.getESIConsoleParser(project, context,
+						providerId, buildInfo, collector, markerGenerator);
 				if (parser != null) {
 					parsers.add(parser);
 				}
-	
-				buildRunnerHelper.setLaunchParameters(launcher, program, comandLineOptions, workingDirectoryURI, envp );
-				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-	
-				buildRunnerHelper.greeting(MakeMessages.getFormattedString("ExternalScannerInfoProvider.Greeting", project.getName())); //$NON-NLS-1$
-				buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_PROGRAM, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
+				buildRunnerHelper.setLaunchParameters(launcher, program, comandLineOptions, workingDirectoryURI, envp);
+				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor,
+						TICKS_STREAM_PROGRESS_MONITOR, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
+				buildRunnerHelper.greeting(
+						MakeMessages.getFormattedString("ExternalScannerInfoProvider.Greeting", project.getName())); //$NON-NLS-1$
+				buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_PROGRAM,
+						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				buildRunnerHelper.close();
 				buildRunnerHelper.goodbye();
 			}
@@ -169,8 +170,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 	protected String[] getCommandLineOptions() {
 		// add additional arguments
 		// subclass can change default behavior
-		return prepareArguments(
-				buildInfo.isUseDefaultProviderCommand(providerId));
+		return prepareArguments(buildInfo.isUseDefaultProviderCommand(providerId));
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 		//fWorkingDirectory = resource.getProject().getLocation();
 		URI workingDirURI = MakeBuilderUtil.getBuildDirectoryURI(currProject, MakeBuilder.BUILDER_ID);
 		String pathString = EFSExtensionManager.getDefault().getPathFromURI(workingDirURI);
-		if(pathString != null) {
+		if (pathString != null) {
 			fWorkingDirectory = new Path(pathString);
 		}
 
@@ -193,7 +193,8 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 		}
 
 		fCompileCommand = new Path(buildInfo.getProviderRunCommand(providerId));
-		fCompileArguments = ScannerConfigUtil.tokenizeStringWithQuotes(buildInfo.getProviderRunArguments(providerId), "\"");//$NON-NLS-1$
+		fCompileArguments = ScannerConfigUtil.tokenizeStringWithQuotes(buildInfo.getProviderRunArguments(providerId),
+				"\"");//$NON-NLS-1$
 		return (fCompileCommand != null);
 	}
 
@@ -220,7 +221,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 		// of the language as long as the encoding is set to UTF-8.
 		// English language is chosen because parser relies on English messages
 		// in the output of the 'gcc -v' command.
-		props.put("LANGUAGE", "en");        // override for GNU gettext   //$NON-NLS-1$ //$NON-NLS-2$
+		props.put("LANGUAGE", "en"); // override for GNU gettext   //$NON-NLS-1$ //$NON-NLS-2$
 		props.put("LC_ALL", "en_US.UTF-8"); // for other parts of the system libraries    //$NON-NLS-1$ //$NON-NLS-2$
 		return props;
 	}
@@ -239,7 +240,6 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 		}
 		return env;
 	}
-
 
 	/**
 	 * Set preference to stream output of scanner discovery to a console.
@@ -260,8 +260,8 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 	 * @return boolean preference value
 	 */
 	public static boolean isConsoleEnabled() {
-		boolean value = InstanceScope.INSTANCE.getNode(MakeCorePlugin.PLUGIN_ID)
-				.getBoolean(PREF_CONSOLE_ENABLED, false);
+		boolean value = InstanceScope.INSTANCE.getNode(MakeCorePlugin.PLUGIN_ID).getBoolean(PREF_CONSOLE_ENABLED,
+				false);
 		return value;
 	}
 

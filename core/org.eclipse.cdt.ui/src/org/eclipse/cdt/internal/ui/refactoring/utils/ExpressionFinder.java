@@ -27,8 +27,8 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
 /**
  * @author Guido Zgraggen IFS
  */
-public class ExpressionFinder {	
-	
+public class ExpressionFinder {
+
 	public static IASTName findExpressionInTranslationUnit(IASTTranslationUnit transUnit, final IIndexName indexName) {
 		final Container<IASTName> expName = new Container<IASTName>();
 		transUnit.accept(new ASTVisitor() {
@@ -40,9 +40,10 @@ public class ExpressionFinder {
 			public int visit(IASTName name) {
 				if (name.isReference() && name.getNodeLocations().length > 0) {
 					IASTNodeLocation nodeLocation = name.getNodeLocations()[0];
-					if (indexName.getNodeOffset() == nodeLocation.getNodeOffset() 
+					if (indexName.getNodeOffset() == nodeLocation.getNodeOffset()
 							&& indexName.getNodeLength() == nodeLocation.getNodeLength()
-							&& new Path(indexName.getFileLocation().getFileName()).equals(new Path(nodeLocation.asFileLocation().getFileName()))) {
+							&& new Path(indexName.getFileLocation().getFileName())
+									.equals(new Path(nodeLocation.asFileLocation().getFileName()))) {
 						expName.setObject(name);
 						return ASTVisitor.PROCESS_ABORT;
 					}

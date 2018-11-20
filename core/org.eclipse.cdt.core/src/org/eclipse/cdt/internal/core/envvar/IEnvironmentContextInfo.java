@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.envvar;
 
-
-
-
 /**
  * This interface is used by the Environment Variable Provider to
  * represent the given context(level) information
@@ -36,7 +33,7 @@ public interface IEnvironmentContextInfo {
 	 * @return IEnvironmentVariableSupplier[]
 	 */
 	public ICoreEnvironmentVariableSupplier[] getSuppliers();
-	
+
 	/**
 	 * Returns the current context
 	 * 

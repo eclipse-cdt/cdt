@@ -23,36 +23,36 @@ import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 
 public class OptionalBuildProperties implements IOptionalBuildProperties {
-	
-	public static final String PROPERTY_VALUE_SEPARATOR = "=";   //$NON-NLS-1$
+
+	public static final String PROPERTY_VALUE_SEPARATOR = "="; //$NON-NLS-1$
 	public static final String PROPERTIES_SEPARATOR = ","; //$NON-NLS-1$
-	
+
 	private Map<String, String> fProperties = new HashMap<>();
-	
+
 	public OptionalBuildProperties() {
 	}
-	
+
 	public OptionalBuildProperties(String properties) {
 		StringTokenizer t = new StringTokenizer(properties, PROPERTIES_SEPARATOR);
-		while(t.hasMoreTokens()){
+		while (t.hasMoreTokens()) {
 			String property = t.nextToken();
 			int index = property.indexOf(PROPERTY_VALUE_SEPARATOR);
 			String id, value;
-			if(index != -1){
+			if (index != -1) {
 				id = SafeStringInterner.safeIntern(property.substring(0, index));
 				value = SafeStringInterner.safeIntern(property.substring(index + 1));
 			} else {
 				id = SafeStringInterner.safeIntern(property);
 				value = null;
 			}
-			fProperties.put(id,  value);
+			fProperties.put(id, value);
 		}
 	}
 
 	public OptionalBuildProperties(OptionalBuildProperties properties) {
 		fProperties.putAll(properties.fProperties);
 	}
-	
+
 	@Override
 	public String getProperty(String id) {
 		return fProperties.get(id);
@@ -62,27 +62,27 @@ public class OptionalBuildProperties implements IOptionalBuildProperties {
 	public void setProperty(String id, String value) {
 		fProperties.put(id, value);
 	}
-	
+
 	@Override
-	public String[] getProperties(){
+	public String[] getProperties() {
 		return fProperties.values().toArray(new String[fProperties.size()]);
 	}
-	
+
 	@Override
 	public void removeProperty(String id) {
 		fProperties.remove(id);
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		int size = fProperties.size();
-		Set<Entry<String,String>> entries = fProperties.entrySet();
-		if(size == 0)
+		Set<Entry<String, String>> entries = fProperties.entrySet();
+		if (size == 0)
 			return ""; //$NON-NLS-1$
 
 		StringBuilder buf = new StringBuilder();
-		Iterator<Entry<String,String>> iterator = entries.iterator();
-		Entry<String,String> entry = iterator.next();
+		Iterator<Entry<String, String>> iterator = entries.iterator();
+		Entry<String, String> entry = iterator.next();
 		buf.append(entry.getKey() + PROPERTY_VALUE_SEPARATOR + entry.getValue());
 
 		while (iterator.hasNext()) {
@@ -102,6 +102,5 @@ public class OptionalBuildProperties implements IOptionalBuildProperties {
 	public void clear() {
 		fProperties.clear();
 	}
-
 
 }

@@ -29,43 +29,41 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 @Immutable
 public class MIWatchpointScopeEvent extends MIStoppedEvent {
 
-    final private String number;
+	final private String number;
 
-    /** @since 5.0 */
-    protected MIWatchpointScopeEvent(
-        IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String number)
-    {
-        super(ctx, token, results, frame);
-        this.number = number;
-    }
+	/** @since 5.0 */
+	protected MIWatchpointScopeEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame,
+			String number) {
+		super(ctx, token, results, frame);
+		this.number = number;
+	}
 
-    /** @since 5.0 */
-    public String getNumber() {
-        return number;
-    }
+	/** @since 5.0 */
+	public String getNumber() {
+		return number;
+	}
 
-    /**
-     * @since 1.1
-     */
-    public static MIWatchpointScopeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
-    {
-       String number = ""; //$NON-NLS-1$
-       for (int i = 0; i < results.length; i++) {
-           String var = results[i].getVariable();
-           MIValue value = results[i].getMIValue();
+	/**
+	 * @since 1.1
+	 */
+	public static MIWatchpointScopeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
+		String number = ""; //$NON-NLS-1$
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue value = results[i].getMIValue();
 
-           if (var.equals("wpnum")) { //$NON-NLS-1$
-               if (value instanceof MIConst) {
-                   String str = ((MIConst) value).getString();
-                   try {
-                       number = str.trim();
-                   } catch (NumberFormatException e) {
-                   }
-               }
-           } 
-       }
+			if (var.equals("wpnum")) { //$NON-NLS-1$
+				if (value instanceof MIConst) {
+					String str = ((MIConst) value).getString();
+					try {
+						number = str.trim();
+					} catch (NumberFormatException e) {
+					}
+				}
+			}
+		}
 
-       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-       return new MIWatchpointScopeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), number);
-    }
+		MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+		return new MIWatchpointScopeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), number);
+	}
 }

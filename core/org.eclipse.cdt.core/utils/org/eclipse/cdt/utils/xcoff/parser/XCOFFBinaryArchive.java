@@ -43,7 +43,6 @@ public class XCOFFBinaryArchive extends BinaryFile implements IBinaryArchive {
 		children = new ArrayList<IBinaryObject>(5);
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryArchive#getObjects()
 	 */

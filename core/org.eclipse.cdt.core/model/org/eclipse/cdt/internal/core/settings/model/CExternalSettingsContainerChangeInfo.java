@@ -17,62 +17,61 @@ import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager.CCo
 
 public class CExternalSettingsContainerChangeInfo {
 	public static final int CHANGED = 1;
-	
+
 	public static final int CONTAINED_ID = 1;
 	public static final int CONTAINER_CONTENTS = 1 << 1;
 
 	private int fFlags;
-	private	String fOldId;
+	private String fOldId;
 	private CContainerRef fCRef;
-//	private Map fIncludeMap, fExcludeMap;
-	
-//	private class ProjChangeInfo {
-//		private String fProjName;
-//		private Set fCfgIds;
-//	}
-//	private CExternalSettingsContainer fContainer;
-//	private ExtSettingsDelta[] fDeltas;
-	
-	CExternalSettingsContainerChangeInfo(int flags, 
-			CContainerRef cr, 
-//			CExternalSettingsContainer container, 
+	//	private Map fIncludeMap, fExcludeMap;
+
+	//	private class ProjChangeInfo {
+	//		private String fProjName;
+	//		private Set fCfgIds;
+	//	}
+	//	private CExternalSettingsContainer fContainer;
+	//	private ExtSettingsDelta[] fDeltas;
+
+	CExternalSettingsContainerChangeInfo(int flags, CContainerRef cr,
+			//			CExternalSettingsContainer container, 
 			String oldId/*,
-			ExtSettingsDelta[] deltas*/
-			){
+						ExtSettingsDelta[] deltas*/
+	) {
 		this.fFlags = flags;
 		this.fCRef = cr;
-//		this.fContainer = container;
+		//		this.fContainer = container;
 		this.fOldId = oldId;
-//		this.fIncludeMap = includeMap;
-//		this.fExcludeMap = exludeMap;
-//		this.fDeltas = deltas;
+		//		this.fIncludeMap = includeMap;
+		//		this.fExcludeMap = exludeMap;
+		//		this.fDeltas = deltas;
 	}
-	
-	public int getEventType(){
+
+	public int getEventType() {
 		return CHANGED;
 	}
-	
-	public int getChangeFlags(){
+
+	public int getChangeFlags() {
 		return fFlags;
 	}
-	
-//	public CExternalSettingsContainer getContainer(){
-//		return fContainer;
-//	}
-	
-//	public ExtSettingsDelta[] getDeltas(){
-//		return fDeltas;
-//	}
-	
-	public String getOldId(){
+
+	//	public CExternalSettingsContainer getContainer(){
+	//		return fContainer;
+	//	}
+
+	//	public ExtSettingsDelta[] getDeltas(){
+	//		return fDeltas;
+	//	}
+
+	public String getOldId() {
 		return fOldId;
 	}
-	
-	public String getNewId(){
+
+	public String getNewId() {
 		return fCRef.getContainerId();
 	}
-	
-	public CContainerRef getContainerInfo(){
+
+	public CContainerRef getContainerInfo() {
 		return fCRef;
 	}
 }

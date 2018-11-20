@@ -72,8 +72,8 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 	}
 
 	protected StringBuilder[] getTestSource(int sections) throws IOException {
-		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser",
-				getClass(), getName(), sections);
+		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser", getClass(),
+				getName(), sections);
 	}
 
 	protected void compareResult(ASTVisitor visitor) throws Exception {
@@ -94,7 +94,8 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 		compareResult(visitor, testSources[0].toString(), testSources[0].toString(), shouldValidateAST);
 	}
 
-	private void compareResult(ASTVisitor visitor, String source, String expected, boolean shouldValidateAST) throws Exception {
+	private void compareResult(ASTVisitor visitor, String source, String expected, boolean shouldValidateAST)
+			throws Exception {
 		final IFile testFile = importFile("source.h", source); //$NON-NLS-1$
 
 		CCorePlugin.getIndexManager().reindex(cproject);
@@ -111,14 +112,13 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 			assertFalse("Problem nodes found, AST is invalid.", validator.problemsFound());
 		}
 
-		final ChangeGenerator changeGenerator =
-				new ChangeGenerator(modStore, ASTCommenter.getCommentedNodeMap(unit));
+		final ChangeGenerator changeGenerator = new ChangeGenerator(modStore, ASTCommenter.getCommentedNodeMap(unit));
 		unit.accept(visitor);
 
 		changeGenerator.generateChange(unit);
 		final Document doc = new Document(source);
 		Change[] changes = ((CompositeChange) changeGenerator.getChange()).getChildren();
-		assertThat("No changes found",changes.length, is(greaterThan(0)));
+		assertThat("No changes found", changes.length, is(greaterThan(0)));
 		for (Change change : changes) {
 			if (change instanceof TextFileChange) {
 				TextFileChange textChange = (TextFileChange) change;
@@ -128,7 +128,8 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 		assertEquals(TestHelper.unifyNewLines(expected), TestHelper.unifyNewLines(doc.get()));
 	}
 
-	protected ASTModification addModification(ASTModification parentMod, ModificationKind kind, IASTNode targetNode, IASTNode newNode) {
+	protected ASTModification addModification(ASTModification parentMod, ModificationKind kind, IASTNode targetNode,
+			IASTNode newNode) {
 		ASTModification mod = new ASTModification(kind, targetNode, newNode, null);
 		modStore.storeModification(parentMod, mod);
 		return mod;

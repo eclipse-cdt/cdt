@@ -25,13 +25,14 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTForStatement extends IASTForStatement, IASTImplicitDestructorNameOwner {
-    public static final ASTNodeProperty CONDITION_DECLARATION =
-    		new ASTNodeProperty("org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty CONDITION_DECLARATION = new ASTNodeProperty(
+			"org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement"); //$NON-NLS-1$
 
-    public void setConditionDeclaration(IASTDeclaration d);
-    public IASTDeclaration getConditionDeclaration();
+	public void setConditionDeclaration(IASTDeclaration d);
 
-    /**
+	public IASTDeclaration getConditionDeclaration();
+
+	/**
 	 * @since 5.1
 	 */
 	@Override

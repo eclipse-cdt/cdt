@@ -76,8 +76,8 @@ public class ProjectTargets {
 
 			//Historical ... fall back to the workspace and look in previous XML file location
 			if (rootElement.getChildren().length == 0) {
-				IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(
-						TARGETS_EXT);
+				IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName())
+						.addFileExtension(TARGETS_EXT);
 				targetFile = targetFilePath.toFile();
 				try {
 					InputStream input = new FileInputStream(targetFile);
@@ -186,7 +186,7 @@ public class ProjectTargets {
 		elem.setValue(target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
 
 		String targetAttr = target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, null);
-		if ( targetAttr != null) {
+		if (targetAttr != null) {
 			elem = targetElem.createChild(TARGET_ARGUMENTS);
 			elem.setValue(targetAttr);
 		}
@@ -272,11 +272,11 @@ public class ProjectTargets {
 							if (option.length > 0) {
 								target.setStopOnError(Boolean.valueOf(option[0].getValue()).booleanValue());
 							}
-							option =  node.getChildrenByName(TARGET_USE_DEFAULT_CMD);
+							option = node.getChildrenByName(TARGET_USE_DEFAULT_CMD);
 							if (option.length > 0) {
 								target.setUseDefaultBuildCmd(Boolean.valueOf(option[0].getValue()).booleanValue());
 							}
-							option =  node.getChildrenByName(TARGET_COMMAND);
+							option = node.getChildrenByName(TARGET_COMMAND);
 							if (option.length > 0) {
 								target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, option[0].getValue());
 							}

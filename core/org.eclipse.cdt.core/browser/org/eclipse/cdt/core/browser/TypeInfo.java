@@ -27,6 +27,7 @@ public class TypeInfo implements ITypeInfo {
 	 */
 	protected TypeInfo() {
 	}
+
 	/**
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
@@ -37,10 +38,10 @@ public class TypeInfo implements ITypeInfo {
 		throw new UnsupportedOperationException();
 	}
 
-		/**
-	 * @deprecated
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
+	/**
+	* @deprecated
+	* @noreference This method is not intended to be referenced by clients.
+	*/
 	@Override
 	@Deprecated
 	public ITypeReference[] getReferences() {

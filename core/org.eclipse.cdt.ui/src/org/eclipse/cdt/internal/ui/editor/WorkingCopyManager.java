@@ -49,62 +49,62 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	 */
 	public WorkingCopyManager(CDocumentProvider provider) {
 		Assert.isNotNull(provider);
-		fDocumentProvider= provider;
+		fDocumentProvider = provider;
 	}
 
 	@Override
 	public void connect(IEditorInput input) throws CoreException {
 		fDocumentProvider.connect(input);
 	}
-	
+
 	@Override
 	public void disconnect(IEditorInput input) {
 		fDocumentProvider.disconnect(input);
 	}
-	
+
 	@Override
 	public void shutdown() {
 		if (!fIsShuttingDown) {
-			fIsShuttingDown= true;
+			fIsShuttingDown = true;
 			try {
 				if (fMap != null) {
 					fMap.clear();
-					fMap= null;
+					fMap = null;
 				}
 				fDocumentProvider.shutdown();
 			} finally {
-				fIsShuttingDown= false;
+				fIsShuttingDown = false;
 			}
 		}
 	}
 
 	@Override
 	public IWorkingCopy getWorkingCopy(IEditorInput input) {
-		IWorkingCopy unit= fMap == null ? null : fMap.get(input);
+		IWorkingCopy unit = fMap == null ? null : fMap.get(input);
 		return unit != null ? unit : fDocumentProvider.getWorkingCopy(input);
 	}
-	
+
 	@Override
 	public void setWorkingCopy(IEditorInput input, IWorkingCopy workingCopy) {
 		if (fDocumentProvider.getDocument(input) != null) {
 			if (fMap == null)
-				fMap= new HashMap<>();
+				fMap = new HashMap<>();
 			fMap.put(input, workingCopy);
 		}
 	}
-	
+
 	@Override
 	public void removeWorkingCopy(IEditorInput input) {
 		fMap.remove(input);
 		if (fMap.isEmpty())
-			fMap= null;
+			fMap = null;
 	}
 
-	public IBufferFactory getBufferFactory() {		
+	public IBufferFactory getBufferFactory() {
 		if (fBufferFactory == null) {
 			synchronized (this) {
 				if (fBufferFactory == null)
-					fBufferFactory= new CustomBufferFactory();
+					fBufferFactory = new CustomBufferFactory();
 			}
 		}
 		return fBufferFactory;
@@ -123,6 +123,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	@Override
 	public IWorkingCopy getSharedWorkingCopy(ITranslationUnit original, IProblemRequestor requestor,
 			IProgressMonitor progressMonitor) throws CModelException {
-		return CModelManager.getDefault().getSharedWorkingCopy(getBufferFactory(), original, requestor, progressMonitor);
+		return CModelManager.getDefault().getSharedWorkingCopy(getBufferFactory(), original, requestor,
+				progressMonitor);
 	}
 }

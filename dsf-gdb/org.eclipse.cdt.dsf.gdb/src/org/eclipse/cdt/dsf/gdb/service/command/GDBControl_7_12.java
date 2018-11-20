@@ -27,17 +27,19 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * @since 5.2
  */
 public class GDBControl_7_12 extends GDBControl_7_7 {
-    public GDBControl_7_12(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
-    	super(session, config, factory);
-    }
+	public GDBControl_7_12(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
+		super(session, config, factory);
+	}
 
-    @Override
-	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+	@Override
+	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes,
+			RequestMonitorWithProgress rm) {
 		return new FinalLaunchSequence_7_12(getSession(), attributes, rm);
 	}
-    
+
 	@Override
-	protected IEventProcessor createMIRunControlEventProcessor(AbstractMIControl connection, ICommandControlDMContext controlDmc) {
+	protected IEventProcessor createMIRunControlEventProcessor(AbstractMIControl connection,
+			ICommandControlDMContext controlDmc) {
 		return new MIRunControlEventProcessor_7_12(connection, controlDmc);
 	}
 

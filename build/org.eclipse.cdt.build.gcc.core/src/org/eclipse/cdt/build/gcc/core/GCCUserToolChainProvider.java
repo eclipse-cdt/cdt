@@ -131,14 +131,16 @@ public class GCCUserToolChainProvider implements IUserToolChainProvider {
 				}
 			}
 		} catch (IOException | IllegalStateException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), Messages.GCCUserToolChainProvider_Loading, e));
+			throw new CoreException(
+					new Status(IStatus.ERROR, Activator.getId(), Messages.GCCUserToolChainProvider_Loading, e));
 		}
 	}
 
 	@Override
 	public void addToolChain(IToolChain toolChain) throws CoreException {
 		if (!(toolChain instanceof GCCToolChain)) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), Messages.GCCUserToolChainProvider_NotOurs));
+			throw new CoreException(
+					new Status(IStatus.ERROR, Activator.getId(), Messages.GCCUserToolChainProvider_NotOurs));
 		}
 
 		GCCToolChain gcc = (GCCToolChain) toolChain;
@@ -192,7 +194,8 @@ public class GCCUserToolChainProvider implements IUserToolChainProvider {
 		try {
 			saveJsonFile();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), Messages.GCCUserToolChainProvider_Saving, e));
+			throw new CoreException(
+					new Status(IStatus.ERROR, Activator.getId(), Messages.GCCUserToolChainProvider_Saving, e));
 		}
 
 		manager.addToolChain(toolChain);
@@ -214,7 +217,8 @@ public class GCCUserToolChainProvider implements IUserToolChainProvider {
 			try {
 				saveJsonFile();
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), Messages.GCCUserToolChainProvider_Saving1, e));
+				throw new CoreException(
+						new Status(IStatus.ERROR, Activator.getId(), Messages.GCCUserToolChainProvider_Saving1, e));
 			}
 		}
 		manager.removeToolChain(toolChain);

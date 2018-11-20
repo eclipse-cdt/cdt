@@ -34,7 +34,8 @@ public class ColorAndEffectFieldEditor extends FieldEditor {
 	private Button checkItalic;
 	private Button checkBox; // :)
 
-	public ColorAndEffectFieldEditor(String name, String nameBold, String nameItalic, String nameBox, String labelText, Composite parent) {
+	public ColorAndEffectFieldEditor(String name, String nameBold, String nameItalic, String nameBox, String labelText,
+			Composite parent) {
 		super(name, labelText, parent);
 		this.nameBold = nameBold;
 		this.nameItalic = nameItalic;

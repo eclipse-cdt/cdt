@@ -29,13 +29,13 @@ import org.eclipse.core.runtime.IPath;
  * from multiple files for the same file-system location.
  */
 public class FileRelevance {
-	private static final int PREFERRED_PROJECT 		= 0x40;
-	private static final int CDT_PROJECT 			= 0x20;
-	private static final int ON_SOURCE_ROOT			= 0x10;
+	private static final int PREFERRED_PROJECT = 0x40;
+	private static final int CDT_PROJECT = 0x20;
+	private static final int ON_SOURCE_ROOT = 0x10;
 
 	// Penalty for undesirable attributes
-	private static final int LINK_PENALTY			= 1;
-	private static final int INACCESSIBLE_SHIFT 	= 4;
+	private static final int LINK_PENALTY = 1;
+	private static final int INACCESSIBLE_SHIFT = 4;
 
 	/**
 	 * Compute a relevance for the given file. The higher the score the more relevant the
@@ -64,17 +64,18 @@ public class FileRelevance {
 	 * @param f the file to compute the relevance for
 	 * @return integer representing file relevance. Larger numbers are more relevant
 	 */
-	public static int getRelevance(IFile f, IProject preferredProject, boolean degradeSymLinks, Object originalLocation) {
-		int result= 0;
-		IProject p= f.getProject();
+	public static int getRelevance(IFile f, IProject preferredProject, boolean degradeSymLinks,
+			Object originalLocation) {
+		int result = 0;
+		IProject p = f.getProject();
 		if (p.equals(preferredProject))
-			result+= PREFERRED_PROJECT;
+			result += PREFERRED_PROJECT;
 
 		if (CoreModel.hasCNature(p)) {
-			result+= CDT_PROJECT;
-			ICProject cproject= CModelManager.getDefault().create(p);
+			result += CDT_PROJECT;
+			ICProject cproject = CModelManager.getDefault().create(p);
 			if (cproject.isOnSourceRoot(f))
-				result+= ON_SOURCE_ROOT;
+				result += ON_SOURCE_ROOT;
 		}
 
 		if (!f.isAccessible()) {
@@ -92,7 +93,7 @@ public class FileRelevance {
 					result += LINK_PENALTY;
 			} else if (originalLocation instanceof IPath) {
 				if (originalLocation.equals(f.getLocation()))
-					result+= LINK_PENALTY;
+					result += LINK_PENALTY;
 			}
 		}
 		return result;

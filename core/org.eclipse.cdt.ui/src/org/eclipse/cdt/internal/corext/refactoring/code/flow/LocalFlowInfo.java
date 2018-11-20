@@ -23,27 +23,26 @@ class LocalFlowInfo extends FlowInfo {
 		super(NO_RETURN);
 		if (variableIndex < 0)
 			throw new IllegalArgumentException("Invalid index for local variable \"" + binding.getName()); //$NON-NLS-1$
-		fVariableIndex= variableIndex;
+		fVariableIndex = variableIndex;
 		if (context.considerAccessMode()) {
 			createAccessModeArray(context);
 			context.manageLocal(binding);
-			fAccessModes[fVariableIndex]= localAccessMode;
+			fAccessModes[fVariableIndex] = localAccessMode;
 		}
 	}
 
 	public LocalFlowInfo(LocalFlowInfo info, int localAccessMode, FlowContext context) {
 		super(NO_RETURN);
-		fVariableIndex= info.fVariableIndex;
+		fVariableIndex = info.fVariableIndex;
 		if (context.considerAccessMode()) {
 			createAccessModeArray(context);
-			fAccessModes[fVariableIndex]= localAccessMode;
+			fAccessModes[fVariableIndex] = localAccessMode;
 		}
 	}
 
 	public void setWriteAccess(FlowContext context) {
 		if (context.considerAccessMode()) {
-			fAccessModes[fVariableIndex]= FlowInfo.WRITE;
+			fAccessModes[fVariableIndex] = FlowInfo.WRITE;
 		}
 	}
 }
-

@@ -49,10 +49,10 @@ public class FunctionCompletionProposal extends CCompletionProposal {
 	protected IDocument fDocument;
 
 	public FunctionCompletionProposal(String replacementString, int replacementOffset, int replacementLength,
-			Image image, String displayString, String idString, int relevance, ITextViewer viewer,
-			IFunction function, int invocationOffset, int parseOffset, ITranslationUnit translationUnit, IDocument document) {
-		super(replacementString, replacementOffset, replacementLength, image, displayString, idString,
-				relevance, viewer);
+			Image image, String displayString, String idString, int relevance, ITextViewer viewer, IFunction function,
+			int invocationOffset, int parseOffset, ITranslationUnit translationUnit, IDocument document) {
+		super(replacementString, replacementOffset, replacementLength, image, displayString, idString, relevance,
+				viewer);
 		fFunctionParameters = function.getParameters();
 		fInvocationOffset = invocationOffset;
 		fParseOffset = parseOffset;
@@ -118,8 +118,7 @@ public class FunctionCompletionProposal extends CCompletionProposal {
 			int exit = getReplacementOffset() + getReplacementString().length();
 			try {
 				LinkedPositionGroup group = new LinkedPositionGroup();
-				group.addPosition(new LinkedPosition(document, fInvocationOffset, 0,
-						LinkedPositionGroup.NO_STOP));
+				group.addPosition(new LinkedPosition(document, fInvocationOffset, 0, LinkedPositionGroup.NO_STOP));
 
 				LinkedModeModel model = new LinkedModeModel();
 				model.addGroup(group);

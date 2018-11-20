@@ -22,17 +22,17 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 
 public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements ICASTSimpleDeclSpecifier {
-    private int simpleType;
-    private boolean isSigned;
-    private boolean isUnsigned;
-    private boolean isShort;
-    private boolean isLong;
-    private boolean longlong;
-    private boolean complex;
-    private boolean imaginary;
+	private int simpleType;
+	private boolean isSigned;
+	private boolean isUnsigned;
+	private boolean isShort;
+	private boolean isLong;
+	private boolean longlong;
+	private boolean complex;
+	private boolean imaginary;
 	private IASTExpression fDeclTypeExpression;
 
-    @Override
+	@Override
 	public CASTSimpleDeclSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -45,59 +45,59 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 
 	protected <T extends CASTSimpleDeclSpecifier> T copy(T copy, CopyStyle style) {
 		CASTSimpleDeclSpecifier target = copy;
-    	target.simpleType = simpleType;
-    	target.isSigned = isSigned;
-    	target.isUnsigned = isUnsigned;
-    	target.isShort = isShort;
-    	target.isLong = isLong;
-    	target.longlong = longlong;
-    	target.complex = complex;
-    	target.imaginary = imaginary;
-    	if (fDeclTypeExpression != null)
+		target.simpleType = simpleType;
+		target.isSigned = isSigned;
+		target.isUnsigned = isUnsigned;
+		target.isShort = isShort;
+		target.isLong = isLong;
+		target.longlong = longlong;
+		target.complex = complex;
+		target.imaginary = imaginary;
+		if (fDeclTypeExpression != null)
 			copy.setDeclTypeExpression(fDeclTypeExpression.copy(style));
-    	return super.copy(copy, style);
-    }
+		return super.copy(copy, style);
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        return simpleType;
-    }
+		return simpleType;
+	}
 
-    @Override
+	@Override
 	public boolean isSigned() {
-        return isSigned;
-    }
+		return isSigned;
+	}
 
-    @Override
+	@Override
 	public boolean isUnsigned() {
-        return isUnsigned;
-    }
+		return isUnsigned;
+	}
 
-    @Override
+	@Override
 	public boolean isShort() {
-        return isShort;
-    }
+		return isShort;
+	}
 
-    @Override
+	@Override
 	public boolean isLong() {
-        return isLong;
-    }
+		return isLong;
+	}
 
-    @Override
+	@Override
 	public void setType(int type) {
-        assertNotFrozen();
-        simpleType = type;
-    }
+		assertNotFrozen();
+		simpleType = type;
+	}
 
-    @Override
+	@Override
 	public void setType(Kind kind) {
-    	setType(getType(kind));
-    }
+		setType(getType(kind));
+	}
 
-    private int getType(Kind kind) {
-    	switch (kind) {
-    	case eBoolean:
-    		return t_bool;
+	private int getType(Kind kind) {
+		switch (kind) {
+		case eBoolean:
+			return t_bool;
 		case eChar:
 		case eWChar:
 		case eChar16:
@@ -126,71 +126,77 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 		case eNullPtr:
 			// Null pointer type cannot be expressed with a simple declaration specifier.
 			break;
-    	}
-    	return t_unspecified;
-    }
+		}
+		return t_unspecified;
+	}
 
-    @Override
+	@Override
 	public void setShort(boolean value) {
-        assertNotFrozen();
-        isShort = value;
-    }
+		assertNotFrozen();
+		isShort = value;
+	}
 
-    @Override
+	@Override
 	public void setLong(boolean value) {
-        assertNotFrozen();
-        isLong = value;
-    }
+		assertNotFrozen();
+		isLong = value;
+	}
 
-    @Override
+	@Override
 	public void setUnsigned(boolean value) {
-        assertNotFrozen();
-        isUnsigned = value;
-    }
+		assertNotFrozen();
+		isUnsigned = value;
+	}
 
-    @Override
+	@Override
 	public void setSigned(boolean value) {
-        assertNotFrozen();
-        isSigned = value;
-    }
+		assertNotFrozen();
+		isSigned = value;
+	}
 
-    @Override
+	@Override
 	public boolean isLongLong() {
-        return longlong;
-    }
+		return longlong;
+	}
 
-    @Override
+	@Override
 	public void setLongLong(boolean value) {
-        assertNotFrozen();
-        longlong = value;
-    }
+		assertNotFrozen();
+		longlong = value;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!visitAlignmentSpecifiers(action)) {
-        	return false;
-        }
+		if (!visitAlignmentSpecifiers(action)) {
+			return false;
+		}
 
-        if (fDeclTypeExpression != null && !fDeclTypeExpression.accept(action))
+		if (fDeclTypeExpression != null && !fDeclTypeExpression.accept(action))
 			return false;
 
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public boolean isComplex() {
@@ -199,7 +205,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 
 	@Override
 	public void setComplex(boolean value) {
-        assertNotFrozen();
+		assertNotFrozen();
 		this.complex = value;
 	}
 
@@ -210,7 +216,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 
 	@Override
 	public void setImaginary(boolean value) {
-        assertNotFrozen();
+		assertNotFrozen();
 		this.imaginary = value;
 	}
 
@@ -221,12 +227,12 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 
 	@Override
 	public void setDeclTypeExpression(IASTExpression expression) {
-        assertNotFrozen();
-        fDeclTypeExpression= expression;
-        if (expression != null) {
-        	expression.setPropertyInParent(DECLTYPE_EXPRESSION);
-        	expression.setParent(this);
-        }
+		assertNotFrozen();
+		fDeclTypeExpression = expression;
+		if (expression != null) {
+			expression.setPropertyInParent(DECLTYPE_EXPRESSION);
+			expression.setParent(this);
+		}
 	}
 
 	@Override
@@ -234,7 +240,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 		if (child == fDeclTypeExpression) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
-			fDeclTypeExpression= (IASTExpression) other;
+			fDeclTypeExpression = (IASTExpression) other;
 			return;
 		}
 		super.replace(child, other);

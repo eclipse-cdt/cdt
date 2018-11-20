@@ -54,7 +54,7 @@ class CodanPartListener implements IPartListener2 {
 			partListener.partOpened(ref);
 		}
 	}
-	
+
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 	}
@@ -116,7 +116,7 @@ class CodanPartListener implements IPartListener2 {
 			reconciler.uninstall((CEditor) part);
 		}
 	}
-	
+
 	private boolean isCEditor(IWorkbenchPart part) {
 		// We need to be very careful since this code may be executed in an environment where CDT is 
 		// installed, but is not actively used. 

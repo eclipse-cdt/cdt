@@ -39,14 +39,13 @@ public class QtInstallProvider implements IQtInstallProvider {
 		Path qmake = Paths.get(isWin32 ? "bin/qmake.exe" : "bin/qmake"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (root != null && Files.exists(root)) {
 			try {
-				return Files.walk(root, 2).filter((path) -> Files.exists(path.resolve(qmake)))
-						.map((path) -> {
-							QtInstall install = new QtInstall(path.resolve(qmake));
-							if (isWin32 && "win32-g++".equals(install.getSpec())) { //$NON-NLS-1$
-								install.setProperty(IToolChain.ATTR_PACKAGE, "qt"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-							return install;
-						}).collect(Collectors.toList());
+				return Files.walk(root, 2).filter((path) -> Files.exists(path.resolve(qmake))).map((path) -> {
+					QtInstall install = new QtInstall(path.resolve(qmake));
+					if (isWin32 && "win32-g++".equals(install.getSpec())) { //$NON-NLS-1$
+						install.setProperty(IToolChain.ATTR_PACKAGE, "qt"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					return install;
+				}).collect(Collectors.toList());
 			} catch (IOException e) {
 				Activator.log(e);
 			}

@@ -16,22 +16,22 @@ public class ReturnTypeDeductionIndexTests extends IndexBindingResolutionTestBas
 	public ReturnTypeDeductionIndexTests() {
 		setStrategy(new SinglePDOMTestStrategy(true));
 	}
-	
+
 	//	struct A {
 	//		auto f();
 	//	};
 	//	auto A::f() { return 42; }
-	
+
 	//	auto waldo = A().f();
 	public void testOutOfLineMethod1() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("waldo", CommonCPPTypes.int_);
 	}
-	
+
 	//	struct A {
 	//		auto f();
 	//	};
-	
+
 	//	auto A::f() { return 42; }
 	//	auto waldo = A().f();
 	public void _testOutOfLineMethod2() throws Exception {

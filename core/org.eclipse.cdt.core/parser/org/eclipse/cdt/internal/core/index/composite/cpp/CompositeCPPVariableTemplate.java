@@ -55,8 +55,7 @@ public class CompositeCPPVariableTemplate extends CompositeCPPVariable
 				System.arraycopy(ss, 0, preresult[i], 0, ss.length);
 			}
 
-			return ArrayUtil.addAll(
-					ICPPVariableTemplatePartialSpecialization.EMPTY_ARRAY,
+			return ArrayUtil.addAll(ICPPVariableTemplatePartialSpecialization.EMPTY_ARRAY,
 					cf.getCompositeBindings(preresult));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

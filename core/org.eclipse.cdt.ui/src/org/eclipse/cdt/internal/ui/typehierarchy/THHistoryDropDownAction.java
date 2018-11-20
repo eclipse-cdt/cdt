@@ -33,7 +33,7 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 
 		public ClearHistoryAction(THViewPart view) {
 			super(Messages.THHistoryDropDownAction_ClearHistory);
-			fView= view;
+			fView = view;
 		}
 
 		@Override
@@ -43,14 +43,14 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 		}
 	}
 
-	public static final int RESULTS_IN_DROP_DOWN= 10;
+	public static final int RESULTS_IN_DROP_DOWN = 10;
 
 	private THViewPart fHierarchyView;
 	private Menu fMenu;
 
 	public THHistoryDropDownAction(THViewPart viewPart) {
-		fHierarchyView= viewPart;
-		fMenu= null;
+		fHierarchyView = viewPart;
+		fMenu = null;
 		setToolTipText(Messages.THHistoryDropDownAction_tooltip);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "history_list.gif"); //$NON-NLS-1$
 		setMenuCreator(this);
@@ -61,7 +61,7 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 		// action is reused, can be called several times.
 		if (fMenu != null) {
 			fMenu.dispose();
-			fMenu= null;
+			fMenu = null;
 		}
 	}
 
@@ -75,8 +75,8 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
-		fMenu= new Menu(parent);
-		ICElement[] elements= fHierarchyView.getHistoryEntries();
+		fMenu = new Menu(parent);
+		ICElement[] elements = fHierarchyView.getHistoryEntries();
 		addEntries(fMenu, elements);
 		new MenuItem(fMenu, SWT.SEPARATOR);
 		addActionToMenu(fMenu, new THHistoryListAction(fHierarchyView));
@@ -85,13 +85,13 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 	}
 
 	private boolean addEntries(Menu menu, ICElement[] elements) {
-		boolean checked= false;
+		boolean checked = false;
 
-		int min= Math.min(elements.length, RESULTS_IN_DROP_DOWN);
-		for (int i= 0; i < min; i++) {
-			THHistoryAction action= new THHistoryAction(fHierarchyView, elements[i]);
+		int min = Math.min(elements.length, RESULTS_IN_DROP_DOWN);
+		for (int i = 0; i < min; i++) {
+			THHistoryAction action = new THHistoryAction(fHierarchyView, elements[i]);
 			action.setChecked(elements[i].equals(fHierarchyView.getInput()));
-			checked= checked || action.isChecked();
+			checked = checked || action.isChecked();
 			addActionToMenu(menu, action);
 		}
 
@@ -99,7 +99,7 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 	}
 
 	protected void addActionToMenu(Menu parent, Action action) {
-		ActionContributionItem item= new ActionContributionItem(action);
+		ActionContributionItem item = new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
 

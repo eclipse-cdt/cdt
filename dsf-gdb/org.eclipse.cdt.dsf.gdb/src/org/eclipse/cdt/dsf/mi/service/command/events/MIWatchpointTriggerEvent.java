@@ -30,102 +30,100 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 @Immutable
 public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 
-    final private String number;
-    final private String exp;
-    final private String oldValue;
-    final private String newValue;
+	final private String number;
+	final private String exp;
+	final private String oldValue;
+	final private String newValue;
 
-    /**
+	/**
 	 * @since 5.0
 	 */
-    protected MIWatchpointTriggerEvent(
-        IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, 
-        String number, String exp, String oldValue, String newValue) 
-    {
-        super(ctx, token, results, frame);
-        this.number = number;
-        this.exp = exp;
-        this.oldValue = oldValue;
-        this.newValue = newValue;
-    }
+	protected MIWatchpointTriggerEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame,
+			String number, String exp, String oldValue, String newValue) {
+		super(ctx, token, results, frame);
+		this.number = number;
+		this.exp = exp;
+		this.oldValue = oldValue;
+		this.newValue = newValue;
+	}
 
-    /**
+	/**
 	 * @since 5.0
 	 */
-    public String getNumber() {
-        return number;
-    }
+	public String getNumber() {
+		return number;
+	}
 
-    public String getExpression() {
-        return exp;
-    }
+	public String getExpression() {
+		return exp;
+	}
 
-    public String getOldValue() {
-        return oldValue;
-    }
+	public String getOldValue() {
+		return oldValue;
+	}
 
-    public String getNewValue() {
-        return newValue;
-    }
+	public String getNewValue() {
+		return newValue;
+	}
 
-    /**
-     * @since 1.1
-     */
-    public static MIWatchpointTriggerEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
-    {
-       String number = ""; //$NON-NLS-1$
-       String exp = ""; //$NON-NLS-1$
-       String oldValue = ""; //$NON-NLS-1$
-       String newValue = ""; //$NON-NLS-1$
+	/**
+	 * @since 1.1
+	 */
+	public static MIWatchpointTriggerEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
+		String number = ""; //$NON-NLS-1$
+		String exp = ""; //$NON-NLS-1$
+		String oldValue = ""; //$NON-NLS-1$
+		String newValue = ""; //$NON-NLS-1$
 
-       for (int i = 0; i < results.length; i++) {
-           String var = results[i].getVariable();
-           MIValue value = results[i].getMIValue();
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue value = results[i].getMIValue();
 
-           if (var.equals("wpt") || var.equals("hw-awpt") || var.equals("hw-rwpt")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-               if (value instanceof MITuple) {
-                   for (MIResult wptResult : ((MITuple) value).getMIResults()) {
-                       String wptVar = wptResult.getVariable();
-                       MIValue wptValue = wptResult.getMIValue();
+			if (var.equals("wpt") || var.equals("hw-awpt") || var.equals("hw-rwpt")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (value instanceof MITuple) {
+					for (MIResult wptResult : ((MITuple) value).getMIResults()) {
+						String wptVar = wptResult.getVariable();
+						MIValue wptValue = wptResult.getMIValue();
 
-                       if (wptVar.equals("number")) { //$NON-NLS-1$
-                           if (wptValue instanceof MIConst) {
-                               String str = ((MIConst) wptValue).getString();
-                               try {
-                                   number = str;
-                               } catch (NumberFormatException e) {
-                               }
-                           }
-                       } else if (wptVar.equals("exp")) { //$NON-NLS-1$
-                           if (wptValue instanceof MIConst) {
-                               exp = ((MIConst) wptValue).getString();
-                           }
-                       }
-                   }
-               }
-           } else if (var.equals("value")) { //$NON-NLS-1$
-               if (value instanceof MITuple) {
-                   for (MIResult valueResult : ((MITuple)value).getMIResults()) {
-                       String valueVar = valueResult.getVariable();
-                       MIValue valueValue = valueResult.getMIValue();
-                       String str = ""; //$NON-NLS-1$
-                       if (valueValue instanceof MIConst) {
-                           str = ((MIConst) valueValue).getString();
-                       }
+						if (wptVar.equals("number")) { //$NON-NLS-1$
+							if (wptValue instanceof MIConst) {
+								String str = ((MIConst) wptValue).getString();
+								try {
+									number = str;
+								} catch (NumberFormatException e) {
+								}
+							}
+						} else if (wptVar.equals("exp")) { //$NON-NLS-1$
+							if (wptValue instanceof MIConst) {
+								exp = ((MIConst) wptValue).getString();
+							}
+						}
+					}
+				}
+			} else if (var.equals("value")) { //$NON-NLS-1$
+				if (value instanceof MITuple) {
+					for (MIResult valueResult : ((MITuple) value).getMIResults()) {
+						String valueVar = valueResult.getVariable();
+						MIValue valueValue = valueResult.getMIValue();
+						String str = ""; //$NON-NLS-1$
+						if (valueValue instanceof MIConst) {
+							str = ((MIConst) valueValue).getString();
+						}
 
-                       if (valueVar.equals("old")) { //$NON-NLS-1$
-                           oldValue = str;
-                       } else if (valueVar.equals("new")) { //$NON-NLS-1$
-                           newValue = str;
-                       } else if (valueVar.equals("value")) { //$NON-NLS-1$
-                           oldValue = newValue = str;
-                       }
-                   }
+						if (valueVar.equals("old")) { //$NON-NLS-1$
+							oldValue = str;
+						} else if (valueVar.equals("new")) { //$NON-NLS-1$
+							newValue = str;
+						} else if (valueVar.equals("value")) { //$NON-NLS-1$
+							oldValue = newValue = str;
+						}
+					}
 
-               }
-           } 
-       }
-       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-       return new MIWatchpointTriggerEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), number, exp, oldValue, newValue);
-    }
+				}
+			}
+		}
+		MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+		return new MIWatchpointTriggerEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(),
+				number, exp, oldValue, newValue);
+	}
 }

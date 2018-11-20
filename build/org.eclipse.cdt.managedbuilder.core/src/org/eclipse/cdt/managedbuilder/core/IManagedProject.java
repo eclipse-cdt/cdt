@@ -41,9 +41,10 @@ import org.eclipse.core.resources.IResource;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesContainer, IOptionalBuildObjectPropertiesContainer {
-	public static final String MANAGED_PROJECT_ELEMENT_NAME = "project";	//$NON-NLS-1$
-	public static final String PROJECTTYPE = "projectType";					//$NON-NLS-1$
+public interface IManagedProject
+		extends IBuildObject, IBuildObjectPropertiesContainer, IOptionalBuildObjectPropertiesContainer {
+	public static final String MANAGED_PROJECT_ELEMENT_NAME = "project"; //$NON-NLS-1$
+	public static final String PROJECTTYPE = "projectType"; //$NON-NLS-1$
 	public static final String BUILD_PROPERTIES = "buildProperties"; //$NON-NLS-1$
 	/**
 	 * @since 8.6
@@ -51,7 +52,6 @@ public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesCon
 	public static final String OPTIONAL_BUILD_PROPERTIES = "optionalBuildProperties"; //$NON-NLS-1$
 	public static final String BUILD_ARTEFACT_TYPE = "buildArtefactType"; //$NON-NLS-1$
 
-	
 	/**
 	 * Creates a configuration for this project populated with the tools
 	 * and options settings from the parent configuration.  As options and 
@@ -65,7 +65,7 @@ public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesCon
 	 * @return IConfiguration of the new configuration
 	 */
 	public IConfiguration createConfiguration(IConfiguration parent, String id);
-	
+
 	/**
 	 * Creates a configuration for this project populated with the tools
 	 * and options settings from the parent configuration.  As opposed to the 
@@ -130,7 +130,7 @@ public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesCon
 	 * @return boolean 
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
 	 */
@@ -143,19 +143,19 @@ public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesCon
 	 * @return boolean 
 	 */
 	public boolean isValid();
-	
+
 	/**
 	 * Sets the element's "Valid" flag.
 	 */
 	public void setValid(boolean isValid);
 
-//	/**
-//	 * Persist the managed project to the project file (.cdtbuild).
-//	 * 
-//	 * @param doc
-//	 * @param element
-//	 */
-//	public void serialize(Document doc, Element element);
+	//	/**
+	//	 * Persist the managed project to the project file (.cdtbuild).
+	//	 * 
+	//	 * @param doc
+	//	 * @param element
+	//	 */
+	//	public void serialize(Document doc, Element element);
 
 	/**
 	 * Returns the default build artifact name for the project

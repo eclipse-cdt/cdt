@@ -30,7 +30,7 @@ public class Messages extends NLS {
 	public static String RegisterGroupConfirmRestoreMessage;
 	public static String RegisterGroupRestore;
 	public static String RegisterGroupRestoreCancel;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

@@ -35,8 +35,8 @@ public class EditorHighlightingSynchronizer implements ILinkedModeListener {
 	 */
 	public EditorHighlightingSynchronizer(CEditor editor) {
 		Assert.isLegal(editor != null);
-		fEditor= editor;
-		fWasOccurrencesOn= fEditor.isMarkingOccurrences();
+		fEditor = editor;
+		fWasOccurrencesOn = fEditor.isMarkingOccurrences();
 
 		if (fWasOccurrencesOn && !isEditorDisposed())
 			fEditor.uninstallOccurrencesFinder();

@@ -22,46 +22,46 @@ public class AutoconfPrototype {
 	protected List<Integer> minParms;
 	protected List<Integer> maxParms;
 	protected List<List<String>> parmList;
-	
+
 	public AutoconfPrototype() {
 		numPrototypes = 0;
 		minParms = new ArrayList<>();
 		maxParms = new ArrayList<>();
 		parmList = new ArrayList<>();
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String newName) {
 		name = newName;
 	}
-	
+
 	public int getNumPrototypes() {
 		return numPrototypes;
 	}
-	
+
 	public void setNumPrototypes(int num) {
 		numPrototypes = num;
 	}
-	
+
 	public int getMinParms(int prototypeNum) {
 		return minParms.get(prototypeNum).intValue();
 	}
-	
+
 	public void setMinParms(int prototypeNum, int value) {
 		minParms.add(prototypeNum, Integer.valueOf(value));
 	}
-	
+
 	public int getMaxParms(int prototypeNum) {
 		return maxParms.get(prototypeNum).intValue();
 	}
-	
+
 	public void setMaxParms(int prototypeNum, int value) {
 		maxParms.add(prototypeNum, Integer.valueOf(value));
 	}
-	
+
 	public String getParmName(int prototypeNum, int parmNum) {
 		List<String> parms = parmList.get(prototypeNum);
 		return parms.get(parmNum);
@@ -74,13 +74,12 @@ public class AutoconfPrototype {
 		if (parmList.size() == prototypeNum) {
 			parms = new ArrayList<>();
 			parmList.add(parms);
-		}
-		else
+		} else
 			parms = parmList.get(prototypeNum);
 		if (parms.size() == parmNum)
-			parms.add(value);	
+			parms.add(value);
 		else
 			parms.set(parmNum, value);
 	}
-	
+
 }

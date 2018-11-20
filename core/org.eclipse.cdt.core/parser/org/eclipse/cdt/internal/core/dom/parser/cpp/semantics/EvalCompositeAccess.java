@@ -39,8 +39,8 @@ import org.eclipse.core.runtime.CoreException;
  * Composite values can include arrays, structures, and parameter packs (see {@code CompositeValue}).
  */
 public final class EvalCompositeAccess implements ICPPEvaluation {
-	private final ICPPEvaluation parent;  // The composite value being accessed
-	private final int elementId;          // The index of the sub-value being accessed
+	private final ICPPEvaluation parent; // The composite value being accessed
+	private final int elementId; // The index of the sub-value being accessed
 
 	public EvalCompositeAccess(ICPPEvaluation parent, int elementId) {
 		Assert.isNotNull(parent);
@@ -87,10 +87,9 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 			return false;
 		}
 		EvalCompositeAccess o = (EvalCompositeAccess) other;
-		return parent.isEquivalentTo(o.parent)
-			&& elementId == o.elementId;
+		return parent.isEquivalentTo(o.parent) && elementId == o.elementId;
 	}
-	
+
 	@Override
 	public IType getType() {
 		IType type = getParent().getType();

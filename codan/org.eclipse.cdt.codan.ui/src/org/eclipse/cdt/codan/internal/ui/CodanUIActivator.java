@@ -78,7 +78,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
-	
+
 	/**
 	 * 
 	 * @param key - key is usually plug-in relative path to image like icons/xxx.gif
@@ -89,7 +89,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 		Image image = registry.get(key);
 		if (image == null) {
 			ImageDescriptor descriptor = imageDescriptorFromPlugin(PLUGIN_ID, key);
-			if (descriptor==null) {
+			if (descriptor == null) {
 				ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				return sharedImages.getImage(key);
 			}

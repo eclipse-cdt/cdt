@@ -41,31 +41,31 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	private final List<Button> fCheckBoxes;
 	private final List<Button> fRadioButtons;
 	private final List<Text> fTextControls;
-	
+
 	/**
 	 * creates a new preference page.
 	 */
 	public WorkInProgressPreferencePage() {
 		setPreferenceStore(getPreferenceStore());
-		fRadioButtons= new ArrayList<Button>();
-		fCheckBoxes= new ArrayList<Button>();
-		fTextControls= new ArrayList<Text>();
+		fRadioButtons = new ArrayList<Button>();
+		fCheckBoxes = new ArrayList<Button>();
+		fTextControls = new ArrayList<Text>();
 	}
 
-	Button addCheckBox(Composite parent, String label, String key) { 
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		
-		Button button= new Button(parent, SWT.CHECK);
+	Button addCheckBox(Composite parent, String label, String key) {
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+
+		Button button = new Button(parent, SWT.CHECK);
 		button.setText(label);
 		button.setData(key);
 		button.setLayoutData(gd);
 
 		button.setSelection(getPreferenceStore().getBoolean(key));
-		
+
 		fCheckBoxes.add(button);
 		return button;
 	}
-	
+
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
@@ -78,22 +78,21 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	@Override
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
-		
-		Composite result= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth= 0;
-		layout.verticalSpacing= convertVerticalDLUsToPixels(10);
-		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+
+		Composite result = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = 0;
+		layout.verticalSpacing = convertVerticalDLUsToPixels(10);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		result.setLayout(layout);
 
 		// Add your controls here
-		
+
 		applyDialogFont(result);
 		return result;
 	}
-	
- 
+
 	/*
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
@@ -102,9 +101,9 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	}
 
 	protected void createSpacer(Composite composite, int columnSpan) {
-		Label label= new Label(composite, SWT.NONE);
-		GridData gd= new GridData();
-		gd.horizontalSpan= columnSpan;
+		Label label = new Label(composite, SWT.NONE);
+		GridData gd = new GridData();
+		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
 	}
 
@@ -121,23 +120,23 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	 */
 	@Override
 	protected void performDefaults() {
-		IPreferenceStore store= getPreferenceStore();
-		for (int i= 0; i < fCheckBoxes.size(); i++) {
-			Button button= fCheckBoxes.get(i);
-			String key= (String) button.getData();
+		IPreferenceStore store = getPreferenceStore();
+		for (int i = 0; i < fCheckBoxes.size(); i++) {
+			Button button = fCheckBoxes.get(i);
+			String key = (String) button.getData();
 			button.setSelection(store.getDefaultBoolean(key));
 		}
-		for (int i= 0; i < fRadioButtons.size(); i++) {
-			Button button= fRadioButtons.get(i);
-			String[] info= (String[]) button.getData();
+		for (int i = 0; i < fRadioButtons.size(); i++) {
+			Button button = fRadioButtons.get(i);
+			String[] info = (String[]) button.getData();
 			button.setSelection(info[1].equals(store.getDefaultString(info[0])));
 		}
-		for (int i= 0; i < fTextControls.size(); i++) {
-			Text text= fTextControls.get(i);
-			String key= (String) text.getData();
+		for (int i = 0; i < fTextControls.size(); i++) {
+			Text text = fTextControls.get(i);
+			String key = (String) text.getData();
 			text.setText(store.getDefaultString(key));
 		}
-		
+
 		super.performDefaults();
 	}
 
@@ -146,22 +145,22 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	 */
 	@Override
 	public boolean performOk() {
-		IPreferenceStore store= getPreferenceStore();
-		for (int i= 0; i < fCheckBoxes.size(); i++) {
-			Button button= fCheckBoxes.get(i);
-			String key= (String) button.getData();
+		IPreferenceStore store = getPreferenceStore();
+		for (int i = 0; i < fCheckBoxes.size(); i++) {
+			Button button = fCheckBoxes.get(i);
+			String key = (String) button.getData();
 			store.setValue(key, button.getSelection());
 		}
-		for (int i= 0; i < fRadioButtons.size(); i++) {
-			Button button= fRadioButtons.get(i);
+		for (int i = 0; i < fRadioButtons.size(); i++) {
+			Button button = fRadioButtons.get(i);
 			if (button.getSelection()) {
-				String[] info= (String[]) button.getData();
+				String[] info = (String[]) button.getData();
 				store.setValue(info[0], info[1]);
 			}
 		}
-		for (int i= 0; i < fTextControls.size(); i++) {
-			Text text= fTextControls.get(i);
-			String key= (String) text.getData();
+		for (int i = 0; i < fTextControls.size(); i++) {
+			Text text = fTextControls.get(i);
+			String key = (String) text.getData();
 			store.setValue(key, text.getText());
 		}
 		return super.performOk();

@@ -111,7 +111,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	 * Returns the active workbench page or <code>null</code> if none.
 	 */
 	public static IWorkbenchPage getActivePage() {
-		IWorkbenchWindow window= getActiveWorkbenchWindow();
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
 			return window.getActivePage();
 		}
@@ -146,7 +146,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
-			return PLUGIN_ID; 
+			return PLUGIN_ID;
 		}
 		return getDefault().getBundle().getSymbolicName();
 	}
@@ -251,15 +251,15 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 
 	public synchronized IMakefileDocumentProvider getMakefileDocumentProvider() {
 		if (fMakefileDocumentProvider == null) {
-			fMakefileDocumentProvider=  new MakefileDocumentProvider();
+			fMakefileDocumentProvider = new MakefileDocumentProvider();
 		}
 		return fMakefileDocumentProvider;
 	}
 
 	public synchronized IWorkingCopyManager getWorkingCopyManager() {
 		if (fWorkingCopyManager == null) {
-			IMakefileDocumentProvider provider= getMakefileDocumentProvider();
-			fWorkingCopyManager= new WorkingCopyManager(provider);
+			IMakefileDocumentProvider provider = getMakefileDocumentProvider();
+			fWorkingCopyManager = new WorkingCopyManager(provider);
 		}
 		return fWorkingCopyManager;
 	}
@@ -283,7 +283,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	 */
 	public IPreferenceStore getCorePreferenceStore() {
 		if (fCorePreferenceStore == null) {
-			fCorePreferenceStore= new ScopedPreferenceStore(InstanceScope.INSTANCE, MakeCorePlugin.PLUGIN_ID);
+			fCorePreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, MakeCorePlugin.PLUGIN_ID);
 		}
 		return fCorePreferenceStore;
 	}
@@ -298,8 +298,8 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		if (fWorkingCopyManager != null) {
 			fWorkingCopyManager.shutdown();
-			fWorkingCopyManager= null;
-	}
+			fWorkingCopyManager = null;
+		}
 		super.stop(context);
 	}
 

@@ -20,8 +20,8 @@ import org.eclipse.debug.core.model.IValue;
  * Extends the IValue interface by C/C++ specific functionality.
  */
 public interface ICValue extends IValue, ICDebugElement {
-	
+
 	ICType getType() throws DebugException;
 
-	String evaluateAsExpression( ICStackFrame frame );
+	String evaluateAsExpression(ICStackFrame frame);
 }

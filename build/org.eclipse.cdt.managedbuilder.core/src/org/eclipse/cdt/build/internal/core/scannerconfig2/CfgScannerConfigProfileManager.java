@@ -25,25 +25,25 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 
 public class CfgScannerConfigProfileManager {
-	
-	public static ICfgScannerConfigBuilderInfo2Set getCfgScannerConfigBuildInfo(IConfiguration cfg){
+
+	public static ICfgScannerConfigBuilderInfo2Set getCfgScannerConfigBuildInfo(IConfiguration cfg) {
 		return CfgScannerConfigInfoFactory2.create(cfg);
 	}
-	
-	public static boolean isPerFileProfile(String profileId){
+
+	public static boolean isPerFileProfile(String profileId) {
 		ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(profileId);
 		ScannerConfigScope scope = profile.getProfileScope();
-		return scope!=null && scope.equals(ScannerConfigScope.FILE_SCOPE);
+		return scope != null && scope.equals(ScannerConfigScope.FILE_SCOPE);
 	}
-	
-	public static InfoContext createDefaultContext(IProject project){
+
+	public static InfoContext createDefaultContext(IProject project) {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IConfiguration cfg = null;
-		if(info != null && info.isValid()){
+		if (info != null && info.isValid()) {
 			cfg = info.getDefaultConfiguration();
 		}
-		
-		if(cfg != null)
+
+		if (cfg != null)
 			return new CfgInfoContext(cfg).toInfoContext();
 		return new InfoContext(project);
 	}

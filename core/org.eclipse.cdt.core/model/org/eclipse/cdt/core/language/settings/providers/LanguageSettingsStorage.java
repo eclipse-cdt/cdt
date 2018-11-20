@@ -36,7 +36,7 @@ import org.eclipse.cdt.internal.core.WeakHashSetSynchronized;
 public class LanguageSettingsStorage implements Cloneable {
 	/** Storage to keep settings entries. */
 	protected Map<String, // languageId
-				Map<String, // resource project path
+			Map<String, // resource project path
 					List<ICLanguageSettingEntry>>> fStorage = new HashMap<String, Map<String, List<ICLanguageSettingEntry>>>();
 
 	/**
@@ -58,7 +58,7 @@ public class LanguageSettingsStorage implements Cloneable {
 	public List<ICLanguageSettingEntry> getSettingEntries(String rcProjectPath, String languageId) {
 		List<ICLanguageSettingEntry> entries = null;
 		Map<String, List<ICLanguageSettingEntry>> langMap = fStorage.get(languageId);
-		if (langMap!=null) {
+		if (langMap != null) {
 			entries = langMap.get(rcProjectPath);
 		}
 		return entries;
@@ -87,7 +87,8 @@ public class LanguageSettingsStorage implements Cloneable {
 				}
 
 				return kind0 - kind1;
-			}});
+			}
+		});
 
 		return sortedEntries;
 	}
@@ -104,7 +105,7 @@ public class LanguageSettingsStorage implements Cloneable {
 	public void setSettingEntries(String rcProjectPath, String languageId,
 			List<? extends ICLanguageSettingEntry> entries) {
 		synchronized (fStorage) {
-			if (entries!=null) {
+			if (entries != null) {
 				Map<String, List<ICLanguageSettingEntry>> langMap = fStorage.get(languageId);
 				if (langMap == null) {
 					langMap = new HashMap<String, List<ICLanguageSettingEntry>>();

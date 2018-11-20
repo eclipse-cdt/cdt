@@ -73,18 +73,18 @@ public interface IASTNode {
 	 */
 	public IASTNodeLocation[] getNodeLocations();
 
-    /**
-     * Computes a file location for the node. When the node actually resides in a macro-expansion
-     * the location of the expansion is returned. In case the node spans multiple files the location
-     * will be in a common root file and will contain the appropriate include directives.
-     * <p>
-     * The method may return {@code null} in case the node does not have a file-location. This
-     * is for instance the case for built-in macro names or empty names for anonymous type
-     * declarations.
-     *
-     * @return the mapped file location or {@code null}.
-     */
-    public IASTFileLocation getFileLocation();
+	/**
+	 * Computes a file location for the node. When the node actually resides in a macro-expansion
+	 * the location of the expansion is returned. In case the node spans multiple files the location
+	 * will be in a common root file and will contain the appropriate include directives.
+	 * <p>
+	 * The method may return {@code null} in case the node does not have a file-location. This
+	 * is for instance the case for built-in macro names or empty names for anonymous type
+	 * declarations.
+	 *
+	 * @return the mapped file location or {@code null}.
+	 */
+	public IASTFileLocation getFileLocation();
 
 	/**
 	 * Lightweight check for understanding what file we are in.
@@ -140,27 +140,27 @@ public interface IASTNode {
 	 */
 	public boolean accept(ASTVisitor visitor);
 
-    /**
-     * Returns the raw signature of the IASTNode before it is processed by the preprocessor.
-     *
-     * Example:
-     * <pre>
-     * #define ONE 1
-     * int x=ONE; // getRawSignature() for this declaration would return "int x=ONE;"
-     * </pre>
-     *
-     * @return the raw signature of the IASTNode before it is processed by the preprocessor
-     */
-    public String getRawSignature();
+	/**
+	 * Returns the raw signature of the IASTNode before it is processed by the preprocessor.
+	 *
+	 * Example:
+	 * <pre>
+	 * #define ONE 1
+	 * int x=ONE; // getRawSignature() for this declaration would return "int x=ONE;"
+	 * </pre>
+	 *
+	 * @return the raw signature of the IASTNode before it is processed by the preprocessor
+	 */
+	public String getRawSignature();
 
-    /**
-     * Returns whether this node contains the given one. The decision is made
-     * purely on location information and therefore the method is fast.
-     *
-     * @param node the node to check
-     * @return whether this node contains the given one.
-     * @since 4.0
-     */
+	/**
+	 * Returns whether this node contains the given one. The decision is made
+	 * purely on location information and therefore the method is fast.
+	 *
+	 * @param node the node to check
+	 * @return whether this node contains the given one.
+	 * @since 4.0
+	 */
 	public boolean contains(IASTNode node);
 
 	/**
@@ -172,19 +172,19 @@ public interface IASTNode {
 	 * <b>Examples</b> looking at the condition of if-statements:
 	 * <pre>
 	 * #define IF      if
-     * #define IF_P    if (
-     * #define IF_P_T  if (true
-     * #define SEMI_IF ; if
-     * #define IF_COND if (true)
-     * void test() {
-     *    if (true) {}       // leading syntax: 'if ('
-     *    IF (true) {}       // leading syntax: 'IF ('
-     *    IF_P true) {}      // leading syntax: 'IF_P'
-     *    IF_P_T ) {}        // throws ExpansionOverlapsBoundaryException
-     *    SEMI_IF (true) {}  // throws ExpansionOverlapsBoundaryException
-     *    IF_COND            // throws ExpansionOverlapsBoundaryException
-     * </pre>
-     *
+	 * #define IF_P    if (
+	 * #define IF_P_T  if (true
+	 * #define SEMI_IF ; if
+	 * #define IF_COND if (true)
+	 * void test() {
+	 *    if (true) {}       // leading syntax: 'if ('
+	 *    IF (true) {}       // leading syntax: 'IF ('
+	 *    IF_P true) {}      // leading syntax: 'IF_P'
+	 *    IF_P_T ) {}        // throws ExpansionOverlapsBoundaryException
+	 *    SEMI_IF (true) {}  // throws ExpansionOverlapsBoundaryException
+	 *    IF_COND            // throws ExpansionOverlapsBoundaryException
+	 * </pre>
+	 *
 	 * @return a chain of tokens or {@code null}, if there are none.
 	 * @throws ExpansionOverlapsBoundaryException if one of the boundaries of the leading syntax is
 	 *     overlapped by a macro-expansion.
@@ -192,8 +192,7 @@ public interface IASTNode {
 	 *     part of a translation unit.
 	 * @since 5.1
 	 */
-	public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException,
-			UnsupportedOperationException;
+	public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException, UnsupportedOperationException;
 
 	/**
 	 * Returns the tokens that can be found between this node and its right sibling (or the

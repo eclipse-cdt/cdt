@@ -31,7 +31,7 @@ public class MITraceDefineVariable extends MICommand<MIInfo> {
 	public MITraceDefineVariable(ITraceTargetDMContext ctx, String varName) {
 		this(ctx, varName, ""); //$NON-NLS-1$
 	}
-	
+
 	public MITraceDefineVariable(ITraceTargetDMContext ctx, String varName, String varValue) {
 		super(ctx, "-trace-define-variable", new String[] { varName, varValue }); //$NON-NLS-1$
 	}

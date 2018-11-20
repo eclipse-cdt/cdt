@@ -28,19 +28,22 @@ class CompositeCEnumeration extends CompositeCBinding implements IEnumeration, I
 
 	@Override
 	public IEnumerator[] getEnumerators() {
-		IEnumerator[] result = ((IEnumeration)rbinding).getEnumerators();
-		for (int i= 0; i < result.length; i++)
+		IEnumerator[] result = ((IEnumeration) rbinding).getEnumerators();
+		for (int i = 0; i < result.length; i++)
 			result[i] = (IEnumerator) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		return result;
 	}
 
 	@Override
 	public boolean isSameType(IType type) {
-		return ((IEnumeration)rbinding).isSameType(type);
+		return ((IEnumeration) rbinding).isSameType(type);
 	}
 
 	@Override
-	public Object clone() { fail(); return null; }
+	public Object clone() {
+		fail();
+		return null;
+	}
 
 	@Override
 	public String toString() {
@@ -49,11 +52,11 @@ class CompositeCEnumeration extends CompositeCBinding implements IEnumeration, I
 
 	@Override
 	public long getMinValue() {
-		return ((IEnumeration)rbinding).getMinValue();
+		return ((IEnumeration) rbinding).getMinValue();
 	}
 
 	@Override
 	public long getMaxValue() {
-		return ((IEnumeration)rbinding).getMaxValue();
+		return ((IEnumeration) rbinding).getMaxValue();
 	}
 }

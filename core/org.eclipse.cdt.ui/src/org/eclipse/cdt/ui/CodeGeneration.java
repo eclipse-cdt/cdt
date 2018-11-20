@@ -43,10 +43,9 @@ public class CodeGeneration {
 	 * @throws CoreException
 	 * @since 5.3
 	 */
-	public static String getHeaderFileContent(Template template, ITranslationUnit tu,
-			String lineDelimiter) throws CoreException {	
-		return getHeaderFileContent(template, tu, null, null, null, null, null, null, null,
-				lineDelimiter);
+	public static String getHeaderFileContent(Template template, ITranslationUnit tu, String lineDelimiter)
+			throws CoreException {
+		return getHeaderFileContent(template, tu, null, null, null, null, null, null, null, lineDelimiter);
 	}
 
 	/**
@@ -60,10 +59,9 @@ public class CodeGeneration {
 	 * @return Returns the new content or <code>null</code> if the template is undefined or empty.
 	 * @throws CoreException
 	 */
-	public static String getHeaderFileContent(ITranslationUnit tu, String typeComment,
-			String typeContent, String lineDelimiter) throws CoreException {	
-		return getHeaderFileContent(tu, null, null, null, null, typeComment, typeContent, null,
-				lineDelimiter);
+	public static String getHeaderFileContent(ITranslationUnit tu, String typeComment, String typeContent,
+			String lineDelimiter) throws CoreException {
+		return getHeaderFileContent(tu, null, null, null, null, typeComment, typeContent, null, lineDelimiter);
 	}
 
 	/**
@@ -78,10 +76,10 @@ public class CodeGeneration {
 	 * @return Returns the new content or <code>null</code> if the template is undefined or empty.
 	 * @throws CoreException
 	 */
-	public static String getHeaderFileContent(Template template, ITranslationUnit tu,
-			String typeComment, String typeContent, String lineDelimiter) throws CoreException {	
-		return getHeaderFileContent(template, tu, null, null, null, null, typeComment, typeContent,
-				null, lineDelimiter);
+	public static String getHeaderFileContent(Template template, ITranslationUnit tu, String typeComment,
+			String typeContent, String lineDelimiter) throws CoreException {
+		return getHeaderFileContent(template, tu, null, null, null, null, typeComment, typeContent, null,
+				lineDelimiter);
 	}
 
 	/**
@@ -104,12 +102,11 @@ public class CodeGeneration {
 	 * @throws CoreException
 	 * @since 5.3
 	 */
-	public static String getHeaderFileContent(ITranslationUnit tu, String includes,
-			String namespaceBegin, String namespaceEnd, String namespaceName, String typeComment,
-			String typeContent, String typeName, String lineDelimiter) throws CoreException {	
-		return StubUtility.getHeaderFileContent(tu, typeContent,
-				getFileComment(tu, lineDelimiter), includes, namespaceBegin, namespaceEnd,
-				namespaceName, typeComment, typeName, lineDelimiter);
+	public static String getHeaderFileContent(ITranslationUnit tu, String includes, String namespaceBegin,
+			String namespaceEnd, String namespaceName, String typeComment, String typeContent, String typeName,
+			String lineDelimiter) throws CoreException {
+		return StubUtility.getHeaderFileContent(tu, typeContent, getFileComment(tu, lineDelimiter), includes,
+				namespaceBegin, namespaceEnd, namespaceName, typeComment, typeName, lineDelimiter);
 	}
 
 	/**
@@ -133,13 +130,11 @@ public class CodeGeneration {
 	 * @throws CoreException
 	 * @since 5.3
 	 */
-	public static String getHeaderFileContent(Template template, ITranslationUnit tu,
-			String includes, String namespaceBegin, String namespaceEnd, String namespaceName,
-			String typeComment, String typeContent, String typeName, String lineDelimiter)
-			throws CoreException {	
-		return StubUtility.getHeaderFileContent(template, tu, typeContent,
-				getFileComment(tu, lineDelimiter), includes, namespaceBegin, namespaceEnd,
-				namespaceName, typeComment, typeName, lineDelimiter);
+	public static String getHeaderFileContent(Template template, ITranslationUnit tu, String includes,
+			String namespaceBegin, String namespaceEnd, String namespaceName, String typeComment, String typeContent,
+			String typeName, String lineDelimiter) throws CoreException {
+		return StubUtility.getHeaderFileContent(template, tu, typeContent, getFileComment(tu, lineDelimiter), includes,
+				namespaceBegin, namespaceEnd, namespaceName, typeComment, typeName, lineDelimiter);
 	}
 
 	/**
@@ -153,10 +148,9 @@ public class CodeGeneration {
 	 * @return Returns the new content or <code>null</code> if the template is undefined or empty.
 	 * @throws CoreException
 	 */
-	public static String getBodyFileContent(ITranslationUnit tu, String typeComment,
-			String typeContent, String lineDelimiter) throws CoreException {	
-		return getBodyFileContent(tu, typeContent, null, null, null, null, typeComment, null,
-				lineDelimiter);
+	public static String getBodyFileContent(ITranslationUnit tu, String typeComment, String typeContent,
+			String lineDelimiter) throws CoreException {
+		return getBodyFileContent(tu, typeContent, null, null, null, null, typeComment, null, lineDelimiter);
 	}
 
 	/**
@@ -171,10 +165,9 @@ public class CodeGeneration {
 	 * @return Returns the new content or <code>null</code> if the template is undefined or empty.
 	 * @throws CoreException
 	 */
-	public static String getBodyFileContent(Template template, ITranslationUnit tu,
-			String typeComment, String typeContent, String lineDelimiter) throws CoreException {	
-		return getBodyFileContent(template, tu, typeContent, null, null, null, null, typeComment,
-				null, lineDelimiter);
+	public static String getBodyFileContent(Template template, ITranslationUnit tu, String typeComment,
+			String typeContent, String lineDelimiter) throws CoreException {
+		return getBodyFileContent(template, tu, typeContent, null, null, null, null, typeComment, null, lineDelimiter);
 	}
 
 	/**
@@ -197,13 +190,11 @@ public class CodeGeneration {
 	 * @throws CoreException
 	 * @since 5.3
 	 */
-	public static String getBodyFileContent(ITranslationUnit tu,
-			String includes, String namespaceBegin, String namespaceEnd, String namespaceName,
-			String typeComment, String typeContent, String typeName, String lineDelimiter)
-			throws CoreException {	
-		return StubUtility.getBodyFileContent(tu, typeContent, getFileComment(tu, lineDelimiter),
-				includes, namespaceBegin, namespaceEnd, namespaceName, typeComment, typeName,
-				lineDelimiter);
+	public static String getBodyFileContent(ITranslationUnit tu, String includes, String namespaceBegin,
+			String namespaceEnd, String namespaceName, String typeComment, String typeContent, String typeName,
+			String lineDelimiter) throws CoreException {
+		return StubUtility.getBodyFileContent(tu, typeContent, getFileComment(tu, lineDelimiter), includes,
+				namespaceBegin, namespaceEnd, namespaceName, typeComment, typeName, lineDelimiter);
 	}
 
 	/**
@@ -227,13 +218,11 @@ public class CodeGeneration {
 	 * @throws CoreException
 	 * @since 5.3
 	 */
-	public static String getBodyFileContent(Template template, ITranslationUnit tu,
-			String includes, String namespaceBegin, String namespaceEnd, String namespaceName,
-			String typeComment, String typeContent, String typeName, String lineDelimiter)
-			throws CoreException {	
-		return StubUtility.getBodyFileContent(template, tu, typeContent,
-				getFileComment(tu, lineDelimiter), includes, namespaceBegin, namespaceEnd,
-				namespaceName, typeComment, typeName, lineDelimiter);
+	public static String getBodyFileContent(Template template, ITranslationUnit tu, String includes,
+			String namespaceBegin, String namespaceEnd, String namespaceName, String typeComment, String typeContent,
+			String typeName, String lineDelimiter) throws CoreException {
+		return StubUtility.getBodyFileContent(template, tu, typeContent, getFileComment(tu, lineDelimiter), includes,
+				namespaceBegin, namespaceEnd, namespaceName, typeComment, typeName, lineDelimiter);
 	}
 
 	/**
@@ -254,11 +243,11 @@ public class CodeGeneration {
 	 * @throws CoreException
 	 * @since 5.3
 	 */
-	public static String getTestFileContent(ITranslationUnit tu,
-			String includes, String namespaceBegin, String namespaceEnd, String namespaceName,
-			String testCases, String typeName, String lineDelimiter) throws CoreException {	
-		return StubUtility.getTestFileContent(tu, testCases, getFileComment(tu, lineDelimiter),
-				includes, namespaceBegin, namespaceEnd, namespaceName, typeName, lineDelimiter);
+	public static String getTestFileContent(ITranslationUnit tu, String includes, String namespaceBegin,
+			String namespaceEnd, String namespaceName, String testCases, String typeName, String lineDelimiter)
+			throws CoreException {
+		return StubUtility.getTestFileContent(tu, testCases, getFileComment(tu, lineDelimiter), includes,
+				namespaceBegin, namespaceEnd, namespaceName, typeName, lineDelimiter);
 	}
 
 	/**
@@ -274,11 +263,10 @@ public class CodeGeneration {
 	 * @return Returns the constructed body content or <code>null</code> if
 	 * the comment code template is empty. The returned string is unformatted and and has no indent (formatting required).
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
-	 */	
-	public static String getMethodBodyContent(ITranslationUnit tu, String typeName,
-			String methodName, String bodyStatement, String lineDelimiter) throws CoreException {
-		return StubUtility.getMethodBodyContent(tu.getCProject(), typeName, methodName,
-				bodyStatement, lineDelimiter);
+	 */
+	public static String getMethodBodyContent(ITranslationUnit tu, String typeName, String methodName,
+			String bodyStatement, String lineDelimiter) throws CoreException {
+		return StubUtility.getMethodBodyContent(tu.getCProject(), typeName, methodName, bodyStatement, lineDelimiter);
 	}
 
 	/**
@@ -295,11 +283,10 @@ public class CodeGeneration {
 	 * 		template is empty. The returned string is unformatted and and has no indent
 	 * 		(formatting required).
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
-	 */	
-	public static String getConstructorBodyContent(ITranslationUnit tu, String typeName,
-			String bodyStatement, String lineDelimiter) throws CoreException {
-		return StubUtility.getConstructorBodyContent(tu.getCProject(), typeName, bodyStatement,
-				lineDelimiter);
+	 */
+	public static String getConstructorBodyContent(ITranslationUnit tu, String typeName, String bodyStatement,
+			String lineDelimiter) throws CoreException {
+		return StubUtility.getConstructorBodyContent(tu.getCProject(), typeName, bodyStatement, lineDelimiter);
 	}
 
 	/**
@@ -316,11 +303,10 @@ public class CodeGeneration {
 	 * 		template is empty. The returned string is unformatted and and has no indent
 	 * 		(formatting required).
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
-	 */	
-	public static String getDestructorBodyContent(ITranslationUnit tu, String typeName,
-			String bodyStatement, String lineDelimiter) throws CoreException {
-		return StubUtility.getDestructorBodyContent(tu.getCProject(), typeName, bodyStatement,
-				lineDelimiter);
+	 */
+	public static String getDestructorBodyContent(ITranslationUnit tu, String typeName, String bodyStatement,
+			String lineDelimiter) throws CoreException {
+		return StubUtility.getDestructorBodyContent(tu.getCProject(), typeName, bodyStatement, lineDelimiter);
 	}
 
 	/**
@@ -339,12 +325,10 @@ public class CodeGeneration {
 	 * 		has no indent (formatting required).
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
 	 * @since 5.3
-	 */	
-	public static String getClassBodyContent(ITranslationUnit tu, String className,
-			String classMemberDeclarations, String lineDelimiter)
-			throws CoreException {
-		return StubUtility.getClassBodyContent(tu.getCProject(), className, classMemberDeclarations,
-				lineDelimiter);
+	 */
+	public static String getClassBodyContent(ITranslationUnit tu, String className, String classMemberDeclarations,
+			String lineDelimiter) throws CoreException {
+		return StubUtility.getClassBodyContent(tu.getCProject(), className, classMemberDeclarations, lineDelimiter);
 	}
 
 	/**
@@ -361,9 +345,9 @@ public class CodeGeneration {
 	 * 		indent (formatting required).
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
 	 * @since 5.3
-	 */	
-	public static String getNamespaceBeginContent(ITranslationUnit tu, String namespaceName,
-			String lineDelimiter) throws CoreException {
+	 */
+	public static String getNamespaceBeginContent(ITranslationUnit tu, String namespaceName, String lineDelimiter)
+			throws CoreException {
 		return StubUtility.getNamespaceBeginContent(tu.getCProject(), namespaceName, lineDelimiter);
 	}
 
@@ -381,9 +365,9 @@ public class CodeGeneration {
 	 * 		indent (formatting required).
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
 	 * @since 5.3
-	 */	
-	public static String getNamespaceEndContent(ITranslationUnit tu, String namespaceName,
-			String lineDelimiter) throws CoreException {
+	 */
+	public static String getNamespaceEndContent(ITranslationUnit tu, String namespaceName, String lineDelimiter)
+			throws CoreException {
 		return StubUtility.getNamespaceEndContent(tu.getCProject(), namespaceName, lineDelimiter);
 	}
 
@@ -397,12 +381,11 @@ public class CodeGeneration {
 	 * 		or empty. The returned content is unformatted and is not indented.
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
 	 * @since 5.0
-	 */	
-	public static String getFileComment(ITranslationUnit tu, String lineDelimiter)
-			throws CoreException {
+	 */
+	public static String getFileComment(ITranslationUnit tu, String lineDelimiter) throws CoreException {
 		return StubUtility.getFileComment(tu, lineDelimiter);
 	}
-	
+
 	/**
 	 * Returns the content for a new type comment using the 'typecomment' code template.
 	 * The returned content is unformatted and is not indented.
@@ -414,9 +397,9 @@ public class CodeGeneration {
 	 * @return Returns the new content or <code>null</code> if the code template is undefined
 	 * 		or empty. The returned content is unformatted and is not indented.
 	 * @throws CoreException
-	 */	
-	public static String getClassComment(ITranslationUnit tu, String typeQualifiedName,
-			String lineDelimiter) throws CoreException {
+	 */
+	public static String getClassComment(ITranslationUnit tu, String typeQualifiedName, String lineDelimiter)
+			throws CoreException {
 		return StubUtility.getClassComment(tu, typeQualifiedName, lineDelimiter);
 	}
 
@@ -437,11 +420,10 @@ public class CodeGeneration {
 	 * 		is empty. The returned content is unformatted and not indented (formatting required).
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
 	 */
-	public static String getMethodComment(ITranslationUnit tu, String declaringTypeName,
-			String methodName, String[] paramNames, String[] excTypeSig, String retTypeSig,
-			String lineDelimiter) throws CoreException {
-		return StubUtility.getMethodComment(tu, declaringTypeName, methodName, paramNames,
-				excTypeSig, retTypeSig, lineDelimiter);
+	public static String getMethodComment(ITranslationUnit tu, String declaringTypeName, String methodName,
+			String[] paramNames, String[] excTypeSig, String retTypeSig, String lineDelimiter) throws CoreException {
+		return StubUtility.getMethodComment(tu, declaringTypeName, methodName, paramNames, excTypeSig, retTypeSig,
+				lineDelimiter);
 	}
 
 	/**
@@ -459,10 +441,9 @@ public class CodeGeneration {
 	 * 		is empty. The returned content is unformatted and not indented (formatting required).
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
 	 */
-	public static String getConstructorComment(ITranslationUnit tu, String declaringTypeName,
-			String[] paramNames, String[] excTypeSig, String lineDelimiter) throws CoreException {
-		return StubUtility.getConstructorComment(tu, declaringTypeName, paramNames, excTypeSig,
-				lineDelimiter);
+	public static String getConstructorComment(ITranslationUnit tu, String declaringTypeName, String[] paramNames,
+			String[] excTypeSig, String lineDelimiter) throws CoreException {
+		return StubUtility.getConstructorComment(tu, declaringTypeName, paramNames, excTypeSig, lineDelimiter);
 	}
 
 	/**
@@ -479,8 +460,8 @@ public class CodeGeneration {
 	 * 		is empty. The returned content is unformatted and not indented (formatting required).
 	 * @throws CoreException Thrown when the evaluation of the code template fails.
 	 */
-	public static String getDestructorComment(ITranslationUnit tu, String declaringTypeName,
-			String[] excTypeSig, String lineDelimiter) throws CoreException {
+	public static String getDestructorComment(ITranslationUnit tu, String declaringTypeName, String[] excTypeSig,
+			String lineDelimiter) throws CoreException {
 		return StubUtility.getDestructorComment(tu, declaringTypeName, excTypeSig, lineDelimiter);
 	}
 }

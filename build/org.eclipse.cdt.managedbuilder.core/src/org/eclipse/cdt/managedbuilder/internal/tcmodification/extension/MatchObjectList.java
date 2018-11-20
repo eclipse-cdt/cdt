@@ -17,17 +17,17 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public class MatchObjectList {
 	private MatchObjectElement[] fObjects;
-	
+
 	public MatchObjectList(IConfigurationElement element) throws IllegalArgumentException {
 		IConfigurationElement[] objectEls = element.getChildren(MatchObjectElement.ELEMENT_NAME);
 		MatchObjectElement[] objects = new MatchObjectElement[objectEls.length];
-		for(int i = 0; i < objectEls.length; i++){
+		for (int i = 0; i < objectEls.length; i++) {
 			objects[i] = new MatchObjectElement(objectEls[i]);
 		}
 		fObjects = objects;
 	}
 
-	public MatchObjectElement[] getMatchObjects(){
+	public MatchObjectElement[] getMatchObjects() {
 		return fObjects.clone();
 	}
 

@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecReturn;
 public class CPPASTReturnStatement extends CPPASTAttributeOwner implements IASTReturnStatement, ICPPExecutionOwner {
 	private IASTInitializerClause retValue;
 
-    public CPPASTReturnStatement() {
+	public CPPASTReturnStatement() {
 	}
 
 	public CPPASTReturnStatement(IASTInitializerClause retValue) {
@@ -41,8 +41,7 @@ public class CPPASTReturnStatement extends CPPASTAttributeOwner implements IASTR
 
 	@Override
 	public CPPASTReturnStatement copy(CopyStyle style) {
-		CPPASTReturnStatement copy =
-				new CPPASTReturnStatement(retValue == null ? null : retValue.copy(style));
+		CPPASTReturnStatement copy = new CPPASTReturnStatement(retValue == null ? null : retValue.copy(style));
 		return copy(copy, style);
 	}
 
@@ -53,60 +52,68 @@ public class CPPASTReturnStatement extends CPPASTAttributeOwner implements IASTR
 
 	@Override
 	public IASTExpression getReturnValue() {
-        if (retValue instanceof IASTExpression) {
-        	return (IASTExpression) retValue;
-        }
-        return null;
-    }
+		if (retValue instanceof IASTExpression) {
+			return (IASTExpression) retValue;
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public void setReturnValue(IASTExpression returnValue) {
-    	setReturnArgument(returnValue);
-    }
+		setReturnArgument(returnValue);
+	}
 
-    @Override
+	@Override
 	public void setReturnArgument(IASTInitializerClause arg) {
-        assertNotFrozen();
-        retValue = arg;
-        if (arg != null) {
+		assertNotFrozen();
+		retValue = arg;
+		if (arg != null) {
 			arg.setParent(this);
 			arg.setPropertyInParent(RETURNVALUE);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-            switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-            }
-        }
-
-        if (!acceptByAttributeSpecifiers(action)) return false;
-		if (retValue != null && !retValue.accept(action)) return false;
-
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
 
-    @Override
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (retValue != null && !retValue.accept(action))
+			return false;
+
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == retValue) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            retValue = (IASTInitializerClause) other;
-            return;
-        }
-        super.replace(child, other);
-    }
+		if (child == retValue) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			retValue = (IASTInitializerClause) other;
+			return;
+		}
+		super.replace(child, other);
+	}
 
 	@Override
 	public ICPPExecution getExecution() {

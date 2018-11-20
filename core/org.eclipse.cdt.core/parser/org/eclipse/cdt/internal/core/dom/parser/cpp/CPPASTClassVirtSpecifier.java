@@ -36,23 +36,29 @@ public class CPPASTClassVirtSpecifier extends ASTNode implements ICPPASTClassVir
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-    	if (action.shouldVisitVirtSpecifiers) {
-            switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-            }
-        }
+		if (action.shouldVisitVirtSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
 
-        if (action.shouldVisitVirtSpecifiers) {
-            switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-            }
-        }
-        return true;
-    }
+		if (action.shouldVisitVirtSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 }

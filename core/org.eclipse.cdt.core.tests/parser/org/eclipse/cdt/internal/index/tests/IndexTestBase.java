@@ -33,18 +33,19 @@ public class IndexTestBase extends BaseTestCase {
 		super(name);
 	}
 
-	protected ICProject createProject(final boolean useCpp, final String importSource) throws CoreException, InterruptedException {
+	protected ICProject createProject(final boolean useCpp, final String importSource)
+			throws CoreException, InterruptedException {
 		// Create the project
-		final ICProject[] result= new ICProject[] {null};
+		final ICProject[] result = new ICProject[] { null };
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				String name= "IndexTest_" + System.currentTimeMillis();
+				String name = "IndexTest_" + System.currentTimeMillis();
 				if (useCpp) {
-					result[0]= CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
+					result[0] = CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
 				} else {
-					result[0]= CProjectHelper.createCProject(name, null, IPDOMManager.ID_NO_INDEXER);
+					result[0] = CProjectHelper.createCProject(name, null, IPDOMManager.ID_NO_INDEXER);
 				}
 				CProjectHelper.importSourcesFromPlugin(result[0], CTestPlugin.getDefault().getBundle(), importSource);
 			}
@@ -59,8 +60,8 @@ public class IndexTestBase extends BaseTestCase {
 		return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "parser", getClass(), tag);
 	}
 
-    protected StringBuilder[] getContentsForTest(int blocks) throws IOException {
-    	return TestSourceReader.getContentsForTest(
-    			CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
-    }
+	protected StringBuilder[] getContentsForTest(int blocks) throws IOException {
+		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser", getClass(),
+				getName(), blocks);
+	}
 }

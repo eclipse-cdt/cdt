@@ -75,7 +75,7 @@ public final class ExecDeclarator implements ICPPExecution {
 		ICPPEvaluation[] clauses = initList.getClauses();
 		if (clauses.length != 1)
 			return eval;
-		
+
 		// Never unwrap initializers for array types.
 		if (targetType instanceof IArrayType)
 			return eval;
@@ -86,20 +86,18 @@ public final class ExecDeclarator implements ICPPExecution {
 		ICPPEvaluation clause = clauses[0];
 		if (targetType instanceof ICPPClassType && !clause.getType().isSameType(targetType))
 			return eval;
-		
+
 		// Otherwise unwrap.
 		return clause;
 	}
-	
-	private ICPPEvaluation createInitialValue(IType type, ActivationRecord record,
-			ConstexprEvaluationContext context) {
+
+	private ICPPEvaluation createInitialValue(IType type, ActivationRecord record, ConstexprEvaluationContext context) {
 		if (initializerEval == null)
 			return createDefaultInitializedCompositeValue(type);
 
 		IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 
-		ICPPEvaluation computedInitializerEval =
-				initializerEval.computeForFunctionCall(record, context.recordStep());
+		ICPPEvaluation computedInitializerEval = initializerEval.computeForFunctionCall(record, context.recordStep());
 
 		// In some contexts, unwrap 1-element initializer lists.
 		computedInitializerEval = maybeUnwrapInitList(computedInitializerEval, nestedType);
@@ -112,8 +110,7 @@ public final class ExecDeclarator implements ICPPExecution {
 
 		if (nestedType instanceof IArrayType && !isCStringType(nestedType)) {
 			if (computedInitializerEval instanceof EvalInitList) {
-				IValue value = CompositeValue.create((EvalInitList) computedInitializerEval, 
-						(IArrayType) nestedType);
+				IValue value = CompositeValue.create((EvalInitList) computedInitializerEval, (IArrayType) nestedType);
 				return new EvalFixed(type, computedInitializerEval.getValueCategory(), value);
 			}
 			// TODO(sprigogin): Should something else be done here?
@@ -121,14 +118,12 @@ public final class ExecDeclarator implements ICPPExecution {
 		}
 
 		if (isValueInitialization(computedInitializerEval)) {
-			ICPPEvaluation defaultValue =
-					new EvalTypeId(type, computedInitializerEval.getTemplateDefinition(), false, false, 
-							ICPPEvaluation.EMPTY_ARRAY);
+			ICPPEvaluation defaultValue = new EvalTypeId(type, computedInitializerEval.getTemplateDefinition(), false,
+					false, ICPPEvaluation.EMPTY_ARRAY);
 			return new EvalFixed(type, defaultValue.getValueCategory(), defaultValue.getValue());
 		}
 
-		return new EvalFixed(type, computedInitializerEval.getValueCategory(),
-				computedInitializerEval.getValue());
+		return new EvalFixed(type, computedInitializerEval.getValueCategory(), computedInitializerEval.getValue());
 	}
 
 	private static ICPPEvaluation createDefaultInitializedCompositeValue(IType type) {
@@ -157,7 +152,7 @@ public final class ExecDeclarator implements ICPPExecution {
 			return createReferenceFromBinding(record, templateDefinition, (EvalBinding) initValue);
 
 		if (initValue instanceof EvalBinary && computedInitializerEval instanceof EvalCompositeAccess)
-			return createReferenceFromCompositeAccess(record, templateDefinition, 
+			return createReferenceFromCompositeAccess(record, templateDefinition,
 					(EvalCompositeAccess) computedInitializerEval);
 
 		return EvalFixed.INCOMPLETE;
@@ -190,8 +185,8 @@ public final class ExecDeclarator implements ICPPExecution {
 		return eval.getType() instanceof IArrayType;
 	}
 
-	private static ICPPEvaluation createReferenceFromBinding(ActivationRecord record,
-			IBinding templateDefinition, EvalBinding evalBinding) {
+	private static ICPPEvaluation createReferenceFromBinding(ActivationRecord record, IBinding templateDefinition,
+			EvalBinding evalBinding) {
 		return new EvalReference(record, evalBinding.getBinding(), templateDefinition);
 	}
 
@@ -200,8 +195,8 @@ public final class ExecDeclarator implements ICPPExecution {
 		return new EvalReference(record, evalCompAccess, templateDefinition);
 	}
 
-	private static ICPPEvaluation createPointerFromCompositeAccess(ActivationRecord record,
-			IBinding templateDefinition, EvalCompositeAccess evalCompAccess) {
+	private static ICPPEvaluation createPointerFromCompositeAccess(ActivationRecord record, IBinding templateDefinition,
+			EvalCompositeAccess evalCompAccess) {
 		return new EvalPointer(record, evalCompAccess, templateDefinition);
 	}
 
@@ -230,8 +225,7 @@ public final class ExecDeclarator implements ICPPExecution {
 		} else {
 			ICPPSpecialization owner = context.getContextSpecialization();
 			if (owner instanceof ICPPClassSpecialization) {
-				newDeclaredBinding = (ICPPBinding) 
-						((ICPPClassSpecialization) owner).specializeMember(declaredBinding);
+				newDeclaredBinding = (ICPPBinding) ((ICPPClassSpecialization) owner).specializeMember(declaredBinding);
 			} else {
 				// TODO: Non-class owners should also have a specializeMember() function which
 				//       implements a caching mechanism.
@@ -239,8 +233,8 @@ public final class ExecDeclarator implements ICPPExecution {
 			}
 		}
 
-		ICPPEvaluation newInitializerEval =
-				initializerEval == null ? null : initializerEval.instantiate(context, maxDepth);
+		ICPPEvaluation newInitializerEval = initializerEval == null ? null
+				: initializerEval.instantiate(context, maxDepth);
 		return new ExecDeclarator(newDeclaredBinding, newInitializerEval);
 	}
 

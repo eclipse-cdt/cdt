@@ -45,7 +45,7 @@ public class Util {
 	}
 
 	public static boolean isSpace(char c) {
-		return (c == ' '  || c == '\t' || c == '\r' || c == '\n');
+		return (c == ' ' || c == '\t' || c == '\r' || c == '\n');
 	}
 
 	public static int indexOf(String line, char c) {
@@ -65,7 +65,7 @@ public class Util {
 			char ch = line.charAt(i);
 			if (ch == '(' && prev == '$' && pprev != '\\') {
 				paren++;
-			} else if (ch == '{' && prev == '$'  && pprev != '\\') {
+			} else if (ch == '{' && prev == '$' && pprev != '\\') {
 				bracket++;
 			} else if (ch == ')' && prev != '\\') {
 				if (paren > 0) {

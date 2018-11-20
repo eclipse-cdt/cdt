@@ -34,7 +34,7 @@ public class RemoteExecutableInfo {
 		fPort = port;
 		fAttach = attach;
 	}
-	
+
 	public RemoteExecutableInfo(RemoteExecutableInfo info) {
 		fHostPath = info.getHostPath();
 		fBuildLog = info.getBuildLog();
@@ -42,22 +42,22 @@ public class RemoteExecutableInfo {
 		fPort = info.getPort();
 		fAttach = info.isAttach();
 	}
-	
+
 	/**
 	 * Returns the path of the executable on the host
 	 */
 	public String getHostPath() {
 		return fHostPath;
 	}
-	
+
 	public String getAddress() {
 		return fAddress;
 	}
-	
+
 	public String getPort() {
 		return fPort;
 	}
-	
+
 	public boolean isAttach() {
 		return fAttach;
 	}

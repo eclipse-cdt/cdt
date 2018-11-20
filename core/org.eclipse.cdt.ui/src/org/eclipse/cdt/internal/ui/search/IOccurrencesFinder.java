@@ -18,10 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 public interface IOccurrencesFinder {
-	public static final int K_OCCURRENCE= 5;
-	
-	public static final int F_WRITE_OCCURRENCE= 1;
-	public static final int F_READ_OCCURRENCE= 2;
+	public static final int K_OCCURRENCE = 5;
+
+	public static final int F_WRITE_OCCURRENCE = 1;
+	public static final int F_READ_OCCURRENCE = 2;
 
 	/**
 	 * Element representing an occurrence
@@ -33,10 +33,10 @@ public interface IOccurrencesFinder {
 		private final String fDescription;
 
 		public OccurrenceLocation(int offset, int length, int flags, String description) {
-			fOffset= offset;
-			fLength= length;
-			fFlags= flags;
-			fDescription= description;
+			fOffset = offset;
+			fLength = length;
+			fFlags = flags;
+			fDescription = description;
 		}
 
 		public int getOffset() {
@@ -60,7 +60,7 @@ public interface IOccurrencesFinder {
 			return "[" + fOffset + " / " + fLength + "] " + fDescription; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	public String initialize(IASTTranslationUnit root, IASTNode node);
 
 	/**
@@ -73,7 +73,7 @@ public interface IOccurrencesFinder {
 	 * @return the unformatted label
 	 */
 	public String getUnformattedPluralLabel();
-	
+
 	/**
 	 * Returns the singular label for this finder with 2 placeholders:
 	 * <ul>
@@ -83,7 +83,7 @@ public interface IOccurrencesFinder {
 	 * @return the unformatted label
 	 */
 	public String getUnformattedSingularLabel();
-	
+
 	/**
 	 * Returns the name of the element to look for or <code>null</code> if the finder hasn't
 	 * been initialized yet.
@@ -106,7 +106,7 @@ public interface IOccurrencesFinder {
 	public OccurrenceLocation[] getOccurrences();
 
 	public int getSearchKind();
-			
+
 	/**
 	 * Returns the id of this finder.
 	 * @return returns the id of this finder.

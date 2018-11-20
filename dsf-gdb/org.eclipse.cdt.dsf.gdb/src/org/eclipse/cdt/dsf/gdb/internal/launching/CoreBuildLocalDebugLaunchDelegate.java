@@ -92,7 +92,8 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		try {
 			servicesLaunchSequence.get();
 		} catch (InterruptedException | ExecutionException e) {
-			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, Messages.CoreBuildLocalDebugLaunchDelegate_FailureLaunching, e));
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+					Messages.CoreBuildLocalDebugLaunchDelegate_FailureLaunching, e));
 		}
 
 		gdbLaunch.initializeControl();
@@ -108,16 +109,16 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 				tracker.dispose();
 				control.completeInitialization(
 						new RequestMonitorWithProgress(ImmediateExecutor.getInstance(), monitor) {
-					@Override
-					protected void handleCompleted() {
-						if (isCanceled()) {
-							rm.cancel();
-						} else {
-							rm.setStatus(getStatus());
-						}
-						rm.done();
-					}
-				});
+							@Override
+							protected void handleCompleted() {
+								if (isCanceled()) {
+									rm.cancel();
+								} else {
+									rm.setStatus(getStatus());
+								}
+								rm.done();
+							}
+						});
 			}
 		};
 
@@ -126,7 +127,8 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		try {
 			ready.get();
 		} catch (ExecutionException | InterruptedException e) {
-			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, Messages.CoreBuildLocalDebugLaunchDelegate_FailureStart, e));
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+					Messages.CoreBuildLocalDebugLaunchDelegate_FailureStart, e));
 		}
 	}
 

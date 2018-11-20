@@ -19,19 +19,18 @@ package org.eclipse.cdt.dsf.concurrent;
  * The handleCompleted() method is immediately executed in same thread as done() call.
  * @since 2.3
  */
-public class ImmediateCountingRequestMonitor extends CountingRequestMonitor
-{
+public class ImmediateCountingRequestMonitor extends CountingRequestMonitor {
 	/**
 	 * Constructor without a parent monitor and using ImmediateExecutor.
 	 */
 	public ImmediateCountingRequestMonitor() {
 		super(ImmediateExecutor.getInstance(), null);
 	}
-	
+
 	/**
 	 * Constructor with an optional parent monitor and using ImmediateExecutor.
 	 */
 	public ImmediateCountingRequestMonitor(RequestMonitor parentMonitor) {
 		super(ImmediateExecutor.getInstance(), parentMonitor);
-	}	
+	}
 }

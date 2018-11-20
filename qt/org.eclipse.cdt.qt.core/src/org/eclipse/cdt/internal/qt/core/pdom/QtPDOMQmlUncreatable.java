@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.CoreException;
 public class QtPDOMQmlUncreatable extends QtPDOMQmlRegistration {
 
 	private static int offsetInitializer = QtPDOMQmlRegistration.Field.Last.offset;
+
 	protected static enum Field {
-		Reason(Database.PTR_SIZE),
-		Last(0);
+		Reason(Database.PTR_SIZE), Last(0);
 
 		public final int offset;
 
@@ -34,7 +34,8 @@ public class QtPDOMQmlUncreatable extends QtPDOMQmlRegistration {
 		super(linkage, record);
 	}
 
-	public QtPDOMQmlUncreatable(QtPDOMLinkage linkage, QmlTypeRegistration qmlTypeReg, IASTName cppName) throws CoreException {
+	public QtPDOMQmlUncreatable(QtPDOMLinkage linkage, QmlTypeRegistration qmlTypeReg, IASTName cppName)
+			throws CoreException {
 		super(linkage, qmlTypeReg, cppName);
 
 		putStringOrNull(Field.Reason.offset, qmlTypeReg.getReason());

@@ -21,15 +21,15 @@ import org.eclipse.cdt.core.model.IWorkingCopyProvider;
  */
 @Deprecated
 public class WorkingCopyCodeReaderFactory extends PartialWorkingCopyCodeReaderFactory {
-    /**
-     * @param provider
-     */
-    public WorkingCopyCodeReaderFactory(IWorkingCopyProvider provider, IIncludeFileResolutionHeuristics heuristics) {
-        super(provider, heuristics);
-    }
-    
-    @Override
+	/**
+	 * @param provider
+	 */
+	public WorkingCopyCodeReaderFactory(IWorkingCopyProvider provider, IIncludeFileResolutionHeuristics heuristics) {
+		super(provider, heuristics);
+	}
+
+	@Override
 	public int getUniqueIdentifier() {
-        return CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE;
-    }
+		return CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE;
+	}
 }

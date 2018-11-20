@@ -21,11 +21,10 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
  *  
  * @since 3.0
  */
-public interface IReservedMacroNameSupplier{
+public interface IReservedMacroNameSupplier {
 
 	/**
 	 * @return true if the given macro name is reserved by the builder or the makefile generator
 	 */
 	boolean isReservedName(String macroName, IConfiguration configuration);
 }
-

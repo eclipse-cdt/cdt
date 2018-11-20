@@ -32,7 +32,7 @@ public interface IGNUASTTypeIdExpression extends IASTTypeIdExpression {
 	 * expressions.
 	 */
 	public static final int op_alignof = IASTTypeIdExpression.op_alignof;
-	
+
 	/**
 	 * @since 5.1
 	 */

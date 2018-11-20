@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view;
 
-
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
@@ -25,7 +24,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import java.text.MessageFormat;
 
-
 /**
  * Shows a simple tests count statics information (run/error/failed).
  */
@@ -33,7 +31,7 @@ public class CounterPanel extends Composite {
 
 	/** Testing session to show statistics for. */
 	private ITestingSession testingSession;
-	
+
 	/** Widget showing the failed tests count. */
 	private Label failedCounterLabel;
 
@@ -52,7 +50,6 @@ public class CounterPanel extends Composite {
 	private final Image errorIcon = TestsRunnerPlugin.createAutoImage("ovr16/failed_counter.gif"); //$NON-NLS-1$
 	private final Image failureIcon = TestsRunnerPlugin.createAutoImage("ovr16/aborted_counter.gif"); //$NON-NLS-1$
 
-	
 	public CounterPanel(Composite parent, ITestingSession testingSession) {
 		super(parent, SWT.WRAP);
 		GridLayout gridLayout = new GridLayout();
@@ -101,7 +98,7 @@ public class CounterPanel extends Composite {
 		this.hasSkipped = testingSession.getCount(ITestItem.Status.Skipped) != 0;
 		updateInfoFromSession();
 	}
-	
+
 	/**
 	 * Updates the information on the panel from the currently set testing
 	 * session.
@@ -112,7 +109,7 @@ public class CounterPanel extends Composite {
 		setCurrentCounter(testingSession.getCurrentCounter(), testingSession.getCount(ITestItem.Status.Skipped));
 		redraw();
 	}
-	
+
 	/**
 	 * Sets a new value for the failed tests counter.
 	 * 
@@ -141,10 +138,9 @@ public class CounterPanel extends Composite {
 		if (!hasSkipped && skippedValue != 0) {
 			layout();
 		}
-		String runString = (skippedValue == 0)
-				? Integer.toString(currentValue)
+		String runString = (skippedValue == 0) ? Integer.toString(currentValue)
 				: MessageFormat.format(UIViewMessages.CounterPanel_tests_skipped, currentValue, skippedValue);
 		currentCounterLabel.setText(runString);
 	}
-	
+
 }

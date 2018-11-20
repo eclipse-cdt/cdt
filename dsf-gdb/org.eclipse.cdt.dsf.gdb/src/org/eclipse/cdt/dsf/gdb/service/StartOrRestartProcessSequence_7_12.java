@@ -89,7 +89,7 @@ public class StartOrRestartProcessSequence_7_12 extends StartOrRestartProcessSeq
 		if (getReverseEnabled() && fReverseService != null && bp != null) {
 			// Order to continue execution if there is no user break point inserted at main
 			fReverseService.enableReverseModeAtBpLocation(getContainerContext(), getReverseMode(), bp,
-														  !getUserBreakpointIsOnMain());
+					!getUserBreakpointIsOnMain());
 		}
 		rm.done();
 	}

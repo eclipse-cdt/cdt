@@ -26,22 +26,22 @@ import org.eclipse.core.resources.IResource;
  */
 @Deprecated
 public interface ITarget extends IBuildObject {
-	public static final String TARGET_ELEMENT_NAME = "target";	//$NON-NLS-1$
-	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
-	public static final String BINARY_PARSER = "binaryParser";	//$NON-NLS-1$
-	public static final String ERROR_PARSERS = "errorParsers";	//$NON-NLS-1$
-	public static final String CLEAN_COMMAND = "cleanCommand";	//$NON-NLS-1$
-	public static final String DEFAULT_EXTENSION = "defaultExtension";	//$NON-NLS-1$
-	public static final String EXTENSION = "extension";	//$NON-NLS-1$
-	public static final String IS_ABSTRACT = "isAbstract";	//$NON-NLS-1$
-	public static final String IS_TEST = "isTest";	//$NON-NLS-1$
-	public static final String MAKE_COMMAND = "makeCommand";	//$NON-NLS-1$
-	public static final String MAKE_ARGS = "makeArguments";	//$NON-NLS-1$
-	public static final String OS_LIST = "osList";	//$NON-NLS-1$
-	public static final String ARCH_LIST = "archList";	//$NON-NLS-1$
-	public static final String PARENT = "parent";	//$NON-NLS-1$
-	public static final String SCANNER_INFO_COLLECTOR_ID = "scannerInfoCollector";	//$NON-NLS-1$
-	
+	public static final String TARGET_ELEMENT_NAME = "target"; //$NON-NLS-1$
+	public static final String ARTIFACT_NAME = "artifactName"; //$NON-NLS-1$
+	public static final String BINARY_PARSER = "binaryParser"; //$NON-NLS-1$
+	public static final String ERROR_PARSERS = "errorParsers"; //$NON-NLS-1$
+	public static final String CLEAN_COMMAND = "cleanCommand"; //$NON-NLS-1$
+	public static final String DEFAULT_EXTENSION = "defaultExtension"; //$NON-NLS-1$
+	public static final String EXTENSION = "extension"; //$NON-NLS-1$
+	public static final String IS_ABSTRACT = "isAbstract"; //$NON-NLS-1$
+	public static final String IS_TEST = "isTest"; //$NON-NLS-1$
+	public static final String MAKE_COMMAND = "makeCommand"; //$NON-NLS-1$
+	public static final String MAKE_ARGS = "makeArguments"; //$NON-NLS-1$
+	public static final String OS_LIST = "osList"; //$NON-NLS-1$
+	public static final String ARCH_LIST = "archList"; //$NON-NLS-1$
+	public static final String PARENT = "parent"; //$NON-NLS-1$
+	public static final String SCANNER_INFO_COLLECTOR_ID = "scannerInfoCollector"; //$NON-NLS-1$
+
 	/**
 	 * Creates a configuration for the target populated with the tools and
 	 * options settings from the parent configuration.  As options and tools
@@ -62,14 +62,14 @@ public interface ITarget extends IBuildObject {
 	 * @return IConfigurationV2
 	 */
 	public IConfigurationV2 createConfiguration(String id);
-	
+
 	/**
 	 * Answers the extension that should be applied to build artifacts created by 
 	 * this target.
 	 * 
 	 * @return String
 	 */
-	public String getArtifactExtension();	
+	public String getArtifactExtension();
 
 	/**
 	 * Get the name of the final build artifact.
@@ -77,7 +77,7 @@ public interface ITarget extends IBuildObject {
 	 * @return String
 	 */
 	public String getArtifactName();
-	
+
 	public void setDirty(boolean isDirty);
 
 	/**
@@ -100,7 +100,7 @@ public interface ITarget extends IBuildObject {
 	 * @return String[]
 	 */
 	public String[] getErrorParserList();
-	
+
 	/**
 	 * Answers the OS-specific command to remove files created by the build
 	 *  
@@ -124,14 +124,14 @@ public interface ITarget extends IBuildObject {
 	 * @deprecated as of CDT 2.0
 	 */
 	@Deprecated
-	public String getDefaultExtension();	
+	public String getDefaultExtension();
 
 	/**
 	 * Answers the command line arguments to pass to the make utility used 
 	 * by the receiver to build a project.
 	 */
 	public String getMakeArguments();
-	
+
 	/**
 	 * Answers the name of the make utility for the target.
 	 *  
@@ -143,7 +143,7 @@ public interface ITarget extends IBuildObject {
 	 * Returns the configuration with the given id, or <code>null</code> if not found.
 	 */
 	public IConfigurationV2 getConfiguration(String id);
-	
+
 	/**
 	 * Gets the resource that this target is applied to.
 	 * 
@@ -157,20 +157,20 @@ public interface ITarget extends IBuildObject {
 	 * @return ITarget
 	 */
 	public ITarget getParent();
-	
+
 	/**
 	 * Answers an array of operating systems the target can be created on.
 	 * 
 	 * @return String[]
 	 */
 	public String[] getTargetOSList();
-		 
-	 /**
-	  * Answers an array of architectures the target can be created on.
-	  * 
-	  * @return String[]
-	  */
-	 public String[] getTargetArchList();
+
+	/**
+	 * Answers an array of architectures the target can be created on.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getTargetArchList();
 
 	/**
 	 * Returns the list of platform specific tools associated with this
@@ -185,7 +185,7 @@ public interface ITarget extends IBuildObject {
 	 * or <code>null</code> 
 	 */
 	public ITool getTool(String id);
-	
+
 	/**
 	 * Answers true if the receiver has a make command that differs from its 
 	 * parent specification.
@@ -193,7 +193,7 @@ public interface ITarget extends IBuildObject {
 	 * @return boolean
 	 */
 	public boolean hasOverridenMakeCommand();
-	
+
 	/**
 	 * Returns whether this target is abstract.
 	 * @return boolean 
@@ -207,7 +207,7 @@ public interface ITarget extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Answers <code>true</code> if the receiver is a target that is defined 
 	 * for testing purposes only, else <code>false</code>. A test target will 
@@ -230,7 +230,7 @@ public interface ITarget extends IBuildObject {
 	 * Removes the configuration with the ID specified in the argument.
 	 */
 	public void removeConfiguration(String id);
-	
+
 	/**
 	 * Set (override) the extension that should be appended to the build artifact
 	 * for the receiver.
@@ -258,7 +258,7 @@ public interface ITarget extends IBuildObject {
 	 * Sets the semicolon separated list of error parser ids
 	 */
 	public void setErrorParserIds(String ids);
-	
+
 	/**
 	 * Set the rebuild state of the receiver.
 	 * 

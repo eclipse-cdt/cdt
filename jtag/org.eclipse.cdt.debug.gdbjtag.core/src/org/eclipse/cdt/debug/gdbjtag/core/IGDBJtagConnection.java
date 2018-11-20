@@ -27,7 +27,7 @@ import java.util.Collection;
  * @since 7.0
  */
 public interface IGDBJtagConnection {
-	
+
 	/**
 	 * Used during instantiation to set the device default connection string from XML
 	 * @param connection A device specific default connection string that GDB understands
@@ -47,5 +47,5 @@ public interface IGDBJtagConnection {
 	 * the connection string (e.g /dev/COM1, 127.0.0.1:8888, etc.) 
 	 */
 	public String getDefaultDeviceConnection();
-	
+
 }

@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.extensions.ICallToResult;
 
 public class CallsToResult implements ICallToResult {
-	private Map<CElementSet, List<IIndexName>> fElementSetsToReferences= new HashMap<>();
+	private Map<CElementSet, List<IIndexName>> fElementSetsToReferences = new HashMap<>();
 
 	public CElementSet[] getElementSets() {
 		Set<CElementSet> elementSets = fElementSetsToReferences.keySet();
@@ -32,16 +32,16 @@ public class CallsToResult implements ICallToResult {
 	}
 
 	public IIndexName[] getReferences(CElementSet elementSet) {
-		List<IIndexName> references= fElementSetsToReferences.get(elementSet);
+		List<IIndexName> references = fElementSetsToReferences.get(elementSet);
 		return references.toArray(new IIndexName[references.size()]);
 	}
 
 	@Override
 	public void add(ICElement[] elems, IIndexName ref) {
-		CElementSet key= new CElementSet(elems);
-		List<IIndexName> list= fElementSetsToReferences.get(key);
+		CElementSet key = new CElementSet(elems);
+		List<IIndexName> list = fElementSetsToReferences.get(key);
 		if (list == null) {
-			list= new ArrayList<>();
+			list = new ArrayList<>();
 			fElementSetsToReferences.put(key, list);
 		}
 		list.add(ref);

@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
 import org.eclipse.osgi.util.NLS;
@@ -27,9 +27,9 @@ public class Messages extends NLS {
 	public static String OpenExternalProblemAction_ErrorOpeningFile;
 
 	public static String format(String pattern, Object... arguments) {
-        return MessageFormat.format(pattern, arguments);
-    }
-    
+		return MessageFormat.format(pattern, arguments);
+	}
+
 	private Messages() {
 		// Do not instantiate
 	}

@@ -42,8 +42,7 @@ public class ContainerTabModel extends BaseDatabindingModel {
 	}
 
 	public void setPublishAllPorts(boolean publishAllPorts) {
-		firePropertyChange(PUBLISH_ALL_PORTS, this.publishAllPorts,
-				this.publishAllPorts = publishAllPorts);
+		firePropertyChange(PUBLISH_ALL_PORTS, this.publishAllPorts, this.publishAllPorts = publishAllPorts);
 	}
 
 	public WritableList<ExposedPortModel> getExposedPorts() {
@@ -83,8 +82,7 @@ public class ContainerTabModel extends BaseDatabindingModel {
 	}
 
 	public void setSelectedPorts(final Set<ExposedPortModel> ports) {
-		firePropertyChange(SELECTED_PORTS, this.selectedPorts,
-				this.selectedPorts = ports);
+		firePropertyChange(SELECTED_PORTS, this.selectedPorts, this.selectedPorts = ports);
 	}
 
 }

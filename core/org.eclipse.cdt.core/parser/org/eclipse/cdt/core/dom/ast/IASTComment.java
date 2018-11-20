@@ -23,19 +23,19 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTComment extends IASTNode {
 	/** @since 5.4 */
 	public final IASTComment[] EMPTY_COMMENT_ARRAY = {};
-	
+
 	/**
 	 * Sets the comment.
 	 * 
 	 * @param comment the text of the comment
 	 */
 	public void setComment(char[] comment);
-	
+
 	/**
 	 * Returns a char array representation of the comment.
 	 */
 	public char[] getComment();
-	
+
 	/**
 	 * Returns true if this is a block comment.
 	 */

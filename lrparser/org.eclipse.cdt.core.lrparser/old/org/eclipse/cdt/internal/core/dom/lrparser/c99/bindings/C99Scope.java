@@ -27,17 +27,17 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
  * @author Mike Kucera
  *
  */
-@SuppressWarnings({"restriction","unused"})
+@SuppressWarnings({ "restriction", "unused" })
 public class C99Scope implements IC99Scope, IASTInternalScope {
 	private IScope parent;
 	private IASTNode physicalNode;
 	private IName scopeName;
 	private final EScopeKind kind;
-	
+
 	public C99Scope(EScopeKind eKind) {
-		kind= eKind;
+		kind = eKind;
 	}
-	
+
 	@Override
 	public IScope getParent() {
 		return parent;
@@ -47,7 +47,7 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	public void setParent(IScope parent) {
 		this.parent = parent;
 	}
-	
+
 	@Override
 	public IASTNode getPhysicalNode() {
 		return physicalNode;
@@ -57,7 +57,7 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	public void setPhysicalNode(IASTNode physicalNode) {
 		this.physicalNode = physicalNode;
 	}
-	
+
 	@Override
 	public final EScopeKind getKind() {
 		return kind;
@@ -72,13 +72,14 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	public void setScopeName(IName scopeName) {
 		this.scopeName = scopeName;
 	}
-	
+
 	@Override
 	public IBinding[] find(String name, IASTTranslationUnit tu) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override @Deprecated
+	@Override
+	@Deprecated
 	public IBinding[] find(String name) {
 		throw new UnsupportedOperationException();
 	}
@@ -92,7 +93,7 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public void addBinding(IBinding binding) {
 		throw new UnsupportedOperationException();
@@ -121,8 +122,8 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	 */
 	@Override
 	@Deprecated
-	public IBinding[] getBindings(IASTName name, boolean resolve,
-			boolean prefixLookup, IIndexFileSet acceptLocalBindings) {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
+			IIndexFileSet acceptLocalBindings) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
 

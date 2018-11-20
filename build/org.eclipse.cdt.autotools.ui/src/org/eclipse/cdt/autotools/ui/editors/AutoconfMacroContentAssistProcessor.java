@@ -25,12 +25,10 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
+public class AutoconfMacroContentAssistProcessor implements IContentAssistProcessor {
 
-public class AutoconfMacroContentAssistProcessor implements
-		IContentAssistProcessor {
-	
 	protected AutoconfEditor editor;
-	
+
 	/**
 	 * @since 2.0
 	 */
@@ -48,11 +46,10 @@ public class AutoconfMacroContentAssistProcessor implements
 		}
 		return offset;
 	}
-	
+
 	@Override
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
-			int offset) {
-		
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+
 		IDocument document = viewer.getDocument();
 		String prefix = ""; //$NON-NLS-1$
 		AutoconfMacro[] macros = AutoconfTextHover.getMacroList(editor);
@@ -80,11 +77,12 @@ public class AutoconfMacroContentAssistProcessor implements
 						if (macros[i].hasParms()) {
 							// Provide parameter info as context information that
 							// is tied to the completion proposal.
-							ci = new AutoconfMacroProposalContextInformation(macros[i].getParms(), macros[i].getParms());
+							ci = new AutoconfMacroProposalContextInformation(macros[i].getParms(),
+									macros[i].getParms());
 							ci.setContextInformationPosition(offset - prefixLen + cursorPos - 1);
 						}
-						ICompletionProposal cp = new CompletionProposal(template, offset - prefixLen, prefixLen, cursorPos, null, 
-								name, ci, AutoconfTextHover.getIndexedInfo(name, editor));
+						ICompletionProposal cp = new CompletionProposal(template, offset - prefixLen, prefixLen,
+								cursorPos, null, name, ci, AutoconfTextHover.getIndexedInfo(name, editor));
 						validList.add(cp);
 					}
 				}
@@ -96,8 +94,7 @@ public class AutoconfMacroContentAssistProcessor implements
 	}
 
 	@Override
-	public IContextInformation[] computeContextInformation(ITextViewer viewer,
-			int offset) {
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		// TODO Auto-generated method stub
 		return null;
 	}

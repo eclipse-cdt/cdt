@@ -67,6 +67,7 @@ public class CheckboxTablePart extends StructuredViewerPart {
 
 	protected void elementChecked(Object element, boolean checked) {
 	}
+
 	protected void selectionChanged(IStructuredSelection selection) {
 	}
 }

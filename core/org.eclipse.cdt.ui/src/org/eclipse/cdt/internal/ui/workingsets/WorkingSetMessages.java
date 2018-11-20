@@ -31,15 +31,15 @@ public final class WorkingSetMessages extends NLS {
 	public static String CElementWorkingSetPage_warning_nameMustNotBeEmpty;
 	public static String CElementWorkingSetPage_warning_workingSetExists;
 	public static String CElementWorkingSetPage_warning_resourceMustBeChecked;
-	
+
 	public static String ProjConfigController_activeConfig;
 
 	public static String WorkingSetMenus_enumPattern;
 	public static String WorkspaceSnapshot_buildNoProj;
-	
+
 	public static String WSConfig_build_problems;
 	public static String WSConfig_build_task;
-	
+
 	public static String WSConfigDialog_activate_label;
 	public static String WSConfigDialog_active_config;
 	public static String WSConfigDialog_add_label;
@@ -59,7 +59,7 @@ public final class WorkingSetMessages extends NLS {
 	public static String WSConfigManager_loadFailed;
 	public static String WSConfigManager_save_job;
 	public static String WSConfigManager_saveFailed;
-	
+
 	public static String WSConfigsController_addDlg_defaultName;
 	public static String WSConfigsController_addDlg_emptyName;
 	public static String WSConfigsController_addDlg_msg;
@@ -70,13 +70,13 @@ public final class WorkingSetMessages extends NLS {
 	public static String WSConfigsController_buildFailedLog;
 	public static String WSConfigsController_renameDlg_msg;
 	public static String WSConfigsController_renameDlg_title;
-	
+
 	public static String WSetConfigsPage_noProjects;
-	
+
 	public static String WSProjConfig_activatedWarning;
 	public static String WSProjConfig_buildProblem;
 	public static String WSProjConfig_noConfig;
-	
+
 	public static String WSProjConfigFactory_badFactory;
 	public static String WSProjConfigFactory_factoryFailed;
 	public static String WSProjConfigFactory_noFactoryID;

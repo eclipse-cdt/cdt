@@ -36,9 +36,9 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 
 	@Override
 	protected Control createContents(Composite parent) {
-		isProjectLevel= getProject() != null;
-		if(isProjectLevel) {
-			fDocBlock= new DocCommentOwnerBlock();
+		isProjectLevel = getProject() != null;
+		if (isProjectLevel) {
+			fDocBlock = new DocCommentOwnerBlock();
 			fDocBlock.setContainer(this);
 			fDocBlock.createControl(parent);
 		}
@@ -48,7 +48,7 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 
 	@Override
 	protected void performDefaults() {
-		if(isProjectLevel) {
+		if (isProjectLevel) {
 			fDocBlock.performDefaults();
 		}
 		super.performDefaults();
@@ -56,10 +56,10 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 
 	@Override
 	public boolean performOk() {
-		if(isProjectLevel) {
+		if (isProjectLevel) {
 			try {
 				fDocBlock.performApply(new NullProgressMonitor());
-			} catch(CoreException ce) {
+			} catch (CoreException ce) {
 				CUIPlugin.log(ce);
 			}
 		}
@@ -67,13 +67,13 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 	}
 
 	@Override
-	public IProject getProject(){
-		IProject project= null;
+	public IProject getProject() {
+		IProject project = null;
 		IAdaptable elem = getElement();
 		if (elem instanceof IProject) {
-			project= (IProject) elem;
+			project = (IProject) elem;
 		} else if (elem != null) {
-			project= elem.getAdapter(IProject.class);
+			project = elem.getAdapter(IProject.class);
 		}
 		return project;
 	}

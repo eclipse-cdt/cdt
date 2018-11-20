@@ -41,64 +41,64 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * @author aniefer
  */
 abstract public class BaseTestFramework extends BaseTestCase {
-    static protected NullProgressMonitor	monitor;
-    static protected IWorkspace 			workspace;
-    static protected IProject 				project;
-    static protected ICProject				cproject;
-    static protected FileManager 			fileManager;
-	static protected boolean				indexDisabled= false;
+	static protected NullProgressMonitor monitor;
+	static protected IWorkspace workspace;
+	static protected IProject project;
+	static protected ICProject cproject;
+	static protected FileManager fileManager;
+	static protected boolean indexDisabled = false;
 
 	static void initProject() {
 		if (project != null) {
 			return;
 		}
-        if (CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null) {
+		if (CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null) {
 			//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 			monitor = new NullProgressMonitor();
-			
+
 			workspace = ResourcesPlugin.getWorkspace();
-			
-	        try {
-	            cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
-	        
-	            project = cproject.getProject();
-	            
-	            /*project.setSessionProperty(SourceIndexer.activationKey, Boolean.FALSE);
-	        	//Set the id of the source indexer extension point as a session property to allow
-	    		//index manager to instantiate it
-	    		project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);*/
-	        } catch (CoreException e) {
-	            /*boo*/
-	        }
+
+			try {
+				cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
+
+				project = cproject.getProject();
+
+				/*project.setSessionProperty(SourceIndexer.activationKey, Boolean.FALSE);
+				//Set the id of the source indexer extension point as a session property to allow
+				//index manager to instantiate it
+				project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);*/
+			} catch (CoreException e) {
+				/*boo*/
+			}
 			if (project == null)
 				fail("Unable to create project"); //$NON-NLS-1$
-	
+
 			//Create file manager
 			fileManager = new FileManager();
-        }
+		}
 	}
-            
-    public BaseTestFramework() {
-        super();
-    }
 
-    /**
-     * @param name
-     */
-    public BaseTestFramework(String name) {
-        super(name);
-    }
-      
-    public void cleanupProject() throws Exception {
-        try{
-	        project.delete(true, false, monitor);
-	    } catch (Throwable e) {
-	        /*boo*/
-	    } finally {
-	    	project= null;
-	    }
-    }
-    
+	public BaseTestFramework() {
+		super();
+	}
+
+	/**
+	 * @param name
+	 */
+	public BaseTestFramework(String name) {
+		super(name);
+	}
+
+	public void cleanupProject() throws Exception {
+		try {
+			project.delete(true, false, monitor);
+		} catch (Throwable e) {
+			/*boo*/
+		} finally {
+			project = null;
+		}
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -107,37 +107,37 @@ abstract public class BaseTestFramework extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-        if (project == null || !project.exists())
-            return;
-        
-        IResource [] members = project.members();
-        for (IResource member : members) {
-            if (member.getName().equals(".project") || member.getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
-                continue;
-            if (member.getName().equals(".settings"))
-            	continue;
-            try {
-                member.delete(false, monitor);
-            } catch (Throwable e) {
-                /*boo*/
-            }
-        }
+		if (project == null || !project.exists())
+			return;
+
+		IResource[] members = project.members();
+		for (IResource member : members) {
+			if (member.getName().equals(".project") || member.getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			if (member.getName().equals(".settings"))
+				continue;
+			try {
+				member.delete(false, monitor);
+			} catch (Throwable e) {
+				/*boo*/
+			}
+		}
 	}
 
-    protected IFile importFile(String fileName, String contents) throws Exception {
+	protected IFile importFile(String fileName, String contents) throws Exception {
 		// Obtain file handle
 		IFile file = project.getProject().getFile(fileName);
-		
+
 		InputStream stream = new ByteArrayInputStream(contents.getBytes());
 		// Create file input stream
 		if (file.exists()) {
-		    file.setContents(stream, false, false, monitor);
+			file.setContents(stream, false, false, monitor);
 		} else {
 			IPath path = file.getLocation();
 			path = path.makeRelativeTo(project.getLocation());
 			if (path.segmentCount() > 1) {
 				path = path.removeLastSegments(1);
-				
+
 				for (int i = path.segmentCount() - 1; i >= 0; i--) {
 					IPath currentPath = path.removeLastSegments(i);
 					IFolder folder = project.getFolder(currentPath);
@@ -146,11 +146,11 @@ abstract public class BaseTestFramework extends BaseTestCase {
 					}
 				}
 			}
-			file.create(stream, false, monitor);	
+			file.create(stream, false, monitor);
 		}
-		
+
 		fileManager.addFile(file);
-		
+
 		return file;
 	}
 }

@@ -35,7 +35,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 public class QtParser extends GNUCPPSourceParser {
 
 	private QtParser(String str) {
-		super(new StringScanner(str), ParserMode.QUICK_PARSE, new NullLogService(), GPPParserExtensionConfiguration.getInstance());
+		super(new StringScanner(str), ParserMode.QUICK_PARSE, new NullLogService(),
+				GPPParserExtensionConfiguration.getInstance());
 	}
 
 	/**
@@ -46,34 +47,31 @@ public class QtParser extends GNUCPPSourceParser {
 	public static ICPPASTFunctionDeclarator parseQtMethodReference(String str) {
 		// Reject strings that have embedded line terminators.  This is needed to properly check that
 		// one that is about to be added.
-		if (str == null
-		 || str.contains(";"))
+		if (str == null || str.contains(";"))
 			return null;
 
 		QtParser parser = new QtParser(str + ';');
 		try {
-			IASTDeclarator declarator
-				= parser.declarator(GNUCPPSourceParser.DtorStrategy.PREFER_FUNCTION, DeclarationOptions.CPP_MEMBER);
+			IASTDeclarator declarator = parser.declarator(GNUCPPSourceParser.DtorStrategy.PREFER_FUNCTION,
+					DeclarationOptions.CPP_MEMBER);
 			if (!(declarator instanceof ICPPASTFunctionDeclarator))
 				return null;
 
 			// JI 439374: Make sure the ; was the last token read to prevent errors where extra strings
 			//            appear in the expansion parameter.
-			if (parser.lastTokenFromScanner == null
-			 || parser.lastTokenFromScanner.getType() != IToken.tSEMI)
+			if (parser.lastTokenFromScanner == null || parser.lastTokenFromScanner.getType() != IToken.tSEMI)
 				return null;
 
 			// JI 439374: Make sure the ; was the last token read to prevent errors where extra strings
 			//            appear in the expansion parameter.
-			if (parser.lastTokenFromScanner == null
-			 || parser.lastTokenFromScanner.getType() != IToken.tSEMI)
+			if (parser.lastTokenFromScanner == null || parser.lastTokenFromScanner.getType() != IToken.tSEMI)
 				return null;
 
 			// make sure this is a legal declarator for a Qt method reference
 			ICPPASTFunctionDeclarator function = (ICPPASTFunctionDeclarator) declarator;
 
 			// 1) parameters must not have names
-			for(ICPPASTParameterDeclaration param : function.getParameters()) {
+			for (ICPPASTParameterDeclaration param : function.getParameters()) {
 				ICPPASTDeclarator decltor = param.getDeclarator();
 				if (decltor == null)
 					continue;
@@ -83,8 +81,7 @@ public class QtParser extends GNUCPPSourceParser {
 					continue;
 
 				char[] name = paramName.getSimpleID();
-				if (name == null
-				 || name.length <= 0)
+				if (name == null || name.length <= 0)
 					continue;
 
 				// The Qt normalization code treats a reference with a trailing const as a special case (this
@@ -99,9 +96,9 @@ public class QtParser extends GNUCPPSourceParser {
 
 			// All tests have passed, so return this declarator.
 			return function;
-		} catch(BacktrackException e) {
+		} catch (BacktrackException e) {
 			return null;
-		} catch(EndOfFileException e) {
+		} catch (EndOfFileException e) {
 			return null;
 		}
 	}
@@ -110,9 +107,9 @@ public class QtParser extends GNUCPPSourceParser {
 		QtParser parser = new QtParser(str);
 		try {
 			return parser.typeId(new DeclarationOptions(DeclarationOptions.NO_INITIALIZER));
-		} catch(BacktrackException e) {
+		} catch (BacktrackException e) {
 			return null;
-		} catch(EndOfFileException e) {
+		} catch (EndOfFileException e) {
 			return null;
 		}
 	}

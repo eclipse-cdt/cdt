@@ -28,18 +28,18 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
  * Models functions used without declarations.
  */
 public class CExternalFunction extends CFunction implements ICExternalBinding {
-    private static final IType VOID_TYPE = 	new CBasicType(Kind.eVoid, 0);
+	private static final IType VOID_TYPE = new CBasicType(Kind.eVoid, 0);
 
 	private IASTName name;
-    private IASTTranslationUnit tu;
+	private IASTTranslationUnit tu;
 
-    public CExternalFunction(IASTTranslationUnit tu, IASTName name) {
-    	super(null);
-        this.name = name;
-        this.tu = tu;
-    }
+	public CExternalFunction(IASTTranslationUnit tu, IASTName name) {
+		super(null);
+		this.name = name;
+		this.tu = tu;
+	}
 
-    @Override
+	@Override
 	public IFunctionType getType() {
 		if (type == null) {
 			// Bug 321856: Prevent recursions
@@ -52,33 +52,33 @@ public class CExternalFunction extends CFunction implements ICExternalBinding {
 		return type;
 	}
 
-    @Override
+	@Override
 	public IParameter[] getParameters() {
-    	return IParameter.EMPTY_PARAMETER_ARRAY;
+		return IParameter.EMPTY_PARAMETER_ARRAY;
 	}
 
 	@Override
 	protected IASTTranslationUnit getTranslationUnit() {
 		return tu;
-    }
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return name.toString();
-    }
+		return name.toString();
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return name.toCharArray();
-    }
+		return name.toCharArray();
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return tu.getScope();
-    }
+		return tu.getScope();
+	}
 
-    @Override
+	@Override
 	public boolean isExtern() {
-        return true;
-    }
+		return true;
+	}
 }

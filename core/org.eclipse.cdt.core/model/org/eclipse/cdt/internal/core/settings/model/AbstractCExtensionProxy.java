@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.CConfigBasedDescriptor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-public abstract class AbstractCExtensionProxy implements ICProjectDescriptionListener{
+public abstract class AbstractCExtensionProxy implements ICProjectDescriptionListener {
 	private IProject fProject;
 	private String fExtId;
 	private boolean fIsNewStyle;
@@ -33,23 +33,25 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 	public AbstractCExtensionProxy(IProject project, String extPointId) {
 		fProject = project;
 		fExtPointId = extPointId;
-		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.LOADED | CProjectDescriptionEvent.APPLIED);
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this,
+				CProjectDescriptionEvent.LOADED | CProjectDescriptionEvent.APPLIED);
 	}
 
-	protected final void providerRequested(){
-		if(!fInited)
-			checkUpdateProvider(CProjectDescriptionManager.getInstance().getProjectDescription(fProject, false), false, false);
+	protected final void providerRequested() {
+		if (!fInited)
+			checkUpdateProvider(CProjectDescriptionManager.getInstance().getProjectDescription(fProject, false), false,
+					false);
 	}
 
-	public void updateProject(IProject project){
+	public void updateProject(IProject project) {
 		IProject oldProj = fProject;
 		fProject = project;
-		if(oldProj == null || !oldProj.equals(fProject))
+		if (oldProj == null || !oldProj.equals(fProject))
 			fInited = false;
 	}
 
-	private ICExtensionReference getRef(ICConfigurationDescription cfg, boolean update){
-		if(fExtPointId != null){
+	private ICExtensionReference getRef(ICConfigurationDescription cfg, boolean update) {
+		if (fExtPointId != null) {
 			try {
 				CConfigBasedDescriptor dr = new CConfigBasedDescriptor(cfg, false);
 				ICExtensionReference[] cextensions = dr.get(fExtPointId, update);
@@ -62,53 +64,53 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 		return null;
 	}
 
-	protected IProject getProject(){
+	protected IProject getProject() {
 		return fProject;
 	}
 
-	private boolean checkUpdateProvider(ICProjectDescription des, boolean recreate, boolean rescan){
+	private boolean checkUpdateProvider(ICProjectDescription des, boolean recreate, boolean rescan) {
 		Object newProvider = null;
 		Object oldProvider = null;
 
-		synchronized(this){
-			if(recreate || rescan || !fInited){
+		synchronized (this) {
+			if (recreate || rescan || !fInited) {
 				ICExtensionReference ref = null;
 				boolean newStyle = true;
 				ICConfigurationDescription cfg = null;
-				if(des != null){
+				if (des != null) {
 					cfg = des.getDefaultSettingConfiguration();
-					if(cfg != null){
+					if (cfg != null) {
 						ref = getRef(cfg, false);
 						newStyle = CProjectDescriptionManager.getInstance().isNewStyleCfg(cfg);
 					}
 				}
 
-				if(ref != null){
-					if(recreate || !ref.getID().equals(fExtId)){
+				if (ref != null) {
+					if (recreate || !ref.getID().equals(fExtId)) {
 						try {
 							newProvider = ref.createExtension();
-							if(!isValidProvider(newProvider))
+							if (!isValidProvider(newProvider))
 								newProvider = null;
 						} catch (CoreException e) {
 						}
 					}
 				}
 
-				if(newProvider == null){
-					if(recreate || fProvider == null || newStyle != fIsNewStyle){
+				if (newProvider == null) {
+					if (recreate || fProvider == null || newStyle != fIsNewStyle) {
 						newStyle = isNewStyleCfg(cfg);
 						newProvider = createDefaultProvider(cfg, newStyle);
 					}
 				}
 
-				if(newProvider != null){
-					if(fProvider != null){
+				if (newProvider != null) {
+					if (fProvider != null) {
 						deinitializeProvider(fProvider);
 						oldProvider = fProvider;
 					}
 
 					fProvider = newProvider;
-					if(ref != null)
+					if (ref != null)
 						fExtId = ref.getID();
 
 					fIsNewStyle = newStyle;
@@ -120,14 +122,14 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 			}
 		}
 
-		if(newProvider != null){
+		if (newProvider != null) {
 			postProcessProviderChange(newProvider, oldProvider);
 			return true;
 		}
 		return false;
 	}
 
-	protected boolean isNewStyleCfg(ICConfigurationDescription des){
+	protected boolean isNewStyleCfg(ICConfigurationDescription des) {
 		return CProjectDescriptionManager.getInstance().isNewStyleCfg(des);
 	}
 
@@ -139,33 +141,33 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 
 	protected abstract Object createDefaultProvider(ICConfigurationDescription cfgDes, boolean newStile);
 
-	protected void postProcessProviderChange(Object newProvider, Object oldProvider){
+	protected void postProcessProviderChange(Object newProvider, Object oldProvider) {
 	}
 
-	public void close(){
+	public void close() {
 		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
-		if(fProvider != null){
+		if (fProvider != null) {
 			deinitializeProvider(fProvider);
 		}
 	}
 
 	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
-		if(!fProject.equals(event.getProject()))
+		if (!fProject.equals(event.getProject()))
 			return;
 
 		doHandleEvent(event);
 	}
 
-	protected boolean doHandleEvent(CProjectDescriptionEvent event){
+	protected boolean doHandleEvent(CProjectDescriptionEvent event) {
 		boolean force = false;
-		switch(event.getEventType()){
+		switch (event.getEventType()) {
 		case CProjectDescriptionEvent.LOADED:
 			force = true;
 			//$FALL-THROUGH$
 		case CProjectDescriptionEvent.APPLIED:
 			ICProjectDescription des = event.getNewCProjectDescription();
-			if(des != null){
+			if (des != null) {
 				updateProject(des.getProject());
 				return checkUpdateProvider(des, force, true);
 			}

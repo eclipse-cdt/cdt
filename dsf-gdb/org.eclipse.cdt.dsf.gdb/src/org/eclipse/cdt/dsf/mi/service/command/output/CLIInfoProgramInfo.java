@@ -32,7 +32,7 @@ public class CLIInfoProgramInfo extends MIInfo {
 	 * find it there.
 	 */
 	public Long getPID() {
-		return fPid; 
+		return fPid;
 	}
 
 	void parse() {
@@ -41,8 +41,8 @@ public class CLIInfoProgramInfo extends MIInfo {
 			MIOOBRecord[] oobs = out.getMIOOBRecords();
 			for (MIOOBRecord oob : oobs) {
 				if (oob instanceof MIConsoleStreamOutput) {
-					parseLine(((MIConsoleStreamOutput)oob).getString());
-					
+					parseLine(((MIConsoleStreamOutput) oob).getString());
+
 					// quit parsing output once we have everything we want out
 					// of it
 					if (fPid != null) {
@@ -67,7 +67,8 @@ public class CLIInfoProgramInfo extends MIInfo {
 				while (st.hasMoreTokens()) {
 					String s = st.nextToken();
 					/* Not a process id if LWP is reported */
-					if (s.equals("LWP")) break; //$NON-NLS-1$
+					if (s.equals("LWP")) //$NON-NLS-1$
+						break;
 
 					if (Character.isDigit(s.charAt(0))) {
 						try {
@@ -81,4 +82,3 @@ public class CLIInfoProgramInfo extends MIInfo {
 		}
 	}
 }
-

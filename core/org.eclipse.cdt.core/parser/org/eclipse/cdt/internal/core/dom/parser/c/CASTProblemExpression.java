@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 
 public class CASTProblemExpression extends CASTProblemOwner implements IASTProblemExpression {
 
-    public CASTProblemExpression() {
+	public CASTProblemExpression() {
 		super();
 	}
 
@@ -45,30 +45,36 @@ public class CASTProblemExpression extends CASTProblemOwner implements IASTProbl
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        super.accept(action);	// visits the problem
+		super.accept(action); // visits the problem
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
-    }
+	}
 
 	@Override
 	public boolean isLValue() {

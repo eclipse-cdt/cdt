@@ -23,8 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Implementation of array range designator.
  */
-public class CPPASTArrayRangeDesignator extends ASTNode
-		implements IGPPASTArrayRangeDesignator, IASTAmbiguityParent {
+public class CPPASTArrayRangeDesignator extends ASTNode implements IGPPASTArrayRangeDesignator, IASTAmbiguityParent {
 	private ICPPASTExpression floor;
 	private ICPPASTExpression ceiling;
 
@@ -83,9 +82,12 @@ public class CPPASTArrayRangeDesignator extends ASTNode
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
-				case ASTVisitor.PROCESS_ABORT: return false;
-				case ASTVisitor.PROCESS_SKIP: return true;
-				default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 		if (floor != null && !floor.accept(action))

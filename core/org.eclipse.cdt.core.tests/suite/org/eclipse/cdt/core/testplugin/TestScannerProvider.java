@@ -32,7 +32,7 @@ public class TestScannerProvider extends AbstractCExtension implements IScannerI
 	public final static String SCANNER_ID = CTestPlugin.PLUGIN_ID + ".TestScanner";
 
 	public static void clear() {
-		sIncludes= sLocalIncludes= sIncludeFiles= sMacroFiles= null;
+		sIncludes = sLocalIncludes = sIncludeFiles = sMacroFiles = null;
 		sDefinedSymbols.clear();
 	}
 

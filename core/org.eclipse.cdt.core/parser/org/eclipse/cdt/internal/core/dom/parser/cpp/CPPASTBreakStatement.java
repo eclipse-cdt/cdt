@@ -22,29 +22,36 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecBreak;
  * @author jcamelon
  */
 public class CPPASTBreakStatement extends CPPASTAttributeOwner implements IASTBreakStatement, ICPPExecutionOwner {
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-        	switch (action.leave(this)) {
-        		case ASTVisitor.PROCESS_ABORT: return false;
-        		case ASTVisitor.PROCESS_SKIP: return true;
-        		default: break;
-        	}
-        }
-        return true;
-    }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public CPPASTBreakStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}

@@ -23,7 +23,8 @@ public class ExecWhile implements ICPPExecution {
 	private final ExecSimpleDeclaration conditionDeclExec;
 	private final ICPPExecution bodyExec;
 
-	public ExecWhile(ICPPEvaluation conditionExprEval, ExecSimpleDeclaration conditionDeclExec, ICPPExecution bodyExec) {
+	public ExecWhile(ICPPEvaluation conditionExprEval, ExecSimpleDeclaration conditionDeclExec,
+			ICPPExecution bodyExec) {
 		this.conditionExprEval = conditionExprEval;
 		this.conditionDeclExec = conditionDeclExec;
 		this.bodyExec = bodyExec;
@@ -59,10 +60,15 @@ public class ExecWhile implements ICPPExecution {
 
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
-		ICPPEvaluation newConditionExprEval = conditionExprEval != null ? conditionExprEval.instantiate(context, maxDepth) : null;
-		ExecSimpleDeclaration newConditionDeclExec = conditionDeclExec != null ? (ExecSimpleDeclaration) conditionDeclExec.instantiate(context, maxDepth) : null;
+		ICPPEvaluation newConditionExprEval = conditionExprEval != null
+				? conditionExprEval.instantiate(context, maxDepth)
+				: null;
+		ExecSimpleDeclaration newConditionDeclExec = conditionDeclExec != null
+				? (ExecSimpleDeclaration) conditionDeclExec.instantiate(context, maxDepth)
+				: null;
 		ICPPExecution newBodyExec = bodyExec.instantiate(context, maxDepth);
-		if (newConditionExprEval == conditionExprEval && newConditionDeclExec == conditionDeclExec && newBodyExec == bodyExec) {
+		if (newConditionExprEval == conditionExprEval && newConditionDeclExec == conditionDeclExec
+				&& newBodyExec == bodyExec) {
 			return this;
 		}
 		return new ExecWhile(newConditionExprEval, newConditionDeclExec, newBodyExec);

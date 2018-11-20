@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEnvironmentVariableSupplier {
-	
+
 	/**
 	 *
 	 * @param name the variable name
@@ -31,7 +31,7 @@ public interface IEnvironmentVariableSupplier {
 	 * the variable of a given name
 	 */
 	IEnvironmentVariable getVariable(String name, Object context);
-	
+
 	/**
 	 *
 	 * @param context the context

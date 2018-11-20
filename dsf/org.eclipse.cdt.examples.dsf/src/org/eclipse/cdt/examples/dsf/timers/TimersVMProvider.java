@@ -39,133 +39,142 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 @SuppressWarnings("restriction")
 public class TimersVMProvider extends AbstractDMVMProvider {
 
-    /** Event indicating that the timers view layout has changed */
-    public static class TimersViewLayoutChanged {}
-    
-    /** Enumeration of possible layouts for the timers view model */
-    public enum ViewLayout { TRIGGERS_AT_TOP, TIMERS_AT_TOP }
-    
-    /** Have we registered ourselves as a listener for DM events? */  
-    private boolean fRegisteredEventListener;
-    
-    public TimersVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) {
-        super(adapter, presentationContext, session);
-        
-        // Add ourselves as listener for DM events events.
-        try {
-            session.getExecutor().execute(new Runnable() {
-                @Override
-		public void run() {
-                    if (DsfSession.isSessionActive(getSession().getId())) {
-                        getSession().addServiceEventListener(TimersVMProvider.this, null);
-                        fRegisteredEventListener = true;
-                    }
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session shut down, not much we can do but wait to be disposed.
-        }
-        
-        // Set the initial view layout.
-        setViewLayout(ViewLayout.TIMERS_AT_TOP);   
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider#dispose()
-     */
-    @Override
+	/** Event indicating that the timers view layout has changed */
+	public static class TimersViewLayoutChanged {
+	}
+
+	/** Enumeration of possible layouts for the timers view model */
+	public enum ViewLayout {
+		TRIGGERS_AT_TOP, TIMERS_AT_TOP
+	}
+
+	/** Have we registered ourselves as a listener for DM events? */
+	private boolean fRegisteredEventListener;
+
+	public TimersVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) {
+		super(adapter, presentationContext, session);
+
+		// Add ourselves as listener for DM events events.
+		try {
+			session.getExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					if (DsfSession.isSessionActive(getSession().getId())) {
+						getSession().addServiceEventListener(TimersVMProvider.this, null);
+						fRegisteredEventListener = true;
+					}
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session shut down, not much we can do but wait to be disposed.
+		}
+
+		// Set the initial view layout.
+		setViewLayout(ViewLayout.TIMERS_AT_TOP);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider#dispose()
+	 */
+	@Override
 	public void dispose() {
 		// Remove ourselves as listener for DM events events. In practice, we
 		// get called after the session has shut down, so we'll end up with a
 		// RejectedExecutionException. We put this here all the same for
 		// completeness sake.
-        try {
-            getSession().getExecutor().execute(new Runnable() {
-                @Override
-		public void run() {
-                    if (fRegisteredEventListener && DsfSession.isSessionActive(getSession().getId())) {
-                        getSession().removeServiceEventListener(TimersVMProvider.this);
-                        fRegisteredEventListener = false;
-                    }
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session shut down, not much we can do but wait to be disposed.
-        }
-        
-        super.dispose();
-    }
-    
-    /** 
-     * Configures a new layout for the timers view model.
-     * @param layout New layout to use.
-     */
-    public void setViewLayout(ViewLayout layout) {
-        clearNodes();
-        if (layout == ViewLayout.TRIGGERS_AT_TOP) {
-            IRootVMNode root = new TimersRootVMNode(this); 
-            IVMNode triggersNode = new TriggersVMNode(this, getSession());
-            addChildNodes(root, new IVMNode[] { triggersNode });
-            IVMNode timersNode = new TimersVMNode(this, getSession());
-            addChildNodes(triggersNode, new IVMNode[] { timersNode });
-            IVMNode alarmNode = new AlarmsVMNode(this, getSession());
-            addChildNodes(timersNode, new IVMNode[] { alarmNode });
-            setRootNode(root);
-        } else if (layout == ViewLayout.TIMERS_AT_TOP) {
-            IRootVMNode root = new TimersRootVMNode(this); 
-            IVMNode timersNode = new TimersVMNode(this, getSession());
-            addChildNodes(root, new IVMNode[] { timersNode });
-            IVMNode triggersNode = new TriggersVMNode(this, getSession());
-            addChildNodes(timersNode, new IVMNode[] { triggersNode });
-            IVMNode alarmNode = new AlarmsVMNode(this, getSession());
-            addChildNodes(triggersNode, new IVMNode[] { alarmNode });
-            setRootNode(root);
-        }
-        
-        handleEvent(new TimersViewLayoutChanged());
-    }
-    
-    @Override
-    public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
-        return new TimersViewColumnPresentation();
-    }
+		try {
+			getSession().getExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					if (fRegisteredEventListener && DsfSession.isSessionActive(getSession().getId())) {
+						getSession().removeServiceEventListener(TimersVMProvider.this);
+						fRegisteredEventListener = false;
+					}
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session shut down, not much we can do but wait to be disposed.
+		}
 
-    @Override
-    public String getColumnPresentationId(IPresentationContext context, Object element) {
-        return TimersViewColumnPresentation.ID;
-    }
+		super.dispose();
+	}
 
-    // Add a handler for the triggers and timers changed events.  The 
-    // AbstractDMVMProvider superclass automatically registers this provider
-    // for all IDMEvent events, however these two events do not implement
-    // IDMEvent
-    @DsfServiceEventHandler
-    public void eventDispatched(final TriggersChangedEvent event) {
-        if (isDisposed()) return;
+	/** 
+	 * Configures a new layout for the timers view model.
+	 * @param layout New layout to use.
+	 */
+	public void setViewLayout(ViewLayout layout) {
+		clearNodes();
+		if (layout == ViewLayout.TRIGGERS_AT_TOP) {
+			IRootVMNode root = new TimersRootVMNode(this);
+			IVMNode triggersNode = new TriggersVMNode(this, getSession());
+			addChildNodes(root, new IVMNode[] { triggersNode });
+			IVMNode timersNode = new TimersVMNode(this, getSession());
+			addChildNodes(triggersNode, new IVMNode[] { timersNode });
+			IVMNode alarmNode = new AlarmsVMNode(this, getSession());
+			addChildNodes(timersNode, new IVMNode[] { alarmNode });
+			setRootNode(root);
+		} else if (layout == ViewLayout.TIMERS_AT_TOP) {
+			IRootVMNode root = new TimersRootVMNode(this);
+			IVMNode timersNode = new TimersVMNode(this, getSession());
+			addChildNodes(root, new IVMNode[] { timersNode });
+			IVMNode triggersNode = new TriggersVMNode(this, getSession());
+			addChildNodes(timersNode, new IVMNode[] { triggersNode });
+			IVMNode alarmNode = new AlarmsVMNode(this, getSession());
+			addChildNodes(triggersNode, new IVMNode[] { alarmNode });
+			setRootNode(root);
+		}
 
-        try {
-            getExecutor().execute(new Runnable() {
-                @Override
-		public void run() {
-                    if (isDisposed()) return;
-                    handleEvent(event);
-                }
-            });
-        } catch (RejectedExecutionException e) {}
-    }
+		handleEvent(new TimersViewLayoutChanged());
+	}
 
-    @DsfServiceEventHandler
-    public void eventDispatched(final TimersChangedEvent event) {
-        if (isDisposed()) return;
+	@Override
+	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
+		return new TimersViewColumnPresentation();
+	}
 
-        try {
-            getExecutor().execute(new Runnable() {
-                @Override
-		public void run() {
-                    if (isDisposed()) return;
-                    handleEvent(event);
-                }
-            });
-        } catch (RejectedExecutionException e) {}
-    }
+	@Override
+	public String getColumnPresentationId(IPresentationContext context, Object element) {
+		return TimersViewColumnPresentation.ID;
+	}
+
+	// Add a handler for the triggers and timers changed events.  The 
+	// AbstractDMVMProvider superclass automatically registers this provider
+	// for all IDMEvent events, however these two events do not implement
+	// IDMEvent
+	@DsfServiceEventHandler
+	public void eventDispatched(final TriggersChangedEvent event) {
+		if (isDisposed())
+			return;
+
+		try {
+			getExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					if (isDisposed())
+						return;
+					handleEvent(event);
+				}
+			});
+		} catch (RejectedExecutionException e) {
+		}
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(final TimersChangedEvent event) {
+		if (isDisposed())
+			return;
+
+		try {
+			getExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					if (isDisposed())
+						return;
+					handleEvent(event);
+				}
+			});
+		} catch (RejectedExecutionException e) {
+		}
+	}
 }

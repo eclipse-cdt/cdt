@@ -18,71 +18,60 @@ import org.eclipse.cdt.debug.ui.memory.floatingpoint.FPutilities.Endian;
 import org.eclipse.cdt.debug.ui.memory.floatingpoint.FPutilities.FPDataType;
 import org.eclipse.cdt.debug.ui.memory.floatingpoint.FPutilities.Justification;
 
-public class FPDisplayCharacteristics
-{
-    private FPDataType dataType;
-    private Endian endian;
-    private int displayedPrecision;
-    private Justification justification;
-    
-    // Constructors
-    
-    FPDisplayCharacteristics()
-    {
-        // Default values
-        
-        this.dataType = FPDataType.FLOAT;
-        this.endian = Endian.LITTLE;
-        this.displayedPrecision = FPDataType.FLOAT.getDisplayedPrecision();
-        this.justification = Justification.LEFT;
-    }
-    
-    public FPDisplayCharacteristics(FPDataType dataType, Endian endian, Justification justification)
-    {
-        this.dataType = dataType;
-        this.endian = endian;
-        this.justification = justification;
-    }
+public class FPDisplayCharacteristics {
+	private FPDataType dataType;
+	private Endian endian;
+	private int displayedPrecision;
+	private Justification justification;
 
-    // Getters and Setters
-    
-    public FPDataType getDataType()
-    {
-        return dataType;
-    }
+	// Constructors
 
-    public void setDataType(FPDataType dataType)
-    {
-        this.dataType = dataType;
-    }
+	FPDisplayCharacteristics() {
+		// Default values
 
-    public Endian getEndian()
-    {
-        return endian;
-    }
+		this.dataType = FPDataType.FLOAT;
+		this.endian = Endian.LITTLE;
+		this.displayedPrecision = FPDataType.FLOAT.getDisplayedPrecision();
+		this.justification = Justification.LEFT;
+	}
 
-    public void setEndian(Endian endian)
-    {
-        this.endian = endian;
-    }
+	public FPDisplayCharacteristics(FPDataType dataType, Endian endian, Justification justification) {
+		this.dataType = dataType;
+		this.endian = endian;
+		this.justification = justification;
+	}
 
-    public int getDisplayedPrecision()
-    {
-        return displayedPrecision;
-    }
+	// Getters and Setters
 
-    public void setDisplayedPrecision(int displayedPrecision)
-    {
-        this.displayedPrecision = displayedPrecision;
-    }
+	public FPDataType getDataType() {
+		return dataType;
+	}
 
-    public Justification getJustification()
-    {
-        return justification;
-    }
+	public void setDataType(FPDataType dataType) {
+		this.dataType = dataType;
+	}
 
-    public void setJustification(Justification justification)
-    {
-        this.justification = justification;
-    }
+	public Endian getEndian() {
+		return endian;
+	}
+
+	public void setEndian(Endian endian) {
+		this.endian = endian;
+	}
+
+	public int getDisplayedPrecision() {
+		return displayedPrecision;
+	}
+
+	public void setDisplayedPrecision(int displayedPrecision) {
+		this.displayedPrecision = displayedPrecision;
+	}
+
+	public Justification getJustification() {
+		return justification;
+	}
+
+	public void setJustification(Justification justification) {
+		this.justification = justification;
+	}
 }

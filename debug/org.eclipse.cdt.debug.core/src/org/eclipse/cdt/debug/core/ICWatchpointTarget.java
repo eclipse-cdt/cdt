@@ -27,11 +27,13 @@ public interface ICWatchpointTarget {
 	/** IRequest object used in the asynchronous method {@link ICWatchpointTarget#getSize()} */
 	interface GetSizeRequest extends IRequest {
 		int getSize(); // returns -1 if size not available
+
 		void setSize(int size);
 	};
-	
+
 	interface CanCreateWatchpointRequest extends IRequest {
 		boolean getCanCreate();
+
 		void setCanCreate(boolean value);
 	};
 
@@ -44,7 +46,7 @@ public interface ICWatchpointTarget {
 	 * supports watchpoints (at all or at that particular location).
 	 */
 	void canSetWatchpoint(CanCreateWatchpointRequest request);
-	
+
 	/**
 	 * Get the expression or the name of the variable
 	 */

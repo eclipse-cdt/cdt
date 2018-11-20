@@ -28,14 +28,14 @@ import org.eclipse.swt.widgets.Composite;
  * @since 7.2
  */
 public interface IFieldEditorFactory {
-    
-    /**
-     * Creates a field editor with given parameters.
-     * 
-     * @param name Field editor's property name.
-     * @param labelText Field editors label.
-     * @param parent Field editors parent control.
-     * @return Newly created field editor.
-     */
-    public FieldEditor createFieldEditor(String name, String labelText, Composite parent);
+
+	/**
+	 * Creates a field editor with given parameters.
+	 * 
+	 * @param name Field editor's property name.
+	 * @param labelText Field editors label.
+	 * @param parent Field editors parent control.
+	 * @return Newly created field editor.
+	 */
+	public FieldEditor createFieldEditor(String name, String labelText, Composite parent);
 }

@@ -55,7 +55,7 @@ public class BufferManager implements IBufferFactory {
 		 */
 		@Override
 		protected boolean close(LRUCacheEntry<K, IBuffer> entry) {
-			IBuffer buffer= entry._fValue;
+			IBuffer buffer = entry._fValue;
 			if (buffer.hasUnsavedChanges()) {
 				return false;
 			}

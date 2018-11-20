@@ -24,17 +24,13 @@ import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 public class FindDeclarationsInWorkingSetAction extends FindInWorkingSetAction {
 
 	public FindDeclarationsInWorkingSetAction(IWorkbenchSite site, IWorkingSet[] workingSets) {
-		super(site,
-				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_label, 
-				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_tooltip, 
-				workingSets);
+		super(site, CSearchMessages.CSearch_FindReferencesInWorkingSetAction_label,
+				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_tooltip, workingSets);
 	}
 
 	public FindDeclarationsInWorkingSetAction(CEditor editor, IWorkingSet[] workingSets) {
-		super(editor,
-				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_label, 
-				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_tooltip, 
-				workingSets);
+		super(editor, CSearchMessages.CSearch_FindReferencesInWorkingSetAction_label,
+				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_tooltip, workingSets);
 	}
 
 	@Override

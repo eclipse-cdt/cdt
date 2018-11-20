@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
@@ -58,9 +57,10 @@ public class SearchReferencesAcrossLanguagesTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER);
+		fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
+				IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(fCProject);
-		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
+		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 
 	@Override
@@ -96,11 +96,11 @@ public class SearchReferencesAcrossLanguagesTest extends BaseUITestCase {
 		final String hcontent = contents[0].toString();
 		final String ccontent = contents[1].toString();
 		final String cppcontent = contents[2].toString();
-		IFile f_h= createFile(getProject(), "405678.h", hcontent);
-		IFile f_c= createFile(getProject(), "405678.c", ccontent);
-		IFile f_cpp= createFile(getProject(), "405678.cpp", cppcontent);
+		IFile f_h = createFile(getProject(), "405678.h", hcontent);
+		IFile f_c = createFile(getProject(), "405678.c", ccontent);
+		IFile f_cpp = createFile(getProject(), "405678.cpp", cppcontent);
 		IIndexManager indexManager = CCorePlugin.getIndexManager();
-		indexManager.update(new ICElement[] {fCProject}, IIndexManager.UPDATE_ALL);
+		indexManager.update(new ICElement[] { fCProject }, IIndexManager.UPDATE_ALL);
 		waitForIndexer(fCProject);
 
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -114,7 +114,8 @@ public class SearchReferencesAcrossLanguagesTest extends BaseUITestCase {
 		ISelection sel = ceditor.getSelectionProvider().getSelection();
 
 		// Now a query is created and executed.
-		CSearchTextSelectionQuery query = new CSearchTextSelectionQuery(null, ceditor.getInputCElement(), (ITextSelection) sel, IIndex.FIND_REFERENCES);
+		CSearchTextSelectionQuery query = new CSearchTextSelectionQuery(null, ceditor.getInputCElement(),
+				(ITextSelection) sel, IIndex.FIND_REFERENCES);
 
 		IStatus status = null;
 		long end_ms = System.currentTimeMillis() + 1000;
@@ -123,7 +124,7 @@ public class SearchReferencesAcrossLanguagesTest extends BaseUITestCase {
 			if (status == Status.CANCEL_STATUS) {
 				Thread.sleep(100);
 			}
-		} while(!status.isOK() && System.currentTimeMillis() < end_ms);
+		} while (!status.isOK() && System.currentTimeMillis() < end_ms);
 		assertTrue("query failed: " + status.getMessage(), status.isOK());
 
 		ISearchResult result = query.getSearchResult();

@@ -45,7 +45,7 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	 */
 	@Override
 	protected synchronized boolean load(final URL url) {
-		final CUIPlugin plugin= CUIPlugin.getDefault();
+		final CUIPlugin plugin = CUIPlugin.getDefault();
 		if (plugin != null) {
 			plugin.getCorePreferenceStore().addPropertyChangeListener(this);
 			return updateTaskTags();
@@ -67,7 +67,7 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	 */
 	@Override
 	public synchronized void unload() {
-		final CUIPlugin plugin= CUIPlugin.getDefault();
+		final CUIPlugin plugin = CUIPlugin.getDefault();
 		if (plugin != null)
 			plugin.getCorePreferenceStore().removePropertyChangeListener(this);
 
@@ -80,11 +80,11 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	 * @return  <code>true</code> if the task tags got updated
 	 */
 	protected boolean updateTaskTags() {
-		final String tags= CCorePlugin.getOption(CCorePreferenceConstants.TODO_TASK_TAGS);
+		final String tags = CCorePlugin.getOption(CCorePreferenceConstants.TODO_TASK_TAGS);
 		if (tags != null) {
 			unload();
 
-			final StringTokenizer tokenizer= new StringTokenizer(tags, ","); //$NON-NLS-1$
+			final StringTokenizer tokenizer = new StringTokenizer(tags, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens())
 				hashWord(tokenizer.nextToken());
 
@@ -92,7 +92,7 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 		}
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.AbstractSpellDictionary#stripNonLetters(java.lang.String)
 	 */

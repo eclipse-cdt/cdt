@@ -22,12 +22,12 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
 public class AutotoolsConfigurePropertyPage extends AbstractPage {
 
 	private ICConfigurationDescription cfgd;
-	
+
 	@Override
 	protected boolean isSingle() {
 		return true;
 	}
-	
+
 	/**
 	 * Default constructor
 	 */
@@ -38,7 +38,7 @@ public class AutotoolsConfigurePropertyPage extends AbstractPage {
 	public ICConfigurationDescription getCfgd() {
 		return cfgd;
 	}
-	
+
 	public void getAllConfigurationData() {
 		ICConfigurationDescription[] cfgds = getCfgsEditable();
 		for (int i = 0; i < cfgds.length; ++i) {
@@ -48,11 +48,11 @@ public class AutotoolsConfigurePropertyPage extends AbstractPage {
 			CConfigurationData data = cfgds[i].getConfigurationData();
 		}
 	}
-	
+
 	public IAConfiguration getConfiguration(ICConfigurationDescription cfgd) {
 		return AutotoolsConfigurationManager.getInstance().getTmpConfiguration(getProject(), cfgd);
 	}
-	
+
 	@Override
 	protected void cfgChanged(ICConfigurationDescription cfgd) {
 		this.cfgd = cfgd;
@@ -60,4 +60,3 @@ public class AutotoolsConfigurePropertyPage extends AbstractPage {
 		super.cfgChanged(cfgd);
 	}
 }
-

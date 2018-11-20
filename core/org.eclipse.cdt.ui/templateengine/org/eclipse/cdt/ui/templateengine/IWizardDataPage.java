@@ -29,7 +29,7 @@ public interface IWizardDataPage extends IWizardPage {
 	 * associated project template's value store.
 	 */
 	Map<String, String> getPageData();
-	
+
 	/**
 	 * Set the page that follows this one. Implementations must ensure
 	 * {@link IWizardPage#getNextPage()} returns the specified value

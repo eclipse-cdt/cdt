@@ -37,7 +37,7 @@ public class Messages extends NLS {
 	public static String LaunchInterruptedError;
 	public static String LaunchMissingError;
 	public static String DebuggerInitializingProblem;
-	
+
 	public static String GdbDebugNewExecutableCommand_Arguments;
 	public static String GdbDebugExecutableCommand_Binary;
 	public static String GdbDebugExecutableCommand_Binary_Optional;
@@ -108,13 +108,11 @@ public class Messages extends NLS {
 	public static String AttachedExecutable_toolTip;
 	public static String AttachedExecutableMenuName;
 	public static String Application_WorkspaceRootNotExistError;
-	public static String Application_WorkspaceCreationError ;
+	public static String Application_WorkspaceCreationError;
 	public static String Application_WorkspaceRootPermissionError;
 	public static String Application_WorkspaceInUseError;
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
-
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private Messages() {
 	}

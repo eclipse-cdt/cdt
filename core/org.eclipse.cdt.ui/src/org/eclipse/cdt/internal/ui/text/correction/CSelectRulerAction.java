@@ -23,11 +23,12 @@ import org.eclipse.cdt.internal.ui.editor.ConstructedCEditorMessages;
 
 public class CSelectRulerAction extends AbstractRulerActionDelegate {
 
-    /*
-     * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
-     */
-    @Override
+	/*
+	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
+	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-        return new CSelectAnnotationRulerAction(ConstructedCEditorMessages.getResourceBundle(), "CSelectAnnotationRulerAction.", editor, rulerInfo); //$NON-NLS-1$
-    }
+		return new CSelectAnnotationRulerAction(ConstructedCEditorMessages.getResourceBundle(),
+				"CSelectAnnotationRulerAction.", editor, rulerInfo); //$NON-NLS-1$
+	}
 }

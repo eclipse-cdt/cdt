@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 
 public class CPPASTAllVisitor extends ASTVisitor {
-	
+
 	{
 		shouldVisitNames = true;
 		shouldVisitDeclarations = true;
@@ -52,8 +52,7 @@ public class CPPASTAllVisitor extends ASTVisitor {
 		shouldVisitNamespaces = true;
 		shouldVisitTemplateParameters = true;
 	}
-	
-	
+
 	@Override
 	public int visit(IASTTranslationUnit tu) {
 		return visitAll(tu);
@@ -108,12 +107,12 @@ public class CPPASTAllVisitor extends ASTVisitor {
 	public int visit(IASTEnumerator enumerator) {
 		return visitAll(enumerator);
 	}
-	
+
 	@Override
-	public int visit( IASTProblem problem ){
+	public int visit(IASTProblem problem) {
 		return visitAll(problem);
 	}
-	
+
 	/**
 	 * Visit BaseSpecifiers.
 	 */
@@ -137,8 +136,8 @@ public class CPPASTAllVisitor extends ASTVisitor {
 	public int visit(ICPPASTTemplateParameter parameter) {
 		return visitAll(parameter);
 	}
-	
-	public int visitAll(IASTNode node){
+
+	public int visitAll(IASTNode node) {
 		return PROCESS_CONTINUE;
 	}
 }

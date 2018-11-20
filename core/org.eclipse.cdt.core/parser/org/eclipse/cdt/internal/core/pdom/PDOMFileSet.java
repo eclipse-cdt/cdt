@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.HashSet;
@@ -23,26 +23,26 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.core.runtime.CoreException;
 
 public final class PDOMFileSet implements IIndexFragmentFileSet {
-	private final HashSet<Long> fFileIDs= new HashSet<>();
-	
+	private final HashSet<Long> fFileIDs = new HashSet<>();
+
 	@Override
 	public void add(IIndexFragmentFile fragFile) {
-		PDOMFile pdomFile= (PDOMFile) fragFile;
+		PDOMFile pdomFile = (PDOMFile) fragFile;
 		fFileIDs.add(pdomFile.getRecord());
 	}
 
 	@Override
 	public void remove(IIndexFragmentFile fragFile) {
-		PDOMFile pdomFile= (PDOMFile) fragFile;
+		PDOMFile pdomFile = (PDOMFile) fragFile;
 		fFileIDs.remove(pdomFile.getRecord());
 	}
 
 	@Override
 	public boolean containsFileOfLocalBinding(IIndexFragmentBinding fb) throws CoreException {
 		if (fb instanceof PDOMBinding) {
-			PDOMBinding pdomBinding= (PDOMBinding) fb;
+			PDOMBinding pdomBinding = (PDOMBinding) fb;
 			return fFileIDs.contains(pdomBinding.getLocalToFileRec());
-		} 
+		}
 		return false;
 	}
 

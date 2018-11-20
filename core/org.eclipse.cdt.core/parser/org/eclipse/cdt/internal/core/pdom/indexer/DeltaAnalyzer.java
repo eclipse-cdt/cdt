@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -30,19 +30,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class DeltaAnalyzer {
-	private final List<ITranslationUnit> fForce= new ArrayList<ITranslationUnit>();
-	private final List<ITranslationUnit> fChanged= new ArrayList<ITranslationUnit>();
-	private final List<ITranslationUnit> fRemoved= new ArrayList<ITranslationUnit>();
+	private final List<ITranslationUnit> fForce = new ArrayList<ITranslationUnit>();
+	private final List<ITranslationUnit> fChanged = new ArrayList<ITranslationUnit>();
+	private final List<ITranslationUnit> fRemoved = new ArrayList<ITranslationUnit>();
 	// For testing purposes, only.
-	public static boolean sSuppressPotentialTUs= false;
-	
+	public static boolean sSuppressPotentialTUs = false;
+
 	public DeltaAnalyzer() {
 	}
-	
+
 	public void analyzeDelta(ICElementDelta delta) throws CoreException {
 		processDelta(delta, new HashSet<IResource>());
 	}
-	
+
 	private void processDelta(ICElementDelta delta, Set<IResource> handled) throws CoreException {
 		final int flags = delta.getFlags();
 
@@ -75,31 +75,30 @@ public class DeltaAnalyzer {
 			}
 			break;
 		case ICElement.C_CCONTAINER:
-			ICContainer folder= (ICContainer) element;
+			ICContainer folder = (ICContainer) element;
 			if (delta.getKind() == ICElementDelta.ADDED) {
 				handled.add(element.getResource());
 				collectSources(folder, fChanged);
 			}
 			break;
 		}
-		
+
 		if (!sSuppressPotentialTUs) {
 			// Always look at the children of the resource delta (bug 343538)
-			final IResourceDelta[] rDeltas= delta.getResourceDeltas();
+			final IResourceDelta[] rDeltas = delta.getResourceDeltas();
 			processResourceDelta(rDeltas, element, handled);
 		}
 	}
 
-	public void processResourceDelta(final IResourceDelta[] rDeltas, final ICElement element,
-			Set<IResource> handled) {
+	public void processResourceDelta(final IResourceDelta[] rDeltas, final ICElement element, Set<IResource> handled) {
 		if (rDeltas != null) {
-			for (IResourceDelta rd: rDeltas) {
+			for (IResourceDelta rd : rDeltas) {
 				if (rd == null) {
 					continue;
 				}
 				final int rdkind = rd.getKind();
 				if (rdkind != IResourceDelta.ADDED) {
-					IResource res= rd.getResource();
+					IResource res = rd.getResource();
 					if (!handled.add(res)) {
 						continue;
 					}
@@ -116,7 +115,8 @@ public class DeltaAnalyzer {
 						}
 					}
 				}
-				processResourceDelta(rd.getAffectedChildren(IResourceDelta.CHANGED | IResourceDelta.REMOVED), element, handled);
+				processResourceDelta(rd.getAffectedChildren(IResourceDelta.CHANGED | IResourceDelta.REMOVED), element,
+						handled);
 			}
 		}
 	}

@@ -29,8 +29,8 @@ public class DsfTestPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static DsfTestPlugin fgPlugin;
-    private static BundleContext fgBundleContext; 
-	
+	private static BundleContext fgBundleContext;
+
 	/**
 	 * The constructor
 	 */
@@ -43,8 +43,8 @@ public class DsfTestPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void start(BundleContext context) throws Exception {
-        fgBundleContext = context;
+	public void start(BundleContext context) throws Exception {
+		fgBundleContext = context;
 		super.start(context);
 	}
 
@@ -53,10 +53,10 @@ public class DsfTestPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-        fgBundleContext = null;
-        fgPlugin = null;
+		fgBundleContext = null;
+		fgPlugin = null;
 	}
 
 	/**
@@ -68,14 +68,13 @@ public class DsfTestPlugin extends AbstractUIPlugin {
 		return fgPlugin;
 	}
 
-    public static BundleContext getBundleContext() {
-        return fgBundleContext;
-    }
+	public static BundleContext getBundleContext() {
+		return fgBundleContext;
+	}
 
-    public static void failRequest(RequestMonitor rm, int code, String message) {
-        rm.setStatus(new Status(IStatus.ERROR, PLUGIN_ID, code, message, null));
-        rm.done();
-    }
-    
+	public static void failRequest(RequestMonitor rm, int code, String message) {
+		rm.setStatus(new Status(IStatus.ERROR, PLUGIN_ID, code, message, null));
+		rm.done();
+	}
 
 }

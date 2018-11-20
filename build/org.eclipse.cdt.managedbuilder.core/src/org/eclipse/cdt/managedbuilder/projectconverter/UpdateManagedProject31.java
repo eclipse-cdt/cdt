@@ -32,90 +32,90 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class UpdateManagedProject31 {
 	private static final String INEXISTEND_PROP_ID = ""; //$NON-NLS-1$
-	
+
 	static void doProjectUpdate(IProgressMonitor monitor, final IProject project) throws CoreException {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-		((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
+		((ManagedBuildInfo) info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
 
-		info.setValid(true);		
+		info.setValid(true);
 		adjustProperties(info);
 	}
 
-	
-	private static void adjustProperties(IManagedBuildInfo info){
+	private static void adjustProperties(IManagedBuildInfo info) {
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration[] cfgs = mProj.getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
+		for (int i = 0; i < cfgs.length; i++) {
 			adjustProperties(cfgs[i]);
 		}
 	}
 
-	private static void adjustProperties(IConfiguration cfg){
+	private static void adjustProperties(IConfiguration cfg) {
 		IBuildObjectProperties props = cfg.getBuildProperties();
-		if(props == null)
+		if (props == null)
 			return;
-		
+
 		boolean artefactTypeSupported = props.supportsType(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
 		boolean buildTypeSupported = props.supportsType(ManagedBuildManager.BUILD_TYPE_PROPERTY_ID);
-		if(!artefactTypeSupported && !buildTypeSupported)
+		if (!artefactTypeSupported && !buildTypeSupported)
 			return;
-		
+
 		String artefactType = artefactTypeSupported ? null : INEXISTEND_PROP_ID;
 		String buildType = buildTypeSupported ? null : INEXISTEND_PROP_ID;
-		String artExt = ((Configuration)cfg).getArtifactExtensionAttribute(false);
+		String artExt = ((Configuration) cfg).getArtifactExtensionAttribute(false);
 		String id = cfg.getId();
-		if(artefactType == null){
+		if (artefactType == null) {
 			artefactType = getBuildArtefactTypeFromId(id);
 		}
-		if(buildType == null){
+		if (buildType == null) {
 			buildType = getBuildTypeFromId(id);
 		}
-		
-		if(artefactType == null || buildType == null){
-			for(IToolChain tc = cfg.getToolChain(); tc != null && (artefactType == null || buildType == null); tc = tc.getSuperClass()){
+
+		if (artefactType == null || buildType == null) {
+			for (IToolChain tc = cfg.getToolChain(); tc != null
+					&& (artefactType == null || buildType == null); tc = tc.getSuperClass()) {
 				id = tc.getId();
-				if(artefactType == null){
+				if (artefactType == null) {
 					artefactType = getBuildArtefactTypeFromId(id);
 				}
-				if(buildType == null){
+				if (buildType == null) {
 					buildType = getBuildTypeFromId(id);
 				}
 			}
 		}
-		
-		if(artefactType != null && artefactType != INEXISTEND_PROP_ID){
+
+		if (artefactType != null && artefactType != INEXISTEND_PROP_ID) {
 			try {
 				props.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artefactType);
 			} catch (CoreException e) {
 				ManagedBuilderCorePlugin.log(e);
 			}
 		}
-		if(buildType != null && buildType != INEXISTEND_PROP_ID){
+		if (buildType != null && buildType != INEXISTEND_PROP_ID) {
 			try {
 				props.setProperty(ManagedBuildManager.BUILD_TYPE_PROPERTY_ID, buildType);
 			} catch (CoreException e) {
 				ManagedBuilderCorePlugin.log(e);
 			}
 		}
-		
-		if(artExt != null)
+
+		if (artExt != null)
 			cfg.setArtifactExtension(artExt);
 	}
-	
-	private static String getBuildArtefactTypeFromId(String id){
-		if(id.indexOf(".exe") != -1) //$NON-NLS-1$
+
+	private static String getBuildArtefactTypeFromId(String id) {
+		if (id.indexOf(".exe") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_EXE;
-		if(id.indexOf(".so") != -1) //$NON-NLS-1$
+		if (id.indexOf(".so") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB;
-		if(id.indexOf(".lib") != -1) //$NON-NLS-1$
+		if (id.indexOf(".lib") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB;
 		return null;
 	}
 
-	private static String getBuildTypeFromId(String id){
-		if(id.indexOf(".debug") != -1) //$NON-NLS-1$
+	private static String getBuildTypeFromId(String id) {
+		if (id.indexOf(".debug") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_TYPE_PROPERTY_DEBUG;
-		if(id.indexOf(".release") != -1) //$NON-NLS-1$
+		if (id.indexOf(".release") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_TYPE_PROPERTY_RELEASE;
 		return null;
 	}

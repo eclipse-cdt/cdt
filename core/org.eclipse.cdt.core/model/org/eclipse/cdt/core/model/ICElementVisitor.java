@@ -25,5 +25,5 @@ public interface ICElementVisitor {
 	 * of this element.
 	 */
 	public boolean visit(ICElement element) throws CoreException;
-	
+
 }

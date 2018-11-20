@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
@@ -22,17 +22,15 @@ public enum EScopeKind {
 	 * Used for local scope, but also for function-scope (labels) and 
 	 * function-prototype scope (parameters in function prototypes).
 	 */
-	eLocal, 
+	eLocal,
 	/**
 	 * @since 5.2
 	 */
-	eEnumeration,
-	eNamespace,
+	eEnumeration, eNamespace,
 	/**
 	 * For classes, structs or unions.
 	 */
-	eClassType,
-	eGlobal,
+	eClassType, eGlobal,
 	/**
 	 * For each template declaration a scope is created in which the template
 	 * parameters can be looked up.

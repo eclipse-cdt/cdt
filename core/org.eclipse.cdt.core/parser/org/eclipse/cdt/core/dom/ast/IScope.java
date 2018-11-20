@@ -35,11 +35,11 @@ public interface IScope {
 	EScopeKind getKind();
 
 	/**
-     * Returns the IName for this scope, may be {@code null}.
-     *
-     * @return The name of this scope.
-     */
-    public IName getScopeName();
+	 * Returns the IName for this scope, may be {@code null}.
+	 *
+	 * @return The name of this scope.
+	 */
+	public IName getScopeName();
 
 	/**
 	 * Returns the first enclosing non-template scope, or {@code null} if this is the global scope.
@@ -114,7 +114,7 @@ public interface IScope {
 		private final IASTNode fLookupPoint;
 		private final IASTTranslationUnit fTu;
 		private final boolean fLookupPointIsName;
-		private boolean fResolve= true;
+		private boolean fResolve = true;
 		private boolean fPrefixLookup;
 		private boolean fIgnorePointOfDeclaration;
 		private boolean fArgumentDependent;
@@ -123,24 +123,24 @@ public interface IScope {
 			if (name == null)
 				throw new IllegalArgumentException();
 			fLookupPoint = name;
-			fLookupPointIsName= true;
-			fLookupKey= name.getLookupKey();
+			fLookupPointIsName = true;
+			fLookupKey = name.getLookupKey();
 			fResolve = resolve;
 			fPrefixLookup = prefixLookup;
-			fTu= name.getTranslationUnit();
+			fTu = name.getTranslationUnit();
 		}
 
 		public ScopeLookupData(char[] name, IASTNode point) {
 			// To support IScope.find(...) the lookup point may be null.
-			fLookupPoint= point;
-			fLookupPointIsName= false;
-			fLookupKey= name;
-			fIgnorePointOfDeclaration= false;
+			fLookupPoint = point;
+			fLookupPointIsName = false;
+			fLookupKey = name;
+			fIgnorePointOfDeclaration = false;
 			if (fLookupPoint == null) {
-				fTu= null;
-				fIgnorePointOfDeclaration= true;
+				fTu = null;
+				fIgnorePointOfDeclaration = true;
 			} else {
-				fTu= fLookupPoint.getTranslationUnit();
+				fTu = fLookupPoint.getTranslationUnit();
 			}
 		}
 
@@ -148,11 +148,11 @@ public interface IScope {
 		 * @since 5.11
 		 */
 		public ScopeLookupData(char[] name, IASTTranslationUnit tu) {
-			fLookupPoint= null;
-			fLookupPointIsName= false;
-			fLookupKey= name;
-			fIgnorePointOfDeclaration= true;
-			fTu= tu;
+			fLookupPoint = null;
+			fLookupPointIsName = false;
+			fLookupKey = name;
+			fIgnorePointOfDeclaration = true;
+			fTu = tu;
 		}
 
 		public final void setPrefixLookup(boolean prefixLookup) {
@@ -166,14 +166,14 @@ public interface IScope {
 		public final void setIgnorePointOfDeclaration(boolean ignorePointOfDeclaration) {
 			fIgnorePointOfDeclaration = ignorePointOfDeclaration;
 		}
-		
+
 		/** @since 6.3 */
 		public final void setArgumentDependent(boolean argumentDependent) {
 			fArgumentDependent = argumentDependent;
 		}
 
 		public final void setLookupKey(char[] key) {
-			fLookupKey= key;
+			fLookupKey = key;
 		}
 
 		public final char[] getLookupKey() {

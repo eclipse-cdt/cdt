@@ -57,13 +57,13 @@ public class CHeaderRule implements IRule {
 					if (contentLength < 1) {
 						break;
 					}
-					
+
 					// Rewind and check for an #include.
 					seek(scanner, -lookAhead);
 					if (!followsIncludeDirective(scanner)) {
 						return Token.UNDEFINED;
 					}
-					
+
 					seek(scanner, lookAhead);
 					return fToken;
 				}
@@ -121,7 +121,7 @@ public class CHeaderRule implements IRule {
 		}
 		scanner.read();
 		--lookBehind;
-		if (current == 'e' && searchBackwards(scanner, "include") ||  //$NON-NLS-1$
+		if (current == 'e' && searchBackwards(scanner, "include") || //$NON-NLS-1$
 				current == 't' && searchBackwards(scanner, "include_next")) { //$NON-NLS-1$
 			result = true;
 		}

@@ -29,79 +29,79 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 public class CPPImplicitFunction extends CPPFunction {
 	private ICPPParameter[] params;
 	private IScope scope;
-    private ICPPFunctionType functionType;
+	private ICPPFunctionType functionType;
 	private final boolean isConstexpr;
 	private final boolean takesVarArgs;
 	private boolean isDeleted;
 	private final char[] name;
 
-	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type,
-			ICPPParameter[] params, boolean isConstexpr, boolean takesVarArgs) {
-        super(null);
-        this.name= name;
-		this.scope= scope;
-		this.functionType= type;
-		this.params= params;
-		this.takesVarArgs= takesVarArgs;
-        this.isConstexpr = isConstexpr;
+	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, ICPPParameter[] params,
+			boolean isConstexpr, boolean takesVarArgs) {
+		super(null);
+		this.name = name;
+		this.scope = scope;
+		this.functionType = type;
+		this.params = params;
+		this.takesVarArgs = takesVarArgs;
+		this.isConstexpr = isConstexpr;
 	}
 
-    @Override
+	@Override
 	public ICPPParameter[] getParameters() {
-        return params;
-    }
+		return params;
+	}
 
-    @Override
+	@Override
 	public ICPPFunctionType getType() {
-    	return functionType;
-    }
-    
-    @Override
-    public ICPPFunctionType getDeclaredType() {
-    	return functionType;
-    }
+		return functionType;
+	}
 
-    @Override
+	@Override
+	public ICPPFunctionType getDeclaredType() {
+		return functionType;
+	}
+
+	@Override
 	public String getName() {
-        return String.valueOf(name);
-    }
+		return String.valueOf(name);
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return scope;
-    }
+		return scope;
+	}
 
-    @Override
+	@Override
 	public IScope getFunctionScope() {
-        return null;
-    }
+		return null;
+	}
 
 	@Override
 	public boolean isConstexpr() {
 		return isConstexpr;
 	}
 
-    @Override
+	@Override
 	public boolean takesVarArgs() {
-        return takesVarArgs;
-    }
+		return takesVarArgs;
+	}
 
-    @Override
+	@Override
 	public boolean isDeleted() {
-    	return isDeleted;
-    }
+		return isDeleted;
+	}
 
-    @Override
+	@Override
 	public IBinding getOwner() {
-    	return null;
-    }
+		return null;
+	}
 
-    public void setDeleted(boolean val) {
-    	isDeleted= val;
-    }
+	public void setDeleted(boolean val) {
+		isDeleted = val;
+	}
 }

@@ -32,43 +32,43 @@ public class DelegatingDragAdapter implements DragSourceListener {
 	private TransferDragSourceListener[] fPossibleListeners;
 	private List<TransferDragSourceListener> fActiveListeners;
 	private TransferDragSourceListener fFinishListener;
-	
+
 	public DelegatingDragAdapter(TransferDragSourceListener[] listeners) {
 		setPossibleListeners(listeners);
 	}
-	
+
 	protected void setPossibleListeners(TransferDragSourceListener[] listeners) {
 		Assert.isNotNull(listeners);
 		Assert.isTrue(fActiveListeners == null, "Can only set possible listeners before drag operation has started"); //$NON-NLS-1$
-		fPossibleListeners= listeners;
+		fPossibleListeners = listeners;
 	}
-	
+
 	/* non Java-doc
 	 * @see DragSourceListener
 	 */
 	@Override
 	public void dragStart(DragSourceEvent event) {
-		fFinishListener= null;
-		boolean saveDoit= event.doit;
-		Object saveData= event.data;
-		boolean doIt= false;
-		List<Transfer> transfers= new ArrayList<Transfer>(fPossibleListeners.length);
-		fActiveListeners= new ArrayList<TransferDragSourceListener>(fPossibleListeners.length);
-		
+		fFinishListener = null;
+		boolean saveDoit = event.doit;
+		Object saveData = event.data;
+		boolean doIt = false;
+		List<Transfer> transfers = new ArrayList<Transfer>(fPossibleListeners.length);
+		fActiveListeners = new ArrayList<TransferDragSourceListener>(fPossibleListeners.length);
+
 		for (TransferDragSourceListener listener : fPossibleListeners) {
-			event.doit= saveDoit;
+			event.doit = saveDoit;
 			listener.dragStart(event);
 			if (event.doit) {
 				transfers.add(listener.getTransfer());
 				fActiveListeners.add(listener);
 			}
-			doIt= doIt || event.doit;
+			doIt = doIt || event.doit;
 		}
 		if (doIt) {
-			((DragSource)event.widget).setTransfer(transfers.toArray(new Transfer[transfers.size()]));
+			((DragSource) event.widget).setTransfer(transfers.toArray(new Transfer[transfers.size()]));
 		}
-		event.data= saveData;
-		event.doit= doIt;
+		event.data = saveData;
+		event.doit = doIt;
 	}
 
 	/* non Java-doc
@@ -76,42 +76,42 @@ public class DelegatingDragAdapter implements DragSourceListener {
 	 */
 	@Override
 	public void dragSetData(DragSourceEvent event) {
-		fFinishListener= getListener(event.dataType);
+		fFinishListener = getListener(event.dataType);
 		if (fFinishListener != null) {
 			fFinishListener.dragSetData(event);
 		}
 	}
-	
+
 	/* non Java-doc
 	 * @see DragSourceListener
 	 */
 	@Override
 	public void dragFinished(DragSourceEvent event) {
-		try{
+		try {
 			if (fFinishListener != null) {
 				fFinishListener.dragFinished(event);
 			} else {
 				// If the user presses Escape then we get a dragFinished without
 				// getting a dragSetData before.
-				fFinishListener= getListener(event.dataType);
+				fFinishListener = getListener(event.dataType);
 				if (fFinishListener != null) {
 					fFinishListener.dragFinished(event);
 				}
 			}
-		} finally{
-			fFinishListener= null;
-			fActiveListeners= null;
-		}	
+		} finally {
+			fFinishListener = null;
+			fActiveListeners = null;
+		}
 	}
-	
+
 	private TransferDragSourceListener getListener(TransferData type) {
 		if (type == null)
 			return null;
-			
+
 		for (TransferDragSourceListener listener : fActiveListeners) {
 			if (listener.getTransfer().isSupportedType(type))
 				return listener;
 		}
 		return null;
-	}	
+	}
 }

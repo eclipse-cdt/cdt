@@ -45,128 +45,128 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_has_nothrow_assign= 4;
+	public static final int op_has_nothrow_assign = 4;
 
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_has_nothrow_copy= 5;
-	
+	public static final int op_has_nothrow_copy = 5;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_has_nothrow_constructor= 6;
-	
+	public static final int op_has_nothrow_constructor = 6;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_has_trivial_assign= 7;
-	
+	public static final int op_has_trivial_assign = 7;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_has_trivial_copy= 8;
-	
+	public static final int op_has_trivial_copy = 8;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_has_trivial_constructor= 9;
-	
+	public static final int op_has_trivial_constructor = 9;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_has_trivial_destructor= 10;
-	
+	public static final int op_has_trivial_destructor = 10;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_has_virtual_destructor= 11;
-	
+	public static final int op_has_virtual_destructor = 11;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_is_abstract= 12;
-	
+	public static final int op_is_abstract = 12;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_is_class= 13;
-	
+	public static final int op_is_class = 13;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_is_empty= 14;
-	
+	public static final int op_is_empty = 14;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_is_enum= 15;
-	
+	public static final int op_is_enum = 15;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_is_pod= 16;
-	
+	public static final int op_is_pod = 16;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_is_polymorphic= 17;
-	
+	public static final int op_is_polymorphic = 17;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_is_union= 18;
-			
+	public static final int op_is_union = 18;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.5
 	 */
-	public static final int op_is_literal_type= 19;
-			
+	public static final int op_is_literal_type = 19;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.5
 	 */
-	public static final int op_is_standard_layout= 20;
-			
+	public static final int op_is_standard_layout = 20;
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.5
 	 */
-	public static final int op_is_trivial= 21;
+	public static final int op_is_trivial = 21;
 
 	/**
 	 * <code>op_sizeofParameterPack</code> is used for sizeof... ( typeid ) expressions.
 	 * @since 5.5
 	 */
 	public static final int op_sizeofParameterPack = 22;
-	
+
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.6
 	 */
-	public static final int op_is_final= 23;
+	public static final int op_is_final = 23;
 
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 6.0
 	 */
 	public static final int op_is_trivially_copyable = 24;
-	
+
 	/**
 	 * Returns the operator for the expression.
 	 * 
@@ -184,7 +184,8 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	 * <code>TYPEID</code> represents the relationship between an <code>IASTTypeIdExpression</code> and
 	 * it's nested <code>IASTTypeId</code>.
 	 */
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("IASTTypeIdExpression.TYPE_ID - IASTTypeId for IASTTypeIdExpression"); //$NON-NLS-1$
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty(
+			"IASTTypeIdExpression.TYPE_ID - IASTTypeId for IASTTypeIdExpression"); //$NON-NLS-1$
 
 	/**
 	 * Set the type Id.

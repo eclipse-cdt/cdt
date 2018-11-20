@@ -52,7 +52,8 @@ public class OpenProblemPreferences implements IObjectActionDelegate {
 					list.add(problem);
 				}
 			}
-			new CustomizeProblemDialog(targetPart.getSite().getShell(), list.toArray(new IProblem[list.size()]), resource).open();
+			new CustomizeProblemDialog(targetPart.getSite().getShell(), list.toArray(new IProblem[list.size()]),
+					resource).open();
 		}
 	}
 

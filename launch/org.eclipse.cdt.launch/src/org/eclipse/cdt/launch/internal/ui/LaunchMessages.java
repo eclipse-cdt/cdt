@@ -206,18 +206,19 @@ public class LaunchMessages extends NLS {
 	public static String BuildErrPrompter_error_in_referenced_project_active;
 	public static String CMainTab2_File_does_not_exist;
 	public static String CMainTab2_CoreFile_type;
-	public static String CMainTab2_TraceFile_type; 
+	public static String CMainTab2_TraceFile_type;
 	public static String CMainTab2_CoreFile_path;
-	public static String CMainTab2_TraceFile_path; 
+	public static String CMainTab2_TraceFile_path;
 	public static String CMainTab2_Application_Selection;
 	public static String CMainTab2_Core_Selection;
 	public static String CMainTab2_Trace_Selection;
 	public static String CMainTab2_Post_mortem_file_type;
+
 	private LaunchMessages() {
 	}
 
 	static {
-        // Load message values from bundle file
-        NLS.initializeMessages(LaunchMessages.class.getCanonicalName(), LaunchMessages.class);
-    }
+		// Load message values from bundle file
+		NLS.initializeMessages(LaunchMessages.class.getCanonicalName(), LaunchMessages.class);
+	}
 }

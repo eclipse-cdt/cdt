@@ -41,7 +41,7 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	private final CStructMapper fStructMapper;
 
 	public CASTTranslationUnit() {
-		fStructMapper= new CStructMapper(this);
+		fStructMapper = new CStructMapper(this);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	public IASTName[] getDeclarationsInAST(IBinding binding) {
 		if (binding instanceof IMacroBinding) {
 			return getMacroDefinitionsInAST((IMacroBinding) binding);
-        }
+		}
 		return CVisitor.getDeclarations(this, binding);
 	}
 
@@ -74,34 +74,34 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	public IASTName[] getDefinitionsInAST(IBinding binding) {
 		return getDefinitionsInAST(binding, false);
 	}
-	
-    @Override
+
+	@Override
 	public IASTName[] getDefinitionsInAST(IBinding binding, boolean permissive) {
 		if (binding instanceof IMacroBinding) {
 			return getMacroDefinitionsInAST((IMacroBinding) binding);
-        }
+		}
 		// TODO: Implement support for permissive=true.
-    	IASTName[] names = CVisitor.getDeclarations(this, binding);
-    	for (int i = 0; i < names.length; i++) {
-    		if (!names[i].isDefinition())
-    			names[i] = null;
-    	}
-    	// nulls can be anywhere, don't use trim()
-    	return ArrayUtil.removeNulls(IASTName.class, names);
-    }
+		IASTName[] names = CVisitor.getDeclarations(this, binding);
+		for (int i = 0; i < names.length; i++) {
+			if (!names[i].isDefinition())
+				names[i] = null;
+		}
+		// nulls can be anywhere, don't use trim()
+		return ArrayUtil.removeNulls(IASTName.class, names);
+	}
 
 	@Override
 	public IASTName[] getReferences(IBinding binding) {
-        if (binding instanceof IMacroBinding)
-        	return getMacroReferencesInAST((IMacroBinding) binding);
+		if (binding instanceof IMacroBinding)
+			return getMacroReferencesInAST((IMacroBinding) binding);
 		return CVisitor.getReferences(this, binding);
 	}
 
 	@Override
 	@Deprecated
-    public ParserLanguage getParserLanguage() {
-    	return ParserLanguage.C;
-    }
+	public ParserLanguage getParserLanguage() {
+		return ParserLanguage.C;
+	}
 
 	@Override
 	public ILinkage getLinkage() {

@@ -19,22 +19,20 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-
-
 /**
  * The SharedFilter is a filter used to determine whether
  * a Shared object is shown
  */
 public class SharedFilter extends ViewerFilter {
-	
+
 	/* (non-Javadoc)
 	 * Method declared on ViewerFilter.
 	 */
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof IBinary) {
-			IBinary bin = (IBinary)element;
-			if (! (parentElement instanceof IBinaryContainer)) {
+			IBinary bin = (IBinary) element;
+			if (!(parentElement instanceof IBinaryContainer)) {
 				if (bin.isSharedLib()) {
 					return false;
 				}

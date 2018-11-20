@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
@@ -35,10 +35,9 @@ import org.eclipse.cdt.internal.ui.browser.opentype.ElementSelectionDialog;
 
 public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate {
 
-	private static final int[] VISIBLE_TYPES = { 
-		ICElement.C_CLASS, ICElement.C_STRUCT, ICElement.C_TYPEDEF, ICElement.C_ENUMERATION,
-		ICElement.C_UNION };
-	
+	private static final int[] VISIBLE_TYPES = { ICElement.C_CLASS, ICElement.C_STRUCT, ICElement.C_TYPEDEF,
+			ICElement.C_ENUMERATION, ICElement.C_UNION };
+
 	private IWorkbenchWindow fWorkbenchWindow;
 
 	public OpenTypeInHierarchyAction() {
@@ -51,26 +50,26 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 		int result = dialog.open();
 		if (result != IDialogConstants.OK_ID)
 			return;
-		
+
 		ITypeInfo info = (ITypeInfo) dialog.getFirstResult();
 		if (info == null)
 			return;
-		
-		ICElement[] elements= null;
+
+		ICElement[] elements = null;
 		ITypeReference location = info.getResolvedReference();
 		if (location != null) {
-			elements= location.getCElements();
+			elements = location.getCElements();
 		}
 		if (elements == null || elements.length == 0) {
 			String title = Messages.OpenTypeInHierarchyAction_errorTitle;
-			String message = NLS.bind(Messages.OpenTypeInHierarchyAction_errorNoDefinition, info.getQualifiedTypeName().toString());
+			String message = NLS.bind(Messages.OpenTypeInHierarchyAction_errorNoDefinition,
+					info.getQualifiedTypeName().toString());
 			MessageDialog.openError(getShell(), title, message);
-		} 
-		else {
+		} else {
 			TypeHierarchyUI.open(elements[0], fWorkbenchWindow);
 		}
 	}
-	
+
 	private void configureDialog(ElementSelectionDialog dialog) {
 		dialog.setDialogSettings(getClass().getName());
 		dialog.setVisibleTypes(VISIBLE_TYPES);
@@ -79,13 +78,13 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 		dialog.setMessage(Messages.OpenTypeInHierarchyAction_message);
 
 		if (fWorkbenchWindow != null) {
-			IWorkbenchPage page= fWorkbenchWindow.getActivePage();
+			IWorkbenchPage page = fWorkbenchWindow.getActivePage();
 			if (page != null) {
-				IWorkbenchPart part= page.getActivePart();
+				IWorkbenchPart part = page.getActivePart();
 				if (part instanceof ITextEditor) {
-					ISelection sel= ((ITextEditor) part).getSelectionProvider().getSelection();
+					ISelection sel = ((ITextEditor) part).getSelectionProvider().getSelection();
 					if (sel instanceof ITextSelection) {
-						String txt= ((ITextSelection) sel).getText();
+						String txt = ((ITextSelection) sel).getText();
 						if (txt.length() > 0 && txt.length() < 80) {
 							dialog.setFilter(txt, true);
 						}
@@ -101,14 +100,14 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 
 	@Override
 	public void dispose() {
-		fWorkbenchWindow= null;
+		fWorkbenchWindow = null;
 	}
-	
+
 	@Override
 	public void init(IWorkbenchWindow window) {
-		fWorkbenchWindow= window;
+		fWorkbenchWindow = window;
 	}
-	
+
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}

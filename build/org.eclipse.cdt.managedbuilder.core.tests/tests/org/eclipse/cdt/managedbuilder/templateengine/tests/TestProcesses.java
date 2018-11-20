@@ -36,23 +36,23 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-public class TestProcesses extends TestCase {	
+public class TestProcesses extends TestCase {
 	private static final String INCLUDE_FOLDER = "Include"; //$NON-NLS-1$
 	private static final String APPEND = "Append"; //$NON-NLS-1$
 	private static final String MBS_GNU_CPP_LINK_OPTION_ID = ".*gnu.cpp.link.option.*"; //$NON-NLS-1$
 	private static final String MBS_STRING_OPTION_VALUE = "MBSStringOption"; //$NON-NLS-1$
-	private static final String[] MBS_STRING_LIST_OPTION_VALUES = {"MBS", "String", "List", "Option"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private static final String[] MBS_STRING_LIST_OPTION_VALUES = { "MBS", "String", "List", "Option" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private static final String RELEASE_CONFIG_ID = ".*release.*"; //$NON-NLS-1$
 	private static final String PROJECT_TYPE = "org.eclipse.cdt.managedbuilder.core.tests.projectType"; //$NON-NLS-1$
 
 	String projectName;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		TemplateEngineTestsHelper.turnOffAutoBuild();
-		projectName= "TemplateEngineTestsProject"+System.currentTimeMillis();
+		projectName = "TemplateEngineTestsProject" + System.currentTimeMillis();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -61,7 +61,7 @@ public class TestProcesses extends TestCase {
 		if (project.exists()) {
 			try {
 				ManagedBuildTestHelper.delete(CoreModel.getDefault().create(project));
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				fail(e.getMessage());
 			}
@@ -69,7 +69,8 @@ public class TestProcesses extends TestCase {
 	}
 
 	public void testCreateIncludeFolder() {
-		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*CreateIncludeFolder"); //$NON-NLS-1$
+		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
+				".*CreateIncludeFolder"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
 		Map<String, String> valueStore = template.getValueStore();
@@ -110,7 +111,8 @@ public class TestProcesses extends TestCase {
 	}
 
 	public void testSetMBSBooleanOptionValue() {
-		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*SetMBSBooleanOptionValue"); //$NON-NLS-1$
+		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
+				".*SetMBSBooleanOptionValue"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
 		Map<String, String> valueStore = template.getValueStore();
@@ -135,7 +137,8 @@ public class TestProcesses extends TestCase {
 	}
 
 	public void testSetMBSStringOptionValue() {
-		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*SetMBSStringOptionValue"); //$NON-NLS-1$
+		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
+				".*SetMBSStringOptionValue"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
 		Map<String, String> valueStore = template.getValueStore();
@@ -160,7 +163,8 @@ public class TestProcesses extends TestCase {
 	}
 
 	public void testSetMBSStringListOptionValues() {
-		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*SetMBSStringListOptionValues"); //$NON-NLS-1$
+		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
+				".*SetMBSStringListOptionValues"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
 		Map<String, String> valueStore = template.getValueStore();
@@ -170,7 +174,7 @@ public class TestProcesses extends TestCase {
 		valueStore.put("isCProject", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("id", MBS_GNU_CPP_LINK_OPTION_ID); //$NON-NLS-1$
 
-		for (int i=0; i < MBS_STRING_LIST_OPTION_VALUES.length; i++) {
+		for (int i = 0; i < MBS_STRING_LIST_OPTION_VALUES.length; i++) {
 			valueStore.put("StringListValue" + i, MBS_STRING_LIST_OPTION_VALUES[i]); //$NON-NLS-1$
 		}
 
@@ -188,7 +192,8 @@ public class TestProcesses extends TestCase {
 	}
 
 	public void testAppendToMBSStringOptionValue() {
-		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*AppendToMBSStringOptionValue"); //$NON-NLS-1$
+		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
+				".*AppendToMBSStringOptionValue"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
 		Map<String, String> valueStore = template.getValueStore();
@@ -214,7 +219,8 @@ public class TestProcesses extends TestCase {
 	}
 
 	public void testAppendToMBSStringListOptionValues() {
-		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*AppendToMBSStringListOptionValues"); //$NON-NLS-1$
+		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
+				".*AppendToMBSStringListOptionValues"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
 		Map<String, String> valueStore = template.getValueStore();
@@ -223,12 +229,12 @@ public class TestProcesses extends TestCase {
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("isCProject", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("id", MBS_GNU_CPP_LINK_OPTION_ID); //$NON-NLS-1$
-		
-		for (int i=0; i < MBS_STRING_LIST_OPTION_VALUES.length; i++) {
+
+		for (int i = 0; i < MBS_STRING_LIST_OPTION_VALUES.length; i++) {
 			valueStore.put("StringListValue" + i, MBS_STRING_LIST_OPTION_VALUES[i]); //$NON-NLS-1$
 		}
 
-		for (int i=0; i < MBS_STRING_LIST_OPTION_VALUES.length; i++) {
+		for (int i = 0; i < MBS_STRING_LIST_OPTION_VALUES.length; i++) {
 			valueStore.put("AppendStringListValue" + i, APPEND + MBS_STRING_LIST_OPTION_VALUES[i]); //$NON-NLS-1$
 		}
 
@@ -256,7 +262,7 @@ public class TestProcesses extends TestCase {
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		valueStore.put("isCProject", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		for (int i=0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			valueStore.put("baseName" + i, "BaseName" + i); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
@@ -271,19 +277,20 @@ public class TestProcesses extends TestCase {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		assertTrue(project.exists());
 
-		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(project).getManagedProject().getConfigurations();
-		for(int i=0; i<projectConfigs.length; i++) {
+		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(project).getManagedProject()
+				.getConfigurations();
+		for (int i = 0; i < projectConfigs.length; i++) {
 			IConfiguration config = projectConfigs[i];
 			IResourceConfiguration[] resourceConfigs = config.getResourceConfigurations();
-			for (int j=0; j<resourceConfigs.length; j++) {
+			for (int j = 0; j < resourceConfigs.length; j++) {
 				if (resourceConfigs[j].isExcluded()) {
 					String resourcePath = resourceConfigs[j].getResourcePath();
 					if (resourcePath.matches(".*BaseName0.*")) { //$NON-NLS-1$
 						//Exclude BaseName0.* only from Release config
-						assertTrue(config.getId().matches(RELEASE_CONFIG_ID));	
+						assertTrue(config.getId().matches(RELEASE_CONFIG_ID));
 					} else if (resourcePath.matches(".*BaseName1.*")) { //$NON-NLS-1$
 						//Exclude BaseName1.* from all other configs other than from Release config
-						assertFalse(config.getId().matches(RELEASE_CONFIG_ID));	
+						assertFalse(config.getId().matches(RELEASE_CONFIG_ID));
 					} else {
 						fail(resourcePath + " shouldn't be excluded from project"); //$NON-NLS-1$
 					}
@@ -292,29 +299,32 @@ public class TestProcesses extends TestCase {
 		}
 	}
 
-	private void assertSetMBSOptionValues(IProject project, String id, int optionType, boolean append) throws BuildException {
-		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(project).getManagedProject().getConfigurations();
+	private void assertSetMBSOptionValues(IProject project, String id, int optionType, boolean append)
+			throws BuildException {
+		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(project).getManagedProject()
+				.getConfigurations();
 
-		boolean foundCandidate= false;
-		for(int i=0; i<projectConfigs.length; i++) {
+		boolean foundCandidate = false;
+		for (int i = 0; i < projectConfigs.length; i++) {
 			IConfiguration config = projectConfigs[i];
 			IOption[] globalOptions = config.getToolChain().getOptions();
 			foundCandidate |= assertMBSOptionValues(id.toLowerCase(), globalOptions, optionType, append);
 
 			ITool[] tools = config.getTools();
-			for(int j=0; j<tools.length; j++) {
+			for (int j = 0; j < tools.length; j++) {
 				foundCandidate |= assertMBSOptionValues(id.toLowerCase(), tools[j].getOptions(), optionType, append);
 			}
 		}
 		assertTrue(foundCandidate);
 	}
 
-	public boolean assertMBSOptionValues(String id, IOption[] options, int optionType, boolean append) throws BuildException {
-		boolean foundCandidate= false;
+	public boolean assertMBSOptionValues(String id, IOption[] options, int optionType, boolean append)
+			throws BuildException {
+		boolean foundCandidate = false;
 		for (int i = 0; i < options.length; i++) {
 			IOption option = options[i];
 			if (option.getId().toLowerCase().matches(id)) {
-				foundCandidate= true;
+				foundCandidate = true;
 				if (option.getValueType() == optionType) {
 					switch (optionType) {
 					case IOption.BOOLEAN:
@@ -322,34 +332,36 @@ public class TestProcesses extends TestCase {
 						break;
 					case IOption.STRING:
 						if (append) {
-							assertTrue(option.getStringValue().equals(MBS_STRING_OPTION_VALUE + APPEND + MBS_STRING_OPTION_VALUE));
+							assertTrue(option.getStringValue()
+									.equals(MBS_STRING_OPTION_VALUE + APPEND + MBS_STRING_OPTION_VALUE));
 						} else {
 							assertTrue(option.getStringValue().equals(MBS_STRING_OPTION_VALUE));
 						}
 						break;
 					default:
-						if(option.getValue() instanceof List) {
+						if (option.getValue() instanceof List) {
 							@SuppressWarnings("unchecked")
-							List<String> list= (List<String>) option.getValue();
-							String[] optionValues= list.toArray(new String[list.size()]); 
+							List<String> list = (List<String>) option.getValue();
+							String[] optionValues = list.toArray(new String[list.size()]);
 							if (append) {
 								assertTrue(optionValues.length == 2 * MBS_STRING_LIST_OPTION_VALUES.length);
-								int j=0;
+								int j = 0;
 								for (; j < MBS_STRING_LIST_OPTION_VALUES.length; j++) {
 									assertTrue(optionValues[j].equals(MBS_STRING_LIST_OPTION_VALUES[j]));
 								}
 								for (; j < optionValues.length; j++) {
-									assertTrue(optionValues[j].equals(APPEND + MBS_STRING_LIST_OPTION_VALUES[j-MBS_STRING_LIST_OPTION_VALUES.length]));
+									assertTrue(optionValues[j].equals(APPEND
+											+ MBS_STRING_LIST_OPTION_VALUES[j - MBS_STRING_LIST_OPTION_VALUES.length]));
 								}
 							} else {
 								assertTrue(optionValues.length == MBS_STRING_LIST_OPTION_VALUES.length);
-								for (int j=0; j < optionValues.length; j++) {
+								for (int j = 0; j < optionValues.length; j++) {
 									assertTrue(optionValues[j].equals(MBS_STRING_LIST_OPTION_VALUES[j]));
 								}
 							}
 							break;
 						}
-					continue;
+						continue;
 					}
 				}
 			}
@@ -361,7 +373,8 @@ public class TestProcesses extends TestCase {
 	 * @return the gnu mingw exe debug configuration
 	 */
 	private List<IConfiguration> getConfigurations() {
-		IConfiguration config= ManagedBuildManager.getExtensionConfiguration("cdt.managedbuild.config.gnu.mingw.exe.debug");
+		IConfiguration config = ManagedBuildManager
+				.getExtensionConfiguration("cdt.managedbuild.config.gnu.mingw.exe.debug");
 		return Collections.singletonList(config);
 	}
 }

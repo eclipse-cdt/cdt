@@ -18,8 +18,8 @@ import junit.framework.TestSuite;
 
 public class ScannerTestSuite extends TestSuite {
 
-	public static Test suite() { 
-		TestSuite suite= new ScannerTestSuite();
+	public static Test suite() {
+		TestSuite suite = new ScannerTestSuite();
 		suite.addTest(LexerTests.suite());
 		suite.addTest(LocationMapTests.suite());
 		suite.addTest(PortedScannerTests.suite());
@@ -31,5 +31,5 @@ public class ScannerTestSuite extends TestSuite {
 		suite.addTest(StreamHasherTests.suite());
 		suite.addTest(FileCharArrayTests.suite());
 		return suite;
-	}	
+	}
 }

@@ -47,9 +47,9 @@ public class Resources {
 	 * isOK()</code> returns <code>true</code> then the resource is in sync
 	 */
 	public static IStatus checkInSync(IResource resource) {
-		return checkInSync(new IResource[] {resource});
+		return checkInSync(new IResource[] { resource });
 	}
-	
+
 	/**
 	 * Checks if the given resources are in sync with the underlying file
 	 * system.
@@ -59,12 +59,12 @@ public class Resources {
 	 *  isOK() </code> returns <code>true</code> then the resources are in sync
 	 */
 	public static IStatus checkInSync(IResource[] resources) {
-		IStatus result= null;
-		for (int i= 0; i < resources.length; i++) {
-			IResource resource= resources[i];
+		IStatus result = null;
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
 			if (!resource.isSynchronized(IResource.DEPTH_INFINITE)) {
-				result= addOutOfSync(result, resource);
-			}			
+				result = addOutOfSync(result, resource);
+			}
 		}
 		if (result != null)
 			return result;
@@ -85,7 +85,7 @@ public class Resources {
 	public static IStatus makeCommittable(IResource resource, Object context) {
 		return makeCommittable(new IResource[] { resource }, context);
 	}
-	
+
 	/**
 	 * Makes the given resources committable. Committable means that all
 	 * resources are writeable and that the content of the resources hasn't
@@ -101,83 +101,75 @@ public class Resources {
 	 * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
 	 */
 	public static IStatus makeCommittable(IResource[] resources, Object context) {
-		List<IResource> readOnlyFiles= new ArrayList<IResource>();
-		for (int i= 0; i < resources.length; i++) {
-			IResource resource= resources[i];
+		List<IResource> readOnlyFiles = new ArrayList<IResource>();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
 			if (resource.getType() == IResource.FILE) {
 				ResourceAttributes attributes = resource.getResourceAttributes();
-				if (attributes != null && attributes.isReadOnly()) {	
+				if (attributes != null && attributes.isReadOnly()) {
 					readOnlyFiles.add(resource);
 				}
 			}
 		}
 		if (readOnlyFiles.size() == 0)
 			return new Status(IStatus.OK, CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
-			
-		Map<IFile, Long> oldTimeStamps= createModificationStampMap(readOnlyFiles);
-		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(
-			readOnlyFiles.toArray(new IFile[readOnlyFiles.size()]), context);
+
+		Map<IFile, Long> oldTimeStamps = createModificationStampMap(readOnlyFiles);
+		IStatus status = ResourcesPlugin.getWorkspace()
+				.validateEdit(readOnlyFiles.toArray(new IFile[readOnlyFiles.size()]), context);
 		if (!status.isOK())
 			return status;
-			
-		IStatus modified= null;
-		Map<IFile, Long> newTimeStamps= createModificationStampMap(readOnlyFiles);
-		for (Iterator<IFile> iter= oldTimeStamps.keySet().iterator(); iter.hasNext();) {
-			IFile file= iter.next();
+
+		IStatus modified = null;
+		Map<IFile, Long> newTimeStamps = createModificationStampMap(readOnlyFiles);
+		for (Iterator<IFile> iter = oldTimeStamps.keySet().iterator(); iter.hasNext();) {
+			IFile file = iter.next();
 			if (!oldTimeStamps.get(file).equals(newTimeStamps.get(file)))
-				modified= addModified(modified, file);
+				modified = addModified(modified, file);
 		}
-		if (modified != null)	
+		if (modified != null)
 			return modified;
 		return new Status(IStatus.OK, CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 	}
 
-	private static Map<IFile, Long> createModificationStampMap(List<IResource> files){
-		Map<IFile, Long> map= new HashMap<IFile, Long>();
-		for (Iterator<IResource> iter= files.iterator(); iter.hasNext(); ) {
-			IFile file= (IFile)iter.next();
+	private static Map<IFile, Long> createModificationStampMap(List<IResource> files) {
+		Map<IFile, Long> map = new HashMap<IFile, Long>();
+		for (Iterator<IResource> iter = files.iterator(); iter.hasNext();) {
+			IFile file = (IFile) iter.next();
 			map.put(file, Long.valueOf(file.getModificationStamp()));
 		}
 		return map;
 	}
-	
+
 	private static IStatus addModified(IStatus status, IFile file) {
-		IStatus entry= CUIStatus.createError(
-			ICStatusConstants.VALIDATE_EDIT_CHANGED_CONTENT, 
-			NLS.bind(CorextMessages.Resources_fileModified, file.getFullPath().toString()),
-			null);
+		IStatus entry = CUIStatus.createError(ICStatusConstants.VALIDATE_EDIT_CHANGED_CONTENT,
+				NLS.bind(CorextMessages.Resources_fileModified, file.getFullPath().toString()), null);
 		if (status == null) {
 			return entry;
 		} else if (status.isMultiStatus()) {
-			((MultiStatus)status).add(entry);
+			((MultiStatus) status).add(entry);
 			return status;
 		} else {
-			MultiStatus result= new MultiStatus(CUIPlugin.getPluginId(),
-				ICStatusConstants.VALIDATE_EDIT_CHANGED_CONTENT,
-				CorextMessages.Resources_modifiedResources, null);
+			MultiStatus result = new MultiStatus(CUIPlugin.getPluginId(),
+					ICStatusConstants.VALIDATE_EDIT_CHANGED_CONTENT, CorextMessages.Resources_modifiedResources, null);
 			result.add(status);
 			result.add(entry);
 			return result;
 		}
-	}	
+	}
 
 	private static IStatus addOutOfSync(IStatus status, IResource resource) {
-		IStatus entry= new Status(
-			IStatus.ERROR,
-			ResourcesPlugin.getPlugin().getBundle().getSymbolicName(),
-			IResourceStatus.OUT_OF_SYNC_LOCAL,
-			NLS.bind(CorextMessages.Resources_outOfSync, resource.getFullPath().toString()),
-			null);
+		IStatus entry = new Status(IStatus.ERROR, ResourcesPlugin.getPlugin().getBundle().getSymbolicName(),
+				IResourceStatus.OUT_OF_SYNC_LOCAL,
+				NLS.bind(CorextMessages.Resources_outOfSync, resource.getFullPath().toString()), null);
 		if (status == null) {
 			return entry;
 		} else if (status.isMultiStatus()) {
-			((MultiStatus)status).add(entry);
+			((MultiStatus) status).add(entry);
 			return status;
 		} else {
-			MultiStatus result= new MultiStatus(
-				ResourcesPlugin.getPlugin().getBundle().getSymbolicName(),
-				IResourceStatus.OUT_OF_SYNC_LOCAL,
-				CorextMessages.Resources_outOfSyncResources, null);
+			MultiStatus result = new MultiStatus(ResourcesPlugin.getPlugin().getBundle().getSymbolicName(),
+					IResourceStatus.OUT_OF_SYNC_LOCAL, CorextMessages.Resources_outOfSyncResources, null);
 			result.add(status);
 			result.add(entry);
 			return result;
@@ -185,9 +177,9 @@ public class Resources {
 	}
 
 	public static String[] getLocationOSStrings(IResource[] resources) {
-		List<String> result= new ArrayList<String>(resources.length);
-		for (int i= 0; i < resources.length; i++) {
-			IPath location= resources[i].getLocation();
+		List<String> result = new ArrayList<String>(resources.length);
+		for (int i = 0; i < resources.length; i++) {
+			IPath location = resources[i].getLocation();
 			if (location != null)
 				result.add(location.toOSString());
 		}

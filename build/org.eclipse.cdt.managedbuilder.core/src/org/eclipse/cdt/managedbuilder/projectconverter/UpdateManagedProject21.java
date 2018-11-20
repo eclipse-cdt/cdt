@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.projectconverter;
 
-
 import java.io.File;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -50,7 +49,7 @@ class UpdateManagedProject21 {
 	 * @param project the <code>IProject</code> that needs to be upgraded
 	 */
 	static void doProjectUpdate(IProgressMonitor monitor, final IProject project) throws CoreException {
-		String[] projectName = new String[]{project.getName()};
+		String[] projectName = new String[] { project.getName() };
 		IFile file = project.getFile(ManagedBuildManager.SETTINGS_FILE_NAME);
 		File settingsFile = file.getLocation().toFile();
 		if (!settingsFile.exists()) {
@@ -65,7 +64,7 @@ class UpdateManagedProject21 {
 
 		// No physical conversion is need since the 3.0 model is a superset of the 2.1 model
 		// We need to upgrade the version
-		((ManagedBuildInfo)info).setVersion("3.0.0"); //$NON-NLS-1$
+		((ManagedBuildInfo) info).setVersion("3.0.0"); //$NON-NLS-1$
 		info.setValid(true);
 
 		// Save the updated file.
@@ -75,27 +74,27 @@ class UpdateManagedProject21 {
 		// Eclipse content types.
 		// If the tree is locked spawn a job to this.
 		IWorkspace workspace = project.getWorkspace();
-//		boolean treeLock = workspace.isTreeLocked();
+		//		boolean treeLock = workspace.isTreeLocked();
 		ISchedulingRule rule1 = workspace.getRuleFactory().createRule(project);
 		ISchedulingRule rule2 = workspace.getRuleFactory().refreshRule(project);
 		ISchedulingRule rule = MultiRule.combine(rule1, rule2);
 		//since the java synchronized mechanism is now used for the build info loadding,
 		//initiate the job in all cases
-//		if (treeLock) {
-			WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
-				@Override
-				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					checkForCPPWithC(monitor, project);
-					ManagedBuildManager.saveBuildInfoLegacy(project, true);
-					return Status.OK_STATUS;
-				}
-			};
-			job.setRule(rule);
-			job.schedule();
-//		} else {
-//			checkForCPPWithC(monitor, project);
-//			ManagedBuildManager.saveBuildInfo(project, true);
-//		}
+		//		if (treeLock) {
+		WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
+			@Override
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				checkForCPPWithC(monitor, project);
+				ManagedBuildManager.saveBuildInfoLegacy(project, true);
+				return Status.OK_STATUS;
+			}
+		};
+		job.setRule(rule);
+		job.schedule();
+		//		} else {
+		//			checkForCPPWithC(monitor, project);
+		//			ManagedBuildManager.saveBuildInfo(project, true);
+		//		}
 		monitor.done();
 	}
 
@@ -121,32 +120,32 @@ class UpdateManagedProject21 {
 						}
 					};
 					workspace.run(runnable, project, IWorkspace.AVOID_UPDATE, monitor);
-				} catch (Exception e) {}	// Ignore the error - the user may have to add .c extensions to
-								// the local definition of C++ file extensions
+				} catch (Exception e) {
+				} // Ignore the error - the user may have to add .c extensions to
+				// the local definition of C++ file extensions
 
 				final boolean found[] = new boolean[1];
-				project.accept(new IResourceProxyVisitor(){
+				project.accept(new IResourceProxyVisitor() {
 
-						/* (non-Javadoc)
-						 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
-						 */
-						@Override
-						public boolean visit(IResourceProxy proxy) throws CoreException {
-							if(found[0] || proxy.isDerived())
-								return false;
-							if(proxy.getType() == IResource.FILE){
-								String ext = proxy.requestFullPath().getFileExtension();
-								if (ext != null && "c".equals(ext)) { //$NON-NLS-1$
-									found[0] = true;
-								}
-								return false;
+					/* (non-Javadoc)
+					 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
+					 */
+					@Override
+					public boolean visit(IResourceProxy proxy) throws CoreException {
+						if (found[0] || proxy.isDerived())
+							return false;
+						if (proxy.getType() == IResource.FILE) {
+							String ext = proxy.requestFullPath().getFileExtension();
+							if (ext != null && "c".equals(ext)) { //$NON-NLS-1$
+								found[0] = true;
 							}
-							return true;
+							return false;
 						}
-					},
-					IResource.NONE);
+						return true;
+					}
+				}, IResource.NONE);
 
-				if(found[0]){
+				if (found[0]) {
 					IScopeContext projectScope = new ProjectScope(project);
 
 					// First, we need to enable user settings on the project __explicitely__
@@ -161,10 +160,10 @@ class UpdateManagedProject21 {
 					// the conflict resolution of the ContentTypeManager framework
 					// will give preference to the project settings.
 					IContentTypeManager manager = Platform.getContentTypeManager();
-					IContentType contentType = manager.getContentType("org.eclipse.cdt.core.cxxSource");	//$NON-NLS-1$
+					IContentType contentType = manager.getContentType("org.eclipse.cdt.core.cxxSource"); //$NON-NLS-1$
 					IContentTypeSettings settings = contentType.getSettings(projectScope);
 					// Add the .c extension on the C++ content type.
-					settings.addFileSpec("c", IContentType.FILE_EXTENSION_SPEC);	//$NON-NLS-1$
+					settings.addFileSpec("c", IContentType.FILE_EXTENSION_SPEC); //$NON-NLS-1$
 				}
 			} catch (CoreException e) {
 				// Ignore errors.  User will need to manually add .c extension if necessary

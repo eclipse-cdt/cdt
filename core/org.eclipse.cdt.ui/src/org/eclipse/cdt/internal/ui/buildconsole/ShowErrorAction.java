@@ -29,13 +29,13 @@ import org.eclipse.cdt.ui.IBuildConsoleManager;
 public class ShowErrorAction extends Action {
 
 	private BuildConsolePage fConsolePage;
-	
+
 	public ShowErrorAction(BuildConsolePage page) {
-		super(ConsoleMessages.ShowErrorAction_Tooltip); 
+		super(ConsoleMessages.ShowErrorAction_Tooltip);
 		fConsolePage = page;
 		setChecked(true);
-		setToolTipText(ConsoleMessages.ShowErrorAction_Tooltip); 
-		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();		
+		setToolTipText(ConsoleMessages.ShowErrorAction_Tooltip);
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED_DISABLED));
 	}
@@ -51,10 +51,10 @@ public class ShowErrorAction extends Action {
 			IProject project = fConsolePage.getProject();
 			IConsole console = consoleManager.getProjectConsole(project);
 			if (console instanceof BuildConsolePartitioner) {
-				BuildConsolePartitioner par = (BuildConsolePartitioner)console;
+				BuildConsolePartitioner par = (BuildConsolePartitioner) console;
 				fConsolePage.showError(par, true);
 			}
 		}
-	}	
-	
+	}
+
 }

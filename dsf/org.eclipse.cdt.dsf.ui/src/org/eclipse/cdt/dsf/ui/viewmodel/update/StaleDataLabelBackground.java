@@ -28,23 +28,21 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class StaleDataLabelBackground extends LabelBackground {
 
-    public StaleDataLabelBackground() {
-        super(null);
-        setPropertyNames(
-            new String[] { ICachingVMProvider.PROP_CACHE_ENTRY_DIRTY, ICachingVMProvider.PROP_UPDATE_POLICY_ID });
-    }
-    
-    @Override
-    public RGB getBackground() {
-        return JFaceResources.getColorRegistry().getRGB(
-            IDsfDebugUIConstants.PREF_COLOR_STALE_DATA_BACKGROUND);
-    }
-    
-    @Override
-    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-        return 
-            Boolean.TRUE.equals(properties.get(ICachingVMProvider.PROP_CACHE_ENTRY_DIRTY)) &&
-            !AutomaticUpdatePolicy.AUTOMATIC_UPDATE_POLICY_ID.equals(
-                properties.get(ICachingVMProvider.PROP_UPDATE_POLICY_ID));
-    }
+	public StaleDataLabelBackground() {
+		super(null);
+		setPropertyNames(
+				new String[] { ICachingVMProvider.PROP_CACHE_ENTRY_DIRTY, ICachingVMProvider.PROP_UPDATE_POLICY_ID });
+	}
+
+	@Override
+	public RGB getBackground() {
+		return JFaceResources.getColorRegistry().getRGB(IDsfDebugUIConstants.PREF_COLOR_STALE_DATA_BACKGROUND);
+	}
+
+	@Override
+	public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
+		return Boolean.TRUE.equals(properties.get(ICachingVMProvider.PROP_CACHE_ENTRY_DIRTY))
+				&& !AutomaticUpdatePolicy.AUTOMATIC_UPDATE_POLICY_ID
+						.equals(properties.get(ICachingVMProvider.PROP_UPDATE_POLICY_ID));
+	}
 }

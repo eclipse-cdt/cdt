@@ -25,49 +25,74 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 @SuppressWarnings("restriction")
 public class LRCPPSpecTest extends AST2CPPSpecTest {
-	
+
 	public static TestSuite suite() {
-        return suite(LRCPPSpecTest.class);
-    }
-	
-	public LRCPPSpecTest() { } 
-	public LRCPPSpecTest(String name) { super(name); }
+		return suite(LRCPPSpecTest.class);
+	}
+
+	public LRCPPSpecTest() {
+	}
+
+	public LRCPPSpecTest(String name) {
+		super(name);
+	}
 
 	//TODO ??? overwrite some failed test cases
 	@Override
-	public void test7_1_3s5b() throws Exception {}
+	public void test7_1_3s5b() throws Exception {
+	}
+
 	@Override
-	public void test8_2s7a() throws Exception {}
+	public void test8_2s7a() throws Exception {
+	}
+
 	@Override
-	public void test8_2s7b() throws Exception {}
+	public void test8_2s7b() throws Exception {
+	}
+
 	@Override
-	public void test14_8_2s8a() throws Exception {}
+	public void test14_8_2s8a() throws Exception {
+	}
+
 	@Override
-	public void test14_8_2_1s1a() throws Exception {}
+	public void test14_8_2_1s1a() throws Exception {
+	}
+
 	@Override
-	public void test14_8_2_1s1b() throws Exception {}
+	public void test14_8_2_1s1b() throws Exception {
+	}
+
 	@Override
-	public void test14_8_2_1s3() throws Exception {}
+	public void test14_8_2_1s3() throws Exception {
+	}
+
 	@Override
-	public void test14_8_2_4s12() throws Exception {}
+	public void test14_8_2_4s12() throws Exception {
+	}
+
 	@Override
-	public void test14_8_2_5s5() throws Exception {}
+	public void test14_8_2_5s5() throws Exception {
+	}
+
 	@Override
-	public void test14_8_2_5s10() throws Exception {}
+	public void test14_8_2_5s10() throws Exception {
+	}
+
 	@Override
-	public void test14_8_2_4s21() throws Exception {}
+	public void test14_8_2_4s21() throws Exception {
+	}
+
 	@Override
-	public void test14_8_2_5s22() throws Exception {}
-	
-	
-	
-	
+	public void test14_8_2_5s22() throws Exception {
+	}
+
 	@Override
-	protected void parseCandCPP( String code, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
-		parse(code, ParserLanguage.C,   checkBindings, expectedProblemBindings);
+	protected void parseCandCPP(String code, boolean checkBindings, int expectedProblemBindings)
+			throws ParserException {
+		parse(code, ParserLanguage.C, checkBindings, expectedProblemBindings);
 		parse(code, ParserLanguage.CPP, checkBindings, expectedProblemBindings);
 	}
-		
+
 	@Override
 	protected IASTTranslationUnit parseWithErrors(String code, ParserLanguage lang) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
@@ -76,27 +101,30 @@ public class LRCPPSpecTest extends AST2CPPSpecTest {
 		options.setCheckPreprocessorProblems(false);
 		options.setCheckSyntaxProblems(false);
 		return ParseHelper.parse(code, language, options);
-    }
-	
+	}
+
 	@Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean checkBindings,
+			int expectedProblemBindings) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
 		ParseHelper.Options options = new ParseHelper.Options();
 		options.setCheckBindings(checkBindings);
 		options.setExpectedProblemBindings(expectedProblemBindings);
 		return ParseHelper.parse(code, language, options);
-    }
-	
+	}
+
 	@Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, @SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	ParseHelper.Options options = new ParseHelper.Options();
-    	options.setCheckSyntaxProblems(expectNoProblems);
-    	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setLimitTrivialInitializers(limitTrivialInitializers);
-    	return ParseHelper.parse(code, language, options);
-    }
-	
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang,
+			@SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems,
+			int limitTrivialInitializers) throws ParserException {
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckSyntaxProblems(expectNoProblems);
+		options.setCheckPreprocessorProblems(expectNoProblems);
+		options.setLimitTrivialInitializers(limitTrivialInitializers);
+		return ParseHelper.parse(code, language, options);
+	}
+
 	@Override
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang, String[] problems) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
@@ -104,16 +132,13 @@ public class LRCPPSpecTest extends AST2CPPSpecTest {
 		options.setProblems(problems);
 		return ParseHelper.parse(code, language, options);
 	}
-	
-	
-	
+
 	protected ILanguage getCLanguage() {
 		return GCCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return GPPLanguage.getDefault();
 	}
-	
-	
+
 }

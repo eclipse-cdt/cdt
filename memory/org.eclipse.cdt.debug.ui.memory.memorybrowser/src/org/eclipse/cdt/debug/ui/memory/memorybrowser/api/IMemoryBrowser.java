@@ -43,7 +43,7 @@ public interface IMemoryBrowser {
 	 * @throws CoreException
 	 */
 	public void go(String expression, String memorySpaceId, boolean inNewTab) throws CoreException;
-	
+
 	/**
 	 * Returns the selected memory space.
 	 * 
@@ -58,7 +58,7 @@ public interface IMemoryBrowser {
 	 *         an empty string.
 	 */
 	public String getSelectedMemorySpace();
-	
+
 	/**
 	 * Returns the active memory retrieval object, or null if none is active.
 	 * 

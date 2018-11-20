@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-
 /**
  * GDB/MI var-update.
  */
@@ -31,7 +30,7 @@ public class MIVarChange {
 	private boolean hasMore = false;
 	private MIVar[] newChildren;
 	private MIDisplayHint displayHint = MIDisplayHint.NONE;
-	
+
 	public MIVarChange(String n) {
 		name = n;
 	}
@@ -68,7 +67,7 @@ public class MIVarChange {
 	public boolean isDynamic() {
 		return isDynamic;
 	}
-	
+
 	/**
 	 * @return Whether the number of children changed since the last update.
 	 * 
@@ -77,7 +76,7 @@ public class MIVarChange {
 	public boolean numChildrenChanged() {
 		return (newNumChildren != -1);
 	}
-	
+
 	/**
 	 * Only call if {@link #numChildrenChanged()} returns true.
 	 * 
@@ -86,10 +85,10 @@ public class MIVarChange {
 	 * @since 4.0
 	 */
 	public int getNewNumChildren() {
-		assert(newNumChildren != -1);
+		assert (newNumChildren != -1);
 		return newNumChildren;
 	}
-	
+
 	/**
 	 * @return Whether there more children available than {@link #getNewNumChildren()}.
 	 * 
@@ -107,7 +106,7 @@ public class MIVarChange {
 	public MIVar[] getNewChildren() {
 		return newChildren;
 	}
-	
+
 	/**
 	 * @return The new display hint
 	 *         
@@ -116,7 +115,7 @@ public class MIVarChange {
 	public MIDisplayHint getDisplayHint() {
 		return displayHint;
 	}
-	
+
 	public void setValue(String v) {
 		value = v;
 	}
@@ -128,35 +127,35 @@ public class MIVarChange {
 	public void setChanged(boolean c) {
 		changed = c;
 	}
-	
+
 	/**
 	 * @since 4.1
 	 */
 	public void setNewType(String newType) {
 		this.newType = newType;
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */
 	public void setDynamic(boolean isDynamic) {
 		this.isDynamic = isDynamic;
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */
 	public void setNewNumChildren(int newNumChildren) {
 		this.newNumChildren = newNumChildren;
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */
 	public void setHasMore(boolean hasMore) {
 		this.hasMore = hasMore;
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */

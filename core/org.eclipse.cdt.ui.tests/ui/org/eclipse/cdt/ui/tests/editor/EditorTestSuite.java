@@ -21,8 +21,7 @@ import org.junit.runners.Suite;
  * Tests for functionality in the package org.eclipse.cdt.internal.ui.editor. 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	SourceHeaderPartnerFinderTest.class,
+@Suite.SuiteClasses({ SourceHeaderPartnerFinderTest.class,
 
 })
 public class EditorTestSuite {

@@ -29,20 +29,19 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
  * Parses the Boost.Test XML log and notifies the Tests Runner Core about how
  * the testing process is going.
  */
 public class BoostXmlLogHandler extends DefaultHandler {
-	
+
 	// Boost.Test XML log tags
 	private static final String XML_NODE_TEST_LOG = "TestLog"; //$NON-NLS-1$
 	private static final String XML_NODE_TEST_SUITE = "TestSuite"; //$NON-NLS-1$
 	private static final String XML_NODE_TEST_CASE = "TestCase"; //$NON-NLS-1$
 	private static final String XML_NODE_TESTING_TIME = "TestingTime"; //$NON-NLS-1$
 	private static final String XML_NODE_LAST_CHECKPOINT = "LastCheckpoint"; //$NON-NLS-1$
-	
+
 	// Boost.Test XML log message levels representation
 	private static final String XML_NODE_INFO = "Info"; //$NON-NLS-1$
 	private static final String XML_NODE_MESSAGE = "Message"; //$NON-NLS-1$
@@ -50,7 +49,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	private static final String XML_NODE_ERROR = "Error"; //$NON-NLS-1$
 	private static final String XML_NODE_FATAL_ERROR = "FatalError"; //$NON-NLS-1$
 	private static final String XML_NODE_EXCEPTION = "Exception"; //$NON-NLS-1$
-	
+
 	// Boost.Test XML log attributes
 	private static final String XML_ATTR_TEST_SUITE_NAME = "name"; //$NON-NLS-1$
 	private static final String XML_ATTR_TEST_CASE_NAME = "name"; //$NON-NLS-1$
@@ -58,30 +57,30 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	private static final String XML_ATTR_MESSAGE_LINE = "line"; //$NON-NLS-1$
 
 	/** Maps the string message level representation to the Tests Runner internal enum code. */
-    private static final Map<String, ITestMessage.Level> STRING_TO_MESSAGE_LEVEL;
-    static {
-        Map<String, ITestMessage.Level> aMap = new HashMap<String, ITestMessage.Level>();
-        aMap.put(XML_NODE_INFO, ITestMessage.Level.Info);
-        aMap.put(XML_NODE_MESSAGE, ITestMessage.Level.Message);
-        aMap.put(XML_NODE_WARNING, ITestMessage.Level.Warning);
-        aMap.put(XML_NODE_ERROR, ITestMessage.Level.Error);
-        aMap.put(XML_NODE_FATAL_ERROR, ITestMessage.Level.FatalError);
-        // NOTE: Exception node is processed separately
-        STRING_TO_MESSAGE_LEVEL = Collections.unmodifiableMap(aMap);
-    }
+	private static final Map<String, ITestMessage.Level> STRING_TO_MESSAGE_LEVEL;
+	static {
+		Map<String, ITestMessage.Level> aMap = new HashMap<String, ITestMessage.Level>();
+		aMap.put(XML_NODE_INFO, ITestMessage.Level.Info);
+		aMap.put(XML_NODE_MESSAGE, ITestMessage.Level.Message);
+		aMap.put(XML_NODE_WARNING, ITestMessage.Level.Warning);
+		aMap.put(XML_NODE_ERROR, ITestMessage.Level.Error);
+		aMap.put(XML_NODE_FATAL_ERROR, ITestMessage.Level.FatalError);
+		// NOTE: Exception node is processed separately
+		STRING_TO_MESSAGE_LEVEL = Collections.unmodifiableMap(aMap);
+	}
 
-    /** The default file name for test message location. */
+	/** The default file name for test message location. */
 	private static final String DEFAULT_LOCATION_FILE = null;
 
 	/** The default line number for test message location. */
 	private static final int DEFAULT_LOCATION_LINE = -1;
-    
+
 	/** The interface to notify the Tests Runner Core */
 	private ITestModelUpdater modelUpdater;
-	
+
 	/** Stores the text between XML tags. */
 	private Stack<StringBuilder> elementDataStack = new Stack<StringBuilder>();
-	
+
 	/** File name for current test message location. */
 	private String fileName;
 
@@ -90,7 +89,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 
 	/** Current test case status. */
 	private ITestItem.Status testStatus;
-	
+
 	/**
 	 * Keep track of the last test case name so that we can handle
 	 * parameterized test cases which have the same name
@@ -102,10 +101,11 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	BoostXmlLogHandler(ITestModelUpdater modelUpdater) {
 		this.modelUpdater = modelUpdater;
 	}
-	
+
 	@Override
-	public void startElement(String namespaceURI, String localName, String qName, Attributes attrs) throws SAXException {
-		
+	public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
+			throws SAXException {
+
 		elementDataStack.push(new StringBuilder());
 		if (qName == XML_NODE_TEST_SUITE) {
 			String testSuiteName = attrs.getValue(XML_ATTR_TEST_SUITE_NAME);
@@ -125,26 +125,25 @@ public class BoostXmlLogHandler extends DefaultHandler {
 			modelUpdater.enterTestCase(testCaseName);
 			testStatus = Status.Passed;
 
-		} else if (STRING_TO_MESSAGE_LEVEL.containsKey(qName)
-				|| qName == XML_NODE_LAST_CHECKPOINT) {
+		} else if (STRING_TO_MESSAGE_LEVEL.containsKey(qName) || qName == XML_NODE_LAST_CHECKPOINT) {
 			fileName = attrs.getValue(XML_ATTR_MESSAGE_FILE);
 			String lineNumberStr = attrs.getValue(XML_ATTR_MESSAGE_LINE);
 			lineNumber = lineNumberStr != null ? Integer.parseInt(lineNumberStr.trim()) : DEFAULT_LOCATION_LINE;
-			
+
 		} else if (qName == XML_NODE_EXCEPTION) {
 			fileName = DEFAULT_LOCATION_FILE;
 			lineNumber = DEFAULT_LOCATION_LINE;
 
-		} else if (qName == XML_NODE_TESTING_TIME ) {
-			
+		} else if (qName == XML_NODE_TESTING_TIME) {
+
 		} else if (qName == XML_NODE_TEST_LOG) {
 			/* just skip, do nothing */
-			
+
 		} else {
 			logAndThrowErrorForElement(qName);
 		}
 	}
-	
+
 	/**
 	 * Common routing: notifies the Tests Runner core about new test message
 	 * and resets the internal state.
@@ -159,7 +158,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 			if (testStatus != ITestItem.Status.Aborted) {
 				testStatus = ITestItem.Status.Failed;
 			}
-			
+
 		} else if (level == ITestMessage.Level.Exception) {
 			testStatus = ITestItem.Status.Aborted;
 		}
@@ -174,9 +173,9 @@ public class BoostXmlLogHandler extends DefaultHandler {
 		} else if (qName == XML_NODE_TEST_CASE) {
 			modelUpdater.setTestStatus(testStatus);
 			modelUpdater.exitTestCase();
-		
+
 		} else if (qName == XML_NODE_TESTING_TIME) {
-			modelUpdater.setTestingTime(Integer.parseInt(elementDataStack.peek().toString().trim())/1000);
+			modelUpdater.setTestingTime(Integer.parseInt(elementDataStack.peek().toString().trim()) / 1000);
 
 		} else if (STRING_TO_MESSAGE_LEVEL.containsKey(qName)) {
 			addCurrentMessage(STRING_TO_MESSAGE_LEVEL.get(qName));
@@ -189,13 +188,13 @@ public class BoostXmlLogHandler extends DefaultHandler {
 
 		} else if (qName == XML_NODE_TEST_LOG || qName == XML_NODE_LAST_CHECKPOINT) {
 			/* just skip, do nothing */
-			
+
 		} else {
 			logAndThrowErrorForElement(qName);
 		}
 		elementDataStack.pop();
 	}
-	
+
 	@Override
 	public void characters(char[] ch, int start, int length) {
 		StringBuilder builder = elementDataStack.peek();
@@ -203,7 +202,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 			builder.append(ch[i]);
 		}
 	}
-	
+
 	/**
 	 * Throws the testing exception for the specified XML tag.
 	 * 
@@ -211,11 +210,9 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	 * @throws SAXException the exception that will be thrown
 	 */
 	private void logAndThrowErrorForElement(String tagName) throws SAXException {
-		logAndThrowError(
-			MessageFormat.format(BoostTestsRunnerMessages.BoostXmlLogHandler_wrong_tag_name, tagName)
-		);
+		logAndThrowError(MessageFormat.format(BoostTestsRunnerMessages.BoostXmlLogHandler_wrong_tag_name, tagName));
 	}
-	
+
 	/**
 	 * Throws the testing exception with the specified message.
 	 * 
@@ -228,7 +225,6 @@ public class BoostXmlLogHandler extends DefaultHandler {
 		throw e;
 	}
 
-	
 	@Override
 	public void warning(SAXParseException ex) throws SAXException {
 		BoostTestsRunnerPlugin.log(ex);
@@ -245,5 +241,5 @@ public class BoostXmlLogHandler extends DefaultHandler {
 		BoostTestsRunnerPlugin.log(ex);
 		throw ex;
 	}
-	
+
 }

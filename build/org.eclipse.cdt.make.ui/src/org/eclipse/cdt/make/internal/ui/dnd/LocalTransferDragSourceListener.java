@@ -36,7 +36,6 @@ public class LocalTransferDragSourceListener extends AbstractSelectionDragAdapte
 		super(provider);
 	}
 
-
 	/**
 	 * @return the {@link Transfer} type that this listener can accept a
 	 * drop operation for.

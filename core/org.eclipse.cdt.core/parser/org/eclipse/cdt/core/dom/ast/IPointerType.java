@@ -19,21 +19,21 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPointerType extends IType {
-    /**
-     * Returns the type that this is a pointer to.
-     */
+	/**
+	 * Returns the type that this is a pointer to.
+	 */
 	public IType getType();
-    
-    /**
-     * Returns whether the pointer is const qualified.
-     */
-    public boolean isConst();
-    
-    /** 
-     * Returns whether the pointer is volatile qualified.
-     */
-    public boolean isVolatile();
-    
+
+	/**
+	 * Returns whether the pointer is const qualified.
+	 */
+	public boolean isConst();
+
+	/** 
+	 * Returns whether the pointer is volatile qualified.
+	 */
+	public boolean isVolatile();
+
 	/**
 	 * Returns whether the pointer is qualified to be restrict.
 	 * For c++ this is a GNU-extension.

@@ -22,17 +22,17 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 public class LaunchImages {
-	private static final String NAME_PREFIX= LaunchUIPlugin.PLUGIN_ID + '.';
-	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
-	
+	private static final String NAME_PREFIX = LaunchUIPlugin.PLUGIN_ID + '.';
+	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
+
 	// The plugin registry
 	private static ImageRegistry imageRegistry = new ImageRegistry();
 
 	// Subdirectory (under the package containing this class) where 16 color images are
 	private static URL fgIconBaseURL;
 	static {
-		fgIconBaseURL= Platform.getBundle(LaunchUIPlugin.getUniqueIdentifier()).getEntry("/icons/"); //$NON-NLS-1$
-	}	
+		fgIconBaseURL = Platform.getBundle(LaunchUIPlugin.getUniqueIdentifier()).getEntry("/icons/"); //$NON-NLS-1$
+	}
 
 	private static final String T_TABS = "view16/"; //$NON-NLS-1$
 	private static final String T_OBJS = "obj16/"; //$NON-NLS-1$
@@ -44,36 +44,36 @@ public class LaunchImages {
 	public static String IMG_VIEW_SOURCE_TAB = NAME_PREFIX + "source_tab.gif"; //$NON-NLS-1$
 	public static String IMG_VIEW_CORE_BUILD_TAB = NAME_PREFIX + "core_build_tab.png"; //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_TAB_MAIN= createManaged(T_TABS, IMG_VIEW_MAIN_TAB);
+	public static final ImageDescriptor DESC_TAB_MAIN = createManaged(T_TABS, IMG_VIEW_MAIN_TAB);
 	public static final ImageDescriptor DESC_TAB_ARGUMENTS = createManaged(T_TABS, IMG_VIEW_ARGUMENTS_TAB);
 	public static final ImageDescriptor DESC_TAB_ENVIRONMENT = createManaged(T_TABS, IMG_VIEW_ENVIRONMENT_TAB);
 	public static final ImageDescriptor DESC_TAB_DEBUGGER = createManaged(T_TABS, IMG_VIEW_DEBUGGER_TAB);
 	public static final ImageDescriptor DESC_TAB_SOURCE = createManaged(T_TABS, IMG_VIEW_SOURCE_TAB);
 	public static final ImageDescriptor DESC_TAB_CORE_BUILD = createManaged(T_TABS, IMG_VIEW_CORE_BUILD_TAB);
 
-	public static String IMG_OBJS_EXEC= NAME_PREFIX + "exec_obj.gif"; //$NON-NLS-1$
+	public static String IMG_OBJS_EXEC = NAME_PREFIX + "exec_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_EXEC = createManaged(T_OBJS, IMG_OBJS_EXEC);
 
 	public static void initialize() {
 	}
-	
+
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}
-	
+
 	private static ImageDescriptor createManaged(ImageRegistry registry, String prefix, String name) {
-		ImageDescriptor result= ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
+		ImageDescriptor result = ImageDescriptor
+				.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
 		registry.put(name, result);
 		return result;
 	}
-	
+
 	public static Image get(String key) {
 		return imageRegistry.get(key);
 	}
 
-	
 	private static URL makeIconFileURL(String prefix, String name) {
-		StringBuilder buffer= new StringBuilder(prefix);
+		StringBuilder buffer = new StringBuilder(prefix);
 		buffer.append(name);
 		try {
 			return new URL(fgIconBaseURL, buffer.toString());
@@ -82,7 +82,7 @@ public class LaunchImages {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Helper method to access the image registry from the JavaPlugin class.
 	 */

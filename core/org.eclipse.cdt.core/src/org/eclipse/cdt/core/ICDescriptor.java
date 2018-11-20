@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Element;
+
 /**
  * @deprecated as this API is not configuration aware. Replaced by 
  * {@link ICConfigurationDescription} which can be fetched with 
@@ -30,6 +31,7 @@ import org.w3c.dom.Element;
 @Deprecated
 public interface ICDescriptor {
 	public ICOwnerInfo getProjectOwner();
+
 	public String getPlatform();
 
 	/**

@@ -29,22 +29,20 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * @since 4.4
  */
 @ConfinedToDsfExecutor("fConnection#getExecutor")
-public class CLIEventProcessor_7_7 extends CLIEventProcessor_7_0
-    implements IEventProcessor
-{
-    private final ICommandControlService fControl;
-    private boolean fResetDPrintfStyle;
-    
-    public CLIEventProcessor_7_7(ICommandControlService connection, ICommandControlDMContext controlDmc) {
-    	super(connection, controlDmc);
-    	fControl = connection;
-    }
+public class CLIEventProcessor_7_7 extends CLIEventProcessor_7_0 implements IEventProcessor {
+	private final ICommandControlService fControl;
+	private boolean fResetDPrintfStyle;
+
+	public CLIEventProcessor_7_7(ICommandControlService connection, ICommandControlDMContext controlDmc) {
+		super(connection, controlDmc);
+		fControl = connection;
+	}
 
 	@Override
-    public void eventReceived(Object output) {
+	public void eventReceived(Object output) {
 		if (!fResetDPrintfStyle) {
 			// Only do this if we haven't already reset the dprintf style
-			for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
+			for (MIOOBRecord oobr : ((MIOutput) output).getMIOOBRecords()) {
 				if (oobr instanceof MIConsoleStreamOutput) {
 					MIConsoleStreamOutput exec = (MIConsoleStreamOutput) oobr;
 
@@ -55,10 +53,9 @@ public class CLIEventProcessor_7_7 extends CLIEventProcessor_7_0
 						// and not the 'call' one.
 						fResetDPrintfStyle = true;
 						if (fControl instanceof IMICommandControl) {
-							CommandFactory factory = ((IMICommandControl)fControl).getCommandFactory();
-							fControl.queueCommand(
-									factory.createMIGDBSetDPrintfStyle(fControl.getContext(), MIGDBSetDPrintfStyle.GDB_STYLE),
-									new ImmediateDataRequestMonitor<MIInfo>() {
+							CommandFactory factory = ((IMICommandControl) fControl).getCommandFactory();
+							fControl.queueCommand(factory.createMIGDBSetDPrintfStyle(fControl.getContext(),
+									MIGDBSetDPrintfStyle.GDB_STYLE), new ImmediateDataRequestMonitor<MIInfo>() {
 										@Override
 										protected void handleCompleted() {
 											// We accept errors
@@ -69,6 +66,6 @@ public class CLIEventProcessor_7_7 extends CLIEventProcessor_7_0
 				}
 			}
 		}
-        super.eventReceived(output);
-    }
+		super.eventReceived(output);
+	}
 }

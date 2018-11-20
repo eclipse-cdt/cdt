@@ -49,7 +49,7 @@ public class GetterSetterNameGenerator {
 	// Do not instantiate.
 	private GetterSetterNameGenerator() {
 	}
-	
+
 	public static Set<String> getGenerateGetterSettersPreferenceKeys() {
 		return generateGetterSettersPreferenceKeys;
 	}
@@ -67,7 +67,7 @@ public class GetterSetterNameGenerator {
 		return StubUtility.suggestGetterName(StubUtility.trimFieldName(fieldName.toString()),
 				isBooleanDeclaratorName(fieldName), namesToAvoid, tu);
 	}
-	
+
 	private static boolean isBooleanDeclaratorName(IASTName name) {
 		if (IASTDeclarator.DECLARATOR_NAME.equals(name.getPropertyInParent())) {
 			IASTDeclarator declarator = (IASTDeclarator) name.getParent();

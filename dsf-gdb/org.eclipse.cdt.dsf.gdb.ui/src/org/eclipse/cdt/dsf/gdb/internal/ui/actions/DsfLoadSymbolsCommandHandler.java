@@ -46,7 +46,9 @@ public class DsfLoadSymbolsCommandHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) {
 		final ISelection iselection = HandlerUtil.getCurrentSelection(event);
-		final IStructuredSelection selection = (iselection instanceof IStructuredSelection) ? (IStructuredSelection) iselection : null;
+		final IStructuredSelection selection = (iselection instanceof IStructuredSelection)
+				? (IStructuredSelection) iselection
+				: null;
 		boolean all = event.getCommand().getId().equals("org.eclipse.cdt.debug.ui.command.loadAllSymbols");//$NON-NLS-1$
 		String sessionId = getSessionIdFromContext(selection);
 		loadSymbols(selection, sessionId, all);
@@ -86,7 +88,7 @@ public class DsfLoadSymbolsCommandHandler extends AbstractHandler {
 			try {
 				IModules2 modules = tracker.getService(IModules2.class);
 				if (modules != null) {
-					modules.loadSymbols((IModuleDMContext)context, new RequestMonitor(session.getExecutor(), null) {
+					modules.loadSymbols((IModuleDMContext) context, new RequestMonitor(session.getExecutor(), null) {
 						@Override
 						protected void handleSuccess() {
 							doRefresh(session, module);
@@ -130,9 +132,9 @@ public class DsfLoadSymbolsCommandHandler extends AbstractHandler {
 	private void doRefresh(DsfSession session, Object element) {
 		if (element != null) {
 			try {
-				IRefreshAllTarget refreshTarget = (IRefreshAllTarget)session.getModelAdapter(IRefreshAllTarget.class);
+				IRefreshAllTarget refreshTarget = (IRefreshAllTarget) session.getModelAdapter(IRefreshAllTarget.class);
 				if (refreshTarget != null) {
-					refreshTarget.refresh(new StructuredSelection(element));						
+					refreshTarget.refresh(new StructuredSelection(element));
 				}
 			} catch (CoreException e) {
 				// refresh failed, sad
@@ -150,7 +152,7 @@ public class DsfLoadSymbolsCommandHandler extends AbstractHandler {
 			if (sessionId != null)
 				return sessionId;
 		}
-		
+
 		IAdaptable debugContext = DebugUITools.getDebugContext();
 		String sessionId = null;
 		if (debugContext instanceof IDMVMContext) {

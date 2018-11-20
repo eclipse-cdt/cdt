@@ -24,20 +24,20 @@ public interface IOptionCategory extends IBuildObject {
 
 	// Schema element names
 	public static final String OWNER = "owner"; //$NON-NLS-1$
-	public static final String ICON  = "icon";  //$NON-NLS-1$
-	
-//	 Resource Filter type
+	public static final String ICON = "icon"; //$NON-NLS-1$
+
+	//	 Resource Filter type
 	public static final int FILTER_ALL = 0;
-	public static final String ALL = "all";	//$NON-NLS-1$
+	public static final String ALL = "all"; //$NON-NLS-1$
 	public static final int FILTER_FILE = 1;
 	public static final int FILTER_PROJECT = 2;
-	public static final String PROJECT = "project";	//$NON-NLS-1$
+	public static final String PROJECT = "project"; //$NON-NLS-1$
 
 	/**
 	 * Returns the list of children of this node in the option category tree
 	 */
 	public IOptionCategory[] getChildCategories();
-	
+
 	/**
 	 * Returns an array of ITool/IOption pairs for the options in this category
 	 * for a given configuration.
@@ -45,19 +45,20 @@ public interface IOptionCategory extends IBuildObject {
 	 * @since 3.1
 	 */
 	public Object[][] getOptions(IConfiguration configuration, IHoldsOptions optHolder);
+
 	/**
 	 * @deprecated since 3.1 - use getOption with IHoldsOptions aregument instead
 	 */
 	@Deprecated
 	public Object[][] getOptions(IConfiguration configuration);
 
-//	/**
-//	 * Returns an array of ITool/IOption pairs for the options in this category
-//	 * for a given resource configuration.
-//	 * 
-//	 * @since 3.1
-//	 */
-//	public Object[][] getOptions(IResourceConfiguration resConfig, IHoldsOptions optHolder);
+	//	/**
+	//	 * Returns an array of ITool/IOption pairs for the options in this category
+	//	 * for a given resource configuration.
+	//	 * 
+	//	 * @since 3.1
+	//	 */
+	//	public Object[][] getOptions(IResourceConfiguration resConfig, IHoldsOptions optHolder);
 
 	/**
 	 * Returns an array of ITool/IOption pairs for the options in this category
@@ -66,7 +67,7 @@ public interface IOptionCategory extends IBuildObject {
 	 * @since 3.1
 	 */
 	public Object[][] getOptions(IResourceInfo resInfo, IHoldsOptions optHolder);
-	
+
 	/**
 	 * @deprecated since 3.1 - use getOption with IHoldsOptions argument instead
 	 */
@@ -78,7 +79,7 @@ public interface IOptionCategory extends IBuildObject {
 	 * top category for a tool.
 	 */
 	public IOptionCategory getOwner();
-	
+
 	/**
 	 * Returns the tool that ultimately owns this category.
 	 * If owned by a toolChain return null.
@@ -118,12 +119,12 @@ public interface IOptionCategory extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
 	 */
 	public void setDirty(boolean isDirty);
-	
+
 	/**
 	 * @return an instance of the class that calculates whether the option category is visible.
 	 * @since 8.0

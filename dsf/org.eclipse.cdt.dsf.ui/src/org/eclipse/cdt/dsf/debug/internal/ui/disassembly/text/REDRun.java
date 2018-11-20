@@ -111,7 +111,6 @@ public class REDRun implements CharSequence {
 		return r.fRider == fRider && r.fOffset == fOffset + fLength;
 	}
 
-	
 	/*
 	 * @see java.lang.Object#toString()
 	 */

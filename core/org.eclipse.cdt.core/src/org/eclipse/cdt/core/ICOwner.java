@@ -22,5 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 @Deprecated
 public interface ICOwner {
 	public void configure(ICDescriptor cproject) throws CoreException;
+
 	public void update(ICDescriptor cproject, String extensionID) throws CoreException;
 }

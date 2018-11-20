@@ -24,15 +24,15 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
  * @since 5.1
  */
 public interface IContentAssistHelpInvocationContext extends ICHelpInvocationContext {
-	
+
 	/**
 	 * @return the offset of the content assist.
 	 */
 	int getInvocationOffset();
-	
+
 	/**
 	 * @return the AST completion node or null.
 	 */
 	IASTCompletionNode getCompletionNode();
-	
+
 }

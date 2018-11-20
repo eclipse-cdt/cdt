@@ -36,8 +36,8 @@ public class MembersGrouping extends CElementGrouping {
 	public MembersGrouping(Object parent, String namespace) {
 		super(CElementGrouping.CLASS_GROUPING);
 		assert parent instanceof ICElement || parent instanceof NamespacesGrouping;
-		fParent= parent;
-		fNamespace= namespace;
+		fParent = parent;
+		fNamespace = namespace;
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class MembersGrouping extends CElementGrouping {
 		List<ICElement> nsMembers = new ArrayList<ICElement>();
 		if (fParent instanceof IParent) {
 			try {
-				nsMembers.addAll(getNamespaceChildren(((IParent)fParent).getChildren()));
+				nsMembers.addAll(getNamespaceChildren(((IParent) fParent).getChildren()));
 			} catch (CModelException exc) {
 			}
 		} else if (fParent instanceof NamespacesGrouping) {
@@ -99,7 +99,7 @@ public class MembersGrouping extends CElementGrouping {
 			return true;
 		}
 		if (obj instanceof MembersGrouping) {
-			final MembersGrouping other= (MembersGrouping)obj;
+			final MembersGrouping other = (MembersGrouping) obj;
 			return fParent.equals(other.fParent) && fNamespace.equals(other.fNamespace);
 		}
 		return false;
@@ -109,7 +109,7 @@ public class MembersGrouping extends CElementGrouping {
 	public int hashCode() {
 		return fParent.hashCode() * 17 + fNamespace.hashCode();
 	}
-	
+
 	@Override
 	public String toString() {
 		return fNamespace;

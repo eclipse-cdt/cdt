@@ -26,9 +26,9 @@ package org.eclipse.cdt.managedbuilder.core;
 public interface IAdditionalInput {
 
 	// Schema attribute names for additionalInput elements
-	public static final String ADDITIONAL_INPUT_ELEMENT_NAME = "additionalInput";	//$NON-NLS-1$
-	public static final String PATHS = "paths";	//$NON-NLS-1$
-	public static final String KIND = "kind";	//$NON-NLS-1$
+	public static final String ADDITIONAL_INPUT_ELEMENT_NAME = "additionalInput"; //$NON-NLS-1$
+	public static final String PATHS = "paths"; //$NON-NLS-1$
+	public static final String KIND = "kind"; //$NON-NLS-1$
 	public static final String ADDITIONAL_DEPENDENCY = "additionaldependency"; //$NON-NLS-1$
 	public static final int KIND_ADDITIONAL_DEPENDENCY = 1;
 	public static final String ADDITIONAL_INPUT = "additionalinput"; //$NON-NLS-1$
@@ -66,12 +66,12 @@ public interface IAdditionalInput {
 	 *   KIND_ADDITIONAL_INPUT - added as an additional input to the command line, but not as a dependency.
 	 *   KIND_ADDITIONAL_INPUT_DEPENDENCY - added as both.
 	 * The default is KIND_ADDITIONAL_INPUT_DEPENDENCY
-     */
+	 */
 	public int getKind();
-	
+
 	/**
 	 * Sets the kind of additional input.
-	 */ 
+	 */
 	public void setKind(int kind);
 
 	/**
@@ -81,10 +81,10 @@ public interface IAdditionalInput {
 	 * @return boolean 
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
 	 */
 	public void setDirty(boolean isDirty);
-	
+
 }

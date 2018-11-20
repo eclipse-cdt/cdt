@@ -41,7 +41,7 @@ class CompositeCPPTypedef extends CompositeCPPBinding implements ITypedef, IInde
 	public void setType(IType type) {
 		fail();
 	}
-	
+
 	@Override
 	public Object clone() {
 		return new CPPTypedefClone(this);

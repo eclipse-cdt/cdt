@@ -46,11 +46,11 @@ import org.eclipse.cdt.internal.core.index.composite.CompositeMacroContainer;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 
 public class CCompositesFactory extends AbstractCompositeFactory {
-	
+
 	public CCompositesFactory(IIndex index) {
 		super(index);
 	}
-	
+
 	@Override
 	public IIndexScope getCompositeScope(IIndexScope rscope) {
 		if (rscope == null)
@@ -70,25 +70,25 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 	public IType getCompositeType(IType rtype) {
 		if (rtype instanceof IIndexFragmentBinding) {
 			return (IType) getCompositeBinding((IIndexFragmentBinding) rtype);
-		} 
+		}
 		if (rtype instanceof IFunctionType) {
-			IFunctionType ft= (IFunctionType) rtype;
-			IType r= ft.getReturnType();
-			IType r2= getCompositeType(r);
-			IType[] p= ft.getParameterTypes();
-			IType[] p2= getCompositeTypes(p);
+			IFunctionType ft = (IFunctionType) rtype;
+			IType r = ft.getReturnType();
+			IType r2 = getCompositeType(r);
+			IType[] p = ft.getParameterTypes();
+			IType[] p2 = getCompositeTypes(p);
 			boolean takesVarargs = ft.takesVarArgs();
 			if (r != r2 || p != p2) {
 				return new CFunctionType(r2, p2, takesVarargs);
 			}
 			return ft;
-		} 
+		}
 		if (rtype instanceof ICPointerType) {
-			ICPointerType pt= (ICPointerType) rtype;
-			IType r= pt.getType();
-			IType r2= getCompositeType(r);
+			ICPointerType pt = (ICPointerType) rtype;
+			IType r = pt.getType();
+			IType r2 = getCompositeType(r);
 			if (r != r2) {
-				int q= 0;
+				int q = 0;
 				if (pt.isConst())
 					q |= CPointerType.IS_CONST;
 				if (pt.isVolatile())
@@ -100,31 +100,31 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 			return pt;
 		}
 		if (rtype instanceof ICQualifierType) {
-			ICQualifierType qt= (ICQualifierType) rtype;
-			IType r= qt.getType();
-			IType r2= getCompositeType(r);
+			ICQualifierType qt = (ICQualifierType) rtype;
+			IType r = qt.getType();
+			IType r2 = getCompositeType(r);
 			if (r != r2) {
 				return new CQualifierType(r2, qt.isConst(), qt.isVolatile(), qt.isRestrict());
 			}
 			return qt;
-		} 
+		}
 		if (rtype instanceof ICArrayType) {
-			ICArrayType at= (ICArrayType) rtype;
-			IType r= at.getType();
-			IType r2= getCompositeType(r);
-			IValue v= at.getSize();
-			IValue v2= getCompositeValue(v);
+			ICArrayType at = (ICArrayType) rtype;
+			IType r = at.getType();
+			IType r2 = getCompositeType(r);
+			IValue v = at.getSize();
+			IValue v2 = getCompositeValue(v);
 			if (r != r2 || v != v2) {
 				CArrayType at2 = new CArrayType(r2, at.isConst(), at.isVolatile(), at.isRestrict(), v2);
 				at2.setIsStatic(at.isStatic());
 				at2.setIsVariableLength(at.isVariableLength());
 			}
 			return at;
-		} 
+		}
 		if (rtype instanceof IBasicType || rtype instanceof ISemanticProblem || rtype == null) {
 			return rtype;
-		} 
-		
+		}
+
 		throw new CompositingNotImplementedError();
 	}
 
@@ -139,9 +139,9 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 	@Override
 	public IIndexBinding getCompositeBinding(IIndexFragmentBinding rbinding) {
 		IIndexBinding result;
-		
+
 		if (rbinding == null) {
-			result = null; 
+			result = null;
 		} else if (rbinding instanceof IParameter) {
 			result = new CompositeCParameter(this, rbinding);
 		} else if (rbinding instanceof IField) {
@@ -153,17 +153,18 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 		} else if (rbinding instanceof IEnumeration) {
 			result = new CompositeCEnumeration(this, findOneBinding(rbinding, false));
 		} else if (rbinding instanceof IFunction) {
-			result = new CompositeCFunction(this, rbinding);				
+			result = new CompositeCFunction(this, rbinding);
 		} else if (rbinding instanceof IEnumerator) {
 			result = new CompositeCEnumerator(this, rbinding);
 		} else if (rbinding instanceof ITypedef) {
 			result = new CompositeCTypedef(this, rbinding);
 		} else if (rbinding instanceof IIndexMacroContainer) {
-			result= new CompositeMacroContainer(this, rbinding);
+			result = new CompositeMacroContainer(this, rbinding);
 		} else {
-			throw new CompositingNotImplementedError("Composite binding unavailable for " + rbinding + " " + rbinding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new CompositingNotImplementedError(
+					"Composite binding unavailable for " + rbinding + " " + rbinding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		return result;
 	}
 }

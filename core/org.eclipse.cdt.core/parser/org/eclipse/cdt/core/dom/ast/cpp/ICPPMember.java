@@ -30,14 +30,14 @@ public interface ICPPMember extends ICPPBinding {
 
 	/**
 	 * Returns the accessibility of the member.
-	 */ 
+	 */
 	public int getVisibility();
 
 	/**
 	 * Same as {@link #getOwner()}.
 	 */
 	public ICPPClassType getClassOwner();
-	
+
 	/**
 	 * Returns whether this is a static member or not.
 	 * @since 5.1

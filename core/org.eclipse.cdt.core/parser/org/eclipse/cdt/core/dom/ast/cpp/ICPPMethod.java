@@ -22,13 +22,13 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  */
 public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	public static final ICPPMethod[] EMPTY_CPPMETHOD_ARRAY = {};
-	
+
 	/**
 	 * Returns whether this method is declared to be virtual. Does not detect whether
 	 * the method is virtual because of overriding a virtual method from a base class.
 	 */
 	public boolean isVirtual();
-	
+
 	/**
 	 * Is this a destructor?
 	 * 
@@ -41,7 +41,7 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	 * @since 4.0
 	 */
 	public boolean isImplicit();
-	
+
 	/**
 	 * Returns whether this is an explicit constructor or an explicit conversion operator.
 	 * @since 5.3

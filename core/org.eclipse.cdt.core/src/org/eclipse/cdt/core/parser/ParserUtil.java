@@ -43,14 +43,14 @@ public class ParserUtil {
 	public static IParserLogService getParserLogService() {
 		return parserLogService;
 	}
-		
+
 	public static IParserLogService getScannerLogService() {
 		return scannerLogService;
 	}
-	
+
 	public static char[] findWorkingCopyBuffer(String path, Iterator<IWorkingCopy> workingCopies) {
 		IResource resultingResource = getResourceForFilename(path);
-			
+
 		if (resultingResource != null && resultingResource.getType() == IResource.FILE) {
 			// This is the file for sure. Check the working copy.
 			if (workingCopies.hasNext())
@@ -58,7 +58,7 @@ public class ParserUtil {
 		}
 		return null;
 	}
-	
+
 	@Deprecated
 	public static CodeReader createReader(String path, Iterator<IWorkingCopy> workingCopies) {
 		// check to see if the file which this path points to points to an
@@ -88,29 +88,29 @@ public class ParserUtil {
 			return null;
 		IPath path = new Path(finalPath);
 		IPath initialPath = new Path(finalPath);
-		
+
 		IWorkspaceRoot root = workspace.getRoot();
-        if (root.getLocation().isPrefixOf(path))
+		if (root.getLocation().isPrefixOf(path))
 			path = path.removeFirstSegments(root.getLocation().segmentCount());
 
-        try {
-    		IFile file = root.getFile(path);
-    		if (file != null && file.exists()) 
-    		    return file;
-    		
-            file = root.getFileForLocation(path);
-            if (file != null && file.exists()) 
-                return file;
+		try {
+			IFile file = root.getFile(path);
+			if (file != null && file.exists())
+				return file;
 
-            // check for linked resources
-            file= ResourceLookup.selectFileForLocation(initialPath, null); 
-            if (file != null && file.exists())
-            	return file;
-            
-    		return null;
-        } catch (IllegalArgumentException e) { // thrown on invalid paths
-            return null;
-        }
+			file = root.getFileForLocation(path);
+			if (file != null && file.exists())
+				return file;
+
+			// check for linked resources
+			file = ResourceLookup.selectFileForLocation(initialPath, null);
+			if (file != null && file.exists())
+				return file;
+
+			return null;
+		} catch (IllegalArgumentException e) { // thrown on invalid paths
+			return null;
+		}
 	}
 
 	protected static char[] findWorkingCopy(IResource resultingResource, Iterator<IWorkingCopy> workingCopies) {

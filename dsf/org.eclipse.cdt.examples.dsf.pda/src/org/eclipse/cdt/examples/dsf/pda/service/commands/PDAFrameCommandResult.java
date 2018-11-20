@@ -15,20 +15,19 @@ package org.eclipse.cdt.examples.dsf.pda.service.commands;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 
-
 /**
  * @see PDAFrameCommand
  */
 @Immutable
 public class PDAFrameCommandResult extends PDACommandResult {
-    
-    /**
-     * Frame data return by the frame command.
-     */
-    final public PDAFrame fFrame;
-    
-    PDAFrameCommandResult(String response) {
-        super(response);
-        fFrame = new PDAFrame(response);
-    }
+
+	/**
+	 * Frame data return by the frame command.
+	 */
+	final public PDAFrame fFrame;
+
+	PDAFrameCommandResult(String response) {
+		super(response);
+		fFrame = new PDAFrame(response);
+	}
 }

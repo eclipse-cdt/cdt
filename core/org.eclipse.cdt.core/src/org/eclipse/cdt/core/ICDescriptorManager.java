@@ -31,13 +31,13 @@ public interface ICDescriptorManager {
 	public void convert(IProject project, String id) throws CoreException;
 
 	/**
- 	 * Return the ICDescriptor for the project.  If project doesn't contain
- 	 * an ICDescriptor then one is created.
- 	 * Equivalent to: {@code ICDescriptorManager#getDescriptor(project, true)}
- 	 * 
- 	 * Users should consider batching changes in an ICDescriptorOperation
- 	 * 
- 	 * @see ICDescriptorManager#getDescriptor(IProject, boolean)
+	 * Return the ICDescriptor for the project.  If project doesn't contain
+	 * an ICDescriptor then one is created.
+	 * Equivalent to: {@code ICDescriptorManager#getDescriptor(project, true)}
+	 * 
+	 * Users should consider batching changes in an ICDescriptorOperation
+	 * 
+	 * @see ICDescriptorManager#getDescriptor(IProject, boolean)
 	 * @param project
 	 * @return ICDescriptor
 	 * @throws CoreException
@@ -48,7 +48,7 @@ public interface ICDescriptorManager {
 	 * Return the ICDescriptor for the project.  If project doesn't contain
 	 * an ICDescriptor and create == true, then one is created
 	 * 
- 	 * Users should consider batching changes in an ICDescriptorOperation
+	 * Users should consider batching changes in an ICDescriptorOperation
 	 * 
 	 * @param project
 	 * @param create
@@ -66,7 +66,8 @@ public interface ICDescriptorManager {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor) throws CoreException;
+	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor)
+			throws CoreException;
 
 	/**
 	 * Runs the ICDescriptorOperation on the provided ICProjectDescription. The changes are reconciled into
@@ -80,7 +81,7 @@ public interface ICDescriptorManager {
 	 * @throws CoreException
 	 */
 	public void runDescriptorOperation(IProject project, ICProjectDescription des, ICDescriptorOperation op,
-										IProgressMonitor monitor) throws CoreException;
+			IProgressMonitor monitor) throws CoreException;
 
 	public void addDescriptorListener(ICDescriptorListener listener);
 

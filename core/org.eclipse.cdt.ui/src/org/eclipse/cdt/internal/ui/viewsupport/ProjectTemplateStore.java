@@ -35,18 +35,19 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * @since 5.0
  */
 public final class ProjectTemplateStore {
-	private static final String KEY= "org.eclipse.cdt.ui.text.custom_code_templates"; //$NON-NLS-1$
+	private static final String KEY = "org.eclipse.cdt.ui.text.custom_code_templates"; //$NON-NLS-1$
 
 	private final TemplateStore fInstanceStore;
 	private final TemplateStore fProjectStore;
 
 	public ProjectTemplateStore(IProject project) {
-		fInstanceStore= CUIPlugin.getDefault().getCodeTemplateStore();
+		fInstanceStore = CUIPlugin.getDefault().getCodeTemplateStore();
 		if (project == null) {
-			fProjectStore= null;
+			fProjectStore = null;
 		} else {
-			final ScopedPreferenceStore projectSettings= new ScopedPreferenceStore(new ProjectScope(project), CUIPlugin.PLUGIN_ID);
-			fProjectStore= new TemplateStore(projectSettings, KEY) {
+			final ScopedPreferenceStore projectSettings = new ScopedPreferenceStore(new ProjectScope(project),
+					CUIPlugin.PLUGIN_ID);
+			fProjectStore = new TemplateStore(projectSettings, KEY) {
 				/*
 				 * Make sure we keep the id of added code templates - add removes
 				 * it in the usual add() method
@@ -62,8 +63,8 @@ public final class ProjectTemplateStore {
 
 				@Override
 				public void save() throws IOException {
-					StringWriter output= new StringWriter();
-					TemplateReaderWriter writer= new TemplateReaderWriter();
+					StringWriter output = new StringWriter();
+					TemplateReaderWriter writer = new TemplateReaderWriter();
 					writer.save(getTemplateData(false), output);
 
 					projectSettings.setValue(KEY, output.toString());
@@ -74,13 +75,13 @@ public final class ProjectTemplateStore {
 	}
 
 	public static boolean hasProjectSpecificTempates(IProject project) {
-		String pref= new ProjectScope(project).getNode(CUIPlugin.PLUGIN_ID).get(KEY, null);
+		String pref = new ProjectScope(project).getNode(CUIPlugin.PLUGIN_ID).get(KEY, null);
 		if (pref != null && pref.trim().length() > 0) {
-			Reader input= new StringReader(pref);
-			TemplateReaderWriter reader= new TemplateReaderWriter();
+			Reader input = new StringReader(pref);
+			TemplateReaderWriter reader = new TemplateReaderWriter();
 			TemplatePersistenceData[] datas;
 			try {
-				datas= reader.read(input);
+				datas = reader.read(input);
 				return datas.length > 0;
 			} catch (IOException e) {
 				// ignore
@@ -97,11 +98,11 @@ public final class ProjectTemplateStore {
 	}
 
 	public Template findTemplateById(String id) {
-		Template template= null;
+		Template template = null;
 		if (fProjectStore != null)
-			template= fProjectStore.findTemplateById(id);
+			template = fProjectStore.findTemplateById(id);
 		if (template == null)
-			template= fInstanceStore.findTemplateById(id);
+			template = fInstanceStore.findTemplateById(id);
 
 		return template;
 	}
@@ -110,24 +111,25 @@ public final class ProjectTemplateStore {
 		if (fProjectStore != null) {
 			fProjectStore.load();
 
-			Set<String> datas= new HashSet<String>();
-			TemplatePersistenceData[] data= fProjectStore.getTemplateData(false);
+			Set<String> datas = new HashSet<String>();
+			TemplatePersistenceData[] data = fProjectStore.getTemplateData(false);
 			for (TemplatePersistenceData element : data) {
-				String id= element.getId();
+				String id = element.getId();
 				if (id == null) {
-					id= element.getTemplate().getName();
+					id = element.getTemplate().getName();
 				}
 				datas.add(id);
 			}
 
-			data= fInstanceStore.getTemplateData(false);
+			data = fInstanceStore.getTemplateData(false);
 			for (TemplatePersistenceData orig : data) {
-				String origId= orig.getId();
+				String origId = orig.getId();
 				if (origId == null) {
-					origId= orig.getTemplate().getName();
+					origId = orig.getTemplate().getName();
 				}
 				if (!datas.contains(orig.getId())) {
-					TemplatePersistenceData copy= new TemplatePersistenceData(new Template(orig.getTemplate()), orig.isEnabled(), orig.getId());
+					TemplatePersistenceData copy = new TemplatePersistenceData(new Template(orig.getTemplate()),
+							orig.isEnabled(), orig.getId());
 					fProjectStore.add(copy);
 					copy.setDeleted(true);
 				}
@@ -149,7 +151,7 @@ public final class ProjectTemplateStore {
 	public void setProjectSpecific(String id, boolean projectSpecific) {
 		Assert.isNotNull(fProjectStore);
 
-		TemplatePersistenceData data= fProjectStore.getTemplateData(id);
+		TemplatePersistenceData data = fProjectStore.getTemplateData(id);
 		if (data == null) {
 			return; // does not exist
 		}

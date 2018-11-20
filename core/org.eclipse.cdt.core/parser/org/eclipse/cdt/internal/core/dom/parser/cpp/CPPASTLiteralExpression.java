@@ -58,10 +58,13 @@ import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalExce
  */
 public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression {
 	private static final EvalFixed EVAL_TRUE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, IntegralValue.create(true));
-	private static final EvalFixed EVAL_FALSE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, IntegralValue.create(false));
-	private static final EvalFixed EVAL_NULL_PTR = new EvalFixed(CPPBasicType.NULL_PTR, PRVALUE, IntegralValue.create(0));
+	private static final EvalFixed EVAL_FALSE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE,
+			IntegralValue.create(false));
+	private static final EvalFixed EVAL_NULL_PTR = new EvalFixed(CPPBasicType.NULL_PTR, PRVALUE,
+			IntegralValue.create(0));
 
-	public static final CPPASTLiteralExpression INT_ZERO = new CPPASTLiteralExpression(lk_integer_constant, new char[] {'0'});
+	public static final CPPASTLiteralExpression INT_ZERO = new CPPASTLiteralExpression(lk_integer_constant,
+			new char[] { '0' });
 
 	private int fKind;
 	/**
@@ -77,7 +80,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	private char[] fSuffix;
 	private final char[] fNumericCompilerSuffixes;
 
-	private int fStringLiteralSize;  // Accounting for escape sequences and the null terminator.
+	private int fStringLiteralSize; // Accounting for escape sequences and the null terminator.
 	private ICPPEvaluation fEvaluation;
 	private IBinding fUserDefinedLiteralOperator;
 	private IASTImplicitName[] fImplicitNames;
@@ -150,7 +153,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		fLiteral = getLiteral(value, fSuffix);
 		resetLazyFields();
 	}
-	
+
 	/**
 	 * Adds a suffix to this literal expression.
 	 * 
@@ -233,26 +236,33 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		 * treated as the latter"
 		 */
 		if (len == 1) {
-			switch(fSuffix[0]) {
-			case 'u': case 'U':
-			case 'f': case 'F':
-			case 'l': case 'L':
+			switch (fSuffix[0]) {
+			case 'u':
+			case 'U':
+			case 'f':
+			case 'F':
+			case 'l':
+			case 'L':
 				return true;
 			}
 		}
 		if (len == 2) {
-			switch(fSuffix[0]) {
-			case 'u': case 'U':
+			switch (fSuffix[0]) {
+			case 'u':
+			case 'U':
 				return Character.toLowerCase(fSuffix[1]) == 'l';
-			case 'l': case 'L':
+			case 'l':
+			case 'L':
 				return Character.toLowerCase(fSuffix[1]) == 'l' || Character.toLowerCase(fSuffix[1]) == 'u';
 			}
 		}
 		if (len == 3) {
-			switch(fSuffix[0]) {
-			case 'u': case 'U':
+			switch (fSuffix[0]) {
+			case 'u':
+			case 'U':
 				return Character.toLowerCase(fSuffix[1]) == 'l' && Character.toLowerCase(fSuffix[2]) == 'l';
-			case 'l': case 'L':
+			case 'l':
+			case 'L':
 				return Character.toLowerCase(fSuffix[1]) == 'l' && Character.toLowerCase(fSuffix[2]) == 'u';
 			}
 		}
@@ -273,23 +283,30 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitExpressions) {
 			switch (action.visit(this)) {
-				case ASTVisitor.PROCESS_ABORT: return false;
-				case ASTVisitor.PROCESS_SKIP: return true;
-				default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 
 		if (action.shouldVisitImplicitNames) {
 			for (IASTImplicitName name : getImplicitNames()) {
-				if (!name.accept(action)) return false;
+				if (!name.accept(action))
+					return false;
 			}
 		}
 
 		if (action.shouldVisitExpressions) {
 			switch (action.leave(this)) {
-				case ASTVisitor.PROCESS_ABORT: return false;
-				case ASTVisitor.PROCESS_SKIP: return true;
-				default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 		return true;
@@ -305,7 +322,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 		// Skip past a prefix affecting the character type.
 		if (fLiteral[0] == 'L' || fLiteral[0] == 'u' || fLiteral[0] == 'U') {
-			if(fLiteral[1] == '8') {
+			if (fLiteral[1] == '8') {
 				++start;
 			}
 			++start;
@@ -435,10 +452,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		if (hasSuffix()) {
 			if (hasNumericSuffix()) {
 				switch (fSuffix[0]) {
-				case 'f': case 'F':
+				case 'f':
+				case 'F':
 					kind = Kind.eFloat;
 					break;
-				case 'l': case 'L':
+				case 'l':
+				case 'L':
 					flags |= IBasicType.IS_LONG;
 					break;
 				}
@@ -446,7 +465,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				IType type = getUserDefinedLiteralOperatorType();
 				if (type instanceof IProblemType && hasNumericCompilerSuffix()) {
 					switch (fSuffix[0]) {
-					case 'i': case 'j':
+					case 'i':
+					case 'j':
 						flags |= IBasicType.IS_IMAGINARY;
 						break;
 					}
@@ -467,10 +487,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				int makelong = 0;
 				for (char c : fSuffix) {
 					switch (c) {
-					case 'u': case 'U':
+					case 'u':
+					case 'U':
 						flags |= IBasicType.IS_UNSIGNED;
 						break;
-					case 'l': case 'L':
+					case 'l':
+					case 'L':
 						makelong++;
 						break;
 					}
@@ -484,7 +506,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				IType type = getUserDefinedLiteralOperatorType();
 				if (type instanceof IProblemType && hasNumericCompilerSuffix()) {
 					switch (fSuffix[0]) {
-					case 'i': case 'j':
+					case 'i':
+					case 'j':
 						flags |= IBasicType.IS_IMAGINARY;
 						break;
 					}
@@ -508,8 +531,14 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				return probablyHex(value, i);
 			case 'b':
 				return probablyBinary(value, i);
-			case '0': case '1': case '2': case '3':
-			case '4': case '5': case '6': case '7':
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
 				/* octal-literal:
 				*   0
 				*   octal-literal octal-digit
@@ -774,7 +803,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				int paramCount = params.length;
 				if (paramCount == 0) {
 					// TODO: Support literal operator templates.
-					args = new ICPPEvaluation[]{op};
+					args = new ICPPEvaluation[] { op };
 				} else if (paramCount == 1) {
 					//this means that we need to fall back to the raw literal operator
 					if (params[0].getType() instanceof IPointerType) {
@@ -787,16 +816,16 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 						IType type = new CPPBasicType(Kind.eChar, 0, this);
 						type = new CPPQualifierType(type, true, false);
-						type = new CPPArrayType(type, IntegralValue.create(numLen+1));
+						type = new CPPArrayType(type, IntegralValue.create(numLen + 1));
 						EvalFixed strEval = new EvalFixed(type, LVALUE, CStringValue.create(strValue));
-						args = new ICPPEvaluation[]{op, strEval};
+						args = new ICPPEvaluation[] { op, strEval };
 					} else {
-						args = new ICPPEvaluation[]{op, literalEval};
+						args = new ICPPEvaluation[] { op, literalEval };
 					}
 				} else if (paramCount == 2) {
 					IValue sizeValue = IntegralValue.create(computeStringLiteralSize() - 1);
 					EvalFixed literalSizeEval = new EvalFixed(CPPBasicType.INT, PRVALUE, sizeValue);
-					args = new ICPPEvaluation[]{op, literalEval, literalSizeEval};
+					args = new ICPPEvaluation[] { op, literalEval, literalSizeEval };
 				}
 				return new EvalFunctionCall(args, null, this);
 			}

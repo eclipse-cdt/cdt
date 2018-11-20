@@ -62,7 +62,8 @@ public class LanguageSettingsProvidersPage extends AbstractPage {
 		if (prj != null) {
 			if (!prj.equals(project)) {
 				project = prj;
-				isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
+				isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport
+						.isLanguageSettingsProvidersFunctionalityEnabled(project);
 			}
 			return isLanguageSettingsProvidersEnabled;
 		}
@@ -81,7 +82,7 @@ public class LanguageSettingsProvidersPage extends AbstractPage {
 	public void setLanguageSettingsProvidersEnabled(boolean enable) {
 		isLanguageSettingsProvidersEnabled = enable;
 		project = getProject();
-		forEach(ICPropertyTab.UPDATE,getResDesc());
+		forEach(ICPropertyTab.UPDATE, getResDesc());
 	}
 
 	/**
@@ -90,7 +91,8 @@ public class LanguageSettingsProvidersPage extends AbstractPage {
 	 * @noreference This method is temporary and not intended to be referenced by clients.
 	 */
 	public void applyLanguageSettingsProvidersEnabled() {
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(getProject(), isLanguageSettingsProvidersEnabled);
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(getProject(),
+				isLanguageSettingsProvidersEnabled);
 	}
 
 	@Override

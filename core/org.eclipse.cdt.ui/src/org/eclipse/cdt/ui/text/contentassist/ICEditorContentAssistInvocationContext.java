@@ -77,14 +77,14 @@ public interface ICEditorContentAssistInvocationContext {
 	 * @return the viewer, possibly <code>null</code>
 	 */
 	ITextViewer getViewer();
-	
+
 	/**
 	 * Returns the invocation offset.
 	 * 
 	 * @return the invocation offset
 	 */
 	int getInvocationOffset();
-	
+
 	/**
 	 * Returns <code>true</code> if the current content assist invocation
 	 * is for revealing context information, or <code>false</code> otherwise.
@@ -93,14 +93,14 @@ public interface ICEditorContentAssistInvocationContext {
 	 * is for revealing context information.
 	 */
 	boolean isContextInformationStyle();
-	
+
 	/**
 	 * Returns the document that content assist is invoked on, or <code>null</code> if not known.
 	 * 
 	 * @return the document or <code>null</code>
 	 */
 	IDocument getDocument();
-	
+
 	/**
 	 * Computes the identifier (as specified by {@link Character#isJavaIdentifierPart(char)}) that
 	 * immediately precedes the invocation offset.

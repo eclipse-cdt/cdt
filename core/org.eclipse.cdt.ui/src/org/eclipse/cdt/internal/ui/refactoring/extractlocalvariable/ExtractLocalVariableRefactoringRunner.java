@@ -31,15 +31,14 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
  */
 public class ExtractLocalVariableRefactoringRunner extends RefactoringRunner {
 
-	public ExtractLocalVariableRefactoringRunner(ICElement element, ISelection selection,
-			IShellProvider shellProvider, ICProject cProject) {
+	public ExtractLocalVariableRefactoringRunner(ICElement element, ISelection selection, IShellProvider shellProvider,
+			ICProject cProject) {
 		super(element, selection, shellProvider, cProject);
 	}
 
 	@Override
 	public void run() {
-		ExtractLocalVariableRefactoring refactoring =
-				new ExtractLocalVariableRefactoring(element, selection, project);
+		ExtractLocalVariableRefactoring refactoring = new ExtractLocalVariableRefactoring(element, selection, project);
 		ExtractLocalVariableWizard wizard = new ExtractLocalVariableWizard(refactoring);
 		run(wizard, refactoring, RefactoringSaveHelper.SAVE_NOTHING);
 	}

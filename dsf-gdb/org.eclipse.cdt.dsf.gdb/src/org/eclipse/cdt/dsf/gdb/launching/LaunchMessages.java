@@ -26,24 +26,26 @@ public class LaunchMessages {
 	private static ResourceBundle RESOURCE_BUNDLE = null;
 
 	static {
-        try {
-        	RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-        } catch (MissingResourceException x) {
-        }
+		try {
+			RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+		} catch (MissingResourceException x) {
+		}
 	}
 
-	private LaunchMessages() {}
+	private LaunchMessages() {
+	}
 
 	public static String getFormattedString(String key, String arg) {
 		return MessageFormat.format(getString(key), arg);
 	}
 
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), (Object[])args);
+		return MessageFormat.format(getString(key), (Object[]) args);
 	}
 
 	public static String getString(String key) {
-		if (RESOURCE_BUNDLE == null) return '!' + key + '!';
+		if (RESOURCE_BUNDLE == null)
+			return '!' + key + '!';
 		return RESOURCE_BUNDLE.getString(key);
 	}
 }

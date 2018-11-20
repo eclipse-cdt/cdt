@@ -78,7 +78,7 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 	 */
 	@Override
 	public IProject getProject() {
-		return ((NewCProjectWizard)getWizard()).getNewProject();
+		return ((NewCProjectWizard) getWizard()).getNewProject();
 	}
 
 	/* (non-Javadoc)
@@ -86,6 +86,6 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 	 */
 	@Override
 	public IProject getProjectHandle() {
-		return ((NewCProjectWizard)getWizard()).getProjectHandle();
+		return ((NewCProjectWizard) getWizard()).getProjectHandle();
 	}
 }

@@ -13,6 +13,7 @@
  *     Marc-Andre Laperle - Moved to an operation for a custom wizard page
  *******************************************************************************/
 package org.eclipse.cdt.internal.build.crossgcc;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.cdt.core.templateengine.SharedDefaults;
@@ -35,25 +36,29 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  */
 public class SetCrossCommandOperation implements IRunnableWithProgress {
 
-	public void run(IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException {
-		
-		String projectName = (String) MBSCustomPageManager.getPageProperty(SetCrossCommandWizardPage.PAGE_ID, SetCrossCommandWizardPage.CROSS_PROJECT_NAME);
-		String prefix = (String) MBSCustomPageManager.getPageProperty(SetCrossCommandWizardPage.PAGE_ID, SetCrossCommandWizardPage.CROSS_COMMAND_PREFIX);
-		String path = (String) MBSCustomPageManager.getPageProperty(SetCrossCommandWizardPage.PAGE_ID, SetCrossCommandWizardPage.CROSS_COMMAND_PATH);
-		
-		SharedDefaults.getInstance().getSharedDefaultsMap().put(SetCrossCommandWizardPage.SHARED_DEFAULTS_PATH_KEY, path);
-		SharedDefaults.getInstance().getSharedDefaultsMap().put(SetCrossCommandWizardPage.SHARED_DEFAULTS_PREFIX_KEY, prefix);
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+
+		String projectName = (String) MBSCustomPageManager.getPageProperty(SetCrossCommandWizardPage.PAGE_ID,
+				SetCrossCommandWizardPage.CROSS_PROJECT_NAME);
+		String prefix = (String) MBSCustomPageManager.getPageProperty(SetCrossCommandWizardPage.PAGE_ID,
+				SetCrossCommandWizardPage.CROSS_COMMAND_PREFIX);
+		String path = (String) MBSCustomPageManager.getPageProperty(SetCrossCommandWizardPage.PAGE_ID,
+				SetCrossCommandWizardPage.CROSS_COMMAND_PATH);
+
+		SharedDefaults.getInstance().getSharedDefaultsMap().put(SetCrossCommandWizardPage.SHARED_DEFAULTS_PATH_KEY,
+				path);
+		SharedDefaults.getInstance().getSharedDefaultsMap().put(SetCrossCommandWizardPage.SHARED_DEFAULTS_PREFIX_KEY,
+				prefix);
 		SharedDefaults.getInstance().updateShareDefaultsMap(SharedDefaults.getInstance().getSharedDefaultsMap());
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		if (!project.exists())
 			return;
-		
+
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
 		if (buildInfo == null)
 			return;
-		
+
 		IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
 		for (IConfiguration config : configs) {
 			IToolChain toolchain = config.getToolChain();
@@ -62,7 +67,7 @@ public class SetCrossCommandOperation implements IRunnableWithProgress {
 			option = toolchain.getOptionBySuperClassId("cdt.managedbuild.option.gnu.cross.path"); //$NON-NLS-1$
 			ManagedBuildManager.setOption(config, toolchain, option, path);
 		}
-		
+
 		ManagedBuildManager.saveBuildInfo(project, true);
 	}
 

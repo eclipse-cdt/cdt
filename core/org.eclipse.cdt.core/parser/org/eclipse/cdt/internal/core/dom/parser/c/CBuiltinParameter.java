@@ -32,15 +32,15 @@ public class CBuiltinParameter extends PlatformObject implements IParameter {
 			return IParameter.EMPTY_PARAMETER_ARRAY;
 		}
 		assert !(ft instanceof ICPPFunctionType);
-		IType[] ptypes= ft.getParameterTypes();
-		IParameter[] result= new IParameter[ptypes.length];
+		IType[] ptypes = ft.getParameterTypes();
+		IParameter[] result = new IParameter[ptypes.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i]= new CBuiltinParameter(ptypes[i]);
+			result[i] = new CBuiltinParameter(ptypes[i]);
 		}
 		return result;
 	}
 
-	private IType type= null;
+	private IType type = null;
 
 	public CBuiltinParameter(IType type) {
 		this.type = type;

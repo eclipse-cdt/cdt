@@ -43,8 +43,7 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 				if (statement instanceof IASTIfStatement) {
 					IASTStatement thenStmt = ((IASTIfStatement) statement).getThenClause();
 					IASTStatement elseStmt = ((IASTIfStatement) statement).getElseClause();
-					if (elseStmt instanceof IASTNullStatement && doReportAfterElse() &&
-							!macroInvolved(elseStmt)) {
+					if (elseStmt instanceof IASTNullStatement && doReportAfterElse() && !macroInvolved(elseStmt)) {
 						reportProblem(ER_ID, elseStmt);
 					}
 					if (elseStmt != null && doNotReportIfElse())
@@ -72,9 +71,11 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 		if (includesMacroExpansion(node)) {
 			return true;
 		}
-		IASTNodeSelector nodeSelector = node.getTranslationUnit().getNodeSelector(node.getTranslationUnit().getFilePath());
+		IASTNodeSelector nodeSelector = node.getTranslationUnit()
+				.getNodeSelector(node.getTranslationUnit().getFilePath());
 		IASTFileLocation fileLocation = node.getFileLocation();
-		IASTPreprocessorMacroExpansion macro = nodeSelector.findEnclosingMacroExpansion(fileLocation.getNodeOffset() - 1, 1);
+		IASTPreprocessorMacroExpansion macro = nodeSelector
+				.findEnclosingMacroExpansion(fileLocation.getNodeOffset() - 1, 1);
 		return macro != null;
 	}
 
@@ -82,6 +83,7 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		addPreference(problem, PARAM_ELSE, CheckersMessages.SuspiciousSemicolonChecker_ParamElse, Boolean.FALSE);
-		addPreference(problem, PARAM_ALFTER_ELSE, CheckersMessages.SuspiciousSemicolonChecker_ParamAfterElse, Boolean.FALSE);
+		addPreference(problem, PARAM_ALFTER_ELSE, CheckersMessages.SuspiciousSemicolonChecker_ParamAfterElse,
+				Boolean.FALSE);
 	}
 }

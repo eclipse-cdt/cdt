@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.core.resources.IResourceDelta;
 
-
 /**
  * @see ICElementDelta
  */
@@ -64,7 +63,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Empty array of ICElementDelta
 	 */
-	protected static  ICElementDelta[] fgEmptyDelta= new ICElementDelta[] {};
+	protected static ICElementDelta[] fgEmptyDelta = new ICElementDelta[] {};
 
 	/**
 	 * @see #getAffectedChildren()
@@ -94,16 +93,16 @@ public class CElementDelta implements ICElementDelta {
 	 */
 	protected void addAffectedChild(CElementDelta child) {
 		switch (fKind) {
-			case ADDED:
-			case REMOVED:
-				// no need to add a child if this parent is added or removed
-				return;
-			case CHANGED:
-				fChangeFlags |= F_CHILDREN;
-				break;
-			default:
-				fKind = CHANGED;
-				fChangeFlags |= F_CHILDREN;
+		case ADDED:
+		case REMOVED:
+			// no need to add a child if this parent is added or removed
+			return;
+		case CHANGED:
+			fChangeFlags |= F_CHILDREN;
+			break;
+		default:
+			fKind = CHANGED;
+			fChangeFlags |= F_CHILDREN;
 		}
 
 		// if a child delta is added to a translation unit delta or below,
@@ -113,7 +112,7 @@ public class CElementDelta implements ICElementDelta {
 		}
 
 		if (fAffectedChildren.length == 0) {
-			fAffectedChildren = new ICElementDelta[] {child};
+			fAffectedChildren = new ICElementDelta[] { child };
 			return;
 		}
 
@@ -130,73 +129,73 @@ public class CElementDelta implements ICElementDelta {
 		}
 
 		if (existingChild == null) { //new affected child
-			fAffectedChildren= growAndAddToArray(fAffectedChildren, child);
+			fAffectedChildren = growAndAddToArray(fAffectedChildren, child);
 		} else {
 			switch (existingChild.getKind()) {
+			case ADDED:
+				switch (child.getKind()) {
+				// child was added then added -> it is added
 				case ADDED:
-					switch (child.getKind()) {
-						// child was added then added -> it is added
-						case ADDED:
-						// child was added then changed -> it is added
-						case CHANGED:
-							return;
-
-						// child was added then removed -> noop
-						case REMOVED:
-							fAffectedChildren = removeAndShrinkArray(fAffectedChildren, existingChildIndex);
-							return;
-					}
-					break;
-				case REMOVED:
-					switch (child.getKind()) {
-						// child was removed then added -> it is changed
-						case ADDED:
-							child.fKind = CHANGED;
-							fAffectedChildren[existingChildIndex] = child;
-							return;
-
-						// child was removed then changed -> it is removed
-						case CHANGED:
-						// child was removed then removed -> it is removed
-						case REMOVED:
-							return;
-					}
-					break;
+					// child was added then changed -> it is added
 				case CHANGED:
-					switch (child.getKind()) {
-						// child was changed then added -> it is added
-						case ADDED:
-						// child was changed then removed -> it is removed
-						case REMOVED:
-							fAffectedChildren[existingChildIndex] = child;
-							return;
+					return;
 
-						// child was changed then changed -> it is changed
-						case CHANGED:
-							((CElementDelta) existingChild).fChangeFlags |= child.fChangeFlags;
-							ICElementDelta[] children = child.getAffectedChildren();
-							for (ICElementDelta element : children) {
-								CElementDelta childsChild = (CElementDelta) element;
-								((CElementDelta) existingChild).addAffectedChild(childsChild);
-							}
-							// add the non-c resource deltas if needed
-							// note that the child delta always takes
-							// precedence over this existing child delta
-							// as non-c resource deltas are always
-							// created last (by the DeltaProcessor)
-							IResourceDelta[] resDeltas = child.getResourceDeltas();
-							if (resDeltas != null) {
-								((CElementDelta)existingChild).resourceDeltas = resDeltas;
-								((CElementDelta)existingChild).resourceDeltasCounter = child.resourceDeltasCounter;
-							}
-							return;
-					}
-					break;
-				default:
-					// unknown -> existing child becomes the child with the existing child's flags
-					int flags = existingChild.getFlags();
+				// child was added then removed -> noop
+				case REMOVED:
+					fAffectedChildren = removeAndShrinkArray(fAffectedChildren, existingChildIndex);
+					return;
+				}
+				break;
+			case REMOVED:
+				switch (child.getKind()) {
+				// child was removed then added -> it is changed
+				case ADDED:
+					child.fKind = CHANGED;
 					fAffectedChildren[existingChildIndex] = child;
-					child.fChangeFlags |= flags;
+					return;
+
+				// child was removed then changed -> it is removed
+				case CHANGED:
+					// child was removed then removed -> it is removed
+				case REMOVED:
+					return;
+				}
+				break;
+			case CHANGED:
+				switch (child.getKind()) {
+				// child was changed then added -> it is added
+				case ADDED:
+					// child was changed then removed -> it is removed
+				case REMOVED:
+					fAffectedChildren[existingChildIndex] = child;
+					return;
+
+				// child was changed then changed -> it is changed
+				case CHANGED:
+					((CElementDelta) existingChild).fChangeFlags |= child.fChangeFlags;
+					ICElementDelta[] children = child.getAffectedChildren();
+					for (ICElementDelta element : children) {
+						CElementDelta childsChild = (CElementDelta) element;
+						((CElementDelta) existingChild).addAffectedChild(childsChild);
+					}
+					// add the non-c resource deltas if needed
+					// note that the child delta always takes
+					// precedence over this existing child delta
+					// as non-c resource deltas are always
+					// created last (by the DeltaProcessor)
+					IResourceDelta[] resDeltas = child.getResourceDeltas();
+					if (resDeltas != null) {
+						((CElementDelta) existingChild).resourceDeltas = resDeltas;
+						((CElementDelta) existingChild).resourceDeltasCounter = child.resourceDeltasCounter;
+					}
+					return;
+				}
+				break;
+			default:
+				// unknown -> existing child becomes the child with the existing child's flags
+				int flags = existingChild.getFlags();
+				fAffectedChildren[existingChildIndex] = child;
+				child.fChangeFlags |= flags;
 			}
 		}
 	}
@@ -219,16 +218,16 @@ public class CElementDelta implements ICElementDelta {
 	 */
 	protected void addResourceDelta(IResourceDelta child) {
 		switch (fKind) {
-			case ADDED:
-			case REMOVED:
-				// no need to add a child if this parent is added or removed
-				return;
-			case CHANGED:
-				fChangeFlags |= F_CONTENT;
-				break;
-			default:
-				fKind = CHANGED;
-				fChangeFlags |= F_CONTENT;
+		case ADDED:
+		case REMOVED:
+			// no need to add a child if this parent is added or removed
+			return;
+		case CHANGED:
+			fChangeFlags |= F_CONTENT;
+			break;
+		default:
+			fKind = CHANGED;
+			fChangeFlags |= F_CONTENT;
 		}
 		if (resourceDeltas == null) {
 			resourceDeltas = new IResourceDelta[5];
@@ -237,7 +236,8 @@ public class CElementDelta implements ICElementDelta {
 		}
 		if (resourceDeltas.length == resourceDeltasCounter) {
 			// need a resize
-			System.arraycopy(resourceDeltas, 0, (resourceDeltas = new IResourceDelta[resourceDeltasCounter * 2]), 0, resourceDeltasCounter);
+			System.arraycopy(resourceDeltas, 0, (resourceDeltas = new IResourceDelta[resourceDeltasCounter * 2]), 0,
+					resourceDeltasCounter);
 		}
 		resourceDeltas[resourceDeltasCounter++] = child;
 	}
@@ -280,13 +280,13 @@ public class CElementDelta implements ICElementDelta {
 	 */
 	protected CElementDelta createDeltaTree(ICElement element, CElementDelta delta) {
 		CElementDelta childDelta = delta;
-		ArrayList<ICElement> ancestors= getAncestors(element);
+		ArrayList<ICElement> ancestors = getAncestors(element);
 		if (ancestors == null) {
 			if (equalsAndSameParent(delta.getElement(), getElement())) {
 				// handle case of two jars that can be equals but not in the
 				// same project
 				// the element being changed is the root element
-				fKind= delta.fKind;
+				fKind = delta.fKind;
 				fChangeFlags = delta.fChangeFlags;
 				fMovedToHandle = delta.fMovedToHandle;
 				fMovedFromHandle = delta.fMovedFromHandle;
@@ -314,7 +314,7 @@ public class CElementDelta implements ICElementDelta {
 			return this;
 		}
 		for (ICElementDelta element : fAffectedChildren) {
-			CElementDelta delta = ((CElementDelta)element).find(e);
+			CElementDelta delta = ((CElementDelta) element).find(e);
 			if (delta != null) {
 				return delta;
 			}
@@ -384,7 +384,7 @@ public class CElementDelta implements ICElementDelta {
 		if (length == 0) {
 			return new ICElementDelta[] {};
 		}
-		ArrayList<ICElementDelta> children= new ArrayList<ICElementDelta>(length);
+		ArrayList<ICElementDelta> children = new ArrayList<ICElementDelta>(length);
 		for (int i = 0; i < length; i++) {
 			if (fAffectedChildren[i].getKind() == type) {
 				children.add(fAffectedChildren[i]);
@@ -407,7 +407,7 @@ public class CElementDelta implements ICElementDelta {
 			return null;
 		int childrenCount = fAffectedChildren.length;
 		for (int i = 0; i < childrenCount; i++) {
-			CElementDelta delta = (CElementDelta)fAffectedChildren[i];
+			CElementDelta delta = (CElementDelta) fAffectedChildren[i];
 			if (equalsAndSameParent(delta.getElement(), element)) { // handle case of two jars that can be equals but not in the same project
 				return delta;
 			}
@@ -474,7 +474,8 @@ public class CElementDelta implements ICElementDelta {
 		if (resourceDeltas == null)
 			return null;
 		if (resourceDeltas.length != resourceDeltasCounter) {
-			System.arraycopy(resourceDeltas, 0, resourceDeltas = new IResourceDelta[resourceDeltasCounter], 0, resourceDeltasCounter);
+			System.arraycopy(resourceDeltas, 0, resourceDeltas = new IResourceDelta[resourceDeltasCounter], 0,
+					resourceDeltasCounter);
 		}
 		return resourceDeltas;
 	}
@@ -496,12 +497,11 @@ public class CElementDelta implements ICElementDelta {
 	 * inserts the tree as an affected child of this node.
 	 */
 	protected void insertDeltaTree(ICElement element, CElementDelta delta) {
-		CElementDelta childDelta= createDeltaTree(element, delta);
+		CElementDelta childDelta = createDeltaTree(element, delta);
 		if (!equalsAndSameParent(element, getElement())) {
 			addAffectedChild(childDelta);
 		}
 	}
-
 
 	/**
 	 * Creates the nested deltas resulting from an move operation.
@@ -555,7 +555,7 @@ public class CElementDelta implements ICElementDelta {
 			}
 		}
 		if (index >= 0) {
-			fAffectedChildren= removeAndShrinkArray(fAffectedChildren, index);
+			fAffectedChildren = removeAndShrinkArray(fAffectedChildren, index);
 		}
 	}
 
@@ -580,7 +580,7 @@ public class CElementDelta implements ICElementDelta {
 	 * and then the delete operation should call this method.
 	 */
 	public void removed(ICElement element) {
-		CElementDelta removedDelta= new CElementDelta(element);
+		CElementDelta removedDelta = new CElementDelta(element);
 		insertDeltaTree(element, removedDelta);
 		CElementDelta actualDelta = getDeltaFor(element);
 		if (actualDelta != null) {
@@ -637,24 +637,24 @@ public class CElementDelta implements ICElementDelta {
 	 */
 	public String toDebugString(int depth) {
 		StringBuilder buffer = new StringBuilder();
-		for (int i= 0; i < depth; i++) {
+		for (int i = 0; i < depth; i++) {
 			buffer.append('\t');
 		}
-		buffer.append(((CElement)getElement()).toDebugString());
+		buffer.append(((CElement) getElement()).toDebugString());
 		buffer.append(" ["); //$NON-NLS-1$
 		switch (getKind()) {
-			case ICElementDelta.ADDED :
-				buffer.append('+');
-				break;
-			case ICElementDelta.REMOVED :
-				buffer.append('-');
-				break;
-			case ICElementDelta.CHANGED :
-				buffer.append('*');
-				break;
-			default :
-				buffer.append('?');
-				break;
+		case ICElementDelta.ADDED:
+			buffer.append('+');
+			break;
+		case ICElementDelta.REMOVED:
+			buffer.append('-');
+			break;
+		case ICElementDelta.CHANGED:
+			buffer.append('*');
+			break;
+		default:
+			buffer.append('?');
+			break;
 		}
 		buffer.append("]: {"); //$NON-NLS-1$
 		int changeFlags = getFlags();
@@ -749,25 +749,25 @@ public class CElementDelta implements ICElementDelta {
 
 		for (int i = 0; i < resourceDeltasCounter; i++) {
 			buffer.append("\n");//$NON-NLS-1$
-			for (int j = 0; j < depth+1; j++) {
+			for (int j = 0; j < depth + 1; j++) {
 				buffer.append('\t');
 			}
 			IResourceDelta resourceDelta = resourceDeltas[i];
 			buffer.append(resourceDelta.toString());
 			buffer.append("["); //$NON-NLS-1$
 			switch (resourceDelta.getKind()) {
-				case IResourceDelta.ADDED :
-					buffer.append('+');
-					break;
-				case IResourceDelta.REMOVED :
-					buffer.append('-');
-					break;
-				case IResourceDelta.CHANGED :
-					buffer.append('*');
-					break;
-				default :
-					buffer.append('?');
-					break;
+			case IResourceDelta.ADDED:
+				buffer.append('+');
+				break;
+			case IResourceDelta.REMOVED:
+				buffer.append('-');
+				break;
+			case IResourceDelta.CHANGED:
+				buffer.append('*');
+				break;
+			default:
+				buffer.append('?');
+				break;
 			}
 			buffer.append("]"); //$NON-NLS-1$
 		}

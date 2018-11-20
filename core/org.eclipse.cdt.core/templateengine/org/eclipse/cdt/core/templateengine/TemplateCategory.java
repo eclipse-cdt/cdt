@@ -25,23 +25,23 @@ public class TemplateCategory {
 	private final String id;
 	private String label;
 	private List<String> parentCategoryIds;
-	
+
 	public TemplateCategory(String id, String label, List<String> parentCategoryIds) {
 		this.id = id;
 		this.label = label;
 		this.parentCategoryIds = parentCategoryIds;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
-	
+
 	public String getLabel() {
 		return label;
 	}
-	
+
 	public List<String> getParentCategoryIds() {
 		return parentCategoryIds;
 	}
-	
+
 }

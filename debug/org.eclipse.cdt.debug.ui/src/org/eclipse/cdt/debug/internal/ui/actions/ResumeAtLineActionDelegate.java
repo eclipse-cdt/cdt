@@ -12,7 +12,7 @@
  * QNX Software Systems - Initial API and implementation
  * Ericsson             - Updated to latest platform code
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -39,20 +39,20 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
- 
+
 /**
  * A resume at line action that can be contributed to a an editor. The action
  * will perform the "resume at line" operation for editors that provide
  * an appropriate <code>IResumeAtLineTarget</code> adapter.
  */
 public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActionDelegate2, IViewActionDelegate {
-	
+
 	private IWorkbenchPart fActivePart = null;
 	private IResumeAtLineTarget fPartTarget = null;
 	private IAction fAction = null;
 	private DebugContextListener fContextListener = new DebugContextListener();
 	private ISuspendResume fTargetElement = null;
-	
+
 	class DebugContextListener implements IDebugContextListener {
 
 		protected void contextActivated(ISelection selection) {
@@ -60,8 +60,8 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if (ss.size() == 1) {
-                    fTargetElement = (ISuspendResume)
-                        DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
+					fTargetElement = (ISuspendResume) DebugPlugin.getAdapter(ss.getFirstElement(),
+							ISuspendResume.class);
 				}
 			}
 			update();
@@ -71,19 +71,21 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 		public void debugContextChanged(DebugContextEvent event) {
 			contextActivated(event.getContext());
 		}
-		
-	}		
-	
+
+	}
+
 	/*(non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	@Override
 	public void dispose() {
-		DebugUITools.getDebugContextManager().getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
+		DebugUITools.getDebugContextManager().getContextService(fActivePart.getSite().getWorkbenchWindow())
+				.removeDebugContextListener(fContextListener);
 		fActivePart = null;
 		fPartTarget = null;
-		
+
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -91,12 +93,16 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 	public void run(IAction action) {
 		if (fPartTarget != null && fTargetElement != null) {
 			try {
-				fPartTarget.resumeAtLine(fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(), fTargetElement);
+				fPartTarget.resumeAtLine(fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(),
+						fTargetElement);
 			} catch (CoreException e) {
-				ErrorDialog.openError( fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.getString( "ResumeAtLineActionDelegate.1" ), ActionMessages.getString( "ResumeAtLineActionDelegate.2" ), e.getStatus() ); //$NON-NLS-1$ //$NON-NLS-2$
+				ErrorDialog.openError(fActivePart.getSite().getWorkbenchWindow().getShell(),
+						ActionMessages.getString("ResumeAtLineActionDelegate.1"), //$NON-NLS-1$
+						ActionMessages.getString("ResumeAtLineActionDelegate.2"), e.getStatus()); //$NON-NLS-1$
 			}
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -105,7 +111,7 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 		this.fAction = action;
 		update();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
@@ -120,26 +126,28 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 				if (fPartTarget != null && fTargetElement != null) {
 					IWorkbenchPartSite site = fActivePart.getSite();
 					if (site != null) {
-					    ISelectionProvider selectionProvider = site.getSelectionProvider();
-					    if (selectionProvider != null) {
-					        ISelection selection = selectionProvider.getSelection();
-					        enabled = fTargetElement.isSuspended() && fPartTarget.canResumeAtLine(fActivePart, selection, fTargetElement);
-					    }
+						ISelectionProvider selectionProvider = site.getSelectionProvider();
+						if (selectionProvider != null) {
+							ISelection selection = selectionProvider.getSelection();
+							enabled = fTargetElement.isSuspended()
+									&& fPartTarget.canResumeAtLine(fActivePart, selection, fTargetElement);
+						}
 					}
 				}
-				fAction.setEnabled(enabled);				
+				fAction.setEnabled(enabled);
 			}
 		};
 		CDebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	@Override
 	public void init(IAction action) {
-		this.fAction = action; 
+		this.fAction = action;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
@@ -147,15 +155,16 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		init(action);
-		bindTo(targetEditor);	
+		bindTo(targetEditor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
@@ -163,7 +172,7 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 	public void init(IViewPart view) {
 		bindTo(view);
 	}
-	
+
 	/**
 	 * Binds this action to operate on the given part's IResumeAtLineTarget adapter.
 	 *  
@@ -172,7 +181,8 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 	private void bindTo(IWorkbenchPart part) {
 		IDebugContextManager manager = DebugUITools.getDebugContextManager();
 		if (fActivePart != null && !fActivePart.equals(part)) {
-			manager.getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
+			manager.getContextService(fActivePart.getSite().getWorkbenchWindow())
+					.removeDebugContextListener(fContextListener);
 		}
 		fPartTarget = null;
 		fActivePart = part;
@@ -180,17 +190,18 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 			IWorkbenchWindow workbenchWindow = part.getSite().getWorkbenchWindow();
 			IDebugContextService service = manager.getContextService(workbenchWindow);
 			service.addDebugContextListener(fContextListener);
-			fPartTarget  = part.getAdapter(IResumeAtLineTarget.class);
+			fPartTarget = part.getAdapter(IResumeAtLineTarget.class);
 			if (fPartTarget == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on
 				if (adapterManager.hasAdapter(part, IResumeAtLineTarget.class.getName())) {
-					fPartTarget = (IResumeAtLineTarget) adapterManager.loadAdapter(part, IResumeAtLineTarget.class.getName());
+					fPartTarget = (IResumeAtLineTarget) adapterManager.loadAdapter(part,
+							IResumeAtLineTarget.class.getName());
 				}
 			}
 			ISelection activeContext = service.getActiveContext();
 			fContextListener.contextActivated(activeContext);
 		}
-		update();			
+		update();
 	}
 }

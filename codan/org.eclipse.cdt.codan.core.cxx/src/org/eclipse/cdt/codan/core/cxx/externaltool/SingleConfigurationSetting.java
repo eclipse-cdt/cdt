@@ -37,8 +37,7 @@ public class SingleConfigurationSetting<T> {
 	 * @param defaultValue the setting's default value.
 	 * @param valueType the type of the value to store (used for safe casting.)
 	 */
-	public SingleConfigurationSetting(IProblemPreferenceDescriptor descriptor, T defaultValue,
-			Class<T> valueType) {
+	public SingleConfigurationSetting(IProblemPreferenceDescriptor descriptor, T defaultValue, Class<T> valueType) {
 		this.descriptor = descriptor;
 		this.defaultValue = defaultValue;
 		this.valueType = valueType;

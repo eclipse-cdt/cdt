@@ -25,32 +25,31 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.swt.widgets.Display;
 
-
 public class CTestPlugin extends Plugin {
 	public static String PLUGIN_ID = "org.eclipse.cdt.ui.tests"; //$NON-NLS-1$
 	private static CTestPlugin fgDefault;
-	
+
 	public CTestPlugin() {
 		super();
-		fgDefault= this;
+		fgDefault = this;
 	}
-	
+
 	public static CTestPlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-	
+
 	public static void enableAutobuild(boolean enable) throws CoreException {
 		// disable auto build
-		IWorkspace workspace= CTestPlugin.getWorkspace();
-		IWorkspaceDescription desc= workspace.getDescription();
+		IWorkspace workspace = CTestPlugin.getWorkspace();
+		IWorkspaceDescription desc = workspace.getDescription();
 		desc.setAutoBuilding(enable);
 		workspace.setDescription(desc);
 	}
-	
+
 	public File getFileInPlugin(IPath path) {
 		try {
 			return new File(FileLocator.toFileURL(FileLocator.find(getBundle(), path, null)).getFile());
@@ -58,16 +57,16 @@ public class CTestPlugin extends Plugin {
 			return null;
 		}
 	}
-	
+
 	public static String getPluginId() {
 		return PLUGIN_ID;
 	}
-	
+
 	public static Display getStandardDisplay() {
-		Display display= Display.getCurrent();
+		Display display = Display.getCurrent();
 		if (display == null) {
-			display= Display.getDefault();
+			display = Display.getDefault();
 		}
-		return display;		
+		return display;
 	}
 }

@@ -27,6 +27,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  */
 public class MIGDBSetTargetCharset extends MIGDBSet {
 	public MIGDBSetTargetCharset(ICommandControlDMContext ctx, String targetCharset) {
-		super(ctx, new String[] {"target-charset", targetCharset}); //$NON-NLS-1$
+		super(ctx, new String[] { "target-charset", targetCharset }); //$NON-NLS-1$
 	}
 }

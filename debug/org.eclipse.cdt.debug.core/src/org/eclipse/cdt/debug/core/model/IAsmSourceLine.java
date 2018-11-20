@@ -23,7 +23,7 @@ public interface IAsmSourceLine {
 	 *  
 	 * @return the array of the disassembly instructions associated with this source line
 	 */
-	IAsmInstruction[] getInstructions(); 
+	IAsmInstruction[] getInstructions();
 
 	/**
 	 * Returns the number of this line in the source file

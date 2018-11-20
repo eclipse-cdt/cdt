@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
-
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -28,7 +27,6 @@ public class GoogleTestsRunnerPlugin extends Plugin {
 
 	/** Plug-in instance. */
 	private static GoogleTestsRunnerPlugin plugin;
-
 
 	public GoogleTestsRunnerPlugin() {
 		super();

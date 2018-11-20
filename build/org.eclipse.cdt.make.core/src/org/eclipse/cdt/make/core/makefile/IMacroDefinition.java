@@ -20,7 +20,7 @@ package org.eclipse.cdt.make.core.makefile;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IMacroDefinition  extends IDirective {
+public interface IMacroDefinition extends IDirective {
 
 	/**
 	 * @return the name of the macro

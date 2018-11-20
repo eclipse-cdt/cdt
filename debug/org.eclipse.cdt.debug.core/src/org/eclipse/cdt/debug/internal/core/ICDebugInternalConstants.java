@@ -33,12 +33,14 @@ public class ICDebugInternalConstants {
 	 * This preference is superseded by PREF_DEFAULT_SOURCE_CONTAINERS. Kept for backward
 	 * compatibility only.
 	 */
-	public static final String PREF_COMMON_SOURCE_CONTAINERS = CDebugCorePlugin.getUniqueIdentifier() + ".cDebug.common_source_containers"; //$NON-NLS-1$
+	public static final String PREF_COMMON_SOURCE_CONTAINERS = CDebugCorePlugin.getUniqueIdentifier()
+			+ ".cDebug.common_source_containers"; //$NON-NLS-1$
 
 	/**
 	 * String preference for the default source containers.
 	 */
-	public static final String PREF_DEFAULT_SOURCE_CONTAINERS = CDebugCorePlugin.getUniqueIdentifier() + ".cDebug.default_source_containers"; //$NON-NLS-1$
+	public static final String PREF_DEFAULT_SOURCE_CONTAINERS = CDebugCorePlugin.getUniqueIdentifier()
+			+ ".cDebug.default_source_containers"; //$NON-NLS-1$
 
 	/**
 	 * Boolean preference indicating the on/off state of the Show Full Paths
@@ -47,7 +49,7 @@ public class ICDebugInternalConstants {
 	 * plus this key
 	 */
 	public static final String SHOW_FULL_PATHS_PREF_KEY = "org.eclipse.cdt.debug.ui.cDebug.show_full_paths"; //$NON-NLS-1$	
-	
+
 	/**
 	 * An attribute set by a non-ICBreakpoint to support fullpath capability in the Breakpoints view. 
 	 * If this attribute exists, not <code>null</code>, in the breakpoint marker or the breakpoint is an 

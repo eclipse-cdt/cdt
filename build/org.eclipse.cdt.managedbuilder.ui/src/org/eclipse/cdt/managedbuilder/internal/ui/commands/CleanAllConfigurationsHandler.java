@@ -34,23 +34,20 @@ import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 public class CleanAllConfigurationsHandler extends AbstractResourceActionHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		List<IProject> projects =
-				RebuildConfigurationsHandler.getSelectedCdtProjects(getSelection(event));
+		List<IProject> projects = RebuildConfigurationsHandler.getSelectedCdtProjects(getSelection(event));
 		if (!projects.isEmpty()) {
 			// Setup the global build console.
 			CUIPlugin.getDefault().startGlobalConsole();
 
 			for (IProject project : projects) {
-				ICProjectDescription projectDescription =
-						CoreModel.getDefault().getProjectDescription(project, false);
+				ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(project, false);
 				if (projectDescription != null) {
 					ICConfigurationDescription[] cfgds = projectDescription.getConfigurations();
 					if (cfgds != null && cfgds.length > 0) {
 						// Save all dirty editors.
 						BuildUtilities.saveEditors(null);
 
-						Job buildJob =
-								new BuildConfigurationsJob(cfgds, IncrementalProjectBuilder.CLEAN_BUILD, 0);
+						Job buildJob = new BuildConfigurationsJob(cfgds, IncrementalProjectBuilder.CLEAN_BUILD, 0);
 						buildJob.schedule();
 					}
 				}

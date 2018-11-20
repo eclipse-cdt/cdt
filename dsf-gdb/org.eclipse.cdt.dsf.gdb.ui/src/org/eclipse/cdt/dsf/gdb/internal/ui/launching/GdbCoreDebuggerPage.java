@@ -56,7 +56,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 	private IMILaunchConfigurationComponent fSolibBlock;
 	private boolean fIsInitializing = false;
 
-    @Override
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
@@ -68,7 +68,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		setControl(parent);
 	}
 
-    @Override
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
 		String defaultGdbCommand = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND);
@@ -93,45 +93,44 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		return valid;
 	}
 
-    @Override
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setInitializing(true);
 		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
 		String defaultGdbCommand = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND);
 		String defaultGdbInit = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT);
-		
+
 		String gdbCommand = defaultGdbCommand;
 		String gdbInit = defaultGdbInit;
-		
+
 		try {
-			gdbCommand = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
-		} catch(CoreException e) {
+			gdbCommand = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
+					defaultGdbCommand);
+		} catch (CoreException e) {
 		}
 		try {
 			gdbInit = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, defaultGdbInit);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 		}
 
 		if (fSolibBlock != null)
 			fSolibBlock.initializeFrom(configuration);
 		fGDBCommandText.setText(gdbCommand);
 		fGDBInitText.setText(gdbInit);
-		
-		setInitializing(false); 
+
+		setInitializing(false);
 	}
 
-    @Override
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
-				                   fGDBCommandText.getText().trim());
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT,
-				                   fGDBInitText.getText().trim());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, fGDBCommandText.getText().trim());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, fGDBInitText.getText().trim());
 
 		if (fSolibBlock != null)
 			fSolibBlock.performApply(configuration);
 	}
 
-    @Override
+	@Override
 	public String getName() {
 		return LaunchUIMessages.getString("GDBDebuggerPage.tab_name"); //$NON-NLS-1$
 	}
@@ -157,14 +156,14 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
-    @Override
+	@Override
 	public void update(Observable o, Object arg) {
 		if (!isInitializing())
 			updateLaunchConfigurationDialog();
 	}
 
 	public IMILaunchConfigurationComponent createSolibBlock(Composite parent) {
-		IMILaunchConfigurationComponent block = new GDBSolibBlock( new SolibSearchPathBlock(), true, true); 
+		IMILaunchConfigurationComponent block = new GDBSolibBlock(new SolibSearchPathBlock(), true, true);
 		block.createControl(parent);
 		return block;
 	}
@@ -178,11 +177,11 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(LaunchUIMessages.getString("GDBDebuggerPage.main_tab_name")); //$NON-NLS-1$
 		Composite comp = ControlFactory.createCompositeEx(tabFolder, 1, GridData.FILL_BOTH);
-		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
 		comp.setFont(tabFolder.getFont());
 		tabItem.setControl(comp);
 		Composite subComp = ControlFactory.createCompositeEx(comp, 3, GridData.FILL_HORIZONTAL);
-		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout) subComp.getLayout()).makeColumnsEqualWidth = false;
 		subComp.setFont(tabFolder.getFont());
 		Label label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_debugger")); //$NON-NLS-1$
 		GridData gd = new GridData();
@@ -190,7 +189,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		label.setLayoutData(gd);
 		fGDBCommandText = ControlFactory.createTextField(subComp, SWT.SINGLE | SWT.BORDER);
 		fGDBCommandText.addModifyListener(new ModifyListener() {
-            @Override
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				if (!isInitializing())
 					updateLaunchConfigurationDialog();
@@ -213,7 +212,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 					String cmd = gdbCommand.substring(0, lastSeparatorIndex);
 					// remove double quotes, since they interfere with 
 					// "setFilterPath()" below
-					cmd = cmd.replaceAll("\\\"", "");  //$NON-NLS-1$//$NON-NLS-2$
+					cmd = cmd.replaceAll("\\\"", ""); //$NON-NLS-1$//$NON-NLS-2$
 					dialog.setFilterPath(cmd);
 				}
 				String res = dialog.open();
@@ -236,7 +235,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fGDBInitText.setLayoutData(gd);
 		fGDBInitText.addModifyListener(new ModifyListener() {
-            @Override
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				if (!isInitializing())
 					updateLaunchConfigurationDialog();
@@ -272,7 +271,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		gd.widthHint = 200;
-		label.setLayoutData(gd);		
+		label.setLayoutData(gd);
 	}
 
 	public void createSolibTab(TabFolder tabFolder) {
@@ -283,7 +282,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		tabItem.setControl(comp);
 		fSolibBlock = createSolibBlock(comp);
 		if (fSolibBlock instanceof Observable)
-			((Observable)fSolibBlock).addObserver(this);
+			((Observable) fSolibBlock).addObserver(this);
 	}
 
 	/*
@@ -295,7 +294,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 	public void dispose() {
 		if (fSolibBlock != null) {
 			if (fSolibBlock instanceof Observable)
-				((Observable)fSolibBlock).deleteObserver(this);
+				((Observable) fSolibBlock).deleteObserver(this);
 			fSolibBlock.dispose();
 		}
 		super.dispose();

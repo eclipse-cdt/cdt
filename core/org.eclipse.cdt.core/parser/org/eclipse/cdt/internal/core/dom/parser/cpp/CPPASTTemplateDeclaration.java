@@ -29,15 +29,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  */
 public class CPPASTTemplateDeclaration extends ASTNode
 		implements ICPPASTInternalTemplateDeclaration, IASTAmbiguityParent {
-    private boolean exported;
-    private byte isAssociatedWithLastName= -1;
-    private short nestingLevel= -1;
-    private IASTDeclaration declaration;
-    private ICPPTemplateScope templateScope;
-    private ICPPASTTemplateParameter[] parameters;
-    private int parametersPos= -1;
+	private boolean exported;
+	private byte isAssociatedWithLastName = -1;
+	private short nestingLevel = -1;
+	private IASTDeclaration declaration;
+	private ICPPTemplateScope templateScope;
+	private ICPPASTTemplateParameter[] parameters;
+	private int parametersPos = -1;
 
-    public CPPASTTemplateDeclaration() {
+	public CPPASTTemplateDeclaration() {
 	}
 
 	public CPPASTTemplateDeclaration(IASTDeclaration declaration) {
@@ -61,46 +61,47 @@ public class CPPASTTemplateDeclaration extends ASTNode
 
 	@Override
 	public boolean isExported() {
-        return exported;
-    }
+		return exported;
+	}
 
-    @Override
+	@Override
 	public void setExported(boolean value) {
-        assertNotFrozen();
-        exported = value;
-    }
+		assertNotFrozen();
+		exported = value;
+	}
 
-    @Override
+	@Override
 	public IASTDeclaration getDeclaration() {
-        return declaration;
-    }
+		return declaration;
+	}
 
-    @Override
+	@Override
 	public void setDeclaration(IASTDeclaration declaration) {
-        assertNotFrozen();
-        this.declaration = declaration;
-        if (declaration != null) {
+		assertNotFrozen();
+		this.declaration = declaration;
+		if (declaration != null) {
 			declaration.setParent(this);
 			declaration.setPropertyInParent(OWNED_DECLARATION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public ICPPASTTemplateParameter[] getTemplateParameters() {
-        if (parameters == null) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
-        parameters = ArrayUtil.trimAt(ICPPASTTemplateParameter.class, parameters, parametersPos);
-        return parameters;
-    }
+		if (parameters == null)
+			return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
+		parameters = ArrayUtil.trimAt(ICPPASTTemplateParameter.class, parameters, parametersPos);
+		return parameters;
+	}
 
-    @Override
+	@Override
 	public void addTemplateParameter(ICPPASTTemplateParameter parm) {
-        assertNotFrozen();
-    	if (parm != null) {
-    		parameters = ArrayUtil.appendAt(ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm);
-    		parm.setParent(this);
+		assertNotFrozen();
+		if (parm != null) {
+			parameters = ArrayUtil.appendAt(ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm);
+			parm.setParent(this);
 			parm.setPropertyInParent(PARAMETER);
-    	}
-    }
+		}
+	}
 
 	@Deprecated
 	@Override
@@ -108,32 +109,40 @@ public class CPPASTTemplateDeclaration extends ASTNode
 		addTemplateParameter(param);
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclarations) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        ICPPASTTemplateParameter[] params = getTemplateParameters();
-        for (int i = 0; i < params.length; i++) {
-            if (!params[i].accept(action)) return false;
-        }
-
-        if (declaration != null && !declaration.accept(action)) return false;
-
-        if (action.shouldVisitDeclarations) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		ICPPASTTemplateParameter[] params = getTemplateParameters();
+		for (int i = 0; i < params.length; i++) {
+			if (!params[i].accept(action))
+				return false;
 		}
-        return true;
-    }
+
+		if (declaration != null && !declaration.accept(action))
+			return false;
+
+		if (action.shouldVisitDeclarations) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public ICPPTemplateScope getScope() {
@@ -142,14 +151,14 @@ public class CPPASTTemplateDeclaration extends ASTNode
 		return templateScope;
 	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (declaration == child) {
-            other.setParent(child.getParent());
-            other.setPropertyInParent(child.getPropertyInParent());
-            declaration = (IASTDeclaration) other;
-        }
-    }
+		if (declaration == child) {
+			other.setParent(child.getParent());
+			other.setPropertyInParent(child.getPropertyInParent());
+			declaration = (IASTDeclaration) other;
+		}
+	}
 
 	@Override
 	public short getNestingLevel() {
@@ -171,12 +180,12 @@ public class CPPASTTemplateDeclaration extends ASTNode
 
 	@Override
 	public void setAssociatedWithLastName(boolean value) {
-		isAssociatedWithLastName= value ? (byte) 1 : (byte) 0;
+		isAssociatedWithLastName = value ? (byte) 1 : (byte) 0;
 	}
 
 	@Override
 	public void setNestingLevel(short level) {
 		assert level >= 0;
-		nestingLevel= level;
+		nestingLevel = level;
 	}
 }

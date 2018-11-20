@@ -72,18 +72,18 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
 		return getName() + " " + ASTTypeUtil.getArgumentListString(fArguments, true); //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-    	if ((obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)) {
-    		final ICPPTemplateInstance inst = (ICPPTemplateInstance) obj;
-			ICPPFunctionType ct1= ((ICPPFunction) getSpecializedBinding()).getType();
-			ICPPFunctionType ct2= ((ICPPFunction) inst.getTemplateDefinition()).getType();
+		if ((obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)) {
+			final ICPPTemplateInstance inst = (ICPPTemplateInstance) obj;
+			ICPPFunctionType ct1 = ((ICPPFunction) getSpecializedBinding()).getType();
+			ICPPFunctionType ct2 = ((ICPPFunction) inst.getTemplateDefinition()).getType();
 			if (!ct1.isSameType(ct2))
 				return false;
 
 			return CPPTemplates.haveSameArguments(this, inst);
-    	}
+		}
 
-    	return false;
-    }
+		return false;
+	}
 }

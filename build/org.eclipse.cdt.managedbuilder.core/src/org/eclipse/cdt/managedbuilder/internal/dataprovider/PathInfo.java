@@ -27,38 +27,37 @@ class PathInfo {
 	private String fAbsoluteInfoStr;
 	private Boolean fIsAbsolute;
 	private SupplierBasedCdtVariableSubstitutor fSubstitutor;
-	
+
 	private static final boolean IS_WINDOWS = File.separatorChar == '\\';
 
-
-	public PathInfo(String str, boolean isWspPath, SupplierBasedCdtVariableSubstitutor subst){
+	public PathInfo(String str, boolean isWspPath, SupplierBasedCdtVariableSubstitutor subst) {
 		fUnresolvedStr = str;
 		fIsWorkspacePath = isWspPath;
 		fSubstitutor = subst;
 	}
 
-	public String getUnresolvedPath(){
+	public String getUnresolvedPath() {
 		return fUnresolvedStr;
 	}
-	
-	public boolean isWorkspacePath(){
+
+	public boolean isWorkspacePath() {
 		return fIsWorkspacePath;
 	}
-	
-	public boolean isAbsolute(){
-		if(fIsAbsolute == null)
+
+	public boolean isAbsolute() {
+		if (fIsAbsolute == null)
 			fIsAbsolute = Boolean.valueOf(checkIsAbsolute());
 		return fIsAbsolute.booleanValue();
 	}
-	
-	private boolean checkIsAbsolute(){
-//		if(fIsWorkspacePath)
-//			return true;
-		
-		if(fResolvedPath != null)
+
+	private boolean checkIsAbsolute() {
+		//		if(fIsWorkspacePath)
+		//			return true;
+
+		if (fResolvedPath != null)
 			return fResolvedPath.isAbsolute();
 
-		if(fAbsoluteInfoStr != null){
+		if (fAbsoluteInfoStr != null) {
 			return isAbsolute(fAbsoluteInfoStr, fSubstitutor, new String[1]);
 		}
 
@@ -67,32 +66,32 @@ class PathInfo {
 		fAbsoluteInfoStr = str[0];
 		return isAbs;
 	}
-	
-	private static boolean isAbsolute(String str, SupplierBasedCdtVariableSubstitutor subst, String[] out){
+
+	private static boolean isAbsolute(String str, SupplierBasedCdtVariableSubstitutor subst, String[] out) {
 		int length = str.length();
 		out[0] = str;
-		if(length == 0)
+		if (length == 0)
 			return false;
-		
+
 		char c0 = str.charAt(0);
-		if(c0 == '/' || c0 == '\\')
+		if (c0 == '/' || c0 == '\\')
 			return true;
-		
-		if(length == 1)
+
+		if (length == 1)
 			return false;
-		
+
 		char c1 = str.charAt(1);
-		if(IS_WINDOWS && c1 == ':')
+		if (IS_WINDOWS && c1 == ':')
 			return true;
-		
-		if(length < 4)
+
+		if (length < 4)
 			return false;
-		
-		if(c0 == '$' && c1 == '{'){
+
+		if (c0 == '$' && c1 == '{') {
 			int indx = str.indexOf('}');
-			if(indx != -1){
+			if (indx != -1) {
 				String macroName = str.substring(2, indx);
-				if(macroName.length() != 0){
+				if (macroName.length() != 0) {
 					String resolvedMacro;
 					try {
 						resolvedMacro = subst.resolveToString(macroName);
@@ -102,17 +101,17 @@ class PathInfo {
 						e.printStackTrace();
 					}
 					String substr = str.substring(indx + 1);
-					String rStr = resolvedMacro == null || resolvedMacro.length() == 0 ?
-							substr : new StringBuilder().append(resolvedMacro).append(subst).toString();
+					String rStr = resolvedMacro == null || resolvedMacro.length() == 0 ? substr
+							: new StringBuilder().append(resolvedMacro).append(subst).toString();
 					return isAbsolute(rStr, subst, out);
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
-	public SupplierBasedCdtVariableSubstitutor getSubstitutor(){
+
+	public SupplierBasedCdtVariableSubstitutor getSubstitutor() {
 		return fSubstitutor;
 	}
 }

@@ -83,7 +83,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	@Deprecated
 	public AbstractErrorParserBlock(Preferences prefs) {
 		this();
-//		usingDeprecatedConstructor = true;
+		//		usingDeprecatedConstructor = true;
 		fPrefs = prefs;
 	}
 
@@ -267,14 +267,11 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.ERROR_PARSERS_PAGE);
 
-		String[] buttonLabels = new String[]{
-		CUIMessages.AbstractErrorParserBlock_label_up,
+		String[] buttonLabels = new String[] { CUIMessages.AbstractErrorParserBlock_label_up,
 				CUIMessages.AbstractErrorParserBlock_label_down,
 				/* 2 */
-				null,
-				CUIMessages.AbstractErrorParserBlock_label_selectAll,
-				CUIMessages.AbstractErrorParserBlock_label_unselectAll
-		};
+				null, CUIMessages.AbstractErrorParserBlock_label_selectAll,
+				CUIMessages.AbstractErrorParserBlock_label_unselectAll };
 
 		fErrorParserList = new CheckedListDialogField<String>(null, buttonLabels, getLabelProvider());
 		fErrorParserList.setDialogFieldListener(getFieldListenerAdapter());
@@ -284,7 +281,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		fErrorParserList.setCheckAllButtonIndex(3);
 		fErrorParserList.setUncheckAllButtonIndex(4);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fErrorParserList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fErrorParserList }, true);
 		LayoutUtil.setHorizontalGrabbing(fErrorParserList.getListControl(null), true);
 
 		initializeValues();

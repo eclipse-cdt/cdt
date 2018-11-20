@@ -75,7 +75,7 @@ public interface IToolChainManager {
 	 * @since 6.4
 	 */
 	IToolChain getToolChain(String typeId, String id) throws CoreException;
-	
+
 	/**
 	 * Return the toolchains provided by the given provider
 	 * 
@@ -142,7 +142,7 @@ public interface IToolChainManager {
 	 *            the toolchain
 	 */
 	void addToolChain(IToolChain toolChain);
-	
+
 	/**
 	 * Remove a toolchain
 	 * 

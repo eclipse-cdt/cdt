@@ -28,9 +28,10 @@ public interface IFunctionInfo {
 	 * @return the function parameter types
 	 */
 	public String[] getParameters();
+
 	/**
 	 * @return the function return type
 	 */
 	public String getReturnType();
-	
+
 }

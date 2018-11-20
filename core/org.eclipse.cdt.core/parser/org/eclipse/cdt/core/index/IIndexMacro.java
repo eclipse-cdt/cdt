@@ -32,7 +32,7 @@ public interface IIndexMacro extends IMacroBinding, IIndexBinding {
 	 * otherwise return <code>null</code>.
 	 */
 	IASTFileLocation getFileLocation() throws CoreException;
-	
+
 	/**
 	 * Returns the file in which this macro is defined and belongs to.
 	 * @throws CoreException 

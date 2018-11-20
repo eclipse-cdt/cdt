@@ -63,13 +63,13 @@ public class BaseUITestCase extends BaseTestCase {
 	public BaseUITestCase(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IViewPart view= activePage.findView("org.eclipse.cdt.ui.tests.DOMAST.DOMAST");
+		IViewPart view = activePage.findView("org.eclipse.cdt.ui.tests.DOMAST.DOMAST");
 		if (view != null) {
 			activePage.hideView(view);
 		}
@@ -87,44 +87,45 @@ public class BaseUITestCase extends BaseTestCase {
 	protected String readTaggedComment(Class clazz, final String tag) throws IOException {
 		return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "ui", clazz, tag);
 	}
-    
+
 	/**
 	 * Reads a section in comments form the source of the given class. Fully
 	 * equivalent to <code>readTaggedComment(getClass(), tag)</code>
 	 * @since 4.0
 	 */
-    protected String readTaggedComment(final String tag) throws IOException {
-    	return readTaggedComment(getClass(), tag);
-    }
-    
-    /**
-     * Reads multiple sections in comments from the source of the given class.
-     * @since 4.0
-     */
+	protected String readTaggedComment(final String tag) throws IOException {
+		return readTaggedComment(getClass(), tag);
+	}
+
+	/**
+	 * Reads multiple sections in comments from the source of the given class.
+	 * @since 4.0
+	 */
 	public StringBuilder[] getContentsForTest(int sections) throws IOException {
-		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui",
-				getClass(), getName(), sections);
+		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(),
+				sections);
 	}
 
 	public String getAboveComment() throws IOException {
 		return getContentsForTest(1)[0].toString();
 	}
 
-    protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
-    	return TestSourceReader.createFile(container, new Path(fileName), contents);
-    }
+	protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
+		return TestSourceReader.createFile(container, new Path(fileName), contents);
+	}
 
-    protected IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file) throws CModelException, CoreException {
-    	return TestSourceReader.createIndexBasedAST(index, project, file);
-    }
+	protected IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file)
+			throws CModelException, CoreException {
+		return TestSourceReader.createIndexBasedAST(index, project, file);
+	}
 
 	protected void runEventQueue(int time) {
-		final long endTime= System.currentTimeMillis() + time;
+		final long endTime = System.currentTimeMillis() + time;
 		while (true) {
 			while (Display.getCurrent().readAndDispatch()) {
 			}
 
-			long diff= endTime - System.currentTimeMillis();
+			long diff = endTime - System.currentTimeMillis();
 			if (diff <= 0) {
 				break;
 			}
@@ -145,11 +146,11 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	protected void expandTreeItem(Tree tree, int[] idxs) {
-		TreeItem item= tree.getItem(idxs[0]);
+		TreeItem item = tree.getItem(idxs[0]);
 		assertNotNull(item);
 		expandTreeItem(item);
-		for (int i= 1; i < idxs.length; i++) {
-			item= item.getItem(idxs[i]);
+		for (int i = 1; i < idxs.length; i++) {
+			item = item.getItem(idxs[i]);
 			assertNotNull(item);
 			expandTreeItem(item);
 		}
@@ -164,18 +165,18 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	protected void selectTreeItem(Tree tree, int idx) {
-		selectTreeItem(tree, new int[] {idx});
+		selectTreeItem(tree, new int[] { idx });
 	}
 
 	protected void selectTreeItem(Tree tree, int idx1, int idx2) {
-		selectTreeItem(tree, new int[] {idx1, idx2});
+		selectTreeItem(tree, new int[] { idx1, idx2 });
 	}
 
 	protected void selectTreeItem(Tree tree, int[] idxs) {
-		TreeItem item= tree.getItem(idxs[0]);
+		TreeItem item = tree.getItem(idxs[0]);
 		assertNotNull(item);
-		for (int i= 1; i < idxs.length; i++) {
-			item= item.getItem(idxs[i]);
+		for (int i = 1; i < idxs.length; i++) {
+			item = item.getItem(idxs[i]);
 			assertNotNull(item);
 		}
 		tree.setSelection(item);
@@ -188,15 +189,15 @@ public class BaseUITestCase extends BaseTestCase {
 	protected void closeEditor(IEditorPart editor) {
 		IWorkbenchPartSite site;
 		IWorkbenchPage page;
-		if (editor != null && (site= editor.getSite()) != null && (page= site.getPage()) != null) {
+		if (editor != null && (site = editor.getSite()) != null && (page = site.getPage()) != null) {
 			page.closeEditor(editor, false);
 		}
 	}
 
 	protected void closeAllEditors() {
-		IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
-			IWorkbenchPage[] pages= window.getPages();
+			IWorkbenchPage[] pages = window.getPages();
 			for (IWorkbenchPage page : pages) {
 				page.closeAllEditors(false);
 			}
@@ -204,15 +205,15 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	protected void restoreAllParts() throws WorkbenchException {
-		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		page.zoomOut();
 		runEventQueue(0);
 
-		IViewReference[] viewRefs= page.getViewReferences();
+		IViewReference[] viewRefs = page.getViewReferences();
 		for (IViewReference ref : viewRefs) {
 			page.setPartState(ref, IWorkbenchPage.STATE_RESTORED);
 		}
-		IEditorReference[] editorRefs= page.getEditorReferences();
+		IEditorReference[] editorRefs = page.getEditorReferences();
 		for (IEditorReference ref : editorRefs) {
 			page.setPartState(ref, IWorkbenchPage.STATE_RESTORED);
 		}
@@ -220,20 +221,21 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	protected IViewPart activateView(String id) throws PartInitException {
-		IViewPart view= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(id);
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(id);
 		assertNotNull(view);
 		runEventQueue(0);
-		return  view;
+		return view;
 	}
 
-	protected void executeCommand(IViewPart viewPart, String commandID) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
-		IHandlerService hs= viewPart.getSite().getService(IHandlerService.class);
+	protected void executeCommand(IViewPart viewPart, String commandID)
+			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
+		IHandlerService hs = viewPart.getSite().getService(IHandlerService.class);
 		assertNotNull(hs);
 		hs.executeCommand(commandID, null);
 	}
 
 	private Control[] findControls(Control w, Class<?> clazz) {
-		ArrayList<Control> result= new ArrayList<Control>();
+		ArrayList<Control> result = new ArrayList<Control>();
 		findControls(w, clazz, result);
 		return result.toArray(new Control[result.size()]);
 	}
@@ -243,8 +245,8 @@ public class BaseUITestCase extends BaseTestCase {
 			result.add(w);
 		}
 		if (w instanceof Composite) {
-			Composite comp= (Composite) w;
-			Control[] children= comp.getChildren();
+			Composite comp = (Composite) w;
+			Control[] children = comp.getChildren();
 			for (Control element : children) {
 				findControls(element, clazz, result);
 			}
@@ -256,16 +258,16 @@ public class BaseUITestCase extends BaseTestCase {
 		IViewReference viewRef = part.getViewSite().getPage().findViewReference(part.getViewSite().getId());
 		Control viewControl = ((WorkbenchPartReference) viewRef).getPane().getControl();
 
-		Tree tree= null;
-		TreeItem root= null;
-		StringBuilder cands= new StringBuilder();
-		for (int i= 0; i < 400; i++) {
+		Tree tree = null;
+		TreeItem root = null;
+		StringBuilder cands = new StringBuilder();
+		for (int i = 0; i < 400; i++) {
 			cands.setLength(0);
-			Control[] trees= findControls(viewControl, Tree.class);
+			Control[] trees = findControls(viewControl, Tree.class);
 			for (int j = 0; j < trees.length; j++) {
 				try {
-					tree= (Tree) trees[j];
-					root= tree.getItem(i0);
+					tree = (Tree) trees[j];
+					root = tree.getItem(i0);
 					if (label.equals(root.getText())) {
 						return root;
 					}
@@ -289,11 +291,11 @@ public class BaseUITestCase extends BaseTestCase {
 
 	final protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
 		assertNotNull(label); // we don't handle testing for a base node to not appear; can be added if/when needed
-		TreeItem root= null;
-		for (int millis= 0; millis < 5000; millis= millis == 0 ? 1 : millis * 2) {
+		TreeItem root = null;
+		for (int millis = 0; millis < 5000; millis = millis == 0 ? 1 : millis * 2) {
 			runEventQueue(millis);
 			try {
-				root= tree.getItem(i0);
+				root = tree.getItem(i0);
 				if (label.equals(root.getText())) {
 					return root;
 				}
@@ -311,22 +313,22 @@ public class BaseUITestCase extends BaseTestCase {
 	 * Pass label=null to test that the {i0,i1} node doesn't exist
 	 */
 	final protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
-		String firstItemText= null;
+		String firstItemText = null;
 		int timeout = (label == null) ? 1000 : 5000; // see footnote[0]
 
 		// If {i0,i1} exists, whether or not it matches label (when label != null)
 		boolean nodePresent = false;
 
-		for (int millis= 0; millis < timeout; millis= millis == 0 ? 1 : millis * 2) {
+		for (int millis = 0; millis < timeout; millis = millis == 0 ? 1 : millis * 2) {
 			nodePresent = false;
 			runEventQueue(millis);
-			TreeItem i0Node= tree.getItem(i0);
+			TreeItem i0Node = tree.getItem(i0);
 			if (!i0Node.getExpanded()) {
 				expandTreeItem(i0Node);
 			}
 			try {
-				TreeItem firstItem= i0Node.getItem(0);
-				firstItemText= firstItem.getText();
+				TreeItem firstItem = i0Node.getItem(0);
+				firstItemText = firstItem.getText();
 				if (!firstItemText.isEmpty() && !firstItemText.equals("...")) {
 					TreeItem item = i0Node.getItem(i1);
 					nodePresent = true;

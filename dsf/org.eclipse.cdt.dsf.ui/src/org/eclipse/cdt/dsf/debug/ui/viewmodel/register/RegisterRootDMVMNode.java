@@ -29,27 +29,31 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRe
  * when stepping or just when selecting within the view. 
  */
 public class RegisterRootDMVMNode extends RootDMVMNode implements IElementMementoProvider {
-	
+
 	public RegisterRootDMVMNode(AbstractVMProvider provider) {
-        super(provider);
-    }
-	
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
-     */
-    @Override
+		super(provider);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
+	 */
+	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
-        for ( IElementMementoRequest request : requests )  { request.done(); } 
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
-     */
-    @Override
+		for (IElementMementoRequest request : requests) {
+			request.done();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
+	 */
+	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
-    	
-    	for ( IElementMementoRequest request : requests )  { request.done(); } 
-    }
+
+		for (IElementMementoRequest request : requests) {
+			request.done();
+		}
+	}
 }

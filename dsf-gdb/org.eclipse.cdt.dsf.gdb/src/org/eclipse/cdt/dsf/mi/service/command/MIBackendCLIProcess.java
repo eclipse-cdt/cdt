@@ -51,132 +51,134 @@ import org.eclipse.core.runtime.Status;
 public class MIBackendCLIProcess extends AbstractCLIProcess {
 
 	private IMIBackend fMIBackend;
-	private AtomicInteger fExitCode = new AtomicInteger(-1); 
+	private AtomicInteger fExitCode = new AtomicInteger(-1);
 	private BackedExitedEventListener fExitedEventListener;
-	
-    @ConfinedToDsfExecutor("getSession()#getExecutor")
+
+	@ConfinedToDsfExecutor("getSession()#getExecutor")
 	public MIBackendCLIProcess(ICommandControlService commandControl, IMIBackend backend) throws IOException {
 		super(commandControl);
 		fMIBackend = backend;
 		if (fMIBackend.getState() == IMIBackend.State.TERMINATED) {
-		    fExitCode.set(fMIBackend.getExitCode());
+			fExitCode.set(fMIBackend.getExitCode());
 		}
 		fExitedEventListener = new BackedExitedEventListener();
-        getSession().addServiceEventListener(fExitedEventListener, null);		
+		getSession().addServiceEventListener(fExitedEventListener, null);
 	}
 
-    public class BackedExitedEventListener {
-        private final List<RequestMonitor> fWaitForRMs = new ArrayList<RequestMonitor>();
-        
-        @DsfServiceEventHandler
-        public void eventDispatched(BackendStateChangedEvent event) {
-            if (event.getState() == IMIBackend.State.TERMINATED &&
-            		event.getBackendId().equals(fMIBackend.getId())) 
-            {
-                fExitCode.set(fMIBackend.getExitCode());
-                for (RequestMonitor rm : fWaitForRMs) {
-                    rm.done();
-                }
-                fWaitForRMs.clear();
-            }
-        }
-        
-        void dispose() {
-            for (RequestMonitor rm : fWaitForRMs) {
-                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Backend terminate event never received", null)); //$NON-NLS-1$
-                rm.done();
-            }
-            fWaitForRMs.clear();
-        }
-    }
-    
-    /**
-     * @see java.lang.Process#waitFor()
-     */
-    @Override
-    public int waitFor() throws InterruptedException {
-        if (!DsfSession.isSessionActive(getSession().getId())) {
-            return fExitCode.get();
-        }
+	public class BackedExitedEventListener {
+		private final List<RequestMonitor> fWaitForRMs = new ArrayList<RequestMonitor>();
 
-        try {
-            Query<Object> query = new Query<Object>() {
-                @Override
-                protected void execute(final DataRequestMonitor<Object> rm) {
-                    if ( !DsfSession.isSessionActive(getSession().getId()) || 
-                         isDisposed() ||
-                         fMIBackend.getState() == IMIBackend.State.TERMINATED ) 
-                    {
-                        rm.setData(new Object());
-                        rm.done();
-                    } else {
-                        fExitedEventListener.fWaitForRMs.add(
-                            new ImmediateRequestMonitor(rm) {
-                                @Override
-                                protected void handleSuccess() {
-                                    rm.setData(new Object());
-                                    rm.done();
-                                }
-                            });
-                    }
-                }
-            };
-            getSession().getExecutor().execute(query);
-            query.get();
-        } catch (RejectedExecutionException e) {
-        } catch (ExecutionException e) {
-        }
-        return fExitCode.get();
-    }
+		@DsfServiceEventHandler
+		public void eventDispatched(BackendStateChangedEvent event) {
+			if (event.getState() == IMIBackend.State.TERMINATED && event.getBackendId().equals(fMIBackend.getId())) {
+				fExitCode.set(fMIBackend.getExitCode());
+				for (RequestMonitor rm : fWaitForRMs) {
+					rm.done();
+				}
+				fWaitForRMs.clear();
+			}
+		}
 
-    
-    /**
-     * @see java.lang.Process#exitValue()
-     */
-    @Override
-    public int exitValue() {
-        if (!DsfSession.isSessionActive(getSession().getId())) {
-            return fExitCode.get();
-        }
-        try {
-            getSession().getExecutor().submit(new Callable<Object>() { 
-            	@Override
-                public Object call() throws Exception {
-                    if (fMIBackend.getState() != IMIBackend.State.TERMINATED) {
-                        throw new IllegalThreadStateException("Backend Process has not exited"); //$NON-NLS-1$
-                    }
-                    return null;
-                }}).get();
-        } catch (RejectedExecutionException e) {
-        } catch (InterruptedException e) {
-        } catch (ExecutionException e) {
-            if (e.getCause() instanceof RuntimeException) {
-                throw (RuntimeException)e.getCause();
-            }
-        }
-        return fExitCode.get();
-    }
-    /**
-     * @see java.lang.Process#destroy()
-     */
-    @Override
-    public void destroy() {
-        try {
-            getSession().getExecutor().execute(new DsfRunnable() { 	@Override public void run() {
-                if (!DsfSession.isSessionActive(getSession().getId())) return;
-                if (isDisposed()) return;
+		void dispose() {
+			for (RequestMonitor rm : fWaitForRMs) {
+				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED,
+						"Backend terminate event never received", null)); //$NON-NLS-1$
+				rm.done();
+			}
+			fWaitForRMs.clear();
+		}
+	}
 
-                fMIBackend.destroy();
-            }});
-        } catch (RejectedExecutionException e) {
-            // Session disposed.
-        }
-    }
-    
-    @Override
-    public void dispose() {
-        fExitedEventListener.dispose();
-        getSession().removeServiceEventListener(fExitedEventListener);        
-        super.dispose();
-    }
+	/**
+	 * @see java.lang.Process#waitFor()
+	 */
+	@Override
+	public int waitFor() throws InterruptedException {
+		if (!DsfSession.isSessionActive(getSession().getId())) {
+			return fExitCode.get();
+		}
+
+		try {
+			Query<Object> query = new Query<Object>() {
+				@Override
+				protected void execute(final DataRequestMonitor<Object> rm) {
+					if (!DsfSession.isSessionActive(getSession().getId()) || isDisposed()
+							|| fMIBackend.getState() == IMIBackend.State.TERMINATED) {
+						rm.setData(new Object());
+						rm.done();
+					} else {
+						fExitedEventListener.fWaitForRMs.add(new ImmediateRequestMonitor(rm) {
+							@Override
+							protected void handleSuccess() {
+								rm.setData(new Object());
+								rm.done();
+							}
+						});
+					}
+				}
+			};
+			getSession().getExecutor().execute(query);
+			query.get();
+		} catch (RejectedExecutionException e) {
+		} catch (ExecutionException e) {
+		}
+		return fExitCode.get();
+	}
+
+	/**
+	 * @see java.lang.Process#exitValue()
+	 */
+	@Override
+	public int exitValue() {
+		if (!DsfSession.isSessionActive(getSession().getId())) {
+			return fExitCode.get();
+		}
+		try {
+			getSession().getExecutor().submit(new Callable<Object>() {
+				@Override
+				public Object call() throws Exception {
+					if (fMIBackend.getState() != IMIBackend.State.TERMINATED) {
+						throw new IllegalThreadStateException("Backend Process has not exited"); //$NON-NLS-1$
+					}
+					return null;
+				}
+			}).get();
+		} catch (RejectedExecutionException e) {
+		} catch (InterruptedException e) {
+		} catch (ExecutionException e) {
+			if (e.getCause() instanceof RuntimeException) {
+				throw (RuntimeException) e.getCause();
+			}
+		}
+		return fExitCode.get();
+	}
+
+	/**
+	 * @see java.lang.Process#destroy()
+	 */
+	@Override
+	public void destroy() {
+		try {
+			getSession().getExecutor().execute(new DsfRunnable() {
+				@Override
+				public void run() {
+					if (!DsfSession.isSessionActive(getSession().getId()))
+						return;
+					if (isDisposed())
+						return;
+
+					fMIBackend.destroy();
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session disposed.
+		}
+	}
+
+	@Override
+	public void dispose() {
+		fExitedEventListener.dispose();
+		getSession().removeServiceEventListener(fExitedEventListener);
+		super.dispose();
+	}
 }

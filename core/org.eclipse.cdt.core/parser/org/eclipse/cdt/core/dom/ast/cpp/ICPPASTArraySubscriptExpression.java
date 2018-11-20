@@ -32,7 +32,7 @@ public interface ICPPASTArraySubscriptExpression
 	 */
 	@Override
 	public ICPPASTArraySubscriptExpression copy(CopyStyle style);
-	
+
 	/**
 	 * @since 5.5
 	 */

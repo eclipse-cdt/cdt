@@ -51,8 +51,7 @@ public interface IChecker {
 	 * @throws OperationCanceledException if the checker was interrupted.
 	 * @since 2.0
 	 */
-	boolean processResource(IResource resource, ICheckerInvocationContext context)
-			throws OperationCanceledException;
+	boolean processResource(IResource resource, ICheckerInvocationContext context) throws OperationCanceledException;
 
 	/**
 	 * Called after processing a resource.

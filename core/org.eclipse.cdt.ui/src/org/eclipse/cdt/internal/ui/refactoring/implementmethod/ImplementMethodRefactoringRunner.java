@@ -30,15 +30,14 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
  */
 public class ImplementMethodRefactoringRunner extends RefactoringRunner {
 
-	public ImplementMethodRefactoringRunner(ICElement element, ISelection selection,
-			IShellProvider shellProvider, ICProject cProject) {
+	public ImplementMethodRefactoringRunner(ICElement element, ISelection selection, IShellProvider shellProvider,
+			ICProject cProject) {
 		super(element, selection, shellProvider, cProject);
 	}
 
 	@Override
 	public void run() {
-		ImplementMethodRefactoring refactoring =
-				new ImplementMethodRefactoring(element, selection, project);
+		ImplementMethodRefactoring refactoring = new ImplementMethodRefactoring(element, selection, project);
 		ImplementMethodWizard wizard = new ImplementMethodWizard(refactoring);
 		run(wizard, refactoring, RefactoringSaveHelper.SAVE_REFACTORING);
 	}

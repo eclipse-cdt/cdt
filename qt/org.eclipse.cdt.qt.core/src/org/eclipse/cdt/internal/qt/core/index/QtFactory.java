@@ -60,7 +60,7 @@ public class QtFactory {
 		IIndex index = null;
 		try {
 			index = CCorePlugin.getIndexManager().getIndex(cProject);
-		} catch( CoreException e ) {
+		} catch (CoreException e) {
 			Activator.log(e);
 			return null;
 		}
@@ -78,7 +78,8 @@ public class QtFactory {
 		public final int patch;
 
 		// QT_VERSION looks like 0x040805
-		private static final Pattern Version_regex = Pattern.compile( "0x([a-fA-F\\d]{1,2})([a-fA-F\\d]{2})([a-fA-F\\d]{2})" );
+		private static final Pattern Version_regex = Pattern
+				.compile("0x([a-fA-F\\d]{1,2})([a-fA-F\\d]{2})([a-fA-F\\d]{2})");
 
 		public static QtVersion create(String version) {
 			Matcher m = Version_regex.matcher(version);
@@ -90,7 +91,7 @@ public class QtFactory {
 				int minor = Integer.parseInt(m.group(2), 16);
 				int patch = Integer.parseInt(m.group(3), 16);
 				return new QtVersion(major, minor, patch);
-			} catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				Activator.log(e);
 			}
 			return null;
@@ -109,9 +110,10 @@ public class QtFactory {
 			// Multiple macros might be found, sort the values and choose the highest version.
 			SortedSet<String> versions = new TreeSet<String>();
 			try {
-				for(IIndexMacro macro : index.findMacros(QT_VERSION, IndexFilter.ALL, null))
+				for (IIndexMacro macro : index.findMacros(QT_VERSION, IndexFilter.ALL, null))
 					versions.add(new String(macro.getExpansion()).toLowerCase());
-			} catch( CoreException e ) { }
+			} catch (CoreException e) {
+			}
 
 			// don't create the Qt index if there is no Qt information in the CDT index
 			if (versions.size() <= 0)

@@ -38,7 +38,7 @@ public abstract class SpellingEngine implements ISpellingEngine {
 	protected static class SpellEventListener implements ISpellEventListener {
 		/** Spelling problem collector */
 		private ISpellingProblemCollector fCollector;
-		
+
 		/**
 		 * The document.
 		 */
@@ -51,8 +51,8 @@ public abstract class SpellingEngine implements ISpellingEngine {
 		 * @param document the document
 		 */
 		public SpellEventListener(ISpellingProblemCollector collector, IDocument document) {
-			fCollector= collector;
-			fDocument= document;
+			fCollector = collector;
+			fDocument = document;
 		}
 
 		/*
@@ -68,10 +68,11 @@ public abstract class SpellingEngine implements ISpellingEngine {
 	 * @see org.eclipse.ui.texteditor.spelling.ISpellingEngine#check(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion[], org.eclipse.ui.texteditor.spelling.SpellingContext, org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void check(IDocument document, IRegion[] regions, SpellingContext context, ISpellingProblemCollector collector, IProgressMonitor monitor) {
+	public void check(IDocument document, IRegion[] regions, SpellingContext context,
+			ISpellingProblemCollector collector, IProgressMonitor monitor) {
 		if (collector != null) {
-			final ISpellCheckEngine spellingEngine= SpellCheckEngine.getInstance();
-			ISpellChecker checker= spellingEngine.getSpellChecker();
+			final ISpellCheckEngine spellingEngine = SpellCheckEngine.getInstance();
+			ISpellChecker checker = spellingEngine.getSpellChecker();
 			if (checker != null)
 				check(document, regions, checker, collector, monitor);
 		}
@@ -86,5 +87,6 @@ public abstract class SpellingEngine implements ISpellingEngine {
 	 * @param collector the spelling problem collector
 	 * @param monitor the progress monitor, can be <code>null</code>
 	 */
-	protected abstract void check(IDocument document, IRegion[] regions, ISpellChecker checker, ISpellingProblemCollector collector, IProgressMonitor monitor);
+	protected abstract void check(IDocument document, IRegion[] regions, ISpellChecker checker,
+			ISpellingProblemCollector collector, IProgressMonitor monitor);
 }

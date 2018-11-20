@@ -70,21 +70,36 @@ public class Trace {
 	 */
 	private static final DebugTrace NULL_TRACE = new DebugTrace() {
 		@Override
-		public void trace(String option, String message) {}
+		public void trace(String option, String message) {
+		}
+
 		@Override
-		public void trace(String option, String message, Throwable error) {}
+		public void trace(String option, String message, Throwable error) {
+		}
+
 		@Override
-		public void traceDumpStack(String option) {}
+		public void traceDumpStack(String option) {
+		}
+
 		@Override
-		public void traceEntry(String option) {}
+		public void traceEntry(String option) {
+		}
+
 		@Override
-		public void traceEntry(String option, Object methodArgument) {}
+		public void traceEntry(String option, Object methodArgument) {
+		}
+
 		@Override
-		public void traceEntry(String option, Object[] methodArguments) {}
+		public void traceEntry(String option, Object[] methodArguments) {
+		}
+
 		@Override
-		public void traceExit(String option) {}
+		public void traceExit(String option) {
+		}
+
 		@Override
-		public void traceExit(String option, Object result) {}
+		public void traceExit(String option, Object result) {
+		}
 	};
 
 	/** Should be called by plugin's  startup method() */
@@ -94,6 +109,7 @@ public class Trace {
 		String option = Platform.getDebugOption(CDebugCorePlugin.PLUGIN_ID + "/debug/executables"); //$NON-NLS-1$
 		DEBUG_EXECUTABLES = DEBUG && ((option != null) ? option.equalsIgnoreCase("true") : false); //$NON-NLS-1$
 	}
+
 	/** Singleton trace object */
 	private static DebugTrace trace;
 
@@ -111,15 +127,15 @@ public class Trace {
 				if (bundle != null) {
 					BundleContext context = bundle.getBundleContext();
 					if (context != null) {
-						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<DebugOptions, DebugOptions>(context, DebugOptions.class.getName(), null);
+						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<DebugOptions, DebugOptions>(
+								context, DebugOptions.class.getName(), null);
 						try {
 							tracker.open();
 							DebugOptions debugOptions = tracker.getService();
 							if (debugOptions != null) {
 								trace = debugOptions.newDebugTrace(bundle.getSymbolicName());
 							}
-						}
-						finally {
+						} finally {
 							tracker.close();
 						}
 					}

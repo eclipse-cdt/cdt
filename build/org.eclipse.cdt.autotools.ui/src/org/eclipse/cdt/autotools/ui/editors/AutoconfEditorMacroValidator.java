@@ -29,7 +29,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 
-
 /**
  *	Validate a macro call by checking against the stored macro prototypes
  */
@@ -44,8 +43,7 @@ public class AutoconfEditorMacroValidator implements IAutoconfMacroValidator {
 	}
 
 	@Override
-	public void validateMacroCall(AutoconfMacroElement macro)
-			throws ParseException, InvalidMacroException {
+	public void validateMacroCall(AutoconfMacroElement macro) throws ParseException, InvalidMacroException {
 		AutoconfPrototype p = AutoconfTextHover.getPrototype(macro.getName(), fEditor);
 		if (p != null) {
 			boolean tooFew = false;
@@ -67,7 +65,7 @@ public class AutoconfEditorMacroValidator implements IAutoconfMacroValidator {
 					break;
 				}
 			}
-			
+
 			int length = macro.getEndOffset() - macro.getStartOffset();
 			int start = macro.getStartOffset();
 			int end = macro.getEndOffset();
@@ -75,31 +73,25 @@ public class AutoconfEditorMacroValidator implements IAutoconfMacroValidator {
 			try {
 				lineNumber = macro.getDocument().getLineOfOffset(start);
 			} catch (BadLocationException e) {
-				
+
 			}
-			
+
 			if (!justRight) {
 				if (tooFew) {
-					String formatString = AutoconfEditorMessages.getFormattedString(AUTOCONF_MACRO_ARGS_TOO_FEW, 
-							AutotoolsPlugin.getDefault().getPreferenceStore().getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION),
+					String formatString = AutoconfEditorMessages.getFormattedString(AUTOCONF_MACRO_ARGS_TOO_FEW,
+							AutotoolsPlugin.getDefault().getPreferenceStore()
+									.getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION),
 							p.getName(), Integer.toString(minParms));
-					throw new ParseException(
-							formatString,
-							start, end,
-							lineNumber, 0, length,
-							IMarker.SEVERITY_WARNING);
+					throw new ParseException(formatString, start, end, lineNumber, 0, length, IMarker.SEVERITY_WARNING);
 				} else if (tooMany) {
 					String formatString = AutoconfEditorMessages.getFormattedString(AUTOCONF_MACRO_ARGS_TOO_MANY,
-							AutotoolsPlugin.getDefault().getPreferenceStore().getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION),
+							AutotoolsPlugin.getDefault().getPreferenceStore()
+									.getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION),
 							p.getName(), Integer.toString(maxParms));
-					throw new ParseException(
-							formatString,
-							start, end,
-							lineNumber, 0, length,
-							IMarker.SEVERITY_WARNING);
+					throw new ParseException(formatString, start, end, lineNumber, 0, length, IMarker.SEVERITY_WARNING);
 				}
 			}
-			
+
 			IProject project = fEditor.getProject();
 			String acDocVer = AutoconfTextHover.getDefaultAutoconfMacrosVer();
 			try {
@@ -114,7 +106,7 @@ public class AutoconfEditorMacroValidator implements IAutoconfMacroValidator {
 			} catch (CoreException ce1) {
 				// do nothing
 			}
-			
+
 			macro.validate(acDocVer);
 
 		}

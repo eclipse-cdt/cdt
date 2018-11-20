@@ -54,13 +54,13 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
  * @author Emanuel Graf
  *
  */
-public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
-	
+public class CTextEditChangePreviewViewer implements IChangePreviewViewer {
+
 	private CPPMergeViewer viewer;
 	private CTextEditChangePane viewerPane;
 	private CTextEditChangePreviewViewerContentProvider textEditChangeContentProvider;
-	
-	private static class CTextEditChangePane extends CompareViewerPane{
+
+	private static class CTextEditChangePane extends CompareViewerPane {
 
 		/**
 		 * @param parent
@@ -69,10 +69,10 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 		public CTextEditChangePane(Composite parent, int style) {
 			super(parent, style);
 		}
-		
+
 	}
-	
-	private class CPPMergeViewer extends CMergeViewer{
+
+	private class CPPMergeViewer extends CMergeViewer {
 
 		/**
 		 * @param parent
@@ -85,23 +85,22 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 
 		@Override
 		protected CSourceViewerConfiguration getSourceViewerConfiguration() {
-			CTextTools tools= CUIPlugin.getDefault().getTextTools();
-			IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-			return new CSourceViewerConfiguration(tools.getColorManager(), store, null, tools.getDocumentPartitioning());
+			CTextTools tools = CUIPlugin.getDefault().getTextTools();
+			IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
+			return new CSourceViewerConfiguration(tools.getColorManager(), store, null,
+					tools.getDocumentPartitioning());
 		}
 
 		@Override
 		protected void configureTextViewer(TextViewer textViewer) {
 			if (textViewer instanceof SourceViewer) {
-				((SourceViewer)textViewer).configure(getSourceViewerConfiguration());
+				((SourceViewer) textViewer).configure(getSourceViewerConfiguration());
 			}
 		}
-		
-		
+
 	}
 
-	
-	private class CTextEditChangePreviewViewerContentProvider implements IMergeViewerContentProvider{
+	private class CTextEditChangePreviewViewerContentProvider implements IMergeViewerContentProvider {
 
 		@Override
 		public Object getAncestorContent(Object input) {
@@ -114,7 +113,7 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 		public Image getAncestorImage(Object input) {
 			if (input instanceof ICompareInput) {
 				ITypedElement ancestor = ((ICompareInput) input).getAncestor();
-				if(ancestor != null) {
+				if (ancestor != null) {
 					return ancestor.getImage();
 				}
 			}
@@ -125,7 +124,7 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 		public String getAncestorLabel(Object input) {
 			if (input instanceof ICompareInput) {
 				ITypedElement ancestor = ((ICompareInput) input).getAncestor();
-				if(ancestor != null) {
+				if (ancestor != null) {
 					return ancestor.getName();
 				}
 			}
@@ -148,7 +147,7 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 
 		@Override
 		public String getLeftLabel(Object input) {
-			return Messages.CTextEditChangePreviewViewer_OrgSource; 
+			return Messages.CTextEditChangePreviewViewer_OrgSource;
 		}
 
 		@Override
@@ -167,7 +166,7 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 
 		@Override
 		public String getRightLabel(Object input) {
-			return Messages.CTextEditChangePreviewViewer_RefactoredSource; 
+			return Messages.CTextEditChangePreviewViewer_RefactoredSource;
 		}
 
 		@Override
@@ -205,31 +204,36 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			//Nothing to do
 		}
-		
+
 	}
-	
+
 	private static class CompareElement implements ITypedElement, IEncodedStreamContentAccessor, IResourceProvider {
-		private static final String ENCODING= "UTF-8"; //$NON-NLS-1$
+		private static final String ENCODING = "UTF-8"; //$NON-NLS-1$
 		private final String fContent;
 		private final String fType;
 		private final IResource fResource;
+
 		public CompareElement(String content, String type, IResource resource) {
-			fContent= content;
-			fType= type;
-			fResource= resource;
+			fContent = content;
+			fType = type;
+			fResource = resource;
 		}
+
 		@Override
 		public String getName() {
 			return ""; //$NON-NLS-1$
 		}
+
 		@Override
 		public Image getImage() {
 			return null;
 		}
+
 		@Override
 		public String getType() {
 			return fType;
 		}
+
 		@Override
 		public InputStream getContents() throws CoreException {
 			try {
@@ -238,10 +242,12 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 				return new ByteArrayInputStream(fContent.getBytes());
 			}
 		}
+
 		@Override
 		public String getCharset() {
 			return ENCODING;
 		}
+
 		@Override
 		public IResource getResource() {
 			return fResource;
@@ -254,7 +260,7 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 		compConfig.setLeftEditable(false);
 		compConfig.setRightEditable(false);
 		viewerPane = new CTextEditChangePane(parent, SWT.BORDER | SWT.FLAT);
-		viewer =  new CPPMergeViewer(viewerPane,SWT.MULTI | SWT.FULL_SELECTION, compConfig);
+		viewer = new CPPMergeViewer(viewerPane, SWT.MULTI | SWT.FULL_SELECTION, compConfig);
 		textEditChangeContentProvider = new CTextEditChangePreviewViewerContentProvider();
 		viewer.setContentProvider(textEditChangeContentProvider);
 		viewerPane.setContent(viewer.getControl());
@@ -268,10 +274,11 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 	@Override
 	public void setInput(ChangePreviewViewerInput input) {
 		try {
-			Change change= input.getChange();
+			Change change = input.getChange();
 			if (change instanceof CTextFileChange) {
-				CTextFileChange editChange= (CTextFileChange)change;
-				setInput(editChange, editChange.getCurrentContent(new NullProgressMonitor()), editChange.getPreviewContent(new NullProgressMonitor()), editChange.getTextType());
+				CTextFileChange editChange = (CTextFileChange) change;
+				setInput(editChange, editChange.getCurrentContent(new NullProgressMonitor()),
+						editChange.getPreviewContent(new NullProgressMonitor()), editChange.getTextType());
 				return;
 			}
 			viewer.setInput(null);
@@ -284,9 +291,8 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 		IFile resource = change.getFile();
 		viewerPane.setText(resource.getName());
 		viewerPane.setImage(new CElementLabelProvider().getImage(resource));
-		viewer.setInput(new DiffNode(
-			new CompareElement(left, type, resource),
-			new CompareElement(right, type, resource)));
+		viewer.setInput(
+				new DiffNode(new CompareElement(left, type, resource), new CompareElement(right, type, resource)));
 	}
 
 }

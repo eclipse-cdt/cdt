@@ -30,12 +30,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAStackDepthCommand extends AbstractPDACommand<PDAStackDepthCommandResult> {
 
-    public PDAStackDepthCommand(PDAThreadDMContext thread) {
-        super(thread, "stackdepth " + thread.getID());
-    }
-    
-    @Override
-    public PDAStackDepthCommandResult createResult(String resultText) {
-        return new PDAStackDepthCommandResult(resultText);
-    }
+	public PDAStackDepthCommand(PDAThreadDMContext thread) {
+		super(thread, "stackdepth " + thread.getID());
+	}
+
+	@Override
+	public PDAStackDepthCommandResult createResult(String resultText) {
+		return new PDAStackDepthCommandResult(resultText);
+	}
 }

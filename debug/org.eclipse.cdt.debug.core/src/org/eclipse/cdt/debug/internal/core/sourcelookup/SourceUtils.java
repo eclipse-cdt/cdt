@@ -91,7 +91,7 @@ public class SourceUtils {
 	}
 
 	private static void saveSourceLocations(Document doc, Element node, ICSourceLocation[] locations) {
-		for(int i = 0; i < locations.length; i++) {
+		for (int i = 0; i < locations.length; i++) {
 			Element child = doc.createElement(NAME_SOURCE_LOCATION);
 			child.setAttribute(ATTR_CLASS, locations[i].getClass().getName());
 			try {
@@ -132,11 +132,11 @@ public class SourceUtils {
 		List<ICSourceLocation> sourceLocations = new LinkedList<ICSourceLocation>();
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
-		for(int i = 0; i < length; ++i) {
+		for (int i = 0; i < length; ++i) {
 			Node node = list.item(i);
 			short type = node.getNodeType();
 			if (type == Node.ELEMENT_NODE) {
-				Element entry = (Element)node;
+				Element entry = (Element) node;
 				if (entry.getNodeName().equalsIgnoreCase(NAME_SOURCE_LOCATION)) {
 					String className = entry.getAttribute(ATTR_CLASS);
 					String data = entry.getAttribute(ATTR_MEMENTO);
@@ -148,13 +148,14 @@ public class SourceUtils {
 					try {
 						clazz = CDebugCorePlugin.getDefault().getBundle().loadClass(className);
 					} catch (ClassNotFoundException e) {
-						CDebugCorePlugin.log(MessageFormat.format("Unable to restore source location - class not found {0}", //$NON-NLS-1$
-								(Object[]) new String[] { className }));
+						CDebugCorePlugin
+								.log(MessageFormat.format("Unable to restore source location - class not found {0}", //$NON-NLS-1$
+										(Object[]) new String[] { className }));
 						continue;
 					}
 					ICSourceLocation location = null;
 					try {
-						location = (ICSourceLocation)clazz.newInstance();
+						location = (ICSourceLocation) clazz.newInstance();
 					} catch (IllegalAccessException e) {
 						CDebugCorePlugin.log("Unable to restore source location: " + e.getMessage()); //$NON-NLS-1$
 						continue;
@@ -188,8 +189,10 @@ public class SourceUtils {
 				IDirectorySourceLocation d = (IDirectorySourceLocation) location;
 				IPath a = d.getAssociation();
 				if (a != null) {
-					MappingSourceContainer mapping = new MappingSourceContainer(InternalSourceLookupMessages.SourceUtils_0 + (++mappingCount));
-					mapping.addMapEntries(new MapEntrySourceContainer[] { new MapEntrySourceContainer(a.toOSString(), d.getDirectory()) });
+					MappingSourceContainer mapping = new MappingSourceContainer(
+							InternalSourceLookupMessages.SourceUtils_0 + (++mappingCount));
+					mapping.addMapEntries(new MapEntrySourceContainer[] {
+							new MapEntrySourceContainer(a.toOSString(), d.getDirectory()) });
 					containers.add(mapping);
 
 				}
@@ -308,7 +311,7 @@ public class SourceUtils {
 	 * @param project
 	 * @return
 	 */
-	private static Object[] updateUnavailableResources(IFile[] wfiles, IProject project){
+	private static Object[] updateUnavailableResources(IFile[] wfiles, IProject project) {
 		// with no projects context we will not be able to create ITranslationUnits
 		if (project == null) {
 			return wfiles;
@@ -316,7 +319,7 @@ public class SourceUtils {
 
 		ICProject cProject = CoreModel.getDefault().create(project);
 		Object[] result = new Object[wfiles.length];
-		for (int i=0; i< wfiles.length; ++i) {
+		for (int i = 0; i < wfiles.length; ++i) {
 			IFile wkspFile = wfiles[i];
 			if (wkspFile.isAccessible()) {
 				result[i] = wkspFile;

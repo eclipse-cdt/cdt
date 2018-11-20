@@ -26,7 +26,7 @@ public final class TemplateMessages extends NLS {
 	public static String CContextType_variable_description_enclosing_method_arguments;
 	public static String CContextType_variable_description_return_type;
 	public static String CContextType_variable_description_todo;
-	
+
 	public static String CodeTemplateContextType_variable_description_todo;
 	public static String CodeTemplateContextType_variable_description_typedeclaration;
 	public static String CodeTemplateContextType_variable_description_class_members;
@@ -52,7 +52,7 @@ public final class TemplateMessages extends NLS {
 	public static String CodeTemplateContextType_cppsource_name;
 	public static String CodeTemplateContextType_cppheader_name;
 	public static String CodeTemplateContextType_asmsource_name;
-	
+
 	public static String FileTemplateContextType__variable_description_eclipse;
 	public static String FileTemplateContextType_validate_unknownvariable;
 	public static String FileTemplateContextType_validate_missingvariable;

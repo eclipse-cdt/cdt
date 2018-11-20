@@ -27,4 +27,3 @@ interface IDsfActionsConstants {
 	static final int ACTION_ADAPTERS_TIMEOUT_MS = 500;
 
 }
-

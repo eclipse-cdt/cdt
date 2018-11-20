@@ -22,50 +22,51 @@ import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableManager;
 
 public class BuildSystemVariableSupplier extends CoreMacroSupplierBase {
 	private static BuildSystemVariableSupplier fInstance;
-	private BuildSystemVariableSupplier(){
+
+	private BuildSystemVariableSupplier() {
 	}
-	
-	public static BuildSystemVariableSupplier getInstance(){
-		if(fInstance == null){
+
+	public static BuildSystemVariableSupplier getInstance() {
+		if (fInstance == null) {
 			fInstance = new BuildSystemVariableSupplier();
 		}
 		return fInstance;
 	}
-	private class ExtensionMacroProvider extends CdtVariableManager{
+
+	private class ExtensionMacroProvider extends CdtVariableManager {
 		private IVariableContextInfo fStartInfo;
 		private int fContextType;
 		private Object fContextData;
 		private boolean fStartInitialized;
-		
-		public ExtensionMacroProvider(int contextType, Object contextData){
+
+		public ExtensionMacroProvider(int contextType, Object contextData) {
 			fContextType = contextType;
 			fContextData = contextData;
 		}
 
 		@Override
-		public IVariableContextInfo getMacroContextInfo(int contextType,Object contextData){
+		public IVariableContextInfo getMacroContextInfo(int contextType, Object contextData) {
 			IVariableContextInfo startInfo = getStartInfo();
-			if(contextType == fContextType &&
-					contextData == fContextData)
+			if (contextType == fContextType && contextData == fContextData)
 				return startInfo;
-			
+
 			IVariableContextInfo info = super.getMacroContextInfo(contextType, contextData);
-			if(info == null)
+			if (info == null)
 				return null;
-			
-			if(SupplierBasedCdtVariableManager.checkParentContextRelation(startInfo,info))
+
+			if (SupplierBasedCdtVariableManager.checkParentContextRelation(startInfo, info))
 				return info;
 			return null;
 		}
-		
-		protected IVariableContextInfo getStartInfo(){
-			if(fStartInfo == null && !fStartInitialized){
-				IVariableContextInfo info = super.getMacroContextInfo(fContextType,fContextData);
-				if(info != null){
+
+		protected IVariableContextInfo getStartInfo() {
+			if (fStartInfo == null && !fStartInitialized) {
+				IVariableContextInfo info = super.getMacroContextInfo(fContextType, fContextData);
+				if (info != null) {
 					ICdtVariableSupplier suppliers[] = info.getSuppliers();
 					suppliers = filterValidSuppliers(suppliers);
-					if(suppliers != null)
-						fStartInfo = new DefaultVariableContextInfo(fContextType,fContextData,suppliers);
+					if (suppliers != null)
+						fStartInfo = new DefaultVariableContextInfo(fContextType, fContextData, suppliers);
 					else
 						fStartInfo = info.getNext();
 					fStartInitialized = true;
@@ -74,47 +75,45 @@ public class BuildSystemVariableSupplier extends CoreMacroSupplierBase {
 			}
 			return fStartInfo;
 		}
-		
-		protected ICdtVariableSupplier[] filterValidSuppliers(ICdtVariableSupplier suppliers[]){
-			if(suppliers == null)
+
+		protected ICdtVariableSupplier[] filterValidSuppliers(ICdtVariableSupplier suppliers[]) {
+			if (suppliers == null)
 				return null;
 
 			int i = 0, j = 0;
-			for(i = 0; i < suppliers.length; i++){
-				if(suppliers[i] == this)
+			for (i = 0; i < suppliers.length; i++) {
+				if (suppliers[i] == this)
 					break;
 			}
-			
-		
-			if(i >= suppliers.length)
+
+			if (i >= suppliers.length)
 				return null;
-			
+
 			int startNum = i + 1;
 
-			ICdtVariableSupplier validSuppliers[] = 
-				new ICdtVariableSupplier[suppliers.length - startNum];
-			
-			for(i = startNum, j = 0; i < suppliers.length; i++, j++)
+			ICdtVariableSupplier validSuppliers[] = new ICdtVariableSupplier[suppliers.length - startNum];
+
+			for (i = startNum, j = 0; i < suppliers.length; i++, j++)
 				validSuppliers[j] = suppliers[i];
-			
+
 			return validSuppliers;
 		}
 	}
 
 	@Override
 	protected ICdtVariable getMacro(String name, int type, Object data) {
-		ICConfigurationDescription des = (ICConfigurationDescription)data;
+		ICConfigurationDescription des = (ICConfigurationDescription) data;
 		ICdtVariablesContributor cr = des.getBuildVariablesContributor();
-		if(cr != null)
+		if (cr != null)
 			return cr.getVariable(name, new ExtensionMacroProvider(type, data));
 		return null;
 	}
 
 	@Override
 	protected ICdtVariable[] getMacros(int type, Object data) {
-		ICConfigurationDescription des = (ICConfigurationDescription)data;
+		ICConfigurationDescription des = (ICConfigurationDescription) data;
 		ICdtVariablesContributor cr = des.getBuildVariablesContributor();
-		if(cr != null)
+		if (cr != null)
 			return cr.getVariables(new ExtensionMacroProvider(type, data));
 		return new ICdtVariable[0];
 	}

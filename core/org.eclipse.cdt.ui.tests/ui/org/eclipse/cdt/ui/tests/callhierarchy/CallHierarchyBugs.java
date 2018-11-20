@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.Test;
@@ -29,9 +29,8 @@ import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
 import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
-
 public class CallHierarchyBugs extends CallHierarchyBaseTest {
-	
+
 	public CallHierarchyBugs(String name) {
 		super(name);
 	}
@@ -45,7 +44,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		super.setUp();
 		restoreAllParts();
 	}
-	
+
 	// class SomeClass {
 	// public:
 	//    void method();
@@ -58,29 +57,29 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	// }
 	public void testCallHierarchyFromOutlineView_183941() throws Exception {
 		StringBuilder[] contents = getContentsForTest(2);
-		IFile file1= createFile(getProject(), "SomeClass.h", contents[0].toString());
-		IFile file2= createFile(getProject(), "SomeClass.cpp", contents[1].toString());
+		IFile file1 = createFile(getProject(), "SomeClass.h", contents[0].toString());
+		IFile file2 = createFile(getProject(), "SomeClass.cpp", contents[1].toString());
 		waitUntilFileIsIndexed(fIndex, file2);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
-		final IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final IViewPart outline = activateView(IPageLayout.ID_OUTLINE);
 		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
 
 		// open editor, check outline
 		openEditor(file1);
-		Tree outlineTree= checkTreeNode(outline, 0, "SomeClass").getParent();
+		Tree outlineTree = checkTreeNode(outline, 0, "SomeClass").getParent();
 		expandTreeItem(outlineTree, 0);
-		TreeItem node= checkTreeNode(outlineTree, 0, 0, "method() : void");
+		TreeItem node = checkTreeNode(outlineTree, 0, 0, "method() : void");
 
 		openCH(workbenchWindow, node);
-		Tree chTree= checkTreeNode(ch, 0, "SomeClass::method() : void").getParent();
+		Tree chTree = checkTreeNode(ch, 0, "SomeClass::method() : void").getParent();
 		checkTreeNode(chTree, 0, 1, null);
-		
+
 		ch.onSetShowReferencedBy(false);
 		checkTreeNode(chTree, 0, "SomeClass::method() : void");
 		checkTreeNode(chTree, 0, 0, "SomeClass::field : int");
 	}
-	
+
 	// class SomeClass {
 	// public:
 	//    void ambiguous_impl();
@@ -99,50 +98,49 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	// }
 	public void testCallHierarchyFromOutlineViewAmbiguous_183941() throws Exception {
 		StringBuilder[] contents = getContentsForTest(2);
-		IFile file1= createFile(getProject(), "SomeClass.h", contents[0].toString());
-		IFile file2= createFile(getProject(), "SomeClass.cpp", contents[1].toString());
+		IFile file1 = createFile(getProject(), "SomeClass.h", contents[0].toString());
+		IFile file2 = createFile(getProject(), "SomeClass.cpp", contents[1].toString());
 		waitUntilFileIsIndexed(fIndex, file2);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
-		final IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final IViewPart outline = activateView(IPageLayout.ID_OUTLINE);
 		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
 
 		// open editor, check outline
 		openEditor(file1);
-		TreeItem node1= checkTreeNode(outline, 1, "SomeClass::ambiguous_impl() : void");
-		Tree outlineTree= node1.getParent();
-		TreeItem node2= checkTreeNode(outlineTree, 2, "other() : void");
+		TreeItem node1 = checkTreeNode(outline, 1, "SomeClass::ambiguous_impl() : void");
+		Tree outlineTree = node1.getParent();
+		TreeItem node2 = checkTreeNode(outlineTree, 2, "other() : void");
 
 		// open and check call hierarchy
 		openCH(workbenchWindow, node1);
 		ch.onSetShowReferencedBy(false);
 
-		Tree chTree= checkTreeNode(ch, 0, "SomeClass::ambiguous_impl() : void").getParent();
+		Tree chTree = checkTreeNode(ch, 0, "SomeClass::ambiguous_impl() : void").getParent();
 		checkTreeNode(chTree, 0, 0, "SomeClass::ref1 : int");
 
 		// open and check call hierarchy
 		openCH(workbenchWindow, node2);
 		checkTreeNode(chTree, 0, "other() : void");
 
-		
 		// open editor, check outline
 		openEditor(file2);
-		outlineTree= checkTreeNode(outline, 0, "SomeClass.h").getParent();
-		node1= checkTreeNode(outlineTree, 1, "SomeClass::ambiguous_impl() : void");
-		
+		outlineTree = checkTreeNode(outline, 0, "SomeClass.h").getParent();
+		node1 = checkTreeNode(outlineTree, 1, "SomeClass::ambiguous_impl() : void");
+
 		// open and check call hierarchy
 		openCH(workbenchWindow, node1);
 		ch.onSetShowReferencedBy(false);
-		chTree= checkTreeNode(ch, 0, "SomeClass::ambiguous_impl() : void").getParent();
+		chTree = checkTreeNode(ch, 0, "SomeClass::ambiguous_impl() : void").getParent();
 		checkTreeNode(chTree, 0, 0, "SomeClass::ref2 : int");
 	}
 
 	private void openCH(final IWorkbenchWindow workbenchWindow, TreeItem node1) {
-		Object obj= node1.getData();
+		Object obj = node1.getData();
 		assertTrue(obj instanceof ICElement);
 		CallHierarchyUI.open(workbenchWindow, (ICElement) obj);
 	}
-	
+
 	// class Base {
 	// public:
 	//    virtual void vmethod();
@@ -162,46 +160,46 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//    b->Base::vmethod(); b->Base::method(); 
 	// }
 	public void testPolyMorphicMethodCalls_156689() throws Exception {
-		String content= getContentsForTest(1)[0].toString();
-		IFile file= createFile(getProject(), "SomeClass.cpp", content);
+		String content = getContentsForTest(1)[0].toString();
+		IFile file = createFile(getProject(), "SomeClass.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
 
 		// open editor, check outline
-		CEditor editor= openEditor(file);
+		CEditor editor = openEditor(file);
 		int idx = content.indexOf("vmethod");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor);
 
-		Tree chTree= checkTreeNode(ch, 0, "Base::vmethod() : void").getParent();
+		Tree chTree = checkTreeNode(ch, 0, "Base::vmethod() : void").getParent();
 		checkTreeNode(chTree, 0, 0, "regRefs() : void");
 		checkTreeNode(chTree, 0, 1, "vrefs() : void");
 		checkTreeNode(chTree, 0, 2, null);
 
-		idx = content.indexOf("vmethod", idx+1);
+		idx = content.indexOf("vmethod", idx + 1);
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor);
 
-		chTree= checkTreeNode(ch, 0, "Derived::vmethod() : void").getParent();
+		chTree = checkTreeNode(ch, 0, "Derived::vmethod() : void").getParent();
 		checkTreeNode(chTree, 0, 0, "vrefs() : void");
 		checkTreeNode(chTree, 0, 1, null);
 
-		idx = content.indexOf(" method")+1;
+		idx = content.indexOf(" method") + 1;
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor);
 
-		chTree= checkTreeNode(ch, 0, "Base::method() : void").getParent();
+		chTree = checkTreeNode(ch, 0, "Base::method() : void").getParent();
 		checkTreeNode(chTree, 0, 0, "regRefs() : void");
 		checkTreeNode(chTree, 0, 1, "vrefs() : void");
 		checkTreeNode(chTree, 0, 2, null);
 
-		idx = content.indexOf(" method", idx+1)+1;
+		idx = content.indexOf(" method", idx + 1) + 1;
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor);
 
-		chTree= checkTreeNode(ch, 0, "Derived::method() : void").getParent();
+		chTree = checkTreeNode(ch, 0, "Derived::method() : void").getParent();
 		checkTreeNode(chTree, 0, 0, null);
 	}
 
@@ -218,21 +216,21 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//    b->vmethod();
 	// }
 	public void testReversePolyMorphicMethodCalls_156689() throws Exception {
-		String content= getContentsForTest(1)[0].toString();
-		IFile file= createFile(getProject(), "SomeClass.cpp", content);
+		String content = getContentsForTest(1)[0].toString();
+		IFile file = createFile(getProject(), "SomeClass.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
 
 		// open editor, check outline
-		CEditor editor= openEditor(file);
+		CEditor editor = openEditor(file);
 		int idx = content.indexOf("vrefs");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
 
-		Tree chTree= checkTreeNode(ch, 0, "vrefs() : void").getParent();
-		TreeItem item= checkTreeNode(chTree, 0, 0, "Base::vmethod() : void");
+		Tree chTree = checkTreeNode(ch, 0, "vrefs() : void").getParent();
+		TreeItem item = checkTreeNode(chTree, 0, 0, "Base::vmethod() : void");
 		checkTreeNode(chTree, 0, 1, null);
 
 		expandTreeItem(item);
@@ -240,7 +238,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(item, 1, "Derived::vmethod() : void");
 		checkTreeNode(item, 2, null);
 	}
-	
+
 	//	template <class T> class CSome {
 	//		public:
 	//			T Foo (const T& x) { return 2*x; }
@@ -254,23 +252,23 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//		X.Foo(3);
 	//	}
 	public void testMethodInstance_Bug240599() throws Exception {
-		String content= getContentsForTest(1)[0].toString();
-		IFile file= createFile(getProject(), "CSome.cpp", content);
+		String content = getContentsForTest(1)[0].toString();
+		IFile file = createFile(getProject(), "CSome.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
 
 		// open editor, check outline
-		CEditor editor= openEditor(file);
+		CEditor editor = openEditor(file);
 		int idx = content.indexOf("Foo(3)");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
-		Tree chTree= checkTreeNode(ch, 0, "CSome<int>::Foo(const int &) : int").getParent();
-		TreeItem item= checkTreeNode(chTree, 0, 0, "test() : void");
+		Tree chTree = checkTreeNode(ch, 0, "CSome<int>::Foo(const int &) : int").getParent();
+		TreeItem item = checkTreeNode(chTree, 0, 0, "test() : void");
 		checkTreeNode(chTree, 0, 1, null);
 	}
-	
+
 	//	class Base {
 	//	public:
 	//	   virtual void First() {}
@@ -294,30 +292,30 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//		return 0;
 	//	}
 	public void testMultiplePolyMorphicMethodCalls_244987() throws Exception {
-		String content= getContentsForTest(1)[0].toString();
-		IFile file= createFile(getProject(), "SomeClass244987.cpp", content);
+		String content = getContentsForTest(1)[0].toString();
+		IFile file = createFile(getProject(), "SomeClass244987.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
 
 		// open editor, check outline
-		CEditor editor= openEditor(file);
+		CEditor editor = openEditor(file);
 		int idx = content.indexOf("main");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
 
-		Tree chTree= checkTreeNode(ch, 0, "main() : int").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "func(Base *) : void");
+		Tree chTree = checkTreeNode(ch, 0, "main() : int").getParent();
+		TreeItem ti = checkTreeNode(chTree, 0, 0, "func(Base *) : void");
 		expandTreeItem(ti);
 		checkTreeNode(chTree, 0, 1, null);
 
-		TreeItem ti1= checkTreeNode(ti, 0, "Base::First() : void");
+		TreeItem ti1 = checkTreeNode(ti, 0, "Base::First() : void");
 		expandTreeItem(ti1);
-		TreeItem ti2= checkTreeNode(ti, 1, "Base::Second() : void");
+		TreeItem ti2 = checkTreeNode(ti, 1, "Base::Second() : void");
 		expandTreeItem(ti2);
 		checkTreeNode(ti, 2, null);
-		
+
 		checkTreeNode(ti1, 0, "Base::First() : void");
 		checkTreeNode(ti1, 1, "Derived::First() : void");
 		checkTreeNode(ti1, 2, null);
@@ -336,26 +334,26 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//		CALL(0);
 	//	}
 	public void testMacrosHidingCall_249801() throws Exception {
-		String content= getContentsForTest(1)[0].toString();
-		IFile file= createFile(getProject(), "file249801.cpp", content);
+		String content = getContentsForTest(1)[0].toString();
+		IFile file = createFile(getProject(), "file249801.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 
 		// open editor, check outline
-		CEditor editor= openEditor(file);
+		CEditor editor = openEditor(file);
 		int idx = content.indexOf("MACRO(Test");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
 
-		Tree chTree= checkTreeNode(ch, 0, "PREFIX_Test(char *, char *) : void").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "call(int) : void");
+		Tree chTree = checkTreeNode(ch, 0, "PREFIX_Test(char *, char *) : void").getParent();
+		TreeItem ti = checkTreeNode(chTree, 0, 0, "call(int) : void");
 
 		idx = content.indexOf("CALL(0");
-		editor.selectAndReveal(idx+4, 0);
+		editor.selectAndReveal(idx + 4, 0);
 		openCallHierarchy(editor, true);
-		chTree= checkTreeNode(ch, 0, "call(int) : void").getParent();
-		ti= checkTreeNode(chTree, 0, 0, "PREFIX_Test(char *, char *) : void");
+		chTree = checkTreeNode(ch, 0, "call(int) : void").getParent();
+		ti = checkTreeNode(chTree, 0, 0, "PREFIX_Test(char *, char *) : void");
 	}
 
 	//	void shared_func();
@@ -370,21 +368,21 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		final String hcontent = contents[0].toString();
 		final String content_inc = contents[1].toString();
 		final String content_full = content_inc + contents[2].toString();
-		IFile header= createFile(getProject(), "260262.h", hcontent);
-		IFile f1= createFile(getProject(), "260262.c", content_full);
-		IFile f2= createFile(getProject(), "260262.cpp", content_inc);
+		IFile header = createFile(getProject(), "260262.h", hcontent);
+		IFile f1 = createFile(getProject(), "260262.c", content_full);
+		IFile f2 = createFile(getProject(), "260262.cpp", content_inc);
 		waitUntilFileIsIndexed(fIndex, f2);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 
 		// open editor, check outline
-		CEditor editor= openEditor(header);
+		CEditor editor = openEditor(header);
 		int idx = hcontent.indexOf("shared_func()");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
 
-		Tree chTree= checkTreeNode(ch, 0, "shared_func() : void").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "call() : void");
+		Tree chTree = checkTreeNode(ch, 0, "shared_func() : void").getParent();
+		TreeItem ti = checkTreeNode(chTree, 0, 0, "call() : void");
 		checkTreeNode(chTree, 0, 1, null);
 	}
 
@@ -400,24 +398,24 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		final String hcontent = contents[0].toString();
 		final String content_inc = contents[1].toString();
 		final String content_full = content_inc + contents[2].toString();
-		IFile header= createFile(getProject(), "260262.h", hcontent);
-		IFile f1= createFile(getProject(), "260262.c", content_full);
-		IFile f2= createFile(getProject(), "260262.cpp", content_inc);
+		IFile header = createFile(getProject(), "260262.h", hcontent);
+		IFile f1 = createFile(getProject(), "260262.c", content_full);
+		IFile f2 = createFile(getProject(), "260262.cpp", content_inc);
 		waitUntilFileIsIndexed(fIndex, f2);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 
 		// open editor, check outline
-		CEditor editor= openEditor(header);
+		CEditor editor = openEditor(header);
 		int idx = hcontent.indexOf("shared_func()");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
 
-		Tree chTree= checkTreeNode(ch, 0, "shared_func() : void").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "call() : void");
+		Tree chTree = checkTreeNode(ch, 0, "shared_func() : void").getParent();
+		TreeItem ti = checkTreeNode(chTree, 0, 0, "call() : void");
 		checkTreeNode(chTree, 0, 1, null);
 	}
-	
+
 	//	namespace {
 	//		void doNothing()
 	//		{
@@ -430,23 +428,22 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	public void testUnnamedNamespace_283679() throws Exception {
 		final StringBuilder[] contents = getContentsForTest(1);
 		final String content = contents[0].toString();
-		IFile f2= createFile(getProject(), "testUnnamedNamespace_283679.cpp", content);
+		IFile f2 = createFile(getProject(), "testUnnamedNamespace_283679.cpp", content);
 		waitUntilFileIsIndexed(fIndex, f2);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 
 		// open editor, check outline
-		CEditor editor= openEditor(f2);
+		CEditor editor = openEditor(f2);
 		int idx = content.indexOf("doNothing()");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
 
-		Tree chTree= checkTreeNode(ch, 0, "doNothing() : void").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "main() : int");
+		Tree chTree = checkTreeNode(ch, 0, "doNothing() : void").getParent();
+		TreeItem ti = checkTreeNode(chTree, 0, 0, "main() : int");
 		checkTreeNode(chTree, 0, 1, null);
 	}
 
-	
 	//	class Base {
 	//		public:
 	//			virtual void dosomething() {}
@@ -465,24 +462,24 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	public void testCallsToFromVirtualMethod_246064() throws Exception {
 		final StringBuilder[] contents = getContentsForTest(1);
 		final String content = contents[0].toString();
-		IFile f2= createFile(getProject(), "testCallsToFromVirtualMethod_246064.cpp", content);
+		IFile f2 = createFile(getProject(), "testCallsToFromVirtualMethod_246064.cpp", content);
 		waitUntilFileIsIndexed(fIndex, f2);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 
 		// open editor, check outline
-		CEditor editor= openEditor(f2);
+		CEditor editor = openEditor(f2);
 		int idx = content.indexOf("dosomething();");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
 
-		Tree chTree= checkTreeNode(ch, 0, "Base::dosomething() : void").getParent();
-		TreeItem item= checkTreeNode(chTree, 0, 0, "Base::dosomething() : void");
+		Tree chTree = checkTreeNode(ch, 0, "Base::dosomething() : void").getParent();
+		TreeItem item = checkTreeNode(chTree, 0, 0, "Base::dosomething() : void");
 		expandTreeItem(item);
 		checkTreeNode(chTree, 0, 1, "Derived::dosomething() : void");
 		checkTreeNode(chTree, 0, 2, null);
 	}
-	
+
 	//	template<typename T> struct Array {
 	//	      template<typename TIterator> void erase(TIterator it) {}
 	//	};
@@ -493,19 +490,19 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//	}
 	public void testCallsToInstanceofSpecializedTemplate_361999() throws Exception {
 		final String content = getAboveComment();
-		IFile f2= createFile(getProject(), "testCallsToInstanceofSpecializedTemplate_361999.cpp", content);
+		IFile f2 = createFile(getProject(), "testCallsToInstanceofSpecializedTemplate_361999.cpp", content);
 		waitUntilFileIsIndexed(fIndex, f2);
 
-		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final CHViewPart ch = (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 
 		// open editor, check outline
-		CEditor editor= openEditor(f2);
+		CEditor editor = openEditor(f2);
 		int idx = content.indexOf("erase(TIterator it)");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
 
-		Tree chTree= checkTreeNode(ch, 0, "Array<T>::erase(TIterator) : void").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "main() : int");
+		Tree chTree = checkTreeNode(ch, 0, "Array<T>::erase(TIterator) : void").getParent();
+		TreeItem ti = checkTreeNode(chTree, 0, 0, "main() : int");
 		checkTreeNode(chTree, 0, 1, null);
 	}
 }

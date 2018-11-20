@@ -83,6 +83,6 @@ public abstract class AbstractExecutableExtensionBase {
 	@SuppressWarnings("nls")
 	@Override
 	public String toString() {
-		return "id="+fId+", name="+fName;
+		return "id=" + fId + ", name=" + fName;
 	}
 }

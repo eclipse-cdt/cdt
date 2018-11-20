@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *	   IBM Corporation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.indexer;
 
 import java.text.NumberFormat;
@@ -45,18 +45,17 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	protected StandaloneIndexer fIndexer;
 	protected IParserLogService fLogger;
 
-	public static final int[] IDS_FOR_LINKAGES_TO_INDEX = {
-		ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
-	};
-	
-	protected StandaloneIndexerTask(StandaloneIndexer indexer, Collection<String> added,
-			Collection<String> changed, Collection<String> removed, boolean isFast) {
+	public static final int[] IDS_FOR_LINKAGES_TO_INDEX = { ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID,
+			ILinkage.FORTRAN_LINKAGE_ID };
+
+	protected StandaloneIndexerTask(StandaloneIndexer indexer, Collection<String> added, Collection<String> changed,
+			Collection<String> removed, boolean isFast) {
 		super(concat(added, changed), removed.toArray(), new StandaloneIndexerInputAdapter(indexer), isFast);
-		fIndexer= indexer;
+		fIndexer = indexer;
 		setShowActivity(fIndexer.getShowActivity());
 		setShowProblems(fIndexer.getShowProblems());
 		setSkipReferences(fIndexer.getSkipReferences());
-		
+
 		if (getIndexAllFiles()) {
 			setIndexFilesWithoutBuildConfiguration(true);
 			setIndexHeadersWithoutContext(UnusedHeaderStrategy.useDefaultLanguage);
@@ -65,15 +64,15 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 			setIndexHeadersWithoutContext(UnusedHeaderStrategy.skip);
 		}
 	}
-	
+
 	private static Object[] concat(Collection<?> added, Collection<?> changed) {
-		Object[] result= new Object[added.size() + changed.size()];
-		int i=0;
+		Object[] result = new Object[added.size() + changed.size()];
+		int i = 0;
 		for (Iterator<?> iterator = added.iterator(); iterator.hasNext();) {
-			result[i++]= iterator.next();
+			result[i++] = iterator.next();
 		}
 		for (Iterator<?> iterator = changed.iterator(); iterator.hasNext();) {
-			result[i++]= iterator.next();
+			result[i++] = iterator.next();
 		}
 		return result;
 	}
@@ -84,7 +83,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	final public StandaloneIndexer getIndexer() {
 		return fIndexer;
 	}
-	
+
 	/**
 	 * Return indexer's progress information.
 	 */
@@ -92,7 +91,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	final public IndexerProgress getProgressInformation() {
 		return super.getProgressInformation();
 	}
-			
+
 	/**
 	 * Figures out whether all files (sources without config, headers not included)
 	 * should be parsed.
@@ -106,7 +105,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	protected final IWritableIndex createIndex() {
 		return fIndexer.getIndex();
 	}
-	
+
 	public final void run(IProgressMonitor monitor) throws InterruptedException {
 		long start = System.currentTimeMillis();
 		runTask(monitor);
@@ -115,48 +114,48 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 
 	protected void traceEnd(long start) {
 		if (fIndexer.getTraceStatistics()) {
-			IndexerProgress info= getProgressInformation();
-			String name= getClass().getName();
-			name= name.substring(name.lastIndexOf('.')+1);
+			IndexerProgress info = getProgressInformation();
+			String name = getClass().getName();
+			name = name.substring(name.lastIndexOf('.') + 1);
 
-			trace(name + " "  //$NON-NLS-1$
-					+ " (" + info.fCompletedSources + " sources, "  //$NON-NLS-1$ //$NON-NLS-2$
+			trace(name + " " //$NON-NLS-1$
+					+ " (" + info.fCompletedSources + " sources, " //$NON-NLS-1$ //$NON-NLS-2$
 					+ info.fCompletedHeaders + " headers)"); //$NON-NLS-1$
-			
-			boolean allFiles= getIndexAllFiles();
-			boolean skipRefs= fIndexer.getSkipReferences() == StandaloneIndexer.SKIP_ALL_REFERENCES;
-			boolean skipTypeRefs= skipRefs || fIndexer.getSkipReferences() == StandaloneIndexer.SKIP_TYPE_REFERENCES;
-			trace(name + " Options: "  //$NON-NLS-1$
+
+			boolean allFiles = getIndexAllFiles();
+			boolean skipRefs = fIndexer.getSkipReferences() == StandaloneIndexer.SKIP_ALL_REFERENCES;
+			boolean skipTypeRefs = skipRefs || fIndexer.getSkipReferences() == StandaloneIndexer.SKIP_TYPE_REFERENCES;
+			trace(name + " Options: " //$NON-NLS-1$
 					+ "parseAllFiles=" + allFiles //$NON-NLS-1$
 					+ ",skipReferences=" + skipRefs //$NON-NLS-1$
 					+ ", skipTypeReferences=" + skipTypeRefs //$NON-NLS-1$
 					+ "."); //$NON-NLS-1$
-			
-			trace(name + " Timings: "  //$NON-NLS-1$
+
+			trace(name + " Timings: " //$NON-NLS-1$
 					+ (System.currentTimeMillis() - start) + " total, " //$NON-NLS-1$
 					+ fStatistics.fParsingTime + " parser, " //$NON-NLS-1$
 					+ fStatistics.fResolutionTime + " resolution, " //$NON-NLS-1$
 					+ fStatistics.fAddToIndexTime + " index update."); //$NON-NLS-1$
-			int sum= fStatistics.fDeclarationCount+fStatistics.fReferenceCount+fStatistics.fProblemBindingCount;
-			double problemPct= sum==0 ? 0.0 : (double) fStatistics.fProblemBindingCount / (double) sum;
-			NumberFormat nf= NumberFormat.getPercentInstance();
+			int sum = fStatistics.fDeclarationCount + fStatistics.fReferenceCount + fStatistics.fProblemBindingCount;
+			double problemPct = sum == 0 ? 0.0 : (double) fStatistics.fProblemBindingCount / (double) sum;
+			NumberFormat nf = NumberFormat.getPercentInstance();
 			nf.setMaximumFractionDigits(2);
 			nf.setMinimumFractionDigits(2);
 			trace(name + " Result: " //$NON-NLS-1$
 					+ fStatistics.fDeclarationCount + " declarations, " //$NON-NLS-1$
 					+ fStatistics.fReferenceCount + " references, " //$NON-NLS-1$
 					+ fStatistics.fErrorCount + " errors, " //$NON-NLS-1$
-					+ fStatistics.fProblemBindingCount + "(" + nf.format(problemPct) + ") problems.");  //$NON-NLS-1$ //$NON-NLS-2$
-						
+					+ fStatistics.fProblemBindingCount + "(" + nf.format(problemPct) + ") problems."); //$NON-NLS-1$ //$NON-NLS-2$
+
 			IWritableIndex index = fIndexer.getIndex();
 			if (index != null) {
-				long misses= index.getCacheMisses();
-				long hits= index.getCacheHits();
-				long tries= misses+hits;
-				double missPct= tries==0 ? 0.0 : (double) misses / (double) tries;
+				long misses = index.getCacheMisses();
+				long hits = index.getCacheHits();
+				long tries = misses + hits;
+				double missPct = tries == 0 ? 0.0 : (double) misses / (double) tries;
 				trace(name + " Cache: " //$NON-NLS-1$
-					+ hits + " hits, "  //$NON-NLS-1$
-					+ misses + "(" + nf.format(missPct)+ ") misses."); //$NON-NLS-1$ //$NON-NLS-2$
+						+ hits + " hits, " //$NON-NLS-1$
+						+ misses + "(" + nf.format(missPct) + ") misses."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -179,14 +178,14 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		switch (kind) {
 		case parsingFileTask:
 			return MessageFormat.format("parsing {0} ({1})", arguments); //$NON-NLS-1$
-			
+
 		case errorWhileParsing:
 			return MessageFormat.format("Error while parsing {0}.", arguments); //$NON-NLS-1$
-			
+
 		case tooManyIndexProblems:
 			return "Too many errors while indexing, stopping indexer."; //$NON-NLS-1$
 		}
-		
+
 		return null;
 	}
 
@@ -196,8 +195,8 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 			return fLogger;
 		return new StdoutLogService();
 	}
-	
-	protected void setLogService(IParserLogService logService){
+
+	protected void setLogService(IParserLogService logService) {
 		fLogger = logService;
 	}
 
@@ -205,19 +204,19 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	protected void logError(IStatus s) {
 		trace(s.getMessage());
 	}
-	
+
 	@Override
 	protected void logException(Throwable e) {
 		trace(e.getMessage());
 	}
-	
+
 	@Override
 	protected int[] getLinkagesToParse() {
 		return IDS_FOR_LINKAGES_TO_INDEX;
 	}
 
 	@Override
-	protected void trace(String message) {		
+	protected void trace(String message) {
 		getLogService().traceLog(message);
 	}
 }

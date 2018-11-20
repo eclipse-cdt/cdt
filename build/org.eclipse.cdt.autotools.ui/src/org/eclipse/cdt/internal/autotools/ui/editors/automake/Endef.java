@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 public class Endef extends Terminal {
 
-
 	public Endef(Directive parent) {
 		super(parent);
 	}
@@ -24,9 +23,9 @@ public class Endef extends Terminal {
 	public boolean isEndef() {
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
-       return GNUMakefileConstants.TERMINAL_ENDEF;
-    }
+		return GNUMakefileConstants.TERMINAL_ENDEF;
+	}
 }

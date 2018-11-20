@@ -34,99 +34,114 @@ public interface IDiscoveredPathManager {
 
 		IProject getProject();
 
-        /**
-         * Get include paths for the whole project 
-         */
-        IPath[] getIncludePaths();
-        /**
-         * Get defined symbols for the whole project 
-         */
-        Map<String, String> getSymbols();
-		
-        IDiscoveredScannerInfoSerializable getSerializable();
+		/**
+		 * Get include paths for the whole project 
+		 */
+		IPath[] getIncludePaths();
+
+		/**
+		 * Get defined symbols for the whole project 
+		 */
+		Map<String, String> getSymbols();
+
+		IDiscoveredScannerInfoSerializable getSerializable();
 	}
-    
-    interface IPerProjectDiscoveredPathInfo extends IDiscoveredPathInfo {
-        void setIncludeMap(LinkedHashMap<String, Boolean> map);
-        void setSymbolMap(LinkedHashMap<String, SymbolEntry> map);
 
-        LinkedHashMap<String, Boolean> getIncludeMap();
-        LinkedHashMap<String, SymbolEntry> getSymbolMap();
-    }
+	interface IPerProjectDiscoveredPathInfo extends IDiscoveredPathInfo {
+		void setIncludeMap(LinkedHashMap<String, Boolean> map);
 
-    interface IPerFileDiscoveredPathInfo extends IDiscoveredPathInfo {
-        /**
-         * Get include paths for the specific path (file) 
-         */
-        IPath[] getIncludePaths(IPath path);
-        /**
-         * Get quote include paths (for #include "...") for the specific path (file)
-         */
-        IPath[] getQuoteIncludePaths(IPath path);
-        /**
-         * Get defined symbols for the specific path (file) 
-         */
-        Map<String, String> getSymbols(IPath path);
-        
-        /**
-         * Get include files (gcc option -include) for the specific path (file)
-         */
-        IPath[] getIncludeFiles(IPath path);
-        /**
-         * Get macro files (gcc option -imacros) for the specific path (file)
-         */
-        IPath[] getMacroFiles(IPath path);
+		void setSymbolMap(LinkedHashMap<String, SymbolEntry> map);
+
+		LinkedHashMap<String, Boolean> getIncludeMap();
+
+		LinkedHashMap<String, SymbolEntry> getSymbolMap();
+	}
+
+	interface IPerFileDiscoveredPathInfo extends IDiscoveredPathInfo {
+		/**
+		 * Get include paths for the specific path (file) 
+		 */
+		IPath[] getIncludePaths(IPath path);
+
+		/**
+		 * Get quote include paths (for #include "...") for the specific path (file)
+		 */
+		IPath[] getQuoteIncludePaths(IPath path);
+
+		/**
+		 * Get defined symbols for the specific path (file) 
+		 */
+		Map<String, String> getSymbols(IPath path);
+
+		/**
+		 * Get include files (gcc option -include) for the specific path (file)
+		 */
+		IPath[] getIncludeFiles(IPath path);
+
+		/**
+		 * Get macro files (gcc option -imacros) for the specific path (file)
+		 */
+		IPath[] getMacroFiles(IPath path);
+
 		/**
 		 * Returns if there is any discovered scanner info for the path
 		 */
 		boolean isEmpty(IPath path);
-    }
-    
-    interface IPerFileDiscoveredPathInfo2 extends IPerFileDiscoveredPathInfo {
-    	/**
-    	 * returns the map containing {@link IResource} - to - {@link PathInfo} pairs representing 
-    	 * complete set of discovered information for the whole project
-    	 * 
-    	 * @return Map
-    	 */
-    	Map<IResource, PathInfo> getPathInfoMap();
-    }
+	}
 
-    
-    interface IDiscoveredScannerInfoSerializable {
-        /**
-         * Serialize discovered scanner info to an XML element
-         */
-        public void serialize(Element root);
-        
-        /**
-         * Deserialize discovered scanner info from an XML element
-         */
-        public void deserialize(Element root);
-        
-        /**
-         * @return an id of the collector
-         */
-        public String getCollectorId();
-    }
-    
-    interface IDiscoveredInfoListener {
+	interface IPerFileDiscoveredPathInfo2 extends IPerFileDiscoveredPathInfo {
+		/**
+		 * returns the map containing {@link IResource} - to - {@link PathInfo} pairs representing 
+		 * complete set of discovered information for the whole project
+		 * 
+		 * @return Map
+		 */
+		Map<IResource, PathInfo> getPathInfoMap();
+	}
+
+	interface IDiscoveredScannerInfoSerializable {
+		/**
+		 * Serialize discovered scanner info to an XML element
+		 */
+		public void serialize(Element root);
+
+		/**
+		 * Deserialize discovered scanner info from an XML element
+		 */
+		public void deserialize(Element root);
+
+		/**
+		 * @return an id of the collector
+		 */
+		public String getCollectorId();
+	}
+
+	interface IDiscoveredInfoListener {
 
 		void infoChanged(IDiscoveredPathInfo info);
+
 		void infoRemoved(IDiscoveredPathInfo info);
 	}
 
 	IDiscoveredPathInfo getDiscoveredInfo(IProject project, InfoContext context) throws CoreException;
 
-	IDiscoveredPathInfo getDiscoveredInfo(IProject project, InfoContext context, boolean defaultToProjectSettings) throws CoreException;
+	IDiscoveredPathInfo getDiscoveredInfo(IProject project, InfoContext context, boolean defaultToProjectSettings)
+			throws CoreException;
 
 	IDiscoveredPathInfo getDiscoveredInfo(IProject project) throws CoreException;
+
 	void removeDiscoveredInfo(IProject project);
+
 	void removeDiscoveredInfo(IProject project, InfoContext context);
-	void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List<IResource> changedResources) throws CoreException;
+
+	void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer,
+			List<IResource> changedResources) throws CoreException;
+
 	void updateDiscoveredInfo(IDiscoveredPathInfo info, List<IResource> changedResources) throws CoreException;
-    void changeDiscoveredContainer(IProject project, ScannerConfigScope profileScope, List<IResource> changedResources);
+
+	void changeDiscoveredContainer(IProject project, ScannerConfigScope profileScope, List<IResource> changedResources);
 
 	void addDiscoveredInfoListener(IDiscoveredInfoListener listener);
+
 	void removeDiscoveredInfoListener(IDiscoveredInfoListener listener);
 }

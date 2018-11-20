@@ -65,15 +65,16 @@ public class PasteAction extends SelectionListenerAction {
 	 * @param shell the shell for any dialogs
 	 */
 	public PasteAction(Shell shell, Clipboard clipboard) {
-		super(CViewMessages.PasteAction_title); 
+		super(CViewMessages.PasteAction_title);
 		Assert.isNotNull(shell);
 		Assert.isNotNull(clipboard);
 		this.shell = shell;
 		this.clipboard = clipboard;
-		setToolTipText(CViewMessages.PasteAction_toolTip); 
+		setToolTipText(CViewMessages.PasteAction_toolTip);
 		setId(PasteAction.ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.PASTE_ACTION);
 	}
+
 	/**
 	 * Returns the actual target of the paste action. Returns null
 	 * if no valid target is selected.
@@ -95,6 +96,7 @@ public class PasteAction extends SelectionListenerAction {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns whether any of the given resources are linked resources.
 	 * 
@@ -112,6 +114,7 @@ public class PasteAction extends SelectionListenerAction {
 		}
 		return false;
 	}
+
 	/**
 	 * Implementation of method defined on <code>IAction</code>.
 	 */
@@ -150,6 +153,7 @@ public class PasteAction extends SelectionListenerAction {
 			operation.copyFiles(fileData, container);
 		}
 	}
+
 	/**
 	 * Returns the container to hold the pasted resources.
 	 */
@@ -159,6 +163,7 @@ public class PasteAction extends SelectionListenerAction {
 			return ((IFile) selection.get(0)).getParent();
 		return (IContainer) selection.get(0);
 	}
+
 	/**
 	 * The <code>PasteAction</code> implementation of this
 	 * <code>SelectionListenerAction</code> method enables this action if 
@@ -175,11 +180,11 @@ public class PasteAction extends SelectionListenerAction {
 			public void run() {
 				// clipboard must have resources or files
 				ResourceTransfer resTransfer = ResourceTransfer.getInstance();
-				clipboardData[0] = (IResource[])clipboard.getContents(resTransfer);
+				clipboardData[0] = (IResource[]) clipboard.getContents(resTransfer);
 			}
 		});
 		IResource[] resourceData = clipboardData[0];
-		if (resourceData != null && resourceData.length > 0	&& resourceData[0].getType() == IResource.PROJECT) {
+		if (resourceData != null && resourceData.length > 0 && resourceData[0].getType() == IResource.PROJECT) {
 			for (int i = 0; i < resourceData.length; i++) {
 				// make sure all resource data are open projects
 				// can paste open projects regardless of selection

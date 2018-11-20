@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
@@ -55,7 +55,7 @@ public interface ICPPTemplateParameterMap {
 	 * @since 5.5
 	 */
 	public ICPPTemplateArgument getArgument(ICPPTemplateParameter param, int packOffset);
-	
+
 	/**
 	 * Returns the array of template parameter positions, for which a mapping exists.
 	 */

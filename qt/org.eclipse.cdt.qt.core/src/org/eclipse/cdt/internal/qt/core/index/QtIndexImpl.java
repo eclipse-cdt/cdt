@@ -30,10 +30,8 @@ public class QtIndexImpl extends QtIndex {
 
 	private final CDTIndex cdtIndex;
 
-	private static final Pattern QmlTypeNameRegex
-		= Pattern.compile("^(?:"
-				+ QtKeywords.QML_REGISTER_TYPE + '|' + QtKeywords.QML_REGISTER_UNCREATABLE_TYPE
-				+ ")<.*>\0(.*)$");
+	private static final Pattern QmlTypeNameRegex = Pattern.compile(
+			"^(?:" + QtKeywords.QML_REGISTER_TYPE + '|' + QtKeywords.QML_REGISTER_UNCREATABLE_TYPE + ")<.*>\0(.*)$");
 
 	private static final IndexFilter QtLinkageFilter = new IndexFilter() {
 		@Override
@@ -79,7 +77,7 @@ public class QtIndexImpl extends QtIndex {
 		public IQObject access(IIndex index) throws CoreException {
 
 			// TODO can there be more than one result?
-			for(IIndexBinding binding : index.findBindings(name, QtLinkageFilter, null))
+			for (IIndexBinding binding : index.findBindings(name, QtLinkageFilter, null))
 				if (binding instanceof QtPDOMQObject)
 					return new QObject(QtIndexImpl.this, cdtIndex, (QtPDOMQObject) binding);
 
@@ -93,7 +91,7 @@ public class QtIndexImpl extends QtIndex {
 
 		public QGadgetImplAccessor(String[] qualName) {
 			name = new char[qualName.length][];
-			for(int i = 0; i < name.length; ++i)
+			for (int i = 0; i < name.length; ++i)
 				name[i] = qualName[i].toCharArray();
 		}
 
@@ -101,7 +99,7 @@ public class QtIndexImpl extends QtIndex {
 		public IQGadget access(IIndex index) throws CoreException {
 
 			// TODO can there be more than one result?
-			for(IIndexBinding binding : index.findBindings(name, QtLinkageFilter, null))
+			for (IIndexBinding binding : index.findBindings(name, QtLinkageFilter, null))
 				if (binding instanceof AbstractQtPDOMClass)
 					return new QGadget(QtIndexImpl.this, cdtIndex, (AbstractQtPDOMClass) binding);
 
@@ -114,7 +112,7 @@ public class QtIndexImpl extends QtIndex {
 		@Override
 		public Collection<IQmlRegistration> access(IIndex index) throws CoreException {
 			Collection<IQmlRegistration> types = null;
-			for(IIndexBinding binding : index.findBindings(QmlTypeNameRegex, false, QtLinkageFilter, null)) {
+			for (IIndexBinding binding : index.findBindings(QmlTypeNameRegex, false, QtLinkageFilter, null)) {
 				IQmlRegistration qml = QmlRegistration.create(QtIndexImpl.this, binding);
 				if (qml != null) {
 					if (types == null)

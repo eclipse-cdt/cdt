@@ -44,11 +44,9 @@ public class DsfExtendedTerminateCommand extends DsfTerminateCommand {
 				public void run() {
 					Shell shell = display.getActiveShell();
 					if (shell != null) {
-						boolean confirmed = MessageDialog.openConfirm(
-								shell, 
-								ActionMessages.DsfExtendedTerminateCommand_Confirm_Termination, 
-								ActionMessages.DsfExtendedTerminateCommand_Terminate_the_session
-								);
+						boolean confirmed = MessageDialog.openConfirm(shell,
+								ActionMessages.DsfExtendedTerminateCommand_Confirm_Termination,
+								ActionMessages.DsfExtendedTerminateCommand_Terminate_the_session);
 						if (!confirmed) {
 							request.cancel();
 							return;

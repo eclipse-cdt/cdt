@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-
 /**
  * A settings processor that imports and exports include paths.
  *
@@ -43,10 +42,10 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 	private static final String INCLUDE_PATH_ELEMENT = "includepath"; //$NON-NLS-1$
 	private static final String WORKSPACE_PATH_ATTR = "workspace_path"; //$NON-NLS-1$
 
-
 	@Override
 	public Image getIcon() {
-		return CUIPlugin.getImageDescriptorRegistry().get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER));
+		return CUIPlugin.getImageDescriptorRegistry()
+				.get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER));
 	}
 
 	@Override
@@ -65,12 +64,13 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 	}
 
 	@Override
-	protected void writeSettings(ContentHandler content, ICLanguageSettingEntry setting) throws SettingsImportExportException {
+	protected void writeSettings(ContentHandler content, ICLanguageSettingEntry setting)
+			throws SettingsImportExportException {
 		char[] value = setting.getValue().toCharArray();
 
 		try {
 			AttributesImpl attrib = null;
-			if( (setting.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) > 0 ) {
+			if ((setting.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) > 0) {
 				attrib = new AttributesImpl();
 				attrib.addAttribute(NONE, NONE, WORKSPACE_PATH_ATTR, NONE, Boolean.TRUE.toString());
 			}
@@ -84,23 +84,22 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 		}
 	}
 
-
 	@Override
 	protected void readSettings(ICLanguageSetting setting, Element language) throws SettingsImportExportException {
 		List<ICLanguageSettingEntry> includes = new ArrayList<ICLanguageSettingEntry>();
 
 		List<Element> includeNodes = XMLUtils.extractChildElements(language, INCLUDE_PATH_ELEMENT);
-		for(Element includeElement : includeNodes) {
+		for (Element includeElement : includeNodes) {
 			String include = includeElement.getTextContent();
 			int flags = 0;
-			if(include != null && include.length() > 0) {
-				if( includeElement.getAttribute(WORKSPACE_PATH_ATTR).equalsIgnoreCase(Boolean.TRUE.toString()) )
+			if (include != null && include.length() > 0) {
+				if (includeElement.getAttribute(WORKSPACE_PATH_ATTR).equalsIgnoreCase(Boolean.TRUE.toString()))
 					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
 				includes.add(CDataUtil.createCIncludePathEntry(include, flags));
 			}
 		}
 
-		if(includes.isEmpty())
+		if (includes.isEmpty())
 			return;
 
 		// need to do this or existing settings will disappear

@@ -21,8 +21,7 @@ import org.eclipse.core.runtime.IPath;
  * 
  * @since Dec 24, 2002
  */
-public interface IDirectorySourceLocation extends ICSourceLocation
-{
+public interface IDirectorySourceLocation extends ICSourceLocation {
 	IPath getDirectory();
 
 	IPath getAssociation();

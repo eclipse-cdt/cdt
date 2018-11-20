@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
-
 public class CPPASTImplicitDestructorName extends CPPASTImplicitName implements IASTImplicitDestructorName {
 	private final IASTName constructionPoint;
 

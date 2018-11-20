@@ -20,41 +20,40 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 
-
 /**
  */
 @Immutable
 public abstract class MIEvent<V extends IDMContext> extends AbstractDMEvent<V> {
-    private final int fToken;
-    private final MIResult[] fResults;
+	private final int fToken;
+	private final MIResult[] fResults;
 
-    public MIEvent(V dmc, int token, MIResult[] results) {
-        super(dmc);
-    	fToken = token;
-    	fResults = results;
-    }
+	public MIEvent(V dmc, int token, MIResult[] results) {
+		super(dmc);
+		fToken = token;
+		fResults = results;
+	}
 
-    public int getToken() {
-    	return fToken;
-    }
-    
-    public MIResult[] getResults() {
-        return fResults;
-    }
-    
-    @Override
-    public String toString() {
-        if (fResults == null) {
-            return super.toString();
-        } else if (fResults.length == 1) {
-            return fResults[0].toString();
-        } else {
-            StringBuilder builder = new StringBuilder();
-            for (MIResult result : fResults) {
-                builder.append(result);
-                builder.append('\n');
-            }
-            return builder.toString();
-        }
-    }
+	public int getToken() {
+		return fToken;
+	}
+
+	public MIResult[] getResults() {
+		return fResults;
+	}
+
+	@Override
+	public String toString() {
+		if (fResults == null) {
+			return super.toString();
+		} else if (fResults.length == 1) {
+			return fResults[0].toString();
+		} else {
+			StringBuilder builder = new StringBuilder();
+			for (MIResult result : fResults) {
+				builder.append(result);
+				builder.append('\n');
+			}
+			return builder.toString();
+		}
+	}
 }

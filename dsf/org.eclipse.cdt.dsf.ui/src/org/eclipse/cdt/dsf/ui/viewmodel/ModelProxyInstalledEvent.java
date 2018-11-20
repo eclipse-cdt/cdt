@@ -23,34 +23,34 @@ import org.eclipse.jface.viewers.Viewer;
  * @since 1.0
  */
 public class ModelProxyInstalledEvent {
-    private final IModelProxy fProxy;
-    private final Viewer fViewer;
-    private final Object fRootElement;
-    
-    public ModelProxyInstalledEvent(IModelProxy proxy, Viewer viewer, Object rootElement) {
-        fProxy = proxy;
-        fViewer = viewer;
-        fRootElement = rootElement;
-    }
-    
-    /**
-     * Returns the IModelProxy that generated this event.
-     */
-    public IModelProxy getModelProxy() {
-        return fProxy;
-    }
+	private final IModelProxy fProxy;
+	private final Viewer fViewer;
+	private final Object fRootElement;
 
-    /**
-     * Returns the element that this model proxy was registered for.
-     */
-    public Object getRootElement() {
-        return fRootElement;
-    } 
+	public ModelProxyInstalledEvent(IModelProxy proxy, Viewer viewer, Object rootElement) {
+		fProxy = proxy;
+		fViewer = viewer;
+		fRootElement = rootElement;
+	}
 
-    /**
-     * Returns the viewer that installed this model proxy.
-     */
-    public Viewer getViewer() {
-        return fViewer;
-    }
+	/**
+	 * Returns the IModelProxy that generated this event.
+	 */
+	public IModelProxy getModelProxy() {
+		return fProxy;
+	}
+
+	/**
+	 * Returns the element that this model proxy was registered for.
+	 */
+	public Object getRootElement() {
+		return fRootElement;
+	}
+
+	/**
+	 * Returns the viewer that installed this model proxy.
+	 */
+	public Viewer getViewer() {
+		return fViewer;
+	}
 }

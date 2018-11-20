@@ -31,17 +31,17 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAEventStopCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public enum Event { UNIMPINSTR, NOSUCHLABEL };
-    
-    public PDAEventStopCommand(PDAVirtualMachineDMContext context, Event event, boolean enable) {
-        super(context, 
-              "eventstop " + 
-              (event == Event.UNIMPINSTR ? "unimpinstr " : "nosuchlabel ") + 
-              (enable ? "1" : "0"));
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public enum Event {
+		UNIMPINSTR, NOSUCHLABEL
+	};
+
+	public PDAEventStopCommand(PDAVirtualMachineDMContext context, Event event, boolean enable) {
+		super(context,
+				"eventstop " + (event == Event.UNIMPINSTR ? "unimpinstr " : "nosuchlabel ") + (enable ? "1" : "0"));
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

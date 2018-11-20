@@ -28,7 +28,7 @@ public class CPPASTAttribute extends ASTAttribute implements ICPPASTAttribute {
 	public CPPASTAttribute(char[] name, char[] scope, IASTToken argumentsClause, boolean packExpansion) {
 		super(name, argumentsClause);
 		this.scope = scope;
-		this.packExpansion =  packExpansion;
+		this.packExpansion = packExpansion;
 	}
 
 	@Override

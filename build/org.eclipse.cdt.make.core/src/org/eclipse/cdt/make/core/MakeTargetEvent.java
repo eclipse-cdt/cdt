@@ -45,7 +45,7 @@ public class MakeTargetEvent extends EventObject {
 	public MakeTargetEvent(Object source, int type, IMakeTarget target) {
 		super(source);
 		this.type = type;
-		this.targets = new IMakeTarget[] {target};
+		this.targets = new IMakeTarget[] { target };
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class MakeTargetEvent extends EventObject {
 	public IMakeTarget getTarget() {
 		return targets[0];
 	}
-	
+
 	/**
 	 * @return MakeTargets passed in this event.
 	 * 

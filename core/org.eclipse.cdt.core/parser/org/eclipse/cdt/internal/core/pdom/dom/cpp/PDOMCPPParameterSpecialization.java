@@ -42,18 +42,19 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 
 	private final IType fType;
 	private volatile IValue fDefaultValue = IntegralValue.NOT_INITIALIZED;
-	
+
 	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, long record, IType t) {
 		super(linkage, record);
-		fType= t;
+		fType = t;
 	}
-		
-	public PDOMCPPParameterSpecialization(PDOMCPPLinkage linkage, PDOMCPPFunctionSpecialization parent, ICPPParameter astParam,
-			PDOMCPPParameter original, PDOMCPPParameterSpecialization next) throws CoreException {
+
+	public PDOMCPPParameterSpecialization(PDOMCPPLinkage linkage, PDOMCPPFunctionSpecialization parent,
+			ICPPParameter astParam, PDOMCPPParameter original, PDOMCPPParameterSpecialization next)
+			throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astParam, original);
-		fType= null;  // This constructor is used for adding parameters to the database, only.
+		fType = null; // This constructor is used for adding parameters to the database, only.
 		fDefaultValue = astParam.getDefaultValue();
-		
+
 		Database db = getDB();
 		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
 		linkage.storeValue(record + DEFAULT_VALUE, fDefaultValue);
@@ -73,52 +74,52 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		long rec = getDB().getRecPtr(record + NEXT_PARAM);
 		return rec;
 	}
-	
+
 	@Override
 	public IType getType() {
 		return fType;
 	}
-	
+
 	@Override
 	protected IPDOMBinding loadSpecializedBinding(long record) throws CoreException {
 		if (record == 0)
 			return null;
-		IType type= null;
+		IType type = null;
 		IBinding parent = getParentBinding();
 		if (parent instanceof ICPPSpecialization && parent instanceof ICPPFunction) {
-			IParameter[] pars= ((ICPPFunction) parent).getParameters();
-			int parPos= -1;
-			for (parPos= 0; parPos < pars.length; parPos++) {
-				IParameter par= pars[parPos];
+			IParameter[] pars = ((ICPPFunction) parent).getParameters();
+			int parPos = -1;
+			for (parPos = 0; parPos < pars.length; parPos++) {
+				IParameter par = pars[parPos];
 				if (equals(par)) {
 					break;
 				}
 			}
 			if (parPos < pars.length) {
-				parent= ((ICPPSpecialization) parent).getSpecializedBinding();
+				parent = ((ICPPSpecialization) parent).getSpecializedBinding();
 				if (parent instanceof ICPPFunction) {
 					ICPPFunctionType ftype = ((ICPPFunction) parent).getType();
 					if (ftype != null) {
-						IType[] ptypes= ftype.getParameterTypes();
+						IType[] ptypes = ftype.getParameterTypes();
 						if (parPos < ptypes.length) {
-							type= ptypes[parPos];
+							type = ptypes[parPos];
 						}
 					}
 				}
 			}
-		} 
+		}
 		return new PDOMCPPParameter(getLinkage(), record, type);
 	}
 
-	private ICPPParameter getParameter(){
+	private ICPPParameter getParameter() {
 		return (ICPPParameter) getSpecializedBinding();
 	}
-	
+
 	@Override
 	public boolean hasDefaultValue() {
 		return getParameter().hasDefaultValue();
 	}
-	
+
 	@Override
 	public IValue getDefaultValue() {
 		if (fDefaultValue == IntegralValue.NOT_INITIALIZED) {
@@ -167,10 +168,10 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		return false;
 	}
 
-    @Override
+	@Override
 	public boolean isConstexpr() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public IValue getInitialValue() {

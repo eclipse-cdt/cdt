@@ -20,26 +20,22 @@ import org.eclipse.jface.text.rules.IToken;
  *
  * @author P.Tomaszewski
  */
-public class COperatorRule extends SingleCharRule
-{
-    /**
-     * Creates new rule.
-     * @param token Style token.
-     */
-    public COperatorRule(IToken token)
-    {
-        super(token);
-    }
+public class COperatorRule extends SingleCharRule {
+	/**
+	 * Creates new rule.
+	 * @param token Style token.
+	 */
+	public COperatorRule(IToken token) {
+		super(token);
+	}
 
-    /**
-     * @see org.eclipse.cdt.internal.ui.text.SingleCharRule#isRuleChar(int)
-     */
-    @Override
-	public boolean isRuleChar(int ch)
-    {
-        return (ch == ';' || ch == '.' || ch == ':' || ch == '=' || ch == '-'
-            || ch == '+' || ch == '\\' || ch == '*' || ch == '!' || ch == '%'
-            || ch == '^' || ch == '&' || ch == '~' || ch == '>' || ch == '<')
-            || ch == '|' || ch == '/' || ch == '?' || ch == ',';
-    }
+	/**
+	 * @see org.eclipse.cdt.internal.ui.text.SingleCharRule#isRuleChar(int)
+	 */
+	@Override
+	public boolean isRuleChar(int ch) {
+		return (ch == ';' || ch == '.' || ch == ':' || ch == '=' || ch == '-' || ch == '+' || ch == '\\' || ch == '*'
+				|| ch == '!' || ch == '%' || ch == '^' || ch == '&' || ch == '~' || ch == '>' || ch == '<') || ch == '|'
+				|| ch == '/' || ch == '?' || ch == ',';
+	}
 }

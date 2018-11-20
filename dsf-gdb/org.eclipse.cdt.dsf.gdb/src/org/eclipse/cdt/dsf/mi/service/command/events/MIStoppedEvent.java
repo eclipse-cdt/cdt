@@ -29,34 +29,33 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 @Immutable
 public class MIStoppedEvent extends MIEvent<IExecutionDMContext> {
 
-    final private MIFrame frame;
+	final private MIFrame frame;
 
-    protected MIStoppedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
-    	super(ctx, token, results);
-    	this.frame = frame;
-    }
+	protected MIStoppedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
+		super(ctx, token, results);
+		this.frame = frame;
+	}
 
-    public MIFrame getFrame() {
-    	return frame;
-    }
-    
-    /**
-     * @since 1.1
-     */
-    public static MIStoppedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
-    {
-    	MIFrame frame = null;
+	public MIFrame getFrame() {
+		return frame;
+	}
 
-    	for (int i = 0; i < results.length; i++) {
-    		String var = results[i].getVariable();
-    		MIValue value = results[i].getMIValue();
+	/**
+	 * @since 1.1
+	 */
+	public static MIStoppedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
+		MIFrame frame = null;
 
-    		if (var.equals("frame")) { //$NON-NLS-1$
-    			if (value instanceof MITuple) {
-    				frame = new MIFrame((MITuple)value);
-    			}
-    		}
-    	}
-    	return new MIStoppedEvent(dmc, token, results, frame);
-    }
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue value = results[i].getMIValue();
+
+			if (var.equals("frame")) { //$NON-NLS-1$
+				if (value instanceof MITuple) {
+					frame = new MIFrame((MITuple) value);
+				}
+			}
+		}
+		return new MIStoppedEvent(dmc, token, results, frame);
+	}
 }

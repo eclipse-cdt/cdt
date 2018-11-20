@@ -26,51 +26,51 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 @Immutable
 abstract public class AbstractPDACommand<V extends PDACommandResult> implements ICommand<V> {
 
-    final private IDMContext fContext;
-    final private String fRequest;
-    
-    public AbstractPDACommand(IDMContext context, String request) {
-        fContext = context;
-        fRequest = request;
-    }
-    
-    @Override
-    public IDMContext getContext() {
-        return fContext;
-    }
-    
-    @Override
-    public ICommand<? extends ICommandResult> coalesceWith(ICommand<? extends ICommandResult> command) {
-        return null;
-    }
+	final private IDMContext fContext;
+	final private String fRequest;
 
-    /**
-     * Returns the request to be sent to PDA. 
-     */
-    public String getRequest() {
-        return fRequest;
-    }
+	public AbstractPDACommand(IDMContext context, String request) {
+		fContext = context;
+		fRequest = request;
+	}
 
-    /**
-     * Returns the command result based on the given PDA response.  This command 
-     * uses the class type parameter as the return type to allow the compiler to 
-     * enforce the correct command result.  This class must be implemented by 
-     * each command to create the concrete result type. 
-     */
-    abstract public V createResult(String resultText);
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof AbstractPDACommand) {
-            AbstractPDACommand<?> cmd = (AbstractPDACommand<?>)obj;
-            return fContext.equals(cmd.fContext) && fRequest.equals(cmd.fRequest);
-        }
-        return false;
-    }
-    
-    @Override
-    public int hashCode() {
-        return fContext.hashCode() + fRequest.hashCode();
-    }
-    
+	@Override
+	public IDMContext getContext() {
+		return fContext;
+	}
+
+	@Override
+	public ICommand<? extends ICommandResult> coalesceWith(ICommand<? extends ICommandResult> command) {
+		return null;
+	}
+
+	/**
+	 * Returns the request to be sent to PDA. 
+	 */
+	public String getRequest() {
+		return fRequest;
+	}
+
+	/**
+	 * Returns the command result based on the given PDA response.  This command 
+	 * uses the class type parameter as the return type to allow the compiler to 
+	 * enforce the correct command result.  This class must be implemented by 
+	 * each command to create the concrete result type. 
+	 */
+	abstract public V createResult(String resultText);
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof AbstractPDACommand) {
+			AbstractPDACommand<?> cmd = (AbstractPDACommand<?>) obj;
+			return fContext.equals(cmd.fContext) && fRequest.equals(cmd.fRequest);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return fContext.hashCode() + fRequest.hashCode();
+	}
+
 }

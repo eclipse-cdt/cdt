@@ -112,7 +112,8 @@ public class HeuristicResolver {
 	 */
 	public static IScope findConcreteScopeForType(IType type) {
 		if (type instanceof ICPPUnknownType) {
-			type = resolveUnknownType((ICPPUnknownType) type, SemanticUtil.TDEF | SemanticUtil.REF | SemanticUtil.CVTYPE);
+			type = resolveUnknownType((ICPPUnknownType) type,
+					SemanticUtil.TDEF | SemanticUtil.REF | SemanticUtil.CVTYPE);
 		}
 		type = SemanticUtil.getNestedType(type, SemanticUtil.PTR);
 		if (type instanceof ICompositeType) {
@@ -139,12 +140,10 @@ public class HeuristicResolver {
 	 * An extension of CPPDeferredClassInstance that implements ICPPClassSpecialization,
 	 * allowing its members to be specialized via specializeMember().
 	 */
-	private static class CPPDependentClassInstance extends CPPDeferredClassInstance
-			implements ICPPClassSpecialization {
+	private static class CPPDependentClassInstance extends CPPDeferredClassInstance implements ICPPClassSpecialization {
 
 		public CPPDependentClassInstance(ICPPDeferredClassInstance deferredInstance) {
-			super(chooseTemplateForDeferredInstance(deferredInstance), 
-					deferredInstance.getTemplateArguments());
+			super(chooseTemplateForDeferredInstance(deferredInstance), deferredInstance.getTemplateArguments());
 		}
 
 		@Override
@@ -209,7 +208,7 @@ public class HeuristicResolver {
 		public ICPPClassType[] getNestedClasses(IASTNode point) {
 			throw new UnsupportedOperationException();
 		}
-		
+
 		@Override
 		public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
 			throw new UnsupportedOperationException();
@@ -236,8 +235,7 @@ public class HeuristicResolver {
 				return false;
 			}
 			HeuristicLookup otherLookup = (HeuristicLookup) other;
-			return scope == otherLookup.scope
-					&& CharArrayUtils.equals(name, otherLookup.name);
+			return scope == otherLookup.scope && CharArrayUtils.equals(name, otherLookup.name);
 		}
 
 		@Override
@@ -287,8 +285,7 @@ public class HeuristicResolver {
 					lookupType = specializationContext.getSpecializedBinding();
 					break;
 				} else if (lookupType instanceof ICPPDeferredClassInstance) {
-					specializationContext = new CPPDependentClassInstance(
-							(ICPPDeferredClassInstance) lookupType);
+					specializationContext = new CPPDependentClassInstance((ICPPDeferredClassInstance) lookupType);
 					lookupType = specializationContext.getSpecializedBinding();
 					break;
 				}
@@ -307,9 +304,8 @@ public class HeuristicResolver {
 						resolvedType = null;
 					}
 				}
-				
-				resolvedType = SemanticUtil.getNestedType(resolvedType, 
-						SemanticUtil.CVTYPE | SemanticUtil.TDEF);
+
+				resolvedType = SemanticUtil.getNestedType(resolvedType, SemanticUtil.CVTYPE | SemanticUtil.TDEF);
 
 				if (resolvedType == lookupType || !(resolvedType instanceof ICPPUnknownType)) {
 					lookupType = resolvedType;
@@ -409,8 +405,7 @@ public class HeuristicResolver {
 		ICPPClassTemplate template = instance.getClassTemplate();
 		if (!instance.isExplicitSpecialization()) {
 			try {
-				IBinding partial = CPPTemplates.selectSpecialization(template, 
-						instance.getTemplateArguments(), false);
+				IBinding partial = CPPTemplates.selectSpecialization(template, instance.getTemplateArguments(), false);
 				if (partial != null && partial instanceof ICPPTemplateInstance)
 					return (ICPPClassTemplate) ((ICPPTemplateInstance) partial).getTemplateDefinition();
 			} catch (DOMException e) {
@@ -496,8 +491,7 @@ public class HeuristicResolver {
 						if (result instanceof ICPPClassTemplate) {
 							result = (IType) CPPTemplates.instantiate((ICPPClassTemplate) result, args);
 						} else if (result instanceof ICPPAliasTemplate) {
-							result = (IType) CPPTemplates.instantiateAliasTemplate((ICPPAliasTemplate) result,
-									args);
+							result = (IType) CPPTemplates.instantiateAliasTemplate((ICPPAliasTemplate) result, args);
 						}
 					}
 					return result;
@@ -518,8 +512,8 @@ public class HeuristicResolver {
 			return new IBinding[] { chooseTemplateForDeferredInstance((ICPPDeferredClassInstance) binding) };
 		} else if (binding instanceof ICPPUnknownMember) {
 			Set<HeuristicLookup> lookupSet = new HashSet<>();
-			return lookInside(((ICPPUnknownMember) binding).getOwnerType(), false,
-					binding.getNameCharArray(), null, lookupSet);
+			return lookInside(((ICPPUnknownMember) binding).getOwnerType(), false, binding.getNameCharArray(), null,
+					lookupSet);
 		} else if (binding instanceof ICPPUnknownType) {
 			IType resolved = resolveUnknownType((ICPPUnknownType) binding);
 			if (resolved != binding && resolved instanceof IBinding) {

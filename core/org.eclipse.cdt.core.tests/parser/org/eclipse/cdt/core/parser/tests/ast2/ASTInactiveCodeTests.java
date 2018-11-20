@@ -32,15 +32,15 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  * Testcases for inactive code in ast.
  */
 public class ASTInactiveCodeTests extends AST2TestBase {
-	
+
 	public static TestSuite suite() {
 		return suite(ASTInactiveCodeTests.class);
 	}
-	
+
 	public ASTInactiveCodeTests() {
 		super();
 	}
-	
+
 	public ASTInactiveCodeTests(String name) {
 		super(name);
 	}
@@ -68,11 +68,11 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	#endif
 	//	int a7;
 	public void testIfBranches() throws Exception {
-		String codeTmpl= getAboveComment();
-		for (int i= 0; i < (1<<4); i++) {
+		String codeTmpl = getAboveComment();
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.C, i);
 		}
-		for (int i= 0; i < (1<<4); i++) {
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.CPP, i);
 		}
 	}
@@ -80,26 +80,27 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	private void testBranches(String codeTmpl, ParserLanguage lang, int bits) throws Exception {
 		testBranches(codeTmpl, lang, bits, 0);
 	}
+
 	private void testBranches(String codeTmpl, ParserLanguage lang, int bits, int level) throws Exception {
-		BitSet bs= convert(bits);
-		char[] chars= codeTmpl.toCharArray();
-		int pos= codeTmpl.indexOf('%', 0);
-		int i= 0;
+		BitSet bs = convert(bits);
+		char[] chars = codeTmpl.toCharArray();
+		int pos = codeTmpl.indexOf('%', 0);
+		int i = 0;
 		while (pos >= 0) {
-			chars[pos]= bs.get(i++) ? '1' : '0';
-			pos= codeTmpl.indexOf('%', pos+1);
+			chars[pos] = bs.get(i++) ? '1' : '0';
+			pos = codeTmpl.indexOf('%', pos + 1);
 		}
-		IASTDeclarationListOwner tu= parse(new String(chars), lang);
+		IASTDeclarationListOwner tu = parse(new String(chars), lang);
 		while (level-- > 0) {
 			final IASTDeclaration decl = tu.getDeclarations(true)[0];
 			if (decl instanceof IASTSimpleDeclaration) {
-				tu= (IASTDeclarationListOwner) ((IASTSimpleDeclaration) decl).getDeclSpecifier();
+				tu = (IASTDeclarationListOwner) ((IASTSimpleDeclaration) decl).getDeclSpecifier();
 			} else {
-				tu= (IASTDeclarationListOwner) decl;
+				tu = (IASTDeclarationListOwner) decl;
 			}
 		}
-		
-		IASTDeclaration[] decl= tu.getDeclarations(true);
+
+		IASTDeclaration[] decl = tu.getDeclarations(true);
 		assertEquals(8, decl.length);
 		assertEquals(bs.get(0), decl[0].isActive());
 		assertEquals(!bs.get(0) && bs.get(1), decl[1].isActive());
@@ -112,7 +113,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	}
 
 	private BitSet convert(int bits) {
-		BitSet result= new BitSet(32);
+		BitSet result = new BitSet(32);
 		for (int i = 0; i < 32; i++) {
 			if ((bits & (1 << i)) != 0) {
 				result.set(i);
@@ -139,11 +140,11 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	#endif
 	//	int a7;
 	public void testIfdefBranches() throws Exception {
-		String codeTmpl= getAboveComment();
-		for (int i= 0; i < (1<<4); i++) {
+		String codeTmpl = getAboveComment();
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.C, i);
 		}
-		for (int i= 0; i < (1<<4); i++) {
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.CPP, i);
 		}
 	}
@@ -166,11 +167,11 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	#endif
 	//	int a7;
 	public void testIfndefBranches() throws Exception {
-		String codeTmpl= getAboveComment();
-		for (int i= 0; i < (1<<4); i++) {
+		String codeTmpl = getAboveComment();
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.C, i);
 		}
-		for (int i= 0; i < (1<<4); i++) {
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.CPP, i);
 		}
 	}
@@ -194,11 +195,11 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	int a7;
 	// };
 	public void testStructs() throws Exception {
-		String codeTmpl= getAboveComment();
-		for (int i= 0; i < (1<<4); i++) {
+		String codeTmpl = getAboveComment();
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.C, i, 1);
 		}
-		for (int i= 0; i < (1<<4); i++) {
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.CPP, i, 1);
 		}
 	}
@@ -222,8 +223,8 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	int a7;
 	// };
 	public void testExternC() throws Exception {
-		String codeTmpl= getAboveComment();
-		for (int i= 0; i < (1<<4); i++) {
+		String codeTmpl = getAboveComment();
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.CPP, i, 1);
 		}
 	}
@@ -247,12 +248,12 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	int a7;
 	// }
 	public void testNamespace() throws Exception {
-		String codeTmpl= getAboveComment();
-		for (int i= 0; i < (1<<4); i++) {
+		String codeTmpl = getAboveComment();
+		for (int i = 0; i < (1 << 4); i++) {
 			testBranches(codeTmpl, ParserLanguage.CPP, i, 1);
 		}
 	}
-	
+
 	// typedef int TInt;
 	// const int value= 12;
 	// #if 0
@@ -260,15 +261,15 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//    int g(value);
 	// #endif
 	public void testAmbiguity() throws Exception {
-		String code= getAboveComment();
-		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code, ParserLanguage.CPP);
 		IASTDeclaration[] decls = tu.getDeclarations(true);
-		IASTSimpleDeclaration decl= (IASTSimpleDeclaration) decls[2];
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) decls[2];
 		assertTrue(decl.getDeclarators()[0] instanceof IASTFunctionDeclarator);
-		decl= (IASTSimpleDeclaration) decls[3];
+		decl = (IASTSimpleDeclaration) decls[3];
 		assertFalse(decl.getDeclarators()[0] instanceof IASTFunctionDeclarator);
 	}
-	
+
 	// int a; // 1
 	// #if 0
 	//    int a; // 2
@@ -279,15 +280,15 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	// #endif
 	// int b; // 2
 	public void testDuplicateDefinition() throws Exception {
-		String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);
 		bh.assertNonProblem("a; // 1", 1);
 		bh.assertNonProblem("a; // 2", 1);
 		bh.assertNonProblem("a; // 3", 1);
 		bh.assertNonProblem("b; // 1", 1);
 		bh.assertNonProblem("b; // 2", 1);
 
-		bh= new AST2AssertionHelper(code, true);
+		bh = new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("a; // 1", 1);
 		bh.assertNonProblem("a; // 2", 1);
 		bh.assertNonProblem("a; // 3", 1);
@@ -297,7 +298,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 		parseAndCheckBindings(code, ParserLanguage.C);
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
-	
+
 	// struct S {
 	// #if 0
 	//   int a;
@@ -307,18 +308,18 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	// };
 	// #endif
 	public void testInactiveClosingBrace() throws Exception {
-		String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
-		IField a= bh.assertNonProblem("a;", 1);
-		IField b= bh.assertNonProblem("b;", 1);
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);
+		IField a = bh.assertNonProblem("a;", 1);
+		IField b = bh.assertNonProblem("b;", 1);
 		assertSame(a.getOwner(), b.getOwner());
 
-		bh= new AST2AssertionHelper(code, true);
-		a= bh.assertNonProblem("a;", 1);
-		b= bh.assertNonProblem("b;", 1);
+		bh = new AST2AssertionHelper(code, true);
+		a = bh.assertNonProblem("a;", 1);
+		b = bh.assertNonProblem("b;", 1);
 		assertSame(a.getOwner(), b.getOwner());
 	}
-	
+
 	// struct S 
 	// #if 1
 	//   {
@@ -332,20 +333,20 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//   #endif
 	// };
 	public void testOpenBraceInActiveBranch() throws Exception {
-		String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
-		IField a= bh.assertNonProblem("a;", 1);
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);
+		IField a = bh.assertNonProblem("a;", 1);
 		bh.assertNoName("b;", 1);
-		IField c= bh.assertNonProblem("c;", 1);
-		IField d= bh.assertNonProblem("d;", 1);
+		IField c = bh.assertNonProblem("c;", 1);
+		IField d = bh.assertNonProblem("d;", 1);
 		assertSame(a.getOwner(), c.getOwner());
 		assertSame(a.getOwner(), d.getOwner());
 
-		bh= new AST2AssertionHelper(code, true);
-		a= bh.assertNonProblem("a;", 1);
+		bh = new AST2AssertionHelper(code, true);
+		a = bh.assertNonProblem("a;", 1);
 		bh.assertNoName("b;", 1);
-		c= bh.assertNonProblem("c;", 1);
-		d= bh.assertNonProblem("d;", 1);
+		c = bh.assertNonProblem("c;", 1);
+		d = bh.assertNonProblem("d;", 1);
 		assertSame(a.getOwner(), c.getOwner());
 		assertSame(a.getOwner(), d.getOwner());
 	}
@@ -362,26 +363,26 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	// #endif
 	// int d;
 	public void testOpenBraceInInactiveBranch() throws Exception {
-		String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
-		IField a= bh.assertNonProblem("a;", 1);
-		IField b= bh.assertNonProblem("b;", 1);
-		IVariable c= bh.assertNonProblem("c;", 1); // part of a different non-nested branch
-		IVariable d= bh.assertNonProblem("d;", 1);
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);
+		IField a = bh.assertNonProblem("a;", 1);
+		IField b = bh.assertNonProblem("b;", 1);
+		IVariable c = bh.assertNonProblem("c;", 1); // part of a different non-nested branch
+		IVariable d = bh.assertNonProblem("d;", 1);
 		assertSame(a.getOwner(), b.getOwner());
 		assertNull(c.getOwner());
 		assertNull(d.getOwner());
 
-		bh= new AST2AssertionHelper(code, true);
-		a= bh.assertNonProblem("a;", 1);
-		b= bh.assertNonProblem("b;", 1);
-		c= bh.assertNonProblem("c;", 1); // part of a different non-nested branch
-		d= bh.assertNonProblem("d;", 1);
+		bh = new AST2AssertionHelper(code, true);
+		a = bh.assertNonProblem("a;", 1);
+		b = bh.assertNonProblem("b;", 1);
+		c = bh.assertNonProblem("c;", 1); // part of a different non-nested branch
+		d = bh.assertNonProblem("d;", 1);
 		assertSame(a.getOwner(), b.getOwner());
 		assertNull(c.getOwner());
 		assertNull(d.getOwner());
 	}
-	
+
 	//	 #if 0
 	//	 void f() {
 	//	   #if 1
@@ -392,14 +393,14 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	 }
 	//	 #endif
 	public void testUnexpectedBranchesInInactiveCode() throws Exception {
-		String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
-		IFunction f= bh.assertNonProblem("f()", 1);
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);
+		IFunction f = bh.assertNonProblem("f()", 1);
 		bh.assertNoName("a;", 1);
 		bh.assertNoName("b;", 1);
 
-		bh= new AST2AssertionHelper(code, true);
-		f= bh.assertNonProblem("f()", 1);
+		bh = new AST2AssertionHelper(code, true);
+		f = bh.assertNonProblem("f()", 1);
 		bh.assertNoName("a;", 1);
 		bh.assertNoName("b;", 1);
 	}

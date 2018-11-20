@@ -28,36 +28,36 @@ import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
  *
  */
 public class TestDsfExecutor extends DefaultDsfExecutor {
-    private List<Throwable> fExceptions = Collections.synchronizedList(new ArrayList<Throwable>());
-    
-    @Override
-    protected void afterExecute(Runnable r, Throwable t) {
-        super.afterExecute(r, t);
-        if (r instanceof Future<?>) {
-            Future<?> future = (Future<?>)r;
-            try {
-                if (future.isDone()) {
-                    future.get();
-                }
-                future.get();
-            } catch (InterruptedException e) { // Ignore
-            } catch (CancellationException e) { // Ignore also
-            } catch (ExecutionException e) {
-                if (e.getCause() != null) {
-                    fExceptions.add(e.getCause());
-                }
-            }
-        }
-    }
-    
-    public boolean exceptionsCaught() {
-        return fExceptions.size() != 0;
-    }
-    
-    public Throwable[] getExceptions() {
-        synchronized (fExceptions) {
-            return fExceptions.toArray(new Throwable[fExceptions.size()]);
-        }
-    }
+	private List<Throwable> fExceptions = Collections.synchronizedList(new ArrayList<Throwable>());
+
+	@Override
+	protected void afterExecute(Runnable r, Throwable t) {
+		super.afterExecute(r, t);
+		if (r instanceof Future<?>) {
+			Future<?> future = (Future<?>) r;
+			try {
+				if (future.isDone()) {
+					future.get();
+				}
+				future.get();
+			} catch (InterruptedException e) { // Ignore
+			} catch (CancellationException e) { // Ignore also
+			} catch (ExecutionException e) {
+				if (e.getCause() != null) {
+					fExceptions.add(e.getCause());
+				}
+			}
+		}
+	}
+
+	public boolean exceptionsCaught() {
+		return fExceptions.size() != 0;
+	}
+
+	public Throwable[] getExceptions() {
+		synchronized (fExceptions) {
+			return fExceptions.toArray(new Throwable[fExceptions.size()]);
+		}
+	}
 
 }

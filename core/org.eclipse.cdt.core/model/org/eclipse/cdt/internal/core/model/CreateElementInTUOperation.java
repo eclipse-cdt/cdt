@@ -100,7 +100,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	 * the specified parent, contained within a translation unit.
 	 */
 	public CreateElementInTUOperation(ICElement parentElement) {
-		super(null, new ICElement[]{parentElement});
+		super(null, new ICElement[] { parentElement });
 		initializeDefaultPosition();
 	}
 
@@ -133,7 +133,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	}
 
 	protected abstract String generateElement(ITranslationUnit unit) throws CModelException;
-	
+
 	/**
 	 * Execute the operation - generate new source for the compilation unit
 	 * and save the results.
@@ -150,24 +150,26 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 		if (fCreationOccurred) {
 			//a change has really occurred
 			IBuffer buffer = unit.getBuffer();
-			if (buffer == null) return;
+			if (buffer == null)
+				return;
 			char[] bufferContents = buffer.getCharacters();
-			if (bufferContents == null) return;
+			if (bufferContents == null)
+				return;
 			char[] elementContents = Util.normalizeCRs(getCreatedElementCharacters(), bufferContents);
 			switch (fReplacementLength) {
-				case -1 : 
-					// element is append at the end
-					buffer.append(elementContents);
-					break;
+			case -1:
+				// element is append at the end
+				buffer.append(elementContents);
+				break;
 
-				case 0 :
-					// element is inserted
-					buffer.replace(fInsertionPosition, 0, elementContents);
-					break;
+			case 0:
+				// element is inserted
+				buffer.replace(fInsertionPosition, 0, elementContents);
+				break;
 
-				default :
-					// element is replacing the previous one
-					buffer.replace(fInsertionPosition, fReplacementLength, elementContents);
+			default:
+				// element is replacing the previous one
+				buffer.replace(fInsertionPosition, fReplacementLength, elementContents);
 			}
 			unit.save(null, false);
 			boolean isWorkingCopy = unit.isWorkingCopy();
@@ -183,7 +185,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 					}
 					addDelta(delta);
 				} // else unit is created outside classpath
-				  // non-java resource delta will be notified by delta processor
+					// non-java resource delta will be notified by delta processor
 			}
 		}
 		done();
@@ -202,14 +204,14 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	 * Creates and returns the handles for the elements this operation created.
 	 */
 	protected ICElement[] generateResultHandles() throws CModelException {
-		return new ICElement[]{generateResultHandle()};
+		return new ICElement[] { generateResultHandle() };
 	}
 
 	/**
 	 * Returns the compilation unit in which the new element is being created.
 	 */
 	protected ITranslationUnit getTranslationUnit() {
-		return ((ISourceReference)getParentElement()).getTranslationUnit();
+		return ((ISourceReference) getParentElement()).getTranslationUnit();
 	}
 
 	/**
@@ -217,7 +219,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	 * progress reporting.
 	 * @see #executeOperation()
 	 */
-	protected int getMainAmountOfWork(){
+	protected int getMainAmountOfWork() {
 		return 2;
 	}
 
@@ -255,21 +257,21 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	 */
 	protected void insertElement() throws CModelException {
 		if (fInsertionPolicy != INSERT_LAST) {
-			ISourceRange range = ((ISourceReference)fAnchorElement).getSourceRange();
+			ISourceRange range = ((ISourceReference) fAnchorElement).getSourceRange();
 			switch (fInsertionPolicy) {
-				case INSERT_AFTER:
-					fReplacementLength = 0;
-					fInsertionPosition = range.getStartPos() + range.getLength();
+			case INSERT_AFTER:
+				fReplacementLength = 0;
+				fInsertionPosition = range.getStartPos() + range.getLength();
 				break;
 
-				case INSERT_BEFORE:
-					fReplacementLength = 0;
-					fInsertionPosition = range.getStartPos();
+			case INSERT_BEFORE:
+				fReplacementLength = 0;
+				fInsertionPosition = range.getStartPos();
 				break;
 
-				default:
-					fReplacementLength = range.getStartPos() + range.getLength();
-					fInsertionPosition = range.getStartPos();
+			default:
+				fReplacementLength = range.getStartPos() + range.getLength();
+				fInsertionPosition = range.getStartPos();
 			}
 			return;
 		}

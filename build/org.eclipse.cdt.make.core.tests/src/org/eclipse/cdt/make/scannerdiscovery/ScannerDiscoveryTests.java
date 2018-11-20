@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.make.scannerdiscovery;
 
@@ -18,15 +18,15 @@ import junit.framework.TestSuite;
 
 public class ScannerDiscoveryTests extends TestSuite {
 
-    public static TestSuite suite() {
-        return new ScannerDiscoveryTests();
-    }
-    
-    public ScannerDiscoveryTests() {
-        super(ScannerDiscoveryTests.class.getName());
-        addTestSuite(ScannerConfigDiscoveryTests.class);
-        addTest(GCCScannerInfoConsoleParserTests.suite());
-        addTest(GCCPerFileBOPConsoleParserTests.suite());
-        addTestSuite(ScannerConfigProfileTests.class);
-    }
+	public static TestSuite suite() {
+		return new ScannerDiscoveryTests();
+	}
+
+	public ScannerDiscoveryTests() {
+		super(ScannerDiscoveryTests.class.getName());
+		addTestSuite(ScannerConfigDiscoveryTests.class);
+		addTest(GCCScannerInfoConsoleParserTests.suite());
+		addTest(GCCPerFileBOPConsoleParserTests.suite());
+		addTestSuite(ScannerConfigProfileTests.class);
+	}
 }

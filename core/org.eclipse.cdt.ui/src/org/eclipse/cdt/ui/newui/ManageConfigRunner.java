@@ -60,17 +60,18 @@ public class ManageConfigRunner implements IConfigManager {
 			return false;
 
 		ManageConfigDialog d = new ManageConfigDialog(Display.getDefault().getActiveShell(),
-				obs[0].getName()+ ": " + MANAGE_TITLE, obs[0]); //$NON-NLS-1$
+				obs[0].getName() + ": " + MANAGE_TITLE, obs[0]); //$NON-NLS-1$
 		boolean result = false;
 		if (d.open() == Window.OK) {
 			if (doOk) {
 				des = d.getProjectDescription();
 				prj = obs[0];
-				if(des != null)
+				if (des != null)
 					try {
 						PlatformUI.getWorkbench().getProgressService().run(false, false, getRunnable());
-					} catch (InvocationTargetException e) {}
-					  catch (InterruptedException e) {}
+					} catch (InvocationTargetException e) {
+					} catch (InterruptedException e) {
+					}
 			}
 			AbstractPage.updateViews(obs[0]);
 			result = true;

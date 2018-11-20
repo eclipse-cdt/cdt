@@ -24,12 +24,11 @@ public class GrepCheckerHelpLink extends AbstractCodanProblemDetailsProvider {
 	public boolean isApplicable(String id) {
 		return id.startsWith("org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblem");
 	}
-	
 
 	@Override
 	public String getStyledProblemDescription() {
 		String arg = CodanProblemMarker.getProblemArgument(marker, 0);
 		String url = "http://www.google.ca/search?q=" + arg;
-		return "Google " + "<a href=\"" + url + "\">"  + arg + "</a>";
+		return "Google " + "<a href=\"" + url + "\">" + arg + "</a>";
 	}
 }

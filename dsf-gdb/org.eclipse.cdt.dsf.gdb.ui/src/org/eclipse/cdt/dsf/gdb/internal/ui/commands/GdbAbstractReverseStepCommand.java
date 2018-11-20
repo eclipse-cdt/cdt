@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -49,66 +48,68 @@ public abstract class GdbAbstractReverseStepCommand extends AbstractDebugCommand
 	private final DsfServicesTracker fTracker;
 	private final DsfSteppingModeTarget fSteppingMode;
 
-	protected DsfSteppingModeTarget getSteppingMode() { return fSteppingMode; }
+	protected DsfSteppingModeTarget getSteppingMode() {
+		return fSteppingMode;
+	}
 
 	public GdbAbstractReverseStepCommand(DsfSession session, DsfSteppingModeTarget steppingMode) {
 		fExecutor = session.getExecutor();
 		fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
 		fSteppingMode = steppingMode;
-	}    
+	}
 
 	public void dispose() {
 		fTracker.dispose();
 	}
 
-    @Override
+	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
-    	if (targets.length != 1) {
-    		return;
-    	}
+		if (targets.length != 1) {
+			return;
+		}
 
-        final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), IExecutionDMContext.class);
-        if (dmc == null) {
-        	return;
-        }
+		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				IExecutionDMContext.class);
+		if (dmc == null) {
+			return;
+		}
 
-        final StepType stepType = getStepType();
-        Query<Object> reverseStepQuery = new Query<Object>() {
-        	@Override
-        	public void execute(DataRequestMonitor<Object> rm) {
-        		IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
+		final StepType stepType = getStepType();
+		Query<Object> reverseStepQuery = new Query<Object>() {
+			@Override
+			public void execute(DataRequestMonitor<Object> rm) {
+				IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
 
-        		if (runControl != null) {
-        			runControl.reverseStep(dmc, stepType, rm);
-        		} else {
-        			rm.done();
-        		}
-        	}
-        };
-        try {
-        	fExecutor.execute(reverseStepQuery);
-        	reverseStepQuery.get();
-        } catch (InterruptedException e) {
-        } catch (ExecutionException e) {
-        } catch (RejectedExecutionException e) {
-        	// Can be thrown if the session is shutdown
-        }
-    }
+				if (runControl != null) {
+					runControl.reverseStep(dmc, stepType, rm);
+				} else {
+					rm.done();
+				}
+			}
+		};
+		try {
+			fExecutor.execute(reverseStepQuery);
+			reverseStepQuery.get();
+		} catch (InterruptedException e) {
+		} catch (ExecutionException e) {
+		} catch (RejectedExecutionException e) {
+			// Can be thrown if the session is shutdown
+		}
+	}
 
-    @Override
+	@Override
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
-        throws CoreException 
-    {
-    	if (targets.length != 1) {
-    		return false;
-    	}
+			throws CoreException {
+		if (targets.length != 1) {
+			return false;
+		}
 
-    	final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), IExecutionDMContext.class);
-    	if (dmc == null) {
-    		return false;
-    	}
+		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				IExecutionDMContext.class);
+		if (dmc == null) {
+			return false;
+		}
 
-        
 		final StepType stepType = getStepType();
 		Query<Boolean> canReverseQuery = new Query<Boolean>() {
 			@Override
@@ -133,17 +134,17 @@ public abstract class GdbAbstractReverseStepCommand extends AbstractDebugCommand
 		}
 
 		return false;
-    }
-	
-    @Override
+	}
+
+	@Override
 	protected Object getTarget(Object element) {
-    	if (element instanceof IDMVMContext) {
-    		return element;
-    	}
-        return null;
-    }
-    
-    @Override
+		if (element instanceof IDMVMContext) {
+			return element;
+		}
+		return null;
+	}
+
+	@Override
 	protected boolean isRemainEnabled(IDebugCommandRequest request) {
 		return true;
 	}

@@ -19,7 +19,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Parent;
 
 public abstract class Conditional extends Parent implements IConditional {
 
-    private static final String EMPTY = ""; //$NON-NLS-1$
+	private static final String EMPTY = ""; //$NON-NLS-1$
 	String cond;
 	String arg1;
 	String arg2;
@@ -40,7 +40,6 @@ public abstract class Conditional extends Parent implements IConditional {
 		arg2 = argument2;
 		cond = conditional;
 	}
-
 
 	@Override
 	public String getConditional() {

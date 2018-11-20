@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite;
 
 import java.util.ArrayList;
@@ -32,16 +32,16 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKin
  * @since 5.0
  */
 public class ASTModificationMap {
-	private final Map<IASTNode, List<ASTModification>> fModifications= new IdentityHashMap<>();
+	private final Map<IASTNode, List<ASTModification>> fModifications = new IdentityHashMap<>();
 
 	/**
 	 * Adds a modification to this modification map.
 	 */
 	public void addModification(ASTModification mod) {
 		IASTNode targetNode = mod.getTargetNode();
-		List<ASTModification> mods= fModifications.get(targetNode);
+		List<ASTModification> mods = fModifications.get(targetNode);
 		if (mods == null || mods.isEmpty()) {
-			mods= new ArrayList<>();
+			mods = new ArrayList<>();
 			mods.add(mod);
 			fModifications.put(targetNode, mods);
 		} else {
@@ -60,7 +60,7 @@ public class ASTModificationMap {
 				break;
 			case INSERT_BEFORE:
 				int i;
-				for (i= mods.size(); --i >= 0;) {
+				for (i = mods.size(); --i >= 0;) {
 					if (mods.get(i).getKind() == ModificationKind.INSERT_BEFORE) {
 						break;
 					}
@@ -70,7 +70,7 @@ public class ASTModificationMap {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the list of modifications for a given node. The list can contain different
 	 * modifications. It is guaranteed that INSERT_BEFORE modifications appear first. Furthermore,
@@ -85,7 +85,7 @@ public class ASTModificationMap {
 		}
 		return Collections.unmodifiableList(modList);
 	}
-	
+
 	/**
 	 * Returns the collection of nodes that are modified by this modification map.
 	 */

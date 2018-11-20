@@ -30,11 +30,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
  * @author jcamelon
  */
 public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
-        implements ICPPASTElaboratedTypeSpecifier, IASTInternalNameOwner {
-    private int kind;
-    private IASTName name;
+		implements ICPPASTElaboratedTypeSpecifier, IASTInternalNameOwner {
+	private int kind;
+	private IASTName name;
 
-    public CPPASTElaboratedTypeSpecifier() {
+	public CPPASTElaboratedTypeSpecifier() {
 	}
 
 	public CPPASTElaboratedTypeSpecifier(int kind, IASTName name) {
@@ -49,60 +49,68 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 
 	@Override
 	public CPPASTElaboratedTypeSpecifier copy(CopyStyle style) {
-		CPPASTElaboratedTypeSpecifier copy =
-				new CPPASTElaboratedTypeSpecifier(kind, name == null ? null : name.copy(style));
+		CPPASTElaboratedTypeSpecifier copy = new CPPASTElaboratedTypeSpecifier(kind,
+				name == null ? null : name.copy(style));
 		return super.copy(copy, style);
 	}
 
 	@Override
 	public int getKind() {
-        return kind;
-    }
+		return kind;
+	}
 
-    @Override
+	@Override
 	public void setKind(int value) {
-        assertNotFrozen();
-        this.kind = value;
-    }
+		assertNotFrozen();
+		this.kind = value;
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(TYPE_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (!acceptByAttributeSpecifiers(action))
 			return false;
 
-        if (name != null) if (!name.accept(action)) return false;
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default: break;
-	        }
+		if (name != null)
+			if (!name.accept(action))
+				return false;
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
@@ -111,7 +119,8 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 
 	@Override
 	public int getRoleForName(IASTName n, boolean allowResolution) {
-		if (n != name) return r_unclear;
+		if (n != name)
+			return r_unclear;
 
 		IASTNode parent = getParent();
 		if (parent instanceof IASTSimpleDeclaration) {
@@ -121,10 +130,9 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		}
 
 		// 7.1.5.3.2: check for simple form <class-key> <identifier>, then it may be a declaration
-		final int kind= getKind();
+		final int kind = getKind();
 		if (kind == k_class || kind == k_union || kind == k_struct) {
-			if (name instanceof ICPPASTQualifiedName == false
-					&& name instanceof ICPPASTTemplateId == false) {
+			if (name instanceof ICPPASTQualifiedName == false && name instanceof ICPPASTTemplateId == false) {
 				IBinding binding = allowResolution ? name.resolveBinding() : name.getBinding();
 				if (binding != null) {
 					if (binding instanceof ICPPInternalBinding) {

@@ -49,34 +49,34 @@ import org.eclipse.swt.graphics.Rectangle;
 public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/** The default position type for untyped positions */
-	private static final String DEFAULT_TYPE= "__default__"; //$NON-NLS-1$
+	private static final String DEFAULT_TYPE = "__default__"; //$NON-NLS-1$
 	/** The position type for the cursor line position */
-	private static final String CURSOR_LINE_TYPE= "__cursor_line__"; //$NON-NLS-1$
+	private static final String CURSOR_LINE_TYPE = "__cursor_line__"; //$NON-NLS-1$
 
 	/** Manager for position changes */
 	private IPaintPositionManager fPositionManager;
 	/** Indicates whether this painter is active */
-	private boolean fIsActive= false;
+	private boolean fIsActive = false;
 	/** The text viewer this painter is associated with */
 	private ITextViewer fTextViewer;
 	/** The viewer's widget */
 	private StyledText fTextWidget;
 	/** Text positions (cursor line position is always at index 0 */
-	private List<Position> fPositions= new ArrayList<Position>();
+	private List<Position> fPositions = new ArrayList<Position>();
 	/** Cached text positions */
-	private List<Position> fLastPositions= new ArrayList<Position>();
+	private List<Position> fLastPositions = new ArrayList<Position>();
 	/** Temporary changed positions */
-	private List<Position> fChangedPositions= new ArrayList<Position>();
+	private List<Position> fChangedPositions = new ArrayList<Position>();
 	/** Cursor line position */
-	private Position fCursorLine= new TypedPosition(0, 0, CURSOR_LINE_TYPE);
+	private Position fCursorLine = new TypedPosition(0, 0, CURSOR_LINE_TYPE);
 	/** Saved cursor line position */
-	private Position fLastCursorLine= new Position(0, 0);
+	private Position fLastCursorLine = new Position(0, 0);
 	/** Enablement of the cursor line highlighting */
 	private boolean fCursorLineEnabled;
 	/** Whether cursor line highlighting is active */
 	private boolean fCursorLineActive;
 	/** Map of position type to color */
-	private Map<String, Color> fColorMap= new HashMap<String, Color>();
+	private Map<String, Color> fColorMap = new HashMap<String, Color>();
 
 	/**
 	 * Creates a new painter for the given text viewer.
@@ -84,8 +84,8 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	public LineBackgroundPainter(ITextViewer textViewer) {
 		super();
-		fTextViewer= textViewer;
-		fTextWidget= textViewer.getTextWidget();
+		fTextViewer = textViewer;
+		fTextWidget = textViewer.getTextWidget();
 		fPositions.add(fCursorLine);
 		fLastPositions.add(fLastCursorLine);
 	}
@@ -124,8 +124,8 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * @param enable
 	 */
 	public void enableCursorLine(boolean enable) {
-		fCursorLineEnabled= enable;
-		fCursorLineActive= enable;
+		fCursorLineEnabled = enable;
+		fCursorLineActive = enable;
 		if (fCursorLineActive) {
 			updateCursorLine();
 		}
@@ -138,7 +138,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * @param positions a list of <code>Position</code>s
 	 */
 	public void setHighlightPositions(List<Position> positions) {
-		boolean isActive= fIsActive;
+		boolean isActive = fIsActive;
 		deactivate(isActive);
 		fPositions.clear();
 		fPositions.add(fCursorLine);
@@ -155,7 +155,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * @param positions a list of <code>Position</code>s
 	 */
 	public void addHighlightPositions(List<Position> positions) {
-		boolean isActive= fIsActive;
+		boolean isActive = fIsActive;
 		deactivate(isActive);
 		fPositions.addAll(positions);
 		if (isActive) {
@@ -169,7 +169,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * @param positions a list of <code>Position</code>s
 	 */
 	public void removeHighlightPositions(List<Position> positions) {
-		boolean isActive= fIsActive;
+		boolean isActive = fIsActive;
 		deactivate(isActive);
 		fPositions.removeAll(positions);
 		if (isActive) {
@@ -184,7 +184,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * @param addPositions a list of <code>Position</code>s to add
 	 */
 	public void replaceHighlightPositions(List<Position> removePositions, List<Position> addPositions) {
-		boolean isActive= fIsActive;
+		boolean isActive = fIsActive;
 		deactivate(isActive);
 		fPositions.removeAll(removePositions);
 		fPositions.addAll(addPositions);
@@ -197,7 +197,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * Trigger redraw of managed positions.
 	 */
 	public void redraw() {
-		if(fIsActive) {
+		if (fIsActive) {
 			fTextWidget.redraw();
 		}
 	}
@@ -210,9 +210,9 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 		if (fPositionManager == null) {
 			return;
 		}
-		int sz= fPositions.size();
-		for (int i= 0; i < sz; ++i) {
-			Position position= positions.get(i);
+		int sz = fPositions.size();
+		for (int i = 0; i < sz; ++i) {
+			Position position = positions.get(i);
 			fPositionManager.managePosition(position);
 		}
 	}
@@ -225,9 +225,9 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 		if (fPositionManager == null) {
 			return;
 		}
-		int sz= fPositions.size();
-		for (int i= 0; i < sz; ++i) {
-			Position position= positions.get(i);
+		int sz = fPositions.size();
+		for (int i = 0; i < sz; ++i) {
+			Position position = positions.get(i);
 			fPositionManager.unmanagePosition(position);
 		}
 	}
@@ -238,15 +238,15 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	@Override
 	public void dispose() {
 		// no deactivate!
-		fIsActive= false;
-		fTextViewer= null;
-		fTextWidget= null;
-		fCursorLine= null;
-		fLastCursorLine= null;
-		fPositions= null;
-		fLastPositions= null;
-		fChangedPositions= null;
-		fColorMap= null;
+		fIsActive = false;
+		fTextViewer = null;
+		fTextWidget = null;
+		fCursorLine = null;
+		fLastCursorLine = null;
+		fPositions = null;
+		fLastPositions = null;
+		fChangedPositions = null;
+		fColorMap = null;
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	@Override
 	public void paint(int reason) {
-		IDocument document= fTextViewer.getDocument();
+		IDocument document = fTextViewer.getDocument();
 		if (document == null) {
 			deactivate(false);
 			return;
@@ -271,27 +271,27 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 		if (fCursorLineEnabled) {
 			// check selection
-			StyledText textWidget= fTextViewer.getTextWidget();
-			Point selection= textWidget.getSelection();
-			int startLine= textWidget.getLineAtOffset(selection.x);
-			int endLine= textWidget.getLineAtOffset(selection.y);
+			StyledText textWidget = fTextViewer.getTextWidget();
+			Point selection = textWidget.getSelection();
+			int startLine = textWidget.getLineAtOffset(selection.x);
+			int endLine = textWidget.getLineAtOffset(selection.y);
 			if (startLine != endLine) {
 				redrawPositions(Collections.singletonList(fLastCursorLine));
-				fCursorLineActive= false;
+				fCursorLineActive = false;
 			} else {
-				fCursorLineActive= true;
+				fCursorLineActive = true;
 			}
 			if (fCursorLineActive) {
 				// redraw in case of text changes prior to update of current cursor line
 				if (!fLastCursorLine.equals(fCursorLine)) {
 					redrawPositions(Collections.singletonList(fLastCursorLine));
-					fLastCursorLine.offset= fCursorLine.offset;
-					fLastCursorLine.length= fCursorLine.length;
+					fLastCursorLine.offset = fCursorLine.offset;
+					fLastCursorLine.length = fCursorLine.length;
 				}
 				updateCursorLine();
 			}
 		}
-		List<Position> changedPositions= getChangedPositions();
+		List<Position> changedPositions = getChangedPositions();
 		if (changedPositions != null) {
 			redrawPositions(changedPositions);
 			updatePositions();
@@ -305,7 +305,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	private void activate(boolean redraw) {
 		if (!fIsActive) {
-			fIsActive= true;
+			fIsActive = true;
 			fTextWidget.addLineBackgroundListener(this);
 			if (redraw) {
 				if (fCursorLineActive) {
@@ -322,23 +322,23 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * Copy positions from the current position list to the last position list.
 	 */
 	private void updatePositions() {
-		int sz= fPositions.size();
-		for (int i= 0; i < sz; ++i) {
-			Position position= fPositions.get(i);
+		int sz = fPositions.size();
+		for (int i = 0; i < sz; ++i) {
+			Position position = fPositions.get(i);
 			Position copy;
 			if (i == fLastPositions.size()) {
-				copy= new Position(position.offset, position.length);
-				copy.isDeleted= position.isDeleted;
+				copy = new Position(position.offset, position.length);
+				copy.isDeleted = position.isDeleted;
 				fLastPositions.add(copy);
 			} else {
-				copy= fLastPositions.get(i);
-				copy.offset= position.offset;
-				copy.length= position.length;
-				copy.isDeleted= position.isDeleted;
+				copy = fLastPositions.get(i);
+				copy.offset = position.offset;
+				copy.length = position.length;
+				copy.isDeleted = position.isDeleted;
 			}
-			position.isDeleted= false;
+			position.isDeleted = false;
 		}
-		int diff= fLastPositions.size() - sz;
+		int diff = fLastPositions.size() - sz;
 		while (diff > 0) {
 			--diff;
 			fLastPositions.remove(sz + diff);
@@ -353,13 +353,13 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 		if (fLastPositions.size() != fPositions.size()) {
 			return fLastPositions;
 		}
-		List<Position> changedPositions= null;
-		for (int i= 0, sz= fPositions.size(); i < sz; ++i) {
-			Position previous= fLastPositions.get(i);
-			Position current= fPositions.get(i);
+		List<Position> changedPositions = null;
+		for (int i = 0, sz = fPositions.size(); i < sz; ++i) {
+			Position previous = fLastPositions.get(i);
+			Position current = fPositions.get(i);
 			if (!previous.equals(current)) {
 				if (changedPositions == null) {
-					changedPositions= fChangedPositions;
+					changedPositions = fChangedPositions;
 					changedPositions.clear();
 				}
 				changedPositions.add(previous);
@@ -376,14 +376,14 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	private void redrawPositions(List<Position> positions) {
 		// TextViewer.getTopIndexStartOffset is buggy
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=174419
-//		final int minOffset= fTextViewer.getTopIndexStartOffset();
-		final int minOffset= getTopIndexStartOffset();
-		final int maxOffset= fTextViewer.getBottomIndexEndOffset()+3;
-		Rectangle clientArea= fTextWidget.getClientArea();
-		int width= clientArea.width + fTextWidget.getHorizontalPixel();
-		int lineHeight= fTextWidget.getLineHeight();
-		for (int i= 0, sz= positions.size(); i < sz; ++i) {
-			Position position= positions.get(i);
+		//		final int minOffset= fTextViewer.getTopIndexStartOffset();
+		final int minOffset = getTopIndexStartOffset();
+		final int maxOffset = fTextViewer.getBottomIndexEndOffset() + 3;
+		Rectangle clientArea = fTextWidget.getClientArea();
+		int width = clientArea.width + fTextWidget.getHorizontalPixel();
+		int lineHeight = fTextWidget.getLineHeight();
+		for (int i = 0, sz = positions.size(); i < sz; ++i) {
+			Position position = positions.get(i);
 			// if the position that is about to be drawn was deleted then we can't
 			if (position.isDeleted()) {
 				continue;
@@ -392,21 +392,21 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 			if (!position.overlapsWith(minOffset, maxOffset - minOffset + 1)) {
 				continue;
 			}
-			int widgetOffset= getWidgetOffset(position.offset);
+			int widgetOffset = getWidgetOffset(position.offset);
 			if (widgetOffset < 0 || widgetOffset > fTextWidget.getCharCount()) {
 				continue;
 			}
 			// TLETODO [performance] SyledText.getLocationAtOffset() is very expensive
-			Point upperLeft= fTextWidget.getLocationAtOffset(widgetOffset);
-			int upperY= Math.max(Math.min(upperLeft.y, clientArea.height), 0);
+			Point upperLeft = fTextWidget.getLocationAtOffset(widgetOffset);
+			int upperY = Math.max(Math.min(upperLeft.y, clientArea.height), 0);
 			int height;
 			if (position.length == 0) {
-				height= lineHeight;
+				height = lineHeight;
 			} else {
-				int widgetEndOffset= Math.min(widgetOffset + position.length, fTextWidget.getCharCount());
-				Point lowerRight= fTextWidget.getLocationAtOffset(widgetEndOffset);
-				int lowerY= Math.min(lowerRight.y + lineHeight, clientArea.height);
-				height= lowerY - upperY;
+				int widgetEndOffset = Math.min(widgetOffset + position.length, fTextWidget.getCharCount());
+				Point lowerRight = fTextWidget.getLocationAtOffset(widgetEndOffset);
+				int lowerY = Math.min(lowerRight.y + lineHeight, clientArea.height);
+				height = lowerY - upperY;
 			}
 			if (height > 0) {
 				fTextWidget.redraw(0, upperY, width, height, false);
@@ -421,9 +421,9 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	private int getTopIndexStartOffset() {
 		if (fTextWidget != null) {
-			int top= fTextWidget.getTopIndex();
+			int top = fTextWidget.getTopIndex();
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=183653
-			top= fTextWidget.getOffsetAtLine(Math.min(fTextWidget.getLineCount() - 1, top));
+			top = fTextWidget.getOffsetAtLine(Math.min(fTextWidget.getLineCount() - 1, top));
 			if (top >= 0) {
 				return getDocumentOffset(top);
 			}
@@ -437,7 +437,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	@Override
 	public void deactivate(boolean redraw) {
 		if (fIsActive) {
-			fIsActive= false;
+			fIsActive = false;
 			fTextWidget.removeLineBackgroundListener(this);
 			if (redraw) {
 				redrawPositions(fLastPositions);
@@ -451,7 +451,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	@Override
 	public void setPositionManager(IPaintPositionManager manager) {
-		fPositionManager= manager;
+		fPositionManager = manager;
 	}
 
 	/**
@@ -461,11 +461,11 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	private int getWidgetOffset(int documentOffset) {
 		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
+			ITextViewerExtension5 extension = (ITextViewerExtension5) fTextViewer;
 			return extension.modelOffset2WidgetOffset(documentOffset);
 		}
-		IRegion visible= fTextViewer.getVisibleRegion();
-		int widgetOffset= documentOffset - visible.getOffset();
+		IRegion visible = fTextViewer.getVisibleRegion();
+		int widgetOffset = documentOffset - visible.getOffset();
 		if (widgetOffset > visible.getLength()) {
 			return -1;
 		}
@@ -479,10 +479,10 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	private int getDocumentOffset(int widgetOffset) {
 		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
+			ITextViewerExtension5 extension = (ITextViewerExtension5) fTextViewer;
 			return extension.widgetOffset2ModelOffset(widgetOffset);
 		}
-		IRegion visible= fTextViewer.getVisibleRegion();
+		IRegion visible = fTextViewer.getVisibleRegion();
 		if (widgetOffset > visible.getLength()) {
 			return -1;
 		}
@@ -495,11 +495,11 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	@Override
 	public void lineGetBackground(LineBackgroundEvent event) {
 		if (fTextWidget != null) {
-			Position match= findIncludingPosition(getDocumentOffset(event.lineOffset));
+			Position match = findIncludingPosition(getDocumentOffset(event.lineOffset));
 			if (match != null) {
-				Color color= getColorForPosition(match);
+				Color color = getColorForPosition(match);
 				if (color != null) {
-					event.lineBackground= color;
+					event.lineBackground = color;
 				}
 			}
 		}
@@ -517,7 +517,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 			}
 		} else {
 			if (position instanceof TypedPosition) {
-				String type= ((TypedPosition)position).getType();
+				String type = ((TypedPosition) position).getType();
 				return fColorMap.get(type);
 			}
 			return fColorMap.get(DEFAULT_TYPE);
@@ -532,8 +532,8 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	private Position findIncludingPosition(int offset) {
 		// TLETODO [performance] Use binary search?
-		for (int i= fCursorLineActive ? 0 : 1, sz= fPositions.size(); i < sz; ++i) {
-			Position position= fPositions.get(i);
+		for (int i = fCursorLineActive ? 0 : 1, sz = fPositions.size(); i < sz; ++i) {
+			Position position = fPositions.get(i);
 			if (position.offset == offset || position.includes(offset)) {
 				return position;
 			}
@@ -546,13 +546,13 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	private void updateCursorLine() {
 		try {
-			IDocument document= fTextViewer.getDocument();
+			IDocument document = fTextViewer.getDocument();
 			if (document != null) {
-				int lineNumber= document.getLineOfOffset(getDocumentOffset(fTextWidget.getCaretOffset()));
+				int lineNumber = document.getLineOfOffset(getDocumentOffset(fTextWidget.getCaretOffset()));
 
-				fCursorLine.isDeleted= false;
-				fCursorLine.offset= document.getLineOffset(lineNumber);
-				fCursorLine.length= 0;
+				fCursorLine.isDeleted = false;
+				fCursorLine.offset = document.getLineOffset(lineNumber);
+				fCursorLine.length = 0;
 			}
 		} catch (BadLocationException e) {
 			// gracefully ignored

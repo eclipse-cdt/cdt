@@ -29,9 +29,9 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  */
 public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier
 		implements ICASTTypedefNameSpecifier, IASTCompletionContext {
-    private IASTName name;
+	private IASTName name;
 
-    public CASTTypedefNameSpecifier() {
+	public CASTTypedefNameSpecifier() {
 	}
 
 	public CASTTypedefNameSpecifier(IASTName name) {
@@ -45,49 +45,54 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier
 
 	@Override
 	public CASTTypedefNameSpecifier copy(CopyStyle style) {
-		CASTTypedefNameSpecifier copy =
-				new CASTTypedefNameSpecifier(name == null ? null : name.copy(style));
+		CASTTypedefNameSpecifier copy = new CASTTypedefNameSpecifier(name == null ? null : name.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if (!visitAlignmentSpecifiers(action))
-        	return false;
-        if (name != null && !name.accept(action))
-        	return false;
+		if (!visitAlignmentSpecifiers(action))
+			return false;
+		if (name != null && !name.accept(action))
+			return false;
 
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
@@ -102,7 +107,7 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier
 
 		for (int i = 0; i < bindings.length; i++) {
 			if (!(bindings[i] instanceof ITypedef)) {
-				bindings[i]= null;
+				bindings[i] = null;
 			}
 		}
 

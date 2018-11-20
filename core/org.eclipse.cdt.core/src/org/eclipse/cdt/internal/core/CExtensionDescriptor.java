@@ -21,7 +21,7 @@ public class CExtensionDescriptor implements ICExtensionDescriptor {
 	protected static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	protected static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 
-	public CExtensionDescriptor(IConfigurationElement el){
+	public CExtensionDescriptor(IConfigurationElement el) {
 		fElement = el;
 	}
 
@@ -35,7 +35,7 @@ public class CExtensionDescriptor implements ICExtensionDescriptor {
 		return fElement.getAttribute(ATTRIBUTE_NAME);
 	}
 
-	public IConfigurationElement getConfigurationElement(){
+	public IConfigurationElement getConfigurationElement() {
 		return fElement;
 	}
 }

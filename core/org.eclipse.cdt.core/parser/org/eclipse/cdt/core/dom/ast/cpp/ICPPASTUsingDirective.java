@@ -50,7 +50,7 @@ public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner, I
 	 *            <code>IASTName</code>
 	 */
 	public void setQualifiedName(IASTName qualifiedName);
-	
+
 	/**
 	 * @since 5.1
 	 */

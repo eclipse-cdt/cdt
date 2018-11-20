@@ -16,15 +16,13 @@ package org.eclipse.cdt.core.dom.lrparser;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
-
 /**
  * Represents a parser that can be used by BaseExtensibleLanguage.
  * 
  * @author Mike Kucera
  */
 public interface IParser<N extends IASTNode> {
-	
-	
+
 	/**
 	 * Performs the actual parse.
 	 * 
@@ -35,14 +33,11 @@ public interface IParser<N extends IASTNode> {
 	 * will be available via the getCompletionNode() method.
 	 */
 	public N parse();
-	
-	
+
 	/**
 	 * Returns the completion node if a completion token was encountered
 	 * during the parse, null otherwise.
 	 */
 	public IASTCompletionNode getCompletionNode();
-	
-	
-	
+
 }

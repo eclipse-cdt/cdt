@@ -34,7 +34,7 @@ public interface ICPPASTNameSpecifier extends IASTNode {
 
 	@Override
 	public ICPPASTNameSpecifier copy();
-	
+
 	@Override
 	public ICPPASTNameSpecifier copy(CopyStyle style);
 
@@ -46,7 +46,7 @@ public interface ICPPASTNameSpecifier extends IASTNode {
 	 * if it's a binding, otherwise return null.
 	 */
 	public IBinding resolveBinding();
-	
+
 	/**
 	 * Similar to resolveBinding(), but only performs the first phase
 	 * of binding resolution for two-phase bindings.

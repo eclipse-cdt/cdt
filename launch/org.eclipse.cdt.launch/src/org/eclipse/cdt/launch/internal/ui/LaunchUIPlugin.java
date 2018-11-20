@@ -108,6 +108,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
+
 	/**
 	 * Logs an internal error with the specified message.
 	 * 
@@ -162,7 +163,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 		log(status);
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
-			ErrorDialog.openError(shell, LaunchMessages.LaunchUIPlugin_Error, message, status); 
+			ErrorDialog.openError(shell, LaunchMessages.LaunchUIPlugin_Error, message, status);
 		}
 	}
 
@@ -171,7 +172,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
 			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 1, t.getMessage(), null);
-			ErrorDialog.openError(shell, LaunchMessages.LaunchUIPlugin_Error, message, status); 
+			ErrorDialog.openError(shell, LaunchMessages.LaunchUIPlugin_Error, message, status);
 		}
 	}
 
@@ -181,7 +182,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		LaunchUIPlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_FILTERED_DEBUGGERS);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
@@ -193,43 +194,43 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop(BundleContext context) throws Exception {
-        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+	public void stop(BundleContext context) throws Exception {
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		super.stop(context);
 	}
 
 	/* (non-Javadoc)
-     * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
-     */
-    @Override
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
+	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
+	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
+	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+	 */
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
-        for (ILaunch l : launches) {
-            if (l instanceof CLaunch) {
-                ((CLaunch)l).refresh();
-            }
-        }
-    }
+		for (ILaunch l : launches) {
+			if (l instanceof CLaunch) {
+				((CLaunch) l).refresh();
+			}
+		}
+	}
 
 	public static <T> T getService(Class<T> service) {
 		BundleContext context = fgPlugin.getBundle().getBundleContext();

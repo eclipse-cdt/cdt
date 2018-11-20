@@ -52,12 +52,12 @@ public class LibraryListEditor extends LlvmListEditor {
 		dlg.setText(Messages.LibraryListEditor_0);
 		dlg.open();
 		String file = dlg.getFileName();
-		if(file == null) {
+		if (file == null) {
 			return null;
 		}
 		//remove white spaces
 		file = file.trim();
-		if (file.length()!=0) {
+		if (file.length() != 0) {
 			//get all existing items in the list
 			String[] existingItems = getList().getItems();
 			//return null if duplicate item found
@@ -83,18 +83,18 @@ public class LibraryListEditor extends LlvmListEditor {
 	 */
 	protected void removePressed() {
 		List libList = getList();
-        setPresentsDefaultValue(false);
-        String[] selected = libList.getSelection();
-        for (String s : selected) {
-            //remove a library from the LLVM preference store
-            LlvmPreferenceStore.removeLibrary(s);
-            //remove a library from LLVM linker's option
-            LlvmToolOptionPathUtil.removeLlvmLib(s);
-            //inform LLVM environment variable supplier that there has been a change
-            LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
-            libList.remove(s);
-            selectionChanged();
-        }
+		setPresentsDefaultValue(false);
+		String[] selected = libList.getSelection();
+		for (String s : selected) {
+			//remove a library from the LLVM preference store
+			LlvmPreferenceStore.removeLibrary(s);
+			//remove a library from LLVM linker's option
+			LlvmToolOptionPathUtil.removeLlvmLib(s);
+			//inform LLVM environment variable supplier that there has been a change
+			LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
+			libList.remove(s);
+			selectionChanged();
+		}
 	}
 
 }

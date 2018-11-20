@@ -32,7 +32,7 @@ public interface ICPPParameter extends IParameter, ICPPVariable {
 	 * if there is a default value or not.
 	 */
 	public boolean hasDefaultValue();
-	
+
 	/**
 	 * Returns the default value of this parameter if it has one,
 	 * or null otherwise.

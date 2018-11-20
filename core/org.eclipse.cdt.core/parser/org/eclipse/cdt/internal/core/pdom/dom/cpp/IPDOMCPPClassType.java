@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
@@ -43,14 +43,14 @@ public interface IPDOMCPPClassType extends ICPPClassType, IPDOMBinding, IIndexTy
 	 * @param visibility The visibility of the <code>member</code>.
 	 */
 	void addMember(PDOMNode member, int visibility) throws CoreException;
-	
+
 	/**
 	 * Returns true if this class type is visible to ADL only.
 	 * A class type is visible to ADL only if it's only declaration so far
 	 * is a friend declaration inside another class.
 	 */
 	boolean isVisibleToAdlOnly();
-	
+
 	/**
 	 * Set whether this class type is visible to ADL only.
 	 * See isVisibleToAdlOnly().

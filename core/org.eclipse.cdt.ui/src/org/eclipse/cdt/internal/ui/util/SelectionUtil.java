@@ -31,13 +31,12 @@ public class SelectionUtil {
 	public static Object getSingleElement(ISelection s) {
 		if (!(s instanceof IStructuredSelection))
 			return null;
-		IStructuredSelection selection= (IStructuredSelection) s;
+		IStructuredSelection selection = (IStructuredSelection) s;
 		if (selection.size() != 1)
 			return null;
 
 		return selection.getFirstElement();
 	}
-
 
 	/**
 	 * Returns the selection in the currently active workbench window part.

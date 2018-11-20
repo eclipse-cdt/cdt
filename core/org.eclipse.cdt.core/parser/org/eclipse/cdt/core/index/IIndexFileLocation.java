@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Andrew Ferguson (Symbian) - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
 import java.net.URI;

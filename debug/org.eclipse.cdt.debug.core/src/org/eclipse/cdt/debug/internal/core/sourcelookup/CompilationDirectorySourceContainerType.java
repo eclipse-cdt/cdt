@@ -11,7 +11,7 @@
  * Contributors:
  * 	  Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core.sourcelookup; 
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -20,7 +20,7 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTyp
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
- 
+
 /**
  * See {@link CompilationDirectorySourceContainer}.
  */

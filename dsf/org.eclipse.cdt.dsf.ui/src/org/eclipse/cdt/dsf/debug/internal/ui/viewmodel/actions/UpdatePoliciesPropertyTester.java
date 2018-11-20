@@ -43,40 +43,40 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class UpdatePoliciesPropertyTester extends PropertyTester {
 
-    private static final String SUPPORTED = "areUpdatePoliciesSupported"; //$NON-NLS-1$
-    private static final String AVAILABLE = "isUpdatePolicyAvailable"; //$NON-NLS-1$
-    private static final String ACTIVE = "isUpdatePolicyActive"; //$NON-NLS-1$
+	private static final String SUPPORTED = "areUpdatePoliciesSupported"; //$NON-NLS-1$
+	private static final String AVAILABLE = "isUpdatePolicyAvailable"; //$NON-NLS-1$
+	private static final String ACTIVE = "isUpdatePolicyActive"; //$NON-NLS-1$
 
-    @Override
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-        if (receiver instanceof IVMContext) {
-            IVMProvider provider = ((IVMContext)receiver).getVMNode().getVMProvider();
-            if (provider instanceof ICachingVMProvider) {
-                return testProvider((ICachingVMProvider)provider, property, expectedValue);
-            }
-        } else if (receiver instanceof IDebugView) {
-            IVMProvider provider = VMHandlerUtils.getVMProviderForPart((IDebugView)receiver);
-            if (provider instanceof ICachingVMProvider) {
-                return testProvider((ICachingVMProvider)provider, property, expectedValue);                    
-            }
-        }
-        return false;
-    }
+		if (receiver instanceof IVMContext) {
+			IVMProvider provider = ((IVMContext) receiver).getVMNode().getVMProvider();
+			if (provider instanceof ICachingVMProvider) {
+				return testProvider((ICachingVMProvider) provider, property, expectedValue);
+			}
+		} else if (receiver instanceof IDebugView) {
+			IVMProvider provider = VMHandlerUtils.getVMProviderForPart((IDebugView) receiver);
+			if (provider instanceof ICachingVMProvider) {
+				return testProvider((ICachingVMProvider) provider, property, expectedValue);
+			}
+		}
+		return false;
+	}
 
-    private boolean testProvider(ICachingVMProvider provider, String property, Object expectedValue) {
-        if (SUPPORTED.equals(property)) {
-            return true;
-        } else if (AVAILABLE.equals(property)) {
-            for (IVMUpdatePolicy policy : provider.getAvailableUpdatePolicies()) {
-                if (policy.getID().equals(expectedValue)) {
-                    return true;
-                }
-                return false;
-            }
-        } else if (ACTIVE.equals(property)) {
-            return expectedValue != null && expectedValue.equals(provider.getActiveUpdatePolicy().getID());
-        } 
-        return false;
-    }
-    
+	private boolean testProvider(ICachingVMProvider provider, String property, Object expectedValue) {
+		if (SUPPORTED.equals(property)) {
+			return true;
+		} else if (AVAILABLE.equals(property)) {
+			for (IVMUpdatePolicy policy : provider.getAvailableUpdatePolicies()) {
+				if (policy.getID().equals(expectedValue)) {
+					return true;
+				}
+				return false;
+			}
+		} else if (ACTIVE.equals(property)) {
+			return expectedValue != null && expectedValue.equals(provider.getActiveUpdatePolicy().getID());
+		}
+		return false;
+	}
+
 }

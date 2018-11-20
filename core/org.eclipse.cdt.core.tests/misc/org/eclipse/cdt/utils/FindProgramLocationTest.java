@@ -43,10 +43,10 @@ public class FindProgramLocationTest extends TestCase {
 		assertNull(PathUtil.findProgramLocation("", ""));
 		assertNull(PathUtil.findProgramLocation("prog", ""));
 		assertNull(PathUtil.findProgramLocation("prog", PATH_SEPARATOR));
-		assertNull(PathUtil.findProgramLocation("prog", "x"+PATH_SEPARATOR));
-		assertNull(PathUtil.findProgramLocation("prog", PATH_SEPARATOR+"x"));
-		assertNull(PathUtil.findProgramLocation("prog", PATH_SEPARATOR+PATH_SEPARATOR));
-		assertNull(PathUtil.findProgramLocation("prog", PATH_SEPARATOR+"x"+PATH_SEPARATOR));
+		assertNull(PathUtil.findProgramLocation("prog", "x" + PATH_SEPARATOR));
+		assertNull(PathUtil.findProgramLocation("prog", PATH_SEPARATOR + "x"));
+		assertNull(PathUtil.findProgramLocation("prog", PATH_SEPARATOR + PATH_SEPARATOR));
+		assertNull(PathUtil.findProgramLocation("prog", PATH_SEPARATOR + "x" + PATH_SEPARATOR));
 	}
 
 	public void testFind() throws CoreException, IOException {
@@ -174,7 +174,7 @@ public class FindProgramLocationTest extends TestCase {
 			IPath actual = PathUtil.findProgramLocation(name2, path1);
 			assertEquals(filePath2_exe, actual);
 		}
-		
+
 		String path12 = dir1.toOSString() + PATH_SEPARATOR + dir2.toOSString();
 		{
 			// dir2/file.exe is preferred to dir1/file

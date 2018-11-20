@@ -30,12 +30,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAPopDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAPopDataCommand(PDAThreadDMContext thread) {
-        super(thread, "popdata " + thread.getID());
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAPopDataCommand(PDAThreadDMContext thread) {
+		super(thread, "popdata " + thread.getID());
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

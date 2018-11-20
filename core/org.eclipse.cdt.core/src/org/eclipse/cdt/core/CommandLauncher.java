@@ -109,7 +109,7 @@ public class CommandLauncher implements ICommandLauncher {
 		}
 		return fEnvironment;
 	}
-	
+
 	/**
 	 * Returns a property from the given environment.
 	 * Asks the Environment reader directly for its key instead of retrieving this entire property map
@@ -175,15 +175,15 @@ public class CommandLauncher implements ICommandLauncher {
 		return null;
 	}
 
-
 	/**
 	 * @since 5.1
 	 * @see org.eclipse.cdt.core.ICommandLauncher#execute(IPath, String[], String[], IPath, IProgressMonitor)
 	 */
 	@Override
-	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory, IProgressMonitor monitor) throws CoreException {
+	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory,
+			IProgressMonitor monitor) throws CoreException {
 		parseEnvironment(env);
-		String envPathValue =  getEnvironmentProperty(PATH_ENV);
+		String envPathValue = getEnvironmentProperty(PATH_ENV);
 
 		Boolean isFound = null;
 		String command = commandPath.toOSString();
@@ -230,8 +230,8 @@ public class CommandLauncher implements ICommandLauncher {
 					envPathValue = System.getenv(PATH_ENV);
 				}
 				errorMessage = errorMessage + NEWLINE
-						+ NLS.bind(Messages.CommandLauncher_ProgramNotFoundInPath, command) + NEWLINE
-						+ "PATH=[" + envPathValue + "]" + NEWLINE; //$NON-NLS-1$ //$NON-NLS-2$
+						+ NLS.bind(Messages.CommandLauncher_ProgramNotFoundInPath, command) + NEWLINE + "PATH=[" //$NON-NLS-1$
+						+ envPathValue + "]" + NEWLINE; //$NON-NLS-1$
 			}
 			setErrorMessage(errorMessage);
 			fProcess = null;
@@ -328,7 +328,6 @@ public class CommandLauncher implements ICommandLauncher {
 	protected String getCommandLine(String[] commandArgs) {
 		return getCommandLineQuoted(commandArgs, false);
 	}
-
 
 	/**
 	 * @since 5.1

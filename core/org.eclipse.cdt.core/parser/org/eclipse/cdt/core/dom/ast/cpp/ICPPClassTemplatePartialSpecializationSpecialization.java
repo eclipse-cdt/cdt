@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
@@ -21,5 +21,5 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPClassTemplatePartialSpecializationSpecialization
-		extends	ICPPClassTemplatePartialSpecialization, ICPPClassSpecialization {
+		extends ICPPClassTemplatePartialSpecialization, ICPPClassSpecialization {
 }

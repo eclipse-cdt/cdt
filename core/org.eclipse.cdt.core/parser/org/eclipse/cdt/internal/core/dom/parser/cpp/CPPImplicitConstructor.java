@@ -33,13 +33,12 @@ public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPCon
 	public CPPImplicitConstructor(ICPPClassScope scope, char[] name, ICPPParameter[] params, IASTNode point) {
 		// Note: the value passed for the 'isConstexpr' parameter of the CPPImplicitMethod constructor
 		// is irrelevant, as CPPImplicitConstructor overrides isConstexpr().
-        super(scope, name, createFunctionType(params), params, false);
-    }
+		super(scope, name, createFunctionType(params), params, false);
+	}
 
 	private static ICPPFunctionType createFunctionType(IParameter[] params) {
 		return CPPVisitor.createImplicitFunctionType(UNSPECIFIED_TYPE, params, false, false);
 	}
-
 
 	/*
 	 *	From $12.1 / 5:

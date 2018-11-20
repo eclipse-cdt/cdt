@@ -26,9 +26,9 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 public class ModifiedASTDeclarationWriter extends DeclarationWriter {
 	private final ASTModificationHelper modificationHelper;
-	
-	public ModifiedASTDeclarationWriter(Scribe scribe, ASTWriterVisitor visitor,
-			ModificationScopeStack stack, NodeCommentMap commentMap) {
+
+	public ModifiedASTDeclarationWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack,
+			NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);
 	}
@@ -36,17 +36,16 @@ public class ModifiedASTDeclarationWriter extends DeclarationWriter {
 	@Override
 	protected void writeDeclarationsInNamespace(ICPPASTNamespaceDefinition namespaceDefinition,
 			IASTDeclaration[] declarations) {
-		IASTDeclaration[] modifiedDeclarations = modificationHelper.createModifiedChildArray(
-				namespaceDefinition, declarations, IASTDeclaration.class, commentMap);
+		IASTDeclaration[] modifiedDeclarations = modificationHelper.createModifiedChildArray(namespaceDefinition,
+				declarations, IASTDeclaration.class, commentMap);
 		super.writeDeclarationsInNamespace(namespaceDefinition, modifiedDeclarations);
 	}
-	
+
 	@Override
 	protected void writeCtorChainInitializer(ICPPASTFunctionDefinition funcDec,
 			ICPPASTConstructorChainInitializer[] ctorInitChain) {
-		ICPPASTConstructorChainInitializer[] modifiedInitializer =
-				modificationHelper.createModifiedChildArray(funcDec, ctorInitChain,
-						ICPPASTConstructorChainInitializer.class, commentMap);
+		ICPPASTConstructorChainInitializer[] modifiedInitializer = modificationHelper.createModifiedChildArray(funcDec,
+				ctorInitChain, ICPPASTConstructorChainInitializer.class, commentMap);
 		super.writeCtorChainInitializer(funcDec, modifiedInitializer);
 	}
 }

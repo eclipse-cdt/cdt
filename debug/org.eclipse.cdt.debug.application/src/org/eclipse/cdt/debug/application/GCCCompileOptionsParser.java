@@ -18,7 +18,7 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildComman
 public class GCCCompileOptionsParser extends GCCBuildCommandParser {
 
 	private String currentResourceName;
-	
+
 	public GCCCompileOptionsParser() {
 		super();
 	}
@@ -35,7 +35,7 @@ public class GCCCompileOptionsParser extends GCCBuildCommandParser {
 	protected String parseResourceName(String line) {
 		return getCurrentResourceName();
 	}
-	
+
 	@Override
 	public GCCCompileOptionsParser cloneShallow() throws CloneNotSupportedException {
 		return (GCCCompileOptionsParser) super.cloneShallow();

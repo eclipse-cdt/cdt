@@ -26,49 +26,49 @@ import org.eclipse.core.runtime.IStatus;
  */
 public class ErrorLabelText extends LabelText {
 
-    protected final static String PROP_ERROR_MESSAGE = "error_message"; //$NON-NLS-1$
-    
-    public ErrorLabelText() {
-        this(MessagesForDebugVM.ErrorLabelText__text_format, new String[] {});
-    }
+	protected final static String PROP_ERROR_MESSAGE = "error_message"; //$NON-NLS-1$
 
-    public ErrorLabelText(String formatPattern, String[] propertyNames) {
-        super(formatPattern, addErrorMessageProperty(propertyNames));
-    }
-    
-    private static String[] addErrorMessageProperty(String[] propertyNames) {
-        String[] newPropertyNames = new String[propertyNames.length + 1];
-        System.arraycopy(propertyNames, 0, newPropertyNames, 0, propertyNames.length);
-        newPropertyNames[propertyNames.length + 0] = PROP_ERROR_MESSAGE;
-        return newPropertyNames;
-    }
+	public ErrorLabelText() {
+		this(MessagesForDebugVM.ErrorLabelText__text_format, new String[] {});
+	}
 
-    @Override
-    protected Object getPropertyValue(String propertyName, IStatus status, Map<String, Object> properties) {
-        if (PROP_ERROR_MESSAGE.equals(propertyName)) {
-            if (status.getChildren().length < 2) {
-                return replaceNewlines(status.getMessage());
-            } else {
-                StringBuilder buf = new StringBuilder( status.getMessage() );
-                for  (IStatus childStatus : status.getChildren()) {
-                    buf.append(MessagesForDebugVM.ErrorLabelText_Error_message__text_page_break_delimiter);
-                    buf.append( replaceNewlines(childStatus.getMessage()) );
-                }
-                return buf.toString();
-            } 
-        } 
-        return super.getPropertyValue(propertyName, status, properties);
-    }
-    
-    private String replaceNewlines(String message) {
-        return message.replaceAll("\n", MessagesForDebugVM.ErrorLabelText_Error_message__text_page_break_delimiter); //$NON-NLS-1$
-    }
-    
-    @Override
-    public boolean checkProperty(String propertyName, IStatus status, Map<String,Object> properties) {
-        if (PROP_ERROR_MESSAGE.equals(propertyName)) { 
-            return !status.isOK();
-        }
-        return super.checkProperty(propertyName, status, properties);
-    };
+	public ErrorLabelText(String formatPattern, String[] propertyNames) {
+		super(formatPattern, addErrorMessageProperty(propertyNames));
+	}
+
+	private static String[] addErrorMessageProperty(String[] propertyNames) {
+		String[] newPropertyNames = new String[propertyNames.length + 1];
+		System.arraycopy(propertyNames, 0, newPropertyNames, 0, propertyNames.length);
+		newPropertyNames[propertyNames.length + 0] = PROP_ERROR_MESSAGE;
+		return newPropertyNames;
+	}
+
+	@Override
+	protected Object getPropertyValue(String propertyName, IStatus status, Map<String, Object> properties) {
+		if (PROP_ERROR_MESSAGE.equals(propertyName)) {
+			if (status.getChildren().length < 2) {
+				return replaceNewlines(status.getMessage());
+			} else {
+				StringBuilder buf = new StringBuilder(status.getMessage());
+				for (IStatus childStatus : status.getChildren()) {
+					buf.append(MessagesForDebugVM.ErrorLabelText_Error_message__text_page_break_delimiter);
+					buf.append(replaceNewlines(childStatus.getMessage()));
+				}
+				return buf.toString();
+			}
+		}
+		return super.getPropertyValue(propertyName, status, properties);
+	}
+
+	private String replaceNewlines(String message) {
+		return message.replaceAll("\n", MessagesForDebugVM.ErrorLabelText_Error_message__text_page_break_delimiter); //$NON-NLS-1$
+	}
+
+	@Override
+	public boolean checkProperty(String propertyName, IStatus status, Map<String, Object> properties) {
+		if (PROP_ERROR_MESSAGE.equals(propertyName)) {
+			return !status.isOK();
+		}
+		return super.checkProperty(propertyName, status, properties);
+	};
 }

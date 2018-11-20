@@ -29,17 +29,17 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
  * 
  */
 public class MIThreadInfo extends MICommand<MIThreadInfoInfo> {
-	
+
 	public MIThreadInfo(ICommandControlDMContext dmc) {
 		super(dmc, "-thread-info"); //$NON-NLS-1$
 	}
 
 	public MIThreadInfo(ICommandControlDMContext dmc, String threadId) {
-		super(dmc, "-thread-info", new String[]{ threadId }); //$NON-NLS-1$
+		super(dmc, "-thread-info", new String[] { threadId }); //$NON-NLS-1$
 	}
 
-    @Override
-    public MIThreadInfoInfo getResult(MIOutput out) {
-        return new MIThreadInfoInfo(out);
-    }
+	@Override
+	public MIThreadInfoInfo getResult(MIOutput out) {
+		return new MIThreadInfoInfo(out);
+	}
 }

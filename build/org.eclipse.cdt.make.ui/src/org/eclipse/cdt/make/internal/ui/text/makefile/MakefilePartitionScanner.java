@@ -29,11 +29,8 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 	public final static String MAKEFILE_COMMENT_PARTITION = "makefile_comment"; //$NON-NLS-1$
 	public final static String MAKEFILE_OTHER_PARTITION = IDocument.DEFAULT_CONTENT_TYPE;
 
-	public final static String[] MAKE_PARTITIONS =
-		new String[] {
-			MAKEFILE_COMMENT_PARTITION,
-			MAKEFILE_OTHER_PARTITION,
-	};
+	public final static String[] MAKE_PARTITIONS = new String[] { MAKEFILE_COMMENT_PARTITION,
+			MAKEFILE_OTHER_PARTITION, };
 
 	/** The predefined delimiters of this tracker */
 	private char[][] fModDelimiters = { { '\r', '\n' }, { '\r' }, { '\n' } };

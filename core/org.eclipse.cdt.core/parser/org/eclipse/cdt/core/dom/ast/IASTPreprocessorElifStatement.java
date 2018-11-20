@@ -20,8 +20,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorElifStatement extends
-		IASTPreprocessorStatement {
+public interface IASTPreprocessorElifStatement extends IASTPreprocessorStatement {
 
 	/**
 	 * Was this #elif branch taken?
@@ -29,7 +28,7 @@ public interface IASTPreprocessorElifStatement extends
 	 * @return boolean
 	 */
 	public boolean taken();
-	
+
 	/**
 	 * The condition of the elif.
 	 * 

@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableStatus;
 
 public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor {
-//	private static final Object UNDEFINED_MACRO_VALUE = new Object();
+	//	private static final Object UNDEFINED_MACRO_VALUE = new Object();
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private IVariableContextInfo fContextInfo;
 	private String fInexistentMacroValue;
@@ -35,28 +35,28 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	private String fIncorrectlyReferencedMacroValue;
 	private Map<?, ?> fDelimiterMap;
 
-	protected class ResolvedMacro extends CdtVariable{
+	protected class ResolvedMacro extends CdtVariable {
 		private boolean fIsDefined;
 		private boolean fIsList;
 
-		public ResolvedMacro(String name){
-			super(name, VALUE_TEXT, (String)null);
+		public ResolvedMacro(String name) {
+			super(name, VALUE_TEXT, (String) null);
 			fIsDefined = false;
 		}
 
-		public ResolvedMacro(String name, String value, boolean isDefined){
+		public ResolvedMacro(String name, String value, boolean isDefined) {
 			super(name, VALUE_TEXT, value);
 			fIsDefined = isDefined;
 			fIsList = false;
 		}
 
-		public ResolvedMacro(String name, String value){
+		public ResolvedMacro(String name, String value) {
 			super(name, VALUE_TEXT, value);
 			fIsDefined = true;
 			fIsList = false;
 		}
 
-		public ResolvedMacro(String name, String value[]){
+		public ResolvedMacro(String name, String value[]) {
 			super(name, VALUE_TEXT_LIST, value);
 			fIsDefined = true;
 			fIsList = true;
@@ -67,9 +67,9 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		 */
 		@Override
 		public String getStringValue() throws CdtVariableException {
-//			if(!fIsDefined)
-//				throw new BuildMacroException(BuildMacroException.TYPE_MACROS_UNDEFINED,fName);
-			if(fIsList && fStringValue == null)
+			//			if(!fIsDefined)
+			//				throw new BuildMacroException(BuildMacroException.TYPE_MACROS_UNDEFINED,fName);
+			if (fIsList && fStringValue == null)
 				fStringValue = stringListToString(fStringListValue);
 			return fStringValue;
 		}
@@ -79,22 +79,22 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		 */
 		@Override
 		public String[] getStringListValue() throws CdtVariableException {
-//			if(!fIsDefined)
-//				throw new BuildMacroException(BuildMacroException.TYPE_MACROS_UNDEFINED,fName);
-			if(!fIsList && fStringListValue == null){
-				if(fStringValue != null && fStringValue.length() != 0)
-					fStringListValue = new String[]{fStringValue};
+			//			if(!fIsDefined)
+			//				throw new BuildMacroException(BuildMacroException.TYPE_MACROS_UNDEFINED,fName);
+			if (!fIsList && fStringListValue == null) {
+				if (fStringValue != null && fStringValue.length() != 0)
+					fStringListValue = new String[] { fStringValue };
 				else
 					fStringListValue = new String[0];
 			}
 			return fStringListValue;
 		}
 
-		protected String getDelimiter(){
-			if(fDelimiterMap != null){
+		protected String getDelimiter() {
+			if (fDelimiterMap != null) {
 				Object delimiter = fDelimiterMap.get(fName);
-				if(delimiter instanceof String)
-					return (String)delimiter;
+				if (delimiter instanceof String)
+					return (String) delimiter;
 			}
 			return fListDelimiter;
 		}
@@ -103,35 +103,32 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 			String result = null;
 			String delimiter;
 			if (values != null) {
-				if(values.length == 0)
+				if (values.length == 0)
 					result = EMPTY_STRING;
-				else if(values.length == 1)
+				else if (values.length == 1)
 					result = values[0];
-				else if((delimiter = getDelimiter()) != null){
+				else if ((delimiter = getDelimiter()) != null) {
 					StringBuilder buffer = new StringBuilder();
-					for(int i = 0; i < values.length; i++){
+					for (int i = 0; i < values.length; i++) {
 						buffer.append(values[i]);
-						if(i < values.length-1)
+						if (i < values.length - 1)
 							buffer.append(delimiter);
 					}
 					result = buffer.toString();
 				} else {
-					ICdtVariableStatus eStatus = new SupplierBasedCdtVariableStatus(ICdtVariableStatus.TYPE_MACRO_NOT_STRING,
-							null,
-							null,
-							fName,
-							fContextInfo);
+					ICdtVariableStatus eStatus = new SupplierBasedCdtVariableStatus(
+							ICdtVariableStatus.TYPE_MACRO_NOT_STRING, null, null, fName, fContextInfo);
 					throw new CdtVariableException(eStatus);
 				}
 			}
 			return result;
 		}
 
-		public boolean isList(){
+		public boolean isList() {
 			return fIsList;
 		}
 
-		public boolean isDefined(){
+		public boolean isDefined() {
 			return fIsDefined;
 		}
 	}
@@ -145,20 +142,20 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		private ICdtVariable fMacro;
 		private boolean fInitialized;
 		private int fSupplierNum;
-//		private int fEnvSupplierNum;
+		//		private int fEnvSupplierNum;
 
-		public MacroDescriptor(String name, IVariableContextInfo info){
+		public MacroDescriptor(String name, IVariableContextInfo info) {
 			fName = name;
 			fInfo = info;
 		}
 
-		public MacroDescriptor(String name, IVariableContextInfo info, int supplierNum){
+		public MacroDescriptor(String name, IVariableContextInfo info, int supplierNum) {
 			fName = name;
 			fInfo = info;
 			fSupplierNum = supplierNum;
 		}
 
-		public MacroDescriptor(ICdtVariable macro, IVariableContextInfo info, int supplierNum){
+		public MacroDescriptor(ICdtVariable macro, IVariableContextInfo info, int supplierNum) {
 			fName = macro.getName();
 			fInfo = info;
 			fMacro = macro;
@@ -166,24 +163,24 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 			fInitialized = true;
 		}
 
-		public MacroDescriptor getNext(){
-			return new MacroDescriptor(fName,getInfo(),getSupplierNum()+1);
+		public MacroDescriptor getNext() {
+			return new MacroDescriptor(fName, getInfo(), getSupplierNum() + 1);
 		}
 
-		public int getSupplierNum(){
+		public int getSupplierNum() {
 			init();
 			return fSupplierNum;
 		}
 
-		private void init(){
-			if(fInitialized)
+		private void init() {
+			if (fInitialized)
 				return;
 			fInitialized = true;
-			for(; fInfo != null; fInfo = fInfo.getNext()){
+			for (; fInfo != null; fInfo = fInfo.getNext()) {
 				ICdtVariableSupplier suppliers[] = fInfo.getSuppliers();
-				if(suppliers != null){
-					for(; fSupplierNum < suppliers.length; fSupplierNum++){
-						if((fMacro = suppliers[fSupplierNum].getVariable(fName,fInfo)) != null){
+				if (suppliers != null) {
+					for (; fSupplierNum < suppliers.length; fSupplierNum++) {
+						if ((fMacro = suppliers[fSupplierNum].getVariable(fName, fInfo)) != null) {
 							return;
 						}
 					}
@@ -192,12 +189,12 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 			}
 		}
 
-		protected IVariableContextInfo getInfo(){
+		protected IVariableContextInfo getInfo() {
 			init();
 			return fInfo;
 		}
 
-		public ICdtVariable getMacro(){
+		public ICdtVariable getMacro() {
 			init();
 			return fMacro;
 		}
@@ -208,11 +205,13 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	private HashSet<String> fMacrosUnderResolution = new HashSet<String>();
 	private Stack<MacroDescriptor> fMacroDescriptors = new Stack<MacroDescriptor>();
 
-	public SupplierBasedCdtVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
-		this(contextInfo, inexistentMacroValue, listDelimiter, null ,inexistentMacroValue);
+	public SupplierBasedCdtVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue,
+			String listDelimiter) {
+		this(contextInfo, inexistentMacroValue, listDelimiter, null, inexistentMacroValue);
 	}
 
-	public SupplierBasedCdtVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue, String listDelimiter, Map<?, ?> delimiterMap, String incorrectlyReferencedMacroValue){
+	public SupplierBasedCdtVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue,
+			String listDelimiter, Map<?, ?> delimiterMap, String incorrectlyReferencedMacroValue) {
 		fContextInfo = contextInfo;
 		fInexistentMacroValue = inexistentMacroValue;
 		fListDelimiter = listDelimiter;
@@ -241,32 +240,29 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	 */
 	@Override
 	public String resolveToString(String macroName) throws CdtVariableException {
-		return resolveToString(new MacroDescriptor(macroName,fContextInfo));
+		return resolveToString(new MacroDescriptor(macroName, fContextInfo));
 	}
 
-	public void setMacroContextInfo(IVariableContextInfo info)
-			throws CdtVariableException{
-		if(checkEqual(fContextInfo,info))
+	public void setMacroContextInfo(IVariableContextInfo info) throws CdtVariableException {
+		if (checkEqual(fContextInfo, info))
 			return;
 
 		reset();
 		fContextInfo = info;
 	}
 
-	protected ResolvedMacro getResolvedMacro(MacroDescriptor des)
-			throws CdtVariableException {
+	protected ResolvedMacro getResolvedMacro(MacroDescriptor des) throws CdtVariableException {
 		ResolvedMacro value = checkResolvingMacro(des);
 
-		if(value == null)
-		{
-			try{
+		if (value == null) {
+			try {
 				value = resolveMacro(des);
-			}finally{
-				if(value != null)
-					addResolvedMacro(des,value);
+			} finally {
+				if (value != null)
+					addResolvedMacro(des, value);
 				else {
-					value = new ResolvedMacro(des.fName,fInexistentMacroValue,false);
-					addResolvedMacro(des,value);
+					value = new ResolvedMacro(des.fName, fInexistentMacroValue, false);
+					addResolvedMacro(des, value);
 				}
 			}
 		}
@@ -274,7 +270,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		return value;
 	}
 
-	protected ResolvedMacro resolveMacro(MacroDescriptor des) throws CdtVariableException{
+	protected ResolvedMacro resolveMacro(MacroDescriptor des) throws CdtVariableException {
 		return des.fMacro != null ? resolveMacro(des.fMacro) : resolveMacro(des.fName);
 	}
 
@@ -282,26 +278,25 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#resolveToStringList(java.lang.String)
 	 */
 	@Override
-	public String[] resolveToStringList(String macroName)
-			throws CdtVariableException {
-		return resolveToStringList(new MacroDescriptor(macroName,fContextInfo));
+	public String[] resolveToStringList(String macroName) throws CdtVariableException {
+		return resolveToStringList(new MacroDescriptor(macroName, fContextInfo));
 	}
 
-	protected ResolvedMacro resolveMacro(String macroName) throws CdtVariableException{
-		ICdtVariable variable = SupplierBasedCdtVariableManager.getVariable(macroName,fContextInfo,true);
+	protected ResolvedMacro resolveMacro(String macroName) throws CdtVariableException {
+		ICdtVariable variable = SupplierBasedCdtVariableManager.getVariable(macroName, fContextInfo, true);
 		if (variable == null)
 			return null;
 
 		return resolveMacro(variable);
 	}
 
-	protected ResolvedMacro resolveParentMacro(MacroDescriptor macroDes) throws CdtVariableException{
+	protected ResolvedMacro resolveParentMacro(MacroDescriptor macroDes) throws CdtVariableException {
 		MacroDescriptor des = macroDes.getNext();
 
 		ResolvedMacro macro = null;
 
-		if(des != null){
-			try{
+		if (des != null) {
+			try {
 				fMacroDescriptors.push(des);
 				macro = resolveMacro(des.getMacro());
 			} finally {
@@ -311,8 +306,8 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		return macro;
 	}
 
-	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException{
-		if(macro == null)
+	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException {
+		if (macro == null)
 			return null;
 
 		String macroName = macro.getName();
@@ -320,26 +315,24 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 
 		ResolvedMacro resolvedMacro = null;
 
-		if(CdtVariableResolver.isStringListVariable(macro.getValueType())){
+		if (CdtVariableResolver.isStringListVariable(macro.getValueType())) {
 			String result[] = null;
 			String unresolvedValues[] = macro.getStringListValue();
-			if(unresolvedValues == null || unresolvedValues.length == 0)
-				resolvedMacro = new ResolvedMacro(macroName,EMPTY_STRING);
-			else{
+			if (unresolvedValues == null || unresolvedValues.length == 0)
+				resolvedMacro = new ResolvedMacro(macroName, EMPTY_STRING);
+			else {
 				String resolvedValues[][] = new String[unresolvedValues.length][];
 
-				for(int i = 0; i < unresolvedValues.length; i++){
-					try{
-						resolvedValues[i] = CdtVariableResolver.resolveToStringList(unresolvedValues[i],substitutor);
+				for (int i = 0; i < unresolvedValues.length; i++) {
+					try {
+						resolvedValues[i] = CdtVariableResolver.resolveToStringList(unresolvedValues[i], substitutor);
 					} catch (CdtVariableException e) {
 						ICdtVariableStatus statuses[] = e.getVariableStatuses();
-						if(statuses != null && statuses.length == 1){
+						if (statuses != null && statuses.length == 1) {
 							ICdtVariableStatus status = statuses[0];
-							if(status.getVariableName() == null){
+							if (status.getVariableName() == null) {
 								ICdtVariableStatus eStatus = new SupplierBasedCdtVariableStatus(status.getCode(),
-										macro.getName(),
-										status.getExpression(),
-										status.getReferencedMacroName(),
+										macro.getName(), status.getExpression(), status.getReferencedMacroName(),
 										fContextInfo);
 								e = new CdtVariableException(eStatus);
 							}
@@ -348,30 +341,28 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 					}
 				}
 
-				if(resolvedValues.length == 1)
+				if (resolvedValues.length == 1)
 					result = resolvedValues[0];
-				else{
+				else {
 					List<String> list = new ArrayList<String>();
 					for (String[] resolvedValue : resolvedValues)
 						list.addAll(Arrays.asList(resolvedValue));
 
 					result = list.toArray(new String[list.size()]);
 				}
-				resolvedMacro = new ResolvedMacro(macroName,result);
+				resolvedMacro = new ResolvedMacro(macroName, result);
 			}
 		} else {
-			try{
-				resolvedMacro = new ResolvedMacro(macroName,CdtVariableResolver.resolveToString(macro.getStringValue(),substitutor));
+			try {
+				resolvedMacro = new ResolvedMacro(macroName,
+						CdtVariableResolver.resolveToString(macro.getStringValue(), substitutor));
 			} catch (CdtVariableException e) {
 				ICdtVariableStatus statuses[] = e.getVariableStatuses();
-				if(statuses != null && statuses.length == 1){
+				if (statuses != null && statuses.length == 1) {
 					ICdtVariableStatus status = statuses[0];
-					if(status.getVariableName() == null){
+					if (status.getVariableName() == null) {
 						ICdtVariableStatus eStatus = new SupplierBasedCdtVariableStatus(status.getCode(),
-								macro.getName(),
-								status.getExpression(),
-								status.getReferencedMacroName(),
-								fContextInfo);
+								macro.getName(), status.getExpression(), status.getReferencedMacroName(), fContextInfo);
 						e = new CdtVariableException(eStatus);
 					}
 				}
@@ -381,12 +372,11 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		return resolvedMacro;
 	}
 
-	private ResolvedMacro checkResolvingMacro(MacroDescriptor des)
-				throws CdtVariableException{
+	private ResolvedMacro checkResolvingMacro(MacroDescriptor des) throws CdtVariableException {
 		String name = des.fName;
 		ResolvedMacro value = fResolvedMacros.get(name);
-		if(value == null){
-			if(fMacrosUnderResolution.add(name)) {
+		if (value == null) {
+			if (fMacrosUnderResolution.add(name)) {
 				fMacroDescriptors.push(des);
 			} else {
 				// the macro of the specified name is referenced from the other macros that
@@ -401,18 +391,15 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 				// In the above example the ${macro1} reference will be expanded to the value of the ${macro1} macro of the
 				// parent context or to an empty string if there is no such macro defined in the parent contexts
 				MacroDescriptor last = fMacroDescriptors.lastElement();
-				if(last != null && last.fName.equals(name)) {
+				if (last != null && last.fName.equals(name)) {
 					value = resolveParentMacro(last);
-					if(value == null)
-						value = new ResolvedMacro(name,EMPTY_STRING,false);
-				} else if(fIncorrectlyReferencedMacroValue != null) {
-					value = new ResolvedMacro(name,fIncorrectlyReferencedMacroValue,false);
-				} else{
-					ICdtVariableStatus status = new SupplierBasedCdtVariableStatus(ICdtVariableStatus.TYPE_MACRO_REFERENCE_INCORRECT,
-							(String)null,
-							null,
-							name,
-							fContextInfo);
+					if (value == null)
+						value = new ResolvedMacro(name, EMPTY_STRING, false);
+				} else if (fIncorrectlyReferencedMacroValue != null) {
+					value = new ResolvedMacro(name, fIncorrectlyReferencedMacroValue, false);
+				} else {
+					ICdtVariableStatus status = new SupplierBasedCdtVariableStatus(
+							ICdtVariableStatus.TYPE_MACRO_REFERENCE_INCORRECT, (String) null, null, name, fContextInfo);
 					throw new CdtVariableException(status);
 				}
 			}
@@ -421,27 +408,27 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		return value;
 	}
 
-	protected void addResolvedMacro(MacroDescriptor des, ResolvedMacro value){
+	protected void addResolvedMacro(MacroDescriptor des, ResolvedMacro value) {
 		String name = des.fName;
 		fMacrosUnderResolution.remove(name);
-		fResolvedMacros.put(name,value);
+		fResolvedMacros.put(name, value);
 		fMacroDescriptors.pop();
 	}
 
-	protected ResolvedMacro removeResolvedMacro(String name){
+	protected ResolvedMacro removeResolvedMacro(String name) {
 		return fResolvedMacros.remove(name);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#getMacroContextInfo()
 	 */
-	public IVariableContextInfo getMacroContextInfo(){
+	public IVariableContextInfo getMacroContextInfo() {
 		return fContextInfo;
 	}
 
-	public void reset() throws CdtVariableException{
-		if(fMacrosUnderResolution.size() != 0)
-			throw new CdtVariableException(ICdtVariableStatus.TYPE_ERROR,(String)null,null,null);
+	public void reset() throws CdtVariableException {
+		if (fMacrosUnderResolution.size() != 0)
+			throw new CdtVariableException(ICdtVariableStatus.TYPE_ERROR, (String) null, null, null);
 
 		fResolvedMacros.clear();
 	}
@@ -451,7 +438,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	}
 
 	public void setDelimiterMap(Map<?, ?> delimiterMap) throws CdtVariableException {
-		if(checkEqual(fDelimiterMap,delimiterMap))
+		if (checkEqual(fDelimiterMap, delimiterMap))
 			return;
 		reset();
 		fDelimiterMap = delimiterMap;
@@ -461,18 +448,17 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		return fIncorrectlyReferencedMacroValue;
 	}
 
-	protected boolean checkEqual(Object o1, Object o2){
-		if(o1 != null){
-			if(o1.equals(o2))
+	protected boolean checkEqual(Object o1, Object o2) {
+		if (o1 != null) {
+			if (o1.equals(o2))
 				return true;
 		} else if (o2 == null)
 			return true;
 		return false;
 	}
 
-	public void setIncorrectlyReferencedMacroValue(
-			String incorrectlyReferencedMacroValue) throws CdtVariableException {
-		if(checkEqual(fIncorrectlyReferencedMacroValue,incorrectlyReferencedMacroValue))
+	public void setIncorrectlyReferencedMacroValue(String incorrectlyReferencedMacroValue) throws CdtVariableException {
+		if (checkEqual(fIncorrectlyReferencedMacroValue, incorrectlyReferencedMacroValue))
 			return;
 		reset();
 		fIncorrectlyReferencedMacroValue = incorrectlyReferencedMacroValue;
@@ -483,7 +469,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	}
 
 	public void setInexistentMacroValue(String inexistentMacroValue) throws CdtVariableException {
-		if(checkEqual(fInexistentMacroValue,inexistentMacroValue))
+		if (checkEqual(fInexistentMacroValue, inexistentMacroValue))
 			return;
 		reset();
 		fInexistentMacroValue = inexistentMacroValue;
@@ -494,7 +480,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	}
 
 	public void setListDelimiter(String listDelimiter) throws CdtVariableException {
-		if(checkEqual(fListDelimiter,listDelimiter))
+		if (checkEqual(fListDelimiter, listDelimiter))
 			return;
 		reset();
 		fListDelimiter = listDelimiter;

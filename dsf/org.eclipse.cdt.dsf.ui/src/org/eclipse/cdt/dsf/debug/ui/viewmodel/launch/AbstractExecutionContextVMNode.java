@@ -62,23 +62,21 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * @since 2.2
  * @experimental
  */
-public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode
-{
+public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	/**
 	 * List that keeps track of which events are considered leaf events for 
 	 * delta creation. 
 	 */
-    protected ArrayList<Class<?>> leafEventTypes = new ArrayList<>();
-    
+	protected ArrayList<Class<?>> leafEventTypes = new ArrayList<>();
+
 	/**
 	 * List that keeps track of which events are considered container events for 
 	 * delta creation. 
 	 */
-    protected ArrayList<Class<?>> containerEventTypes = new ArrayList<>();
-    
+	protected ArrayList<Class<?>> containerEventTypes = new ArrayList<>();
 
-    public AbstractExecutionContextVMNode(AbstractDMVMProvider provider,
-		DsfSession session, Class<? extends IDMContext> dmcClassType) {
+	public AbstractExecutionContextVMNode(AbstractDMVMProvider provider, DsfSession session,
+			Class<? extends IDMContext> dmcClassType) {
 		super(provider, session, dmcClassType);
 	}
 
@@ -88,15 +86,15 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode
 	protected void addCommonEventTypes() {
 
 		// non container events. 
-    	addEventType(ISuspendedDMEvent.class,false);
-    	addEventType(IResumedDMEvent.class, false); 
-    	addEventType(FullStackRefreshEvent.class, false);
-    	addEventType(SteppingTimedOutEvent.class, false);
-    	addEventType(ExpandStackEvent.class, false);
-		
-    	// container events. 
-    	addEventType(IContainerSuspendedDMEvent.class,true);
-    	addEventType(IContainerResumedDMEvent.class, true);
+		addEventType(ISuspendedDMEvent.class, false);
+		addEventType(IResumedDMEvent.class, false);
+		addEventType(FullStackRefreshEvent.class, false);
+		addEventType(SteppingTimedOutEvent.class, false);
+		addEventType(ExpandStackEvent.class, false);
+
+		// container events. 
+		addEventType(IContainerSuspendedDMEvent.class, true);
+		addEventType(IContainerResumedDMEvent.class, true);
 	}
 
 	/**
@@ -108,9 +106,9 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode
 	 * @param containerEvent Is the event a container event or now
 	 */
 	protected void addEventType(Class<? extends IDMEvent<?>> eventClass, boolean containerEvent) {
-		if (containerEvent) { 
+		if (containerEvent) {
 			containerEventTypes.add(eventClass);
-		} else { 
+		} else {
 			leafEventTypes.add(eventClass);
 		}
 	}
@@ -130,117 +128,116 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode
 			leafEventTypes.remove(eventClass);
 		}
 	}
-	
-	
+
 	/**
 	 * When we support recursive containers we want to make sure the immediate parent is returned only.
 	 *
 	 * @return true if the context is set by the method. 
 	 */
-    protected boolean getContextsForRecursiveVMNode(VMDelta parentDelta, Object e, DataRequestMonitor<IVMContext[]> rm) {
-    	
-    	IExecutionDMContext leafContext = null;
-    	if (isExecutionContainerEvent(e)) {
-    		leafContext = getLeafContextForContainerEvent(e);
-    	}
-    	else if (isExecutionLeafEvent(e)) {
-    		leafContext = getLeafContextForLeafEvent(e);
-    	}
+	protected boolean getContextsForRecursiveVMNode(VMDelta parentDelta, Object e,
+			DataRequestMonitor<IVMContext[]> rm) {
+
+		IExecutionDMContext leafContext = null;
+		if (isExecutionContainerEvent(e)) {
+			leafContext = getLeafContextForContainerEvent(e);
+		} else if (isExecutionLeafEvent(e)) {
+			leafContext = getLeafContextForLeafEvent(e);
+		}
 		if (leafContext != null) {
 			setImmediateParentAsContexts(leafContext, parentDelta, rm);
 			return true;
-    	}
+		}
 		return false;
-    }
-    
-    /**
-     * Make sure we build the delta for the recursive containers one level at a time.
-     * 
-     * @param e - the event 
-	 * @return true if the delta is built by this method. 
-     */
-	protected boolean buildDeltaForRecursiveVMNode(Object e, final VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
+	}
 
-    	IExecutionDMContext leafContext = null;
-    	if (isExecutionContainerEvent(e)) {
-    		leafContext = getLeafContextForContainerEvent(e);
-    	}
-    	else if (isExecutionLeafEvent(e)) {
-    		leafContext = getLeafContextForLeafEvent(e);
-    	}
+	/**
+	 * Make sure we build the delta for the recursive containers one level at a time.
+	 * 
+	 * @param e - the event 
+	 * @return true if the delta is built by this method. 
+	 */
+	protected boolean buildDeltaForRecursiveVMNode(Object e, final VMDelta parentDelta, int nodeOffset,
+			RequestMonitor rm) {
+
+		IExecutionDMContext leafContext = null;
+		if (isExecutionContainerEvent(e)) {
+			leafContext = getLeafContextForContainerEvent(e);
+		} else if (isExecutionLeafEvent(e)) {
+			leafContext = getLeafContextForLeafEvent(e);
+		}
 		if (leafContext != null) {
 			addOneLevelToDelta(leafContext, parentDelta, rm);
 			return true;
-    	}
+		}
 		return false;
 	}
-    
-    /**
-     * When the deltas are generated one level at a time we need to distinguish  
-     * between container and regular events to return the proper context for the event.    
-     */
-	protected IExecutionDMContext getLeafContextForContainerEvent(Object event) {
-    	
-    	IExecutionDMContext leafEC = null;
-    	IExecutionDMContext[] triggeringContext = null;
 
-    	if (isExecutionContainerEvent(event)) {
+	/**
+	 * When the deltas are generated one level at a time we need to distinguish  
+	 * between container and regular events to return the proper context for the event.    
+	 */
+	protected IExecutionDMContext getLeafContextForContainerEvent(Object event) {
+
+		IExecutionDMContext leafEC = null;
+		IExecutionDMContext[] triggeringContext = null;
+
+		if (isExecutionContainerEvent(event)) {
 			if (event instanceof IContainerSuspendedDMEvent) {
-				IContainerSuspendedDMEvent typedEvent = (IContainerSuspendedDMEvent)event;   
+				IContainerSuspendedDMEvent typedEvent = (IContainerSuspendedDMEvent) event;
 				triggeringContext = typedEvent.getTriggeringContexts();
 			}
 			if (event instanceof IContainerResumedDMEvent) {
-				IContainerResumedDMEvent typedEvent = (IContainerResumedDMEvent)event;   
+				IContainerResumedDMEvent typedEvent = (IContainerResumedDMEvent) event;
 				triggeringContext = typedEvent.getTriggeringContexts();
 			}
-    	}
-		
-		if (triggeringContext != null && triggeringContext.length > 0){
+		}
+
+		if (triggeringContext != null && triggeringContext.length > 0) {
 			leafEC = triggeringContext[0];
 		}
-		
-		return leafEC;
-    }
 
-    /**
-     * When the deltas are generated one level at a time we need to distinguish  
-     * between container and regular events to return the proper context for the event.    
-     */
-	protected IExecutionDMContext getLeafContextForLeafEvent(Object event) {
-    	
-    	IExecutionDMContext leafEC = null;
-    	
-    	if (event instanceof IDMEvent<?>) { 
-    		if (isExecutionLeafEvent(event)) {
-	    		IDMEvent<?> typedEvent = (IDMEvent<?>)event;
-	    		IDMContext dmContext = typedEvent.getDMContext();
-	    		if (dmContext instanceof IExecutionDMContext) {
-	    			leafEC = (IExecutionDMContext)dmContext;
-	    		}
-    		}
-    	}
-    	
 		return leafEC;
-    }
-    
+	}
+
+	/**
+	 * When the deltas are generated one level at a time we need to distinguish  
+	 * between container and regular events to return the proper context for the event.    
+	 */
+	protected IExecutionDMContext getLeafContextForLeafEvent(Object event) {
+
+		IExecutionDMContext leafEC = null;
+
+		if (event instanceof IDMEvent<?>) {
+			if (isExecutionLeafEvent(event)) {
+				IDMEvent<?> typedEvent = (IDMEvent<?>) event;
+				IDMContext dmContext = typedEvent.getDMContext();
+				if (dmContext instanceof IExecutionDMContext) {
+					leafEC = (IExecutionDMContext) dmContext;
+				}
+			}
+		}
+
+		return leafEC;
+	}
+
 	/**
 	 * Considers the parent delta when we construct the next level. 
 	 */
-    protected void addOneLevelToDelta(IExecutionDMContext leafContext, VMDelta parentDelta, RequestMonitor requestMonitor) {
-    	assert leafContext != null;
+	protected void addOneLevelToDelta(IExecutionDMContext leafContext, VMDelta parentDelta,
+			RequestMonitor requestMonitor) {
+		assert leafContext != null;
 		if (parentDelta.getElement() instanceof ILaunch) {
-			IContainerDMContext topContainer = 
-				DMContexts.getTopMostAncestorOfType(leafContext, IContainerDMContext.class);
-			
+			IContainerDMContext topContainer = DMContexts.getTopMostAncestorOfType(leafContext,
+					IContainerDMContext.class);
+
 			// It is possible for a thread node to be an immediate child of a launch node
 			// with no container node in between.  
 			if (topContainer != null) {
 				parentDelta.addNode(createVMContext(topContainer), 0, IModelDelta.NO_CHANGE);
 			}
-		}
-		else if (parentDelta.getElement() instanceof IDMVMContext) {
-			IDMVMContext vmContext = (IDMVMContext)parentDelta.getElement();
-			IDMContext dmContext = vmContext.getDMContext(); 
+		} else if (parentDelta.getElement() instanceof IDMVMContext) {
+			IDMVMContext vmContext = (IDMVMContext) parentDelta.getElement();
+			IDMContext dmContext = vmContext.getDMContext();
 			IExecutionDMContext current = DMContexts.getParentOfType(leafContext, IContainerDMContext.class);
 			while (current != null) {
 				IContainerDMContext parent = DMContexts.getParentOfType(current, IContainerDMContext.class);
@@ -252,36 +249,34 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode
 			}
 		}
 		requestMonitor.done();
-    }
+	}
 
-    /**
-     * Based on the event (container or not), set the proper context that is the immediate 
-     * parent one level at a time. 
-     */
-    protected void setImmediateParentAsContexts(IExecutionDMContext leafContext, 
-    	VMDelta parentDelta, DataRequestMonitor<IVMContext[]> rm){
+	/**
+	 * Based on the event (container or not), set the proper context that is the immediate 
+	 * parent one level at a time. 
+	 */
+	protected void setImmediateParentAsContexts(IExecutionDMContext leafContext, VMDelta parentDelta,
+			DataRequestMonitor<IVMContext[]> rm) {
 
-    	assert leafContext != null;
-    	IVMContext[] all = null;
+		assert leafContext != null;
+		IVMContext[] all = null;
 		if (parentDelta.getElement() instanceof ILaunch) {
-			IContainerDMContext topContainer = 
-				DMContexts.getTopMostAncestorOfType(leafContext, IContainerDMContext.class);
+			IContainerDMContext topContainer = DMContexts.getTopMostAncestorOfType(leafContext,
+					IContainerDMContext.class);
 			if (topContainer != null) {
 				all = new IVMContext[] { createVMContext(topContainer) };
-			}
-			else {
+			} else {
 				// the thread is directly a child node of the launch node (no container in the middle).
 				all = new IVMContext[] { createVMContext(leafContext) };
 			}
-		}
-		else if (parentDelta.getElement() instanceof IDMVMContext) {
-			IDMVMContext vmContext = (IDMVMContext)parentDelta.getElement();
-			IDMContext dmContext = vmContext.getDMContext(); 
+		} else if (parentDelta.getElement() instanceof IDMVMContext) {
+			IDMVMContext vmContext = (IDMVMContext) parentDelta.getElement();
+			IDMContext dmContext = vmContext.getDMContext();
 			IExecutionDMContext current = leafContext;
 			while (current != null) {
 				IContainerDMContext parent = DMContexts.getParentOfType(current, IContainerDMContext.class);
 				if (dmContext.equals(parent)) {
-					all = new IVMContext[] { createVMContext(current)};
+					all = new IVMContext[] { createVMContext(current) };
 					break;
 				}
 				current = parent;
@@ -293,31 +288,31 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode
 		rm.setData(all);
 		rm.done();
 	}
-	
-    /**
-     * Returns whether the event should be considered a container event or not. 
-     */
-    protected boolean isExecutionContainerEvent(Object event) {
-    	if (event != null) {
-    		for (Class<?> clazz : containerEventTypes)
-    			if (clazz.isAssignableFrom(event.getClass())) {
-    				return true;
-    			}
-    	}
-	    return false;
+
+	/**
+	 * Returns whether the event should be considered a container event or not. 
+	 */
+	protected boolean isExecutionContainerEvent(Object event) {
+		if (event != null) {
+			for (Class<?> clazz : containerEventTypes)
+				if (clazz.isAssignableFrom(event.getClass())) {
+					return true;
+				}
+		}
+		return false;
 	}
 
-    /**
-     * Returns whether the event should be use to generate deltas for each of the levels.  
-     */
-    protected boolean isExecutionLeafEvent(Object event) {
-    	if (event != null) {
-	    	for (Class<?> clazz : leafEventTypes) {
-	    		if (clazz.isAssignableFrom(event.getClass())) {
-	    			return true;
-	    		}
-	    	}
-    	}
-	    return false;
+	/**
+	 * Returns whether the event should be use to generate deltas for each of the levels.  
+	 */
+	protected boolean isExecutionLeafEvent(Object event) {
+		if (event != null) {
+			for (Class<?> clazz : leafEventTypes) {
+				if (clazz.isAssignableFrom(event.getClass())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

@@ -28,11 +28,11 @@ import org.eclipse.core.runtime.content.IContentType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILanguageMappingChangeEvent {
-	
+
 	public static final int TYPE_WORKSPACE = 0;
 	public static final int TYPE_PROJECT = 1;
 	public static final int TYPE_FILE = 2;
-	
+
 	/**
 	 * Returns an IFile corresponding to the file for which settings have changed if this
 	 * event's type is TYPE_FILE, or null otherwise.
@@ -42,7 +42,7 @@ public interface ILanguageMappingChangeEvent {
 	 * @since 4.0
 	 */
 	public IFile getFile();
-	
+
 	/**
 	 * Returns a String corresponding to the full path to the file for which settings have changed if this
 	 * event's type is TYPE_FILE, or null otherwise.
@@ -56,7 +56,7 @@ public interface ILanguageMappingChangeEvent {
 	 * @since 4.0
 	 */
 	public String getFilename();
-	
+
 	/**
 	 * Returns an IPath corresponding to the file for which settings have changed if this
 	 * event's type is TYPE_FILE, or null otherwise.
@@ -71,7 +71,7 @@ public interface ILanguageMappingChangeEvent {
 	 * @since 4.0
 	 */
 	public IPath getPath();
-	
+
 	/**
 	 * Returns an IProject corresponding to the project for which settings have changed if this
 	 * event's type is TYPE_PROJECT or TYPE_FILE, or null otherwise.
@@ -81,7 +81,7 @@ public interface ILanguageMappingChangeEvent {
 	 * @since 4.0
 	 */
 	public IProject getProject();
-	
+
 	/**
 	 * Returns the type of even being reported.
 	 * @return the type of even being reported
@@ -92,7 +92,7 @@ public interface ILanguageMappingChangeEvent {
 	 * @since 4.0
 	 */
 	public int getType();
-	
+
 	/**
 	 * Returns an array of IContentTypes for which mappings have been changed, or an empty collection
 	 * if there are no affected content types.  Since there currently should be no change event unless

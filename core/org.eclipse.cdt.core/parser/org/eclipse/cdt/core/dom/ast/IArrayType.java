@@ -20,27 +20,27 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IArrayType extends IType {
-    /**
-     * Returns the type that this is an array of.
-     */
-    IType getType();
-    
-    /**
-     * Returns the value for the size of the array type, or {@code null} if it is unspecified.
-     * @since 5.2
-     */
-    IValue getSize();
+	/**
+	 * Returns the type that this is an array of.
+	 */
+	IType getType();
 
-    /**
-     * Checks is the array type has specified size.
-     * @since 5.9
-     */
-    boolean hasSize();
+	/**
+	 * Returns the value for the size of the array type, or {@code null} if it is unspecified.
+	 * @since 5.2
+	 */
+	IValue getSize();
 
-    /**
-     * @deprecated Replaced by {@link #getSize()}.
-     * @noreference This method is not intended to be referenced by clients.
-     */
-    @Deprecated
-    IASTExpression getArraySizeExpression() throws DOMException;
+	/**
+	 * Checks is the array type has specified size.
+	 * @since 5.9
+	 */
+	boolean hasSize();
+
+	/**
+	 * @deprecated Replaced by {@link #getSize()}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	IASTExpression getArraySizeExpression() throws DOMException;
 }

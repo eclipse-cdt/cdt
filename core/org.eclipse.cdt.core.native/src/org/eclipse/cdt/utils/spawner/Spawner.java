@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,7 +61,7 @@ public class Spawner extends Process {
 	 * 
 	 * @since 5.2
 	 */
-	public int CTRLC = 1000;  // arbitrary high number to avoid collision
+	public int CTRLC = 1000; // arbitrary high number to avoid collision
 
 	int pid = 0;
 	int status;
@@ -83,6 +82,7 @@ public class Spawner extends Process {
 		else
 			exec(cmdarray, new String[0], "."); //$NON-NLS-1$
 	}
+
 	/**
 	 * Executes the specified command and arguments in a separate process with the
 	 * specified environment and working directory.
@@ -101,6 +101,7 @@ public class Spawner extends Process {
 		fPty = pty;
 		exec_pty(cmdarray, envp, dirpath, pty);
 	}
+
 	/**
 	 * Executes the specified string command in a separate process.
 	 **/
@@ -150,14 +151,14 @@ public class Spawner extends Process {
 	protected void finalize() throws Throwable {
 		closeUnusedStreams();
 	}
-	
+
 	/**
 	 * See java.lang.Process#getInputStream ();
 	 * The client is responsible for closing the stream explicitly.
 	 **/
 	@Override
 	public synchronized InputStream getInputStream() {
-		if(null == in) {
+		if (null == in) {
 			if (fPty != null) {
 				in = fPty.getInputStream();
 			} else {
@@ -173,7 +174,7 @@ public class Spawner extends Process {
 	 **/
 	@Override
 	public synchronized OutputStream getOutputStream() {
-		if(null == out) {
+		if (null == out) {
 			if (fPty != null) {
 				out = fPty.getOutputStream();
 			} else {
@@ -189,7 +190,7 @@ public class Spawner extends Process {
 	 **/
 	@Override
 	public synchronized InputStream getErrorStream() {
-		if(null == err) {
+		if (null == err) {
 			if (fPty != null && !fPty.isConsole()) {
 				// If PTY is used and it's not in "Console" mode, then stderr is
 				// redirected to the PTY's output stream.  Therefore, return a 
@@ -215,7 +216,7 @@ public class Spawner extends Process {
 		while (!isDone) {
 			wait();
 		}
-		
+
 		// For situations where the user does not call destroy(),
 		// we try to kill the streams that were not used here.
 		// We check for streams that were not created, we create
@@ -251,7 +252,7 @@ public class Spawner extends Process {
 	public synchronized void destroy() {
 		// Sends the TERM
 		terminate();
-		
+
 		// Close the streams on this side.
 		//
 		// We only close the streams that were
@@ -272,7 +273,7 @@ public class Spawner extends Process {
 		//
 		// But 345164
 		closeUnusedStreams();
-		
+
 		// Grace before using the heavy gone.
 		if (!isDone) {
 			try {
@@ -301,12 +302,11 @@ public class Spawner extends Process {
 	 * @since 5.2
 	 */
 	public int interruptCTRLC() {
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
-        	return raise(pid, CTRLC);
-        }
-        else {
-        	return interrupt();
-        }
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			return raise(pid, CTRLC);
+		} else {
+			return interrupt();
+		}
 	}
 
 	public int hangup() {
@@ -369,7 +369,7 @@ public class Spawner extends Process {
 
 			@Override
 			protected int waitFor(int pid) {
-			    return pty.waitFor(Spawner.this, pid);
+				return pty.waitFor(Spawner.this, pid);
 			}
 		};
 		reaper.setDaemon(true);
@@ -410,34 +410,38 @@ public class Spawner extends Process {
 	 */
 	private synchronized void closeUnusedStreams() {
 		try {
-			if(null == err)
+			if (null == err)
 				getErrorStream().close();
-		} catch (IOException e) {}
+		} catch (IOException e) {
+		}
 		try {
-			if(null == in)
+			if (null == in)
 				getInputStream().close();
-		} catch (IOException e) {}
+		} catch (IOException e) {
+		}
 		try {
-			if(null == out)
+			if (null == out)
 				getOutputStream().close();
-		} catch (IOException e) {}
+		} catch (IOException e) {
+		}
 	}
 
 	/**
 	 * Native method use in normal exec() calls. 
 	 */
-	native int exec0( String[] cmdarray, String[] envp, String dir, int[] chan) throws IOException;
+	native int exec0(String[] cmdarray, String[] envp, String dir, int[] chan) throws IOException;
 
 	/**
 	 * Native method use in no redirect meaning to streams will created. 
 	 */
-	native int exec1( String[] cmdarray, String[] envp, String dir) throws IOException;
+	native int exec1(String[] cmdarray, String[] envp, String dir) throws IOException;
 
 	/**
 	 * Native method when executing with a terminal emulation. 
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public native int exec2( String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD, boolean console) throws IOException;
+	public native int exec2(String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD,
+			boolean console) throws IOException;
 
 	/**
 	 * Native method to drop a signal on the process with pid.
@@ -493,7 +497,7 @@ public class Spawner extends Process {
 				_pid = execute(fCmdarray, fEnvp, fDirpath, fChannels);
 			} catch (Exception e) {
 				_pid = -1;
-				fException= e;
+				fException = e;
 			}
 
 			// Tell spawner that the process started.
@@ -513,7 +517,7 @@ public class Spawner extends Process {
 		}
 
 		public String getErrorMessage() {
-			final String reason= fException != null ? fException.getMessage() : "Unknown reason"; //$NON-NLS-1$
+			final String reason = fException != null ? fException.getMessage() : "Unknown reason"; //$NON-NLS-1$
 			return NLS.bind(Messages.Util_error_cannotRun, fCmdarray[0], reason);
 		}
 	}

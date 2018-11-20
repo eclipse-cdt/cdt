@@ -42,7 +42,7 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
  */
 @Deprecated
 public class SourceAttachmentDialog extends StatusDialog {
-	
+
 	private SourceAttachmentBlock fSourceAttachmentBlock;
 	private boolean fApplyChanges;
 
@@ -63,20 +63,20 @@ public class SourceAttachmentDialog extends StatusDialog {
 	 */
 	public SourceAttachmentDialog(Shell parent, ILibraryEntry entry, ICProject project, boolean applyChanges) {
 		super(parent);
-		fApplyChanges= applyChanges;
+		fApplyChanges = applyChanges;
 
-		IStatusChangeListener listener= new IStatusChangeListener() {
+		IStatusChangeListener listener = new IStatusChangeListener() {
 			@Override
 			public void statusChanged(IStatus status) {
 				updateStatus(status);
 			}
-		};		
-		fSourceAttachmentBlock= new SourceAttachmentBlock(listener, entry, project);			
-	
-		setTitle(CPathEntryMessages.SourceAttachmentDialog_title); 
+		};
+		fSourceAttachmentBlock = new SourceAttachmentBlock(listener, entry, project);
+
+		setTitle(CPathEntryMessages.SourceAttachmentDialog_title);
 		setHelpAvailable(false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
@@ -84,29 +84,28 @@ public class SourceAttachmentDialog extends StatusDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		//WorkbenchHelp.setHelp(newShell, IJavaHelpContextIds.SOURCE_ATTACHMENT_DIALOG);
-	}		
-			
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite composite= (Composite) super.createDialogArea(parent);
-			
-		Control inner= createSourceAttachmentControls(composite);
-		inner.setLayoutData(new GridData(GridData.FILL_BOTH));			
-		applyDialogFont(composite);		
+		Composite composite = (Composite) super.createDialogArea(parent);
+
+		Control inner = createSourceAttachmentControls(composite);
+		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
+		applyDialogFont(composite);
 		return composite;
 	}
 
 	/**
 	 * Creates the controls for the source attachment configuration.
-	 */	
+	 */
 	protected Control createSourceAttachmentControls(Composite composite) {
 		return fSourceAttachmentBlock.createControl(composite);
 	}
-	
-	
+
 	/**
 	 * Returns the configured source attachment path.
 	 */
@@ -118,11 +117,11 @@ public class SourceAttachmentDialog extends StatusDialog {
 	 * Returns the configured source attachment path root. Sonce 2.1 source
 	 * attachment roots are autodetected. The value returned is therefore always
 	 * null.
-	 */	
+	 */
 	public IPath getSourceAttachmentRootPath() {
 		return fSourceAttachmentBlock.getSourceAttachmentRootPath();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -131,24 +130,24 @@ public class SourceAttachmentDialog extends StatusDialog {
 		super.okPressed();
 		if (fApplyChanges) {
 			try {
-				IRunnableWithProgress runnable= getRunnable();
-				new ProgressMonitorDialog(getShell()).run(true, true, runnable);						
-	
+				IRunnableWithProgress runnable = getRunnable();
+				new ProgressMonitorDialog(getShell()).run(true, true, runnable);
+
 			} catch (InvocationTargetException e) {
-				String title= CPathEntryMessages.SourceAttachmentDialog_error_title; 
-				String message= CPathEntryMessages.SourceAttachmentDialog_error_message; 
+				String title = CPathEntryMessages.SourceAttachmentDialog_error_title;
+				String message = CPathEntryMessages.SourceAttachmentDialog_error_message;
 				ExceptionHandler.handle(e, getShell(), title, message);
-	
+
 			} catch (InterruptedException e) {
 				// cancelled
 			}
 		}
 	}
-	
+
 	/**
 	 * Creates the runnable that configures the project with the new source
 	 * attachements.
-     */
+	 */
 	protected IRunnableWithProgress getRunnable() {
 		return fSourceAttachmentBlock.getRunnable(getShell());
 	}
@@ -163,8 +162,9 @@ public class SourceAttachmentDialog extends StatusDialog {
 	 * @param libPath The path of the bibrary to be found
 	 * @return IClasspathEntry A classpath entry from the container of
 	 * <code>null</code> if the container can not be modified.
-     */
-	public static IPathEntry getPathEntryToEdit(ICProject jproject, IPath containerPath, IPath libPath) throws CModelException {
+	 */
+	public static IPathEntry getPathEntryToEdit(ICProject jproject, IPath containerPath, IPath libPath)
+			throws CModelException {
 		//IPathEntryContainer container= CoreModel.getPathEntryContainer(containerPath, jproject);
 		//PathEntryContainerInitializer initializer= CoreModel.getPathEntryContainerInitializer(containerPath.segment(0));
 		//if (container != null && initializer != null && initializer.canUpdateClasspathContainer(containerPath, jproject)) {
@@ -178,8 +178,6 @@ public class SourceAttachmentDialog extends StatusDialog {
 		//	}
 		//}
 		return null; // attachment not possible
-	}	
-	
-	
+	}
 
 }

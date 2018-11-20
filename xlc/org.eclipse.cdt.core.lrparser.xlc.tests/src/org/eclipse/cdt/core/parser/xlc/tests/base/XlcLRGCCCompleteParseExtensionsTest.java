@@ -24,11 +24,11 @@ public class XlcLRGCCCompleteParseExtensionsTest extends LRGCCCompleteParseExten
 	public static TestSuite suite() {
 		return suite(XlcLRGCCCompleteParseExtensionsTest.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

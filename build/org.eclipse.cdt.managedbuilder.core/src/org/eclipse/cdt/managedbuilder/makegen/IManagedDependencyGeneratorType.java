@@ -47,18 +47,18 @@ public interface IManagedDependencyGeneratorType {
 	/**
 	 *  Constants returned by getCalculatorType
 	 */
-	public int TYPE_NODEPS = 0;			//  Deprecated - use TYPE_NODEPENDENCIES
-	public int TYPE_COMMAND = 1;		//  Deprecated - use TYPE_BUILD_COMMANDS
-	public int TYPE_INDEXER = 2;		//  Deprecated - use TYPE_CUSTOM
-	public int TYPE_EXTERNAL = 3;		//  Deprecated - use TYPE_CUSTOM
+	public int TYPE_NODEPS = 0; //  Deprecated - use TYPE_NODEPENDENCIES
+	public int TYPE_COMMAND = 1; //  Deprecated - use TYPE_BUILD_COMMANDS
+	public int TYPE_INDEXER = 2; //  Deprecated - use TYPE_CUSTOM
+	public int TYPE_EXTERNAL = 3; //  Deprecated - use TYPE_CUSTOM
 	public int TYPE_OLD_TYPE_LIMIT = 3;
-	
+
 	//  Use these types
 	public int TYPE_NODEPENDENCIES = 4;
 	public int TYPE_BUILD_COMMANDS = 5;
 	public int TYPE_PREBUILD_COMMANDS = 6;
 	public int TYPE_CUSTOM = 7;
-	
+
 	/**
 	 * Returns the type of dependency generator that is implemented.  
 	 * 

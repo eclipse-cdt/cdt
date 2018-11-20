@@ -65,11 +65,11 @@ public class MIAsyncErrorProcessor implements IEventProcessor {
 
 	@Override
 	public void eventReceived(Object output) {
-		MIResultRecord rr = ((MIOutput)output).getMIResultRecord();
+		MIResultRecord rr = ((MIOutput) output).getMIResultRecord();
 		// Handling the asynchronous error case, i.e. when the "<token>^running" event 
 		// appears before "<token>^error, msg=<error_message>" for run control commands.
 		if (rr != null && MIResultRecord.ERROR.equals(rr.getResultClass())) {
-			handleAsyncError((MIOutput)output);
+			handleAsyncError((MIOutput) output);
 		}
 	}
 
@@ -88,12 +88,12 @@ public class MIAsyncErrorProcessor implements IEventProcessor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void commandDone(ICommandToken token, ICommandResult result) {
-		if (token.getCommand() instanceof MICommand<?> && result instanceof MIInfo && ((MIInfo)result).isRunning()) {
-			IDMContext ctx = ((MICommand<MIInfo>)token.getCommand()).getContext();
+		if (token.getCommand() instanceof MICommand<?> && result instanceof MIInfo && ((MIInfo) result).isRunning()) {
+			IDMContext ctx = ((MICommand<MIInfo>) token.getCommand()).getContext();
 			if (ctx instanceof IExecutionDMContext) {
-				MIResultRecord rr = ((MIInfo)result).getMIOutput().getMIResultRecord();
+				MIResultRecord rr = ((MIInfo) result).getMIOutput().getMIResultRecord();
 				if (rr != null) {
-					fRunCommands.put((IExecutionDMContext)ctx, Integer.valueOf(rr.getToken()));
+					fRunCommands.put((IExecutionDMContext) ctx, Integer.valueOf(rr.getToken()));
 				}
 			}
 		}
@@ -109,7 +109,7 @@ public class MIAsyncErrorProcessor implements IEventProcessor {
 	protected ICommandControlService getCommandControl() {
 		return fCommandControl;
 	}
-	
+
 	protected void handleAsyncError(MIOutput output) {
 		int token = output.getMIResultRecord().getToken();
 		for (Entry<IExecutionDMContext, Integer> entry : fRunCommands.entrySet()) {
@@ -118,10 +118,12 @@ public class MIAsyncErrorProcessor implements IEventProcessor {
 			}
 		}
 	}
-	
+
 	protected void fireStoppedEvent(final MIOutput output, final IExecutionDMContext ctx) {
 		DsfSession session = DsfSession.getSession(ctx.getSessionId());
 		int token = output.getMIResultRecord().getToken();
-		session.dispatchEvent(MIErrorEvent.parse(ctx, token, output.getMIResultRecord().getMIResults(), output.getMIOOBRecords()), null);
+		session.dispatchEvent(
+				MIErrorEvent.parse(ctx, token, output.getMIResultRecord().getMIResults(), output.getMIOOBRecords()),
+				null);
 	}
 }

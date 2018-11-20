@@ -29,11 +29,11 @@ class CompositeCPPTypedefSpecialization extends CompositeCPPTypedef implements I
 	@Override
 	public IBinding getSpecializedBinding() {
 		return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
-	}	
-	
+	}
+
 	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		IBinding owner= getOwner();
+		IBinding owner = getOwner();
 		if (owner instanceof ICPPSpecialization) {
 			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 		}

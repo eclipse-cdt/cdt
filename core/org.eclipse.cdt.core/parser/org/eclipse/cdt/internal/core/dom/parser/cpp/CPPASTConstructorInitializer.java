@@ -28,10 +28,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTConstructorInitializer extends ASTNode
 		implements ICPPASTConstructorInitializer, IASTAmbiguityParent {
-    private IASTInitializerClause[] fArguments;
+	private IASTInitializerClause[] fArguments;
 
-    public CPPASTConstructorInitializer() {
-    	setArguments(null);
+	public CPPASTConstructorInitializer() {
+		setArguments(null);
 	}
 
 	public CPPASTConstructorInitializer(IASTInitializerClause[] args) {
@@ -58,43 +58,46 @@ public class CPPASTConstructorInitializer extends ASTNode
 
 	@Override
 	public IASTInitializerClause[] getArguments() {
-        return fArguments;
-    }
+		return fArguments;
+	}
 
-    @Override
+	@Override
 	public void setArguments(IASTInitializerClause[] arguments) {
-        assertNotFrozen();
-        if (arguments == null) {
-        	fArguments= IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        } else {
-            fArguments= arguments;
-        	for (IASTInitializerClause arg : arguments) {
+		assertNotFrozen();
+		if (arguments == null) {
+			fArguments = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+		} else {
+			fArguments = arguments;
+			for (IASTInitializerClause arg : arguments) {
 				arg.setParent(this);
 				arg.setPropertyInParent(ARGUMENT);
 			}
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitInitializers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitInitializers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        for (IASTInitializerClause arg : fArguments) {
-        	if (!arg.accept(action))
-        		return false;
-        }
+		for (IASTInitializerClause arg : fArguments) {
+			if (!arg.accept(action))
+				return false;
+		}
 
 		if (action.shouldVisitInitializers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
 		return true;
-    }
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
@@ -107,39 +110,39 @@ public class CPPASTConstructorInitializer extends ASTNode
 		}
 	}
 
-    @Override
+	@Override
 	@Deprecated
 	public IASTExpression getExpression() {
-    	if (fArguments.length == 0)
-    		return null;
-    	if (fArguments.length == 1) {
-    		IASTInitializerClause arg = fArguments[0];
-    		if (arg instanceof IASTExpression)
-    			return (IASTExpression) arg;
-    		return null;
-    	}
+		if (fArguments.length == 0)
+			return null;
+		if (fArguments.length == 1) {
+			IASTInitializerClause arg = fArguments[0];
+			if (arg instanceof IASTExpression)
+				return (IASTExpression) arg;
+			return null;
+		}
 
-    	CPPASTExpressionList result= new CPPASTExpressionList();
-    	for (IASTInitializerClause arg : fArguments) {
-    		if (arg instanceof IASTExpression) {
-    			result.addExpression(((IASTExpression) arg).copy());
-    		}
-    	}
-    	result.setParent(this);
-    	result.setPropertyInParent(EXPRESSION);
-        return result;
-    }
+		CPPASTExpressionList result = new CPPASTExpressionList();
+		for (IASTInitializerClause arg : fArguments) {
+			if (arg instanceof IASTExpression) {
+				result.addExpression(((IASTExpression) arg).copy());
+			}
+		}
+		result.setParent(this);
+		result.setPropertyInParent(EXPRESSION);
+		return result;
+	}
 
-    @Override
+	@Override
 	@Deprecated
 	public void setExpression(IASTExpression expression) {
-        assertNotFrozen();
-        if (expression == null) {
-        	setArguments(null);
-        } else if (expression instanceof ICPPASTExpressionList) {
-        	setArguments(((ICPPASTExpressionList) expression).getExpressions());
-        } else {
-        	setArguments(new IASTExpression[] {expression});
-        }
-    }
+		assertNotFrozen();
+		if (expression == null) {
+			setArguments(null);
+		} else if (expression instanceof ICPPASTExpressionList) {
+			setArguments(((ICPPASTExpressionList) expression).getExpressions());
+		} else {
+			setArguments(new IASTExpression[] { expression });
+		}
+	}
 }

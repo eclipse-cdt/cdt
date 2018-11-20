@@ -28,13 +28,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallColl
  * @author jcamelon
  */
 public class CPPASTCatchHandler extends CPPASTAttributeOwner implements ICPPASTCatchHandler {
-    private boolean fIsCatchAll;
-    private IASTStatement fBody;
-    private IASTDeclaration fDeclaration;
+	private boolean fIsCatchAll;
+	private IASTStatement fBody;
+	private IASTDeclaration fDeclaration;
 	private IScope fScope;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTCatchHandler() {
+	public CPPASTCatchHandler() {
 	}
 
 	public CPPASTCatchHandler(IASTDeclaration declaration, IASTStatement body) {
@@ -58,44 +58,44 @@ public class CPPASTCatchHandler extends CPPASTAttributeOwner implements ICPPASTC
 
 	@Override
 	public void setIsCatchAll(boolean isEllipsis) {
-        assertNotFrozen();
-        fIsCatchAll = isEllipsis;
-    }
+		assertNotFrozen();
+		fIsCatchAll = isEllipsis;
+	}
 
-    @Override
+	@Override
 	public boolean isCatchAll() {
-        return fIsCatchAll;
-    }
+		return fIsCatchAll;
+	}
 
-    @Override
+	@Override
 	public void setCatchBody(IASTStatement compoundStatement) {
-        assertNotFrozen();
-        fBody = compoundStatement;
-        if (compoundStatement != null) {
+		assertNotFrozen();
+		fBody = compoundStatement;
+		if (compoundStatement != null) {
 			compoundStatement.setParent(this);
 			compoundStatement.setPropertyInParent(CATCH_BODY);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTStatement getCatchBody() {
-        return fBody;
-    }
+		return fBody;
+	}
 
-    @Override
+	@Override
 	public void setDeclaration(IASTDeclaration decl) {
-        assertNotFrozen();
-        fDeclaration = decl;
-        if (decl != null) {
+		assertNotFrozen();
+		fDeclaration = decl;
+		if (decl != null) {
 			decl.setParent(this);
 			decl.setPropertyInParent(DECLARATION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTDeclaration getDeclaration() {
-        return fDeclaration;
-    }
+		return fDeclaration;
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -106,49 +106,58 @@ public class CPPASTCatchHandler extends CPPASTAttributeOwner implements ICPPASTC
 		return fImplicitDestructorNames;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (fDeclaration != null && !fDeclaration.accept(action)) return false;
-        if (fBody != null && !fBody.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (fDeclaration != null && !fDeclaration.accept(action))
+			return false;
+		if (fBody != null && !fBody.accept(action))
+			return false;
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (fBody == child) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            fBody = (IASTStatement) other;
-            return;
-        }
-        if (fDeclaration == child) {
-            other.setParent(child.getParent());
-            other.setPropertyInParent(child.getPropertyInParent());
-            fDeclaration = (IASTDeclaration) other;
-            return;
-        }
-        super.replace(child, other);
-    }
+		if (fBody == child) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			fBody = (IASTStatement) other;
+			return;
+		}
+		if (fDeclaration == child) {
+			other.setParent(child.getParent());
+			other.setPropertyInParent(child.getPropertyInParent());
+			fDeclaration = (IASTDeclaration) other;
+			return;
+		}
+		super.replace(child, other);
+	}
 
 	@Override
 	public IScope getScope() {

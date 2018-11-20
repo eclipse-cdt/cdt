@@ -29,12 +29,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Array subscript expression for C.
  */
-public class CASTArraySubscriptExpression extends ASTNode implements
-        IASTArraySubscriptExpression, IASTAmbiguityParent {
-    private IASTExpression array;
-    private IASTExpression subscript;
+public class CASTArraySubscriptExpression extends ASTNode implements IASTArraySubscriptExpression, IASTAmbiguityParent {
+	private IASTExpression array;
+	private IASTExpression subscript;
 
-    public CASTArraySubscriptExpression() {
+	public CASTArraySubscriptExpression() {
 	}
 
 	public CASTArraySubscriptExpression(IASTExpression array, IASTExpression subscript) {
@@ -57,35 +56,35 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 
 	@Override
 	public IASTExpression getArrayExpression() {
-        return array;
-    }
+		return array;
+	}
 
-    @Override
+	@Override
 	public void setArrayExpression(IASTExpression expression) {
-        assertNotFrozen();
-        array = expression;
-        if (expression != null) {
-        	expression.setParent(this);
-        	expression.setPropertyInParent(ARRAY);
-        }
-    }
+		assertNotFrozen();
+		array = expression;
+		if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(ARRAY);
+		}
+	}
 
-    @Override
+	@Override
 	public IASTExpression getSubscriptExpression() {
-        return subscript;
-    }
+		return subscript;
+	}
 
-    @Override
+	@Override
 	public void setSubscriptExpression(IASTExpression expression) {
-        assertNotFrozen();
-        this.subscript = expression;
-        if (expression != null) {
-        	expression.setParent(this);
-        	expression.setPropertyInParent(SUBSCRIPT);
-        }
-    }
+		assertNotFrozen();
+		this.subscript = expression;
+		if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(SUBSCRIPT);
+		}
+	}
 
-    @Override
+	@Override
 	public IASTInitializerClause getArgument() {
 		return subscript;
 	}
@@ -101,42 +100,50 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (array != null && !array.accept(action)) return false;
-        if (subscript != null && !subscript.accept(action)) return false;
+		if (array != null && !array.accept(action))
+			return false;
+		if (subscript != null && !subscript.accept(action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == array) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            array = (IASTExpression) other;
-        }
-        if (child == subscript) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            subscript = (IASTExpression) other;
-        }
-    }
+		if (child == array) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			array = (IASTExpression) other;
+		}
+		if (child == subscript) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			subscript = (IASTExpression) other;
+		}
+	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
 		IType t = getArrayExpression().getExpressionType();
 		t = CVisitor.unwrapTypedefs(t);
@@ -145,7 +152,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 		else if (t instanceof IArrayType)
 			return ((IArrayType) t).getType();
 		return t;
-    }
+	}
 
 	@Override
 	public boolean isLValue() {

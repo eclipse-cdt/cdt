@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
-
 /**
  * This interface is used to provide a description of a debug element,
  * usually a stack frame, when no source can be located for it.

@@ -73,14 +73,15 @@ public class RenameModifications extends RefactoringModifications {
 	public void rename(ITranslationUnit unit, RenameArguments args) {
 		add(unit, args, null);
 		if (unit.getResource() != null) {
-			getResourceModifications().addRename(unit.getResource(), new RenameArguments(args.getNewName(), args.getUpdateReferences()));
+			getResourceModifications().addRename(unit.getResource(),
+					new RenameArguments(args.getNewName(), args.getUpdateReferences()));
 		}
 	}
 
 	@Override
 	public void buildDelta(IResourceChangeDescriptionFactory builder) {
 		for (int i = 0; i < fRename.size(); i++) {
-			Object element= fRename.get(i);
+			Object element = fRename.get(i);
 			if (element instanceof IResource) {
 				ResourceModifications.buildMoveDelta(builder, (IResource) element,
 						(RenameArguments) fRenameArguments.get(i));
@@ -108,12 +109,8 @@ public class RenameModifications extends RefactoringModifications {
 			String[] natures, SharableParticipants shared) {
 		List<RefactoringParticipant> result = new ArrayList<>();
 		for (int i = 0; i < fRename.size(); i++) {
-			ArrayUtil.addAll(result,
-					ParticipantManager.loadRenameParticipants(status,
-							owner, fRename.get(i),
-							(RenameArguments) fRenameArguments.get(i),
-							fParticipantDescriptorFilter.get(i),
-							natures, shared));
+			ArrayUtil.addAll(result, ParticipantManager.loadRenameParticipants(status, owner, fRename.get(i),
+					(RenameArguments) fRenameArguments.get(i), fParticipantDescriptorFilter.get(i), natures, shared));
 		}
 		ArrayUtil.addAll(result, getResourceModifications().getParticipants(status, owner, natures, shared));
 		return result.toArray(new RefactoringParticipant[result.size()]);

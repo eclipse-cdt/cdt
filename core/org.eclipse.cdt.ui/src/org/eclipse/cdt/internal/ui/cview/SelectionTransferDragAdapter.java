@@ -26,19 +26,19 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.internal.ui.dnd.BasicSelectionTransferDragAdapter;
 
 public class SelectionTransferDragAdapter extends BasicSelectionTransferDragAdapter {
-	
+
 	public SelectionTransferDragAdapter(ISelectionProvider provider) {
 		super(provider);
 	}
-	
+
 	@Override
 	protected boolean isDragable(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			for (Iterator<?> iter= ((IStructuredSelection)selection).iterator(); iter.hasNext();) {
-				Object element= iter.next();
+			for (Iterator<?> iter = ((IStructuredSelection) selection).iterator(); iter.hasNext();) {
+				Object element = iter.next();
 				if (element instanceof ICElement) {
 					if (!(element instanceof ISourceReference)) {
-						return  false;
+						return false;
 					}
 				}
 			}

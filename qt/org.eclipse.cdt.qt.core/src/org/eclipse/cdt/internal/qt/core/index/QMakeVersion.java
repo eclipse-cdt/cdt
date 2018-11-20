@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.qt.core.Activator;
 public final class QMakeVersion implements IQtVersion {
 
 	// QMAKE_VERSION looks like 2.01a or 3.0
-	private static final Pattern REGEXP = Pattern.compile( "([\\d]+)\\.([\\d]+).*" );
+	private static final Pattern REGEXP = Pattern.compile("([\\d]+)\\.([\\d]+).*");
 
 	// parses major and minor version numbers only
 	public static QMakeVersion create(String version) {
@@ -38,7 +38,7 @@ public final class QMakeVersion implements IQtVersion {
 			int major = Integer.parseInt(m.group(1));
 			int minor = Integer.parseInt(m.group(2));
 			return new QMakeVersion(major, minor);
-		} catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			Activator.log(e);
 		}
 		return null;

@@ -19,23 +19,22 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-
 public abstract class CConfigurationData extends CDataObject {
 
 	protected CConfigurationData() {
 	}
 
 	@Override
-	public final int getType(){
+	public final int getType() {
 		return SETTING_CONFIGURATION;
 	}
-	
+
 	public abstract CFolderData getRootFolderData();
 
 	public abstract CResourceData[] getResourceDatas();
 
-//	public abstract CResourceData getResourceData(IPath path);
-	
+	//	public abstract CResourceData getResourceData(IPath path);
+
 	public abstract String getDescription();
 
 	public abstract void setDescription(String description);
@@ -48,23 +47,23 @@ public abstract class CConfigurationData extends CDataObject {
 
 	public abstract CFileData createFileData(IPath path, CFolderData base, CLanguageData langData) throws CoreException;
 
-//	public abstract CDataObject[] getChildrenOfKind(int kind);
+	//	public abstract CDataObject[] getChildrenOfKind(int kind);
 
-//	public abstract CDataObject getChildById(String id);
-	
+	//	public abstract CDataObject getChildById(String id);
+
 	public abstract CTargetPlatformData getTargetPlatformData();
-	
+
 	public abstract ICSourceEntry[] getSourceEntries();
 
 	public abstract void setSourceEntries(ICSourceEntry[] entries);
-	
+
 	public abstract CBuildData getBuildData();
-	
+
 	public abstract ICdtVariablesContributor getBuildVariablesContributor();
-	
+
 	public abstract void setName(String name);
-	
-	public CConfigurationStatus getStatus(){
+
+	public CConfigurationStatus getStatus() {
 		return CConfigurationStatus.CFG_STATUS_OK;
 	}
 }

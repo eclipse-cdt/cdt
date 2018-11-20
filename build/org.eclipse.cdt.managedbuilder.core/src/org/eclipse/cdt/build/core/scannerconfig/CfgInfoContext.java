@@ -29,7 +29,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.content.IContentType;
 
-public final class CfgInfoContext{
+public final class CfgInfoContext {
 	private static final String DELIMITER = ";"; //$NON-NLS-1$
 	private static final int NULL_OBJ_CODE = 29;
 	private Configuration fCfg;
@@ -38,71 +38,71 @@ public final class CfgInfoContext{
 	private IInputType fInType;
 	private InfoContext fContext;
 
-	public CfgInfoContext(IResourceInfo rcInfo, ITool tool, IInputType inType){
+	public CfgInfoContext(IResourceInfo rcInfo, ITool tool, IInputType inType) {
 		this(rcInfo, tool, inType, null);
 	}
 
-	private CfgInfoContext(IResourceInfo rcInfo, ITool tool, IInputType inType, InfoContext baseContext){
+	private CfgInfoContext(IResourceInfo rcInfo, ITool tool, IInputType inType, InfoContext baseContext) {
 		this.fRcInfo = rcInfo;
 		this.fTool = tool;
 		this.fInType = inType;
-		this.fCfg = (Configuration)fRcInfo.getParent();
+		this.fCfg = (Configuration) fRcInfo.getParent();
 		this.fContext = baseContext;
 	}
 
-	public CfgInfoContext(IConfiguration cfg){
+	public CfgInfoContext(IConfiguration cfg) {
 		this(cfg, null);
 	}
 
-	private CfgInfoContext(IConfiguration cfg, InfoContext baseContext){
-		this.fCfg = (Configuration)cfg;
+	private CfgInfoContext(IConfiguration cfg, InfoContext baseContext) {
+		this.fCfg = (Configuration) cfg;
 		this.fContext = baseContext;
 	}
-	
-	public IConfiguration getConfiguration(){
+
+	public IConfiguration getConfiguration() {
 		return fCfg;
 	}
-	
-	public IResourceInfo getResourceInfo(){
+
+	public IResourceInfo getResourceInfo() {
 		return fRcInfo;
 	}
-	
-	public ITool getTool(){
+
+	public ITool getTool() {
 		return fTool;
 	}
-	
-	public IInputType getInputType(){
+
+	public IInputType getInputType() {
 		return fInType;
 	}
-	
-	public InfoContext toInfoContext(){
-		if(fContext == null){
+
+	public InfoContext toInfoContext() {
+		if (fContext == null) {
 			IProject project = fCfg.isPreference() ? null : fCfg.getOwner().getProject();
 			StringBuilder buf = new StringBuilder();
 			buf.append(fCfg.getId());
-			if(fRcInfo != null){
+			if (fRcInfo != null) {
 				buf.append(DELIMITER);
 				buf.append(fRcInfo.getId());
 			}
-			
-			if(fTool != null){
+
+			if (fTool != null) {
 				buf.append(DELIMITER);
 				buf.append(fTool.getId());
 			}
-			
-			if(fInType != null){
+
+			if (fInType != null) {
 				buf.append(DELIMITER);
 				buf.append(fInType.getId());
 			}
-			
+
 			ILanguage language = null;
-			if (fInType!=null) {
+			if (fInType != null) {
 				IContentType contentType = fInType.getSourceContentType();
-				if (contentType!=null) {
+				if (contentType != null) {
 					language = LanguageManager.getInstance().getLanguage(contentType);
 				}
 			}
-			
+
 			String instanceId = buf.toString();
 			fContext = new InfoContext(project, instanceId, language);
 		}
@@ -111,34 +111,34 @@ public final class CfgInfoContext{
 
 	public static CfgInfoContext fromInfoContext(ICProjectDescription des, InfoContext context) {
 		IProject project = context.getProject();
-		if(project == null)
+		if (project == null)
 			return null;
-		
+
 		String instanceId = context.getInstanceId();
-		if(instanceId.length() == 0)
+		if (instanceId.length() == 0)
 			return null;
-		
+
 		String[] ids = CDataUtil.stringToArray(instanceId, DELIMITER);
 		String cfgId = ids[0];
 
 		ICConfigurationDescription cfgDes = des.getConfigurationById(cfgId);
-		if(cfgDes == null)
+		if (cfgDes == null)
 			return null;
-		
+
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
-		if(cfg == null)
+		if (cfg == null)
 			return null;
-		
+
 		return doCreate(cfg, ids, context);
 	}
-	
-	private static CfgInfoContext doCreate(IConfiguration cfg, String[] ids, InfoContext context){
+
+	private static CfgInfoContext doCreate(IConfiguration cfg, String[] ids, InfoContext context) {
 		String rcInfoId = null, toolId = null, inTypeId = null;
 		IResourceInfo rcInfo = null;
 		ITool tool = null;
 		IInputType inType = null;
-		
-		switch(ids.length){
+
+		switch (ids.length) {
 		case 4:
 			inTypeId = ids[3];
 		case 3:
@@ -146,27 +146,27 @@ public final class CfgInfoContext{
 		case 2:
 			rcInfoId = ids[1];
 		}
-		
-		if(rcInfoId != null){
-			rcInfo = (IResourceInfo)find(cfg.getResourceInfos(), rcInfoId);
-			if(rcInfo == null){
+
+		if (rcInfoId != null) {
+			rcInfo = (IResourceInfo) find(cfg.getResourceInfos(), rcInfoId);
+			if (rcInfo == null) {
 				return null;
 			}
 		}
-		
-		if(toolId != null){
-			tool = (ITool)find(rcInfo.getTools(), toolId);
-			if(tool == null)
+
+		if (toolId != null) {
+			tool = (ITool) find(rcInfo.getTools(), toolId);
+			if (tool == null)
 				return null;
 		}
-		
-		if(inTypeId != null){
-			inType = (IInputType)find(tool.getInputTypes(), inTypeId);
-			if(inType == null)
+
+		if (inTypeId != null) {
+			inType = (IInputType) find(tool.getInputTypes(), inTypeId);
+			if (inType == null)
 				return null;
 		}
-		
-		if(rcInfo != null)
+
+		if (rcInfo != null)
 			return new CfgInfoContext(rcInfo, tool, inType, context);
 		return new CfgInfoContext(cfg, context);
 
@@ -174,48 +174,48 @@ public final class CfgInfoContext{
 
 	public static CfgInfoContext fromInfoContext(IConfiguration cfg, InfoContext context) {
 		IProject project = context.getProject();
-		if(project == null)
+		if (project == null)
 			return null;
-		
+
 		String instanceId = context.getInstanceId();
-		if(instanceId.length() == 0)
+		if (instanceId.length() == 0)
 			return null;
-		
+
 		String[] ids = CDataUtil.stringToArray(instanceId, DELIMITER);
 		String cfgId = ids[0];
-		if(!cfgId.equals(cfg.getId()))
+		if (!cfgId.equals(cfg.getId()))
 			return null;
 
 		return doCreate(cfg, ids, context);
 	}
-	
-	private static IBuildObject find(IBuildObject objs[], String id){
-		for(int i = 0; i < objs.length; i++){
-			if(objs[i].getId().equals(id))
+
+	private static IBuildObject find(IBuildObject objs[], String id) {
+		for (int i = 0; i < objs.length; i++) {
+			if (objs[i].getId().equals(id))
 				return objs[i];
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if(this == obj)
+		if (this == obj)
 			return true;
-		
-		if(!(obj instanceof CfgInfoContext))
-			return false;
-		
-		CfgInfoContext other = (CfgInfoContext)obj;
-		if(!checkBuildObjects(other.fCfg, fCfg))
+
+		if (!(obj instanceof CfgInfoContext))
 			return false;
 
-		if(!checkBuildObjects(other.fRcInfo, fRcInfo))
+		CfgInfoContext other = (CfgInfoContext) obj;
+		if (!checkBuildObjects(other.fCfg, fCfg))
 			return false;
 
-		if(!checkBuildObjects(other.fTool, fTool))
+		if (!checkBuildObjects(other.fRcInfo, fRcInfo))
 			return false;
 
-		if(!checkBuildObjects(other.fInType, fInType))
+		if (!checkBuildObjects(other.fTool, fTool))
+			return false;
+
+		if (!checkBuildObjects(other.fInType, fInType))
 			return false;
 
 		return true;
@@ -229,17 +229,17 @@ public final class CfgInfoContext{
 		code += getCode(fInType);
 		return code;
 	}
-	
-	private boolean checkBuildObjects(IBuildObject bo1, IBuildObject bo2){
-		if(bo1 == null)
+
+	private boolean checkBuildObjects(IBuildObject bo1, IBuildObject bo2) {
+		if (bo1 == null)
 			return bo2 == null;
-		if(bo2 == null)
+		if (bo2 == null)
 			return false;
 		return bo1.getId().equals(bo2.getId());
 	}
-	
-	private int getCode(IBuildObject bo){
-		if(bo == null)
+
+	private int getCode(IBuildObject bo) {
+		if (bo == null)
 			return NULL_OBJ_CODE;
 		return bo.getId().hashCode();
 	}

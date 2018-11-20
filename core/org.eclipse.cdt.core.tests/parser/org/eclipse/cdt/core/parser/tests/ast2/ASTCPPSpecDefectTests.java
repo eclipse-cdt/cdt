@@ -19,31 +19,31 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 public class ASTCPPSpecDefectTests extends AST2TestBase {
-	
+
 	public ASTCPPSpecDefectTests() {
 	}
-	
+
 	public ASTCPPSpecDefectTests(String name) {
 		super(name);
 	}
-	
+
 	public static TestSuite suite() {
 		return suite(ASTCPPSpecDefectTests.class);
 	}
-		
+
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);
 		return tu;
-	}	
-	
+	}
+
 	private IASTTranslationUnit parseAndCheckBindings() throws Exception {
-		String code= getAboveComment();
+		String code = getAboveComment();
 		return parseAndCheckBindings(code);
 	}
-	
+
 	//  // C++ defect #33
 	//	namespace ns {
 	//		struct S {};
@@ -58,7 +58,7 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 	public void test33_ADLForOverloadSet_324842() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//  // C++ defect #38
 	//	template<typename T> T operator+(T&);
 	//	struct A {
@@ -67,7 +67,7 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 	public void test38_templateArgForOperator() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <class T1, class ...Z> class S; // #1
 	//	template <class T1, class ...Z> class S<T1, const Z&...> {}; // #2
 	//	template <class T1, class T2> class S<T1, const T2&> {};; // #3

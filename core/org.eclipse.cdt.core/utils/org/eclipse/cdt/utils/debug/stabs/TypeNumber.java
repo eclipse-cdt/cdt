@@ -17,7 +17,6 @@ package org.eclipse.cdt.utils.debug.stabs;
 import java.io.IOException;
 import java.io.Reader;
 
-
 public class TypeNumber {
 
 	int typeno;
@@ -38,12 +37,12 @@ public class TypeNumber {
 
 	public int getFileNo() {
 		return fileno;
-	} 
+	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof TypeNumber) {
-			TypeNumber tn = (TypeNumber)obj;
+			TypeNumber tn = (TypeNumber) obj;
 			return tn.typeno == typeno && tn.fileno == fileno;
 		}
 		return super.equals(obj);
@@ -54,19 +53,19 @@ public class TypeNumber {
 	 */
 	@Override
 	public int hashCode() {
-		return fileno*10 + typeno;
+		return fileno * 10 + typeno;
 	}
 
 	void parseTypeNumber(Reader reader) {
 		try {
 			int c = reader.read();
-			char ch = (char)c;
+			char ch = (char) c;
 			if (c == -1) {
 				return;
 			} else if (ch == '(') {
 				StringBuilder sb = new StringBuilder();
 				while ((c = reader.read()) != -1) {
-					ch = (char)c;
+					ch = (char) c;
 					if (ch == ')') {
 						try {
 							typeno = Integer.parseInt(sb.toString());
@@ -90,7 +89,7 @@ public class TypeNumber {
 				sb.append(ch);
 				reader.mark(1);
 				while ((c = reader.read()) != -1) {
-					ch = (char)c;
+					ch = (char) c;
 					if (Character.isDigit(ch)) {
 						sb.append(ch);
 					} else {
@@ -108,4 +107,3 @@ public class TypeNumber {
 	}
 
 }
-

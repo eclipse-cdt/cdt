@@ -24,69 +24,68 @@ import java.util.Map;
  */
 public class MITuple extends MIValue {
 
-    final private static MIResult[] NULL_RESULTS = new MIResult[0];
-    final private static MIValue[] NULL_VALUES = new MIValue[0];
+	final private static MIResult[] NULL_RESULTS = new MIResult[0];
+	final private static MIValue[] NULL_VALUES = new MIValue[0];
 
-    private MIResult[] results = NULL_RESULTS;
-    private MIValue[] values = NULL_VALUES;
-    private Map<String, MIValue> name2value;
+	private MIResult[] results = NULL_RESULTS;
+	private MIValue[] values = NULL_VALUES;
+	private Map<String, MIValue> name2value;
 
-    public MIResult[] getMIResults() {
-        return results;
-    }
+	public MIResult[] getMIResults() {
+		return results;
+	}
 
-    public void setMIResults(MIResult[] res) {
-        results = res;
-        name2value = null;
-    }
+	public void setMIResults(MIResult[] res) {
+		results = res;
+		name2value = null;
+	}
 
-    public MIValue[] getMIValues() {
-        return values;
-    }
+	public MIValue[] getMIValues() {
+		return values;
+	}
 
-    /** Return the value of the specified field of this tuple.
-     *
+	/** Return the value of the specified field of this tuple.
+	 *
 	 * @since 4.6
 	 */
-    public MIValue getField(String name) {
-        if (name2value == null) {
-            name2value = new HashMap<String, MIValue>();
-            for (MIResult r : results) {
-                name2value.put(r.getVariable(), r.getMIValue());
-            }
-        }
-        return name2value.get(name);
-    }
+	public MIValue getField(String name) {
+		if (name2value == null) {
+			name2value = new HashMap<String, MIValue>();
+			for (MIResult r : results) {
+				name2value.put(r.getVariable(), r.getMIValue());
+			}
+		}
+		return name2value.get(name);
+	}
 
-    public void setMIValues(MIValue[] vals) {
-        values = vals;
-    }
+	public void setMIValues(MIValue[] vals) {
+		values = vals;
+	}
 
-    @Override
-    public String toString() {
-        return toString("{", "}"); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	@Override
+	public String toString() {
+		return toString("{", "}"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
-    // Return comma-separated values, with start and end prepended and appended
-    // Intentionally package private, should only be used by ourselves and
-    // MIResultRecord.
-    String toString(String start, String end)
-    {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(start);
-        for (int i = 0; i < results.length; i++) {
-            if (i != 0) {
-                buffer.append(',');
-            }
-            buffer.append(results[i].toString());
-        }
-        for (int i = 0; i < values.length; i++) {
-            if (i != 0) {
-                buffer.append(',');
-            }
-            buffer.append(values[i].toString());
-        }
-        buffer.append(end);
-        return buffer.toString();
-    }
+	// Return comma-separated values, with start and end prepended and appended
+	// Intentionally package private, should only be used by ourselves and
+	// MIResultRecord.
+	String toString(String start, String end) {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(start);
+		for (int i = 0; i < results.length; i++) {
+			if (i != 0) {
+				buffer.append(',');
+			}
+			buffer.append(results[i].toString());
+		}
+		for (int i = 0; i < values.length; i++) {
+			if (i != 0) {
+				buffer.append(',');
+			}
+			buffer.append(values[i].toString());
+		}
+		buffer.append(end);
+		return buffer.toString();
+	}
 }

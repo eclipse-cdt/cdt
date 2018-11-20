@@ -28,9 +28,9 @@ public class CorrectionContext extends TextInvocationContext implements IInvocat
 	 */
 	public CorrectionContext(ITranslationUnit tu, ISourceViewer sourceViewer, int offset, int length) {
 		super(sourceViewer, offset, length);
-		fTranslationUnit= tu;
+		fTranslationUnit = tu;
 	}
-	
+
 	/*
 	 * Constructor for CorrectionContext.
 	 */

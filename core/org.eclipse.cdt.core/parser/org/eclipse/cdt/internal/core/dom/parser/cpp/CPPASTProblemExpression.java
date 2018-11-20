@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTProblemExpression, ICPPASTExpression {
 
-    public CPPASTProblemExpression() {
+	public CPPASTProblemExpression() {
 		super();
 	}
 
@@ -54,33 +54,39 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTP
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        super.accept(action);	// visits the problem
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		super.accept(action); // visits the problem
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		return EvalFixed.INCOMPLETE;
 	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
-    }
+		return CPPEvaluation.getType(this);
+	}
 
 	@Override
 	public boolean isLValue() {
@@ -89,6 +95,6 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTP
 
 	@Override
 	public ValueCategory getValueCategory() {
-    	return CPPEvaluation.getValueCategory(this);
+		return CPPEvaluation.getValueCategory(this);
 	}
 }

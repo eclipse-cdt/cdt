@@ -71,8 +71,7 @@ public class WorkingSetConfigurationDialog extends TrayDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite result = (Composite) super.createDialogArea(parent);
 
-		block = new WorkingSetConfigurationBlock(WorkingSetConfigurationManager.getDefault()
-				.createWorkspaceSnapshot());
+		block = new WorkingSetConfigurationBlock(WorkingSetConfigurationManager.getDefault().createWorkspaceSnapshot());
 		Control contents = block.createContents(result);
 		contents.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 

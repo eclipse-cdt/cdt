@@ -31,25 +31,25 @@ public abstract class AbstractDynamicPrintf extends AbstractLineBreakpoint imple
 		super();
 	}
 
-	public AbstractDynamicPrintf( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+	public AbstractDynamicPrintf(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
+		super(resource, attributes, add);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICDynamicPrintf#getPrintfString()
 	 */
 	@Override
 	public String getPrintfString() throws CoreException {
-		return ensureMarker().getAttribute( PRINTF_STRING, "" ); //$NON-NLS-1$
+		return ensureMarker().getAttribute(PRINTF_STRING, ""); //$NON-NLS-1$
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICDynamicPrintf#setPrintfString(String)
 	 */
-	public void setPrintfString( String str ) throws CoreException {
-		setAttribute( PRINTF_STRING, str );
-		setAttribute( IMarker.MESSAGE, getMarkerMessage() );
+	public void setPrintfString(String str) throws CoreException {
+		setAttribute(PRINTF_STRING, str);
+		setAttribute(IMarker.MESSAGE, getMarkerMessage());
 	}
 }

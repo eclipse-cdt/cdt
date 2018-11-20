@@ -21,21 +21,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * IProblemRequestorExtension
  */
 public interface IProblemRequestorExtension {
-	
+
 	/**
 	 * Sets the progress monitor to this problem requestor.
 	 * 
 	 * @param monitor the progress monitor to be used
 	 */
 	void setProgressMonitor(IProgressMonitor monitor);
-	
+
 	/**
 	 * Sets the active state of this problem requestor.
 	 * 
 	 * @param isActive the state of this problem requestor
 	 */
 	void setIsActive(boolean isActive);
-	
+
 	/**
 	 * Informs the problem requestor that a sequence of reportings is about to start. While
 	 * a sequence is active, multiple peering calls of <code>beginReporting</code> and
@@ -44,7 +44,7 @@ public interface IProblemRequestorExtension {
 	 * @since 3.0
 	 */
 	void beginReportingSequence();
-	
+
 	/**
 	 * Informs the problem requestor that the sequence of reportings has been finished.
 	 * 

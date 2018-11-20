@@ -26,10 +26,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  */
 public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpression {
 
-    private int op;
-    private IASTTypeId typeId;
+	private int op;
+	private IASTTypeId typeId;
 
-    public CASTTypeIdExpression() {
+	public CASTTypeIdExpression() {
 	}
 
 	public CASTTypeIdExpression(int op, IASTTypeId typeId) {
@@ -44,66 +44,73 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
 
 	@Override
 	public CASTTypeIdExpression copy(CopyStyle style) {
-		CASTTypeIdExpression copy = new CASTTypeIdExpression(op, typeId == null ? null
-				: typeId.copy(style));
+		CASTTypeIdExpression copy = new CASTTypeIdExpression(op, typeId == null ? null : typeId.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public int getOperator() {
-        return op;
-    }
+		return op;
+	}
 
-    @Override
+	@Override
 	public void setOperator(int value) {
-        assertNotFrozen();
-        this.op = value;
-    }
+		assertNotFrozen();
+		this.op = value;
+	}
 
-    @Override
+	@Override
 	public void setTypeId(IASTTypeId typeId) {
-       assertNotFrozen();
-       this.typeId = typeId;
-       if (typeId != null) {
+		assertNotFrozen();
+		this.typeId = typeId;
+		if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(TYPE_ID);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTTypeId getTypeId() {
-        return typeId;
-    }
+		return typeId;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (typeId != null) if (!typeId.accept(action)) return false;
+		if (typeId != null)
+			if (!typeId.accept(action))
+				return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	if (getOperator() == op_sizeof) {
+		if (getOperator() == op_sizeof) {
 			return CVisitor.get_SIZE_T(this);
 		}
-    	return CVisitor.createType(typeId.getAbstractDeclarator());
-    }
+		return CVisitor.createType(typeId.getAbstractDeclarator());
+	}
 
 	@Override
 	public boolean isLValue() {

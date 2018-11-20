@@ -19,7 +19,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 
-
 // ---------------------------------------------------------------------------
 // VisualizerAction
 // ---------------------------------------------------------------------------
@@ -28,19 +27,18 @@ import org.eclipse.swt.widgets.Event;
  *  (Viewers are not required to use this class. This is simply a
  *  convenience wrapper for the standard Action class.)
  */
-public class VisualizerAction extends Action
-{
+public class VisualizerAction extends Action {
 	// --- members ---
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor. */
 	protected VisualizerAction() {
 		// NOTE: this constructor is only intended for deriving classes
 		// that need to construct the text/description/image attributes
 		// programmatically.
 	}
-	
+
 	/** Constructor. */
 	public VisualizerAction(String text, int style) {
 		super(text, style);
@@ -51,27 +49,24 @@ public class VisualizerAction extends Action
 		super(text);
 		setDescription(description);
 	}
-	
+
 	/** Constructor. */
-	public VisualizerAction(String text, String description,
-						    ImageDescriptor image) {
+	public VisualizerAction(String text, String description, ImageDescriptor image) {
 		super(text, image);
 		setDescription(description);
 	}
-	
+
 	/** Constructor. */
-	public VisualizerAction(String text, String description,
-						    ImageDescriptor enabledImage, ImageDescriptor disabledImage) {
+	public VisualizerAction(String text, String description, ImageDescriptor enabledImage,
+			ImageDescriptor disabledImage) {
 		super(text, enabledImage);
 		setDescription(description);
 		setDisabledImageDescriptor(disabledImage);
 	}
 
 	/** Dispose method. */
-	public void dispose()
-	{
+	public void dispose() {
 	}
-	
 
 	// --- methods ---
 

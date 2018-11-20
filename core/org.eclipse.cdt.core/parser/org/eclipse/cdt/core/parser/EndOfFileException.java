@@ -19,8 +19,8 @@ package org.eclipse.cdt.core.parser;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class EndOfFileException extends Exception {
-	private static final long serialVersionUID= 1607883323361197919L;
-	
+	private static final long serialVersionUID = 1607883323361197919L;
+
 	private final boolean fEndsInactiveCode;
 	private final int fOffset;
 
@@ -30,22 +30,22 @@ public class EndOfFileException extends Exception {
 	public EndOfFileException(int offset) {
 		this(offset, false);
 	}
-	
+
 	/**
 	 * @since 5.2
 	 */
 	public EndOfFileException(int offset, boolean endsInactiveCode) {
-		fOffset= offset;
-		fEndsInactiveCode= endsInactiveCode;
+		fOffset = offset;
+		fEndsInactiveCode = endsInactiveCode;
 	}
-	
+
 	/**
 	 * @since 5.1
 	 */
 	public boolean endsInactiveCode() {
 		return fEndsInactiveCode;
 	}
-	
+
 	/**
 	 * Returns the offset at which the translation unit ends, or -1 if not known.
 	 * @since 5.2

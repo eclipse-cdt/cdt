@@ -25,15 +25,17 @@ import org.eclipse.core.runtime.CoreException;
  * @since 4.0
  */
 abstract public class IndexFilter {
-	public static final IndexFilter ALL = new IndexFilter() {};
+	public static final IndexFilter ALL = new IndexFilter() {
+	};
 	public static final IndexFilter ALL_DECLARED = getDeclaredBindingFilter(-1, false);
 	public static final IndexFilter ALL_DECLARED_OR_IMPLICIT = getDeclaredBindingFilter(-1, true);
-	public static final IndexFilter CPP_DECLARED_OR_IMPLICIT= getDeclaredBindingFilter(ILinkage.CPP_LINKAGE_ID, true);
+	public static final IndexFilter CPP_DECLARED_OR_IMPLICIT = getDeclaredBindingFilter(ILinkage.CPP_LINKAGE_ID, true);
 	/**
 	 * @since 5.1
 	 */
-	public static final IndexFilter CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE= getDeclaredBindingFilter(ILinkage.CPP_LINKAGE_ID, true, false);
-	public static final IndexFilter C_DECLARED_OR_IMPLICIT= getDeclaredBindingFilter(ILinkage.C_LINKAGE_ID, true);
+	public static final IndexFilter CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE = getDeclaredBindingFilter(
+			ILinkage.CPP_LINKAGE_ID, true, false);
+	public static final IndexFilter C_DECLARED_OR_IMPLICIT = getDeclaredBindingFilter(ILinkage.C_LINKAGE_ID, true);
 
 	/**
 	 * Get an IndexFilter that filters out bindings from linkages other than that specified.
@@ -71,7 +73,8 @@ abstract public class IndexFilter {
 	 * @return an IndexFilter instance
 	 * @since 5.1
 	 */
-	public static IndexFilter getDeclaredBindingFilter(final int linkageID, boolean acceptImplicit, boolean allowInstances) {
+	public static IndexFilter getDeclaredBindingFilter(final int linkageID, boolean acceptImplicit,
+			boolean allowInstances) {
 		return new DeclaredBindingsFilter(linkageID, acceptImplicit, allowInstances);
 	}
 

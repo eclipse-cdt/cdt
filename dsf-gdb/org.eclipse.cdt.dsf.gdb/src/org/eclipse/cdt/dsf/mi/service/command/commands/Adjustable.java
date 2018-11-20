@@ -22,8 +22,8 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
  * 
  */
 public interface Adjustable {
-	
+
 	String getValue();
-	
+
 	String getAdjustedValue();
 }

@@ -29,47 +29,48 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 7.5
  */
 public class ToggleCDynamicPrintfTargetFactory implements IToggleBreakpointsTargetFactory {
-    
-    public static String TOGGLE_C_DYNAMICPRINTF_TARGET_ID = CDebugUIPlugin.getUniqueIdentifier() + ".toggleCDynamicPrintfTarget"; //$NON-NLS-1$
-    
-    private static Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
-    static {
-        TOGGLE_TARGET_IDS.add(TOGGLE_C_DYNAMICPRINTF_TARGET_ID);
-    }
-    
-    private ToggleDynamicPrintfAdapter fCToggleDynamicPrintfTarget = new ToggleDynamicPrintfAdapter();
-    
-    @Override
-    public IToggleBreakpointsTarget createToggleTarget(String targetID) {
-        if (TOGGLE_C_DYNAMICPRINTF_TARGET_ID.equals(targetID)) {
-            return fCToggleDynamicPrintfTarget;
-        }
-        return null;
-    }
-    
-    @Override
-    public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
-        return null;
-    }
-    
-    @Override
-    public String getToggleTargetDescription(String targetID) {
-        if (TOGGLE_C_DYNAMICPRINTF_TARGET_ID.equals(targetID)) {
-            return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CDynamicPrintfDescription"); //$NON-NLS-1$
-        }
-        return null;
-    }
-    
-    @Override
-    public String getToggleTargetName(String targetID) {
-        if (TOGGLE_C_DYNAMICPRINTF_TARGET_ID.equals(targetID)) {
-            return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CDynamicPrintfName"); //$NON-NLS-1$
-        }
-        return null;
-    }
-    
-    @Override
-    public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
-        return TOGGLE_TARGET_IDS;
-    }
+
+	public static String TOGGLE_C_DYNAMICPRINTF_TARGET_ID = CDebugUIPlugin.getUniqueIdentifier()
+			+ ".toggleCDynamicPrintfTarget"; //$NON-NLS-1$
+
+	private static Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
+	static {
+		TOGGLE_TARGET_IDS.add(TOGGLE_C_DYNAMICPRINTF_TARGET_ID);
+	}
+
+	private ToggleDynamicPrintfAdapter fCToggleDynamicPrintfTarget = new ToggleDynamicPrintfAdapter();
+
+	@Override
+	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
+		if (TOGGLE_C_DYNAMICPRINTF_TARGET_ID.equals(targetID)) {
+			return fCToggleDynamicPrintfTarget;
+		}
+		return null;
+	}
+
+	@Override
+	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
+		return null;
+	}
+
+	@Override
+	public String getToggleTargetDescription(String targetID) {
+		if (TOGGLE_C_DYNAMICPRINTF_TARGET_ID.equals(targetID)) {
+			return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CDynamicPrintfDescription"); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	@Override
+	public String getToggleTargetName(String targetID) {
+		if (TOGGLE_C_DYNAMICPRINTF_TARGET_ID.equals(targetID)) {
+			return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CDynamicPrintfName"); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	@Override
+	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
+		return TOGGLE_TARGET_IDS;
+	}
 }

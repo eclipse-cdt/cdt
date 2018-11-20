@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
-
 public interface IConvertManagedBuildObject {
 	public IBuildObject convert(IBuildObject buildObj, String fromId, String toId, boolean isConfirmed);
 }

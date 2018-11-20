@@ -28,7 +28,7 @@ public class PDOMASTFileLocation implements IASTFileLocation {
 		fNodeOffset = nodeOffset;
 		fNodeLength = nodeLength;
 	}
-	
+
 	@Override
 	public IASTFileLocation asFileLocation() {
 		return this;

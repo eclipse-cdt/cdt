@@ -59,7 +59,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 public class ProjectSelectionPage extends WizardPage implements IWizardDataPage {
 
-	private static final String PAGE_NAME= "NewProjectSelectionWizardPage"; //$NON-NLS-1$
+	private static final String PAGE_NAME = "NewProjectSelectionWizardPage"; //$NON-NLS-1$
 	private static final String PAGE_TITLE = Messages.getString("ProjectSelectionPage.0"); //$NON-NLS-1$
 	private static final String PAGE_DESCRIPTION = Messages.getString("ProjectSelectionPage.1"); //$NON-NLS-1$
 
@@ -88,22 +88,22 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 			return;
 		}
 
-		Object selectedElement= selection.getFirstElement();
+		Object selectedElement = selection.getFirstElement();
 		if (selectedElement == null) {
-			selectedElement= getActiveEditorCInput();
+			selectedElement = getActiveEditorCInput();
 		}
 
-		String projPath= null;
+		String projPath = null;
 
 		if (selectedElement instanceof IResource) {
-			IProject project= ((IResource)selectedElement).getProject();
+			IProject project = ((IResource) selectedElement).getProject();
 			if (project != null) {
-				projPath= project.getFullPath().makeRelative().toString();
+				projPath = project.getFullPath().makeRelative().toString();
 			}
 		} else if (selectedElement instanceof ICElement) {
-			ICProject cProject= ((ICElement)selectedElement).getCProject();
+			ICProject cProject = ((ICElement) selectedElement).getCProject();
 			if (cProject != null) {
-				projPath= cProject.getProject().getFullPath().makeRelative().toString();
+				projPath = cProject.getProject().getFullPath().makeRelative().toString();
 			}
 		}
 
@@ -119,11 +119,11 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	 * return null
 	 */
 	private ICElement getActiveEditorCInput() {
-		IWorkbenchPage page= CUIPlugin.getActivePage();
+		IWorkbenchPage page = CUIPlugin.getActivePage();
 		if (page != null) {
-			IEditorPart part= page.getActiveEditor();
+			IEditorPart part = page.getActiveEditor();
 			if (part != null) {
-				IEditorInput editorInput= part.getEditorInput();
+				IEditorInput editorInput = part.getEditorInput();
 				if (editorInput != null) {
 					return editorInput.getAdapter(ICElement.class);
 				}
@@ -136,9 +136,9 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 
 		try {
 			// find the first C project
-			IProject[] projects= workspaceRoot.getProjects();
-			for (int i= 0; i < projects.length; i++) {
-				IProject project= projects[i];
+			IProject[] projects = workspaceRoot.getProjects();
+			for (int i = 0; i < projects.length; i++) {
+				IProject project = projects[i];
 				if (project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
 					projectName = project.getFullPath().makeRelative().toString();
 					break;
@@ -176,12 +176,12 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
-		Composite composite= new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 
-		GridLayout layout= new GridLayout();
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;
-		layout.numColumns= 3;
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 3;
 		composite.setLayout(layout);
 
 		createProjectFiled(composite);
@@ -199,23 +199,22 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	private void createProjectFiled(Composite parent) {
 		getLabelControl(parent);
 		GridData gdLabel = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gdLabel.horizontalSpan= 1;
+		gdLabel.horizontalSpan = 1;
 		projectNameLabel.setLayoutData(gdLabel);
-
 
 		getTextControl(parent);
 		GridData gdText = new GridData();
-		gdText.horizontalAlignment= GridData.FILL;
-		gdText.grabExcessHorizontalSpace= true;
-		gdText.horizontalSpan= 1;
+		gdText.horizontalAlignment = GridData.FILL;
+		gdText.grabExcessHorizontalSpace = true;
+		gdText.horizontalSpan = 1;
 		gdText.widthHint = convertWidthInCharsToPixels(40);
 		projectNameText.setLayoutData(gdText);
 
 		getButtonControl(parent);
 		GridData gdButton = new GridData();
-		gdButton.horizontalAlignment= GridData.FILL;
-		gdButton.grabExcessHorizontalSpace= false;
-		gdButton.horizontalSpan= 1;
+		gdButton.horizontalAlignment = GridData.FILL;
+		gdButton.grabExcessHorizontalSpace = false;
+		gdButton.horizontalSpan = 1;
 		projectBrowseButton.setLayoutData(gdButton);
 	}
 
@@ -261,6 +260,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				packRootChangeControlPressed();
 			}
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				packRootChangeControlPressed();
@@ -274,61 +274,61 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	}
 
 	protected void packRootChangeControlPressed() {
-		ICProject cProject= chooseProject();
+		ICProject cProject = chooseProject();
 		if (cProject != null) {
-			IPath path= cProject.getProject().getFullPath().makeRelative();
+			IPath path = cProject.getProject().getFullPath().makeRelative();
 			projectName = path.toOSString();
 			projectNameText.setText(projectName);
 		}
 	}
 
-    private boolean validatePage() {
-		currentCProject= null;
+	private boolean validatePage() {
+		currentCProject = null;
 
 		String projectName = projectNameText.getText();
 		if (projectName.length() == 0) {
-            setErrorMessage(Messages.getString("ProjectSelectionPage.6")); //$NON-NLS-1$
+			setErrorMessage(Messages.getString("ProjectSelectionPage.6")); //$NON-NLS-1$
 			return false;
 		}
 
-		IPath path= new Path(projectName);
+		IPath path = new Path(projectName);
 		if (path.segmentCount() != 1) {
-            setErrorMessage(Messages.getString("ProjectSelectionPage.7")); //$NON-NLS-1$
+			setErrorMessage(Messages.getString("ProjectSelectionPage.7")); //$NON-NLS-1$
 			return false;
 		}
 
-		IProject project= workspaceRoot.getProject(path.toString());
+		IProject project = workspaceRoot.getProject(path.toString());
 		if (!project.exists()) {
-            setErrorMessage(Messages.getString("ProjectSelectionPage.8")); //$NON-NLS-1$
+			setErrorMessage(Messages.getString("ProjectSelectionPage.8")); //$NON-NLS-1$
 			return false;
 		}
 
 		try {
 			if (project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-				currentCProject= CoreModel.getDefault().create(project);
-		        setErrorMessage(null);
+				currentCProject = CoreModel.getDefault().create(project);
+				setErrorMessage(null);
 				return true;
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
-			currentCProject= null;
+			currentCProject = null;
 		}
 
-        setErrorMessage(Messages.getString("ProjectSelectionPage.9")); //$NON-NLS-1$
+		setErrorMessage(Messages.getString("ProjectSelectionPage.9")); //$NON-NLS-1$
 		return false;
-    }
+	}
 
 	private ICProject chooseProject() {
 		ICProject[] projects;
 		try {
-			projects= CoreModel.create(workspaceRoot).getCProjects();
+			projects = CoreModel.create(workspaceRoot).getCProjects();
 		} catch (CModelException e) {
 			CUIPlugin.log(e);
-			projects= new ICProject[0];
+			projects = new ICProject[0];
 		}
 
-		ILabelProvider labelProvider= new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT);
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
+		ILabelProvider labelProvider = new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT);
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setTitle(Messages.getString("ProjectSelectionPage.10")); //$NON-NLS-1$
 		dialog.setMessage(Messages.getString("ProjectSelectionPage.11")); //$NON-NLS-1$
 		dialog.setElements(projects);
@@ -345,7 +345,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	 */
 	@Override
 	public void setNextPage(IWizardPage next) {
-		this.next= next;
+		this.next = next;
 	}
 
 	/*
@@ -354,7 +354,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	 */
 	@Override
 	public IWizardPage getNextPage() {
-		if(next != null) {
+		if (next != null) {
 			return next;
 		}
 		return super.getNextPage();

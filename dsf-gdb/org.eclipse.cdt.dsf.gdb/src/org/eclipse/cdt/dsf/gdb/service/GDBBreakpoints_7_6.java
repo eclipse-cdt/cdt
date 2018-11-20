@@ -28,8 +28,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  *
  * @since 4.2
  */
-public class GDBBreakpoints_7_6 extends GDBBreakpoints_7_4
-{
+public class GDBBreakpoints_7_6 extends GDBBreakpoints_7_4 {
 	public GDBBreakpoints_7_6(DsfSession session) {
 		super(session);
 	}
@@ -46,13 +45,9 @@ public class GDBBreakpoints_7_6 extends GDBBreakpoints_7_4
 
 	private void doInitialize(final RequestMonitor rm) {
 		// Register this service
-		register(new String[] { IBreakpoints.class.getName(),
-		                        IBreakpointsExtension.class.getName(),
-								MIBreakpoints.class.getName(),
-								GDBBreakpoints_7_0.class.getName(),
-								GDBBreakpoints_7_2.class.getName(),
-								GDBBreakpoints_7_4.class.getName(),
-								GDBBreakpoints_7_6.class.getName() },
+		register(new String[] { IBreakpoints.class.getName(), IBreakpointsExtension.class.getName(),
+				MIBreakpoints.class.getName(), GDBBreakpoints_7_0.class.getName(), GDBBreakpoints_7_2.class.getName(),
+				GDBBreakpoints_7_4.class.getName(), GDBBreakpoints_7_6.class.getName() },
 				new Hashtable<String, String>());
 
 		rm.done();
@@ -60,10 +55,10 @@ public class GDBBreakpoints_7_6 extends GDBBreakpoints_7_4
 
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
-        unregister();
+		unregister();
 		super.shutdown(requestMonitor);
 	}
-	
+
 	@Override
 	protected boolean bpThreadGroupInfoAvailable() {
 		return true;

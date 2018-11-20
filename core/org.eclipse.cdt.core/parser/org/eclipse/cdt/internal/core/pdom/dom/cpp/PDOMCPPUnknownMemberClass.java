@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -31,7 +31,7 @@ public class PDOMCPPUnknownMemberClass extends CPPUnknownMemberClass implements 
 
 	public PDOMCPPUnknownMemberClass(IIndexFragment frag, IType owner, char[] name) {
 		super(owner, name);
-		fFragment= frag;
+		fFragment = frag;
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class PDOMCPPUnknownMemberClass extends CPPUnknownMemberClass implements 
 			return null;
 		}
 	}
-	
+
 	@Override
 	protected CPPUnknownTypeScope createScope() {
 		return new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));

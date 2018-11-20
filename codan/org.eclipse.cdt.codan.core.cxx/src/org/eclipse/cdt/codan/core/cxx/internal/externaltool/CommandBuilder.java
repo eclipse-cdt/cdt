@@ -25,8 +25,7 @@ import org.eclipse.core.runtime.Path;
  * Creates the command to use to invoke an external tool.
  */
 class CommandBuilder {
-	Command buildCommand(InvocationParameters parameters, ConfigurationSettings settings,
-			ArgsSeparator argsSeparator) {
+	Command buildCommand(InvocationParameters parameters, ConfigurationSettings settings, ArgsSeparator argsSeparator) {
 		IPath executablePath = executablePath(settings);
 		String[] args = argsToPass(parameters, settings, argsSeparator);
 		return new Command(executablePath, args);
@@ -37,8 +36,8 @@ class CommandBuilder {
 		return new Path(executablePath.toString());
 	}
 
-	private String[] argsToPass(InvocationParameters parameters,
-			ConfigurationSettings configurationSettings, ArgsSeparator argsSeparator) {
+	private String[] argsToPass(InvocationParameters parameters, ConfigurationSettings configurationSettings,
+			ArgsSeparator argsSeparator) {
 		String actualFilePath = parameters.getActualFilePath();
 		String[] args = configuredArgs(configurationSettings, argsSeparator);
 		return addFilePathToArgs(actualFilePath, args);

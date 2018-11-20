@@ -315,7 +315,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testDifferentComments() throws Exception {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(17,23);
+		checkErrorLines(17, 23);
 	}
 
 	// void foo(void) {

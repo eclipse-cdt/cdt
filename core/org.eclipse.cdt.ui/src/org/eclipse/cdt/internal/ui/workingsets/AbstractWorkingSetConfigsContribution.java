@@ -115,8 +115,8 @@ abstract class AbstractWorkingSetConfigsContribution extends CompoundContributio
 				if (!ssel.isEmpty()) {
 					Object first = ssel.getFirstElement();
 					if (first instanceof IWorkingSet) {
-						workingSet = WorkingSetConfigurationManager.getDefault().getWorkingSet(
-								((IWorkingSet) first).getName());
+						workingSet = WorkingSetConfigurationManager.getDefault()
+								.getWorkingSet(((IWorkingSet) first).getName());
 					}
 				}
 			}

@@ -25,12 +25,12 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 
 	public FunctionDeclaration(ICElement parent, String name) {
 		super(parent, name, ICElement.C_FUNCTION_DECLARATION);
-		fParameterTypes= fgEmptyStrings;
+		fParameterTypes = fgEmptyStrings;
 	}
 
 	public FunctionDeclaration(ICElement parent, String name, int type) {
 		super(parent, name, type);
-		fParameterTypes= fgEmptyStrings;
+		fParameterTypes = fgEmptyStrings;
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}
 
 	@Override
-	public String getSignature() throws CModelException{
+	public String getSignature() throws CModelException {
 		return getSignature(this);
 	}
 
@@ -115,7 +115,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		return new FunctionInfo(this);
 	}
 
-	protected FunctionInfo getFunctionInfo() throws CModelException{
+	protected FunctionInfo getFunctionInfo() throws CModelException {
 		return (FunctionInfo) getElementInfo();
 	}
 
@@ -128,9 +128,8 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}
 
 	public static boolean equals(IFunctionDeclaration lhs, IFunctionDeclaration rhs) {
-		return CElement.equals(lhs, rhs) &&
-			Util.equalArraysOrNull(lhs.getParameterTypes(), rhs.getParameterTypes()) &&
-			lhs.getReturnType().equals(rhs.getReturnType());
+		return CElement.equals(lhs, rhs) && Util.equalArraysOrNull(lhs.getParameterTypes(), rhs.getParameterTypes())
+				&& lhs.getReturnType().equals(rhs.getReturnType());
 	}
 
 	/**
@@ -138,11 +137,11 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
 	@Override
-	public boolean isConst() throws CModelException{
+	public boolean isConst() throws CModelException {
 		return getFunctionInfo().isConst();
 	}
 
-	public void setConst(boolean isConst) throws CModelException{
+	public void setConst(boolean isConst) throws CModelException {
 		getFunctionInfo().setConst(isConst);
 	}
 

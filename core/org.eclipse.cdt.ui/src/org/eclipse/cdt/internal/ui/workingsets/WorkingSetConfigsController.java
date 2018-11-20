@@ -118,8 +118,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 						ITreeContentProvider content = (ITreeContentProvider) tree.getContentProvider();
 
 						if ((initialWorkingSet != null)
-								&& Arrays.asList(content.getElements(tree.getInput())).contains(
-										initialWorkingSet)) {
+								&& Arrays.asList(content.getElements(tree.getInput())).contains(initialWorkingSet)) {
 							initialSelection = initialWorkingSet;
 						} else {
 							// we have a most-recently-used working set. Just
@@ -289,8 +288,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	 */
 	private void addConfig() {
 		InputDialog dlg = new InputDialog(tree.getTree().getShell(),
-				WorkingSetMessages.WSConfigsController_addDlg_title,
-				WorkingSetMessages.WSConfigsController_addDlg_msg,
+				WorkingSetMessages.WSConfigsController_addDlg_title, WorkingSetMessages.WSConfigsController_addDlg_msg,
 				WorkingSetMessages.WSConfigsController_addDlg_defaultName, new IInputValidator() {
 
 					@Override
@@ -306,8 +304,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 				});
 
 		if (dlg.open() == IDialogConstants.OK_ID) {
-			IWorkingSetConfiguration.ISnapshot newConfig = currentWorkingSet.createConfiguration(dlg
-					.getValue());
+			IWorkingSetConfiguration.ISnapshot newConfig = currentWorkingSet.createConfiguration(dlg.getValue());
 			tree.refresh(currentWorkingSet);
 			tree.setSelection(new StructuredSelection(newConfig), true);
 			currentConfig = newConfig;
@@ -335,8 +332,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	private void renameConfig() {
 		InputDialog dlg = new InputDialog(tree.getTree().getShell(),
 				WorkingSetMessages.WSConfigsController_renameDlg_title,
-				WorkingSetMessages.WSConfigsController_renameDlg_msg, currentConfig.getName(),
-				new IInputValidator() {
+				WorkingSetMessages.WSConfigsController_renameDlg_msg, currentConfig.getName(), new IInputValidator() {
 
 					@Override
 					public String isValid(String newText) {

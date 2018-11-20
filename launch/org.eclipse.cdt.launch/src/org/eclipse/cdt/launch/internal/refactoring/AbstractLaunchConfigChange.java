@@ -60,8 +60,7 @@ public abstract class AbstractLaunchConfigChange extends Change {
 	}
 
 	@Override
-	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException,
-			OperationCanceledException {
+	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 
 		return new RefactoringStatus();
 	}
@@ -91,8 +90,7 @@ public abstract class AbstractLaunchConfigChange extends Change {
 			((CompositeChange) change).add(toAppend);
 			return change;
 		} else {
-			return new CompositeChange(LaunchMessages.AbstractChange_compositeName0, 
-					new Change[] { change, toAppend });
+			return new CompositeChange(LaunchMessages.AbstractChange_compositeName0, new Change[] { change, toAppend });
 		}
 	}
 }

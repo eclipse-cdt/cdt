@@ -22,14 +22,14 @@ import org.eclipse.debug.core.model.IMemoryBlock;
  * @since 5.0
  */
 public interface IGdbMemoryAddressInfoTypeRetrieval {
-    /**
-     * @return the String representing the type of information items being provided
-     */
-    String getInfoType();
+	/**
+	 * @return the String representing the type of information items being provided
+	 */
+	String getInfoType();
 
-    /**
-     * The implementation provides the items of an associated type which could be pointing to a memory address
-     */
-    void itemsRequest(IDMContext selectionContext, IMemoryBlock memoryBlock,
-            DataRequestMonitor<IMemoryBlockAddressInfoItem[]> rm);
+	/**
+	 * The implementation provides the items of an associated type which could be pointing to a memory address
+	 */
+	void itemsRequest(IDMContext selectionContext, IMemoryBlock memoryBlock,
+			DataRequestMonitor<IMemoryBlockAddressInfoItem[]> rm);
 }

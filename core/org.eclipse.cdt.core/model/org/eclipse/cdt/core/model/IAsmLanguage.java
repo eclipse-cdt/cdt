@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * This is an optional extension interface to {@link ILanguage} which allows
  * an assembly language variant to expose certain syntax characteristics. 
@@ -28,14 +27,14 @@ package org.eclipse.cdt.core.model;
  * @since 5.0
  */
 public interface IAsmLanguage {
-	
+
 	/**
 	 * Get the set of valid line comment characters defined for this assembly variant.
 	 * 
 	 * @return an array line comment characters
 	 */
 	char[] getLineCommentCharacters();
-	
+
 	/**
 	 * Get the line separator character defined for this assembly variant.
 	 * The line separator character is used to split physical lines into logical lines.
@@ -44,7 +43,7 @@ public interface IAsmLanguage {
 	 * @return the line separator character or <code>'\0'</code>
 	 */
 	char getLineSeparatorCharacter();
-	
+
 	/**
 	 * Get the set of assembler directives defined for this variant.
 	 * 

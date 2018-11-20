@@ -32,16 +32,15 @@ public class GCCBuildASTParserAction extends C99BuildASTParserAction {
 
 	private final ICNodeFactory nodeFactory;
 
-	
-	public GCCBuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, ICNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+	public GCCBuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, ICNodeFactory nodeFactory,
+			ISecondaryParserFactory parserFactory) {
 		super(parser, astStack, nodeFactory, parserFactory);
 		this.nodeFactory = nodeFactory;
 	}
-	
-	
+
 	/**
 	 * designator_base
-     *     ::= identifier_token ':'		
+	 *     ::= identifier_token ':'		
 	 */
 	public void consumeDesignatorFieldGCC() {
 		IASTName name = createName(stream.getLeftIToken());
@@ -49,7 +48,7 @@ public class GCCBuildASTParserAction extends C99BuildASTParserAction {
 		setOffsetAndLength(designator);
 		astStack.push(designator);
 	}
-	
+
 	/**
 	 * designator ::= '[' constant_expression '...' constant_expression']'
 	 */
@@ -60,28 +59,28 @@ public class GCCBuildASTParserAction extends C99BuildASTParserAction {
 		setOffsetAndLength(designator);
 		astStack.push(designator);
 	}
-	
+
 	/**
 	 * typeof_type_specifier
-     *     ::= 'typeof' unary_expression
-     *   
-     * typeof_declaration_specifiers
-     *     ::= typeof_type_specifier
-     *       | no_type_declaration_specifiers  typeof_type_specifier
-     *       | typeof_declaration_specifiers no_type_declaration_specifier
-     *
-     * declaration_specifiers
-     *     ::= <openscope-ast> typeof_declaration_specifiers
+	 *     ::= 'typeof' unary_expression
+	 *   
+	 * typeof_declaration_specifiers
+	 *     ::= typeof_type_specifier
+	 *       | no_type_declaration_specifiers  typeof_type_specifier
+	 *       | typeof_declaration_specifiers no_type_declaration_specifier
+	 *
+	 * declaration_specifiers
+	 *     ::= <openscope-ast> typeof_declaration_specifiers
 	 */
 	public void consumeDeclarationSpecifiersTypeof() {
 		List<Object> topScope = astStack.closeScope();
-		
+
 		// There's an expression somewhere on the stack, find it		
 		IASTExpression expr = findFirstAndRemove(topScope, IASTExpression.class);
 		ICASTSimpleDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifierGCC(expr);
-		
+
 		// now apply the rest of the specifiers
-		for(Object token : topScope) {
+		for (Object token : topScope) {
 			setSpecifier(declSpec, token);
 		}
 

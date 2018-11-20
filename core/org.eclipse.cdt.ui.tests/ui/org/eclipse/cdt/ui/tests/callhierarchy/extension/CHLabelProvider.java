@@ -25,7 +25,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 public class CHLabelProvider implements IStyledLabelProvider {
 
-	public static String ICON_PATH= "$nl$/icons/obj16/container_obj.gif";
+	public static String ICON_PATH = "$nl$/icons/obj16/container_obj.gif";
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
@@ -47,27 +47,27 @@ public class CHLabelProvider implements IStyledLabelProvider {
 	@Override
 	public StyledString getStyledText(Object element) {
 		if (element instanceof DslNode) {
-			DslNode node = (DslNode)element;
-    		ICElement decl = node.getRepresentedDeclaration();
+			DslNode node = (DslNode) element;
+			ICElement decl = node.getRepresentedDeclaration();
 
-    		if (decl !=null) {
-    			StyledString label = new StyledString();
-    			label.append(decl.getElementName());
-        		if (node.getDslNodeName() != null) {
-        			return StyledCellLabelProvider.styleDecoratedString(node.getDslNodeName(), StyledString.DECORATIONS_STYLER, label);
-        		}
-        		return label;
-    		}
-        }
+			if (decl != null) {
+				StyledString label = new StyledString();
+				label.append(decl.getElementName());
+				if (node.getDslNodeName() != null) {
+					return StyledCellLabelProvider.styleDecoratedString(node.getDslNodeName(),
+							StyledString.DECORATIONS_STYLER, label);
+				}
+				return label;
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof DslNode) {
-        	Image img = AbstractUIPlugin.imageDescriptorFromPlugin(
-        			CUIPlugin.PLUGIN_ID, ICON_PATH).createImage(); //$NON-NLS-1$
-        	return img;
+			Image img = AbstractUIPlugin.imageDescriptorFromPlugin(CUIPlugin.PLUGIN_ID, ICON_PATH).createImage(); //$NON-NLS-1$
+			return img;
 		}
 		return null;
 	}

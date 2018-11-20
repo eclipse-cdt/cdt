@@ -20,9 +20,9 @@ import org.eclipse.jface.dialogs.IDialogPage;
 public interface ICOptionPage extends IDialogPage {
 
 	public void setContainer(ICOptionContainer container);
-		
+
 	public boolean isValid();
-	
+
 	public void performApply(IProgressMonitor monitor) throws CoreException;
 
 	public void performDefaults();

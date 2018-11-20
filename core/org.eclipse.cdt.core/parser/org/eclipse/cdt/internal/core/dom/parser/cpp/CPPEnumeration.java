@@ -60,26 +60,32 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		public CPPEnumerationProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
 		}
+
 		@Override
 		public IEnumerator[] getEnumerators() {
 			return EMPTY_ENUMERATORS;
 		}
+
 		@Override
 		public long getMinValue() {
 			return 0;
 		}
+
 		@Override
 		public long getMaxValue() {
 			return 0;
 		}
+
 		@Override
 		public boolean isScoped() {
 			return false;
 		}
+
 		@Override
 		public IType getFixedType() {
 			return null;
 		}
+
 		@Override
 		public ICPPScope asScope() {
 			return this;
@@ -88,39 +94,39 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 
 	private final boolean fIsScoped;
 	private final IType fFixedType;
-	private IASTName fDefinition= NOT_INITIALIZED;
-    private IASTName[] fDeclarations= IASTName.EMPTY_NAME_ARRAY;
+	private IASTName fDefinition = NOT_INITIALIZED;
+	private IASTName[] fDeclarations = IASTName.EMPTY_NAME_ARRAY;
 	private Long fMaxValue;
 	private Long fMinValue;
 
 	private ICPPEnumeration fIndexBinding;
 	private boolean fSearchedIndex;
 
-    public CPPEnumeration(ICPPASTEnumerationSpecifier spec, IType fixedType) {
-        final IASTName name = spec.getName();
-        fIsScoped= spec.isScoped();
-        fFixedType= fixedType;
-        if (spec.isOpaque()) {
-        	addDeclaration(name);
-        } else {
-        	addDefinition(name);
-        }
+	public CPPEnumeration(ICPPASTEnumerationSpecifier spec, IType fixedType) {
+		final IASTName name = spec.getName();
+		fIsScoped = spec.isScoped();
+		fFixedType = fixedType;
+		if (spec.isOpaque()) {
+			addDeclaration(name);
+		} else {
+			addDefinition(name);
+		}
 		name.setBinding(this);
-    }
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getDeclarations() {
-    	fDeclarations= ArrayUtil.trim(fDeclarations);
-    	return fDeclarations;
-    }
+		fDeclarations = ArrayUtil.trim(fDeclarations);
+		return fDeclarations;
+	}
 
-    private class FindDefinitionAction extends ASTVisitor {
+	private class FindDefinitionAction extends ASTVisitor {
 		private char[] nameArray = CPPEnumeration.this.getNameCharArray();
 		{
-			shouldVisitNames          = true;
-			shouldVisitDeclarations   = true;
+			shouldVisitNames = true;
+			shouldVisitDeclarations = true;
 			shouldVisitDeclSpecifiers = true;
-			shouldVisitDeclarators    = true;
+			shouldVisitDeclarators = true;
 		}
 
 		@Override
@@ -129,9 +135,8 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 				return PROCESS_SKIP;
 			char[] c = name.getLookupKey();
 			final IASTNode parent = name.getParent();
-			if (parent instanceof ICPPASTEnumerationSpecifier &&
-					!((ICPPASTEnumerationSpecifier) parent).isOpaque() &&
-					CharArrayUtils.equals(c, nameArray)) {
+			if (parent instanceof ICPPASTEnumerationSpecifier && !((ICPPASTEnumerationSpecifier) parent).isOpaque()
+					&& CharArrayUtils.equals(c, nameArray)) {
 				IBinding binding = name.resolveBinding();
 				if (binding == CPPEnumeration.this && getDefinition() == name) {
 					return PROCESS_ABORT;
@@ -146,94 +151,96 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 				return PROCESS_CONTINUE;
 			return PROCESS_SKIP;
 		}
+
 		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
 			return (declSpec instanceof ICPPASTEnumerationSpecifier) ? PROCESS_CONTINUE : PROCESS_SKIP;
 		}
+
 		@Override
 		public int visit(IASTDeclarator declarator) {
 			return PROCESS_SKIP;
 		}
 	}
 
-    @Override
+	@Override
 	public IASTName getDefinition() {
-    	if (fDefinition == NOT_INITIALIZED)
-    		return null;
-        return fDefinition;
-    }
+		if (fDefinition == NOT_INITIALIZED)
+			return null;
+		return fDefinition;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return new String(getNameCharArray());
-    }
+		return new String(getNameCharArray());
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-    	return getADeclaration().getSimpleID();
-    }
+		return getADeclaration().getSimpleID();
+	}
 
 	private IASTName getADeclaration() {
-    	if (fDefinition != null && fDefinition != NOT_INITIALIZED)
-    		return fDefinition;
-    	return fDeclarations[0];
+		if (fDefinition != null && fDefinition != NOT_INITIALIZED)
+			return fDefinition;
+		return fDeclarations[0];
 	}
 
 	@Override
 	public IScope getScope() {
-        return CPPVisitor.getContainingScope(getADeclaration());
-    }
+		return CPPVisitor.getContainingScope(getADeclaration());
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-    	throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
-    }
+		throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName(this);
-    }
+		return CPPVisitor.getQualifiedName(this);
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray(this);
-    }
+		return CPPVisitor.getQualifiedNameCharArray(this);
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
-        IScope scope = getScope();
-        while (scope != null) {
-            if (scope instanceof ICPPBlockScope)
-                return false;
-            scope = scope.getParent();
-        }
-        return true;
-    }
+		IScope scope = getScope();
+		while (scope != null) {
+			if (scope instanceof ICPPBlockScope)
+				return false;
+			scope = scope.getParent();
+		}
+		return true;
+	}
 
 	@Override
 	public void addDefinition(IASTNode node) {
 		assert fDefinition == null || fDefinition == NOT_INITIALIZED;
-		fDefinition= (IASTName) node;
+		fDefinition = (IASTName) node;
 	}
 
 	@Override
 	public void addDeclaration(IASTNode node) {
 		assert node instanceof IASTName;
 		if (fDeclarations == null) {
-			fDeclarations= new IASTName[] {(IASTName) node};
+			fDeclarations = new IASTName[] { (IASTName) node };
 		} else {
-			fDeclarations= ArrayUtil.append(fDeclarations, (IASTName) node);
+			fDeclarations = ArrayUtil.append(fDeclarations, (IASTName) node);
 		}
 	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType type) {
-        if (type == this)
-            return true;
-        if (type instanceof ITypedef || type instanceof IIndexBinding)
-            return type.isSameType(this);
-        return false;
-    }
+		if (type == this)
+			return true;
+		if (type instanceof ITypedef || type instanceof IIndexBinding)
+			return type.isSameType(this);
+		return false;
+	}
 
 	@Override
 	public ILinkage getLinkage() {
@@ -256,7 +263,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 			return fMinValue.longValue();
 
 		long minValue = SemanticUtil.computeMinValue(this);
-		fMinValue= minValue;
+		fMinValue = minValue;
 		return minValue;
 	}
 
@@ -266,7 +273,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 			return fMaxValue.longValue();
 
 		long maxValue = SemanticUtil.computeMaxValue(this);
-		fMaxValue= maxValue;
+		fMaxValue = maxValue;
 		return maxValue;
 	}
 
@@ -280,32 +287,32 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		return fFixedType;
 	}
 
-    @Override
+	@Override
 	public IEnumerator[] getEnumerators() {
-    	findDefinition();
-    	final IASTName definition = getDefinition();
+		findDefinition();
+		final IASTName definition = getDefinition();
 		if (definition == null) {
-			ICPPEnumeration typeInIndex= getIndexBinding();
+			ICPPEnumeration typeInIndex = getIndexBinding();
 			if (typeInIndex != null) {
 				return typeInIndex.getEnumerators();
 			}
-    		return EMPTY_ENUMERATORS;
-    	}
+			return EMPTY_ENUMERATORS;
+		}
 
 		IASTEnumerator[] enums = ((IASTEnumerationSpecifier) definition.getParent()).getEnumerators();
-        IEnumerator[] bindings = new IEnumerator[enums.length];
-        for (int i = 0; i < enums.length; i++) {
-            bindings[i] = (IEnumerator) enums[i].getName().resolveBinding();
-        }
-        return bindings;
-    }
+		IEnumerator[] bindings = new IEnumerator[enums.length];
+		for (int i = 0; i < enums.length; i++) {
+			bindings[i] = (IEnumerator) enums[i].getName().resolveBinding();
+		}
+		return bindings;
+	}
 
 	private ICPPEnumeration getIndexBinding() {
 		if (!fSearchedIndex) {
 			final IASTTranslationUnit translationUnit = getADeclaration().getTranslationUnit();
-			IIndex index= translationUnit.getIndex();
+			IIndex index = translationUnit.getIndex();
 			if (index != null) {
-				fIndexBinding= (ICPPEnumeration) index.adaptBinding(this);
+				fIndexBinding = (ICPPEnumeration) index.adaptBinding(this);
 			}
 		}
 		return fIndexBinding;
@@ -316,20 +323,20 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		findDefinition();
 		IASTName def = getDefinition();
 		if (def == null) {
-			ICPPEnumeration indexBinding= getIndexBinding();
+			ICPPEnumeration indexBinding = getIndexBinding();
 			if (indexBinding != null) {
 				return indexBinding.asScope();
 			}
-			def= getADeclaration();
+			def = getADeclaration();
 		}
 		return ((ICPPASTEnumerationSpecifier) def.getParent()).getScope();
 	}
 
 	private void findDefinition() {
-    	if (fDefinition == NOT_INITIALIZED) {
-    		FindDefinitionAction action = new FindDefinitionAction();
-    		IASTNode node = CPPVisitor.getContainingBlockItem(getADeclaration()).getParent();
-    		node.accept(action);
-    	}
+		if (fDefinition == NOT_INITIALIZED) {
+			FindDefinitionAction action = new FindDefinitionAction();
+			IASTNode node = CPPVisitor.getContainingBlockItem(getADeclaration()).getParent();
+			node.accept(action);
+		}
 	}
 }

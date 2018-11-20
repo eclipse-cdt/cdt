@@ -22,12 +22,14 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 @Immutable
 public class MIThreadGroupAddedEvent extends MIEvent<IProcessDMContext> {
 
-    final private String fGroupId;
+	final private String fGroupId;
 
-    public MIThreadGroupAddedEvent(IProcessDMContext ctx, int token, String groupId) {
-        super(ctx, token, null);
-        fGroupId = groupId;
-    }
-    
-    public String getGroupId() { return fGroupId; }
+	public MIThreadGroupAddedEvent(IProcessDMContext ctx, int token, String groupId) {
+		super(ctx, token, null);
+		fGroupId = groupId;
+	}
+
+	public String getGroupId() {
+		return fGroupId;
+	}
 }

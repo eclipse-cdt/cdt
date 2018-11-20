@@ -21,19 +21,19 @@ package org.eclipse.cdt.dsf.debug.service;
  */
 public interface IMixedInstruction {
 
-    /**
-     * @return the file name
-     */
-    String getFileName();
-    
-    /**
-     * @return the line Number.
-     */
-    int getLineNumber();
-    
-    /**
-     * @return the array of instruction.
-     */
-    IInstruction[] getInstructions();
+	/**
+	 * @return the file name
+	 */
+	String getFileName();
+
+	/**
+	 * @return the line Number.
+	 */
+	int getLineNumber();
+
+	/**
+	 * @return the array of instruction.
+	 */
+	IInstruction[] getInstructions();
 
 }

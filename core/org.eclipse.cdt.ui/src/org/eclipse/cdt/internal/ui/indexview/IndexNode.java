@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.indexview;
 
@@ -25,8 +25,8 @@ class IndexNode {
 	String fText;
 	Image fImage;
 	boolean fHasDeclarationInProject;
-	int fBindingKind= 0;
-	
+	int fBindingKind = 0;
+
 	public ICProject getProject() {
 		if (fParent instanceof IndexNode) {
 			return ((IndexNode) fParent).getProject();
@@ -71,5 +71,5 @@ class IndexNode {
 			return false;
 		return true;
 	}
-	
+
 }

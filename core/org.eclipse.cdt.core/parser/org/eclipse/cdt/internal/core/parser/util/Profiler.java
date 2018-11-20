@@ -51,25 +51,25 @@ import java.util.Map.Entry;
  */
 public class Profiler {
 	private static class Timer {
-		long elapsedTime;  // In nanoseconds 
+		long elapsedTime; // In nanoseconds 
 		long counter;
-		long startTime;    // Time in nanoseconds when the timer was started.
+		long startTime; // Time in nanoseconds when the timer was started.
 		int recursionDepth;
-		
+
 		final long getElapsedTime() {
 			return elapsedTime;
 		}
-		
+
 		final long getCounter() {
 			return counter;
 		}
-		
+
 		final void recordEntry() {
 			if (recursionDepth++ == 0) {
 				startTime = System.nanoTime();
 			}
 		}
-		
+
 		final void recordExit() {
 			if (--recursionDepth == 0) {
 				elapsedTime += System.nanoTime() - startTime;
@@ -77,15 +77,15 @@ public class Profiler {
 			}
 		}
 	}
-	
+
 	private Map<String, Timer> timers;
 	private Map<String, int[]> counters;
-	
+
 	private Profiler() {
 		timers = new HashMap<String, Timer>();
 		counters = new HashMap<String, int[]>();
 	}
-	
+
 	private static ThreadLocal<Profiler> threadProfiler = new ThreadLocal<Profiler>();
 
 	/**
@@ -136,25 +136,24 @@ public class Profiler {
 	public static void printStats() {
 		Profiler profiler = threadProfiler.get();
 		if (profiler != null) {
-			List<Map.Entry<String, Timer>> list =
-					new ArrayList<Map.Entry<String, Timer>>(profiler.timers.entrySet());
+			List<Map.Entry<String, Timer>> list = new ArrayList<Map.Entry<String, Timer>>(profiler.timers.entrySet());
 			Comparator<Map.Entry<String, Timer>> c = new Comparator<Map.Entry<String, Timer>>() {
 				@Override
 				public int compare(Entry<String, Timer> o1, Entry<String, Timer> o2) {
 					long diff = o2.getValue().getElapsedTime() - o1.getValue().getElapsedTime();
-					return diff < 0 ? -1 : diff > 0 ? 1 : 0; 
+					return diff < 0 ? -1 : diff > 0 ? 1 : 0;
 				}
 			};
 			Collections.sort(list, c);
 			System.out.println("==="); //$NON-NLS-1$
 			for (Entry<String, Timer> item : list) {
 				System.out.println("===\t" + ((item.getValue().getElapsedTime() + 500000) / 1000000) + //$NON-NLS-1$
-						"\t"+ item.getValue().getCounter() + "\t" + item.getKey()); //$NON-NLS-1$ //$NON-NLS-2$
+						"\t" + item.getValue().getCounter() + "\t" + item.getKey()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			if (!profiler.counters.isEmpty()) {
-				List<Map.Entry<String, int[]>> keyList =
-					new ArrayList<Map.Entry<String, int[]>>(profiler.counters.entrySet());
+				List<Map.Entry<String, int[]>> keyList = new ArrayList<Map.Entry<String, int[]>>(
+						profiler.counters.entrySet());
 				Comparator<Map.Entry<String, int[]>> c2 = new Comparator<Map.Entry<String, int[]>>() {
 					@Override
 					public int compare(Entry<String, int[]> o1, Entry<String, int[]> o2) {

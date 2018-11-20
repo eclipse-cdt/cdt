@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Scope of a function, containing labels.
  */
 public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
-    private CharArrayObjectMap<ILabel> labels = CharArrayObjectMap.emptyMap();
+	private CharArrayObjectMap<ILabel> labels = CharArrayObjectMap.emptyMap();
 
 	/**
 	 * @param physicalNode
@@ -55,66 +55,66 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 
 	@Override
 	public void addBinding(IBinding binding) {
-	    // 3.3.4 only labels have function scope.
-	    if (!(binding instanceof ILabel))
-	        return;
+		// 3.3.4 only labels have function scope.
+		if (!(binding instanceof ILabel))
+			return;
 
-	    if (labels == CharArrayObjectMap.EMPTY_MAP)
-	        labels = new CharArrayObjectMap<>(2);
+		if (labels == CharArrayObjectMap.EMPTY_MAP)
+			labels = new CharArrayObjectMap<>(2);
 
-	    labels.put(binding.getNameCharArray(), (ILabel) binding);
+		labels.put(binding.getNameCharArray(), (ILabel) binding);
 	}
 
 	@Override
 	public IBinding[] find(String name) {
-	    char[] n = name.toCharArray();
-	    List<IBinding> bindings = new ArrayList<>();
+		char[] n = name.toCharArray();
+		List<IBinding> bindings = new ArrayList<>();
 
-	    for (int i = 0; i < labels.size(); i++) {
-	    	char[] key = labels.keyAt(i);
-	    	if (CharArrayUtils.equals(key, n)) {
-	    		bindings.add(labels.get(key));
-	    	}
-	    }
+		for (int i = 0; i < labels.size(); i++) {
+			char[] key = labels.keyAt(i);
+			if (CharArrayUtils.equals(key, n)) {
+				bindings.add(labels.get(key));
+			}
+		}
 
-	    IBinding[] additional = super.find(name);
-	    for (IBinding element : additional) {
-	    	bindings.add(element);
-	    }
+		IBinding[] additional = super.find(name);
+		for (IBinding element : additional) {
+			bindings.add(element);
+		}
 
-	    return bindings.toArray(new IBinding[bindings.size()]);
+		return bindings.toArray(new IBinding[bindings.size()]);
 	}
 
 	@Override
 	public IScope getParent() {
-	    // We can't just resolve the function and get its parent scope, since there are cases where that
-	    // could loop because resolving functions requires resolving their parameter types.
-	    IASTFunctionDeclarator funcDeclarator = (IASTFunctionDeclarator) getPhysicalNode();
-	    IASTName name = funcDeclarator.getName();
-	    if (name != null)
-	    	return CPPVisitor.getContainingNonTemplateScope(name.getLastName());
+		// We can't just resolve the function and get its parent scope, since there are cases where that
+		// could loop because resolving functions requires resolving their parameter types.
+		IASTFunctionDeclarator funcDeclarator = (IASTFunctionDeclarator) getPhysicalNode();
+		IASTName name = funcDeclarator.getName();
+		if (name != null)
+			return CPPVisitor.getContainingNonTemplateScope(name.getLastName());
 
-	    return super.getParent();
+		return super.getParent();
 	}
 
-    @Override
+	@Override
 	public IScope getBodyScope() {
-        IASTFunctionDeclarator fnDtor = (IASTFunctionDeclarator) getPhysicalNode();
-        IASTNode parent = fnDtor.getParent();
-        if (parent instanceof IASTFunctionDefinition) {
-            IASTStatement body = ((IASTFunctionDefinition) parent).getBody();
-            if (body instanceof IASTCompoundStatement)
-                return ((IASTCompoundStatement) body).getScope();
-        }
-        return null;
-    }
+		IASTFunctionDeclarator fnDtor = (IASTFunctionDeclarator) getPhysicalNode();
+		IASTNode parent = fnDtor.getParent();
+		if (parent instanceof IASTFunctionDefinition) {
+			IASTStatement body = ((IASTFunctionDefinition) parent).getBody();
+			if (body instanceof IASTCompoundStatement)
+				return ((IASTCompoundStatement) body).getScope();
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public IName getScopeName() {
-        IASTNode node = getPhysicalNode();
-        if (node instanceof IASTDeclarator) {
-            return ((IASTDeclarator) node).getName();
-        }
-        return null;
-    }
+		IASTNode node = getPhysicalNode();
+		if (node instanceof IASTDeclarator) {
+			return ((IASTDeclarator) node).getName();
+		}
+		return null;
+	}
 }

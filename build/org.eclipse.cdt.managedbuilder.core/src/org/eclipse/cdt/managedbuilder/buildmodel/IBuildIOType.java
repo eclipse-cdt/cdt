@@ -29,14 +29,14 @@ public interface IBuildIOType {
 	 * @return boolean
 	 */
 	boolean isInput();
-	
+
 	/**
 	 * Specifies a set of resources associated with this argument
 	 * 
 	 * @return IBuildResource[]
 	 */
 	IBuildResource[] getResources();
-	
+
 	/**
 	 * Specifies the build step this argument belongs to
 	 * 

@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.IInclude;
 public class Include extends SourceManipulation implements IInclude {
 	private String fullPath;
 	private final boolean standard;
-	private boolean fIsResolved= true;
+	private boolean fIsResolved = true;
 
 	public Include(ICElement parent, String name, boolean isStandard) {
 		super(parent, name, ICElement.C_INCLUDE);
@@ -57,7 +57,7 @@ public class Include extends SourceManipulation implements IInclude {
 	}
 
 	public void setResolved(boolean resolved) {
-		fIsResolved= resolved;
+		fIsResolved = resolved;
 	}
 
 	@Override
@@ -74,11 +74,8 @@ public class Include extends SourceManipulation implements IInclude {
 	}
 
 	public static boolean equals(IInclude lhs, IInclude rhs) {
-		return CElement.equals(lhs, rhs)
-			&& lhs.isActive() == rhs.isActive()
-			&& lhs.isResolved() == rhs.isResolved()
-			&& lhs.isLocal() == rhs.isLocal()
-			&& (lhs.getFullFileName() == rhs.getFullFileName()
-					|| lhs.getFullFileName() != null && lhs.getFullFileName().equals(rhs.getFullFileName()));
+		return CElement.equals(lhs, rhs) && lhs.isActive() == rhs.isActive() && lhs.isResolved() == rhs.isResolved()
+				&& lhs.isLocal() == rhs.isLocal() && (lhs.getFullFileName() == rhs.getFullFileName()
+						|| lhs.getFullFileName() != null && lhs.getFullFileName().equals(rhs.getFullFileName()));
 	}
 }

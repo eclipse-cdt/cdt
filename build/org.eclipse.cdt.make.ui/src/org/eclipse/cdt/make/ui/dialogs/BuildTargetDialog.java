@@ -55,7 +55,6 @@ public class BuildTargetDialog extends Dialog {
 		this(parent, container, true);
 	}
 
-
 	public void setTarget(IMakeTarget target) {
 		targetPart.setSelectedTarget(target);
 	}
@@ -73,7 +72,8 @@ public class BuildTargetDialog extends Dialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create Build and Cancel buttons by default
-		createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("BuildTargetDialog.button.build"), true); //$NON-NLS-1$
+		createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("BuildTargetDialog.button.build"), //$NON-NLS-1$
+				true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		getButton(IDialogConstants.OK_ID).setEnabled(targetPart.getSelectedTarget() != null);
 	}
@@ -86,7 +86,8 @@ public class BuildTargetDialog extends Dialog {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		title.setLayoutData(gd);
-		title.setText(MakeUIPlugin.getResourceString("BuildTargetDialog.title.makeTargetsFor") + fContainer.getFullPath().toString().substring(1)); //$NON-NLS-1$
+		title.setText(MakeUIPlugin.getResourceString("BuildTargetDialog.title.makeTargetsFor") //$NON-NLS-1$
+				+ fContainer.getFullPath().toString().substring(1));
 		targetPart.createControl(composite, SWT.NULL, 2);
 
 		gd = (GridData) targetPart.getControl().getLayoutData();

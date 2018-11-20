@@ -20,60 +20,60 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  */
 public abstract class MIAsyncRecord extends MIOOBRecord {
 
-    final static MIResult[] nullResults = new MIResult[0];
+	final static MIResult[] nullResults = new MIResult[0];
 
-    MIResult[] results = null;
-    String asynClass = ""; //$NON-NLS-1$
-    int token = -1;
+	MIResult[] results = null;
+	String asynClass = ""; //$NON-NLS-1$
+	int token = -1;
 
-    public int getToken() {
-        return token;
-    }
+	public int getToken() {
+		return token;
+	}
 
-    public void setToken(int t) {
-        token = t;
-    }
+	public void setToken(int t) {
+		token = t;
+	}
 
-    public String getAsyncClass() {
-        return asynClass;
-    }
+	public String getAsyncClass() {
+		return asynClass;
+	}
 
-    public void setAsyncClass(String a) {
-        asynClass = a;
-    }
+	public void setAsyncClass(String a) {
+		asynClass = a;
+	}
 
-    public MIResult[] getMIResults() {
-        if (results == null) {
-            return nullResults;
-        }
-        return results;
-    }
+	public MIResult[] getMIResults() {
+		if (results == null) {
+			return nullResults;
+		}
+		return results;
+	}
 
-    public void setMIResults(MIResult[] res) {
-        results = res;
-    }
+	public void setMIResults(MIResult[] res) {
+		results = res;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        if (token > 0) {
-            buffer.append(token);
-        }
-        if (this instanceof MIExecAsyncOutput) {
-            buffer.append('*');
-        } else if (this instanceof MIStatusAsyncOutput) {
-            buffer.append('+');
-        } else if (this instanceof MINotifyAsyncOutput) {
-            buffer.append('=');
-        }
-        buffer.append(asynClass);
-        if (results != null) {
-            for (int i = 0; i < results.length; i++) {
-                buffer.append(',');
-                buffer.append(results[i].toString());
-            }
-        }
-        buffer.append('\n');
-        return buffer.toString();
-    }
+	@Override
+	public String toString() {
+		StringBuilder buffer = new StringBuilder();
+		if (token > 0) {
+			buffer.append(token);
+		}
+		if (this instanceof MIExecAsyncOutput) {
+			buffer.append('*');
+		} else if (this instanceof MIStatusAsyncOutput) {
+			buffer.append('+');
+		} else if (this instanceof MINotifyAsyncOutput) {
+			buffer.append('=');
+		}
+		buffer.append(asynClass);
+		if (results != null) {
+			for (int i = 0; i < results.length; i++) {
+				buffer.append(',');
+				buffer.append(results[i].toString());
+			}
+		}
+		buffer.append('\n');
+		return buffer.toString();
+	}
 }

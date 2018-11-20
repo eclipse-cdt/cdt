@@ -20,10 +20,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 /**
  * Event issued when the PDA debugger is started.
  */
-public class PDAStartedEvent extends AbstractDMEvent<IExecutionDMContext> 
-    implements IStartedDMEvent
-{
-    PDAStartedEvent(PDAVirtualMachineDMContext context) {
-        super(context);
-    }
+public class PDAStartedEvent extends AbstractDMEvent<IExecutionDMContext> implements IStartedDMEvent {
+	PDAStartedEvent(PDAVirtualMachineDMContext context) {
+		super(context);
+	}
 }

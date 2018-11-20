@@ -32,14 +32,16 @@ public interface IGDBDebuggerConsole extends IDebuggerConsole {
 	 */
 	@Override
 	public default void consoleSelected() {
-		DsfSession session = ((GdbLaunch)getLaunch()).getSession();
-		if (!session.isActive()) {return;}
+		DsfSession session = ((GdbLaunch) getLaunch()).getSession();
+		if (!session.isActive()) {
+			return;
+		}
 
 		// only trigger the DV selection if the current selection is in
 		// a different session
 		IAdaptable context = DebugUITools.getDebugContext();
 		if (context != null) {
-			ILaunch selectedLaunch =  context.getAdapter(ILaunch.class);
+			ILaunch selectedLaunch = context.getAdapter(ILaunch.class);
 			if (getLaunch().equals(selectedLaunch)) {
 				return;
 			}

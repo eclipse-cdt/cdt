@@ -43,7 +43,7 @@ class CompositeCVariable extends CompositeCBinding implements IVariable {
 
 	@Override
 	public boolean isRegister() {
-		return ((IVariable)rbinding).isRegister();
+		return ((IVariable) rbinding).isRegister();
 	}
 
 	@Override

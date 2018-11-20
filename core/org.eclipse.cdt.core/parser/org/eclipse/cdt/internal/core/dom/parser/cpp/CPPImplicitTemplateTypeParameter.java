@@ -32,25 +32,25 @@ import org.eclipse.core.runtime.PlatformObject;
  *
  * Used for the template type parameters of implicit method templates.
  */
-public class CPPImplicitTemplateTypeParameter extends PlatformObject implements ICPPTemplateTypeParameter,
-		ICPPUnknownType, ICPPUnknownBinding {
+public class CPPImplicitTemplateTypeParameter extends PlatformObject
+		implements ICPPTemplateTypeParameter, ICPPUnknownType, ICPPUnknownBinding {
 	private int fParameterID;
 	private boolean fIsParameterPack;
 	private ICPPScope fUnknownScope;
-	
+
 	// The containing (implicit) template definition.
 	private ICPPTemplateDefinition fContainingTemplate;
-	
+
 	// The AST node that triggered the creation of the implicit template.
 	// For methods of generic lambdas, this is the lambda expression.
 	private IASTNode fNode;
-	
+
 	public CPPImplicitTemplateTypeParameter(IASTNode node, int position, boolean isParameterPack) {
 		fParameterID = computeParameterID(position);
 		fIsParameterPack = isParameterPack;
 		fNode = node;
 	}
-	
+
 	private int computeParameterID(int position) {
 		int nesting = 0;
 		for (IASTNode node = fNode; node != null; node = node.getParent()) {
@@ -61,11 +61,11 @@ public class CPPImplicitTemplateTypeParameter extends PlatformObject implements 
 		}
 		return (nesting << 16) + (position & 0xffff);
 	}
-	
+
 	public void setContainingTemplate(ICPPTemplateDefinition containingTemplate) {
 		fContainingTemplate = containingTemplate;
 	}
-	
+
 	@Override
 	public String[] getQualifiedName() throws DOMException {
 		return new String[] { getName() };
@@ -142,20 +142,20 @@ public class CPPImplicitTemplateTypeParameter extends PlatformObject implements 
 
 	@Override
 	public boolean isSameType(IType type) {
-        if (type == this)
-            return true;
-        if (type instanceof ITypedef)
-            return type.isSameType(this);
-        if (!(type instanceof ICPPTemplateTypeParameter))
-        	return false;
+		if (type == this)
+			return true;
+		if (type instanceof ITypedef)
+			return type.isSameType(this);
+		if (!(type instanceof ICPPTemplateTypeParameter))
+			return false;
 
-        return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
+		return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
 	}
 
 	@Override
 	public Object clone() {
-        return new CPPImplicitTemplateTypeParameter(fNode, getParameterPosition(), fIsParameterPack);
-    }
+		return new CPPImplicitTemplateTypeParameter(fNode, getParameterPosition(), fIsParameterPack);
+	}
 
 	@Override
 	public ICPPScope asScope() throws DOMException {

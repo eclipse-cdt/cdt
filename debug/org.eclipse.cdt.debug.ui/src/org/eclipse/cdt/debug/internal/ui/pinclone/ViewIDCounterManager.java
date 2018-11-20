@@ -42,14 +42,15 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public final class ViewIDCounterManager {
 	private static ViewIDCounterManager INSTANCE;
 	private static boolean fInitialized = false;
-	
+
 	private boolean fShuttingDown = false;
-	private final Map<String, Set<Integer>> viewIdToNextCounterMap = Collections.synchronizedMap(new HashMap<String, Set<Integer>>());
-	
+	private final Map<String, Set<Integer>> viewIdToNextCounterMap = Collections
+			.synchronizedMap(new HashMap<String, Set<Integer>>());
+
 	private ViewIDCounterManager() {
 		initListeners();
 	}
-	
+
 	/**
 	 * Returns an instance of the view id counter manager.
 	 * 
@@ -60,18 +61,22 @@ public final class ViewIDCounterManager {
 			INSTANCE = new ViewIDCounterManager();
 		}
 		return INSTANCE;
-	}	
-	
+	}
+
 	/**
 	 * Initialize this view ID counter manager. Catch up opened view and set the title
 	 * accordingly from the view's secondary id.
 	 */
 	synchronized public void init() {
-		if (fInitialized) return;
+		if (fInitialized)
+			return;
 		fInitialized = true;
-		
+
 		new WorkbenchJob("Initializing pinnable view") { //$NON-NLS-1$
-			{ setSystem(true); }
+			{
+				setSystem(true);
+			}
+
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -80,61 +85,73 @@ public final class ViewIDCounterManager {
 					for (IViewReference viewRef : viewRefs) {
 						try {
 							// initialize the view id counter map
-						    if (PinCloneUtils.isClonedPart(viewRef)) {
-						    	String id = viewRef.getId();
-						    	String secondaryId = viewRef.getSecondaryId();
-						        Set<Integer> secondaryIdSet = viewIdToNextCounterMap.get(id);
-						        if (secondaryIdSet == null) {
-						            secondaryIdSet = new HashSet<Integer>();
-						            viewIdToNextCounterMap.put(id, secondaryIdSet);
-						        }
-						        secondaryId = PinCloneUtils.decodeClonedPartSecondaryId(secondaryId);   
-						        secondaryIdSet.add(Integer.valueOf(secondaryId));
-						    }
-						    
-						    // set the view title
-						    IViewPart part = viewRef.getView(false);
-						    if (part != null && PinCloneUtils.isClonedPart(part)) {
-						        PinCloneUtils.setPartTitle(part);
-						    }						
+							if (PinCloneUtils.isClonedPart(viewRef)) {
+								String id = viewRef.getId();
+								String secondaryId = viewRef.getSecondaryId();
+								Set<Integer> secondaryIdSet = viewIdToNextCounterMap.get(id);
+								if (secondaryIdSet == null) {
+									secondaryIdSet = new HashSet<Integer>();
+									viewIdToNextCounterMap.put(id, secondaryIdSet);
+								}
+								secondaryId = PinCloneUtils.decodeClonedPartSecondaryId(secondaryId);
+								secondaryIdSet.add(Integer.valueOf(secondaryId));
+							}
+
+							// set the view title
+							IViewPart part = viewRef.getView(false);
+							if (part != null && PinCloneUtils.isClonedPart(part)) {
+								PinCloneUtils.setPartTitle(part);
+							}
 						} catch (Exception e) {
-							CDebugUIPlugin.log(e);					
+							CDebugUIPlugin.log(e);
 						}
-					}			
+					}
 				}
 				return Status.OK_STATUS;
 			}
 		}.schedule();
 	}
-	
+
 	private void initListeners() {
 		try {
 			// add a workbench listener to listen to preShutdown and ignore view part close event
 			IWorkbench wb = PlatformUI.getWorkbench();
 			wb.addWorkbenchListener(new IWorkbenchListener() {
 				@Override
-				public void postShutdown(IWorkbench workbench) {}
-				
+				public void postShutdown(IWorkbench workbench) {
+				}
+
 				@Override
 				public boolean preShutdown(IWorkbench workbench, boolean forced) {
 					fShuttingDown = true;
 					return true;
 				}
 			});
-			
+
 			final IPartListener2 partListener = new IPartListener2() {
 				@Override
-				public void partVisible(IWorkbenchPartReference partRef) {}					
+				public void partVisible(IWorkbenchPartReference partRef) {
+				}
+
 				@Override
-				public void partInputChanged(IWorkbenchPartReference partRef) {}						
+				public void partInputChanged(IWorkbenchPartReference partRef) {
+				}
+
 				@Override
-				public void partHidden(IWorkbenchPartReference partRef) {}						
+				public void partHidden(IWorkbenchPartReference partRef) {
+				}
+
 				@Override
-				public void partDeactivated(IWorkbenchPartReference partRef) {}																		
+				public void partDeactivated(IWorkbenchPartReference partRef) {
+				}
+
 				@Override
-				public void partBroughtToTop(IWorkbenchPartReference partRef) {}						
+				public void partBroughtToTop(IWorkbenchPartReference partRef) {
+				}
+
 				@Override
-				public void partActivated(IWorkbenchPartReference partRef) {}
+				public void partActivated(IWorkbenchPartReference partRef) {
+				}
 
 				@Override
 				public void partOpened(IWorkbenchPartReference partRef) {
@@ -143,66 +160,71 @@ public final class ViewIDCounterManager {
 						if (part != null && PinCloneUtils.isClonedPart(part)) {
 							PinCloneUtils.setPartTitle(part);
 						}
-					}					
+					}
 				}
-				
+
 				@Override
 				public void partClosed(IWorkbenchPartReference partRef) {
 					if (!fShuttingDown)
 						recycleCounterId(partRef);
 				}
 			};
-			
+
 			// subscribe to existing workbench window listener
 			for (IWorkbenchWindow ww : wb.getWorkbenchWindows()) {
 				ww.getPartService().addPartListener(partListener);
 			}
-			
+
 			// subscribe to new workbench window listener
-			wb.addWindowListener(new IWindowListener() {					
+			wb.addWindowListener(new IWindowListener() {
 				@Override
-				public void windowDeactivated(IWorkbenchWindow window) {}												
+				public void windowDeactivated(IWorkbenchWindow window) {
+				}
+
 				@Override
-				public void windowActivated(IWorkbenchWindow window) {}				
+				public void windowActivated(IWorkbenchWindow window) {
+				}
+
 				@Override
-				public void windowClosed(IWorkbenchWindow window) {}
-				
+				public void windowClosed(IWorkbenchWindow window) {
+				}
+
 				@Override
 				public void windowOpened(IWorkbenchWindow window) {
 					window.getPartService().addPartListener(partListener);
-				}		
+				}
 			});
 		} catch (Exception e) {
 			CDebugUIPlugin.log(e);
 		}
 	}
-	
+
 	private void recycleCounterId(IWorkbenchPartReference partRef) {
 		if (partRef instanceof IViewReference) {
 			IViewReference viewRef = ((IViewReference) partRef);
 			IWorkbenchPart part = viewRef.getPart(false);
-			if ( !(part instanceof IViewPart) || !PinCloneUtils.isClonedPart((IViewPart) part))
+			if (!(part instanceof IViewPart) || !PinCloneUtils.isClonedPart((IViewPart) part))
 				return;
-			
+
 			String viewId = viewRef.getId();
 			String secondaryId = viewRef.getSecondaryId();
-			
+
 			if (secondaryId != null) {
 				Set<Integer> secondaryIdSet = viewIdToNextCounterMap.get(viewId);
-				if (secondaryIdSet != null) {	
+				if (secondaryIdSet != null) {
 					secondaryIdSet.remove(Integer.valueOf(PinCloneUtils.decodeClonedPartSecondaryId(secondaryId)));
 				}
 			}
 		}
 	}
-	
+
 	public Integer getNextCounter(String viewId) {
 		Set<Integer> secondaryIdSet = viewIdToNextCounterMap.get(viewId);
 		if (secondaryIdSet == null) {
 			secondaryIdSet = new HashSet<Integer>();
 			viewIdToNextCounterMap.put(viewId, secondaryIdSet);
 		}
-		
+
 		for (int i = 1; i < Integer.MAX_VALUE; ++i) {
 			Integer next = Integer.valueOf(i);
 			if (!secondaryIdSet.contains(next)) {
@@ -210,7 +232,7 @@ public final class ViewIDCounterManager {
 				return next;
 			}
 		}
-		
+
 		return Integer.valueOf(0);
 	}
 }

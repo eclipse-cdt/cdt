@@ -143,26 +143,26 @@ public abstract class ASTVisitor {
 	 * Set this flag to visit captures
 	 * @since 5.3
 	 */
-	public boolean shouldVisitCaptures= false;
+	public boolean shouldVisitCaptures = false;
 
 	/**
 	 * Set this flag to visit virt-specifiers.
 	 * @since 5.7
 	 */
 	public boolean shouldVisitVirtSpecifiers = false;
-	
+
 	/**
 	 * Set this flag to visit decltype-specifiers.
 	 * @since 5.8
 	 */
 	public boolean shouldVisitDecltypeSpecifiers = false;
-	
+
 	/**
 	 * Per default inactive nodes are not visited. You can change that by setting
 	 * this flag to <code>true</code>.
 	 * @since 5.1
 	 */
-	public boolean includeInactiveNodes= false;
+	public boolean includeInactiveNodes = false;
 
 	/**
 	 * Normally neither ambiguous nodes nor their children are visited. By setting
@@ -217,28 +217,28 @@ public abstract class ASTVisitor {
 	 * @since 5.1
 	 */
 	public ASTVisitor(boolean visitNodes) {
-		shouldVisitArrayModifiers= visitNodes;
-		shouldVisitBaseSpecifiers= visitNodes;
-		shouldVisitCaptures= visitNodes;
-		shouldVisitDeclarations= visitNodes;
-		shouldVisitDeclarators= visitNodes;
-		shouldVisitDeclSpecifiers= visitNodes;
-		shouldVisitDesignators= visitNodes;
-		shouldVisitEnumerators= visitNodes;
-		shouldVisitExpressions= visitNodes;
-		shouldVisitInitializers= visitNodes;
-		shouldVisitNames= visitNodes;
-		shouldVisitNamespaces= visitNodes;
-		shouldVisitParameterDeclarations= visitNodes;
-		shouldVisitPointerOperators= visitNodes;
-		shouldVisitAttributes= visitNodes;
-		shouldVisitProblems= visitNodes;
-		shouldVisitStatements= visitNodes;
-		shouldVisitTemplateParameters= visitNodes;
-		shouldVisitTranslationUnit= visitNodes;
-		shouldVisitTypeIds= visitNodes;
-		shouldVisitVirtSpecifiers= visitNodes;
-		shouldVisitDecltypeSpecifiers= visitNodes;
+		shouldVisitArrayModifiers = visitNodes;
+		shouldVisitBaseSpecifiers = visitNodes;
+		shouldVisitCaptures = visitNodes;
+		shouldVisitDeclarations = visitNodes;
+		shouldVisitDeclarators = visitNodes;
+		shouldVisitDeclSpecifiers = visitNodes;
+		shouldVisitDesignators = visitNodes;
+		shouldVisitEnumerators = visitNodes;
+		shouldVisitExpressions = visitNodes;
+		shouldVisitInitializers = visitNodes;
+		shouldVisitNames = visitNodes;
+		shouldVisitNamespaces = visitNodes;
+		shouldVisitParameterDeclarations = visitNodes;
+		shouldVisitPointerOperators = visitNodes;
+		shouldVisitAttributes = visitNodes;
+		shouldVisitProblems = visitNodes;
+		shouldVisitStatements = visitNodes;
+		shouldVisitTemplateParameters = visitNodes;
+		shouldVisitTranslationUnit = visitNodes;
+		shouldVisitTypeIds = visitNodes;
+		shouldVisitVirtSpecifiers = visitNodes;
+		shouldVisitDecltypeSpecifiers = visitNodes;
 	}
 
 	// visit methods
@@ -370,7 +370,7 @@ public abstract class ASTVisitor {
 	public int visit(ICPPASTClassVirtSpecifier classVirtSpecifier) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	/**
 	 * @since 5.8
 	 */
@@ -448,7 +448,7 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 
-	public int leave(IASTProblem problem){
+	public int leave(IASTProblem problem) {
 		return PROCESS_CONTINUE;
 	}
 
@@ -507,14 +507,14 @@ public abstract class ASTVisitor {
 	public int leave(ICPPASTClassVirtSpecifier virtSpecifier) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	/**
 	 * @since 5.8
 	 */
 	public int leave(ICPPASTDecltypeSpecifier decltypeSpecifier) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	/**
 	 * For internal use, only. When {@link ASTVisitor#shouldVisitAmbiguousNodes} is set to true, the
 	 * visitor will be called for ambiguous nodes. However, the children of an ambiguous will not be

@@ -37,8 +37,8 @@ public final class CSearchMessages extends NLS {
 	public static String CSearchPage_searchFor_macro;
 	public static String CSearchPage_searchFor_any;
 	public static String CSearchPage_searchFor_classStruct;
-    public static String CSearchPage_label_note;
-    public static String CSearchPage_label_activeCodeRemark;
+	public static String CSearchPage_label_note;
+	public static String CSearchPage_label_activeCodeRemark;
 	public static String CSearchPage_limitTo_label;
 	public static String CSearchPage_limitTo_declarations;
 	public static String CSearchPage_limitTo_definitions;
@@ -105,7 +105,7 @@ public final class CSearchMessages extends NLS {
 		NLS.initializeMessages(CSearchMessages.class.getName(), CSearchMessages.class);
 	}
 
-    private CSearchMessages() {
-        // Do not instantiate
-    }
+	private CSearchMessages() {
+		// Do not instantiate
+	}
 }

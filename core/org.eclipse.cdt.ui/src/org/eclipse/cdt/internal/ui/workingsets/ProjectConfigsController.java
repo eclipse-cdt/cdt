@@ -125,8 +125,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 	@Override
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element = event.getElement();
-		IWorkingSetProjectConfigurationController controller = controllerContext
-				.controllerForElement(element);
+		IWorkingSetProjectConfigurationController controller = controllerContext.controllerForElement(element);
 
 		if (controller != null) {
 			controller.checkStateChanged(element, event.getChecked(), controllerContext);
@@ -151,8 +150,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 	 */
 	private void updateCheckState(IWorkingSetConfiguration.ISnapshot config) {
 		for (IWorkingSetProjectConfiguration project : config.getProjectConfigurations()) {
-			IWorkingSetProjectConfigurationController controller = controllerContext
-					.controllerForElement(project);
+			IWorkingSetProjectConfigurationController controller = controllerContext.controllerForElement(project);
 
 			if (controller != null) {
 				controller.updateCheckState(controllerContext);
@@ -199,8 +197,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 			contentProviders = new java.util.HashMap<IWorkingSetProjectConfigurationController, ITreeContentProvider>();
 			labelProviders = new java.util.HashMap<IWorkingSetProjectConfigurationController, ILabelProvider>();
 
-			for (IWorkingSetProjectConfiguration next : getWorkingSetConfiguration()
-					.getProjectConfigurations()) {
+			for (IWorkingSetProjectConfiguration next : getWorkingSetConfiguration().getProjectConfigurations()) {
 
 				IWorkingSetProjectConfiguration.ISnapshot project = (IWorkingSetProjectConfiguration.ISnapshot) next;
 

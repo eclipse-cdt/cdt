@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.Status;
 public class FinalLaunchSequence_7_7 extends FinalLaunchSequence_7_2 {
 
 	private IGDBControl fControl;
-	
+
 	public FinalLaunchSequence_7_7(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
 	}
@@ -52,15 +52,16 @@ public class FinalLaunchSequence_7_7 extends FinalLaunchSequence_7_2 {
 			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our steps right after the initialization of the base class.
-			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_2") + 1, "stepInitializeFinalLaunchSequence_7_7"); //$NON-NLS-1$ //$NON-NLS-2$
+			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_2") + 1, //$NON-NLS-1$
+					"stepInitializeFinalLaunchSequence_7_7"); //$NON-NLS-1$
 			orderList.add(orderList.indexOf("stepSourceGDBInitFile"), "stepSetDPrinfStyle"); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
 			return orderList.toArray(new String[orderList.size()]);
 		}
 
 		return null;
 	}
-	
+
 	/** 
 	 * Initialize the members of the FinalLaunchSequence_7_7 class.
 	 * This step is mandatory for the rest of the sequence to complete.
@@ -70,15 +71,16 @@ public class FinalLaunchSequence_7_7 extends FinalLaunchSequence_7_2 {
 		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
 		fControl = tracker.getService(IGDBControl.class);
 		tracker.dispose();
-		
-        if (fControl == null) {
-			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot obtain service", null)); //$NON-NLS-1$
+
+		if (fControl == null) {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+					"Cannot obtain service", null)); //$NON-NLS-1$
 			return;
 		}
-		
+
 		rm.done();
 	}
-	
+
 	/**
 	 * Specify how dynamic printf should be handled by GDB.
 	 */
@@ -86,10 +88,8 @@ public class FinalLaunchSequence_7_7 extends FinalLaunchSequence_7_2 {
 	public void stepSetDPrinfStyle(final RequestMonitor rm) {
 		// We use the 'call' style which will
 		// have dprintf call the printf function in the program.
-		fControl.queueCommand(
-				fControl.getCommandFactory().createMIGDBSetDPrintfStyle(fControl.getContext(), 
-						                                                MIGDBSetDPrintfStyle.CALL_STYLE),
-				new ImmediateDataRequestMonitor<MIInfo>(rm) {
+		fControl.queueCommand(fControl.getCommandFactory().createMIGDBSetDPrintfStyle(fControl.getContext(),
+				MIGDBSetDPrintfStyle.CALL_STYLE), new ImmediateDataRequestMonitor<MIInfo>(rm) {
 					@Override
 					protected void handleCompleted() {
 						// We accept errors

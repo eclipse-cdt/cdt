@@ -21,10 +21,9 @@ public class C99Field extends C99Variable implements IC99Binding, IField, ITypea
 
 	private ICompositeType compositeTypeOwner;
 
-	
 	public C99Field() {
 	}
-	
+
 	public C99Field(String name) {
 		super(name);
 	}
@@ -42,6 +41,5 @@ public class C99Field extends C99Variable implements IC99Binding, IField, ITypea
 	public IScope getScope() {
 		return compositeTypeOwner.getCompositeScope();
 	}
-
 
 }

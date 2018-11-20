@@ -38,16 +38,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
  * Cast expression for C++
  */
 public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpression, IASTAmbiguityParent {
-    private int fOperator;
-    private ICPPASTExpression fOperand;
+	private int fOperator;
+	private ICPPASTExpression fOperand;
 	private IASTTypeId fTypeId;
 	private ICPPEvaluation fEvaluation;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTCastExpression() {
+	public CPPASTCastExpression() {
 	}
 
-    public CPPASTCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
+	public CPPASTCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
 		fOperator = operator;
 		setOperand(operand);
 		setTypeId(typeId);
@@ -70,44 +70,44 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 
 	@Override
 	public void setTypeId(IASTTypeId typeId) {
-        assertNotFrozen();
-        this.fTypeId = typeId;
-        if (typeId != null) {
+		assertNotFrozen();
+		this.fTypeId = typeId;
+		if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(TYPE_ID);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTTypeId getTypeId() {
-        return fTypeId;
-    }
+		return fTypeId;
+	}
 
 	@Override
 	public int getOperator() {
-        return fOperator;
-    }
+		return fOperator;
+	}
 
-    @Override
+	@Override
 	public void setOperator(int operator) {
-        assertNotFrozen();
-        fOperator = operator;
-    }
+		assertNotFrozen();
+		fOperator = operator;
+	}
 
-    @Override
+	@Override
 	public IASTExpression getOperand() {
-        return fOperand;
-    }
+		return fOperand;
+	}
 
-    @Override
+	@Override
 	public void setOperand(IASTExpression expression) {
-        assertNotFrozen();
-        fOperand = (ICPPASTExpression) expression;
-        if (expression != null) {
+		assertNotFrozen();
+		fOperand = (ICPPASTExpression) expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(OPERAND);
 		}
-    }
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -118,47 +118,54 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		return fImplicitDestructorNames;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (fTypeId != null && !fTypeId.accept(action)) return false;
-        IASTExpression op = getOperand();
-        if (op != null && !op.accept(action)) return false;
+		if (fTypeId != null && !fTypeId.accept(action))
+			return false;
+		IASTExpression op = getOperand();
+		if (op != null && !op.accept(action))
+			return false;
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == fOperand) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            fOperand  = (ICPPASTExpression) other;
-        }
-    }
-
+		if (child == fOperand) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			fOperand = (ICPPASTExpression) other;
+		}
+	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null)
-			fEvaluation= computeEvaluation();
+			fEvaluation = computeEvaluation();
 
 		return fEvaluation;
 	}
@@ -167,21 +174,21 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		if (fOperand == null)
 			return EvalFixed.INCOMPLETE;
 
-		IType type= CPPVisitor.createType(getTypeId());
+		IType type = CPPVisitor.createType(getTypeId());
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
 
 		return new EvalTypeId(type, this, false, fOperand.getEvaluation());
 	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
-    }
+		return CPPEvaluation.getType(this);
+	}
 
 	@Override
 	public ValueCategory getValueCategory() {
-    	return CPPEvaluation.getValueCategory(this);
+		return CPPEvaluation.getValueCategory(this);
 	}
 
 	@Override

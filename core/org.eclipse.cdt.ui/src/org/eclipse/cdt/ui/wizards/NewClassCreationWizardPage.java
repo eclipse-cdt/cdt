@@ -109,50 +109,49 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 
 public class NewClassCreationWizardPage extends NewElementWizardPage {
-    protected static final String PAGE_NAME = "NewClassWizardPage"; //$NON-NLS-1$
-    protected static final int MAX_FIELD_CHARS = 50;
+	protected static final String PAGE_NAME = "NewClassWizardPage"; //$NON-NLS-1$
+	protected static final int MAX_FIELD_CHARS = 50;
 
-    // Dialog setting keys.
-    private static final String KEY_NAMESPACE_SELECTED = "namespaceSelected"; //$NON-NLS-1$
-    private static final String KEY_NAMESPACE = "namespace"; //$NON-NLS-1$
-    private static final String KEY_TEST_FILE_SELECTED = "testFileSelected"; //$NON-NLS-1$
-    private static final String KEY_STUB_SELECTED = "stubSelected"; //$NON-NLS-1$
-    private static final String KEY_STUB_VIRTUAL = "stubVirtual"; //$NON-NLS-1$
-    private static final String KEY_STUB_INLINE = "stubInline"; //$NON-NLS-1$
+	// Dialog setting keys.
+	private static final String KEY_NAMESPACE_SELECTED = "namespaceSelected"; //$NON-NLS-1$
+	private static final String KEY_NAMESPACE = "namespace"; //$NON-NLS-1$
+	private static final String KEY_TEST_FILE_SELECTED = "testFileSelected"; //$NON-NLS-1$
+	private static final String KEY_STUB_SELECTED = "stubSelected"; //$NON-NLS-1$
+	private static final String KEY_STUB_VIRTUAL = "stubVirtual"; //$NON-NLS-1$
+	private static final String KEY_STUB_INLINE = "stubInline"; //$NON-NLS-1$
 
 	// Field IDs
-    protected static final int SOURCE_FOLDER_ID = 1;
-    protected static final int NAMESPACE_ID = 2;
-    protected static final int CLASS_NAME_ID = 4;
-    protected static final int BASE_CLASSES_ID = 8;
-    protected static final int METHOD_STUBS_ID = 16;
-    protected static final int HEADER_FILE_ID = 32;
-    protected static final int SOURCE_FILE_ID = 64;
-    /** @since 5.3 */
-    protected static final int TEST_FILE_ID = 128;
-    protected static final int ALL_FIELDS = SOURCE_FOLDER_ID | NAMESPACE_ID
-            | CLASS_NAME_ID | BASE_CLASSES_ID | METHOD_STUBS_ID
-            | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID;
+	protected static final int SOURCE_FOLDER_ID = 1;
+	protected static final int NAMESPACE_ID = 2;
+	protected static final int CLASS_NAME_ID = 4;
+	protected static final int BASE_CLASSES_ID = 8;
+	protected static final int METHOD_STUBS_ID = 16;
+	protected static final int HEADER_FILE_ID = 32;
+	protected static final int SOURCE_FILE_ID = 64;
+	/** @since 5.3 */
+	protected static final int TEST_FILE_ID = 128;
+	protected static final int ALL_FIELDS = SOURCE_FOLDER_ID | NAMESPACE_ID | CLASS_NAME_ID | BASE_CLASSES_ID
+			| METHOD_STUBS_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID;
 	protected int fLastFocusedField = 0;
 
-    protected StringButtonDialogField fSourceFolderDialogField;
-    protected SelectionButtonDialogField fNamespaceSelection;
-    protected StringButtonDialogField fNamespaceDialogField;
-    protected StringDialogField fClassNameDialogField;
-    protected BaseClassesListDialogField fBaseClassesDialogField;
-    protected MethodStubsListDialogField fMethodStubsDialogField;
-    protected StringButtonDialogField fHeaderFileDialogField;
+	protected StringButtonDialogField fSourceFolderDialogField;
+	protected SelectionButtonDialogField fNamespaceSelection;
+	protected StringButtonDialogField fNamespaceDialogField;
+	protected StringDialogField fClassNameDialogField;
+	protected BaseClassesListDialogField fBaseClassesDialogField;
+	protected MethodStubsListDialogField fMethodStubsDialogField;
+	protected StringButtonDialogField fHeaderFileDialogField;
 	protected StringButtonDialogField fSourceFileDialogField;
-    /** @since 5.3 */
-    protected StringButtonDialogField fTestFileDialogField;
-    /** @since 5.3 */
-    protected SelectionButtonDialogField fTestFileSelection;
-    /** @since 5.3 */
-    protected boolean fHeaderFileDerivedFromClassName;
-    /** @since 5.3 */
-    protected boolean fSourceFileDerivedFromClassName;
-    /** @since 5.3 */
-    protected boolean fTestFileDerivedFromClassName;
+	/** @since 5.3 */
+	protected StringButtonDialogField fTestFileDialogField;
+	/** @since 5.3 */
+	protected SelectionButtonDialogField fTestFileSelection;
+	/** @since 5.3 */
+	protected boolean fHeaderFileDerivedFromClassName;
+	/** @since 5.3 */
+	protected boolean fSourceFileDerivedFromClassName;
+	/** @since 5.3 */
+	protected boolean fTestFileDerivedFromClassName;
 
 	protected IStatus fSourceFolderStatus;
 	protected IStatus fNamespaceStatus;
@@ -165,19 +164,18 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected IStatus fTestFileStatus;
 	protected final IStatus STATUS_OK = new StatusInfo();
 
-    protected IFile fCreatedHeaderFile;
-    protected IFile fCreatedSourceFile;
-    /** @since 5.3 */
-    protected IFile fCreatedTestFile;
-    protected ICElement fCreatedClass;
+	protected IFile fCreatedHeaderFile;
+	protected IFile fCreatedSourceFile;
+	/** @since 5.3 */
+	protected IFile fCreatedTestFile;
+	protected ICElement fCreatedClass;
 
-    /**
-     * This flag isFirstTime is used to keep a note
-     * that the class creation wizard has just been
-     * created.
-     */
-    private boolean isFirstTime = false;
-
+	/**
+	 * This flag isFirstTime is used to keep a note
+	 * that the class creation wizard has just been
+	 * created.
+	 */
+	private boolean isFirstTime = false;
 
 	/**
 	 * Constructor for NewClassCreationWizardPage
@@ -208,10 +206,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fClassNameDialogField.setLabelText(NewClassWizardMessages.NewClassCreationWizardPage_className_label);
 
 		BaseClassesFieldAdapter baseClassesAdapter = new BaseClassesFieldAdapter();
-		fBaseClassesDialogField = new BaseClassesListDialogField(NewClassWizardMessages.NewClassCreationWizardPage_baseClasses_label, baseClassesAdapter);
+		fBaseClassesDialogField = new BaseClassesListDialogField(
+				NewClassWizardMessages.NewClassCreationWizardPage_baseClasses_label, baseClassesAdapter);
 
 		MethodStubsFieldAdapter methodStubsAdapter = new MethodStubsFieldAdapter();
-		fMethodStubsDialogField = new MethodStubsListDialogField(NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label, methodStubsAdapter);
+		fMethodStubsDialogField = new MethodStubsListDialogField(
+				NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label, methodStubsAdapter);
 
 		FileGroupFieldAdapter fileGroupAdapter = new FileGroupFieldAdapter();
 		fHeaderFileDialogField = new StringButtonDialogField(fileGroupAdapter);
@@ -229,9 +229,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fTestFileDialogField.setDialogFieldListener(fileGroupAdapter);
 		fTestFileDialogField.setButtonLabel(NewClassWizardMessages.NewClassCreationWizardPage_testFile_button);
 
-	    fHeaderFileDerivedFromClassName = true;
-	    fSourceFileDerivedFromClassName = true;
-	    fTestFileDerivedFromClassName = true;
+		fHeaderFileDerivedFromClassName = true;
+		fSourceFileDerivedFromClassName = true;
+		fTestFileDerivedFromClassName = true;
 
 		fSourceFolderStatus = STATUS_OK;
 		fNamespaceStatus = STATUS_OK;
@@ -248,41 +248,41 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 	// -------- UI Creation ---------
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
 	public void createControl(Composite parent) {
-        initializeDialogUnits(parent);
+		initializeDialogUnits(parent);
 
-        Composite composite = new Composite(parent, SWT.NONE);
-        int nColumns = 4;
+		Composite composite = new Composite(parent, SWT.NONE);
+		int nColumns = 4;
 
-        GridLayout layout = new GridLayout();
-        layout.numColumns = nColumns;
-        composite.setLayout(layout);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = nColumns;
+		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
 
-        createSourceFolderControls(composite, nColumns);
-        createNamespaceControls(composite, nColumns);
+		createSourceFolderControls(composite, nColumns);
+		createNamespaceControls(composite, nColumns);
 
-        createSeparator(composite, nColumns);
+		createSeparator(composite, nColumns);
 
-        createClassNameControls(composite, nColumns);
-        createBaseClassesControls(composite, nColumns);
-        createMethodStubsControls(composite, nColumns);
+		createClassNameControls(composite, nColumns);
+		createBaseClassesControls(composite, nColumns);
+		createMethodStubsControls(composite, nColumns);
 
-        createSeparator(composite, nColumns);
+		createSeparator(composite, nColumns);
 
-        createFileControls(composite, nColumns);
+		createFileControls(composite, nColumns);
 
 		composite.layout();
 
 		setErrorMessage(null);
 		setMessage(null);
 		setControl(composite);
-    }
+	}
 
 	/**
 	 * Creates a separator line. Expects a <code>GridLayout</code> with at least 1 column.
@@ -291,7 +291,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @param nColumns number of columns to span
 	 */
 	protected void createSeparator(Composite composite, int nColumns) {
-		(new Separator(SWT.SEPARATOR | SWT.HORIZONTAL)).doFillIntoGrid(composite, nColumns, convertHeightInCharsToPixels(1));
+		(new Separator(SWT.SEPARATOR | SWT.HORIZONTAL)).doFillIntoGrid(composite, nColumns,
+				convertHeightInCharsToPixels(1));
 	}
 
 	/**
@@ -319,23 +320,23 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @param nColumns number of columns to span
 	 */
 	protected void createNamespaceControls(Composite composite, int nColumns) {
-		Composite tabGroup= new Composite(composite, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;
- 		tabGroup.setLayout(layout);
+		Composite tabGroup = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		tabGroup.setLayout(layout);
 
 		fNamespaceSelection.doFillIntoGrid(tabGroup, 1);
 
-		Text textControl= fNamespaceDialogField.getTextControl(composite);
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint= getMaxFieldWidth();
-		gd.horizontalSpan= 2;
+		Text textControl = fNamespaceDialogField.getTextControl(composite);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = getMaxFieldWidth();
+		gd.horizontalSpan = 2;
 		textControl.setLayoutData(gd);
 		textControl.addFocusListener(new StatusFocusListener(NAMESPACE_ID));
 
-		Button button= fNamespaceDialogField.getChangeControl(composite);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		Button button = fNamespaceDialogField.getChangeControl(composite);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gd);
 	}
@@ -363,9 +364,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @param nColumns number of columns to span
 	 */
 	protected void createBaseClassesControls(Composite composite, int nColumns) {
-	    fBaseClassesDialogField.doFillIntoGrid(composite, nColumns);
-	    Control listControl = fBaseClassesDialogField.getListControl(null);
-	    LayoutUtil.setVerticalGrabbing(listControl, false);
+		fBaseClassesDialogField.doFillIntoGrid(composite, nColumns);
+		Control listControl = fBaseClassesDialogField.getListControl(null);
+		LayoutUtil.setVerticalGrabbing(listControl, false);
 		listControl.addFocusListener(new StatusFocusListener(BASE_CLASSES_ID));
 	}
 
@@ -378,10 +379,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */
 	protected void createMethodStubsControls(Composite composite, int nColumns) {
 		fMethodStubsDialogField.doFillIntoGrid(composite, nColumns);
-	    Control listControl = fMethodStubsDialogField.getListControl(null);
-	    LayoutUtil.setHeightHint(listControl,
-	    		convertHeightInCharsToPixels(6) + convertHeightInCharsToPixels(1) / 2);
-	    LayoutUtil.setVerticalGrabbing(listControl, false);
+		Control listControl = fMethodStubsDialogField.getListControl(null);
+		LayoutUtil.setHeightHint(listControl, convertHeightInCharsToPixels(6) + convertHeightInCharsToPixels(1) / 2);
+		LayoutUtil.setVerticalGrabbing(listControl, false);
 		listControl.addFocusListener(new StatusFocusListener(METHOD_STUBS_ID));
 	}
 
@@ -393,7 +393,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @param nColumns number of columns to span
 	 */
 	protected void createFileControls(Composite composite, int nColumns) {
- 		fHeaderFileDialogField.doFillIntoGrid(composite, nColumns);
+		fHeaderFileDialogField.doFillIntoGrid(composite, nColumns);
 		Text textControl = fHeaderFileDialogField.getTextControl(null);
 		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
 		textControl.addFocusListener(new StatusFocusListener(HEADER_FILE_ID));
@@ -407,7 +407,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
- 		tabGroup.setLayout(layout);
+		tabGroup.setLayout(layout);
 
 		fTestFileSelection.doFillIntoGrid(tabGroup, 1);
 
@@ -424,33 +424,33 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		button.setLayoutData(gd);
 	}
 
-    /**
-     * The wizard owning this page is responsible for calling this method with the
-     * current selection. The selection is used to initialize the fields of the wizard
-     * page.
-     *
-     * @param selection used to initialize the fields
-     */
-    public void init(IStructuredSelection selection) {
-    	if (fDialogSettings == null) {
+	/**
+	 * The wizard owning this page is responsible for calling this method with the
+	 * current selection. The selection is used to initialize the fields of the wizard
+	 * page.
+	 *
+	 * @param selection used to initialize the fields
+	 */
+	public void init(IStructuredSelection selection) {
+		if (fDialogSettings == null) {
 			fDialogSettings = getDialogSettings().getSection(PAGE_NAME);
 			if (fDialogSettings == null) {
 				fDialogSettings = getDialogSettings().addNewSection(PAGE_NAME);
 			}
-    	}
+		}
 
 		ICElement celem = getInitialCElement(selection);
 
-        String namespace = null;
-        if (celem != null) {
-            ICElement ns = NewClassWizardUtil.getNamespace(celem);
-            if (ns != null) {
-                namespace = TypeUtil.getFullyQualifiedName(ns).toString();
-                if (namespace != null && namespace.length() == 0) {
-                    namespace = null;
-                }
-            }
-        }
+		String namespace = null;
+		if (celem != null) {
+			ICElement ns = NewClassWizardUtil.getNamespace(celem);
+			if (ns != null) {
+				namespace = TypeUtil.getFullyQualifiedName(ns).toString();
+				if (namespace != null && namespace.length() == 0) {
+					namespace = null;
+				}
+			}
+		}
 		if (namespace == null) {
 			namespace = fDialogSettings.get(KEY_NAMESPACE);
 		}
@@ -458,81 +458,81 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		setNamespaceText(namespace, false);
 		setNamespaceSelection(namespace != null || fDialogSettings.getBoolean(KEY_NAMESPACE_SELECTED), true);
 
-        IPath folderPath = null;
-        if (celem != null) {
-            ICContainer folder = NewClassWizardUtil.getSourceFolder(celem);
-            if (folder == null) {
-                ICProject cproject = celem.getCProject();
-                if (cproject != null) {
-                    folder = NewClassWizardUtil.getFirstSourceRoot(cproject);
-                }
-            }
-            if (folder != null) {
-                folderPath = folder.getResource().getFullPath();
-            }
-        }
-        setSourceFolderFullPath(folderPath, false);
+		IPath folderPath = null;
+		if (celem != null) {
+			ICContainer folder = NewClassWizardUtil.getSourceFolder(celem);
+			if (folder == null) {
+				ICProject cproject = celem.getCProject();
+				if (cproject != null) {
+					folder = NewClassWizardUtil.getFirstSourceRoot(cproject);
+				}
+			}
+			if (folder != null) {
+				folderPath = folder.getResource().getFullPath();
+			}
+		}
+		setSourceFolderFullPath(folderPath, false);
 
-        String className = null;
-        ITextSelection textSel = getEditorTextSelection();
-        if (textSel != null) {
-            String text = textSel.getText();
-            if (text != null && text.length() > 0 && CConventions.validateClassName(text).isOK()) {
-                className = text;
-            }
-        }
+		String className = null;
+		ITextSelection textSel = getEditorTextSelection();
+		if (textSel != null) {
+			String text = textSel.getText();
+			if (text != null && text.length() > 0 && CConventions.validateClassName(text).isOK()) {
+				className = text;
+			}
+		}
 		// Forcing update will also populate default file names.
-        setClassName(className, true);
+		setClassName(className, true);
 
-        IMethodStub[] stubs = getDefaultMethodStubs();
-        for (int i = 0; i < stubs.length; ++i) {
-        	IMethodStub stub = stubs[i];
-        	if (stub.canModifyVirtual()) {
-        		stub.setVirtual(getBooleanSettingWithDefault(KEY_STUB_VIRTUAL + i, stub.isVirtual()));
-        	}
-        	if (stub.canModifyInline()) {
-        		stub.setInline(getBooleanSettingWithDefault(KEY_STUB_INLINE + i, stub.isInline()));
-        	}
-            addMethodStub(stub, getBooleanSettingWithDefault(KEY_STUB_SELECTED + i, true));
-        }
+		IMethodStub[] stubs = getDefaultMethodStubs();
+		for (int i = 0; i < stubs.length; ++i) {
+			IMethodStub stub = stubs[i];
+			if (stub.canModifyVirtual()) {
+				stub.setVirtual(getBooleanSettingWithDefault(KEY_STUB_VIRTUAL + i, stub.isVirtual()));
+			}
+			if (stub.canModifyInline()) {
+				stub.setInline(getBooleanSettingWithDefault(KEY_STUB_INLINE + i, stub.isInline()));
+			}
+			addMethodStub(stub, getBooleanSettingWithDefault(KEY_STUB_SELECTED + i, true));
+		}
 
-        setTestFileSelection(fDialogSettings.getBoolean(KEY_TEST_FILE_SELECTED), true);
-        handleFieldChanged(ALL_FIELDS);
-    }
+		setTestFileSelection(fDialogSettings.getBoolean(KEY_TEST_FILE_SELECTED), true);
+		handleFieldChanged(ALL_FIELDS);
+	}
 
-    private boolean getBooleanSettingWithDefault(String key, boolean defaultValue) {
-    	String value = fDialogSettings.get(key);
-    	if (value == null) {
-    		return defaultValue;
-    	}
-    	return Boolean.valueOf(value);
-    }
+	private boolean getBooleanSettingWithDefault(String key, boolean defaultValue) {
+		String value = fDialogSettings.get(key);
+		if (value == null) {
+			return defaultValue;
+		}
+		return Boolean.valueOf(value);
+	}
 
-    /**
-     * Attempts to extract a C Element from the initial selection.
-     *
-     * @param selection the initial selection
-     * @return a C Element, or <code>null</code> if not available
-     */
-    protected ICElement getInitialCElement(IStructuredSelection selection) {
-        ICElement celem = NewClassWizardUtil.getCElementFromSelection(selection);
-        if (celem == null) {
-            celem = NewClassWizardUtil.getCElementFromEditor();
-        }
-        if (celem == null || celem.getElementType() == ICElement.C_MODEL) {
-            try {
-                ICProject[] projects = CoreModel.create(NewClassWizardUtil.getWorkspaceRoot()).getCProjects();
-                if (projects.length == 1) {
-                    celem = projects[0];
-                }
-            } catch (CModelException e) {
-                CUIPlugin.log(e);
-            }
-        }
-        return celem;
-    }
+	/**
+	 * Attempts to extract a C Element from the initial selection.
+	 *
+	 * @param selection the initial selection
+	 * @return a C Element, or <code>null</code> if not available
+	 */
+	protected ICElement getInitialCElement(IStructuredSelection selection) {
+		ICElement celem = NewClassWizardUtil.getCElementFromSelection(selection);
+		if (celem == null) {
+			celem = NewClassWizardUtil.getCElementFromEditor();
+		}
+		if (celem == null || celem.getElementType() == ICElement.C_MODEL) {
+			try {
+				ICProject[] projects = CoreModel.create(NewClassWizardUtil.getWorkspaceRoot()).getCProjects();
+				if (projects.length == 1) {
+					celem = projects[0];
+				}
+			} catch (CModelException e) {
+				CUIPlugin.log(e);
+			}
+		}
+		return celem;
+	}
 
-    /**
+	/**
 	 * Returns the recommended maximum width for text fields (in pixels). This
 	 * method requires that createContent has been called before this method is
 	 * call. Subclasses may override to change the maximum width for text
@@ -544,101 +544,98 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		return convertWidthInCharsToPixels(MAX_FIELD_CHARS);
 	}
 
-    /**
-     * Returns the text selection of the current editor. <code>null</code> is returned
-     * when the current editor does not have focus or does not return a text selection.
-     *
-     * @return the selection of the current editor, or <code>null</code>.
-     */
-    protected ITextSelection getEditorTextSelection() {
-        IWorkbenchPage page = CUIPlugin.getActivePage();
-        if (page != null) {
-        	IWorkbenchPart part = page.getActivePart();
-        	if (part instanceof IEditorPart) {
-        		ISelectionProvider selectionProvider = part.getSite().getSelectionProvider();
-        		if (selectionProvider != null) {
-        			ISelection selection = selectionProvider.getSelection();
-        			if (selection instanceof ITextSelection) {
-        				return (ITextSelection) selection;
-        			}
-        		}
-        	}
-        }
-    	return null;
-    }
+	/**
+	 * Returns the text selection of the current editor. <code>null</code> is returned
+	 * when the current editor does not have focus or does not return a text selection.
+	 *
+	 * @return the selection of the current editor, or <code>null</code>.
+	 */
+	protected ITextSelection getEditorTextSelection() {
+		IWorkbenchPage page = CUIPlugin.getActivePage();
+		if (page != null) {
+			IWorkbenchPart part = page.getActivePart();
+			if (part instanceof IEditorPart) {
+				ISelectionProvider selectionProvider = part.getSite().getSelectionProvider();
+				if (selectionProvider != null) {
+					ISelection selection = selectionProvider.getSelection();
+					if (selection instanceof ITextSelection) {
+						return (ITextSelection) selection;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Returns the method stubs to display in the wizard.
-     *
-     * @return array of method stubs
-     *
-     * @noreference This method is not intended to be referenced by clients.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     */
-    protected IMethodStub[] getDefaultMethodStubs() {
-        return new IMethodStub[] {
-            new ConstructorMethodStub(),
-            new DestructorMethodStub()
-        };
-    }
+	/**
+	 * Returns the method stubs to display in the wizard.
+	 *
+	 * @return array of method stubs
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	protected IMethodStub[] getDefaultMethodStubs() {
+		return new IMethodStub[] { new ConstructorMethodStub(), new DestructorMethodStub() };
+	}
 
-    /**
-     * Returns the text entered into the source folder input field.
-     *
-     * @return the source folder
-     */
-    public String getSourceFolderText() {
-        return fSourceFolderDialogField.getText().trim();
-    }
+	/**
+	 * Returns the text entered into the source folder input field.
+	 *
+	 * @return the source folder
+	 */
+	public String getSourceFolderText() {
+		return fSourceFolderDialogField.getText().trim();
+	}
 
-    /**
-     * Sets the text of the source folder input field.
-     *
-     * @param folder the folder name
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    public void setSourceFolderText(String folder, boolean update) {
-        fSourceFolderDialogField.setTextWithoutUpdate(folder != null ? folder : ""); //$NON-NLS-1$
-        if (update) {
-            fSourceFolderDialogField.dialogFieldChanged();
-        }
-    }
+	/**
+	 * Sets the text of the source folder input field.
+	 *
+	 * @param folder the folder name
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	public void setSourceFolderText(String folder, boolean update) {
+		fSourceFolderDialogField.setTextWithoutUpdate(folder != null ? folder : ""); //$NON-NLS-1$
+		if (update) {
+			fSourceFolderDialogField.dialogFieldChanged();
+		}
+	}
 
-    /**
-     * Returns the current source folder as a path.
-     *
-     * @return the source folder path
-     */
-    protected IPath getSourceFolderFullPath() {
-        String text = getSourceFolderText();
-        if (text.length() > 0)
-            return new Path(text).makeAbsolute();
-        return null;
-    }
+	/**
+	 * Returns the current source folder as a path.
+	 *
+	 * @return the source folder path
+	 */
+	protected IPath getSourceFolderFullPath() {
+		String text = getSourceFolderText();
+		if (text.length() > 0)
+			return new Path(text).makeAbsolute();
+		return null;
+	}
 
-    /**
-     * Sets the source folder from the given path.
-     *
-     * @param folderPath the source folder path
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    protected void setSourceFolderFullPath(IPath folderPath, boolean update) {
-        String str = (folderPath != null) ? folderPath.makeRelative().toString() : ""; //.makeRelative().toString(); //$NON-NLS-1$
-        setSourceFolderText(str, update);
-    }
+	/**
+	 * Sets the source folder from the given path.
+	 *
+	 * @param folderPath the source folder path
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	protected void setSourceFolderFullPath(IPath folderPath, boolean update) {
+		String str = (folderPath != null) ? folderPath.makeRelative().toString() : ""; //.makeRelative().toString(); //$NON-NLS-1$
+		setSourceFolderText(str, update);
+	}
 
-    /**
-     * Returns the current project, based on the current source folder.
-     *
-     * @return the current project
-     */
-    protected ICProject getCurrentProject() {
-        IPath folderPath = getSourceFolderFullPath();
-        if (folderPath != null) {
-            return toCProject(PathUtil.getEnclosingProject(folderPath));
-        }
-        return null;
-    }
+	/**
+	 * Returns the current project, based on the current source folder.
+	 *
+	 * @return the current project
+	 */
+	protected ICProject getCurrentProject() {
+		IPath folderPath = getSourceFolderFullPath();
+		if (folderPath != null) {
+			return toCProject(PathUtil.getEnclosingProject(folderPath));
+		}
+		return null;
+	}
 
 	private ICProject toCProject(IProject enclosingProject) {
 		if (enclosingProject != null)
@@ -646,894 +643,893 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		return null;
 	}
 
-    /**
-     * Returns the text entered into the namespace input field.
-     *
-     * @return the namespace
-     */
-    public String getNamespaceText() {
-        return fNamespaceDialogField.getText().trim();
-    }
+	/**
+	 * Returns the text entered into the namespace input field.
+	 *
+	 * @return the namespace
+	 */
+	public String getNamespaceText() {
+		return fNamespaceDialogField.getText().trim();
+	}
 
-    /**
-     * Sets the text of the namespace input field.
-     *
-     * @param namespace the namespace name
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    public void setNamespaceText(String namespace, boolean update) {
-        fNamespaceDialogField.setTextWithoutUpdate(namespace != null ? namespace : ""); //$NON-NLS-1$
-        if (update) {
-            fNamespaceDialogField.dialogFieldChanged();
-        }
-    }
+	/**
+	 * Sets the text of the namespace input field.
+	 *
+	 * @param namespace the namespace name
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	public void setNamespaceText(String namespace, boolean update) {
+		fNamespaceDialogField.setTextWithoutUpdate(namespace != null ? namespace : ""); //$NON-NLS-1$
+		if (update) {
+			fNamespaceDialogField.dialogFieldChanged();
+		}
+	}
 
-    /**
-     * Returns the selection state of the namespace checkbox.
-     *
-     * @return the selection state of the namespace checkbox
-     */
-    public boolean isNamespaceSelected() {
-        return fNamespaceSelection.isSelected();
-    }
+	/**
+	 * Returns the selection state of the namespace checkbox.
+	 *
+	 * @return the selection state of the namespace checkbox
+	 */
+	public boolean isNamespaceSelected() {
+		return fNamespaceSelection.isSelected();
+	}
 
-    /**
-     * Sets the namespace checkbox's selection state.
-     *
-     * @param isSelected the checkbox's selection state
-     * @param canBeModified if <code>true</code> the checkbox is
-     * modifiable; otherwise it is read-only.
-     */
-    public void setNamespaceSelection(boolean isSelected, boolean canBeModified) {
-        fNamespaceSelection.setSelection(isSelected);
-        fNamespaceSelection.setEnabled(canBeModified);
-        updateNamespaceEnableState();
-    }
+	/**
+	 * Sets the namespace checkbox's selection state.
+	 *
+	 * @param isSelected the checkbox's selection state
+	 * @param canBeModified if <code>true</code> the checkbox is
+	 * modifiable; otherwise it is read-only.
+	 */
+	public void setNamespaceSelection(boolean isSelected, boolean canBeModified) {
+		fNamespaceSelection.setSelection(isSelected);
+		fNamespaceSelection.setEnabled(canBeModified);
+		updateNamespaceEnableState();
+	}
 
-    /**
-     * Updates the enable state of the namespace button.
-     */
-    private void updateNamespaceEnableState() {
-        fNamespaceDialogField.setEnabled(isNamespaceSelected());
-    }
+	/**
+	 * Updates the enable state of the namespace button.
+	 */
+	private void updateNamespaceEnableState() {
+		fNamespaceDialogField.setEnabled(isNamespaceSelected());
+	}
 
-    /**
-     * Returns the class name entered into the class input field.
-     *
-     * @return the class name
-     */
-    public String getClassName() {
-        return fClassNameDialogField.getText().trim();
-    }
+	/**
+	 * Returns the class name entered into the class input field.
+	 *
+	 * @return the class name
+	 */
+	public String getClassName() {
+		return fClassNameDialogField.getText().trim();
+	}
 
-    /**
-     * Sets the text of the class name input field.
-     *
-     * @param name the new class name
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    public void setClassName(String name, boolean update) {
-        fClassNameDialogField.setTextWithoutUpdate(name != null ? name : ""); //$NON-NLS-1$
-        if (update) {
-            fClassNameDialogField.dialogFieldChanged();
-        }
-    }
+	/**
+	 * Sets the text of the class name input field.
+	 *
+	 * @param name the new class name
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	public void setClassName(String name, boolean update) {
+		fClassNameDialogField.setTextWithoutUpdate(name != null ? name : ""); //$NON-NLS-1$
+		if (update) {
+			fClassNameDialogField.dialogFieldChanged();
+		}
+	}
 
-    /**
-     * Returns the currently selected (checked) method stubs.
-     *
-     * @return array of <code>IMethodStub</code> or empty array if none selected.
-     *
-     * @noreference This method is not intended to be referenced by clients.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     */
-    protected IMethodStub[] getSelectedMethodStubs() {
-        return fMethodStubsDialogField.getCheckedMethodStubs();
-    }
+	/**
+	 * Returns the currently selected (checked) method stubs.
+	 *
+	 * @return array of <code>IMethodStub</code> or empty array if none selected.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	protected IMethodStub[] getSelectedMethodStubs() {
+		return fMethodStubsDialogField.getCheckedMethodStubs();
+	}
 
-    /**
-     * Adds a method stub to the method stubs field.
-     *
-     * @param methodStub the method stub to add
-     * @param selected <code>true</code> if the stub is initially selected (checked)
-     *
-     * @noreference This method is not intended to be referenced by clients.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     */
-    protected void addMethodStub(IMethodStub methodStub, boolean selected) {
-        fMethodStubsDialogField.addMethodStub(methodStub, selected);
-    }
+	/**
+	 * Adds a method stub to the method stubs field.
+	 *
+	 * @param methodStub the method stub to add
+	 * @param selected <code>true</code> if the stub is initially selected (checked)
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	protected void addMethodStub(IMethodStub methodStub, boolean selected) {
+		fMethodStubsDialogField.addMethodStub(methodStub, selected);
+	}
 
-    /**
-     * Returns the contents of the base classes field.
-     *
-     * @return array of <code>IBaseClassInfo</code>
-     *
-     * @noreference This method is not intended to be referenced by clients.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     */
-    protected IBaseClassInfo[] getBaseClasses() {
-        List<IBaseClassInfo> classesList = fBaseClassesDialogField.getElements();
-        return classesList.toArray(new IBaseClassInfo[classesList.size()]);
-    }
+	/**
+	 * Returns the contents of the base classes field.
+	 *
+	 * @return array of <code>IBaseClassInfo</code>
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	protected IBaseClassInfo[] getBaseClasses() {
+		List<IBaseClassInfo> classesList = fBaseClassesDialogField.getElements();
+		return classesList.toArray(new IBaseClassInfo[classesList.size()]);
+	}
 
-    /**
-     * Adds a base class to the base classes field.
-     * @param newBaseClass the new base class
-     * @param access the access visibility (public/private/protected)
-     * @param isVirtual <code>true</code> if the inheritance is virtual
-     */
-    protected void addBaseClass(ITypeInfo newBaseClass, ASTAccessVisibility access, boolean isVirtual) {
-        // Check if already exists.
-        List<IBaseClassInfo> baseClasses = fBaseClassesDialogField.getElements();
-        if (baseClasses != null) {
-            for (IBaseClassInfo baseClassInfo : baseClasses) {
-                BaseClassInfo info = (BaseClassInfo) baseClassInfo;
-                if (info.getType().equals(newBaseClass)) {
-                    // already added
-                    return;
-                }
-            }
-        }
+	/**
+	 * Adds a base class to the base classes field.
+	 * @param newBaseClass the new base class
+	 * @param access the access visibility (public/private/protected)
+	 * @param isVirtual <code>true</code> if the inheritance is virtual
+	 */
+	protected void addBaseClass(ITypeInfo newBaseClass, ASTAccessVisibility access, boolean isVirtual) {
+		// Check if already exists.
+		List<IBaseClassInfo> baseClasses = fBaseClassesDialogField.getElements();
+		if (baseClasses != null) {
+			for (IBaseClassInfo baseClassInfo : baseClasses) {
+				BaseClassInfo info = (BaseClassInfo) baseClassInfo;
+				if (info.getType().equals(newBaseClass)) {
+					// already added
+					return;
+				}
+			}
+		}
 
-        if (verifyBaseClasses()) {
-            NewClassWizardUtil.resolveClassLocation(newBaseClass, getContainer());
-        }
+		if (verifyBaseClasses()) {
+			NewClassWizardUtil.resolveClassLocation(newBaseClass, getContainer());
+		}
 
-        fBaseClassesDialogField.addBaseClass(new BaseClassInfo(newBaseClass, access, isVirtual));
-    }
+		fBaseClassesDialogField.addBaseClass(new BaseClassInfo(newBaseClass, access, isVirtual));
+	}
 
-    /**
-     * Sets the use test file creation checkbox's selection state.
-     *
-     * @param isSelected the checkbox's selection state
-     * @param canBeModified if <code>true</code> the checkbox is modifiable; otherwise it is read-only.
-     * @since 5.3
-     */
-    public void setTestFileSelection(boolean isSelected, boolean canBeModified) {
-    	fTestFileSelection.setSelection(isSelected);
-    	fTestFileSelection.setEnabled(canBeModified);
-    	updateTestFileEnableState();
-    }
+	/**
+	 * Sets the use test file creation checkbox's selection state.
+	 *
+	 * @param isSelected the checkbox's selection state
+	 * @param canBeModified if <code>true</code> the checkbox is modifiable; otherwise it is read-only.
+	 * @since 5.3
+	 */
+	public void setTestFileSelection(boolean isSelected, boolean canBeModified) {
+		fTestFileSelection.setSelection(isSelected);
+		fTestFileSelection.setEnabled(canBeModified);
+		updateTestFileEnableState();
+	}
 
-    /**
-     * Updates the enable state of test file name text box.
-     */
-    private void updateTestFileEnableState() {
-        fTestFileDialogField.setEnabled(fTestFileSelection.isSelected());
-    }
+	/**
+	 * Updates the enable state of test file name text box.
+	 */
+	private void updateTestFileEnableState() {
+		fTestFileDialogField.setEnabled(fTestFileSelection.isSelected());
+	}
 
-    /**
-     * Returns the text entered into the header file input field.
-     *
-     * @return the header file
-     */
-    public String getHeaderFileText() {
-        return fHeaderFileDialogField.getText().trim();
-    }
+	/**
+	 * Returns the text entered into the header file input field.
+	 *
+	 * @return the header file
+	 */
+	public String getHeaderFileText() {
+		return fHeaderFileDialogField.getText().trim();
+	}
 
-    /**
-     * Sets the text of the header file input field.
-     *
-     * @param header the header file name
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    public void setHeaderFileText(String header, boolean update) {
-    	setFileText(fHeaderFileDialogField, header, update);
-    }
+	/**
+	 * Sets the text of the header file input field.
+	 *
+	 * @param header the header file name
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	public void setHeaderFileText(String header, boolean update) {
+		setFileText(fHeaderFileDialogField, header, update);
+	}
 
-    /**
-     * Returns the current header file as a path.
-     *
-     * @return the header file path
-     */
-    protected IPath getHeaderFileFullPath() {
-    	return getFilePath(getHeaderFileText());
-    }
+	/**
+	 * Returns the current header file as a path.
+	 *
+	 * @return the header file path
+	 */
+	protected IPath getHeaderFileFullPath() {
+		return getFilePath(getHeaderFileText());
+	}
 
-    /**
-     * Sets the header file from the given path.
-     *
-     * @param path the header file path
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    protected void setHeaderFileFullPath(IPath path, boolean update) {
-    	setFileFullPath(fHeaderFileDialogField, path, update);
-    }
+	/**
+	 * Sets the header file from the given path.
+	 *
+	 * @param path the header file path
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	protected void setHeaderFileFullPath(IPath path, boolean update) {
+		setFileFullPath(fHeaderFileDialogField, path, update);
+	}
 
-    /**
-     * Returns the text entered into the source file input field.
-     *
-     * @return the source file
-     */
-    public String getSourceFileText() {
-        return fSourceFileDialogField.getText().trim();
-    }
+	/**
+	 * Returns the text entered into the source file input field.
+	 *
+	 * @return the source file
+	 */
+	public String getSourceFileText() {
+		return fSourceFileDialogField.getText().trim();
+	}
 
-    /**
-     * Sets the text of the source file input field.
-     *
-     * @param source the source file name
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    public void setSourceFileText(String source, boolean update) {
-    	setFileText(fSourceFileDialogField, source, update);
-    }
+	/**
+	 * Sets the text of the source file input field.
+	 *
+	 * @param source the source file name
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	public void setSourceFileText(String source, boolean update) {
+		setFileText(fSourceFileDialogField, source, update);
+	}
 
-    /**
-     * Returns the current source file as a path.
-     *
-     * @return the source file path
-     */
-    protected IPath getSourceFileFullPath() {
-    	return getFilePath(getSourceFileText());
-    }
+	/**
+	 * Returns the current source file as a path.
+	 *
+	 * @return the source file path
+	 */
+	protected IPath getSourceFileFullPath() {
+		return getFilePath(getSourceFileText());
+	}
 
-    /**
-     * Sets the source file from the given path.
-     *
-     * @param path the source file path
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    protected void setSourceFileFullPath(IPath path, boolean update) {
-    	setFileFullPath(fSourceFileDialogField, path, update);
-    }
+	/**
+	 * Sets the source file from the given path.
+	 *
+	 * @param path the source file path
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	protected void setSourceFileFullPath(IPath path, boolean update) {
+		setFileFullPath(fSourceFileDialogField, path, update);
+	}
 
-    /**
-     * Returns the text entered into the source file input field.
-     *
-     * @return the source file
-     * @since 5.3
-     */
-    public String getTestFileText() {
-    	return fTestFileDialogField.isEnabled() ? fTestFileDialogField.getText().trim() : null;
-    }
+	/**
+	 * Returns the text entered into the source file input field.
+	 *
+	 * @return the source file
+	 * @since 5.3
+	 */
+	public String getTestFileText() {
+		return fTestFileDialogField.isEnabled() ? fTestFileDialogField.getText().trim() : null;
+	}
 
-    /**
-     * Sets the text of the test file input field.
-     *
-     * @param testFile the test file name
-     * @param update <code>true</code> if the dialog should be updated
-     * @since 5.3
-     */
-    public void setTestFileText(String testFile, boolean update) {
-    	setFileText(fTestFileDialogField, testFile, update);
-    }
+	/**
+	 * Sets the text of the test file input field.
+	 *
+	 * @param testFile the test file name
+	 * @param update <code>true</code> if the dialog should be updated
+	 * @since 5.3
+	 */
+	public void setTestFileText(String testFile, boolean update) {
+		setFileText(fTestFileDialogField, testFile, update);
+	}
 
-    /**
-     * Returns the current test file as a path. Returns {@code null} if creation of test file
-     * is disabled.
-     *
-     * @return the test file path, or {@code null} if creation of test file is disabled.
-     * @since 5.3
-     */
-    protected IPath getTestFileFullPath() {
-    	return getFilePath(getTestFileText());
-    }
+	/**
+	 * Returns the current test file as a path. Returns {@code null} if creation of test file
+	 * is disabled.
+	 *
+	 * @return the test file path, or {@code null} if creation of test file is disabled.
+	 * @since 5.3
+	 */
+	protected IPath getTestFileFullPath() {
+		return getFilePath(getTestFileText());
+	}
 
-    /**
-     * Returns a path corresponding to a file name.
-     * @param filename the name of a header, a source, or a test file. Can be {@code null}.
-     * @return the corresponding path, or {@code null} if the filename is {@code null}.
-     */
+	/**
+	 * Returns a path corresponding to a file name.
+	 * @param filename the name of a header, a source, or a test file. Can be {@code null}.
+	 * @return the corresponding path, or {@code null} if the filename is {@code null}.
+	 */
 	private IPath getFilePath(String filename) {
 		if (filename == null || filename.length() == 0) {
-    		return null;
-    	}
-    	IPath path = new Path(filename);
+			return null;
+		}
+		IPath path = new Path(filename);
 		if (!path.isAbsolute()) {
 			IPath folderPath = getSourceFolderFullPath();
 			if (folderPath != null)
 				path = folderPath.append(path);
 		}
-    	return path;
+		return path;
 	}
 
-    /**
-     * Sets a file name field to a given value.
-     *
-     * @param field the field to set
-     * @param filename the new value of the field
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    private void setFileText(StringButtonDialogField field, String filename, boolean update) {
-    	field.setTextWithoutUpdate(filename != null ? filename : ""); //$NON-NLS-1$
-        if (update) {
-        	field.dialogFieldChanged();
-        }
-    }
+	/**
+	 * Sets a file name field to a given value.
+	 *
+	 * @param field the field to set
+	 * @param filename the new value of the field
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	private void setFileText(StringButtonDialogField field, String filename, boolean update) {
+		field.setTextWithoutUpdate(filename != null ? filename : ""); //$NON-NLS-1$
+		if (update) {
+			field.dialogFieldChanged();
+		}
+	}
 
-    /**
-     * Sets a file name field from the given path.
-     *
-     * @param path the file path
-     * @param update <code>true</code> if the dialog should be updated
-     */
-    private void setFileFullPath(StringButtonDialogField field, IPath path, boolean update) {
-        String str = null;
-        if (path != null) {
-            IPath sourceFolder = getSourceFolderFullPath();
-            if (sourceFolder != null) {
-                IPath relativePath = PathUtil.makeRelativePath(path, sourceFolder);
-                if (relativePath != null)
-                    path = relativePath;
-            }
-            str = path.makeRelative().toString();
-        }
-        setFileText(field, str, update);
-    }
+	/**
+	 * Sets a file name field from the given path.
+	 *
+	 * @param path the file path
+	 * @param update <code>true</code> if the dialog should be updated
+	 */
+	private void setFileFullPath(StringButtonDialogField field, IPath path, boolean update) {
+		String str = null;
+		if (path != null) {
+			IPath sourceFolder = getSourceFolderFullPath();
+			if (sourceFolder != null) {
+				IPath relativePath = PathUtil.makeRelativePath(path, sourceFolder);
+				if (relativePath != null)
+					path = relativePath;
+			}
+			str = path.makeRelative().toString();
+		}
+		setFileText(field, str, update);
+	}
 
-    /**
-     * Sets the test file from the given path.
-     *
-     * @param path the test file path
-     * @param update <code>true</code> if the dialog should be updated
-     * @since 5.3
-     */
-    protected void setTestFileFullPath(IPath path, boolean update) {
-    	setFileFullPath(fTestFileDialogField, path, update);
-    }
+	/**
+	 * Sets the test file from the given path.
+	 *
+	 * @param path the test file path
+	 * @param update <code>true</code> if the dialog should be updated
+	 * @since 5.3
+	 */
+	protected void setTestFileFullPath(IPath path, boolean update) {
+		setFileFullPath(fTestFileDialogField, path, update);
+	}
 
-    /*
-     * @see WizardPage#becomesVisible
-     */
-    @Override
+	/*
+	 * @see WizardPage#becomesVisible
+	 */
+	@Override
 	public void setVisible(boolean visible) {
-        super.setVisible(visible);
-        if (visible) {
-            setFocus();
-        }
-    }
+		super.setVisible(visible);
+		if (visible) {
+			setFocus();
+		}
+	}
 
-    /**
-     * Sets the focus on the class name input field.
-     */
-    protected void setFocus() {
-        fClassNameDialogField.setFocus();
-    }
+	/**
+	 * Sets the focus on the class name input field.
+	 */
+	protected void setFocus() {
+		fClassNameDialogField.setFocus();
+	}
 
-    // ----------- UI Validation ----------
+	// ----------- UI Validation ----------
 
-    /**
-     * Causes doStatusUpdate() to be called whenever the focus changes.
-     * Remembers the last focused field.
-     */
-    private final class StatusFocusListener implements FocusListener {
-        private int fieldID;
+	/**
+	 * Causes doStatusUpdate() to be called whenever the focus changes.
+	 * Remembers the last focused field.
+	 */
+	private final class StatusFocusListener implements FocusListener {
+		private int fieldID;
 
-        public StatusFocusListener(int fieldID) {
-            this.fieldID = fieldID;
-        }
+		public StatusFocusListener(int fieldID) {
+			this.fieldID = fieldID;
+		}
 
-        @Override
+		@Override
 		public void focusGained(FocusEvent e) {
-            if (fLastFocusedField != this.fieldID) {
-                fLastFocusedField = this.fieldID;
-            	if (isFirstTime) {
-            		isFirstTime = false;
-            		return;
-            	}
-                doStatusUpdate();
-            }
-        }
+			if (fLastFocusedField != this.fieldID) {
+				fLastFocusedField = this.fieldID;
+				if (isFirstTime) {
+					isFirstTime = false;
+					return;
+				}
+				doStatusUpdate();
+			}
+		}
 
-        @Override
+		@Override
 		public void focusLost(FocusEvent e) {
-            if (fLastFocusedField != 0) {
-                fLastFocusedField = 0;
-                doStatusUpdate();
-            }
-        }
-    }
+			if (fLastFocusedField != 0) {
+				fLastFocusedField = 0;
+				doStatusUpdate();
+			}
+		}
+	}
 
-    /**
-     * Handles changes to the source folder field
-     */
-    private final class SourceFolderFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
+	/**
+	 * Handles changes to the source folder field
+	 */
+	private final class SourceFolderFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		@Override
 		public void changeControlPressed(DialogField field) {
-		    IPath oldFolderPath = getSourceFolderFullPath();
+			IPath oldFolderPath = getSourceFolderFullPath();
 			IPath newFolderPath = chooseSourceFolder(oldFolderPath);
 			if (newFolderPath != null) {
 				setSourceFolderFullPath(newFolderPath, false);
-				handleFieldChanged(SOURCE_FOLDER_ID|ALL_FIELDS);
+				handleFieldChanged(SOURCE_FOLDER_ID | ALL_FIELDS);
 			}
 		}
 
 		@Override
 		public void dialogFieldChanged(DialogField field) {
-			handleFieldChanged(SOURCE_FOLDER_ID|ALL_FIELDS);
+			handleFieldChanged(SOURCE_FOLDER_ID | ALL_FIELDS);
 		}
 	}
 
-    private IPath chooseSourceFolder(IPath initialPath) {
-        ICElement initElement = NewClassWizardUtil.getSourceFolder(initialPath);
-        if (initElement instanceof ISourceRoot) {
-            ICProject cProject = initElement.getCProject();
-            ISourceRoot projRoot = cProject.findSourceRoot(cProject.getProject());
-            if (projRoot != null && projRoot.equals(initElement))
-                initElement = cProject;
-        }
+	private IPath chooseSourceFolder(IPath initialPath) {
+		ICElement initElement = NewClassWizardUtil.getSourceFolder(initialPath);
+		if (initElement instanceof ISourceRoot) {
+			ICProject cProject = initElement.getCProject();
+			ISourceRoot projRoot = cProject.findSourceRoot(cProject.getProject());
+			if (projRoot != null && projRoot.equals(initElement))
+				initElement = cProject;
+		}
 
-        SourceFolderSelectionDialog dialog = new SourceFolderSelectionDialog(getShell());
-        dialog.setInput(CoreModel.create(NewClassWizardUtil.getWorkspaceRoot()));
-        dialog.setInitialSelection(initElement);
+		SourceFolderSelectionDialog dialog = new SourceFolderSelectionDialog(getShell());
+		dialog.setInput(CoreModel.create(NewClassWizardUtil.getWorkspaceRoot()));
+		dialog.setInitialSelection(initElement);
 
-        if (dialog.open() == Window.OK) {
-            Object result = dialog.getFirstResult();
-            if (result instanceof ICElement) {
-                ICElement element = (ICElement)result;
-                if (element instanceof ICProject) {
-                    ICProject cproject = (ICProject)element;
-                    ISourceRoot folder = cproject.findSourceRoot(cproject.getProject());
-                    if (folder != null)
-                        return folder.getResource().getFullPath();
-                }
-                return element.getResource().getFullPath();
-            }
-        }
-        return null;
-    }
+		if (dialog.open() == Window.OK) {
+			Object result = dialog.getFirstResult();
+			if (result instanceof ICElement) {
+				ICElement element = (ICElement) result;
+				if (element instanceof ICProject) {
+					ICProject cproject = (ICProject) element;
+					ISourceRoot folder = cproject.findSourceRoot(cproject.getProject());
+					if (folder != null)
+						return folder.getResource().getFullPath();
+				}
+				return element.getResource().getFullPath();
+			}
+		}
+		return null;
+	}
 
-    /**
-     * handles changes to the namespace field
-     */
-    private final class NamespaceFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
+	/**
+	 * handles changes to the namespace field
+	 */
+	private final class NamespaceFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		@Override
 		public void changeControlPressed(DialogField field) {
-	        ITypeInfo ns = chooseNamespace();
-		    if (ns != null) {
-		        int changedFields = NAMESPACE_ID|CLASS_NAME_ID;
-		        IPath oldFolderPath = getSourceFolderFullPath();
-		        if (oldFolderPath == null) {
+			ITypeInfo ns = chooseNamespace();
+			if (ns != null) {
+				int changedFields = NAMESPACE_ID | CLASS_NAME_ID;
+				IPath oldFolderPath = getSourceFolderFullPath();
+				if (oldFolderPath == null) {
 					IPath headerPath = getHeaderFileFullPath();
 					IPath sourcePath = getSourceFileFullPath();
 					IPath testPath = getTestFileFullPath();
-		            IPath newFolderPath = updateSourceFolderFromPath(ns.getEnclosingProject().getProject().getFullPath());
-			        if (newFolderPath != null) {
-			            changedFields |= SOURCE_FOLDER_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID;
-					    setSourceFolderFullPath(newFolderPath, false);
-					    // Adjust the relative paths
-					    setHeaderFileFullPath(headerPath, false);
-					    setSourceFileFullPath(sourcePath, false);
-					    setTestFileFullPath(testPath, false);
-			        }
-		        }
-		        setNamespaceText(ns.getQualifiedTypeName().toString(), false);
+					IPath newFolderPath = updateSourceFolderFromPath(
+							ns.getEnclosingProject().getProject().getFullPath());
+					if (newFolderPath != null) {
+						changedFields |= SOURCE_FOLDER_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID;
+						setSourceFolderFullPath(newFolderPath, false);
+						// Adjust the relative paths
+						setHeaderFileFullPath(headerPath, false);
+						setSourceFileFullPath(sourcePath, false);
+						setTestFileFullPath(testPath, false);
+					}
+				}
+				setNamespaceText(ns.getQualifiedTypeName().toString(), false);
 				handleFieldChanged(changedFields);
-	        }
+			}
 		}
 
 		@Override
 		public void dialogFieldChanged(DialogField field) {
-	        updateNamespaceEnableState();
-			handleFieldChanged(NAMESPACE_ID|CLASS_NAME_ID);
+			updateNamespaceEnableState();
+			handleFieldChanged(NAMESPACE_ID | CLASS_NAME_ID);
 		}
 	}
 
-    private IPath updateSourceFolderFromPath(IPath filePath) {
-        ICElement folder = NewClassWizardUtil.getSourceFolder(filePath);
-        if (folder instanceof ISourceRoot) {
-            ICProject cProject = folder.getCProject();
-            ISourceRoot projRoot = cProject.findSourceRoot(cProject.getProject());
-            if (projRoot != null && projRoot.equals(folder))
-                folder = cProject;
-        }
-        if (folder != null) {
-            return folder.getPath();
-        }
-        IProject proj = PathUtil.getEnclosingProject(filePath);
-        if (proj != null)
-            return proj.getFullPath();
-        return null;
-    }
+	private IPath updateSourceFolderFromPath(IPath filePath) {
+		ICElement folder = NewClassWizardUtil.getSourceFolder(filePath);
+		if (folder instanceof ISourceRoot) {
+			ICProject cProject = folder.getCProject();
+			ISourceRoot projRoot = cProject.findSourceRoot(cProject.getProject());
+			if (projRoot != null && projRoot.equals(folder))
+				folder = cProject;
+		}
+		if (folder != null) {
+			return folder.getPath();
+		}
+		IProject proj = PathUtil.getEnclosingProject(filePath);
+		if (proj != null)
+			return proj.getFullPath();
+		return null;
+	}
 
-    private ITypeInfo chooseNamespace() {
-        ITypeSearchScope scope;
-        ICProject project = getCurrentProject();
-        if (project != null) {
-            scope = new TypeSearchScope(project);
-        } else {
-            scope = new TypeSearchScope(true);
-        }
+	private ITypeInfo chooseNamespace() {
+		ITypeSearchScope scope;
+		ICProject project = getCurrentProject();
+		if (project != null) {
+			scope = new TypeSearchScope(project);
+		} else {
+			scope = new TypeSearchScope(true);
+		}
 
-        ITypeInfo[] elements = AllTypesCache.getNamespaces(scope, false);
-        if (elements == null || elements.length == 0) {
-            String title = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noNamespaces_title;
-            String message = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noNamespaces_message;
-            MessageDialog.openInformation(getShell(), title, message);
-            return null;
-        }
+		ITypeInfo[] elements = AllTypesCache.getNamespaces(scope, false);
+		if (elements == null || elements.length == 0) {
+			String title = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noNamespaces_title;
+			String message = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noNamespaces_message;
+			MessageDialog.openInformation(getShell(), title, message);
+			return null;
+		}
 
-        NamespaceSelectionDialog dialog = new NamespaceSelectionDialog(getShell());
-        dialog.setElements(elements);
-        int result = dialog.open();
-        if (result == IDialogConstants.OK_ID) {
-            return (ITypeInfo) dialog.getFirstResult();
-        }
+		NamespaceSelectionDialog dialog = new NamespaceSelectionDialog(getShell());
+		dialog.setElements(elements);
+		int result = dialog.open();
+		if (result == IDialogConstants.OK_ID) {
+			return (ITypeInfo) dialog.getFirstResult();
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Handles changes to the class name field
-     */
+	/**
+	 * Handles changes to the class name field
+	 */
 	private final class ClassNameFieldAdapter implements IDialogFieldListener {
 		@Override
 		public void dialogFieldChanged(DialogField field) {
-		    int changedFields = CLASS_NAME_ID;
+			int changedFields = CLASS_NAME_ID;
 			updateFilesFromClassName(fClassNameDialogField.getText().trim());
 			changedFields |= HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID;
 			handleFieldChanged(changedFields);
 		}
 	}
 
-    /**
-     * Handles changes to the base classes field
-     */
+	/**
+	 * Handles changes to the base classes field
+	 */
 	private final class BaseClassesFieldAdapter implements IListAdapter<IBaseClassInfo> {
-        @Override
+		@Override
 		public void customButtonPressed(ListDialogField<IBaseClassInfo> field, int index) {
-            if (index == 0) {
-                chooseBaseClasses();
-            }
-            handleFieldChanged(BASE_CLASSES_ID);
-        }
+			if (index == 0) {
+				chooseBaseClasses();
+			}
+			handleFieldChanged(BASE_CLASSES_ID);
+		}
 
-        @Override
+		@Override
 		public void selectionChanged(ListDialogField<IBaseClassInfo> field) {
-        }
+		}
 
-        @Override
+		@Override
 		public void doubleClicked(ListDialogField<IBaseClassInfo> field) {
-        }
-    }
+		}
+	}
 
-    private void chooseBaseClasses() {
-        List<IBaseClassInfo> oldContents = fBaseClassesDialogField.getElements();
-        NewBaseClassSelectionDialog dialog = new NewBaseClassSelectionDialog(getShell());
-        dialog.addListener(new ITypeSelectionListener() {
-            @Override
+	private void chooseBaseClasses() {
+		List<IBaseClassInfo> oldContents = fBaseClassesDialogField.getElements();
+		NewBaseClassSelectionDialog dialog = new NewBaseClassSelectionDialog(getShell());
+		dialog.addListener(new ITypeSelectionListener() {
+			@Override
 			public void typeAdded(ITypeInfo newBaseClass) {
-                addBaseClass(newBaseClass, ASTAccessVisibility.PUBLIC, false);
-            }
-        });
-        int result = dialog.open();
-        if (result != IDialogConstants.OK_ID) {
-            // Restore the old contents
-            fBaseClassesDialogField.setElements(oldContents);
-        }
-    }
+				addBaseClass(newBaseClass, ASTAccessVisibility.PUBLIC, false);
+			}
+		});
+		int result = dialog.open();
+		if (result != IDialogConstants.OK_ID) {
+			// Restore the old contents
+			fBaseClassesDialogField.setElements(oldContents);
+		}
+	}
 
-    /**
-     * Handles changes to the method stubs field
-     */
+	/**
+	 * Handles changes to the method stubs field
+	 */
 	private final class MethodStubsFieldAdapter implements IListAdapter<IMethodStub> {
 
-        @Override
+		@Override
 		public void customButtonPressed(ListDialogField<IMethodStub> field, int index) {
-        }
+		}
 
-        @Override
+		@Override
 		public void selectionChanged(ListDialogField<IMethodStub> field) {
-        }
+		}
 
-        @Override
+		@Override
 		public void doubleClicked(ListDialogField<IMethodStub> field) {
-        }
-    }
+		}
+	}
 
-    /**
-     * handles changes to the file name fields
-     */
-    private final class FileGroupFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
+	/**
+	 * handles changes to the file name fields
+	 */
+	private final class FileGroupFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		@Override
 		public void changeControlPressed(DialogField field) {
-		    IPath filePath = null;
+			IPath filePath = null;
 			IPath headerPath = getHeaderFileFullPath();
 			IPath sourcePath = getSourceFileFullPath();
 			IPath testPath = getTestFileFullPath();
-		    if (field == fHeaderFileDialogField) {
-		        filePath = chooseFile(NewClassWizardMessages.NewClassCreationWizardPage_ChooseHeaderFileDialog_title,
-				getHeaderFileFullPath());
-		        if (filePath != null) {
-		            headerPath = filePath;
-		        }
-		    } else if (field == fSourceFileDialogField) {
+			if (field == fHeaderFileDialogField) {
+				filePath = chooseFile(NewClassWizardMessages.NewClassCreationWizardPage_ChooseHeaderFileDialog_title,
+						getHeaderFileFullPath());
+				if (filePath != null) {
+					headerPath = filePath;
+				}
+			} else if (field == fSourceFileDialogField) {
 				filePath = chooseFile(NewClassWizardMessages.NewClassCreationWizardPage_ChooseSourceFileDialog_title,
-				getSourceFileFullPath());
-		        if (filePath != null) {
-		            sourcePath = filePath;
-		        }
-		    } else if (field == fTestFileDialogField) {
+						getSourceFileFullPath());
+				if (filePath != null) {
+					sourcePath = filePath;
+				}
+			} else if (field == fTestFileDialogField) {
 				filePath = chooseFile(NewClassWizardMessages.NewClassCreationWizardPage_ChooseTestFileDialog_title,
-				getTestFileFullPath());
-		        if (filePath != null) {
-		            testPath = filePath;
-		        }
-		    }
-		    if (filePath != null) {
-		        IPath folderPath = null;
-			    int changedFields = 0;
-	            int headerSegments = 0;
-	            int sourceSegments = 0;
-	            int testSegments = 0;
-	            if (headerPath != null)
-	                headerSegments = filePath.matchingFirstSegments(headerPath);
-	            if (sourcePath != null)
-	                sourceSegments = filePath.matchingFirstSegments(sourcePath);
-	            if (testPath != null)
-	                testSegments = filePath.matchingFirstSegments(testPath);
-	            int segments = Math.min(Math.min(headerSegments, sourceSegments), testSegments);
-	            if (segments > 0) {
-	                IPath newFolderPath = filePath.uptoSegment(segments);
-		            folderPath = updateSourceFolderFromPath(newFolderPath);
-	            }
-		        if (folderPath != null) {
-		            changedFields |= SOURCE_FOLDER_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID;
-				    // Adjust the relative paths
-		            setSourceFolderFullPath(folderPath, false);
-				    setHeaderFileFullPath(headerPath, false);
-				    setSourceFileFullPath(sourcePath, false);
-				    setTestFileFullPath(testPath, false);
-		        }
-			    if (field == fHeaderFileDialogField) {
-		            setHeaderFileFullPath(filePath, false);
-		            changedFields |= HEADER_FILE_ID;
-		        } else if (field == fSourceFileDialogField) {
-		            setSourceFileFullPath(filePath, false);
-		            changedFields |= SOURCE_FILE_ID;
-		        } else if (field == fTestFileDialogField) {
-		            setTestFileFullPath(filePath, false);
-		            changedFields |= TEST_FILE_ID;
-		        }
+						getTestFileFullPath());
+				if (filePath != null) {
+					testPath = filePath;
+				}
+			}
+			if (filePath != null) {
+				IPath folderPath = null;
+				int changedFields = 0;
+				int headerSegments = 0;
+				int sourceSegments = 0;
+				int testSegments = 0;
+				if (headerPath != null)
+					headerSegments = filePath.matchingFirstSegments(headerPath);
+				if (sourcePath != null)
+					sourceSegments = filePath.matchingFirstSegments(sourcePath);
+				if (testPath != null)
+					testSegments = filePath.matchingFirstSegments(testPath);
+				int segments = Math.min(Math.min(headerSegments, sourceSegments), testSegments);
+				if (segments > 0) {
+					IPath newFolderPath = filePath.uptoSegment(segments);
+					folderPath = updateSourceFolderFromPath(newFolderPath);
+				}
+				if (folderPath != null) {
+					changedFields |= SOURCE_FOLDER_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID;
+					// Adjust the relative paths
+					setSourceFolderFullPath(folderPath, false);
+					setHeaderFileFullPath(headerPath, false);
+					setSourceFileFullPath(sourcePath, false);
+					setTestFileFullPath(testPath, false);
+				}
+				if (field == fHeaderFileDialogField) {
+					setHeaderFileFullPath(filePath, false);
+					changedFields |= HEADER_FILE_ID;
+				} else if (field == fSourceFileDialogField) {
+					setSourceFileFullPath(filePath, false);
+					changedFields |= SOURCE_FILE_ID;
+				} else if (field == fTestFileDialogField) {
+					setTestFileFullPath(filePath, false);
+					changedFields |= TEST_FILE_ID;
+				}
 				handleFieldChanged(changedFields);
-		    }
+			}
 		}
 
 		@Override
 		public void dialogFieldChanged(DialogField field) {
-		    int changedFields = 0;
-		    if (field == fTestFileSelection) {
-		        boolean enabled = fTestFileSelection.isSelected();
-		        fTestFileDialogField.setEnabled(enabled);
-		        if (enabled) {
-		        	fTestFileDerivedFromClassName = true;
-		        	updateFilesFromClassName(fClassNameDialogField.getText().trim());
-		        } else {
-		        	fTestFileDialogField.setTextWithoutUpdate(""); //$NON-NLS-1$
-		        }
-		        changedFields = TEST_FILE_ID;
-			    updateTestFileEnableState();
-			    handleFieldChanged(SOURCE_FOLDER_ID);
-		    }
-		    if (field == fHeaderFileDialogField) {
-	            changedFields |= HEADER_FILE_ID;
-	            fHeaderFileDerivedFromClassName = false;
-	        } else if (field == fSourceFileDialogField) {
-	            changedFields |= SOURCE_FILE_ID;
-	            fSourceFileDerivedFromClassName = false;
-	        } else if (field == fTestFileDialogField) {
-	            changedFields |= TEST_FILE_ID;
-	            fTestFileDerivedFromClassName = false;
-	        }
+			int changedFields = 0;
+			if (field == fTestFileSelection) {
+				boolean enabled = fTestFileSelection.isSelected();
+				fTestFileDialogField.setEnabled(enabled);
+				if (enabled) {
+					fTestFileDerivedFromClassName = true;
+					updateFilesFromClassName(fClassNameDialogField.getText().trim());
+				} else {
+					fTestFileDialogField.setTextWithoutUpdate(""); //$NON-NLS-1$
+				}
+				changedFields = TEST_FILE_ID;
+				updateTestFileEnableState();
+				handleFieldChanged(SOURCE_FOLDER_ID);
+			}
+			if (field == fHeaderFileDialogField) {
+				changedFields |= HEADER_FILE_ID;
+				fHeaderFileDerivedFromClassName = false;
+			} else if (field == fSourceFileDialogField) {
+				changedFields |= SOURCE_FILE_ID;
+				fSourceFileDerivedFromClassName = false;
+			} else if (field == fTestFileDialogField) {
+				changedFields |= TEST_FILE_ID;
+				fTestFileDerivedFromClassName = false;
+			}
 			handleFieldChanged(changedFields);
 		}
 	}
 
-    private IPath chooseFile(String title, IPath initialPath) {
-        SourceFileSelectionDialog dialog = new SourceFileSelectionDialog(getShell());
-        dialog.setTitle(title);
-        ICElement input = CoreModel.create(NewClassWizardUtil.getWorkspaceRoot());
-        ICProject project = getCurrentProject();
-        if (project != null)
-            input = project;
-        dialog.setInput(input);
+	private IPath chooseFile(String title, IPath initialPath) {
+		SourceFileSelectionDialog dialog = new SourceFileSelectionDialog(getShell());
+		dialog.setTitle(title);
+		ICElement input = CoreModel.create(NewClassWizardUtil.getWorkspaceRoot());
+		ICProject project = getCurrentProject();
+		if (project != null)
+			input = project;
+		dialog.setInput(input);
 
-        IPath filePath = initialPath;
-        if (filePath != null) {
-            String folderName = filePath.removeLastSegments(1).toString();
-            String fileName = filePath.lastSegment();
-            dialog.setInitialSelection(folderName, fileName);
-        } else {
-            filePath = getSourceFolderFullPath();
-            if (filePath != null) {
-                dialog.setInitialSelection(filePath.toString(), null);
-            }
-        }
+		IPath filePath = initialPath;
+		if (filePath != null) {
+			String folderName = filePath.removeLastSegments(1).toString();
+			String fileName = filePath.lastSegment();
+			dialog.setInitialSelection(folderName, fileName);
+		} else {
+			filePath = getSourceFolderFullPath();
+			if (filePath != null) {
+				dialog.setInitialSelection(filePath.toString(), null);
+			}
+		}
 
-        if (dialog.open() == Window.OK) {
-            return dialog.getFilePath();
-        }
-        return null;
-    }
+		if (dialog.open() == Window.OK) {
+			return dialog.getFilePath();
+		}
+		return null;
+	}
 
-    /**
-     * update header and source file fields from the class name
-     */
-    private void updateFilesFromClassName(String className) {
-        String headerName = ""; //$NON-NLS-1$
-        String sourceName = ""; //$NON-NLS-1$
-        String testName = ""; //$NON-NLS-1$
-        IPath folder = getSourceFolderFullPath();
-        if (className != null && className.length() > 0) {
-            String[] names = generateFileNames(className, folder);
-            if (names != null && names.length == 3) {
-                headerName = names[0];
-                sourceName = names[1];
-                testName = names[2];
-            }
-        }
-        if (fHeaderFileDerivedFromClassName)
-        	fHeaderFileDialogField.setTextWithoutUpdate(headerName);
-        if (fSourceFileDerivedFromClassName)
-        	fSourceFileDialogField.setTextWithoutUpdate(sourceName);
-        if (fTestFileDerivedFromClassName && fTestFileDialogField.isEnabled())
-        	fTestFileDialogField.setTextWithoutUpdate(testName);
-    }
+	/**
+	 * update header and source file fields from the class name
+	 */
+	private void updateFilesFromClassName(String className) {
+		String headerName = ""; //$NON-NLS-1$
+		String sourceName = ""; //$NON-NLS-1$
+		String testName = ""; //$NON-NLS-1$
+		IPath folder = getSourceFolderFullPath();
+		if (className != null && className.length() > 0) {
+			String[] names = generateFileNames(className, folder);
+			if (names != null && names.length == 3) {
+				headerName = names[0];
+				sourceName = names[1];
+				testName = names[2];
+			}
+		}
+		if (fHeaderFileDerivedFromClassName)
+			fHeaderFileDialogField.setTextWithoutUpdate(headerName);
+		if (fSourceFileDerivedFromClassName)
+			fSourceFileDialogField.setTextWithoutUpdate(sourceName);
+		if (fTestFileDerivedFromClassName && fTestFileDialogField.isEnabled())
+			fTestFileDialogField.setTextWithoutUpdate(testName);
+	}
 
-    private static final int MAX_UNIQUE_CLASSNAME = 99;
+	private static final int MAX_UNIQUE_CLASSNAME = 99;
 	private IDialogSettings fDialogSettings;
 
-    /**
-     * Returns the names of the header file and source file which will be
-     * used when this class is created, e.g. "MyClass" -> ["MyClass.h","MyClass.cpp"]
-     * Note: the file names should be unique to avoid overwriting existing files.
-     *
-     * @param className the class name
-     * @param folder the folder where the files are to be created, or <code>null</code>
-     * @return an array of 2 Strings, containing the header file name and
-     * source file name, respectively.
-     */
-    protected String[] generateFileNames(String className, IPath folder) {
-        String headerName = null;
-        String sourceName = null;
-        String testName = null;
+	/**
+	 * Returns the names of the header file and source file which will be
+	 * used when this class is created, e.g. "MyClass" -> ["MyClass.h","MyClass.cpp"]
+	 * Note: the file names should be unique to avoid overwriting existing files.
+	 *
+	 * @param className the class name
+	 * @param folder the folder where the files are to be created, or <code>null</code>
+	 * @return an array of 2 Strings, containing the header file name and
+	 * source file name, respectively.
+	 */
+	protected String[] generateFileNames(String className, IPath folder) {
+		String headerName = null;
+		String sourceName = null;
+		String testName = null;
 
-        if (folder == null) {
-            headerName = NewSourceFileGenerator.generateHeaderFileNameFromClass(className);
-            sourceName = NewSourceFileGenerator.generateSourceFileNameFromClass(className);
-            testName = NewSourceFileGenerator.generateTestFileNameFromClass(className);
-        } else {
-            // Make sure the file names are unique.
-            String currName = className;
-            int count = 0;
-            String separator = ""; //$NON-NLS-1$
-            if (Character.isDigit(className.charAt(className.length() - 1)))
-                separator = "_"; //$NON-NLS-1$
-            while (count < MAX_UNIQUE_CLASSNAME) {
-                String header = NewSourceFileGenerator.generateHeaderFileNameFromClass(currName);
-                IPath path = folder.append(header);
-                if (!path.toFile().exists()) {
-                    String source = NewSourceFileGenerator.generateSourceFileNameFromClass(currName);
-                    path = folder.append(source);
-                    if (!path.toFile().exists()) {
-                        String test = NewSourceFileGenerator.generateTestFileNameFromClass(currName);
-                        path = folder.append(test);
-                        if (!path.toFile().exists()) {
-	                        headerName = header;
-	                        sourceName = source;
-	                        testName = test;
-	                        // We're done.
-	                        break;
-                        }
-                    }
-                }
-                ++count;
-                currName = className + separator + count;
-            }
-        }
+		if (folder == null) {
+			headerName = NewSourceFileGenerator.generateHeaderFileNameFromClass(className);
+			sourceName = NewSourceFileGenerator.generateSourceFileNameFromClass(className);
+			testName = NewSourceFileGenerator.generateTestFileNameFromClass(className);
+		} else {
+			// Make sure the file names are unique.
+			String currName = className;
+			int count = 0;
+			String separator = ""; //$NON-NLS-1$
+			if (Character.isDigit(className.charAt(className.length() - 1)))
+				separator = "_"; //$NON-NLS-1$
+			while (count < MAX_UNIQUE_CLASSNAME) {
+				String header = NewSourceFileGenerator.generateHeaderFileNameFromClass(currName);
+				IPath path = folder.append(header);
+				if (!path.toFile().exists()) {
+					String source = NewSourceFileGenerator.generateSourceFileNameFromClass(currName);
+					path = folder.append(source);
+					if (!path.toFile().exists()) {
+						String test = NewSourceFileGenerator.generateTestFileNameFromClass(currName);
+						path = folder.append(test);
+						if (!path.toFile().exists()) {
+							headerName = header;
+							sourceName = source;
+							testName = test;
+							// We're done.
+							break;
+						}
+					}
+				}
+				++count;
+				currName = className + separator + count;
+			}
+		}
 
-        return new String[] { headerName, sourceName, testName };
-    }
+		return new String[] { headerName, sourceName, testName };
+	}
 
-    /**
-     * Hook method that gets called when a field on this page has changed.
-     *
-     * @param fields Bitwise-OR'd ids of the fields that changed.
-     */
-    protected void handleFieldChanged(int fields) {
-        if (fields == 0)
-            return; // no change
+	/**
+	 * Hook method that gets called when a field on this page has changed.
+	 *
+	 * @param fields Bitwise-OR'd ids of the fields that changed.
+	 */
+	protected void handleFieldChanged(int fields) {
+		if (fields == 0)
+			return; // no change
 
-        if (fieldChanged(fields, SOURCE_FOLDER_ID)) {
-            fSourceFolderStatus = sourceFolderChanged();
-        }
-        if (fieldChanged(fields, NAMESPACE_ID)) {
-            fNamespaceStatus = namespaceChanged();
-        }
-        if (fieldChanged(fields, CLASS_NAME_ID)) {
-            fClassNameStatus = classNameChanged();
-        }
-        if (fieldChanged(fields, BASE_CLASSES_ID)) {
-            fBaseClassesStatus = baseClassesChanged();
-        }
-        if (fieldChanged(fields, METHOD_STUBS_ID)) {
-            fMethodStubsStatus = methodStubsChanged();
-        }
-        if (fieldChanged(fields, HEADER_FILE_ID)) {
-            fHeaderFileStatus = headerFileChanged();
-        }
-        if (fieldChanged(fields, SOURCE_FILE_ID)) {
-            fSourceFileStatus = sourceFileChanged();
-        }
-        if (fieldChanged(fields, TEST_FILE_ID)) {
-            fTestFileStatus = testFileChanged();
-        }
-        doStatusUpdate();
-    }
+		if (fieldChanged(fields, SOURCE_FOLDER_ID)) {
+			fSourceFolderStatus = sourceFolderChanged();
+		}
+		if (fieldChanged(fields, NAMESPACE_ID)) {
+			fNamespaceStatus = namespaceChanged();
+		}
+		if (fieldChanged(fields, CLASS_NAME_ID)) {
+			fClassNameStatus = classNameChanged();
+		}
+		if (fieldChanged(fields, BASE_CLASSES_ID)) {
+			fBaseClassesStatus = baseClassesChanged();
+		}
+		if (fieldChanged(fields, METHOD_STUBS_ID)) {
+			fMethodStubsStatus = methodStubsChanged();
+		}
+		if (fieldChanged(fields, HEADER_FILE_ID)) {
+			fHeaderFileStatus = headerFileChanged();
+		}
+		if (fieldChanged(fields, SOURCE_FILE_ID)) {
+			fSourceFileStatus = sourceFileChanged();
+		}
+		if (fieldChanged(fields, TEST_FILE_ID)) {
+			fTestFileStatus = testFileChanged();
+		}
+		doStatusUpdate();
+	}
 
-    private boolean fieldChanged(int fields, int fieldID) {
-        return ((fields & fieldID) != 0);
-    }
+	private boolean fieldChanged(int fields, int fieldID) {
+		return ((fields & fieldID) != 0);
+	}
 
-    /**
-     * Updates the status line and the ok button according to the status of the fields
-     * on the page. The most severe error is taken, with the last-focused field being
-     * evaluated first.
-     */
-    protected void doStatusUpdate() {
-        // do the last focused field first
-        IStatus lastStatus = getLastFocusedStatus();
+	/**
+	 * Updates the status line and the ok button according to the status of the fields
+	 * on the page. The most severe error is taken, with the last-focused field being
+	 * evaluated first.
+	 */
+	protected void doStatusUpdate() {
+		// do the last focused field first
+		IStatus lastStatus = getLastFocusedStatus();
 
-        final boolean isClassNameWarning = fClassNameStatus.getSeverity() == IStatus.WARNING;
-        // status of all used components
-		IStatus[] status = new IStatus[] {
-            lastStatus,
-            (fSourceFolderStatus != lastStatus) ? fSourceFolderStatus : STATUS_OK,
-            (fNamespaceStatus != lastStatus) ? fNamespaceStatus : STATUS_OK,
+		final boolean isClassNameWarning = fClassNameStatus.getSeverity() == IStatus.WARNING;
+		// status of all used components
+		IStatus[] status = new IStatus[] { lastStatus,
+				(fSourceFolderStatus != lastStatus) ? fSourceFolderStatus : STATUS_OK,
+				(fNamespaceStatus != lastStatus) ? fNamespaceStatus : STATUS_OK,
 
-            // Give priority to file-level warnings over class name warnings
-            (fHeaderFileStatus != lastStatus && isClassNameWarning) ? fHeaderFileStatus : STATUS_OK,
-            (fSourceFileStatus != lastStatus && isClassNameWarning) ? fSourceFileStatus : STATUS_OK,
-            (fTestFileStatus != lastStatus && isClassNameWarning) ? fTestFileStatus : STATUS_OK,
+				// Give priority to file-level warnings over class name warnings
+				(fHeaderFileStatus != lastStatus && isClassNameWarning) ? fHeaderFileStatus : STATUS_OK,
+				(fSourceFileStatus != lastStatus && isClassNameWarning) ? fSourceFileStatus : STATUS_OK,
+				(fTestFileStatus != lastStatus && isClassNameWarning) ? fTestFileStatus : STATUS_OK,
 
-            (fClassNameStatus != lastStatus) ? fClassNameStatus : STATUS_OK,
-            (fBaseClassesStatus != lastStatus) ? fBaseClassesStatus : STATUS_OK,
-            (fMethodStubsStatus != lastStatus) ? fMethodStubsStatus : STATUS_OK,
-            (fHeaderFileStatus != lastStatus) ? fHeaderFileStatus : STATUS_OK,
-            (fSourceFileStatus != lastStatus) ? fSourceFileStatus : STATUS_OK,
-            (fTestFileStatus != lastStatus) ? fTestFileStatus : STATUS_OK,
-        };
+				(fClassNameStatus != lastStatus) ? fClassNameStatus : STATUS_OK,
+				(fBaseClassesStatus != lastStatus) ? fBaseClassesStatus : STATUS_OK,
+				(fMethodStubsStatus != lastStatus) ? fMethodStubsStatus : STATUS_OK,
+				(fHeaderFileStatus != lastStatus) ? fHeaderFileStatus : STATUS_OK,
+				(fSourceFileStatus != lastStatus) ? fSourceFileStatus : STATUS_OK,
+				(fTestFileStatus != lastStatus) ? fTestFileStatus : STATUS_OK, };
 
-        // the mode severe status will be displayed and the ok button enabled/disabled.
-        updateStatus(status);
-    }
+		// the mode severe status will be displayed and the ok button enabled/disabled.
+		updateStatus(status);
+	}
 
-    /**
-     * Returns the status of the last field which had focus.
-     *
-     * @return status of the last field which had focus
-     */
-    protected IStatus getLastFocusedStatus() {
-        switch (fLastFocusedField) {
-        case SOURCE_FOLDER_ID:
-            return fSourceFolderStatus;
-        case NAMESPACE_ID:
-            return fNamespaceStatus;
-        case CLASS_NAME_ID:
-            return fClassNameStatus;
-        case BASE_CLASSES_ID:
-            return fBaseClassesStatus;
-        case METHOD_STUBS_ID:
-            return fMethodStubsStatus;
-        case HEADER_FILE_ID:
-            return fHeaderFileStatus;
-        case SOURCE_FILE_ID:
-            return fSourceFileStatus;
-        case TEST_FILE_ID:
-            return fTestFileStatus;
-        default:
-        	return STATUS_OK;
-        }
-    }
+	/**
+	 * Returns the status of the last field which had focus.
+	 *
+	 * @return status of the last field which had focus
+	 */
+	protected IStatus getLastFocusedStatus() {
+		switch (fLastFocusedField) {
+		case SOURCE_FOLDER_ID:
+			return fSourceFolderStatus;
+		case NAMESPACE_ID:
+			return fNamespaceStatus;
+		case CLASS_NAME_ID:
+			return fClassNameStatus;
+		case BASE_CLASSES_ID:
+			return fBaseClassesStatus;
+		case METHOD_STUBS_ID:
+			return fMethodStubsStatus;
+		case HEADER_FILE_ID:
+			return fHeaderFileStatus;
+		case SOURCE_FILE_ID:
+			return fSourceFileStatus;
+		case TEST_FILE_ID:
+			return fTestFileStatus;
+		default:
+			return STATUS_OK;
+		}
+	}
 
-    /**
-     * Hook method that gets called when the source folder has changed. The method validates the
-     * source folder and returns the status of the validation.
-     *
-     * @return the status of the validation
-     */
+	/**
+	 * Hook method that gets called when the source folder has changed. The method validates the
+	 * source folder and returns the status of the validation.
+	 *
+	 * @return the status of the validation
+	 */
 	protected IStatus sourceFolderChanged() {
 		StatusInfo status = new StatusInfo();
 
@@ -1549,26 +1545,30 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
 				IProject proj = res.getProject();
 				if (!proj.isOpen()) {
-					status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFolder, folderPath));
+					status.setError(
+							NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFolder, folderPath));
 					return status;
 				}
-			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+				if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
 					if (resType == IResource.PROJECT) {
 						status.setError(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotACProject);
 						return status;
 					}
 					status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotInACProject);
 				}
-			    if (!NewClassWizardUtil.isOnSourceRoot(res)) {
-					status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotASourceFolder, folderPath));
+				if (!NewClassWizardUtil.isOnSourceRoot(res)) {
+					status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotASourceFolder,
+							folderPath));
 					return status;
 				}
 			} else {
-				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFolder, folderPath));
+				status.setError(
+						NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFolder, folderPath));
 				return status;
 			}
 		} else {
-			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
+			status.setError(
+					NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
 			return status;
 		}
 
@@ -1576,19 +1576,19 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	}
 
 	/**
-     * Hook method that gets called when the namespace has changed. The method validates the
-     * namespace and returns the status of the validation.
-     *
-     * @return the status of the validation
-     */
+	 * Hook method that gets called when the namespace has changed. The method validates the
+	 * namespace and returns the status of the validation.
+	 *
+	 * @return the status of the validation
+	 */
 	protected IStatus namespaceChanged() {
 		StatusInfo status = new StatusInfo();
 		if (!isNamespaceSelected()) {
-		    return status;
+			return status;
 		}
 
 		// must not be empty
-        String namespace = getNamespaceText();
+		String namespace = getNamespaceText();
 		if (namespace == null || namespace.length() == 0) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterNamespace);
 			return status;
@@ -1596,13 +1596,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 		IStatus val = CConventions.validateNamespaceName(namespace);
 		if (val.getSeverity() == IStatus.ERROR) {
-			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidNamespace, val.getMessage()));
+			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidNamespace,
+					val.getMessage()));
 			return status;
 		} else if (val.getSeverity() == IStatus.WARNING) {
-			status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_NamespaceDiscouraged, val.getMessage()));
+			status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_NamespaceDiscouraged,
+					val.getMessage()));
 		}
 
-	 	IQualifiedTypeName typeName = new QualifiedTypeName(namespace);
+		IQualifiedTypeName typeName = new QualifiedTypeName(namespace);
 		ICProject project = getCurrentProject();
 
 		if (project != null) {
@@ -1618,14 +1620,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_NamespaceExistsDifferentCase);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_TYPE:
-				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingNamespaceExistsDifferentCase);
+				status.setWarning(
+						NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingNamespaceExistsDifferentCase);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_NOTFOUND:
 				// Find the highest ancestor namespace that does not exist.
 				IQualifiedTypeName ns = typeName;
 				while (ns.isQualified()) {
 					IQualifiedTypeName ns1 = ns.getEnclosingTypeName();
-					if (NewClassWizardUtil.searchForCppType(ns1, project, ICPPNamespace.class) == NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT) {
+					if (NewClassWizardUtil.searchForCppType(ns1, project,
+							ICPPNamespace.class) == NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT) {
 						break;
 					}
 					ns = ns1;
@@ -1634,14 +1638,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 						ns.getFullyQualifiedName()));
 				break;
 			}
-	    }
+		}
 
-	    val = CConventions.validateNamespaceName(typeName.lastSegment());
+		val = CConventions.validateNamespaceName(typeName.lastSegment());
 		if (val.getSeverity() == IStatus.ERROR) {
-			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidNamespace, val.getMessage()));
+			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidNamespace,
+					val.getMessage()));
 			return status;
 		}
-	    return status;
+		return status;
 	}
 
 	/**
@@ -1651,38 +1656,40 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @return the status of the validation
 	 */
 	protected IStatus classNameChanged() {
-	    StatusInfo status = new StatusInfo();
+		StatusInfo status = new StatusInfo();
 
-	    String className = getClassName();
+		String className = getClassName();
 		// Must not be empty.
 		if (className == null || className.length() == 0) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterClassName);
 			return status;
 		}
 
-        IQualifiedTypeName typeName = new QualifiedTypeName(className);
-        if (typeName.isQualified()) {
-            status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_QualifiedClassName);
-            return status;
-        }
+		IQualifiedTypeName typeName = new QualifiedTypeName(className);
+		if (typeName.isQualified()) {
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_QualifiedClassName);
+			return status;
+		}
 
 		IStatus val = CConventions.validateClassName(className);
 		if (val.getSeverity() == IStatus.ERROR) {
-			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidClassName, val.getMessage()));
+			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidClassName,
+					val.getMessage()));
 			return status;
 		} else if (val.getSeverity() == IStatus.WARNING) {
-			status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_ClassNameDiscouraged, val.getMessage()));
+			status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_ClassNameDiscouraged,
+					val.getMessage()));
 			// continue checking
 		}
 
-	    ICProject project = getCurrentProject();
-	    if (project != null) {
-		    IQualifiedTypeName fullyQualifiedName = typeName;
+		ICProject project = getCurrentProject();
+		if (project != null) {
+			IQualifiedTypeName fullyQualifiedName = typeName;
 			if (isNamespaceSelected()) {
-                String namespace = getNamespaceText();
-                if (namespace != null && namespace.length() > 0) {
-			        fullyQualifiedName = new QualifiedTypeName(namespace).append(typeName);
-			    }
+				String namespace = getNamespaceText();
+				if (namespace != null && namespace.length() > 0) {
+					fullyQualifiedName = new QualifiedTypeName(namespace).append(typeName);
+				}
 			}
 			int searchResult = NewClassWizardUtil.searchForCppType(fullyQualifiedName, project, ICPPClassType.class);
 			switch (searchResult) {
@@ -1696,103 +1703,105 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_ClassNameExistsDifferentCase);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_TYPE:
-				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingClassExistsDifferentCase);
+				status.setWarning(
+						NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingClassExistsDifferentCase);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_NOTFOUND:
 				break;
 			}
-	    }
+		}
 		return status;
 	}
 
- 	/**
+	/**
 	 * Hook method that gets called when the list of base classes has changed. The method
 	 * validates the base classes and returns the status of the validation.
 	 *
 	 * @return the status of the validation
 	 */
 	protected IStatus baseClassesChanged() {
-        if (verifyBaseClasses()) {
+		if (verifyBaseClasses()) {
 			IPath folder = getSourceFolderFullPath();
-            ICProject project = getCurrentProject();
+			ICProject project = getCurrentProject();
 			if (project != null) {
-                IBaseClassInfo[] baseClasses = getBaseClasses();
-                // make sure all classes belong to the project
-                if (baseClasses != null && baseClasses.length > 0) {
-                    IStatus status = baseClassesChanged(project, folder, baseClasses);
-                    if (status.isMultiStatus()) {
-                        // we only want to show the most severe error
-                        return StatusUtil.getMostSevere(status.getChildren());
-                    }
-                    return status;
-                }
-            }
-        }
+				IBaseClassInfo[] baseClasses = getBaseClasses();
+				// make sure all classes belong to the project
+				if (baseClasses != null && baseClasses.length > 0) {
+					IStatus status = baseClassesChanged(project, folder, baseClasses);
+					if (status.isMultiStatus()) {
+						// we only want to show the most severe error
+						return StatusUtil.getMostSevere(status.getChildren());
+					}
+					return status;
+				}
+			}
+		}
 		return Status.OK_STATUS;
 	}
 
-    /**
-     * This method validates the base classes by searching through the project's
-     * include paths and checking if each base class is reachable.
-     *
-     * @param project the current project
-     * @param sourceFolder the current source folder
-     * @param baseClasses an array of base classes
-     *
-     * @return the status of the validation
-     *
-     * @noreference This method is not intended to be referenced by clients.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     */
-    protected IStatus baseClassesChanged(ICProject project, IPath sourceFolder, IBaseClassInfo[] baseClasses) {
-        MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
-        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project.getProject());
-        if (provider != null) {
-            // TODO Get the scanner info for the actual source folder.
-            IScannerInfo info = provider.getScannerInformation(project.getProject());
-            if (info != null) {
-                String[] includePaths = info.getIncludePaths();
-                for (int i = 0; i < baseClasses.length; ++i) {
-                    IBaseClassInfo baseClass = baseClasses[i];
-                    ITypeInfo baseType = baseClass.getType();
-                    StatusInfo baseClassStatus = new StatusInfo();
-                    if (!NewClassWizardUtil.isTypeReachable(baseType, project, includePaths)) {
-                        baseClassStatus.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_BaseClassNotExistsInProject,
-                        		baseType.getQualifiedTypeName().toString()));
-                    }
-                    status.add(baseClassStatus);
-                }
-            }
-        }
-        return status;
-    }
-
-    /**
-     * Checks if the base classes need to be verified (ie they must exist in the project)
-     *
-     * @return <code>true</code> if the base classes should be verified
-     */
-    public boolean verifyBaseClasses() {
-        return NewClassWizardPrefs.verifyBaseClasses();
-    }
-
-    /**
-     * Hook method that gets called when the list of method stubs has changed. The method
-     * validates the method stubs and returns the status of the validation.
-     *
-     * @return the status of the validation
-     */
-	protected IStatus methodStubsChanged() {
-        // do nothing
-        return Status.OK_STATUS;
+	/**
+	 * This method validates the base classes by searching through the project's
+	 * include paths and checking if each base class is reachable.
+	 *
+	 * @param project the current project
+	 * @param sourceFolder the current source folder
+	 * @param baseClasses an array of base classes
+	 *
+	 * @return the status of the validation
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	protected IStatus baseClassesChanged(ICProject project, IPath sourceFolder, IBaseClassInfo[] baseClasses) {
+		MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project.getProject());
+		if (provider != null) {
+			// TODO Get the scanner info for the actual source folder.
+			IScannerInfo info = provider.getScannerInformation(project.getProject());
+			if (info != null) {
+				String[] includePaths = info.getIncludePaths();
+				for (int i = 0; i < baseClasses.length; ++i) {
+					IBaseClassInfo baseClass = baseClasses[i];
+					ITypeInfo baseType = baseClass.getType();
+					StatusInfo baseClassStatus = new StatusInfo();
+					if (!NewClassWizardUtil.isTypeReachable(baseType, project, includePaths)) {
+						baseClassStatus.setError(NLS.bind(
+								NewClassWizardMessages.NewClassCreationWizardPage_error_BaseClassNotExistsInProject,
+								baseType.getQualifiedTypeName().toString()));
+					}
+					status.add(baseClassStatus);
+				}
+			}
+		}
+		return status;
 	}
 
-    /**
-     * Hook method that gets called when the header file has changed. The method
-     * validates the header file and returns the status of the validation.
-     *
-     * @return the status of the validation
-     */
+	/**
+	 * Checks if the base classes need to be verified (ie they must exist in the project)
+	 *
+	 * @return <code>true</code> if the base classes should be verified
+	 */
+	public boolean verifyBaseClasses() {
+		return NewClassWizardPrefs.verifyBaseClasses();
+	}
+
+	/**
+	 * Hook method that gets called when the list of method stubs has changed. The method
+	 * validates the method stubs and returns the status of the validation.
+	 *
+	 * @return the status of the validation
+	 */
+	protected IStatus methodStubsChanged() {
+		// do nothing
+		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Hook method that gets called when the header file has changed. The method
+	 * validates the header file and returns the status of the validation.
+	 *
+	 * @return the status of the validation
+	 */
 	protected IStatus headerFileChanged() {
 		StatusInfo status = new StatusInfo();
 
@@ -1817,8 +1826,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		boolean fileExists = false;
 		// Check if the file already exists
 		IResource file = NewClassWizardUtil.getWorkspaceRoot().getFile(path);
-    	if (file.getType() == IResource.FILE) {
-    		if (!file.exists()) {
+		if (file.getType() == IResource.FILE) {
+			if (!file.exists()) {
 				URI location = file.getLocationURI();
 				try {
 					IFileStore store = EFS.getStore(location);
@@ -1827,9 +1836,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_LocationUnknown);
 					return status;
 				}
-    		} else {
-    			fileExists = true;
-    		}
+			} else {
+				fileExists = true;
+			}
 
 			IProject proj = file.getProject();
 			if (!proj.isOpen()) {
@@ -1837,42 +1846,47 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				return status;
 			}
 
-		    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+			if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
 				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotInACProject);
 			} else if (fileExists) {
-			    status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_HeaderFileExists);
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_HeaderFileExists);
 			}
-    	} else {
-    		status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
-    		return status;
-    	}
+		} else {
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
+			return status;
+		}
 
 		// Check if folder exists
 		IPath folderPath = path.removeLastSegments(1).makeRelative();
 		IResource folder = NewClassWizardUtil.getWorkspaceRoot().findMember(folderPath);
-		if (folder == null || !folder.exists() || (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
-			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
+		if (folder == null || !folder.exists()
+				|| (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
+			status.setError(
+					NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
 			return status;
 		}
 
 		if (!fileExists) {
 			IStatus val = CConventions.validateHeaderFileName(getCurrentProject().getProject(), path.lastSegment());
 			if (val.getSeverity() == IStatus.ERROR) {
-				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidHeaderFileName, val.getMessage()));
+				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidHeaderFileName,
+						val.getMessage()));
 				return status;
 			} else if (val.getSeverity() == IStatus.WARNING) {
-				status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_HeaderFileNameDiscouraged, val.getMessage()));
+				status.setWarning(
+						NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_HeaderFileNameDiscouraged,
+								val.getMessage()));
 			}
 		}
 		return status;
 	}
 
-    /**
-     * Hook method that gets called when the source file has changed. The method
-     * validates the source file and returns the status of the validation.
-     *
-     * @return the status of the validation
-     */
+	/**
+	 * Hook method that gets called when the source file has changed. The method
+	 * validates the source file and returns the status of the validation.
+	 *
+	 * @return the status of the validation
+	 */
 	protected IStatus sourceFileChanged() {
 		StatusInfo status = new StatusInfo();
 
@@ -1897,8 +1911,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		boolean fileExists = false;
 		// Check if file already exists
 		IResource file = NewClassWizardUtil.getWorkspaceRoot().getFile(path);
-    	if (file.getType() == IResource.FILE) {
-    		if (!file.exists()) {
+		if (file.getType() == IResource.FILE) {
+			if (!file.exists()) {
 				URI location = file.getLocationURI();
 				try {
 					IFileStore store = EFS.getStore(location);
@@ -1907,9 +1921,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_LocationUnknown);
 					return status;
 				}
-    		} else {
-    			fileExists = true;
-    		}
+			} else {
+				fileExists = true;
+			}
 
 			IProject proj = file.getProject();
 			if (!proj.isOpen()) {
@@ -1917,43 +1931,48 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				return status;
 			}
 
-		    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+			if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
 				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotInACProject);
 			} else if (fileExists) {
-			    status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_SourceFileExists);
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_SourceFileExists);
 			}
-    	} else {
-    		status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
-    		return status;
-    	}
+		} else {
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
+			return status;
+		}
 
 		// Check if folder exists
 		IPath folderPath = path.removeLastSegments(1).makeRelative();
 		IResource folder = NewClassWizardUtil.getWorkspaceRoot().findMember(folderPath);
-		if (folder == null || !folder.exists() || (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
-			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
+		if (folder == null || !folder.exists()
+				|| (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
+			status.setError(
+					NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
 			return status;
 		}
 
 		if (!fileExists) {
 			IStatus val = CConventions.validateSourceFileName(getCurrentProject().getProject(), path.lastSegment());
 			if (val.getSeverity() == IStatus.ERROR) {
-				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidSourceFileName, val.getMessage()));
+				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidSourceFileName,
+						val.getMessage()));
 				return status;
 			} else if (val.getSeverity() == IStatus.WARNING) {
-				status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_SourceFileNameDiscouraged, val.getMessage()));
+				status.setWarning(
+						NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_SourceFileNameDiscouraged,
+								val.getMessage()));
 			}
 		}
 		return status;
 	}
 
-    /**
-     * Hook method that gets called when the test file has changed. The method
-     * validates the test file and returns the status of the validation.
-     *
-     * @return the status of the validation
-     * @since 5.3
-     */
+	/**
+	 * Hook method that gets called when the test file has changed. The method
+	 * validates the test file and returns the status of the validation.
+	 *
+	 * @return the status of the validation
+	 * @since 5.3
+	 */
 	protected IStatus testFileChanged() {
 		StatusInfo status = new StatusInfo();
 
@@ -1981,8 +2000,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		boolean fileExists = false;
 		// Check if file already exists
 		IResource file = NewClassWizardUtil.getWorkspaceRoot().getFile(path);
-    	if (file.getType() == IResource.FILE) {
-    		if (!file.exists()) {
+		if (file.getType() == IResource.FILE) {
+			if (!file.exists()) {
 				URI location = file.getLocationURI();
 				try {
 					IFileStore store = EFS.getStore(location);
@@ -1991,9 +2010,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_LocationUnknown);
 					return status;
 				}
-    		} else {
-    			fileExists = true;
-    		}
+			} else {
+				fileExists = true;
+			}
 
 			IProject proj = file.getProject();
 			if (!proj.isOpen()) {
@@ -2001,37 +2020,42 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				return status;
 			}
 
-		    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+			if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
 				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotInACProject);
 			} else if (fileExists) {
-			    status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_TestFileExists);
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_TestFileExists);
 			}
-    	} else {
-    		status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
-    		return status;
-    	}
+		} else {
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
+			return status;
+		}
 
 		// Check if folder exists
 		IPath folderPath = path.removeLastSegments(1).makeRelative();
 		IResource folder = NewClassWizardUtil.getWorkspaceRoot().findMember(folderPath);
-		if (folder == null || !folder.exists() || (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
-			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
+		if (folder == null || !folder.exists()
+				|| (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
+			status.setError(
+					NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
 			return status;
 		}
 
 		if (!fileExists) {
 			IStatus val = CConventions.validateSourceFileName(getCurrentProject().getProject(), path.lastSegment());
 			if (val.getSeverity() == IStatus.ERROR) {
-				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidTestFileName, val.getMessage()));
+				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidTestFileName,
+						val.getMessage()));
 				return status;
 			} else if (val.getSeverity() == IStatus.WARNING) {
-				status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_TestFileNameDiscouraged, val.getMessage()));
+				status.setWarning(
+						NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_TestFileNameDiscouraged,
+								val.getMessage()));
 			}
 		}
 		return status;
 	}
 
-    // -------- Code Generation ---------
+	// -------- Code Generation ---------
 
 	/**
 	 * Creates the new class using the entered field values.
@@ -2045,87 +2069,79 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fDialogSettings.put(KEY_TEST_FILE_SELECTED, fTestFileSelection.isSelected());
 		String namespace = fNamespaceSelection.isSelected() ? getNamespaceText() : null;
 		fDialogSettings.put(KEY_NAMESPACE, namespace);
-        IMethodStub[] stubs = fMethodStubsDialogField.getMethodStubs();
-        for (int i = 0; i < stubs.length; ++i) {
-        	IMethodStub stub = stubs[i];
-        	if (stub.canModifyVirtual()) {
-        		fDialogSettings.put(KEY_STUB_VIRTUAL + i, stub.isVirtual());
-        	}
-        	if (stub.canModifyInline()) {
-        		fDialogSettings.put(KEY_STUB_INLINE + i, stub.isInline());
-        	}
-    		fDialogSettings.put(KEY_STUB_SELECTED + i, fMethodStubsDialogField.isChecked(stub));
-        }
+		IMethodStub[] stubs = fMethodStubsDialogField.getMethodStubs();
+		for (int i = 0; i < stubs.length; ++i) {
+			IMethodStub stub = stubs[i];
+			if (stub.canModifyVirtual()) {
+				fDialogSettings.put(KEY_STUB_VIRTUAL + i, stub.isVirtual());
+			}
+			if (stub.canModifyInline()) {
+				fDialogSettings.put(KEY_STUB_INLINE + i, stub.isInline());
+			}
+			fDialogSettings.put(KEY_STUB_SELECTED + i, fMethodStubsDialogField.isChecked(stub));
+		}
 
-        fCreatedClass = null;
-        fCreatedHeaderFile = null;
-        fCreatedSourceFile = null;
-        fCreatedTestFile = null;
+		fCreatedClass = null;
+		fCreatedHeaderFile = null;
+		fCreatedSourceFile = null;
+		fCreatedTestFile = null;
 
-        IPath headerPath = getHeaderFileFullPath();
-        IPath sourcePath = getSourceFileFullPath();
-        IPath testPath = getTestFileFullPath();
-        createClass(headerPath, sourcePath, testPath, getClassName(), namespace, getBaseClasses(),
-        		getSelectedMethodStubs(), monitor);
+		IPath headerPath = getHeaderFileFullPath();
+		IPath sourcePath = getSourceFileFullPath();
+		IPath testPath = getTestFileFullPath();
+		createClass(headerPath, sourcePath, testPath, getClassName(), namespace, getBaseClasses(),
+				getSelectedMethodStubs(), monitor);
 	}
 
 	/**
-     * Returns whether the generated header and source files should be
-     * opened in editors after the finish button is pressed.
-     *
-     * @return <code>true</code> if the header and source file should be
-     * displayed
-     */
-    public boolean openClassInEditor() {
-        return NewClassWizardPrefs.openClassInEditor();
-    }
+	 * Returns whether the generated header and source files should be
+	 * opened in editors after the finish button is pressed.
+	 *
+	 * @return <code>true</code> if the header and source file should be
+	 * displayed
+	 */
+	public boolean openClassInEditor() {
+		return NewClassWizardPrefs.openClassInEditor();
+	}
 
-    /**
-     * Creates a new class.
-     *
-     * @param headerPath the header file path
-     * @param sourcePath the source file path
-     * @param testPath the test file path, can be {@code null}.
-     * @param className the class name
-     * @param namespace the namespace
-     * @param baseClasses array of base classes
-     * @param methodStubs array of method stubs
-     * @param monitor a progress monitor
-     * @throws CoreException if the creation failed
-     * @since 5.3
-     *
-     * @noreference This method is not intended to be referenced by clients.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     */
-    protected void createClass(IPath headerPath, IPath sourcePath, IPath testPath, String className,
-    		String namespace, IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor)
-    		throws CoreException {
-        NewClassCodeGenerator generator = new NewClassCodeGenerator(
-                headerPath,
-                sourcePath,
-                testPath,
-                className,
-                namespace,
-                baseClasses,
-                methodStubs);
-        generator.setForceSourceFileCreation(true);
-        generator.createClass(monitor);
+	/**
+	 * Creates a new class.
+	 *
+	 * @param headerPath the header file path
+	 * @param sourcePath the source file path
+	 * @param testPath the test file path, can be {@code null}.
+	 * @param className the class name
+	 * @param namespace the namespace
+	 * @param baseClasses array of base classes
+	 * @param methodStubs array of method stubs
+	 * @param monitor a progress monitor
+	 * @throws CoreException if the creation failed
+	 * @since 5.3
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	protected void createClass(IPath headerPath, IPath sourcePath, IPath testPath, String className, String namespace,
+			IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor) throws CoreException {
+		NewClassCodeGenerator generator = new NewClassCodeGenerator(headerPath, sourcePath, testPath, className,
+				namespace, baseClasses, methodStubs);
+		generator.setForceSourceFileCreation(true);
+		generator.createClass(monitor);
 
-        fCreatedClass = generator.getCreatedClass();
-        fCreatedHeaderFile = generator.getCreatedHeaderFile();
-        fCreatedSourceFile = generator.getCreatedSourceFile();
-        fCreatedTestFile = generator.getCreatedTestFile();
-    }
+		fCreatedClass = generator.getCreatedClass();
+		fCreatedHeaderFile = generator.getCreatedHeaderFile();
+		fCreatedSourceFile = generator.getCreatedSourceFile();
+		fCreatedTestFile = generator.getCreatedTestFile();
+	}
 
-    /**
-     * @noreference This method is not intended to be referenced by clients.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     */
-    protected void createClass(IPath headerPath, IPath sourcePath, String className, String namespace,
-    		IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor)
-    		throws CoreException {
-    	createClass(headerPath, sourcePath, null, className, namespace, baseClasses, methodStubs, monitor);
-    }
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	protected void createClass(IPath headerPath, IPath sourcePath, String className, String namespace,
+			IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor) throws CoreException {
+		createClass(headerPath, sourcePath, null, className, namespace, baseClasses, methodStubs, monitor);
+	}
 
 	/**
 	 * Returns the created class. The method only returns a valid class
@@ -2135,40 +2151,40 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @see #createClass(IProgressMonitor)
 	 */
 	public ICElement getCreatedClass() {
-        return fCreatedClass;
+		return fCreatedClass;
 	}
 
-    /**
-     * Returns the created header file. The method only returns a valid file
-     * after {@link #createClass} has been called.
-     *
-     * @return the created header file
-     * @see #createClass(IProgressMonitor)
-     */
-    public IFile getCreatedHeaderFile() {
-        return fCreatedHeaderFile;
-    }
+	/**
+	 * Returns the created header file. The method only returns a valid file
+	 * after {@link #createClass} has been called.
+	 *
+	 * @return the created header file
+	 * @see #createClass(IProgressMonitor)
+	 */
+	public IFile getCreatedHeaderFile() {
+		return fCreatedHeaderFile;
+	}
 
-    /**
-     * Returns the created source file. The method only returns a valid file
-     * after {@link #createClass} has been called.
-     *
-     * @return the created source file
-     * @see #createClass(IProgressMonitor)
-     */
-    public IFile getCreatedSourceFile() {
-    	return fCreatedSourceFile;
-    }
+	/**
+	 * Returns the created source file. The method only returns a valid file
+	 * after {@link #createClass} has been called.
+	 *
+	 * @return the created source file
+	 * @see #createClass(IProgressMonitor)
+	 */
+	public IFile getCreatedSourceFile() {
+		return fCreatedSourceFile;
+	}
 
-    /**
-     * Returns the created test file. The method only returns a valid file
-     * after {@link #createClass} has been called.
-     *
-     * @return the created test file
-     * @see #createClass(IProgressMonitor)
-     * @since 5.3
-     */
-    public IFile getCreatedTestFile() {
-    	return fCreatedTestFile;
-    }
+	/**
+	 * Returns the created test file. The method only returns a valid file
+	 * after {@link #createClass} has been called.
+	 *
+	 * @return the created test file
+	 * @see #createClass(IProgressMonitor)
+	 * @since 5.3
+	 */
+	public IFile getCreatedTestFile() {
+		return fCreatedTestFile;
+	}
 }

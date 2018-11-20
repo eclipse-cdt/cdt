@@ -135,8 +135,8 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 
 	@Override
 	public IScope getScope() throws DOMException {
-		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) ((definition != null) ?
-				(IASTNode) definition.getParent() : declarations[0].getParent());
+		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) ((definition != null) ? (IASTNode) definition.getParent()
+				: declarations[0].getParent());
 		IScope scope = CVisitor.getContainingScope(declSpec);
 		while (scope instanceof ICCompositeTypeScope) {
 			scope = scope.getParent();
@@ -187,8 +187,8 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 	public IField findField(String name) {
 		IScope scope = getCompositeScope();
 		if (scope == null) {
-			return new CField.CFieldProblem(this, declarations[0],
-					IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray());
+			return new CField.CFieldProblem(this, declarations[0], IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND,
+					getNameCharArray());
 		}
 
 		final CASTName astName = new CASTName(name.toCharArray());
@@ -202,9 +202,8 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 
 	@Override
 	public int getKey() {
-		return definition != null ?
-				((IASTCompositeTypeSpecifier) definition.getParent()).getKey() :
-				((IASTElaboratedTypeSpecifier) declarations[0].getParent()).getKind();
+		return definition != null ? ((IASTCompositeTypeSpecifier) definition.getParent()).getKey()
+				: ((IASTElaboratedTypeSpecifier) declarations[0].getParent()).getKind();
 	}
 
 	@Override

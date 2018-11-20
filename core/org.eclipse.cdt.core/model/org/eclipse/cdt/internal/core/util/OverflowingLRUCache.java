@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.util;
 
-
 import java.util.Enumeration;
 
 /**
@@ -50,7 +49,7 @@ import java.util.Enumeration;
  *
  * This class is similar to the JDT OverflowingLRUCache class.
  */
-public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
+public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	/**
 	 * Indicates if the cache has been over filled and by how much.
 	 */
@@ -64,6 +63,7 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	 *	Inital load factor of one third.
 	 */
 	protected double fLoadFactor = 0.333;
+
 	/**
 	 * Creates an OverflowingLRUCache with default sizes.
 	 * 
@@ -74,6 +74,7 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	public OverflowingLRUCache() {
 		super();
 	}
+
 	/**
 	 * Creates a OverflowingLRUCache. 
 	 * @param size Size limit of cache.
@@ -81,6 +82,7 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	public OverflowingLRUCache(int size) {
 		this(size, 0);
 	}
+
 	/**
 	 * Creates a OverflowingLRUCache. 
 	 * @param size Size limit of cache.
@@ -90,6 +92,7 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 		super(size);
 		fOverflow = overflow;
 	}
+
 	/**
 	 * Returns a new cache containing the same contents.
 	 *
@@ -97,18 +100,19 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	 */
 	@Override
 	public Object clone() {
-		
-		OverflowingLRUCache<K,T> newCache = newInstance(fSpaceLimit, fOverflow);
-		LRUCacheEntry<K,T> qEntry;
-		
+
+		OverflowingLRUCache<K, T> newCache = newInstance(fSpaceLimit, fOverflow);
+		LRUCacheEntry<K, T> qEntry;
+
 		/* Preserve order of entries by copying from oldest to newest */
 		qEntry = this.fEntryQueueTail;
 		while (qEntry != null) {
-			newCache.privateAdd (qEntry._fKey, qEntry._fValue, qEntry._fSpace);
+			newCache.privateAdd(qEntry._fKey, qEntry._fValue, qEntry._fSpace);
 			qEntry = qEntry._fPrevious;
 		}
 		return newCache;
 	}
+
 	/**
 	 * Returns true if the element is successfully closed and
 	 * removed from the cache, otherwise false.
@@ -117,7 +121,8 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	 * by closing the obejct.
 	 *
 	 */
-	protected abstract boolean close(LRUCacheEntry<K,T> entry);
+	protected abstract boolean close(LRUCacheEntry<K, T> entry);
+
 	/**
 	 *	Returns an enumerator of the values in the cache with the most
 	 *	recently used first.
@@ -125,30 +130,33 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	public Enumeration<T> elements() {
 		if (fEntryQueue == null)
 			return new LRUCacheEnumerator<T>(null);
-		LRUCacheEnumerator.LRUEnumeratorElement<T> head = 
-			new LRUCacheEnumerator.LRUEnumeratorElement<T>(fEntryQueue._fValue);
-		LRUCacheEntry<K,T> currentEntry = fEntryQueue._fNext;
+		LRUCacheEnumerator.LRUEnumeratorElement<T> head = new LRUCacheEnumerator.LRUEnumeratorElement<T>(
+				fEntryQueue._fValue);
+		LRUCacheEntry<K, T> currentEntry = fEntryQueue._fNext;
 		LRUCacheEnumerator.LRUEnumeratorElement<T> currentElement = head;
-		while(currentEntry != null) {
+		while (currentEntry != null) {
 			currentElement.fNext = new LRUCacheEnumerator.LRUEnumeratorElement<T>(currentEntry._fValue);
 			currentElement = currentElement.fNext;
-			
+
 			currentEntry = currentEntry._fNext;
 		}
 		return new LRUCacheEnumerator<T>(head);
 	}
+
 	public double fillingRatio() {
 		return (fCurrentSpace + fOverflow) * 100.0 / fSpaceLimit;
 	}
+
 	/**
 	 * For internal testing only.
 	 * This method exposed only for testing purposes!
 	 *
 	 * @return Hashtable of entries
 	 */
-	public java.util.Hashtable<K,LRUCacheEntry<K,T>> getEntryTable() {
+	public java.util.Hashtable<K, LRUCacheEntry<K, T>> getEntryTable() {
 		return fEntryTable;
 	}
+
 	/**
 	 * Returns the load factor for the cache.  The load factor determines how 
 	 * much space is reclaimed when the cache exceeds its space limit.
@@ -157,12 +165,14 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	public double getLoadFactor() {
 		return fLoadFactor;
 	}
+
 	/**
 	 *	@return The space by which the cache has overflown.
 	 */
 	public int getOverflow() {
 		return fOverflow;
 	}
+
 	/**
 	 * Ensures there is the specified amount of free space in the receiver,
 	 * by removing old entries if necessary.  Returns true if the requested space was
@@ -173,7 +183,7 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	 */
 	@Override
 	protected boolean makeSpace(int space) {
-	
+
 		int limit = fSpaceLimit;
 		if (fOverflow == 0) {
 			/* if space is already available */
@@ -181,31 +191,33 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 				return true;
 			}
 		}
-	
+
 		/* Free up space by removing oldest entries */
-		int spaceNeeded = (int)((1 - fLoadFactor) * fSpaceLimit);
+		int spaceNeeded = (int) ((1 - fLoadFactor) * fSpaceLimit);
 		spaceNeeded = (spaceNeeded > space) ? spaceNeeded : space;
-		LRUCacheEntry<K,T> entry = fEntryQueueTail;
-	
+		LRUCacheEntry<K, T> entry = fEntryQueueTail;
+
 		while (fCurrentSpace + spaceNeeded > limit && entry != null) {
 			this.privateRemoveEntry(entry, false, false);
 			entry = entry._fPrevious;
 		}
-	
+
 		/* check again, since we may have aquired enough space */
 		if (fCurrentSpace + space <= limit) {
 			fOverflow = 0;
 			return true;
 		}
-	
+
 		/* update fOverflow */
 		fOverflow = fCurrentSpace + space - limit;
 		return false;
 	}
+
 	/**
 	 * Returns a new instance of the reciever.
 	 */
-	protected abstract OverflowingLRUCache<K,T> newInstance(int size, int overflow);
+	protected abstract OverflowingLRUCache<K, T> newInstance(int size, int overflow);
+
 	/**
 	 * Answers the value in the cache at the given key.
 	 * If the value is not in the cache, returns null
@@ -213,48 +225,51 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	 * This function does not modify timestamps.
 	 */
 	public T peek(K key) {
-		
-		LRUCacheEntry<K,T> entry = fEntryTable.get(key);
+
+		LRUCacheEntry<K, T> entry = fEntryTable.get(key);
 		if (entry == null) {
 			return null;
 		}
 		return entry._fValue;
 	}
+
 	/**
 	 * For testing purposes only
 	 */
 	public void printStats() {
 		int forwardListLength = 0;
-		LRUCacheEntry<K,T> entry = fEntryQueue;
-		while(entry != null) {
+		LRUCacheEntry<K, T> entry = fEntryQueue;
+		while (entry != null) {
 			forwardListLength++;
 			entry = entry._fNext;
 		}
 		System.out.println("Forward length: " + forwardListLength); //$NON-NLS-1$
-		
+
 		int backwardListLength = 0;
 		entry = fEntryQueueTail;
-		while(entry != null) {
+		while (entry != null) {
 			backwardListLength++;
 			entry = entry._fPrevious;
 		}
 		System.out.println("Backward length: " + backwardListLength); //$NON-NLS-1$
-	
+
 		Enumeration<K> keys = fEntryTable.keys();
 		class Temp {
 			public Class<?> fClass;
 			public int fCount;
+
 			public Temp(Class<?> aClass) {
 				fClass = aClass;
 				fCount = 1;
 			}
+
 			@Override
 			public String toString() {
 				return "Class: " + fClass + " has " + fCount + " entries."; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
 			}
 		}
 		java.util.HashMap<Class<?>, Temp> h = new java.util.HashMap<Class<?>, Temp>();
-		while(keys.hasMoreElements()) {
+		while (keys.hasMoreElements()) {
 			entry = fEntryTable.get(keys.nextElement());
 			Class<?> key = entry._fValue.getClass();
 			Temp t = h.get(key);
@@ -264,11 +279,12 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 				t.fCount++;
 			}
 		}
-	
+
 		for (Object element : h.keySet()) {
 			System.out.println(h.get(element));
 		}
 	}
+
 	/**
 	 *	Removes the entry from the entry queue.
 	 *	Calls <code>privateRemoveEntry</code> with the external functionality enabled.
@@ -277,9 +293,10 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	 * (i.e., the entry table is left alone).
 	 */
 	@Override
-	protected void privateRemoveEntry (LRUCacheEntry<K,T> entry, boolean shuffle) {
+	protected void privateRemoveEntry(LRUCacheEntry<K, T> entry, boolean shuffle) {
 		privateRemoveEntry(entry, shuffle, true);
 	}
+
 	/**
 	 *	Removes the entry from the entry queue.  If <i>external</i> is true, the entry is removed
 	 *	without checking if it can be removed.  It is assumed that the client has already closed
@@ -292,28 +309,29 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	 *	(i.e., the entry table is left alone).
 	 */
 	protected void privateRemoveEntry(LRUCacheEntry<K, T> entry, boolean shuffle, boolean external) {
-	
+
 		if (!shuffle) {
 			if (external) {
-				fEntryTable.remove(entry._fKey);			
+				fEntryTable.remove(entry._fKey);
 				fCurrentSpace -= entry._fSpace;
 				privateNotifyDeletionFromCache(entry);
 			} else {
-				if (!close(entry)) return;
+				if (!close(entry))
+					return;
 				// buffer close will recursively call #privateRemoveEntry with external==true
 				// thus entry will already be removed if reaching this point.
-				if (fEntryTable.get(entry._fKey) == null){
+				if (fEntryTable.get(entry._fKey) == null) {
 					return;
 				}
 				// basic removal
-				fEntryTable.remove(entry._fKey);			
+				fEntryTable.remove(entry._fKey);
 				fCurrentSpace -= entry._fSpace;
 				privateNotifyDeletionFromCache(entry);
 			}
 		}
 		LRUCacheEntry<K, T> previous = entry._fPrevious;
 		LRUCacheEntry<K, T> next = entry._fNext;
-			
+
 		/* if this was the first entry */
 		if (previous == null) {
 			fEntryQueue = next;
@@ -327,6 +345,7 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 			next._fPrevious = previous;
 		}
 	}
+
 	/**
 	 * Sets the value in the cache at the given key. Returns the value.
 	 *
@@ -339,13 +358,13 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 		/* attempt to rid ourselves of the overflow, if there is any */
 		if (fOverflow > 0)
 			shrink();
-			
+
 		/* Check whether there's an entry in the cache */
-		int newSpace = spaceFor (key, value);
-		LRUCacheEntry<K, T> entry = fEntryTable.get (key);
-		
+		int newSpace = spaceFor(key, value);
+		LRUCacheEntry<K, T> entry = fEntryTable.get(key);
+
 		if (entry != null) {
-			
+
 			/**
 			 * Replace the entry in the cache if it would not overflow
 			 * the cache.  Otherwise flush the entry and re-add it so as 
@@ -354,25 +373,26 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 			int oldSpace = entry._fSpace;
 			int newTotal = fCurrentSpace - oldSpace + newSpace;
 			if (newTotal <= fSpaceLimit) {
-				updateTimestamp (entry);
+				updateTimestamp(entry);
 				entry._fValue = value;
 				entry._fSpace = newSpace;
 				fCurrentSpace = newTotal;
 				fOverflow = 0;
 				return value;
 			}
-			privateRemoveEntry (entry, false, false);
+			privateRemoveEntry(entry, false, false);
 		}
-		
+
 		// attempt to make new space
 		makeSpace(newSpace);
-		
+
 		// add without worring about space, it will
 		// be handled later in a makeSpace call
-		privateAdd (key, value, newSpace);
-		
+		privateAdd(key, value, newSpace);
+
 		return value;
 	}
+
 	/**
 	 * Removes and returns the value in the cache for the given key.
 	 * If the key is not in the cache, returns null.
@@ -383,6 +403,7 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	public Object remove(K key) {
 		return removeKey(key);
 	}
+
 	/**
 	 * Sets the load factor for the cache.  The load factor determines how 
 	 * much space is reclaimed when the cache exceeds its space limit.
@@ -390,11 +411,12 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	 * @throws IllegalArgumentException when the new load factor is not in (0.0, 1.0]
 	 */
 	public void setLoadFactor(double newLoadFactor) throws IllegalArgumentException {
-		if(newLoadFactor <= 1.0 && newLoadFactor > 0.0)
+		if (newLoadFactor <= 1.0 && newLoadFactor > 0.0)
 			fLoadFactor = newLoadFactor;
 		else
 			throw new IllegalArgumentException("cache.invalidLoadFactor"); //$NON-NLS-1$
 	}
+
 	/**
 	 * Sets the maximum amount of space that the cache can store
 	 *
@@ -407,6 +429,7 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 		}
 		fSpaceLimit = limit;
 	}
+
 	/**
 	 * Attempts to shrink the cache if it has overflown.
 	 * Returns true if the cache shrinks to less than or equal to <code>fSpaceLimit</code>.
@@ -416,16 +439,17 @@ public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 			return makeSpace(0);
 		return true;
 	}
+
 	/**
 	 * Returns a String that represents the value of this object.  This method
 	 * is for debugging purposes only.
 	 */
 	@Override
 	public String toString() {
-		return 
-			"OverflowingLRUCache " + this.fillingRatio() + "% full\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			this.toStringContents();
+		return "OverflowingLRUCache " + this.fillingRatio() + "% full\n" + //$NON-NLS-1$ //$NON-NLS-2$
+				this.toStringContents();
 	}
+
 	/**
 	 * Updates the timestamp for the given entry, ensuring that the queue is 
 	 * kept in correct order.  The entry must exist.

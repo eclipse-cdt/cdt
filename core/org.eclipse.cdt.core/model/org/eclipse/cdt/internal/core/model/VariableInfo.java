@@ -18,35 +18,36 @@ class VariableInfo extends SourceManipulationInfo {
 	boolean isConst = false;
 	boolean isVolatile = false;
 	boolean isStatic = false;
-	
-	protected VariableInfo (CElement element) {
+
+	protected VariableInfo(CElement element) {
 		super(element);
 	}
 
-	protected String getTypeName(){
+	protected String getTypeName() {
 		return typeStr;
 	}
-	
-	protected void setTypeName(String type){
+
+	protected void setTypeName(String type) {
 		typeStr = type;
 	}
-	
-	protected void setTypeString(String type){
+
+	protected void setTypeString(String type) {
 		typeStr = type;
 	}
-	protected boolean isConst(){
+
+	protected boolean isConst() {
 		return isConst;
 	}
 
-	protected void setConst(boolean isConst){
+	protected void setConst(boolean isConst) {
 		this.isConst = isConst;
 	}
 
-	protected boolean isVolatile(){
+	protected boolean isVolatile() {
 		return isVolatile;
 	}
 
-	protected void setVolatile(boolean isVolatile){
+	protected void setVolatile(boolean isVolatile) {
 		this.isVolatile = isVolatile;
 	}
 
@@ -57,16 +58,13 @@ class VariableInfo extends SourceManipulationInfo {
 	protected void setStatic(boolean isStatic) {
 		this.isStatic = isStatic;
 	}
-	
+
 	@Override
 	public boolean hasSameContentsAs(SourceManipulationInfo otherInfo) {
-		return 
-		(	 super.hasSameContentsAs(otherInfo) 
-		&& ( typeStr.equals(((VariableInfo)otherInfo).getTypeName()) )
-		&& ( isConst() == ((VariableInfo)otherInfo).isConst() ) 
-		&& (isVolatile() == ((VariableInfo)otherInfo).isVolatile() ) 
-		&& (isStatic() == ((VariableInfo)otherInfo).isStatic() )
-		);
+		return (super.hasSameContentsAs(otherInfo) && (typeStr.equals(((VariableInfo) otherInfo).getTypeName()))
+				&& (isConst() == ((VariableInfo) otherInfo).isConst())
+				&& (isVolatile() == ((VariableInfo) otherInfo).isVolatile())
+				&& (isStatic() == ((VariableInfo) otherInfo).isStatic()));
 	}
 
 }

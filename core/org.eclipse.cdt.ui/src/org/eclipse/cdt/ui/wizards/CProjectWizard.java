@@ -37,18 +37,20 @@ public class CProjectWizard extends CDTCommonProjectWizard {
 	public String[] getNatures() {
 		return new String[] { CProjectNature.C_NATURE_ID };
 	}
-	
+
 	@Override
 	protected IProject continueCreation(IProject prj) {
 		if (continueCreationMonitor == null) {
 			continueCreationMonitor = new NullProgressMonitor();
 		}
-		
+
 		try {
 			continueCreationMonitor.beginTask(Messages.CProjectWizard_0, 1);
 			CProjectNature.addCNature(prj, new SubProgressMonitor(continueCreationMonitor, 1));
-		} catch (CoreException e) {}
-		finally {continueCreationMonitor.done();}
+		} catch (CoreException e) {
+		} finally {
+			continueCreationMonitor.done();
+		}
 		return prj;
 	}
 

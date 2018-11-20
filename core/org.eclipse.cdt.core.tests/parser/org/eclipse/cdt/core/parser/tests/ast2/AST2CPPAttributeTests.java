@@ -140,7 +140,8 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 		return specifier.getAttributes();
 	}
 
-	private void checkAttributeRelations(List<IASTAttributeSpecifier> specifiers, Class<? extends IASTAttributeOwner>... parentType) {
+	private void checkAttributeRelations(List<IASTAttributeSpecifier> specifiers,
+			Class<? extends IASTAttributeOwner>... parentType) {
 		assertEquals(parentType.length, specifiers.size());
 		for (int i = 0; i < specifiers.size(); i++) {
 			IASTAttributeSpecifier specifier = specifiers.get(i);
@@ -487,9 +488,8 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 		IASTAttribute attribute = attributes[0];
 		IASTToken argumentClause = attribute.getArgumentClause();
 		final int startOffset = 8;
-		final String[] tokenImages = new String[] { "this", "(", "is", ")", "{", "[",
-				"my", "]", "}", "(", "argument", "[", "with", "]", "{", "some",
-				"}", ",", "parentheses", ")"};
+		final String[] tokenImages = new String[] { "this", "(", "is", ")", "{", "[", "my", "]", "}", "(", "argument",
+				"[", "with", "]", "{", "some", "}", ",", "parentheses", ")" };
 		argumentClause.accept(new TokenPositionCheckVisitor(startOffset, tokenImages));
 	}
 
@@ -526,7 +526,6 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
 	}
 
-
 	//	enum E {
 	//		value1 [[attr1]], value2 [[attr2]] = 1
 	//	};
@@ -539,7 +538,8 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//}
 	public void testAttributedFunctionParameter_Bug535275() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
-		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTParameterDeclaration.class, ICPPASTSimpleDeclSpecifier.class);
+		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTParameterDeclaration.class,
+				ICPPASTSimpleDeclSpecifier.class);
 	}
 
 	//namespace [[attr]] NS {}

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.Test;
@@ -20,9 +20,8 @@ import org.eclipse.swt.widgets.Tree;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
-
 public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
-	
+
 	public BasicCppCallHierarchyTest(String name) {
 		super(name);
 	}
@@ -47,13 +46,13 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	// }
 	//
 	// void func() {
-    //	   MyClass m, *n;
-    //	   m.method(); // r3
-    //	   n->inline_method(); // r3
-    // }
+	//	   MyClass m, *n;
+	//	   m.method(); // r3
+	//	   n->inline_method(); // r3
+	// }
 	public void testMethods() throws Exception {
 		String content = readTaggedComment("testMethods");
-		IFile file= createFile(getProject(), "testMethods.cpp", content);
+		IFile file = createFile(getProject(), "testMethods.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
@@ -114,7 +113,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 1, "MyClass::inline_method() : void");
 		checkTreeNode(tree, 0, 2, "MyClass::method() : void");
 	}
-	
+
 	// {testStaticMethods}
 	// class MyClass {
 	// public:
@@ -131,12 +130,12 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	// }
 	//
 	// void func() {
-    //	   MyClass::method(); // r3
-    //	   MyClass::inline_method(); // r3
-    // }
+	//	   MyClass::method(); // r3
+	//	   MyClass::inline_method(); // r3
+	// }
 	public void testStaticMethods() throws Exception {
 		String content = readTaggedComment("testStaticMethods");
-		IFile file= createFile(getProject(), "testStaticMethods.cpp", content);
+		IFile file = createFile(getProject(), "testStaticMethods.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
@@ -197,8 +196,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 1, "MyClass::inline_method() : void");
 		checkTreeNode(tree, 0, 2, "MyClass::method() : void");
 	}
-	
-	
+
 	// {testFields}
 	// class MyClass {
 	// public:
@@ -217,14 +215,14 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	// }
 	//
 	// void func() {
-    //	   MyClass m;
-    //	   int i= m.field; // r3
-    //	   i= MyClass::static_field; // r3
-    // }
-	
+	//	   MyClass m;
+	//	   int i= m.field; // r3
+	//	   i= MyClass::static_field; // r3
+	// }
+
 	public void testFields() throws Exception {
 		String content = readTaggedComment("testFields");
-		IFile file= createFile(getProject(), "testFields.cpp", content);
+		IFile file = createFile(getProject(), "testFields.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
@@ -298,7 +296,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	//  }		
 	public void testAutomaticConstructor_156668() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
-		IFile file= createFile(getProject(), "testConstructor.cpp", content);
+		IFile file = createFile(getProject(), "testConstructor.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
@@ -311,7 +309,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 
 	public void _testAutomaticDestructor_156668() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
-		IFile file= createFile(getProject(), "testConstructor.cpp", content);
+		IFile file = createFile(getProject(), "testConstructor.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		openCallHierarchy(editor);
@@ -336,7 +334,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	//  }
 	public void testConstructor() throws Exception {
 		String content = readTaggedComment("testConstructor");
-		IFile file= createFile(getProject(), "testConstructor.cpp", content);
+		IFile file = createFile(getProject(), "testConstructor.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
@@ -346,10 +344,10 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, "MyClass::MyClass()");
 		checkTreeNode(tree, 0, 0, "heap() : void");
 	}
-	
+
 	public void testDestructor_156669() throws Exception {
 		String content = readTaggedComment("testConstructor");
-		IFile file= createFile(getProject(), "testConstructor.cpp", content);
+		IFile file = createFile(getProject(), "testConstructor.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
@@ -359,8 +357,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, "MyClass::~MyClass()");
 		checkTreeNode(tree, 0, 0, "heap() : void");
 	}
-	
-	
+
 	// {testNamespace}
 	// namespace ns {
 	//    int var;
@@ -370,21 +367,21 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	// void ns::func() {
 	//    --var; // r1
 	//    func(); // r1
-    // }
+	// }
 	//
 	// void gfunc1() {
 	//    int i= ns::var; // r2
 	//    ns::func(); // r2
-    // }
+	// }
 	//
 	// using namespace ns;
 	// void gfunc2() {
 	//    int i= var; // r3
 	//    func(); // r3
-    // }
+	// }
 	public void testNamespace() throws Exception {
 		String content = readTaggedComment("testNamespace");
-		IFile file= createFile(getProject(), "testNamespace.cpp", content);
+		IFile file = createFile(getProject(), "testNamespace.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
@@ -441,7 +438,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 
 	public void testNamespacePart2_156519() throws Exception {
 		String content = readTaggedComment("testNamespace");
-		IFile file= createFile(getProject(), "testNamespace.cpp", content);
+		IFile file = createFile(getProject(), "testNamespace.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 

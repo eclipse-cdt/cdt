@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,13 +24,12 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
 
-
 /**
  * This working copy manager works together with a given compilation unit document provider and
  * additionally offers to "overwrite" the working copy provided by this document provider.
  */
 public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyManagerExtension {
-	
+
 	private IMakefileDocumentProvider fDocumentProvider;
 	private Map<IEditorInput, IMakefile> fMap;
 	private boolean fIsShuttingDown;
@@ -44,54 +42,54 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	 */
 	public WorkingCopyManager(IMakefileDocumentProvider provider) {
 		Assert.isNotNull(provider);
-		fDocumentProvider= provider;
+		fDocumentProvider = provider;
 	}
 
 	@Override
 	public void connect(IEditorInput input) throws CoreException {
 		fDocumentProvider.connect(input);
 	}
-	
+
 	@Override
 	public void disconnect(IEditorInput input) {
 		fDocumentProvider.disconnect(input);
 	}
-	
+
 	@Override
 	public void shutdown() {
 		if (!fIsShuttingDown) {
-			fIsShuttingDown= true;
+			fIsShuttingDown = true;
 			try {
 				if (fMap != null) {
 					fMap.clear();
-					fMap= null;
+					fMap = null;
 				}
 				fDocumentProvider.shutdown();
 			} finally {
-				fIsShuttingDown= false;
+				fIsShuttingDown = false;
 			}
 		}
 	}
 
 	@Override
 	public IMakefile getWorkingCopy(IEditorInput input) {
-		IMakefile unit= fMap == null ? null : (IMakefile) fMap.get(input);
+		IMakefile unit = fMap == null ? null : (IMakefile) fMap.get(input);
 		return unit != null ? unit : fDocumentProvider.getWorkingCopy(input);
 	}
-	
+
 	@Override
 	public void setWorkingCopy(IEditorInput input, IMakefile workingCopy) {
 		if (fDocumentProvider.getDocument(input) != null) {
 			if (fMap == null)
-				fMap= new HashMap<>();
+				fMap = new HashMap<>();
 			fMap.put(input, workingCopy);
 		}
 	}
-	
+
 	@Override
 	public void removeWorkingCopy(IEditorInput input) {
 		fMap.remove(input);
 		if (fMap.isEmpty())
-			fMap= null;
+			fMap = null;
 	}
 }

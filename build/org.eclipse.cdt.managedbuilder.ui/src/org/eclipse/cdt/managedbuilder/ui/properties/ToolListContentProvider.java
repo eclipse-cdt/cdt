@@ -35,7 +35,7 @@ import org.eclipse.jface.viewers.Viewer;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class ToolListContentProvider implements ITreeContentProvider{
+public class ToolListContentProvider implements ITreeContentProvider {
 	public static final int FILE = 0x1;
 	public static final int FOLDER = 0x2;
 	public static final int PROJECT = 0x4;
@@ -47,7 +47,8 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	@Override
-	public void dispose() {}
+	public void dispose() {
+	}
 
 	public ToolListContentProvider(int elementType) {
 		this.elementType = elementType;
@@ -62,10 +63,12 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			IToolChain toolChain = config.getToolChain();
 			toolChainCategories = toolChain.getChildCategories();
 			//  Create an element for each one
-			for (int i=0; i<toolChainCategories.length; i++) {
+			for (int i = 0; i < toolChainCategories.length; i++) {
 				ToolListElement e = new ToolListElement(null, toolChain, toolChainCategories[i]);
-				IOptionCategoryApplicability applicabilityCalculator = toolChainCategories[i].getApplicabilityCalculator();
-				if (applicabilityCalculator == null || applicabilityCalculator.isOptionCategoryVisible(config, e.getHoldOptions(), e.getOptionCategory())) {
+				IOptionCategoryApplicability applicabilityCalculator = toolChainCategories[i]
+						.getApplicabilityCalculator();
+				if (applicabilityCalculator == null || applicabilityCalculator.isOptionCategoryVisible(config,
+						e.getHoldOptions(), e.getOptionCategory())) {
 					elementList.add(e);
 					createChildElements(e);
 				}
@@ -73,11 +76,11 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			//  Get the tools to be displayed
 			filteredTools = config.getFilteredTools();
 			//  Create an element for each one
-			for (int i=0; i<filteredTools.length; i++) {
-				if(!filteredTools[i].isHidden()) {
+			for (int i = 0; i < filteredTools.length; i++) {
+				if (!filteredTools[i].isHidden()) {
 					ToolListElement e = new ToolListElement(filteredTools[i]);
 					elementList.add(e);
-					createChildElements(e,config);
+					createChildElements(e, config);
 				}
 			}
 		}
@@ -88,14 +91,14 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		List<ToolListElement> elementList = new ArrayList<ToolListElement>();
 		if (info != null) {
 			ITool[] tools = null;
-			if(info instanceof IFolderInfo){
-				tools = ((IFolderInfo)info).getFilteredTools();
+			if (info instanceof IFolderInfo) {
+				tools = ((IFolderInfo) info).getFilteredTools();
 			} else {
 				tools = info.getTools();
 			}
 
 			//  Create an element for each one
-			for (int i=0; i<tools.length; i++) {
+			for (int i = 0; i < tools.length; i++) {
 				if (tools[i].getCustomBuildStep())
 					continue;
 				ToolListElement e = new ToolListElement(tools[i]);
@@ -105,8 +108,9 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		}
 		return elementList.toArray(new ToolListElement[elementList.size()]);
 	}
+
 	private void createChildElements(ToolListElement parentElement) {
-		createChildElements(parentElement,null);
+		createChildElements(parentElement, null);
 	}
 
 	private void createChildElements(ToolListElement parentElement, IConfiguration config) {
@@ -115,17 +119,18 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		IHoldsOptions optHolder = parentElement.getHoldOptions();
 		IOptionCategoryApplicability applicabilityCalculator = null;
 		if (parent == null) {
-			parent = parentElement.getTool().getTopOptionCategory();	//  Must be an ITool
+			parent = parentElement.getTool().getTopOptionCategory(); //  Must be an ITool
 			optHolder = parentElement.getTool();
 		}
 		IOptionCategory[] cats = parent.getChildCategories();
 		//  Create an element for each one
-		for (int i=0; i<cats.length; i++) {
+		for (int i = 0; i < cats.length; i++) {
 			ToolListElement e = new ToolListElement(parentElement, optHolder, cats[i]);
 			applicabilityCalculator = e.getOptionCategory().getApplicabilityCalculator();
-			if (applicabilityCalculator == null || applicabilityCalculator.isOptionCategoryVisible(config, e.getHoldOptions(), e.getOptionCategory())) {
+			if (applicabilityCalculator == null || applicabilityCalculator.isOptionCategoryVisible(config,
+					e.getHoldOptions(), e.getOptionCategory())) {
 				parentElement.addChildElement(e);
-				createChildElements(e,config);
+				createChildElements(e, config);
 			}
 		}
 	}
@@ -135,11 +140,10 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	 */
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof IConfiguration ||
-			parentElement instanceof IResourceConfiguration	) {
+		if (parentElement instanceof IConfiguration || parentElement instanceof IResourceConfiguration) {
 			return elements;
 		}
-		return ((ToolListElement)parentElement).getChildElements();
+		return ((ToolListElement) parentElement).getChildElements();
 	}
 
 	/**
@@ -155,7 +159,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	 */
 	@Override
 	public Object getParent(Object element) {
-		return ((ToolListElement)element).getParent();
+		return ((ToolListElement) element).getParent();
 	}
 
 	/**
@@ -171,8 +175,9 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput == null) return;
-		fInfo = (IResourceInfo)newInput;
+		if (newInput == null)
+			return;
+		fInfo = (IResourceInfo) newInput;
 		if (elementType == PROJECT)
 			elements = createElements(fInfo.getParent());
 		else
@@ -180,4 +185,3 @@ public class ToolListContentProvider implements ITreeContentProvider{
 
 	}
 }
-

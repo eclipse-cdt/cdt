@@ -37,8 +37,7 @@ import org.eclipse.ui.IFileEditorInput;
 public class AddBuildTargetAction extends Action {
 
 	MakefileContentOutlinePage fOutliner;
-	static final ITargetRule[] EMPTY_TARGET_RULES = {
-	};
+	static final ITargetRule[] EMPTY_TARGET_RULES = {};
 
 	public AddBuildTargetAction(MakefileContentOutlinePage outliner) {
 		super(MakeUIPlugin.getResourceString("AddBuildTargetAction.title")); //$NON-NLS-1$
@@ -80,7 +79,8 @@ public class AddBuildTargetAction extends Action {
 					target.setContainer(file.getParent());
 				}
 			} catch (CoreException e) {
-				MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddBuildTargetAction.exception.internal"), e.toString(), e); //$NON-NLS-1$
+				MakeUIPlugin.errorDialog(shell,
+						MakeUIPlugin.getResourceString("AddBuildTargetAction.exception.internal"), e.toString(), e); //$NON-NLS-1$
 				target = null;
 			}
 
@@ -91,7 +91,8 @@ public class AddBuildTargetAction extends Action {
 					dialog = new MakeTargetDialog(shell, target);
 					dialog.open();
 				} catch (CoreException e) {
-					MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddBuildTargetAction.exception.internal"), e.toString(), e); //$NON-NLS-1$
+					MakeUIPlugin.errorDialog(shell,
+							MakeUIPlugin.getResourceString("AddBuildTargetAction.exception.internal"), e.toString(), e); //$NON-NLS-1$
 				}
 			}
 		}
@@ -132,14 +133,14 @@ public class AddBuildTargetAction extends Action {
 	private IFile getFile() {
 		Object input = fOutliner.getInput();
 		if (input instanceof IFileEditorInput) {
-			return ((IFileEditorInput)input).getFile();
+			return ((IFileEditorInput) input).getFile();
 		}
 		return null;
 	}
 
 	private ITargetRule[] getTargetRules(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List<?> list = ((IStructuredSelection)sel).toList();
+			List<?> list = ((IStructuredSelection) sel).toList();
 			if (list.size() > 0) {
 				List<ITargetRule> targets = new ArrayList<ITargetRule>(list.size());
 				Object[] elements = list.toArray();

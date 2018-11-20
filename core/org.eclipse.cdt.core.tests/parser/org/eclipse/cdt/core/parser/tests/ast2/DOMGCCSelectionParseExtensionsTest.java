@@ -35,14 +35,13 @@ public class DOMGCCSelectionParseExtensionsTest extends DOMSelectionParseTestBas
 		super(name, DOMGCCSelectionParseExtensionsTest.class);
 	}
 
-	public void testBug43021() throws Exception
-	{
+	public void testBug43021() throws Exception {
 		Writer writer = new StringWriter();
-		writer.write( "extern int johnc(__const char *__restrict __format, ...);\n" ); //$NON-NLS-1$
-		writer.write( "void m() {johnc(\"HI\");}" ); //$NON-NLS-1$
+		writer.write("extern int johnc(__const char *__restrict __format, ...);\n"); //$NON-NLS-1$
+		writer.write("void m() {johnc(\"HI\");}"); //$NON-NLS-1$
 		String code = writer.toString();
-		int startIndex = code.indexOf( "{johnc") + 1; //$NON-NLS-1$
-		IASTNode node = parse( code, startIndex, startIndex + 5 );
-		assertNotNull( node );
+		int startIndex = code.indexOf("{johnc") + 1; //$NON-NLS-1$
+		IASTNode node = parse(code, startIndex, startIndex + 5);
+		assertNotNull(node);
 	}
 }

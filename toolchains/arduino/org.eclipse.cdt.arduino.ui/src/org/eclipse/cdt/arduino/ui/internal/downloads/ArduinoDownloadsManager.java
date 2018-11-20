@@ -104,8 +104,8 @@ public class ArduinoDownloadsManager extends WizardDialog {
 		File acceptedFile = ArduinoPreferences.getArduinoHome().resolve(".accepted").toFile(); //$NON-NLS-1$
 		if (!acceptedFile.exists()) {
 			String message = "Do you accept the licenses for the platforms and libraries you are downloading?";
-			MessageDialog dialog = new MessageDialog(shell, "Arduino Licensing", null, message,
-					MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
+			MessageDialog dialog = new MessageDialog(shell, "Arduino Licensing", null, message, MessageDialog.QUESTION,
+					new String[] { "Yes", "No" }, 0);
 			int rc = dialog.open();
 			if (rc == 0) {
 				try {

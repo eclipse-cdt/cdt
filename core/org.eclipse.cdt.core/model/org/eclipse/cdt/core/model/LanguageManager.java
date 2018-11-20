@@ -65,13 +65,14 @@ public class LanguageManager {
 
 	private static LanguageManager instance;
 	private Map<String, ILanguage> fLanguageCache = new HashMap<String, ILanguage>();
-	private Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache= new HashMap<String, IPDOMLinkageFactory>();
-	private Map<String, ILanguage> fContentTypeToLanguageCache= new HashMap<String, ILanguage>();
+	private Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache = new HashMap<String, IPDOMLinkageFactory>();
+	private Map<String, ILanguage> fContentTypeToLanguageCache = new HashMap<String, ILanguage>();
 	private Map<IProject, ProjectLanguageConfiguration> fLanguageConfigurationCache = new HashMap<IProject, ProjectLanguageConfiguration>();
 	private boolean fIsFullyCached;
 	private HashMap<String, ILanguageDescriptor> fIdToLanguageDescriptorCache;//= new HashMap();
 	private HashMap<String, List<ILanguageDescriptor>> fContentTypeToDescriptorListCache;
-	private ListenerList<ILanguageMappingChangeListener> fLanguageChangeListeners = new ListenerList<>(ListenerList.IDENTITY);
+	private ListenerList<ILanguageMappingChangeListener> fLanguageChangeListeners = new ListenerList<>(
+			ListenerList.IDENTITY);
 	private WorkspaceLanguageConfiguration fWorkspaceMappings;
 
 	public static LanguageManager getInstance() {
@@ -99,7 +100,8 @@ public class LanguageManager {
 
 	private HashMap<String, ILanguageDescriptor> createDescriptorCache() {
 		HashMap<String, ILanguageDescriptor> map = new HashMap<String, ILanguageDescriptor>();
-		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		IConfigurationElement[] configs = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
@@ -132,7 +134,6 @@ public class LanguageManager {
 		return map;
 	}
 
-
 	private HashMap<String, List<ILanguageDescriptor>> createContentTypeToDescriptorCache() {
 		HashMap<String, List<ILanguageDescriptor>> map = new HashMap<String, List<ILanguageDescriptor>>();
 		Map<String, ILanguageDescriptor> dc = getDescriptorCache();
@@ -159,13 +160,14 @@ public class LanguageManager {
 		if (language != null)
 			return language;
 
-		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		IConfigurationElement[] configs = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
 				String langId = getLanguageID(languageElem);
 				if (langId.equals(id)) {
-					final ILanguage[] result= new ILanguage[]{null};
+					final ILanguage[] result = new ILanguage[] { null };
 					SafeRunner.run(new ISafeRunnable() {
 						@Override
 						public void handleException(Throwable exception) {
@@ -174,7 +176,7 @@ public class LanguageManager {
 
 						@Override
 						public void run() throws Exception {
-							result[0]= (ILanguage)languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
+							result[0] = (ILanguage) languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
 						}
 					});
 					if (result[0] != null) {
@@ -192,7 +194,7 @@ public class LanguageManager {
 	}
 
 	public ILanguage getLanguage(IContentType contentType) {
-		String contentTypeID= contentType.getId();
+		String contentTypeID = contentType.getId();
 		return getLanguageForContentTypeID(contentTypeID);
 	}
 
@@ -203,15 +205,16 @@ public class LanguageManager {
 		if (language != null || fContentTypeToLanguageCache.containsKey(contentTypeID))
 			return language;
 
-		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		IConfigurationElement[] configs = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
 				IConfigurationElement[] assocContentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE);
 				for (int k = 0; k < assocContentTypes.length; ++k) {
 					if (contentTypeID.equals(assocContentTypes[k].getAttribute(ATTRIBUTE_ID))) {
-						String id= getLanguageID(languageElem);
-						ILanguage lang= getLanguage(id);
+						String id = getLanguageID(languageElem);
+						ILanguage lang = getLanguage(id);
 						fContentTypeToLanguageCache.put(contentTypeID, lang);
 						return lang;
 					}
@@ -235,7 +238,8 @@ public class LanguageManager {
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		IConfigurationElement[] configs = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
@@ -255,7 +259,7 @@ public class LanguageManager {
 	 * @since 3.1.1
 	 */
 	public String[] getRegisteredContentTypeIds() {
-		Set<String> contentTypes= collectContentTypeIds();
+		Set<String> contentTypes = collectContentTypeIds();
 		return contentTypes.toArray(new String[contentTypes.size()]);
 	}
 
@@ -268,7 +272,8 @@ public class LanguageManager {
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		IConfigurationElement[] configs = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
@@ -323,10 +328,11 @@ public class LanguageManager {
 			return Collections.unmodifiableMap(fPDOMLinkageFactoryCache);
 
 		fPDOMLinkageFactoryCache.clear();
-		final IPDOMLinkageFactory[] result = new IPDOMLinkageFactory[] {null};
+		final IPDOMLinkageFactory[] result = new IPDOMLinkageFactory[] { null };
 
 		// read configuration
-		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		IConfigurationElement[] configs = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (final IConfigurationElement element : configs) {
 			if (ELEMENT_PDOM_LINKAGE_FACTORY.equals(element.getName())) {
 				SafeRunner.run(new ISafeRunnable() {
@@ -338,8 +344,8 @@ public class LanguageManager {
 					@Override
 					public void run() throws Exception {
 						result[0] = (IPDOMLinkageFactory) element.createExecutableExtension(ATTRIBUTE_CLASS);
-					}}
-				);
+					}
+				});
 				fPDOMLinkageFactoryCache.put(element.getAttribute(ATTRIBUTE_ID), result[0]);
 			}
 		}
@@ -364,12 +370,13 @@ public class LanguageManager {
 		if (fIsFullyCached) {
 			return;
 		}
-		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		IConfigurationElement[] configs = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
 				String langId = getLanguageID(languageElem);
-				final ILanguage[] result= new ILanguage[] { null };
+				final ILanguage[] result = new ILanguage[] { null };
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void handleException(Throwable exception) {
@@ -378,7 +385,7 @@ public class LanguageManager {
 
 					@Override
 					public void run() throws Exception {
-						result[0]= (ILanguage) languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
+						result[0] = (ILanguage) languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
 					}
 				});
 				if (result[0] != null) {
@@ -461,7 +468,8 @@ public class LanguageManager {
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public void storeLanguageMappingConfiguration(IProject project, IContentType[] affectedContentTypes) throws CoreException {
+	public void storeLanguageMappingConfiguration(IProject project, IContentType[] affectedContentTypes)
+			throws CoreException {
 		synchronized (this) {
 			ProjectLanguageConfiguration mappings = fLanguageConfigurationCache.get(project);
 			LanguageMappingStore store = new LanguageMappingStore();
@@ -486,9 +494,11 @@ public class LanguageManager {
 	 *        are not relevant to determining the language.
 	 * @throws CoreException
 	 */
-	public ILanguage getLanguageForFile(String fullPathToFile, IProject project, ICConfigurationDescription configuration) throws CoreException {
+	public ILanguage getLanguageForFile(String fullPathToFile, IProject project,
+			ICConfigurationDescription configuration) throws CoreException {
 		if (project == null)
-			throw new IllegalArgumentException("project must not be null in call to LanguageManager.getLanguageForFile(String, IProject)"); //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					"project must not be null in call to LanguageManager.getLanguageForFile(String, IProject)"); //$NON-NLS-1$
 
 		IContentType contentType = CContentTypes.getContentType(project, fullPathToFile);
 
@@ -498,7 +508,8 @@ public class LanguageManager {
 
 		String contentTypeID = contentType.getId();
 
-		return LanguageMappingResolver.computeLanguage(project, fullPathToFile, configuration, contentTypeID, false)[0].language;
+		return LanguageMappingResolver.computeLanguage(project, fullPathToFile, configuration, contentTypeID,
+				false)[0].language;
 	}
 
 	/**
@@ -513,7 +524,8 @@ public class LanguageManager {
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, ICConfigurationDescription configuration) throws CoreException {
+	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, ICConfigurationDescription configuration)
+			throws CoreException {
 		return getLanguageForFile(pathToFile, project, configuration, null);
 	}
 
@@ -530,23 +542,25 @@ public class LanguageManager {
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, ICConfigurationDescription configuration, String contentTypeID) throws CoreException {
+	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, ICConfigurationDescription configuration,
+			String contentTypeID) throws CoreException {
 		if (project == null) {
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(pathToFile);
 			if (resource == null) {
 				return null;
 			}
-			project= resource.getProject();
+			project = resource.getProject();
 		}
-		if (contentTypeID==null) {
-			IContentType ct= CContentTypes.getContentType(project, pathToFile.toString());
+		if (contentTypeID == null) {
+			IContentType ct = CContentTypes.getContentType(project, pathToFile.toString());
 			if (ct == null) {
 				return null;
 			}
-			contentTypeID= ct.getId();
+			contentTypeID = ct.getId();
 		}
 
-		return LanguageMappingResolver.computeLanguage(project, pathToFile.toPortableString(), configuration, contentTypeID, false)[0].language;
+		return LanguageMappingResolver.computeLanguage(project, pathToFile.toPortableString(), configuration,
+				contentTypeID, false)[0].language;
 	}
 
 	/**
@@ -572,8 +586,8 @@ public class LanguageManager {
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public ILanguage getLanguageForFile(IFile file, ICConfigurationDescription configuration,
-			String contentTypeId) throws CoreException {
+	public ILanguage getLanguageForFile(IFile file, ICConfigurationDescription configuration, String contentTypeId)
+			throws CoreException {
 		IProject project = file.getProject();
 
 		if (contentTypeId == null) {
@@ -584,14 +598,15 @@ public class LanguageManager {
 			} else {
 				filename = file.getName();
 			}
-			IContentType contentType= CContentTypes.getContentType(project, filename);
+			IContentType contentType = CContentTypes.getContentType(project, filename);
 			if (contentType == null) {
 				return null;
 			}
-			contentTypeId= contentType.getId();
+			contentTypeId = contentType.getId();
 		}
 
-		return LanguageMappingResolver.computeLanguage(project, file.getProjectRelativePath().toPortableString(), configuration, contentTypeId, false)[0].language;
+		return LanguageMappingResolver.computeLanguage(project, file.getProjectRelativePath().toPortableString(),
+				configuration, contentTypeId, false)[0].language;
 	}
 
 	/**
@@ -672,13 +687,12 @@ public class LanguageManager {
 	 * @return CDT language object
 	 * @since 5.4
 	 */
-	public ILanguage getLanguage(IContentType contentType,
-			IProject project, ICConfigurationDescription configurationDescription) {
+	public ILanguage getLanguage(IContentType contentType, IProject project,
+			ICConfigurationDescription configurationDescription) {
 		try {
 			final ProjectLanguageConfiguration projectConfig = getLanguageConfiguration(project);
 			final String contentTypeId = contentType.getId();
-			String langId = projectConfig.getLanguageForContentType(configurationDescription,
-					contentTypeId);
+			String langId = projectConfig.getLanguageForContentType(configurationDescription, contentTypeId);
 			if (langId == null) {
 				WorkspaceLanguageConfiguration wsConfig = getWorkspaceLanguageConfiguration();
 				langId = wsConfig.getLanguageForContentType(contentTypeId);

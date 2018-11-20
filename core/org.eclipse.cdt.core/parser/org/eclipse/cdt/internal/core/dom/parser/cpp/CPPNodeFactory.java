@@ -195,7 +195,8 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript) {
+	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr,
+			IASTExpression subscript) {
 		return new CPPASTArraySubscriptExpression(arrayExpr, subscript);
 	}
 
@@ -238,7 +239,8 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public ICPPASTBaseSpecifier newBaseSpecifier(ICPPASTNameSpecifier nameSpecifier, int visibility, boolean isVirtual) {
+	public ICPPASTBaseSpecifier newBaseSpecifier(ICPPASTNameSpecifier nameSpecifier, int visibility,
+			boolean isVirtual) {
 		return new CPPASTBaseSpecifier(nameSpecifier, visibility, isVirtual);
 	}
 
@@ -253,7 +255,8 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public IASTExpression newBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator op, IASTTypeId type1, IASTTypeId type2) {
+	public IASTExpression newBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator op, IASTTypeId type1,
+			IASTTypeId type2) {
 		return new CPPASTBinaryTypeIdExpression(op, type1, type2);
 	}
 
@@ -305,14 +308,15 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive, IASTExpression negative) {
+	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive,
+			IASTExpression negative) {
 		return new CPPASTConditionalExpression(condition, positive, negative);
 	}
 
 	@Override
 	@Deprecated
 	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName id, IASTExpression expression) {
-		ICPPASTConstructorChainInitializer result= new CPPASTConstructorChainInitializer(id, null);
+		ICPPASTConstructorChainInitializer result = new CPPASTConstructorChainInitializer(id, null);
 		result.setInitializerValue(expression);
 		return result;
 	}
@@ -325,7 +329,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	@Override
 	@Deprecated
 	public ICPPASTConstructorInitializer newConstructorInitializer(IASTExpression exp) {
-		ICPPASTConstructorInitializer result= new CPPASTConstructorInitializer(null);
+		ICPPASTConstructorInitializer result = new CPPASTConstructorInitializer(null);
 		result.setExpression(exp);
 		return result;
 	}
@@ -464,18 +468,19 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	@Deprecated
 	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList) {
 		CPPASTFunctionCallExpression result = new CPPASTFunctionCallExpression(idExpr, null);
-        if (argList == null) {
-        	result.setArguments(null);
-        } else if (argList instanceof ICPPASTExpressionList) {
-        	result.setArguments(((ICPPASTExpressionList) argList).getExpressions());
-        } else {
-        	result.setArguments(new IASTExpression[] {argList});
-        }
+		if (argList == null) {
+			result.setArguments(null);
+		} else if (argList instanceof ICPPASTExpressionList) {
+			result.setArguments(((ICPPASTExpressionList) argList).getExpressions());
+		} else {
+			result.setArguments(new IASTExpression[] { argList });
+		}
 		return result;
 	}
 
 	@Override
-	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTInitializerClause[] arguments) {
+	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr,
+			IASTInitializerClause[] arguments) {
 		return new CPPASTFunctionCallExpression(idExpr, arguments);
 	}
 
@@ -485,19 +490,20 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public ICPPASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
-			IASTStatement bodyStatement) {
+	public ICPPASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier,
+			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
 		return new CPPASTFunctionDefinition(declSpecifier, declarator, bodyStatement);
 	}
 
 	@Override
-	public ICPPASTFunctionWithTryBlock newFunctionTryBlock(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
-			IASTStatement bodyStatement) {
+	public ICPPASTFunctionWithTryBlock newFunctionTryBlock(IASTDeclSpecifier declSpecifier,
+			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
 		return new CPPASTFunctionWithTryBlock(declSpecifier, declarator, bodyStatement);
 	}
 
 	@Override
-	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement) {
+	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(
+			IASTCompoundStatement compoundStatement) {
 		return new CPPASTCompoundStatementExpression(compoundStatement);
 	}
 
@@ -583,7 +589,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public  ICPPASTName newName(String name) {
+	public ICPPASTName newName(String name) {
 		return newName(name.toCharArray());
 	}
 
@@ -614,7 +620,8 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 
 	@Override
 	@Deprecated
-	public ICPPASTNewExpression newNewExpression(IASTExpression placement, IASTExpression initializer, IASTTypeId typeId) {
+	public ICPPASTNewExpression newNewExpression(IASTExpression placement, IASTExpression initializer,
+			IASTTypeId typeId) {
 		final ICPPASTNewExpression result = new CPPASTNewExpression(null, null, typeId);
 		result.setNewPlacement(placement);
 		result.setNewInitializer(initializer);
@@ -622,7 +629,8 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public ICPPASTNewExpression newNewExpression(IASTInitializerClause[] placement, IASTInitializer initializer, IASTTypeId typeId) {
+	public ICPPASTNewExpression newNewExpression(IASTInitializerClause[] placement, IASTInitializer initializer,
+			IASTTypeId typeId) {
 		return new CPPASTNewExpression(placement, initializer, typeId);
 	}
 
@@ -737,13 +745,14 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(
-			ICPPASTDeclSpecifier declSpec, IASTInitializer initializer) {
+	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier declSpec,
+			IASTInitializer initializer) {
 		return new CPPASTSimpleTypeConstructorExpression(declSpec, initializer);
 	}
 
 	@Override
-	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId) {
+	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name,
+			IASTTypeId typeId) {
 		return new CPPASTSimpleTypeTemplateParameter(type, name, typeId);
 	}
 
@@ -779,12 +788,14 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue) {
+	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name,
+			IASTExpression defaultValue) {
 		return new CPPASTTemplatedTypeTemplateParameter(name, defaultValue);
 	}
 
 	@Override
-	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(int type, IASTName name, IASTExpression defaultValue) {
+	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(int type, IASTName name,
+			IASTExpression defaultValue) {
 		return new CPPASTTemplatedTypeTemplateParameter(type, name, defaultValue);
 	}
 
@@ -846,18 +857,21 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public IASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
+	public IASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId,
+			IASTInitializer initializer) {
 		return new CPPASTTypeIdInitializerExpression(typeId, initializer);
 	}
 
 	@Override
 	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate) {
+	public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName,
+			IASTExpression expr, boolean isTemplate) {
 		return new CPPASTTypenameExpression(qualifiedName, expr);
 	}
 
 	@Override
-	public ICPPASTTypeTransformationSpecifier newTypeTransformationSpecifier(ICPPUnaryTypeTransformation.Operator operator, ICPPASTTypeId operand) {
+	public ICPPASTTypeTransformationSpecifier newTypeTransformationSpecifier(
+			ICPPUnaryTypeTransformation.Operator operator, ICPPASTTypeId operand) {
 		return new CPPASTTypeTransformationSpecifier(operator, operand);
 	}
 

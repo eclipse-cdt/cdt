@@ -164,7 +164,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			if (astComment.getRawSignature().contains(suppressionComment))
 				return false;
 		}
-		return super.shouldProduceProblem(problem, loc, args);		
+		return super.shouldProduceProblem(problem, loc, args);
 	}
 
 	protected List<IASTComment> getLineCommentsForLocation(IProblemLocation loc) {
@@ -209,7 +209,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		// definition, because that can result in many lines being highlighted.
 		if (astNode instanceof IASTCompositeTypeSpecifier) {
 			return locFactory.createProblemLocation(getFile(), line);
-		} 
+		}
 		int start = astLocation.getNodeOffset();
 		int end = start + astLocation.getNodeLength();
 		return locFactory.createProblemLocation(getFile(), start, end, line);

@@ -23,8 +23,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
  */
 public class CPPASTEnumerator extends ASTEnumerator {
 
-    public CPPASTEnumerator() {
-    	super();
+	public CPPASTEnumerator() {
+		super();
 	}
 
 	public CPPASTEnumerator(IASTName name, IASTExpression value) {

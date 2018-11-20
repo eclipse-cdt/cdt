@@ -69,7 +69,7 @@ public interface ICPPASTNamespaceAlias extends IASTDeclaration, IASTNameOwner {
 	 *            <code>IASTName</code>
 	 */
 	public void setMappingName(IASTName qualifiedName);
-	
+
 	/**
 	 * @since 5.1
 	 */

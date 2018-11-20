@@ -42,8 +42,7 @@ public interface ICallHierarchyProvider {
 	 * @param result the accumulator to add the results to
 	 * @throws CoreException may be thrown in case of an error
 	 */
-	void findCalledBy(ICElement callee, int linkageID, IIndex index, ICalledByResult result)
-			throws CoreException;
+	void findCalledBy(ICElement callee, int linkageID, IIndex index, ICalledByResult result) throws CoreException;
 
 	/**
 	 * Adds the called functions and the corresponding call points for a function defined in a file

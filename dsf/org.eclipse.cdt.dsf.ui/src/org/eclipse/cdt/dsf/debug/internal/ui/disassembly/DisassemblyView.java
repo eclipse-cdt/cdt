@@ -48,7 +48,7 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	 */
 	@Override
 	public IViewSite getViewSite() {
-		return (IViewSite)getSite();
+		return (IViewSite) getSite();
 	}
 
 	/*
@@ -65,14 +65,14 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		setSite(site);
-        if (memento != null) {
-            Boolean trackExpression = memento.getBoolean(DisassemblyPreferenceConstants.TRACK_EXPRESSION);
-            if (trackExpression != null)
-                fTrackExpression = trackExpression;
-            Boolean syncContext = memento.getBoolean(DisassemblyPreferenceConstants.SYNC_ACTIVE_CONTEXT);
-            if (syncContext != null)
-                fSynchWithActiveDebugContext = syncContext;
-        }
+		if (memento != null) {
+			Boolean trackExpression = memento.getBoolean(DisassemblyPreferenceConstants.TRACK_EXPRESSION);
+			if (trackExpression != null)
+				fTrackExpression = trackExpression;
+			Boolean syncContext = memento.getBoolean(DisassemblyPreferenceConstants.SYNC_ACTIVE_CONTEXT);
+			if (syncContext != null)
+				fSynchWithActiveDebugContext = syncContext;
+		}
 	}
 
 	/*
@@ -93,18 +93,18 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 
 	protected void fillLocalPullDown(IMenuManager manager) {
 		manager.add(fGlobalActions.get(ActionFactory.FIND.getId()));
-        manager.add(new Separator("group.goto")); // ICommonMenuConstants.GROUP_GOTO //$NON-NLS-1$
+		manager.add(new Separator("group.goto")); // ICommonMenuConstants.GROUP_GOTO //$NON-NLS-1$
 		manager.add(fActionGotoPC);
 		manager.add(fActionGotoAddress);
-        manager.add(new Separator("group.show")); // ICommonMenuConstants.GROUP_SHOW //$NON-NLS-1$
-        manager.add(fSyncAction);
+		manager.add(new Separator("group.show")); // ICommonMenuConstants.GROUP_SHOW //$NON-NLS-1$
+		manager.add(fSyncAction);
 		manager.add(fTrackExpressionAction);
-        manager.add(new Separator(ITextEditorActionConstants.GROUP_SETTINGS));
-		manager.add(fActionToggleSource);		
-        manager.add(fActionToggleSymbols);
-        manager.add(fActionOpenPreferences);
-        // Other plug-ins can contribute their actions here
-        manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		manager.add(new Separator(ITextEditorActionConstants.GROUP_SETTINGS));
+		manager.add(fActionToggleSource);
+		manager.add(fActionToggleSymbols);
+		manager.add(fActionOpenPreferences);
+		// Other plug-ins can contribute their actions here
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	@Override

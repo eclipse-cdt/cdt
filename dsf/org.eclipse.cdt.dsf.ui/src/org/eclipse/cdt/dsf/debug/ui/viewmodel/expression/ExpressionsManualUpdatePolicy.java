@@ -26,11 +26,11 @@ import org.eclipse.cdt.dsf.ui.viewmodel.update.IElementUpdateTester;
  */
 public class ExpressionsManualUpdatePolicy extends DebugManualUpdatePolicy {
 
-    @Override
-    public IElementUpdateTester getElementUpdateTester(Object event) {
-        if (event instanceof ExpressionsChangedEvent) {
-            return new ExpressionsChangedUpdateTester((ExpressionsChangedEvent)event);
-        }
-        return super.getElementUpdateTester(event);
-    }
+	@Override
+	public IElementUpdateTester getElementUpdateTester(Object event) {
+		if (event instanceof ExpressionsChangedEvent) {
+			return new ExpressionsChangedUpdateTester((ExpressionsChangedEvent) event);
+		}
+		return super.getElementUpdateTester(event);
+	}
 }

@@ -46,59 +46,64 @@ public class WordQuickFixProcessor implements IQuickFixProcessor {
 	 * @see org.eclipse.cdt.ui.text.java.IQuickFixProcessor#getCorrections(org.eclipse.cdt.ui.text.java.ContentAssistInvocationContext,org.eclipse.cdt.ui.text.java.IProblemLocation[])
 	 */
 	@Override
-	public ICCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
-		final int threshold= SpellingPreferences.spellingProposalThreshold();
+	public ICCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations)
+			throws CoreException {
+		final int threshold = SpellingPreferences.spellingProposalThreshold();
 
-		int size= 0;
-		List<RankedWordProposal> proposals= null;
-		String[] arguments= null;
+		int size = 0;
+		List<RankedWordProposal> proposals = null;
+		String[] arguments = null;
 
-		IProblemLocation location= null;
-		RankedWordProposal proposal= null;
-		ICCompletionProposal[] result= null;
+		IProblemLocation location = null;
+		RankedWordProposal proposal = null;
+		ICCompletionProposal[] result = null;
 
-		boolean fixed= false;
-		boolean match= false;
-		boolean sentence= false;
+		boolean fixed = false;
+		boolean match = false;
+		boolean sentence = false;
 
-		final ISpellCheckEngine engine= SpellCheckEngine.getInstance();
-		final ISpellChecker checker= engine.getSpellChecker();
+		final ISpellCheckEngine engine = SpellCheckEngine.getInstance();
+		final ISpellChecker checker = engine.getSpellChecker();
 
 		if (checker != null) {
-			for (int index= 0; index < locations.length; index++) {
-				location= locations[index];
+			for (int index = 0; index < locations.length; index++) {
+				location = locations[index];
 				if (location.getProblemId() == CSpellingReconcileStrategy.SPELLING_PROBLEM_ID) {
-					arguments= location.getProblemArguments();
+					arguments = location.getProblemArguments();
 					if (arguments != null && arguments.length > 4) {
-						sentence= Boolean.valueOf(arguments[3]).booleanValue();
-						match= Boolean.valueOf(arguments[4]).booleanValue();
-						fixed= arguments[0].charAt(0) == IHtmlTagConstants.HTML_TAG_PREFIX;
+						sentence = Boolean.valueOf(arguments[3]).booleanValue();
+						match = Boolean.valueOf(arguments[4]).booleanValue();
+						fixed = arguments[0].charAt(0) == IHtmlTagConstants.HTML_TAG_PREFIX;
 
 						if ((sentence && match) && !fixed) {
-							result= new ICCompletionProposal[] { new ChangeCaseProposal(arguments, location.getOffset(), location.getLength(), context, engine.getLocale())};
+							result = new ICCompletionProposal[] { new ChangeCaseProposal(arguments,
+									location.getOffset(), location.getLength(), context, engine.getLocale()) };
 						} else {
-							proposals= new ArrayList<RankedWordProposal>(checker.getProposals(arguments[0], sentence));
-							size= proposals.size();
+							proposals = new ArrayList<RankedWordProposal>(checker.getProposals(arguments[0], sentence));
+							size = proposals.size();
 
 							if (threshold > 0 && size > threshold) {
 								Collections.sort(proposals);
-								proposals= proposals.subList(size - threshold - 1, size - 1);
-								size= proposals.size();
+								proposals = proposals.subList(size - threshold - 1, size - 1);
+								size = proposals.size();
 							}
 
-							boolean extendable= !fixed ? (checker.acceptsWords() || AddWordProposal.canAskToConfigure()) : false;
-							result= new ICCompletionProposal[size + (extendable ? 3 : 2)];
+							boolean extendable = !fixed
+									? (checker.acceptsWords() || AddWordProposal.canAskToConfigure())
+									: false;
+							result = new ICCompletionProposal[size + (extendable ? 3 : 2)];
 
-							for (index= 0; index < size; index++) {
-								proposal= proposals.get(index);
-								result[index]= new WordCorrectionProposal(proposal.getText(), arguments, location.getOffset(), location.getLength(), context, proposal.getRank());
+							for (index = 0; index < size; index++) {
+								proposal = proposals.get(index);
+								result[index] = new WordCorrectionProposal(proposal.getText(), arguments,
+										location.getOffset(), location.getLength(), context, proposal.getRank());
 							}
 
 							if (extendable)
-								result[index++]= new AddWordProposal(arguments[0], context);
+								result[index++] = new AddWordProposal(arguments[0], context);
 
-							result[index++]= new WordIgnoreProposal(arguments[0], context);
-							result[index++]= new DisableSpellCheckingProposal(context);
+							result[index++] = new WordIgnoreProposal(arguments[0], context);
+							result[index++] = new DisableSpellCheckingProposal(context);
 						}
 						break;
 					}

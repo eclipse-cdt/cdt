@@ -54,14 +54,17 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	private Map<String, String> buildEnvironment = new HashMap<>();
 	private final Map<String, String> targetAttributes = new HashMap<>();
 
-	public MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
+	public MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name)
+			throws CoreException {
 		this.manager = manager;
 		this.project = project;
 		this.targetBuilderID = targetBuilderID;
 		this.name = name;
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(project, manager.getBuilderID(targetBuilderID));
-		setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
-		setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
+		setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
+				info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
+		setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS,
+				info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
 		isDefaultBuildCmd = info.isDefaultBuildCmd();
 		isStopOnError = info.isStopOnError();
 	}
@@ -253,7 +256,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 			String value = entry.getValue();
 			// translate any string substitution variables
 			String translated = value;
-			translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value, false);
+			translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value,
+					false);
 			envMap.put(key, translated);
 		}
 		return envMap;
@@ -288,7 +292,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 
 	@Override
 	public boolean appendEnvironment() {
-		return appendEnvironment == USE_PROJECT_ENV_SETTING ? getProjectEnvSetting(): appendEnvironment == 1;
+		return appendEnvironment == USE_PROJECT_ENV_SETTING ? getProjectEnvSetting() : appendEnvironment == 1;
 	}
 
 	private boolean getProjectEnvSetting() {
@@ -311,15 +315,16 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		if (obj == this)
 			return true;
 		if (obj instanceof MakeTarget) {
-			MakeTarget other = (MakeTarget)obj;
-			return (container != null ? container.equals(other.getContainer()) : other.getContainer() == null) && name.equals(other.getName());
+			MakeTarget other = (MakeTarget) obj;
+			return (container != null ? container.equals(other.getContainer()) : other.getContainer() == null)
+					&& name.equals(other.getName());
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return container.hashCode() * 17 + name != null ? name.hashCode(): 0;
+		return container.hashCode() * 17 + name != null ? name.hashCode() : 0;
 	}
 
 	@Override
@@ -328,12 +333,15 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		final HashMap<String, String> infoMap = new HashMap<>();
 
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(infoMap, builderID);
-		info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
-		info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
+		info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
+				getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
+		info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS,
+				getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
 		info.setUseDefaultBuildCmd(isDefaultBuildCmd());
 		info.setStopOnError(isStopOnError());
 		info.setIncrementalBuildEnable(true);
-		info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, getBuildAttribute(IMakeTarget.BUILD_TARGET, "")); //$NON-NLS-1$
+		info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL,
+				getBuildAttribute(IMakeTarget.BUILD_TARGET, "")); //$NON-NLS-1$
 		info.setCleanBuildEnable(false);
 		info.setEnvironment(getExpandedEnvironment());
 		info.setAppendEnvironment(appendEnvironment());
@@ -356,7 +364,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, commands.length);
 					for (ICommand command : commands) {
 						if (command.getBuilderName().equals(builderID)) {
-							project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, subMonitor.newChild(1));
+							project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap,
+									subMonitor.newChild(1));
 						} else {
 							project.build(IncrementalProjectBuilder.FULL_BUILD, command.getBuilderName(),
 									command.getArguments(), subMonitor.newChild(1));

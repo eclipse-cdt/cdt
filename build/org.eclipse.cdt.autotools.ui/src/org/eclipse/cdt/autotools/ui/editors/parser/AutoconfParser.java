@@ -24,13 +24,12 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
-
 /**
  * Tokenizing autoconf parser, based on original work by Jeff Johnston 
  * @author eswartz
  */
 public class AutoconfParser {
-	
+
 	public static final String MISSING_SPECIFIER = "MissingSpecifier"; //$NON-NLS-1$
 	public static final String INVALID_SPECIFIER = "InvalidSpecifier"; //$NON-NLS-1$
 	public static final String INVALID_TERMINATION = "InvalidTermination"; //$NON-NLS-1$
@@ -47,37 +46,31 @@ public class AutoconfParser {
 	public static final String IMPROPER_CASE_CONDITION = "ImproperCaseCondition"; //$NON-NLS-1$
 	public static final String UNTERMINATED_CASE_CONDITION = "UnterminatedCaseCondition"; //$NON-NLS-1$
 	public static final String UNTERMINATED_INLINE_DOCUMENT = "UnterminatedInlineDocument"; //$NON-NLS-1$
-	public static final String INCOMPLETE_INLINE_MARKER="IncompleteInlineMarker"; //$NON-NLS-1$
-	public static final String MISSING_INLINE_MARKER="MissingInlineMarker"; //$NON-NLS-1$
+	public static final String INCOMPLETE_INLINE_MARKER = "IncompleteInlineMarker"; //$NON-NLS-1$
+	public static final String MISSING_INLINE_MARKER = "MissingInlineMarker"; //$NON-NLS-1$
 	public static final String UNMATCHED_RIGHT_PARENTHESIS = "UnmatchedRightParenthesis"; //$NON-NLS-1$
 	public static final String UNMATCHED_LEFT_PARENTHESIS = "UnmatchedLeftParenthesis"; //$NON-NLS-1$
-	
+
 	private IAutoconfErrorHandler errorHandler;
 	private IAutoconfMacroValidator macroValidator;
 	private AutoconfTokenizer tokenizer;
 	private IAutoconfMacroDetector macroDetector;
-	
-	private static final String M4_BUILTINS =
-		"define undefine defn pushdef popdef indir builtin ifdef ifelse shift reverse cond " + //$NON-NLS-1$
-		"dumpdef traceon traceoff debugmode debugfile dnl changequote changecom changeword " + //$NON-NLS-1$
-		"m4wrap " + //$NON-NLS-1$
-		"include sinclude divert undivert divnum len index regexp substr translit patsubst " + //$NON-NLS-1$
-		"format incr decr eval syscmd esyscmd sysval mkstemp maketemp errprint m4exit " + //$NON-NLS-1$
-		"__file__ __line__ __program__ "; //$NON-NLS-1$
-	
+
+	private static final String M4_BUILTINS = "define undefine defn pushdef popdef indir builtin ifdef ifelse shift reverse cond " //$NON-NLS-1$
+			+ "dumpdef traceon traceoff debugmode debugfile dnl changequote changecom changeword " + "m4wrap " + "include sinclude divert undivert divnum len index regexp substr translit patsubst " + "format incr decr eval syscmd esyscmd sysval mkstemp maketemp errprint m4exit " + "__file__ __line__ __program__ ";
+
 	private static List<String> m4builtins = new ArrayList<>();
 	static {
 		m4builtins.addAll(Arrays.asList(M4_BUILTINS.split(" "))); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Create a parser for autoconf-style sources.  
 	 * @param errorHandler
 	 * @param macroDetector
 	 * @param macroValidator
 	 */
-	public AutoconfParser(IAutoconfErrorHandler errorHandler,
-			IAutoconfMacroDetector macroDetector,
+	public AutoconfParser(IAutoconfErrorHandler errorHandler, IAutoconfMacroDetector macroDetector,
 			IAutoconfMacroValidator macroValidator) {
 		this.errorHandler = errorHandler;
 		this.macroDetector = macroDetector;
@@ -107,18 +100,17 @@ public class AutoconfParser {
 		this.tokenizer = new AutoconfTokenizer(document, errorHandler);
 		if (useAutoconfQuotes)
 			tokenizer.setM4Quote("[", "]"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		AutoconfElement root = new AutoconfRootElement();
 		Token eof = parseTopLevel(root);
-		
+
 		root.setStartOffset(0);
 		root.setDocument(document);
-		
+
 		setSourceEnd(root, eof);
-		
+
 		return root;
 	}
-
 
 	static class BlockEndCondition extends Exception {
 		/**
@@ -130,11 +122,11 @@ public class AutoconfParser {
 		public BlockEndCondition(Token token) {
 			this.token = token;
 		}
-		
+
 		public Token getToken() {
 			return token;
 		}
-		
+
 	}
 
 	static class ExprEndCondition extends Exception {
@@ -147,11 +139,11 @@ public class AutoconfParser {
 		public ExprEndCondition(Token token) {
 			this.token = token;
 		}
-		
+
 		public Token getToken() {
 			return token;
 		}
-		
+
 	}
 
 	/**
@@ -168,11 +160,11 @@ public class AutoconfParser {
 				// don't terminate here; we may have constructs closed too early
 				Token token = tokenizer.peekToken();
 				if (token.getType() == ITokenConstants.EOF)
-					return token; 
+					return token;
 			}
 		}
 	}
-	
+
 	/**
 	 * Parse a block of nodes, which starts with an expression and contains
 	 * subnodes.  Divide text into macro calls and recognized shell constructs.  
@@ -181,9 +173,9 @@ public class AutoconfParser {
 	 */
 	protected void parseBlock(AutoconfElement parent, Token open, AutoconfElement block) throws BlockEndCondition {
 		parent.addChild(block);
-		
+
 		setSourceStart(block, open);
-		
+
 		// get the expression part
 		Token token;
 		try {
@@ -192,7 +184,7 @@ public class AutoconfParser {
 			setSourceEndBefore(block, e.getToken());
 			throw e;
 		}
-		
+
 		// parse the block proper
 		if (token.getType() != ITokenConstants.EOF) {
 			while (true) {
@@ -211,10 +203,8 @@ public class AutoconfParser {
 	private Token parseBlockExpression(Token open, AutoconfElement block) throws BlockEndCondition {
 		Token token;
 		try {
-			if (block instanceof AutoconfIfElement 
-					|| block instanceof AutoconfElifElement 
-					|| block instanceof AutoconfCaseElement 
-					|| block instanceof AutoconfWhileElement) {
+			if (block instanceof AutoconfIfElement || block instanceof AutoconfElifElement
+					|| block instanceof AutoconfCaseElement || block instanceof AutoconfWhileElement) {
 				token = parseExpression(block);
 			} else if (block instanceof AutoconfForElement) {
 				token = parseForExpression(block);
@@ -228,7 +218,7 @@ public class AutoconfParser {
 			setSourceEnd(block, e.getToken());
 			throw e;
 		}
-	
+
 		// check for expected token
 		while (true) {
 			token = tokenizer.readToken();
@@ -237,24 +227,20 @@ public class AutoconfParser {
 			if (token.getType() != ITokenConstants.EOL)
 				break;
 		}
-		
+
 		if (token.getType() == ITokenConstants.SH_DO) {
-			checkBlockValidity(block, token, 
-					new Class[] { AutoconfForElement.class, AutoconfWhileElement.class },
+			checkBlockValidity(block, token, new Class[] { AutoconfForElement.class, AutoconfWhileElement.class },
 					INVALID_DO);
-		}
-		else if (token.getType() == ITokenConstants.SH_THEN) {
-			checkBlockValidity(block, token, 
-					new Class[] { AutoconfIfElement.class, AutoconfElifElement.class },
+		} else if (token.getType() == ITokenConstants.SH_THEN) {
+			checkBlockValidity(block, token, new Class[] { AutoconfIfElement.class, AutoconfElifElement.class },
 					INVALID_THEN);
-		} 
-		else {
+		} else {
 			String exp;
 			if (block instanceof AutoconfIfElement || block instanceof AutoconfElifElement)
 				exp = "then";
 			else
 				exp = "do";
-			
+
 			handleError(token, AutoconfEditorMessages.getFormattedString(MISSING_SPECIFIER, exp));
 
 			// assume we're still in the block...
@@ -262,7 +248,7 @@ public class AutoconfParser {
 		}
 		return token;
 	}
-	
+
 	/**
 	 * Parse a case statement.  Scoop up statements into case conditional blocks.
 	 * <pre>
@@ -275,9 +261,9 @@ public class AutoconfParser {
 	 */
 	protected void parseCaseBlock(AutoconfElement parent, Token open, AutoconfElement block) throws BlockEndCondition {
 		parent.addChild(block);
-		
+
 		setSourceStart(block, open);
-		
+
 		// get the case expression, terminating at 'in'
 		Token token;
 		try {
@@ -287,12 +273,12 @@ public class AutoconfParser {
 			setSourceEnd(block, e.getToken());
 			throw e;
 		}
-		
+
 		block.setVar(getTokenSpanTextBetween(open, token));
-		
+
 		// now get the statements, which are themselves blocks... just read statements
 		// that terminate with ';;' and stuff those into blocks.
-		
+
 		while (true) {
 			AutoconfCaseConditionElement condition = new AutoconfCaseConditionElement();
 
@@ -306,34 +292,34 @@ public class AutoconfParser {
 					continue;
 				break;
 			}
-			
+
 			if (token.getType() == ITokenConstants.SH_ESAC) {
 				break;
 			}
-			
+
 			try {
 				Token start = token;
 				token = parseCaseExpression(condition);
 				condition.setName(getTokenSpanTextFromUpTo(start, token));
-				
+
 				while (true) {
 					parseStatement(condition);
 				}
 			} catch (BlockEndCondition e) {
 				setSourceEnd(condition, e.getToken());
-				
+
 				if (condition.getSource().length() > 0)
 					block.addChild(condition);
-				
+
 				if (e.getToken().getType() != ITokenConstants.SH_CASE_CONDITION_END) {
 					token = e.getToken();
 					break;
 				}
 			}
 		}
-		
+
 		setSourceEnd(block, token);
-		
+
 		if (token.getType() != ITokenConstants.SH_ESAC) {
 			handleError(token, AutoconfEditorMessages.getFormattedString(UNTERMINATED_CONSTRUCT, block.getName()));
 		}
@@ -344,7 +330,7 @@ public class AutoconfParser {
 		int endOffset = close.getOffset();
 		if (open.getDocument() != close.getDocument())
 			return open.getText();
-		
+
 		String text;
 		try {
 			text = open.getDocument().get(startOffset, endOffset - startOffset).trim();
@@ -352,7 +338,7 @@ public class AutoconfParser {
 			text = open.getText();
 			// TODO: error
 		}
-		
+
 		return text;
 	}
 
@@ -361,7 +347,7 @@ public class AutoconfParser {
 		int endOffset = close.getOffset();
 		if (open.getDocument() != close.getDocument())
 			return open.getText();
-		
+
 		String text;
 		try {
 			text = open.getDocument().get(startOffset, endOffset - startOffset).trim();
@@ -369,9 +355,10 @@ public class AutoconfParser {
 			text = open.getText();
 			// TODO: error
 		}
-		
+
 		return text;
 	}
+
 	private void setSourceStart(AutoconfElement block, Token open) {
 		int offset = open.getOffset();
 		block.setDocument(open.getDocument());
@@ -402,46 +389,45 @@ public class AutoconfParser {
 	 * to validate the legality of block closing tokens.
 	 */
 	protected void parseStatement(AutoconfElement parent) throws BlockEndCondition {
-	
+
 		boolean atStart = true;
-		
+
 		while (true) {
 			Token token = tokenizer.readToken();
-			
+
 			switch (token.getType()) {
 			// 0. Check EOF
 			case ITokenConstants.EOF:
 				AutoconfElement element = parent;
 				while (element != null && !(element instanceof AutoconfRootElement)) {
-					handleError(token, AutoconfEditorMessages.getFormattedString(UNTERMINATED_CONSTRUCT, element.getName()));
+					handleError(token,
+							AutoconfEditorMessages.getFormattedString(UNTERMINATED_CONSTRUCT, element.getName()));
 					element = element.getParent();
 				}
 				throw new BlockEndCondition(token);
-			
-			
-			// 1. Check for end of statement
+
+				// 1. Check for end of statement
 			case ITokenConstants.EOL:
 			case ITokenConstants.SEMI:
 				return;
-			
-			
+
 			// 2. Check macro expansions
 			case ITokenConstants.WORD:
 				checkMacro(parent, token);
 				atStart = false;
 				break;
-			
+
 			// Check for shell constructs.  These should appear at the start of a line
 			// or after a semicolon.  If they don't,  just report an error and continue, 
 			// to be tolerant of our own lax parsing.
-			
+
 			// 3.a) Check dollar variables
 			case ITokenConstants.SH_DOLLAR:
 				// skip the next token
 				atStart = false;
 				token = tokenizer.readToken();
 				continue;
-				
+
 			// 3.b) Look for if/else/elif/fi constructs,
 			// being tolerant of nesting problems by allowing
 			// stranded else/elif nodes but reporting errors.
@@ -449,90 +435,76 @@ public class AutoconfParser {
 				checkLineStart(token, atStart);
 				parseBlock(parent, token, new AutoconfIfElement());
 				break;
-				
+
 			case ITokenConstants.SH_ELIF:
 				checkLineStart(token, atStart);
-				checkBlockValidity(
-						parent, token, 
-						new Class[] { AutoconfIfElement.class, AutoconfElifElement.class },
+				checkBlockValidity(parent, token, new Class[] { AutoconfIfElement.class, AutoconfElifElement.class },
 						INVALID_ELIF);
 				parseBlock(parent, token, new AutoconfElifElement());
 				token = tokenizer.peekToken();
 				throw new BlockEndCondition(token);
-			
+
 			case ITokenConstants.SH_ELSE:
 				checkLineStart(token, atStart);
-				checkBlockValidity(
-						parent, token, 
-						new Class[] { AutoconfIfElement.class, AutoconfElifElement.class },
+				checkBlockValidity(parent, token, new Class[] { AutoconfIfElement.class, AutoconfElifElement.class },
 						INVALID_ELSE);
 				parseBlock(parent, token, new AutoconfElseElement());
 				token = tokenizer.peekToken();
 				throw new BlockEndCondition(token);
-			
+
 			case ITokenConstants.SH_FI:
 				checkLineStart(token, atStart);
-				checkBlockValidity(
-						parent, token, 
+				checkBlockValidity(parent, token,
 						new Class[] { AutoconfIfElement.class, AutoconfElifElement.class, AutoconfElseElement.class },
 						INVALID_FI);
 				throw new BlockEndCondition(token);
-			
-				
-			// 4. Look for for/while loops
+
+				// 4. Look for for/while loops
 			case ITokenConstants.SH_FOR:
 				checkLineStart(token, atStart);
 				parseBlock(parent, token, new AutoconfForElement());
 				break;
-				
+
 			case ITokenConstants.SH_WHILE:
 				checkLineStart(token, atStart);
 				parseBlock(parent, token, new AutoconfWhileElement());
 				break;
-				
+
 			case ITokenConstants.SH_UNTIL:
 				checkLineStart(token, atStart);
 				parseBlock(parent, token, new AutoconfUntilElement());
 				break;
-				
+
 			case ITokenConstants.SH_SELECT:
 				checkLineStart(token, atStart);
 				parseBlock(parent, token, new AutoconfSelectElement());
 				break;
-				
+
 			case ITokenConstants.SH_DONE:
 				checkLineStart(token, atStart);
-				checkBlockValidity(
-						parent, token, 
-						new Class[] { AutoconfForElement.class, AutoconfWhileElement.class,
-								AutoconfUntilElement.class, AutoconfSelectElement.class },
-						INVALID_DONE);
+				checkBlockValidity(parent, token, new Class[] { AutoconfForElement.class, AutoconfWhileElement.class,
+						AutoconfUntilElement.class, AutoconfSelectElement.class }, INVALID_DONE);
 				throw new BlockEndCondition(token);
-			
-			// 5. Look for case statements
+
+				// 5. Look for case statements
 			case ITokenConstants.SH_CASE:
 				checkLineStart(token, atStart);
 				parseCaseBlock(parent, token, new AutoconfCaseElement());
 				break;
-				
+
 			case ITokenConstants.SH_CASE_CONDITION_END:
-				checkBlockValidity(
-						parent, token, 
-						new Class[] { AutoconfCaseConditionElement.class },
+				checkBlockValidity(parent, token, new Class[] { AutoconfCaseConditionElement.class },
 						IMPROPER_CASE_CONDITION);
 				throw new BlockEndCondition(token);
-			
+
 			case ITokenConstants.SH_ESAC:
 				checkLineStart(token, atStart);
-				checkBlockValidity(
-						parent, token, 
+				checkBlockValidity(parent, token,
 						// note: we don't strictly recurse here, so accept either parent
-						new Class[] { AutoconfCaseElement.class, AutoconfCaseConditionElement.class },
-						INVALID_ESAC);
+						new Class[] { AutoconfCaseElement.class, AutoconfCaseConditionElement.class }, INVALID_ESAC);
 				throw new BlockEndCondition(token);
-			
-			
-			// 6. Check for HERE documents
+
+				// 6. Check for HERE documents
 			case ITokenConstants.SH_HERE:
 			case ITokenConstants.SH_HERE_DASH:
 
@@ -558,15 +530,16 @@ public class AutoconfParser {
 		Token token = tokenizer.readToken();
 		if (token.getType() == ITokenConstants.EOL || token.getType() == ITokenConstants.EOF) {
 			handleError(token, AutoconfEditorMessages.getString(INCOMPLETE_INLINE_MARKER));
-			
+
 		} else {
 			String hereTag = token.getText();
-		
+
 			boolean atEOL = false;
 			while (true) {
 				token = tokenizer.readToken();
 				if (token.getType() == ITokenConstants.EOF) {
-					handleError(token, AutoconfEditorMessages.getFormattedString(UNTERMINATED_CONSTRUCT, parent.getName()));
+					handleError(token,
+							AutoconfEditorMessages.getFormattedString(UNTERMINATED_CONSTRUCT, parent.getName()));
 					break;
 				} else if (token.getType() == ITokenConstants.EOL) {
 					atEOL = true;
@@ -574,7 +547,8 @@ public class AutoconfParser {
 					if (atEOL && token.getText().equals(hereTag)) {
 						// only the end if it is also followed by EOL without any whitespace
 						Token eol = tokenizer.readToken();
-						if (eol.getType() == ITokenConstants.EOL && eol.getOffset() == token.getOffset() + token.getLength()) {
+						if (eol.getType() == ITokenConstants.EOL
+								&& eol.getOffset() == token.getOffset() + token.getLength()) {
 							break;
 						}
 					}
@@ -596,22 +570,22 @@ public class AutoconfParser {
 	 * to validate the legality of block closing tokens.
 	 */
 	protected Token parseExpression(AutoconfElement parent) throws BlockEndCondition {
-	
+
 		while (true) {
 			Token token = tokenizer.readToken();
-			
+
 			// 0. Ignore comments (tokenizer skipped them!)
-			
+
 			switch (token.getType()) {
 			// 1. Check EOF
 			case ITokenConstants.EOF:
 				throw new BlockEndCondition(token);
-		
-			// 2. Check macro expansions
+
+				// 2. Check macro expansions
 			case ITokenConstants.WORD:
 				token = checkMacro(parent, token);
 				break;
-			
+
 			// 3. Check expression terminators
 			case ITokenConstants.SEMI:
 			case ITokenConstants.EOL:
@@ -621,22 +595,21 @@ public class AutoconfParser {
 			case ITokenConstants.SH_DOLLAR:
 				token = tokenizer.readToken();
 				break;
-				
+
 			case ITokenConstants.SH_IN:
 				// in 'for' or 'select, an 'in' may occur before 'do'
-				if (!(parent instanceof AutoconfForElement)
-						&& !(parent instanceof AutoconfSelectElement)) 
+				if (!(parent instanceof AutoconfForElement) && !(parent instanceof AutoconfSelectElement))
 					return token;
 				// fall through
-				
-			// 5. Abort on unexpected tokens
+
+				// 5. Abort on unexpected tokens
 			case ITokenConstants.SH_DO:
 			case ITokenConstants.SH_THEN:
 				handleError(token, AutoconfEditorMessages.getFormattedString(INVALID_SPECIFIER, token.getText()));
 				tokenizer.unreadToken(token);
 				// close enough...
 				return token;
-				
+
 			case ITokenConstants.SH_ESAC:
 			case ITokenConstants.SH_CASE:
 			case ITokenConstants.SH_CASE_CONDITION_END:
@@ -664,47 +637,49 @@ public class AutoconfParser {
 	protected Token parseForExpression(AutoconfElement parent) throws BlockEndCondition {
 		while (true) {
 			Token token = tokenizer.readToken();
-			
+
 			// 0. Ignore comments (tokenizer skipped them!)
-			
+
 			// 1. Check EOF
 			if (token.getType() == ITokenConstants.EOF) {
 				throw new BlockEndCondition(token);
 			}
-		
+
 			// 2. Check macro expansions
 			else if (token.getType() == ITokenConstants.WORD) {
 				token = checkMacro(parent, token);
 			}
-			
+
 			// 3. Check expression terminators -- not ';' here, but 'do'
 			else if (token.getType() == ITokenConstants.SH_DO) {
 				tokenizer.unreadToken(token);
 				return tokenizer.peekToken();
 			}
-			
+
 			// 4. Abort on unexpected tokens
-			else switch (token.getType()) {
-			case ITokenConstants.SH_THEN:
-				handleError(token, AutoconfEditorMessages.getFormattedString(INVALID_SPECIFIER, token.getText()));
-				tokenizer.unreadToken(token);
-				// close enough...
-				//throw new ExprEndCondition(token);
-				return token;
-				
-			case ITokenConstants.SH_ESAC:
-			case ITokenConstants.SH_CASE:
-			case ITokenConstants.SH_CASE_CONDITION_END:
-			case ITokenConstants.SH_FOR:
-			case ITokenConstants.SH_IF:
-			case ITokenConstants.SH_ELIF:
-			case ITokenConstants.SH_ELSE:
-			case ITokenConstants.SH_FI:
-			case ITokenConstants.SH_DONE:
-				handleError(token, AutoconfEditorMessages.getFormattedString(UNTERMINATED_CONSTRUCT, parent.getName()));
-				tokenizer.unreadToken(token);
-				throw new BlockEndCondition(token);
-			}
+			else
+				switch (token.getType()) {
+				case ITokenConstants.SH_THEN:
+					handleError(token, AutoconfEditorMessages.getFormattedString(INVALID_SPECIFIER, token.getText()));
+					tokenizer.unreadToken(token);
+					// close enough...
+					//throw new ExprEndCondition(token);
+					return token;
+
+				case ITokenConstants.SH_ESAC:
+				case ITokenConstants.SH_CASE:
+				case ITokenConstants.SH_CASE_CONDITION_END:
+				case ITokenConstants.SH_FOR:
+				case ITokenConstants.SH_IF:
+				case ITokenConstants.SH_ELIF:
+				case ITokenConstants.SH_ELSE:
+				case ITokenConstants.SH_FI:
+				case ITokenConstants.SH_DONE:
+					handleError(token,
+							AutoconfEditorMessages.getFormattedString(UNTERMINATED_CONSTRUCT, parent.getName()));
+					tokenizer.unreadToken(token);
+					throw new BlockEndCondition(token);
+				}
 		}
 	}
 
@@ -719,57 +694,58 @@ public class AutoconfParser {
 	protected Token parseCaseExpression(AutoconfElement parent) throws BlockEndCondition {
 		while (true) {
 			Token token = tokenizer.readToken();
-			
+
 			// 0. Ignore comments (tokenizer skipped them!)
-			
+
 			// 1. Check EOF
 			if (token.getType() == ITokenConstants.EOF) {
 				throw new BlockEndCondition(token);
 			}
-		
+
 			// 2. Check macro expansions
 			else if (token.getType() == ITokenConstants.WORD) {
 				token = checkMacro(parent, token);
 			}
-			
+
 			// 3. Check expression terminators
 			else if (parent instanceof AutoconfCaseElement && token.getType() == ITokenConstants.SH_IN) {
 				return token;
-			}
-			else if (parent instanceof AutoconfCaseConditionElement && token.getType() == ITokenConstants.RPAREN) {
+			} else if (parent instanceof AutoconfCaseConditionElement && token.getType() == ITokenConstants.RPAREN) {
 				return token;
 			}
-			
+
 			// 4. Abort on unexpected tokens
-			else switch (token.getType()) {
-			case ITokenConstants.SEMI:
-			case ITokenConstants.SH_IN:
-			case ITokenConstants.RPAREN:
-			case ITokenConstants.SH_DO:
-			case ITokenConstants.SH_THEN:
-				if (parent instanceof AutoconfCaseElement)
-					handleError(token, AutoconfEditorMessages.getString(INVALID_IN));
-				else
-					handleError(token, AutoconfEditorMessages.getString(IMPROPER_CASE_CONDITION));
-				// close enough...
-				return token;
-				
-			case ITokenConstants.SH_ESAC:
-			case ITokenConstants.SH_CASE:
-			case ITokenConstants.SH_CASE_CONDITION_END:
-			case ITokenConstants.SH_FOR:
-			case ITokenConstants.SH_IF:
-			case ITokenConstants.SH_ELIF:
-			case ITokenConstants.SH_ELSE:
-			case ITokenConstants.SH_FI:
-			case ITokenConstants.SH_DONE:
-				handleError(token, AutoconfEditorMessages.getFormattedString(UNTERMINATED_CONSTRUCT, parent.getName()));
-				tokenizer.unreadToken(token);
-				throw new BlockEndCondition(token);
-			}
+			else
+				switch (token.getType()) {
+				case ITokenConstants.SEMI:
+				case ITokenConstants.SH_IN:
+				case ITokenConstants.RPAREN:
+				case ITokenConstants.SH_DO:
+				case ITokenConstants.SH_THEN:
+					if (parent instanceof AutoconfCaseElement)
+						handleError(token, AutoconfEditorMessages.getString(INVALID_IN));
+					else
+						handleError(token, AutoconfEditorMessages.getString(IMPROPER_CASE_CONDITION));
+					// close enough...
+					return token;
+
+				case ITokenConstants.SH_ESAC:
+				case ITokenConstants.SH_CASE:
+				case ITokenConstants.SH_CASE_CONDITION_END:
+				case ITokenConstants.SH_FOR:
+				case ITokenConstants.SH_IF:
+				case ITokenConstants.SH_ELIF:
+				case ITokenConstants.SH_ELSE:
+				case ITokenConstants.SH_FI:
+				case ITokenConstants.SH_DONE:
+					handleError(token,
+							AutoconfEditorMessages.getFormattedString(UNTERMINATED_CONSTRUCT, parent.getName()));
+					tokenizer.unreadToken(token);
+					throw new BlockEndCondition(token);
+				}
 		}
 	}
-	
+
 	/**
 	 * Check a given close block token against the current parent by checking that
 	 * the parent's class is one of classes,  If a match happens,
@@ -779,17 +755,13 @@ public class AutoconfParser {
 	 * @param token
 	 * @param classes
 	 */
-	private void checkBlockValidity(
-			AutoconfElement parent, 
-			Token token,
-			Class<?>[] classes,
-			String errorMessage) {
+	private void checkBlockValidity(AutoconfElement parent, Token token, Class<?>[] classes, String errorMessage) {
 		for (int i = 0; i < classes.length; i++) {
 			if (classes[i].isInstance(parent)) {
 				return;
 			}
 		}
-		
+
 		// not a match
 		handleError(token, AutoconfEditorMessages.getFormattedString(errorMessage, parent.getName(), token.getText()));
 	}
@@ -800,8 +772,8 @@ public class AutoconfParser {
 	 * 
 	 * @return
 	 */
-	private AutoconfMacroElement createMacroElement (String name){
-		if (name.equals("AC_INIT")){ //$NON-NLS-1$
+	private AutoconfMacroElement createMacroElement(String name) {
+		if (name.equals("AC_INIT")) { //$NON-NLS-1$
 			return new AcInitElement(name);
 		}
 		return new AutoconfMacroElement(name);
@@ -816,7 +788,7 @@ public class AutoconfParser {
 	 */
 	private Token checkMacro(AutoconfElement parent, Token token) {
 		String name = token.getText();
-		
+
 		boolean hasArguments = tokenizer.peekToken().getType() == ITokenConstants.LPAREN;
 		if (macroDetector != null && macroDetector.isMacroIdentifier(name)) {
 			// ok
@@ -827,10 +799,10 @@ public class AutoconfParser {
 		} else {
 			return token;
 		}
-		
+
 		AutoconfMacroElement macro = createMacroElement(name);
-		token = parseMacro(macro, token);					
-		
+		token = parseMacro(macro, token);
+
 		// handle special macros here
 		if ("dnl".equals(name)) { //$NON-NLS-1$
 			// consume to EOL
@@ -839,13 +811,13 @@ public class AutoconfParser {
 				if (token.getType() == ITokenConstants.EOF || token.getType() == ITokenConstants.EOL)
 					break;
 			}
-			
+
 			// ignore macro entirely
 			macro = null;
 		} else if ("changequote".equals(name)) { //$NON-NLS-1$
 			// change quote delimiters
 			validateMacroParameterCount(macro, token, 2);
-			
+
 			// GNU behavior for invalid argument count
 			String parm0 = "`"; //$NON-NLS-1$
 			String parm1 = "'"; //$NON-NLS-1$
@@ -853,12 +825,12 @@ public class AutoconfParser {
 				parm0 = macro.getParameter(0);
 			if (macro.getParameterCount() >= 2)
 				parm1 = macro.getParameter(1);
-			
+
 			tokenizer.setM4Quote(parm0, parm1);
-		}  else if ("changecom".equals(name)) { //$NON-NLS-1$
+		} else if ("changecom".equals(name)) { //$NON-NLS-1$
 			// change comment delimiters
 			validateMacroParameterCount(macro, token, 2);
-			
+
 			// GNU behavior for invalid argument count
 			String parm0 = "#"; //$NON-NLS-1$
 			String parm1 = "\n"; //$NON-NLS-1$
@@ -866,34 +838,33 @@ public class AutoconfParser {
 				parm0 = macro.getParameter(0);
 			if (macro.getParameterCount() >= 2)
 				parm1 = macro.getParameter(1);
-			
+
 			tokenizer.setM4Comment(parm0, parm1);
 		}
-		
+
 		if (macro != null) {
 			parent.addChild(macro);
 		}
-		
+
 		// now validate that the macro is properly terminated
-		if (!(parent instanceof AutoconfMacroArgumentElement) 
-				&& !(parent instanceof AutoconfMacroElement)
+		if (!(parent instanceof AutoconfMacroArgumentElement) && !(parent instanceof AutoconfMacroElement)
 				&& !(parent instanceof AutoconfForElement)) {
 			Token peek = tokenizer.peekToken();
 			if (peek.getType() == ITokenConstants.RPAREN) {
-				handleError(peek, AutoconfEditorMessages.getString(UNMATCHED_RIGHT_PARENTHESIS)); 
+				handleError(peek, AutoconfEditorMessages.getString(UNMATCHED_RIGHT_PARENTHESIS));
 			}
 		}
-		
+
 		return token;
 	}
 
 	private void validateMacroParameterCount(AutoconfMacroElement macro, Token token, int count) {
 		if (macro.getParameterCount() < count) {
-			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooFew", 
-					macro.getName(), Integer.valueOf(2))); //$NON-NLS-1$ 
+			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooFew", macro.getName(),
+					Integer.valueOf(2))); //$NON-NLS-1$ 
 		} else if (macro.getParameterCount() > count) {
-			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooMany", 
-					macro.getName(), Integer.valueOf(2))); //$NON-NLS-1$
+			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooMany", macro.getName(),
+					Integer.valueOf(2))); //$NON-NLS-1$
 		}
 	}
 
@@ -906,10 +877,10 @@ public class AutoconfParser {
 	 */
 	protected Token parseMacro(AutoconfMacroElement macro, Token macroName) {
 		setSourceStart(macro, macroName);
-		
+
 		// parse any arguments
 		tokenizer.setM4Context(true);
-		
+
 		Token token = tokenizer.readToken();
 		if (token.getType() == ITokenConstants.LPAREN) {
 			token = parseMacroArguments(macro);
@@ -918,9 +889,9 @@ public class AutoconfParser {
 			tokenizer.unreadToken(token);
 			setSourceEnd(macro, macroName);
 		}
-		
+
 		tokenizer.setM4Context(false);
-		
+
 		// validate macro arguments?
 		if (macroValidator != null) {
 			try {
@@ -931,7 +902,7 @@ public class AutoconfParser {
 				handleError(e);
 			}
 		}
-		
+
 		return token;
 	}
 
@@ -949,31 +920,30 @@ public class AutoconfParser {
 		Token argStart = null;
 		Token argEnd = null;
 		Token token;
-		
+
 		// When parsing, we want to ignore the whitespace around the arguments.
 		// So, instead of taking the source range "between" a parenthesis and a comma,
 		// track the exact tokens forming the start and end of an argument, defaulting
 		// to the borders of the parentheses and commas if no text is included.
-		
+
 		StringBuilder argBuffer = new StringBuilder();
 		AutoconfMacroArgumentElement arg = new AutoconfMacroArgumentElement();
 
 		while (true) {
 			token = tokenizer.readToken();
-			
+
 			if (token.getType() == ITokenConstants.EOL) {
 				if (argBuffer.length() > 0)
 					argBuffer.append(token.getText());
 				continue;
 			}
-			
-			if (token.getType() == ITokenConstants.COMMA 
-					|| token.getType() == ITokenConstants.RPAREN
+
+			if (token.getType() == ITokenConstants.COMMA || token.getType() == ITokenConstants.RPAREN
 					|| token.getType() == ITokenConstants.EOF) {
 
 				arg.setName(argBuffer.toString());
 				argBuffer.setLength(0);
-				
+
 				if (argStart != null && argEnd != null) {
 					setSourceStart(arg, argStart);
 					setSourceEnd(arg, argEnd);
@@ -985,15 +955,15 @@ public class AutoconfParser {
 					setSourceStart(arg, token);
 					setSourceEndBefore(arg, token);
 				}
-				
+
 				macro.addChild(arg);
-				
+
 				if (token.getType() != ITokenConstants.COMMA)
 					break;
-				
+
 				argStart = null;
 				argEnd = null;
-				
+
 				arg = new AutoconfMacroArgumentElement();
 
 			} else {
@@ -1001,35 +971,35 @@ public class AutoconfParser {
 					argStart = token;
 				}
 				argEnd = token;
-				
+
 				if (argBuffer.length() > 0 && token.followsSpace())
 					argBuffer.append(' ');
 				argBuffer.append(token.getText());
-				
+
 				// handle nested macro calls in arguments
 				if (token.getType() == ITokenConstants.WORD) {
 					argEnd = checkMacro(arg, token);
 				}
 			}
 		}
-		
+
 		if (token.getType() != ITokenConstants.RPAREN) {
-			handleError(token, AutoconfEditorMessages.getString(UNMATCHED_LEFT_PARENTHESIS)); 
+			handleError(token, AutoconfEditorMessages.getString(UNMATCHED_LEFT_PARENTHESIS));
 		}
-		
+
 		// note: moved 15-char truncation to AutoconfLabelProvider
 		AutoconfElement[] children = macro.getChildren();
 		if (children.length > 0)
 			macro.setVar(children[0].getVar());
-		
+
 		return token;
 	}
-	
+
 	/** @since 2.0 */
 	protected void handleError(Token token, String message) {
 		handleMessage(token, message, IMarker.SEVERITY_ERROR);
 	}
-	
+
 	/** @since 2.0 */
 	protected void handleWarning(Token token, String message) {
 		handleMessage(token, message, IMarker.SEVERITY_WARNING);
@@ -1049,13 +1019,8 @@ public class AutoconfParser {
 			} catch (BadLocationException e) {
 				// Don't care if we blow up trying to issue marker
 			}
-			errorHandler.handleError(new ParseException(
-					message,
-					token.getOffset(),
-					token.getOffset() + token.getLength(),
-					lineNumber, 
-					startColumn, endColumn,
-					severity));
+			errorHandler.handleError(new ParseException(message, token.getOffset(),
+					token.getOffset() + token.getLength(), lineNumber, startColumn, endColumn, severity));
 		}
 	}
 
@@ -1063,9 +1028,9 @@ public class AutoconfParser {
 	 * Figure out the error location and create a marker and message for it.
 	 * @param exception
 	 */
-	protected void handleError (InvalidMacroException exception) {
+	protected void handleError(InvalidMacroException exception) {
 		AutoconfElement element = exception.getBadElement();
-		
+
 		if (errorHandler != null) {
 			int lineNumber = 0;
 			int startColumn = 0;
@@ -1078,13 +1043,8 @@ public class AutoconfParser {
 			} catch (BadLocationException e) {
 				// Don't care if we blow up trying to issue marker
 			}
-			errorHandler.handleError(new ParseException(
-					exception.getMessage(),
-					element.getStartOffset(),
-					element.getEndOffset(),
-					lineNumber, 
-					startColumn, endColumn,
-					IMarker.SEVERITY_ERROR));
+			errorHandler.handleError(new ParseException(exception.getMessage(), element.getStartOffset(),
+					element.getEndOffset(), lineNumber, startColumn, endColumn, IMarker.SEVERITY_ERROR));
 		}
 	}
 
@@ -1092,4 +1052,3 @@ public class AutoconfParser {
 		return errorHandler;
 	}
 }
-

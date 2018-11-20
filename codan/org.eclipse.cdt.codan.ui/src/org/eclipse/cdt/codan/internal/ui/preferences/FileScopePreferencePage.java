@@ -61,7 +61,8 @@ public class FileScopePreferencePage extends PreferencePage {
 		setDescription(CodanUIMessages.ExclusionInclusionDialog_description2);
 		fCurrElement = entryToEdit;
 		fCurrProject = entryToEdit.getProject();
-		IWorkspaceRoot root = fCurrProject != null ? fCurrProject.getWorkspace().getRoot() : ResourcesPlugin.getWorkspace().getRoot();
+		IWorkspaceRoot root = fCurrProject != null ? fCurrProject.getWorkspace().getRoot()
+				: ResourcesPlugin.getWorkspace().getRoot();
 		IResource res = root.findMember(entryToEdit.getPath());
 		if (res instanceof IContainer) {
 			fCurrSourceFolder = (IContainer) res;
@@ -69,19 +70,21 @@ public class FileScopePreferencePage extends PreferencePage {
 		if (res == null)
 			fCurrSourceFolder = root;
 		String excLabel = CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_label;
-//		ImageDescriptor excDescriptor = null; //JavaPluginImages.DESC_OBJS_EXCLUSION_FILTER_ATTRIB;
+		//		ImageDescriptor excDescriptor = null; //JavaPluginImages.DESC_OBJS_EXCLUSION_FILTER_ATTRIB;
 		String[] excButtonLabels = new String[] { CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_add,
 				CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_add_multiple,
 				CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_edit, null,
 				CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_remove };
 		String incLabel = CodanUIMessages.ExclusionInclusionDialog_inclusion_pattern_label;
-//		ImageDescriptor incDescriptor = null; //JavaPluginImages.DESC_OBJS_INCLUSION_FILTER_ATTRIB;
+		//		ImageDescriptor incDescriptor = null; //JavaPluginImages.DESC_OBJS_INCLUSION_FILTER_ATTRIB;
 		String[] incButtonLabels = new String[] { CodanUIMessages.ExclusionInclusionDialog_inclusion_pattern_add,
 				CodanUIMessages.ExclusionInclusionDialog_inclusion_pattern_add_multiple,
 				CodanUIMessages.ExclusionInclusionDialog_inclusion_pattern_edit, null,
 				CodanUIMessages.ExclusionInclusionDialog_inclusion_pattern_remove };
-		fExclusionPatternList = createListContents(entryToEdit, FileScopeProblemPreference.EXCLUSION, excLabel, null, excButtonLabels);
-		fInclusionPatternList = createListContents(entryToEdit, FileScopeProblemPreference.INCLUSION, incLabel, null, incButtonLabels);
+		fExclusionPatternList = createListContents(entryToEdit, FileScopeProblemPreference.EXCLUSION, excLabel, null,
+				excButtonLabels);
+		fInclusionPatternList = createListContents(entryToEdit, FileScopeProblemPreference.INCLUSION, incLabel, null,
+				incButtonLabels);
 	}
 
 	@Override
@@ -121,11 +124,11 @@ public class FileScopePreferencePage extends PreferencePage {
 		}
 	}
 
-	private ListDialogField<String> createListContents(FileScopeProblemPreference entryToEdit,
-			String key, String label, String descriptor, String[] buttonLabels) {
+	private ListDialogField<String> createListContents(FileScopeProblemPreference entryToEdit, String key, String label,
+			String descriptor, String[] buttonLabels) {
 		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
-		ListDialogField<String> patternList =
-				new ListDialogField<String>(adapter, buttonLabels, new ExclusionInclusionLabelProvider(descriptor));
+		ListDialogField<String> patternList = new ListDialogField<String>(adapter, buttonLabels,
+				new ExclusionInclusionLabelProvider(descriptor));
 		patternList.setDialogFieldListener(adapter);
 		patternList.setLabelText(label);
 		patternList.enableButton(IDX_EDIT, false);
@@ -182,8 +185,8 @@ public class FileScopePreferencePage extends PreferencePage {
 		}
 		List<String> existing = field.getElements();
 		String entry = selElements.get(0);
-		ExclusionInclusionEntryDialog dialog = new ExclusionInclusionEntryDialog(getShell(), isExclusion(field), entry, existing,
-				fCurrElement);
+		ExclusionInclusionEntryDialog dialog = new ExclusionInclusionEntryDialog(getShell(), isExclusion(field), entry,
+				existing, fCurrElement);
 		if (dialog.open() == Window.OK) {
 			field.replaceElement(entry, dialog.getExclusionPattern());
 		}
@@ -195,8 +198,8 @@ public class FileScopePreferencePage extends PreferencePage {
 
 	private void addEntry(ListDialogField<String> field) {
 		List<String> existing = field.getElements();
-		ExclusionInclusionEntryDialog dialog = new ExclusionInclusionEntryDialog(getShell(), isExclusion(field), null, existing,
-				fCurrElement);
+		ExclusionInclusionEntryDialog dialog = new ExclusionInclusionEntryDialog(getShell(), isExclusion(field), null,
+				existing, fCurrElement);
 		if (dialog.open() == Window.OK) {
 			field.addElement(dialog.getExclusionPattern());
 		}
@@ -270,8 +273,8 @@ public class FileScopePreferencePage extends PreferencePage {
 			title = CodanUIMessages.ExclusionInclusionDialog_ChooseInclusionPattern_title;
 			message = CodanUIMessages.ExclusionInclusionDialog_ChooseInclusionPattern_description;
 		}
-		IPath[] res = ExclusionInclusionEntryDialog.chooseExclusionPattern(getShell(),
-				fCurrSourceFolder, title, message, null, true);
+		IPath[] res = ExclusionInclusionEntryDialog.chooseExclusionPattern(getShell(), fCurrSourceFolder, title,
+				message, null, true);
 		if (res != null) {
 			for (int i = 0; i < res.length; i++) {
 				field.addElement(res[i].toString());

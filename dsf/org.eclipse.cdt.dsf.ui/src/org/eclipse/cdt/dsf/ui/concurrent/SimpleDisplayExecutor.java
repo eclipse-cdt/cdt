@@ -37,87 +37,88 @@ import org.eclipse.swt.widgets.Display;
  *
  * @since 1.0
  */
-public class SimpleDisplayExecutor implements Executor{
-    /**
-     * Internal mapping of display objects to executors.
-     */
-    private static Map<Display, SimpleDisplayExecutor> fExecutors = Collections.synchronizedMap( new HashMap<Display, SimpleDisplayExecutor>() );
+public class SimpleDisplayExecutor implements Executor {
+	/**
+	 * Internal mapping of display objects to executors.
+	 */
+	private static Map<Display, SimpleDisplayExecutor> fExecutors = Collections
+			.synchronizedMap(new HashMap<Display, SimpleDisplayExecutor>());
 
-    /**
-     * Factory method for display executors.
-     * @param display Display to create an executor for.
-     * @return The new (or re-used) executor.
-     */
-    public static SimpleDisplayExecutor getSimpleDisplayExecutor(final Display display) {
-        synchronized (fExecutors) {
-            SimpleDisplayExecutor executor = fExecutors.get(display);
-            if (executor == null) {
-                executor = new SimpleDisplayExecutor(display);
-                fExecutors.put(display, executor);
-            }
-            return executor;
-        }
-    }
+	/**
+	 * Factory method for display executors.
+	 * @param display Display to create an executor for.
+	 * @return The new (or re-used) executor.
+	 */
+	public static SimpleDisplayExecutor getSimpleDisplayExecutor(final Display display) {
+		synchronized (fExecutors) {
+			SimpleDisplayExecutor executor = fExecutors.get(display);
+			if (executor == null) {
+				executor = new SimpleDisplayExecutor(display);
+				fExecutors.put(display, executor);
+			}
+			return executor;
+		}
+	}
 
-    /**
-     * The display class used by this executor to execute the submitted runnables.
-     */
-    private final Display fDisplay;
-    /**
-     * Runnables waiting for the UI loop iteration
-     */
-    private Queue<Runnable> runnables;
+	/**
+	 * The display class used by this executor to execute the submitted runnables.
+	 */
+	private final Display fDisplay;
+	/**
+	 * Runnables waiting for the UI loop iteration
+	 */
+	private Queue<Runnable> runnables;
 
-    private SimpleDisplayExecutor(final Display display) {
-        fDisplay = display;
-    }
+	private SimpleDisplayExecutor(final Display display) {
+		fDisplay = display;
+	}
 
-    @Override
-    public void execute(final Runnable command) {
-        final boolean needsPosting = enqueue(command);
-        if (needsPosting) {
-            try {
-                fDisplay.asyncExec(new Runnable() {
-                    @Override
-                    public void run() {
-                        runInSwtThread();
-                    }
-                });
-            } catch (final SWTException e) {
-                if (e.code == SWT.ERROR_DEVICE_DISPOSED) {
-                    throw new RejectedExecutionException("Display " + fDisplay + " is disposed", e); //$NON-NLS-1$ //$NON-NLS-2$
-                } else {
-                    throw e;
-                }
-            }
-        }
-    }
+	@Override
+	public void execute(final Runnable command) {
+		final boolean needsPosting = enqueue(command);
+		if (needsPosting) {
+			try {
+				fDisplay.asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						runInSwtThread();
+					}
+				});
+			} catch (final SWTException e) {
+				if (e.code == SWT.ERROR_DEVICE_DISPOSED) {
+					throw new RejectedExecutionException("Display " + fDisplay + " is disposed", e); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					throw e;
+				}
+			}
+		}
+	}
 
-    private synchronized boolean enqueue(final Runnable runnable) {
-        boolean needsPosting = false;
-        if (runnables == null) {
-            runnables = new LinkedList<Runnable>();
-            needsPosting = true;
-        }
-        runnables.offer(runnable);
-        return needsPosting;
-    }
+	private synchronized boolean enqueue(final Runnable runnable) {
+		boolean needsPosting = false;
+		if (runnables == null) {
+			runnables = new LinkedList<Runnable>();
+			needsPosting = true;
+		}
+		runnables.offer(runnable);
+		return needsPosting;
+	}
 
-    private synchronized Runnable getNextRunnable() {
-        final Runnable runnable = runnables.poll();
-        if (runnable == null) {
-            runnables = null;
-            return null;
-        } else {
-            return runnable;
-        }
-    }
+	private synchronized Runnable getNextRunnable() {
+		final Runnable runnable = runnables.poll();
+		if (runnable == null) {
+			runnables = null;
+			return null;
+		} else {
+			return runnable;
+		}
+	}
 
-    /** @since 2.3 */
-    protected void runInSwtThread() {
-        Runnable runnable;
-        while ((runnable = getNextRunnable()) != null) {
-            runnable.run();
-        }
-    }
+	/** @since 2.3 */
+	protected void runInSwtThread() {
+		Runnable runnable;
+		while ((runnable = getNextRunnable()) != null) {
+			runnable.run();
+		}
+	}
 }

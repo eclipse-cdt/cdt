@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * Represents a Binary file, for example an ELF executable.
  * An ELF parser will inspect the binary.
@@ -33,10 +32,10 @@ public interface IBinary extends ICElement, IParent, IOpenable {
 	public boolean isObject();
 
 	public boolean isSharedLib();
-	
+
 	public boolean isCore();
 
-	public String [] getNeededSharedLibs();
+	public String[] getNeededSharedLibs();
 
 	public String getSoname();
 
@@ -47,7 +46,7 @@ public interface IBinary extends ICElement, IParent, IOpenable {
 	public long getData();
 
 	public long getBSS();
-	
+
 	public boolean isLittleEndian();
 
 	/**

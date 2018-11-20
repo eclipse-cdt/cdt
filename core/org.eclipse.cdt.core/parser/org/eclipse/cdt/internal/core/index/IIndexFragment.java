@@ -43,11 +43,11 @@ public interface IIndexFragment {
 	/**
 	 * @see IIndex#FIND_DEFINITIONS
 	 */
-	final int FIND_DEFINITIONS  = IIndex.FIND_DEFINITIONS;
+	final int FIND_DEFINITIONS = IIndex.FIND_DEFINITIONS;
 	/**
 	 * @see IIndex#FIND_REFERENCES
 	 */
-	final int FIND_REFERENCES   = IIndex.FIND_REFERENCES;
+	final int FIND_REFERENCES = IIndex.FIND_REFERENCES;
 	/**
 	 * @see IIndex#SEARCH_ACROSS_LANGUAGE_BOUNDARIES
 	 */
@@ -65,13 +65,13 @@ public interface IIndexFragment {
 	 */
 	final int FIND_ALL_OCCURRENCES = IIndex.FIND_ALL_OCCURRENCES;
 
-	final int FIND_NON_LOCAL_ONLY= 0x10000;
+	final int FIND_NON_LOCAL_ONLY = 0x10000;
 	/**
 	 * Property key for the fragment ID. The fragment ID should uniquely identify the fragments
 	 * usage within a logical index.
 	 * @since 4.0
 	 */
-	public static final String PROPERTY_FRAGMENT_ID= "org.eclipse.cdt.internal.core.index.fragment.id"; //$NON-NLS-1$
+	public static final String PROPERTY_FRAGMENT_ID = "org.eclipse.cdt.internal.core.index.fragment.id"; //$NON-NLS-1$
 
 	/**
 	 * Property key for the fragment format ID. The fragment format ID should uniquely identify
@@ -79,7 +79,7 @@ public interface IIndexFragment {
 	 * changes version its ID should remain the same.
 	 * @since 4.0.1
 	 */
-	public static final String PROPERTY_FRAGMENT_FORMAT_ID= "org.eclipse.cdt.internal.core.index.fragment.format.id"; //$NON-NLS-1$
+	public static final String PROPERTY_FRAGMENT_FORMAT_ID = "org.eclipse.cdt.internal.core.index.fragment.format.id"; //$NON-NLS-1$
 
 	/**
 	 * Property key for the fragment format's version. Version numbers belonging to the same format
@@ -89,12 +89,12 @@ public interface IIndexFragment {
 	 * for this property is interpreted as Version(0.0.0)
 	 * @since 4.0.1
 	 */
-	public static final String PROPERTY_FRAGMENT_FORMAT_VERSION= "org.eclipse.cdt.internal.core.index.fragment.format.version"; //$NON-NLS-1$
+	public static final String PROPERTY_FRAGMENT_FORMAT_VERSION = "org.eclipse.cdt.internal.core.index.fragment.format.version"; //$NON-NLS-1$
 
 	/**
 	 * Property key for storing whether indexer has to resume or not.
 	 */
-	public static final String PROPERTY_RESUME_INDEXER= "org.eclipse.cdt.internal.core.index.resume"; //$NON-NLS-1$
+	public static final String PROPERTY_RESUME_INDEXER = "org.eclipse.cdt.internal.core.index.resume"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated Use {@link #getFile(int, IIndexFileLocation, ISignificantMacros)} or
@@ -118,8 +118,8 @@ public interface IIndexFragment {
 	 *     the index
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location,
-			ISignificantMacros significantMacros) throws CoreException;
+	IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location, ISignificantMacros significantMacros)
+			throws CoreException;
 
 	/**
 	 * Returns the files for the given location and linkage.
@@ -187,7 +187,8 @@ public interface IIndexFragment {
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
-	IIndexFragmentBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	IIndexFragmentBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Searches for all macro containers (one for macros with the same name) with names that
@@ -199,7 +200,8 @@ public interface IIndexFragment {
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
-	IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor)
+			throws CoreException;
 
 	/**
 	 * Searches for all bindings with qualified names that seen as an array of simple names equals
@@ -210,7 +212,8 @@ public interface IIndexFragment {
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
-	IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor)
+			throws CoreException;
 
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to
@@ -248,25 +251,29 @@ public interface IIndexFragment {
 	 * Returns all bindings with the given name, accepted by the given filter
 	 * @param monitor to report progress, may be <code>null</code>
 	 */
-	IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor)
+			throws CoreException;
 
 	/**
 	 * Returns all bindings with the given prefix, accepted by the given filter
 	 * @param monitor to report progress, may be <code>null</code>
 	 */
-	IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns all bindings that would be a valid completion for the given text.
 	 * @param monitor to report progress, may be <code>null</code>
 	 */
-	IIndexFragmentBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	IIndexFragmentBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns all macros with the given prefix or name, accepted by the given filter
 	 * @param monitor to report progress, may be <code>null</code>
 	 */
-	IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the linkages that are contained in this fragment

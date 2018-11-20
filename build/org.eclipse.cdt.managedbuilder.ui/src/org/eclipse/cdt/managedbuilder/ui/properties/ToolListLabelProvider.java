@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
- 
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -37,24 +37,24 @@ public class ToolListLabelProvider extends LabelProvider {
 
 	private ImageDescriptor descriptor = null;
 	private ResourceManager manager = null;
-	
+
 	/* (non-Javadoc)
 	 * Returns the Image associated with the icon information retrieved out of OptionCategory.
 	 */
 	private Image getIconFromOptionCategory(IOptionCategory cat) {
 
-		Image img = null; 
+		Image img = null;
 		URL url = cat.getIconPath();
-		
+
 		// Get the image from the URL. 
 		if (url != null) {
 			descriptor = ImageDescriptor.createFromURL(url);
 			manager = JFaceResources.getResources(Display.getCurrent());
 			Assert.isNotNull(manager);
-			img = manager.createImageWithDefault(descriptor);			
+			img = manager.createImageWithDefault(descriptor);
 			if (img == null) {
 				// Report error by displaying a warning message
-				System.err.println("Couldn't create image from URL \"" + url + "\", to display icon for Tool Options." ); //$NON-NLS-1$ //$NON-NLS-2$
+				System.err.println("Couldn't create image from URL \"" + url + "\", to display icon for Tool Options."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return img;
@@ -66,18 +66,18 @@ public class ToolListLabelProvider extends LabelProvider {
 			throw unknownElement(element);
 		}
 		Image defaultImage = IMG_CAT;
-		ToolListElement toolListElement = (ToolListElement)element;
+		ToolListElement toolListElement = (ToolListElement) element;
 		IOptionCategory cat = toolListElement.getOptionCategory();
-	
+
 		if (cat == null) {
 			defaultImage = IMG_TOOL;
-			cat = (IOptionCategory)toolListElement.getTool();
+			cat = (IOptionCategory) toolListElement.getTool();
 		}
-		
+
 		if (cat != null) {
 			// Return a OptionCategory image for an OptionCategory reference
 			Image img = getIconFromOptionCategory(cat);
-			
+
 			if (img != null) {
 				return img;
 			}
@@ -94,31 +94,31 @@ public class ToolListLabelProvider extends LabelProvider {
 		if (!(element instanceof ToolListElement)) {
 			throw unknownElement(element);
 		}
-		ToolListElement toolListElement = (ToolListElement)element;
+		ToolListElement toolListElement = (ToolListElement) element;
 		IOptionCategory cat = toolListElement.getOptionCategory();
-	
+
 		if (cat == null) {
 			ITool tool = toolListElement.getTool();
 			return tool.getUniqueRealName();
-		}
-		else {
+		} else {
 			return cat.getName();
 		}
 	}
 
 	protected RuntimeException unknownElement(Object element) {
-		return new RuntimeException(NLS.bind(Messages.BuildPropertyPage_error_Unknown_tree_element, element.getClass().getName()));
+		return new RuntimeException(
+				NLS.bind(Messages.BuildPropertyPage_error_Unknown_tree_element, element.getClass().getName()));
 	}
 
-    /**
-     * Disposing any images that were allocated for it.
-     * 
-     * @since 3.0
-     */
-    @Override
+	/**
+	 * Disposing any images that were allocated for it.
+	 * 
+	 * @since 3.0
+	 */
+	@Override
 	public void dispose() {
-        if (descriptor != null && manager != null) {
-            manager.destroyImage(descriptor);
-        }
-    }
+		if (descriptor != null && manager != null) {
+			manager.destroyImage(descriptor);
+		}
+	}
 }

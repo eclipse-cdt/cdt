@@ -55,8 +55,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * @noextend This class is not intended to be sub-classed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class CAddDynamicPrintfInteractiveRulerActionDelegate extends AbstractRulerActionDelegate implements IActionDelegate2 {
-	
+public class CAddDynamicPrintfInteractiveRulerActionDelegate extends AbstractRulerActionDelegate
+		implements IActionDelegate2 {
+
 	private IEditorPart fEditor = null;
 	private CAddDynamicPrintfInteractiveRulerAction fDelegate = null;
 

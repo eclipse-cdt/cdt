@@ -29,14 +29,14 @@ public abstract class NodeFactory implements INodeFactory {
 
 	@Override
 	public final void setEndOffset(IASTNode node, int endOffset) {
-		ASTNode a= (ASTNode) node;
+		ASTNode a = (ASTNode) node;
 		a.setLength(endOffset - a.getOffset());
 	}
 
 	@Override
 	public final void setEndOffset(IASTNode node, IASTNode endNode) {
-		ASTNode a= (ASTNode) node;
-		ASTNode e= (ASTNode) endNode;
+		ASTNode a = (ASTNode) node;
+		ASTNode e = (ASTNode) endNode;
 		a.setLength(e.getOffset() + e.getLength() - a.getOffset());
 	}
 

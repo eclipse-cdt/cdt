@@ -19,30 +19,27 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentListener;
 
-public class AutoconfDocumentSetupParticipant implements
-		IDocumentSetupParticipant, IDocumentListener {
+public class AutoconfDocumentSetupParticipant implements IDocumentSetupParticipant, IDocumentListener {
 
 	@Override
 	public void setup(IDocument document) {
-		AutoconfPartitioner partitioner =
-			new AutoconfPartitioner(
-				new AutoconfPartitionScanner(),
+		AutoconfPartitioner partitioner = new AutoconfPartitioner(new AutoconfPartitionScanner(),
 				AutoconfPartitionScanner.AUTOCONF_PARTITION_TYPES);
 		partitioner.connect(document, 1);
 		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			IDocumentExtension3 extension3 = (IDocumentExtension3) document;
 			extension3.setDocumentPartitioner(AutoconfEditor.AUTOCONF_PARTITIONING, partitioner);
 		} else {
 			document.setDocumentPartitioner(partitioner);
 		}
-//		document.addDocumentListener(this);
+		//		document.addDocumentListener(this);
 	}
-	
+
 	@Override
 	public void documentAboutToBeChanged(DocumentEvent e) {
 		// do nothing
 	}
-	
+
 	@Override
 	public void documentChanged(DocumentEvent e) {
 		// do nothing

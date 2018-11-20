@@ -45,7 +45,7 @@ public class ProcessPrompter implements IStatusHandler {
 		if (shell == null) {
 			IStatus error = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(),
 					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
-					LaunchMessages.CoreFileLaunchDelegate_No_Shell_available_in_Launch, null); 
+					LaunchMessages.CoreFileLaunchDelegate_No_Shell_available_in_Launch, null);
 			throw new CoreException(error);
 		}
 
@@ -58,10 +58,11 @@ public class ProcessPrompter implements IStatusHandler {
 			 */
 			@Override
 			public String getText(Object element) {
-				IProcessInfo info = (IProcessInfo)element;
+				IProcessInfo info = (IProcessInfo) element;
 				IPath path = new Path(info.getName());
 				return path.lastSegment() + " - " + info.getPid(); //$NON-NLS-1$
 			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -76,9 +77,10 @@ public class ProcessPrompter implements IStatusHandler {
 
 			@Override
 			public String getText(Object element) {
-				IProcessInfo info = (IProcessInfo)element;
+				IProcessInfo info = (IProcessInfo) element;
 				return info.getName();
 			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -90,23 +92,22 @@ public class ProcessPrompter implements IStatusHandler {
 			}
 		};
 		TwoPaneElementSelector dialog = new TwoPaneElementSelector(shell, provider, qprovider);
-		dialog.setTitle(LaunchMessages.LocalAttachLaunchDelegate_Select_Process); 
-		dialog.setMessage(LaunchMessages.LocalAttachLaunchDelegate_Select_Process_to_attach_debugger_to); 
+		dialog.setTitle(LaunchMessages.LocalAttachLaunchDelegate_Select_Process);
+		dialog.setMessage(LaunchMessages.LocalAttachLaunchDelegate_Select_Process_to_attach_debugger_to);
 		IProcessList plist = null;
 		try {
 			plist = CCorePlugin.getDefault().getProcessList();
 		} catch (CoreException e) {
-			LaunchUIPlugin.errorDialog(LaunchMessages.LocalAttachLaunchDelegate_CDT_Launch_Error, e.getStatus()); 
+			LaunchUIPlugin.errorDialog(LaunchMessages.LocalAttachLaunchDelegate_CDT_Launch_Error, e.getStatus());
 		}
 		if (plist == null) {
-			MessageDialog.openError(shell,
-					LaunchMessages.LocalAttachLaunchDelegate_CDT_Launch_Error,
+			MessageDialog.openError(shell, LaunchMessages.LocalAttachLaunchDelegate_CDT_Launch_Error,
 					LaunchMessages.LocalAttachLaunchDelegate_Platform_cannot_list_processes);
 			return null;
 		}
 		dialog.setElements(plist.getProcessList());
 		if (dialog.open() == Window.OK) {
-			IProcessInfo info = (IProcessInfo)dialog.getFirstResult();
+			IProcessInfo info = (IProcessInfo) dialog.getFirstResult();
 			if (info != null) {
 				return Integer.valueOf(info.getPid());
 			}

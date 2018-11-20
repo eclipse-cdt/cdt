@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.core.lrparser.tests.LRTests;
 import org.eclipse.cdt.core.model.ILanguage;
+
 /**
  * Run the C99 tests against the UPC parser
  *
@@ -25,55 +26,92 @@ import org.eclipse.cdt.core.model.ILanguage;
 public class UPCTests extends LRTests {
 
 	public static TestSuite suite() {
-    	return suite(UPCTests.class);
-    }
-	
+		return suite(UPCTests.class);
+	}
+
 	public UPCTests(String name) {
 		super(name);
 	}
-	
+
 	//TODO ??? overwrite some failed test cases
 	//some test cases which are not applicable to UPC are bypassed here.
 	//UPC extends from C99, which doesn't include some GNU extending features such as "typeof".
 	@Override
-	public void testCompositeTypes() throws Exception {}
+	public void testCompositeTypes() throws Exception {
+	}
+
 	@Override
-	public void testBug93980() throws Exception {}
+	public void testBug93980() throws Exception {
+	}
+
 	@Override
-	public void testBug95866() throws Exception {}
+	public void testBug95866() throws Exception {
+	}
+
 	@Override
-	public void testBug191450_attributesInBetweenPointers() throws Exception {}
+	public void testBug191450_attributesInBetweenPointers() throws Exception {
+	}
+
 	@Override
-	public void testOmittedPositiveExpression_212905() throws Exception {}
+	public void testOmittedPositiveExpression_212905() throws Exception {
+	}
+
 	@Override
-	public void testRedefinedGCCKeywords_226112() throws Exception {}
+	public void testRedefinedGCCKeywords_226112() throws Exception {
+	}
+
 	@Override
-	public void testASMLabels_226121() throws Exception {}
+	public void testASMLabels_226121() throws Exception {
+	}
+
 	@Override
-	public void testCompoundStatementExpression_226274() throws Exception {}
+	public void testCompoundStatementExpression_226274() throws Exception {
+	}
+
 	@Override
-	public void testTypeofUnaryExpression_226492() throws Exception {}
+	public void testTypeofUnaryExpression_226492() throws Exception {
+	}
+
 	@Override
-	public void testTypeofExpression_226492() throws Exception {}
+	public void testTypeofExpression_226492() throws Exception {
+	}
+
 	@Override
-	public void testTypeofExpressionWithAttribute_226492() throws Exception {}
+	public void testTypeofExpressionWithAttribute_226492() throws Exception {
+	}
+
 	@Override
-	public void testAttributeInElaboratedTypeSpecifier_227085() throws Exception {}
+	public void testAttributeInElaboratedTypeSpecifier_227085() throws Exception {
+	}
+
 	@Override
-	public void testRedefinePtrdiff_230895() throws Exception {}
+	public void testRedefinePtrdiff_230895() throws Exception {
+	}
+
 	@Override
-	public void testDeclspecInEnumSpecifier_241203() throws Exception  {}
+	public void testDeclspecInEnumSpecifier_241203() throws Exception {
+	}
+
 	@Override
-	public void testBuiltinTypesCompatible_241570() throws Exception  {}
+	public void testBuiltinTypesCompatible_241570() throws Exception {
+	}
+
 	@Override
-	public void testThreadLocalVariables_260387() throws Exception {}
+	public void testThreadLocalVariables_260387() throws Exception {
+	}
+
 	@Override
-	public void testVaArgWithFunctionPtr_311030() throws Exception {}
+	public void testVaArgWithFunctionPtr_311030() throws Exception {
+	}
+
 	@Override
-	public void testRecursiveFunctionType_321856() throws Exception {}
+	public void testRecursiveFunctionType_321856() throws Exception {
+	}
+
 	@Override
-	public void testPtrDiffRecursion_317004() throws Exception {}
-	
+	public void testPtrDiffRecursion_317004() throws Exception {
+	}
+
 	@Override
 	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();

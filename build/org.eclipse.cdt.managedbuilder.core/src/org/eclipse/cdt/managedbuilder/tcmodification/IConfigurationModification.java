@@ -24,26 +24,26 @@ public interface IConfigurationModification extends IFolderInfoModification {
 	 * @return a builder currently assigned to this Configuration Modification
 	 */
 	IBuilder getBuilder();
-	
+
 	IBuilder getRealBuilder();
-	
+
 	/**
 	 * @return a set of compatible builders 
 	 */
 	IBuilder[] getCompatibleBuilders();
-	
+
 	/**
 	 * @return the compatibility status for the builder
 	 */
 	CompatibilityStatus getBuilderCompatibilityStatus();
-	
+
 	/**
 	 * @return the compatibility status for the builder, 
 	 * i.e. true when the getCompatibilityStatus() returns an non-ERROR status,
 	 * and false otherwise
 	 */
 	boolean isBuilderCompatible();
-	
+
 	/**
 	 * sets the builder to this Configuration Modification
 	 * Note that this does NOT apply the builder to the underlying configuration

@@ -27,20 +27,20 @@ public interface IDisassemblyDocument {
 
 	void addInvalidAddressRange(AddressRangePosition p);
 
-	AddressRangePosition insertLabel(AddressRangePosition pos,
-			BigInteger address, String label, boolean showLabels)
+	AddressRangePosition insertLabel(AddressRangePosition pos, BigInteger address, String label, boolean showLabels)
 			throws BadLocationException;
 
-	AddressRangePosition insertDisassemblyLine(AddressRangePosition p,
-			BigInteger address, int intValue, String functionOffset, String instruction,
-			String compilationPath, int lineNumber) throws BadLocationException;
-
-	AddressRangePosition insertDisassemblyLine(AddressRangePosition p, 
-			BigInteger address, int length, String functionOffset, BigInteger opcode, 
-			String instruction, String compilationPath, int lineNumber) 
+	AddressRangePosition insertDisassemblyLine(AddressRangePosition p, BigInteger address, int intValue,
+			String functionOffset, String instruction, String compilationPath, int lineNumber)
 			throws BadLocationException;
-	
+
+	AddressRangePosition insertDisassemblyLine(AddressRangePosition p, BigInteger address, int length,
+			String functionOffset, BigInteger opcode, String instruction, String compilationPath, int lineNumber)
+			throws BadLocationException;
+
 	AddressRangePosition getDisassemblyPosition(BigInteger address);
+
 	BigInteger getAddressOfLine(int line);
+
 	int getNumberOfLines();
 }

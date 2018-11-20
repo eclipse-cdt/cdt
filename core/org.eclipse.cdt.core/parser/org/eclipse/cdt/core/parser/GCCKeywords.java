@@ -41,78 +41,53 @@ public class GCCKeywords {
 	/** @since 5.10  */
 	public static final String _DECIMAL128 = "_Decimal128";
 
-	public static final char[]
-		cpTYPEOF = 			TYPEOF.toCharArray(),
-		cp__ALIGNOF__ = 	__ALIGNOF__.toCharArray(),
-		cp__ATTRIBUTE__ = 	__ATTRIBUTE__.toCharArray(),
-		cp__DECLSPEC = 		__DECLSPEC.toCharArray(),
-		cp__ALIGNOF = 		"__alignof".toCharArray(),
-		cp__ATTRIBUTE = 	"__attribute".toCharArray(),
-		cp__ASM= 			"__asm".toCharArray(),
-		cp__ASM__= 			"__asm__".toCharArray(),
-		cp__CONST= 			"__const".toCharArray(),
-		cp__CONST__= 		"__const__".toCharArray(),
-		cp__INLINE= 		"__inline".toCharArray(),
-		cp__INLINE__= 		"__inline__".toCharArray(),
-		cp__RESTRICT= 		"__restrict".toCharArray(),
-		cp__RESTRICT__= 	"__restrict__".toCharArray(),
-		cp__VOLATILE= 		"__volatile".toCharArray(),
-		cp__VOLATILE__= 	"__volatile__".toCharArray(),
-		cp__SIGNED= 		"__signed".toCharArray(),
-		cp__SIGNED__= 		"__signed__".toCharArray(),
-		cp__TYPEOF= 		"__typeof".toCharArray(),
-		cp__TYPEOF__= 		"__typeof__".toCharArray();
+	public static final char[] cpTYPEOF = TYPEOF.toCharArray(), cp__ALIGNOF__ = __ALIGNOF__.toCharArray(),
+			cp__ATTRIBUTE__ = __ATTRIBUTE__.toCharArray(), cp__DECLSPEC = __DECLSPEC.toCharArray(),
+			cp__ALIGNOF = "__alignof".toCharArray(), cp__ATTRIBUTE = "__attribute".toCharArray(),
+			cp__ASM = "__asm".toCharArray(), cp__ASM__ = "__asm__".toCharArray(), cp__CONST = "__const".toCharArray(),
+			cp__CONST__ = "__const__".toCharArray(), cp__INLINE = "__inline".toCharArray(),
+			cp__INLINE__ = "__inline__".toCharArray(), cp__RESTRICT = "__restrict".toCharArray(),
+			cp__RESTRICT__ = "__restrict__".toCharArray(), cp__VOLATILE = "__volatile".toCharArray(),
+			cp__VOLATILE__ = "__volatile__".toCharArray(), cp__SIGNED = "__signed".toCharArray(),
+			cp__SIGNED__ = "__signed__".toCharArray(), cp__TYPEOF = "__typeof".toCharArray(),
+			cp__TYPEOF__ = "__typeof__".toCharArray();
 
 	/** @since 5.3 */
-	public static final char[]
-		cp__has_nothrow_assign= 		"__has_nothrow_assign".toCharArray(),
-		cp__has_nothrow_copy= 			"__has_nothrow_copy".toCharArray(),
-		cp__has_nothrow_constructor= 	"__has_nothrow_constructor".toCharArray(),
-		cp__has_trivial_assign= 		"__has_trivial_assign".toCharArray(),
-		cp__has_trivial_copy= 			"__has_trivial_copy".toCharArray(),
-		cp__has_trivial_constructor=  	"__has_trivial_constructor".toCharArray(),
-		cp__has_trivial_destructor= 	"__has_trivial_destructor".toCharArray(),
-		cp__has_virtual_destructor= 	"__has_virtual_destructor".toCharArray(),
-		cp__is_abstract= 				"__is_abstract".toCharArray(),
-		cp__is_base_of= 				"__is_base_of".toCharArray(),
-		cp__is_class= 					"__is_class".toCharArray(),
-		cp__is_empty= 					"__is_empty".toCharArray(),
-		cp__is_enum= 					"__is_enum".toCharArray(),
-		cp__is_pod= 					"__is_pod".toCharArray(),
-		cp__is_polymorphic= 			"__is_polymorphic".toCharArray(),
-		cp__is_union= 					"__is_union".toCharArray();
+	public static final char[] cp__has_nothrow_assign = "__has_nothrow_assign".toCharArray(),
+			cp__has_nothrow_copy = "__has_nothrow_copy".toCharArray(),
+			cp__has_nothrow_constructor = "__has_nothrow_constructor".toCharArray(),
+			cp__has_trivial_assign = "__has_trivial_assign".toCharArray(),
+			cp__has_trivial_copy = "__has_trivial_copy".toCharArray(),
+			cp__has_trivial_constructor = "__has_trivial_constructor".toCharArray(),
+			cp__has_trivial_destructor = "__has_trivial_destructor".toCharArray(),
+			cp__has_virtual_destructor = "__has_virtual_destructor".toCharArray(),
+			cp__is_abstract = "__is_abstract".toCharArray(), cp__is_base_of = "__is_base_of".toCharArray(),
+			cp__is_class = "__is_class".toCharArray(), cp__is_empty = "__is_empty".toCharArray(),
+			cp__is_enum = "__is_enum".toCharArray(), cp__is_pod = "__is_pod".toCharArray(),
+			cp__is_polymorphic = "__is_polymorphic".toCharArray(), cp__is_union = "__is_union".toCharArray();
 
 	/** @since 5.5 */
-	public static final char[]
-		cp__DECLTYPE=			 		__DECLTYPE.toCharArray(),
-		cp__float128= 					__FLOAT128.toCharArray(),
-		cp__int128= 					__INT128.toCharArray(),
-		cp__is_literal_type= 			"__is_literal_type".toCharArray(),
-		cp__is_standard_layout= 		"__is_standard_layout".toCharArray(),
-		cp__is_trivial= 			    "__is_trivial".toCharArray();
-	
+	public static final char[] cp__DECLTYPE = __DECLTYPE.toCharArray(), cp__float128 = __FLOAT128.toCharArray(),
+			cp__int128 = __INT128.toCharArray(), cp__is_literal_type = "__is_literal_type".toCharArray(),
+			cp__is_standard_layout = "__is_standard_layout".toCharArray(),
+			cp__is_trivial = "__is_trivial".toCharArray();
+
 	/** @since 5.6 */
-	public static final char[]
-		cp__is_final= 					"__is_final".toCharArray(),
-		cp__underlying_type=			"__underlying_type".toCharArray();
-	
+	public static final char[] cp__is_final = "__is_final".toCharArray(),
+			cp__underlying_type = "__underlying_type".toCharArray();
+
 	/** @since 5.9 */
-	public static final char[]
-		cp__FINAL=						__FINAL.toCharArray();
+	public static final char[] cp__FINAL = __FINAL.toCharArray();
 
 	/** @since 5.10 */
-	public static final char[]
-		cp_decimal32=					_DECIMAL32.toCharArray(),
-		cp_decimal64=					_DECIMAL64.toCharArray(),
-		cp_decimal128=					_DECIMAL128.toCharArray();
-	
+	public static final char[] cp_decimal32 = _DECIMAL32.toCharArray(), cp_decimal64 = _DECIMAL64.toCharArray(),
+			cp_decimal128 = _DECIMAL128.toCharArray();
+
 	/** @since 6.0 */
-	public static final char[]
-		cp__is_trivially_copyable=		"__is_trivially_copyable".toCharArray(),
-		cp__is_trivially_constructible=	"__is_trivially_constructible".toCharArray(),
-		cp__is_trivially_assignable=	"__is_trivially_assignable".toCharArray();
-	
+	public static final char[] cp__is_trivially_copyable = "__is_trivially_copyable".toCharArray(),
+			cp__is_trivially_constructible = "__is_trivially_constructible".toCharArray(),
+			cp__is_trivially_assignable = "__is_trivially_assignable".toCharArray();
+
 	/** @since 6.6 */
-	public static final char[]
-		cp__is_constructible=           "__is_constructible".toCharArray();
+	public static final char[] cp__is_constructible = "__is_constructible".toCharArray();
 }

@@ -16,56 +16,47 @@ package org.eclipse.cdt.debug.ui.memory.floatingpoint;
 
 import org.eclipse.debug.core.model.MemoryByte;
 
-public class FPMemoryByte extends MemoryByte implements FPIMemoryByte
-{
+public class FPMemoryByte extends MemoryByte implements FPIMemoryByte {
 	private boolean isEdited = false;
-	
+
 	private boolean[] changeHistory = new boolean[0];
-	
-	public FPMemoryByte()
-	{
+
+	public FPMemoryByte() {
 		super();
 	}
-	
-	public FPMemoryByte(byte byteValue)
-	{
+
+	public FPMemoryByte(byte byteValue) {
 		super(byteValue);
 	}
-	
-	public FPMemoryByte(byte byteValue, byte byteFlags)
-	{
+
+	public FPMemoryByte(byte byteValue, byte byteFlags) {
 		super(byteValue, byteFlags);
 	}
-	
+
 	@Override
-    public boolean isEdited()
-	{
+	public boolean isEdited() {
 		return isEdited;
 	}
-	
+
 	@Override
-    public void setEdited(boolean edited)
-	{
+	public void setEdited(boolean edited) {
 		isEdited = edited;
 	}
-	
-	public boolean isChanged(int historyDepth)
-	{
+
+	public boolean isChanged(int historyDepth) {
 		return changeHistory.length > historyDepth && changeHistory[historyDepth];
 	}
-	
-	public void setChanged(int historyDepth, boolean changed)
-	{
-		if(historyDepth >= changeHistory.length)
-		{
+
+	public void setChanged(int historyDepth, boolean changed) {
+		if (historyDepth >= changeHistory.length) {
 			boolean newChangeHistory[] = new boolean[historyDepth + 1];
 			System.arraycopy(changeHistory, 0, newChangeHistory, 0, changeHistory.length);
 			changeHistory = newChangeHistory;
 		}
-		
+
 		changeHistory[historyDepth] = changed;
-		
-		if(historyDepth == 0)
+
+		if (historyDepth == 0)
 			this.setChanged(changed);
 	}
 }

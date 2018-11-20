@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.settings.model;
 
 import org.eclipse.cdt.core.settings.model.extension.CDataObject;
 
-
 public interface IProxyFactory {
 	CDataProxy createProxy(CDataObject data);
 }

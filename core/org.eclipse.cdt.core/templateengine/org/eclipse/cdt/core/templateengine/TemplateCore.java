@@ -73,13 +73,15 @@ public class TemplateCore {
 		this.templateInfo = templateInfo;
 		URL descriptorURL;
 		try {
-			descriptorURL= TemplateEngineHelper.getTemplateResourceURL(templateInfo.getPluginId(), templateInfo.getTemplatePath());
-		} catch(IOException ioe) {
-			String msg= NLS.bind(Messages.TemplateCore_init_failed, templateInfo.getTemplatePath());
+			descriptorURL = TemplateEngineHelper.getTemplateResourceURL(templateInfo.getPluginId(),
+					templateInfo.getTemplatePath());
+		} catch (IOException ioe) {
+			String msg = NLS.bind(Messages.TemplateCore_init_failed, templateInfo.getTemplatePath());
 			throw new TemplateInitializationException(msg);
 		}
-		if(descriptorURL==null)
-			throw new TemplateInitializationException("Unable to load project template. Location URL is null for "+templateInfo.getTemplateId()); //$NON-NLS-1$
+		if (descriptorURL == null)
+			throw new TemplateInitializationException(
+					"Unable to load project template. Location URL is null for " + templateInfo.getTemplateId()); //$NON-NLS-1$
 		templateDescriptor = new TemplateDescriptor(descriptorURL, templateInfo.getPluginId());
 		valueStore = new ValueStore<String>(this);
 		valueStore.putAll(templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement()));
@@ -143,40 +145,40 @@ public class TemplateCore {
 	 * @return   String, which contains the description
 	 */
 	public String getDescription() {
-        if (description == null) {
-        	description = templateDescriptor.getRootElement().getAttribute(DESCRIPTION).trim();
-        }
-        return TemplateEngineHelper.externalizeTemplateString(templateInfo, description);
+		if (description == null) {
+			description = templateDescriptor.getRootElement().getAttribute(DESCRIPTION).trim();
+		}
+		return TemplateEngineHelper.externalizeTemplateString(templateInfo, description);
 	}
 
 	/**
 	 * @return   String, which contains the id of the template
 	 */
 	public String getTemplateId() {
-        if (templateId == null) {
-        	templateId = templateDescriptor.getRootElement().getAttribute(ID).trim();
-        }
-        return templateId;
+		if (templateId == null) {
+			templateId = templateDescriptor.getRootElement().getAttribute(ID).trim();
+		}
+		return templateId;
 	}
 
 	/**
 	 * @return   String, which contains the id of the template
 	 */
 	public String getTemplateType() {
-        if (templateType == null) {
-        	templateType = templateDescriptor.getRootElement().getAttribute(TYPE).trim();
-        }
-        return templateType;
+		if (templateType == null) {
+			templateType = templateDescriptor.getRootElement().getAttribute(TYPE).trim();
+		}
+		return templateType;
 	}
 
 	/**
 	 * @return   String, which contains the Label
 	 */
 	public String getLabel() {
-        if (label == null) {
-        	label = templateDescriptor.getRootElement().getAttribute(LABEL).trim();
-        }
-        return TemplateEngineHelper.externalizeTemplateString(templateInfo, label);
+		if (label == null) {
+			label = templateDescriptor.getRootElement().getAttribute(LABEL).trim();
+		}
+		return TemplateEngineHelper.externalizeTemplateString(templateInfo, label);
 	}
 
 	/**
@@ -187,10 +189,10 @@ public class TemplateCore {
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return getLabel();
 	}
+
 	/**
 	 * sets Dirty
 	 *
@@ -217,7 +219,8 @@ public class TemplateCore {
 			result[0] = getProcessHandler().processAll(monitor);
 		} catch (ProcessFailureException e) {
 			TemplateEngineUtil.log(e);
-			result[0] = new IStatus[] {new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e)};
+			result[0] = new IStatus[] {
+					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e) };
 		}
 		return result[0];
 	}
@@ -227,7 +230,7 @@ public class TemplateCore {
 	 *
 	 * @param templateInfo
 	 * @throws TemplateInitializationException
-     * @since 4.0
+	 * @since 4.0
 	 */
 	public static TemplateCore getTemplate(TemplateInfo templateInfo) throws TemplateInitializationException {
 		synchronized (templateCache) {
@@ -240,7 +243,7 @@ public class TemplateCore {
 		}
 	}
 
-	private static class ValueStore<K> extends HashMap<K,String> {
+	private static class ValueStore<K> extends HashMap<K, String> {
 		private static final long serialVersionUID = -4523467333437879406L;
 		private TemplateCore template;
 
@@ -258,7 +261,7 @@ public class TemplateCore {
 
 		@Override
 		public void putAll(Map<? extends K, ? extends String> map) {
-			for(K key : map.keySet()) {
+			for (K key : map.keySet()) {
 				String value = map.get(key);
 				value = TemplateEngineHelper.externalizeTemplateString(template.getTemplateInfo(), value);
 				super.put(key, value);

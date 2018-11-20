@@ -58,8 +58,8 @@ public class CopyBuildLogAction extends Action {
 		Shell shell = Display.getCurrent().getActiveShell();
 
 		if (console instanceof BuildConsolePartitioner) {
-			URI srcURI = ((BuildConsolePartitioner)console).getLogURI();
-			if (srcURI==null) {
+			URI srcURI = ((BuildConsolePartitioner) console).getLogURI();
+			if (srcURI == null) {
 				MessageDialog.openWarning(shell, ConsoleMessages.CopyLog_UnavailableLog,
 						ConsoleMessages.CopyLog_BuildNotLogged);
 				return;
@@ -71,14 +71,14 @@ public class CopyBuildLogAction extends Action {
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 				MessageDialog.openError(shell, ConsoleMessages.CopyLog_UnavailableLog,
-						ConsoleMessages.CopyLog_UnableToAccess+srcURI);
+						ConsoleMessages.CopyLog_UnableToAccess + srcURI);
 				return;
 			}
 
 			if (!srcStore.fetchInfo().exists()) {
 				MessageDialog.openError(shell, ConsoleMessages.CopyLog_UnavailableLog,
 						ConsoleMessages.CopyLog_LogFileIsNotAvailable);
-					return;
+				return;
 			}
 
 			// open file dialog
@@ -86,11 +86,11 @@ public class CopyBuildLogAction extends Action {
 			dialog.setText(ConsoleMessages.CopyLog_ChooseDestination);
 
 			String destLocation = dialog.open();
-			if (destLocation!=null) {
+			if (destLocation != null) {
 				URI destURI = URIUtil.toURI(destLocation);
-				if (destURI==null) {
+				if (destURI == null) {
 					MessageDialog.openError(shell, ConsoleMessages.CopyLog_UnavailableLog,
-							ConsoleMessages.CopyLog_InvalidDestination+destLocation);
+							ConsoleMessages.CopyLog_InvalidDestination + destLocation);
 					return;
 				}
 				try {
@@ -99,7 +99,7 @@ public class CopyBuildLogAction extends Action {
 				} catch (CoreException e) {
 					CUIPlugin.log(e);
 					MessageDialog.openError(shell, ConsoleMessages.CopyLog_ErrorCopyingFile,
-							ConsoleMessages.CopyLog_ErrorWhileCopyingLog+e.getLocalizedMessage());
+							ConsoleMessages.CopyLog_ErrorWhileCopyingLog + e.getLocalizedMessage());
 				} finally {
 					ResourcesUtil.refreshWorkspaceFiles(destURI);
 				}

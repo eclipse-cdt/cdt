@@ -26,22 +26,20 @@ import org.eclipse.ui.IWorkbenchSite;
 
 public class FindRefsProjectAction extends FindAction {
 
-	public FindRefsProjectAction(CEditor editor, String label, String tooltip){
+	public FindRefsProjectAction(CEditor editor, String label, String tooltip) {
 		super(editor);
-		setText(label); 
-		setToolTipText(tooltip); 
+		setText(label);
+		setToolTipText(tooltip);
 	}
-	
-	public FindRefsProjectAction(CEditor editor){
-		this(editor,
-			CSearchMessages.CSearch_FindReferencesProjectAction_label, 
-			CSearchMessages.CSearch_FindReferencesProjectAction_tooltip); 
+
+	public FindRefsProjectAction(CEditor editor) {
+		this(editor, CSearchMessages.CSearch_FindReferencesProjectAction_label,
+				CSearchMessages.CSearch_FindReferencesProjectAction_tooltip);
 	}
-	
-	public FindRefsProjectAction(IWorkbenchSite site){
-		this(site,
-			CSearchMessages.CSearch_FindReferencesProjectAction_label, 
-			CSearchMessages.CSearch_FindReferencesProjectAction_tooltip); 
+
+	public FindRefsProjectAction(IWorkbenchSite site) {
+		this(site, CSearchMessages.CSearch_FindReferencesProjectAction_label,
+				CSearchMessages.CSearch_FindReferencesProjectAction_tooltip);
 	}
 
 	public FindRefsProjectAction(IWorkbenchSite site, String label, String tooltip) {
@@ -54,24 +52,24 @@ public class FindRefsProjectAction extends FindAction {
 	protected ICElement[] getScope() {
 		ICProject project = null;
 		if (fEditor != null) {
-			project = fEditor.getTranslationUnit().getCProject();			 
-		} else if (fSite != null){
+			project = fEditor.getTranslationUnit().getCProject();
+		} else if (fSite != null) {
 			ISelection selection = getSelection();
 			if (selection instanceof IStructuredSelection) {
-				Object element = ((IStructuredSelection)selection).getFirstElement();
+				Object element = ((IStructuredSelection) selection).getFirstElement();
 				if (element instanceof IResource)
-					project = CoreModel.getDefault().create(((IResource)element).getProject());
+					project = CoreModel.getDefault().create(((IResource) element).getProject());
 				else if (element instanceof ICElement)
-					project = ((ICElement)element).getCProject();
+					project = ((ICElement) element).getCProject();
 			}
 		}
-		
+
 		return project != null ? new ICElement[] { project } : null;
 	}
 
 	@Override
 	protected String getScopeDescription() {
-		return CSearchMessages.ProjectScope; 
+		return CSearchMessages.ProjectScope;
 	}
 
 	@Override

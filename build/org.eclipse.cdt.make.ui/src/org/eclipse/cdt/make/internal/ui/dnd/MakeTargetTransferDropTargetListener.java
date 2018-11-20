@@ -73,7 +73,7 @@ public class MakeTargetTransferDropTargetListener extends AbstractContainerAreaD
 	public int dragOverOperation(int operation, IContainer dropContainer, Object dropTarget) {
 		// This class is intended only for drag/drop between eclipse instances,
 		// so DND_COPY always set and we don't bother checking if the target is the source
-		if (operation!=DND.DROP_NONE) {
+		if (operation != DND.DROP_NONE) {
 			return DND.DROP_COPY;
 		}
 		return operation;
@@ -89,8 +89,8 @@ public class MakeTargetTransferDropTargetListener extends AbstractContainerAreaD
 	@Override
 	public void dropToContainer(Object dropObject, IContainer dropContainer, int operation) {
 		if (dropObject instanceof MakeTargetTransferData && dropContainer != null) {
-			createTransferTargetsUI((MakeTargetTransferData)dropObject, dropContainer,
-				operation, fViewer.getControl().getShell());
+			createTransferTargetsUI((MakeTargetTransferData) dropObject, dropContainer, operation,
+					fViewer.getControl().getShell());
 		}
 	}
 
@@ -103,7 +103,7 @@ public class MakeTargetTransferDropTargetListener extends AbstractContainerAreaD
 	 * @param shell - a shell to display warnings to the user.
 	 */
 	public static void createTransferTargetsUI(MakeTargetTransferData makeTargetTransferData, IContainer dropContainer,
-		int operation, Shell shell) {
+			int operation, Shell shell) {
 		IMakeTarget[] makeTargets = makeTargetTransferData.createMakeTargets(dropContainer.getProject());
 		MakeTargetDndUtil.copyTargets(makeTargets, dropContainer, operation, shell);
 	}

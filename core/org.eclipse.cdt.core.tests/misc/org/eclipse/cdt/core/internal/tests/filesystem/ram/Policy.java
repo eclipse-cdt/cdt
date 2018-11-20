@@ -22,7 +22,8 @@ import org.eclipse.core.runtime.*;
 public class Policy {
 
 	public static void error(String message) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.cdt.core.tests.internal.filesystem.ram", 1, message, null));
+		throw new CoreException(
+				new Status(IStatus.ERROR, "org.eclipse.cdt.core.tests.internal.filesystem.ram", 1, message, null));
 	}
 
 	private Policy() {

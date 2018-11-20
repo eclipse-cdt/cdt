@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
-
 import java.io.File;
 import java.io.IOException;
 
@@ -81,22 +80,19 @@ public class ProcessFactory {
 		return runtime.exec(cmd, envp);
 	}
 
-	public Process exec(String cmd, String[] envp, File dir)
-		throws IOException {
+	public Process exec(String cmd, String[] envp, File dir) throws IOException {
 		if (hasSpawner)
 			return new Spawner(cmd, envp, dir);
 		return runtime.exec(cmd, envp, dir);
 	}
 
-	public Process exec(String cmdarray[], String[] envp, File dir)
-		throws IOException {
+	public Process exec(String cmdarray[], String[] envp, File dir) throws IOException {
 		if (hasSpawner)
 			return new Spawner(cmdarray, envp, dir);
 		return runtime.exec(cmdarray, envp, dir);
 	}
 
-	public Process exec(String cmdarray[], String[] envp, File dir, PTY pty)
-		throws IOException {
+	public Process exec(String cmdarray[], String[] envp, File dir, PTY pty) throws IOException {
 		if (hasSpawner)
 			return new Spawner(cmdarray, envp, dir, pty);
 		throw new UnsupportedOperationException(Messages.Util_exception_cannotCreatePty);

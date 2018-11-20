@@ -63,9 +63,9 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fTemplateContextType= new TestTemplateContextType();
-		fSelection= "while (true) {\n\tdoSomething();\n}";
-		fDefaultOptions= CCorePlugin.getDefaultOptions();
+		fTemplateContextType = new TestTemplateContextType();
+		fSelection = "while (true) {\n\tdoSomething();\n}";
+		fDefaultOptions = CCorePlugin.getDefaultOptions();
 	}
 
 	@Override
@@ -73,9 +73,9 @@ public class TemplateFormatterTest extends BaseUITestCase {
 		CCorePlugin.setOptions(fDefaultOptions);
 		super.tearDown();
 	}
-	
+
 	private void setOption(String key, String value) {
-		HashMap<String, String> options= new HashMap<String, String>(1);
+		HashMap<String, String> options = new HashMap<String, String>(1);
 		options.put(key, value);
 		CCorePlugin.setOptions(options);
 	}
@@ -83,24 +83,25 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	protected void assertFormatterResult() throws Exception {
 		assertFormatterResult(false);
 	}
+
 	protected void assertFormatterResult(boolean useFormatter) throws Exception {
-		CharSequence[] contents= getContentsForTest(2);
-		String before= contents[0].toString().replaceAll("\\r\\n", "\n");
-		String expected= contents[1].toString();
+		CharSequence[] contents = getContentsForTest(2);
+		String before = contents[0].toString().replaceAll("\\r\\n", "\n");
+		String expected = contents[1].toString();
 		final Document document = new Document(before);
-		TemplateContext context= new DocumentTemplateContext(fTemplateContextType, document, 0, document.getLength());
+		TemplateContext context = new DocumentTemplateContext(fTemplateContextType, document, 0, document.getLength());
 		context.setVariable(GlobalTemplateVariables.SELECTION, fSelection);
-		Template template= new Template("test", "descr", fTemplateContextType.getId(), before, false);
-		TemplateBuffer buffer= context.evaluate(template);
-		CFormatter formatter= new CFormatter("\n", 0, useFormatter, null);
+		Template template = new Template("test", "descr", fTemplateContextType.getId(), before, false);
+		TemplateBuffer buffer = context.evaluate(template);
+		CFormatter formatter = new CFormatter("\n", 0, useFormatter, null);
 		formatter.format(buffer, context);
 		assertEquals(expected, buffer.getString());
 	}
-	
+
 	//for(int var=0; var<max; var++) {
 	//	${cursor}
 	//}
-	
+
 	//for(int var=0; var<max; var++) {
 	//	
 	//}
@@ -111,7 +112,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	//for(int var=0; var<max; var++) {
 	//	${cursor}
 	//}
-	
+
 	//for(int var=0; var<max; var++) {
 	//    
 	//}
@@ -124,7 +125,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	//for(int var=0; var<max; var++) {
 	//	${line_selection}
 	//}
-	
+
 	//for(int var=0; var<max; var++) {
 	//	while (true) {
 	//		doSomething();
@@ -137,7 +138,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	//for(int var=0; var<max; var++) {
 	//	${line_selection}
 	//}
-	
+
 	//for(int var=0; var<max; var++) {
 	//    while (true) {
 	//	doSomething();
@@ -146,10 +147,10 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	public void testSourroundWithForLoopTemplateMixedIndent() throws Exception {
 		setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, DefaultCodeFormatterConstants.MIXED);
 		setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, Integer.toString(8));
-		fSelection= "while (true) {\n    doSomething();\n}";
+		fSelection = "while (true) {\n    doSomething();\n}";
 		assertFormatterResult();
 	}
-	
+
 	///*!
 	// * \brief ShortFunctionDescription${cursor}.
 	// *

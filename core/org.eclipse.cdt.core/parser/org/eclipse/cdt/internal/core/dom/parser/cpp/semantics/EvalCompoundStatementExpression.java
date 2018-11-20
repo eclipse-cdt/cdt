@@ -44,7 +44,7 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 
 	public EvalCompoundStatementExpression(ICPPEvaluation delegate, IBinding templateDefinition) {
 		super(templateDefinition);
-		fDelegate= delegate;
+		fDelegate = delegate;
 	}
 
 	public ICPPEvaluation getLastEvaluation() {
@@ -84,7 +84,7 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 		EvalCompoundStatementExpression o = (EvalCompoundStatementExpression) other;
 		return fDelegate.isEquivalentTo(o.fDelegate);
 	}
-	
+
 	@Override
 	public IType getType() {
 		return fDelegate.getType();
@@ -108,8 +108,8 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation arg= buffer.unmarshalEvaluation();
-		IBinding templateDefinition= buffer.unmarshalBinding();
+		ICPPEvaluation arg = buffer.unmarshalEvaluation();
+		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalCompoundStatementExpression(arg, templateDefinition);
 	}
 
@@ -127,7 +127,8 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 		if (delegate == fDelegate) {
 			return this;
 		} else {
-			EvalCompoundStatementExpression evalCompound = new EvalCompoundStatementExpression(delegate, getTemplateDefinition());
+			EvalCompoundStatementExpression evalCompound = new EvalCompoundStatementExpression(delegate,
+					getTemplateDefinition());
 			return evalCompound;
 		}
 	}

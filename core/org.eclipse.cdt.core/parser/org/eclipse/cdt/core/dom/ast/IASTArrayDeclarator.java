@@ -41,7 +41,7 @@ public interface IASTArrayDeclarator extends IASTDeclarator {
 	 *            <code>IASTArrayModifier</code> to be added
 	 */
 	public void addArrayModifier(IASTArrayModifier arrayModifier);
-	
+
 	/**
 	 * @since 5.1
 	 */

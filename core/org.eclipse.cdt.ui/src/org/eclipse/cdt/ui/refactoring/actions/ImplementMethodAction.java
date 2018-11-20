@@ -64,11 +64,11 @@ public class ImplementMethodAction extends RefactoringAction {
 
 	@Override
 	public void updateSelection(ICElement elem) {
-    	super.updateSelection(elem);
-    	if (elem instanceof IMethod || elem instanceof IMethodDeclaration == false 
-    			|| elem instanceof ISourceReference == false
-    			|| ((ISourceReference) elem).getTranslationUnit().getResource() instanceof IFile == false) {
-    		setEnabled(false);
-    	}
-    }
+		super.updateSelection(elem);
+		if (elem instanceof IMethod || elem instanceof IMethodDeclaration == false
+				|| elem instanceof ISourceReference == false
+				|| ((ISourceReference) elem).getTranslationUnit().getResource() instanceof IFile == false) {
+			setEnabled(false);
+		}
+	}
 }

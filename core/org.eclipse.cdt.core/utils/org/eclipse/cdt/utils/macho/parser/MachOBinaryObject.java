@@ -56,7 +56,6 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	protected long timeStamp;
 	private static final String[] NO_NEEDED = new String[0];
 
-	
 	/**
 	 * @param parser
 	 * @param path
@@ -85,7 +84,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		// overload to do nothing
 		return new BinaryObjectInfo();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
@@ -96,7 +95,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getContents();
 	}
-	
+
 	protected MachOHelper getMachOHelper() throws IOException {
 		IPath path = getPath();
 		if (path != null) {
@@ -108,7 +107,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getName()
 	 */
@@ -130,7 +129,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 		return addressFactory;
 	}
-	
+
 	protected void clearCachedValues() {
 		attributes = null;
 		sizes = null;
@@ -138,7 +137,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		soname = null;
 		needed = null;
 	}
-	
+
 	protected MachO.Attribute internalGetAttributes() {
 		if (hasChanged()) {
 			clearCachedValues();
@@ -159,7 +158,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 		return attributes;
 	}
-	
+
 	protected MachOHelper.Sizes internalGetSizes() {
 		if (hasChanged()) {
 			clearCachedValues();
@@ -195,7 +194,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 		return symbols;
 	}
-	
+
 	protected String internalGetSoName() {
 		if (hasChanged()) {
 			clearCachedValues();
@@ -226,10 +225,10 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 				symbols = loadSymbols(helper);
 				//TODO is the sort necessary?
 				Arrays.sort(symbols);
-				
+
 				soname = helper.getSoname();
 				needed = helper.getNeeded();
-				
+
 				// since we're invoking the helper we might as well update the
 				// sizes since it's a pretty lightweight operation by comparison
 				if (sizes == null) {
@@ -251,7 +250,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected ISymbol[] loadSymbols(MachOHelper helper) throws IOException {
-		CPPFilt cppfilt =  null;
+		CPPFilt cppfilt = null;
 		try {
 			ArrayList<Symbol> list = new ArrayList<Symbol>();
 			// Hack should be remove when Elf is clean
@@ -289,10 +288,11 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 			int size = 0;
 			String filename = element.getFilename();
 			IPath filePath = (filename != null) ? new Path(filename) : null;
-			list.add(new Symbol(this, name, type, new Addr32(element.n_value), size, filePath, element.getLineNumber(addr), element.getLineNumber(addr + size - 1)));
+			list.add(new Symbol(this, name, type, new Addr32(element.n_value), size, filePath,
+					element.getLineNumber(addr), element.getLineNumber(addr + size - 1)));
 		}
 	}
-	
+
 	@Override
 	public String getCPU() {
 		MachO.Attribute attribute = internalGetAttributes();
@@ -362,7 +362,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		// fall back to super implementation for now
 		return super.getSymbol(addr);
 	}
-	
+
 	@Override
 	public String[] getNeededSharedLibs() {
 		String[] libs = internalGetNeeded();
@@ -396,7 +396,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 		return false;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {

@@ -36,7 +36,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
-	
+
 	public ExternalSearchDocumentProvider() {
 		super(new CStorageDocumentProvider());
 	}
@@ -46,13 +46,13 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 	 */
 	@Override
 	protected FileInfo createFileInfo(Object element) throws CoreException {
-		final FileInfo info= super.createFileInfo(element);
+		final FileInfo info = super.createFileInfo(element);
 		if (info != null) {
 			IAnnotationModel originalModel = info.fModel;
 			IAnnotationModel externalSearchModel = createAnnotationModel(element);
 			if (externalSearchModel != null) {
-				info.fModel= externalSearchModel;
-				IAnnotationModel fileBufferModel= info.fTextFileBuffer.getAnnotationModel();
+				info.fModel = externalSearchModel;
+				IAnnotationModel fileBufferModel = info.fTextFileBuffer.getAnnotationModel();
 				if (fileBufferModel != null) {
 					((AnnotationModel) externalSearchModel).addAnnotationModel("fileBufferModel", fileBufferModel); //$NON-NLS-1$
 				}
@@ -67,13 +67,12 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 		return info;
 	}
 
-
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 		if (element instanceof ExternalEditorInput) {
-			return createExternalSearchAnnotationModel((ExternalEditorInput)element);
+			return createExternalSearchAnnotationModel((ExternalEditorInput) element);
 		}
 		if (element instanceof IStorageEditorInput) {
-			IStorage storage= ((IStorageEditorInput)element).getStorage();
+			IStorage storage = ((IStorageEditorInput) element).getStorage();
 			if (storage.getFullPath() != null) {
 				return createExternalSearchAnnotationModel(storage.getFullPath(), null);
 			}
@@ -85,7 +84,7 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 			}
 		}
 		if (element instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable) element;
+			IAdaptable adaptable = (IAdaptable) element;
 			ILocationProvider provider = adaptable.getAdapter(ILocationProvider.class);
 			if (provider != null) {
 				IPath location = provider.getPath(element);
@@ -118,7 +117,7 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Create an annotation model for the given file and associated resource marker.
 	 * 
@@ -127,12 +126,12 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 	 * @return  a new annotation model for the file
 	 */
 	private IAnnotationModel createExternalSearchAnnotationModel(IPath location, IResource markerResource) {
-		AnnotationModel model= null;
-		if (markerResource != null){
+		AnnotationModel model = null;
+		if (markerResource != null) {
 			model = new ExternalSearchAnnotationModel(markerResource, location);
 		} else {
 			// no marker resource available - search workspace root and all project resources (depth one)
-			markerResource= CUIPlugin.getWorkspace().getRoot();
+			markerResource = CUIPlugin.getWorkspace().getRoot();
 			model = new ExternalSearchAnnotationModel(markerResource, location, IResource.DEPTH_ONE);
 		}
 		return model;

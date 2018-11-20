@@ -28,13 +28,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadListIdsInfo;
  * 
  */
 public class MIThreadListIds extends MICommand<MIThreadListIdsInfo> {
-	
+
 	public MIThreadListIds(IContainerDMContext contDmc) {
 		super(contDmc, "-thread-list-ids"); //$NON-NLS-1$
 	}
 
-    @Override
-    public MIThreadListIdsInfo getResult(MIOutput out) {
-        return new MIThreadListIdsInfo(out);
-    }
+	@Override
+	public MIThreadListIdsInfo getResult(MIOutput out) {
+		return new MIThreadListIdsInfo(out);
+	}
 }

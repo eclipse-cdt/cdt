@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
-
 /** 
  * Info for ICProject.
  */

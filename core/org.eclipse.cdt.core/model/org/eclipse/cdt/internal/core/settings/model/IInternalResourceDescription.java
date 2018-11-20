@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.core.runtime.IPath;
 
-interface IInternalResourceDescription extends ICResourceDescription{
+interface IInternalResourceDescription extends ICResourceDescription {
 	IPath getCachedPath();
-	
+
 	void setPathContainer(PathSettingsContainer cr);
 
 	PathSettingsContainer getPathContainer();

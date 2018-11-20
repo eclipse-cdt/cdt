@@ -36,15 +36,16 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Utility tools to open editor and highlight the line
  */
 public class CodanEditorUtility {
-	
-	private static final String C_EDITOR_ID= "org.eclipse.cdt.ui.editor.CEditor";  //$NON-NLS-1$
-	
+
+	private static final String C_EDITOR_ID = "org.eclipse.cdt.ui.editor.CEditor"; //$NON-NLS-1$
+
 	/**
 	 * @param fileUrl - file "url", like file:/tmp/a.c#22
 	 * @throws PartInitException
 	 * @throws BadLocationException
 	 */
-	public static void openFileURL(String fileUrl, IResource markerResource) throws PartInitException, BadLocationException {
+	public static void openFileURL(String fileUrl, IResource markerResource)
+			throws PartInitException, BadLocationException {
 		String file = getFileFromURL(fileUrl);
 		IEditorPart part = openInEditor(file, markerResource);
 		int line = getLineFromURL(fileUrl);

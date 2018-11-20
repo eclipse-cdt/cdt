@@ -32,7 +32,7 @@ public class CProjectAdapterFactory implements IAdapterFactory {
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (IProject.class.equals(adapterType)) {
-			return (T) ((ICProject)adaptableObject).getProject();
+			return (T) ((ICProject) adaptableObject).getProject();
 		}
 		return null;
 	}

@@ -54,8 +54,7 @@ public class CLICommandAction extends AbstractBreakpointAction {
 			}
 		} else
 			return new Status(IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),
-					IInternalCDebugUIConstants.INTERNAL_ERROR,
-					Messages.getString("CLICommandAction.NoSupport"), null); //$NON-NLS-1$
+					IInternalCDebugUIConstants.INTERNAL_ERROR, Messages.getString("CLICommandAction.NoSupport"), null); //$NON-NLS-1$
 		return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 	}
 
@@ -84,7 +83,7 @@ public class CLICommandAction extends AbstractBreakpointAction {
 			rootElement.setAttribute(COMMAND_ATT, command);
 			doc.appendChild(rootElement);
 			return DebugPlugin.serializeDocument(doc);
-		} catch (DOMException  | CoreException e) {
+		} catch (DOMException | CoreException e) {
 			CDebugUIPlugin.log(e);
 
 		}

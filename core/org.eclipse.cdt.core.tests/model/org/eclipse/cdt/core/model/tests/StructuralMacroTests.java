@@ -29,10 +29,10 @@ public class StructuralMacroTests extends IMacroTests {
 	 *          containing all its public members named "test*"
 	 */
 	public static Test suite() {
-		TestSuite suite= new TestSuite( StructuralMacroTests.class.getName() );
-		suite.addTest( new StructuralMacroTests("testGetElementName"));
+		TestSuite suite = new TestSuite(StructuralMacroTests.class.getName());
+		suite.addTest(new StructuralMacroTests("testGetElementName"));
 		return suite;
-	}		
+	}
 
 	/**
 	 * @param name
@@ -40,11 +40,10 @@ public class StructuralMacroTests extends IMacroTests {
 	public StructuralMacroTests(String name) {
 		super(name);
 	}
-	
-	
+
 	@Override
 	public void testGetElementName() throws CModelException {
 		setStructuralParse(true);
 		super.testGetElementName();
-	}	
+	}
 }

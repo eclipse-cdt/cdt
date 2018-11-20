@@ -17,7 +17,6 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-
 /**
  * GDB/MI var-list-children
  * -var-list-children var2
@@ -30,14 +29,14 @@ namic="1"},child={name="var6.[0].[3]",exp="[3]",numchild="0",type="std::basic_st
  */
 public class MIVar {
 
-    MITuple raw;
+	MITuple raw;
 
-    String name = ""; //$NON-NLS-1$
-    String type = ""; //$NON-NLS-1$
-    String value = ""; //$NON-NLS-1$
-    String exp = ""; //$NON-NLS-1$
+	String name = ""; //$NON-NLS-1$
+	String type = ""; //$NON-NLS-1$
+	String value = ""; //$NON-NLS-1$
+	String exp = ""; //$NON-NLS-1$
 	private boolean isDynamic = false;
-    int numchild;
+	int numchild;
 	private boolean hasMore = false;
 	private MIDisplayHint displayHint = MIDisplayHint.NONE;
 
@@ -45,14 +44,14 @@ public class MIVar {
 	 * Construct from the raw MI tuple. This is the preferred constructor, since calling all others
 	 * will require caller to reimplement all or parts of parsing.
 	 */
-    public MIVar(MITuple tuple) {
-    	this.raw = tuple;
-        parse(tuple);
-    }
+	public MIVar(MITuple tuple) {
+		this.raw = tuple;
+		parse(tuple);
+	}
 
-    public MIVar(String n, int num, String t) {
-    	this(n, false, num, false, t, MIDisplayHint.NONE);
-    }
+	public MIVar(String n, int num, String t) {
+		this(n, false, num, false, t, MIDisplayHint.NONE);
+	}
 
 	/**
 	 * @param n
@@ -69,7 +68,7 @@ public class MIVar {
 	 */
 	public MIVar(String n, boolean isDynamic, int num, boolean hasMore, String t) {
 		this(n, isDynamic, num, hasMore, t, MIDisplayHint.NONE);
-    }
+	}
 
 	/**
 	 * @param n
@@ -85,37 +84,36 @@ public class MIVar {
 	 * @since 4.0
 	 */
 	public MIVar(String n, boolean isDynamic, int num, boolean hasMore, String t, MIDisplayHint displayHint) {
-        name = n;
+		name = n;
 		this.isDynamic = isDynamic;
-        numchild = num;
+		numchild = num;
 		this.hasMore = hasMore;
-        type = t;
-        this.displayHint = displayHint;
-    }
+		type = t;
+		this.displayHint = displayHint;
+	}
 
-    /** Return raw fields from MI.
+	/** Return raw fields from MI.
 	 * @since 4.7
 	 */
-    public MITuple getRawFields()
-    {
-    	assert raw != null;
-    	return raw;
-    }
+	public MITuple getRawFields() {
+		assert raw != null;
+		return raw;
+	}
 
-    public String getVarName() {
-        return name;
-    }
+	public String getVarName() {
+		return name;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public String getType() {
+		return type;
+	}
 
-    /**
-     * @since 4.6
-     */
-    public String getValue() {
-        return value;
-    }
+	/**
+	 * @since 4.6
+	 */
+	public String getValue() {
+		return value;
+	}
 
 	/**
 	 * @return Whether the value and children of this variable are provided
@@ -123,7 +121,7 @@ public class MIVar {
 	 *         
 	 * @since 4.0
 	 */
-    public boolean isDynamic() {
+	public boolean isDynamic() {
 		return isDynamic;
 	}
 
@@ -133,9 +131,9 @@ public class MIVar {
 	 *         fetched by gdb. Check {@link #hasMore()} in order to find out
 	 *         whether the are more children. 
 	 */
-    public int getNumChild() {
-        return numchild;
-    }
+	public int getNumChild() {
+		return numchild;
+	}
 
 	/**
 	 * @return For dynamic varobjs ({@link #isDynamic() returns true} this
@@ -149,9 +147,9 @@ public class MIVar {
 		return hasMore;
 	}
 
-    public String getExp() {
-        return exp;
-    }
+	public String getExp() {
+		return exp;
+	}
 
 	/**
 	 * @return Whether the underlying value conceptually represents a string,
@@ -159,40 +157,40 @@ public class MIVar {
 	 *         
 	 * @since 4.0
 	 */
-    public MIDisplayHint getDisplayHint() {
-    	return displayHint;
-    }
-    
-    void parse(MITuple tuple) {
-        MIResult[] results = tuple.getMIResults();
-        for (int i = 0; i < results.length; i++) {
-            String var = results[i].getVariable();
-            MIValue value = results[i].getMIValue();
-            String str = ""; //$NON-NLS-1$
-            if (value != null && value instanceof MIConst) {
-                str = ((MIConst)value).getString();
-            }
+	public MIDisplayHint getDisplayHint() {
+		return displayHint;
+	}
 
-            if (var.equals("numchild")) { //$NON-NLS-1$
-                try {
-                    numchild = Integer.parseInt(str.trim());
-                } catch (NumberFormatException e) {
-                }
-            } else if (var.equals("name")) { //$NON-NLS-1$
-                name = str;
-            } else if (var.equals("type")) { //$NON-NLS-1$
-                type = str;
-            } else if (var.equals("value")) { //$NON-NLS-1$
-                this.value = str;
-            } else if (var.equals("exp")) { //$NON-NLS-1$
-                exp = str;
+	void parse(MITuple tuple) {
+		MIResult[] results = tuple.getMIResults();
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue value = results[i].getMIValue();
+			String str = ""; //$NON-NLS-1$
+			if (value != null && value instanceof MIConst) {
+				str = ((MIConst) value).getString();
+			}
+
+			if (var.equals("numchild")) { //$NON-NLS-1$
+				try {
+					numchild = Integer.parseInt(str.trim());
+				} catch (NumberFormatException e) {
+				}
+			} else if (var.equals("name")) { //$NON-NLS-1$
+				name = str;
+			} else if (var.equals("type")) { //$NON-NLS-1$
+				type = str;
+			} else if (var.equals("value")) { //$NON-NLS-1$
+				this.value = str;
+			} else if (var.equals("exp")) { //$NON-NLS-1$
+				exp = str;
 			} else if (var.equals("dynamic") && str.trim().equals("1")) { //$NON-NLS-1$ //$NON-NLS-2$
 				isDynamic = true;
 			} else if (var.equals("has_more") && str.trim().equals("1")) { //$NON-NLS-1$ //$NON-NLS-2$
 				hasMore = true;
-            } else if (var.equals("displayhint")) { //$NON-NLS-1$
-            	displayHint = new MIDisplayHint(str);
-            }
-        }
-    }
+			} else if (var.equals("displayhint")) { //$NON-NLS-1$
+				displayHint = new MIDisplayHint(str);
+			}
+		}
+	}
 }

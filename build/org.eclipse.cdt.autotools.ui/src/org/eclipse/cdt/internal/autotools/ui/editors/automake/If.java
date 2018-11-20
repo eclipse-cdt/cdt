@@ -19,9 +19,9 @@ import java.io.File;
 import org.eclipse.cdt.make.core.makefile.ICommand;
 
 public class If extends Conditional implements IAutomakeConditional, ICommand {
-    private static final String EMPTY = ""; //$NON-NLS-1$
-    private Rule rules[] = null;
-    
+	private static final String EMPTY = ""; //$NON-NLS-1$
+	private Rule rules[] = null;
+
 	public If(Directive parent, Rule[] rules, String var) {
 		super(parent, var, EMPTY, EMPTY);
 		if (rules != null) {
@@ -36,7 +36,7 @@ public class If extends Conditional implements IAutomakeConditional, ICommand {
 			return rules.clone();
 		return null;
 	}
-	
+
 	@Override
 	public void setRules(Rule[] rules) {
 		if (rules != null)
@@ -44,7 +44,7 @@ public class If extends Conditional implements IAutomakeConditional, ICommand {
 		else
 			this.rules = rules;
 	}
-	
+
 	@Override
 	public boolean isIf() {
 		return true;
@@ -54,12 +54,12 @@ public class If extends Conditional implements IAutomakeConditional, ICommand {
 	public boolean isAutomake() {
 		return true;
 	}
-	
+
 	@Override
 	public void setAutomake(boolean value) {
 		// ignore value
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(GNUMakefileConstants.CONDITIONAL_IF);
@@ -70,23 +70,23 @@ public class If extends Conditional implements IAutomakeConditional, ICommand {
 	public String getVariable() {
 		return getConditional();
 	}
-	
+
 	// ICommand methods so Automake if can be a child of an IRule
 	@Override
 	public Process execute(String shell, String[] envp, File dir) {
 		return null;
 	}
-	
+
 	@Override
 	public boolean shouldBeSilent() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean shouldIgnoreError() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean shouldExecute() {
 		return false;

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.SWT;
@@ -100,11 +99,13 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 * <code>VALIDATE_ON_KEY_STROKE</code> by default.
 	 */
 	private int validateStrategy = VALIDATE_ON_KEY_STROKE;
+
 	/**
 	 * Creates a new string field editor
 	 */
 	protected MultiLineTextFieldEditor() {
 	}
+
 	/**
 	 * Creates a string field editor.
 	 * Use the method <code>setTextLimit</code> to limit the text.
@@ -119,12 +120,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 * @param parent the parent of the field editor's control
 	 * @since 2.0
 	 */
-	public MultiLineTextFieldEditor(
-		String name,
-		String labelText,
-		int width,
-		int strategy,
-		Composite parent) {
+	public MultiLineTextFieldEditor(String name, String labelText, int width, int strategy, Composite parent) {
 		init(name, labelText);
 		setValidateStrategy(strategy);
 		isValid = false;
@@ -146,6 +142,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 		this(name, labelText, width, VALIDATE_ON_KEY_STROKE, parent);
 		this.compTitle = labelText;
 	}
+
 	/**
 	 * Creates a string field editor of unlimited width.
 	 * Use the method <code>setTextLimit</code> to limit the text.
@@ -179,6 +176,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 		// we assume it is setting the width.
 		gd.grabExcessHorizontalSpace = gd.horizontalSpan == 1;
 	}
+
 	/**
 	 * Checks whether the text input field contains a valid value or not.
 	 *
@@ -197,8 +195,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 
 		if (txt == null) {
 			result = false;
-		}
-		else {
+		} else {
 			result = (txt.trim().length() > 0) || emptyStringAllowed;
 		}
 
@@ -212,6 +209,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 
 		return result;
 	}
+
 	/**
 	 * Hook for subclasses to do specific state checks.
 	 * <p>
@@ -226,6 +224,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	protected boolean doCheckState() {
 		return true;
 	}
+
 	/**
 	 * Fills this field editor's basic controls into the given parent.
 	 * <p>
@@ -279,8 +278,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	@Override
 	protected void doLoadDefault() {
 		if (textField != null) {
-			String value =
-				getPreferenceStore().getDefaultString(getPreferenceName());
+			String value = getPreferenceStore().getDefaultString(getPreferenceName());
 			textField.setText(value);
 		}
 		valueChanged();
@@ -303,6 +301,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	public String getErrorMessage() {
 		return errorMessage;
 	}
+
 	/**
 		* Returns the number of basic controls this field editor consists of.
 		*
@@ -312,6 +311,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	public int getNumberOfControls() {
 		return 2;
 	}
+
 	/**
 	 * Returns the field editor's value.
 	 *
@@ -343,51 +343,50 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 */
 	public Text getTextControl(Composite parent) {
 		if (textField == null) {
-			textField =
-				new Text(
-					parent,
-					SWT.MULTI | SWT.V_SCROLL | SWT.BORDER | SWT.WRAP);
+			textField = new Text(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER | SWT.WRAP);
 			textField.setFont(parent.getFont());
 			switch (validateStrategy) {
-				case VALIDATE_ON_KEY_STROKE :
-					textField.addKeyListener(new KeyAdapter() {
-						@Override
-						public void keyPressed(KeyEvent e) {
-							valueChanged();
-						}
-					});
+			case VALIDATE_ON_KEY_STROKE:
+				textField.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent e) {
+						valueChanged();
+					}
+				});
 
-					textField.addFocusListener(new FocusAdapter() {
-						@Override
-						public void focusGained(FocusEvent e) {
-							refreshValidState();
-						}
-						@Override
-						public void focusLost(FocusEvent e) {
-							clearErrorMessage();
-						}
-					});
-					break;
-				case VALIDATE_ON_FOCUS_LOST :
-					textField.addKeyListener(new KeyAdapter() {
-						@Override
-						public void keyPressed(KeyEvent e) {
-							clearErrorMessage();
-						}
-					});
-					textField.addFocusListener(new FocusAdapter() {
-						@Override
-						public void focusGained(FocusEvent e) {
-							refreshValidState();
-						}
-						@Override
-						public void focusLost(FocusEvent e) {
-							valueChanged();
-							clearErrorMessage();
-						}
-					});
-					break;
-				default :
+				textField.addFocusListener(new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent e) {
+						refreshValidState();
+					}
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						clearErrorMessage();
+					}
+				});
+				break;
+			case VALIDATE_ON_FOCUS_LOST:
+				textField.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent e) {
+						clearErrorMessage();
+					}
+				});
+				textField.addFocusListener(new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent e) {
+						refreshValidState();
+					}
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						valueChanged();
+						clearErrorMessage();
+					}
+				});
+				break;
+			default:
 			}
 			textField.addDisposeListener(new DisposeListener() {
 				@Override
@@ -525,8 +524,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 *  perform validation only after the text has been typed in
 	 */
 	public void setValidateStrategy(int value) {
-		Assert.isTrue(
-			value == VALIDATE_ON_FOCUS_LOST || value == VALIDATE_ON_KEY_STROKE);
+		Assert.isTrue(value == VALIDATE_ON_FOCUS_LOST || value == VALIDATE_ON_KEY_STROKE);
 		validateStrategy = value;
 	}
 

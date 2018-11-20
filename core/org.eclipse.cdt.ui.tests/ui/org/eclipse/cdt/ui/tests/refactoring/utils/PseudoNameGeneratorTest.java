@@ -35,7 +35,7 @@ public class PseudoNameGeneratorTest extends TestCase {
 	protected void setUp() throws Exception {
 		pseudoNameGenerator = new PseudoNameGenerator();
 	}
-	
+
 	public void testNonConflictingCase() {
 		assertEquals(INT1, pseudoNameGenerator.generateNewName(INT));
 	}
@@ -57,11 +57,11 @@ public class PseudoNameGeneratorTest extends TestCase {
 		assertEquals(INT3, pseudoNameGenerator.generateNewName(INT));
 		assertEquals(CHAR2, pseudoNameGenerator.generateNewName(CHAR));
 	}
-	
+
 	public void testWithNamespace() {
-		assertEquals("string", pseudoNameGenerator.generateNewName("std::string"));  //$NON-NLS-1$//$NON-NLS-2$
+		assertEquals("string", pseudoNameGenerator.generateNewName("std::string")); //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+
 	public void testBug288736TemplateParam() {
 		assertEquals("tempClass", pseudoNameGenerator.generateNewName("tempClass<int>"));
 	}

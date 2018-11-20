@@ -31,14 +31,12 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 /**
  * Function call expression in C.
  */
-public class CASTFunctionCallExpression extends ASTNode
-		implements IASTFunctionCallExpression, IASTAmbiguityParent {
-    private IASTExpression functionName;
-    private IASTInitializerClause[] fArguments;
+public class CASTFunctionCallExpression extends ASTNode implements IASTFunctionCallExpression, IASTAmbiguityParent {
+	private IASTExpression functionName;
+	private IASTInitializerClause[] fArguments;
 
-
-    public CASTFunctionCallExpression() {
-    	setArguments(null);
+	public CASTFunctionCallExpression() {
+		setArguments(null);
 	}
 
 	public CASTFunctionCallExpression(IASTExpression functionName, IASTInitializerClause[] args) {
@@ -68,46 +66,49 @@ public class CASTFunctionCallExpression extends ASTNode
 
 	@Override
 	public void setFunctionNameExpression(IASTExpression expression) {
-        assertNotFrozen();
-        this.functionName = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		this.functionName = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(FUNCTION_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTExpression getFunctionNameExpression() {
-        return functionName;
-    }
+		return functionName;
+	}
 
 	@Override
 	public IASTInitializerClause[] getArguments() {
-        return fArguments;
-    }
+		return fArguments;
+	}
 
-    @Override
+	@Override
 	public void setArguments(IASTInitializerClause[] arguments) {
-        assertNotFrozen();
-        if (arguments == null) {
-        	fArguments= IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        } else {
-            fArguments= arguments;
-        	for (IASTInitializerClause arg : arguments) {
+		assertNotFrozen();
+		if (arguments == null) {
+			fArguments = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+		} else {
+			fArguments = arguments;
+			for (IASTInitializerClause arg : arguments) {
 				arg.setParent(this);
 				arg.setPropertyInParent(ARGUMENT);
 			}
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (functionName != null && !functionName.accept(action))
@@ -122,9 +123,9 @@ public class CASTFunctionCallExpression extends ASTNode
 			return false;
 
 		return true;
-    }
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == functionName) {
 			other.setPropertyInParent(child.getPropertyInParent());

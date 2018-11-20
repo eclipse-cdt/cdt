@@ -37,8 +37,7 @@ public class ServiceFactoriesManager {
 
 	private final Map<String, GdbDebugServicesFactory> fTestServiceFactoriesMap = new HashMap<>();
 
-	public void addTestServicesFactory(String id, GdbDebugServicesFactory servicesFactory)
-			throws CoreException {
+	public void addTestServicesFactory(String id, GdbDebugServicesFactory servicesFactory) throws CoreException {
 		if (fTestServiceFactoriesMap.containsKey(id)) {
 			throw new CoreException(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(),
 					"A factory with this id already exists " + id));

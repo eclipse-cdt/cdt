@@ -33,80 +33,80 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public abstract class CPPUnknownBinding extends PlatformObject
 		implements ICPPUnknownBinding, ICPPInternalBinding, Cloneable {
-    private ICPPScope unknownScope;
-    protected char[] name;
+	private ICPPScope unknownScope;
+	protected char[] name;
 
-    public CPPUnknownBinding(char[] name) {
-        super();
-        this.name = name;
-    }
+	public CPPUnknownBinding(char[] name) {
+		super();
+		this.name = name;
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getDeclarations() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public IASTNode getDefinition() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public void addDefinition(IASTNode node) {
-    }
+	}
 
-    @Override
+	@Override
 	public void addDeclaration(IASTNode node) {
-    }
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName(this);
-    }
+		return CPPVisitor.getQualifiedName(this);
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-    	return CPPVisitor.getQualifiedNameCharArray(this);
-    }
+		return CPPVisitor.getQualifiedNameCharArray(this);
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public final String getName() {
-        return new String(getNameCharArray());
-    }
+		return new String(getNameCharArray());
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IScope getScope() throws DOMException {
-    	// Use getOwner(), it is overridden by derived classes.
-    	final IBinding owner = getOwner();
+		// Use getOwner(), it is overridden by derived classes.
+		final IBinding owner = getOwner();
 		if (owner instanceof ICPPUnknownBinding) {
-    		return ((ICPPUnknownBinding) owner).asScope();
-    	} else if (owner instanceof ICPPClassType) {
-    		return ((ICPPClassType) owner).getCompositeScope();
-    	} else if (owner instanceof ICPPNamespace) {
-    		return ((ICPPNamespace) owner).getNamespaceScope();
-    	} else if (owner instanceof ICPPFunction) {
-    		return ((ICPPFunction) owner).getFunctionScope();
-    	}
-    	return null;
-    }
+			return ((ICPPUnknownBinding) owner).asScope();
+		} else if (owner instanceof ICPPClassType) {
+			return ((ICPPClassType) owner).getCompositeScope();
+		} else if (owner instanceof ICPPNamespace) {
+			return ((ICPPNamespace) owner).getNamespaceScope();
+		} else if (owner instanceof ICPPFunction) {
+			return ((ICPPFunction) owner).getFunctionScope();
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public ICPPScope asScope() {
-    	if (unknownScope == null && this instanceof ICPPUnknownType) {
-    		unknownScope = createScope();
-    	}
-        return unknownScope;
-    }
+		if (unknownScope == null && this instanceof ICPPUnknownType) {
+			unknownScope = createScope();
+		}
+		return unknownScope;
+	}
 
 	protected CPPUnknownTypeScope createScope() {
 		return new CPPUnknownTypeScope((ICPPUnknownType) this, new CPPASTName(name));
@@ -122,7 +122,7 @@ public abstract class CPPUnknownBinding extends PlatformObject
 		try {
 			return (CPPUnknownBinding) super.clone();
 		} catch (CloneNotSupportedException e) {
-			return null;  // Never happens
+			return null; // Never happens
 		}
 	}
 

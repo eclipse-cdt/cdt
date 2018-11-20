@@ -19,13 +19,27 @@ package org.eclipse.cdt.core.parser;
  */
 public enum ParserLanguage {
 	C {
-		@Override public boolean isCPP() { return false; }
-		@Override public String toString() { return "C"; } //$NON-NLS-1$
+		@Override
+		public boolean isCPP() {
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			return "C"; //$NON-NLS-1$
+		}
 	},
-	
+
 	CPP {
-		@Override public boolean isCPP() { return true; }
-		@Override public String toString() { return "C++"; } //$NON-NLS-1$
+		@Override
+		public boolean isCPP() {
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "C++"; //$NON-NLS-1$
+		}
 	};
 
 	public abstract boolean isCPP();

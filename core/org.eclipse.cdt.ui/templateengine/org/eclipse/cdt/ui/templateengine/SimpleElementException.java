@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine;
 
-
-
 /**
  * This Exception is thrown when, we execute getNextChild, addToChildList and
  * getChildCount on an InputUIElement.

@@ -59,6 +59,7 @@ public class CheckersTimeStats {
 			return String.format("%4d %4d %4.2f %4.2f%%", duration, count, ave, per); //$NON-NLS-1$
 		}
 	}
+
 	private Map<String, TimeRecord> records = new HashMap<String, TimeRecord>();
 
 	/**

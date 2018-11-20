@@ -159,8 +159,8 @@ public class MakeTargetTransfer extends ByteArrayTransfer {
 				boolean useDefaultBuildCmd = dataIn.readBoolean();
 				boolean appendEnvironment = dataIn.readBoolean();
 
-				mttd.addMakeTarget(name, runAllBuilders, appendProjectEnvironment, buildTarget,
-					buildCommand, buildArguments, stopOnError, useDefaultBuildCmd, appendEnvironment);
+				mttd.addMakeTarget(name, runAllBuilders, appendProjectEnvironment, buildTarget, buildCommand,
+						buildArguments, stopOnError, useDefaultBuildCmd, appendEnvironment);
 			}
 			return mttd;
 		} catch (IOException e) {

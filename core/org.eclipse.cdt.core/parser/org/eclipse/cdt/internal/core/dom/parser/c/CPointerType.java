@@ -25,14 +25,15 @@ import org.eclipse.core.runtime.CoreException;
 public class CPointerType implements ICPointerType, ITypeContainer, ISerializableType {
 	static public final CPointerType VOID_POINTER = new CPointerType(CBasicType.VOID, 0);
 
-	static public final int IS_CONST    = 1;
+	static public final int IS_CONST = 1;
 	static public final int IS_RESTRICT = 1 << 1;
 	static public final int IS_VOLATILE = 1 << 2;
 
 	IType nextType = null;
 	private int qualifiers = 0;
 
-	public CPointerType() {}
+	public CPointerType() {
+	}
 
 	public CPointerType(IType next, int qualifiers) {
 		this.nextType = next;
@@ -41,20 +42,23 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
 
 	@Override
 	public boolean isSameType(IType obj) {
-	    if (obj == this)
-	        return true;
-	    if (obj instanceof ITypedef)
-	        return obj.isSameType(this);
+		if (obj == this)
+			return true;
+		if (obj instanceof ITypedef)
+			return obj.isSameType(this);
 
-	    if (obj instanceof ICPointerType) {
-	        ICPointerType pt = (ICPointerType) obj;
-            if (isConst() != pt.isConst()) return false;
-			if (isRestrict() != pt.isRestrict()) return false;
-			if (isVolatile() != pt.isVolatile()) return false;
+		if (obj instanceof ICPointerType) {
+			ICPointerType pt = (ICPointerType) obj;
+			if (isConst() != pt.isConst())
+				return false;
+			if (isRestrict() != pt.isRestrict())
+				return false;
+			if (isVolatile() != pt.isVolatile())
+				return false;
 
 			return pt.getType().isSameType(nextType);
-        }
-    	return false;
+		}
+		return false;
 	}
 
 	@Override
@@ -82,16 +86,16 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
 		return (qualifiers & IS_VOLATILE) != 0;
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen.
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen.
+		}
+		return t;
+	}
 
 	public void setQualifiers(int qualifiers) {
 		this.qualifiers = qualifiers;
@@ -100,16 +104,19 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes = ITypeMarshalBuffer.POINTER_TYPE;
-		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
-		if (isRestrict()) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		if (isConst())
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile())
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict())
+			firstBytes |= ITypeMarshalBuffer.FLAG3;
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		IType nested= buffer.unmarshalType();
-		return new CPointerType(nested, firstBytes/ITypeMarshalBuffer.FLAG1);
+		IType nested = buffer.unmarshalType();
+		return new CPointerType(nested, firstBytes / ITypeMarshalBuffer.FLAG1);
 	}
 
 	@Override

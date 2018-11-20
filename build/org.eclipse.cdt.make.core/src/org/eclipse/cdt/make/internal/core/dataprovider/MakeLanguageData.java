@@ -21,7 +21,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.PathInfoToLangSetti
 
 public class MakeLanguageData extends UserAndDiscoveredEntryLanguageData {
 	private PathInfo fDiscoveredCache;
-	
+
 	public MakeLanguageData() {
 		super();
 	}
@@ -40,25 +40,22 @@ public class MakeLanguageData extends UserAndDiscoveredEntryLanguageData {
 	@Override
 	protected void copySettingsFrom(CLanguageData data) {
 		super.copySettingsFrom(data);
-		if(data instanceof MakeLanguageData){
-			fDiscoveredCache = ((MakeLanguageData)data).fDiscoveredCache;
+		if (data instanceof MakeLanguageData) {
+			fDiscoveredCache = ((MakeLanguageData) data).fDiscoveredCache;
 		}
 	}
 
 	@Override
 	protected ICLanguageSettingEntry[] getAllDiscoveredEntries(int kind) {
-		if(fDiscoveredCache != null){
+		if (fDiscoveredCache != null) {
 			int roFlag = canDisableDiscoveredEntries(kind) ? 0 : ICLanguageSettingEntry.READONLY;
-			return PathInfoToLangSettingsConverter.entriesForKind(kind, 
-					roFlag 
-					| ICLanguageSettingEntry.BUILTIN
-					| ICLanguageSettingEntry.RESOLVED,
-					fDiscoveredCache);
+			return PathInfoToLangSettingsConverter.entriesForKind(kind,
+					roFlag | ICLanguageSettingEntry.BUILTIN | ICLanguageSettingEntry.RESOLVED, fDiscoveredCache);
 		}
 		return null;
 	}
-	
-	protected void setDiscoveredInfo(PathInfo info){
+
+	protected void setDiscoveredInfo(PathInfo info) {
 		fDiscoveredCache = info;
 	}
 }

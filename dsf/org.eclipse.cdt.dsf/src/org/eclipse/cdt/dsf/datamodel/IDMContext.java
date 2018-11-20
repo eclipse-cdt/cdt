@@ -42,23 +42,22 @@ import org.eclipse.core.runtime.IAdaptable;
  * @since 1.0
  */
 @Immutable
-public interface IDMContext extends IAdaptable 
-{
-    /** 
-     * Each model context object needs to track the session from which it 
-     * originated.  The session ID allows clients to choose the correct
-     * dispatch thread with which to access the service, and it allows the
-     * service to be uniquely identified among other sessions.   
-     * @return Session ID of the service that originated the context.
-     */
-    public String getSessionId();
-    
-    /**
-     * Returns the parent context of this context.  ModelContext objects can be 
-     * chained this way to allow methods that require context from multiple 
-     * services to retrieve this context from a single handle that comes from
-     * the client.
-     * @return parent context of this context.
-     */
-    public IDMContext[] getParents();
+public interface IDMContext extends IAdaptable {
+	/** 
+	 * Each model context object needs to track the session from which it 
+	 * originated.  The session ID allows clients to choose the correct
+	 * dispatch thread with which to access the service, and it allows the
+	 * service to be uniquely identified among other sessions.   
+	 * @return Session ID of the service that originated the context.
+	 */
+	public String getSessionId();
+
+	/**
+	 * Returns the parent context of this context.  ModelContext objects can be 
+	 * chained this way to allow methods that require context from multiple 
+	 * services to retrieve this context from a single handle that comes from
+	 * the client.
+	 * @return parent context of this context.
+	 */
+	public IDMContext[] getParents();
 }

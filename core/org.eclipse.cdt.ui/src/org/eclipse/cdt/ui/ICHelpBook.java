@@ -32,11 +32,10 @@ public interface ICHelpBook {
 	 * @return String representing the HelpBook tytle
 	 */
 	String getTitle();
-	
+
 	/**
 	 * gets the type of Help provided with this book that might be ine of ICHelpBook.HELP_TYPE_XXX
 	 * @return one of ICHelpBook.HELP_TYPE_XXX representing the type of Provided help
 	 */
 	int getCHelpType();
 }
-

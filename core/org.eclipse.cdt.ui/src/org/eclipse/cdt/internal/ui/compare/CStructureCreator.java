@@ -76,7 +76,7 @@ public class CStructureCreator extends StructureCreator {
 	@Override
 	public String getContents(Object node, boolean ignoreWhitespace) {
 		if (node instanceof IDocumentRange) {
-			IDocumentRange documentRange= (IDocumentRange)node;
+			IDocumentRange documentRange = (IDocumentRange) node;
 			final Position range = documentRange.getRange();
 			try {
 				return documentRange.getDocument().get(range.getOffset(), range.getLength());
@@ -97,28 +97,27 @@ public class CStructureCreator extends StructureCreator {
 	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#createStructureComparator(java.lang.Object, org.eclipse.jface.text.IDocument, org.eclipse.compare.ISharedDocumentAdapter, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected IStructureComparator createStructureComparator(Object element,
-			IDocument document, ISharedDocumentAdapter sharedDocumentAdapter,
-			IProgressMonitor monitor) throws CoreException {
+	protected IStructureComparator createStructureComparator(Object element, IDocument document,
+			ISharedDocumentAdapter sharedDocumentAdapter, IProgressMonitor monitor) throws CoreException {
 
-		DocumentRangeNode root= new StructureRootNode(document, element, this, sharedDocumentAdapter);
+		DocumentRangeNode root = new StructureRootNode(document, element, this, sharedDocumentAdapter);
 
 		// don't follow inclusions
 		IncludeFileContentProvider contentProvider = IncludeFileContentProvider.getEmptyFilesProvider();
-		
+
 		// empty scanner info
-		IScannerInfo scanInfo= new ScannerInfo();
-		
+		IScannerInfo scanInfo = new ScannerInfo();
+
 		// determine the language
-		boolean isSource[]= {false};
-		ILanguage language= determineLanguage(element, isSource);
-		
+		boolean isSource[] = { false };
+		ILanguage language = determineLanguage(element, isSource);
+
 		FileContent content = FileContent.create("<text>", isSource[0], document.get().toCharArray()); //$NON-NLS-1$
-		
+
 		try {
-			IASTTranslationUnit ast = language.getASTTranslationUnit(content, scanInfo, contentProvider, null,
-					0, ParserUtil.getParserLogService());
-			CStructureCreatorVisitor structureCreator= new CStructureCreatorVisitor(root);
+			IASTTranslationUnit ast = language.getASTTranslationUnit(content, scanInfo, contentProvider, null, 0,
+					ParserUtil.getParserLogService());
+			CStructureCreatorVisitor structureCreator = new CStructureCreatorVisitor(root);
 			// build structure
 			ast.accept(structureCreator);
 		} catch (CoreException exc) {
@@ -135,15 +134,15 @@ public class CStructureCreator extends StructureCreator {
 	 * @return a language instance
 	 */
 	private ILanguage determineLanguage(Object element, boolean[] isSource) {
-		ILanguage language= null;
+		ILanguage language = null;
 		if (element instanceof ResourceNode) {
-			IResource resource= ((ResourceNode)element).getResource();
+			IResource resource = ((ResourceNode) element).getResource();
 			if (resource.getType() == IResource.FILE) {
-				ITranslationUnit tUnit= (ITranslationUnit)CoreModel.getDefault().create(resource);
+				ITranslationUnit tUnit = (ITranslationUnit) CoreModel.getDefault().create(resource);
 				if (tUnit != null) {
 					try {
-						language= tUnit.getLanguage();
-						isSource[0]= tUnit.isSourceUnit();
+						language = tUnit.getLanguage();
+						isSource[0] = tUnit.isSourceUnit();
 					} catch (CoreException exc) {
 						// silently ignored
 					}
@@ -151,7 +150,7 @@ public class CStructureCreator extends StructureCreator {
 			}
 		}
 		if (language == null) {
-			language= GPPLanguage.getDefault();
+			language = GPPLanguage.getDefault();
 		}
 		return language;
 	}
@@ -160,26 +159,26 @@ public class CStructureCreator extends StructureCreator {
 	protected String getDocumentPartitioning() {
 		return ICPartitions.C_PARTITIONING;
 	}
-	
+
 	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		// use workspace default for highlighting doc comments in compare viewer
-		IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();
+		IDocCommentOwner owner = DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();
 		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner(owner);
 	}
-	
+
 	private static String readString(IStreamContentAccessor sa) throws CoreException {
-		InputStream is= sa.getContents();
+		InputStream is = sa.getContents();
 		if (is != null) {
-			String encoding= null;
+			String encoding = null;
 			if (sa instanceof IEncodedStreamContentAccessor) {
 				try {
-					encoding= ((IEncodedStreamContentAccessor) sa).getCharset();
+					encoding = ((IEncodedStreamContentAccessor) sa).getCharset();
 				} catch (Exception e) {
 				}
 			}
 			if (encoding == null)
-				encoding= ResourcesPlugin.getEncoding();
+				encoding = ResourcesPlugin.getEncoding();
 			return readString(is, encoding);
 		}
 		return null;
@@ -188,18 +187,18 @@ public class CStructureCreator extends StructureCreator {
 	private static String readString(InputStream is, String encoding) {
 		if (is == null)
 			return null;
-		BufferedReader reader= null;
+		BufferedReader reader = null;
 		try {
-			StringBuilder buffer= new StringBuilder();
-			char[] part= new char[2048];
-			int read= 0;
-			reader= new BufferedReader(new InputStreamReader(is, encoding));
+			StringBuilder buffer = new StringBuilder();
+			char[] part = new char[2048];
+			int read = 0;
+			reader = new BufferedReader(new InputStreamReader(is, encoding));
 
-			while ((read= reader.read(part)) != -1)
+			while ((read = reader.read(part)) != -1)
 				buffer.append(part, 0, read);
-			
+
 			return buffer.toString();
-			
+
 		} catch (IOException ex) {
 			// NeedWork
 		} finally {

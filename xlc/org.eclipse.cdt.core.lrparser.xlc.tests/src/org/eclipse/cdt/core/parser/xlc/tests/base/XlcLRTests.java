@@ -26,15 +26,15 @@ public class XlcLRTests extends LRTests {
 		super(name);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public static TestSuite suite() {
 		return suite(XlcLRTests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

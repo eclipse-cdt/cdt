@@ -37,11 +37,11 @@ import org.eclipse.jface.viewers.ViewerFilter;
 @Deprecated
 public class ArchiveFileFilter extends ViewerFilter {
 
-	private static final String[] fgArchiveExtensions= { "a", "so", "dll" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String[] fgArchiveExtensions = { "a", "so", "dll" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private List<IFile> fExcludes;
 	private boolean fRecursive;
-	
+
 	/**
 	 * @param excludedFiles Excluded files will not pass the filter.
 	 * <code>null</code> is allowed if no files should be excluded. 
@@ -50,13 +50,13 @@ public class ArchiveFileFilter extends ViewerFilter {
 	 */
 	public ArchiveFileFilter(IFile[] excludedFiles, boolean recusive) {
 		if (excludedFiles != null) {
-			fExcludes= Arrays.asList(excludedFiles);
+			fExcludes = Arrays.asList(excludedFiles);
 		} else {
-			fExcludes= null;
+			fExcludes = null;
 		}
-		fRecursive= recusive;
+		fRecursive = recusive;
 	}
-	
+
 	/*
 	 * @see ViewerFilter#select
 	 */
@@ -66,14 +66,14 @@ public class ArchiveFileFilter extends ViewerFilter {
 			if (fExcludes != null && fExcludes.contains(element)) {
 				return false;
 			}
-			return isArchivePath(((IFile)element).getFullPath());
+			return isArchivePath(((IFile) element).getFullPath());
 		} else if (element instanceof IContainer) { // IProject, IFolder
 			if (!fRecursive) {
 				return true;
 			}
 			try {
-				IResource[] resources= ((IContainer)element).members();
-				for (int i= 0; i < resources.length; i++) {
+				IResource[] resources = ((IContainer) element).members();
+				for (int i = 0; i < resources.length; i++) {
 					// recursive! Only show containers that contain an archive
 					if (select(viewer, parent, resources[i])) {
 						return true;
@@ -81,26 +81,26 @@ public class ArchiveFileFilter extends ViewerFilter {
 				}
 			} catch (CoreException e) {
 				CUIPlugin.log(e.getStatus());
-			}				
+			}
 		}
 		return false;
 	}
-	
+
 	public static boolean isArchivePath(IPath path) {
-		String ext= path.getFileExtension();
+		String ext = path.getFileExtension();
 		if (ext != null && ext.length() != 0) {
 			return isArchiveFileExtension(ext);
 		}
 		return false;
 	}
-	
+
 	public static boolean isArchiveFileExtension(String ext) {
-		for (int i= 0; i < fgArchiveExtensions.length; i++) {
+		for (int i = 0; i < fgArchiveExtensions.length; i++) {
 			if (ext.equalsIgnoreCase(fgArchiveExtensions[i])) {
 				return true;
 			}
 		}
 		return false;
 	}
-			
+
 }

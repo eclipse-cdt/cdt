@@ -41,8 +41,8 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	private boolean fIsChanged = false;
 	private boolean fIsReadOnly;
 
-	private HashMap<String, ICdtVariable> getMap(){
-		if(fMacros == null)
+	private HashMap<String, ICdtVariable> getMap() {
+		if (fMacros == null)
 			fMacros = new HashMap<String, ICdtVariable>();
 		return fMacros;
 	}
@@ -53,7 +53,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 
 	@SuppressWarnings("unchecked")
 	public StorableCdtVariables(StorableCdtVariables base, boolean readOnly) {
-		fMacros = (HashMap<String, ICdtVariable>)base.getMap().clone();
+		fMacros = (HashMap<String, ICdtVariable>) base.getMap().clone();
 		fIsReadOnly = readOnly;
 	}
 
@@ -70,8 +70,8 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		fIsReadOnly = readOnly;
 	}
 
-	private void load(ICStorageElement element){
-//		fExpandInMakefile = TRUE.equals(element.getAttribute(EXPAND_ENVIRONMENT_MACROS));
+	private void load(ICStorageElement element) {
+		//		fExpandInMakefile = TRUE.equals(element.getAttribute(EXPAND_ENVIRONMENT_MACROS));
 
 		ICStorageElement nodeList[] = element.getChildren();
 		for (int i = 0; i < nodeList.length; ++i) {
@@ -79,8 +79,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 			String name = node.getName();
 			if (StorableCdtVariable.STRING_MACRO_ELEMENT_NAME.equals(name)) {
 				addMacro(new StorableCdtVariable(node));
-			}
-			else if (StorableCdtVariable.STRINGLIST_MACRO_ELEMENT_NAME.equals(name)) {
+			} else if (StorableCdtVariable.STRINGLIST_MACRO_ELEMENT_NAME.equals(name)) {
 				addMacro(new StorableCdtVariable(node));
 			}
 		}
@@ -88,12 +87,12 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		fIsChanged = false;
 	}
 
-	public void serialize(ICStorageElement element){
-		if(fMacros != null){
-			for (ICdtVariable v : fMacros.values()){
-				StorableCdtVariable macro = (StorableCdtVariable)v;
+	public void serialize(ICStorageElement element) {
+		if (fMacros != null) {
+			for (ICdtVariable v : fMacros.values()) {
+				StorableCdtVariable macro = (StorableCdtVariable) v;
 				ICStorageElement macroEl;
-				if(CdtVariableResolver.isStringListVariable(macro.getValueType()))
+				if (CdtVariableResolver.isStringListVariable(macro.getValueType()))
 					macroEl = element.createChild(StorableCdtVariable.STRINGLIST_MACRO_ELEMENT_NAME);
 				else
 					macroEl = element.createChild(StorableCdtVariable.STRING_MACRO_ELEMENT_NAME);
@@ -103,21 +102,21 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		fIsDirty = false;
 	}
 
-	private void addMacro(ICdtVariable macro){
+	private void addMacro(ICdtVariable macro) {
 		String name = macro.getName();
-		if(name == null)
+		if (name == null)
 			return;
 
-		getMap().put(name,macro);
+		getMap().put(name, macro);
 	}
 
 	@Override
-	public ICdtVariable createMacro(String name, int type, String value){
-		if(name == null || "".equals(name = name.trim()) || CdtVariableResolver.isStringListVariable(type)) //$NON-NLS-1$
+	public ICdtVariable createMacro(String name, int type, String value) {
+		if (name == null || "".equals(name = name.trim()) || CdtVariableResolver.isStringListVariable(type)) //$NON-NLS-1$
 			return null;
 
 		ICdtVariable macro = checkMacro(name, type, value);
-		if(macro == null){
+		if (macro == null) {
 			macro = new StorableCdtVariable(name, type, value);
 			addMacro(macro);
 			fIsDirty = true;
@@ -126,18 +125,15 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		return macro;
 	}
 
-	public ICdtVariable checkMacro(String name, int type, String value){
-		if(fIsReadOnly)
+	public ICdtVariable checkMacro(String name, int type, String value) {
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 		ICdtVariable macro = getMacro(name);
-		if(macro != null){
-			if(macro.getName().equals(name)
-					&& macro.getValueType() == type){
+		if (macro != null) {
+			if (macro.getName().equals(name) && macro.getValueType() == type) {
 				try {
 					String val = macro.getStringValue();
-					if((val != null
-								&& val.equals(value))
-							|| val == value){
+					if ((val != null && val.equals(value)) || val == value) {
 						return macro;
 					}
 				} catch (CdtVariableException e) {
@@ -147,26 +143,25 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		return null;
 	}
 
-	public ICdtVariable checkMacro(String name, int type, String value[]){
-		if(fIsReadOnly)
+	public ICdtVariable checkMacro(String name, int type, String value[]) {
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 		ICdtVariable macro = getMacro(name);
-		if(macro != null){
-			if(macro.getName().equals(name)
-					&& macro.getValueType() == type){
+		if (macro != null) {
+			if (macro.getName().equals(name) && macro.getValueType() == type) {
 				try {
 					String val[] = macro.getStringListValue();
-					if(val != null){
-						if(value != null && value.length == val.length){
+					if (val != null) {
+						if (value != null && value.length == val.length) {
 							int i;
-							for(i = 0; i < val.length; i++){
-								if(!value[i].equals(val[i]))
+							for (i = 0; i < val.length; i++) {
+								if (!value[i].equals(val[i]))
 									break;
 							}
-							if(i == value.length)
+							if (i == value.length)
 								return macro;
 						}
-					} else if (value == val){
+					} else if (value == val) {
 						return macro;
 					}
 				} catch (CdtVariableException e) {
@@ -181,26 +176,26 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	 * all macros that are present in the store but not included in the given array
 	 * will be removed
 	 */
-	public void setMacros(ICdtVariable macros[]){
-		if(fIsReadOnly)
+	public void setMacros(ICdtVariable macros[]) {
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-		if(macros == null || macros.length == 0)
+		if (macros == null || macros.length == 0)
 			deleteAll();
-		else{
+		else {
 			if (getMap().size() != 0) {
 				Set<String> existing = new HashSet<String>();
 				Set<String> macroNames = new HashSet<String>();
-				
-				for (ICdtVariable m : getMap().values()){
+
+				for (ICdtVariable m : getMap().values()) {
 					existing.add(m.getName());
 				}
-				
-				for (ICdtVariable m : macros){
+
+				for (ICdtVariable m : macros) {
 					macroNames.add(m.getName());
 				}
-				
-				for (String name : existing){
-					if (!macroNames.contains(name)){
+
+				for (String name : existing) {
+					if (!macroNames.contains(name)) {
 						deleteMacro(name);
 					}
 				}
@@ -210,8 +205,8 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	}
 
 	@Override
-	public void createMacros(ICdtVariable macros[]){
-		if(fIsReadOnly)
+	public void createMacros(ICdtVariable macros[]) {
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 		for (ICdtVariable macro : macros) {
 			createMacro(macro);
@@ -219,36 +214,35 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	}
 
 	@Override
-	public boolean isEmpty(){
+	public boolean isEmpty() {
 		return fMacros == null || fMacros.isEmpty();
 	}
 
 	@Override
-	public ICdtVariable createMacro(ICdtVariable copy){
-		if(fIsReadOnly)
+	public ICdtVariable createMacro(ICdtVariable copy) {
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 		String name = copy.getName();
-		if(name == null || "".equals(name = name.trim())) //$NON-NLS-1$
+		if (name == null || "".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
 
 		int type = copy.getValueType();
 
 		ICdtVariable macro = null;
-		try{
-			if(CdtVariableResolver.isStringListVariable(type)){
+		try {
+			if (CdtVariableResolver.isStringListVariable(type)) {
 				String value[] = copy.getStringListValue();
 				macro = checkMacro(name, type, value);
-				if(macro == null){
+				if (macro == null) {
 					macro = new StorableCdtVariable(name, type, value);
 					addMacro(macro);
 					fIsDirty = true;
 					fIsChanged = true;
 				}
-			}
-			else {
+			} else {
 				String value = copy.getStringValue();
 				macro = checkMacro(name, type, value);
-				if(macro == null){
+				if (macro == null) {
 					macro = new StorableCdtVariable(name, type, value);
 					addMacro(macro);
 					fIsDirty = true;
@@ -256,18 +250,18 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 				}
 			}
 
-		}catch(CdtVariableException e){
+		} catch (CdtVariableException e) {
 		}
 		return macro;
 	}
 
 	@Override
-	public ICdtVariable createMacro(String name, int type, String value[]){
-		if(name == null || "".equals(name = name.trim()) || !CdtVariableResolver.isStringListVariable(type)) //$NON-NLS-1$
+	public ICdtVariable createMacro(String name, int type, String value[]) {
+		if (name == null || "".equals(name = name.trim()) || !CdtVariableResolver.isStringListVariable(type)) //$NON-NLS-1$
 			return null;
 
 		ICdtVariable macro = checkMacro(name, type, value);
-		if(macro == null){
+		if (macro == null) {
 			macro = new StorableCdtVariable(name, type, value);
 			addMacro(macro);
 			fIsDirty = true;
@@ -285,7 +279,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	 * by calling the serialize() method
 	 * @return boolean
 	 */
-	public boolean isDirty(){
+	public boolean isDirty() {
 		return fIsDirty;
 	}
 
@@ -294,7 +288,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	 * @see org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables#isDirty()
 	 * @param dirty represents the new state
 	 */
-	public void setDirty(boolean dirty){
+	public void setDirty(boolean dirty) {
 		fIsDirty = dirty;
 	}
 
@@ -307,45 +301,44 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	 * @return boolean
 	 */
 	@Override
-	public boolean isChanged(){
+	public boolean isChanged() {
 		return fIsChanged;
 	}
 
-/*	public boolean isExpanded(){
-		return fExpandInMakefile;
-	}
-*/
-/*	public void setExpanded(boolean expand){
-		if(fExpandInMakefile != expand){
-			fExpandInMakefile = expand;
-			fIsDirty = true;
-			//should we set the change state here?
-			fIsChanged = true;
+	/*	public boolean isExpanded(){
+			return fExpandInMakefile;
 		}
-	}
-*/
+	*/
+	/*	public void setExpanded(boolean expand){
+			if(fExpandInMakefile != expand){
+				fExpandInMakefile = expand;
+				fIsDirty = true;
+				//should we set the change state here?
+				fIsChanged = true;
+			}
+		}
+	*/
 	/**
 	 * sets the "change" state for this set of macros.
 	 * @see org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables#isChanged()
 	 * @param changed represents the new "change" state
 	 */
-	public void setChanged(boolean changed){
+	public void setChanged(boolean changed) {
 		fIsChanged = changed;
 	}
 
 	@Override
-	public ICdtVariable getMacro(String name){
-		if(name == null || "".equals(name = name.trim())) //$NON-NLS-1$
+	public ICdtVariable getMacro(String name) {
+		if (name == null || "".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
 
 		ICdtVariable var = getMap().get(name);
-		if(var == null){
+		if (var == null) {
 			int indx = name.indexOf(':');
-			if(indx != -1){
+			if (indx != -1) {
 				String baseName = name.substring(0, indx);
 				ICdtVariable tmp = getMap().get(baseName);
-				if(tmp != null
-						&& CdtVariableManager.getDefault().toEclipseVariable(tmp, null) != null){
+				if (tmp != null && CdtVariableManager.getDefault().toEclipseVariable(tmp, null) != null) {
 					var = EclipseVariablesVariableSupplier.getInstance().getVariable(name);
 				}
 			}
@@ -354,21 +347,21 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	}
 
 	@Override
-	public ICdtVariable[] getMacros(){
+	public ICdtVariable[] getMacros() {
 		Collection<ICdtVariable> macros = getMap().values();
 		return macros.toArray(new ICdtVariable[macros.size()]);
 	}
 
 	@Override
-	public ICdtVariable deleteMacro(String name){
-		if(fIsReadOnly)
+	public ICdtVariable deleteMacro(String name) {
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 
-		if(name == null || "".equals(name = name.trim())) //$NON-NLS-1$
+		if (name == null || "".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
 
 		ICdtVariable macro = getMap().remove(name);
-		if(macro != null){
+		if (macro != null) {
 			fIsDirty = true;
 			fIsChanged = true;
 		}
@@ -377,11 +370,11 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	}
 
 	@Override
-	public boolean deleteAll(){
-		if(fIsReadOnly)
+	public boolean deleteAll() {
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 		Map<String, ICdtVariable> map = getMap();
-		if(map.size() > 0){
+		if (map.size() > 0) {
 			fIsDirty = true;
 			fIsChanged = true;
 			map.clear();
@@ -391,12 +384,12 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	}
 
 	@Override
-	public boolean contains(ICdtVariable var){
+	public boolean contains(ICdtVariable var) {
 		ICdtVariable curVar = getMacro(var.getName());
-		if(curVar == null)
+		if (curVar == null)
 			return false;
 
-		if(new VarKey(curVar, false).equals(new VarKey(var, false)))
+		if (new VarKey(curVar, false).equals(new VarKey(var, false)))
 			return true;
 
 		return false;

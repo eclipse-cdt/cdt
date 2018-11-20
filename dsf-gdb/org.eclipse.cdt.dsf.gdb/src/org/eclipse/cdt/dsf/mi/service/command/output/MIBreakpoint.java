@@ -75,49 +75,49 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
  * For examples, see {@link MIBreakpoints#createMIBreakpoint(MITuple)} or
  * {@link MIBreakInsertInfo#createMIBreakpoint(MITuple)}
  */
-public class MIBreakpoint  {
+public class MIBreakpoint {
 
-    String  number   = ""; //$NON-NLS-1$
-    String  type     = "";  //$NON-NLS-1$
-    String  disp     = "";  //$NON-NLS-1$
-    boolean enabled  = false;
-    String  address  = "";  //$NON-NLS-1$
-    String  func     = "";  //$NON-NLS-1$
-    String  fullName = "";  //$NON-NLS-1$
-    String  file     = "";  //$NON-NLS-1$
-    int     line     = -1;
-    String  cond     = "";  //$NON-NLS-1$
-    int     times    = 0;
-    String  exp      = "";  //$NON-NLS-1$
-    String  threadId = "0"; //$NON-NLS-1$
-    int     ignore   = 0;
-    String  commands = ""; //$NON-NLS-1$
-    String  originalLocation = ""; //$NON-NLS-1$
+	String number = ""; //$NON-NLS-1$
+	String type = ""; //$NON-NLS-1$
+	String disp = ""; //$NON-NLS-1$
+	boolean enabled = false;
+	String address = ""; //$NON-NLS-1$
+	String func = ""; //$NON-NLS-1$
+	String fullName = ""; //$NON-NLS-1$
+	String file = ""; //$NON-NLS-1$
+	int line = -1;
+	String cond = ""; //$NON-NLS-1$
+	int times = 0;
+	String exp = ""; //$NON-NLS-1$
+	String threadId = "0"; //$NON-NLS-1$
+	int ignore = 0;
+	String commands = ""; //$NON-NLS-1$
+	String originalLocation = ""; //$NON-NLS-1$
 
-    // For tracepoints
-    int     passcount = 0;
-    // For dynamic printf
-    String  printfString;
-    
-    boolean isWpt  = false;
-    boolean isAWpt = false;
-    boolean isRWpt = false;
-    boolean isWWpt = false;
-    boolean isHdw  = false;
+	// For tracepoints
+	int passcount = 0;
+	// For dynamic printf
+	String printfString;
 
-    // Indicate if we are dealing with a tracepoint. 
-    // (if its a fast or normal tracepoint can be known through the 'type' field)
-    boolean isTpt = false;
+	boolean isWpt = false;
+	boolean isAWpt = false;
+	boolean isRWpt = false;
+	boolean isWWpt = false;
+	boolean isHdw = false;
 
-    /** See {@link #isCatchpoint()} */
-    boolean isCatchpoint;
+	// Indicate if we are dealing with a tracepoint. 
+	// (if its a fast or normal tracepoint can be known through the 'type' field)
+	boolean isTpt = false;
+
+	/** See {@link #isCatchpoint()} */
+	boolean isCatchpoint;
 
 	/** See {@link #getCatchpointType()} */
 	private String catchpointType;
-	
-    /** See {@link #isDynamicPrintf()} */	
+
+	/** See {@link #isDynamicPrintf()} */
 	private boolean isDynPrintf;
-	
+
 	/** 
 	 * A pending breakpoint is a breakpoint that did not install properly,
 	 * but that will be kept in the hopes that it installs later, triggered by
@@ -125,7 +125,7 @@ public class MIBreakpoint  {
 	 * This concept is only supported starting with GDB 6.8
 	 */
 	private boolean pending;
-	
+
 	/**
 	 * The list of groupIds to which this breakpoint applies.
 	 * This field is only reported by MI starting with GDB 7.6.
@@ -153,36 +153,36 @@ public class MIBreakpoint  {
 	 *            breakpoint to copy from
 	 */
 	public MIBreakpoint(MIBreakpoint other) {
-        number   = other.number;
-        type     = other.type;
-        disp     = other.disp;
-        enabled  = other.enabled;
-        address  = other.address;
-        func     = other.func;
-        fullName = other.fullName;
-        file     = other.file;
-        line     = other.line;
-        cond     = other.cond;
-        times    = other.times;
-        exp      = other.exp;
-        threadId = other.threadId;
-        ignore   = other.ignore;
-        commands = other.commands;
-        passcount= other.passcount;
-        isWpt    = other.isWpt;
-        isAWpt   = other.isAWpt;
-        isRWpt   = other.isRWpt;
-        isWWpt   = other.isWWpt;
-        isHdw    = other.isHdw;
-        isTpt    = other.isTpt;
-        isCatchpoint = other.isCatchpoint;
-        catchpointType = other.catchpointType;
-        isDynPrintf = other.isDynPrintf;
-        pending = other.pending;
-        originalLocation = other.originalLocation;
-        if (other.groupIds != null) {
-        	groupIds = Arrays.copyOf(other.groupIds, other.groupIds.length);
-        }
+		number = other.number;
+		type = other.type;
+		disp = other.disp;
+		enabled = other.enabled;
+		address = other.address;
+		func = other.func;
+		fullName = other.fullName;
+		file = other.file;
+		line = other.line;
+		cond = other.cond;
+		times = other.times;
+		exp = other.exp;
+		threadId = other.threadId;
+		ignore = other.ignore;
+		commands = other.commands;
+		passcount = other.passcount;
+		isWpt = other.isWpt;
+		isAWpt = other.isAWpt;
+		isRWpt = other.isRWpt;
+		isWWpt = other.isWWpt;
+		isHdw = other.isHdw;
+		isTpt = other.isTpt;
+		isCatchpoint = other.isCatchpoint;
+		catchpointType = other.catchpointType;
+		isDynPrintf = other.isDynPrintf;
+		pending = other.pending;
+		originalLocation = other.originalLocation;
+		if (other.groupIds != null) {
+			groupIds = Arrays.copyOf(other.groupIds, other.groupIds.length);
+		}
 	}
 
 	/**
@@ -236,10 +236,10 @@ public class MIBreakpoint  {
 	 *            "Catchpoint 1 (catch)"
 	 * @since 3.0
 	 */
-    public MIBreakpoint(String cliResult) {
+	public MIBreakpoint(String cliResult) {
 		if (cliResult.startsWith("Catchpoint ")) { //$NON-NLS-1$ 
 			String bkptNumber = ""; //$NON-NLS-1$
-	
+
 			StringTokenizer tokenizer = new StringTokenizer(cliResult);
 			for (int i = 0; tokenizer.hasMoreTokens(); i++) {
 				String sub = tokenizer.nextToken();
@@ -251,102 +251,100 @@ public class MIBreakpoint  {
 					break;
 				case 2: // third token is the event type; drop the parenthesis
 					if (sub.startsWith("(")) { //$NON-NLS-1$
-						sub = sub.substring(1, sub.length()-1);
+						sub = sub.substring(1, sub.length() - 1);
 					}
 					catchpointType = sub;
 					break;
 				}
 			}
-			
+
 			number = bkptNumber;
 			isCatchpoint = true;
 			enabled = true;
-		}
-		else {
+		} else {
 			assert false : "unexpected CLI output: " + cliResult; //$NON-NLS-1$
 		}
-    }
+	}
 
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Properties getters 
-    ///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	// Properties getters 
+	///////////////////////////////////////////////////////////////////////////
 
 	/** @since 5.0 */
 	public String getNumber() {
-        return number;
-    }
+		return number;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public String getDisposition() {
-        return disp;
-    }
+	public String getDisposition() {
+		return disp;
+	}
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    public void setEnabled(boolean e) {
-        enabled = e;
-    }
+	public void setEnabled(boolean e) {
+		enabled = e;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public String getFunction() {
-        return func;
-    }
+	public String getFunction() {
+		return func;
+	}
 
-    public String getFile() {
-        return file;
-    }
+	public String getFile() {
+		return file;
+	}
 
-    public String getFullName() {
-        return fullName;
-    }
+	public String getFullName() {
+		return fullName;
+	}
 
-    public int getLine() {
-        return line;
-    }
+	public int getLine() {
+		return line;
+	}
 
-    public String getCondition() {
-        return cond;
-    }
+	public String getCondition() {
+		return cond;
+	}
 
-    public void setCondition(String condition) {
-        cond = condition;
-    }
+	public void setCondition(String condition) {
+		cond = condition;
+	}
 
-    public int getIgnoreCount() {
-        return ignore;
-    }
+	public int getIgnoreCount() {
+		return ignore;
+	}
 
-    public void setIgnoreCount(int ignoreCount) {
-        ignore = ignoreCount;
-    }
+	public void setIgnoreCount(int ignoreCount) {
+		ignore = ignoreCount;
+	}
 
-    public String getThreadId() {
-        return threadId;
-    }
+	public String getThreadId() {
+		return threadId;
+	}
 
-    public int getTimes() {
-        return times;
-    }
+	public int getTimes() {
+		return times;
+	}
 
-    public String getExpression() {
-        return exp;
-    }
+	public String getExpression() {
+		return exp;
+	}
 
-    /**
+	/**
 	 * @since 4.2
 	 */
-    public String getOriginalLocation() {
-    	return originalLocation;
-    }
+	public String getOriginalLocation() {
+		return originalLocation;
+	}
 
 	/**
 	 * If isCatchpoint is true, then this indicates the type of catchpoint
@@ -355,317 +353,319 @@ public class MIBreakpoint  {
 	 * 
 	 * @since 3.0
 	 */
-    public String getCatchpointType() {
-    	return catchpointType;
-    }
-
-    public boolean isTemporary() {
-        return getDisposition().equals("del"); //$NON-NLS-1$
-    }
-
-    /**
-     * Will return true if we are dealing with a hardware breakpoint.
-     * Note that this method will return false for tracepoint, even
-     * if it is a fast tracepoint.
-     */
-    public boolean isHardware() {
-        return isHdw;
-    }
-
-	public void setHardware(boolean b) {
-		isHdw = b;		
+	public String getCatchpointType() {
+		return catchpointType;
 	}
 
-    public boolean isWatchpoint() {
-        return isWpt;
-    }
+	public boolean isTemporary() {
+		return getDisposition().equals("del"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Will return true if we are dealing with a hardware breakpoint.
+	 * Note that this method will return false for tracepoint, even
+	 * if it is a fast tracepoint.
+	 */
+	public boolean isHardware() {
+		return isHdw;
+	}
+
+	public void setHardware(boolean b) {
+		isHdw = b;
+	}
+
+	public boolean isWatchpoint() {
+		return isWpt;
+	}
 
 	public void isWatchpoint(boolean b) {
 		isWpt = b;
 	}
 
-    public boolean isAccessWatchpoint() {
-        return isAWpt;
-    }
+	public boolean isAccessWatchpoint() {
+		return isAWpt;
+	}
 
 	public void setAccessWatchpoint(boolean b) {
 		isWpt = b;
-		isAWpt = b;		
+		isAWpt = b;
 	}
 
-    public boolean isReadWatchpoint() {
-        return isRWpt;
-    }
+	public boolean isReadWatchpoint() {
+		return isRWpt;
+	}
 
 	public void setReadWatchpoint(boolean b) {
 		isWpt = b;
 		isRWpt = b;
 	}
 
-    public boolean isWriteWatchpoint() {
-        return isWWpt;
-    }
+	public boolean isWriteWatchpoint() {
+		return isWWpt;
+	}
 
 	public void setWriteWatchpoint(boolean b) {
 		isWpt = b;
 		isWWpt = b;
 	}
 
-    /**
-     * Return whether this breakpoint is actually a tracepoint.
-     * This method will return true for both fast and normal tracepoints.
-     * To know of fast vs normal tracepoint use {@link getType()} and look
-     * for "tracepoint" or "fast tracepoint"
-     * 
+	/**
+	 * Return whether this breakpoint is actually a tracepoint.
+	 * This method will return true for both fast and normal tracepoints.
+	 * To know of fast vs normal tracepoint use {@link getType()} and look
+	 * for "tracepoint" or "fast tracepoint"
+	 * 
 	 * @since 3.0
 	 */
-    public boolean isTracepoint() {
-        return isTpt;
-    }
-    
-    /**
-     * Indicates if we are dealing with a catchpoint.
-     * 
-	 * @since 3.0
-	 */
-    public boolean isCatchpoint() {
-    	return isCatchpoint;
-    }
+	public boolean isTracepoint() {
+		return isTpt;
+	}
 
-    /**
-     * Indicates if we are dealing with a dynamic printf.
-     * 
+	/**
+	 * Indicates if we are dealing with a catchpoint.
+	 * 
+	 * @since 3.0
+	 */
+	public boolean isCatchpoint() {
+		return isCatchpoint;
+	}
+
+	/**
+	 * Indicates if we are dealing with a dynamic printf.
+	 * 
 	 * @since 4.4
 	 */
-    public boolean isDynamicPrintf() {
-    	return isDynPrintf;
-    }
+	public boolean isDynamicPrintf() {
+		return isDynPrintf;
+	}
 
-    /**
-     * Returns the passcount of a tracepoint.  Will return 0 if this
-     * breakpoint is not a tracepoint.
-     * 
+	/**
+	 * Returns the passcount of a tracepoint.  Will return 0 if this
+	 * breakpoint is not a tracepoint.
+	 * 
 	 * @since 3.0
 	 */
-    public int getPassCount() {
-        return passcount;
-    }
+	public int getPassCount() {
+		return passcount;
+	}
 
-    /**
-     * Set the passcount of a tracepoint.  Will not do anything if
-     * this breakpoint is not a tracepoint.
+	/**
+	 * Set the passcount of a tracepoint.  Will not do anything if
+	 * this breakpoint is not a tracepoint.
 	 * @since 3.0
 	 */
-    public void setPassCount(int count) {
-    	if (isTpt == false) return;
-        passcount = count;
-    }
-    
-    /**
-     * Return the commands associated with this breakpoint (or tracepoint)
-     * 
-	 * @since 3.0
-	 */
-    public String getCommands() {
-        return commands;
-    }
+	public void setPassCount(int count) {
+		if (isTpt == false)
+			return;
+		passcount = count;
+	}
 
-    /**
-     * Sets the commands associated with this breakpoint (or tracepoint)
-     * 
+	/**
+	 * Return the commands associated with this breakpoint (or tracepoint)
+	 * 
 	 * @since 3.0
 	 */
-    public void setCommands(String cmds) {
-        commands = cmds;
-    }
-    
-    /**
-     * Return the string the dynamic printf will print.
-     * Returns null if this breakpoint is not a dynamic printf
-     * 
+	public String getCommands() {
+		return commands;
+	}
+
+	/**
+	 * Sets the commands associated with this breakpoint (or tracepoint)
+	 * 
+	 * @since 3.0
+	 */
+	public void setCommands(String cmds) {
+		commands = cmds;
+	}
+
+	/**
+	 * Return the string the dynamic printf will print.
+	 * Returns null if this breakpoint is not a dynamic printf
+	 * 
 	 * @since 4.4
 	 */
-    public String getPrintfString() {
-        if (!isDynamicPrintf()) return null;
-        
-        if (printfString == null) {
-        	// The string is burried inside the list of commands.
-        	// There should be only one command so we shouldn't need the delimiter but it does
-        	// not hurt to use it.  This delimeter is inserted when we parse the commands
-        	// from the result obtained from GDB
-        	String[] commands = getCommands().split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
-        	final String printfToken = "printf";  //$NON-NLS-1$
-        	for (String cmd : commands) {
-        		int pos = cmd.indexOf(printfToken); 
-        		if (pos != -1) {
-        			printfString = cmd.substring(pos + printfToken.length() + 1);
-        		}
-        	}
-        	//		assert false : "Could not get printf string from gdb output"; //$NON-NLS-1$
-        }
+	public String getPrintfString() {
+		if (!isDynamicPrintf())
+			return null;
+
+		if (printfString == null) {
+			// The string is burried inside the list of commands.
+			// There should be only one command so we shouldn't need the delimiter but it does
+			// not hurt to use it.  This delimeter is inserted when we parse the commands
+			// from the result obtained from GDB
+			String[] commands = getCommands().split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
+			final String printfToken = "printf"; //$NON-NLS-1$
+			for (String cmd : commands) {
+				int pos = cmd.indexOf(printfToken);
+				if (pos != -1) {
+					printfString = cmd.substring(pos + printfToken.length() + 1);
+				}
+			}
+			//		assert false : "Could not get printf string from gdb output"; //$NON-NLS-1$
+		}
 		return printfString;
-    }
-    
-    /**
-     * Returns wether this breakpoint is pending
-     * 
-     * @since 4.0
-     */
-    public boolean isPending() {
-    	return pending;
-    }
-    
-    /**
-     * Returns the thread-groups to which this breakpoint applies.
-     * Returns null if the data is not known.
-     * 
-     * @since 4.2
-     */
-    public String[] getGroupIds() {
-    	return groupIds;
-    }
-    
-    /**
-     * Sets the list of thread-groups to which this breakpoint applies.
-     * 
-     * @since 4.2
-     */
-    public void setGroupIds(String[] groups) {
-    	groupIds = groups;
-    }
-    
-    // Parse the result string
-    void parse(MITuple tuple) {
-        MIResult[] results = tuple.getMIResults();
-        for (int i = 0; i < results.length; i++) {
-            String var = results[i].getVariable();
-            MIValue value = results[i].getMIValue();
-            String str = ""; //$NON-NLS-1$
-            if (value != null && value instanceof MIConst) {
-                str = ((MIConst)value).getCString();
-            }
+	}
 
-            if (var.equals("number")) { //$NON-NLS-1$
-            	number = str.trim();
-            } else if (var.equals("type")) { //$NON-NLS-1$
+	/**
+	 * Returns wether this breakpoint is pending
+	 * 
+	 * @since 4.0
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * Returns the thread-groups to which this breakpoint applies.
+	 * Returns null if the data is not known.
+	 * 
+	 * @since 4.2
+	 */
+	public String[] getGroupIds() {
+		return groupIds;
+	}
+
+	/**
+	 * Sets the list of thread-groups to which this breakpoint applies.
+	 * 
+	 * @since 4.2
+	 */
+	public void setGroupIds(String[] groups) {
+		groupIds = groups;
+	}
+
+	// Parse the result string
+	void parse(MITuple tuple) {
+		MIResult[] results = tuple.getMIResults();
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue value = results[i].getMIValue();
+			String str = ""; //$NON-NLS-1$
+			if (value != null && value instanceof MIConst) {
+				str = ((MIConst) value).getCString();
+			}
+
+			if (var.equals("number")) { //$NON-NLS-1$
+				number = str.trim();
+			} else if (var.equals("type")) { //$NON-NLS-1$
 				// Note that catchpoints are reported by gdb as address
 				// breakpoints; there's really nothing we can go on to determine
 				// that it's actually a catchpoint (short of using a really ugly
 				// and fragile hack--looking at the 'what' field for specific values)
-            	
-                type = str;
-                //type="hw watchpoint"
-                if (type.startsWith("hw")) { //$NON-NLS-1$
-                    isHdw = true;
+
+				type = str;
+				//type="hw watchpoint"
+				if (type.startsWith("hw")) { //$NON-NLS-1$
+					isHdw = true;
 					if (type.indexOf("watchpoint") != -1) { //$NON-NLS-1$
 						isWWpt = true;
 						isWpt = true;
 					}
-                }
-                //type="acc watchpoint"
-                if (type.startsWith("acc")) { //$NON-NLS-1$
-                    isAWpt = true;
-                    isWpt = true;
-                }
-                //type="read watchpoint"
-                if (type.startsWith("read")) { //$NON-NLS-1$
-                    isRWpt = true;
-                    isWpt = true;
-                }
-                if (type.startsWith("tracepoint") ||  //$NON-NLS-1$
-                    type.startsWith("fast tracepoint")) { //$NON-NLS-1$
-                	isTpt = true;
-                }
-                if (type.startsWith("catchpoint")) { //$NON-NLS-1$
-                    isCatchpoint = true;
-                }
-                if (type.startsWith("dprintf")) { //$NON-NLS-1$
-                    isDynPrintf = true;
-                }
-                // type="breakpoint"
-                // default ok.
-            } else if (var.equals("disp")) { //$NON-NLS-1$
-                disp = str;
-            } else if (var.equals("enabled")) { //$NON-NLS-1$
-                enabled = str.equals("y"); //$NON-NLS-1$
-            } else if (var.equals("addr")) { //$NON-NLS-1$
-            	address = str.trim();
-            } else if (var.equals("func")) { //$NON-NLS-1$
-                func = str;
-            } else if (var.equals("file")) { //$NON-NLS-1$
-                file = str;
-            } else if (var.equals("fullname")) { //$NON-NLS-1$
-                fullName = str;
-            } else if (var.equals("thread")) { //$NON-NLS-1$
-                threadId = str;
-            } else if (var.equals("line")) { //$NON-NLS-1$
-                try {
-                    line = Integer.parseInt(str.trim());
-                } catch (NumberFormatException e) {
-                }
-            } else if (var.equals("times")) { //$NON-NLS-1$
-                try {
-                    times = Integer.parseInt(str.trim());
-                } catch (NumberFormatException e) {
-                }
-            } else if (var.equals("what") || var.equals("exp")) { //$NON-NLS-1$ //$NON-NLS-2$
-                exp = str;
-            } else if (var.equals("ignore")) { //$NON-NLS-1$
-                try {
-                    ignore = Integer.parseInt(str.trim());
-                } catch (NumberFormatException e) {
-                }
-            } else if (var.equals("pass")) { //$NON-NLS-1$
-                try {
-                    passcount = Integer.parseInt(str.trim());
-                } catch (NumberFormatException e) {
-                }
-            } else if (var.equals("cond")) { //$NON-NLS-1$
-                cond = str;
-            } else if (var.equals("pending")) { //$NON-NLS-1$
-            	// Only supported starting with GDB 6.8
-            	pending = true;
-            } else if (var.equals("script")) { //$NON-NLS-1$
-            	if (value instanceof MITuple) {
-            		parseCommands((MITuple)value);
-            	}
-            } else if (var.equals("thread-groups")) { //$NON-NLS-1$
-                if (value instanceof MIList) {
-            		parseGroups((MIList)value);
-            	}
-            } else if (var.equals("original-location")) { //$NON-NLS-1$
-                originalLocation = str;
-            }
-        }
-    }
+				}
+				//type="acc watchpoint"
+				if (type.startsWith("acc")) { //$NON-NLS-1$
+					isAWpt = true;
+					isWpt = true;
+				}
+				//type="read watchpoint"
+				if (type.startsWith("read")) { //$NON-NLS-1$
+					isRWpt = true;
+					isWpt = true;
+				}
+				if (type.startsWith("tracepoint") || //$NON-NLS-1$
+						type.startsWith("fast tracepoint")) { //$NON-NLS-1$
+					isTpt = true;
+				}
+				if (type.startsWith("catchpoint")) { //$NON-NLS-1$
+					isCatchpoint = true;
+				}
+				if (type.startsWith("dprintf")) { //$NON-NLS-1$
+					isDynPrintf = true;
+				}
+				// type="breakpoint"
+				// default ok.
+			} else if (var.equals("disp")) { //$NON-NLS-1$
+				disp = str;
+			} else if (var.equals("enabled")) { //$NON-NLS-1$
+				enabled = str.equals("y"); //$NON-NLS-1$
+			} else if (var.equals("addr")) { //$NON-NLS-1$
+				address = str.trim();
+			} else if (var.equals("func")) { //$NON-NLS-1$
+				func = str;
+			} else if (var.equals("file")) { //$NON-NLS-1$
+				file = str;
+			} else if (var.equals("fullname")) { //$NON-NLS-1$
+				fullName = str;
+			} else if (var.equals("thread")) { //$NON-NLS-1$
+				threadId = str;
+			} else if (var.equals("line")) { //$NON-NLS-1$
+				try {
+					line = Integer.parseInt(str.trim());
+				} catch (NumberFormatException e) {
+				}
+			} else if (var.equals("times")) { //$NON-NLS-1$
+				try {
+					times = Integer.parseInt(str.trim());
+				} catch (NumberFormatException e) {
+				}
+			} else if (var.equals("what") || var.equals("exp")) { //$NON-NLS-1$ //$NON-NLS-2$
+				exp = str;
+			} else if (var.equals("ignore")) { //$NON-NLS-1$
+				try {
+					ignore = Integer.parseInt(str.trim());
+				} catch (NumberFormatException e) {
+				}
+			} else if (var.equals("pass")) { //$NON-NLS-1$
+				try {
+					passcount = Integer.parseInt(str.trim());
+				} catch (NumberFormatException e) {
+				}
+			} else if (var.equals("cond")) { //$NON-NLS-1$
+				cond = str;
+			} else if (var.equals("pending")) { //$NON-NLS-1$
+				// Only supported starting with GDB 6.8
+				pending = true;
+			} else if (var.equals("script")) { //$NON-NLS-1$
+				if (value instanceof MITuple) {
+					parseCommands((MITuple) value);
+				}
+			} else if (var.equals("thread-groups")) { //$NON-NLS-1$
+				if (value instanceof MIList) {
+					parseGroups((MIList) value);
+				}
+			} else if (var.equals("original-location")) { //$NON-NLS-1$
+				originalLocation = str;
+			}
+		}
+	}
 
-    void parseCommands(MITuple tuple) {
-    	MIValue[] values = tuple.getMIValues();
-    	StringBuilder cmds = new StringBuilder();
-    	for (int i = 0; i < values.length; i++) {
-    		MIValue value = values[i];
-    		if (value != null && value instanceof MIConst) {
-    			if (i > 0) {
-    				// Insert a delimiter
-    				cmds.append(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
-    			}
-    			cmds.append(((MIConst)value).getCString());
-    		}
-    	}
-    	setCommands(cmds.toString());
+	void parseCommands(MITuple tuple) {
+		MIValue[] values = tuple.getMIValues();
+		StringBuilder cmds = new StringBuilder();
+		for (int i = 0; i < values.length; i++) {
+			MIValue value = values[i];
+			if (value != null && value instanceof MIConst) {
+				if (i > 0) {
+					// Insert a delimiter
+					cmds.append(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
+				}
+				cmds.append(((MIConst) value).getCString());
+			}
+		}
+		setCommands(cmds.toString());
 
-    }
-    
-    private void parseGroups(MIList list) {
+	}
+
+	private void parseGroups(MIList list) {
 		List<String> groups = new ArrayList<String>();
-		
+
 		MIValue[] values = list.getMIValues();
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] instanceof MIConst) {
-				groups.add(((MIConst)values[i]).getCString());
+				groups.add(((MIConst) values[i]).getCString());
 			}
 		}
-		
+
 		groupIds = groups.toArray(new String[groups.size()]);
-    }
+	}
 }

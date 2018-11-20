@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 
-
 /**
  * Wizard Node
  */
@@ -117,7 +116,7 @@ class WizardNode implements IWizardNode {
 			}
 
 			@Override
-			public boolean canFinish(){
+			public boolean canFinish() {
 				return !finishPressed && super.canFinish();
 			}
 
@@ -128,7 +127,7 @@ class WizardNode implements IWizardNode {
 				IWizardPage[] wpages = getPages();
 				for (IWizardPage page : wpages) {
 					if (page instanceof UIWizardPage)
-					((UIWizardPage) page).getComposite().getUIElement().setValues(template.getValueStore());
+						((UIWizardPage) page).getComposite().getUIElement().setValues(template.getValueStore());
 				}
 			}
 

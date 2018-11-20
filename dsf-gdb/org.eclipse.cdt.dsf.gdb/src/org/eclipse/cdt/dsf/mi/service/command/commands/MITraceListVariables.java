@@ -37,9 +37,9 @@ public class MITraceListVariables extends MICommand<MITraceListVariablesInfo> {
 	public MITraceListVariables(ITraceTargetDMContext ctx) {
 		super(ctx, "-trace-list-variables"); //$NON-NLS-1$
 	}
-	
-    @Override
-    public MITraceListVariablesInfo getResult(MIOutput out) {
-        return new MITraceListVariablesInfo(out);
-    }
+
+	@Override
+	public MITraceListVariablesInfo getResult(MIOutput out) {
+		return new MITraceListVariablesInfo(out);
+	}
 }

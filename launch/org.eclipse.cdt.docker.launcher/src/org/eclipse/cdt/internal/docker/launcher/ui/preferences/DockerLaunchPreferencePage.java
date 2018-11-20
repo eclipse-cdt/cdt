@@ -22,8 +22,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class DockerLaunchPreferencePage extends FieldEditorPreferencePage
-		implements IWorkbenchPreferencePage {
+public class DockerLaunchPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	private StringFieldEditor defaultImage;
 	private BooleanFieldEditor keepContainerAfterLaunch;
@@ -39,12 +38,11 @@ public class DockerLaunchPreferencePage extends FieldEditorPreferencePage
 	 * editor knows how to save and restore itself.
 	 */
 	public void createFieldEditors() {
-		defaultImage = new StringFieldEditor(PreferenceConstants.DEFAULT_IMAGE,
-				Messages.Default_Image, getFieldEditorParent());
+		defaultImage = new StringFieldEditor(PreferenceConstants.DEFAULT_IMAGE, Messages.Default_Image,
+				getFieldEditorParent());
 		addField(defaultImage);
 
-		keepContainerAfterLaunch = new BooleanFieldEditor(
-				PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH,
+		keepContainerAfterLaunch = new BooleanFieldEditor(PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH,
 				Messages.Keep_Container_After_Launch, getFieldEditorParent());
 		addField(keepContainerAfterLaunch);
 

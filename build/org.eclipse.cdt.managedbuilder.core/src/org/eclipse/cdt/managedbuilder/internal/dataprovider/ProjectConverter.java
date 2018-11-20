@@ -76,13 +76,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class ProjectConverter implements ICProjectConverter {
-	private final static String OLD_MAKE_BUILDER_ID = "org.eclipse.cdt.make.core.makeBuilder";	//$NON-NLS-1$
-	private final static String OLD_MAKE_NATURE_ID = "org.eclipse.cdt.make.core.makeNature";	//$NON-NLS-1$
-	private final static String OLD_MNG_BUILDER_ID = "org.eclipse.cdt.managedbuilder.core.genmakebuilder";	//$NON-NLS-1$
-	private final static String OLD_MNG_NATURE_ID = "org.eclipse.cdt.managedbuilder.core.managedBuildNature";	//$NON-NLS-1$
-	private final static String OLD_DISCOVERY_MODULE_ID = "scannerConfiguration";	//$NON-NLS-1$
-	private final static String OLD_BINARY_PARSER_ID = "org.eclipse.cdt.core.BinaryParser";	//$NON-NLS-1$
-	private final static String OLD_ERROR_PARSER_ID = "org.eclipse.cdt.core.ErrorParser";	//$NON-NLS-1$
+	private final static String OLD_MAKE_BUILDER_ID = "org.eclipse.cdt.make.core.makeBuilder"; //$NON-NLS-1$
+	private final static String OLD_MAKE_NATURE_ID = "org.eclipse.cdt.make.core.makeNature"; //$NON-NLS-1$
+	private final static String OLD_MNG_BUILDER_ID = "org.eclipse.cdt.managedbuilder.core.genmakebuilder"; //$NON-NLS-1$
+	private final static String OLD_MNG_NATURE_ID = "org.eclipse.cdt.managedbuilder.core.managedBuildNature"; //$NON-NLS-1$
+	private final static String OLD_DISCOVERY_MODULE_ID = "scannerConfiguration"; //$NON-NLS-1$
+	private final static String OLD_BINARY_PARSER_ID = "org.eclipse.cdt.core.BinaryParser"; //$NON-NLS-1$
+	private final static String OLD_ERROR_PARSER_ID = "org.eclipse.cdt.core.ErrorParser"; //$NON-NLS-1$
 	private final static String OLD_PATH_ENTRY_ID = "org.eclipse.cdt.core.pathentry"; //$NON-NLS-1$
 	private final static String OLD_DISCOVERY_NATURE_ID = "org.eclipse.cdt.make.core.ScannerConfigNature"; //$NON-NLS-1$
 	private final static String OLD_DISCOVERY_BUILDER_ID = "org.eclipse.cdt.make.core.ScannerConfigBuilder"; //$NON-NLS-1$
@@ -96,41 +96,41 @@ public class ProjectConverter implements ICProjectConverter {
 	@Override
 	public boolean canConvertProject(IProject project, String oldOwnerId, ICProjectDescription oldDes) {
 		try {
-			if(oldOwnerId == null || oldDes == null)
+			if (oldOwnerId == null || oldDes == null)
 				return false;
 
 			IProjectDescription eDes = project.getDescription();
 			Set<String> natureSet = new HashSet<String>(Arrays.asList(eDes.getNatureIds()));
-			if(natureSet.contains(OLD_MAKE_NATURE_ID))
+			if (natureSet.contains(OLD_MAKE_NATURE_ID))
 				return true;
 
-			if(natureSet.contains(OLD_MNG_NATURE_ID))
+			if (natureSet.contains(OLD_MNG_NATURE_ID))
 				return true;
 
 		} catch (CoreException e) {
 		}
 
 		return false;
-//		return ManagedBuildManager.canGetBuildInfo(project);
+		//		return ManagedBuildManager.canGetBuildInfo(project);
 	}
 
 	@Override
-	public ICProjectDescription convertProject(IProject project, IProjectDescription eDes, String oldOwnerId, ICProjectDescription oldDes)
-			throws CoreException {
+	public ICProjectDescription convertProject(IProject project, IProjectDescription eDes, String oldOwnerId,
+			ICProjectDescription oldDes) throws CoreException {
 		Set<String> natureSet = new HashSet<String>(Arrays.asList(eDes.getNatureIds()));
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescription newDes = null;
 		IManagedBuildInfo info = null;
 		String[] binErrParserIds = null;
-//		boolean convertMakeTargetInfo = false;
+		//		boolean convertMakeTargetInfo = false;
 
-		if(natureSet.contains(OLD_MAKE_NATURE_ID)){
+		if (natureSet.contains(OLD_MAKE_NATURE_ID)) {
 			newDes = oldDes;
 			ICConfigurationDescription des = newDes.getConfigurations()[0];
 			ICConfigExtensionReference refs[] = des.get(OLD_BINARY_PARSER_ID);
-			if(refs.length != 0){
+			if (refs.length != 0) {
 				binErrParserIds = new String[refs.length];
-				for(int i = 0; i < refs.length; i++){
+				for (int i = 0; i < refs.length; i++) {
 					binErrParserIds[i] = refs[i].getID();
 				}
 			}
@@ -143,94 +143,96 @@ public class ProjectConverter implements ICProjectConverter {
 			cfg.setConfigurationDescription(des);
 
 			des.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
-		} else if(natureSet.contains(OLD_MNG_NATURE_ID)){
+		} else if (natureSet.contains(OLD_MNG_NATURE_ID)) {
 			try {
-				if(PROPS.getProperty(project, CONVERSION_FAILED_MSG_ID) != null)
-					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
+				if (PROPS.getProperty(project, CONVERSION_FAILED_MSG_ID) != null)
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+							DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
 
 				newDes = model.createProjectDescription(project, false);
 				info = convertManagedBuildInfo(project, newDes);
 			} catch (CoreException e) {
-				displayInfo(project, CONVERSION_FAILED_MSG_ID, DataProviderMessages.getString("ProjectConverter.10"), DataProviderMessages.getFormattedString("ProjectConverter.11", new String[]{project.getName(), e.getLocalizedMessage()})); //$NON-NLS-1$ //$NON-NLS-2$
+				displayInfo(project, CONVERSION_FAILED_MSG_ID, DataProviderMessages.getString("ProjectConverter.10"), //$NON-NLS-1$
+						DataProviderMessages.getFormattedString("ProjectConverter.11", //$NON-NLS-1$
+								new String[] { project.getName(), e.getLocalizedMessage() }));
 				throw e;
 			}
 		}
 
-		if(newDes == null || !newDes.isValid() || newDes.getConfigurations().length == 0){
+		if (newDes == null || !newDes.isValid() || newDes.getConfigurations().length == 0) {
 			newDes = null;
 		} else {
 			boolean changeEDes = false;
-			if(natureSet.remove(OLD_MAKE_NATURE_ID))
+			if (natureSet.remove(OLD_MAKE_NATURE_ID))
 				changeEDes = true;
-			if(natureSet.remove(OLD_DISCOVERY_NATURE_ID))
+			if (natureSet.remove(OLD_DISCOVERY_NATURE_ID))
 				changeEDes = true;
 
-			if(changeEDes)
+			if (changeEDes)
 				eDes.setNatureIds(natureSet.toArray(new String[natureSet.size()]));
 
 			changeEDes = false;
 			ICommand[] cmds = eDes.getBuildSpec();
 			List<ICommand> list = new ArrayList<ICommand>(Arrays.asList(cmds));
 			ICommand makeBuilderCmd = null;
-			for(Iterator<ICommand> iter = list.iterator(); iter.hasNext();){
+			for (Iterator<ICommand> iter = list.iterator(); iter.hasNext();) {
 				ICommand cmd = iter.next();
-				if(OLD_MAKE_BUILDER_ID.equals(cmd.getBuilderName())){
+				if (OLD_MAKE_BUILDER_ID.equals(cmd.getBuilderName())) {
 					makeBuilderCmd = cmd;
 					iter.remove();
 					changeEDes = true;
-//					convertMakeTargetInfo = true;
-				} else if(OLD_DISCOVERY_BUILDER_ID.equals(cmd.getBuilderName())){
+					//					convertMakeTargetInfo = true;
+				} else if (OLD_DISCOVERY_BUILDER_ID.equals(cmd.getBuilderName())) {
 					iter.remove();
 					changeEDes = true;
 				}
 			}
 
 			ICConfigurationDescription cfgDess[] = newDes.getConfigurations();
-			for(int i = 0; i < cfgDess.length; i++){
+			for (int i = 0; i < cfgDess.length; i++) {
 				ICConfigurationDescription cfgDes = cfgDess[i];
-				BuildConfigurationData data = (BuildConfigurationData)cfgDes.getConfigurationData();
+				BuildConfigurationData data = (BuildConfigurationData) cfgDes.getConfigurationData();
 				IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
 
-				if(makeBuilderCmd != null)
+				if (makeBuilderCmd != null)
 					loadBuilderSettings(cfg, makeBuilderCmd);
 
-//				loadDiscoveryOptions(cfgDes, cfg);
+				//				loadDiscoveryOptions(cfgDes, cfg);
 
 				loadPathEntryInfo(project, cfgDes, data);
 
-				if(binErrParserIds != null){
+				if (binErrParserIds != null) {
 					data.getTargetPlatformData().setBinaryParserIds(binErrParserIds);
 					cfgDes.get(OLD_BINARY_PARSER_ID);
-//					ICConfigExtensionReference refs[] = cfgDes.get(OLD_BINARY_PARSER_ID);
-//					String ids[] = idsFromRefs(refs);
-//					data.getTargetPlatformData().setBinaryParserIds(ids);
-//
-//					refs = cfgDes.get(OLD_ERROR_PARSER_ID);
-//					ids = idsFromRefs(refs);
-//					data.getBuildData().setErrorParserIDs(ids);
+					//					ICConfigExtensionReference refs[] = cfgDes.get(OLD_BINARY_PARSER_ID);
+					//					String ids[] = idsFromRefs(refs);
+					//					data.getTargetPlatformData().setBinaryParserIds(ids);
+					//
+					//					refs = cfgDes.get(OLD_ERROR_PARSER_ID);
+					//					ids = idsFromRefs(refs);
+					//					data.getBuildData().setErrorParserIDs(ids);
 				}
 
 				try {
 					ConfigurationDataProvider.writeConfiguration(cfgDes, data);
-				} catch (CoreException e){
+				} catch (CoreException e) {
 				}
 			}
 
-//			if(convertMakeTargetInfo){
-//				try {
-//					convertMakeTargetInfo(project, newDes, null);
-//				} catch (CoreException e){
-//					ManagedBuilderCorePlugin.log(e);
-//				}
-//			}
+			//			if(convertMakeTargetInfo){
+			//				try {
+			//					convertMakeTargetInfo(project, newDes, null);
+			//				} catch (CoreException e){
+			//					ManagedBuilderCorePlugin.log(e);
+			//				}
+			//			}
 
-			if(changeEDes){
+			if (changeEDes) {
 				cmds = list.toArray(new ICommand[list.size()]);
 				eDes.setBuildSpec(cmds);
 			}
 
 			info.setValid(true);
-
 
 			try {
 				ManagedBuildManager.setLoaddedBuildInfo(project, info);
@@ -241,51 +243,52 @@ public class ProjectConverter implements ICProjectConverter {
 		return newDes;
 	}
 
-	static void displayInfo(IProject proj, String id, String title, String message){
-		if(PROPS.getProperty(proj, id) == null){
+	static void displayInfo(IProject proj, String id, String title, String message) {
+		if (PROPS.getProperty(proj, id) == null) {
 			openInformation(proj, id, title, message, false);
 			PROPS.setProperty(proj, id, Boolean.TRUE);
 		}
 	}
 
-	public static boolean getBooleanFromQueryAnswer(String answer){
-		if(IOverwriteQuery.ALL.equalsIgnoreCase(answer) ||
-				IOverwriteQuery.YES.equalsIgnoreCase(answer))
+	public static boolean getBooleanFromQueryAnswer(String answer) {
+		if (IOverwriteQuery.ALL.equalsIgnoreCase(answer) || IOverwriteQuery.YES.equalsIgnoreCase(answer))
 			return true;
 		return false;
 	}
 
-	static public boolean openQuestion(final IResource rc, final String id, final String title, final String message, IOverwriteQuery query, final boolean multiple){
-		if(query != null)
+	static public boolean openQuestion(final IResource rc, final String id, final String title, final String message,
+			IOverwriteQuery query, final boolean multiple) {
+		if (query != null)
 			return getBooleanFromQueryAnswer(query.queryOverwrite(message));
 
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window == null){
+		if (window == null) {
 			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 			window = windows[0];
 		}
 
 		final Shell shell = window.getShell();
-		final boolean [] answer = new boolean[1];
+		final boolean[] answer = new boolean[1];
 		shell.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				Object ob = PROPS.getProperty(rc, id);
-				if(multiple || ob == null){
+				if (multiple || ob == null) {
 					PROPS.setProperty(rc, id, Boolean.TRUE);
-					answer[0] = MessageDialog.openQuestion(shell,title,message);
+					answer[0] = MessageDialog.openQuestion(shell, title, message);
 					PROPS.setProperty(rc, id, answer[0] ? Boolean.TRUE : Boolean.FALSE);
 				} else {
-					answer[0] = ((Boolean)ob).booleanValue();
+					answer[0] = ((Boolean) ob).booleanValue();
 				}
 			}
 		});
 		return answer[0];
 	}
 
-	static private void openInformation(final IResource rc, final String id, final String title, final String message, final boolean multiple){
+	static private void openInformation(final IResource rc, final String id, final String title, final String message,
+			final boolean multiple) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window == null){
+		if (window == null) {
 			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 			window = windows[0];
 		}
@@ -294,120 +297,125 @@ public class ProjectConverter implements ICProjectConverter {
 		shell.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				if(multiple || PROPS.getProperty(rc, id) == null){
+				if (multiple || PROPS.getProperty(rc, id) == null) {
 					PROPS.setProperty(rc, id, Boolean.TRUE);
-					MessageDialog.openInformation(shell,title,message);
+					MessageDialog.openInformation(shell, title, message);
 				}
 			}
 		});
 	}
 
-	private static void convertMakeTargetInfo(final IProject project, ICProjectDescription des, IProgressMonitor monitor) throws CoreException{
-		if(monitor == null)
+	private static void convertMakeTargetInfo(final IProject project, ICProjectDescription des,
+			IProgressMonitor monitor) throws CoreException {
+		if (monitor == null)
 			monitor = new NullProgressMonitor();
 
-		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, des, new ICDescriptorOperation(){
-
-			@Override
-			public void execute(ICDescriptor descriptor,
-					IProgressMonitor monitor) throws CoreException {
-				final IMakeTargetManager mngr = MakeCorePlugin.getDefault().getTargetManager();
-
-				project.accept(new IResourceVisitor(){
+		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, des,
+				new ICDescriptorOperation() {
 
 					@Override
-					public boolean visit(IResource resource)
-							throws CoreException {
-						if(resource.getType() == IResource.FILE)
-							return false;
+					public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+						final IMakeTargetManager mngr = MakeCorePlugin.getDefault().getTargetManager();
 
-						try {
-							IContainer cr = (IContainer)resource;
-							IMakeTarget targets[] = mngr.getTargets(cr);
-							for(int i = 0; i < targets.length; i++){
-								IMakeTarget t = targets[i];
-								if(!OLD_MAKE_TARGET_BUIDER_ID.equals(t.getTargetBuilderID()))
-									continue;
+						project.accept(new IResourceVisitor() {
 
-								IMakeTarget newT = mngr.createTarget(project, t.getName(), NEW_MAKE_TARGET_BUIDER_ID);
-								copySettings(t, newT);
-								mngr.removeTarget(t);
-								mngr.addTarget(cr, newT);
+							@Override
+							public boolean visit(IResource resource) throws CoreException {
+								if (resource.getType() == IResource.FILE)
+									return false;
+
+								try {
+									IContainer cr = (IContainer) resource;
+									IMakeTarget targets[] = mngr.getTargets(cr);
+									for (int i = 0; i < targets.length; i++) {
+										IMakeTarget t = targets[i];
+										if (!OLD_MAKE_TARGET_BUIDER_ID.equals(t.getTargetBuilderID()))
+											continue;
+
+										IMakeTarget newT = mngr.createTarget(project, t.getName(),
+												NEW_MAKE_TARGET_BUIDER_ID);
+										copySettings(t, newT);
+										mngr.removeTarget(t);
+										mngr.addTarget(cr, newT);
+									}
+								} catch (CoreException e) {
+									ManagedBuilderCorePlugin.log(e);
+								}
+								return true;
 							}
-						} catch ( CoreException e){
-							ManagedBuilderCorePlugin.log(e);
-						}
-						return true;
+
+						});
 					}
 
-				});
-			}
-
-		}, monitor);
+				}, monitor);
 	}
 
-	private static void copySettings(IMakeTarget fromTarget, IMakeTarget toTarget) throws CoreException{
-			toTarget.setAppendEnvironment(fromTarget.appendEnvironment());
-			toTarget.setAppendProjectEnvironment(fromTarget.appendProjectEnvironment());
+	private static void copySettings(IMakeTarget fromTarget, IMakeTarget toTarget) throws CoreException {
+		toTarget.setAppendEnvironment(fromTarget.appendEnvironment());
+		toTarget.setAppendProjectEnvironment(fromTarget.appendProjectEnvironment());
 
-			toTarget.setBuildAttribute(IMakeTarget.BUILD_LOCATION, fromTarget.getBuildAttribute(IMakeTarget.BUILD_LOCATION, null));
-			toTarget.setBuildAttribute(IMakeTarget.BUILD_COMMAND, fromTarget.getBuildAttribute(IMakeTarget.BUILD_COMMAND, null));
-			toTarget.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, fromTarget.getBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, null));
-			toTarget.setBuildAttribute(IMakeTarget.BUILD_TARGET, fromTarget.getBuildAttribute(IMakeTarget.BUILD_TARGET, null));
+		toTarget.setBuildAttribute(IMakeTarget.BUILD_LOCATION,
+				fromTarget.getBuildAttribute(IMakeTarget.BUILD_LOCATION, null));
+		toTarget.setBuildAttribute(IMakeTarget.BUILD_COMMAND,
+				fromTarget.getBuildAttribute(IMakeTarget.BUILD_COMMAND, null));
+		toTarget.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS,
+				fromTarget.getBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, null));
+		toTarget.setBuildAttribute(IMakeTarget.BUILD_TARGET,
+				fromTarget.getBuildAttribute(IMakeTarget.BUILD_TARGET, null));
 
-			Map<String, String> fromMap = fromTarget.getEnvironment();
-			if(fromMap != null)
-				toTarget.setEnvironment(new HashMap<String, String>(fromMap));
+		Map<String, String> fromMap = fromTarget.getEnvironment();
+		if (fromMap != null)
+			toTarget.setEnvironment(new HashMap<String, String>(fromMap));
 
-//			toTarget.setErrorParsers(fromTarget.getErrorParsers());
+		//			toTarget.setErrorParsers(fromTarget.getErrorParsers());
 
-			toTarget.setRunAllBuilders(fromTarget.runAllBuilders());
+		toTarget.setRunAllBuilders(fromTarget.runAllBuilders());
 
-			toTarget.setStopOnError(fromTarget.isStopOnError());
+		toTarget.setStopOnError(fromTarget.isStopOnError());
 
-			toTarget.setUseDefaultBuildCmd(fromTarget.isDefaultBuildCmd());
+		toTarget.setUseDefaultBuildCmd(fromTarget.isDefaultBuildCmd());
 
-			toTarget.setContainer(fromTarget.getContainer());
+		toTarget.setContainer(fromTarget.getContainer());
 
 	}
 
-	private void loadPathEntryInfo(IProject project, ICConfigurationDescription des, CConfigurationData data){
+	private void loadPathEntryInfo(IProject project, ICConfigurationDescription des, CConfigurationData data) {
 		try {
 			ICStorageElement el = des.getStorage(OLD_PATH_ENTRY_ID, false);
-			if(el != null){
+			if (el != null) {
 				IPathEntry[] entries = PathEntryTranslator.decodePathEntries(project, el);
-				if(entries.length != 0){
+				if (entries.length != 0) {
 					List<IPathEntry> list = new ArrayList<IPathEntry>(Arrays.asList(entries));
-					for(Iterator<IPathEntry> iter = list.iterator(); iter.hasNext();){
+					for (Iterator<IPathEntry> iter = list.iterator(); iter.hasNext();) {
 						IPathEntry entry = iter.next();
-						if(entry.getEntryKind() == IPathEntry.CDT_CONTAINER){
+						if (entry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
 							iter.remove();
 							continue;
 						}
 					}
 
-					if(list.size() != 0){
+					if (list.size() != 0) {
 						PathEntryTranslator tr = new PathEntryTranslator(project, data);
 						entries = list.toArray(new IPathEntry[list.size()]);
-						ReferenceSettingsInfo refInfo = tr.applyPathEntries(entries, null, PathEntryTranslator.OP_REPLACE);
+						ReferenceSettingsInfo refInfo = tr.applyPathEntries(entries, null,
+								PathEntryTranslator.OP_REPLACE);
 						ICExternalSetting extSettings[] = refInfo.getExternalSettings();
 						des.removeExternalSettings();
-						if(extSettings.length != 0){
+						if (extSettings.length != 0) {
 							ICExternalSetting setting;
-							for(int i = 0; i < extSettings.length; i++){
+							for (int i = 0; i < extSettings.length; i++) {
 								setting = extSettings[i];
 								des.createExternalSetting(setting.getCompatibleLanguageIds(),
-										setting.getCompatibleContentTypeIds(),
-										setting.getCompatibleExtensions(),
+										setting.getCompatibleContentTypeIds(), setting.getCompatibleExtensions(),
 										setting.getEntries());
 							}
 						}
 
 						IPath projPaths[] = refInfo.getReferencedProjectsPaths();
-						if(projPaths.length != 0){
+						if (projPaths.length != 0) {
 							Map<String, String> map = new HashMap<String, String>(projPaths.length);
-							for(int i = 0; i < projPaths.length; i++){
-								map.put(projPaths[i].segment(0), "");	//$NON-NLS-1$
+							for (int i = 0; i < projPaths.length; i++) {
+								map.put(projPaths[i].segment(0), ""); //$NON-NLS-1$
 							}
 							des.setReferenceInfo(map);
 						}
@@ -420,85 +428,83 @@ public class ProjectConverter implements ICProjectConverter {
 		}
 	}
 
-//	private String[] idsFromRefs(ICConfigExtensionReference refs[]){
-//		String ids[] = new String[refs.length];
-//		for(int i = 0; i < ids.length; i++){
-//			ids[i] = refs[i].getID();
-//		}
-//		return ids;
-//	}
+	//	private String[] idsFromRefs(ICConfigExtensionReference refs[]){
+	//		String ids[] = new String[refs.length];
+	//		for(int i = 0; i < ids.length; i++){
+	//			ids[i] = refs[i].getID();
+	//		}
+	//		return ids;
+	//	}
 
-//	private void loadDiscoveryOptions(ICConfigurationDescription des, IConfiguration cfg){
-//		try {
-//			ICStorageElement discoveryStorage = des.getStorage(OLD_DISCOVERY_MODULE_ID, false);
-//			if(discoveryStorage != null){
-//				Configuration config = (Configuration)cfg;
-//				IScannerConfigBuilderInfo2 scannerConfigInfo = ScannerConfigInfoFactory2.create(new CfgInfoContext(cfg), discoveryStorage, ScannerConfigProfileManager.NULL_PROFILE_ID);
-//				config.setPerRcTypeDiscovery(false);
-//				config.setScannerConfigInfo(scannerConfigInfo);
-//				des.removeStorage(OLD_DISCOVERY_MODULE_ID);
-//			}
-//		} catch (CoreException e) {
-//			ManagedBuilderCorePlugin.log(e);
-//		}
-//
-//
-//	}
+	//	private void loadDiscoveryOptions(ICConfigurationDescription des, IConfiguration cfg){
+	//		try {
+	//			ICStorageElement discoveryStorage = des.getStorage(OLD_DISCOVERY_MODULE_ID, false);
+	//			if(discoveryStorage != null){
+	//				Configuration config = (Configuration)cfg;
+	//				IScannerConfigBuilderInfo2 scannerConfigInfo = ScannerConfigInfoFactory2.create(new CfgInfoContext(cfg), discoveryStorage, ScannerConfigProfileManager.NULL_PROFILE_ID);
+	//				config.setPerRcTypeDiscovery(false);
+	//				config.setScannerConfigInfo(scannerConfigInfo);
+	//				des.removeStorage(OLD_DISCOVERY_MODULE_ID);
+	//			}
+	//		} catch (CoreException e) {
+	//			ManagedBuilderCorePlugin.log(e);
+	//		}
+	//
+	//
+	//	}
 
-	private void loadBuilderSettings(IConfiguration cfg, ICommand cmd){
-		Builder builder = (Builder)BuilderFactory.createBuilderFromCommand(cfg, cmd);
-		if(builder.getCommand() != null && builder.getCommand().length() != 0){
+	private void loadBuilderSettings(IConfiguration cfg, ICommand cmd) {
+		Builder builder = (Builder) BuilderFactory.createBuilderFromCommand(cfg, cmd);
+		if (builder.getCommand() != null && builder.getCommand().length() != 0) {
 			String[] errParserIds = builder.getCustomizedErrorParserIds();
 			builder.setCustomizedErrorParserIds(null);
-			((ToolChain)cfg.getToolChain()).setBuilder(builder);
-			if(errParserIds != null && errParserIds.length != 0){
+			((ToolChain) cfg.getToolChain()).setBuilder(builder);
+			if (errParserIds != null && errParserIds.length != 0) {
 				cfg.setErrorParserList(errParserIds);
 			}
 		}
 	}
 
-	private static boolean convertOldStdMakeToNewStyle(final IProject project, boolean checkOnly, IProgressMonitor monitor, boolean throwExceptions) throws CoreException {
+	private static boolean convertOldStdMakeToNewStyle(final IProject project, boolean checkOnly,
+			IProgressMonitor monitor, boolean throwExceptions) throws CoreException {
 		try {
-//			ICDescriptor dr = CCorePlugin.getDefault().getCProjectDescription(project, false);
-//			if(dr == null){
-//				if(throwExceptions)
-//					throw new CoreException(new Status(IStatus.ERROR,
-//							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-//							DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
-//				return false;
-//			}
-//
-//			if(!MakeCorePlugin.MAKE_PROJECT_ID.equals(dr.getProjectOwner().getID())){
-//				if(throwExceptions)
-//					throw new CoreException(new Status(IStatus.ERROR,
-//							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-//							DataProviderMessages.getString("ProjectConverter.1") + dr.getProjectOwner().getID())); //$NON-NLS-1$
-//				return false;
-//			}
+			//			ICDescriptor dr = CCorePlugin.getDefault().getCProjectDescription(project, false);
+			//			if(dr == null){
+			//				if(throwExceptions)
+			//					throw new CoreException(new Status(IStatus.ERROR,
+			//							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+			//							DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
+			//				return false;
+			//			}
+			//
+			//			if(!MakeCorePlugin.MAKE_PROJECT_ID.equals(dr.getProjectOwner().getID())){
+			//				if(throwExceptions)
+			//					throw new CoreException(new Status(IStatus.ERROR,
+			//							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+			//							DataProviderMessages.getString("ProjectConverter.1") + dr.getProjectOwner().getID())); //$NON-NLS-1$
+			//				return false;
+			//			}
 
 			ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
 
-			if(des == null){
-				if(throwExceptions)
-					throw new CoreException(new Status(IStatus.ERROR,
-							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-							DataProviderMessages.getString("ProjectConverter.9")));  //$NON-NLS-1$
+			if (des == null) {
+				if (throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+							DataProviderMessages.getString("ProjectConverter.9"))); //$NON-NLS-1$
 				return false;
 			}
 
 			ICConfigurationDescription cfgs[] = des.getConfigurations();
-			if(cfgs.length != 1){
-				if(throwExceptions)
-					throw new CoreException(new Status(IStatus.ERROR,
-							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+			if (cfgs.length != 1) {
+				if (throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 							DataProviderMessages.getString("ProjectConverter.2") + cfgs.length)); //$NON-NLS-1$
 				return false;
 			}
 
-			if(!CCorePlugin.DEFAULT_PROVIDER_ID.equals(cfgs[0].getBuildSystemId())){
-				if(throwExceptions)
-					throw new CoreException(new Status(IStatus.ERROR,
-							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+			if (!CCorePlugin.DEFAULT_PROVIDER_ID.equals(cfgs[0].getBuildSystemId())) {
+				if (throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 							DataProviderMessages.getString("ProjectConverter.3") + cfgs.length)); //$NON-NLS-1$
 				return false;
 			}
@@ -506,43 +512,42 @@ public class ProjectConverter implements ICProjectConverter {
 			final IProjectDescription eDes = project.getDescription();
 			String natureIds[] = eDes.getNatureIds();
 			Set<String> set = new HashSet<String>(Arrays.asList(natureIds));
-			if(!set.contains(OLD_MAKE_NATURE_ID)){
-				if(throwExceptions)
-					throw new CoreException(new Status(IStatus.ERROR,
-							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+			if (!set.contains(OLD_MAKE_NATURE_ID)) {
+				if (throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 							DataProviderMessages.getString("ProjectConverter.4") + natureIds.toString())); //$NON-NLS-1$
 				return false;
 			}
 
-			if(!checkOnly){
+			if (!checkOnly) {
 				ProjectConverter instance = new ProjectConverter();
 				ICProjectDescription oldDes = CCorePlugin.getDefault().getProjectDescription(project);
-				if(!instance.canConvertProject(project, MakeCorePlugin.MAKE_PROJECT_ID, oldDes)){
-					if(throwExceptions)
-						throw new CoreException(new Status(IStatus.ERROR,
-								ManagedBuilderCorePlugin.getUniqueIdentifier(),
-								DataProviderMessages.getString("ProjectConverter.5"))); //$NON-NLS-1$
+				if (!instance.canConvertProject(project, MakeCorePlugin.MAKE_PROJECT_ID, oldDes)) {
+					if (throwExceptions)
+						throw new CoreException(
+								new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+										DataProviderMessages.getString("ProjectConverter.5"))); //$NON-NLS-1$
 					return false;
 				}
 
-				final ICProjectDescription newDes = instance.convertProject(project, eDes, MakeCorePlugin.MAKE_PROJECT_ID, oldDes);
-				if(newDes == null){
-					if(throwExceptions)
-						throw new CoreException(new Status(IStatus.ERROR,
-								ManagedBuilderCorePlugin.getUniqueIdentifier(),
-								DataProviderMessages.getString("ProjectConverter.6"))); //$NON-NLS-1$
+				final ICProjectDescription newDes = instance.convertProject(project, eDes,
+						MakeCorePlugin.MAKE_PROJECT_ID, oldDes);
+				if (newDes == null) {
+					if (throwExceptions)
+						throw new CoreException(
+								new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+										DataProviderMessages.getString("ProjectConverter.6"))); //$NON-NLS-1$
 					return false;
 				}
 
 				final IWorkspace wsp = ResourcesPlugin.getWorkspace();
-				wsp.run(new IWorkspaceRunnable(){
+				wsp.run(new IWorkspaceRunnable() {
 
 					@Override
-					public void run(IProgressMonitor monitor)
-							throws CoreException {
+					public void run(IProgressMonitor monitor) throws CoreException {
 						project.setDescription(eDes, monitor);
 						CCorePlugin.getDefault().setProjectDescription(project, newDes);
-						Job job = new Job(DataProviderMessages.getString("ProjectConverter.7")){ //$NON-NLS-1$
+						Job job = new Job(DataProviderMessages.getString("ProjectConverter.7")) { //$NON-NLS-1$
 
 							@Override
 							protected IStatus run(IProgressMonitor monitor) {
@@ -566,18 +571,17 @@ public class ProjectConverter implements ICProjectConverter {
 			}
 			return true;
 		} catch (CoreException e) {
-			if(throwExceptions)
+			if (throwExceptions)
 				throw e;
 			ManagedBuilderCorePlugin.log(e);
 		}
-		if(throwExceptions)
-			throw new CoreException(new Status(IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+		if (throwExceptions)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					DataProviderMessages.getString("ProjectConverter.8"))); //$NON-NLS-1$
 		return false;
 	}
 
-	public static boolean isOldStyleMakeProject(IProject project){
+	public static boolean isOldStyleMakeProject(IProject project) {
 		try {
 			return convertOldStdMakeToNewStyle(project, true, null, false);
 		} catch (CoreException e) {
@@ -586,52 +590,56 @@ public class ProjectConverter implements ICProjectConverter {
 		return false;
 	}
 
-	public static void convertOldStdMakeToNewStyle(IProject project, IProgressMonitor monitor) throws CoreException{
+	public static void convertOldStdMakeToNewStyle(IProject project, IProgressMonitor monitor) throws CoreException {
 		convertOldStdMakeToNewStyle(project, false, monitor, true);
 	}
 
-	private IManagedBuildInfo convertManagedBuildInfo(IProject project, ICProjectDescription newDes) throws CoreException {
+	private IManagedBuildInfo convertManagedBuildInfo(IProject project, ICProjectDescription newDes)
+			throws CoreException {
 		IManagedBuildInfo info = ManagedBuildManager.getOldStyleBuildInfo(project);
 
-		synchronized(PROPS){
-			if(info != null && info.isValid()){
+		synchronized (PROPS) {
+			if (info != null && info.isValid()) {
 				IManagedProject mProj = info.getManagedProject();
 				IConfiguration cfgs[] = mProj.getConfigurations();
-				if(cfgs.length != 0){
+				if (cfgs.length != 0) {
 					Configuration cfg;
 					CConfigurationData data;
 
 					UserDefinedVariableSupplier usrSupplier = UserDefinedVariableSupplier.getInstance();
 
-					for(int i = 0; i < cfgs.length; i++){
-						cfg = (Configuration)cfgs[i];
+					for (int i = 0; i < cfgs.length; i++) {
+						cfg = (Configuration) cfgs[i];
 						data = cfg.getConfigurationData();
-//						try {
-							ICConfigurationDescription cfgDes = newDes.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-							if(cfg.getConfigurationDescription() != null) {
-								//copy cfg to avoid raise conditions
-								cfg = ConfigurationDataProvider.copyCfg(cfg, cfgDes);
-								cfgDes.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
-							}
-							cfg.setConfigurationDescription(cfgDes);
+						//						try {
+						ICConfigurationDescription cfgDes = newDes
+								.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+						if (cfg.getConfigurationDescription() != null) {
+							//copy cfg to avoid raise conditions
+							cfg = ConfigurationDataProvider.copyCfg(cfg, cfgDes);
+							cfgDes.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID,
+									cfg.getConfigurationData());
+						}
+						cfg.setConfigurationDescription(cfgDes);
 
-							StorableCdtVariables vars = ((ToolChain)cfg.getToolChain()).getResetOldStyleProjectVariables();
-							if(vars != null){
-								ICdtVariable vs[] = vars.getMacros();
-								for(int k = 0; k < vs.length; k++){
-									usrSupplier.createMacro(vs[k], ICoreVariableContextInfo.CONTEXT_CONFIGURATION, cfgDes);
-								}
+						StorableCdtVariables vars = ((ToolChain) cfg.getToolChain()).getResetOldStyleProjectVariables();
+						if (vars != null) {
+							ICdtVariable vs[] = vars.getMacros();
+							for (int k = 0; k < vs.length; k++) {
+								usrSupplier.createMacro(vs[k], ICoreVariableContextInfo.CONTEXT_CONFIGURATION, cfgDes);
 							}
-//						} catch (WriteAccessException e) {
-//							ManagedBuilderCorePlugin.log(e);
-//						} catch (CoreException e) {
-//							ManagedBuilderCorePlugin.log(e);
-//						}
+						}
+						//						} catch (WriteAccessException e) {
+						//							ManagedBuilderCorePlugin.log(e);
+						//						} catch (CoreException e) {
+						//							ManagedBuilderCorePlugin.log(e);
+						//						}
 						cfg.exportArtifactInfo();
 					}
 				}
 			} else {
-				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), DataProviderMessages.getString("ProjectConverter.13"))); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+						DataProviderMessages.getString("ProjectConverter.13"))); //$NON-NLS-1$
 			}
 		}
 		return info;

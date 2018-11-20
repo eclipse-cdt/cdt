@@ -56,17 +56,17 @@ public interface IIndex {
 	/**
 	 * Constant to search for definitions. This does not include declarations.
 	 */
-	final int FIND_DEFINITIONS  = 0x2;
+	final int FIND_DEFINITIONS = 0x2;
 	/**
 	 * Constant to search for references. This does not include declarations or definitions.
 	 */
-	final int FIND_REFERENCES   = 0x4;
+	final int FIND_REFERENCES = 0x4;
 	/**
 	 * Constant to search for occurrences across language boundaries.
 	 * Can be used to find the occurrences of a C++-function declared with 'extern "C"' within
 	 * the c-linkage.
 	 */
-	final int SEARCH_ACROSS_LANGUAGE_BOUNDARIES= 0x8;
+	final int SEARCH_ACROSS_LANGUAGE_BOUNDARIES = 0x8;
 	/**
 	 * Constant to include potential matches in the results of a search.
 	 * An example of a potential match might be a function definition that does match
@@ -249,8 +249,7 @@ public interface IIndex {
 	 * @throws CoreException
 	 * @since 4.0.2
 	 */
-	public IIndexMacro[] findMacros(char[] name, IndexFilter filter, IProgressMonitor monitor)
-			throws CoreException;
+	public IIndexMacro[] findMacros(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Searches for all macros with names that start with the given prefix.
@@ -262,8 +261,8 @@ public interface IIndex {
 	 * @throws CoreException
 	 * @since 4.0.2
 	 */
-	public IIndexMacro[] findMacrosForPrefix(char[] prefix, IndexFilter filter,
-			IProgressMonitor monitor) throws CoreException;
+	public IIndexMacro[] findMacrosForPrefix(char[] prefix, IndexFilter filter, IProgressMonitor monitor)
+			throws CoreException;
 
 	/**
 	 * Searches for the binding of a name. The name may be originated by
@@ -307,8 +306,8 @@ public interface IIndex {
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
-	public IIndexBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified,
-			IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	public IIndexBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Searches for all macro containers (one for macros with the same name) with names that
@@ -344,7 +343,7 @@ public interface IIndex {
 	 * In case a binding exists in multiple projects, no duplicate bindings are returned.
 	 * This method makes use of the BTree and is faster than the methods using patterns.
 	 *
- 	 * This is fully equivalent to
+	 * This is fully equivalent to
 	 * <pre>
 	 * findBindings(name, true, filter, monitor);
 	 * </pre>
@@ -354,8 +353,7 @@ public interface IIndex {
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
-	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor)
-			throws CoreException;
+	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Searches the global scope and optionally all other scopes for bindings with a given name.
@@ -382,14 +380,14 @@ public interface IIndex {
 	 * @return an array of bindings with the prefix
 	 * @throws CoreException
 	 */
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean fileScopeOnly,
-			IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean fileScopeOnly, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean fileScopeOnly,
-			IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean fileScopeOnly, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Searches for all names that resolve to the given binding. The search can be limited to
@@ -444,8 +442,8 @@ public interface IIndex {
 	 * Returns an {@link IIndexBinding} for this index that is equivalent to the specified binding,
 	 * or null if such a binding does not exist in this index. This is useful for adapting
 	 * bindings obtained from IIndex objects that might have been created for a different scope
-     * or for IBinding objects obtained directly from the AST.
-     *
+	 * or for IBinding objects obtained directly from the AST.
+	 *
 	 * @param binding an AST or an index binding
 	 * @return an IIndexBinding for this index that is equivalent to the specified binding
 	 */

@@ -15,15 +15,25 @@ import junit.framework.TestSuite;
 
 public class SwitchStatementTests extends TestBase {
 	public static class NonIndexing extends SwitchStatementTests {
-		public NonIndexing() {setStrategy(new NonIndexingTestStrategy());}
-		public static TestSuite suite() {return suite(NonIndexing.class);}
+		public NonIndexing() {
+			setStrategy(new NonIndexingTestStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(NonIndexing.class);
+		}
 	}
-	
+
 	public static class SingleProject extends SwitchStatementTests {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true, false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(true, false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
-	
+
 	//	constexpr int f() {
 	//		int x { 1 };
 	//		switch (x) {
@@ -35,12 +45,12 @@ public class SwitchStatementTests extends TestBase {
 	//			return -1;
 	//		}
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSwitchFirstCase() throws Exception {
 		assertEvaluationEquals(1);
 	}
-	
+
 	//	constexpr int f() {
 	//		int x { 2 };
 	//		switch (x) {
@@ -52,12 +62,12 @@ public class SwitchStatementTests extends TestBase {
 	//			return -1;
 	//		}
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSwitchMiddleCase() throws Exception {
 		assertEvaluationEquals(2);
 	}
-	
+
 	//	constexpr int f() {
 	//		int x { 3 };
 	//		switch (x) {
@@ -69,12 +79,12 @@ public class SwitchStatementTests extends TestBase {
 	//			return -1;
 	//		}
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSwitchDefault() throws Exception {
 		assertEvaluationEquals(-1);
 	}
-	
+
 	//	constexpr int f() {
 	//		int x { 1 };
 	//		switch (x) {
@@ -85,12 +95,12 @@ public class SwitchStatementTests extends TestBase {
 	//			return -1;
 	//		}
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSwitchFallThrough() throws Exception {
 		assertEvaluationEquals(2);
 	}
-	
+
 	//	constexpr int f() {
 	//		int x { 1 };
 	//		int y = 10;
@@ -100,12 +110,12 @@ public class SwitchStatementTests extends TestBase {
 	//		y--;
 	//		return y;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSwitchWithOnlyOneClause1() throws Exception {
 		assertEvaluationEquals(10);
 	}
-	
+
 	//	constexpr int f() {
 	//		int x { 0 };
 	//		int y = 10;
@@ -115,13 +125,12 @@ public class SwitchStatementTests extends TestBase {
 	//		y--;
 	//		return y;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSwitchWithOnlyOneClause2() throws Exception {
 		assertEvaluationEquals(9);
 	}
-	
-	
+
 	//	constexpr int f() {
 	//		int x { 2 };
 	//		int y = 2;
@@ -137,12 +146,12 @@ public class SwitchStatementTests extends TestBase {
 	//		}
 	//		return y;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSwitchBreak() throws Exception {
 		assertEvaluationEquals(20);
 	}
-	
+
 	//	constexpr int f() {
 	//		int x { 3 };
 	//		int y = 2;
@@ -156,12 +165,12 @@ public class SwitchStatementTests extends TestBase {
 	//		}
 	//		return y;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSwitchNoMatchingCaseAndNoDefault() throws Exception {
 		assertEvaluationEquals(2);
 	}
-	
+
 	//	class Point {
 	//		int x, y;
 	//	public:
@@ -183,12 +192,12 @@ public class SwitchStatementTests extends TestBase {
 	//		}
 	//		return y;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testSwitchCaseConstants() throws Exception {
 		assertEvaluationEquals(20);
 	}
-	
+
 	//	constexpr int triple(int x) {
 	//		return x * 3;
 	//	}
@@ -204,12 +213,12 @@ public class SwitchStatementTests extends TestBase {
 	//				return 4;
 	//		}
 	//	}
-	
+
 	//	constexpr int x = f(5);
 	public void testDeclarationInSwitchStatementController() throws Exception {
 		assertEvaluationEquals(3);
 	}
-	
+
 	//	enum Color { RED, GREEN, BLUE };
 	//	constexpr int f(Color color) {
 	//		switch(color) {
@@ -221,12 +230,12 @@ public class SwitchStatementTests extends TestBase {
 	//				return 3;
 	//		}
 	//	}
-	
+
 	//	constexpr int x = f(BLUE);
 	public void testSwitchOnEnumValue() throws Exception {
 		assertEvaluationEquals(3);
 	}
-	
+
 	//	constexpr int f() {
 	//		int arr[] = {1,2,1,3,5,6,1,2,0};
 	//		int sum{};

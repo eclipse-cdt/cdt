@@ -54,8 +54,7 @@ public class TypeHelper {
 				CPPSemantics.pushLookupPoint(ast);
 				if (type instanceof ICPPClassType) {
 					ICPPClassType classType = ((ICPPClassType) type);
-					if (!TypeTraits.hasTrivialCopyCtor(classType) ||
-							!TypeTraits.hasTrivialDestructor(classType)) {
+					if (!TypeTraits.hasTrivialCopyCtor(classType) || !TypeTraits.hasTrivialDestructor(classType)) {
 						return true;
 					}
 				}

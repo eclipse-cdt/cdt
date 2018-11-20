@@ -67,7 +67,8 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 
 	private void createDelegate() {
 		if (fDelegate == null) {
-			fDelegate= new AbstractCPPClassSpecializationScope(specialization()) {};
+			fDelegate = new AbstractCPPClassSpecializationScope(specialization()) {
+			};
 		}
 	}
 
@@ -83,7 +84,8 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 		return fDelegate.find(name, tu);
 	}
 
-	@Override @Deprecated
+	@Override
+	@Deprecated
 	public IBinding[] find(String name) {
 		createDelegate();
 		return fDelegate.find(name);
@@ -95,7 +97,8 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 		return fDelegate.getBinding(name, resolve, acceptLocalBindings);
 	}
 
-	@Deprecated	@Override 
+	@Deprecated
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
 			IIndexFileSet acceptLocalBindings) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
@@ -142,7 +145,7 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 		createDelegate();
 		return fDelegate.getNestedClasses();
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		createDelegate();

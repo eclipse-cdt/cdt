@@ -21,16 +21,14 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 /**
  *  Test command line generator
  */
-public class ManagedBuildCommandLineGenerator implements
-		IManagedCommandLineGenerator {
+public class ManagedBuildCommandLineGenerator implements IManagedCommandLineGenerator {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator#generateCommandLineInfo(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String[], java.lang.String)
 	 */
 	@Override
-	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool,
-			String commandName, String[] flags, String outputFlag,
-			String outputPrefix, String outputName, String[] inputResources,
+	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool, String commandName, String[] flags,
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources,
 			String commandLinePattern) {
 		ManagedBuildCommandLineInfo info = new ManagedBuildCommandLineInfo();
 		//  Concatenate the tool name and the passed in command name
@@ -38,36 +36,38 @@ public class ManagedBuildCommandLineGenerator implements
 		//  Put out the flags backwards
 		String myflags = ""; //$NON-NLS-1$
 		for (int i = flags.length - 1; i >= 0; i--) {
-			if (i < flags.length - 1) myflags += " ";
+			if (i < flags.length - 1)
+				myflags += " ";
 			myflags += flags[i];
 		}
 		info.commandFlags = myflags;
 		//  Alphabetize the inputs and add foo.cpp
 		String[] inputs = new String[inputResources.length + 1];
 		String myinputs = ""; //$NON-NLS-1$
-		for (int i=0; i<inputResources.length; i++) {
+		for (int i = 0; i < inputResources.length; i++) {
 			inputs[i] = inputResources[i];
 		}
 		inputs[inputResources.length] = "foo.cpp";
 		//  Sort
 		for (int i = 0; i < inputs.length; i++) {
 			for (int j = 1; j < inputs.length; j++) {
-				if (inputs[j].compareTo(inputs[j-1]) < 0) {
-					String temp = inputs[j-1];
-					inputs[j-1] = inputs[j];
+				if (inputs[j].compareTo(inputs[j - 1]) < 0) {
+					String temp = inputs[j - 1];
+					inputs[j - 1] = inputs[j];
 					inputs[j] = temp;
 				}
 			}
 		}
 		for (int i = 0; i < inputs.length; i++) {
-			if (i > 0) myinputs += " ";
+			if (i > 0)
+				myinputs += " ";
 			myinputs += inputs[i];
 		}
 		info.commandInputs = myinputs;
 		// Don't change the command line pattern
 		info.commandLinePattern = commandLinePattern;
 		// Config artifact name
-		info.commandOutput = ((IToolChain)tool.getParent()).getParent().getArtifactName();
+		info.commandOutput = ((IToolChain) tool.getParent()).getParent().getArtifactName();
 		// -Oh
 		info.commandOutputFlag = "-0h";
 		// ""

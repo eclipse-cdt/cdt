@@ -53,7 +53,7 @@ public class CParameterGuessingTests extends AbstractContentAssistTest {
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}
-	
+
 	protected static final int DEFAULT_FLAGS = IS_COMPLETION;
 
 	protected void assertParametersGuesses(Map<String, String[][]> expected) throws Exception {
@@ -66,8 +66,7 @@ public class CParameterGuessingTests extends AbstractContentAssistTest {
 	//		funWith2ATypeObjectParams(
 	public void testIndirectTypes() throws Exception {
 		Map<String, String[][]> resultsMap = new HashMap<>();
-		resultsMap.put("funWith2ATypeObjectParams(a, b)", new String[][] { { "ax", "*axPtr" },
-				{ "ax", "*axPtr" } });
+		resultsMap.put("funWith2ATypeObjectParams(a, b)", new String[][] { { "ax", "*axPtr" }, { "ax", "*axPtr" } });
 		assertParametersGuesses(resultsMap);
 	}
 

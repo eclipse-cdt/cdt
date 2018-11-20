@@ -104,7 +104,8 @@ public class BuildRunnerHelper implements Closeable {
 	 * @param envp - String[] array of environment variables in format "var=value" suitable for using
 	 *    as "envp" with Runtime.exec(String[] cmdarray, String[] envp, File dir)
 	 */
-	public void setLaunchParameters(ICommandLauncher launcher, IPath buildCommand, String[] args, URI workingDirectoryURI, String[] envp) {
+	public void setLaunchParameters(ICommandLauncher launcher, IPath buildCommand, String[] args,
+			URI workingDirectoryURI, String[] envp) {
 		this.launcher = launcher;
 		launcher.setProject(project);
 		// Print the command for visual interaction.
@@ -127,7 +128,8 @@ public class BuildRunnerHelper implements Closeable {
 	 *    has not been called yet.
 	 * @throws CoreException
 	 */
-	public void prepareStreams(ErrorParserManager epm, List<IConsoleParser> buildOutputParsers, IConsole con, IProgressMonitor monitor) throws CoreException {
+	public void prepareStreams(ErrorParserManager epm, List<IConsoleParser> buildOutputParsers, IConsole con,
+			IProgressMonitor monitor) throws CoreException {
 		errorParserManager = epm;
 		console = con;
 
@@ -158,14 +160,15 @@ public class BuildRunnerHelper implements Closeable {
 		Integer lastWork = null;
 		if (buildCommand != null && project != null) {
 			progressPropertyName = getProgressPropertyName(buildCommand, args);
-			lastWork = (Integer)project.getSessionProperty(progressPropertyName);
+			lastWork = (Integer) project.getSessionProperty(progressPropertyName);
 		}
 		if (lastWork == null) {
 			lastWork = TICKS_STREAM_PROGRESS_MONITOR;
 		}
 
 		streamProgressMonitor = new StreamProgressMonitor(monitor, null, lastWork.intValue());
-		ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(streamProgressMonitor, streamProgressMonitor, parsers.toArray(new IConsoleParser[parsers.size()]));
+		ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(streamProgressMonitor, streamProgressMonitor,
+				parsers.toArray(new IConsoleParser[parsers.size()]));
 		stdout = sniffer.getOutputStream();
 		stderr = sniffer.getErrorStream();
 	}
@@ -200,8 +203,9 @@ public class BuildRunnerHelper implements Closeable {
 			monitor.beginTask("", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 			try {
 				if (rc != null) {
-					monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.removingMarkers", rc.getFullPath().toString())); //$NON-NLS-1$
-					rc.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false,  IResource.DEPTH_INFINITE);
+					monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.removingMarkers", //$NON-NLS-1$
+							rc.getFullPath().toString()));
+					rc.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				}
 			} catch (CoreException e) {
 				// ignore
@@ -210,7 +214,8 @@ public class BuildRunnerHelper implements Closeable {
 				// Remove markers which source is this project from other projects
 				try {
 					IWorkspace workspace = project.getWorkspace();
-					IMarker[] markers = workspace.getRoot().findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+					IMarker[] markers = workspace.getRoot().findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true,
+							IResource.DEPTH_INFINITE);
 					String projectName = project.getName();
 					List<IMarker> markersList = new ArrayList<IMarker>();
 					for (IMarker marker : markers) {
@@ -264,7 +269,8 @@ public class BuildRunnerHelper implements Closeable {
 			IPath workingDirectory = new Path(pathFromURI);
 
 			String errMsg = null;
-			monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.invokingCommand", guessCommandLine(buildCommand.toString(), args))); //$NON-NLS-1$
+			monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.invokingCommand", //$NON-NLS-1$
+					guessCommandLine(buildCommand.toString(), args)));
 			Process p = launcher.execute(buildCommand, args, envp, workingDirectory, monitor);
 			monitor.worked(TICKS_EXECUTE_PROGRAM);
 			if (p != null) {
@@ -279,10 +285,10 @@ public class BuildRunnerHelper implements Closeable {
 				monitor.worked(TICKS_PARSE_OUTPUT);
 				if (status != ICommandLauncher.OK) {
 					errMsg = launcher.getErrorMessage();
-				}
-				else if(p.exitValue() != 0) {
+				} else if (p.exitValue() != 0) {
 					errMsg = CCorePlugin.getFormattedString("BuildRunnerHelper.commandNonZeroExitCode", //$NON-NLS-1$
-							new String[] { guessCommandLine(buildCommand.toString(), args), Integer.toString(p.exitValue())});
+							new String[] { guessCommandLine(buildCommand.toString(), args),
+									Integer.toString(p.exitValue()) });
 				}
 			} else {
 				errMsg = launcher.getErrorMessage();
@@ -359,7 +365,8 @@ public class BuildRunnerHelper implements Closeable {
 			monitor = new NullProgressMonitor();
 		}
 		try {
-			monitor.beginTask(CCorePlugin.getFormattedString("BuildRunnerHelper.refreshingProject", project.getName()), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+			monitor.beginTask(CCorePlugin.getFormattedString("BuildRunnerHelper.refreshingProject", project.getName()), //$NON-NLS-1$
+					IProgressMonitor.UNKNOWN);
 			monitor.subTask(""); //$NON-NLS-1$
 
 			// Do not allow the cancel of the refresh, since the builder is external
@@ -387,8 +394,8 @@ public class BuildRunnerHelper implements Closeable {
 	 *    {@link IncrementalProjectBuilder#FULL_BUILD} should be used.
 	 */
 	public void greeting(int kind) {
-		String msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildProject",  //$NON-NLS-1$
-					new String[] { buildKindToString(kind), project.getName() });
+		String msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildProject", //$NON-NLS-1$
+				new String[] { buildKindToString(kind), project.getName() });
 		greeting(msg);
 	}
 
@@ -422,11 +429,11 @@ public class BuildRunnerHelper implements Closeable {
 	 * @param isSupported - flag indicating if tool-chain is supported on the system.
 	 */
 	public void greeting(String kind, String cfgName, String toolchainName, boolean isSupported) {
-		String msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildProjectConfiguration",  //$NON-NLS-1$
+		String msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildProjectConfiguration", //$NON-NLS-1$
 				new String[] { kind, cfgName, project.getName() });
 		greeting(msg);
 
-		if (!isSupported ){
+		if (!isSupported) {
 			String errMsg = CCorePlugin.getFormattedString("BuildRunnerHelper.unsupportedConfiguration", //$NON-NLS-1$
 					new String[] { cfgName, toolchainName });
 			printLine(errMsg);
@@ -460,23 +467,24 @@ public class BuildRunnerHelper implements Closeable {
 	 */
 	public void goodbye() {
 		Assert.isTrue(startTime != 0, "Start time must be set before calling this method."); //$NON-NLS-1$
-		Assert.isTrue(consoleInfo != null, "consoleInfo must be open with greetings(...) call before using this method."); //$NON-NLS-1$
+		Assert.isTrue(consoleInfo != null,
+				"consoleInfo must be open with greetings(...) call before using this method."); //$NON-NLS-1$
 
 		//Count Errors/Warnings
 		int errorCount = errorParserManager.getErrorCount();
 		int warningCount = errorParserManager.getWarningCount();
-		
+
 		endTime = System.currentTimeMillis();
 		String duration = durationToString(endTime - startTime);
 		String msg = ""; //$NON-NLS-1$
-		if(isCancelled) {
+		if (isCancelled) {
 			msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildCancelled", duration); //$NON-NLS-1$
-		} else if(errorCount > 0) {
-			msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildFailed", new String[] {duration, //$NON-NLS-1$
-					Integer.toString(errorCount), Integer.toString(warningCount)}); 
+		} else if (errorCount > 0) {
+			msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildFailed", new String[] { duration, //$NON-NLS-1$
+					Integer.toString(errorCount), Integer.toString(warningCount) });
 		} else {
-			msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildFinished", new String[] {duration, //$NON-NLS-1$
-					Integer.toString(errorCount), Integer.toString(warningCount)}); 
+			msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildFinished", new String[] { duration, //$NON-NLS-1$
+					Integer.toString(errorCount), Integer.toString(warningCount) });
 		}
 		String goodbye = '\n' + timestamp(endTime) + msg + '\n';
 
@@ -515,6 +523,7 @@ public class BuildRunnerHelper implements Closeable {
 		}
 		return buf.toString().trim();
 	}
+
 	/**
 	 * Print a message to the console info output. Note that this message is colored
 	 * with the color assigned to "Info" stream.
@@ -523,7 +532,7 @@ public class BuildRunnerHelper implements Closeable {
 	private void toConsole(String msg) {
 		Assert.isNotNull(console, "Streams must be created and connected before calling this method"); //$NON-NLS-1$
 		try {
-			consoleInfo.write((msg+"\n").getBytes()); //$NON-NLS-1$
+			consoleInfo.write((msg + "\n").getBytes()); //$NON-NLS-1$
 		} catch (Exception e) {
 			CCorePlugin.log(e);
 		}
@@ -590,18 +599,18 @@ public class BuildRunnerHelper implements Closeable {
 		}
 		long hours = TimeUnit.MILLISECONDS.toHours(duration) % 24;
 		if (hours > 0) {
-			result +=  hours + "h:";
+			result += hours + "h:";
 		}
 		long minutes = TimeUnit.MILLISECONDS.toMinutes(duration) % 60;
 		if (minutes > 0) {
-			result +=  minutes + "m:";
+			result += minutes + "m:";
 		}
 		long seconds = TimeUnit.MILLISECONDS.toSeconds(duration) % 60;
 		if (seconds > 0) {
-			result +=  seconds + "s.";
+			result += seconds + "s.";
 		}
 		long milliseconds = TimeUnit.MILLISECONDS.toMillis(duration) % 1000;
-		result +=  milliseconds + "ms";
+		result += milliseconds + "ms";
 
 		return result;
 	}
@@ -619,16 +628,16 @@ public class BuildRunnerHelper implements Closeable {
 	 */
 	private static String buildKindToString(int kind) {
 		switch (kind) {
-			case IncrementalProjectBuilder.FULL_BUILD:
-				return CCorePlugin.getResourceString("BuildRunnerHelper.build"); //$NON-NLS-1$
-			case IncrementalProjectBuilder.INCREMENTAL_BUILD:
-				return CCorePlugin.getResourceString("BuildRunnerHelper.incrementalBuild"); //$NON-NLS-1$
-			case IncrementalProjectBuilder.AUTO_BUILD:
-				return CCorePlugin.getResourceString("BuildRunnerHelper.autoBuild"); //$NON-NLS-1$
-			case IncrementalProjectBuilder.CLEAN_BUILD:
-				return CCorePlugin.getResourceString("BuildRunnerHelper.cleanBuild"); //$NON-NLS-1$
-			default:
-				return CCorePlugin.getResourceString("BuildRunnerHelper.build"); //$NON-NLS-1$
+		case IncrementalProjectBuilder.FULL_BUILD:
+			return CCorePlugin.getResourceString("BuildRunnerHelper.build"); //$NON-NLS-1$
+		case IncrementalProjectBuilder.INCREMENTAL_BUILD:
+			return CCorePlugin.getResourceString("BuildRunnerHelper.incrementalBuild"); //$NON-NLS-1$
+		case IncrementalProjectBuilder.AUTO_BUILD:
+			return CCorePlugin.getResourceString("BuildRunnerHelper.autoBuild"); //$NON-NLS-1$
+		case IncrementalProjectBuilder.CLEAN_BUILD:
+			return CCorePlugin.getResourceString("BuildRunnerHelper.cleanBuild"); //$NON-NLS-1$
+		default:
+			return CCorePlugin.getResourceString("BuildRunnerHelper.build"); //$NON-NLS-1$
 		}
 	}
 }

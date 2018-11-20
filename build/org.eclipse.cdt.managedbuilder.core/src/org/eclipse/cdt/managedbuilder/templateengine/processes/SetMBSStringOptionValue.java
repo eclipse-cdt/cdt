@@ -34,7 +34,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-
 /**
  * This class sets the Managed Build System Option Values. Note that this class
  * handles both string options and enumerated options.
@@ -45,7 +44,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class SetMBSStringOptionValue extends ProcessRunner {
 
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -80,8 +80,10 @@ public class SetMBSStringOptionValue extends ProcessRunner {
 		}
 	}
 
-	private boolean setOptionValue(IProject projectHandle, String id, String value, String path) throws BuildException, ProcessFailureException {
-		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject().getConfigurations();
+	private boolean setOptionValue(IProject projectHandle, String id, String value, String path)
+			throws BuildException, ProcessFailureException {
+		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject()
+				.getConfigurations();
 
 		boolean resource = !(path == null || path.isEmpty() || path.equals("/")); //$NON-NLS-1$
 		boolean modified = false;
@@ -115,13 +117,15 @@ public class SetMBSStringOptionValue extends ProcessRunner {
 		return modified;
 	}
 
-	private boolean setOptionForResourceConfig(String id, String value, IResourceConfiguration resourceConfig, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
+	private boolean setOptionForResourceConfig(String id, String value, IResourceConfiguration resourceConfig,
+			IOption[] options, IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
 		for (IOption option : options) {
 			if (option.getBaseId().toLowerCase().matches(lowerId)) {
 				int optionType = option.getValueType();
-				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED) || (optionType == IOption.TREE)) {
+				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED)
+						|| (optionType == IOption.TREE)) {
 					ManagedBuildManager.setOption(resourceConfig, optionHolder, option, value);
 					modified = true;
 				}
@@ -130,13 +134,15 @@ public class SetMBSStringOptionValue extends ProcessRunner {
 		return modified;
 	}
 
-	private boolean setOptionForConfig(String id, String value, IConfiguration config, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
+	private boolean setOptionForConfig(String id, String value, IConfiguration config, IOption[] options,
+			IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
 		for (IOption option : options) {
 			if (option.getBaseId().toLowerCase().matches(lowerId)) {
 				int optionType = option.getValueType();
-				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED) || (optionType == IOption.TREE)) {
+				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED)
+						|| (optionType == IOption.TREE)) {
 					ManagedBuildManager.setOption(config, optionHolder, option, value);
 					modified = true;
 				}

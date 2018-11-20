@@ -25,53 +25,52 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * An example is the built-in variable __func__.
  */
 public class CBuiltinVariable extends CVariable {
-    private IType type=null;
-    private char[] name=null;
-    private IScope scope=null;
+	private IType type = null;
+	private char[] name = null;
+	private IScope scope = null;
 
-    public CBuiltinVariable(IType type, char[] name, IScope scope) {
-        super(null);
-        this.type = type;
-        this.name = name;
-        this.scope = scope;
-    }
+	public CBuiltinVariable(IType type, char[] name, IScope scope) {
+		super(null);
+		this.type = type;
+		this.name = name;
+		this.scope = scope;
+	}
 
-    @Override
+	@Override
 	public IType getType() {
-        return type;
-    }
+		return type;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return String.valueOf(name);
-    }
+		return String.valueOf(name);
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return scope;
-    }
+		return scope;
+	}
 
-    /**
-     * returns null
-     */
-    @Override
+	/**
+	 * returns null
+	 */
+	@Override
 	public IASTNode[] getDeclarations() {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * returns null
-     */
-    @Override
+	/**
+	 * returns null
+	 */
+	@Override
 	public IASTNode getDefinition() {
-        return null;
-    }
-
+		return null;
+	}
 
 	@Override
 	public IBinding getOwner() {

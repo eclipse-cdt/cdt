@@ -17,10 +17,10 @@ import org.eclipse.core.resources.IProject;
 
 public interface IProjectBuildState extends IRebuildState {
 	IConfigurationBuildState[] getConfigurationBuildStates();
-	
+
 	IConfigurationBuildState getConfigurationBuildState(String id, boolean create);
 
 	void removeConfigurationBuildState(String id);
-	
+
 	IProject getProject();
 }

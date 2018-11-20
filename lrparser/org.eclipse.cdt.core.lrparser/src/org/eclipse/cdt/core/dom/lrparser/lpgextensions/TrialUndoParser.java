@@ -69,11 +69,13 @@ public class TrialUndoParser {
 	}
 
 	public final int getLastToken(int i) {
-		int l = (i >= prs.rhs(state.currentAction) ? state.lastToken : state.tokens.get(state.locationStack[state.stateStackTop + i] - 1));
+		int l = (i >= prs.rhs(state.currentAction) ? state.lastToken
+				: state.tokens.get(state.locationStack[state.stateStackTop + i] - 1));
 		return tokStream.getLastErrorToken(l);
 	}
 
-	public TrialUndoParser(TokenStream tokStream, ParseTable prs, ITrialUndoActionProvider ra) throws BadParseSymFileException, NotBacktrackParseTableException {
+	public TrialUndoParser(TokenStream tokStream, ParseTable prs, ITrialUndoActionProvider ra)
+			throws BadParseSymFileException, NotBacktrackParseTableException {
 		this.tokStream = tokStream;
 		this.prs = prs;
 		this.actionProvider = ra;
@@ -92,7 +94,8 @@ public class TrialUndoParser {
 			throw new NotBacktrackParseTableException();
 	}
 
-	public TrialUndoParser(Monitor monitor, TokenStream tokStream, ParseTable prs, ITrialUndoActionProvider ra) throws BadParseSymFileException, NotBacktrackParseTableException {
+	public TrialUndoParser(Monitor monitor, TokenStream tokStream, ParseTable prs, ITrialUndoActionProvider ra)
+			throws BadParseSymFileException, NotBacktrackParseTableException {
 		this(tokStream, prs, ra);
 		this.monitor = monitor;
 	}
@@ -138,7 +141,8 @@ public class TrialUndoParser {
 		state.reallocateOtherStacks(start_token_index);
 
 		int initial_error_token = backtrackParse(state.repair_token);
-		for (int error_token = initial_error_token, count = 0; error_token != 0; error_token = backtrackParse(state.repair_token), count++) {
+		for (int error_token = initial_error_token, count = 0; error_token != 0; error_token = backtrackParse(
+				state.repair_token), count++) {
 			if (count == max_error_count)
 				throw new BadParseException(initial_error_token);
 			state.actionCount = start_action_index;
@@ -149,9 +153,12 @@ public class TrialUndoParser {
 
 			backtrackParseUpToError(state.repair_token, error_token);
 
-			for (state.stateStackTop = findRecoveryStateIndex(state.stateStackTop); state.stateStackTop >= 0; state.stateStackTop = findRecoveryStateIndex(state.stateStackTop - 1)) {
+			for (state.stateStackTop = findRecoveryStateIndex(
+					state.stateStackTop); state.stateStackTop >= 0; state.stateStackTop = findRecoveryStateIndex(
+							state.stateStackTop - 1)) {
 				int recovery_token = state.tokens.get(state.locationStack[state.stateStackTop] - 1);
-				state.repair_token = errorRepair((recovery_token >= start_token_index ? recovery_token : error_token), error_token);
+				state.repair_token = errorRepair((recovery_token >= start_token_index ? recovery_token : error_token),
+						error_token);
 				if (state.repair_token != 0)
 					break;
 			}
@@ -285,7 +292,8 @@ public class TrialUndoParser {
 				if (state.configurationStack.findConfiguration(state.stateStack, state.stateStackTop, state.curtok))
 					state.act = ERROR_ACTION;
 				else {
-					state.configurationStack.push(state.stateStack, state.stateStackTop, state.act + 1, state.curtok, state.actionCount);
+					state.configurationStack.push(state.stateStack, state.stateStackTop, state.act + 1, state.curtok,
+							state.actionCount);
 					state.trialActionStack.add(Integer.valueOf(state.trialActionCount));
 					state.act = prs.baseAction(state.act);
 					maxStackTop = state.stateStackTop > maxStackTop ? state.stateStackTop : maxStackTop;
@@ -393,10 +401,12 @@ public class TrialUndoParser {
 				}
 				break;
 			} else if (state.act > ACCEPT_ACTION) {
-				if (state.configurationStack.findConfiguration(state.stateStack, state.stateStackTop, state.tokens.size()))
+				if (state.configurationStack.findConfiguration(state.stateStack, state.stateStackTop,
+						state.tokens.size()))
 					state.act = ERROR_ACTION;
 				else {
-					state.configurationStack.push(state.stateStack, state.stateStackTop, state.act + 1, state.tokens.size(), state.actionCount);
+					state.configurationStack.push(state.stateStack, state.stateStackTop, state.act + 1,
+							state.tokens.size(), state.actionCount);
 					state.trialActionStack.add(Integer.valueOf(state.trialActionCount));
 					state.act = prs.baseAction(state.act);
 				}
@@ -552,7 +562,7 @@ public class TrialUndoParser {
 	private int errorRepair(int recovery_token, int error_token) {
 		int temp_stack[] = new int[state.stateStackTop + 1];
 		System.arraycopy(state.stateStack, 0, temp_stack, 0, temp_stack.length);
-		for (; tokStream.getKind(recovery_token) != EOFT_SYMBOL; recovery_token = tokStream.getNext(recovery_token)) { 
+		for (; tokStream.getKind(recovery_token) != EOFT_SYMBOL; recovery_token = tokStream.getNext(recovery_token)) {
 			System.out.println("recovery token: " + tokStream.getKind(recovery_token)); //$NON-NLS-1$
 			tokStream.reset(recovery_token);
 			if (repairable(error_token))
@@ -579,7 +589,8 @@ public class TrialUndoParser {
 		state.actionCount = state.actionStack[state.stateStackTop];
 		state.trialActionCount = state.undoStack[state.stateStackTop];
 
-		return tokStream.makeErrorToken(state.tokens.get(state.locationStack[state.stateStackTop] - 1), tokStream.getPrevious(recovery_token), error_token, ERROR_SYMBOL);
+		return tokStream.makeErrorToken(state.tokens.get(state.locationStack[state.stateStackTop] - 1),
+				tokStream.getPrevious(recovery_token), error_token, ERROR_SYMBOL);
 	}
 
 	private int tAction(int act, int sym) {

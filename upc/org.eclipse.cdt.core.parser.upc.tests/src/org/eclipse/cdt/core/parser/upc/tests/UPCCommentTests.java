@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.lrparser.tests.LRCommentTests;
 import org.eclipse.cdt.core.model.ILanguage;
 
 public class UPCCommentTests extends LRCommentTests {
-	
+
 	@Override
 	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();

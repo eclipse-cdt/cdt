@@ -36,7 +36,7 @@ public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction imp
 
 	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		IBinding owner= getOwner();
+		IBinding owner = getOwner();
 		if (owner instanceof ICPPSpecialization) {
 			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 		}
@@ -52,13 +52,13 @@ public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction imp
 
 	@Override
 	public IType[] getExceptionSpecification() {
-		IType[] es= ((ICPPFunction)rbinding).getExceptionSpecification();
+		IType[] es = ((ICPPFunction) rbinding).getExceptionSpecification();
 		if (es == null || es.length == 0)
 			return es;
-		
-		IType[] result= new IType[es.length];
+
+		IType[] result = new IType[es.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i]= cf.getCompositeType(result[i]);
+			result[i] = cf.getCompositeType(result[i]);
 		}
 		return result;
 	}

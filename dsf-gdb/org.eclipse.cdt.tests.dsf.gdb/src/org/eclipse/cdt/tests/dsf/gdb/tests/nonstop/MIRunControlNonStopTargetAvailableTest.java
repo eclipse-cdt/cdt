@@ -42,7 +42,7 @@ public class MIRunControlNonStopTargetAvailableTest extends MIRunControlTargetAv
 	}
 
 	@Test
-	public void checknothing(){
+	public void checknothing() {
 
 	}
 }

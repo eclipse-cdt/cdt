@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
-
 /**
  * Low-level job to read source files in the background.
  */
@@ -37,7 +36,7 @@ public class SourceReadingJob extends Job {
 		fFileInfo.fReadingJob = this;
 		fDone = done;
 		if (fi.fFile instanceof ISchedulingRule) {
-			setRule((ISchedulingRule)fi.fFile);
+			setRule((ISchedulingRule) fi.fFile);
 		}
 		setSystem(true);
 		// usually short lived job

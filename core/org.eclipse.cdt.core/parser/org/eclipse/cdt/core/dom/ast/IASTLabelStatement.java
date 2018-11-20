@@ -29,9 +29,11 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 	 */
 	@Deprecated
 	public static final IASTStatement[] EMPTY_LABEL_STATEMENT_ARRAY = {};
-	
-	public static final ASTNodeProperty NAME = new ASTNodeProperty("IASTLabelStatement.NAME - name for IASTLabelStatement"); //$NON-NLS-1$
-    public static final ASTNodeProperty NESTED_STATEMENT = new ASTNodeProperty("IASTLabelStatement.NESTED_STATEMENT - statement for IASTLabelStatement"); //$NON-NLS-1$
+
+	public static final ASTNodeProperty NAME = new ASTNodeProperty(
+			"IASTLabelStatement.NAME - name for IASTLabelStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty NESTED_STATEMENT = new ASTNodeProperty(
+			"IASTLabelStatement.NESTED_STATEMENT - statement for IASTLabelStatement"); //$NON-NLS-1$
 
 	/**
 	 * The name for the label. The name resolves to an ILabel binding.
@@ -50,16 +52,16 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 	/**
 	 * Returns the statement following the label.
 	 */
-    public IASTStatement getNestedStatement();
-    
-    /**
-     * Sets the statement following the label.
-     *
-     * @param statement the statement to set
-     */
-    public void setNestedStatement(IASTStatement statement);
-    
-    /**
+	public IASTStatement getNestedStatement();
+
+	/**
+	 * Sets the statement following the label.
+	 *
+	 * @param statement the statement to set
+	 */
+	public void setNestedStatement(IASTStatement statement);
+
+	/**
 	 * @since 5.1
 	 */
 	@Override

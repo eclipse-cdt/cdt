@@ -118,7 +118,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getName();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -323,7 +323,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
 	 */
@@ -334,5 +334,5 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		}
 		return addressFactory;
 	}
-	
+
 }

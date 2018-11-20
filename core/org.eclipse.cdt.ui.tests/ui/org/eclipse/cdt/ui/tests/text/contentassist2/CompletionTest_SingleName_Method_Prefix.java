@@ -12,6 +12,7 @@
  *     Rational Software - initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -21,42 +22,28 @@ import junit.framework.TestSuite;
  * Testing statement start completion kind, with a prefix
  *
  */
-public class CompletionTest_SingleName_Method_Prefix	  extends CompletionProposalsBaseTest{
-		
+public class CompletionTest_SingleName_Method_Prefix extends CompletionProposalsBaseTest {
+
 	private final String fileName = "CompletionTestStart1.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "a";
-	private final String[] expectedResults = {
-			"anotherField : int",
-			"aVariable : int",
-			"anotherMethod(void) : void",
-			"aFunction(void) : bool",
-			"anotherFunction(void) : void",
-			"aClass",
-			"anotherClass",
-			"anotherClass(const anotherClass &)",
-			"anotherClass(void)",
-			"aNamespace",
-			"anEnumeration",
-			"aFirstEnum",
-			"aSecondEnum",
-			"aThirdEnum",
-			"AStruct",
-			"AMacro(x)"
-	};
-	
+	private final String[] expectedResults = { "anotherField : int", "aVariable : int", "anotherMethod(void) : void",
+			"aFunction(void) : bool", "anotherFunction(void) : void", "aClass", "anotherClass",
+			"anotherClass(const anotherClass &)", "anotherClass(void)", "aNamespace", "anEnumeration", "aFirstEnum",
+			"aSecondEnum", "aThirdEnum", "AStruct", "AMacro(x)" };
+
 	public CompletionTest_SingleName_Method_Prefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_SingleName_Method_Prefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_SingleName_Method_Prefix.class.getName());
 		suite.addTest(new CompletionTest_SingleName_Method_Prefix("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -96,6 +83,7 @@ public class CompletionTest_SingleName_Method_Prefix	  extends CompletionProposa
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

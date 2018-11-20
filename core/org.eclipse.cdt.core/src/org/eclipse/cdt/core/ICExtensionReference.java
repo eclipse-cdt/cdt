@@ -35,36 +35,36 @@ import org.eclipse.core.runtime.IConfigurationElement;
 @Deprecated
 public interface ICExtensionReference {
 
-    /**
-     * Return the extension point of this reference.
-     *
-     * @return String
-     */
-    public String getExtension();
+	/**
+	 * Return the extension point of this reference.
+	 *
+	 * @return String
+	 */
+	public String getExtension();
 
-    /**
-     * Return the extension ID of this reference.
-     *
-     * @return String
-     */
-    public String getID();
+	/**
+	 * Return the extension ID of this reference.
+	 *
+	 * @return String
+	 */
+	public String getID();
 
-    /**
-     * Sets a name/value data pair on this reference in the .cdtproject file
-     */
-    public void setExtensionData(String key, String value) throws CoreException;
+	/**
+	 * Sets a name/value data pair on this reference in the .cdtproject file
+	 */
+	public void setExtensionData(String key, String value) throws CoreException;
 
-    /**
-     * Gets a value of the key from the .cdtproject file set by
-     * setExtensionData()
-     */
-    public String getExtensionData(String key);
+	/**
+	 * Gets a value of the key from the .cdtproject file set by
+	 * setExtensionData()
+	 */
+	public String getExtensionData(String key);
 
-    /**
-     * Returns the project descriptor which this extension reference belongs to.
-     * @return the ICDescriptor
-     */
-    public ICDescriptor getCDescriptor();
+	/**
+	 * Returns the project descriptor which this extension reference belongs to.
+	 * @return the ICDescriptor
+	 */
+	public ICDescriptor getCDescriptor();
 
 	/**
 	 * Creates and returns a new instance of the cextension executable
@@ -86,28 +86,28 @@ public interface ICExtensionReference {
 	 *   could not be created for any reason.
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData
 	 */
-    public ICExtension createExtension() throws CoreException;
+	public ICExtension createExtension() throws CoreException;
 
-    /**
-     * Returns all configuration elements that are children of the
-     * cextension element. Returns an empty array if this configuration
-     * element has no children.
-     * <p>
-     * Each child corresponds to a nested XML element in the configuration
-     * markup. For example, the configuration markup
-     *
-     * <pre>
-     *  &lt;view&gt;
-     *  &nbsp&nbsp&nbsp&nbsp&lt;verticalHint&gt;top&lt;/verticalHint&gt;
-     *  &nbsp&nbsp&nbsp&nbsp&lt;horizontalHint&gt;left&lt;/horizontalHint&gt;
-     *  &lt;/view&gt;
-     * </pre>
-     *
-     * corresponds to a configuration element, named <code>"view"</code>,
-     * with two children.
-     * </p>
-     *
-     * @return the child configuration elements
-     */
-    public IConfigurationElement[] getExtensionElements() throws CoreException;
+	/**
+	 * Returns all configuration elements that are children of the
+	 * cextension element. Returns an empty array if this configuration
+	 * element has no children.
+	 * <p>
+	 * Each child corresponds to a nested XML element in the configuration
+	 * markup. For example, the configuration markup
+	 *
+	 * <pre>
+	 *  &lt;view&gt;
+	 *  &nbsp&nbsp&nbsp&nbsp&lt;verticalHint&gt;top&lt;/verticalHint&gt;
+	 *  &nbsp&nbsp&nbsp&nbsp&lt;horizontalHint&gt;left&lt;/horizontalHint&gt;
+	 *  &lt;/view&gt;
+	 * </pre>
+	 *
+	 * corresponds to a configuration element, named <code>"view"</code>,
+	 * with two children.
+	 * </p>
+	 *
+	 * @return the child configuration elements
+	 */
+	public IConfigurationElement[] getExtensionElements() throws CoreException;
 }

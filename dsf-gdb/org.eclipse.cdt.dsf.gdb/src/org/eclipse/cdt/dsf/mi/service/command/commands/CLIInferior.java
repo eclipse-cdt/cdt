@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  */
 public class CLIInferior extends MIInterpreterExecConsole<MIInfo> {
 
-	private static final String INFERIOR = "inferior ";  //$NON-NLS-1$
+	private static final String INFERIOR = "inferior "; //$NON-NLS-1$
 
 	public CLIInferior(ICommandControlDMContext ctx, String inferiorId) {
 		super(ctx, INFERIOR + inferiorId);

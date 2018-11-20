@@ -30,16 +30,14 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.PlatformUI;
 
-
 @SuppressWarnings("deprecation")
 public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
-	
+
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.projectOptionsPage"; //$NON-NLS-1$
-	
+
 	public static class ManagedWizardOptionBlock extends ManagedProjectOptionBlock {
-		
+
 		NewAutotoolsProjectOptionPage parent;
-		
 
 		public ManagedWizardOptionBlock(NewAutotoolsProjectOptionPage parentPage) {
 			super(parentPage);
@@ -50,7 +48,7 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 			AutotoolsReferenceBlock() {
 				super();
 			}
-			
+
 			@Override
 			public void performApply(IProgressMonitor monitor) {
 				try {
@@ -61,6 +59,7 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 				}
 			}
 		}
+
 		public void updateProjectTypeProperties() {
 		}
 
@@ -70,14 +69,14 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 			// Bug 406711 - Remove the IndexerBlock as this causes an exception to occur
 			//             because the project handle isn't set up.  It is not needed.
 		}
-		
-		public void setupHelpContextIds(){
+
+		public void setupHelpContextIds() {
 			List<ICOptionPage> pages = getOptionPages();
-			
+
 			Iterator<ICOptionPage> iter = pages.iterator();
-			for( int i = 0; i < 3 && iter.hasNext(); i++ ) {
+			for (int i = 0; i < 3 && iter.hasNext(); i++) {
 				ICOptionPage page = iter.next();
-				
+
 				String id = null;
 				if (page instanceof ReferenceBlock) {
 					id = CDTHelpContextIds.MAN_PROJ_WIZ_PROJECTS_TAB;
@@ -88,7 +87,7 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 			}
 		}
 	}
-	
+
 	protected ManagedWizardOptionBlock optionBlock;
 
 	/**
@@ -107,7 +106,7 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 	@Override
 	public IProject getProject() {
 		if (getWizard() instanceof ConvertToAutotoolsProjectWizard)
-			return ((ConvertToAutotoolsProjectWizard)getWizard()).getProject();
+			return ((ConvertToAutotoolsProjectWizard) getWizard()).getProject();
 		return null;
 	}
 
@@ -115,20 +114,19 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 	public Preferences getPreferences() {
 		return ManagedBuilderUIPlugin.getDefault().getPluginPreferences();
 	}
-	
+
 	public void updateProjectTypeProperties() {
 		//  Update the error parser list
 		optionBlock.updateProjectTypeProperties();
 	}
-	
-	public void setupHelpContextIds(){
+
+	public void setupHelpContextIds() {
 		optionBlock.setupHelpContextIds();
 	}
-	
+
 	@Override
-	public IWizardPage getNextPage()
-	{
+	public IWizardPage getNextPage() {
 		return MBSCustomPageManager.getNextPage(PAGE_ID); // get first custom page, if any
 	}
-	
+
 }

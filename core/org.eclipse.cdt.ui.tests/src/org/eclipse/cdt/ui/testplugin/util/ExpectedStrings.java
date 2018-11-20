@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.testplugin.util;
 
-
 import java.util.Stack;
+
 /**
  * @author Peter Graves
  *
@@ -22,9 +22,9 @@ import java.util.Stack;
  * in a structure/list, it will maintain a list of unfound/extra strings.
  */
 public class ExpectedStrings {
-	public String [] expStrings;
-	private boolean[] foundStrings; 
-	private Stack<String> extraStrings; 	// A stack of the unexpected strings we received
+	public String[] expStrings;
+	private boolean[] foundStrings;
+	private Stack<String> extraStrings; // A stack of the unexpected strings we received
 	private boolean extra;
 
 	/**
@@ -37,18 +37,18 @@ public class ExpectedStrings {
 	 * Constructor for ExpectedStrings that accepts a list of strings that we expect to get.
 	 */
 	public ExpectedStrings(String[] values) {
-		expStrings=new String[values.length];
+		expStrings = new String[values.length];
 		for (int x = 0; x < values.length; x++) {
 			expStrings[x] = values[x];
 		}
-		foundStrings=new boolean[values.length];
+		foundStrings = new boolean[values.length];
 		for (int x = 0; x < values.length; x++) {
 			foundStrings[x] = false;
 		}
 		extraStrings = new Stack<>();
 		extra = false;
 	}
-	
+
 	public int foundString(String current) {
 		for (int x = 0; x < expStrings.length; x++) {
 			if (current.equals(expStrings[x])) {
@@ -56,10 +56,10 @@ public class ExpectedStrings {
 				return 0;
 			}
 		}
-		
+
 		// If we arrive here, the strings was not found, so this is and extra string.
 		extraStrings.push(current);
-		extra= true;
+		extra = true;
 		return 1;
 	}
 

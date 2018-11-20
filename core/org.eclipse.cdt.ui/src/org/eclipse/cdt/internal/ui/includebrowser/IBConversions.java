@@ -31,81 +31,81 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 public class IBConversions {
 
-    public static IBNode selectionToNode(ISelection sel) {
-        if (sel instanceof IStructuredSelection) {
-            IStructuredSelection ssel= (IStructuredSelection) sel;
-            for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
-                Object o= iter.next();
-                if (o instanceof IBNode) {
-                    IBNode node = (IBNode) o;
-                    return node;
-                }
-            }
-        }
-        return null;
-    }
+	public static IBNode selectionToNode(ISelection sel) {
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) sel;
+			for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
+				Object o = iter.next();
+				if (o instanceof IBNode) {
+					IBNode node = (IBNode) o;
+					return node;
+				}
+			}
+		}
+		return null;
+	}
 
-    public static ITranslationUnit selectionToTU(ISelection sel) {
-        if (sel instanceof IStructuredSelection) {
-            IStructuredSelection ssel= (IStructuredSelection) sel;
-            for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
-                ITranslationUnit tu= objectToTU(iter.next());
-                if (tu != null) {
-                    return tu;
-                }
-            }
-        }
-        return null;
-    }
+	public static ITranslationUnit selectionToTU(ISelection sel) {
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) sel;
+			for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
+				ITranslationUnit tu = objectToTU(iter.next());
+				if (tu != null) {
+					return tu;
+				}
+			}
+		}
+		return null;
+	}
 
-    public static ISelection nodeSelectionToRepresentedTUSelection(ISelection sel) {
-        if (sel instanceof IStructuredSelection) {
-            IStructuredSelection ssel= (IStructuredSelection) sel;
-            ArrayList<ITranslationUnit> tus= new ArrayList<ITranslationUnit>();
-            for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
-            	Object obj= iter.next();
-            	if (obj instanceof IBNode) {
-            		ITranslationUnit tu= ((IBNode) obj).getRepresentedTranslationUnit();
-            		if (tu != null) {
-            			tus.add(tu);
-            		}
-            	}
-            }
-            return new StructuredSelection(tus);
-        }
-        return StructuredSelection.EMPTY;
-    }
+	public static ISelection nodeSelectionToRepresentedTUSelection(ISelection sel) {
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) sel;
+			ArrayList<ITranslationUnit> tus = new ArrayList<ITranslationUnit>();
+			for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
+				Object obj = iter.next();
+				if (obj instanceof IBNode) {
+					ITranslationUnit tu = ((IBNode) obj).getRepresentedTranslationUnit();
+					if (tu != null) {
+						tus.add(tu);
+					}
+				}
+			}
+			return new StructuredSelection(tus);
+		}
+		return StructuredSelection.EMPTY;
+	}
 
-    public static ITranslationUnit objectToTU(Object object) {
-        if (object instanceof ITranslationUnit) {
-            return (ITranslationUnit) object;
-        }
-        if (object instanceof IFile) {
-        	return CoreModelUtil.findTranslationUnit((IFile) object);
-        }
-        if (object instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) object;
-            ITranslationUnit result= adaptable.getAdapter(ITranslationUnit.class);
-            if (result != null) {
-                return result;
-            }
-            IFile file= adaptable.getAdapter(IFile.class);
-            if (file != null) {
-                return CoreModelUtil.findTranslationUnit(file);
-            }
+	public static ITranslationUnit objectToTU(Object object) {
+		if (object instanceof ITranslationUnit) {
+			return (ITranslationUnit) object;
+		}
+		if (object instanceof IFile) {
+			return CoreModelUtil.findTranslationUnit((IFile) object);
+		}
+		if (object instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) object;
+			ITranslationUnit result = adaptable.getAdapter(ITranslationUnit.class);
+			if (result != null) {
+				return result;
+			}
+			IFile file = adaptable.getAdapter(IFile.class);
+			if (file != null) {
+				return CoreModelUtil.findTranslationUnit(file);
+			}
 
-            ILocationProvider locProvider= adaptable.getAdapter(ILocationProvider.class);
-            if (locProvider != null) {
-            	IPath path= locProvider.getPath(locProvider);
-            	if (path != null) {
-            		try {
+			ILocationProvider locProvider = adaptable.getAdapter(ILocationProvider.class);
+			if (locProvider != null) {
+				IPath path = locProvider.getPath(locProvider);
+				if (path != null) {
+					try {
 						return CoreModelUtil.findTranslationUnitForLocation(path, null);
 					} catch (CModelException e) {
 						CUIPlugin.log(e);
 					}
-            	}
-            }
-        }
-        return null;
-    }
+				}
+			}
+		}
+		return null;
+	}
 }

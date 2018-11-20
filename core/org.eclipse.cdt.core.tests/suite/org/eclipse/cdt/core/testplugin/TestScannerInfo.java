@@ -27,13 +27,13 @@ public class TestScannerInfo extends ExtendedScannerInfo {
 	private String[] fMacroFiles;
 	private Map<String, String> fDefinedSymbols;
 
-	public TestScannerInfo(String[] includes, String[] localIncludes, String[] macroFiles,
-			String[] includeFiles, Map<String, String> definedSymbols) {
-		fIncludes= includes;
-		fLocalIncludes= localIncludes;
-		fIncludeFiles= includeFiles;
-		fMacroFiles= macroFiles;
-		fDefinedSymbols= definedSymbols;
+	public TestScannerInfo(String[] includes, String[] localIncludes, String[] macroFiles, String[] includeFiles,
+			Map<String, String> definedSymbols) {
+		fIncludes = includes;
+		fLocalIncludes = localIncludes;
+		fIncludeFiles = includeFiles;
+		fMacroFiles = macroFiles;
+		fDefinedSymbols = definedSymbols;
 	}
 
 	@Override
@@ -53,11 +53,11 @@ public class TestScannerInfo extends ExtendedScannerInfo {
 
 	@Override
 	public String[] getIncludeFiles() {
-		return fIncludeFiles == null ? EMPTY: fIncludeFiles;
+		return fIncludeFiles == null ? EMPTY : fIncludeFiles;
 	}
 
 	@Override
 	public String[] getMacroFiles() {
-		return fMacroFiles == null ? EMPTY: fMacroFiles;
+		return fMacroFiles == null ? EMPTY : fMacroFiles;
 	}
 }

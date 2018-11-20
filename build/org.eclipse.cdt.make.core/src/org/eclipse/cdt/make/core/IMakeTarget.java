@@ -39,11 +39,11 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	 * @since 7.0
 	 */
 	public void setName(String name);
-	
+
 	public String getTargetBuilderID();
-	
+
 	public IProject getProject();
-	
+
 	/**
 	 * Set build target
 	 * 
@@ -52,7 +52,6 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	@Deprecated
 	public void setBuildTarget(String target) throws CoreException;
 
-	
 	/**
 	 * @deprecated as of CDT 3.0
 	 * 
@@ -60,27 +59,27 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	 */
 	@Deprecated
 	public String getBuildTarget();
-	
+
 	public void setRunAllBuilders(boolean runAllBuilders) throws CoreException;
 
 	public boolean runAllBuilders();
-	
+
 	/**
 	 * Get the target build container.
 	 * 
 	 * @return IContainer of where target build will be invoked. 
 	 */
 	public IContainer getContainer();
-	
+
 	/**
 	 * Make this target temporary on the container, this target will not be persisted, 
 	 * and may not be added to the IMakeTargetManager. 
 	 */
 	public void setContainer(IContainer container);
-	
+
 	public void setAppendProjectEnvironment(boolean append);
-	
+
 	public boolean appendProjectEnvironment();
-	
+
 	public void build(IProgressMonitor monitor) throws CoreException;
 }

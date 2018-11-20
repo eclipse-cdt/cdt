@@ -32,7 +32,7 @@ public final class CHoverMessages extends NLS {
 	public static String CMacroExpansionControl_title_macroExpansion;
 	public static String CMacroExpansionControl_title_macroExpansionExploration;
 	public static String CMacroExpansionControl_title_original;
-	
+
 	public static String CMacroExpansionInput_jobTitle;
 
 	public static String CSourceHover_jobTitle;

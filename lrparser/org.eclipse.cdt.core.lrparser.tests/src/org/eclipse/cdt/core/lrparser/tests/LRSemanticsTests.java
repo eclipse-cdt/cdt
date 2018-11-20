@@ -27,30 +27,33 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class LRSemanticsTests extends SemanticsTests {
 
 	public static TestSuite suite() {
-    	return suite(LRSemanticsTests.class);
-    }
-    
-	public LRSemanticsTests() { }
-	public LRSemanticsTests(String name) { super(name); }
-	
-	 
-	@SuppressWarnings("unused") 
+		return suite(LRSemanticsTests.class);
+	}
+
+	public LRSemanticsTests() {
+	}
+
+	public LRSemanticsTests(String name) {
+		super(name);
+	}
+
+	@SuppressWarnings("unused")
 	@Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, 
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
 			boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	ParseHelper.Options options = new ParseHelper.Options();
-    	options.setCheckSyntaxProblems(expectNoProblems);
-    	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setLimitTrivialInitializers(limitTrivialInitializers);
-    	return ParseHelper.parse(code, language, options);
-    }
-    
-    protected ILanguage getCLanguage() {
-    	return GCCLanguage.getDefault();
-    }
-    
-    protected ILanguage getCPPLanguage() {
-    	return GPPLanguage.getDefault();
-    }
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckSyntaxProblems(expectNoProblems);
+		options.setCheckPreprocessorProblems(expectNoProblems);
+		options.setLimitTrivialInitializers(limitTrivialInitializers);
+		return ParseHelper.parse(code, language, options);
+	}
+
+	protected ILanguage getCLanguage() {
+		return GCCLanguage.getDefault();
+	}
+
+	protected ILanguage getCPPLanguage() {
+		return GPPLanguage.getDefault();
+	}
 }

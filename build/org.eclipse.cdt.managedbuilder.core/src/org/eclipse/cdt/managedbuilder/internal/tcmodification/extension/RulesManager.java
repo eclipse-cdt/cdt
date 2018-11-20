@@ -39,17 +39,17 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-
 public class RulesManager {
 	private static RulesManager fInstance;
-	private static final String EXTENSION_POINT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".tcModificationInfo"; //$NON-NLS-1$
-	
+	private static final String EXTENSION_POINT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier()
+			+ ".tcModificationInfo"; //$NON-NLS-1$
+
 	private ConflictDefinition[] fConflictDefinitions;
-	
+
 	private Map<MatchObjectElement, IObjectSet> fMatchObjectMap = new HashMap<MatchObjectElement, IObjectSet>();
 	private PerTypeMapStorage<IRealBuildObjectAssociation, Set<IRealBuildObjectAssociation>> fObjToChildSuperClassMap;
 	private StarterJob fStarter;
-	private boolean fIsStartInited; 
+	private boolean fIsStartInited;
 
 	private class StarterJob extends Job {
 
@@ -67,42 +67,42 @@ public class RulesManager {
 			}
 			return Status.OK_STATUS;
 		}
-		
+
 	}
 
-	private RulesManager(){
+	private RulesManager() {
 	}
-	
-	public static RulesManager getInstance(){
-		if(fInstance == null)
+
+	public static RulesManager getInstance() {
+		if (fInstance == null)
 			fInstance = getInstanceSynch();
 		return fInstance;
 	}
 
-	public synchronized static RulesManager getInstanceSynch(){
-		if(fInstance == null)
+	public synchronized static RulesManager getInstanceSynch() {
+		if (fInstance == null)
 			fInstance = new RulesManager();
 		return fInstance;
 	}
-	
-	public void start(){
-		if(fIsStartInited)
+
+	public void start() {
+		if (fIsStartInited)
 			return;
 
 		synchronized (this) {
-			if(fIsStartInited)
+			if (fIsStartInited)
 				return;
-			
+
 			fIsStartInited = true;
 		}
-		
+
 		fStarter = new StarterJob();
 		fStarter.schedule();
 	}
-	
-	private void loadExtensions(){
+
+	private void loadExtensions() {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
-		if(extensionPoint == null){
+		if (extensionPoint == null) {
 			fConflictDefinitions = new ConflictDefinition[0];
 		} else {
 			IExtension[] extensions = extensionPoint.getExtensions();
@@ -110,51 +110,51 @@ public class RulesManager {
 			for (int i = 0; i < extensions.length; ++i) {
 				IExtension extension = extensions[i];
 				IConfigurationElement[] elements = extension.getConfigurationElements();
-				for(int k = 0; k < elements.length; k++){
+				for (int k = 0; k < elements.length; k++) {
 					IConfigurationElement el = elements[k];
 					String elName = el.getName();
-					if(ConflictDefinitionElement.ELEMENT_NAME.equals(elName)){
+					if (ConflictDefinitionElement.ELEMENT_NAME.equals(elName)) {
 						try {
 							ConflictDefinitionElement cde = new ConflictDefinitionElement(el);
 							ConflictDefinition cd = resolve(cde);
-							if(cd != null)
+							if (cd != null)
 								conflictDefs.add(cd);
-						} catch (IllegalArgumentException e){
+						} catch (IllegalArgumentException e) {
 							ManagedBuilderCorePlugin.log(e);
 						}
 					}
 				}
 			}
-			
+
 			fConflictDefinitions = conflictDefs.toArray(new ConflictDefinition[conflictDefs.size()]);
 		}
 	}
-	
+
 	private ConflictDefinition resolve(ConflictDefinitionElement el) throws IllegalArgumentException {
 		MatchObjectElement mos[] = el.getMatchObjects();
-		if(mos.length != 2)
+		if (mos.length != 2)
 			throw new IllegalArgumentException();
-		
+
 		IObjectSet oss[] = new IObjectSet[mos.length];
-		
-		for(int i = 0; i < mos.length; i++){
+
+		for (int i = 0; i < mos.length; i++) {
 			oss[i] = resolve(mos[i]);
-			if(oss[i].getNumObjects() == 0){
+			if (oss[i].getNumObjects() == 0) {
 				//no conflicts
 				return null;
 			}
 		}
-		
+
 		return new ConflictDefinition(new ObjectSetList(oss));
 	}
-	
-	private IObjectSet resolve(MatchObjectElement el){
+
+	private IObjectSet resolve(MatchObjectElement el) {
 		IObjectSet oSet = fMatchObjectMap.get(el);
-		if(oSet == null){
+		if (oSet == null) {
 			int type = el.getObjectType();
 			PatternElement[] patterns = el.getPatterns();
-			HashSet<IRealBuildObjectAssociation> objectsSet = new HashSet<IRealBuildObjectAssociation>(); 
-			for(int i = 0; i < patterns.length; i++){
+			HashSet<IRealBuildObjectAssociation> objectsSet = new HashSet<IRealBuildObjectAssociation>();
+			for (int i = 0; i < patterns.length; i++) {
 				PatternElement pattern = patterns[i];
 				processPattern(type, pattern, objectsSet);
 			}
@@ -163,108 +163,113 @@ public class RulesManager {
 		}
 		return oSet;
 	}
-	
-	private IRealBuildObjectAssociation[] getObjectsForId(int objType, String id, int idType){
-		if(idType == PatternElement.TYPE_ID_EXACT_MATCH){
+
+	private IRealBuildObjectAssociation[] getObjectsForId(int objType, String id, int idType) {
+		if (idType == PatternElement.TYPE_ID_EXACT_MATCH) {
 			IRealBuildObjectAssociation obj = TcModificationUtil.getObjectById(objType, id);
-			if(obj != null)
-				return new IRealBuildObjectAssociation[]{obj};
+			if (obj != null)
+				return new IRealBuildObjectAssociation[] { obj };
 			return new IRealBuildObjectAssociation[0];
 		}
-		
+
 		IRealBuildObjectAssociation[] allObjs = TcModificationUtil.getExtensionObjects(objType);
 		Pattern pattern = Pattern.compile(id);
 		List<IRealBuildObjectAssociation> list = new ArrayList<IRealBuildObjectAssociation>();
-		
-		for(int i = 0; i < allObjs.length; i++){
-			if(pattern.matcher(allObjs[i].getId()).matches())
+
+		for (int i = 0; i < allObjs.length; i++) {
+			if (pattern.matcher(allObjs[i].getId()).matches())
 				list.add(allObjs[i]);
 		}
-		
+
 		return list.toArray(new IRealBuildObjectAssociation[list.size()]);
 	}
-	
-	private Set<IRealBuildObjectAssociation> processPattern(int objType, PatternElement el, Set<IRealBuildObjectAssociation> set){
-		if(set == null)
+
+	private Set<IRealBuildObjectAssociation> processPattern(int objType, PatternElement el,
+			Set<IRealBuildObjectAssociation> set) {
+		if (set == null)
 			set = new HashSet<IRealBuildObjectAssociation>();
-		
+
 		String ids[] = el.getIds();
-		if(el.getSearchType() == PatternElement.TYPE_SEARCH_EXTENSION_OBJECT){
-			for(int i = 0; i < ids.length; i++){
+		if (el.getSearchType() == PatternElement.TYPE_SEARCH_EXTENSION_OBJECT) {
+			for (int i = 0; i < ids.length; i++) {
 				IRealBuildObjectAssociation objs[] = getObjectsForId(objType, ids[i], el.getIdType());
-				for(int k = 0; k < objs.length; k++){
+				for (int k = 0; k < objs.length; k++) {
 					set.add(objs[k].getRealBuildObject());
 				}
 			}
-		} else if (el.getSearchType() == PatternElement.TYPE_SEARCH_ALL_EXTENSION_SUPERCLASSES){
+		} else if (el.getSearchType() == PatternElement.TYPE_SEARCH_ALL_EXTENSION_SUPERCLASSES) {
 			IRealBuildObjectAssociation[] allReal = TcModificationUtil.getRealObjects(objType);
-			for(int i = 0; i < ids.length; i++){
-				IRealBuildObjectAssociation []objs = getObjectsForId(objType, ids[i], el.getIdType());
-				for(int k = 0; k < objs.length; k++){
+			for (int i = 0; i < ids.length; i++) {
+				IRealBuildObjectAssociation[] objs = getObjectsForId(objType, ids[i], el.getIdType());
+				for (int k = 0; k < objs.length; k++) {
 					IRealBuildObjectAssociation obj = objs[k];
-					
+
 					set.add(obj.getRealBuildObject());
 
 					Set<IRealBuildObjectAssociation> childRealSet = getChildSuperClassRealSet(obj, allReal);
-					
+
 					set.addAll(childRealSet);
-//					for(int k = 0; k < allReal.length; k++){
-//						IRealBuildObjectAssociation otherReal = allReal[k];
-//						if(otherReal == obj || set.contains(otherReal))
-//							continue;
-//						
-//						if("tcm.derive.tc1".equals(otherReal.getId())){
-//							int f = 0; f++;
-//						}
-//						IRealBuildObjectAssociation[] identics = otherReal.getIdenticBuildObjects();
-//						for(int j = 0; j < identics.length; j++){
-//							IRealBuildObjectAssociation identic = identics[j];
-//							for(identic = identic.getSuperClassObject(); identic != null; identic = identic.getSuperClassObject()){
-//								if(identic == obj){
-//									set.add(identic.getRealBuildObject());
-//								}
-//							}
-//						}
-//					}
+					//					for(int k = 0; k < allReal.length; k++){
+					//						IRealBuildObjectAssociation otherReal = allReal[k];
+					//						if(otherReal == obj || set.contains(otherReal))
+					//							continue;
+					//						
+					//						if("tcm.derive.tc1".equals(otherReal.getId())){
+					//							int f = 0; f++;
+					//						}
+					//						IRealBuildObjectAssociation[] identics = otherReal.getIdenticBuildObjects();
+					//						for(int j = 0; j < identics.length; j++){
+					//							IRealBuildObjectAssociation identic = identics[j];
+					//							for(identic = identic.getSuperClassObject(); identic != null; identic = identic.getSuperClassObject()){
+					//								if(identic == obj){
+					//									set.add(identic.getRealBuildObject());
+					//								}
+					//							}
+					//						}
+					//					}
 				}
 			}
 		}
-		
+
 		return set;
 	}
-	
-	private Set<IRealBuildObjectAssociation> getChildSuperClassRealSet(IRealBuildObjectAssociation obj, IRealBuildObjectAssociation[] all){
-		if(fObjToChildSuperClassMap == null)
+
+	private Set<IRealBuildObjectAssociation> getChildSuperClassRealSet(IRealBuildObjectAssociation obj,
+			IRealBuildObjectAssociation[] all) {
+		if (fObjToChildSuperClassMap == null)
 			fObjToChildSuperClassMap = new PerTypeMapStorage<IRealBuildObjectAssociation, Set<IRealBuildObjectAssociation>>();
 
-		if(all == null)
+		if (all == null)
 			all = TcModificationUtil.getExtensionObjects(obj.getType());
 
-		Map<IRealBuildObjectAssociation, Set<IRealBuildObjectAssociation>> map = fObjToChildSuperClassMap.getMap(obj.getType(), true);
+		Map<IRealBuildObjectAssociation, Set<IRealBuildObjectAssociation>> map = fObjToChildSuperClassMap
+				.getMap(obj.getType(), true);
 		Set<IRealBuildObjectAssociation> set = map.get(obj);
-		if(set == null){
+		if (set == null) {
 			set = createChildSuperClassRealSet(obj, all, null);
 			map.put(obj, set);
 		}
-		
+
 		return set;
 	}
-	
-	private static Set<IRealBuildObjectAssociation> createChildSuperClassRealSet(IRealBuildObjectAssociation obj, IRealBuildObjectAssociation[] all, Set<IRealBuildObjectAssociation> set){
-		if(set == null)
+
+	private static Set<IRealBuildObjectAssociation> createChildSuperClassRealSet(IRealBuildObjectAssociation obj,
+			IRealBuildObjectAssociation[] all, Set<IRealBuildObjectAssociation> set) {
+		if (set == null)
 			set = new HashSet<IRealBuildObjectAssociation>();
-		
-		if(all == null)
+
+		if (all == null)
 			all = TcModificationUtil.getExtensionObjects(obj.getType());
-		
-		for(int i = 0; i < all.length; i++){
+
+		for (int i = 0; i < all.length; i++) {
 			IRealBuildObjectAssociation cur = all[i];
-			for(IRealBuildObjectAssociation el = cur.getSuperClassObject(); el != null; el = el.getSuperClassObject()){
-				if(el == obj){
+			for (IRealBuildObjectAssociation el = cur.getSuperClassObject(); el != null; el = el
+					.getSuperClassObject()) {
+				if (el == obj) {
 					IRealBuildObjectAssociation realQuickTest = null;
-					for(IRealBuildObjectAssociation found = cur; found != obj; found = found.getSuperClassObject()){
+					for (IRealBuildObjectAssociation found = cur; found != obj; found = found.getSuperClassObject()) {
 						IRealBuildObjectAssociation real = found.getRealBuildObject();
-						if(real != realQuickTest){
+						if (real != realQuickTest) {
 							set.add(real);
 							realQuickTest = real;
 						}
@@ -272,22 +277,22 @@ public class RulesManager {
 				}
 			}
 		}
-		
+
 		return set;
 	}
-	
-	public ObjectSetListBasedDefinition[] getRules(int ruleType){
+
+	public ObjectSetListBasedDefinition[] getRules(int ruleType) {
 		checkInitialization();
 		return fConflictDefinitions.clone();
 	}
-	
-	private void checkInitialization(){
-		if(!fIsStartInited)
+
+	private void checkInitialization() {
+		if (!fIsStartInited)
 			throw new IllegalStateException();
-		
-		StarterJob starter = fStarter; 
-		
-		if(starter != null){
+
+		StarterJob starter = fStarter;
+
+		if (starter != null) {
 			try {
 				starter.join();
 			} catch (InterruptedException e) {

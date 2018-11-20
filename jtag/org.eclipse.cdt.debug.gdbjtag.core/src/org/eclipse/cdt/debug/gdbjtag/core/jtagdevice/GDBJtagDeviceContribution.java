@@ -91,7 +91,8 @@ public class GDBJtagDeviceContribution {
 	}
 
 	public IGDBJtagDevice getDevice() throws NullPointerException {
-		if (device != null) return device;
+		if (device != null)
+			return device;
 		Object o = null;
 		try {
 			o = Platform.getBundle(deviceClassBundleName).loadClass(deviceClassName).newInstance();

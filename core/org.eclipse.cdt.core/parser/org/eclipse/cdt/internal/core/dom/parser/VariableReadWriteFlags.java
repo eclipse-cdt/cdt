@@ -90,31 +90,31 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	protected int rwInEqualsInitializer(IASTEqualsInitializer parent, int indirection) {
-		IASTNode grand= parent.getParent();
+		IASTNode grand = parent.getParent();
 		if (grand instanceof IASTDeclarator) {
-			IBinding binding= ((IASTDeclarator) grand).getName().getBinding();
+			IBinding binding = ((IASTDeclarator) grand).getName().getBinding();
 			if (binding instanceof IVariable) {
 				return rwAssignmentToType(((IVariable) binding).getType(), indirection);
 			}
 		}
-		return READ | WRITE;  // fallback
+		return READ | WRITE; // fallback
 	}
 
 	protected int rwInInitializerList(IASTInitializerList parent, int indirection) {
-		IASTNode grand= parent.getParent();
+		IASTNode grand = parent.getParent();
 		if (grand instanceof IASTEqualsInitializer) {
-			IASTNode grandGrand= grand.getParent();
+			IASTNode grandGrand = grand.getParent();
 			if (grandGrand instanceof IASTDeclarator) {
-				IBinding binding= ((IASTDeclarator) grandGrand).getName().resolveBinding();
+				IBinding binding = ((IASTDeclarator) grandGrand).getName().resolveBinding();
 				if (binding instanceof IVariable) {
-					IType type= ((IVariable) binding).getType();
+					IType type = ((IVariable) binding).getType();
 					if (type instanceof IArrayType) {
 						return rwAssignmentToType(type, indirection);
 					}
 				}
 			}
 		}
-		return READ | WRITE;  // fallback
+		return READ | WRITE; // fallback
 	}
 
 	protected int rwInExpression(IASTExpression expr, IASTNode node, int indirection) {
@@ -166,14 +166,14 @@ public abstract class VariableReadWriteFlags {
 			return 0;
 		}
 
-		return READ | WRITE;  // fall back
+		return READ | WRITE; // fall back
 	}
 
 	protected int rwInFieldReference(IASTNode node, IASTFieldReference expr, int indirection) {
 		if (node.getPropertyInParent() == IASTFieldReference.FIELD_NAME) {
 			if (expr.getPropertyInParent() != IASTFunctionCallExpression.FUNCTION_NAME)
 				return rwAnyNode(expr, indirection);
-		} else {  // IASTFieldReference.FIELD_OWNER
+		} else { // IASTFieldReference.FIELD_OWNER
 			if (expr.isPointerDereference())
 				--indirection;
 			if (indirection >= 0)
@@ -186,14 +186,14 @@ public abstract class VariableReadWriteFlags {
 		return READ;
 	}
 
-	protected int rwArgumentForFunctionCall(final IASTFunctionCallExpression funcCall,
-			IASTNode argument, int indirection) {
+	protected int rwArgumentForFunctionCall(final IASTFunctionCallExpression funcCall, IASTNode argument,
+			int indirection) {
 		final IASTInitializerClause[] args = funcCall.getArguments();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i] == argument) {
 				final IASTExpression functionNameExpression = funcCall.getFunctionNameExpression();
 				if (functionNameExpression != null) {
-					final IType type= functionNameExpression.getExpressionType();
+					final IType type = functionNameExpression.getExpressionType();
 					if (type instanceof IFunctionType) {
 						return rwArgumentForFunctionCall((IFunctionType) type, i, args[i], indirection);
 					} else if (funcCall instanceof IASTImplicitNameOwner) {
@@ -202,8 +202,8 @@ public abstract class VariableReadWriteFlags {
 							IASTImplicitName name = implicitNames[0];
 							IBinding binding = name.resolveBinding();
 							if (binding instanceof IFunction) {
-								return rwArgumentForFunctionCall(((IFunction) binding).getType(), i,
-										args[i], indirection);
+								return rwArgumentForFunctionCall(((IFunction) binding).getType(), i, args[i],
+										indirection);
 							}
 						}
 					}
@@ -211,7 +211,7 @@ public abstract class VariableReadWriteFlags {
 				break;
 			}
 		}
-		return READ | WRITE;  // Fallback
+		return READ | WRITE; // Fallback
 	}
 
 	private IType getArgumentType(IASTInitializerClause argument) {
@@ -223,9 +223,9 @@ public abstract class VariableReadWriteFlags {
 		return null;
 	}
 
-	protected int rwArgumentForFunctionCall(IFunctionType type, int parameterIdx,
-			IASTInitializerClause argument, int indirection) {
-		IType[] ptypes= type.getParameterTypes();
+	protected int rwArgumentForFunctionCall(IFunctionType type, int parameterIdx, IASTInitializerClause argument,
+			int indirection) {
+		IType[] ptypes = type.getParameterTypes();
 		IType parameterType = null;
 		if (ptypes != null && ptypes.length > parameterIdx) {
 			parameterType = ptypes[parameterIdx];
@@ -253,15 +253,15 @@ public abstract class VariableReadWriteFlags {
 				return READ;
 			}
 		} else if (stmt instanceof IASTExpressionStatement) {
-			IASTNode parent= stmt.getParent();
+			IASTNode parent = stmt.getParent();
 			while (parent instanceof IASTCompoundStatement) {
-				IASTCompoundStatement compound= (IASTCompoundStatement) parent;
-				IASTStatement[] statements= compound.getStatements();
+				IASTCompoundStatement compound = (IASTCompoundStatement) parent;
+				IASTStatement[] statements = compound.getStatements();
 				if (statements[statements.length - 1] != stmt) {
 					return 0;
 				}
-				stmt= compound;
-				parent= stmt.getParent();
+				stmt = compound;
+				parent = stmt.getParent();
 			}
 			if (parent instanceof IGNUASTCompoundStatementExpression) {
 				return rwAnyNode(parent, indirection);
@@ -377,6 +377,6 @@ public abstract class VariableReadWriteFlags {
 			}
 			return READ;
 		}
-		return READ;  // fallback
+		return READ; // fallback
 	}
 }

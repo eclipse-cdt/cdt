@@ -33,7 +33,8 @@ public class DisassemblyWithSourcePosition extends DisassemblyPosition {
 	 * @param functionOffset
 	 * @param opcode 
 	 */
-	public DisassemblyWithSourcePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength, String functionOffset, BigInteger opcode, String file, int lineNr) {
+	public DisassemblyWithSourcePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength,
+			String functionOffset, BigInteger opcode, String file, int lineNr) {
 		super(offset, length, addressOffset, addressLength, functionOffset, opcode);
 		fFile = file;
 		fLine = lineNr;
@@ -54,7 +55,7 @@ public class DisassemblyWithSourcePosition extends DisassemblyPosition {
 	 */
 	@Override
 	public String toString() {
-		return super.toString() + "->["+fFile + ':' + fLine + ']';  //$NON-NLS-1$
+		return super.toString() + "->[" + fFile + ':' + fLine + ']'; //$NON-NLS-1$
 	}
-	
+
 }

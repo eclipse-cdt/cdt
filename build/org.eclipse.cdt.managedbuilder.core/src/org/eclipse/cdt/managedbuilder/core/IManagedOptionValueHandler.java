@@ -77,8 +77,8 @@ public interface IManagedOptionValueHandler {
 	 * @return True when the event was handled, false otherwise. This enables
 	 *         default event handling can take place.
 	 */
-	boolean handleValue(IBuildObject configuration, IHoldsOptions holder,
-			IOption option, String extraArgument, int event);
+	boolean handleValue(IBuildObject configuration, IHoldsOptions holder, IOption option, String extraArgument,
+			int event);
 
 	/**
 	 * Checks whether the value of an option is its default value.
@@ -101,8 +101,7 @@ public interface IManagedOptionValueHandler {
 	 *         otherwise. This enables that default event handling can take
 	 *         place.
 	 */
-	boolean isDefaultValue(IBuildObject configuration, IHoldsOptions holder,
-			IOption option, String extraArgument);
+	boolean isDefaultValue(IBuildObject configuration, IHoldsOptions holder, IOption option, String extraArgument);
 
 	/**
 	 * Checks whether an enumeration value of an option is currently a valid
@@ -128,7 +127,6 @@ public interface IManagedOptionValueHandler {
 	 * 
 	 * @return True if the enumeration value is valid and False otherwise.
 	 */
-	boolean isEnumValueAppropriate(IBuildObject configuration,
-			IHoldsOptions holder, IOption option, String extraArgument,
-			String enumValue);
+	boolean isEnumValueAppropriate(IBuildObject configuration, IHoldsOptions holder, IOption option,
+			String extraArgument, String enumValue);
 }

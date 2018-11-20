@@ -71,7 +71,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-
 public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 
 	public static final String LOCAL_AUTOCONF_MACROS_DOC_NAME = "macros/acmacros";
@@ -81,16 +80,20 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 
 	private static class AutotoolsHoverDoc {
 		public Document[] documents = new Document[2];
+
 		public AutotoolsHoverDoc(Document acDocument, Document amDocument) {
 			this.documents[0] = acDocument;
 			this.documents[1] = amDocument;
 		}
+
 		public Document getAcDocument() {
 			return documents[0];
 		}
+
 		public Document getAmDocument() {
 			return documents[1];
 		}
+
 		public Document[] getDocuments() {
 			return documents;
 		}
@@ -107,36 +110,34 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 
 	public static String getAutoconfMacrosDocName(String version) {
 		return AUTOCONF_MACROS_DOC_NAME + "-" //$NON-NLS-1$ 
-		+ version
-		+ ".xml"; //$NON-NLS-1$	
+				+ version + ".xml"; //$NON-NLS-1$	
 	}
 
 	public static String getLocalAutoconfMacrosDocName(String version) {
 		return LOCAL_AUTOCONF_MACROS_DOC_NAME + "-" //$NON-NLS-1$ 
-		+ version
-		+ ".xml"; //$NON-NLS-1$	
+				+ version + ".xml"; //$NON-NLS-1$	
 	}
 
 	/* Get the preferences default for the autoconf macros document name.  */
 	public static String getDefaultAutoconfMacrosVer() {
-		return AutotoolsPlugin.getDefault().getPreferenceStore().getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION);
+		return AutotoolsPlugin.getDefault().getPreferenceStore()
+				.getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION);
 	}
 
 	public static String getAutomakeMacrosDocName(String version) {
 		return AUTOMAKE_MACROS_DOC_NAME + "-" //$NON-NLS-1$ 
-		+ version
-		+ ".xml"; //$NON-NLS-1$	
+				+ version + ".xml"; //$NON-NLS-1$	
 	}
-	
+
 	public static String getLocalAutomakeMacrosDocName(String version) {
 		return LOCAL_AUTOMAKE_MACROS_DOC_NAME + "-" //$NON-NLS-1$ 
-		+ version
-		+ ".xml"; //$NON-NLS-1$	
+				+ version + ".xml"; //$NON-NLS-1$	
 	}
-	
+
 	/* Get the preferences default for the autoconf macros document name.  */
 	public static String getDefaultAutomakeMacrosVer() {
-		return AutotoolsPlugin.getDefault().getPreferenceStore().getString(AutotoolsEditorPreferenceConstants.AUTOMAKE_VERSION);
+		return AutotoolsPlugin.getDefault().getPreferenceStore()
+				.getString(AutotoolsEditorPreferenceConstants.AUTOMAKE_VERSION);
 	}
 
 	protected static Document getACDoc(String acDocVer) {
@@ -178,18 +179,17 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 						if (docStream != null)
 							docStream.close();
 					}
-				} catch (FileNotFoundException|MalformedURLException|URISyntaxException e) {
+				} catch (FileNotFoundException | MalformedURLException | URISyntaxException e) {
 					AutotoolsPlugin.log(e);
 				}
 				acDocument = doc;
-			}
-			catch (IOException ioe) {
+			} catch (IOException ioe) {
 			}
 		}
 		acHoverDocs.put(acDocVer, acDocument);
 		return acDocument;
 	}
-	
+
 	protected static Document getAMDoc(String amDocVer) {
 		Document amDocument = null;
 		if (amHoverDocs == null) {
@@ -229,12 +229,11 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 						if (docStream != null)
 							docStream.close();
 					}
-				} catch (FileNotFoundException|MalformedURLException|URISyntaxException e) {
+				} catch (FileNotFoundException | MalformedURLException | URISyntaxException e) {
 					AutotoolsPlugin.log(e);
 				}
 				amDocument = doc;
-			}
-			catch (IOException ioe) {
+			} catch (IOException ioe) {
 			}
 		}
 		amHoverDocs.put(amDocVer, amDocument);
@@ -245,7 +244,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 		String acDocVer = getDefaultAutoconfMacrosVer();
 		String amDocVer = getDefaultAutomakeMacrosVer();
 		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fe = (IFileEditorInput)input;
+			IFileEditorInput fe = (IFileEditorInput) input;
 			IFile f = fe.getFile();
 			IProject p = f.getProject();
 			try {
@@ -328,7 +327,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 						}
 						buffer.append(prototype).append("</I>)<br>"); //$NON-NLS-1$
 					}
-					if (nodeName.equals("synopsis")) {  //$NON-NLS-1$
+					if (nodeName.equals("synopsis")) { //$NON-NLS-1$
 						Node textNode = n.getLastChild();
 						buffer.append("<br><B>Synopsis:</B> ");
 						buffer.append(textNode.getNodeValue());
@@ -344,13 +343,13 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 
 		return null;
 	}
-	
+
 	public static AutoconfMacro[] getMacroList(AutoconfEditor editor) {
 		IEditorInput input = editor.getEditorInput();
 		AutotoolsHoverDoc hoverdoc = getHoverDoc(input);
 		return getMacroList(hoverdoc);
 	}
-	
+
 	private static AutoconfMacro[] getMacroList(AutotoolsHoverDoc hoverdoc) {
 		if (acHoverMacros == null) {
 			acHoverMacros = new HashMap<>();
@@ -433,7 +432,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 						++prototypeCount;
 						int parmCount = 0;
 						int minParmCount = -1;
-						p.setNumPrototypes(prototypeCount  + 1);
+						p.setNumPrototypes(prototypeCount + 1);
 						NodeList varList = n.getChildNodes();
 						for (int j = 0; j < varList.getLength(); ++j) {
 							Node v = varList.item(j);
@@ -445,9 +444,8 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 								String parm = parmNode.getNodeValue();
 								// Check for first optional parameter which means
 								// we know the minimum number of parameters needed.
-								if (minParmCount < 0 && (parm.charAt(0) == '[' ||
-										parm.startsWith("...")))
-									minParmCount = parmCount  - 1;
+								if (minParmCount < 0 && (parm.charAt(0) == '[' || parm.startsWith("...")))
+									minParmCount = parmCount - 1;
 								// Old style documentation sometimes had '[' in
 								// prototypes so look for one at end of a parm too.
 								else if (minParmCount < 0 && parm.endsWith("["))
@@ -493,8 +491,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 			 * region for the whole selection.
 			 */
 			Point selectedRange = textViewer.getSelectedRange();
-			if (selectedRange.x >= 0 && selectedRange.y > 0
-					&& offset >= selectedRange.x
+			if (selectedRange.x >= 0 && selectedRange.y > 0 && offset >= selectedRange.x
 					&& offset <= selectedRange.x + selectedRange.y)
 				return new Region(selectedRange.x, selectedRange.y);
 			else {
@@ -526,7 +523,8 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 		if (fBindingService == null)
 			return null;
 
-		String keySequence= fBindingService.getBestActiveBindingFormattedFor(IAutotoolEditorActionDefinitionIds.SHOW_TOOLTIP);
+		String keySequence = fBindingService
+				.getBestActiveBindingFormattedFor(IAutotoolEditorActionDefinitionIds.SHOW_TOOLTIP);
 		if (keySequence == null)
 			return null;
 
@@ -540,24 +538,25 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	 */
 	protected static String getStyleSheet() {
 		if (fgStyleSheet == null) {
-			Bundle bundle= Platform.getBundle(AutotoolsUIPlugin.PLUGIN_ID);
-			URL styleSheetURL= bundle.getEntry("/AutoconfHoverStyleSheet.css"); //$NON-NLS-1$
+			Bundle bundle = Platform.getBundle(AutotoolsUIPlugin.PLUGIN_ID);
+			URL styleSheetURL = bundle.getEntry("/AutoconfHoverStyleSheet.css"); //$NON-NLS-1$
 			if (styleSheetURL != null) {
 				try {
-					styleSheetURL= FileLocator.toFileURL(styleSheetURL);
-					try (BufferedReader reader= new BufferedReader(new InputStreamReader(styleSheetURL.openStream()))) {
-						StringBuilder buffer= new StringBuilder(200);
-						String line= reader.readLine();
+					styleSheetURL = FileLocator.toFileURL(styleSheetURL);
+					try (BufferedReader reader = new BufferedReader(
+							new InputStreamReader(styleSheetURL.openStream()))) {
+						StringBuilder buffer = new StringBuilder(200);
+						String line = reader.readLine();
 						while (line != null) {
 							buffer.append(line);
 							buffer.append('\n');
-							line= reader.readLine();
+							line = reader.readLine();
 						}
-						fgStyleSheet= buffer.toString();
+						fgStyleSheet = buffer.toString();
 					}
 				} catch (IOException ex) {
 					AutotoolsUIPlugin.log(ex);
-					fgStyleSheet= ""; //$NON-NLS-1$
+					fgStyleSheet = ""; //$NON-NLS-1$
 				}
 			}
 		}

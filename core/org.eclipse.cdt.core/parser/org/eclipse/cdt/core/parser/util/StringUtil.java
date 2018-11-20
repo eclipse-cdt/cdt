@@ -22,7 +22,8 @@ import java.util.Collection;
  */
 public class StringUtil {
 
-	private StringUtil() {}
+	private StringUtil() {
+	}
 
 	/**
 	 * Joins strings using the given delimiter.

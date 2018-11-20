@@ -72,7 +72,7 @@ public class PathEntry implements IPathEntry {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IPathEntry) {
-			IPathEntry otherEntry = (IPathEntry)obj;
+			IPathEntry otherEntry = (IPathEntry) obj;
 			if (!path.equals(otherEntry.getPath())) {
 				return false;
 			}
@@ -121,26 +121,26 @@ public class PathEntry implements IPathEntry {
 	static String kindToString(int kind) {
 
 		switch (kind) {
-			case IPathEntry.CDT_PROJECT :
-				return "prj"; //$NON-NLS-1$
-			case IPathEntry.CDT_SOURCE :
-				return "src"; //$NON-NLS-1$
-			case IPathEntry.CDT_LIBRARY :
-				return "lib"; //$NON-NLS-1$
-			case IPathEntry.CDT_INCLUDE :
-				return "inc"; //$NON-NLS-1$
-			case IPathEntry.CDT_INCLUDE_FILE:
-				return "incfile"; //$NON-NLS-1$
-			case IPathEntry.CDT_MACRO :
-				return "mac"; //$NON-NLS-1$
-			case IPathEntry.CDT_MACRO_FILE:
-				return "macfile"; //$NON-NLS-1$
-			case IPathEntry.CDT_CONTAINER :
-				return "con"; //$NON-NLS-1$
-			case IPathEntry.CDT_OUTPUT :
-				return "out"; //$NON-NLS-1$
-			default :
-				return "unknown"; //$NON-NLS-1$
+		case IPathEntry.CDT_PROJECT:
+			return "prj"; //$NON-NLS-1$
+		case IPathEntry.CDT_SOURCE:
+			return "src"; //$NON-NLS-1$
+		case IPathEntry.CDT_LIBRARY:
+			return "lib"; //$NON-NLS-1$
+		case IPathEntry.CDT_INCLUDE:
+			return "inc"; //$NON-NLS-1$
+		case IPathEntry.CDT_INCLUDE_FILE:
+			return "incfile"; //$NON-NLS-1$
+		case IPathEntry.CDT_MACRO:
+			return "mac"; //$NON-NLS-1$
+		case IPathEntry.CDT_MACRO_FILE:
+			return "macfile"; //$NON-NLS-1$
+		case IPathEntry.CDT_CONTAINER:
+			return "con"; //$NON-NLS-1$
+		case IPathEntry.CDT_OUTPUT:
+			return "out"; //$NON-NLS-1$
+		default:
+			return "unknown"; //$NON-NLS-1$
 		}
 	}
 
@@ -161,24 +161,24 @@ public class PathEntry implements IPathEntry {
 
 	String getKindString() {
 		switch (getEntryKind()) {
-			case IPathEntry.CDT_LIBRARY :
-				return ("Library path"); //$NON-NLS-1$
-			case IPathEntry.CDT_PROJECT :
-				return ("Project path"); //$NON-NLS-1$
-			case IPathEntry.CDT_SOURCE :
-				return ("Source path"); //$NON-NLS-1$
-			case IPathEntry.CDT_OUTPUT :
-				return ("Output path"); //$NON-NLS-1$
-			case IPathEntry.CDT_INCLUDE :
-				return ("Include path"); //$NON-NLS-1$
-			case IPathEntry.CDT_INCLUDE_FILE :
-				return ("Include-file path"); //$NON-NLS-1$
-			case IPathEntry.CDT_MACRO :
-				return ("Symbol definition"); //$NON-NLS-1$
-			case IPathEntry.CDT_MACRO_FILE :
-				return ("Symbol-file definition"); //$NON-NLS-1$
-			case IPathEntry.CDT_CONTAINER :
-				return ("Contributed paths"); //$NON-NLS-1$
+		case IPathEntry.CDT_LIBRARY:
+			return ("Library path"); //$NON-NLS-1$
+		case IPathEntry.CDT_PROJECT:
+			return ("Project path"); //$NON-NLS-1$
+		case IPathEntry.CDT_SOURCE:
+			return ("Source path"); //$NON-NLS-1$
+		case IPathEntry.CDT_OUTPUT:
+			return ("Output path"); //$NON-NLS-1$
+		case IPathEntry.CDT_INCLUDE:
+			return ("Include path"); //$NON-NLS-1$
+		case IPathEntry.CDT_INCLUDE_FILE:
+			return ("Include-file path"); //$NON-NLS-1$
+		case IPathEntry.CDT_MACRO:
+			return ("Symbol definition"); //$NON-NLS-1$
+		case IPathEntry.CDT_MACRO_FILE:
+			return ("Symbol-file definition"); //$NON-NLS-1$
+		case IPathEntry.CDT_CONTAINER:
+			return ("Contributed paths"); //$NON-NLS-1$
 		}
 		return ("Unknown"); //$NON-NLS-1$
 	}

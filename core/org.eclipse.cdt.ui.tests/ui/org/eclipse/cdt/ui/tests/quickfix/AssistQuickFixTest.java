@@ -60,7 +60,7 @@ import org.eclipse.cdt.internal.ui.text.correction.proposals.TUCorrectionProposa
 public class AssistQuickFixTest extends BaseUITestCase {
 	private static final Class<AssistQuickFixTest> THIS = AssistQuickFixTest.class;
 	private static final String PROJECT = "AssistQuickFixTest";
-	
+
 	private ICProject fCProject;
 	private CEditor fEditor;
 	private IDocument fDocument;
@@ -74,57 +74,59 @@ public class AssistQuickFixTest extends BaseUITestCase {
 
 	protected static class ProjectTestSetup extends TestSetup {
 		private ICProject fCProject;
-		
+
 		public ProjectTestSetup(Test test) {
 			super(test);
 		}
+
 		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
-			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/quickFix", false, true);
+			fCProject = EditorTestHelper.createCProject(PROJECT, "resources/quickFix", false, true);
 		}
+
 		@Override
 		protected void tearDown() throws Exception {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
-			
+
 			super.tearDown();
 		}
 	}
-	
+
 	public AssistQuickFixTest(String name) {
 		super(name);
 		fProblems = new IProblem[0];
 	}
-	
+
 	public static Test setUpTest(Test someTest) {
 		return new ProjectTestSetup(someTest);
 	}
-	
+
 	public static Test suite() {
 		return setUpTest(new TestSuite(THIS));
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
-			fProjectSetup= new ProjectTestSetup(this);
+			fProjectSetup = new ProjectTestSetup(this);
 			fProjectSetup.setUp();
 		}
-		fEditor= openCEditor(new Path("/" + PROJECT + "/src/RenameInFile.cpp"));
+		fEditor = openCEditor(new Path("/" + PROJECT + "/src/RenameInFile.cpp"));
 		assertNotNull(fEditor);
-		fTextWidget= fEditor.getViewer().getTextWidget();
+		fTextWidget = fEditor.getViewer().getTextWidget();
 		assertNotNull(fTextWidget);
-		boolean ok= EditorTestHelper.joinReconciler((SourceViewer) fEditor.getViewer(), 10, 500, 20);
+		boolean ok = EditorTestHelper.joinReconciler((SourceViewer) fEditor.getViewer(), 10, 500, 20);
 		assertTrue("Reconciler did not finish in time", ok);
-		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		fDocument = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		assertNotNull(fDocument);
-		fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		fAnnotationModel= fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
-	
-		fMatch= null;
+		fFindReplaceDocumentAdapter = new FindReplaceDocumentAdapter(fDocument);
+		fAnnotationModel = fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
+
+		fMatch = null;
 	}
-	
+
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -135,9 +137,9 @@ public class AssistQuickFixTest extends BaseUITestCase {
 			fProjectSetup.tearDown();
 		}
 	}
-	
+
 	private CEditor openCEditor(IPath path) {
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		assertTrue(file != null && file.exists());
 		try {
 			return (CEditor) EditorTestHelper.openInEditor(file, true);
@@ -145,11 +147,12 @@ public class AssistQuickFixTest extends BaseUITestCase {
 			fail();
 			return null;
 		}
-	}	
-	
-	private static final List<ICCompletionProposal> collectCorrections(CorrectionContext context, Class<?>[] filteredTypes) throws CoreException {
-		List<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>();
-		IStatus status= CCorrectionProcessor.collectCorrections(context, new IProblemLocation[0], proposals);
+	}
+
+	private static final List<ICCompletionProposal> collectCorrections(CorrectionContext context,
+			Class<?>[] filteredTypes) throws CoreException {
+		List<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+		IStatus status = CCorrectionProcessor.collectCorrections(context, new IProblemLocation[0], proposals);
 		assertStatusOk(status);
 
 		if (!proposals.isEmpty()) {
@@ -157,7 +160,7 @@ public class AssistQuickFixTest extends BaseUITestCase {
 		}
 
 		if (filteredTypes != null && filteredTypes.length > 0) {
-			for (Iterator<ICCompletionProposal> iter= proposals.iterator(); iter.hasNext(); ) {
+			for (Iterator<ICCompletionProposal> iter = proposals.iterator(); iter.hasNext();) {
 				if (isFiltered(iter.next(), filteredTypes)) {
 					iter.remove();
 				}
@@ -176,13 +179,14 @@ public class AssistQuickFixTest extends BaseUITestCase {
 	}
 
 	private CorrectionContext getCorrectionContext(int offset, int length) {
-		ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
+		ITranslationUnit tu = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
 		return new CorrectionContext(tu, offset, length);
 	}
 
-	private static final ArrayList<ICCompletionProposal> collectAssists(CorrectionContext context, Class<?>[] filteredTypes) throws CoreException {
-		ArrayList<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>();
-		IStatus status= CCorrectionProcessor.collectAssists(context, new IProblemLocation[0], proposals);
+	private static final ArrayList<ICCompletionProposal> collectAssists(CorrectionContext context,
+			Class<?>[] filteredTypes) throws CoreException {
+		ArrayList<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+		IStatus status = CCorrectionProcessor.collectAssists(context, new IProblemLocation[0], proposals);
 		assertStatusOk(status);
 
 		if (!proposals.isEmpty()) {
@@ -190,7 +194,7 @@ public class AssistQuickFixTest extends BaseUITestCase {
 		}
 
 		if (filteredTypes != null && filteredTypes.length > 0) {
-			for (Iterator<ICCompletionProposal> iter= proposals.iterator(); iter.hasNext(); ) {
+			for (Iterator<ICCompletionProposal> iter = proposals.iterator(); iter.hasNext();) {
 				if (isFiltered(iter.next(), filteredTypes)) {
 					iter.remove();
 				}
@@ -212,7 +216,8 @@ public class AssistQuickFixTest extends BaseUITestCase {
 
 	private static void assertCorrectContext(IInvocationContext context, ProblemLocation problem) {
 		if (problem.getProblemId() != 0) {
-			if (!CCorrectionProcessor.hasCorrections(context.getTranslationUnit(), problem.getProblemId(), problem.getMarkerType())) {
+			if (!CCorrectionProcessor.hasCorrections(context.getTranslationUnit(), problem.getProblemId(),
+					problem.getMarkerType())) {
 				assertTrue("Problem type not marked with light bulb: " + problem, false);
 			}
 		}
@@ -220,8 +225,9 @@ public class AssistQuickFixTest extends BaseUITestCase {
 
 	private static void assertNumberOfProposals(List<ICCompletionProposal> proposals, int expectedProposals) {
 		if (proposals.size() != expectedProposals) {
-			StringBuilder buf= new StringBuilder();
-			buf.append("Wrong number of proposals, is: ").append(proposals.size()). append(", expected: ").append(expectedProposals).append('\n');
+			StringBuilder buf = new StringBuilder();
+			buf.append("Wrong number of proposals, is: ").append(proposals.size()).append(", expected: ")
+					.append(expectedProposals).append('\n');
 			for (ICCompletionProposal proposal : proposals) {
 				buf.append(" - ").append(proposal.getDisplayString()).append('\n');
 				if (proposal instanceof TUCorrectionProposal) {
@@ -238,8 +244,9 @@ public class AssistQuickFixTest extends BaseUITestCase {
 
 	private static void assertCorrectLabels(List<ICCompletionProposal> proposals) {
 		for (ICCompletionProposal proposal : proposals) {
-			String name= proposal.getDisplayString();
-			if (name == null || name.length() == 0 || name.charAt(0) == '!' || name.indexOf("{0}") != -1 || name.indexOf("{1}") != -1) {
+			String name = proposal.getDisplayString();
+			if (name == null || name.length() == 0 || name.charAt(0) == '!' || name.indexOf("{0}") != -1
+					|| name.indexOf("{1}") != -1) {
 				assertTrue("wrong proposal label: " + name, false);
 			}
 			if (proposal.getImage() == null) {
@@ -250,57 +257,58 @@ public class AssistQuickFixTest extends BaseUITestCase {
 
 	private static void assertCorrectContext(CorrectionContext context, ProblemLocation problem) {
 		if (problem.getProblemId() != 0) {
-			if (!CCorrectionProcessor.hasCorrections(context.getTranslationUnit(), problem.getProblemId(), problem.getMarkerType())) {
+			if (!CCorrectionProcessor.hasCorrections(context.getTranslationUnit(), problem.getProblemId(),
+					problem.getMarkerType())) {
 				assertTrue("Problem type not marked with light bulb: " + problem, false);
 			}
 		}
 	}
 
 	public void testLocalRenameClass() throws Exception {
-    	final String name = "Base2"; 
+		final String name = "Base2";
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, name, true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, name, true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
-        CorrectionContext context= getCorrectionContext(fMatch.getOffset(), 0);
-        List<ICCompletionProposal> proposals= collectAssists(context, null);
-        
-        assertNumberOfProposals(proposals, 2);
-        assertCorrectLabels(proposals);
-        assertTrue(proposals.get(0) instanceof LinkedNamesAssistProposal);
-        assertTrue(proposals.get(1) instanceof RenameRefactoringProposal);
-    }
+		CorrectionContext context = getCorrectionContext(fMatch.getOffset(), 0);
+		List<ICCompletionProposal> proposals = collectAssists(context, null);
+
+		assertNumberOfProposals(proposals, 2);
+		assertCorrectLabels(proposals);
+		assertTrue(proposals.get(0) instanceof LinkedNamesAssistProposal);
+		assertTrue(proposals.get(1) instanceof RenameRefactoringProposal);
+	}
 
 	public void testLocalRenameMacro() throws Exception {
-    	final String name = "INT"; 
+		final String name = "INT";
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, name, true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, name, true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
-        CorrectionContext context= getCorrectionContext(fMatch.getOffset(), 0);
-        List<ICCompletionProposal> proposals= collectAssists(context, null);
-        
-        assertNumberOfProposals(proposals, 2);
-        assertCorrectLabels(proposals);
-        assertTrue(proposals.get(0) instanceof LinkedNamesAssistProposal);
-        assertTrue(proposals.get(1) instanceof RenameRefactoringProposal);
-    }
+		CorrectionContext context = getCorrectionContext(fMatch.getOffset(), 0);
+		List<ICCompletionProposal> proposals = collectAssists(context, null);
+
+		assertNumberOfProposals(proposals, 2);
+		assertCorrectLabels(proposals);
+		assertTrue(proposals.get(0) instanceof LinkedNamesAssistProposal);
+		assertTrue(proposals.get(1) instanceof RenameRefactoringProposal);
+	}
 
 	public void testLocalRenameLanguageKeyword() throws Exception {
-    	final String name = "int"; 
+		final String name = "int";
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, name, true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, name, true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
-        CorrectionContext context= getCorrectionContext(fMatch.getOffset(), 0);
-        List<ICCompletionProposal> proposals= collectAssists(context, null);
-        
-        assertNumberOfProposals(proposals, 0);
-    }
+		CorrectionContext context = getCorrectionContext(fMatch.getOffset(), 0);
+		List<ICCompletionProposal> proposals = collectAssists(context, null);
+
+		assertNumberOfProposals(proposals, 0);
+	}
 }

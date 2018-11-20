@@ -44,38 +44,37 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 /**
  * @author dsteffle
  */
-public class ShowInDOMViewAction extends ActionDelegate implements
-		IEditorActionDelegate {
+public class ShowInDOMViewAction extends ActionDelegate implements IEditorActionDelegate {
 
 	private static final String FIND_NODE_IN_AST_DOM_VIEW = "Find Node in AST DOM View"; //$NON-NLS-1$
 	CEditor editor = null;
 	IASTTranslationUnit tu = null;
 	IViewPart view = null;
 	String file = null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof CEditor)
-			editor = (CEditor)targetEditor;
+			editor = (CEditor) targetEditor;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		TextSelection selection = null;
-		
-		if (editor != null &&
-				editor.getSelectionProvider().getSelection() instanceof TextSelection) {
-			selection = (TextSelection)editor.getSelectionProvider().getSelection();
+
+		if (editor != null && editor.getSelectionProvider().getSelection() instanceof TextSelection) {
+			selection = (TextSelection) editor.getSelectionProvider().getSelection();
 		}
 		if (selection != null) {
 			if (!isFileInView()) {
-				view = DOMAST.openDOMASTViewRunAction(editor, new FindDisplayNode(selection.getOffset(), selection.getLength()), FIND_NODE_IN_AST_DOM_VIEW);				
+				view = DOMAST.openDOMASTViewRunAction(editor,
+						new FindDisplayNode(selection.getOffset(), selection.getLength()), FIND_NODE_IN_AST_DOM_VIEW);
 			} else {
 				new FindDisplayNode(selection.getOffset(), selection.getLength()).run();
 			}
@@ -85,39 +84,41 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 	protected void showMessage(String message) {
 		MessageDialog.openInformation(CTestPlugin.getStandardDisplay().getActiveShell(), DOMAST.VIEW_NAME, message);
 	}
-	
+
 	private boolean isFileInView() {
-		file= getInputFile(editor);
-		
-		if (file == null) return false;
+		file = getInputFile(editor);
+
+		if (file == null)
+			return false;
 
 		try {
 			view = editor.getSite().getPage().showView(DOMAST.VIEW_ID);
-		} catch (PartInitException pie) {}
-		
+		} catch (PartInitException pie) {
+		}
+
 		if (view instanceof DOMAST) {
-			IContentProvider provider = ((DOMAST)view).getContentProvider();
+			IContentProvider provider = ((DOMAST) view).getContentProvider();
 			if (provider != null && provider instanceof DOMAST.ViewContentProvider) {
-				tu = ((DOMAST.ViewContentProvider)provider).getTU();
-				
+				tu = ((DOMAST.ViewContentProvider) provider).getTU();
+
 				if (tu != null) {
 					String fileName = null;
-					
+
 					// check if file is tu
 					IASTNodeLocation[] locs = tu.getNodeLocations();
-					for (int i=0; i<locs.length; i++) {
+					for (int i = 0; i < locs.length; i++) {
 						if (locs[i] instanceof IASTFileLocation) {
-							fileName = ((IASTFileLocation)locs[i]).getFileName();
+							fileName = ((IASTFileLocation) locs[i]).getFileName();
 						}
 					}
-					
-					if (fileName != null && fileName.equals(file) ) {
+
+					if (fileName != null && fileName.equals(file)) {
 						return true;
 					}
-					
+
 					// check the #includes on the TU (i.e. check if selecting something from a header file shown in DOM View)
 					IASTPreprocessorIncludeStatement[] includes = tu.getIncludeDirectives();
-					for(int i=0; i<includes.length; i++) {
+					for (int i = 0; i < includes.length; i++) {
 						if (includes[i].getPath().equals(file)) {
 							return true;
 						}
@@ -126,7 +127,6 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 			}
 		}
 
-		
 		return false;
 	}
 
@@ -136,23 +136,23 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 	 * @return the absolute file system location or <code>null</code>
 	 */
 	private String getInputFile(ITextEditor editor) {
-		IEditorInput input= editor.getEditorInput();
+		IEditorInput input = editor.getEditorInput();
 		if (input == null) {
 			return null;
 		}
-		IFile file= ResourceUtil.getFile(input);
+		IFile file = ResourceUtil.getFile(input);
 		if (file != null) {
 			return file.getLocation().toOSString();
 		}
 		if (input instanceof IPathEditorInput) {
-			IPath location= ((IPathEditorInput)input).getPath();
+			IPath location = ((IPathEditorInput) input).getPath();
 			if (location != null) {
 				return location.toOSString();
 			}
 		}
-		ILocationProvider locationProvider= (ILocationProvider)input.getAdapter(ILocationProvider.class);
+		ILocationProvider locationProvider = (ILocationProvider) input.getAdapter(ILocationProvider.class);
 		if (locationProvider != null) {
-			IPath location= locationProvider.getPath(input);
+			IPath location = locationProvider.getPath(input);
 			if (location != null) {
 				return location.toOSString();
 			}
@@ -165,37 +165,38 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 		private static final String IASTNode_NOT_FOUND = IAST_NODE_NOT_FOUND;
 		int offset = 0;
 		int length = 0;
-		
+
 		public FindDisplayNode(int offset, int length) {
 			this.offset = offset;
 			this.length = length;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
 		@Override
 		public void run() {
 			if (view instanceof DOMAST) {
-				IContentProvider provider = ((DOMAST)view).getContentProvider();
+				IContentProvider provider = ((DOMAST) view).getContentProvider();
 				if (provider != null && provider instanceof DOMAST.ViewContentProvider) {
-					tu = ((DOMAST.ViewContentProvider)provider).getTU();
+					tu = ((DOMAST.ViewContentProvider) provider).getTU();
 					file = getInputFile(editor);
 				}
 			}
-			
+
 			// the selection is within a file currently shown in the DOM AST View
 			if (tu != null && file != null && view instanceof DOMAST) {
 				IASTNode node = tu.getNodeSelector(file).findNode(offset, length);
-				if (node != null && ((DOMAST)view).getContentProvider() instanceof DOMAST.ViewContentProvider) {
-					boolean success = ((DOMAST.ViewContentProvider)((DOMAST)view).getContentProvider()).findAndSelect(node, true); // use offsets when searching for node equality
-                    if( ! success )
-                        showMessage(IASTNode_NOT_FOUND);
+				if (node != null && ((DOMAST) view).getContentProvider() instanceof DOMAST.ViewContentProvider) {
+					boolean success = ((DOMAST.ViewContentProvider) ((DOMAST) view).getContentProvider())
+							.findAndSelect(node, true); // use offsets when searching for node equality
+					if (!success)
+						showMessage(IASTNode_NOT_FOUND);
 				} else {
 					showMessage(IASTNode_NOT_FOUND);
 				}
 			}
 		}
 	}
-	
+
 }

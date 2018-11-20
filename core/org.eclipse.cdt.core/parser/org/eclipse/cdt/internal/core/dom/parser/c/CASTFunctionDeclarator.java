@@ -31,12 +31,12 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
  * A function declarator for plain C.
  */
 public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStandardFunctionDeclarator {
-    private IASTParameterDeclaration[] parameters;
-    private int parametersPos= -1;
-    private boolean varArgs;
-    private IScope scope;
+	private IASTParameterDeclaration[] parameters;
+	private int parametersPos = -1;
+	private boolean varArgs;
+	private IScope scope;
 
-    public CASTFunctionDeclarator() {
+	public CASTFunctionDeclarator() {
 	}
 
 	public CASTFunctionDeclarator(IASTName name) {
@@ -60,34 +60,34 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
 
 	@Override
 	public IASTParameterDeclaration[] getParameters() {
-        if (parameters == null)
-        	return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
-        parameters = ArrayUtil.trimAt(IASTParameterDeclaration.class, parameters, parametersPos);
-        return parameters;
-    }
+		if (parameters == null)
+			return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
+		parameters = ArrayUtil.trimAt(IASTParameterDeclaration.class, parameters, parametersPos);
+		return parameters;
+	}
 
-    @Override
+	@Override
 	public void addParameterDeclaration(IASTParameterDeclaration parameter) {
-        assertNotFrozen();
-    	if (parameter != null) {
-    		parameter.setParent(this);
+		assertNotFrozen();
+		if (parameter != null) {
+			parameter.setParent(this);
 			parameter.setPropertyInParent(FUNCTION_PARAMETER);
-    		parameters = ArrayUtil.appendAt(IASTParameterDeclaration.class, parameters, ++parametersPos, parameter);
-    	}
-    }
+			parameters = ArrayUtil.appendAt(IASTParameterDeclaration.class, parameters, ++parametersPos, parameter);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean takesVarArgs() {
-        return varArgs;
-    }
+		return varArgs;
+	}
 
-    @Override
+	@Override
 	public void setVarArgs(boolean value) {
-        assertNotFrozen();
-        varArgs = value;
-    }
+		assertNotFrozen();
+		varArgs = value;
+	}
 
-    @Override
+	@Override
 	protected boolean postAccept(ASTVisitor action) {
 		IASTParameterDeclaration[] params = getParameters();
 		for (int i = 0; i < params.length; i++) {
@@ -99,39 +99,39 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (parameters != null) {
-        	for (int i = 0; i < parameters.length; ++i) {
-        		if (child == parameters[i]) {
-        			other.setPropertyInParent(child.getPropertyInParent());
-        			other.setParent(child.getParent());
-        			parameters[i]= (IASTParameterDeclaration) other;
-        			return;
-        		}
-        	}
-        }
-        super.replace(child, other);
+		if (parameters != null) {
+			for (int i = 0; i < parameters.length; ++i) {
+				if (child == parameters[i]) {
+					other.setPropertyInParent(child.getPropertyInParent());
+					other.setParent(child.getParent());
+					parameters[i] = (IASTParameterDeclaration) other;
+					return;
+				}
+			}
+		}
+		super.replace(child, other);
 	}
 
 	@Override
 	public IScope getFunctionScope() {
-        if (scope != null)
-            return scope;
+		if (scope != null)
+			return scope;
 
-        // introduce a scope for function declarations and definitions, only.
-        IASTNode node= getParent();
-        while (!(node instanceof IASTDeclaration)) {
-        	if (node==null)
-        		return null;
-        	node= node.getParent();
-        }
-        if (node instanceof IASTParameterDeclaration)
-        	return null;
+		// introduce a scope for function declarations and definitions, only.
+		IASTNode node = getParent();
+		while (!(node instanceof IASTDeclaration)) {
+			if (node == null)
+				return null;
+			node = node.getParent();
+		}
+		if (node instanceof IASTParameterDeclaration)
+			return null;
 
-        if (node instanceof IASTFunctionDefinition) {
-        	scope= ((IASTFunctionDefinition) node).getScope();
-        } else if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
-            scope = new CScope(this, EScopeKind.eLocal);
-        }
-        return scope;
+		if (node instanceof IASTFunctionDefinition) {
+			scope = ((IASTFunctionDefinition) node).getScope();
+		} else if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
+			scope = new CScope(this, EScopeKind.eLocal);
+		}
+		return scope;
 	}
 }

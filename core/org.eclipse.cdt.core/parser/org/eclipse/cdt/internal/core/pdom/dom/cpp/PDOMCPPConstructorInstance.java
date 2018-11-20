@@ -29,23 +29,22 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Bryan Wilkinson
  */
-public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance 
-		implements ICPPConstructorSpecialization {
+public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance implements ICPPConstructorSpecialization {
 	/** Offset of the constructor chain execution for constexpr constructors. */
 	private static final int CONSTRUCTOR_CHAIN = PDOMCPPMethodInstance.RECORD_SIZE + 0; // Database.EXECUTION_SIZE
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPConstructorInstance record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
-	
+
 	public PDOMCPPConstructorInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method,
 			PDOMBinding instantiated) throws CoreException {
 		super(linkage, parent, method, instantiated);
 		linkage.new ConfigureConstructorInstance(method, this);
 	}
-	
+
 	public PDOMCPPConstructorInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
@@ -59,7 +58,7 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -75,7 +74,7 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution();
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr())

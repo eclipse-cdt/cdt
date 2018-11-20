@@ -31,10 +31,10 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 	protected static final int FIELD_POSITION_OFFSET = PDOMCPPVariable.RECORD_SIZE; // 2 bytes 1-based
-	
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = FIELD_POSITION_OFFSET + 2;
-	
+
 	public PDOMCPPField(PDOMCPPLinkage linkage, PDOMNode parent, ICPPField field, boolean setTypeAndValue)
 			throws CoreException {
 		super(linkage, parent, field, setTypeAndValue);
@@ -44,15 +44,15 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 	public PDOMCPPField(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		super.update(linkage, newBinding);
 		if (newBinding instanceof ICPPField) {
-			setFieldPosition((ICPPField)newBinding);
+			setFieldPosition((ICPPField) newBinding);
 		}
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;

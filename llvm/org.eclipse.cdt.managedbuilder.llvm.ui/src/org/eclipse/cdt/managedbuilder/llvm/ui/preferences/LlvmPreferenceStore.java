@@ -43,7 +43,7 @@ public class LlvmPreferenceStore {
 	 * Get a value from the LLVM Preference store.
 	 *
 	 * @param name the name of the preference
-     * @return the string-valued preference
+	 * @return the string-valued preference
 	 */
 	public static String getPreferenceStoreValue(String name) {
 		return getPreferenceStore().get(name, ""); //$NON-NLS-1$
@@ -91,7 +91,7 @@ public class LlvmPreferenceStore {
 	 * separated by a path separator.
 	 *
 	 * @param name the name of the preference
-     * @return A String array containing all Preference store values
+	 * @return A String array containing all Preference store values
 	 */
 	public static String[] getPreferenceStoreValueAsArray(String name) {
 		return LlvmToolOptionPathUtil.stringToArray(name);
@@ -101,7 +101,7 @@ public class LlvmPreferenceStore {
 	 * Set LLVM Preference store value.
 	 *
 	 * @param name the name of the preference
-     * @param value the string-valued preference
+	 * @param value the string-valued preference
 	 */
 	public static void setPreferenceStoreValue(String name, String value) {
 		getPreferenceStore().put(name, value);
@@ -173,15 +173,15 @@ public class LlvmPreferenceStore {
 		//get existing paths
 		paths = getExistingPaths(name);
 		//if values exist
-		if (paths.length()!=0) {
+		if (paths.length() != 0) {
 			//if the value is reasonable
-			if (!value.equalsIgnoreCase("") && value.length()!=0) { //$NON-NLS-1$
+			if (!value.equalsIgnoreCase("") && value.length() != 0) { //$NON-NLS-1$
 				//if the paths doesn't contain the new value
 				if (!paths.contains(value)) {
 					//append existing paths to the string buffer
 					sB.append(paths);
 					//add a path separator in the end if it doesn't exists
-					if (paths.charAt(paths.length()-1)!=Separators.getPathSeparator().charAt(0)) {
+					if (paths.charAt(paths.length() - 1) != Separators.getPathSeparator().charAt(0)) {
 						sB.append(Separators.getPathSeparator());
 					}
 					//append the new value to end of the list
@@ -190,13 +190,13 @@ public class LlvmPreferenceStore {
 			}
 		} else { //no existing values
 			//if the value is reasonable
-			if (!value.equalsIgnoreCase("") && value.length()!=0) { //$NON-NLS-1$
+			if (!value.equalsIgnoreCase("") && value.length() != 0) { //$NON-NLS-1$
 				//append a new path to the string buffer
 				sB.append(value);
 			}
 		}
 		String newValues = sB.toString();
-		if (newValues.length()!=0) {
+		if (newValues.length() != 0) {
 			//set the new preference store value
 			setPreferenceStoreValue(name, newValues);
 		}
@@ -307,7 +307,7 @@ public class LlvmPreferenceStore {
 		if (path != null) {
 			//add to preference store
 			appendLibraryPath(path);
-//			ProjectIndex.rebuiltIndex(proj);
+			//			ProjectIndex.rebuiltIndex(proj);
 			appendLibrary("stdc++"); //$NON-NLS-1$
 		}
 	}
@@ -318,7 +318,7 @@ public class LlvmPreferenceStore {
 		if (path != null) {
 			//add to preference store
 			appendLibraryPath(path);
-//			ProjectIndex.rebuiltIndex(proj);
+			//			ProjectIndex.rebuiltIndex(proj);
 			appendLibrary(lib);
 		}
 	}

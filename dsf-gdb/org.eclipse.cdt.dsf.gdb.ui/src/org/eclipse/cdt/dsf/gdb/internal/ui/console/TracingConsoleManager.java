@@ -55,37 +55,37 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	 * We keep it up-to-date by registering as an IPropertyChangeListener
 	 */
 	private boolean fTracingEnabled = false;
-	
+
 	/**
 	 * The maximum number of characters that are allowed per console
 	 */
 	private int fMaxNumCharacters = 500000;
-	
+
 	/**
 	 * The number of characters that will be kept in the console once we
 	 * go over fMaxNumCharacters and that we must remove some characters
 	 */
 	private int fMinNumCharacters = fMaxNumCharacters - NUMBER_OF_CHARS_TO_DELETE;
-	
+
 	/**
 	 * A map of all TracingConsoles for their corresponding launch.
 	 * We keep this list because TracingConsoles may not be registered
 	 * with the ConsoleManager, so we need another way to find them.
 	 */
 	private HashMap<ITracedLaunch, TracingConsole> fTracingConsoles = new HashMap<>();
-	
+
 	/**
 	 * Start the tracing console.  We don't do this in a constructor, because
 	 * we need to use <code>this</code>.
 	 */
 	public void startup() {
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
-		
+
 		store.addPropertyChangeListener(this);
 		fTracingEnabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE);
 		int maxChars = store.getInt(IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES);
 		setWaterMarks(maxChars);
-		
+
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
@@ -97,14 +97,14 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 
 	protected void toggleTracingVisibility(boolean visible) {
 		if (visible) {
-			ConsolePlugin.getDefault().getConsoleManager().addConsoles(
-					fTracingConsoles.values().toArray(new IConsole[fTracingConsoles.size()]));
+			ConsolePlugin.getDefault().getConsoleManager()
+					.addConsoles(fTracingConsoles.values().toArray(new IConsole[fTracingConsoles.size()]));
 		} else {
-			ConsolePlugin.getDefault().getConsoleManager().removeConsoles(
-					fTracingConsoles.values().toArray(new IConsole[fTracingConsoles.size()]));
+			ConsolePlugin.getDefault().getConsoleManager()
+					.removeConsoles(fTracingConsoles.values().toArray(new IConsole[fTracingConsoles.size()]));
 		}
 	}
-	
+
 	protected void removeAllConsoles() {
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		for (ILaunch launch : launches) {
@@ -112,25 +112,25 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 		}
 	}
 
-    @Override
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			addConsole(launch);
 		}
 	}
 
-    @Override
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 
-    @Override
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			removeConsole(launch);
 		}
 	}
-	
-    @Override
+
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			// Since we already had a console, don't get rid of it
@@ -138,14 +138,14 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 			renameConsole(launch);
 		}
 	}
-	
-    @Override
+
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE)) {
-			fTracingEnabled = (Boolean)event.getNewValue();
+			fTracingEnabled = (Boolean) event.getNewValue();
 			toggleTracingVisibility(fTracingEnabled);
 		} else if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES)) {
-			int maxChars = (Integer)event.getNewValue();
+			int maxChars = (Integer) event.getNewValue();
 			updateAllConsoleWaterMarks(maxChars);
 		}
 	}
@@ -157,13 +157,14 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 			if (getConsole(launch) == null) {
 				if (!launch.isTerminated()) {
 					// Create a new tracing console.
-					TracingConsole console = new TracingConsole(launch, ConsoleMessages.ConsoleMessages_trace_console_name);
+					TracingConsole console = new TracingConsole(launch,
+							ConsoleMessages.ConsoleMessages_trace_console_name);
 					console.initialize();
 					console.setWaterMarks(fMinNumCharacters, fMaxNumCharacters);
-					
-					fTracingConsoles.put((ITracedLaunch)launch, console);
+
+					fTracingConsoles.put((ITracedLaunch) launch, console);
 					if (fTracingEnabled) {
-						ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{console});
+						ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { console });
 					}
 				} // else we don't display a new console for a terminated launch
 			}
@@ -175,7 +176,7 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 		if (console != null) {
 			console.destroy();
 			if (fTracingEnabled) {
-				ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[]{console});
+				ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[] { console });
 			}
 		}
 	}
@@ -186,24 +187,25 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 			console.resetName();
 		}
 	}
-	
+
 	private TracingConsole getConsole(ILaunch launch) {
 		return fTracingConsoles.get(launch);
 	}
-	
+
 	/** @since 2.2 */
 	protected void setWaterMarks(int maxChars) {
 		if (maxChars < (MIN_NUMBER_OF_CHARS_TO_KEEP * 2)) {
 			maxChars = MIN_NUMBER_OF_CHARS_TO_KEEP * 2;
 		}
-		
+
 		fMaxNumCharacters = maxChars;
 		// If the max number of chars is anything below the number of chars we are going to delete
 		// (plus our minimum buffer), we only keep the minimum.
 		// If the max number of chars is bigger than the number of chars we are going to delete (plus
 		// the minimum buffer), we truncate a fixed amount chars.
-		fMinNumCharacters = maxChars < (NUMBER_OF_CHARS_TO_DELETE + MIN_NUMBER_OF_CHARS_TO_KEEP) 
-								? MIN_NUMBER_OF_CHARS_TO_KEEP : maxChars - NUMBER_OF_CHARS_TO_DELETE;
+		fMinNumCharacters = maxChars < (NUMBER_OF_CHARS_TO_DELETE + MIN_NUMBER_OF_CHARS_TO_KEEP)
+				? MIN_NUMBER_OF_CHARS_TO_KEEP
+				: maxChars - NUMBER_OF_CHARS_TO_DELETE;
 	}
 
 	/** @since 2.2 */
@@ -214,12 +216,12 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 			updateConsoleWaterMarks(launch);
 		}
 	}
-	
+
 	/** @since 2.2 */
 	protected void updateConsoleWaterMarks(ILaunch launch) {
 		TracingConsole console = getConsole(launch);
 		if (console != null) {
 			console.setWaterMarks(fMinNumCharacters, fMaxNumCharacters);
-		}		
+		}
 	}
 }

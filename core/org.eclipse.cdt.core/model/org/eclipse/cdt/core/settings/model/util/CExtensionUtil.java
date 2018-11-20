@@ -25,7 +25,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 public class CExtensionUtil {
-	public static IConfigurationElement getFirstConfigurationElement(ICConfigExtensionReference ref, String name, boolean caseSensitive) throws CoreException {
+	public static IConfigurationElement getFirstConfigurationElement(ICConfigExtensionReference ref, String name,
+			boolean caseSensitive) throws CoreException {
 		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = extensionRegistry.getExtensionPoint(ref.getExtensionPoint());
 		IExtension extension = extensionPoint.getExtension(ref.getID());
@@ -35,8 +36,7 @@ public class CExtensionUtil {
 		}
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for (int i = 0; i < element.length; i++) {
-			if (caseSensitive ? element[i].getName().equals(name) :
-				element[i].getName().equalsIgnoreCase(name)) {
+			if (caseSensitive ? element[i].getName().equals(name) : element[i].getName().equalsIgnoreCase(name)) {
 				return element[i];
 			}
 		}

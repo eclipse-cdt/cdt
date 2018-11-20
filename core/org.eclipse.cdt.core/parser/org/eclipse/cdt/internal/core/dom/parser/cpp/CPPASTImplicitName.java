@@ -67,19 +67,23 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-		if ((!alternate && action.shouldVisitImplicitNames) ||
-				(alternate && action.shouldVisitImplicitNameAlternates)) {
-            switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-            }
+		if ((!alternate && action.shouldVisitImplicitNames)
+				|| (alternate && action.shouldVisitImplicitNameAlternates)) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			}
 
-            switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-            }
-        }
-        return true;
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -98,7 +102,7 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 	}
 
 	public void setIsDefinition(boolean val) {
-		isDefinition= val;
+		isDefinition = val;
 	}
 
 	/**
@@ -119,9 +123,8 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 				offset += ((ASTNode) relativeNode).getLength();
 
 			OverloadableOperator oo = OverloadableOperator.valueOf(first);
-			if ((first.getNext() == null && oo != null) ||
-					Arrays.equals(first.getCharImage(), Keywords.cDELETE) ||
-					Arrays.equals(first.getCharImage(), Keywords.cNEW)) {
+			if ((first.getNext() == null && oo != null) || Arrays.equals(first.getCharImage(), Keywords.cDELETE)
+					|| Arrays.equals(first.getCharImage(), Keywords.cNEW)) {
 				int length = first.getLength();
 				setOffsetAndLength(offset, length);
 			} else {
@@ -134,7 +137,7 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 				setOffsetAndLength(parent.getOffset() + parent.getLength(), 0);
 			}
 		}
-    }
+	}
 
 	// Fallback algorithm to use in computeOperatorOffsets() when the operator is
 	// in a macro expansion.
@@ -151,23 +154,19 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 		ASTNodeSearch visitor = new ASTNodeSearch(relativeNode);
 		IASTNode sibling = trailing ? visitor.findRightSibling() : visitor.findLeftSibling();
 		IASTNode parent = sibling == null ? relativeNode.getParent() : null;
-		if (!((sibling == null || sibling instanceof ASTNode) &&
-			  (parent == null || parent instanceof ASTNode))) {
+		if (!((sibling == null || sibling instanceof ASTNode) && (parent == null || parent instanceof ASTNode))) {
 			return false;
 		}
 		ASTNode sib = (ASTNode) sibling;
 		ASTNode par = (ASTNode) parent;
 		@SuppressWarnings("null")
 		int start = trailing ? relative.getOffset() + relative.getLength()
-		                     : sib != null ? sib.getOffset() + sib.getLength()
-		                                   : par.getOffset();
-   		@SuppressWarnings("null")
-		int end = trailing ? sib != null ? sib.getOffset()
-				                         : par.getOffset() + par.getLength()
-				           : relative.getOffset();
+				: sib != null ? sib.getOffset() + sib.getLength() : par.getOffset();
+		@SuppressWarnings("null")
+		int end = trailing ? sib != null ? sib.getOffset() : par.getOffset() + par.getLength() : relative.getOffset();
 
-	    // If there is only one token within the bounds, it must be the
-	    // operator token, and we have our answer.
+		// If there is only one token within the bounds, it must be the
+		// operator token, and we have our answer.
 		if (end == start + 1) {
 			setOffsetAndLength(start, 1);
 			return true;

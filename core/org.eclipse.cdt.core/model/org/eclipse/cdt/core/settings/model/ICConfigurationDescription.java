@@ -137,7 +137,8 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @throws WriteAccessException when the configuration description is read-only
 	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
-	ICFileDescription createFileDescription(IPath path, ICResourceDescription base) throws CoreException, WriteAccessException;
+	ICFileDescription createFileDescription(IPath path, ICResourceDescription base)
+			throws CoreException, WriteAccessException;
 
 	/**
 	 * Creates a new folder description for the specified path
@@ -147,7 +148,8 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @throws WriteAccessException when the configuration description is read-only
 	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
-	ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base) throws CoreException, WriteAccessException;
+	ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base)
+			throws CoreException, WriteAccessException;
 
 	/**
 	 * Returns the ID of the build system used with this configuration
@@ -233,9 +235,9 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * an empty map is returned.
 	 *
 	 * @return Map<String,String> of referenced Project -> Configuration ID
-  	 * @see {@link #setReferenceInfo(Map)} <br/>
- 	 * {@link #getExternalSettings()}<br/>
- 	 * {@link #createExternalSetting(String[], String[], String[], ICSettingEntry[])}
+	 * @see {@link #setReferenceInfo(Map)} <br/>
+	 * {@link #getExternalSettings()}<br/>
+	 * {@link #createExternalSetting(String[], String[], String[], ICSettingEntry[])}
 	 */
 	Map<String, String> getReferenceInfo();
 
@@ -251,9 +253,9 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @param refs Map of project name -> configuration ID of referenced configurations
 	 * @throws WriteAccessException when the configuration description is read-only
 	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
- 	 * @see {@link #getReferenceInfo()} <br/>
- 	 * {@link #getExternalSettings()}<br/>
- 	 * {@link #createExternalSetting(String[], String[], String[], ICSettingEntry[])}
+	 * @see {@link #getReferenceInfo()} <br/>
+	 * {@link #getExternalSettings()}<br/>
+	 * {@link #createExternalSetting(String[], String[], String[], ICSettingEntry[])}
 	 */
 	void setReferenceInfo(Map<String, String> refs) throws WriteAccessException;
 
@@ -283,9 +285,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @throws WriteAccessException when the configuration description is read-only
 	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
-	ICExternalSetting createExternalSetting(String languageIDs[],
-			String contentTypeIds[],
-			String extensions[],
+	ICExternalSetting createExternalSetting(String languageIDs[], String contentTypeIds[], String extensions[],
 			ICSettingEntry entries[]) throws WriteAccessException;
 
 	/**

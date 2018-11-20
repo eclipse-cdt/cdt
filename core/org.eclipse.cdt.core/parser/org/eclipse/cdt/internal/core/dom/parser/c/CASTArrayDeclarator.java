@@ -26,10 +26,10 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  * @author jcamelon
  */
 public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDeclarator {
-    private IASTArrayModifier[] arrayMods;
-    private int arrayModsPos = -1;
+	private IASTArrayModifier[] arrayMods;
+	private int arrayModsPos = -1;
 
-    public CASTArrayDeclarator() {
+	public CASTArrayDeclarator() {
 	}
 
 	public CASTArrayDeclarator(IASTName name, IASTInitializer initializer) {
@@ -56,24 +56,23 @@ public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDecl
 
 	@Override
 	public IASTArrayModifier[] getArrayModifiers() {
-        if (arrayMods == null)
-        	return IASTArrayModifier.EMPTY_ARRAY;
-        arrayMods = ArrayUtil.trimAt(IASTArrayModifier.class, arrayMods, arrayModsPos);
-        return arrayMods;
-    }
+		if (arrayMods == null)
+			return IASTArrayModifier.EMPTY_ARRAY;
+		arrayMods = ArrayUtil.trimAt(IASTArrayModifier.class, arrayMods, arrayModsPos);
+		return arrayMods;
+	}
 
-    @Override
+	@Override
 	public void addArrayModifier(IASTArrayModifier arrayModifier) {
-        assertNotFrozen();
-    	if (arrayModifier != null) {
-    		arrayModifier.setParent(this);
+		assertNotFrozen();
+		if (arrayModifier != null) {
+			arrayModifier.setParent(this);
 			arrayModifier.setPropertyInParent(ARRAY_MODIFIER);
-            arrayMods = ArrayUtil.appendAt(IASTArrayModifier.class, arrayMods,
-            		++arrayModsPos, arrayModifier);
-    	}
-    }
+			arrayMods = ArrayUtil.appendAt(IASTArrayModifier.class, arrayMods, ++arrayModsPos, arrayModifier);
+		}
+	}
 
-    @Override
+	@Override
 	protected boolean postAccept(ASTVisitor action) {
 		IASTArrayModifier[] mods = getArrayModifiers();
 		for (int i = 0; i < mods.length; i++) {

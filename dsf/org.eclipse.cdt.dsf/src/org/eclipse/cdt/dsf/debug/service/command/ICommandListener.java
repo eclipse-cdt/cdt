@@ -32,19 +32,19 @@ public interface ICommandListener {
 	 * 
 	 * @return None
 	 * @param command Command which has been added to the Queue
- 	 */
+	 */
 	public void commandQueued(ICommandToken token);
-	
+
 	/**
-     * Notification that the given command was sent to the debugger. At this 
-     * point the command is no longer in the Command Queue and should not be
-     * examined. The only thing which can be done is to try and cancel the
-     * command.
-     * 
-     * @return None
-     * @param command
-     */
-    public void commandSent(ICommandToken token);
+	 * Notification that the given command was sent to the debugger. At this 
+	 * point the command is no longer in the Command Queue and should not be
+	 * examined. The only thing which can be done is to try and cancel the
+	 * command.
+	 * 
+	 * @return None
+	 * @param command
+	 */
+	public void commandSent(ICommandToken token);
 
 	/**
 	 * Notifies that the specified command has been removed from the 
@@ -58,7 +58,7 @@ public interface ICommandListener {
 	 * @param Command which has been sent to the backend
 	 */
 	public void commandRemoved(ICommandToken token);
-    
+
 	/**
 	 * Notifies that the specified command has been completed.
 	 * 

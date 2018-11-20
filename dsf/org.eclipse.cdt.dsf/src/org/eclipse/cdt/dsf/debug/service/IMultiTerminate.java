@@ -25,28 +25,28 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
  */
 public interface IMultiTerminate {
 
-    /**
-     * Checks whether it is possible to terminate at least one of the specified threads 
-     * or processes.
-     * 
-     * @param dmcs The contexts of the threads to terminate
-     * @param rm Request monitor returning whether there is at least one thread or process can be terminated.
-     */
-    void canTerminateSome(IThreadDMContext[] dmcs, DataRequestMonitor<Boolean> rm);
+	/**
+	 * Checks whether it is possible to terminate at least one of the specified threads 
+	 * or processes.
+	 * 
+	 * @param dmcs The contexts of the threads to terminate
+	 * @param rm Request monitor returning whether there is at least one thread or process can be terminated.
+	 */
+	void canTerminateSome(IThreadDMContext[] dmcs, DataRequestMonitor<Boolean> rm);
 
-    /**
-     * Checks whether it is possible to terminate all of the specified threads or processes.
-     * 
-     * @param dmcs The contexts of the threads or processes to terminate
-     * @param rm Request monitor returning whether all of the threads can be terminated.
-     */
-    void canTerminateAll(IThreadDMContext[] dmcs, DataRequestMonitor<Boolean> rm);
+	/**
+	 * Checks whether it is possible to terminate all of the specified threads or processes.
+	 * 
+	 * @param dmcs The contexts of the threads or processes to terminate
+	 * @param rm Request monitor returning whether all of the threads can be terminated.
+	 */
+	void canTerminateAll(IThreadDMContext[] dmcs, DataRequestMonitor<Boolean> rm);
 
-    /**
-     * Request to terminate the specified threads or processes. Only threads and processes
-     * that can be terminated will be affected, others will be ignored.
-     * 
-     * @param dmc The contexts of the threads or processes to terminate.
-     */
-    void terminate(IThreadDMContext[] dmcs, RequestMonitor rm);
+	/**
+	 * Request to terminate the specified threads or processes. Only threads and processes
+	 * that can be terminated will be affected, others will be ignored.
+	 * 
+	 * @param dmc The contexts of the threads or processes to terminate.
+	 */
+	void terminate(IThreadDMContext[] dmcs, RequestMonitor rm);
 }

@@ -77,13 +77,12 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
 public class ManagedBuildTestHelper {
-	private static final String rcbsToolId = "org.eclipse.cdt.managedbuilder.ui.rcbs";	//$NON-NLS-1$
-	private static final String rcbsToolName = "Resource Custom Build Step";	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype";	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeName = "Resource Custom Build Step Input Type";	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype";	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeName = "Resource Custom Build Step Output Type";	//$NON-NLS-1$
-
+	private static final String rcbsToolId = "org.eclipse.cdt.managedbuilder.ui.rcbs"; //$NON-NLS-1$
+	private static final String rcbsToolName = "Resource Custom Build Step"; //$NON-NLS-1$
+	private static final String rcbsToolInputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype"; //$NON-NLS-1$
+	private static final String rcbsToolInputTypeName = "Resource Custom Build Step Input Type"; //$NON-NLS-1$
+	private static final String rcbsToolOutputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype"; //$NON-NLS-1$
+	private static final String rcbsToolOutputTypeName = "Resource Custom Build Step Output Type"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * Create a new project named <code>name</code> or return the project in
@@ -93,10 +92,7 @@ public class ManagedBuildTestHelper {
 	 * @return
 	 * @throws CoreException
 	 */
-	static public IProject createProject(
-			final String name,
-			final IPath location,
-			final String projectId,
+	static public IProject createProject(final String name, final IPath location, final String projectId,
 			final String projectTypeId) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject newProjectHandle = root.getProject(name);
@@ -113,7 +109,8 @@ public class ManagedBuildTestHelper {
 				workspace.setDescription(workspaceDesc);
 				IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 				//description.setLocation(root.getLocation());
-				project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
+				project = CCorePlugin.getDefault().createCProject(description, newProjectHandle,
+						new NullProgressMonitor(), ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
 			}
 		} else {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -147,42 +144,37 @@ public class ManagedBuildTestHelper {
 		return project;
 	}
 
-	static public IProject createProject(
-			final String name,
-			final String projectTypeId) {
+	static public IProject createProject(final String name, final String projectTypeId) {
 		try {
-			return 	createProject(name,
-					null,
-					ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID,
-					projectTypeId);
+			return createProject(name, null, ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID, projectTypeId);
 		} catch (CoreException e) {
 			TestCase.fail(e.getLocalizedMessage());
 		}
 		return null;
 	}
 
-	static public IFile createFile(IProject project, String name){
+	static public IFile createFile(IProject project, String name) {
 		return createFile(project, name, new ByteArrayInputStream(new byte[0]));
 	}
 
-	static public IFile createFile(IProject project, String name, String contents){
+	static public IFile createFile(IProject project, String name, String contents) {
 		return createFile(project, name, new ByteArrayInputStream(contents.getBytes()));
 	}
 
-	static public IFile createFile(IProject project, String name, InputStream contents){
+	static public IFile createFile(IProject project, String name, InputStream contents) {
 		IFile file = project.getFile(name);
-		if( !file.exists() ){
+		if (!file.exists()) {
 			try {
 				IPath dirPath = file.getFullPath().removeLastSegments(1).removeFirstSegments(1);
-				if(dirPath.segmentCount() > 0){
+				if (dirPath.segmentCount() > 0) {
 					IFolder rc = project.getFolder(dirPath);
-					if(!rc.exists()){
+					if (!rc.exists()) {
 						rc.create(true, true, null);
 					}
 				}
 
-//				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
-				file.create(contents, false, null );
+				//				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
+				file.create(contents, false, null);
 			} catch (CoreException e) {
 				TestCase.fail(e.getLocalizedMessage());
 			}
@@ -190,20 +182,20 @@ public class ManagedBuildTestHelper {
 		return file;
 	}
 
-	static public IFolder createFolder(IProject project, String name){
+	static public IFolder createFolder(IProject project, String name) {
 		IFolder folder = project.getFolder(name);
-		if( !folder.exists() ){
+		if (!folder.exists()) {
 			try {
 				IPath dirPath = folder.getFullPath().removeLastSegments(1).removeFirstSegments(1);
-				if(dirPath.segmentCount() > 0){
+				if (dirPath.segmentCount() > 0) {
 					IFolder rc = project.getFolder(dirPath);
-					if(!rc.exists()){
+					if (!rc.exists()) {
 						rc.create(true, true, null);
 					}
 				}
 
-//				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
-				folder.create(true , false, null );
+				//				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
+				folder.create(true, false, null);
 			} catch (CoreException e) {
 				TestCase.fail(e.getLocalizedMessage());
 			}
@@ -274,36 +266,35 @@ public class ManagedBuildTestHelper {
 
 		try {
 			return createProject(name, zipFile, null, null);
-		} catch(Exception e){
+		} catch (Exception e) {
 			Assert.fail("fail to create the project: " + e.getLocalizedMessage());
 		}
 		/* never get here */
 		return null;
 	}
 
-	static public IProject createProject(String projectName, File importFrom, IPath location, String projectTypeId) throws CoreException, InvocationTargetException, IOException {
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IProject project= root.getProject(projectName);
+	static public IProject createProject(String projectName, File importFrom, IPath location, String projectTypeId)
+			throws CoreException, InvocationTargetException, IOException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(projectName);
 		if (project.exists())
 			removeProject(projectName);
 
-		IPath destPath = (location != null) ?
-				location :
-				project.getFullPath();
+		IPath destPath = (location != null) ? location : project.getFullPath();
 
 		if (importFrom != null) {
 			IImportStructureProvider importStructure;
 			Object importRoot;
 			if (importFrom.isFile()) {
 				importStructure = new ZipFileStructureProvider(new ZipFile(importFrom));
-				importRoot = ((ZipFileStructureProvider)importStructure).getRoot();
+				importRoot = ((ZipFileStructureProvider) importStructure).getRoot();
 			} else {
 				importStructure = new FileSystemStructureProvider();
 				importRoot = importFrom;
 			}
 
 			try {
-				ImportOperation op= new ImportOperation(destPath, importRoot, importStructure, new IOverwriteQuery() {
+				ImportOperation op = new ImportOperation(destPath, importRoot, importStructure, new IOverwriteQuery() {
 					@Override
 					public String queryOverwrite(String file) {
 						return ALL;
@@ -320,11 +311,8 @@ public class ManagedBuildTestHelper {
 		return createProject(projectName, location, ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID, projectTypeId);
 	}
 
-	static public IProject createNewManagedProject(IProject newProjectHandle,
-			final String name,
-			final IPath location,
-			final String projectId,
-			final String projectTypeId) throws CoreException {
+	static public IProject createNewManagedProject(IProject newProjectHandle, final String name, final IPath location,
+			final String projectId, final String projectTypeId) throws CoreException {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		final IProject project = newProjectHandle;
@@ -372,7 +360,7 @@ public class ManagedBuildTestHelper {
 				ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);
 
 				IConfiguration cfgs[] = newProject.getConfigurations();
-				for(int i = 0; i < cfgs.length; i++){
+				for (int i = 0; i < cfgs.length; i++) {
 					cfgs[i].setArtifactName(newProject.getDefaultArtifactName());
 				}
 
@@ -400,16 +388,17 @@ public class ManagedBuildTestHelper {
 		// Initialize the path entry container
 		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
 		if (initResult.getCode() != IStatus.OK) {
-			Assert.fail("Initializing build information failed for: " + project.getName() + " because: " + initResult.getMessage());
+			Assert.fail("Initializing build information failed for: " + project.getName() + " because: "
+					+ initResult.getMessage());
 		}
 		return project;
 	}
 
-	static public void addManagedBuildNature (IProject project) {
+	static public void addManagedBuildNature(IProject project) {
 		// Create the buildinformation object for the project
 		IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 		Assert.assertNotNull(info);
-//		info.setValid(true);
+		//		info.setValid(true);
 
 		// Add the managed build nature
 		try {
@@ -432,10 +421,12 @@ public class ManagedBuildTestHelper {
 		try {
 			desc.saveProjectData();
 		} catch (CoreException e) {
-			Assert.fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());		}
+			Assert.fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());
+		}
 	}
 
-	static public boolean compareBenchmarks(final IProject project, IPath testLocationBase, IPath[] files, IPath benchmarkLocationBase) {
+	static public boolean compareBenchmarks(final IProject project, IPath testLocationBase, IPath[] files,
+			IPath benchmarkLocationBase) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			@Override
@@ -449,7 +440,7 @@ public class ManagedBuildTestHelper {
 		} catch (Exception e) {
 			Assert.fail("File " + files[0].lastSegment() + " - project refresh failed.");
 		}
-		for (int i=0; i<files.length; i++) {
+		for (int i = 0; i < files.length; i++) {
 			IPath testFileLocation = testLocationBase.append(files[i]);
 			IPath benchmarkFileLocation = benchmarkLocationBase.append("Benchmarks").append(files[i]);
 			if (isMakefile(testFileLocation)) {
@@ -466,7 +457,8 @@ public class ManagedBuildTestHelper {
 			StringBuffer benchmarkBuffer = readContentsStripLineEnds(project, benchmarkFileLocation);
 			if (!testBuffer.toString().equals(benchmarkBuffer.toString())) {
 				StringBuffer buffer = new StringBuffer();
-				buffer.append("File ").append(testFileLocation.lastSegment()).append(" does not match its benchmark.\n ");
+				buffer.append("File ").append(testFileLocation.lastSegment())
+						.append(" does not match its benchmark.\n ");
 				buffer.append("expected:\n ");
 				buffer.append('"').append(benchmarkBuffer).append('"');
 				buffer.append("\n\n ");
@@ -475,14 +467,12 @@ public class ManagedBuildTestHelper {
 				buffer.append("\n\n ");
 
 				buffer.append(">>>>>>>>>>>>>>>start diff: \n");
-				String location1 = benchmarkFileLocation.isAbsolute()
-					? benchmarkFileLocation.toString()
-					: getFileLocation(project, benchmarkFileLocation);
-				String location2 = testFileLocation.isAbsolute()
-					? testFileLocation.toString()
-					: getFileLocation(project, testFileLocation);
+				String location1 = benchmarkFileLocation.isAbsolute() ? benchmarkFileLocation.toString()
+						: getFileLocation(project, benchmarkFileLocation);
+				String location2 = testFileLocation.isAbsolute() ? testFileLocation.toString()
+						: getFileLocation(project, testFileLocation);
 				String diff = DiffUtil.getInstance().diff(location1, location2);
-				if(diff == null)
+				if (diff == null)
 					diff = "!diff failed!";
 				buffer.append(diff);
 				buffer.append("\n<<<<<<<<<<<end diff");
@@ -496,13 +486,9 @@ public class ManagedBuildTestHelper {
 
 	private static boolean isMakefile(IPath file) {
 		String ext = file.getFileExtension();
-		if (ext==null) {
+		if (ext == null) {
 			String name = file.lastSegment();
-			return name!=null && (
-					name.equals("makefile")
-					|| name.equals("Makefile")
-					|| name.equals("GNUmakefile")
-				);
+			return name != null && (name.equals("makefile") || name.equals("Makefile") || name.equals("GNUmakefile"));
 		}
 		return ext.equals("mk");
 	}
@@ -525,23 +511,26 @@ public class ManagedBuildTestHelper {
 		final String INCLUDE_PATTERN = "-include \\$\\(.*\\)";
 		final String MACRO_PATTERN = "\\S* [:+]=.*";
 		final String EMPTY_MACRO_PATTERN = "\\S* :=";
-		final String WORKSPACE_DIR_STR = CdtVariableResolver.createVariableReference(CdtVariableResolver.VAR_WORKSPACE_DIR_PATH);
+		final String WORKSPACE_DIR_STR = CdtVariableResolver
+				.createVariableReference(CdtVariableResolver.VAR_WORKSPACE_DIR_PATH);
 		ArrayList<String> testArray = mergeContinuationLines(getContents(testFile));
 		ArrayList<String> benchmarkArray = mergeContinuationLines(getContents(benchmarkFile));
 
 		Set<String> testNotMatchingLines = new TreeSet<String>();
 		Set<String> benchNotMatchingLines = new TreeSet<String>();
 		Set<String> extraLines = new TreeSet<String>();
-		for (int i=0;i<benchmarkArray.size() || i<testArray.size();i++) {
-			if (!(i<benchmarkArray.size())) {
-				System.err.println(testFile.lastSegment()+": extra line =["+testArray.get(i)+ "] not in benchmark. File "+testFile);
-				System.err.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
+		for (int i = 0; i < benchmarkArray.size() || i < testArray.size(); i++) {
+			if (!(i < benchmarkArray.size())) {
+				System.err.println(testFile.lastSegment() + ": extra line =[" + testArray.get(i)
+						+ "] not in benchmark. File " + testFile);
+				System.err.println(testFile.lastSegment() + ": benchmark file " + benchmarkFile);
 				extraLines.add(testArray.get(i));
 				continue;
 			}
-			if (!(i<testArray.size())) {
-				System.err.println(testFile.lastSegment()+": missing line =["+benchmarkArray.get(i)+ "] comparing to benchmark. File "+testFile);
-				System.err.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
+			if (!(i < testArray.size())) {
+				System.err.println(testFile.lastSegment() + ": missing line =[" + benchmarkArray.get(i)
+						+ "] comparing to benchmark. File " + testFile);
+				System.err.println(testFile.lastSegment() + ": benchmark file " + benchmarkFile);
 				extraLines.add(benchmarkArray.get(i));
 				continue;
 			}
@@ -551,12 +540,14 @@ public class ManagedBuildTestHelper {
 				if (testLine.startsWith("	-$(RM) ")) {
 					// accommodate to arbitrary order of 'rm' parameters
 					final String DELIMITERS = "[ $]";
-					String[] testMacros = new TreeSet<String>(Arrays.asList(testLine.split(DELIMITERS))).toArray(new String[0]);
-					String[] benchMacros = new TreeSet<String>(Arrays.asList(benchmarkLine.split(DELIMITERS))).toArray(new String[0]);
-					if (testMacros.length!=benchMacros.length) {
+					String[] testMacros = new TreeSet<String>(Arrays.asList(testLine.split(DELIMITERS)))
+							.toArray(new String[0]);
+					String[] benchMacros = new TreeSet<String>(Arrays.asList(benchmarkLine.split(DELIMITERS)))
+							.toArray(new String[0]);
+					if (testMacros.length != benchMacros.length) {
 						return false;
 					}
-					for (int j=0;j<testMacros.length;j++) {
+					for (int j = 0; j < testMacros.length; j++) {
 						if (!testMacros[j].equals(benchMacros[j])) {
 							return false;
 						}
@@ -582,48 +573,50 @@ public class ManagedBuildTestHelper {
 				} else if (benchmarkLine.contains(WORKSPACE_DIR_STR)) {
 					String[] benchmarkSubstrings = benchmarkLine.split(" ");
 					String[] testSubstrings = testLine.split(" ");
-					if (testSubstrings.length!=benchmarkSubstrings.length) {
-						System.err.println("Following lines do not match ("+testFile.lastSegment()+"):");
-						System.err.println("actual  : ["+testLine+"], file "+testFile);
-						System.err.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
+					if (testSubstrings.length != benchmarkSubstrings.length) {
+						System.err.println("Following lines do not match (" + testFile.lastSegment() + "):");
+						System.err.println("actual  : [" + testLine + "], file " + testFile);
+						System.err.println("expected: [" + benchmarkLine + "], file " + benchmarkFile);
 						return false;
 					}
 
 					final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 					final IWorkspaceRoot root = workspace.getRoot();
 					final String workspaceLocation = root.getLocation().toOSString();
-					final String platformFileSeparator = System.getProperty("file.separator", Character.toString(IPath.SEPARATOR)); //$NON-NLS-1$
+					final String platformFileSeparator = System.getProperty("file.separator", //$NON-NLS-1$
+							Character.toString(IPath.SEPARATOR));
 
-					for (int j=0;j<testSubstrings.length;j++) {
+					for (int j = 0; j < testSubstrings.length; j++) {
 						String testSubstring = testSubstrings[j];
 						String benchmarkSubstring = benchmarkSubstrings[j];
 						if (benchmarkSubstring.contains(WORKSPACE_DIR_STR)) {
-							benchmarkSubstring = benchmarkSubstring
-								.replace("/", platformFileSeparator)
-								.replace(WORKSPACE_DIR_STR,workspaceLocation);
+							benchmarkSubstring = benchmarkSubstring.replace("/", platformFileSeparator)
+									.replace(WORKSPACE_DIR_STR, workspaceLocation);
 						}
 						if (!testSubstring.equals(benchmarkSubstring)) {
-							System.err.println("Following lines do not match ("+testFile.lastSegment()+"):");
-							System.err.println("actual  : ["+testLine+"], file "+testFile);
-							System.err.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
-							System.err.println("substring actual : ["+testSubstring+"], file "+testFile);
-							System.err.println("substring expected: ["+benchmarkSubstring+"], file "+benchmarkFile);
+							System.err.println("Following lines do not match (" + testFile.lastSegment() + "):");
+							System.err.println("actual  : [" + testLine + "], file " + testFile);
+							System.err.println("expected: [" + benchmarkLine + "], file " + benchmarkFile);
+							System.err.println("substring actual : [" + testSubstring + "], file " + testFile);
+							System.err
+									.println("substring expected: [" + benchmarkSubstring + "], file " + benchmarkFile);
 							return false;
 						}
 					}
 				} else {
-					System.err.println("Following lines do not match ("+testFile.lastSegment()+"):");
-					System.err.println("actual  : ["+testLine+"], file "+testFile);
-					System.err.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
+					System.err.println("Following lines do not match (" + testFile.lastSegment() + "):");
+					System.err.println("actual  : [" + testLine + "], file " + testFile);
+					System.err.println("expected: [" + benchmarkLine + "], file " + benchmarkFile);
 					return false;
 				}
 			}
 		}
-		if (testArray.size()!=benchmarkArray.size()) {
-			System.err.println("testArray.size="+testArray.size()+ " while benchmarkArray.size="+benchmarkArray.size());
+		if (testArray.size() != benchmarkArray.size()) {
+			System.err.println(
+					"testArray.size=" + testArray.size() + " while benchmarkArray.size=" + benchmarkArray.size());
 			// Ignore benign differences
 			for (String line : extraLines) {
-				if (line==null || line.length()==0) {
+				if (line == null || line.length() == 0) {
 					continue;
 				}
 				if (line.matches(EMPTY_MACRO_PATTERN)) {
@@ -636,13 +629,13 @@ public class ManagedBuildTestHelper {
 		// Check if all collected lines match irrespective of order
 		String[] testNotMatchingLinesArray = testNotMatchingLines.toArray(new String[0]);
 		String[] benchNotMatchingLinesArray = benchNotMatchingLines.toArray(new String[0]);
-		for (int i=0;i<testNotMatchingLinesArray.length;i++) {
-			if (! testNotMatchingLinesArray[i].equals(benchNotMatchingLinesArray[i])) {
-				System.err.println("Following line is missing ("+testFile.lastSegment()+"):");
+		for (int i = 0; i < testNotMatchingLinesArray.length; i++) {
+			if (!testNotMatchingLinesArray[i].equals(benchNotMatchingLinesArray[i])) {
+				System.err.println("Following line is missing (" + testFile.lastSegment() + "):");
 				if (testNotMatchingLinesArray[i].compareTo(benchNotMatchingLinesArray[i]) < 0) {
-					System.err.println("line ["+testNotMatchingLinesArray[i]+"], missing in file "+benchmarkFile);
+					System.err.println("line [" + testNotMatchingLinesArray[i] + "], missing in file " + benchmarkFile);
 				} else {
-					System.err.println("line ["+benchNotMatchingLinesArray[i]+"], missing in file "+testFile);
+					System.err.println("line [" + benchNotMatchingLinesArray[i] + "], missing in file " + testFile);
 				}
 				return false;
 			}
@@ -664,15 +657,17 @@ public class ManagedBuildTestHelper {
 		ArrayList<String> testArray = getContents(testFile);
 		ArrayList<String> benchmarkArray = getContents(benchmarkFile);
 
-		for (int i=0;i<benchmarkArray.size() || i<testArray.size();i++) {
-			if (!(i<benchmarkArray.size())) {
-				System.err.println(testFile.lastSegment()+": extra line =["+testArray.get(i)+ "] not in benchmark. File "+testFile);
-				System.err.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
+		for (int i = 0; i < benchmarkArray.size() || i < testArray.size(); i++) {
+			if (!(i < benchmarkArray.size())) {
+				System.err.println(testFile.lastSegment() + ": extra line =[" + testArray.get(i)
+						+ "] not in benchmark. File " + testFile);
+				System.err.println(testFile.lastSegment() + ": benchmark file " + benchmarkFile);
 				continue;
 			}
-			if (!(i<testArray.size())) {
-				System.err.println(testFile.lastSegment()+": missing line =["+benchmarkArray.get(i)+ "] comparing to benchmark. File "+testFile);
-				System.err.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
+			if (!(i < testArray.size())) {
+				System.err.println(testFile.lastSegment() + ": missing line =[" + benchmarkArray.get(i)
+						+ "] comparing to benchmark. File " + testFile);
+				System.err.println(testFile.lastSegment() + ": benchmark file " + benchmarkFile);
 				continue;
 			}
 			String testLine = testArray.get(i);
@@ -684,15 +679,15 @@ public class ManagedBuildTestHelper {
 					String benchmarkLineTrimmed = benchmarkLine;
 					if (testLineTrimmed.endsWith("\\") && benchmarkLineTrimmed.endsWith("\\")) {
 						// trim ending "\"
-						testLineTrimmed = testLineTrimmed.substring(0, testLineTrimmed.length()-1);
-						benchmarkLineTrimmed = benchmarkLineTrimmed.substring(0, benchmarkLineTrimmed.length()-1);
+						testLineTrimmed = testLineTrimmed.substring(0, testLineTrimmed.length() - 1);
+						benchmarkLineTrimmed = benchmarkLineTrimmed.substring(0, benchmarkLineTrimmed.length() - 1);
 					}
 					if (testLineTrimmed.trim().equals(benchmarkLineTrimmed.trim())) {
 						continue;
 					}
-					System.err.println("Following lines do not match ("+testFile.lastSegment()+"):");
-					System.err.println("actual  : ["+testLine+"], file "+testFile);
-					System.err.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
+					System.err.println("Following lines do not match (" + testFile.lastSegment() + "):");
+					System.err.println("actual  : [" + testLine + "], file " + testFile);
+					System.err.println("expected: [" + benchmarkLine + "], file " + benchmarkFile);
 					result = false;
 				}
 			}
@@ -708,10 +703,10 @@ public class ManagedBuildTestHelper {
 			String line;
 			do {
 				line = in.readLine();
-				if (line!=null) {
+				if (line != null) {
 					lines.add(line);
 				}
-			} while (line !=null);
+			} while (line != null);
 		} catch (IOException e) {
 			Assert.fail("File " + fullPath.toString() + " could not be read: " + e.getLocalizedMessage());
 		}
@@ -719,11 +714,11 @@ public class ManagedBuildTestHelper {
 	}
 
 	private static ArrayList<String> mergeContinuationLines(ArrayList<String> lines) {
-		for (int i=0;i<lines.size();) {
+		for (int i = 0; i < lines.size();) {
 			String line = lines.get(i);
-			if (line.endsWith("\\") && i+1<lines.size()) {
-				lines.set(i, line.substring(0, line.length()-1)+lines.get(i+1));
-				lines.remove(i+1);
+			if (line.endsWith("\\") && i + 1 < lines.size()) {
+				lines.set(i, line.substring(0, line.length() - 1) + lines.get(i + 1));
+				lines.remove(i + 1);
 				// do not advance i and check the renewed line again
 				continue;
 			}
@@ -736,7 +731,8 @@ public class ManagedBuildTestHelper {
 		return compareBenchmarks(project, testDir, new Path("benchmarks").append(testDir), fileNames);
 	}
 
-	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath benchmarkDir, String[] fileNames) {
+	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath benchmarkDir,
+			String[] fileNames) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			@Override
@@ -751,8 +747,8 @@ public class ManagedBuildTestHelper {
 			Assert.fail("File " + fileNames[0] + " - project refresh failed.");
 		}
 
-		IFolder testFolder = (IFolder)project.findMember(testDir);
-		IFolder bmFolder = (IFolder)project.findMember(benchmarkDir);
+		IFolder testFolder = (IFolder) project.findMember(testDir);
+		IFolder bmFolder = (IFolder) project.findMember(benchmarkDir);
 
 		return compareBenchmarks(testFolder, bmFolder, fileNames);
 	}
@@ -761,10 +757,10 @@ public class ManagedBuildTestHelper {
 		Assert.assertNotNull(testFolder);
 		Assert.assertNotNull(bmFolder);
 
-		for (int i=0; i<fileNames.length; i++) {
+		for (int i = 0; i < fileNames.length; i++) {
 			IFile tFile = testFolder.getFile(fileNames[i]);
 			IFile bmFile = bmFolder.getFile(fileNames[i]);
-			if(!tFile.exists() && !bmFile.exists())
+			if (!tFile.exists() && !bmFile.exists())
 				continue;
 
 			compareBenchmarks(tFile, bmFile);
@@ -802,7 +798,7 @@ public class ManagedBuildTestHelper {
 			String location1 = getFileLocation(bmFile.getProject(), bmFile.getProjectRelativePath());
 			String location2 = getFileLocation(tFile.getProject(), tFile.getProjectRelativePath());
 			String diff = DiffUtil.getInstance().diff(location1, location2);
-			if(diff == null)
+			if (diff == null)
 				diff = "!diff failed!";
 			buffer.append(diff);
 			buffer.append("\n<<<<<<<<<<<end diff");
@@ -827,7 +823,7 @@ public class ManagedBuildTestHelper {
 		} catch (Exception e) {
 			Assert.fail("File " + files[0].lastSegment() + " - project refresh failed.");
 		}
-		for (int i=0; i<files.length; i++) {
+		for (int i = 0; i < files.length; i++) {
 			IPath testFile = testDir.append(files[i]);
 			IPath fullPath = project.getLocation().append(testFile);
 			try {
@@ -842,12 +838,14 @@ public class ManagedBuildTestHelper {
 		return true;
 	}
 
-	static public String getFileLocation(IProject project, IPath path){
+	static public String getFileLocation(IProject project, IPath path) {
 		return project.getLocation().append(path).toString();
 	}
+
 	static public StringBuffer readContentsStripLineEnds(IFile file) {
 		return readContentsStripLineEnds(file.getProject(), file.getProjectRelativePath());
 	}
+
 	static public StringBuffer readContentsStripLineEnds(IProject project, IPath path) {
 		StringBuffer buff = new StringBuffer();
 		IPath fullPath = path;
@@ -865,9 +863,10 @@ public class ManagedBuildTestHelper {
 			int c;
 			do {
 				c = input.read();
-				if (c == -1) break;
+				if (c == -1)
+					break;
 				if (c != '\r' && c != '\n') {
-					buff.append((char)c);
+					buff.append((char) c);
 				}
 			} while (c != -1);
 			input.close();
@@ -896,7 +895,7 @@ public class ManagedBuildTestHelper {
 			if (!tmpSrcDirFile.exists()) {
 				Assert.fail("Can't create temporary directory " + tmpSrcDirFile.toString());
 			}
-			for (int i=0; i<files.length; i++) {
+			for (int i = 0; i < files.length; i++) {
 				IPath file = files[i];
 				IPath srcFile = srcDir.append(file);
 				FileReader srcReader = null;
@@ -930,7 +929,8 @@ public class ManagedBuildTestHelper {
 					int c;
 					do {
 						c = srcReader.read();
-						if (c == -1) break;
+						if (c == -1)
+							break;
 						writer.write(c);
 					} while (c != -1);
 					srcReader.close();
@@ -961,7 +961,7 @@ public class ManagedBuildTestHelper {
 		} else {
 			File tmpSrcDirFile = tmpSrcDir.toFile();
 			if (tmpSrcDirFile.exists()) {
-				for (int i=0; i<files.length; i++) {
+				for (int i = 0; i < files.length; i++) {
 					// Delete the file
 					IPath thisFile = tmpSrcDir.append(files[i]);
 					thisFile.toFile().delete();
@@ -969,12 +969,11 @@ public class ManagedBuildTestHelper {
 				// Delete the dir
 				tmpSrcDirFile.delete();
 			}
-			
+
 			tmpRootDir.toFile().delete();
 		}
 	}
 
-	
 	/*
 	 * Cloned from core CProjectHelper
 	 */
@@ -1005,7 +1004,7 @@ public class ManagedBuildTestHelper {
 		message.append(status.getMessage());
 		if (status.isMultiStatus()) {
 			IStatus children[] = status.getChildren();
-			for( int i = 0; i < children.length; i++) {
+			for (int i = 0; i < children.length; i++) {
 				message.append(getMessage(children[i]));
 			}
 		}
@@ -1015,7 +1014,7 @@ public class ManagedBuildTestHelper {
 
 	static private void deleteDirectory(File dir) {
 		File[] toDelete = dir.listFiles();
-		for (int i=0; i<toDelete.length; i++) {
+		for (int i = 0; i < toDelete.length; i++) {
 			File fileToDelete = toDelete[i];
 			if (fileToDelete.isDirectory()) {
 				deleteDirectory(fileToDelete);
@@ -1025,19 +1024,19 @@ public class ManagedBuildTestHelper {
 		dir.delete();
 	}
 
-	public static ITool createRcbsTool(IConfiguration cfg, String file, String inputs, String outputs, String cmds){
+	public static ITool createRcbsTool(IConfiguration cfg, String file, String inputs, String outputs, String cmds) {
 		IProject project = cfg.getOwner().getProject();
 		IResource f = project.findMember(file);
 
 		Assert.assertTrue("file does not exist", f != null);
 		Assert.assertEquals("resource is not a file", f.getType(), IResource.FILE);
 
-		return createRcbsTool(cfg, (IFile)f, inputs, outputs, cmds);
+		return createRcbsTool(cfg, (IFile) f, inputs, outputs, cmds);
 	}
 
-	public static ITool createRcbsTool(IConfiguration cfg, IFile file, String inputs, String outputs, String cmds){
+	public static ITool createRcbsTool(IConfiguration cfg, IFile file, String inputs, String outputs, String cmds) {
 		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(file.getFullPath().toString());
-		if(rcCfg == null)
+		if (rcCfg == null)
 			rcCfg = cfg.createResourceConfiguration(file);
 
 		Assert.assertTrue("failed to create resource configuration", rcCfg != null);
@@ -1053,33 +1052,36 @@ public class ManagedBuildTestHelper {
 		return tool;
 	}
 
-	public static ITool setRcbsInputs(ITool tool, String inputs){
+	public static ITool setRcbsInputs(ITool tool, String inputs) {
 		tool.getInputTypes()[0].getAdditionalInputs()[0].setPaths(inputs);
 		return tool;
 	}
 
-	public static ITool setRcbsOutputs(ITool tool, String outputs){
+	public static ITool setRcbsOutputs(ITool tool, String outputs) {
 		tool.getOutputTypes()[0].setOutputNames(outputs);
 		return tool;
 	}
 
-	public static ITool getRcbsTool(IResourceConfiguration rcConfig, boolean create){
+	public static ITool getRcbsTool(IResourceConfiguration rcConfig, boolean create) {
 		ITool rcbsTools[] = getRcbsTools(rcConfig);
 		ITool rcbsTool = null;
-		if(rcbsTools != null)
+		if (rcbsTools != null)
 			rcbsTool = rcbsTools[0];
 		else if (create) {
-			rcbsTool = rcConfig.createTool(null,rcbsToolId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolName,false);	//$NON-NLS-1$
+			rcbsTool = rcConfig.createTool(null, rcbsToolId + "." + ManagedBuildManager.getRandomNumber(), rcbsToolName, //$NON-NLS-1$
+					false);
 			rcbsTool.setCustomBuildStep(true);
-			IInputType rcbsToolInputType = rcbsTool.createInputType(null,rcbsToolInputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolInputTypeName,false);	//$NON-NLS-1$
+			IInputType rcbsToolInputType = rcbsTool.createInputType(null,
+					rcbsToolInputTypeId + "." + ManagedBuildManager.getRandomNumber(), rcbsToolInputTypeName, false); //$NON-NLS-1$
 			IAdditionalInput rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput(""); //$NON-NLS-1$
 			rcbsToolInputTypeAdditionalInput.setKind(IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY);
-			rcbsTool.createOutputType(null,rcbsToolOutputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolOutputTypeName,false);	//$NON-NLS-1$
+			rcbsTool.createOutputType(null, rcbsToolOutputTypeId + "." + ManagedBuildManager.getRandomNumber(), //$NON-NLS-1$
+					rcbsToolOutputTypeName, false);
 		}
 		return rcbsTool;
 	}
 
-	public static ITool[] getRcbsTools(IResourceConfiguration rcConfig){
+	public static ITool[] getRcbsTools(IResourceConfiguration rcConfig) {
 		List<ITool> list = new ArrayList<ITool>();
 		ITool tools[] = rcConfig.getTools();
 		for (int i = 0; i < tools.length; i++) {
@@ -1088,59 +1090,59 @@ public class ManagedBuildTestHelper {
 				list.add(tool);
 			}
 		}
-		if(list.size() != 0)
+		if (list.size() != 0)
 			return list.toArray(new ITool[list.size()]);
 		return null;
 	}
 
-	public static boolean setObjs(IConfiguration cfg, String[] objs){
+	public static boolean setObjs(IConfiguration cfg, String[] objs) {
 		return setOption(cfg, IOption.OBJECTS, objs);
 	}
 
-	public static boolean setLibs(IConfiguration cfg, String[] objs){
+	public static boolean setLibs(IConfiguration cfg, String[] objs) {
 		return setOption(cfg, IOption.LIBRARIES, objs);
 	}
 
-	public static boolean setOption(IConfiguration cfg, int type, Object value){
+	public static boolean setOption(IConfiguration cfg, int type, Object value) {
 		return setOption(cfg.getFilteredTools(), type, value);
 	}
 
-	public static boolean setOption(IResourceConfiguration rcCfg, int type, Object value){
+	public static boolean setOption(IResourceConfiguration rcCfg, int type, Object value) {
 		return setOption(rcCfg.getToolsToInvoke()[0], type, value);
 	}
 
-	public static boolean setOption(ITool tools[], int type, Object value){
-		for(int i = 0; i < tools.length; i++){
-			if(setOption(tools[i], type, value))
+	public static boolean setOption(ITool tools[], int type, Object value) {
+		for (int i = 0; i < tools.length; i++) {
+			if (setOption(tools[i], type, value))
 				return true;
 		}
 		return false;
 	}
 
-	public static IBuildObject[] getOption(IConfiguration cfg, int type){
+	public static IBuildObject[] getOption(IConfiguration cfg, int type) {
 		return getOption(cfg.getFilteredTools(), type);
 	}
 
-	public static IBuildObject[] getOption(IResourceConfiguration rcCfg, int type, Object value){
-		return getOption(new ITool[]{rcCfg.getToolsToInvoke()[0]}, type);
+	public static IBuildObject[] getOption(IResourceConfiguration rcCfg, int type, Object value) {
+		return getOption(new ITool[] { rcCfg.getToolsToInvoke()[0] }, type);
 	}
 
-	public static IBuildObject[] getOption(ITool tools[], int type){
-		for(int i = 0; i < tools.length; i++){
+	public static IBuildObject[] getOption(ITool tools[], int type) {
+		for (int i = 0; i < tools.length; i++) {
 			IOption option = getOption(tools[i], type);
-			if(option != null)
-				return new IBuildObject[]{tools[i],option};
+			if (option != null)
+				return new IBuildObject[] { tools[i], option };
 		}
 		return null;
 	}
 
-	public static IOption getOption(IHoldsOptions tool, int type){
+	public static IOption getOption(IHoldsOptions tool, int type) {
 		IOption opts[] = tool.getOptions();
 
-		for(int i = 0; i < opts.length; i++){
+		for (int i = 0; i < opts.length; i++) {
 			IOption option = opts[i];
 			try {
-				if(option.getValueType() == type){
+				if (option.getValueType() == type) {
 					return option;
 				}
 			} catch (BuildException e) {
@@ -1149,66 +1151,62 @@ public class ManagedBuildTestHelper {
 		return null;
 	}
 
-	public static boolean setOption(ITool tool, int type, Object value){
+	public static boolean setOption(ITool tool, int type, Object value) {
 		IOption option = getOption(tool, type);
 
-		if(option == null)
+		if (option == null)
 			return false;
 		IBuildObject obj = tool.getParent();
 		IConfiguration cfg = null;
 		IResourceConfiguration rcCfg = null;
-		if(obj instanceof IToolChain)
-			cfg = ((IToolChain)obj).getParent();
+		if (obj instanceof IToolChain)
+			cfg = ((IToolChain) obj).getParent();
 		else
-			rcCfg = (IResourceConfiguration)obj;
+			rcCfg = (IResourceConfiguration) obj;
 
 		try {
-				if(option.getValueType() == type){
-					switch(type){
-						case IOption.BOOLEAN:
-						{
-							boolean val = ((Boolean)value).booleanValue();
-							if(rcCfg != null)
-								rcCfg.setOption(tool, option, val);
-							else
-								cfg.setOption(tool, option, val);
-						}
-							return true;
-						case IOption.ENUMERATED:
-						case IOption.STRING:
-						{
-							String val = (String)value;
-							if(rcCfg != null)
-								rcCfg.setOption(tool, option, val);
-							else
-								cfg.setOption(tool, option, val);
-						}
-							return true;
-						case IOption.STRING_LIST:
-						case IOption.INCLUDE_PATH:
-						case IOption.PREPROCESSOR_SYMBOLS:
-						case IOption.LIBRARIES:
-						case IOption.OBJECTS:
-						case IOption.INCLUDE_FILES:
-						case IOption.LIBRARY_PATHS:
-						case IOption.LIBRARY_FILES:
-						case IOption.MACRO_FILES:
-						{
-							String val[] = (String[])value;
-							if(rcCfg != null)
-								rcCfg.setOption(tool, option, val);
-							else
-								cfg.setOption(tool, option, val);
-						}
-							return true;
-						default:
-							Assert.fail("wrong option type passed");
-					}
+			if (option.getValueType() == type) {
+				switch (type) {
+				case IOption.BOOLEAN: {
+					boolean val = ((Boolean) value).booleanValue();
+					if (rcCfg != null)
+						rcCfg.setOption(tool, option, val);
+					else
+						cfg.setOption(tool, option, val);
 				}
-			} catch (BuildException e) {
+					return true;
+				case IOption.ENUMERATED:
+				case IOption.STRING: {
+					String val = (String) value;
+					if (rcCfg != null)
+						rcCfg.setOption(tool, option, val);
+					else
+						cfg.setOption(tool, option, val);
+				}
+					return true;
+				case IOption.STRING_LIST:
+				case IOption.INCLUDE_PATH:
+				case IOption.PREPROCESSOR_SYMBOLS:
+				case IOption.LIBRARIES:
+				case IOption.OBJECTS:
+				case IOption.INCLUDE_FILES:
+				case IOption.LIBRARY_PATHS:
+				case IOption.LIBRARY_FILES:
+				case IOption.MACRO_FILES: {
+					String val[] = (String[]) value;
+					if (rcCfg != null)
+						rcCfg.setOption(tool, option, val);
+					else
+						cfg.setOption(tool, option, val);
+				}
+					return true;
+				default:
+					Assert.fail("wrong option type passed");
+				}
 			}
+		} catch (BuildException e) {
+		}
 		return false;
 	}
-
 
 }

@@ -29,19 +29,20 @@ public class ASMEditorActionContributor extends TextEditorActionContributor {
 	 * Default constructor is mandatory (executable extension).
 	 */
 	public ASMEditorActionContributor() {
-		fTogglePresentation= new TogglePresentationAction();
+		fTogglePresentation = new TogglePresentationAction();
 		fTogglePresentation.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditorActionContributor#init(org.eclipse.ui.IActionBars)
 	 */
 	@Override
 	public void init(IActionBars bars) {
 		super.init(bars);
-		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
+		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY,
+				fTogglePresentation);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditorActionContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
@@ -50,19 +51,19 @@ public class ASMEditorActionContributor extends TextEditorActionContributor {
 		super.setActiveEditor(part);
 		internalSetActiveEditor(part);
 	}
-	
+
 	private void internalSetActiveEditor(IEditorPart part) {
-		ITextEditor textEditor= null;
+		ITextEditor textEditor = null;
 		if (part instanceof ITextEditor)
-			textEditor= (ITextEditor) part;
-		
+			textEditor = (ITextEditor) part;
+
 		fTogglePresentation.setEditor(textEditor);
-		
+
 		if (part instanceof AsmTextEditor) {
 			((AsmTextEditor) part).fillActionBars(getActionBars());
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditorActionContributor#dispose()
 	 */

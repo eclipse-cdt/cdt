@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
 
 public class CDefaultFolderData extends CFolderData {
 	protected IPath fPath;
-//	protected boolean fIsExcluded;
+	//	protected boolean fIsExcluded;
 	protected List<CLanguageData> fLanguageDatas = new ArrayList<CLanguageData>();
 	protected String fName;
 	protected String fId;
@@ -34,7 +34,7 @@ public class CDefaultFolderData extends CFolderData {
 
 	public CDefaultFolderData(CConfigurationData cfg, CDataFactory factory) {
 		fCfg = cfg;
-		if(factory == null)
+		if (factory == null)
 			factory = new CDataFactory();
 		fFactory = factory;
 	}
@@ -46,27 +46,28 @@ public class CDefaultFolderData extends CFolderData {
 		fPath = path;
 	}
 
-	public CDefaultFolderData(String id, IPath path, CFolderData base, CConfigurationData cfg, CDataFactory factory, boolean clone) {
+	public CDefaultFolderData(String id, IPath path, CFolderData base, CConfigurationData cfg, CDataFactory factory,
+			boolean clone) {
 		this(id, path, cfg, factory);
-		
+
 		copyDataFrom(base, clone);
 	}
-	
-	protected void copyDataFrom(CFolderData base, boolean clone){
-		if(base != null){
+
+	protected void copyDataFrom(CFolderData base, boolean clone) {
+		if (base != null) {
 			CLanguageData lDatas[] = base.getLanguageDatas();
 			for (CLanguageData lData : lDatas) {
 				fLanguageDatas.add(copyLanguageData(lData, clone));
 			}
-			
-//			fIsExcluded = base.isExcluded();
+
+			//			fIsExcluded = base.isExcluded();
 		}
 	}
 
-	protected CLanguageData copyLanguageData(CLanguageData base, boolean clone){
+	protected CLanguageData copyLanguageData(CLanguageData base, boolean clone) {
 		return fFactory.createLanguageData(fCfg, this, base, null, clone);
 	}
-	
+
 	@Override
 	public CLanguageData[] getLanguageDatas() {
 		return fLanguageDatas.toArray(new CLanguageData[fLanguageDatas.size()]);
@@ -77,23 +78,23 @@ public class CDefaultFolderData extends CFolderData {
 		return fPath;
 	}
 
-//	public boolean isExcluded() {
-//		return fIsExcluded;
-//	}
-//
-//	public void setExcluded(boolean excluded) {
-//		if(excluded == fIsExcluded)
-//			return;
-//
-//		fIsExcluded = excluded;
-//		setModified(true);
-//	}
+	//	public boolean isExcluded() {
+	//		return fIsExcluded;
+	//	}
+	//
+	//	public void setExcluded(boolean excluded) {
+	//		if(excluded == fIsExcluded)
+	//			return;
+	//
+	//		fIsExcluded = excluded;
+	//		setModified(true);
+	//	}
 
 	@Override
 	public void setPath(IPath path) {
-		if(CDataUtil.objectsEqual(path, fPath))
+		if (CDataUtil.objectsEqual(path, fPath))
 			return;
-		
+
 		fPath = path;
 		setModified(true);
 	}
@@ -113,57 +114,55 @@ public class CDefaultFolderData extends CFolderData {
 		return getId() != null;
 	}
 
-//	protected CLanguageData doCreateLanguageDataForContentTypes(String languageId,
-//			String[] typesIds) {
-//		return fFactory.createLanguageData(fCfg, this, null, null, languageId, typesIds, true);
-//	}
-//
-//	protected CLanguageData doCreateLanguageDataForExtensions(String languageId,
-//			String[] extensions) {
-//		return fFactory.createLanguageData(fCfg, this, null, null, languageId, extensions, false);
-//	}
-	
+	//	protected CLanguageData doCreateLanguageDataForContentTypes(String languageId,
+	//			String[] typesIds) {
+	//		return fFactory.createLanguageData(fCfg, this, null, null, languageId, typesIds, true);
+	//	}
+	//
+	//	protected CLanguageData doCreateLanguageDataForExtensions(String languageId,
+	//			String[] extensions) {
+	//		return fFactory.createLanguageData(fCfg, this, null, null, languageId, extensions, false);
+	//	}
+
 	@Override
-	public CLanguageData createLanguageDataForContentTypes(String languageId,
-			String[] typesIds) {
+	public CLanguageData createLanguageDataForContentTypes(String languageId, String[] typesIds) {
 		throw new UnsupportedOperationException();
-//		CLanguageData data = doCreateLanguageDataForContentTypes(languageId, typesIds);
-//		if(data != null){
-//			fLanguageDatas.add(data);
-//			setModified(true);
-//		}
-//		return data;
+		//		CLanguageData data = doCreateLanguageDataForContentTypes(languageId, typesIds);
+		//		if(data != null){
+		//			fLanguageDatas.add(data);
+		//			setModified(true);
+		//		}
+		//		return data;
 	}
 
 	@Override
-	public CLanguageData createLanguageDataForExtensions(String languageId,
-			String[] extensions) {
+	public CLanguageData createLanguageDataForExtensions(String languageId, String[] extensions) {
 		throw new UnsupportedOperationException();
-//		CLanguageData data = doCreateLanguageDataForExtensions(languageId, extensions);
-//		if(data != null){
-//			fLanguageDatas.add(data);
-//			setModified(true);
-//		}
-//		return data;
+		//		CLanguageData data = doCreateLanguageDataForExtensions(languageId, extensions);
+		//		if(data != null){
+		//			fLanguageDatas.add(data);
+		//			setModified(true);
+		//		}
+		//		return data;
 	}
-	
-	public boolean isModified(){
-		if(fIsModified)
+
+	public boolean isModified() {
+		if (fIsModified)
 			return true;
-		
+
 		CLanguageData lDatas[] = getLanguageDatas();
 		for (CLanguageData lData : lDatas) {
-			if(fFactory.isModified(lData))
+			if (fFactory.isModified(lData))
 				return true;
 		}
-		
+
 		return false;
 	}
-	
-	public void setModified(boolean modified){
+
+	public void setModified(boolean modified) {
 		fIsModified = modified;
 
-		if(!modified){
+		if (!modified) {
 			CLanguageData lDatas[] = getLanguageDatas();
 			for (CLanguageData lData : lDatas) {
 				fFactory.setModified(lData, false);

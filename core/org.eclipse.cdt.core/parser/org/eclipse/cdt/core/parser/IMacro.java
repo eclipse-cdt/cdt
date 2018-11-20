@@ -24,10 +24,10 @@ public interface IMacro {
 	 * the name followed by the comma-separated parameters put in parenthesis. For 
 	 * example: 'funcStyleMacro(par1, par2)'. 
 	 */
-    public char[] getSignature();
+	public char[] getSignature();
 
-    /**
-     * Returns the expansion for this macro.
-     */
-    public char[] getExpansion();
+	/**
+	 * Returns the expansion for this macro.
+	 */
+	public char[] getExpansion();
 }

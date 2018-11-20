@@ -34,128 +34,130 @@ import org.eclipse.core.runtime.Path;
  * @author jcamelon
  *
  */
-public class TranslationUnitBaseTest extends TestCase
-{
-    /**
-     * 
-     */
-    public TranslationUnitBaseTest()
-    {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-    /**
-     * @param name
-     */
-    public TranslationUnitBaseTest(String name)
-    {
-        super(name);
-        // TODO Auto-generated constructor stub
-    }
-    protected IWorkspace workspace;
-    protected IWorkspaceRoot root;
-    protected ICProject testProject;
-    protected IFile objfile;
-    protected IFile archfile;
-    protected IFile libfile;
-    protected IFile exefile;
-    protected IFile cfile;
-    protected Path objpath;
-    protected Path archpath;
-    protected Path libpath;
-    protected Path exepath;
-    protected Path cpath;
-    protected NullProgressMonitor monitor;
-    /**
-         * Sets up the test fixture.
-         *
-         * Called before every test case method.
-         * 
-         * Example code test the packages in the project 
-         *  "com.qnx.tools.ide.cdt.core"
-         */
-    @Override
-	protected void setUp() throws Exception
-    {
-        /***
-         * The rest of the tests assume that they have a working workspace
-         * and workspace root object to use to create projects/files in, 
-         * so we need to get them setup first.
-         */
-        IWorkspaceDescription desc;
-        workspace= ResourcesPlugin.getWorkspace();
-        root= workspace.getRoot();
-        monitor = new NullProgressMonitor();
-        if (workspace==null) 
-            fail("Workspace was not setup");
-        if (root==null)
-            fail("Workspace root was not setup");
-            
-        desc=workspace.getDescription();
-        desc.setAutoBuilding(false);
-        workspace.setDescription(desc);
-    
-        /***
-         * Setup the various files, paths and projects that are needed by the
-         * tests
-         */
-            
-        testProject=CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
-        if (testProject==null)
-            fail("Unable to create project");
-    
-        cfile = testProject.getProject().getFile("exetest.c");
-        if (!cfile.exists()) {
-            cfile.create(new FileInputStream(
-            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/TranslationUnits.c"))),
+public class TranslationUnitBaseTest extends TestCase {
+	/**
+	 * 
+	 */
+	public TranslationUnitBaseTest() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param name
+	 */
+	public TranslationUnitBaseTest(String name) {
+		super(name);
+		// TODO Auto-generated constructor stub
+	}
+
+	protected IWorkspace workspace;
+	protected IWorkspaceRoot root;
+	protected ICProject testProject;
+	protected IFile objfile;
+	protected IFile archfile;
+	protected IFile libfile;
+	protected IFile exefile;
+	protected IFile cfile;
+	protected Path objpath;
+	protected Path archpath;
+	protected Path libpath;
+	protected Path exepath;
+	protected Path cpath;
+	protected NullProgressMonitor monitor;
+
+	/**
+	     * Sets up the test fixture.
+	     *
+	     * Called before every test case method.
+	     * 
+	     * Example code test the packages in the project 
+	     *  "com.qnx.tools.ide.cdt.core"
+	     */
+	@Override
+	protected void setUp() throws Exception {
+		/***
+		 * The rest of the tests assume that they have a working workspace
+		 * and workspace root object to use to create projects/files in, 
+		 * so we need to get them setup first.
+		 */
+		IWorkspaceDescription desc;
+		workspace = ResourcesPlugin.getWorkspace();
+		root = workspace.getRoot();
+		monitor = new NullProgressMonitor();
+		if (workspace == null)
+			fail("Workspace was not setup");
+		if (root == null)
+			fail("Workspace root was not setup");
+
+		desc = workspace.getDescription();
+		desc.setAutoBuilding(false);
+		workspace.setDescription(desc);
+
+		/***
+		 * Setup the various files, paths and projects that are needed by the
+		 * tests
+		 */
+
+		testProject = CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
+		if (testProject == null)
+			fail("Unable to create project");
+
+		cfile = testProject.getProject().getFile("exetest.c");
+		if (!cfile.exists()) {
+			cfile.create(
+					new FileInputStream(
+							CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/TranslationUnits.c"))),
 					false, monitor);
-        }
-        cpath=new Path(workspace.getRoot().getLocation()+"/filetest/main.c");
-    
-        objfile = testProject.getProject().getFile("exetest.o");
-        if (!objfile.exists()) {
-            objfile.create(new FileInputStream(
-            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/exe/x86/o.g/main.o"))),
+		}
+		cpath = new Path(workspace.getRoot().getLocation() + "/filetest/main.c");
+
+		objfile = testProject.getProject().getFile("exetest.o");
+		if (!objfile.exists()) {
+			objfile.create(
+					new FileInputStream(
+							CTestPlugin.getDefault().getFileInPlugin(new Path("resources/exe/x86/o.g/main.o"))),
 					false, monitor);
-        }
-        objpath=new Path(workspace.getRoot().getLocation()+"/filetest/main.o");
-        
-        exefile = testProject.getProject().getFile("test_g");
-        if (!exefile.exists()) {
-            exefile.create(new FileInputStream(
-            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/exe/x86/o.g/exe_g"))),
+		}
+		objpath = new Path(workspace.getRoot().getLocation() + "/filetest/main.o");
+
+		exefile = testProject.getProject().getFile("test_g");
+		if (!exefile.exists()) {
+			exefile.create(
+					new FileInputStream(
+							CTestPlugin.getDefault().getFileInPlugin(new Path("resources/exe/x86/o.g/exe_g"))),
 					false, monitor);
-        }
-        exepath=new Path(workspace.getRoot().getLocation()+"/filetest/exe_g");
-        
-        archfile = testProject.getProject().getFile("libtestlib_g.a");
-        if (!archfile.exists()) {
-            archfile.create(new FileInputStream(
-            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/testlib/x86/a.g/libtestlib_g.a"))),
+		}
+		exepath = new Path(workspace.getRoot().getLocation() + "/filetest/exe_g");
+
+		archfile = testProject.getProject().getFile("libtestlib_g.a");
+		if (!archfile.exists()) {
+			archfile.create(new FileInputStream(
+					CTestPlugin.getDefault().getFileInPlugin(new Path("resources/testlib/x86/a.g/libtestlib_g.a"))),
 					false, monitor);
-        }
-        libpath=new Path(workspace.getRoot().getLocation()+"/filetest/libtestlib_g.so");
-        
-        libfile = testProject.getProject().getFile("libtestlib_g.so");
-        if (!libfile.exists()) {
-            libfile.create(new FileInputStream(
-            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/testlib/x86/so.g/libtestlib_g.so"))),
+		}
+		libpath = new Path(workspace.getRoot().getLocation() + "/filetest/libtestlib_g.so");
+
+		libfile = testProject.getProject().getFile("libtestlib_g.so");
+		if (!libfile.exists()) {
+			libfile.create(new FileInputStream(
+					CTestPlugin.getDefault().getFileInPlugin(new Path("resources/testlib/x86/so.g/libtestlib_g.so"))),
 					false, monitor);
-        }
-        archpath=new Path(workspace.getRoot().getLocation()+"/filetest/libtestlib_g.a");
-   }
-    /**
-         * Tears down the test fixture.
-         *
-         * Called after every test case method.
-         */
-    @Override
-	protected void tearDown() 
-    {
-       // release resources here and clean-up
-       try {
-		testProject.getProject().delete(true,true,monitor);
-	   } catch (CoreException e) {
-	   } 
-    }
+		}
+		archpath = new Path(workspace.getRoot().getLocation() + "/filetest/libtestlib_g.a");
+	}
+
+	/**
+	     * Tears down the test fixture.
+	     *
+	     * Called after every test case method.
+	     */
+	@Override
+	protected void tearDown() {
+		// release resources here and clean-up
+		try {
+			testProject.getProject().delete(true, true, monitor);
+		} catch (CoreException e) {
+		}
+	}
 }

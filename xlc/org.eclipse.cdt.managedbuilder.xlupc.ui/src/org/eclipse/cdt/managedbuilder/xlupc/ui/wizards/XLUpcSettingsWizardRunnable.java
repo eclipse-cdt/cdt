@@ -33,12 +33,11 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.wizard.IWizardPage;
 
-
 public class XLUpcSettingsWizardRunnable extends XLCSettingsWizardRunnable {
 
-
 	// now add UPC language mapping to the project
-	private static final String[] CONTENT_TYPE_IDS = { CCorePlugin.CONTENT_TYPE_CHEADER, CCorePlugin.CONTENT_TYPE_CSOURCE };
+	private static final String[] CONTENT_TYPE_IDS = { CCorePlugin.CONTENT_TYPE_CHEADER,
+			CCorePlugin.CONTENT_TYPE_CSOURCE };
 
 	public XLUpcSettingsWizardRunnable() {
 		pageId = XLUpcSettingsWizardPage.PAGE_ID;
@@ -64,8 +63,8 @@ public class XLUpcSettingsWizardRunnable extends XLCSettingsWizardRunnable {
 
 				IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 
-				for(String id : CONTENT_TYPE_IDS) {
-					if(contentTypeManager.getContentType(id) != null) {
+				for (String id : CONTENT_TYPE_IDS) {
+					if (contentTypeManager.getContentType(id) != null) {
 						langConfig.addContentTypeMapping(configDescription, id, UPCLanguage.ID);
 					}
 				}

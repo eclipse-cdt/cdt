@@ -78,7 +78,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	public static final String CDEBUGGER_PAGE_EXTENSION_POINT_ID = "CDebuggerPage"; //$NON-NLS-1$
 	public static final String DEBUGGER_PAGE_ELEMENT = "debuggerPage"; //$NON-NLS-1$
-	
+
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
 
@@ -86,9 +86,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	private CDebugImageDescriptorRegistry fImageDescriptorRegistry;
 
-    private DisassemblyEditorManager fDisassemblyEditorManager;
-    
-    private static IDebuggerConsoleManager fDebuggerConsoleManager;
+	private DisassemblyEditorManager fDisassemblyEditorManager;
+
+	private static IDebuggerConsoleManager fDebuggerConsoleManager;
 
 	/**
 	 * The constructor.
@@ -123,8 +123,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * Returns the a color based on the type of output. Valid types:
 	 * <li>CHANGED_REGISTER_RGB</li>
 	 */
-	public static Color getPreferenceColor( String type ) {
-		return ColorManager.getDefault().getColor( PreferenceConverter.getColor( getDefault().getPreferenceStore(), type ) );
+	public static Color getPreferenceColor(String type) {
+		return ColorManager.getDefault()
+				.getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), type));
 	}
 
 	public static CDebugModelPresentation getDebugModelPresentation() {
@@ -137,8 +138,8 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * @param status
 	 *            status to log
 	 */
-	public static void log( IStatus status ) {
-		getDefault().getLog().log( status );
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
 	}
 
 	/**
@@ -147,8 +148,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * @param e
 	 *            the exception to be logged
 	 */
-	public static void log( Throwable e ) {
-		log( new Status( IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, "Internal Error", e ) ); //$NON-NLS-1$
+	public static void log(Throwable e) {
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR,
+				"Internal Error", e)); //$NON-NLS-1$
 	}
 
 	/**
@@ -157,59 +159,60 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * @param message
 	 *            the error message to log
 	 */
-	public static void logErrorMessage( String message ) {
-		log( new Status( IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, message, null ) );
+	public static void logErrorMessage(String message) {
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, message, null));
 	}
 
-	public ICDebuggerPage getDebuggerPage( String debuggerID ) throws CoreException {
-		if ( fDebuggerPageMap == null ) {
+	public ICDebuggerPage getDebuggerPage(String debuggerID) throws CoreException {
+		if (fDebuggerPageMap == null) {
 			initializeDebuggerPageMap();
 		}
-		IConfigurationElement configElement = fDebuggerPageMap.get( debuggerID );
+		IConfigurationElement configElement = fDebuggerPageMap.get(debuggerID);
 		ICDebuggerPage tab = null;
-		if ( configElement != null ) {
-			Object o = configElement.createExecutableExtension( "class" ); //$NON-NLS-1$
-			if ( o instanceof ICDebuggerPage ) {
-				tab = (ICDebuggerPage)o;
-				tab.init( debuggerID );
-			}
-			else if ( o instanceof ILaunchConfigurationTab ) {
-				tab = new CDebuggerPageAdapter( (ILaunchConfigurationTab)o );
-				tab.init( debuggerID );
+		if (configElement != null) {
+			Object o = configElement.createExecutableExtension("class"); //$NON-NLS-1$
+			if (o instanceof ICDebuggerPage) {
+				tab = (ICDebuggerPage) o;
+				tab.init(debuggerID);
+			} else if (o instanceof ILaunchConfigurationTab) {
+				tab = new CDebuggerPageAdapter((ILaunchConfigurationTab) o);
+				tab.init(debuggerID);
 			}
 		}
 		return tab;
 	}
 
 	protected void initializeDebuggerPageMap() {
-		fDebuggerPageMap = new HashMap<String, IConfigurationElement>( 10 );
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( PLUGIN_ID, CDEBUGGER_PAGE_EXTENSION_POINT_ID );
+		fDebuggerPageMap = new HashMap<String, IConfigurationElement>(10);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID,
+				CDEBUGGER_PAGE_EXTENSION_POINT_ID);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-		for( int i = 0; i < infos.length; i++ ) {
+		for (int i = 0; i < infos.length; i++) {
 			IConfigurationElement info = infos[i];
 			if (info.getName().equals(DEBUGGER_PAGE_ELEMENT)) {
-				String id = info.getAttribute( "debuggerID" ); //$NON-NLS-1$
+				String id = info.getAttribute("debuggerID"); //$NON-NLS-1$
 				if (id != null) {
-					fDebuggerPageMap.put( id, info );
+					fDebuggerPageMap.put(id, info);
 				}
 			}
 		}
 	}
 
-	public static void errorDialog( String message, IStatus status ) {
-		log( status );
+	public static void errorDialog(String message, IStatus status) {
+		log(status);
 		Shell shell = getActiveWorkbenchShell();
-		if ( shell != null ) {
-			ErrorDialog.openError( shell, UIMessages.getString( "CDebugUIPlugin.0" ), message, status ); //$NON-NLS-1$
+		if (shell != null) {
+			ErrorDialog.openError(shell, UIMessages.getString("CDebugUIPlugin.0"), message, status); //$NON-NLS-1$
 		}
 	}
 
-	public static void errorDialog( String message, Throwable t ) {
-		log( t );
+	public static void errorDialog(String message, Throwable t) {
+		log(t);
 		Shell shell = getActiveWorkbenchShell();
-		if ( shell != null ) {
-			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, t.getMessage(), null );	
-			ErrorDialog.openError( shell, UIMessages.getString( "CDebugUIPlugin.0" ), message, status ); //$NON-NLS-1$
+		if (shell != null) {
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR,
+					t.getMessage(), null);
+			ErrorDialog.openError(shell, UIMessages.getString("CDebugUIPlugin.0"), message, status); //$NON-NLS-1$
 		}
 	}
 
@@ -224,7 +227,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	public static IWorkbenchPage getActivePage() {
 		IWorkbenchWindow w = getActiveWorkbenchWindow();
-		if ( w != null ) {
+		if (w != null) {
 			return w.getActivePage();
 		}
 		return null;
@@ -241,8 +244,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 			if (windows.length > 0) {
 				return windows[0].getShell();
 			}
-		}
-		else {
+		} else {
 			return window.getShell();
 		}
 		return null;
@@ -255,7 +257,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	public static Display getStandardDisplay() {
 		Display display;
 		display = Display.getCurrent();
-		if ( display == null )
+		if (display == null)
 			display = Display.getDefault();
 		return display;
 	}
@@ -264,7 +266,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * Returns the image descriptor registry used for this plugin.
 	 */
 	public static CDebugImageDescriptorRegistry getImageDescriptorRegistry() {
-		if ( getDefault().fImageDescriptorRegistry == null ) {
+		if (getDefault().fImageDescriptorRegistry == null) {
 			getDefault().fImageDescriptorRegistry = new CDebugImageDescriptorRegistry();
 		}
 		return getDefault().fImageDescriptorRegistry;
@@ -291,13 +293,13 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void start( BundleContext context ) throws Exception {
-		super.start( context );
-        fDisassemblyEditorManager = new DisassemblyEditorManager();
-		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
-		
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		fDisassemblyEditorManager = new DisassemblyEditorManager();
+		CDebugCorePlugin.getDefault().addCBreakpointListener(CBreakpointUpdater.getInstance());
+
 		fDebuggerConsoleManager = new DebuggerConsoleManager();
-		
+
 		WorkbenchJob wjob = new WorkbenchJob("Initializing CDT Debug UI") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -310,26 +312,26 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	private void startupInUIThread() {
 		ViewIDCounterManager.getInstance().init();
-		
+
 		// We contribute actions to the platform's Variables view with a
 		// criteria to enable only when this plugin is loaded. This can lead to
 		// some edge cases with broken behavior (273306). The solution is to
 		// force a selection change notification after we get loaded.
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
-		   IWorkbenchPage[] pages = window.getPages();
-		   for (IWorkbenchPage page : pages) {
-			   IViewReference viewRef = page.findViewReference(IDebugUIConstants.ID_VARIABLE_VIEW);
-			   if (viewRef != null) {
-				   IViewPart part = viewRef.getView(false);
-				   if (part instanceof IDebugView) {
-					   Viewer viewer = ((IDebugView)part).getViewer();
-					   if (viewer != null) {
-						   viewer.setSelection(viewer.getSelection());
-					   }
-				   }
-			   }
-		   }
+			IWorkbenchPage[] pages = window.getPages();
+			for (IWorkbenchPage page : pages) {
+				IViewReference viewRef = page.findViewReference(IDebugUIConstants.ID_VARIABLE_VIEW);
+				if (viewRef != null) {
+					IViewPart part = viewRef.getView(false);
+					if (part instanceof IDebugView) {
+						Viewer viewer = ((IDebugView) part).getViewer();
+						if (viewer != null) {
+							viewer.setSelection(viewer.getSelection());
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -339,13 +341,13 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop( BundleContext context ) throws Exception {
-		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
-        fDisassemblyEditorManager.dispose();
-		if ( fImageDescriptorRegistry != null ) {
+	public void stop(BundleContext context) throws Exception {
+		CDebugCorePlugin.getDefault().removeCBreakpointListener(CBreakpointUpdater.getInstance());
+		fDisassemblyEditorManager.dispose();
+		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
 		}
-		super.stop( context );
+		super.stop(context);
 	}
 
 	/**
@@ -358,10 +360,10 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		return EditorsUI.getSharedTextColors();
 	}
 
-    public DisassemblyEditorManager getDisassemblyEditorManager() {
-        return fDisassemblyEditorManager;
-    }
-    
+	public DisassemblyEditorManager getDisassemblyEditorManager() {
+		return fDisassemblyEditorManager;
+	}
+
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in relative path
 	 * 
@@ -383,7 +385,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		Image image = registry.get(key);
 		if (image == null) {
 			ImageDescriptor descriptor = imageDescriptorFromPlugin(PLUGIN_ID, key);
-			if (descriptor==null) {
+			if (descriptor == null) {
 				ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				return sharedImages.getImage(key);
 			}

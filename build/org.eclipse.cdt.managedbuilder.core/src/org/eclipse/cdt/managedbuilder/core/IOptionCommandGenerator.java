@@ -16,7 +16,6 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 
-
 /**
  * This interface can be implemented by clients to contribute custom command-generator
  * for a build-option.
@@ -26,8 +25,7 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
  * 
  * @since 8.0
  */
-public interface IOptionCommandGenerator
-{
+public interface IOptionCommandGenerator {
 	/**
 	 * Generate the command for the given option.
 	 * 
@@ -37,5 +35,5 @@ public interface IOptionCommandGenerator
 	 * 			back to the default command generation logic.
 	 */
 	String generateCommand(IOption option, IVariableSubstitutor macroSubstitutor);
-	
+
 }

@@ -23,36 +23,28 @@ import junit.framework.TestSuite;
  * Bug#50711 : Wrong completion kind in a new expression
  *
  */
-public class CompletionTest_NewTypeReference_NoPrefix  extends CompletionProposalsBaseTest{
-	
+public class CompletionTest_NewTypeReference_NoPrefix extends CompletionProposalsBaseTest {
+
 	private final String fileName = "CompletionTestStart29.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedPrefix = ""; 
-	private final String[] expectedResults = {
-			"aClass",
-			"anotherClass",
-			"AStruct",
-			"xOtherClass",
-			"XStruct",
-			"aNamespace",
-			"xNamespace",
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
+	private final String expectedPrefix = "";
+	private final String[] expectedResults = { "aClass", "anotherClass", "AStruct", "xOtherClass", "XStruct",
+			"aNamespace", "xNamespace",
 			// enums may not be desired, but valid
-			"anEnumeration",
-			"xEnumeration"
-	};
-	
+			"anEnumeration", "xEnumeration" };
+
 	public CompletionTest_NewTypeReference_NoPrefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_NewTypeReference_NoPrefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_NewTypeReference_NoPrefix.class.getName());
 		suite.addTest(new CompletionTest_NewTypeReference_NoPrefix("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -92,6 +84,7 @@ public class CompletionTest_NewTypeReference_NoPrefix  extends CompletionProposa
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

@@ -72,7 +72,7 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
 	 * @since 6.3
 	 */
 	public ICPPFunctionType getDeclaredType();
-	
+
 	/**
 	 * @since 5.2
 	 */

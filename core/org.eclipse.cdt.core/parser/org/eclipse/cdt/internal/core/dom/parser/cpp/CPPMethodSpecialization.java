@@ -126,7 +126,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization implement
 		}
 		return super.getExceptionSpecification();
 	}
-	
+
 	@Override
 	public IType[] getExceptionSpecification(IASTNode point) {
 		return getExceptionSpecification();

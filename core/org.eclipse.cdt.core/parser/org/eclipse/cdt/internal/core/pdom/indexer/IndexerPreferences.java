@@ -46,21 +46,21 @@ public class IndexerPreferences {
 	public static final int SCOPE_PROJECT_PRIVATE = 1;
 	public static final int SCOPE_PROJECT_SHARED = 2;
 
-	public static final int UPDATE_POLICY_IMMEDIATE= 0;
-	public static final int UPDATE_POLICY_LAZY= 1;
-	public static final int UPDATE_POLICY_MANUAL= 2;
+	public static final int UPDATE_POLICY_IMMEDIATE = 0;
+	public static final int UPDATE_POLICY_LAZY = 1;
+	public static final int UPDATE_POLICY_MANUAL = 2;
 
-	public static final String KEY_INDEXER_ID= "indexerId"; //$NON-NLS-1$
-	public static final String KEY_INDEX_ALL_FILES= "indexAllFiles"; //$NON-NLS-1$
-	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG= "indexUnusedHeadersWithDefaultLang"; //$NON-NLS-1$
-	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG= "indexUnusedHeadersWithAlternateLang"; //$NON-NLS-1$
-	public static final String KEY_INDEX_ON_OPEN= "indexOnOpen"; //$NON-NLS-1$
-	public static final String KEY_INCLUDE_HEURISTICS= "useHeuristicIncludeResolution"; //$NON-NLS-1$
-	public static final String KEY_SKIP_ALL_REFERENCES= "skipReferences"; //$NON-NLS-1$
-	public static final String KEY_SKIP_IMPLICIT_REFERENCES= "skipImplicitReferences"; //$NON-NLS-1$
-	public static final String KEY_SKIP_TYPE_REFERENCES= "skipTypeReferences"; //$NON-NLS-1$
-	public static final String KEY_SKIP_MACRO_REFERENCES= "skipMacroReferences"; //$NON-NLS-1$
-	public static final String KEY_UPDATE_POLICY= "updatePolicy"; //$NON-NLS-1$
+	public static final String KEY_INDEXER_ID = "indexerId"; //$NON-NLS-1$
+	public static final String KEY_INDEX_ALL_FILES = "indexAllFiles"; //$NON-NLS-1$
+	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG = "indexUnusedHeadersWithDefaultLang"; //$NON-NLS-1$
+	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG = "indexUnusedHeadersWithAlternateLang"; //$NON-NLS-1$
+	public static final String KEY_INDEX_ON_OPEN = "indexOnOpen"; //$NON-NLS-1$
+	public static final String KEY_INCLUDE_HEURISTICS = "useHeuristicIncludeResolution"; //$NON-NLS-1$
+	public static final String KEY_SKIP_ALL_REFERENCES = "skipReferences"; //$NON-NLS-1$
+	public static final String KEY_SKIP_IMPLICIT_REFERENCES = "skipImplicitReferences"; //$NON-NLS-1$
+	public static final String KEY_SKIP_TYPE_REFERENCES = "skipTypeReferences"; //$NON-NLS-1$
+	public static final String KEY_SKIP_MACRO_REFERENCES = "skipMacroReferences"; //$NON-NLS-1$
+	public static final String KEY_UPDATE_POLICY = "updatePolicy"; //$NON-NLS-1$
 	public static final String KEY_SKIP_FILES_LARGER_THAN_MB = "skipFilesLargerThanMB"; //$NON-NLS-1$
 	public static final String KEY_SKIP_INCLUDED_FILES_LARGER_THAN_MB = "skipIncludedFilesLargerThanMB"; //$NON-NLS-1$
 
@@ -69,11 +69,11 @@ public class IndexerPreferences {
 
 	public static final String KEY_REINDEX_ON_CONFIG_CHANGE = "reindexOnConfigChange"; //$NON-NLS-1$
 	public static final String KEY_REINDEX_ON_INDEXER_CHANGE = "reindexOnIndexerChange"; //$NON-NLS-1$
-	public static final String KEY_INDEX_ALL_HEADER_VERSIONS= "indexAllHeaderVersions"; //$NON-NLS-1$
-	public static final String KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS= "indexAllVersionsSpecificHeaders"; //$NON-NLS-1$
+	public static final String KEY_INDEX_ALL_HEADER_VERSIONS = "indexAllHeaderVersions"; //$NON-NLS-1$
+	public static final String KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS = "indexAllVersionsSpecificHeaders"; //$NON-NLS-1$
 
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
-	private static final int DEFAULT_UPDATE_POLICY= 0;
+	private static final int DEFAULT_UPDATE_POLICY = 0;
 	public static final int DEFAULT_FILE_SIZE_LIMIT_MB = 8;
 	public static final int DEFAULT_INCLUDED_FILE_SIZE_LIMIT_MB = 16;
 
@@ -87,16 +87,16 @@ public class IndexerPreferences {
 	 * {@link #SCOPE_PROJECT_PRIVATE}.
 	 */
 	public static int getScope(IProject project) {
-		int scope= SCOPE_INSTANCE;
+		int scope = SCOPE_INSTANCE;
 		if (project != null) {
-			Preferences ppp= getLocalPreferences(project);
-			scope= ppp.getInt(KEY_INDEXER_PREFS_SCOPE, -1);
+			Preferences ppp = getLocalPreferences(project);
+			scope = ppp.getInt(KEY_INDEXER_PREFS_SCOPE, -1);
 			if (scope == -1) {
-				scope= determineScopeOnFirstUse(project);
+				scope = determineScopeOnFirstUse(project);
 			}
 			if (scope != SCOPE_INSTANCE) {
 				if (get(project, scope, KEY_INDEXER_ID, null) == null) {
-					scope= SCOPE_INSTANCE;
+					scope = SCOPE_INSTANCE;
 					ppp.putInt(KEY_INDEXER_PREFS_SCOPE, scope);
 					CCoreInternals.savePreferences(project, false);
 				}
@@ -113,30 +113,30 @@ public class IndexerPreferences {
 	public static int setScope(IProject project, int scope) {
 		if (project == null)
 			throw new IllegalArgumentException();
-		boolean makeCopy= false;
+		boolean makeCopy = false;
 		switch (scope) {
 		case SCOPE_INSTANCE:
 			break;
 		case SCOPE_PROJECT_PRIVATE:
 		case SCOPE_PROJECT_SHARED:
-			makeCopy= true;
+			makeCopy = true;
 			break;
 		default:
 			throw new IllegalArgumentException();
 		}
 
 		if (makeCopy) {
-			Preferences[] prefs= getPreferences(project, scope);
+			Preferences[] prefs = getPreferences(project, scope);
 			if (prefs[0].get(KEY_INDEXER_ID, null) == null) {
-				Preferences ppp= getLocalPreferences(project);
-				int oldScope= ppp.getInt(KEY_INDEXER_PREFS_SCOPE, SCOPE_INSTANCE);
+				Preferences ppp = getLocalPreferences(project);
+				int oldScope = ppp.getInt(KEY_INDEXER_PREFS_SCOPE, SCOPE_INSTANCE);
 
-				Properties props= getProperties(project, oldScope);
+				Properties props = getProperties(project, oldScope);
 				setProperties(prefs[0], props);
 			}
 		}
 
-		Preferences ppp= getLocalPreferences(project);
+		Preferences ppp = getLocalPreferences(project);
 		ppp.putInt(KEY_INDEXER_PREFS_SCOPE, scope);
 		return scope;
 	}
@@ -171,9 +171,9 @@ public class IndexerPreferences {
 	 * specific scope.
 	 */
 	public static Properties getProperties(IProject project, int scope) {
-		Preferences[] prefs= getPreferences(project, scope);
-		Properties props= new Properties();
-		for (int i= 0; i < prefs.length; i++) {
+		Preferences[] prefs = getPreferences(project, scope);
+		Properties props = new Properties();
+		for (int i = 0; i < prefs.length; i++) {
 			readProperties(prefs[i], props);
 			if (i == 0) {
 				migrateProperties(props);
@@ -192,8 +192,8 @@ public class IndexerPreferences {
 	}
 
 	public static Properties getDefaultIndexerProperties() {
-		Preferences prefs= getDefaultPreferences();
-		Properties props= new Properties();
+		Preferences prefs = getDefaultPreferences();
+		Properties props = new Properties();
 		readProperties(prefs, props);
 		return props;
 	}
@@ -207,7 +207,7 @@ public class IndexerPreferences {
 	 * Adds or changes indexer properties for a project.
 	 */
 	public static void setProperties(IProject project, int scope, Properties props) {
-		Preferences[] prefs= getPreferences(project, scope);
+		Preferences[] prefs = getPreferences(project, scope);
 		setProperties(prefs[0], props);
 	}
 
@@ -224,9 +224,9 @@ public class IndexerPreferences {
 	 * @since 4.0
 	 */
 	public static String get(IProject project, String key, String defval) {
-    	IPreferencesService prefService = Platform.getPreferencesService();
-    	Preferences[] prefs= IndexerPreferences.getPreferences(project);
-    	return prefService.get(key, defval, prefs);
+		IPreferencesService prefService = Platform.getPreferencesService();
+		Preferences[] prefs = IndexerPreferences.getPreferences(project);
+		return prefService.get(key, defval, prefs);
 	}
 
 	/**
@@ -234,9 +234,9 @@ public class IndexerPreferences {
 	 * @since 4.0
 	 */
 	private static String get(IProject project, int scope, String key, String defval) {
-    	IPreferencesService prefService = Platform.getPreferencesService();
-    	Preferences[] prefs= IndexerPreferences.getPreferences(project, scope);
-    	return prefService.get(key, defval, prefs);
+		IPreferencesService prefService = Platform.getPreferencesService();
+		Preferences[] prefs = IndexerPreferences.getPreferences(project, scope);
+		return prefService.get(key, defval, prefs);
 	}
 
 	/**
@@ -246,18 +246,18 @@ public class IndexerPreferences {
 		if (getScope(project) == SCOPE_INSTANCE) {
 			setScope(project, SCOPE_PROJECT_PRIVATE);
 		}
-    	final Preferences[] prefs= IndexerPreferences.getPreferences(project.getProject());
-    	prefs[0].put(key, value);
+		final Preferences[] prefs = IndexerPreferences.getPreferences(project.getProject());
+		prefs[0].put(key, value);
 	}
 
 	/**
 	 * Sets up the initial indexing preferences for the project.
 	 */
 	private static int determineScopeOnFirstUse(IProject project) {
-		int scope= SCOPE_INSTANCE;
-		Preferences prjPrefs= getProjectPreferences(project);
+		int scope = SCOPE_INSTANCE;
+		Preferences prjPrefs = getProjectPreferences(project);
 		if (prjPrefs.get(KEY_INDEXER_ID, null) != null) {
-			scope= SCOPE_PROJECT_SHARED;
+			scope = SCOPE_PROJECT_SHARED;
 		}
 		getLocalPreferences(project).putInt(KEY_INDEXER_PREFS_SCOPE, scope);
 		CCoreInternals.savePreferences(project, false);
@@ -281,11 +281,7 @@ public class IndexerPreferences {
 	}
 
 	private static Preferences[] getInstancePreferencesArray() {
-		return new Preferences[] {
-				getInstancePreferences(),
-				getConfigurationPreferences(),
-				getDefaultPreferences()
-		};
+		return new Preferences[] { getInstancePreferences(), getConfigurationPreferences(), getDefaultPreferences() };
 	}
 
 	private static Preferences getInstancePreferences() {
@@ -313,7 +309,7 @@ public class IndexerPreferences {
 			String[] keys = preferences.keys();
 			for (String key : keys) {
 				if (props.get(key) == null) {
-					String val= preferences.get(key, null);
+					String val = preferences.get(key, null);
 					if (val != null) {
 						props.put(key, val);
 					}
@@ -324,7 +320,7 @@ public class IndexerPreferences {
 	}
 
 	public static void initializeDefaultPreferences(IEclipsePreferences defaultPreferences) {
-		Preferences prefs= defaultPreferences.node(INDEXER_NODE);
+		Preferences prefs = defaultPreferences.node(INDEXER_NODE);
 		prefs.put(KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		prefs.putBoolean(KEY_INDEX_ALL_FILES, true);
 		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, true);
@@ -346,33 +342,33 @@ public class IndexerPreferences {
 	}
 
 	public static void addChangeListener(IProject prj, IPreferenceChangeListener pcl) {
-		Preferences node= getProjectPreferences(prj);
+		Preferences node = getProjectPreferences(prj);
 		addListener(node, pcl);
-		node= getLocalPreferences(prj);
+		node = getLocalPreferences(prj);
 		addListener(node, pcl);
-		node= getInstancePreferences();
+		node = getInstancePreferences();
 		addListener(node, pcl);
 	}
 
 	private static void addListener(Preferences node, IPreferenceChangeListener pcl) {
 		if (node instanceof IEclipsePreferences) {
-			IEclipsePreferences enode= (IEclipsePreferences) node;
+			IEclipsePreferences enode = (IEclipsePreferences) node;
 			enode.addPreferenceChangeListener(pcl);
 		}
 	}
 
 	public static void removeChangeListener(IProject prj, IPreferenceChangeListener pcl) {
-		Preferences node= getProjectPreferences(prj);
+		Preferences node = getProjectPreferences(prj);
 		removeListener(node, pcl);
-		node= getLocalPreferences(prj);
+		node = getLocalPreferences(prj);
 		removeListener(node, pcl);
-		node= getInstancePreferences();
+		node = getInstancePreferences();
 		removeListener(node, pcl);
 	}
 
 	private static void removeListener(Preferences node, IPreferenceChangeListener pcl) {
 		if (node instanceof IEclipsePreferences) {
-			IEclipsePreferences enode= (IEclipsePreferences) node;
+			IEclipsePreferences enode = (IEclipsePreferences) node;
 			enode.removePreferenceChangeListener(pcl);
 		}
 	}
@@ -380,18 +376,11 @@ public class IndexerPreferences {
 	public static String getIndexImportLocation(IProject project) {
 		Preferences[] prefs;
 		if (project != null) {
-			prefs= new Preferences[] {
-					getProjectPreferences(project),
-					getInstancePreferences(),
-					getConfigurationPreferences(),
-					getDefaultPreferences()
-			};
+			prefs = new Preferences[] { getProjectPreferences(project), getInstancePreferences(),
+					getConfigurationPreferences(), getDefaultPreferences() };
 		} else {
-			prefs= new Preferences[] {
-					getInstancePreferences(),
-					getConfigurationPreferences(),
-					getDefaultPreferences()
-			};
+			prefs = new Preferences[] { getInstancePreferences(), getConfigurationPreferences(),
+					getDefaultPreferences() };
 		}
 
 		return Platform.getPreferencesService().get(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION, prefs);
@@ -405,15 +394,15 @@ public class IndexerPreferences {
 
 	public static int getUpdatePolicy(IProject project) {
 		// no support for project specific policies
-		Preferences[] prefs= getInstancePreferencesArray();
+		Preferences[] prefs = getInstancePreferencesArray();
 		return getUpdatePolicy(prefs);
 	}
 
 	private static int getUpdatePolicy(Preferences[] prefs) {
-		String val= Platform.getPreferencesService().get(KEY_UPDATE_POLICY, null, prefs);
+		String val = Platform.getPreferencesService().get(KEY_UPDATE_POLICY, null, prefs);
 		if (val != null) {
 			try {
-				int result= Integer.parseInt(val);
+				int result = Integer.parseInt(val);
 				switch (result) {
 				case IndexUpdatePolicy.POST_CHANGE:
 				case IndexUpdatePolicy.POST_BUILD:
@@ -429,19 +418,19 @@ public class IndexerPreferences {
 
 	public static boolean preferDefaultLanguage(IProject project) {
 		IPreferencesService prefService = Platform.getPreferencesService();
-		Preferences[] prefs= IndexerPreferences.getPreferences(project);
-		if (Boolean.parseBoolean(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, null, prefs)) &&
-				Boolean.parseBoolean(prefService.get(KEY_INDEX_ALL_FILES, null, prefs)) &&
-				!Boolean.parseBoolean(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, null, prefs))) {
+		Preferences[] prefs = IndexerPreferences.getPreferences(project);
+		if (Boolean.parseBoolean(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, null, prefs))
+				&& Boolean.parseBoolean(prefService.get(KEY_INDEX_ALL_FILES, null, prefs))
+				&& !Boolean.parseBoolean(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, null, prefs))) {
 			return false;
 		}
 		return true;
 	}
 
 	public static boolean preferDefaultLanguage(Properties props) {
-		if (Boolean.parseBoolean((String) props.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)) &&
-				Boolean.parseBoolean((String) props.get(KEY_INDEX_ALL_FILES)) &&
-				!Boolean.parseBoolean((String) props.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG))) {
+		if (Boolean.parseBoolean((String) props.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG))
+				&& Boolean.parseBoolean((String) props.get(KEY_INDEX_ALL_FILES))
+				&& !Boolean.parseBoolean((String) props.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG))) {
 			return false;
 		}
 		return true;

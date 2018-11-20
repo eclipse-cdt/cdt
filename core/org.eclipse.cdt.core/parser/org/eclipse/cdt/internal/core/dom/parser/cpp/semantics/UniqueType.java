@@ -22,7 +22,7 @@ class UniqueType implements IType {
 	private boolean fForParameterPack;
 
 	public UniqueType(boolean forParameterPack) {
-		fForParameterPack= forParameterPack;
+		fForParameterPack = forParameterPack;
 	}
 
 	@Override

@@ -40,7 +40,7 @@ public interface ICDebugConstants {
 	 * view
 	 */
 	public static final String PREF_DEFAULT_REGISTER_FORMAT = PLUGIN_ID + "cDebug.default_register_format"; //$NON-NLS-1$
-	
+
 	/**
 	 * The charset to use for decoding char type strings. We however can't use the ID
 	 * "character_set" here because that would break backwards compatibility as it was
@@ -102,17 +102,17 @@ public interface ICDebugConstants {
 	 */
 	public static final int MAX_NUMBER_OF_INSTRUCTIONS = 999;
 
-    /**
-     * Preference that saves the default debugger type
-     * @since 3.1
-     */
-    public static final String PREF_DEFAULT_DEBUGGER_TYPE = PLUGIN_ID + ".cDebug.defaultDebugger"; //$NON-NLS-1$
+	/**
+	 * Preference that saves the default debugger type
+	 * @since 3.1
+	 */
+	public static final String PREF_DEFAULT_DEBUGGER_TYPE = PLUGIN_ID + ".cDebug.defaultDebugger"; //$NON-NLS-1$
 
-    /**
-     * Preference that saves the deactivated debugger types
-     * @since 3.1
-     */
-    public static final String PREF_FILTERED_DEBUGGERS = PLUGIN_ID + ".cDebug.filteredDebuggers"; //$NON-NLS-1$
+	/**
+	 * Preference that saves the deactivated debugger types
+	 * @since 3.1
+	 */
+	public static final String PREF_FILTERED_DEBUGGERS = PLUGIN_ID + ".cDebug.filteredDebuggers"; //$NON-NLS-1$
 
 	/**
 	 * Boolean preference used to persist the instruction-stepping mode. The
@@ -132,23 +132,23 @@ public interface ICDebugConstants {
 	 */
 	@Deprecated
 	public static final String DEF_CHARSET = "UTF-16"; //$NON-NLS-1$
-	
-    /**
-     * Specifies the stepping mode (context/source/instruction)
-     */
-    public static final String PREF_STEP_MODE = PLUGIN_ID + ".steppingMode"; //$NON-NLS-1$
 
-    public static final String PREF_VALUE_STEP_MODE_CONTEXT = "context"; //$NON-NLS-1$
-    public static final String PREF_VALUE_STEP_MODE_SOURCE = "source"; //$NON-NLS-1$
-    public static final String PREF_VALUE_STEP_MODE_INSTRUCTION = "instruction"; //$NON-NLS-1$
-    
-    /**
-     * Preference key for toggle breakpoint model identifier. Debugger that contribute custom
-     * CBreakpoint should set the system property with this key to true. when this system property
-     * is set to true, the standard ICBreakpoint toggle breakpoint factory enablement will take 
-     * into account for non-standard ICElement input.
-     * 
-     * @since 7.1
-     */
-    public static final String PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER = PLUGIN_ID + ".toggleBreakpointModel"; //$NON-NLS-1$    
+	/**
+	 * Specifies the stepping mode (context/source/instruction)
+	 */
+	public static final String PREF_STEP_MODE = PLUGIN_ID + ".steppingMode"; //$NON-NLS-1$
+
+	public static final String PREF_VALUE_STEP_MODE_CONTEXT = "context"; //$NON-NLS-1$
+	public static final String PREF_VALUE_STEP_MODE_SOURCE = "source"; //$NON-NLS-1$
+	public static final String PREF_VALUE_STEP_MODE_INSTRUCTION = "instruction"; //$NON-NLS-1$
+
+	/**
+	 * Preference key for toggle breakpoint model identifier. Debugger that contribute custom
+	 * CBreakpoint should set the system property with this key to true. when this system property
+	 * is set to true, the standard ICBreakpoint toggle breakpoint factory enablement will take 
+	 * into account for non-standard ICElement input.
+	 * 
+	 * @since 7.1
+	 */
+	public static final String PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER = PLUGIN_ID + ".toggleBreakpointModel"; //$NON-NLS-1$    
 }

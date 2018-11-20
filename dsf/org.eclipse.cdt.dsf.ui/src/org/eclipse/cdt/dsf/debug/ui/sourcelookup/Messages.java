@@ -22,7 +22,7 @@ public class Messages extends NLS {
 
 	public static String IPAnnotation_primary;
 	public static String IPAnnotation_secondary;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

@@ -51,117 +51,116 @@ import java.util.List;
 
 public class MIDataDisassembleInfo extends MIInfo {
 
-    // The parsed information
-    private boolean mixed;
-    private MIMixedInstruction[] mixedCode;
-    private MIInstruction[] assemblyCode;
+	// The parsed information
+	private boolean mixed;
+	private MIMixedInstruction[] mixedCode;
+	private MIInstruction[] assemblyCode;
 
-    public MIDataDisassembleInfo(MIOutput record) {
-        super(record);
-        mixed = false;
-        parse();
-    }
+	public MIDataDisassembleInfo(MIOutput record) {
+		super(record);
+		mixed = false;
+		parse();
+	}
 
-    public boolean isMixed() {
-        return mixed;
-    }
+	public boolean isMixed() {
+		return mixed;
+	}
 
-    public MIInstruction[] getMIAssemblyCode() {
-        return assemblyCode;
-    }
+	public MIInstruction[] getMIAssemblyCode() {
+		return assemblyCode;
+	}
 
-    public MIMixedInstruction[] getMIMixedCode() {
-        return mixedCode;
-    }
+	public MIMixedInstruction[] getMIMixedCode() {
+		return mixedCode;
+	}
 
-    /**
-     *  Find the relevant tag in the output record ("asm_insns") and then
-     *  parse its value.
-     */
-    private void parse() {
-        List<MIInstruction> asmList = new ArrayList<MIInstruction>();
-        List<MIMixedInstruction> srcList = new ArrayList<MIMixedInstruction>();
+	/**
+	 *  Find the relevant tag in the output record ("asm_insns") and then
+	 *  parse its value.
+	 */
+	private void parse() {
+		List<MIInstruction> asmList = new ArrayList<MIInstruction>();
+		List<MIMixedInstruction> srcList = new ArrayList<MIMixedInstruction>();
 
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord rr = out.getMIResultRecord();
-            if (rr != null) {
-                MIResult[] results =  rr.getMIResults();
-                // Technically, there should be only one field (asm_insns), but just in case...
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    if (var.equals("asm_insns")) { //$NON-NLS-1$
-                        MIValue value = results[i].getMIValue();
-                        if (value instanceof MIList) {
-                            parseResult((MIList) value, srcList, asmList);
-                        }
-                    }
-                }
-            }
-        }
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results = rr.getMIResults();
+				// Technically, there should be only one field (asm_insns), but just in case...
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("asm_insns")) { //$NON-NLS-1$
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MIList) {
+							parseResult((MIList) value, srcList, asmList);
+						}
+					}
+				}
+			}
+		}
 
-        assemblyCode = asmList.toArray(new MIInstruction[asmList.size()]);
-        mixedCode = srcList.toArray(new MIMixedInstruction[srcList.size()]);
-    }
+		assemblyCode = asmList.toArray(new MIInstruction[asmList.size()]);
+		mixedCode = srcList.toArray(new MIMixedInstruction[srcList.size()]);
+	}
 
-    /**
-     *  Parse the back-end result. Depending on the requested mode
-     *  ("-- 0" or "-- 1" on the request), the result has one of the
-     *  following forms:
-     *  
-     *  [1] Mode == 0 (assembly instructions only)
-     *      {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
-     *      {address="0x000107c4",func-name="main",offset="8",inst="sethi %hi(0x11800), %o2"},
-     *      ...,
-     *      {address="0x00010820",func-name="main",offset="100",inst="restore "}
-     * 
-     *  [2] Mode == 1 (Mixed source and assembly code)
-     *      src_and_asm_line={
-     *          line="31",file="/dir1/dir2/basics.c",
-     *          line_asm_insn=[
-     *          {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
-     *          {address="0x000107c4",func-name="main",offset="8",inst="sethi %hi(0x11800), %o2"},
-     *          ...,
-     *          {address="0x00010820",func-name="main",offset="100",inst="restore "}
-     *          ]
-     *      },
-     *      ...,
-     *      src_and_asm_line={
-     *          line="31",file="/dir1/dir2/basics.c",
-     *          line_asm_insn=[
-     *          ...,
-     *          ]
-     *      }
-     */
-    private void parseResult(MIList list,
-            List<MIMixedInstruction> srcList, List<MIInstruction> asmList) {
+	/**
+	 *  Parse the back-end result. Depending on the requested mode
+	 *  ("-- 0" or "-- 1" on the request), the result has one of the
+	 *  following forms:
+	 *  
+	 *  [1] Mode == 0 (assembly instructions only)
+	 *      {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
+	 *      {address="0x000107c4",func-name="main",offset="8",inst="sethi %hi(0x11800), %o2"},
+	 *      ...,
+	 *      {address="0x00010820",func-name="main",offset="100",inst="restore "}
+	 * 
+	 *  [2] Mode == 1 (Mixed source and assembly code)
+	 *      src_and_asm_line={
+	 *          line="31",file="/dir1/dir2/basics.c",
+	 *          line_asm_insn=[
+	 *          {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
+	 *          {address="0x000107c4",func-name="main",offset="8",inst="sethi %hi(0x11800), %o2"},
+	 *          ...,
+	 *          {address="0x00010820",func-name="main",offset="100",inst="restore "}
+	 *          ]
+	 *      },
+	 *      ...,
+	 *      src_and_asm_line={
+	 *          line="31",file="/dir1/dir2/basics.c",
+	 *          line_asm_insn=[
+	 *          ...,
+	 *          ]
+	 *      }
+	 */
+	private void parseResult(MIList list, List<MIMixedInstruction> srcList, List<MIInstruction> asmList) {
 
-        // Mixed mode (with source)
-        MIResult[] results = list.getMIResults();
-        if (results != null && results.length > 0) {
-            for (int i = 0; i < results.length; i++) {
-                String var = results[i].getVariable();
-                if (var.equals("src_and_asm_line")) { //$NON-NLS-1$
-                    MIValue value = results[i].getMIValue();
-                    if (value instanceof MITuple) {
-                        srcList.add(new MIMixedInstruction((MITuple) value));
-                    }
-                }
-            }
-            mixed = true;
-        }
+		// Mixed mode (with source)
+		MIResult[] results = list.getMIResults();
+		if (results != null && results.length > 0) {
+			for (int i = 0; i < results.length; i++) {
+				String var = results[i].getVariable();
+				if (var.equals("src_and_asm_line")) { //$NON-NLS-1$
+					MIValue value = results[i].getMIValue();
+					if (value instanceof MITuple) {
+						srcList.add(new MIMixedInstruction((MITuple) value));
+					}
+				}
+			}
+			mixed = true;
+		}
 
-        // Non-mixed mode
-        MIValue[] values = list.getMIValues();
-        if (values != null && values.length > 0) {
-            for (int i = 0; i < values.length; i++) {
-                if (values[i] instanceof MITuple) {
-                    asmList.add(new MIInstruction((MITuple) values[i]));
-                }
-            }
-            mixed = false;
-        }
+		// Non-mixed mode
+		MIValue[] values = list.getMIValues();
+		if (values != null && values.length > 0) {
+			for (int i = 0; i < values.length; i++) {
+				if (values[i] instanceof MITuple) {
+					asmList.add(new MIInstruction((MITuple) values[i]));
+				}
+			}
+			mixed = false;
+		}
 
-    }
+	}
 
 }

@@ -20,13 +20,14 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MessagesForDebugVM extends NLS {
-    public static String ErrorLabelText__text_format;
-    public static String ErrorLabelText_Error_message__text_page_break_delimiter;
-    
-    static {
-        // initialize resource bundle
-        NLS.initializeMessages(MessagesForDebugVM.class.getName(), MessagesForDebugVM.class);
-    }
+	public static String ErrorLabelText__text_format;
+	public static String ErrorLabelText_Error_message__text_page_break_delimiter;
 
-    private MessagesForDebugVM() {}
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(MessagesForDebugVM.class.getName(), MessagesForDebugVM.class);
+	}
+
+	private MessagesForDebugVM() {
+	}
 }

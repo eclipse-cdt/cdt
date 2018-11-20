@@ -25,14 +25,13 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Extern "C" construct.
  */
-public class CPPASTLinkageSpecification extends ASTNode
-		implements ICPPASTLinkageSpecification, IASTAmbiguityParent {
-    private String fLiteral;
+public class CPPASTLinkageSpecification extends ASTNode implements ICPPASTLinkageSpecification, IASTAmbiguityParent {
+	private String fLiteral;
 	private IASTDeclaration[] fAllDeclarations;
 	private IASTDeclaration[] fActiveDeclarations;
-    private int fLastDeclaration = -1;
+	private int fLastDeclaration = -1;
 
-    public CPPASTLinkageSpecification() {
+	public CPPASTLinkageSpecification() {
 	}
 
 	public CPPASTLinkageSpecification(String literal) {
@@ -55,14 +54,14 @@ public class CPPASTLinkageSpecification extends ASTNode
 
 	@Override
 	public String getLiteral() {
-        return fLiteral;
-    }
+		return fLiteral;
+	}
 
-    @Override
+	@Override
 	public void setLiteral(String value) {
-        assertNotFrozen();
-        this.fLiteral = value;
-    }
+		assertNotFrozen();
+		this.fLiteral = value;
+	}
 
 	@Override
 	public final void addDeclaration(IASTDeclaration decl) {
@@ -70,16 +69,16 @@ public class CPPASTLinkageSpecification extends ASTNode
 			decl.setParent(this);
 			decl.setPropertyInParent(OWNED_DECLARATION);
 			fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
-			fActiveDeclarations= null;
+			fActiveDeclarations = null;
 		}
 	}
 
 	@Override
 	public final IASTDeclaration[] getDeclarations() {
-		IASTDeclaration[] active= fActiveDeclarations;
+		IASTDeclaration[] active = fActiveDeclarations;
 		if (active == null) {
-			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fLastDeclaration+1);
-			fActiveDeclarations= active;
+			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fLastDeclaration + 1);
+			fActiveDeclarations = active;
 		}
 		return active;
 	}
@@ -87,35 +86,38 @@ public class CPPASTLinkageSpecification extends ASTNode
 	@Override
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
+			fAllDeclarations = ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
 			return fAllDeclarations;
 		}
 		return getDeclarations();
 	}
 
-
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclarations) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		IASTDeclaration[] decls = getDeclarations(action.includeInactiveNodes);
 		for (IASTDeclaration decl : decls) {
-			if (!decl.accept(action)) return false;
+			if (!decl.accept(action))
+				return false;
 		}
 
 		if (action.shouldVisitDeclarations && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public final void replace(IASTNode child, IASTNode other) {
 		assert child.isActive() == other.isActive();
 		for (int i = 0; i <= fLastDeclaration; ++i) {
@@ -123,7 +125,7 @@ public class CPPASTLinkageSpecification extends ASTNode
 				other.setParent(child.getParent());
 				other.setPropertyInParent(child.getPropertyInParent());
 				fAllDeclarations[i] = (IASTDeclaration) other;
-				fActiveDeclarations= null;
+				fActiveDeclarations = null;
 				return;
 			}
 		}

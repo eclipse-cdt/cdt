@@ -38,283 +38,289 @@ import org.junit.Test;
  * Tests that exercise the Query object.
  */
 public class DsfQueryTests {
-    TestDsfExecutor fExecutor;
-    
-    @Before 
-    public void startServices() throws ExecutionException, InterruptedException {
-        fExecutor = new TestDsfExecutor();
-    }   
-    
-    @After 
-    public void shutdownServices() throws ExecutionException, InterruptedException {
-        fExecutor.submit(new DsfRunnable() { @Override
-	public void run() {
-            fExecutor.shutdown();
-        }}).get();
-        if (fExecutor.exceptionsCaught()) {
-            Throwable[] exceptions = fExecutor.getExceptions();
-            throw new ExecutionException(exceptions[0]);
-        }
-        fExecutor = null;
-    }
-    
-    @Test 
-    public void simpleGetTest() throws InterruptedException, ExecutionException {
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                rm.setData(1);
-                rm.done();
-            }
-        };
-        // Check initial state
-        assertTrue(!q.isDone());
-        assertTrue(!q.isCancelled());
-        
-        fExecutor.execute(q);
-        assertEquals(1, (int)q.get());
-        
-        // Check final state
-        assertTrue(q.isDone());
-        assertTrue(!q.isCancelled());
+	TestDsfExecutor fExecutor;
 
-    }
+	@Before
+	public void startServices() throws ExecutionException, InterruptedException {
+		fExecutor = new TestDsfExecutor();
+	}
 
-    @Test 
-    public void getErrorTest() throws InterruptedException, ExecutionException {
-        final String error_message = "Test Error";
-        
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, error_message, null)); //$NON-NLS-1$
-                rm.done();
-            }
-        };
+	@After
+	public void shutdownServices() throws ExecutionException, InterruptedException {
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fExecutor.shutdown();
+			}
+		}).get();
+		if (fExecutor.exceptionsCaught()) {
+			Throwable[] exceptions = fExecutor.getExceptions();
+			throw new ExecutionException(exceptions[0]);
+		}
+		fExecutor = null;
+	}
 
-        // Check initial state
-        assertTrue(!q.isDone());
-        assertTrue(!q.isCancelled());
-        
-        fExecutor.execute(q);
-        
-        try {
-            q.get();
-            fail("Expected exception");
-        } catch (ExecutionException e) {
-            assertEquals(e.getCause().getMessage(), error_message);
-        }
-        
-        // Check final state
-        assertTrue(q.isDone());
-        assertTrue(!q.isCancelled());
+	@Test
+	public void simpleGetTest() throws InterruptedException, ExecutionException {
+		Query<Integer> q = new Query<Integer>() {
+			@Override
+			protected void execute(DataRequestMonitor<Integer> rm) {
+				rm.setData(1);
+				rm.done();
+			}
+		};
+		// Check initial state
+		assertTrue(!q.isDone());
+		assertTrue(!q.isCancelled());
 
-    }
+		fExecutor.execute(q);
+		assertEquals(1, (int) q.get());
 
-    @Test 
-    public void doneExceptionTest() throws InterruptedException, ExecutionException {
-        Query<Integer> q = new Query<Integer>() { 
-            @SuppressWarnings("deprecation")
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                doneException(new Throwable());
-            }
-        };
+		// Check final state
+		assertTrue(q.isDone());
+		assertTrue(!q.isCancelled());
 
-        // Check initial state
-        assertTrue(!q.isDone());
-        assertTrue(!q.isCancelled());
-        
-        fExecutor.execute(q);
-        
-        try {
-            q.get();
-            fail("Expected exception");
-        } catch (ExecutionException e) {
-        }
-        
-        // Check final state
-        assertTrue(q.isDone());
-        assertTrue(!q.isCancelled());
+	}
 
-    }
+	@Test
+	public void getErrorTest() throws InterruptedException, ExecutionException {
+		final String error_message = "Test Error";
 
-    
-    @Test 
-    public void getWithMultipleDispatchesTest() throws InterruptedException, ExecutionException {
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(final DataRequestMonitor<Integer> rm) {
-                fExecutor.execute(new DsfRunnable() { 
-                    @Override
-		    public void run() {
-                        rm.setData(1);
-                        rm.done();
-                    }
-                    @Override
-                    public String toString() { return super.toString() + "\n       getWithMultipleDispatchesTest() second runnable"; } //$NON-NLS-1$
-                });
-            }
-            @Override
-            public String toString() { return super.toString() + "\n       getWithMultipleDispatchesTest() first runnable (query)"; } //$NON-NLS-1$
-        };
-        fExecutor.execute(q);
-        assertEquals(1, (int)q.get()); 
-    }
+		Query<Integer> q = new Query<Integer>() {
+			@Override
+			protected void execute(DataRequestMonitor<Integer> rm) {
+				rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+						error_message, null)); //$NON-NLS-1$
+				rm.done();
+			}
+		};
 
-    @Test (expected = ExecutionException.class)
-    public void exceptionOnGetTest() throws InterruptedException, ExecutionException {
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(final DataRequestMonitor<Integer> rm) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, -1, "", null)); //$NON-NLS-1$
-                rm.done();
-            }
-        };
-        
-        fExecutor.execute(q);
-        
-        try {
-            q.get();
-        } finally {
-            assertTrue(q.isDone());
-            assertTrue(!q.isCancelled());
-        }            
-    }
+		// Check initial state
+		assertTrue(!q.isDone());
+		assertTrue(!q.isCancelled());
 
-    @Test
-    public void cancelBeforeWaitingTest() throws InterruptedException, ExecutionException {
-        final Query<Integer> q = new Query<Integer>() { 
-            @Override protected void execute(final DataRequestMonitor<Integer> rm) {
-                fail("Query was cancelled, it should not be called."); //$NON-NLS-1$
-                rm.done();
-            }
-        };
-        
-        // Cancel before invoking the query.
-        q.cancel(false);
+		fExecutor.execute(q);
 
-        assertTrue(q.isDone());
-        assertTrue(q.isCancelled());            
+		try {
+			q.get();
+			fail("Expected exception");
+		} catch (ExecutionException e) {
+			assertEquals(e.getCause().getMessage(), error_message);
+		}
 
-        // Start the query.
-        fExecutor.execute(q);
-        
-        
-        
-        // Block to retrieve data
-        try {
-            q.get();
-        } catch (CancellationException e) {
-            return; // Success
-        } finally {
-            assertTrue(q.isDone());
-            assertTrue(q.isCancelled());            
-        }            
-        assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
-    }
+		// Check final state
+		assertTrue(q.isDone());
+		assertTrue(!q.isCancelled());
 
-    @Test
-    public void cancelWhileWaitingTest() throws InterruptedException, ExecutionException {
-        final DataRequestMonitor<?>[] rmHolder = new DataRequestMonitor<?>[1];   
-        final Boolean[] cancelCalled = new Boolean[] { Boolean.FALSE };
-        
-        final Query<Integer> q = new Query<Integer>() { 
-            @Override protected void execute(final DataRequestMonitor<Integer> rm) {
-                synchronized (rmHolder) {
-                    rmHolder[0] = rm;
-                    rmHolder.notifyAll();
-                }
-            }
-        };
-        
-        // Start the query.
-        fExecutor.execute(q);
+	}
 
-        // Wait until the query is started
-        synchronized (rmHolder) {
-            while(rmHolder[0] == null) {
-                rmHolder.wait();
-            }
-        }        
-        
-        // Add a cancel listener to the query RM
-        rmHolder[0].addCancelListener(new ICanceledListener() {
-            
-            @Override
-	    public void requestCanceled(RequestMonitor rm) {
-                cancelCalled[0] = Boolean.TRUE;
-            }
-        });
-        
-        // Cancel running request.
-        q.cancel(false);
-        
-        assertTrue(cancelCalled[0]);
-        assertTrue(rmHolder[0].isCanceled());
-        assertTrue(q.isCancelled());
-        assertTrue(q.isDone());
-        
-        // Retrieve data
-        try {
-            q.get();
-        } catch (CancellationException e) {
-            return; // Success
-        } finally {
-            assertTrue(q.isDone());
-            assertTrue(q.isCancelled());            
-        }            
-        
-        // Complete rm and query.
-        @SuppressWarnings("unchecked")
-        DataRequestMonitor<Integer> drm = (DataRequestMonitor<Integer>)rmHolder[0]; 
-        drm.setData(Integer.valueOf(1));
-        rmHolder[0].done();
-        
-        // Try to retrieve data again, it should still result in 
-        // cancellation exception.
-        try {
-            q.get();
-        } catch (CancellationException e) {
-            return; // Success
-        } finally {
-            assertTrue(q.isDone());
-            assertTrue(q.isCancelled());            
-        }            
+	@Test
+	public void doneExceptionTest() throws InterruptedException, ExecutionException {
+		Query<Integer> q = new Query<Integer>() {
+			@SuppressWarnings("deprecation")
+			@Override
+			protected void execute(DataRequestMonitor<Integer> rm) {
+				doneException(new Throwable());
+			}
+		};
 
-        
-        assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
-    }
+		// Check initial state
+		assertTrue(!q.isDone());
+		assertTrue(!q.isCancelled());
 
-    
-    @Test
-    public void getTimeoutTest() throws InterruptedException, ExecutionException {
-        final Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(final DataRequestMonitor<Integer> rm) {
-                // Call done with a delay of 1 second, to avoid stalling the tests.
-                fExecutor.schedule(
-                    new DsfRunnable() {
-                        @Override
-			public void run() { rm.done(); }
-                    }, 
-                    60, TimeUnit.SECONDS);
-            }
-        };
+		fExecutor.execute(q);
 
-        fExecutor.execute(q);
+		try {
+			q.get();
+			fail("Expected exception");
+		} catch (ExecutionException e) {
+		}
 
-        // Note: no point in checking isDone() and isCancelled() here, because
-        // the value could change on timing.
-        
-        try {
-            q.get(1, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
-            return; // Success
-        } finally {
-            assertFalse("Query should not be done yet, it should have timed out first.", q.isDone()); //$NON-NLS-1$
-        }            
-        assertTrue("TimeoutException should have been thrown", false); //$NON-NLS-1$
-    }
+		// Check final state
+		assertTrue(q.isDone());
+		assertTrue(!q.isCancelled());
+
+	}
+
+	@Test
+	public void getWithMultipleDispatchesTest() throws InterruptedException, ExecutionException {
+		Query<Integer> q = new Query<Integer>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Integer> rm) {
+				fExecutor.execute(new DsfRunnable() {
+					@Override
+					public void run() {
+						rm.setData(1);
+						rm.done();
+					}
+
+					@Override
+					public String toString() {
+						return super.toString() + "\n       getWithMultipleDispatchesTest() second runnable"; //$NON-NLS-1$
+					}
+				});
+			}
+
+			@Override
+			public String toString() {
+				return super.toString() + "\n       getWithMultipleDispatchesTest() first runnable (query)"; //$NON-NLS-1$
+			}
+		};
+		fExecutor.execute(q);
+		assertEquals(1, (int) q.get());
+	}
+
+	@Test(expected = ExecutionException.class)
+	public void exceptionOnGetTest() throws InterruptedException, ExecutionException {
+		Query<Integer> q = new Query<Integer>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Integer> rm) {
+				rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, -1, "", null)); //$NON-NLS-1$
+				rm.done();
+			}
+		};
+
+		fExecutor.execute(q);
+
+		try {
+			q.get();
+		} finally {
+			assertTrue(q.isDone());
+			assertTrue(!q.isCancelled());
+		}
+	}
+
+	@Test
+	public void cancelBeforeWaitingTest() throws InterruptedException, ExecutionException {
+		final Query<Integer> q = new Query<Integer>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Integer> rm) {
+				fail("Query was cancelled, it should not be called."); //$NON-NLS-1$
+				rm.done();
+			}
+		};
+
+		// Cancel before invoking the query.
+		q.cancel(false);
+
+		assertTrue(q.isDone());
+		assertTrue(q.isCancelled());
+
+		// Start the query.
+		fExecutor.execute(q);
+
+		// Block to retrieve data
+		try {
+			q.get();
+		} catch (CancellationException e) {
+			return; // Success
+		} finally {
+			assertTrue(q.isDone());
+			assertTrue(q.isCancelled());
+		}
+		assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
+	}
+
+	@Test
+	public void cancelWhileWaitingTest() throws InterruptedException, ExecutionException {
+		final DataRequestMonitor<?>[] rmHolder = new DataRequestMonitor<?>[1];
+		final Boolean[] cancelCalled = new Boolean[] { Boolean.FALSE };
+
+		final Query<Integer> q = new Query<Integer>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Integer> rm) {
+				synchronized (rmHolder) {
+					rmHolder[0] = rm;
+					rmHolder.notifyAll();
+				}
+			}
+		};
+
+		// Start the query.
+		fExecutor.execute(q);
+
+		// Wait until the query is started
+		synchronized (rmHolder) {
+			while (rmHolder[0] == null) {
+				rmHolder.wait();
+			}
+		}
+
+		// Add a cancel listener to the query RM
+		rmHolder[0].addCancelListener(new ICanceledListener() {
+
+			@Override
+			public void requestCanceled(RequestMonitor rm) {
+				cancelCalled[0] = Boolean.TRUE;
+			}
+		});
+
+		// Cancel running request.
+		q.cancel(false);
+
+		assertTrue(cancelCalled[0]);
+		assertTrue(rmHolder[0].isCanceled());
+		assertTrue(q.isCancelled());
+		assertTrue(q.isDone());
+
+		// Retrieve data
+		try {
+			q.get();
+		} catch (CancellationException e) {
+			return; // Success
+		} finally {
+			assertTrue(q.isDone());
+			assertTrue(q.isCancelled());
+		}
+
+		// Complete rm and query.
+		@SuppressWarnings("unchecked")
+		DataRequestMonitor<Integer> drm = (DataRequestMonitor<Integer>) rmHolder[0];
+		drm.setData(Integer.valueOf(1));
+		rmHolder[0].done();
+
+		// Try to retrieve data again, it should still result in 
+		// cancellation exception.
+		try {
+			q.get();
+		} catch (CancellationException e) {
+			return; // Success
+		} finally {
+			assertTrue(q.isDone());
+			assertTrue(q.isCancelled());
+		}
+
+		assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
+	}
+
+	@Test
+	public void getTimeoutTest() throws InterruptedException, ExecutionException {
+		final Query<Integer> q = new Query<Integer>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Integer> rm) {
+				// Call done with a delay of 1 second, to avoid stalling the tests.
+				fExecutor.schedule(new DsfRunnable() {
+					@Override
+					public void run() {
+						rm.done();
+					}
+				}, 60, TimeUnit.SECONDS);
+			}
+		};
+
+		fExecutor.execute(q);
+
+		// Note: no point in checking isDone() and isCancelled() here, because
+		// the value could change on timing.
+
+		try {
+			q.get(1, TimeUnit.MILLISECONDS);
+		} catch (TimeoutException e) {
+			return; // Success
+		} finally {
+			assertFalse("Query should not be done yet, it should have timed out first.", q.isDone()); //$NON-NLS-1$
+		}
+		assertTrue("TimeoutException should have been thrown", false); //$NON-NLS-1$
+	}
 
 }

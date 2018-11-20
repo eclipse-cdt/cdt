@@ -19,7 +19,6 @@ import org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferencePage
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-
 public class MakeUIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 	/* (non-Javadoc)

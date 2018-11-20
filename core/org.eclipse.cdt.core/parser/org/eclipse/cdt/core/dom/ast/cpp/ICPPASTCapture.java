@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -30,7 +30,7 @@ public interface ICPPASTCapture extends IASTNode, ICPPASTPackExpandable, IASTNam
 
 	@Override
 	ICPPASTCapture copy();
-	
+
 	@Override
 	ICPPASTCapture copy(CopyStyle style);
 
@@ -38,18 +38,18 @@ public interface ICPPASTCapture extends IASTNode, ICPPASTPackExpandable, IASTNam
 	 * Returns whether the capture uses a leading ampersand.
 	 */
 	boolean isByReference();
-	
+
 	/**
 	 * Returns whether this capture is for the this pointer.
 	 */
 	boolean capturesThisPointer();
-	
+
 	/**
 	 * Returns the identifier for this capture or <code>null</code>, when 
 	 * <code>this<code> is captured.
 	 */
 	IASTName getIdentifier();
-	
+
 	/**
 	 * Not allowed on frozen AST.
 	 * @see #isByReference()

@@ -110,7 +110,8 @@ public class NewSerialFlashTargetWizardPage extends WizardPage {
 				}
 			}
 		} catch (IOException e) {
-			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.NewSerialFlashTargetWizardPage_Fetching, e));
+			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					Messages.NewSerialFlashTargetWizardPage_Fetching, e));
 		}
 	}
 

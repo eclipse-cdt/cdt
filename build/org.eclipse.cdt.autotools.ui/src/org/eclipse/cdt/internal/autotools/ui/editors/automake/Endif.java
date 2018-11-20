@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 public class Endif extends Terminal {
 
 	public Endif(Directive parent) {
@@ -24,9 +23,9 @@ public class Endif extends Terminal {
 	public boolean isEndif() {
 		return true;
 	}
-	
-    @Override
+
+	@Override
 	public String toString() {
-        return GNUMakefileConstants.TERMINAL_ENDIF;
-    }
+		return GNUMakefileConstants.TERMINAL_ENDIF;
+	}
 }

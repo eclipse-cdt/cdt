@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  */
 public class ASTNodeSearch extends ASTGenericVisitor {
 	private static final int LEFT = 0;
-	private static final int RIGHT= 1;
+	private static final int RIGHT = 1;
 	private int fMode;
 	private IASTNode fLeft;
 	private IASTNode fRight;
@@ -30,16 +30,16 @@ public class ASTNodeSearch extends ASTGenericVisitor {
 
 	public ASTNodeSearch(IASTNode node) {
 		super(true);
-		fNode= node;
-		fParent= node.getParent();
+		fNode = node;
+		fParent = node.getParent();
 	}
 
 	public IASTNode findLeftSibling() {
 		if (fParent == null)
 			return null;
 
-		fMode= LEFT;
-		fLeft= fRight= null;
+		fMode = LEFT;
+		fLeft = fRight = null;
 		fParent.accept(this);
 		return fLeft;
 	}
@@ -48,8 +48,8 @@ public class ASTNodeSearch extends ASTGenericVisitor {
 		if (fParent == null)
 			return null;
 
-		fMode= RIGHT;
-		fLeft= fRight= null;
+		fMode = RIGHT;
+		fLeft = fRight = null;
 		fParent.accept(this);
 		return fRight;
 	}
@@ -63,13 +63,13 @@ public class ASTNodeSearch extends ASTGenericVisitor {
 		case LEFT:
 			if (node == fNode)
 				return PROCESS_ABORT;
-			fLeft= node;
+			fLeft = node;
 			return PROCESS_SKIP;
 		case RIGHT:
 			if (node == fNode) {
-				fLeft= fNode;
+				fLeft = fNode;
 			} else if (fLeft != null) {
-				fRight= node;
+				fRight = node;
 				return PROCESS_ABORT;
 			}
 			return PROCESS_SKIP;

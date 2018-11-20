@@ -102,7 +102,7 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 							}
 						} catch (IOException e) {
 							Activator.log(e);
-						}						
+						}
 					} else {
 						matcher = clangPattern.matcher(file.getName());
 						if (matcher.matches()) {

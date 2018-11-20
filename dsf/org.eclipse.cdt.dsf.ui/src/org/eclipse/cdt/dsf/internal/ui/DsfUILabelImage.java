@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
  * @since 2.0 
  */
 public class DsfUILabelImage extends LabelImage {
-    public DsfUILabelImage(String imageId) {
-        super(DsfUIPlugin.getImageDescriptor(imageId));
-    }
+	public DsfUILabelImage(String imageId) {
+		super(DsfUIPlugin.getImageDescriptor(imageId));
+	}
 }

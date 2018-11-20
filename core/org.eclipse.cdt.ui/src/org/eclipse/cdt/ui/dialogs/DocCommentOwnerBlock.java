@@ -40,80 +40,81 @@ import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DocCommentOwnerBlock extends AbstractCOptionPage {
-	private static String EDITOR_PREF_PAGE_ID= "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
-	
+	private static String EDITOR_PREF_PAGE_ID = "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
+
 	protected DocCommentOwnerComposite fDocComboComposite;
 	protected DocCommentOwnerManager fManager;
-	
+
 	protected Button fCheckbox;
 	protected Link fLink;
-	
+
 	public DocCommentOwnerBlock() {
-		fManager= DocCommentOwnerManager.getInstance();
+		fManager = DocCommentOwnerManager.getInstance();
 	}
-	
+
 	void handleCheckBox() {
 		fDocComboComposite.setEnabled(fCheckbox.getSelection());
 		fLink.setVisible(!fCheckbox.getSelection());
 	}
-	
+
 	@Override
 	public void createControl(final Composite parent) {
-		Composite pane= new Composite(parent, SWT.NONE);
+		Composite pane = new Composite(parent, SWT.NONE);
 		pane.setLayout(new GridLayout(2, true));
-		pane.setLayoutData(GridDataFactory.fillDefaults().grab(true,false).span(2, 1).create());
-		
+		pane.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
+
 		setControl(pane);
-		
-		fCheckbox= ControlFactory.createCheckBox(pane, DialogsMessages.DocCommentOwnerBlock_EnableProjectSpecificSettings);
-		fCheckbox.setLayoutData(GridDataFactory.fillDefaults().grab(true,false).create());
-		fCheckbox.addSelectionListener(new SelectionAdapter(){
+
+		fCheckbox = ControlFactory.createCheckBox(pane,
+				DialogsMessages.DocCommentOwnerBlock_EnableProjectSpecificSettings);
+		fCheckbox.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+		fCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleCheckBox();
 			}
 		});
-		
-		fLink= new Link(pane, SWT.NONE);
+
+		fLink = new Link(pane, SWT.NONE);
 		fLink.setText(DialogsMessages.PreferenceScopeBlock_preferenceLink);
-		fLink.setLayoutData(GridDataFactory.fillDefaults().align(GridData.CENTER, GridData.BEGINNING).grab(true,false).create());
+		fLink.setLayoutData(
+				GridDataFactory.fillDefaults().align(GridData.CENTER, GridData.BEGINNING).grab(true, false).create());
 		fLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), EDITOR_PREF_PAGE_ID, null, null).open();
 			}
 		});
-		
-		String dsc= DialogsMessages.DocCommentOwnerBlock_SelectDocToolDescription;
-		String msg= DialogsMessages.DocCommentOwnerBlock_DocToolLabel;
-		
-		IDocCommentOwner prjOwner= DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
-		fDocComboComposite= new DocCommentOwnerComposite(pane, prjOwner, dsc, msg);
-		fDocComboComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true,false).span(2, 1).create());
-		
+
+		String dsc = DialogsMessages.DocCommentOwnerBlock_SelectDocToolDescription;
+		String msg = DialogsMessages.DocCommentOwnerBlock_DocToolLabel;
+
+		IDocCommentOwner prjOwner = DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
+		fDocComboComposite = new DocCommentOwnerComposite(pane, prjOwner, dsc, msg);
+		fDocComboComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
+
 		fCheckbox.setSelection(fManager.projectDefinesOwnership(getProject()));
 		handleCheckBox();
 	}
-	
+
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		if(!fCheckbox.getSelection())
+		if (!fCheckbox.getSelection())
 			fManager.setCommentOwner(getProject(), null, true);
 		else {
-			IDocCommentOwner newOwner= fDocComboComposite.getSelectedDocCommentOwner();
-			IProject p= getProject();
+			IDocCommentOwner newOwner = fDocComboComposite.getSelectedDocCommentOwner();
+			IProject p = getProject();
 			fManager.setCommentOwner(p, newOwner, true);
 		}
 	}
 
 	public IProject getProject() {
 		ICOptionContainer container = getContainer();
-		if (container != null){
+		if (container != null) {
 			if (container instanceof ICOptionContainerExtension) {
 				try {
 					return ((ICOptionContainerExtension) container).getProjectHandle();
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					return null;
 				}
 			}

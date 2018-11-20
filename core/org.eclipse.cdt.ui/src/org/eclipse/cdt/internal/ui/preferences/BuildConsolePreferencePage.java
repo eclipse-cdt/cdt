@@ -81,7 +81,6 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	private IntegerFieldEditor buildCount;
 	private IntegerFieldEditor wrapLinesMax;
 
-	
 	public BuildConsolePreferencePage() {
 		super(GRID);
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
@@ -113,28 +112,32 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 
 		buildCount = new IntegerFieldEditor(PREF_BUILDCONSOLE_LINES,
 				CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.label"), parent); //$NON-NLS-1$
-		buildCount.getLabelControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.tooltip")); //$NON-NLS-1$
-		buildCount.getTextControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.tooltip")); //$NON-NLS-1$
+		buildCount.getLabelControl(parent)
+				.setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.tooltip")); //$NON-NLS-1$
+		buildCount.getTextControl(parent)
+				.setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.tooltip")); //$NON-NLS-1$
 		buildCount.setErrorMessage(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.errorMessage")); //$NON-NLS-1$
 		buildCount.setValidRange(10, Integer.MAX_VALUE);
 		addField(buildCount);
 
 		IntegerFieldEditor updateDelay = new IntegerFieldEditor(PREF_BUILDCONSOLE_UPDATE_DELAY_MS,
 				CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.label"), parent); //$NON-NLS-1$
-		updateDelay.getLabelControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.tooltip")); //$NON-NLS-1$
-		updateDelay.getTextControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.tooltip")); //$NON-NLS-1$
-		updateDelay.setErrorMessage(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.errorMessage")); //$NON-NLS-1$
+		updateDelay.getLabelControl(parent)
+				.setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.tooltip")); //$NON-NLS-1$
+		updateDelay.getTextControl(parent)
+				.setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.tooltip")); //$NON-NLS-1$
+		updateDelay
+				.setErrorMessage(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.errorMessage")); //$NON-NLS-1$
 		updateDelay.setValidRange(0, Integer.MAX_VALUE);
 		addField(updateDelay);
 
 		wrapLinesMax = new IntegerFieldEditor(PREF_BUILDCONSOLE_WRAP_LINES_MAX,
 				CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.label"), parent); //$NON-NLS-1$
-		wrapLinesMax.getLabelControl(parent).setToolTipText(
-				CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.tooltip")); //$NON-NLS-1$
-		wrapLinesMax.getTextControl(parent).setToolTipText(
-				CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.tooltip")); //$NON-NLS-1$
-		wrapLinesMax.setErrorMessage(
-				CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.errorMessage")); //$NON-NLS-1$
+		wrapLinesMax.getLabelControl(parent)
+				.setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.tooltip")); //$NON-NLS-1$
+		wrapLinesMax.getTextControl(parent)
+				.setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.tooltip")); //$NON-NLS-1$
+		wrapLinesMax.setErrorMessage(CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.errorMessage")); //$NON-NLS-1$
 		wrapLinesMax.setValidRange(0, Integer.MAX_VALUE);
 		addField(wrapLinesMax);
 
@@ -186,7 +189,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		setWrapLinesEnablement();
 		super.propertyChange(event);
 	}
-	
+
 	private Label createLabel(Composite parent, String text) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
@@ -196,6 +199,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		label.setLayoutData(data);
 		return label;
 	}
+
 	/**
 	 * Creates a new color field editor.
 	 */
@@ -241,7 +245,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public static int buildConsoleLines() {
 		return CUIPlugin.getDefault().getPreferenceStore().getInt(PREF_BUILDCONSOLE_LINES);
 	}
-	
+
 	public static int buildConsoleUpdateDelayMs() {
 		return CUIPlugin.getDefault().getPreferenceStore().getInt(PREF_BUILDCONSOLE_UPDATE_DELAY_MS);
 	}
@@ -251,37 +255,39 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	}
 
 	public static void initDefaults(IPreferenceStore prefs, boolean unconditionally) {
-		if(unconditionally || !prefs.contains(PREF_CLEAR_CONSOLE))
+		if (unconditionally || !prefs.contains(PREF_CLEAR_CONSOLE))
 			prefs.setDefault(PREF_CLEAR_CONSOLE, true);
-		if(unconditionally || !prefs.contains(PREF_AUTO_OPEN_CONSOLE))
+		if (unconditionally || !prefs.contains(PREF_AUTO_OPEN_CONSOLE))
 			prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, true);
-		if(unconditionally || !prefs.contains(PREF_CONSOLE_ON_TOP))
+		if (unconditionally || !prefs.contains(PREF_CONSOLE_ON_TOP))
 			prefs.setDefault(PREF_CONSOLE_ON_TOP, true);
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES))
 			prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES, false);
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_LINES))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_LINES))
 			prefs.setDefault(PREF_BUILDCONSOLE_LINES, 500);
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES_MAX))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES_MAX))
 			prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES_MAX, 5000);
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_UPDATE_DELAY_MS))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_UPDATE_DELAY_MS))
 			prefs.setDefault(PREF_BUILDCONSOLE_UPDATE_DELAY_MS, DEFAULT_BUILDCONSOLE_UPDATE_DELAY_MS);
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_TAB_WIDTH))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_TAB_WIDTH))
 			prefs.setDefault(PREF_BUILDCONSOLE_TAB_WIDTH, 4);
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_OUTPUT_COLOR))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_OUTPUT_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_OUTPUT_COLOR, new RGB(0, 0, 0));
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_INFO_COLOR))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_INFO_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_INFO_COLOR, new RGB(0, 0, 255));
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_ERROR_COLOR))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_ERROR_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_BACKGROUND_COLOR))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_BACKGROUND_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_BACKGROUND_COLOR, new RGB(255, 255, 255));
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR, new RGB(254, 231, 224));
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR))
-			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR, new RGB(254, 243, 218));
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR))
-			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR, new RGB(244, 247, 254));
-		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR))
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR,
+					new RGB(254, 243, 218));
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR))
+			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR,
+					new RGB(244, 247, 254));
+		if (unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR, new RGB(255, 0, 0));
 	}
 

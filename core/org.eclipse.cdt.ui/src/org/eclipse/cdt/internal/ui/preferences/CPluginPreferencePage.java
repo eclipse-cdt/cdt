@@ -52,8 +52,8 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
  * The page for general C/C++ preferences.
  */
 public class CPluginPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	public static final String C_BASE_PREF_PAGE_ID= "org.eclipse.cdt.ui.preferences.CPluginPreferencePage"; //$NON-NLS-1$
-	
+	public static final String C_BASE_PREF_PAGE_ID = "org.eclipse.cdt.ui.preferences.CPluginPreferencePage"; //$NON-NLS-1$
+
 	private static final int GROUP_VINDENT = 5;
 	private ArrayList<Button> fCheckBoxes;
 
@@ -62,50 +62,48 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		setDescription(PreferencesMessages.CPluginPreferencePage_description);
 
-		fCheckBoxes= new ArrayList<Button>();
+		fCheckBoxes = new ArrayList<Button>();
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_PREF_PAGE);
-	}	
+	}
 
 	@Override
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
 
-		Composite container= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth= 0;
-		layout.verticalSpacing= convertVerticalDLUsToPixels(10);
-		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = 0;
+		layout.verticalSpacing = convertVerticalDLUsToPixels(10);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		container.setLayout(layout);
 
 		Group outlineViewGroup = addGroup(container, PreferencesMessages.CPluginPreferencePage_outline_view);
 		addCheckBox(outlineViewGroup, PreferencesMessages.CPluginPreferencePage_structuralParseMode_label,
 				PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
-		
+
 		addNote(outlineViewGroup, PreferencesMessages.CPluginPreferencePage_performanceHint);
 
 		// Refactoring.
 		Group refactoringGroup = addGroup(container, PreferencesMessages.CPluginPreferencePage_refactoring_title);
-		addCheckBox(refactoringGroup,
-				PreferencesMessages.CPluginPreferencePage_refactoring_auto_save,
+		addCheckBox(refactoringGroup, PreferencesMessages.CPluginPreferencePage_refactoring_auto_save,
 				PreferenceConstants.REFACTOR_SAVE_ALL_EDITORS);
-		addCheckBox(refactoringGroup,
-				PreferencesMessages.CPluginPreferencePage_refactoring_lightweight,
+		addCheckBox(refactoringGroup, PreferencesMessages.CPluginPreferencePage_refactoring_lightweight,
 				PreferenceConstants.REFACTOR_LIGHTWEIGHT);
-		
-		Group dontAskGroup= addGroup(container, PreferencesMessages.CPluginPreferencePage_cdtDialogs_group, 2);
-		Label label= new Label(dontAskGroup, SWT.WRAP);
+
+		Group dontAskGroup = addGroup(container, PreferencesMessages.CPluginPreferencePage_cdtDialogs_group, 2);
+		Label label = new Label(dontAskGroup, SWT.WRAP);
 		label.setText(PreferencesMessages.CPluginPreferencePage_clearDoNotShowAgainSettings_label);
-		GridData data= new GridData(GridData.FILL, GridData.CENTER, true, false);
-		data.widthHint= convertVerticalDLUsToPixels(50);
+		GridData data = new GridData(GridData.FILL, GridData.CENTER, true, false);
+		data.widthHint = convertVerticalDLUsToPixels(50);
 		label.setLayoutData(data);
 
-		Button clearButton= new Button(dontAskGroup, SWT.PUSH);
+		Button clearButton = new Button(dontAskGroup, SWT.PUSH);
 		clearButton.setText(PreferencesMessages.CPluginPreferencePage_clear_button);
 		clearButton.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 		clearButton.addSelectionListener(new SelectionListener() {
@@ -113,6 +111,7 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 			public void widgetSelected(SelectionEvent e) {
 				OptionalMessageDialog.clearAllRememberedStates();
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				OptionalMessageDialog.clearAllRememberedStates();
@@ -124,7 +123,7 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	private void addNote(Group parent, String noteMessage) {
-		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), parent,
+		Composite noteControl = createNoteComposite(JFaceResources.getDialogFont(), parent,
 				PreferencesMessages.CPluginPreferencePage_note, noteMessage);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.verticalIndent = GROUP_VINDENT;
@@ -139,12 +138,12 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 			// this is temporary fix for problem that 3 line note does not displayed properly within the group
 			Label messageLabel = (Label) children[1];
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.widthHint=500;
+			gd.widthHint = 500;
 			messageLabel.setLayoutData(gd);
 		}
 		return messageComposite;
 	}
-	
+
 	private Group addGroup(Composite parent, String label) {
 		return addGroup(parent, label, 1);
 	}
@@ -158,7 +157,7 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	private Button addCheckBox(Composite parent, String label, String key) {
-		Button button= new Button(parent, SWT.CHECK);
+		Button button = new Button(parent, SWT.CHECK);
 		button.setText(label);
 		button.setData(key);
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
@@ -170,11 +169,11 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	protected void addFiller(Composite composite) {
-		PixelConverter pixelConverter= new PixelConverter(composite);
-		Label filler= new Label(composite, SWT.LEFT );
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 1;
-		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
+		PixelConverter pixelConverter = new PixelConverter(composite);
+		Label filler = new Label(composite, SWT.LEFT);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 1;
+		gd.heightHint = pixelConverter.convertHeightInCharsToPixels(1) / 2;
 		filler.setLayoutData(gd);
 	}
 
@@ -187,7 +186,8 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	public static boolean useStructuralParseMode() {
-		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
+		return CUIPlugin.getDefault().getPreferenceStore()
+				.getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	@Override
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	/**
 	 * Initializes the default values of this page in the preference bundle.
 	 */
@@ -204,7 +204,7 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, false);
 		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
@@ -212,10 +212,10 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	public boolean performOk() {
 		if (!super.performOk())
 			return false;
-		IPreferenceStore store= getPreferenceStore();
-		for (int i= 0; i < fCheckBoxes.size(); i++) {
-			Button button= fCheckBoxes.get(i);
-			String key= (String) button.getData();
+		IPreferenceStore store = getPreferenceStore();
+		for (int i = 0; i < fCheckBoxes.size(); i++) {
+			Button button = fCheckBoxes.get(i);
+			String key = (String) button.getData();
 			store.setValue(key, button.getSelection());
 		}
 		// tell the Core Plugin about this preference
@@ -223,14 +223,14 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 		return true;
 	}
 
-    @Override
+	@Override
 	protected void performDefaults() {
-    	super.performDefaults();
-		IPreferenceStore store= getPreferenceStore();
-		for (int i= 0; i < fCheckBoxes.size(); i++) {
-			Button button= fCheckBoxes.get(i);
-			String key= (String) button.getData();
+		super.performDefaults();
+		IPreferenceStore store = getPreferenceStore();
+		for (int i = 0; i < fCheckBoxes.size(); i++) {
+			Button button = fCheckBoxes.get(i);
+			String key = (String) button.getData();
 			button.setSelection(store.getDefaultBoolean(key));
 		}
-    }
+	}
 }

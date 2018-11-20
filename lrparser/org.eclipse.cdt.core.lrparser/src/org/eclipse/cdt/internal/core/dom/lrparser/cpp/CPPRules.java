@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.lrparser.cpp;
 
-
 import java.util.Map;
 import java.util.HashMap;
 
@@ -42,19 +41,23 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(38), "identifier_name ::= identifier_token");
 		fRules.put(Integer.valueOf(445), "operator_id_name ::= operator overloadable_operator");
 		fRules.put(Integer.valueOf(443), "operator_function_id_name ::= operator_id_name");
-		fRules.put(Integer.valueOf(444), "operator_function_id_name ::= operator_id_name LT <openscope-ast> template_argument_list_opt GT");
+		fRules.put(Integer.valueOf(444),
+				"operator_function_id_name ::= operator_id_name LT <openscope-ast> template_argument_list_opt GT");
 		fRules.put(Integer.valueOf(431), "conversion_function_id_name ::= operator conversion_type_id");
 		fRules.put(Integer.valueOf(502), "template_identifier ::= identifier_name");
-		fRules.put(Integer.valueOf(501), "template_id_name ::= template_identifier LT <openscope-ast> template_argument_list_opt GT");
+		fRules.put(Integer.valueOf(501),
+				"template_id_name ::= template_identifier LT <openscope-ast> template_argument_list_opt GT");
 		fRules.put(Integer.valueOf(33), "unqualified_id_name ::= identifier_name");
 		fRules.put(Integer.valueOf(34), "unqualified_id_name ::= operator_function_id_name");
 		fRules.put(Integer.valueOf(35), "unqualified_id_name ::= conversion_function_id_name");
 		fRules.put(Integer.valueOf(36), "unqualified_id_name ::= template_id_name");
 		fRules.put(Integer.valueOf(37), "unqualified_id_name ::= Tilde class_name");
 		fRules.put(Integer.valueOf(54), "class_or_namespace_name ::= class_name");
-		fRules.put(Integer.valueOf(47), "nested_name_specifier ::= class_or_namespace_name ColonColon nested_name_specifier_with_template");
+		fRules.put(Integer.valueOf(47),
+				"nested_name_specifier ::= class_or_namespace_name ColonColon nested_name_specifier_with_template");
 		fRules.put(Integer.valueOf(48), "nested_name_specifier ::= class_or_namespace_name ColonColon");
-		fRules.put(Integer.valueOf(43), "qualified_id_name ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name");
+		fRules.put(Integer.valueOf(43),
+				"qualified_id_name ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name");
 		fRules.put(Integer.valueOf(44), "qualified_id_name ::= ColonColon identifier_name");
 		fRules.put(Integer.valueOf(45), "qualified_id_name ::= ColonColon operator_function_id_name");
 		fRules.put(Integer.valueOf(46), "qualified_id_name ::= ColonColon template_id_name");
@@ -67,7 +70,8 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(339), "declarator_id_name ::= dcolon_opt nested_name_specifier_opt type_name");
 		fRules.put(Integer.valueOf(321), "basic_direct_declarator ::= declarator_id_name");
 		fRules.put(Integer.valueOf(322), "basic_direct_declarator ::= LeftParen declarator )");
-		fRules.put(Integer.valueOf(323), "function_direct_declarator ::= basic_direct_declarator LeftParen <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt");
+		fRules.put(Integer.valueOf(323),
+				"function_direct_declarator ::= basic_direct_declarator LeftParen <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt");
 		fRules.put(Integer.valueOf(324), "array_direct_declarator ::= array_direct_declarator array_modifier");
 		fRules.put(Integer.valueOf(325), "array_direct_declarator ::= basic_direct_declarator array_modifier");
 		fRules.put(Integer.valueOf(318), "direct_declarator ::= basic_direct_declarator");
@@ -75,7 +79,8 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(320), "direct_declarator ::= array_direct_declarator");
 		fRules.put(Integer.valueOf(328), "ptr_operator ::= Star <openscope-ast> cv_qualifier_seq_opt");
 		fRules.put(Integer.valueOf(329), "ptr_operator ::= And");
-		fRules.put(Integer.valueOf(330), "ptr_operator ::= dcolon_opt nested_name_specifier Star <openscope-ast> cv_qualifier_seq_opt");
+		fRules.put(Integer.valueOf(330),
+				"ptr_operator ::= dcolon_opt nested_name_specifier Star <openscope-ast> cv_qualifier_seq_opt");
 		fRules.put(Integer.valueOf(331), "ptr_operator_seq ::= ptr_operator");
 		fRules.put(Integer.valueOf(332), "ptr_operator_seq ::= ptr_operator_seq ptr_operator");
 		fRules.put(Integer.valueOf(314), "declarator ::= direct_declarator");
@@ -84,14 +89,19 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(313), "init_declarator ::= declarator initializer");
 		fRules.put(Integer.valueOf(311), "init_declarator_complete ::= init_declarator");
 		fRules.put(Integer.valueOf(307), "init_declarator_list ::= init_declarator_complete");
-		fRules.put(Integer.valueOf(308), "init_declarator_list ::= init_declarator_list Comma init_declarator_complete");
+		fRules.put(Integer.valueOf(308),
+				"init_declarator_list ::= init_declarator_list Comma init_declarator_complete");
 		fRules.put(Integer.valueOf(309), "init_declarator_list_opt ::= init_declarator_list");
 		fRules.put(Integer.valueOf(310), "init_declarator_list_opt ::=");
-		fRules.put(Integer.valueOf(221), "simple_declaration ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ;");
+		fRules.put(Integer.valueOf(221),
+				"simple_declaration ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ;");
 		fRules.put(Integer.valueOf(304), "asm_definition ::= asm LeftParen stringlit ) ;");
-		fRules.put(Integer.valueOf(299), "namespace_alias_definition ::= namespace identifier_token Assign dcolon_opt nested_name_specifier_opt namespace_name ;");
-		fRules.put(Integer.valueOf(300), "using_declaration ::= using typename_opt dcolon_opt nested_name_specifier_opt unqualified_id_name ;");
-		fRules.put(Integer.valueOf(303), "using_directive ::= using namespace dcolon_opt nested_name_specifier_opt namespace_name ;");
+		fRules.put(Integer.valueOf(299),
+				"namespace_alias_definition ::= namespace identifier_token Assign dcolon_opt nested_name_specifier_opt namespace_name ;");
+		fRules.put(Integer.valueOf(300),
+				"using_declaration ::= using typename_opt dcolon_opt nested_name_specifier_opt unqualified_id_name ;");
+		fRules.put(Integer.valueOf(303),
+				"using_directive ::= using namespace dcolon_opt nested_name_specifier_opt namespace_name ;");
 		fRules.put(Integer.valueOf(212), "block_declaration ::= simple_declaration");
 		fRules.put(Integer.valueOf(213), "block_declaration ::= asm_definition");
 		fRules.put(Integer.valueOf(214), "block_declaration ::= namespace_alias_definition");
@@ -99,20 +109,27 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(216), "block_declaration ::= using_directive");
 		fRules.put(Integer.valueOf(316), "function_declarator ::= function_direct_declarator");
 		fRules.put(Integer.valueOf(317), "function_declarator ::= <openscope-ast> ptr_operator_seq direct_declarator");
-		fRules.put(Integer.valueOf(372), "function_definition ::= declaration_specifiers_opt function_declarator <openscope-ast> ctor_initializer_list_opt function_body");
-		fRules.put(Integer.valueOf(373), "function_definition ::= declaration_specifiers_opt function_declarator try <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq");
+		fRules.put(Integer.valueOf(372),
+				"function_definition ::= declaration_specifiers_opt function_declarator <openscope-ast> ctor_initializer_list_opt function_body");
+		fRules.put(Integer.valueOf(373),
+				"function_definition ::= declaration_specifiers_opt function_declarator try <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq");
 		fRules.put(Integer.valueOf(489), "export_opt ::= export");
 		fRules.put(Integer.valueOf(490), "export_opt ::=");
-		fRules.put(Integer.valueOf(488), "template_declaration ::= export_opt template LT <openscope-ast> template_parameter_list GT declaration");
+		fRules.put(Integer.valueOf(488),
+				"template_declaration ::= export_opt template LT <openscope-ast> template_parameter_list GT declaration");
 		fRules.put(Integer.valueOf(510), "explicit_instantiation ::= template declaration");
 		fRules.put(Integer.valueOf(511), "explicit_specialization ::= template LT GT declaration");
-		fRules.put(Integer.valueOf(305), "linkage_specification ::= extern stringlit LeftBrace <openscope-ast> declaration_seq_opt }");
+		fRules.put(Integer.valueOf(305),
+				"linkage_specification ::= extern stringlit LeftBrace <openscope-ast> declaration_seq_opt }");
 		fRules.put(Integer.valueOf(306), "linkage_specification ::= extern stringlit <openscope-ast> declaration");
-		fRules.put(Integer.valueOf(296), "original_namespace_definition ::= namespace identifier_name LeftBrace <openscope-ast> declaration_seq_opt }");
-		fRules.put(Integer.valueOf(297), "extension_namespace_definition ::= namespace original_namespace_name LeftBrace <openscope-ast> declaration_seq_opt }");
+		fRules.put(Integer.valueOf(296),
+				"original_namespace_definition ::= namespace identifier_name LeftBrace <openscope-ast> declaration_seq_opt }");
+		fRules.put(Integer.valueOf(297),
+				"extension_namespace_definition ::= namespace original_namespace_name LeftBrace <openscope-ast> declaration_seq_opt }");
 		fRules.put(Integer.valueOf(294), "named_namespace_definition ::= original_namespace_definition");
 		fRules.put(Integer.valueOf(295), "named_namespace_definition ::= extension_namespace_definition");
-		fRules.put(Integer.valueOf(298), "unnamed_namespace_definition ::= namespace LeftBrace <openscope-ast> declaration_seq_opt }");
+		fRules.put(Integer.valueOf(298),
+				"unnamed_namespace_definition ::= namespace LeftBrace <openscope-ast> declaration_seq_opt }");
 		fRules.put(Integer.valueOf(292), "namespace_definition ::= named_namespace_definition");
 		fRules.put(Integer.valueOf(293), "namespace_definition ::= unnamed_namespace_definition");
 		fRules.put(Integer.valueOf(205), "declaration ::= block_declaration");
@@ -158,12 +175,17 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(56), "postfix_expression ::= postfix_expression LeftBracket expression ]");
 		fRules.put(Integer.valueOf(57), "postfix_expression ::= postfix_expression LeftParen expression_list_opt )");
 		fRules.put(Integer.valueOf(58), "postfix_expression ::= simple_type_specifier LeftParen expression_list_opt )");
-		fRules.put(Integer.valueOf(59), "postfix_expression ::= typename dcolon_opt nested_name_specifier <empty> identifier_name LeftParen expression_list_opt )");
-		fRules.put(Integer.valueOf(60), "postfix_expression ::= typename dcolon_opt nested_name_specifier template_opt template_id_name LeftParen expression_list_opt )");
+		fRules.put(Integer.valueOf(59),
+				"postfix_expression ::= typename dcolon_opt nested_name_specifier <empty> identifier_name LeftParen expression_list_opt )");
+		fRules.put(Integer.valueOf(60),
+				"postfix_expression ::= typename dcolon_opt nested_name_specifier template_opt template_id_name LeftParen expression_list_opt )");
 		fRules.put(Integer.valueOf(61), "postfix_expression ::= postfix_expression Dot qualified_or_unqualified_name");
-		fRules.put(Integer.valueOf(62), "postfix_expression ::= postfix_expression Arrow qualified_or_unqualified_name");
-		fRules.put(Integer.valueOf(63), "postfix_expression ::= postfix_expression Dot template qualified_or_unqualified_name");
-		fRules.put(Integer.valueOf(64), "postfix_expression ::= postfix_expression Arrow template qualified_or_unqualified_name");
+		fRules.put(Integer.valueOf(62),
+				"postfix_expression ::= postfix_expression Arrow qualified_or_unqualified_name");
+		fRules.put(Integer.valueOf(63),
+				"postfix_expression ::= postfix_expression Dot template qualified_or_unqualified_name");
+		fRules.put(Integer.valueOf(64),
+				"postfix_expression ::= postfix_expression Arrow template qualified_or_unqualified_name");
 		fRules.put(Integer.valueOf(65), "postfix_expression ::= postfix_expression Dot pseudo_destructor_name");
 		fRules.put(Integer.valueOf(66), "postfix_expression ::= postfix_expression Arrow pseudo_destructor_name");
 		fRules.put(Integer.valueOf(67), "postfix_expression ::= postfix_expression PlusPlus");
@@ -174,8 +196,10 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(72), "postfix_expression ::= const_cast LT type_id GT LeftParen expression )");
 		fRules.put(Integer.valueOf(73), "postfix_expression ::= typeid LeftParen expression )");
 		fRules.put(Integer.valueOf(74), "postfix_expression ::= typeid LeftParen type_id )");
-		fRules.put(Integer.valueOf(92), "new_expression ::= dcolon_opt new new_placement_opt new_type_id <openscope-ast> new_array_expressions_opt new_initializer_opt");
-		fRules.put(Integer.valueOf(93), "new_expression ::= dcolon_opt new new_placement_opt LeftParen type_id ) <openscope-ast> new_array_expressions_opt new_initializer_opt");
+		fRules.put(Integer.valueOf(92),
+				"new_expression ::= dcolon_opt new new_placement_opt new_type_id <openscope-ast> new_array_expressions_opt new_initializer_opt");
+		fRules.put(Integer.valueOf(93),
+				"new_expression ::= dcolon_opt new new_placement_opt LeftParen type_id ) <openscope-ast> new_array_expressions_opt new_initializer_opt");
 		fRules.put(Integer.valueOf(108), "delete_expression ::= dcolon_opt delete cast_expression");
 		fRules.put(Integer.valueOf(109), "delete_expression ::= dcolon_opt delete LeftBracket ] cast_expression");
 		fRules.put(Integer.valueOf(79), "unary_expression ::= postfix_expression");
@@ -199,7 +223,8 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(115), "multiplicative_expression ::= pm_expression");
 		fRules.put(Integer.valueOf(116), "multiplicative_expression ::= multiplicative_expression Star pm_expression");
 		fRules.put(Integer.valueOf(117), "multiplicative_expression ::= multiplicative_expression Slash pm_expression");
-		fRules.put(Integer.valueOf(118), "multiplicative_expression ::= multiplicative_expression Percent pm_expression");
+		fRules.put(Integer.valueOf(118),
+				"multiplicative_expression ::= multiplicative_expression Percent pm_expression");
 		fRules.put(Integer.valueOf(119), "additive_expression ::= multiplicative_expression");
 		fRules.put(Integer.valueOf(120), "additive_expression ::= additive_expression Plus multiplicative_expression");
 		fRules.put(Integer.valueOf(121), "additive_expression ::= additive_expression Minus multiplicative_expression");
@@ -219,43 +244,64 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(135), "exclusive_or_expression ::= and_expression");
 		fRules.put(Integer.valueOf(136), "exclusive_or_expression ::= exclusive_or_expression Caret and_expression");
 		fRules.put(Integer.valueOf(137), "inclusive_or_expression ::= exclusive_or_expression");
-		fRules.put(Integer.valueOf(138), "inclusive_or_expression ::= inclusive_or_expression Or exclusive_or_expression");
+		fRules.put(Integer.valueOf(138),
+				"inclusive_or_expression ::= inclusive_or_expression Or exclusive_or_expression");
 		fRules.put(Integer.valueOf(139), "logical_and_expression ::= inclusive_or_expression");
-		fRules.put(Integer.valueOf(140), "logical_and_expression ::= logical_and_expression AndAnd inclusive_or_expression");
+		fRules.put(Integer.valueOf(140),
+				"logical_and_expression ::= logical_and_expression AndAnd inclusive_or_expression");
 		fRules.put(Integer.valueOf(141), "logical_or_expression ::= logical_and_expression");
 		fRules.put(Integer.valueOf(142), "logical_or_expression ::= logical_or_expression OrOr logical_and_expression");
 		fRules.put(Integer.valueOf(143), "conditional_expression ::= logical_or_expression");
-		fRules.put(Integer.valueOf(144), "conditional_expression ::= logical_or_expression Question expression Colon assignment_expression");
+		fRules.put(Integer.valueOf(144),
+				"conditional_expression ::= logical_or_expression Question expression Colon assignment_expression");
 		fRules.put(Integer.valueOf(145), "throw_expression ::= throw");
 		fRules.put(Integer.valueOf(146), "throw_expression ::= throw assignment_expression");
 		fRules.put(Integer.valueOf(147), "assignment_expression ::= conditional_expression");
 		fRules.put(Integer.valueOf(148), "assignment_expression ::= throw_expression");
-		fRules.put(Integer.valueOf(149), "assignment_expression ::= logical_or_expression Assign assignment_expression");
-		fRules.put(Integer.valueOf(150), "assignment_expression ::= logical_or_expression StarAssign assignment_expression");
-		fRules.put(Integer.valueOf(151), "assignment_expression ::= logical_or_expression SlashAssign assignment_expression");
-		fRules.put(Integer.valueOf(152), "assignment_expression ::= logical_or_expression PercentAssign assignment_expression");
-		fRules.put(Integer.valueOf(153), "assignment_expression ::= logical_or_expression PlusAssign assignment_expression");
-		fRules.put(Integer.valueOf(154), "assignment_expression ::= logical_or_expression MinusAssign assignment_expression");
-		fRules.put(Integer.valueOf(155), "assignment_expression ::= logical_or_expression RightShiftAssign assignment_expression");
-		fRules.put(Integer.valueOf(156), "assignment_expression ::= logical_or_expression LeftShiftAssign assignment_expression");
-		fRules.put(Integer.valueOf(157), "assignment_expression ::= logical_or_expression AndAssign assignment_expression");
-		fRules.put(Integer.valueOf(158), "assignment_expression ::= logical_or_expression CaretAssign assignment_expression");
-		fRules.put(Integer.valueOf(159), "assignment_expression ::= logical_or_expression OrAssign assignment_expression");
+		fRules.put(Integer.valueOf(149),
+				"assignment_expression ::= logical_or_expression Assign assignment_expression");
+		fRules.put(Integer.valueOf(150),
+				"assignment_expression ::= logical_or_expression StarAssign assignment_expression");
+		fRules.put(Integer.valueOf(151),
+				"assignment_expression ::= logical_or_expression SlashAssign assignment_expression");
+		fRules.put(Integer.valueOf(152),
+				"assignment_expression ::= logical_or_expression PercentAssign assignment_expression");
+		fRules.put(Integer.valueOf(153),
+				"assignment_expression ::= logical_or_expression PlusAssign assignment_expression");
+		fRules.put(Integer.valueOf(154),
+				"assignment_expression ::= logical_or_expression MinusAssign assignment_expression");
+		fRules.put(Integer.valueOf(155),
+				"assignment_expression ::= logical_or_expression RightShiftAssign assignment_expression");
+		fRules.put(Integer.valueOf(156),
+				"assignment_expression ::= logical_or_expression LeftShiftAssign assignment_expression");
+		fRules.put(Integer.valueOf(157),
+				"assignment_expression ::= logical_or_expression AndAssign assignment_expression");
+		fRules.put(Integer.valueOf(158),
+				"assignment_expression ::= logical_or_expression CaretAssign assignment_expression");
+		fRules.put(Integer.valueOf(159),
+				"assignment_expression ::= logical_or_expression OrAssign assignment_expression");
 		fRules.put(Integer.valueOf(162), "expression_list_actual ::= assignment_expression");
-		fRules.put(Integer.valueOf(163), "expression_list_actual ::= expression_list_actual Comma assignment_expression");
+		fRules.put(Integer.valueOf(163),
+				"expression_list_actual ::= expression_list_actual Comma assignment_expression");
 		fRules.put(Integer.valueOf(161), "expression_list ::= <openscope-ast> expression_list_actual");
 		fRules.put(Integer.valueOf(160), "expression ::= expression_list");
 		fRules.put(Integer.valueOf(39), "template_opt ::= template");
 		fRules.put(Integer.valueOf(40), "template_opt ::=");
-		fRules.put(Integer.valueOf(51), "class_or_namespace_name_with_template ::= template_opt class_or_namespace_name");
-		fRules.put(Integer.valueOf(49), "nested_name_specifier_with_template ::= class_or_namespace_name_with_template ColonColon nested_name_specifier_with_template");
-		fRules.put(Integer.valueOf(50), "nested_name_specifier_with_template ::= class_or_namespace_name_with_template ColonColon");
+		fRules.put(Integer.valueOf(51),
+				"class_or_namespace_name_with_template ::= template_opt class_or_namespace_name");
+		fRules.put(Integer.valueOf(49),
+				"nested_name_specifier_with_template ::= class_or_namespace_name_with_template ColonColon nested_name_specifier_with_template");
+		fRules.put(Integer.valueOf(50),
+				"nested_name_specifier_with_template ::= class_or_namespace_name_with_template ColonColon");
 		fRules.put(Integer.valueOf(164), "expression_list_opt ::= expression_list");
 		fRules.put(Integer.valueOf(165), "expression_list_opt ::=");
 		fRules.put(Integer.valueOf(78), "destructor_type_name ::= Tilde type_name");
-		fRules.put(Integer.valueOf(75), "pseudo_destructor_name ::= dcolon_opt nested_name_specifier_opt type_name ColonColon destructor_type_name");
-		fRules.put(Integer.valueOf(76), "pseudo_destructor_name ::= dcolon_opt nested_name_specifier template template_id_name ColonColon destructor_type_name");
-		fRules.put(Integer.valueOf(77), "pseudo_destructor_name ::= dcolon_opt nested_name_specifier_opt destructor_type_name");
+		fRules.put(Integer.valueOf(75),
+				"pseudo_destructor_name ::= dcolon_opt nested_name_specifier_opt type_name ColonColon destructor_type_name");
+		fRules.put(Integer.valueOf(76),
+				"pseudo_destructor_name ::= dcolon_opt nested_name_specifier template template_id_name ColonColon destructor_type_name");
+		fRules.put(Integer.valueOf(77),
+				"pseudo_destructor_name ::= dcolon_opt nested_name_specifier_opt destructor_type_name");
 		fRules.put(Integer.valueOf(254), "storage_class_specifier ::= auto");
 		fRules.put(Integer.valueOf(255), "storage_class_specifier ::= register");
 		fRules.put(Integer.valueOf(256), "storage_class_specifier ::= static");
@@ -272,45 +318,70 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(233), "no_type_declaration_specifier ::= friend");
 		fRules.put(Integer.valueOf(234), "no_type_declaration_specifier ::= typedef");
 		fRules.put(Integer.valueOf(235), "no_type_declaration_specifiers ::= no_type_declaration_specifier");
-		fRules.put(Integer.valueOf(236), "no_type_declaration_specifiers ::= no_type_declaration_specifiers no_type_declaration_specifier");
+		fRules.put(Integer.valueOf(236),
+				"no_type_declaration_specifiers ::= no_type_declaration_specifiers no_type_declaration_specifier");
 		fRules.put(Integer.valueOf(237), "simple_declaration_specifiers ::= simple_type_specifier");
-		fRules.put(Integer.valueOf(238), "simple_declaration_specifiers ::= no_type_declaration_specifiers simple_type_specifier");
-		fRules.put(Integer.valueOf(239), "simple_declaration_specifiers ::= simple_declaration_specifiers simple_type_specifier");
-		fRules.put(Integer.valueOf(240), "simple_declaration_specifiers ::= simple_declaration_specifiers no_type_declaration_specifier");
+		fRules.put(Integer.valueOf(238),
+				"simple_declaration_specifiers ::= no_type_declaration_specifiers simple_type_specifier");
+		fRules.put(Integer.valueOf(239),
+				"simple_declaration_specifiers ::= simple_declaration_specifiers simple_type_specifier");
+		fRules.put(Integer.valueOf(240),
+				"simple_declaration_specifiers ::= simple_declaration_specifiers no_type_declaration_specifier");
 		fRules.put(Integer.valueOf(241), "simple_declaration_specifiers ::= no_type_declaration_specifiers");
 		fRules.put(Integer.valueOf(392), "class_keyword ::= class");
 		fRules.put(Integer.valueOf(393), "class_keyword ::= struct");
 		fRules.put(Integer.valueOf(394), "class_keyword ::= union");
-		fRules.put(Integer.valueOf(386), "class_head ::= class_keyword identifier_name_opt <openscope-ast> base_clause_opt");
-		fRules.put(Integer.valueOf(387), "class_head ::= class_keyword template_id_name <openscope-ast> base_clause_opt");
-		fRules.put(Integer.valueOf(388), "class_head ::= class_keyword nested_name_specifier identifier_name <openscope-ast> base_clause_opt");
-		fRules.put(Integer.valueOf(389), "class_head ::= class_keyword nested_name_specifier template_id_name <openscope-ast> base_clause_opt");
-		fRules.put(Integer.valueOf(385), "class_specifier ::= class_head LeftBrace <openscope-ast> member_declaration_list_opt }");
+		fRules.put(Integer.valueOf(386),
+				"class_head ::= class_keyword identifier_name_opt <openscope-ast> base_clause_opt");
+		fRules.put(Integer.valueOf(387),
+				"class_head ::= class_keyword template_id_name <openscope-ast> base_clause_opt");
+		fRules.put(Integer.valueOf(388),
+				"class_head ::= class_keyword nested_name_specifier identifier_name <openscope-ast> base_clause_opt");
+		fRules.put(Integer.valueOf(389),
+				"class_head ::= class_keyword nested_name_specifier template_id_name <openscope-ast> base_clause_opt");
+		fRules.put(Integer.valueOf(385),
+				"class_specifier ::= class_head LeftBrace <openscope-ast> member_declaration_list_opt }");
 		fRules.put(Integer.valueOf(242), "class_declaration_specifiers ::= class_specifier");
-		fRules.put(Integer.valueOf(243), "class_declaration_specifiers ::= no_type_declaration_specifiers class_specifier");
-		fRules.put(Integer.valueOf(244), "class_declaration_specifiers ::= class_declaration_specifiers no_type_declaration_specifier");
-		fRules.put(Integer.valueOf(280), "elaborated_type_specifier ::= class_keyword dcolon_opt nested_name_specifier_opt identifier_name");
-		fRules.put(Integer.valueOf(281), "elaborated_type_specifier ::= class_keyword dcolon_opt nested_name_specifier_opt template_opt template_id_name");
-		fRules.put(Integer.valueOf(282), "elaborated_type_specifier ::= enum dcolon_opt nested_name_specifier_opt identifier_name");
+		fRules.put(Integer.valueOf(243),
+				"class_declaration_specifiers ::= no_type_declaration_specifiers class_specifier");
+		fRules.put(Integer.valueOf(244),
+				"class_declaration_specifiers ::= class_declaration_specifiers no_type_declaration_specifier");
+		fRules.put(Integer.valueOf(280),
+				"elaborated_type_specifier ::= class_keyword dcolon_opt nested_name_specifier_opt identifier_name");
+		fRules.put(Integer.valueOf(281),
+				"elaborated_type_specifier ::= class_keyword dcolon_opt nested_name_specifier_opt template_opt template_id_name");
+		fRules.put(Integer.valueOf(282),
+				"elaborated_type_specifier ::= enum dcolon_opt nested_name_specifier_opt identifier_name");
 		fRules.put(Integer.valueOf(245), "elaborated_declaration_specifiers ::= elaborated_type_specifier");
-		fRules.put(Integer.valueOf(246), "elaborated_declaration_specifiers ::= no_type_declaration_specifiers elaborated_type_specifier");
-		fRules.put(Integer.valueOf(247), "elaborated_declaration_specifiers ::= elaborated_declaration_specifiers no_type_declaration_specifier");
+		fRules.put(Integer.valueOf(246),
+				"elaborated_declaration_specifiers ::= no_type_declaration_specifiers elaborated_type_specifier");
+		fRules.put(Integer.valueOf(247),
+				"elaborated_declaration_specifiers ::= elaborated_declaration_specifiers no_type_declaration_specifier");
 		fRules.put(Integer.valueOf(283), "enum_specifier ::= enum LeftBrace <openscope-ast> enumerator_list_opt }");
-		fRules.put(Integer.valueOf(284), "enum_specifier ::= enum identifier_token LeftBrace <openscope-ast> enumerator_list_opt }");
+		fRules.put(Integer.valueOf(284),
+				"enum_specifier ::= enum identifier_token LeftBrace <openscope-ast> enumerator_list_opt }");
 		fRules.put(Integer.valueOf(248), "enum_declaration_specifiers ::= enum_specifier");
-		fRules.put(Integer.valueOf(249), "enum_declaration_specifiers ::= no_type_declaration_specifiers enum_specifier");
-		fRules.put(Integer.valueOf(250), "enum_declaration_specifiers ::= enum_declaration_specifiers no_type_declaration_specifier");
+		fRules.put(Integer.valueOf(249),
+				"enum_declaration_specifiers ::= no_type_declaration_specifiers enum_specifier");
+		fRules.put(Integer.valueOf(250),
+				"enum_declaration_specifiers ::= enum_declaration_specifiers no_type_declaration_specifier");
 		fRules.put(Integer.valueOf(275), "type_name_specifier ::= type_name");
 		fRules.put(Integer.valueOf(276), "type_name_specifier ::= dcolon_opt nested_name_specifier_opt type_name");
-		fRules.put(Integer.valueOf(277), "type_name_specifier ::= dcolon_opt nested_name_specifier template template_id_name");
-		fRules.put(Integer.valueOf(278), "type_name_specifier ::= typename dcolon_opt nested_name_specifier identifier_name");
-		fRules.put(Integer.valueOf(279), "type_name_specifier ::= typename dcolon_opt nested_name_specifier template_opt template_id_name");
+		fRules.put(Integer.valueOf(277),
+				"type_name_specifier ::= dcolon_opt nested_name_specifier template template_id_name");
+		fRules.put(Integer.valueOf(278),
+				"type_name_specifier ::= typename dcolon_opt nested_name_specifier identifier_name");
+		fRules.put(Integer.valueOf(279),
+				"type_name_specifier ::= typename dcolon_opt nested_name_specifier template_opt template_id_name");
 		fRules.put(Integer.valueOf(251), "type_name_declaration_specifiers ::= type_name_specifier");
-		fRules.put(Integer.valueOf(252), "type_name_declaration_specifiers ::= no_type_declaration_specifiers type_name_specifier");
-		fRules.put(Integer.valueOf(253), "type_name_declaration_specifiers ::= type_name_declaration_specifiers no_type_declaration_specifier");
+		fRules.put(Integer.valueOf(252),
+				"type_name_declaration_specifiers ::= no_type_declaration_specifiers type_name_specifier");
+		fRules.put(Integer.valueOf(253),
+				"type_name_declaration_specifiers ::= type_name_declaration_specifiers no_type_declaration_specifier");
 		fRules.put(Integer.valueOf(223), "declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers");
 		fRules.put(Integer.valueOf(224), "declaration_specifiers ::= <openscope-ast> class_declaration_specifiers");
-		fRules.put(Integer.valueOf(225), "declaration_specifiers ::= <openscope-ast> elaborated_declaration_specifiers");
+		fRules.put(Integer.valueOf(225),
+				"declaration_specifiers ::= <openscope-ast> elaborated_declaration_specifiers");
 		fRules.put(Integer.valueOf(226), "declaration_specifiers ::= <openscope-ast> enum_declaration_specifiers");
 		fRules.put(Integer.valueOf(227), "declaration_specifiers ::= <openscope-ast> type_name_declaration_specifiers");
 		fRules.put(Integer.valueOf(342), "type_specifier_seq ::= declaration_specifiers");
@@ -321,7 +392,8 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(96), "new_type_id ::= type_specifier_seq");
 		fRules.put(Integer.valueOf(97), "new_type_id ::= type_specifier_seq new_declarator");
 		fRules.put(Integer.valueOf(101), "new_array_expressions ::= LeftBracket expression ]");
-		fRules.put(Integer.valueOf(102), "new_array_expressions ::= new_array_expressions LeftBracket constant_expression ]");
+		fRules.put(Integer.valueOf(102),
+				"new_array_expressions ::= new_array_expressions LeftBracket constant_expression ]");
 		fRules.put(Integer.valueOf(103), "new_array_expressions_opt ::= new_array_expressions");
 		fRules.put(Integer.valueOf(104), "new_array_expressions_opt ::=");
 		fRules.put(Integer.valueOf(105), "new_initializer ::= LeftParen expression_list_opt )");
@@ -347,8 +419,10 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(191), "selection_statement ::= switch LeftParen condition ) statement");
 		fRules.put(Integer.valueOf(194), "iteration_statement ::= while LeftParen condition ) statement");
 		fRules.put(Integer.valueOf(195), "iteration_statement ::= do statement while LeftParen expression ) ;");
-		fRules.put(Integer.valueOf(196), "iteration_statement ::= for LeftParen expression_opt ; expression_opt ; expression_opt ) statement");
-		fRules.put(Integer.valueOf(197), "iteration_statement ::= for LeftParen simple_declaration_with_declspec expression_opt ; expression_opt ) statement");
+		fRules.put(Integer.valueOf(196),
+				"iteration_statement ::= for LeftParen expression_opt ; expression_opt ; expression_opt ) statement");
+		fRules.put(Integer.valueOf(197),
+				"iteration_statement ::= for LeftParen simple_declaration_with_declspec expression_opt ; expression_opt ) statement");
 		fRules.put(Integer.valueOf(198), "jump_statement ::= break ;");
 		fRules.put(Integer.valueOf(199), "jump_statement ::= continue ;");
 		fRules.put(Integer.valueOf(200), "jump_statement ::= return expression ;");
@@ -370,7 +444,8 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(188), "statement_seq ::= statement_seq statement");
 		fRules.put(Integer.valueOf(192), "condition ::= expression");
 		fRules.put(Integer.valueOf(193), "condition ::= type_specifier_seq declarator Assign assignment_expression");
-		fRules.put(Integer.valueOf(222), "simple_declaration_with_declspec ::= declaration_specifiers <openscope-ast> init_declarator_list_opt ;");
+		fRules.put(Integer.valueOf(222),
+				"simple_declaration_with_declspec ::= declaration_specifiers <openscope-ast> init_declarator_list_opt ;");
 		fRules.put(Integer.valueOf(217), "declaration_seq ::= declaration");
 		fRules.put(Integer.valueOf(218), "declaration_seq ::= declaration_seq declaration");
 		fRules.put(Integer.valueOf(219), "declaration_seq_opt ::= declaration_seq");
@@ -389,7 +464,8 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(364), "parameter_declaration ::= declaration_specifiers parameter_init_declarator");
 		fRules.put(Integer.valueOf(365), "parameter_declaration ::= declaration_specifiers");
 		fRules.put(Integer.valueOf(358), "parameter_declaration_list ::= parameter_declaration");
-		fRules.put(Integer.valueOf(359), "parameter_declaration_list ::= parameter_declaration_list Comma parameter_declaration");
+		fRules.put(Integer.valueOf(359),
+				"parameter_declaration_list ::= parameter_declaration_list Comma parameter_declaration");
 		fRules.put(Integer.valueOf(360), "parameter_declaration_list_opt ::= parameter_declaration_list");
 		fRules.put(Integer.valueOf(361), "parameter_declaration_list_opt ::=");
 		fRules.put(Integer.valueOf(355), "parameter_declaration_clause ::= parameter_declaration_list_opt DotDotDot");
@@ -406,22 +482,28 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(327), "array_modifier ::= LeftBracket ]");
 		fRules.put(Integer.valueOf(349), "basic_direct_abstract_declarator ::= LeftParen abstract_declarator )");
 		fRules.put(Integer.valueOf(350), "array_direct_abstract_declarator ::= array_modifier");
-		fRules.put(Integer.valueOf(351), "array_direct_abstract_declarator ::= array_direct_abstract_declarator array_modifier");
-		fRules.put(Integer.valueOf(352), "array_direct_abstract_declarator ::= basic_direct_abstract_declarator array_modifier");
-		fRules.put(Integer.valueOf(353), "function_direct_abstract_declarator ::= basic_direct_abstract_declarator LeftParen <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt");
-		fRules.put(Integer.valueOf(354), "function_direct_abstract_declarator ::= LeftParen <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt");
+		fRules.put(Integer.valueOf(351),
+				"array_direct_abstract_declarator ::= array_direct_abstract_declarator array_modifier");
+		fRules.put(Integer.valueOf(352),
+				"array_direct_abstract_declarator ::= basic_direct_abstract_declarator array_modifier");
+		fRules.put(Integer.valueOf(353),
+				"function_direct_abstract_declarator ::= basic_direct_abstract_declarator LeftParen <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt");
+		fRules.put(Integer.valueOf(354),
+				"function_direct_abstract_declarator ::= LeftParen <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt");
 		fRules.put(Integer.valueOf(346), "direct_abstract_declarator ::= basic_direct_abstract_declarator");
 		fRules.put(Integer.valueOf(347), "direct_abstract_declarator ::= array_direct_abstract_declarator");
 		fRules.put(Integer.valueOf(348), "direct_abstract_declarator ::= function_direct_abstract_declarator");
 		fRules.put(Integer.valueOf(343), "abstract_declarator ::= direct_abstract_declarator");
 		fRules.put(Integer.valueOf(344), "abstract_declarator ::= <openscope-ast> ptr_operator_seq");
-		fRules.put(Integer.valueOf(345), "abstract_declarator ::= <openscope-ast> ptr_operator_seq direct_abstract_declarator");
+		fRules.put(Integer.valueOf(345),
+				"abstract_declarator ::= <openscope-ast> ptr_operator_seq direct_abstract_declarator");
 		fRules.put(Integer.valueOf(362), "abstract_declarator_opt ::= abstract_declarator");
 		fRules.put(Integer.valueOf(363), "abstract_declarator_opt ::=");
 		fRules.put(Integer.valueOf(366), "parameter_init_declarator ::= declarator");
 		fRules.put(Integer.valueOf(367), "parameter_init_declarator ::= declarator Assign parameter_initializer");
 		fRules.put(Integer.valueOf(368), "parameter_init_declarator ::= abstract_declarator");
-		fRules.put(Integer.valueOf(369), "parameter_init_declarator ::= abstract_declarator Assign parameter_initializer");
+		fRules.put(Integer.valueOf(369),
+				"parameter_init_declarator ::= abstract_declarator Assign parameter_initializer");
 		fRules.put(Integer.valueOf(370), "parameter_init_declarator ::= Assign parameter_initializer");
 		fRules.put(Integer.valueOf(371), "parameter_initializer ::= assignment_expression");
 		fRules.put(Integer.valueOf(435), "ctor_initializer_list ::= Colon mem_initializer_list");
@@ -449,11 +531,13 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(427), "access_specifier_keyword ::= protected");
 		fRules.put(Integer.valueOf(428), "access_specifier_keyword ::= public");
 		fRules.put(Integer.valueOf(395), "visibility_label ::= access_specifier_keyword Colon");
-		fRules.put(Integer.valueOf(396), "member_declaration ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ;");
+		fRules.put(Integer.valueOf(396),
+				"member_declaration ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ;");
 		fRules.put(Integer.valueOf(397), "member_declaration ::= declaration_specifiers_opt ;");
 		fRules.put(Integer.valueOf(398), "member_declaration ::= function_definition ;");
 		fRules.put(Integer.valueOf(399), "member_declaration ::= function_definition");
-		fRules.put(Integer.valueOf(400), "member_declaration ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name ;");
+		fRules.put(Integer.valueOf(400),
+				"member_declaration ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name ;");
 		fRules.put(Integer.valueOf(401), "member_declaration ::= using_declaration");
 		fRules.put(Integer.valueOf(402), "member_declaration ::= template_declaration");
 		fRules.put(Integer.valueOf(403), "member_declaration ::= visibility_label");
@@ -469,9 +553,12 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(419), "base_clause_opt ::=");
 		fRules.put(Integer.valueOf(416), "constant_initializer ::= Assign constant_expression");
 		fRules.put(Integer.valueOf(422), "base_specifier ::= dcolon_opt nested_name_specifier_opt class_name");
-		fRules.put(Integer.valueOf(423), "base_specifier ::= virtual access_specifier_keyword_opt dcolon_opt nested_name_specifier_opt class_name");
-		fRules.put(Integer.valueOf(424), "base_specifier ::= access_specifier_keyword virtual dcolon_opt nested_name_specifier_opt class_name");
-		fRules.put(Integer.valueOf(425), "base_specifier ::= access_specifier_keyword dcolon_opt nested_name_specifier_opt class_name");
+		fRules.put(Integer.valueOf(423),
+				"base_specifier ::= virtual access_specifier_keyword_opt dcolon_opt nested_name_specifier_opt class_name");
+		fRules.put(Integer.valueOf(424),
+				"base_specifier ::= access_specifier_keyword virtual dcolon_opt nested_name_specifier_opt class_name");
+		fRules.put(Integer.valueOf(425),
+				"base_specifier ::= access_specifier_keyword dcolon_opt nested_name_specifier_opt class_name");
 		fRules.put(Integer.valueOf(420), "base_specifier_list ::= base_specifier");
 		fRules.put(Integer.valueOf(421), "base_specifier_list ::= base_specifier_list Comma base_specifier");
 		fRules.put(Integer.valueOf(429), "access_specifier_keyword_opt ::= access_specifier_keyword");
@@ -535,23 +622,26 @@ public class CPPRules {
 		fRules.put(Integer.valueOf(487), "overloadable_operator ::= LeftBracket ]");
 		fRules.put(Integer.valueOf(494), "template_parameter ::= parameter_declaration");
 		fRules.put(Integer.valueOf(491), "template_parameter_list ::= template_parameter");
-		fRules.put(Integer.valueOf(492), "template_parameter_list ::= template_parameter_list Comma template_parameter");
+		fRules.put(Integer.valueOf(492),
+				"template_parameter_list ::= template_parameter_list Comma template_parameter");
 		fRules.put(Integer.valueOf(495), "type_parameter ::= class identifier_name_opt");
 		fRules.put(Integer.valueOf(496), "type_parameter ::= class identifier_name_opt Assign type_id");
 		fRules.put(Integer.valueOf(497), "type_parameter ::= typename identifier_name_opt");
 		fRules.put(Integer.valueOf(498), "type_parameter ::= typename identifier_name_opt Assign type_id");
-		fRules.put(Integer.valueOf(499), "type_parameter ::= template LT <openscope-ast> template_parameter_list GT class identifier_name_opt");
-		fRules.put(Integer.valueOf(500), "type_parameter ::= template LT <openscope-ast> template_parameter_list GT class identifier_name_opt Assign id_expression");
+		fRules.put(Integer.valueOf(499),
+				"type_parameter ::= template LT <openscope-ast> template_parameter_list GT class identifier_name_opt");
+		fRules.put(Integer.valueOf(500),
+				"type_parameter ::= template LT <openscope-ast> template_parameter_list GT class identifier_name_opt Assign id_expression");
 		fRules.put(Integer.valueOf(517), "exception_declaration ::= type_specifier_seq <openscope-ast> declarator");
-		fRules.put(Integer.valueOf(518), "exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator");
+		fRules.put(Integer.valueOf(518),
+				"exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator");
 		fRules.put(Integer.valueOf(519), "exception_declaration ::= type_specifier_seq");
 		fRules.put(Integer.valueOf(524), "type_id_list ::= type_id");
 		fRules.put(Integer.valueOf(525), "type_id_list ::= type_id_list Comma type_id");
 
 	}
-	
+
 	public static String lookup(int ruleNumber) {
 		return (String) fRules.get(Integer.valueOf(ruleNumber));
 	}
 }
-

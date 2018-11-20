@@ -29,10 +29,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * 
  * @since 3.0
  */
- 
-public class MIBreakPasscount extends MICommand<MIInfo>
-{
-    public MIBreakPasscount(IBreakpointsTargetDMContext ctx, int tracepoint, int passCount) {
-        super(ctx, "-break-passcount", null, new String[] { Integer.toString(tracepoint), Integer.toString(passCount) }); //$NON-NLS-1$
-    }
+
+public class MIBreakPasscount extends MICommand<MIInfo> {
+	public MIBreakPasscount(IBreakpointsTargetDMContext ctx, int tracepoint, int passCount) {
+		super(ctx, "-break-passcount", null, //$NON-NLS-1$
+				new String[] { Integer.toString(tracepoint), Integer.toString(passCount) });
+	}
 }

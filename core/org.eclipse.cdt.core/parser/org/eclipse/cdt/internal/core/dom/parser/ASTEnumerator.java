@@ -34,11 +34,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * Base class for C and C++ enumerators.
  */
 public abstract class ASTEnumerator extends ASTAttributeOwner implements IASTEnumerator, IASTAmbiguityParent {
-    private IASTName name;
-    private IASTExpression value;
-    private IValue integralValue;
+	private IASTName name;
+	private IASTExpression value;
+	private IValue integralValue;
 
-    public ASTEnumerator() {
+	public ASTEnumerator() {
 	}
 
 	public ASTEnumerator(IASTName name, IASTExpression value) {
@@ -55,54 +55,63 @@ public abstract class ASTEnumerator extends ASTAttributeOwner implements IASTEnu
 	@Override
 	public void setName(IASTName name) {
 		assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(ENUMERATOR_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public void setValue(IASTExpression expression) {
-    	assertNotFrozen();
-        this.value = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		this.value = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(ENUMERATOR_VALUE);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTExpression getValue() {
-        return value;
-    }
+		return value;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitEnumerators) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitEnumerators) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if (name != null && !name.accept(action)) return false;
-		if (!acceptByAttributeSpecifiers(action)) return false;
-        if (value != null && !value.accept(action)) return false;
-        if (action.shouldVisitEnumerators) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (name != null && !name.accept(action))
+			return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (value != null && !value.accept(action))
+			return false;
+		if (action.shouldVisitEnumerators) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
@@ -112,26 +121,26 @@ public abstract class ASTEnumerator extends ASTAttributeOwner implements IASTEnu
 		return r_reference;
 	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == value) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            value = (IASTExpression) other;
-        }
-    }
+		if (child == value) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			value = (IASTExpression) other;
+		}
+	}
 
 	public IValue getIntegralValue() {
 		if (integralValue == null) {
-			IASTNode parent= getParent();
+			IASTNode parent = getParent();
 			if (parent instanceof IASTInternalEnumerationSpecifier) {
-				IASTInternalEnumerationSpecifier enumeration= (IASTInternalEnumerationSpecifier) parent;
+				IASTInternalEnumerationSpecifier enumeration = (IASTInternalEnumerationSpecifier) parent;
 				if (enumeration.startValueComputation()) { // Prevent infinite recursion.
 					computeEnumValues(enumeration);
 				}
 			}
 			if (integralValue == null) {
-				integralValue= IntegralValue.UNKNOWN;
+				integralValue = IntegralValue.UNKNOWN;
 			}
 		}
 		return integralValue;
@@ -149,13 +158,13 @@ public abstract class ASTEnumerator extends ASTAttributeOwner implements IASTEnu
 			IType type = fixedType == null ? CPPBasicType.INT : null;
 			IValue previousExplicitValue = null;
 			int delta = 0;
-			IASTEnumerator[] etors= enumeration.getEnumerators();
+			IASTEnumerator[] etors = enumeration.getEnumerators();
 			for (IASTEnumerator etor : etors) {
 				IBinding etorBinding = etor.getName().resolveBinding();
 				IValue val;
-				IASTExpression expr= etor.getValue();
+				IASTExpression expr = etor.getValue();
 				if (expr != null) {
-					val= ValueFactory.create(expr);
+					val = ValueFactory.create(expr);
 					previousExplicitValue = val;
 					delta = 1;
 					if (fixedType == null) {
@@ -180,7 +189,7 @@ public abstract class ASTEnumerator extends ASTAttributeOwner implements IASTEnu
 					}
 				}
 				if (etor instanceof ASTEnumerator) {
-					((ASTEnumerator) etor).integralValue= val;
+					((ASTEnumerator) etor).integralValue = val;
 				}
 			}
 		} finally {
@@ -203,8 +212,7 @@ public abstract class ASTEnumerator extends ASTAttributeOwner implements IASTEnu
 		Number numericalValue = val.numberValue();
 		if (numericalValue != null) {
 			long longValue = numericalValue.longValue();
-			if ((type.getKind() != Kind.eInt && type.getKind() != Kind.eInt128) ||
-					type.isShort()) {
+			if ((type.getKind() != Kind.eInt && type.getKind() != Kind.eInt128) || type.isShort()) {
 				type = type.isUnsigned() ? CPPBasicType.UNSIGNED_INT : CPPBasicType.INT;
 			}
 			if (!ArithmeticConversion.fitsIntoType(type, longValue)) {

@@ -26,52 +26,52 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
  */
 public interface ICommandControl {
 
-    /**
-     * Adds the specified command to the queue of commands to be processed. 
-     *   
-     * @param command Specific command to be processed
-     * @param rm Request completion monitor
-     * @return None
-     */
-    <V extends ICommandResult> ICommandToken queueCommand(ICommand<V> command, DataRequestMonitor<V> rm);
-    
-    /**
-     * Removes the specified command from the processor queue.
-     *   
-     * @param command Specific command to be removed
-     * @return None
-     */
-    void removeCommand(ICommandToken token);
-    
-    /**
+	/**
+	 * Adds the specified command to the queue of commands to be processed. 
+	 *   
+	 * @param command Specific command to be processed
+	 * @param rm Request completion monitor
+	 * @return None
+	 */
+	<V extends ICommandResult> ICommandToken queueCommand(ICommand<V> command, DataRequestMonitor<V> rm);
+
+	/**
+	 * Removes the specified command from the processor queue.
+	 *   
+	 * @param command Specific command to be removed
+	 * @return None
+	 */
+	void removeCommand(ICommandToken token);
+
+	/**
 	 * Adds a notification handler for the Command processor.
 	 * 
 	 * @param command listener to be added
 	 * @return None
 	 */
-    void addCommandListener(ICommandListener listener);
-    
-    /**
+	void addCommandListener(ICommandListener listener);
+
+	/**
 	 * Removes a notification handler for the Command processor.
 	 * 
 	 * @param command listener to be removed
 	 * @return None
 	 */
-    void removeCommandListener(ICommandListener listener);
-    
-    /**
+	void removeCommandListener(ICommandListener listener);
+
+	/**
 	 * Adds a notification handler for the Event processor.
 	 * 
 	 * @param event listener to be added
 	 * @return None
 	 */
-    void addEventListener(IEventListener listener);
-    
-    /**
+	void addEventListener(IEventListener listener);
+
+	/**
 	 * Removes a notification handler for the Event processor.
 	 * 
 	 * @param event listener to be removed
 	 * @return None
 	 */
-    void removeEventListener(IEventListener listener);
+	void removeEventListener(IEventListener listener);
 }

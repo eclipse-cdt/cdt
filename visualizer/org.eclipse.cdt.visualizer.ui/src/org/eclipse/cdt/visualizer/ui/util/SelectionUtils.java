@@ -27,37 +27,33 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-
 //----------------------------------------------------------------------------
 // SelectionUtils
 //----------------------------------------------------------------------------
 
 /** Eclipse ISelection munging utilities. */
-public class SelectionUtils
-{
+public class SelectionUtils {
 	// --- constants ---
-	
+
 	/** Special value for an "empty" selection,
 	 *  since selection cannot be null.
 	 */
 	public static final ISelection EMPTY_SELECTION = new EmptySelection();
 
 	/** "Empty" or undefined selection. */
-	public static class EmptySelection
-		implements ISelection, IStructuredSelection
-	{
+	public static class EmptySelection implements ISelection, IStructuredSelection {
 		public boolean isEmpty() {
 			return true;
 		}
-		
+
 		public Iterator<Object> iterator() {
 			return new ArrayList<Object>().iterator();
 		}
-		
+
 		public List<Object> toList() {
 			return new ArrayList<Object>();
 		}
-		
+
 		public int size() {
 			return 0;
 		}
@@ -70,37 +66,36 @@ public class SelectionUtils
 			return new Object[0];
 		}
 	}
-	
-	
+
 	// --- selection utilities ---
-	
-    /**
-     * Returns workbench selection, if any.
-     */
-    public static ISelection getWorkbenchSelection() {
-    	ISelection result = null;
+
+	/**
+	 * Returns workbench selection, if any.
+	 */
+	public static ISelection getWorkbenchSelection() {
+		ISelection result = null;
 		IWorkbenchPage page = getWorkbenchPage();
 		if (page != null) {
 			result = page.getSelection();
 		}
 		return result;
-    }
+	}
 
 	/** Creates an ISelection from a collection of objects */
 	public static ISelection toSelection(Collection<?> objects) {
 		return (objects == null) ? null : new StructuredSelection(toList(objects));
 	}
-	
+
 	/** Creates an ISelection from a list of objects */
 	public static ISelection toSelection(List<?> objects) {
 		return (objects == null) ? null : new StructuredSelection(objects);
 	}
-	
+
 	/** Creates an ISelection from the specified object(s) */
 	public static <T> ISelection toSelection(T... objects) {
 		return (objects == null) ? null : new StructuredSelection(objects);
 	}
-	
+
 	/**
 	 * Gets number of top-level object(s) from an Eclipse ISelection.
 	 */
@@ -108,25 +103,22 @@ public class SelectionUtils
 		int result = 0;
 		if (selection == EMPTY_SELECTION) {
 			// nothing to do
-		}
-		else if (selection instanceof IStructuredSelection) {
+		} else if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			result = structuredSelection.size();
-		}
-		else if (selection instanceof ISelection) {
+		} else if (selection instanceof ISelection) {
 			result = ((ISelection) selection).isEmpty() ? 0 : 1;
 		}
 		// collections are not ISelections, this just makes the method a little more generic
 		else if (selection instanceof Collection) {
 			Collection<?> collection = (Collection<?>) selection;
 			result = collection.size();
-		}
-		else if (selection != null) {
+		} else if (selection != null) {
 			result = 1;
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Gets selected object(s) from an Eclipse ISelection as a List.
 	 * If selection is a multiple selection (an IStructuredSelection or Collection),
@@ -138,19 +130,17 @@ public class SelectionUtils
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			result = new ArrayList<Object>((List<?>) structuredSelection.toList());
-		}
-		else if (selection instanceof Collection) {
+		} else if (selection instanceof Collection) {
 			Collection<?> collection = (Collection<?>) selection;
 			result = new ArrayList<Object>(collection);
-		}
-		else {
+		} else {
 			List<Object> list = new ArrayList<Object>();
 			list.add(selection);
 			result = list;
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Gets single selected object from an Eclipse ISelection.
 	 * If selection is a single selection, returns it.
@@ -161,18 +151,17 @@ public class SelectionUtils
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			result = structuredSelection.getFirstElement();
-		}
-		else if (selection instanceof Collection) {
+		} else if (selection instanceof Collection) {
 			Collection<?> collection = (Collection<?>) selection;
 			Iterator<?> i = collection.iterator();
-			if (i.hasNext()) result = i.next();
-		}
-		else {
+			if (i.hasNext())
+				result = i.next();
+		} else {
 			result = selection;
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Creates Eclipse ISelection from a list.
 	 */
@@ -186,7 +175,7 @@ public class SelectionUtils
 	public static <T> ISelection toISelection(T... items) {
 		return new StructuredSelection(items);
 	}
-	
+
 	/**
 	 * Gets iterator for an ISelection.
 	 * Note: returns null if ISelection is not an IStructuredSelection,
@@ -200,35 +189,32 @@ public class SelectionUtils
 		return result;
 	}
 
-	
-    // --- debugging tools ---
-    
+	// --- debugging tools ---
+
 	/** Converts selection to string, for debug display. */
 	public static String toString(ISelection selection) {
 		String result = null;
 		// convert selection to text string
 		if (selection == null) {
 			result = "No selection";
-		}
-		else if (selection instanceof IStructuredSelection) {
+		} else if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			List<?> elements = structuredSelection.toList();
 			int size = elements.size();
 			if (size == 0) {
 				result = "Empty selection";
-			}
-			else {
+			} else {
 				result = "Selection: ";
-				for (int i=0; i<size; i++) {
-					if (i>0) result += "\n";
+				for (int i = 0; i < size; i++) {
+					if (i > 0)
+						result += "\n";
 					Object o = elements.get(i);
 					String type = o.getClass().getName();
 					String value = o.toString();
 					result += "[" + i + "]: type= + " + type + ", value='" + value + "'";
 				}
 			}
-		}
-		else {
+		} else {
 			String type = selection.getClass().getName();
 			String value = selection.toString();
 			result = "Selection: (type = " + type + ") " + value;
@@ -237,47 +223,47 @@ public class SelectionUtils
 	}
 
 	// --- utilities ---
-	
-    /** Creates list from array/set of elements */
-    public static List<Object> toList(Collection<?> collection) {
-    	int size = (collection == null) ? 0 : collection.size();
-    	List<Object> result = new ArrayList<Object>(size);
-    	if (collection != null) result.addAll(collection);
-    	return result;
-    }
-    
-    /** Gets current Eclipse workbench */
+
+	/** Creates list from array/set of elements */
+	public static List<Object> toList(Collection<?> collection) {
+		int size = (collection == null) ? 0 : collection.size();
+		List<Object> result = new ArrayList<Object>(size);
+		if (collection != null)
+			result.addAll(collection);
+		return result;
+	}
+
+	/** Gets current Eclipse workbench */
 	public static IWorkbench getWorkbench() {
-    	IWorkbench result = null;
-    	try {
-    		result = PlatformUI.getWorkbench();
-    	}
-    	catch (IllegalStateException e) {
-    		// Workbench is not defined for some reason. Oh well.
-    	}
-    	return result;
-    }
-    
-    /** Gets current Eclipse workbench window.
-     *  Returns null if workbench does not exist.
-     */
-    public static IWorkbenchWindow getWorkbenchWindow() {
+		IWorkbench result = null;
+		try {
+			result = PlatformUI.getWorkbench();
+		} catch (IllegalStateException e) {
+			// Workbench is not defined for some reason. Oh well.
+		}
+		return result;
+	}
+
+	/** Gets current Eclipse workbench window.
+	 *  Returns null if workbench does not exist.
+	 */
+	public static IWorkbenchWindow getWorkbenchWindow() {
 		IWorkbenchWindow result = null;
-    	IWorkbench workbench = getWorkbench();
-    	if (workbench != null) {
-	        result = workbench.getActiveWorkbenchWindow();
-	        if (result == null) {
+		IWorkbench workbench = getWorkbench();
+		if (workbench != null) {
+			result = workbench.getActiveWorkbenchWindow();
+			if (result == null) {
 				if (workbench.getWorkbenchWindowCount() > 0) {
 					result = (IWorkbenchWindow) workbench.getWorkbenchWindows()[0];
 				}
-	        }
-    	}
-    	return result;
-    }
-    
-    /** Gets current Eclipse workbench page */
-    public static IWorkbenchPage getWorkbenchPage() {
-        IWorkbenchWindow window = getWorkbenchWindow();
-        return (window == null) ? null : window.getActivePage();
-    }
+			}
+		}
+		return result;
+	}
+
+	/** Gets current Eclipse workbench page */
+	public static IWorkbenchPage getWorkbenchPage() {
+		IWorkbenchWindow window = getWorkbenchWindow();
+		return (window == null) ? null : window.getActivePage();
+	}
 }

@@ -59,15 +59,15 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 
 		resolveLineTagLocations(SOURCE_NAME, MIRunControlTest.LINE_TAGS);
 
-	    fSession = getGDBLaunch().getSession();
-        Runnable runnable = new Runnable() {
-            @Override
+		fSession = getGDBLaunch().getSession();
+		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
-            	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-            	fProcService = fServicesTracker.getService(IMIProcesses.class);
-            }
-        };
-        fSession.getExecutor().submit(runnable).get();
+				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+				fProcService = fServicesTracker.getService(IMIProcesses.class);
+			}
+		};
+		fSession.getExecutor().submit(runnable).get();
 	}
 
 	@Override
@@ -75,24 +75,24 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 		super.doAfterTest();
 
 		fProcService = null;
-		if (fServicesTracker!=null) fServicesTracker.dispose();
+		if (fServicesTracker != null)
+			fServicesTracker.dispose();
 	}
 
 	@Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
 
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
-				           EXEC_PATH + EXEC_NAME);
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 	}
 
 	@Test
-    /*
-     *  Get the process data for the current program. Process is executable name in case of GDB back end
-     */
+	/*
+	 *  Get the process data for the current program. Process is executable name in case of GDB back end
+	 */
 	public void getProcessData() throws InterruptedException, ExecutionException, TimeoutException {
-		final IProcessDMContext processContext = DMContexts.getAncestorOfType(
-				SyncUtil.getContainerContext(), IProcessDMContext.class);
+		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(),
+				IProcessDMContext.class);
 		Query<IThreadDMData> query = new Query<IThreadDMData>() {
 			@Override
 			protected void execute(DataRequestMonitor<IThreadDMData> rm) {
@@ -107,8 +107,8 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 		 */
 		IThreadDMData processData = query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
 		Assert.assertNotNull("No process data is returned for Process DMC", processData);
-		Assert.assertTrue("Process data should be executable name " + EXEC_NAME +
-				"but we got " + processData.getName(), processData.getName().contains(EXEC_NAME));
+		Assert.assertTrue("Process data should be executable name " + EXEC_NAME + "but we got " + processData.getName(),
+				processData.getName().contains(EXEC_NAME));
 	}
 
 	/*
@@ -143,8 +143,7 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 
 		// Check the thread names. We did not change the main thread's name, so
 		// it should be the same as the executable name.
-		final String names[] = { EXEC_NAME, "monday", "tuesday", "wednesday",
-				"thursday", "friday" };
+		final String names[] = { EXEC_NAME, "monday", "tuesday", "wednesday", "thursday", "friday" };
 
 		// Check that we have correct data for PrintHello
 		for (int i = 1; i <= 6; i++) {

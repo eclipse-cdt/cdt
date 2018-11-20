@@ -38,7 +38,8 @@ public class CaseBreakQuickFixBreak extends AbstractCaseBreakQuickFix {
 	@Override
 	public void modifyAST(IIndex index, IMarker marker) {
 		try {
-			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index,
+					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTBreakStatement breakStatement = ast.getASTNodeFactory().newBreakStatement();
 			addNewNodeAtMarkedCaseEnd(breakStatement, ast, marker);
 		} catch (CoreException e) {

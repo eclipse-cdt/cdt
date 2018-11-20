@@ -37,8 +37,8 @@ import org.eclipse.core.runtime.CoreException;
  * Performs evaluation of an expression.
  */
 public final class EvalFixed extends CPPEvaluation {
-	public static final ICPPEvaluation INCOMPLETE =
-			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, IntegralValue.ERROR);
+	public static final ICPPEvaluation INCOMPLETE = new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE,
+			IntegralValue.ERROR);
 
 	private final IType fType;
 	private final IValue fValue;
@@ -67,9 +67,9 @@ public final class EvalFixed extends CPPEvaluation {
 				type = t;
 			}
 		}
-		fType= type;
-		fValueCategory= cat;
-		fValue= value;
+		fType = type;
+		fValueCategory = cat;
+		fValue = value;
 	}
 
 	@Override
@@ -85,8 +85,8 @@ public final class EvalFixed extends CPPEvaluation {
 	@Override
 	public boolean isTypeDependent() {
 		if (!fCheckedIsTypeDependent) {
-			fCheckedIsTypeDependent= true;
-			fIsTypeDependent= CPPTemplates.isDependentType(fType);
+			fCheckedIsTypeDependent = true;
+			fIsTypeDependent = CPPTemplates.isDependentType(fType);
 		}
 		return fIsTypeDependent;
 	}
@@ -94,8 +94,8 @@ public final class EvalFixed extends CPPEvaluation {
 	@Override
 	public boolean isValueDependent() {
 		if (!fCheckedIsValueDependent) {
-			fCheckedIsValueDependent= true;
-			fIsValueDependent= IntegralValue.isDependentValue(fValue);
+			fCheckedIsValueDependent = true;
+			fIsValueDependent = IntegralValue.isDependentValue(fValue);
 		}
 		return fIsValueDependent;
 	}
@@ -110,8 +110,7 @@ public final class EvalFixed extends CPPEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return (fType instanceof ICPPClassType && TypeTraits.isEmpty(fType))
-				|| isConstexprValue(fValue);
+		return (fType instanceof ICPPClassType && TypeTraits.isEmpty(fType)) || isConstexprValue(fValue);
 	}
 
 	@Override
@@ -120,10 +119,9 @@ public final class EvalFixed extends CPPEvaluation {
 			return false;
 		}
 		EvalFixed o = (EvalFixed) other;
-		return fType.isSameType(o.fType)
-			&& fValue.isEquivalentTo(o.fValue);
+		return fType.isSameType(o.fType) && fValue.isEquivalentTo(o.fValue);
 	}
-	
+
 	@Override
 	public IType getType() {
 		return fType;
@@ -141,7 +139,7 @@ public final class EvalFixed extends CPPEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		includeValue= includeValue && fValue != IntegralValue.UNKNOWN;
+		includeValue = includeValue && fValue != IntegralValue.UNKNOWN;
 		short firstBytes = ITypeMarshalBuffer.EVAL_FIXED;
 		if (includeValue)
 			firstBytes |= ITypeMarshalBuffer.FLAG1;
@@ -164,23 +162,23 @@ public final class EvalFixed extends CPPEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean readValue= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
+		final boolean readValue = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		IValue value;
 		ValueCategory cat;
 		switch (firstBytes & (ITypeMarshalBuffer.FLAG2 | ITypeMarshalBuffer.FLAG3)) {
 		case ITypeMarshalBuffer.FLAG2:
-			cat= PRVALUE;
+			cat = PRVALUE;
 			break;
 		case ITypeMarshalBuffer.FLAG3:
-			cat= LVALUE;
+			cat = LVALUE;
 			break;
 		default:
-			cat= XVALUE;
+			cat = XVALUE;
 			break;
 		}
 
-		IType type= buffer.unmarshalType();
-		value= readValue ? buffer.unmarshalValue() : IntegralValue.UNKNOWN;
+		IType type = buffer.unmarshalType();
+		value = readValue ? buffer.unmarshalValue() : IntegralValue.UNKNOWN;
 		return new EvalFixed(type, cat, value);
 	}
 

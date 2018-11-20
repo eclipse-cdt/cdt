@@ -34,15 +34,16 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	protected AbstractToolSettingUI(IResourceInfo info) {
 		this(info, GRID);
 	}
-	
+
 	/**
 	 * @since 5.1
 	 */
 	protected AbstractToolSettingUI(IResourceInfo info, int style) {
- 		super(style);
- 		noDefaultAndApplyButton();
-		fInfo = info;	
+		super(style);
+		noDefaultAndApplyButton();
+		fInfo = info;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
@@ -57,7 +58,7 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	 * @return the tool settings preference store
 	 */
 	protected ToolSettingsPrefStore getToolSettingsPrefStore() {
-		return ToolSettingsPrefStore.getDefault();	
+		return ToolSettingsPrefStore.getDefault();
 	}
 
 	/**
@@ -67,7 +68,7 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	protected void setToolTipBoxNeeded(boolean flag) {
 		toolTipBoxNeeded = flag;
 	}
-	
+
 	/**
 	 * @return true if this page needs to have a tool tip box.
 	 * @since 7.0
@@ -81,18 +82,28 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-	    super.propertyChange(event);
+		super.propertyChange(event);
 		if (event.getProperty().equals(FieldEditor.VALUE)) {
-		    setDirty(true);
+			setDirty(true);
 		}
 	}
 
-	public void setDirty(boolean b) {  dirty = b; }
-	public boolean isDirty() { return dirty; }
-	public void storeSettings() { super.performOk(); }
-	
+	public void setDirty(boolean b) {
+		dirty = b;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void storeSettings() {
+		super.performOk();
+	}
+
 	public abstract boolean isFor(Object obj1, Object obj2);
+
 	public abstract void updateFields();
+
 	public abstract void setValues();
-	
+
 }

@@ -23,20 +23,19 @@ public class AutotoolsPropertyManager implements IPropertyChangeManager {
 
 	private static volatile AutotoolsPropertyManager fInstance;
 	private Map<IProject, ListenerList<IProjectPropertyListener>> projectList;
-	
+
 	private AutotoolsPropertyManager() {
 		projectList = new HashMap<>();
 	}
-	
+
 	public static AutotoolsPropertyManager getDefault() {
 		if (fInstance == null)
 			fInstance = new AutotoolsPropertyManager();
 		return fInstance;
 	}
-	
+
 	@Override
-	public synchronized void addProjectPropertyListener(IProject project,
-			IProjectPropertyListener listener) {
+	public synchronized void addProjectPropertyListener(IProject project, IProjectPropertyListener listener) {
 		ListenerList<IProjectPropertyListener> list = projectList.get(project);
 		if (list == null) {
 			list = new ListenerList<>();
@@ -51,14 +50,13 @@ public class AutotoolsPropertyManager implements IPropertyChangeManager {
 		if (list != null) {
 			Object[] listeners = list.getListeners();
 			for (int i = 0; i < listeners.length; ++i) {
-				((IProjectPropertyListener)listeners[i]).handleProjectPropertyChanged(project, property);
+				((IProjectPropertyListener) listeners[i]).handleProjectPropertyChanged(project, property);
 			}
 		}
 	}
 
 	@Override
-	public synchronized void removeProjectPropertyListener(IProject project, 
-			IProjectPropertyListener listener) {
+	public synchronized void removeProjectPropertyListener(IProject project, IProjectPropertyListener listener) {
 		ListenerList<IProjectPropertyListener> list = projectList.get(project);
 		if (list != null)
 			list.remove(listener);

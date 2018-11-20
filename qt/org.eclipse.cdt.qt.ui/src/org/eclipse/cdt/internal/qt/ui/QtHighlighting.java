@@ -19,23 +19,19 @@ import org.eclipse.cdt.internal.qt.core.QtKeywords;
 import org.eclipse.cdt.ui.text.ISemanticHighlighter;
 import org.eclipse.cdt.ui.text.ISemanticToken;
 
-public class QtHighlighting implements ISemanticHighlighter
-{
-    @Override
-    public boolean consumes( ISemanticToken token )
-    {
-        IBinding binding = token.getBinding();
-        if( binding instanceof IMacroBinding )
-        {
-            IASTNode node = token.getNode();
-            if( node instanceof IASTName && ( (IASTName)node ).isReference() )
-            {
-                String n = binding.getName();
-                return QtKeywords.SIGNALS.equals( n )   || QtKeywords.SLOTS.equals( n )
-                    || QtKeywords.Q_SIGNALS.equals( n ) || QtKeywords.Q_SLOTS.equals( n );
-            }
-        }
+public class QtHighlighting implements ISemanticHighlighter {
+	@Override
+	public boolean consumes(ISemanticToken token) {
+		IBinding binding = token.getBinding();
+		if (binding instanceof IMacroBinding) {
+			IASTNode node = token.getNode();
+			if (node instanceof IASTName && ((IASTName) node).isReference()) {
+				String n = binding.getName();
+				return QtKeywords.SIGNALS.equals(n) || QtKeywords.SLOTS.equals(n) || QtKeywords.Q_SIGNALS.equals(n)
+						|| QtKeywords.Q_SLOTS.equals(n);
+			}
+		}
 
-        return false;
-    }
+		return false;
+	}
 }

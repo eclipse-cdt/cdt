@@ -32,5 +32,5 @@ public interface ILanguageUI extends IAdaptable {
 	 * @return code scanner for this language
 	 */
 	RuleBasedScanner getCodeScanner();
-	
+
 }

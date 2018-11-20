@@ -12,7 +12,7 @@
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
-******************************************************************************/ 
+******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -49,8 +49,8 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * @return the existing IIndexFragmentFile for this location, or a newly created one. 
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation,
-			ISignificantMacros sigMacros) throws CoreException;
+	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation, ISignificantMacros sigMacros)
+			throws CoreException;
 
 	/**
 	 * Creates a file object for the given location and linkage. The created file object is not added to
@@ -60,13 +60,13 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * @return a newly created IIndexFragmentFile. 
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation fileLocation,
-			ISignificantMacros sigMacros) throws CoreException;
+	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation fileLocation, ISignificantMacros sigMacros)
+			throws CoreException;
 
 	/**
 	 * Makes an uncommitted file that was created earlier by calling
 	 * {@link #addUncommittedFile(int, IIndexFileLocation, ISignificantMacros)} method visible in the index.
-     *
+	 *
 	 * @return The file that was updated.
 	 * @throws CoreException
 	 */
@@ -82,7 +82,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	/**
 	 * Adds includes, macros and names to the given file.
 	 */
-	void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes,  
+	void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes,
 			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver,
 			YieldableIndexLock lock) throws CoreException, InterruptedException;
 

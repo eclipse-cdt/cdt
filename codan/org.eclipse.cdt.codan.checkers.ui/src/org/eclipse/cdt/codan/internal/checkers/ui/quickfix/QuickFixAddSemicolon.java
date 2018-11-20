@@ -28,7 +28,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 public class QuickFixAddSemicolon extends AbstractAstRewriteQuickFix {
-	
+
 	@Override
 	public String getLabel() {
 		return QuickFixMessages.QuickFixAddSemicolon_add_semicolon;
@@ -47,18 +47,18 @@ public class QuickFixAddSemicolon extends AbstractAstRewriteQuickFix {
 		IASTNode astNode = null;
 		if (isCodanProblem(marker))
 			return;
-		
+
 		// We need to back up in the file
-		
+
 		// Start by finding the original reported position and line number
 		int lineNum = marker.getAttribute(IMarker.LINE_NUMBER, 0) - 1;
-		
+
 		if (lineNum < 1) {
 			return;
 		}
-		
+
 		IDocument document = getDocument();
-		
+
 		int lineOffset;
 		int lineLength;
 		try {
@@ -67,7 +67,7 @@ public class QuickFixAddSemicolon extends AbstractAstRewriteQuickFix {
 		} catch (BadLocationException e2) {
 			return;
 		}
-		
+
 		// find the position of the reported token
 		int pos = getOffset(marker, getDocument());
 		String name = null;
@@ -81,20 +81,19 @@ public class QuickFixAddSemicolon extends AbstractAstRewriteQuickFix {
 		FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(getDocument());
 		IRegion region;
 		try {
-			region = dad.find(pos, name,
-			/* forwardSearch */true, /* caseSensitive */true,
-			/* wholeWord */false, /* regExSearch */false);
+			region = dad.find(pos, name, /* forwardSearch */true, /* caseSensitive */true, /* wholeWord */false,
+					/* regExSearch */false);
 		} catch (BadLocationException e) {
 			return;
 		}
-		
+
 		if (region == null)
 			return;
-		
+
 		// now we have the offset
 		int offset = region.getOffset();
 		IASTNode prevNode = null;
-		
+
 		// see if there are previous nodes on same line
 		if (lineOffset < offset) {
 			astNode = getASTFirstContainedNodeFromPosition(ast, lineOffset, lineLength);
@@ -105,7 +104,8 @@ public class QuickFixAddSemicolon extends AbstractAstRewriteQuickFix {
 				int length = lineLength;
 				while (fileLoc.getNodeOffset() < offset) {
 					prevNode = astNode;
-					astNode = getASTFirstContainedNodeFromPosition(ast, fileLoc.getNodeOffset() + fileLoc.getNodeLength(), length);
+					astNode = getASTFirstContainedNodeFromPosition(ast,
+							fileLoc.getNodeOffset() + fileLoc.getNodeLength(), length);
 					fileLoc = astNode.getFileLocation();
 					if (fileLoc == null)
 						return;
@@ -113,12 +113,12 @@ public class QuickFixAddSemicolon extends AbstractAstRewriteQuickFix {
 				}
 			}
 		}
-		
+
 		// if we didn't find the previous node on the same line, go back a line at a time and find last node on line
 		while (prevNode == null) {
 			lineNum -= 1;
 			if (lineNum < 0)
-				return;  // don't bother once we have reached start of file
+				return; // don't bother once we have reached start of file
 			try {
 				lineOffset = document.getLineOffset(lineNum);
 				lineLength = document.getLineLength(lineNum);
@@ -141,7 +141,7 @@ public class QuickFixAddSemicolon extends AbstractAstRewriteQuickFix {
 			}
 
 		}
-		
+
 		IASTFileLocation location = prevNode.getFileLocation();
 		if (location == null)
 			return;
@@ -165,17 +165,17 @@ public class QuickFixAddSemicolon extends AbstractAstRewriteQuickFix {
 			CheckersUiActivator.log(e);
 		}
 	}
-	
+
 	/**
 	 * @param ast
 	 * @param charStart
 	 * @param length
 	 * @return
 	 */
-	private IASTNode getASTFirstContainedNodeFromPosition(IASTTranslationUnit ast, final int charStart, final int length) {
+	private IASTNode getASTFirstContainedNodeFromPosition(IASTTranslationUnit ast, final int charStart,
+			final int length) {
 		IASTNode node = ast.getNodeSelector(null).findFirstContainedNode(charStart, length);
 		return node;
 	}
-
 
 }

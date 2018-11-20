@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.parser.util.InstanceOfPredicate;
  */
 @Deprecated
 public interface IGCCASTAttributeSpecifier extends IASTAttributeSpecifier {
-	public static InstanceOfPredicate<IASTAttributeSpecifier> TYPE_FILTER =
-			new InstanceOfPredicate<>(IGCCASTAttributeSpecifier.class);
+	public static InstanceOfPredicate<IASTAttributeSpecifier> TYPE_FILTER = new InstanceOfPredicate<>(
+			IGCCASTAttributeSpecifier.class);
 
 	@Override
 	public IGCCASTAttributeSpecifier copy();

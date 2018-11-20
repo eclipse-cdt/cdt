@@ -214,7 +214,8 @@ public class CProject extends Openable implements ICProject {
 		return libRefs;
 	}
 
-	private static ILibraryReference getLibraryReference(ICProject cproject, BinaryParserConfig[] binConfigs, ILibraryEntry entry) {
+	private static ILibraryReference getLibraryReference(ICProject cproject, BinaryParserConfig[] binConfigs,
+			ILibraryEntry entry) {
 		if (binConfigs == null) {
 			binConfigs = CModelManager.getDefault().getBinaryParser(cproject.getProject());
 		}
@@ -262,11 +263,11 @@ public class CProject extends Openable implements ICProject {
 	public String getOption(String optionName, boolean inheritCCoreOptions) {
 		if (CModelManager.OptionNames.contains(optionName)) {
 			IEclipsePreferences preferences = getPreferences();
-			final String cCoreDefault= inheritCCoreOptions ? CCorePlugin.getOption(optionName) : null;
+			final String cCoreDefault = inheritCCoreOptions ? CCorePlugin.getOption(optionName) : null;
 			if (preferences == null) {
 				return cCoreDefault;
 			}
-			String value= preferences.get(optionName, cCoreDefault).trim();
+			String value = preferences.get(optionName, cCoreDefault).trim();
 			return value == null ? null : value.trim();
 		}
 
@@ -279,18 +280,18 @@ public class CProject extends Openable implements ICProject {
 	@Override
 	public Map<String, String> getOptions(boolean inheritCCoreOptions) {
 		// initialize to the defaults from CCorePlugin options pool
-		Map<String, String> options= inheritCCoreOptions ? CCorePlugin.getOptions() : new HashMap<String, String>(5);
+		Map<String, String> options = inheritCCoreOptions ? CCorePlugin.getOptions() : new HashMap<String, String>(5);
 
 		IEclipsePreferences preferences = getPreferences();
 		if (preferences == null)
 			return options;
-		HashSet<String> optionNames= CModelManager.OptionNames;
+		HashSet<String> optionNames = CModelManager.OptionNames;
 
 		// create project options
 		try {
-			String[] propertyNames= preferences.keys();
+			String[] propertyNames = preferences.keys();
 			for (String propertyName : propertyNames) {
-				String value= preferences.get(propertyName, null);
+				String value = preferences.get(propertyName, null);
 				if (value != null && optionNames.contains(propertyName)) {
 					options.put(propertyName, value.trim());
 				}
@@ -306,7 +307,7 @@ public class CProject extends Openable implements ICProject {
 		if (!CModelManager.OptionNames.contains(optionName))
 			return; // unrecognized option
 
-		IEclipsePreferences projectPreferences= getPreferences();
+		IEclipsePreferences projectPreferences = getPreferences();
 		if (optionValue == null) {
 			// remove preference
 			projectPreferences.remove(optionName);
@@ -354,8 +355,8 @@ public class CProject extends Openable implements ICProject {
 		if (!(isCProject())) {
 			return null;
 		}
-		IScopeContext context= new ProjectScope(getProject());
-		final IEclipsePreferences preferences= context.getNode(CCorePlugin.PLUGIN_ID);
+		IScopeContext context = new ProjectScope(getProject());
+		final IEclipsePreferences preferences = context.getNode(CCorePlugin.PLUGIN_ID);
 		return preferences;
 	}
 
@@ -439,29 +440,29 @@ public class CProject extends Openable implements ICProject {
 
 	@Override
 	public ISourceRoot findSourceRoot(IResource res) {
-	    try {
+		try {
 			ISourceRoot[] roots = getAllSourceRoots();
 			for (ISourceRoot root : roots) {
 				if (root.isOnSourceEntry(res)) {
 					return root;
 				}
 			}
-	    } catch (CModelException e) {
-	    }
+		} catch (CModelException e) {
+		}
 		return null;
 	}
 
 	@Override
 	public ISourceRoot findSourceRoot(IPath path) {
-	    try {
+		try {
 			ISourceRoot[] roots = getAllSourceRoots();
 			for (ISourceRoot root : roots) {
-			    if (root.getPath().equals(path)) {
+				if (root.getPath().equals(path)) {
 					return root;
 				}
 			}
-	    } catch (CModelException e) {
-	    }
+		} catch (CModelException e) {
+		}
 		return null;
 	}
 
@@ -473,7 +474,7 @@ public class CProject extends Openable implements ICProject {
 			if (element instanceof ISourceRoot) {
 				result.add((ISourceRoot) element);
 			}
-        }
+		}
 		return result.toArray(new ISourceRoot[result.size()]);
 	}
 
@@ -522,7 +523,7 @@ public class CProject extends Openable implements ICProject {
 	public IOutputEntry[] getOutputEntries(IPathEntry[] entries) throws CModelException {
 		ArrayList<IPathEntry> list = new ArrayList<>(entries.length);
 		for (IPathEntry entrie : entries) {
-			if (entrie.getEntryKind() == IPathEntry .CDT_OUTPUT) {
+			if (entrie.getEntryKind() == IPathEntry.CDT_OUTPUT) {
 				list.add(entrie);
 			}
 		}
@@ -530,7 +531,6 @@ public class CProject extends Openable implements ICProject {
 		list.toArray(outputs);
 		return outputs;
 	}
-
 
 	private boolean isParentOfOutputEntry(IResource resource) {
 		IPath path = resource.getFullPath();
@@ -586,9 +586,8 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm,
-			Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
-			throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
+			IResource underlyingResource) throws CModelException {
 		boolean validInfo = false;
 		try {
 			IResource res = getResource();
@@ -667,8 +666,8 @@ public class CProject extends Openable implements ICProject {
 
 		info.setChildren(children);
 		if (info instanceof CProjectInfo) {
-			CProjectInfo pinfo = (CProjectInfo)info;
-			pinfo.sourceRoots= sourceRoots.toArray(new ISourceRoot[sourceRoots.size()]);
+			CProjectInfo pinfo = (CProjectInfo) info;
+			pinfo.sourceRoots = sourceRoots.toArray(new ISourceRoot[sourceRoots.size()]);
 			pinfo.setNonCResources(null);
 		}
 		return true;
@@ -721,7 +720,7 @@ public class CProject extends Openable implements ICProject {
 	protected void closing(Object info) throws CModelException {
 		if (info instanceof CProjectInfo) {
 			CModelManager.getDefault().removeBinaryRunner(this);
-			CProjectInfo pinfo = (CProjectInfo)info;
+			CProjectInfo pinfo = (CProjectInfo) info;
 			if (pinfo.vBin != null) {
 				pinfo.vBin.close();
 			}
@@ -753,14 +752,14 @@ public class CProject extends Openable implements ICProject {
 				token = memento.nextToken();
 				char firstChar = token.charAt(0);
 				if (firstChar != CEM_SOURCEFOLDER && firstChar != CEM_TRANSLATIONUNIT) {
-					rootPath= rootPath.append(token);
-					token= null;
+					rootPath = rootPath.append(token);
+					token = null;
 				} else {
 					break;
 				}
 			}
 			if (!rootPath.isAbsolute()) {
-				rootPath= getProject().getFullPath().append(rootPath);
+				rootPath = getProject().getFullPath().append(rootPath);
 			}
 			CElement root = (CElement) findSourceRoot(rootPath);
 			if (root != null) {
@@ -775,25 +774,25 @@ public class CProject extends Openable implements ICProject {
 			if (!memento.hasMoreTokens())
 				return this;
 			String tuName = memento.nextToken();
-			final IPath path= Path.fromPortableString(tuName);
-			CElement tu= null;
+			final IPath path = Path.fromPortableString(tuName);
+			CElement tu = null;
 			if (!path.isAbsolute()) {
-				final IProject project= getProject();
+				final IProject project = getProject();
 				if (project != null) {
-					IResource resource= project.findMember(path);
+					IResource resource = project.findMember(path);
 					if (resource != null && resource.getType() == IResource.FILE) {
-						final IFile file= (IFile) resource;
-						tu= (CElement) CModelManager.getDefault().create(file, this);
+						final IFile file = (IFile) resource;
+						tu = (CElement) CModelManager.getDefault().create(file, this);
 						if (tu == null) {
-							String contentTypeId= CoreModel.getRegistedContentTypeId(project, file.getName());
+							String contentTypeId = CoreModel.getRegistedContentTypeId(project, file.getName());
 							if (contentTypeId != null) {
-								tu= new TranslationUnit(this, file, contentTypeId);
+								tu = new TranslationUnit(this, file, contentTypeId);
 							}
 						}
 					}
 				}
 			} else {
-				tu= (CElement) CoreModel.getDefault().createTranslationUnitFrom(this, path);
+				tu = (CElement) CoreModel.getDefault().createTranslationUnitFrom(this, path);
 			}
 			if (tu != null) {
 				return tu.getHandleFromMemento(memento);

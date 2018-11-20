@@ -28,7 +28,7 @@ public interface ICASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier, ICAST
 	 */
 	@Override
 	public ICASTSimpleDeclSpecifier copy();
-	
+
 	/**
 	 * @since 5.3
 	 */

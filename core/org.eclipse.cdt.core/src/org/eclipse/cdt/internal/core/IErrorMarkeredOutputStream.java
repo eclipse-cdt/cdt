@@ -24,13 +24,13 @@ import org.eclipse.cdt.core.ProblemMarkerInfo;
  * @since 5.2 
  */
 public interface IErrorMarkeredOutputStream {
-	
+
 	public void write(String s, ProblemMarkerInfo marker) throws IOException;
-	
+
 	public void write(byte[] b, int offset, int len) throws IOException;
-	
+
 	public void flush() throws IOException;
-	
+
 	public void close() throws IOException;
 
 }

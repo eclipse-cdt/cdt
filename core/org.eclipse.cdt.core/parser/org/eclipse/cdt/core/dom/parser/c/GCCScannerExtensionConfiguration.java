@@ -29,9 +29,9 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
 	private static final int VERSION_4_2 = version(4, 2);
 	private static final int VERSION_4_7 = version(4, 7);
-	private static GCCScannerExtensionConfiguration CONFIG= new GCCScannerExtensionConfiguration();
-	private static GCCScannerExtensionConfiguration CONFIG_4_2= new GCCScannerExtensionConfiguration(VERSION_4_2);
-	private static GCCScannerExtensionConfiguration CONFIG_4_7= new GCCScannerExtensionConfiguration(VERSION_4_7);
+	private static GCCScannerExtensionConfiguration CONFIG = new GCCScannerExtensionConfiguration();
+	private static GCCScannerExtensionConfiguration CONFIG_4_2 = new GCCScannerExtensionConfiguration(VERSION_4_2);
+	private static GCCScannerExtensionConfiguration CONFIG_4_7 = new GCCScannerExtensionConfiguration(VERSION_4_7);
 
 	/**
 	 * @since 5.1
@@ -47,9 +47,9 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		if (info != null) {
 			try {
 				final Map<String, String> definedSymbols = info.getDefinedSymbols();
-				int major= Integer.valueOf(definedSymbols.get("__GNUC__")); //$NON-NLS-1$
-				int minor= Integer.valueOf(definedSymbols.get("__GNUC_MINOR__")); //$NON-NLS-1$
-				int version= version(major, minor);
+				int major = Integer.valueOf(definedSymbols.get("__GNUC__")); //$NON-NLS-1$
+				int minor = Integer.valueOf(definedSymbols.get("__GNUC_MINOR__")); //$NON-NLS-1$
+				int version = version(major, minor);
 				if (version >= VERSION_4_7) {
 					return CONFIG_4_7;
 				}
@@ -72,7 +72,7 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	 */
 	@SuppressWarnings("nls")
 	public GCCScannerExtensionConfiguration(int version) {
-		addMacro("__null", "(void *)0");  
+		addMacro("__null", "(void *)0");
 		addMacro("__builtin_offsetof(T,m)", "((size_t) &((T *)0)->m)");
 
 		if (version >= VERSION_4_2) {
@@ -86,8 +86,8 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		}
 	}
 
-    @Override
+	@Override
 	public boolean supportMinAndMaxOperators() {
-        return false;
-    }
+		return false;
+	}
 }

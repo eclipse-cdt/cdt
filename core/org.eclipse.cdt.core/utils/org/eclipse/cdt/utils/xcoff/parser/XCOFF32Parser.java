@@ -56,27 +56,27 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 					// continue, the array was to small.
 				}
 			}
-			
+
 			//Take a second run at it if the data array failed.
 			if (attribute == null) {
 				attribute = XCoff32.getAttributes(path.toOSString());
 			}
-			
+
 			if (attribute != null) {
 				switch (attribute.getType()) {
-				case XCoff32.Attribute.XCOFF_TYPE_EXE :
+				case XCoff32.Attribute.XCOFF_TYPE_EXE:
 					binary = createBinaryExecutable(path);
 					break;
-					
-				case XCoff32.Attribute.XCOFF_TYPE_SHLIB :
+
+				case XCoff32.Attribute.XCOFF_TYPE_SHLIB:
 					binary = createBinaryShared(path);
 					break;
-					
-				case XCoff32.Attribute.XCOFF_TYPE_OBJ :
+
+				case XCoff32.Attribute.XCOFF_TYPE_OBJ:
 					binary = createBinaryObject(path);
 					break;
-					
-				case XCoff32.Attribute.XCOFF_TYPE_CORE :
+
+				case XCoff32.Attribute.XCOFF_TYPE_CORE:
 					binary = createBinaryCore(path);
 					break;
 				}

@@ -26,7 +26,7 @@ package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
 public enum CNamespace {
 
 	GOTO_LABEL, // goto labels
-	STRUCT_TAG,// structs, unions, enums
+	STRUCT_TAG, // structs, unions, enums
 	IDENTIFIER; // all other identifiers
 
 }

@@ -21,15 +21,15 @@ import org.eclipse.core.runtime.CoreException;
 public interface IModificationContext {
 	public static final int CFG_DATA_SETTINGS_UNMODIFIED = 1;
 	public static final int CFG_DATA_STORAGE_UNMODIFIED = 1 << 1;
-	
+
 	IProject getProject();
-	
+
 	IProjectDescription getEclipseProjectDescription() throws CoreException;
 
 	void setEclipseProjectDescription(IProjectDescription eDes) throws CoreException;
 
 	void addWorkspaceRunnable(IWorkspaceRunnable runnable);
-	
+
 	/**
 	 * the CConfigurationDataProvider can call this method to indicate the
 	 * CConfigurationData settings state.

@@ -114,20 +114,18 @@ public class Bug246129 extends IndexTestBase {
 			// source files if index-all-files is turned off.
 			IPathEntry[] entries = new IPathEntry[] {
 					CoreModel.newIncludeEntry(fProject.getPath(), null, fWrapperIncludeFolder.getLocation()),
-					CoreModel.newIncludeEntry(fProject.getPath(), null,	fIncludeFolder.getLocation()) };
+					CoreModel.newIncludeEntry(fProject.getPath(), null, fIncludeFolder.getLocation()) };
 
 			fProject.setRawPathEntries(entries, npm());
 
 			// However, the scanner info provider used by the unit tests
 			// needs separate setup, and this one must be complete.
-			TestScannerProvider.sIncludes = new String[] {
-					fWrapperIncludeFolder.getLocation().toOSString(),
-					fIncludeFolder.getLocation().toOSString(),
-					fExternalWrapperIncludeFolder.getAbsolutePath(),
+			TestScannerProvider.sIncludes = new String[] { fWrapperIncludeFolder.getLocation().toOSString(),
+					fIncludeFolder.getLocation().toOSString(), fExternalWrapperIncludeFolder.getAbsolutePath(),
 					fExternalIncludeFolder.getAbsolutePath() };
 
-			IndexerPreferences.set(fProject.getProject(),
-					IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
+			IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG,
+					"false");
 
 			File falseFriendDirectory = new File(fWrapperIncludeFolder.getLocation().toOSString() + "/ext/..");
 
@@ -210,8 +208,7 @@ public class Bug246129 extends IndexTestBase {
 	}
 
 	public void testAst() throws Exception {
-		ITranslationUnit tu =
-				CoreModel.getDefault().createTranslationUnitFrom(fProject, fSource.getLocation());
+		ITranslationUnit tu = CoreModel.getDefault().createTranslationUnitFrom(fProject, fSource.getLocation());
 
 		IASTTranslationUnit ast = tu.getAST();
 

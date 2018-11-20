@@ -21,9 +21,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * @since 1.1
  * 
  */
-public class MIGDBSetNonStop extends MIGDBSet 
-{
-    public MIGDBSetNonStop(ICommandControlDMContext ctx, boolean isSet) {
-        super(ctx, new String[] {"non-stop", isSet ? "on" : "off"});//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-    }
+public class MIGDBSetNonStop extends MIGDBSet {
+	public MIGDBSetNonStop(ICommandControlDMContext ctx, boolean isSet) {
+		super(ctx, new String[] { "non-stop", isSet ? "on" : "off" });//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	}
 }

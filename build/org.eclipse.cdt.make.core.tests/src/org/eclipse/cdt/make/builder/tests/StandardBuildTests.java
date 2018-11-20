@@ -69,7 +69,8 @@ public class StandardBuildTests extends TestCase {
 	private void checkDefaultProjectSettings(IProject project) throws Exception {
 		assertNotNull(project);
 
-		IMakeBuilderInfo defaultInfo = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
+		IMakeBuilderInfo defaultInfo = MakeCorePlugin
+				.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
 
 		IMakeBuilderInfo builderInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
 		// Check the rest of the project information
@@ -127,11 +128,12 @@ public class StandardBuildTests extends TestCase {
 				if (!project.isOpen()) {
 					project.open(null);
 				}
-				CCorePlugin.getDefault().convertProjectToC(project, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
+				CCorePlugin.getDefault().convertProjectToC(project, new NullProgressMonitor(),
+						MakeCorePlugin.MAKE_PROJECT_ID);
 				result[0] = project;
 			}
 		}, null);
-		return (IProject)result[0];
+		return (IProject) result[0];
 	}
 
 	/**
@@ -189,7 +191,7 @@ public class StandardBuildTests extends TestCase {
 		try {
 			project.open(new NullProgressMonitor());
 		} catch (CoreException e) {
-			fail ("StandardBuildTest testProjectConversion failed to open project " + e.getLocalizedMessage());
+			fail("StandardBuildTest testProjectConversion failed to open project " + e.getLocalizedMessage());
 		}
 
 		// Make sure it has a CCNature
@@ -206,7 +208,7 @@ public class StandardBuildTests extends TestCase {
 	/**
 	 *
 	 */
-	public void testProjectCreation() throws Exception  {
+	public void testProjectCreation() throws Exception {
 		// Create a new project
 		IProject project = null;
 		try {
@@ -259,7 +261,7 @@ public class StandardBuildTests extends TestCase {
 		try {
 			project.open(new NullProgressMonitor());
 		} catch (CoreException e) {
-			fail ("StandardBuildTest testProjectSettings failed to open project " + e.getLocalizedMessage());
+			fail("StandardBuildTest testProjectSettings failed to open project " + e.getLocalizedMessage());
 		}
 
 		// Retest

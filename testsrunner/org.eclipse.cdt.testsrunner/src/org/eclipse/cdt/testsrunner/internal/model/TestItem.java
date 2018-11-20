@@ -26,11 +26,10 @@ public abstract class TestItem implements ITestItem {
 
 	/** Test item name. */
 	private final String name;
-	
+
 	/** Item parent test suite. May be <code>null</code> for root test suite. */
 	private TestSuite parent;
 
-	
 	public TestItem(String name, TestSuite parent) {
 		this.name = name;
 		this.parent = parent;

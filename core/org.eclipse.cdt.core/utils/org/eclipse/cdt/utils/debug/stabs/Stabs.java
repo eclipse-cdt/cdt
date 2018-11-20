@@ -119,7 +119,7 @@ public class Stabs {
 				stabstr = section.getRawData();
 			}
 		}
-		
+
 		Attribute att = exe.getAttribute();
 		if (data != null && stabstr != null) {
 			init(data, stabstr, att.isLittleEndian());
@@ -146,15 +146,11 @@ public class Stabs {
 
 	int read_4_bytes(byte[] bytes, int offset) {
 		if (isLe) {
-			return (((bytes[offset + 3] & 0xff) << 24)
-				| ((bytes[offset + 2] & 0xff) << 16)
-				| ((bytes[offset + 1] & 0xff) << 8)
-				| (bytes[offset] & 0xff));
+			return (((bytes[offset + 3] & 0xff) << 24) | ((bytes[offset + 2] & 0xff) << 16)
+					| ((bytes[offset + 1] & 0xff) << 8) | (bytes[offset] & 0xff));
 		}
-		return (((bytes[offset] & 0xff) << 24)
-			| ((bytes[offset + 1] & 0xff) << 16)
-			| ((bytes[offset + 2] & 0xff) << 8)
-			| (bytes[offset + 3] & 0xff));
+		return (((bytes[offset] & 0xff) << 24) | ((bytes[offset + 1] & 0xff) << 16) | ((bytes[offset + 2] & 0xff) << 8)
+				| (bytes[offset + 3] & 0xff));
 	}
 
 	short read_2_bytes(byte[] bytes, int offset) {
@@ -232,102 +228,102 @@ public class Stabs {
 	void parseStabEntry(IDebugEntryRequestor requestor, String field, int type, int other, short desc, long value) {
 		// Parse the string
 		switch (type) {
-			case StabConstant.N_GSYM :
-			case StabConstant.N_LSYM :
-			case StabConstant.N_PSYM :
-				//accept a new variable
-				parseStabString(requestor, field, value);
-				break;
+		case StabConstant.N_GSYM:
+		case StabConstant.N_LSYM:
+		case StabConstant.N_PSYM:
+			//accept a new variable
+			parseStabString(requestor, field, value);
+			break;
 
-			case StabConstant.N_SLINE :
-				// New statement line
-				requestor.acceptStatement(desc, value);
-				break;
+		case StabConstant.N_SLINE:
+			// New statement line
+			requestor.acceptStatement(desc, value);
+			break;
 
-			case StabConstant.N_FUN :
-				if (inFunction) {
-					requestor.exitFunction(value);
-					inFunction = false;
-				}
-				// Start a new Function
-				if (field.length() == 0) {
-					field = " anon "; //$NON-NLS-1$
-				}
-				inFunction = true;
-				parseStabString(requestor, field, value);
-				break;
+		case StabConstant.N_FUN:
+			if (inFunction) {
+				requestor.exitFunction(value);
+				inFunction = false;
+			}
+			// Start a new Function
+			if (field.length() == 0) {
+				field = " anon "; //$NON-NLS-1$
+			}
+			inFunction = true;
+			parseStabString(requestor, field, value);
+			break;
 
-			case StabConstant.N_LBRAC :
-				if (inFunction) {
-					requestor.enterCodeBlock(value);
-				}
-				bracket++;
-				break;
+		case StabConstant.N_LBRAC:
+			if (inFunction) {
+				requestor.enterCodeBlock(value);
+			}
+			bracket++;
+			break;
 
-			case StabConstant.N_RBRAC :
-				requestor.exitCodeBlock(value);
-				bracket--;
-				break;
+		case StabConstant.N_RBRAC:
+			requestor.exitCodeBlock(value);
+			bracket--;
+			break;
 
-			case StabConstant.N_BINCL :
-				// Start of an include file
-				requestor.enterInclude(field);
-				inInclude = true;
-				break;
+		case StabConstant.N_BINCL:
+			// Start of an include file
+			requestor.enterInclude(field);
+			inInclude = true;
+			break;
 
-			case StabConstant.N_EINCL :
-				// end of the include
+		case StabConstant.N_EINCL:
+			// end of the include
+			requestor.exitInclude();
+			inInclude = false;
+			break;
+
+		case StabConstant.N_SOL:
+			// if we had an include it means the end.
+			if (inInclude) {
 				requestor.exitInclude();
 				inInclude = false;
-				break;
+			}
+			// Start of an include file
+			requestor.enterInclude(field);
+			inInclude = true;
+			break;
 
-			case StabConstant.N_SOL :
-				// if we had an include it means the end.
-				if (inInclude) {
-					requestor.exitInclude();
-					inInclude = false;
-				}
-				// Start of an include file
-				requestor.enterInclude(field);
-				inInclude = true;
-				break;
+		case StabConstant.N_CATCH:
+			parseStabString(requestor, field, value);
+			break;
 
-			case StabConstant.N_CATCH :
-				parseStabString(requestor, field, value);
-				break;
-
-			case StabConstant.N_SO :
-				// if whitin a function
-				if (inFunction) {
-					requestor.exitFunction(-1);
-					inFunction = false;
-				}
-				if (inInclude) {
-					requestor.exitInclude();
-					inInclude = false;
-				}
-				if (inCompilationUnit) {
-					requestor.exitCompilationUnit(value);
-					inCompilationUnit = false;
+		case StabConstant.N_SO:
+			// if whitin a function
+			if (inFunction) {
+				requestor.exitFunction(-1);
+				inFunction = false;
+			}
+			if (inInclude) {
+				requestor.exitInclude();
+				inInclude = false;
+			}
+			if (inCompilationUnit) {
+				requestor.exitCompilationUnit(value);
+				inCompilationUnit = false;
+				currentFile = null;
+			}
+			if (field != null && field.length() > 0) {
+				// if it ends with "/" do not call the entering yet
+				// we have to concatenate the next one.
+				if (field.endsWith("/")) { //$NON-NLS-1$
+					currentFile = field;
+				} else {
+					if (currentFile != null) {
+						currentFile += field;
+					} else {
+						currentFile = field;
+					}
+					requestor.enterCompilationUnit(currentFile, value);
+					inCompilationUnit = true;
 					currentFile = null;
 				}
-				if (field != null && field.length() > 0) {
-					// if it ends with "/" do not call the entering yet
-					// we have to concatenate the next one.
-					if (field.endsWith("/")) { //$NON-NLS-1$
-						currentFile = field;
-					} else {
-						if (currentFile != null) {
-							currentFile += field;
-						} else {
-							currentFile = field;
-						}
-						requestor.enterCompilationUnit(currentFile, value);
-						inCompilationUnit = true;
-						currentFile = null;
-					}
-				}
-				break;
+			}
+			break;
 		}
 		//System.out.println(" " + i + "\t" + Stab.type2String(type) + "\t" +
 		// other + "\t\t" +
@@ -340,209 +336,195 @@ public class Stabs {
 		StringField sf = new StringField(field);
 
 		switch (sf.getSymbolDescriptor()) {
-			// C++ nested symbol.
-			case ':' :
-				break;
+		// C++ nested symbol.
+		case ':':
+			break;
 
-				// Parameter pass by reference in register.
-			case 'a' :
-				{
-					String information = sf.getTypeInformation();
-					String paramName = sf.getName();
-					DebugParameterKind paramKind = DebugParameterKind.REGISTER_REFERENCE;
-					DebugType paramType = parseStabType("", information); //$NON-NLS-1$
-					requestor.acceptParameter(paramName, paramType, paramKind, value);
-				}
-				break;
+		// Parameter pass by reference in register.
+		case 'a': {
+			String information = sf.getTypeInformation();
+			String paramName = sf.getName();
+			DebugParameterKind paramKind = DebugParameterKind.REGISTER_REFERENCE;
+			DebugType paramType = parseStabType("", information); //$NON-NLS-1$
+			requestor.acceptParameter(paramName, paramType, paramKind, value);
+		}
+			break;
 
-				// Sun Based variable
-			case 'b' :
-				break;
+		// Sun Based variable
+		case 'b':
+			break;
 
-				// symbol descriptor indicates that this stab represents a
-				// constant.
-			case 'c' :
-				{
-					String name = sf.getName();
-					String information = sf.getTypeInformation();
-					parseStabConstant(requestor, name, information, value);
-				}
-				break;
+		// symbol descriptor indicates that this stab represents a
+		// constant.
+		case 'c': {
+			String name = sf.getName();
+			String information = sf.getTypeInformation();
+			parseStabConstant(requestor, name, information, value);
+		}
+			break;
 
-				//  Conformant array bound(Pascal).
-				// Nave of a caught exception GNU C++
-			case 'C' :
-				{
-					String excName = sf.getName();
-					String information = sf.getTypeInformation();
-					DebugType excType = parseStabType("", information); //$NON-NLS-1$
-					requestor.acceptCaughtException(excName, excType, value);
-				}
-				break;
+		//  Conformant array bound(Pascal).
+		// Nave of a caught exception GNU C++
+		case 'C': {
+			String excName = sf.getName();
+			String information = sf.getTypeInformation();
+			DebugType excType = parseStabType("", information); //$NON-NLS-1$
+			requestor.acceptCaughtException(excName, excType, value);
+		}
+			break;
 
-				// File scope function.
-			case 'f' :
-				// Global function.
-			case 'F' :
-				{
-					String funcName = sf.getName();
-					String funcInfo = sf.getTypeInformation();
-					DebugType funcType = parseStabType("", funcInfo); //$NON-NLS-1$
-					boolean funcGlobal = sf.getSymbolDescriptor() == 'F';
-					requestor.enterFunction(funcName, funcType, funcGlobal, value);
-				}
-				break;
-				// Global variable
-			case 'G' :
-				{
-					String varName = sf.getName();
-					String varInfo = sf.getTypeInformation();
-					DebugVariableKind varKind = DebugVariableKind.GLOBAL;
-					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
-					requestor.acceptVariable(varName, varType, varKind, value);
-				}
-				break;
+		// File scope function.
+		case 'f':
+			// Global function.
+		case 'F': {
+			String funcName = sf.getName();
+			String funcInfo = sf.getTypeInformation();
+			DebugType funcType = parseStabType("", funcInfo); //$NON-NLS-1$
+			boolean funcGlobal = sf.getSymbolDescriptor() == 'F';
+			requestor.enterFunction(funcName, funcType, funcGlobal, value);
+		}
+			break;
+		// Global variable
+		case 'G': {
+			String varName = sf.getName();
+			String varInfo = sf.getTypeInformation();
+			DebugVariableKind varKind = DebugVariableKind.GLOBAL;
+			DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
+			requestor.acceptVariable(varName, varType, varKind, value);
+		}
+			break;
 
-				// ???
-			case 'i' :
-				break;
-				// Internal(nested) procedure.
-			case 'I' :
-				break;
-				// Internal/nested function.
-			case 'J' :
-				break;
-				// Label name
-			case 'L' :
-				break;
-				// Module
-			case 'm' :
-				break;
+		// ???
+		case 'i':
+			break;
+		// Internal(nested) procedure.
+		case 'I':
+			break;
+		// Internal/nested function.
+		case 'J':
+			break;
+		// Label name
+		case 'L':
+			break;
+		// Module
+		case 'm':
+			break;
 
-				// Argument list parameter
-			case 'p' :
-				{
-					String paramName = sf.getName();
-					String paramInfo = sf.getTypeInformation();
-					DebugParameterKind paramKind = DebugParameterKind.STACK;
-					DebugType paramType = parseStabType("", paramInfo); //$NON-NLS-1$
-					requestor.acceptParameter(paramName, paramType, paramKind, value);
-				}
-				break;
+		// Argument list parameter
+		case 'p': {
+			String paramName = sf.getName();
+			String paramInfo = sf.getTypeInformation();
+			DebugParameterKind paramKind = DebugParameterKind.STACK;
+			DebugType paramType = parseStabType("", paramInfo); //$NON-NLS-1$
+			requestor.acceptParameter(paramName, paramType, paramKind, value);
+		}
+			break;
 
-				// Paramater in floating point register.
-			case 'D' :
-				// register parameter or prototype f function referenced by the
-				// file.
-			case 'P' :
-				// Register Parameter
-			case 'R' :
-				{
-					String paramName = sf.getName();
-					String paramInfo = sf.getTypeInformation();
-					DebugParameterKind paramKind = DebugParameterKind.REGISTER;
-					DebugType paramType = parseStabType("", paramInfo); //$NON-NLS-1$
-					requestor.acceptParameter(paramName, paramType, paramKind, value);
-				}
-				break;
+		// Paramater in floating point register.
+		case 'D':
+			// register parameter or prototype f function referenced by the
+			// file.
+		case 'P':
+			// Register Parameter
+		case 'R': {
+			String paramName = sf.getName();
+			String paramInfo = sf.getTypeInformation();
+			DebugParameterKind paramKind = DebugParameterKind.REGISTER;
+			DebugType paramType = parseStabType("", paramInfo); //$NON-NLS-1$
+			requestor.acceptParameter(paramName, paramType, paramKind, value);
+		}
+			break;
 
-				// static procedure
-			case 'Q' :
-				break;
+		// static procedure
+		case 'Q':
+			break;
 
-				// Floating point register variable
-			case 'd' :
-				// Never use, according to the
-				// Register variable
-			case 'r' :
-				{
-					String varName = sf.getName();
-					String varInfo = sf.getTypeInformation();
-					DebugVariableKind varKind = DebugVariableKind.REGISTER;
-					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
-					requestor.acceptVariable(varName, varType, varKind, value);
-				}
-				break;
+		// Floating point register variable
+		case 'd':
+			// Never use, according to the
+			// Register variable
+		case 'r': {
+			String varName = sf.getName();
+			String varInfo = sf.getTypeInformation();
+			DebugVariableKind varKind = DebugVariableKind.REGISTER;
+			DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
+			requestor.acceptVariable(varName, varType, varKind, value);
+		}
+			break;
 
-				// File scope variable
-			case 'S' :
-				{
-					String varName = sf.getName();
-					String varInfo = sf.getTypeInformation();
-					DebugVariableKind varKind = DebugVariableKind.STATIC;
-					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
-					requestor.acceptVariable(varName, varType, varKind, value);
-				}
-				break;
+		// File scope variable
+		case 'S': {
+			String varName = sf.getName();
+			String varInfo = sf.getTypeInformation();
+			DebugVariableKind varKind = DebugVariableKind.STATIC;
+			DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
+			requestor.acceptVariable(varName, varType, varKind, value);
+		}
+			break;
 
-				// Type name
-			case 't' :
-				{
-					String name = sf.getName();
-					String infoField = sf.getTypeInformation();
-					DebugType type = parseStabType(name, infoField);
-					requestor.acceptTypeDef(name, type);
-				}
-				break;
+		// Type name
+		case 't': {
+			String name = sf.getName();
+			String infoField = sf.getTypeInformation();
+			DebugType type = parseStabType(name, infoField);
+			requestor.acceptTypeDef(name, type);
+		}
+			break;
 
-				// Enumeration, structure or union
-			case 'T' :
-				{
-					String infoField = sf.getTypeInformation();
-					// According to the doc 't' can follow the 'T'.  If so just
-					// strip the T and go again.
-					if (infoField.length() > 0 && infoField.charAt(0) == 't') {
-						String s = field.replaceFirst(":T", ":"); //$NON-NLS-1$ //$NON-NLS-2$
-						parseStabString(requestor, s, value);
-					} else {
-						// Just register the type.
-						String name = sf.getName();
-						parseStabType(name, infoField);
-					}
-				}
-				break;
+		// Enumeration, structure or union
+		case 'T': {
+			String infoField = sf.getTypeInformation();
+			// According to the doc 't' can follow the 'T'.  If so just
+			// strip the T and go again.
+			if (infoField.length() > 0 && infoField.charAt(0) == 't') {
+				String s = field.replaceFirst(":T", ":"); //$NON-NLS-1$ //$NON-NLS-2$
+				parseStabString(requestor, s, value);
+			} else {
+				// Just register the type.
+				String name = sf.getName();
+				parseStabType(name, infoField);
+			}
+		}
+			break;
 
-				// Parameter passed by reference.
-			case 'v' :
-				{
-					String paramName = sf.getName();
-					String paramInfo = sf.getTypeInformation();
-					DebugParameterKind paramKind = DebugParameterKind.REFERENCE;
-					DebugType paramType = parseStabType("", paramInfo); //$NON-NLS-1$
-					requestor.acceptParameter(paramName, paramType, paramKind, value);
-				}
-				break;
+		// Parameter passed by reference.
+		case 'v': {
+			String paramName = sf.getName();
+			String paramInfo = sf.getTypeInformation();
+			DebugParameterKind paramKind = DebugParameterKind.REFERENCE;
+			DebugType paramType = parseStabType("", paramInfo); //$NON-NLS-1$
+			requestor.acceptParameter(paramName, paramType, paramKind, value);
+		}
+			break;
 
-				// Procedure scope static variable
-			case 'V' :
-				{
-					String varName = sf.getName();
-					String varInfo = sf.getTypeInformation();
-					DebugVariableKind varKind = DebugVariableKind.LOCAL_STATIC;
-					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
-					requestor.acceptVariable(varName, varType, varKind, value);
-				}
-				break;
+		// Procedure scope static variable
+		case 'V': {
+			String varName = sf.getName();
+			String varInfo = sf.getTypeInformation();
+			DebugVariableKind varKind = DebugVariableKind.LOCAL_STATIC;
+			DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
+			requestor.acceptVariable(varName, varType, varKind, value);
+		}
+			break;
 
-				// Conformant array
-			case 'x' :
-				break;
+		// Conformant array
+		case 'x':
+			break;
 
-				// Function return variable
-			case 'X' :
-				// local variable
-			case 's' :
-				// Variable on the stack
-			case '-' :
-			default :
-				{
-					String varName = sf.getName();
-					String varInfo = sf.getTypeInformation();
-					DebugVariableKind varKind = DebugVariableKind.LOCAL;
-					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
-					requestor.acceptVariable(varName, varType, varKind, value);
-				}
-				break;
+		// Function return variable
+		case 'X':
+			// local variable
+		case 's':
+			// Variable on the stack
+		case '-':
+		default: {
+			String varName = sf.getName();
+			String varInfo = sf.getTypeInformation();
+			DebugVariableKind varKind = DebugVariableKind.LOCAL;
+			DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
+			requestor.acceptVariable(varName, varType, varKind, value);
+		}
+			break;
 		}
 	}
 
@@ -565,180 +547,176 @@ public class Stabs {
 		DebugType type = null;
 		switch (typeInfo.getTypeDescriptor()) {
 
-			// Method (C++)
-			case '#' :
-				break;
+		// Method (C++)
+		case '#':
+			break;
 
-				// Reference (C++)
-			case '&' :
-				{
-					DebugType subType = parseStabType("", reader); //$NON-NLS-1$
-					type = new DebugReferenceType(subType);
-				}
-				break;
+		// Reference (C++)
+		case '&': {
+			DebugType subType = parseStabType("", reader); //$NON-NLS-1$
+			type = new DebugReferenceType(subType);
+		}
+			break;
 
-				// Member (C++) class and variable
-			case '@' :
-				break;
+		// Member (C++) class and variable
+		case '@':
+			break;
 
-				// pointer type.
-			case '*' :
-				{
-					DebugType subType = parseStabType("", reader); //$NON-NLS-1$
-					type = new DebugPointerType(subType);
-				}
-				break;
+		// pointer type.
+		case '*': {
+			DebugType subType = parseStabType("", reader); //$NON-NLS-1$
+			type = new DebugPointerType(subType);
+		}
+			break;
 
-				// Builtin type define byt Sun stabs
-				// Pascal Type
-			case 'b' :
-				// Builtin floating type
-			case 'R' :
-				// Wide character
-			case 'w' :
-				// Builtin flaoting point type.
-			case 'g' :
-				// Complex buitin type.
-			case 'c' :
-				{
-					char desc = typeInfo.getTypeDescriptor();
-					type = parseStabBuiltinType(name, desc, reader);
-				}
-				break;
+		// Builtin type define byt Sun stabs
+		// Pascal Type
+		case 'b':
+			// Builtin floating type
+		case 'R':
+			// Wide character
+		case 'w':
+			// Builtin flaoting point type.
+		case 'g':
+			// Complex buitin type.
+		case 'c': {
+			char desc = typeInfo.getTypeDescriptor();
+			type = parseStabBuiltinType(name, desc, reader);
+		}
+			break;
 
-				// Array.
-			case 'a' :
-			case 'A' :
-				type = parseStabArrayType(name, reader);
-				break;
+		// Array.
+		case 'a':
+		case 'A':
+			type = parseStabArrayType(name, reader);
+			break;
 
-				// Volatile-qualified type
-			case 'B' :
-				break;
+		// Volatile-qualified type
+		case 'B':
+			break;
 
-				// Cobol
-			case 'C' :
-				break;
+		// Cobol
+		case 'C':
+			break;
 
-				// File type
-			case 'd' :
-				break;
+		// File type
+		case 'd':
+			break;
 
-				// N-dimensional dynamic array.
-			case 'D' :
-				break;
+		// N-dimensional dynamic array.
+		case 'D':
+			break;
 
-				// Enumeration type
-			case 'e' :
-				type = parseStabEnumType(name, reader);
-				break;
+		// Enumeration type
+		case 'e':
+			type = parseStabEnumType(name, reader);
+			break;
 
-				// N-dimensional subarray
-			case 'E' :
-				break;
+		// N-dimensional subarray
+		case 'E':
+			break;
 
-				// Function type
-			case 'f' :
-				{
-					DebugType subType = parseStabType("", reader); //$NON-NLS-1$
-					type = new DebugFunctionType(subType);
-				}
-				break;
+		// Function type
+		case 'f': {
+			DebugType subType = parseStabType("", reader); //$NON-NLS-1$
+			type = new DebugFunctionType(subType);
+		}
+			break;
 
-				// Pascal Function parameter
-			case 'F' :
-				break;
+		// Pascal Function parameter
+		case 'F':
+			break;
 
-				// COBOL Group
-			case 'G' :
-				break;
+		// COBOL Group
+		case 'G':
+			break;
 
-				// Imported type
-			case 'i' :
-				break;
+		// Imported type
+		case 'i':
+			break;
 
-				// Const-qualified type
-			case 'k' :
-				break;
+		// Const-qualified type
+		case 'k':
+			break;
 
-				// Cobol file desc.
-			case 'K' :
-				break;
+		// Cobol file desc.
+		case 'K':
+			break;
 
-				// Multiple instance type
-			case 'M' :
-				break;
+		// Multiple instance type
+		case 'M':
+			break;
 
-				// string type:
-			case 'n' :
-				break;
+		// string type:
+		case 'n':
+			break;
 
-				// Stringpt:
-			case 'N' :
-				break;
+		// Stringpt:
+		case 'N':
+			break;
 
-				// Opaque type
-			case 'o' :
-				break;
+		// Opaque type
+		case 'o':
+			break;
 
-				// Procedure
-			case 'p' :
-				break;
+		// Procedure
+		case 'p':
+			break;
 
-				// Packed array
-			case 'P' :
-				break;
+		// Packed array
+		case 'P':
+			break;
 
-				// Range. example:
-			case 'r' :
-				type = parseStabRangeType(name, typeInfo.getTypeNumber(), reader);
-				break;
+		// Range. example:
+		case 'r':
+			type = parseStabRangeType(name, typeInfo.getTypeNumber(), reader);
+			break;
 
-				// Structure type
-			case 's' :
-				type = parseStabStructType(name, typeInfo.getTypeNumber(), false, reader);
-				break;
+		// Structure type
+		case 's':
+			type = parseStabStructType(name, typeInfo.getTypeNumber(), false, reader);
+			break;
 
-				// Union
-			case 'u' :
-				type = parseStabStructType(name, typeInfo.getTypeNumber(), true, reader);
-				break;
+		// Union
+		case 'u':
+			type = parseStabStructType(name, typeInfo.getTypeNumber(), true, reader);
+			break;
 
-				// Set type
-			case 'S' :
-				break;
+		// Set type
+		case 'S':
+			break;
 
-				// variant record.
-			case 'v' :
-				break;
+		// variant record.
+		case 'v':
+			break;
 
-				// Cross-reference
-			case 'x' :
-				type = parseStabCrossRefType(name, reader);
-				break;
+		// Cross-reference
+		case 'x':
+			type = parseStabCrossRefType(name, reader);
+			break;
 
-				// ???
-			case 'Y' :
-				break;
+		// ???
+		case 'Y':
+			break;
 
-				// gstring
-			case 'z' :
-				break;
+		// gstring
+		case 'z':
+			break;
 
-				// Reference to a previously define type.
-			case '(' :
-			case '-' :
-			default :
-				if (typeInfo.isTypeDefinition()) {
-					type = parseStabType(name, typeInfo, reader);
+		// Reference to a previously define type.
+		case '(':
+		case '-':
+		default:
+			if (typeInfo.isTypeDefinition()) {
+				type = parseStabType(name, typeInfo, reader);
+			} else {
+				// check for void
+				if (oldType != null && oldType.getTypeNumber().equals(typeInfo.getTypeNumber())) {
+					type = voidType;
 				} else {
-					// check for void
-					if (oldType != null && oldType.getTypeNumber().equals(typeInfo.getTypeNumber())) {
-						type = voidType;
-					} else {
-						type = getDebugType(typeInfo.getTypeNumber());
-					}
+					type = getDebugType(typeInfo.getTypeNumber());
 				}
+			}
 		}
 
 		// register the type.
@@ -786,131 +764,127 @@ public class Stabs {
 	private DebugType parseStabBuiltinType(String name, char desc, Reader reader) throws IOException {
 		DebugType builtinType = null;
 		switch (desc) {
-			case 'b' :
-				{
-					// get the signed
-					int signed = reader.read();
-					reader.mark(1);
-					// get the flag
-					int charFlag = reader.read();
-					if (charFlag != 'c') {
-						reader.reset();
-					}
-					int c;
-					StringBuilder sb = new StringBuilder();
+		case 'b': {
+			// get the signed
+			int signed = reader.read();
+			reader.mark(1);
+			// get the flag
+			int charFlag = reader.read();
+			if (charFlag != 'c') {
+				reader.reset();
+			}
+			int c;
+			StringBuilder sb = new StringBuilder();
 
-					// get the width
-					//int width = 0;
-					while ((c = reader.read()) != -1) {
-						if (c == ';') {
-							break;
-						}
-						sb.append((char) c);
-					}
-					//try {
-					//	String token = sb.toString();
-					//	width = Integer.parseInt(token);
-					//} catch (NumberFormatException e) {
-					//}
-
-					sb.setLength(0);
-
-					// get the offset
-					//int offset = 0;
-					while ((c = reader.read()) != -1) {
-						if (c == ';') {
-							break;
-						}
-						sb.append((char) c);
-					}
-					//try {
-						//String token = sb.toString();
-						//offset = Integer.parseInt(token);
-					//} catch (NumberFormatException e) {
-					//}
-
-					sb.setLength(0);
-
-					// get the nbits
-					int nbits = 0;
-					while ((c = reader.read()) != -1) {
-						if (c == ';') {
-							break;
-						}
-						sb.append((char) c);
-					}
-					try {
-						String token = sb.toString();
-						nbits = Integer.parseInt(token);
-					} catch (NumberFormatException e) {
-					}
-					builtinType = new DebugBaseType(name, nbits / 8, signed == 'u');
+			// get the width
+			//int width = 0;
+			while ((c = reader.read()) != -1) {
+				if (c == ';') {
+					break;
 				}
-				break;
+				sb.append((char) c);
+			}
+			//try {
+			//	String token = sb.toString();
+			//	width = Integer.parseInt(token);
+			//} catch (NumberFormatException e) {
+			//}
 
-			case 'w' :
-				{
-					builtinType = new DebugBaseType(name, 8, false);
+			sb.setLength(0);
+
+			// get the offset
+			//int offset = 0;
+			while ((c = reader.read()) != -1) {
+				if (c == ';') {
+					break;
 				}
-				break;
+				sb.append((char) c);
+			}
+			//try {
+			//String token = sb.toString();
+			//offset = Integer.parseInt(token);
+			//} catch (NumberFormatException e) {
+			//}
 
-			case 'R' :
-				{
-					int c;
-					StringBuilder sb = new StringBuilder();
+			sb.setLength(0);
 
-					// get the fp-Type
-					//int fpType = 0;
-					while ((c = reader.read()) != -1) {
-						if (c == ';') {
-							break;
-						}
-						sb.append((char) c);
-					}
-					//try {
-					//	String token = sb.toString();
-						//fpType = Integer.parseInt(token);
-					//} catch (NumberFormatException e) {
-					//}
-
-					sb.setLength(0);
-
-					// get the bytes
-					int bytes = 0;
-					while ((c = reader.read()) != -1) {
-						if (c == ';') {
-							break;
-						}
-						sb.append((char) c);
-					}
-					try {
-						String token = sb.toString();
-						bytes = Integer.parseInt(token);
-					} catch (NumberFormatException e) {
-					}
-					builtinType = new DebugBaseType(name, bytes, false);
+			// get the nbits
+			int nbits = 0;
+			while ((c = reader.read()) != -1) {
+				if (c == ';') {
+					break;
 				}
-				break;
+				sb.append((char) c);
+			}
+			try {
+				String token = sb.toString();
+				nbits = Integer.parseInt(token);
+			} catch (NumberFormatException e) {
+			}
+			builtinType = new DebugBaseType(name, nbits / 8, signed == 'u');
+		}
+			break;
 
-			case 'c' :
-			case 'g' :
-				{
-					//DebugType type = parseStabType(name, reader);
-					parseStabType(name, reader);
-					int c = reader.read(); // semicolon
-					StringBuilder sb = new StringBuilder();
-					int nbits = 0;
-					while ((c = reader.read()) != -1) {
-						sb.append((char) c);
-					}
-					try {
-						String token = sb.toString();
-						nbits = Integer.parseInt(token);
-					} catch (NumberFormatException e) {
-					}
-					builtinType = new DebugBaseType(name, nbits / 8, false);
+		case 'w': {
+			builtinType = new DebugBaseType(name, 8, false);
+		}
+			break;
+
+		case 'R': {
+			int c;
+			StringBuilder sb = new StringBuilder();
+
+			// get the fp-Type
+			//int fpType = 0;
+			while ((c = reader.read()) != -1) {
+				if (c == ';') {
+					break;
 				}
-				break;
+				sb.append((char) c);
+			}
+			//try {
+			//	String token = sb.toString();
+			//fpType = Integer.parseInt(token);
+			//} catch (NumberFormatException e) {
+			//}
+
+			sb.setLength(0);
+
+			// get the bytes
+			int bytes = 0;
+			while ((c = reader.read()) != -1) {
+				if (c == ';') {
+					break;
+				}
+				sb.append((char) c);
+			}
+			try {
+				String token = sb.toString();
+				bytes = Integer.parseInt(token);
+			} catch (NumberFormatException e) {
+			}
+			builtinType = new DebugBaseType(name, bytes, false);
+		}
+			break;
+
+		case 'c':
+		case 'g': {
+			//DebugType type = parseStabType(name, reader);
+			parseStabType(name, reader);
+			int c = reader.read(); // semicolon
+			StringBuilder sb = new StringBuilder();
+			int nbits = 0;
+			while ((c = reader.read()) != -1) {
+				sb.append((char) c);
+			}
+			try {
+				String token = sb.toString();
+				nbits = Integer.parseInt(token);
+			} catch (NumberFormatException e) {
+			}
+			builtinType = new DebugBaseType(name, nbits / 8, false);
+		}
+			break;
 
 		}
 		return builtinType;
@@ -1255,111 +1229,108 @@ public class Stabs {
 		if (c == '=') {
 			c = reader.read();
 			switch (c) {
-				// Boolean constant.
-				// c=bvalue or c=bvalue
-				// value is a numeric value: 0 fo false and 1 for true.
-				// Not supported by GDB.
-				case 'b' :
-					break;
+			// Boolean constant.
+			// c=bvalue or c=bvalue
+			// value is a numeric value: 0 fo false and 1 for true.
+			// Not supported by GDB.
+			case 'b':
+				break;
 
-					// Character constant.
-					// c=cvalue
-					// value is the numeric value of the constant.
-					// Not supported by GDB.
-				case 'c' :
-					break;
+			// Character constant.
+			// c=cvalue
+			// value is the numeric value of the constant.
+			// Not supported by GDB.
+			case 'c':
+				break;
 
-					// Constant whose value van be represented as integral.
-					// c=e type-information, value
-					// type-information is the type of the constant.
-					// value is the numeric value of the constant.
-					// This is usually use for enumeration constants.
-				case 'e' :
-					{
-						int val = 0;
-						DebugType type = parseStabType("", reader); //$NON-NLS-1$
-						c = reader.read();
-						if (c == ',') {
-							StringBuilder sb = new StringBuilder();
-							while ((c = reader.read()) != -1) {
-								sb.append((char) c);
-							}
-							try {
-								String s = sb.toString();
-								val = Integer.decode(s).intValue();
-							} catch (NumberFormatException e) {
-							}
-						}
-						requestor.acceptTypeConst(name, type, val);
+			// Constant whose value van be represented as integral.
+			// c=e type-information, value
+			// type-information is the type of the constant.
+			// value is the numeric value of the constant.
+			// This is usually use for enumeration constants.
+			case 'e': {
+				int val = 0;
+				DebugType type = parseStabType("", reader); //$NON-NLS-1$
+				c = reader.read();
+				if (c == ',') {
+					StringBuilder sb = new StringBuilder();
+					while ((c = reader.read()) != -1) {
+						sb.append((char) c);
 					}
-					break;
-
-					// Integer constant.
-					// c=ivalue
-					// value is the numeric value;
-				case 'i' :
-					{
-						int val = 0;
-						StringBuilder sb = new StringBuilder();
-						while ((c = reader.read()) != -1) {
-							sb.append((char) c);
-						}
-						try {
-							String s = sb.toString();
-							val = Integer.decode(s).intValue();
-						} catch (NumberFormatException e) {
-						} catch (IndexOutOfBoundsException e) {
-						}
-						requestor.acceptIntegerConst(name, val);
+					try {
+						String s = sb.toString();
+						val = Integer.decode(s).intValue();
+					} catch (NumberFormatException e) {
 					}
-					break;
+				}
+				requestor.acceptTypeConst(name, type, val);
+			}
+				break;
 
-					// Real constant.
-					// c=rvalue
-					// value is the real value, which can be INF or QNAN or SNAN
-					// preceded
-					// by a sign.
-				case 'r' :
-					{
-						double val = 0;
-						StringBuilder sb = new StringBuilder();
-						while ((c = reader.read()) != -1) {
-							sb.append((char) c);
-						}
-						try {
-							String s = sb.toString();
-							if (s.equals("-INF")) { //$NON-NLS-1$
-								val = Double.NEGATIVE_INFINITY;
-							} else if (s.equals("INF")) { //$NON-NLS-1$
-								val = Double.POSITIVE_INFINITY;
-							} else if (s.equals("QNAN")) { //$NON-NLS-1$
-								val = Double.NaN;
-							} else if (s.equals("SNAN")) { //$NON-NLS-1$
-								val = Double.NaN;
-							} else {
-								val = Double.parseDouble(s);
-							}
-						} catch (NumberFormatException e) {
-						} catch (IndexOutOfBoundsException e) {
-						}
-						requestor.acceptFloatConst(name, val);
+			// Integer constant.
+			// c=ivalue
+			// value is the numeric value;
+			case 'i': {
+				int val = 0;
+				StringBuilder sb = new StringBuilder();
+				while ((c = reader.read()) != -1) {
+					sb.append((char) c);
+				}
+				try {
+					String s = sb.toString();
+					val = Integer.decode(s).intValue();
+				} catch (NumberFormatException e) {
+				} catch (IndexOutOfBoundsException e) {
+				}
+				requestor.acceptIntegerConst(name, val);
+			}
+				break;
+
+			// Real constant.
+			// c=rvalue
+			// value is the real value, which can be INF or QNAN or SNAN
+			// preceded
+			// by a sign.
+			case 'r': {
+				double val = 0;
+				StringBuilder sb = new StringBuilder();
+				while ((c = reader.read()) != -1) {
+					sb.append((char) c);
+				}
+				try {
+					String s = sb.toString();
+					if (s.equals("-INF")) { //$NON-NLS-1$
+						val = Double.NEGATIVE_INFINITY;
+					} else if (s.equals("INF")) { //$NON-NLS-1$
+						val = Double.POSITIVE_INFINITY;
+					} else if (s.equals("QNAN")) { //$NON-NLS-1$
+						val = Double.NaN;
+					} else if (s.equals("SNAN")) { //$NON-NLS-1$
+						val = Double.NaN;
+					} else {
+						val = Double.parseDouble(s);
 					}
-					break;
+				} catch (NumberFormatException e) {
+				} catch (IndexOutOfBoundsException e) {
+				}
+				requestor.acceptFloatConst(name, val);
+			}
+				break;
 
-					// String constant.
-					// c=svalue
-					// value is a strinc encosed in either ' in which case ' are
-					// escaped or
-					// " in which case " are escaped.
-					// Not supported by GDB.
-				case 's' :
-					break;
+			// String constant.
+			// c=svalue
+			// value is a strinc encosed in either ' in which case ' are
+			// escaped or
+			// " in which case " are escaped.
+			// Not supported by GDB.
+			case 's':
+				break;
 
-					// Set constant.
-					// C/C++ does not have set
-					// Not supported by GDB.
-				case 'S' :
-					break;
+			// Set constant.
+			// C/C++ does not have set
+			// Not supported by GDB.
+			case 'S':
+				break;
 			}
 		}
 	}
@@ -1370,7 +1341,7 @@ public class Stabs {
 
 	public static void main(String[] args) {
 		try {
-			DebugSymsRequestor symreq = new DebugSymsRequestor();				
+			DebugSymsRequestor symreq = new DebugSymsRequestor();
 			Stabs stabs = new Stabs(args[0]);
 			stabs.parse(symreq);
 			DebugSym[] entries = symreq.getEntries();

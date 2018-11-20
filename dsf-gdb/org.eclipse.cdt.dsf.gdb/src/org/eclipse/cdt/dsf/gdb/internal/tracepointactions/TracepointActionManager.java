@@ -40,17 +40,17 @@ import org.xml.sax.helpers.DefaultHandler;
 public class TracepointActionManager {
 
 	private static final String TRACEPOINT_ACTION_DATA = "TracepointActionManager.actionData"; //$NON-NLS-1$
-    private static final TracepointActionManager fTracepointActionManager = new TracepointActionManager();
-    
-    // We need a delimiter that the user won't type directly.
-    // Bug 346215
-    public static final String TRACEPOINT_ACTION_DELIMITER = "%_#"; //$NON-NLS-1$
-    
+	private static final TracepointActionManager fTracepointActionManager = new TracepointActionManager();
+
+	// We need a delimiter that the user won't type directly.
+	// Bug 346215
+	public static final String TRACEPOINT_ACTION_DELIMITER = "%_#"; //$NON-NLS-1$
+
 	private ArrayList<ITracepointAction> tracepointActions = null;
 
 	private TracepointActionManager() {
 	}
-	
+
 	public static TracepointActionManager getInstance() {
 		return fTracepointActionManager;
 	}
@@ -114,7 +114,7 @@ public class TracepointActionManager {
 						if (className == null)
 							throw new Exception();
 
-						ITracepointAction action = (ITracepointAction)Class.forName(className).newInstance();
+						ITracepointAction action = (ITracepointAction) Class.forName(className).newInstance();
 						action.setName(name);
 						action.initializeFromMemento(value);
 						addAction(action);

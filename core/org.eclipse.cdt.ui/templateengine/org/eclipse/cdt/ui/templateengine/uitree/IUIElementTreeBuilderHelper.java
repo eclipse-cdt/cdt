@@ -27,8 +27,8 @@ public interface IUIElementTreeBuilderHelper {
 	 * Returns the UIElement.
 	 * @param element
 	 * @return UIElement
-     * 
-     * @since 4.0
+	 * 
+	 * @since 4.0
 	 */
 	public UIElement getUIElement(Element element);
 }

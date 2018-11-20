@@ -21,7 +21,7 @@ public class UPCDOMPreprocessorInformationTest extends LRDOMPreprocessorInformat
 
 	@Override
 	protected ILanguage getCLanguage() {
-    	return UPCLanguage.getDefault();
-    }
+		return UPCLanguage.getDefault();
+	}
 
 }

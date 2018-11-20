@@ -68,8 +68,7 @@ public class NM {
 
 	private void parseOutput(InputStream stream) throws IOException {
 
-		BufferedReader reader = new BufferedReader(
-				new InputStreamReader(stream));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		String line;
 
 		// See matcher.java for regular expression string data definitions.
@@ -92,7 +91,7 @@ public class NM {
 					String name = normal_matcher.group(3);
 					long address = Long.parseLong(normal_matcher.group(1), 16);
 					AddressNamePair val = new AddressNamePair(name, address);
-					
+
 					switch (type) {
 					case 'T':
 					case 't':
@@ -118,11 +117,11 @@ public class NM {
 	}
 
 	public NM(String file, boolean dynamic_only) throws IOException {
-		this ("nm", file, dynamic_only); //$NON-NLS-1$
+		this("nm", file, dynamic_only); //$NON-NLS-1$
 	}
 
 	public NM(String command, String file, boolean dynamic_only) throws IOException {
-		this(command, (dynamic_only) ? new String[] {"-C", "-D"}: null, file); //$NON-NLS-1$ //$NON-NLS-2$
+		this(command, (dynamic_only) ? new String[] { "-C", "-D" } : null, file); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public NM(String command, String param, String file) throws IOException {
@@ -139,16 +138,16 @@ public class NM {
 	public NM(String command, String[] params, String file) throws IOException {
 		init(command, params, file);
 	}
-	
+
 	protected void init(String command, String[] params, String file) throws IOException {
 		String[] args = null;
 		if (params == null || params.length == 0) {
-			args = new String[] {command, "-C", file}; //$NON-NLS-1$
+			args = new String[] { command, "-C", file }; //$NON-NLS-1$
 		} else {
 			args = new String[params.length + 2];
 			args[0] = command;
 			System.arraycopy(params, 0, args, 1, params.length);
-			args[params.length+1] = file;
+			args[params.length + 1] = file;
 		}
 
 		undef_symbols = new ArrayList<String>();
@@ -171,7 +170,7 @@ public class NM {
 	public AddressNamePair[] getDataSymbols() {
 		return data_symbols.toArray(new AddressNamePair[0]);
 	}
-	
+
 	public AddressNamePair[] getBSSSymbols() {
 		return bss_symbols.toArray(new AddressNamePair[0]);
 	}

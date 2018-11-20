@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
-
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -53,7 +52,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	private static final String DEFAULT_SEPARATOR = ";"; //$NON-NLS-1$
 
 	//values
-//	private String[] values = null;
+	//	private String[] values = null;
 
 	/**
 	 * Creates a file list control field editor.
@@ -62,11 +61,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * @param parent the parent of the field editor's control
 	 * @param type the browseType of the file list control
 	 */
-	public FileListControlFieldEditor(
-		String name,
-		String labelText,
-		Composite parent,
-		int type) {
+	public FileListControlFieldEditor(String name, String labelText, Composite parent, int type) {
 		super(name, labelText, parent);
 		browseType = type;
 		// Set the browse strategy for the list editor
@@ -82,17 +77,13 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * @param parent the parent of the field editor's control
 	 * @param type the browseType of the file list control
 	 */
-	public FileListControlFieldEditor(
-		String name,
-		String labelText,
-		String tooltip,
-		String contextId,
-		Composite parent,
-		int type) {
+	public FileListControlFieldEditor(String name, String labelText, String tooltip, String contextId, Composite parent,
+			int type) {
 		this(name, labelText, parent, type);
 		// can't use setToolTip(tooltip) as label not created yet
 		getLabelControl(parent).setToolTipText(tooltip);
-		if (!contextId.isEmpty()) PlatformUI.getWorkbench().getHelpSystem().setHelp(list.getListControl(), contextId);
+		if (!contextId.isEmpty())
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(list.getListControl(), contextId);
 	}
 
 	/**
@@ -134,15 +125,10 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * @param value the field editor's value
 	 * @param type the browseType of the file list control
 	 */
-	public FileListControlFieldEditor(
-		String name,
-		String labelText,
-		Composite parent,
-		String value,
-		int type) {
+	public FileListControlFieldEditor(String name, String labelText, Composite parent, String value, int type) {
 		this(name, labelText, parent, type);
 		browseType = type;
-//		this.values = parseString(value);
+		//		this.values = parseString(value);
 	}
 
 	/**
@@ -182,23 +168,20 @@ public class FileListControlFieldEditor extends FieldEditor {
 		topLayout.setLayoutData(gddata);
 		// file list control
 		list = new FileListControl(topLayout, getLabelText(), getType(), false);
-		list.addChangeListener(new IFileListChangeListener(){
+		list.addChangeListener(new IFileListChangeListener() {
 
 			@Override
 			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
-				handleFileListChange(fileList,oldValue,newValue);
+				handleFileListChange(fileList, oldValue, newValue);
 			}
 
 		});
 		topLayout.setLayout(layout);
 	}
 
-	private void handleFileListChange(FileListControl fileList, String oldValue[], String newValue[]){
-//		values = fileList.getItems();
-		fireValueChanged(
-				VALUE,
-				createList(oldValue),
-				createList(newValue));
+	private void handleFileListChange(FileListControl fileList, String oldValue[], String newValue[]) {
+		//		values = fileList.getItems();
+		fireValueChanged(VALUE, createList(oldValue), createList(newValue));
 	}
 
 	/**
@@ -230,21 +213,19 @@ public class FileListControlFieldEditor extends FieldEditor {
 				list.setSelection(0);
 				// Set the resource the editor works for
 				if (store instanceof ToolSettingsPrefStore) {
-					IConfiguration config = ((ToolSettingsPrefStore)store).getSelectedConfig();
+					IConfiguration config = ((ToolSettingsPrefStore) store).getSelectedConfig();
 					if (config != null) {
 						IResource project = config.getOwner();
 						if (project != null) {
 							/* Enable workspace support for list and set project */
 							list.setWorkspaceSupport(true);
-							if (store instanceof ToolSettingsPrefStore){
-								ToolSettingsPrefStore btsStore = ((ToolSettingsPrefStore)store);
+							if (store instanceof ToolSettingsPrefStore) {
+								ToolSettingsPrefStore btsStore = ((ToolSettingsPrefStore) store);
 								Object[] option = btsStore.getOption(getPreferenceName());
-								if(option != null){
-									list.setContext(
-											btsStore.obtainMacroProvider().getMacroContextInfo(
-													IBuildMacroProvider.CONTEXT_OPTION,
-													new OptionContextData((IOption)option[1],
-															(IHoldsOptions)option[0])));
+								if (option != null) {
+									list.setContext(btsStore.obtainMacroProvider().getMacroContextInfo(
+											IBuildMacroProvider.CONTEXT_OPTION,
+											new OptionContextData((IOption) option[1], (IHoldsOptions) option[0])));
 								}
 							}
 						}
@@ -262,8 +243,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	protected void doLoadDefault() {
 		if (list != null) {
 			list.removeAll();
-			String s =
-				getPreferenceStore().getDefaultString(getPreferenceName());
+			String s = getPreferenceStore().getDefaultString(getPreferenceName());
 			String[] array = parseString(s);
 			list.setList(array);
 			list.selectionChanged();
@@ -280,7 +260,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 			getPreferenceStore().setValue(getPreferenceName(), s);
 	}
 
-	public String[] getStringListValue(){
+	public String[] getStringListValue() {
 		return list.getItems();
 	}
 
@@ -319,11 +299,10 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * @return
 	 */
 	private String[] parseString(String stringList) {
-		StringTokenizer tokenizer =
-			new StringTokenizer(stringList, DEFAULT_SEPARATOR);
+		StringTokenizer tokenizer = new StringTokenizer(stringList, DEFAULT_SEPARATOR);
 		ArrayList<String> list = new ArrayList<String>();
 		while (tokenizer.hasMoreElements()) {
-			list.add((String)tokenizer.nextElement());
+			list.add((String) tokenizer.nextElement());
 		}
 		return list.toArray(new String[list.size()]);
 	}
@@ -332,7 +311,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * Set style
 	 */
 	public void setStyle() {
-		((GridLayout)topLayout.getLayout()).marginWidth = 0;
+		((GridLayout) topLayout.getLayout()).marginWidth = 0;
 	}
 
 	/* (non-Javadoc)
@@ -340,17 +319,17 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 */
 	@Override
 	protected void adjustForNumColumns(int numColumns) {
-		((GridData)topLayout.getLayoutData()).horizontalSpan = numColumns;
+		((GridData) topLayout.getLayoutData()).horizontalSpan = numColumns;
 	}
 
-    @Override
+	@Override
 	public Label getLabelControl(Composite parent) {
-    	return list.getLabelControl();
-    }
+		return list.getLabelControl();
+	}
 
-    @Override
+	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
-    	list.setEnabled(enabled);
-    }
+		list.setEnabled(enabled);
+	}
 
 }

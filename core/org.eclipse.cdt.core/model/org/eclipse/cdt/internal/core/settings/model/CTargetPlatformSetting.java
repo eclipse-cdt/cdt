@@ -16,8 +16,7 @@ package org.eclipse.cdt.internal.core.settings.model;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 
-public class CTargetPlatformSetting extends CDataProxy implements
-		ICTargetPlatformSetting {
+public class CTargetPlatformSetting extends CDataProxy implements ICTargetPlatformSetting {
 
 	CTargetPlatformSetting(CTargetPlatformData data, CConfigurationDescription cfg) {
 		super(data, cfg, cfg);
@@ -40,7 +39,7 @@ public class CTargetPlatformSetting extends CDataProxy implements
 		data.setBinaryParserIds(ids);
 	}
 
-	private CTargetPlatformData getTargetPlatformData(boolean write){
-		return (CTargetPlatformData)getData(write);
+	private CTargetPlatformData getTargetPlatformData(boolean write) {
+		return (CTargetPlatformData) getData(write);
 	}
 }

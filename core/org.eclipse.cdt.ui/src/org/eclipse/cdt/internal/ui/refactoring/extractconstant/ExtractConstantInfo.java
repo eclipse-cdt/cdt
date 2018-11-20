@@ -50,6 +50,7 @@ public class ExtractConstantInfo extends VariableNameInformation {
 	public MethodContext getMethodContext() {
 		return methodContext;
 	}
+
 	public void setMethodContext(MethodContext context) {
 		methodContext = context;
 	}

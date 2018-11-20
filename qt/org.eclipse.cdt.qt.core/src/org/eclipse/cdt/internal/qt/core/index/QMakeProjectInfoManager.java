@@ -42,15 +42,17 @@ public class QMakeProjectInfoManager {
 	// sync object for CACHE field
 	private static final Object CACHE_SYNC = new Object();
 	// a list of all QMakeProjectInfo instances
-	private static Map<IProject,QMakeProjectInfo> CACHE;
+	private static Map<IProject, QMakeProjectInfo> CACHE;
 
 	// called by QtPlugin activator to setup this class
 	public static final void start() {
 		synchronized (CACHE_SYNC) {
-			CACHE = new HashMap<IProject,QMakeProjectInfo>();
+			CACHE = new HashMap<IProject, QMakeProjectInfo>();
 		}
-		CoreModel.getDefault().addCProjectDescriptionListener(PD_LISTENER, CProjectDescriptionEvent.LOADED | CProjectDescriptionEvent.APPLIED);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(RC_LISTENER, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
+		CoreModel.getDefault().addCProjectDescriptionListener(PD_LISTENER,
+				CProjectDescriptionEvent.LOADED | CProjectDescriptionEvent.APPLIED);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(RC_LISTENER,
+				IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 	}
 
 	// called by QtPlugin activator to clean up this class
@@ -78,7 +80,7 @@ public class QMakeProjectInfoManager {
 	public static QMakeProjectInfo getQMakeProjectInfoFor(IProject project) {
 		return getQMakeProjectInfoFor(project, true);
 	}
-	
+
 	private static QMakeProjectInfo getQMakeProjectInfoFor(IProject project, boolean create) {
 		QMakeProjectInfo info;
 		synchronized (CACHE_SYNC) {
@@ -91,7 +93,7 @@ public class QMakeProjectInfoManager {
 			if (info != null) {
 				return info;
 			}
-			if (! create) {
+			if (!create) {
 				// do not create, just return null
 				return null;
 			}
@@ -220,7 +222,7 @@ public class QMakeProjectInfoManager {
 
 		public void process() {
 			// removing projects from CACHE
-			for(IResource project : projectsToDelete) {
+			for (IResource project : projectsToDelete) {
 				removeProjectFromCache(project);
 			}
 

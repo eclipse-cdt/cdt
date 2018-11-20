@@ -323,8 +323,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 				}
 				readOnlyConfig = null;
 			} else {
-				WorkingSetConfiguration.Snapshot ro = new WorkingSetConfiguration.Snapshot(this, workspace,
-						true);
+				WorkingSetConfiguration.Snapshot ro = new WorkingSetConfiguration.Snapshot(this, workspace, true);
 				ro.basicSetName(""); // don't want to validate this name //$NON-NLS-1$
 				readOnlyConfig = ro;
 				basicAddConfiguration(readOnlyConfig);

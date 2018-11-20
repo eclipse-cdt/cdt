@@ -29,10 +29,13 @@ import org.eclipse.core.resources.IResource;
 public interface ILanguageSettingsEditableProvider extends ILanguageSettingsBroadcastingProvider, Cloneable {
 	@Override
 	public String getId();
+
 	@Override
 	public String getName();
+
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId);
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
+			String languageId);
 
 	/**
 	 * Sets language settings entries for the provider.

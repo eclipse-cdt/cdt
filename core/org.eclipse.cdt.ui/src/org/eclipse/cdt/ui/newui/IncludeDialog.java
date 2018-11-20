@@ -45,8 +45,8 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class IncludeDialog extends AbstractPropertyDialog {
-	static final String[] FILTER_INCLUDE_FILE = new String[] {"*.h;*.hpp", "*"}; //$NON-NLS-1$ //$NON-NLS-2$
-	static final String[] FILTER_LIBRARY_FILE = new String[] {"*.a;*.so;*.dll;*.lib", "*"}; //$NON-NLS-1$ //$NON-NLS-2$
+	static final String[] FILTER_INCLUDE_FILE = new String[] { "*.h;*.hpp", "*" }; //$NON-NLS-1$ //$NON-NLS-2$
+	static final String[] FILTER_LIBRARY_FILE = new String[] { "*.a;*.so;*.dll;*.lib", "*" }; //$NON-NLS-1$ //$NON-NLS-2$
 	public String sdata;
 	private Button b_add2confs;
 	private Button b_add2langs;
@@ -63,9 +63,9 @@ public class IncludeDialog extends AbstractPropertyDialog {
 	private int kind = 0;
 
 	static final int NEW_FILE = 0;
-	static final int NEW_DIR  = 1;
+	static final int NEW_DIR = 1;
 	static final int OLD_FILE = 2;
-	static final int OLD_DIR  = 3;
+	static final int OLD_DIR = 3;
 
 	static final int DIR_MASK = 1;
 	static final int OLD_MASK = 2;
@@ -73,8 +73,8 @@ public class IncludeDialog extends AbstractPropertyDialog {
 	/**
 	 * @since 5.3
 	 */
-	public IncludeDialog(Shell parent, int mode, String title, String data,
-			ICConfigurationDescription cfgd, int flags, int kind) {
+	public IncludeDialog(Shell parent, int mode, String title, String data, ICConfigurationDescription cfgd, int flags,
+			int kind) {
 
 		super(parent, title);
 		this.mode = mode;
@@ -84,8 +84,8 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		this.kind = kind;
 	}
 
-	public IncludeDialog(Shell parent, int mode, String title, String data,
-			ICConfigurationDescription cfgd, int flags) {
+	public IncludeDialog(Shell parent, int mode, String title, String data, ICConfigurationDescription cfgd,
+			int flags) {
 
 		this(parent, mode, title, data, cfgd, flags, 0);
 	}
@@ -109,15 +109,18 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		gd.horizontalSpan = 2;
 		gd.widthHint = 300;
 		text.setLayoutData(gd);
-		if ((mode & OLD_MASK) == OLD_MASK) { text.setText(sdata); }
+		if ((mode & OLD_MASK) == OLD_MASK) {
+			text.setText(sdata);
+		}
 		text.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				setButtons();
-			}});
+			}
+		});
 
-// Checkboxes
-		Composite c1 = new Composite (c, SWT.NONE);
+		// Checkboxes
+		Composite c1 = new Composite(c, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.verticalAlignment = SWT.TOP;
 		c1.setLayoutData(gd);
@@ -126,8 +129,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		b_add2confs = new Button(c1, SWT.CHECK);
 		b_add2confs.setText(Messages.IncludeDialog_2);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		if (((mode & OLD_MASK) == OLD_MASK) ||
-				(cfgd instanceof ICMultiConfigDescription)) {
+		if (((mode & OLD_MASK) == OLD_MASK) || (cfgd instanceof ICMultiConfigDescription)) {
 			gd.heightHint = 1;
 			b_add2confs.setVisible(false);
 		}
@@ -151,11 +153,12 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				c_wsp.setImage(getWspImage(c_wsp.getSelection()));
-			}});
+			}
+		});
 		c_wsp.setImage(getWspImage(isWsp));
 
-// Buttons
-		Composite c2 = new Composite (c, SWT.NONE);
+		// Buttons
+		Composite c2 = new Composite(c, SWT.NONE);
 		gd = new GridData(GridData.END);
 		c2.setLayoutData(gd);
 		c2.setLayout(new GridLayout(2, true));
@@ -179,7 +182,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		int x = b_ko.getBounds().width * 3 + 10;
 		int y = c.getBounds().width - 10;
 		if (x > y) {
-			((GridData)(text.getLayoutData())).widthHint = x;
+			((GridData) (text.getLayoutData())).widthHint = x;
 			c.pack();
 		}
 
@@ -204,7 +207,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		} else if (e.widget.equals(b_ko)) {
 			shell.dispose();
 		} else if (e.widget.equals(b_work)) {
-			if ((mode & DIR_MASK)== DIR_MASK)
+			if ((mode & DIR_MASK) == DIR_MASK)
 				s = AbstractCPropertyTab.getWorkspaceDirDialog(shell, text.getText());
 			else
 				s = AbstractCPropertyTab.getWorkspaceFileDialog(shell, text.getText());
@@ -215,12 +218,12 @@ public class IncludeDialog extends AbstractPropertyDialog {
 				c_wsp.setImage(getWspImage(c_wsp.getSelection()));
 			}
 		} else if (e.widget.equals(b_file)) {
-			if ((mode & DIR_MASK)== DIR_MASK) {
+			if ((mode & DIR_MASK) == DIR_MASK) {
 				s = AbstractCPropertyTab.getFileSystemDirDialog(shell, text.getText());
 			} else {
-				if (kind==ICSettingEntry.INCLUDE_FILE)
+				if (kind == ICSettingEntry.INCLUDE_FILE)
 					s = AbstractCPropertyTab.getFileSystemFileDialog(shell, text.getText(), FILTER_INCLUDE_FILE);
-				else if (kind==ICSettingEntry.LIBRARY_FILE)
+				else if (kind == ICSettingEntry.LIBRARY_FILE)
 					s = AbstractCPropertyTab.getFileSystemFileDialog(shell, text.getText(), FILTER_LIBRARY_FILE);
 				else
 					s = AbstractCPropertyTab.getFileSystemFileDialog(shell, text.getText());
@@ -232,7 +235,8 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			}
 		} else if (e.widget.equals(b_vars)) {
 			s = AbstractCPropertyTab.getVariableDialog(shell, cfgd);
-			if (s != null) text.insert(s);
+			if (s != null)
+				text.insert(s);
 		}
 	}
 

@@ -98,7 +98,7 @@ public class CoreModelUtil {
 		int len = a.length;
 		if (len > b.length)
 			return false;
-		int i =0;
+		int i = 0;
 		for (; i < len; ++i) {
 			if (a[i] != b[i])
 				return false;
@@ -230,8 +230,8 @@ public class CoreModelUtil {
 	 *            flag to know if the matching should be case sensitive
 	 * @return true if the a sub-pattern matches the subpart of the given name, false otherwise
 	 */
-	public static final boolean match(char[] pattern, int patternStart, int patternEnd, char[] name, int nameStart, int nameEnd,
-			boolean isCaseSensitive) {
+	public static final boolean match(char[] pattern, int patternStart, int patternEnd, char[] name, int nameStart,
+			int nameEnd, boolean isCaseSensitive) {
 		if (name == null)
 			return false; // null name cannot match
 		if (pattern == null)
@@ -247,7 +247,8 @@ public class CoreModelUtil {
 		while ((iPattern < patternEnd) && (patternChar = pattern[iPattern]) != '*') {
 			if (iName == nameEnd)
 				return false;
-			if (patternChar != (isCaseSensitive ? name[iName] : Character.toLowerCase(name[iName])) && patternChar != '?') {
+			if (patternChar != (isCaseSensitive ? name[iName] : Character.toLowerCase(name[iName]))
+					&& patternChar != '?') {
 				return false;
 			}
 			iName++;
@@ -261,7 +262,7 @@ public class CoreModelUtil {
 			segmentStart = 0; // force iName check
 		}
 		int prefixStart = iName;
-		checkSegment : while (iName < nameEnd) {
+		checkSegment: while (iName < nameEnd) {
 			if (iPattern == patternEnd) {
 				iPattern = segmentStart; // mismatch - restart current segment
 				iName = ++prefixStart;
@@ -277,7 +278,8 @@ public class CoreModelUtil {
 				continue checkSegment;
 			}
 			/* check current name character */
-			if ((isCaseSensitive ? name[iName] : Character.toLowerCase(name[iName])) != patternChar && patternChar != '?') {
+			if ((isCaseSensitive ? name[iName] : Character.toLowerCase(name[iName])) != patternChar
+					&& patternChar != '?') {
 				iPattern = segmentStart; // mismatch - restart current segment
 				iName = ++prefixStart;
 				continue checkSegment;
@@ -308,7 +310,8 @@ public class CoreModelUtil {
 	 *            the given path separator
 	 * @return true if the pattern matches the filepath using the pathSepatator, false otherwise
 	 */
-	public static final boolean pathMatch(char[] pattern, char[] filepath, boolean isCaseSensitive, char pathSeparator) {
+	public static final boolean pathMatch(char[] pattern, char[] filepath, boolean isCaseSensitive,
+			char pathSeparator) {
 		if (filepath == null)
 			return false; // null name cannot match
 		if (pattern == null)
@@ -355,8 +358,8 @@ public class CoreModelUtil {
 		}
 		/* check sequence of doubleStar+segment */
 		int pSegmentRestart;
-		if ((pSegmentStart >= pLength && freeTrailingDoubleStar)
-				|| (pSegmentEnd == pSegmentStart + 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*')) {
+		if ((pSegmentStart >= pLength && freeTrailingDoubleStar) || (pSegmentEnd == pSegmentStart + 2
+				&& pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*')) {
 			pSegmentEnd = indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 			// skip separator
 			if (pSegmentEnd < 0)
@@ -369,7 +372,7 @@ public class CoreModelUtil {
 			pSegmentRestart = 0; // force fSegmentStart check
 		}
 		int fSegmentRestart = fSegmentStart;
-		checkSegment : while (fSegmentStart < fLength) {
+		checkSegment: while (fSegmentStart < fLength) {
 			if (pSegmentStart >= pLength) {
 				if (freeTrailingDoubleStar)
 					return true;
@@ -390,7 +393,8 @@ public class CoreModelUtil {
 				continue checkSegment;
 			}
 			/* path segment is ending */
-			if (pSegmentEnd == pSegmentStart + 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*') {
+			if (pSegmentEnd == pSegmentStart + 2 && pattern[pSegmentStart] == '*'
+					&& pattern[pSegmentStart + 1] == '*') {
 				pSegmentEnd = indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 				// skip separator
 				if (pSegmentEnd < 0)
@@ -548,15 +552,16 @@ public class CoreModelUtil {
 	 * from the given project are preferred.
 	 * @since 4.0
 	 */
-	public static ITranslationUnit findTranslationUnitForLocation(IPath location, ICProject preferredProject) throws CModelException {
-		IFile[] files= ResourceLookup.findFilesForLocation(location);
+	public static ITranslationUnit findTranslationUnitForLocation(IPath location, ICProject preferredProject)
+			throws CModelException {
+		IFile[] files = ResourceLookup.findFilesForLocation(location);
 		ResourceLookup.sortFilesByRelevance(files, preferredProject != null ? preferredProject.getProject() : null);
-		boolean oneExisting= false;
+		boolean oneExisting = false;
 		if (files.length > 0) {
 			for (IFile file : files) {
 				if (file.exists()) {
-					oneExisting= true;
-					ITranslationUnit tu= findTranslationUnit(file);
+					oneExisting = true;
+					ITranslationUnit tu = findTranslationUnit(file);
 					if (tu != null) {
 						return tu;
 					}
@@ -564,50 +569,51 @@ public class CoreModelUtil {
 			}
 			if (oneExisting)
 				return null;
-		} 
+		}
 		CoreModel coreModel = CoreModel.getDefault();
-		ITranslationUnit tu= null;
+		ITranslationUnit tu = null;
 		if (preferredProject != null) {
-			tu= coreModel.createTranslationUnitFrom(preferredProject, location);
+			tu = coreModel.createTranslationUnitFrom(preferredProject, location);
 		}
 		if (tu == null) {
-			ICProject[] projects= coreModel.getCModel().getCProjects();
+			ICProject[] projects = coreModel.getCModel().getCProjects();
 			for (int i = 0; i < projects.length && tu == null; i++) {
 				ICProject project = projects[i];
 				if (!project.equals(preferredProject)) {
-					tu= coreModel.createTranslationUnitFrom(project, location);
+					tu = coreModel.createTranslationUnitFrom(project, location);
 				}
 			}
 		}
 		return tu;
-	}	
+	}
 
 	/**
 	 * Searches for a translation unit within the cprojects. For external files the ones
 	 * from the given project are preferred.
 	 * @since 5.0
 	 */
-	public static ITranslationUnit findTranslationUnitForLocation(URI locationURI, ICProject preferredProject) throws CModelException {
-		IFile[] files= ResourceLookup.findFilesForLocationURI(locationURI);
+	public static ITranslationUnit findTranslationUnitForLocation(URI locationURI, ICProject preferredProject)
+			throws CModelException {
+		IFile[] files = ResourceLookup.findFilesForLocationURI(locationURI);
 		if (files.length > 0) {
 			for (IFile file : files) {
-				ITranslationUnit tu= findTranslationUnit(file);
+				ITranslationUnit tu = findTranslationUnit(file);
 				if (tu != null) {
 					return tu;
 				}
 			}
 		} else {
 			CoreModel coreModel = CoreModel.getDefault();
-			ITranslationUnit tu= null;
+			ITranslationUnit tu = null;
 			if (preferredProject != null) {
-				tu= coreModel.createTranslationUnitFrom(preferredProject, locationURI);
+				tu = coreModel.createTranslationUnitFrom(preferredProject, locationURI);
 			}
 			if (tu == null) {
-				ICProject[] projects= coreModel.getCModel().getCProjects();
+				ICProject[] projects = coreModel.getCModel().getCProjects();
 				for (int i = 0; i < projects.length && tu == null; i++) {
 					ICProject project = projects[i];
 					if (!project.equals(preferredProject)) {
-						tu= coreModel.createTranslationUnitFrom(project, locationURI);
+						tu = coreModel.createTranslationUnitFrom(project, locationURI);
 					}
 				}
 			}
@@ -615,47 +621,48 @@ public class CoreModelUtil {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the translation unit for the location given or <code>null</code>.
 	 * @throws CModelException 
 	 */
-	public static ITranslationUnit findTranslationUnitForLocation(IIndexFileLocation ifl, ICProject preferredProject) throws CModelException {
-		String fullPath= ifl.getFullPath();
+	public static ITranslationUnit findTranslationUnitForLocation(IIndexFileLocation ifl, ICProject preferredProject)
+			throws CModelException {
+		String fullPath = ifl.getFullPath();
 		if (fullPath != null) {
-			IResource file= ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
+			IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
 			if (file instanceof IFile) {
 				return findTranslationUnit((IFile) file);
 			}
 			return null;
 		}
-		IPath location= IndexLocationFactory.getAbsolutePath(ifl);
-		if (location != null) { 
+		IPath location = IndexLocationFactory.getAbsolutePath(ifl);
+		if (location != null) {
 			CoreModel coreModel = CoreModel.getDefault();
-			ITranslationUnit tu= null;
+			ITranslationUnit tu = null;
 			if (preferredProject != null) {
-				tu= coreModel.createTranslationUnitFrom(preferredProject, location);
+				tu = coreModel.createTranslationUnitFrom(preferredProject, location);
 			}
 			if (tu == null) {
-				ICProject[] projects= coreModel.getCModel().getCProjects();
+				ICProject[] projects = coreModel.getCModel().getCProjects();
 				for (int i = 0; i < projects.length && tu == null; i++) {
 					ICProject project = projects[i];
 					if (!project.equals(preferredProject)) {
-						tu= coreModel.createTranslationUnitFrom(project, location);
+						tu = coreModel.createTranslationUnitFrom(project, location);
 					}
 				}
 			}
 			return tu;
 		}
 		return null;
-	}	
+	}
 
 	/**
 	 * Returns the translation unit for the file given or <code>null</code>.
 	 */
 	public static ITranslationUnit findTranslationUnit(IFile file) {
 		if (CoreModel.isTranslationUnit(file) && file.exists()) {
-			ICProject cp= CoreModel.getDefault().getCModel().getCProject(file.getProject().getName());
+			ICProject cp = CoreModel.getDefault().getCModel().getCProject(file.getProject().getName());
 			if (cp != null) {
 				ICElement tu;
 				try {
@@ -686,7 +693,8 @@ public class CoreModelUtil {
 	 * @see CoreModelUtil#getReferencingConfigurationDescriptions(ICConfigurationDescription, boolean)
 	 */
 
-	public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
+	public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes,
+			boolean writable) {
 		List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
 
 		if (cfgDes != null) {
@@ -694,7 +702,7 @@ public class CoreModelUtil {
 			if (map.size() != 0) {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				CoreModel model = CoreModel.getDefault();
-				for (Map.Entry<String,String> entry : map.entrySet()) {
+				for (Map.Entry<String, String> entry : map.entrySet()) {
 					String projName = entry.getKey();
 					String cfgId = entry.getValue();
 					IProject project = root.getProject(projName);
@@ -715,9 +723,9 @@ public class CoreModelUtil {
 
 					ICConfigurationDescription refCfgDes;
 					if (cfgId != null && cfgId.length() > 0) {
-						refCfgDes= des.getConfigurationById(cfgId);
+						refCfgDes = des.getConfigurationById(cfgId);
 					} else {
-						refCfgDes= des.getActiveConfiguration();
+						refCfgDes = des.getActiveConfiguration();
 					}
 					if (refCfgDes != null)
 						result.add(refCfgDes);
@@ -739,25 +747,26 @@ public class CoreModelUtil {
 	 * @return a list of configuration descriptions referencing this configuration description
 	 * @see CoreModelUtil#getReferencedConfigurationDescriptions(ICConfigurationDescription, boolean)
 	 */
-	public static ICConfigurationDescription[] getReferencingConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
+	public static ICConfigurationDescription[] getReferencingConfigurationDescriptions(
+			ICConfigurationDescription cfgDes, boolean writable) {
 		List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
 
 		if (cfgDes != null) {
-			CoreModel core= CoreModel.getDefault();
-			IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			CoreModel core = CoreModel.getDefault();
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 
 			for (IProject cproject : projects) {
-				ICProjectDescription prjDes= core.getProjectDescription(cproject, writable);
+				ICProjectDescription prjDes = core.getProjectDescription(cproject, writable);
 				// In case this is not a CDT project the description will be null, so check for null
 				if (prjDes != null) {
-					ICConfigurationDescription[] cfgDscs= prjDes.getConfigurations();
+					ICConfigurationDescription[] cfgDscs = prjDes.getConfigurations();
 					for (ICConfigurationDescription cfgDsc : cfgDscs) {
 						ICConfigurationDescription[] references = getReferencedConfigurationDescriptions(cfgDsc, false);
 						for (ICConfigurationDescription reference : references) {
 							if (reference != null && reference.getId().equals(cfgDes.getId())) {
 								result.add(cfgDsc);
 								break;
-							}				
+							}
 						}
 					}
 				}
@@ -773,7 +782,7 @@ public class CoreModelUtil {
 	 * @return - array of binary parser ids (Strings)
 	 */
 	public static String[] getBinaryParserIds(ICConfigurationDescription[] cfgs) {
-		if (cfgs == null || cfgs.length == 0) 
+		if (cfgs == null || cfgs.length == 0)
 			return null;
 		ArrayList<String> pids = new ArrayList<String>();
 		for (ICConfigurationDescription cfg : cfgs) {
@@ -782,7 +791,7 @@ public class CoreModelUtil {
 			for (int j = 0; j < ids.length; j++) {
 				if (!pids.contains(ids[j]))
 					pids.add(ids[j]);
-			}				
+			}
 		}
 		return pids.toArray(new String[pids.size()]);
 	}
@@ -799,7 +808,7 @@ public class CoreModelUtil {
 			cfg.getTargetPlatformSetting().setBinaryParserIds(pids);
 		}
 	}
-	
+
 	/**
 	 * Instantiate binary parser for given extension reference.
 	 * 

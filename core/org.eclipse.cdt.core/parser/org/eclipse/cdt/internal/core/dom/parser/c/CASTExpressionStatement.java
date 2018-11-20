@@ -25,11 +25,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * @author jcamelon
  */
-public class CASTExpressionStatement extends ASTAttributeOwner
-		implements IASTExpressionStatement, IASTAmbiguityParent {
-    private IASTExpression expression;
+public class CASTExpressionStatement extends ASTAttributeOwner implements IASTExpressionStatement, IASTAmbiguityParent {
+	private IASTExpression expression;
 
-    public CASTExpressionStatement() {
+	public CASTExpressionStatement() {
 	}
 
 	public CASTExpressionStatement(IASTExpression expression) {
@@ -50,48 +49,56 @@ public class CASTExpressionStatement extends ASTAttributeOwner
 
 	@Override
 	public IASTExpression getExpression() {
-        return expression;
-    }
+		return expression;
+	}
 
-    @Override
+	@Override
 	public void setExpression(IASTExpression expression) {
-        assertNotFrozen();
-        this.expression = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		this.expression = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(EXPRESSION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-            switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-            }
-        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (expression != null && !expression.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (expression != null && !expression.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-            switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-            }
-        }
-        return true;
-    }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == expression) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            expression = (IASTExpression) other;
-        }
-    }
+		if (child == expression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			expression = (IASTExpression) other;
+		}
+	}
 }

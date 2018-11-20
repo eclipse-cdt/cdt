@@ -78,7 +78,7 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry {
 		if (!super.equalsByContents(entry))
 			return false;
 
-		return fValue.equals(((CMacroEntry)entry).fValue);
+		return fValue.equals(((CMacroEntry) entry).fValue);
 	}
 
 	@Override

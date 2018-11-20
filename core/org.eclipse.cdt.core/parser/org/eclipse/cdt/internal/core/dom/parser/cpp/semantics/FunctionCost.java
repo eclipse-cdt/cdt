@@ -48,15 +48,15 @@ class FunctionCost {
 	private boolean fIsDirectCopyCtor;
 
 	public FunctionCost(ICPPFunction fn, int paramCount) {
-		fFunction= fn;
-		fCosts= new Cost[paramCount];
-		fValueCategories= new ValueCategory[paramCount];
+		fFunction = fn;
+		fCosts = new Cost[paramCount];
+		fValueCategories = new ValueCategory[paramCount];
 	}
 
 	public FunctionCost(ICPPFunction fn, Cost cost) {
-		fFunction= fn;
-		fCosts= new Cost[] {cost};
-		fValueCategories= null; // no udc will be performed
+		fFunction = fn;
+		fCosts = new Cost[] { cost };
+		fValueCategories = null; // no udc will be performed
 	}
 
 	public int getLength() {
@@ -68,8 +68,8 @@ class FunctionCost {
 	}
 
 	public void setCost(int idx, Cost cost, ValueCategory valueCat) {
-		fCosts[idx]= cost;
-		fValueCategories[idx]= valueCat;
+		fCosts[idx] = cost;
+		fValueCategories[idx] = valueCat;
 	}
 
 	public ICPPFunction getFunction() {
@@ -97,7 +97,7 @@ class FunctionCost {
 	public boolean performUDC() throws DOMException {
 		for (int i = 0; i < fCosts.length; i++) {
 			Cost cost = fCosts[i];
-			Cost udcCost= null;
+			Cost udcCost = null;
 			switch (cost.isDeferredUDC()) {
 			case NONE:
 				continue;
@@ -106,7 +106,7 @@ class FunctionCost {
 						(ICPPClassType) cost.target, false);
 				break;
 			case INIT_BY_CONVERSION:
-				IType uqSource= getNestedType(cost.source, TDEF | REF | CVTYPE);
+				IType uqSource = getNestedType(cost.source, TDEF | REF | CVTYPE);
 				udcCost = Conversions.initializationByConversion(fValueCategories[i], cost.source,
 						(ICPPClassType) uqSource, cost.target, false, allowsContextualBooleanConversion());
 				break;
@@ -132,9 +132,9 @@ class FunctionCost {
 
 	private boolean allowsContextualBooleanConversion() {
 		char[] functionName = fFunction.getNameCharArray();
-		return Arrays.equals(functionName, OverloadableOperator.AND.toCharArray()) ||
-				Arrays.equals(functionName, OverloadableOperator.OR.toCharArray()) || 
-				Arrays.equals(functionName, OverloadableOperator.NOT.toCharArray());
+		return Arrays.equals(functionName, OverloadableOperator.AND.toCharArray())
+				|| Arrays.equals(functionName, OverloadableOperator.OR.toCharArray())
+				|| Arrays.equals(functionName, OverloadableOperator.NOT.toCharArray());
 	}
 
 	/**
@@ -149,10 +149,10 @@ class FunctionCost {
 		// In order for this function to be better than the previous best, it must
 		// have at least one parameter match that is better that the corresponding
 		// match for the other function, and none that are worse.
-		int idx= getLength() - 1;
-		int idxOther= other.getLength() - 1;
+		int idx = getLength() - 1;
+		int idxOther = other.getLength() - 1;
 		for (; idx >= 0 && idxOther >= 0; idx--, idxOther--) {
-			Cost cost= getCost(idx);
+			Cost cost = getCost(idx);
 			if (!cost.converts()) {
 				haveWorse = true;
 				haveBetter = false;
@@ -168,8 +168,8 @@ class FunctionCost {
 		final ICPPFunction f2 = other.getFunction();
 		if (!haveWorse && !haveBetter) {
 			// If they are both template functions, we can order them that way
-			ICPPFunctionTemplate asTemplate= asTemplate(f1);
-			ICPPFunctionTemplate otherAsTemplate= asTemplate(f2);
+			ICPPFunctionTemplate asTemplate = asTemplate(f1);
+			ICPPFunctionTemplate otherAsTemplate = asTemplate(f2);
 			final boolean isTemplate = asTemplate != null;
 			final boolean otherIsTemplate = otherAsTemplate != null;
 
@@ -179,19 +179,19 @@ class FunctionCost {
 			} else if (!isTemplate && otherIsTemplate) {
 				haveBetter = true;
 			} else if (isTemplate && otherIsTemplate) {
-				TypeSelection ts= SemanticUtil.isConversionOperator(f1) ? RETURN_TYPE : PARAMETERS;
- 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts);
+				TypeSelection ts = SemanticUtil.isConversionOperator(f1) ? RETURN_TYPE : PARAMETERS;
+				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts);
 				if (order < 0) {
-					haveBetter= true;
+					haveBetter = true;
 				} else if (order > 0) {
-					haveWorse= true;
+					haveWorse = true;
 				}
 			}
 		}
 
 		if (haveBetter == haveWorse) {
 			// 7.3.3-15 Using declarations in classes can be overridden
-			int cmp= overridesUsingDeclaration(f1, f2);
+			int cmp = overridesUsingDeclaration(f1, f2);
 			if (cmp != 0)
 				return cmp;
 
@@ -213,8 +213,8 @@ class FunctionCost {
 
 		final ICPPMethod m1 = (ICPPMethod) f1;
 		final ICPPMethod m2 = (ICPPMethod) f2;
-		ICPPClassType o1= m1.getClassOwner();
-		ICPPClassType o2= m2.getClassOwner();
+		ICPPClassType o1 = m1.getClassOwner();
+		ICPPClassType o2 = m2.getClassOwner();
 		if (o1.isSameType(o2))
 			return 0;
 
@@ -226,15 +226,15 @@ class FunctionCost {
 		if (!parameterTypesMatch(ft1, ft2))
 			return 0;
 
-		int diff= SemanticUtil.calculateInheritanceDepth(o2, o1);
+		int diff = SemanticUtil.calculateInheritanceDepth(o2, o1);
 		if (diff >= 0)
 			return diff;
 		return -SemanticUtil.calculateInheritanceDepth(o1, o2);
 	}
 
 	private boolean parameterTypesMatch(final ICPPFunctionType ft1, final ICPPFunctionType ft2) {
-		IType[] p1= ft1.getParameterTypes();
-		IType[] p2= ft2.getParameterTypes();
+		IType[] p1 = ft1.getParameterTypes();
+		IType[] p2 = ft2.getParameterTypes();
 		if (p1.length != p2.length) {
 			if (p1.length == 0)
 				return p2.length == 1 && SemanticUtil.isVoidType(p2[0]);
@@ -255,27 +255,27 @@ class FunctionCost {
 		if (other == null)
 			return false;
 
-		boolean haveWorse= false;
-		int idx= getLength() - 1;
-		int idxOther= other.getLength() - 1;
+		boolean haveWorse = false;
+		int idx = getLength() - 1;
+		int idxOther = other.getLength() - 1;
 		for (; idx >= 0 && idxOther >= 0; idx--, idxOther--) {
-			Cost cost= getCost(idx);
+			Cost cost = getCost(idx);
 			if (!cost.converts())
 				return true;
 
-			Cost otherCost= other.getCost(idxOther);
+			Cost otherCost = other.getCost(idxOther);
 
 			int cmp;
 			if (cost.isDeferredUDC() != DeferredUDC.NONE) {
-				cmp= cost.getRank().compareTo(otherCost.getRank());
+				cmp = cost.getRank().compareTo(otherCost.getRank());
 			} else {
-				cmp= cost.compareTo(otherCost);
+				cmp = cost.compareTo(otherCost);
 			}
 
 			if (cmp < 0)
 				return false;
 			if (cmp > 0)
-				haveWorse= true;
+				haveWorse = true;
 		}
 
 		return haveWorse;
@@ -283,7 +283,7 @@ class FunctionCost {
 
 	private static ICPPFunctionTemplate asTemplate(IFunction function) {
 		if (function instanceof ICPPSpecialization) {
-			IBinding original= ((ICPPSpecialization) function).getSpecializedBinding();
+			IBinding original = ((ICPPSpecialization) function).getSpecializedBinding();
 			if (original instanceof ICPPFunctionTemplate) {
 				return (ICPPFunctionTemplate) original;
 			}
@@ -292,7 +292,7 @@ class FunctionCost {
 	}
 
 	public void setIsDirectInitWithCopyCtor(boolean val) {
-		fIsDirectCopyCtor= val;
+		fIsDirectCopyCtor = val;
 	}
 
 	public boolean isDirectInitWithCopyCtor() {

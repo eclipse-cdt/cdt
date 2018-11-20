@@ -21,7 +21,7 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpec
  */
 public class GCCBuiltinSpecsDetectorMinGW extends GCCBuiltinSpecsDetector {
 	// ID must match the tool-chain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
-	private static final String GCC_TOOLCHAIN_ID_MINGW = "cdt.managedbuild.toolchain.gnu.mingw.base";  //$NON-NLS-1$
+	private static final String GCC_TOOLCHAIN_ID_MINGW = "cdt.managedbuild.toolchain.gnu.mingw.base"; //$NON-NLS-1$
 
 	@Override
 	public String getToolchainId() {

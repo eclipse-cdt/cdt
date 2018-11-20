@@ -78,7 +78,7 @@ public class CPPASTCapture extends CPPASTCaptureBase {
 			identifier.setParent(this);
 			identifier.setPropertyInParent(IDENTIFIER);
 		}
-		fIdentifier= identifier;
+		fIdentifier = identifier;
 	}
 
 	@Override

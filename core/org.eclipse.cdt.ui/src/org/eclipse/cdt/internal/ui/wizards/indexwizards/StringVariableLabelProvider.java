@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.wizards.indexwizards;
 
@@ -22,14 +22,14 @@ import org.eclipse.jface.viewers.LabelProvider;
  * @since 4.0
  */
 public class StringVariableLabelProvider extends LabelProvider {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	@Override
 	public String getText(Object element) {
 		if (element instanceof IStringVariable) {
-			IStringVariable variable = (IStringVariable)element;
+			IStringVariable variable = (IStringVariable) element;
 			return variable.getName();
 		}
 		return super.getText(element);

@@ -25,18 +25,17 @@ public class Messages extends NLS {
 	public static String MesonPropertyPage_meson_error;
 	public static String MesonPropertyPage_configure_failed;
 	public static String MesonPropertyPage_terminated_rc;
-	
-	
+
 	public static String MesonPropertyPage_env_group;
 	public static String MesonPropertyPage_env_tooltip;
 	public static String MesonPropertyPage_env_label;
-	
+
 	public static String MesonPropertyPage_project_group;
 	public static String MesonPropertyPage_project_tooltip;
 	public static String MesonPropertyPage_project_label;
-	
+
 	public static String MesonPropertyPage_options_group;
-	
+
 	public static String MesonPropertyPage_prefix_tooltip;
 	public static String MesonPropertyPage_libdir_tooltip;
 	public static String MesonPropertyPage_libexecdir_tooltip;
@@ -64,7 +63,7 @@ public class Messages extends NLS {
 
 	public static String MesonPropertyPage_true;
 	public static String MesonPropertyPage_false;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages("org.eclipse.cdt.meson.ui.properties.messages", Messages.class); //$NON-NLS-1$
@@ -73,4 +72,3 @@ public class Messages extends NLS {
 	private Messages() {
 	}
 }
-

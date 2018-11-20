@@ -24,6 +24,6 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
  */
 public class MIGDBSetTraceUser extends MIGDBSet {
 	public MIGDBSetTraceUser(ITraceTargetDMContext ctx, String userName) {
-		super(ctx, new String[] {"trace-user", userName}); //$NON-NLS-1$
+		super(ctx, new String[] { "trace-user", userName }); //$NON-NLS-1$
 	}
 }

@@ -23,13 +23,13 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * The preference page for configuring styles of include statements.
  */
 public class IncludeStylePreferencePage extends ConfigurationBlockPropertyAndPreferencePage {
-	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.IncludeStylePreferencePage"; //$NON-NLS-1$
-	public static final String PROP_ID= "org.eclipse.cdt.ui.propertyPages.IncludeStylePreferencePage"; //$NON-NLS-1$
+	public static final String PREF_ID = "org.eclipse.cdt.ui.preferences.IncludeStylePreferencePage"; //$NON-NLS-1$
+	public static final String PROP_ID = "org.eclipse.cdt.ui.propertyPages.IncludeStylePreferencePage"; //$NON-NLS-1$
 
 	public IncludeStylePreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		// Only used when the page is shown programmatically.
-		setTitle(PreferencesMessages.IncludeStylePreferencePage_title);		 
+		setTitle(PreferencesMessages.IncludeStylePreferencePage_title);
 	}
 
 	@Override
@@ -51,6 +51,6 @@ public class IncludeStylePreferencePage extends ConfigurationBlockPropertyAndPre
 	protected String getPropertyPageId() {
 		return null;
 		// TODO(sprigogin): Project specific settings
-//		return PROP_ID;
+		//		return PROP_ID;
 	}
 }

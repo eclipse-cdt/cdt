@@ -69,7 +69,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *
  */
 public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
-	
+
 	/**
 	 *  List all groups (processes) being debugged.
 	 */
@@ -102,14 +102,14 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 	public MIListThreadGroups(ICommandControlDMContext ctx, boolean listAll, boolean recurse) {
 		this(ctx, null, listAll, recurse);
 	}
-	
+
 	// There should be no reason to have both listAll and groupId specified,
 	// so this constructor is private, and exists to avoid duplicating code.
 	private MIListThreadGroups(ICommandControlDMContext ctx, String groupId, boolean listAll, boolean recurse) {
 		super(ctx, "-list-thread-groups"); //$NON-NLS-1$
-		
+
 		assert !((groupId != null) && listAll); // see comment above
-        
+
 		final ArrayList<String> arguments = new ArrayList<String>();
 		if (listAll) {
 			arguments.add("--available"); //$NON-NLS-1$
@@ -131,7 +131,7 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 	}
 
 	@Override
-    public MIListThreadGroupsInfo getResult(MIOutput out) {
-        return new MIListThreadGroupsInfo(out);
-    }
+	public MIListThreadGroupsInfo getResult(MIOutput out) {
+		return new MIListThreadGroupsInfo(out);
+	}
 }

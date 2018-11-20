@@ -36,7 +36,7 @@ public class LoggingUtils {
 	 */
 	public static String toString(Object obj, boolean simpleClassName) {
 		if (obj == null) {
-			return "null";  //$NON-NLS-1$
+			return "null"; //$NON-NLS-1$
 		}
 		String className = obj.getClass().getName();
 		if (simpleClassName) {
@@ -47,10 +47,10 @@ public class LoggingUtils {
 		}
 
 		String id = Integer.toHexString(System.identityHashCode(obj));
-	
+
 		return className + "@" + id; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Equivalent to toString(obj, false)
 	 */

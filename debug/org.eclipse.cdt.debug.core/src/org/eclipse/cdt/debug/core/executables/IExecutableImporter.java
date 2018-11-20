@@ -29,7 +29,7 @@ public interface IExecutableImporter {
 	 * @since 6.0
 	 */
 	public static final int HIGH_PRIORITY = 75;
-	
+
 	/**
 	 * Gets the priority to be used when importing these executables.
 	 * The priority is used by the Executables Manager when multiple IExecutableImporters are available.

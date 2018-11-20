@@ -16,7 +16,6 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
-
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarListChildrenInfo;
@@ -31,13 +30,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarListChildrenInfo;
  *     numchild=N,type=TYPE},(repeats N times)}
  * 
  */
-public class MIVarListChildren extends MICommand<MIVarListChildrenInfo> 
-{
+public class MIVarListChildren extends MICommand<MIVarListChildrenInfo> {
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIVarListChildren(ICommandControlDMContext ctx, String name) {
-		super(ctx, "-var-list-children", new String[]{name}); //$NON-NLS-1$
+		super(ctx, "-var-list-children", new String[] { name }); //$NON-NLS-1$
 	}
 
 	/**
@@ -52,11 +50,11 @@ public class MIVarListChildren extends MICommand<MIVarListChildrenInfo>
 	 * @since 4.0
 	 */
 	public MIVarListChildren(ICommandControlDMContext ctx, String name, int from, int to) {
-		super(ctx, "-var-list-children", new String[]{name, String.valueOf(from), String.valueOf(to)}); //$NON-NLS-1$
+		super(ctx, "-var-list-children", new String[] { name, String.valueOf(from), String.valueOf(to) }); //$NON-NLS-1$
 	}
-	
-    @Override
-    public MIVarListChildrenInfo getResult(MIOutput out) {
-        return new MIVarListChildrenInfo(out);
-    }
+
+	@Override
+	public MIVarListChildrenInfo getResult(MIOutput out) {
+		return new MIVarListChildrenInfo(out);
+	}
 }

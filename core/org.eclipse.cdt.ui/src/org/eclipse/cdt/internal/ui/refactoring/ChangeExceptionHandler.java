@@ -73,25 +73,27 @@ public class ChangeExceptionHandler {
 	private String fName;
 
 	private static class RefactorErrorDialog extends ErrorDialog {
-		public RefactorErrorDialog(Shell parentShell, String dialogTitle, String dialogMessage, IStatus status, int displayMask) {
+		public RefactorErrorDialog(Shell parentShell, String dialogTitle, String dialogMessage, IStatus status,
+				int displayMask) {
 			super(parentShell, dialogTitle, dialogMessage, status, displayMask);
 		}
-		
+
 		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
-			Button ok= getButton(IDialogConstants.OK_ID);
+			Button ok = getButton(IDialogConstants.OK_ID);
 			ok.setText(Messages.ChangeExceptionHandler_undo_button);
-			Button abort= createButton(parent, IDialogConstants.CANCEL_ID, Messages.ChangeExceptionHandler_abort_button, true);
+			Button abort = createButton(parent, IDialogConstants.CANCEL_ID,
+					Messages.ChangeExceptionHandler_abort_button, true);
 			abort.moveBelow(ok);
 			abort.setFocus();
 		}
-		
+
 		@Override
 		protected Control createMessageArea(Composite parent) {
-			Control result= super.createMessageArea(parent);
+			Control result = super.createMessageArea(parent);
 			new Label(parent, SWT.NONE); // filler
-			Label label= new Label(parent, SWT.NONE);
+			Label label = new Label(parent, SWT.NONE);
 			label.setText(Messages.ChangeExceptionHandler_message);
 			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			applyDialogFont(result);
@@ -100,19 +102,19 @@ public class ChangeExceptionHandler {
 	}
 
 	public ChangeExceptionHandler(Shell parent, Refactoring refactoring) {
-		fParent= parent;
-		fName= refactoring.getName();
+		fParent = parent;
+		fName = refactoring.getName();
 	}
 
 	public void handle(Change change, RuntimeException exception) {
 		CUIPlugin.log(exception);
-		IStatus status= null;
+		IStatus status = null;
 		if (exception.getMessage() == null) {
-			status= new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR,
-				Messages.ChangeExceptionHandler_status_without_detail, exception);
+			status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR,
+					Messages.ChangeExceptionHandler_status_without_detail, exception);
 		} else {
-			status= new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR,
-				exception.getMessage(), exception);
+			status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, exception.getMessage(),
+					exception);
 		}
 		handle(change, status);
 	}
@@ -124,35 +126,34 @@ public class ChangeExceptionHandler {
 
 	private void handle(Change change, IStatus status) {
 		if (change instanceof CompositeChange) {
-			Change undo= ((CompositeChange)change).getUndoUntilException();
+			Change undo = ((CompositeChange) change).getUndoUntilException();
 			if (undo != null) {
 				CUIPlugin.log(status);
-				final ErrorDialog dialog= new RefactorErrorDialog(fParent,
-					Messages.ChangeExceptionHandler_dialog_title,
-					NLS.bind(Messages.ChangeExceptionHandler_dialog_message, fName),
-					status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
-				int result= dialog.open();
+				final ErrorDialog dialog = new RefactorErrorDialog(fParent,
+						Messages.ChangeExceptionHandler_dialog_title,
+						NLS.bind(Messages.ChangeExceptionHandler_dialog_message, fName), status,
+						IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
+				int result = dialog.open();
 				if (result == IDialogConstants.OK_ID) {
 					performUndo(undo);
 				}
 				return;
 			}
 		}
-		ErrorDialog dialog= new ErrorDialog(fParent,
-			Messages.ChangeExceptionHandler_dialog_title,
-			NLS.bind(Messages.ChangeExceptionHandler_dialog_message, fName),
-			status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
+		ErrorDialog dialog = new ErrorDialog(fParent, Messages.ChangeExceptionHandler_dialog_title,
+				NLS.bind(Messages.ChangeExceptionHandler_dialog_message, fName), status,
+				IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
 		dialog.open();
 	}
 
 	private void performUndo(final Change undo) {
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask("", 11);  //$NON-NLS-1$
+				monitor.beginTask("", 11); //$NON-NLS-1$
 				try {
 					undo.initializeValidationData(new NotCancelableProgressMonitor(new SubProgressMonitor(monitor, 1)));
-					if (undo.isValid(new SubProgressMonitor(monitor,1)).hasFatalError()) {
+					if (undo.isValid(new SubProgressMonitor(monitor, 1)).hasFatalError()) {
 						monitor.done();
 						return;
 					}
@@ -162,15 +163,14 @@ public class ChangeExceptionHandler {
 				}
 			}
 		};
-		WorkbenchRunnableAdapter adapter= new WorkbenchRunnableAdapter(runnable,
-			ResourcesPlugin.getWorkspace().getRoot());
-		ProgressMonitorDialog dialog= new ProgressMonitorDialog(fParent);
+		WorkbenchRunnableAdapter adapter = new WorkbenchRunnableAdapter(runnable,
+				ResourcesPlugin.getWorkspace().getRoot());
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(fParent);
 		try {
 			dialog.run(false, false, adapter);
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, fParent,
-				Messages.ChangeExceptionHandler_undo_dialog_title,
-				NLS.bind(Messages.ChangeExceptionHandler_undo_dialog_message, fName));
+			ExceptionHandler.handle(e, fParent, Messages.ChangeExceptionHandler_undo_dialog_title,
+					NLS.bind(Messages.ChangeExceptionHandler_undo_dialog_message, fName));
 		} catch (InterruptedException e) {
 			// can't happen
 		}

@@ -27,17 +27,16 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 /**
  * @author Emanuel Graf
  */
-public class ExtractFunctionRefactoringRunner extends RefactoringRunner  {
+public class ExtractFunctionRefactoringRunner extends RefactoringRunner {
 
-	public ExtractFunctionRefactoringRunner(ICElement element, ISelection selection,
-			IShellProvider shellProvider, ICProject cProject) {
+	public ExtractFunctionRefactoringRunner(ICElement element, ISelection selection, IShellProvider shellProvider,
+			ICProject cProject) {
 		super(element, selection, shellProvider, cProject);
 	}
 
 	@Override
 	public void run() {
-		ExtractFunctionRefactoring refactoring =
-				new ExtractFunctionRefactoring(element, selection, project);
+		ExtractFunctionRefactoring refactoring = new ExtractFunctionRefactoring(element, selection, project);
 		ExtractFunctionWizard wizard = new ExtractFunctionWizard(refactoring);
 		run(wizard, refactoring, RefactoringSaveHelper.SAVE_REFACTORING);
 	}

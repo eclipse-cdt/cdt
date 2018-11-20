@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.ArrayList;
@@ -79,16 +79,17 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 	protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
 		if (parentElement instanceof IBNode) {
 			IBNode node = (IBNode) parentElement;
-			IIndexFileLocation ifl= node.getRepresentedIFL();
-			ICProject project= node.getCProject();
+			IIndexFileLocation ifl = node.getRepresentedIFL();
+			ICProject project = node.getCProject();
 			if (ifl == null) {
 				return NO_CHILDREN;
 			}
-			
+
 			IIndex index;
 			try {
-				ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
-				index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER);
+				ICProject[] scope = CoreModel.getDefault().getCModel().getCProjects();
+				index = CCorePlugin.getIndexManager().getIndex(scope,
+						IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER);
 				index.acquireReadLock();
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
@@ -96,35 +97,33 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 			} catch (InterruptedException e) {
 				return NO_CHILDREN;
 			}
-			
+
 			try {
-				IBFile directiveFile= null;
-				IBFile targetFile= null;
+				IBFile directiveFile = null;
+				IBFile targetFile = null;
 				IIndexInclude[] includes;
 				if (fComputeIncludedBy) {
-					includes= findIncludedBy(index, ifl, NPM);
+					includes = findIncludedBy(index, ifl, NPM);
 				} else {
-					includes= findIncludesTo(index, ifl, NPM);
-					directiveFile= node.getRepresentedFile();
+					includes = findIncludesTo(index, ifl, NPM);
+					directiveFile = node.getRepresentedFile();
 				}
 				if (includes.length > 0) {
-					Set<IBNode> result= new LinkedHashSet<IBNode>(includes.length);
+					Set<IBNode> result = new LinkedHashSet<IBNode>(includes.length);
 					for (IIndexInclude include : includes) {
 						try {
 							if (fComputeIncludedBy) {
-								directiveFile= targetFile= new IBFile(project, include.getIncludedByLocation());
+								directiveFile = targetFile = new IBFile(project, include.getIncludedByLocation());
 							} else {
-								IIndexFileLocation includesPath= include.getIncludesLocation();
+								IIndexFileLocation includesPath = include.getIncludesLocation();
 								if (includesPath == null) {
-									targetFile= new IBFile(include.getFullName());
+									targetFile = new IBFile(include.getFullName());
 								} else {
-									targetFile= new IBFile(project, includesPath);
+									targetFile = new IBFile(project, includesPath);
 								}
 							}
-							IBNode newnode= new IBNode(node, targetFile, directiveFile, 
-									include.getNameOffset(), 
-									include.getNameLength(), 
-									include.getIncludedBy().getTimestamp());
+							IBNode newnode = new IBNode(node, targetFile, directiveFile, include.getNameOffset(),
+									include.getNameLength(), include.getIncludedBy().getTimestamp());
 							newnode.setIsActiveCode(include.isActive());
 							newnode.setIsSystemInclude(include.isSystemInclude());
 							if (!result.contains(newnode) || newnode.isActiveCode())
@@ -154,13 +153,13 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 	private IIndexInclude[] findIncludedBy(IIndex index, IIndexFileLocation ifl, IProgressMonitor pm) {
 		try {
 			if (ifl != null) {
-				IIndexFile[] files= index.getFiles(ifl);
+				IIndexFile[] files = index.getFiles(ifl);
 				if (files.length == 1) {
 					return index.findIncludedBy(files[0]);
 				}
 				if (files.length > 0) {
-					ArrayList<IIndexInclude> list= new ArrayList<IIndexInclude>();
-					HashSet<IIndexFileLocation> handled= new HashSet<IIndexFileLocation>();
+					ArrayList<IIndexInclude> list = new ArrayList<IIndexInclude>();
+					HashSet<IIndexFileLocation> handled = new HashSet<IIndexFileLocation>();
 					for (IIndexFile file : files) {
 						final IIndexInclude[] includes = index.findIncludedBy(file);
 						for (IIndexInclude indexInclude : includes) {
@@ -174,20 +173,20 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
-		} 
+		}
 		return IIndexInclude.EMPTY_INCLUDES_ARRAY;
 	}
 
 	public IIndexInclude[] findIncludesTo(IIndex index, IIndexFileLocation ifl, IProgressMonitor pm) {
 		try {
 			if (ifl != null) {
-				IIndexFile[] files= index.getFiles(ifl);
+				IIndexFile[] files = index.getFiles(ifl);
 				if (files.length == 1) {
 					return index.findIncludes(files[0]);
 				}
 				if (files.length > 0) {
-					ArrayList<IIndexInclude> list= new ArrayList<IIndexInclude>();
-					HashSet<IIndexFileLocation> handled= new HashSet<IIndexFileLocation>();
+					ArrayList<IIndexInclude> list = new ArrayList<IIndexInclude>();
+					HashSet<IIndexFileLocation> handled = new HashSet<IIndexFileLocation>();
 					for (IIndexFile file : files) {
 						final IIndexInclude[] includes = index.findIncludes(file);
 						for (IIndexInclude indexInclude : includes) {
@@ -201,7 +200,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
-		} 
+		}
 		return IIndexInclude.EMPTY_INCLUDES_ARRAY;
 	}
 }

@@ -24,8 +24,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
-public class LanguageDescriptor extends CExtensionDescriptor implements
-		ILanguageDescriptor {
+public class LanguageDescriptor extends CExtensionDescriptor implements ILanguageDescriptor {
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 	private static final String ELEMENT_CONTENT_TYPE = "contentType"; //$NON-NLS-1$
 	private static final String NAMESPACE_SEPARATOR = "."; //$NON-NLS-1$
@@ -35,15 +34,14 @@ public class LanguageDescriptor extends CExtensionDescriptor implements
 	private String fId;
 	private IContentType[] fContentTypes;
 
-
 	public LanguageDescriptor(IConfigurationElement el) {
 		super(el);
 	}
 
 	@Override
 	public ILanguage getLanguage() {
-		if(fLanguage == null){
-			SafeRunner.run(new ISafeRunnable(){
+		if (fLanguage == null) {
+			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {
 					CCorePlugin.log(exception);
@@ -51,7 +49,7 @@ public class LanguageDescriptor extends CExtensionDescriptor implements
 
 				@Override
 				public void run() throws Exception {
-					fLanguage = (ILanguage)getConfigurationElement().createExecutableExtension(ATTRIBUTE_CLASS);
+					fLanguage = (ILanguage) getConfigurationElement().createExecutableExtension(ATTRIBUTE_CLASS);
 				}
 			});
 		}
@@ -60,28 +58,28 @@ public class LanguageDescriptor extends CExtensionDescriptor implements
 
 	@Override
 	public String[] getContentTypeIds() {
-		if(fContentTypeIds == null){
+		if (fContentTypeIds == null) {
 			fContentTypeIds = calculateCintentTypeIds();
 		}
 		return fContentTypeIds;
 	}
 
-	private String[] calculateCintentTypeIds(){
+	private String[] calculateCintentTypeIds() {
 		IConfigurationElement el = getConfigurationElement();
 		IConfigurationElement children[] = el.getChildren();
 		String ids[] = new String[children.length];
 		int num = 0;
 		String tmp;
-		if(children.length > 0){
-			for(int i = 0; i < children.length; i++){
-				if(ELEMENT_CONTENT_TYPE.equals(children[i].getName())){
+		if (children.length > 0) {
+			for (int i = 0; i < children.length; i++) {
+				if (ELEMENT_CONTENT_TYPE.equals(children[i].getName())) {
 					tmp = children[i].getAttribute(ATTRIBUTE_ID);
-					if(tmp != null)
+					if (tmp != null)
 						ids[num++] = tmp;
 				}
 			}
 
-			if(num < children.length){
+			if (num < children.length) {
 				String t[] = new String[num];
 				System.arraycopy(ids, 0, t, 0, num);
 				ids = t;
@@ -92,34 +90,34 @@ public class LanguageDescriptor extends CExtensionDescriptor implements
 	}
 
 	@Override
-	public String getId(){
-		if(fId == null)
+	public String getId() {
+		if (fId == null)
 			fId = getConfigurationElement().getNamespaceIdentifier() + NAMESPACE_SEPARATOR + super.getId();
 		return fId;
 	}
 
 	@Override
 	public IContentType[] getContentTypes() {
-		if(fContentTypes == null){
+		if (fContentTypes == null) {
 			fContentTypes = calculateContentTypes(getContentTypeIds());
 		}
 		return fContentTypes;
 	}
 
-	private IContentType[] calculateContentTypes(String ids[]){
+	private IContentType[] calculateContentTypes(String ids[]) {
 		IContentType cTypes[] = new IContentType[ids.length];
 
-		if(ids.length > 0){
+		if (ids.length > 0) {
 			int num = 0;
 			IContentTypeManager manager = Platform.getContentTypeManager();
 
 			for (int k = 0; k < ids.length; ++k) {
 				IContentType langContType = manager.getContentType(ids[k]);
-				if(langContType != null)
+				if (langContType != null)
 					cTypes[num++] = langContType;
 			}
 
-			if(num < ids.length){
+			if (num < ids.length) {
 				IContentType tmp[] = new IContentType[num];
 				System.arraycopy(cTypes, 0, tmp, 0, num);
 				cTypes = tmp;

@@ -38,55 +38,54 @@ public interface ICDTLaunchConfigurationConstants {
 	 * @since 7.1
 	 */
 	public static final String ID_LAUNCH_C_REMOTE_APP = "org.eclipse.cdt.launch.remoteApplicationLaunchType"; //$NON-NLS-1$
-	
-	/**
-     * This is the attach launch type id.
-     *
-     * @since 6.0
-     */
-    public static final String ID_LAUNCH_C_ATTACH = "org.eclipse.cdt.launch.attachLaunchType"; //$NON-NLS-1$
 
-    /**
-     * This is the post-mortem launch type id.
-     *
-     * @since 6.0
-     */
-    public static final String ID_LAUNCH_C_POST_MORTEM = "org.eclipse.cdt.launch.postmortemLaunchType"; //$NON-NLS-1$
-    
-    /**
+	/**
+	 * This is the attach launch type id.
+	 *
+	 * @since 6.0
+	 */
+	public static final String ID_LAUNCH_C_ATTACH = "org.eclipse.cdt.launch.attachLaunchType"; //$NON-NLS-1$
+
+	/**
+	 * This is the post-mortem launch type id.
+	 *
+	 * @since 6.0
+	 */
+	public static final String ID_LAUNCH_C_POST_MORTEM = "org.eclipse.cdt.launch.postmortemLaunchType"; //$NON-NLS-1$
+
+	/**
 	 * Specifies the default launch delegate for a Local Debug session
 	 * @since 7.0
 	 */
-    public static final String PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.localCLaunch"; //$NON-NLS-1$
+	public static final String PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.localCLaunch"; //$NON-NLS-1$
 
-    /**
+	/**
 	 * Specifies the default launch delegate for a Remote Debug session.
 	 * This default is part of the optional plugin org.eclipse.cdt.launch.remote.  If that plugin is not installed
 	 * then we won't set a default, which is ok since we only have one other delegate 
 	 * (which is org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch).
 	 * @since 7.1
 	 */
-    public static final String PREFERRED_DEBUG_REMOTE_LAUNCH_DELEGATE = "org.eclipse.rse.remotecdt.dsf.debug"; //$NON-NLS-1$
+	public static final String PREFERRED_DEBUG_REMOTE_LAUNCH_DELEGATE = "org.eclipse.rse.remotecdt.dsf.debug"; //$NON-NLS-1$
 
-
-    /**
+	/**
 	 * Specifies the default launch delegate for an Attach Debug session
 	 * @since 7.0
 	 */
-    public static final String PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"; //$NON-NLS-1$
+	public static final String PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"; //$NON-NLS-1$
 
-    /**
+	/**
 	 * Specifies the default launch delegate for a Post Mortem Debug session
 	 * @since 7.0
 	 */
-    public static final String PREFERRED_DEBUG_POSTMORTEM_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"; //$NON-NLS-1$
+	public static final String PREFERRED_DEBUG_POSTMORTEM_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"; //$NON-NLS-1$
 
-    /**
-     * Specifies the default launch delegate for a Run mode session
+	/**
+	 * Specifies the default launch delegate for a Run mode session
 	 * @since 7.0
 	 */
-    public static final String PREFERRED_RUN_LAUNCH_DELEGATE = "org.eclipse.cdt.cdi.launch.localCLaunch"; //$NON-NLS-1$
-    
+	public static final String PREFERRED_RUN_LAUNCH_DELEGATE = "org.eclipse.cdt.cdi.launch.localCLaunch"; //$NON-NLS-1$
+
 	/**
 	 * Identifier for the C/C++ program process type, which is annotated on processes created
 	 * by the C/C++ application launch delegate.
@@ -247,13 +246,15 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether to enable variable bookkeeping.
 	 */
-	public static final String ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING = CDT_LAUNCH_ID + ".ENABLE_VARIABLE_BOOKKEEPING"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING = CDT_LAUNCH_ID
+			+ ".ENABLE_VARIABLE_BOOKKEEPING"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether to enable register bookkeeping.
 	 */
-	public static final String ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING = CDT_LAUNCH_ID + ".ENABLE_REGISTER_BOOKKEEPING"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING = CDT_LAUNCH_ID
+			+ ".ENABLE_REGISTER_BOOKKEEPING"; //$NON-NLS-1$
 
 	/**
 	 * launch configuration attribute key.  The value is a string specifying the protocol to
@@ -268,7 +269,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * memento.
 	 */
 	public static final String ATTR_DEBUGGER_GLOBAL_VARIABLES = CDT_LAUNCH_ID + ".GLOBAL_VARIABLES"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a format list'
 	 * memento.
@@ -285,7 +286,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Note that we use the prefix "org.eclipse.cdt.dsf.gdb" for backwards-compatibility.
 	 * See bug 476589.
 	 * @since 7.7
-	 */     
+	 */
 	public static final String ATTR_DEBUGGER_POST_MORTEM_TYPE = "org.eclipse.cdt.dsf.gdb" + ".POST_MORTEM_TYPE"; //$NON-NLS-1$  //$NON-NLS-2$
 
 	/**
@@ -333,7 +334,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Indicates a core file.
 	 *   
 	 * @since 7.7
-	 */                                                 
+	 */
 	public static final String DEBUGGER_POST_MORTEM_CORE_FILE = "CORE_FILE"; //$NON-NLS-1$
 
 	/**
@@ -341,7 +342,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Indicates a trace data file.
 	 *      
 	 * @since 7.7
-	 */     
+	 */
 	public static final String DEBUGGER_POST_MORTEM_TRACE_FILE = "TRACE_FILE"; //$NON-NLS-1$
 
 	/**  

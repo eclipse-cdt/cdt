@@ -12,7 +12,7 @@
  *     Markus Schorn - initial API and implementation
  *     IBM Corporation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.indexer;
 
 import java.io.File;
@@ -39,16 +39,16 @@ import org.eclipse.core.runtime.Path;
  * @since 5.0
  */
 public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
-	private final HashMap<String, IIndexFileLocation> fIflCache= new HashMap<String, IIndexFileLocation>();
+	private final HashMap<String, IIndexFileLocation> fIflCache = new HashMap<String, IIndexFileLocation>();
 	private final FileExistsCache fExistsCache;
-	
+
 	private final StandaloneIndexer fIndexer;
 
 	public StandaloneIndexerInputAdapter(StandaloneIndexer indexer) {
-		fIndexer= indexer;
-		fExistsCache= new FileExistsCache(isCaseInsensitiveFileSystem());
+		fIndexer = indexer;
+		fExistsCache = new FileExistsCache(isCaseInsensitiveFileSystem());
 	}
-	
+
 	@Override
 	public IScannerInfo getBuildConfiguration(int linkageID, Object tu) {
 		return fIndexer.getScannerInfo(tu.toString());
@@ -66,7 +66,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public String getEncoding(IIndexFileLocation ifl) {
-		String encoding= getFileEncoding(getASTPath(ifl));
+		String encoding = getFileEncoding(getASTPath(ifl));
 		if (encoding == null)
 			return InternalParserUtil.SYSTEM_DEFAULT_ENCODING;
 
@@ -77,7 +77,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	public boolean isSourceUnit(Object tu) {
 		return isValidSourceUnitName(tu.toString());
 	}
-	
+
 	@Override
 	public boolean isIndexedOnlyIfIncluded(Object tu) {
 		return false;
@@ -97,7 +97,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	public boolean isSource(String filename) {
 		return isValidSourceUnitName(filename);
 	}
-	
+
 	@Override
 	public long getFileSize(String astFilePath) {
 		return new File(astFilePath).length();
@@ -115,7 +115,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public IIndexFileLocation resolveASTPath(String astPath) {
-		IIndexFileLocation result= fIflCache.get(astPath);
+		IIndexFileLocation result = fIflCache.get(astPath);
 		if (result == null) {
 			try {
 				astPath = new File(astPath).getCanonicalPath();
@@ -135,20 +135,20 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	}
 
 	@Override
-	public IIndexFileLocation resolveIncludeFile(String includePath) {		
+	public IIndexFileLocation resolveIncludeFile(String includePath) {
 		if (!fExistsCache.isFile(includePath)) {
 			return null;
 		}
-		IIndexFileLocation result= fIflCache.get(includePath);
+		IIndexFileLocation result = fIflCache.get(includePath);
 		if (result == null) {
-			File file= new File(includePath);
+			File file = new File(includePath);
 			try {
 				includePath = file.getCanonicalPath();
 			} catch (IOException e) {
 				// use the original
 			}
 			//Stand-alone indexing stores the absolute paths of files being indexed
-			result = new IndexFileLocation(UNCPathConverter.getInstance().toURI(includePath),null);
+			result = new IndexFileLocation(UNCPathConverter.getInstance().toURI(includePath), null);
 			fIflCache.put(includePath, result);
 		}
 		return result;
@@ -180,7 +180,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 			fileEncoding = fileEncodingRegistry.getFileEncoding(stu);
 		if (fileEncoding == null)
 			fileEncoding = InternalParserUtil.SYSTEM_DEFAULT_ENCODING;
-		
+
 		return fileEncoding;
 	}
 
@@ -204,10 +204,10 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 			return true;
 		return fIndexer.getValidSourceUnitNames().contains(path.getFileExtension());
 	}
-	
+
 	@SuppressWarnings("nls")
 	@Override
 	public boolean isCaseInsensitiveFileSystem() {
-		return new File("a").equals(new File("A")); 
+		return new File("a").equals(new File("A"));
 	}
 }

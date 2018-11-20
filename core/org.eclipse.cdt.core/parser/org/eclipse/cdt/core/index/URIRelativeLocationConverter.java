@@ -31,7 +31,7 @@ import org.eclipse.core.filesystem.URIUtil;
  */
 public class URIRelativeLocationConverter implements IIndexLocationConverter {
 	private URI baseURI;
-	
+
 	/**
 	 * Constructs an URIRelativeLocationConverter which will relative paths
 	 * by prefixing the supplied base URI.
@@ -41,16 +41,16 @@ public class URIRelativeLocationConverter implements IIndexLocationConverter {
 	public URIRelativeLocationConverter(URI baseURI) {
 		this.baseURI = baseURI;
 	}
-	
+
 	@Override
 	public IIndexFileLocation fromInternalFormat(String raw) {
 		String rawPath = URIUtil.toURI(raw).getRawPath();
 		if (rawPath.length() > 0 && rawPath.charAt(0) == '/')
-			rawPath= rawPath.substring(1);
-		URI uri= baseURI.resolve(rawPath);
+			rawPath = rawPath.substring(1);
+		URI uri = baseURI.resolve(rawPath);
 		return new IndexFileLocation(uri, null);
 	}
-	
+
 	@Override
 	public String toInternalFormat(IIndexFileLocation location) {
 		URI relative = baseURI.relativize(location.getURI());

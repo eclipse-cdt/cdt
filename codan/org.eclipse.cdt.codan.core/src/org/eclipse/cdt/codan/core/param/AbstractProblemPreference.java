@@ -65,7 +65,8 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 		if (isValidIdentifier(key))
 			this.key = key;
 		else
-			throw new IllegalArgumentException("Key must have java identifier syntax or number, i.e no dots and other funky stuff: " + key); //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					"Key must have java identifier syntax or number, i.e no dots and other funky stuff: " + key); //$NON-NLS-1$
 	}
 
 	protected boolean isValidIdentifier(String id) {
@@ -213,7 +214,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 	 * @return true when value if default (usually don't require storage in this case)
 	 * @since 2.0
 	 */
-	public boolean isDefault(){
+	public boolean isDefault() {
 		return false;
 	}
 }

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.settingswizards;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,13 +43,13 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 	public static final String SECTION_NAME = "org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros"; //$NON-NLS-1$
 
 	private static final String MACRO_ELEMENT = "macro"; //$NON-NLS-1$
-	private static final String NAME_ELEMENT = "name";   //$NON-NLS-1$
+	private static final String NAME_ELEMENT = "name"; //$NON-NLS-1$
 	private static final String VALUE_ELEMENT = "value"; //$NON-NLS-1$
-
 
 	@Override
 	public Image getIcon() {
-		return CUIPlugin.getImageDescriptorRegistry().get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO));
+		return CUIPlugin.getImageDescriptorRegistry()
+				.get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO));
 	}
 
 	@Override
@@ -69,7 +68,8 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 	}
 
 	@Override
-	protected void writeSettings(ContentHandler content, ICLanguageSettingEntry setting) throws SettingsImportExportException {
+	protected void writeSettings(ContentHandler content, ICLanguageSettingEntry setting)
+			throws SettingsImportExportException {
 		char[] name = setting.getName().toCharArray();
 		char[] value = setting.getValue().toCharArray();
 
@@ -89,11 +89,10 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 			content.endElement(NONE, NONE, MACRO_ELEMENT);
 			newline(content);
 
-		} catch(SAXException e) {
+		} catch (SAXException e) {
 			throw new SettingsImportExportException(e);
 		}
 	}
-
 
 	@Override
 	protected void readSettings(ICLanguageSetting setting, Element language) throws SettingsImportExportException {
@@ -101,25 +100,25 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 
 		List<Element> macrosNodes = XMLUtils.extractChildElements(language, MACRO_ELEMENT);
 
-		for(Element macroElement : macrosNodes) {
+		for (Element macroElement : macrosNodes) {
 			String name = null;
 			String value = null;
 
 			NodeList nodeList = macroElement.getChildNodes();
-			for(int i = 0; i < nodeList.getLength(); i++) {
+			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
-				switch(node.getNodeType()) {
+				switch (node.getNodeType()) {
 				case Node.TEXT_NODE:
-					Text text = (Text)node;
-					if(XMLUtils.isWhitespace(text.getData()))
+					Text text = (Text) node;
+					if (XMLUtils.isWhitespace(text.getData()))
 						break;
 					throw new SettingsImportExportException("Unknown text: '" + text.getData() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 				case Node.ELEMENT_NODE:
-					Element element = (Element)node;
+					Element element = (Element) node;
 					String tagName = element.getTagName();
-					if(name == null && tagName.equals(NAME_ELEMENT))
+					if (name == null && tagName.equals(NAME_ELEMENT))
 						name = element.getTextContent();
-					else if(value == null && tagName.equals(VALUE_ELEMENT))
+					else if (value == null && tagName.equals(VALUE_ELEMENT))
 						value = element.getTextContent();
 					else
 						throw new SettingsImportExportException("Unknown or extra tag: " + tagName); //$NON-NLS-1$
@@ -129,15 +128,15 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 				}
 			}
 
-			if(name == null)
+			if (name == null)
 				throw new SettingsImportExportException("There must be one <name> element"); //$NON-NLS-1$
-			if(value == null)
+			if (value == null)
 				throw new SettingsImportExportException("There must be one <value> element"); //$NON-NLS-1$
 
 			macros.add(CDataUtil.createCMacroEntry(name, value, 0));
 		}
 
-		if(macros.isEmpty())
+		if (macros.isEmpty())
 			return;
 
 		// need to do this or existing settings will disappear

@@ -39,9 +39,9 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_colors;
 	public static String CEditorPreferencePage_invalid_input;
 	public static String CEditorPreferencePage_empty_input;
-//	public static String CEditorPreferencePage_ContentAssistPage_searchGroupTitle;
-//	public static String CEditorPreferencePage_ContentAssistPage_searchGroupCurrentFileOption;
-//	public static String CEditorPreferencePage_ContentAssistPage_searchGroupCurrentProjectOption;
+	//	public static String CEditorPreferencePage_ContentAssistPage_searchGroupTitle;
+	//	public static String CEditorPreferencePage_ContentAssistPage_searchGroupCurrentFileOption;
+	//	public static String CEditorPreferencePage_ContentAssistPage_searchGroupCurrentProjectOption;
 	public static String CEditorPreferencePage_ContentAssistPage_insertionGroupTitle;
 	public static String CEditorPreferencePage_ContentAssistPage_insertSingleProposalAutomatically;
 	public static String CEditorPreferencePage_ContentAssistPage_insertCommonProposalAutomatically;
@@ -105,7 +105,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_behaviorPage_subWordNavigation;
 	public static String CEditorPreferencePage_behaviorPage_inactiveCode;
 	public static String CEditorPreferencePage_behaviorPage_formattingWithEmptySelection;
-	public static String CEditorPreferencePage_behaviorPage_formatFile; 
+	public static String CEditorPreferencePage_behaviorPage_formatFile;
 	public static String CEditorPreferencePage_behaviorPage_formatStatement;
 	public static String CEditorPreferencePage_behaviorPage_confirmFormattingScope;
 	public static String CEditorPreferencePage_behaviorPage_appearanceColorOptions;
@@ -387,7 +387,7 @@ public final class PreferencesMessages extends NLS {
 	public static String HeaderSubstitutionPreferencePage_title;
 
 	public static String HeaderSubstitutionBlock_header_substitution_maps;
-	public static String HeaderSubstitutionBlock_c_and_cpp; 
+	public static String HeaderSubstitutionBlock_c_and_cpp;
 	public static String HeaderSubstitutionBlock_cpp_only;
 	public static String HeaderSubstitutionBlock_add_button;
 	public static String HeaderSubstitutionBlock_edit_button;
@@ -407,7 +407,7 @@ public final class PreferencesMessages extends NLS {
 	public static String HeaderSubstitutionEditDialog_error_replacement_by_itself;
 	public static String HeaderSubstitutionEditDialog_invalid_source;
 	public static String HeaderSubstitutionEditDialog_invalid_target;
-				
+
 	public static String HeaderSubstitutionMapEditDialog_new_title;
 	public static String HeaderSubstitutionMapEditDialog_edit_title;
 	public static String HeaderSubstitutionMapEditDialog_name;
@@ -426,7 +426,7 @@ public final class PreferencesMessages extends NLS {
 	public static String HeaderSubstitutionMapEditDialog_remove_button2;
 	public static String HeaderSubstitutionMapEditDialog_up_button;
 	public static String HeaderSubstitutionMapEditDialog_down_button;
-	public static String HeaderSubstitutionMapEditDialog_c_and_cpp; 
+	public static String HeaderSubstitutionMapEditDialog_c_and_cpp;
 	public static String HeaderSubstitutionMapEditDialog_cpp_only;
 	public static String HeaderSubstitutionMapEditDialog_import_title;
 	public static String HeaderSubstitutionMapEditDialog_export_title;
@@ -474,7 +474,7 @@ public final class PreferencesMessages extends NLS {
 	public static String IncludeOrderBlock_down;
 	public static String IncludeOrderBlock_order_of_includes;
 	public static String IncludePragmasPreferencePage_title;
-	public static String IncludePragmasBlock_description; 
+	public static String IncludePragmasBlock_description;
 	public static String IncludePragmasBlock_link_tooltip;
 	public static String IncludePragmasBlock_export_pattern;
 	public static String IncludePragmasBlock_begin_exports_pattern;
@@ -556,7 +556,7 @@ public final class PreferencesMessages extends NLS {
 	public static String EditTemplateDialog_paste;
 	public static String EditTemplateDialog_select_all;
 	public static String EditTemplateDialog_content_assist;
-//	public static String EditTemplateDialog_autoinsert;
+	//	public static String EditTemplateDialog_autoinsert;
 
 	public static String MarkOccurrencesConfigurationBlock_title;
 	public static String MarkOccurrencesConfigurationBlock_link;
@@ -564,7 +564,7 @@ public final class PreferencesMessages extends NLS {
 	public static String MarkOccurrencesConfigurationBlock_markOccurrences;
 	public static String MarkOccurrencesConfigurationBlock_markOverloadOccurrences;
 	public static String MarkOccurrencesConfigurationBlock_stickyOccurrences;
-	
+
 	public static String ScalabilityPreferencePage_description;
 	public static String ScalabilityPreferencePage_detection_label;
 	public static String ScalabilityPreferencePage_detection_group_label;

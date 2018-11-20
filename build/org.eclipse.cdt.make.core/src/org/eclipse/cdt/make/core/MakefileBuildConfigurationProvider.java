@@ -33,14 +33,13 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 	}
 
 	@Override
-	public ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name)
-			throws CoreException {
+	public ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		return new StandardBuildConfiguration(config, name);
 	}
 
 	@Override
-	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain,
-			String launchMode, IProgressMonitor monitor) throws CoreException {
+	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+			IProgressMonitor monitor) throws CoreException {
 		ICBuildConfigurationManager configManager = MakeCorePlugin.getService(ICBuildConfigurationManager.class);
 
 		StringBuilder configName = new StringBuilder("make."); //$NON-NLS-1$
@@ -68,8 +67,7 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 		}
 
 		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, name, monitor);
-		StandardBuildConfiguration makeConfig = new StandardBuildConfiguration(config, name, toolChain,
-				launchMode);
+		StandardBuildConfiguration makeConfig = new StandardBuildConfiguration(config, name, toolChain, launchMode);
 		configManager.addBuildConfiguration(config, makeConfig);
 		return makeConfig;
 	}

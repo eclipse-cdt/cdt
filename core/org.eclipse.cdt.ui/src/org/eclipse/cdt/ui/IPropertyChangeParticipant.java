@@ -32,7 +32,7 @@ public interface IPropertyChangeParticipant {
 	 * behaviour in a way it determines potential clients could act upon.
 	 */
 	public boolean affectsBehavior(PropertyChangeEvent event);
-	
+
 	/**
 	 * Performs any necessary to adapt the participant to the specified event.
 	 * @param event

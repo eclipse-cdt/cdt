@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 
 public class QuickFixRenameMember extends AbstractAstRewriteQuickFix {
-	
+
 	@Override
 	public String getLabel() {
 		return QuickFixMessages.QuickFixRenameMember_rename_member;
@@ -55,7 +55,7 @@ public class QuickFixRenameMember extends AbstractAstRewriteQuickFix {
 		}
 		ASTRewrite r = ASTRewrite.create(ast);
 		INodeFactory factory = ast.getASTNodeFactory();
-		
+
 		String[] args = CodanProblemMarker.getProblemArguments(marker);
 		if (args == null || args.length < 3)
 			return;

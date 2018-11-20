@@ -24,8 +24,7 @@ public class TestRedefinition extends TestCase {
 	 * xlc compiler for macro/variable redefinition problem is given as
 	 * input for testing.
 	 */
-	public void testparseLine()
-	{
+	public void testparseLine() {
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		// Macro redefinition warning generates 2 messages. First line is ignored.
 		// Second line is re-parsed to 2 warnings to cross-reference both.
@@ -37,29 +36,29 @@ public class TestRedefinition extends TestCase {
 		aix.parseLine(err_msg2);
 		aix.parseLine(err_msg3);
 		assertEquals(4, aix.getNumberOfMarkers());
-		
+
 		assertEquals("\"TEMP_1\" has been redefined on line 5 of temp1.c", aix.getMessage(0));
 		assertEquals("temp1.h", aix.getFileName(0));
 		assertEquals(3, aix.getLineNumber(0));
 		assertEquals(IMarkerGenerator.SEVERITY_WARNING, aix.getSeverity(0));
-		
+
 		assertEquals("\"TEMP_1\" redefines original definition on line 3 of temp1.h", aix.getMessage(1));
 		assertEquals("temp1.c", aix.getFileName(1));
 		assertEquals(5, aix.getLineNumber(1));
 		assertEquals(IMarkerGenerator.SEVERITY_WARNING, aix.getSeverity(1));
-		
+
 		assertEquals("\"MACRO_2\" has been redefined on line 17 of temp2.c", aix.getMessage(2));
 		assertEquals("temp2.c", aix.getFileName(2));
 		assertEquals(10, aix.getLineNumber(2));
 		assertEquals(IMarkerGenerator.SEVERITY_WARNING, aix.getSeverity(2));
-		
+
 		assertEquals("\"MACRO_2\" redefines original definition on line 10 of temp2.c", aix.getMessage(3));
 		assertEquals("temp2.c", aix.getFileName(3));
 		assertEquals(17, aix.getLineNumber(3));
 		assertEquals(IMarkerGenerator.SEVERITY_WARNING, aix.getSeverity(3));
 	}
-	public TestRedefinition( String name)
-	{
+
+	public TestRedefinition(String name) {
 		super(name);
 	}
 }

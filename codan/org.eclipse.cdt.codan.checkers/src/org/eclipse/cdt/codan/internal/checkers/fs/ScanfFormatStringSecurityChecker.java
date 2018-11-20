@@ -71,8 +71,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
  */
 public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.ScanfFormatStringSecurityProblem"; //$NON-NLS-1$
-	private final static VulnerableFunction[] VULNERABLE_FUNCTIONS = {//
-	// list of all format string vulnerable functions
+	private final static VulnerableFunction[] VULNERABLE_FUNCTIONS = { //
+			// list of all format string vulnerable functions
 			new VulnerableFunction("scanf", 0), //$NON-NLS-1$
 			new VulnerableFunction("fscanf", 1), //$NON-NLS-1$
 			new VulnerableFunction("fwscanf", 1), //$NON-NLS-1$

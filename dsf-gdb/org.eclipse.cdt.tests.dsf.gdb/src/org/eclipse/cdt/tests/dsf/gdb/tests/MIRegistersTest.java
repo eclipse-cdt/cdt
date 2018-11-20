@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
@@ -200,7 +200,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	/*
-	 *  This is a common support method which gets the Register context of root group over the specified frame context 
+	 *  This is a common support method which gets the Register context of root group over the specified frame context
 	 */
 	private IRegisterDMContext[] getTargetRegisters(final IFrameDMContext frameDmc) throws Throwable {
 		IRegisterDMContext[] regContexts = getRegisters(
@@ -211,9 +211,9 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	/*************************************************************************
-	 * 
+	 *
 	 * The tests for the register service.
-	 * 
+	 *
 	 *************************************************************************/
 	@Test
 	public void resolveTargetRegisterGroup() throws Throwable {
@@ -413,7 +413,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	 */
 	private List<IRegistersChangedDMEvent> writeRegisterWaitNotication(final IRegisterDMContext registerDmc,
 			final String regValue, final String formatId) throws Throwable {
-		ServiceEventWaitor<IRegistersChangedDMEvent> eventWaitor = new ServiceEventWaitor<IRegistersChangedDMEvent>(
+		ServiceEventWaitor<IRegistersChangedDMEvent> eventWaitor = new ServiceEventWaitor<>(
 				fSession, IRegistersChangedDMEvent.class);
 
 		writeRegister(registerDmc, regValue, formatId);
@@ -549,7 +549,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	public void getRegisterGroupsData() throws Throwable {
 		int grpsIncrement = 3;
 
-		//Group name to Group description 
+		//Group name to Group description
 		Map<String, String> groupNameToDescMap = new HashMap<>();
 		groupNameToDescMap.put("Group_1", "");
 		groupNameToDescMap.put("Group_2", "");
@@ -786,7 +786,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	public void canRestoreRegisterGroups() throws Throwable {
 		int grpsIncrement = 3;
 		addRegisterGroups(grpsIncrement);
-		//Always able to restore to default 
+		//Always able to restore to default
 		assertTrue(canRestoreDefaultGroups());
 	}
 

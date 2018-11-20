@@ -16,6 +16,11 @@ package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.templateengine.Messages;
+import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
+import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
+import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -26,12 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.ui.templateengine.Messages;
-import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
-import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
-import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
 /**
  * This gives a Label and Combo widget.
@@ -57,7 +56,7 @@ public class UISelectWidget extends InputUIElement {
 
 	/**
 	 * Constructor for Select Widget.
-	 * 
+	 *
 	 * @param attribute
 	 *            attribute associated with this widget.
 	 */
@@ -72,7 +71,7 @@ public class UISelectWidget extends InputUIElement {
 	 */
 	@Override
 	public Map<String, String> getValues() {
-		Map<String, String> values = new HashMap<String, String>();
+		Map<String, String> values = new HashMap<>();
 		if (currentValue != null) {
 			values.put(uiAttributes.get(UIElement.ID), currentValue);
 		}
@@ -139,7 +138,7 @@ public class UISelectWidget extends InputUIElement {
 	}
 
 	/**
-	 * @return whether this widget has been set to a valid state. For this 
+	 * @return whether this widget has been set to a valid state. For this
 	 * widget type that means whether the user has selected a non-empty string name.
 	 */
 	@Override

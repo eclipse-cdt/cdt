@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,12 +17,12 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Pops the top value from the data stack  
- * 
+ * Pops the top value from the data stack
+ *
  * <pre>
  *    C: popdata {thread_id}
  *    R: ok
- *    
+ *
  * Errors:
  *    error: invalid thread
  * </pre>

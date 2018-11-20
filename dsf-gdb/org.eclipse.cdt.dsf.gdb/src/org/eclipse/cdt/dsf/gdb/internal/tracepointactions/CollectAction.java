@@ -34,13 +34,13 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Action used to tell GDB to collect different values from a tracepoint.
  * It corresponds to GDB's 'collect' action.
- * 	
+ *
  * As for GDB 7.4:
  *	collect[/s] EXPRESSIONS
- *	 The tracepoint collect command now takes an optional modifier "/s" 
+ *	 The tracepoint collect command now takes an optional modifier "/s"
  *	 that directs it to dereference pointer-to-character types and
  *	 collect the bytes of memory up to a zero byte.  The behavior is
- *	 similar to what you see when you use the regular print command on a 
+ *	 similar to what you see when you use the regular print command on a
  *	 string.  An optional integer following the "/s" sets a bound on the
  *	 number of bytes that will be collected.
  *
@@ -76,7 +76,7 @@ public class CollectAction extends AbstractTracepointAction {
 		fCollectString = str;
 	}
 
-	/** 
+	/**
 	 * Indicates if this collect action will treat character pointers as strings.
 	 * @since 4.1
 	 */
@@ -94,21 +94,21 @@ public class CollectAction extends AbstractTracepointAction {
 
 	/**
 	 * Indicates the maximum number of bytes that should be collected
-	 * when treating character pointers as strings 
+	 * when treating character pointers as strings
 	 * @return null if no limit is to be used
 	 * @return a non-negative integer indicating the limit
-	 * 
+	 *
 	 * @since 4.1
 	 */
 	public Integer getCharPtrAsStringsLimit() {
 		return fCharPtrAsStringsLimit;
 	}
 
-	/** 
+	/**
 	 * Specify the maximum number of bytes that should be collected when
 	 * when treating character pointers as strings.
 	 * @param limit A non-negative integer, or null of no limit should be used.
-	 * 
+	 *
 	 *  @since 4.1
 	 */
 	public void setCharPtrAsStringsLimit(Integer limit) {

@@ -20,8 +20,6 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -33,12 +31,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import junit.framework.TestCase;
+
 /**
  * This is a utility class that properly creates a project for testing
  * core features. Projects are created from a template stored in a zip file
  * These templates are created using the CDT and have the proper natures
  * and build settings set up.
- * 
+ *
  * @author Doug Schaefer
  */
 public class ProjectCreator extends TestCase {

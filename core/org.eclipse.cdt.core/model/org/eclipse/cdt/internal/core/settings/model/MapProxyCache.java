@@ -25,7 +25,7 @@ public class MapProxyCache implements IProxyCache {
 
 	private HashMap<String, CDataProxy> getMap(boolean create) {
 		if (fMap == null && create)
-			fMap = new HashMap<String, CDataProxy>();
+			fMap = new HashMap<>();
 		return fMap;
 	}
 

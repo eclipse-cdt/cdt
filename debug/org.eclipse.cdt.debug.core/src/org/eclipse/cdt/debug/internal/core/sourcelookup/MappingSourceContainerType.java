@@ -52,7 +52,7 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 				// When upgrading source locator (See Bug 472765),
 				// do not enable backend path substitution
 				boolean enabled = Boolean.parseBoolean(backendEnabled);
-				List<MapEntrySourceContainer> entries = new ArrayList<MapEntrySourceContainer>();
+				List<MapEntrySourceContainer> entries = new ArrayList<>();
 				Node childNode = element.getFirstChild();
 				while (childNode != null) {
 					if (childNode.getNodeType() == Node.ELEMENT_NODE) {

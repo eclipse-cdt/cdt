@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
  * Base class for the 'remote' command of GDB.
- * 
+ *
  * @since 4.1
  */
 public class CLIRemote extends CLICommand<MIInfo> {

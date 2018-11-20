@@ -40,7 +40,7 @@ public abstract class FileContent {
 	/** @since 5.4 */
 	public static final long NULL_FILE_SIZE = -1;
 
-	/** 
+	/**
 	 * Returns the location of this file content as it will appear in {@link IASTFileLocation#getFileName()}
 	 */
 	public abstract String getFileLocation();
@@ -54,7 +54,7 @@ public abstract class FileContent {
 	public abstract long getTimestamp();
 
 	/**
-	 * Returns time when the file was read. Corresponds to the start of reading.    
+	 * Returns time when the file was read. Corresponds to the start of reading.
 	 * @return time before reading started in milliseconds since epoch
 	 * @since 5.4
 	 */

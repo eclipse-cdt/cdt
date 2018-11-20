@@ -18,7 +18,7 @@ public interface IAutotoolsEditor extends ITextEditor {
 	/**
 	 * Adds the given listener.
 	 * Has no effect if an identical listener was not already registered.
-	 * 
+	 *
 	 * @param listener	The reconcile listener to be added
 	 */
 	void addReconcilingParticipant(IReconcilingParticipant listener);

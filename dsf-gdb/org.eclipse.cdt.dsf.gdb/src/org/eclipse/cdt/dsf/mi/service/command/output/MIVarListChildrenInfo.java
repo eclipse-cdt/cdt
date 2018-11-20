@@ -31,7 +31,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 
 	public MIVarListChildrenInfo(MIOutput record) {
 		super(record);
-		List<MIVar> aList = new ArrayList<MIVar>();
+		List<MIVar> aList = new ArrayList<>();
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
@@ -71,7 +71,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 
 	/**
 	 * @return Whether the are more children to fetch.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public boolean hasMore() {

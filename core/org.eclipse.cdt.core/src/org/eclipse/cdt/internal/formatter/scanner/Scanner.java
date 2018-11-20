@@ -42,7 +42,7 @@ public class Scanner extends SimpleScanner {
 
 	/**
 	 * Set the source text as character array.
-	 * 
+	 *
 	 * @param source  the source text
 	 */
 	public void setSource(char[] source) {
@@ -115,7 +115,7 @@ public class Scanner extends SimpleScanner {
 	/**
 	 * Move to next character iff it is equal to the given expected character.
 	 * If the characters do not match, the scanner does not move forward.
-	 * 
+	 *
 	 * @param c the expected character
 	 * @return <code>true</code> if the next character was the expected character
 	 */
@@ -138,7 +138,7 @@ public class Scanner extends SimpleScanner {
 
 	/**
 	 * Set current scanner offset to given offset.
-	 * 
+	 *
 	 * @param nextCharacterStart  the desired scanner offset
 	 */
 	public void setCurrentPosition(int nextCharacterStart) {
@@ -173,7 +173,7 @@ public class Scanner extends SimpleScanner {
 
 	/**
 	 * Get the next token as token type constant.
-	 * 
+	 *
 	 * @return the next token type
 	 */
 	public int getNextToken() {

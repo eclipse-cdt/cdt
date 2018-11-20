@@ -39,14 +39,14 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 /**
- * The command timeout manager registers itself as a command listener and monitors 
- * the command execution time. The goal of this implementation is to gracefully 
- * handle disruptions in the communication between Eclipse and GDB. 
- * 
- * The algorithm used by this class is based on the assumption that the command 
- * execution in GDB is sequential even though DSF can send up to 3 commands at 
+ * The command timeout manager registers itself as a command listener and monitors
+ * the command execution time. The goal of this implementation is to gracefully
+ * handle disruptions in the communication between Eclipse and GDB.
+ *
+ * The algorithm used by this class is based on the assumption that the command
+ * execution in GDB is sequential even though DSF can send up to 3 commands at
  * a time to GDB (see {@link AbstractMIControl}).
- *  
+ *
  * @since 4.1
  */
 public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceChangeListener {
@@ -138,10 +138,10 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 					long timeout = getWaitTimeout();
 					QueueEntry entry = fQueue.peek();
 					if (entry != null) {
-						// Calculate the time elapsed since the execution of this command started 
+						// Calculate the time elapsed since the execution of this command started
 						// and compare it with the command's timeout value.
-						// If the elapsed time is greater or equal than the timeout value the command 
-						// is marked as timed out. Otherwise, schedule the next check when the timeout 
+						// If the elapsed time is greater or equal than the timeout value the command
+						// is marked as timed out. Otherwise, schedule the next check when the timeout
 						// expires.
 						long commandTimeout = getTimeoutForCommand(entry.fCommandToken.getCommand());
 
@@ -160,17 +160,17 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 						if (commandTimeout <= elapsedTime) {
 							processTimedOutCommand(entry.fCommandToken);
 							fQueue.remove(entry);
-							// Reset the timestamp of the next command in the queue because 
-							// regardless how long the command has been in the queue GDB will 
-							// start executing it only when the execution of the previous command 
-							// is completed. 
+							// Reset the timestamp of the next command in the queue because
+							// regardless how long the command has been in the queue GDB will
+							// start executing it only when the execution of the previous command
+							// is completed.
 							QueueEntry nextEntry = fQueue.peek();
 							if (nextEntry != null) {
 								setTimeStamp(currentTime, nextEntry);
 							}
 						} else {
-							// Adjust the wait timeout because the time remaining for 
-							// the current command to expire may be less than the current wait timeout. 
+							// Adjust the wait timeout because the time remaining for
+							// the current command to expire may be less than the current wait timeout.
 							timeout = Math.min(timeout, commandTimeout - elapsedTime);
 
 							if (GdbDebugOptions.DEBUG_COMMAND_TIMEOUTS) {
@@ -222,7 +222,7 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 	private boolean fTimeoutEnabled = false;
 	private int fTimeout = 0;
 	private TimerThread fTimerThread;
-	private BlockingQueue<QueueEntry> fCommandQueue = new LinkedBlockingQueue<QueueEntry>();
+	private BlockingQueue<QueueEntry> fCommandQueue = new LinkedBlockingQueue<>();
 	private CustomTimeoutsMap fCustomTimeouts = new CustomTimeoutsMap();
 
 	private ListenerList fListeners;
@@ -286,7 +286,7 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 					String.format("Command '%s' sent, timeout = %d", commandText, Integer.valueOf(commandTimeout))); //$NON-NLS-1$
 		}
 		if (commandTimeout == 0)
-			// Skip commands with no timeout 
+			// Skip commands with no timeout
 			return;
 		try {
 			fCommandQueue.put(new QueueEntry(System.currentTimeMillis(), token));
@@ -316,9 +316,9 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 				commandText = commandText.substring(0, commandText.length() - 1);
 			printDebugMessage(String.format("Command '%s' is done", commandText)); //$NON-NLS-1$
 		}
-		// Reset the timestamp of the next command in the queue because 
-		// regardless how long it has been in the queue GDB will start 
-		// executing it only when the execution of the previous command 
+		// Reset the timestamp of the next command in the queue because
+		// regardless how long it has been in the queue GDB will start
+		// executing it only when the execution of the previous command
 		// is completed.
 		QueueEntry nextEntry = fCommandQueue.peek();
 		if (nextEntry != null) {

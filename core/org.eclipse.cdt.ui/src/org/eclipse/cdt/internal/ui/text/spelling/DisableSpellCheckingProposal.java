@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.spelling;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.IInvocationContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -21,10 +24,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.IInvocationContext;
 
 /**
  * Proposal to disable spell checking.

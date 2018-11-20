@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * The 'if' statement including the optional else clause.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -45,7 +45,7 @@ public interface IASTIfStatement extends IASTStatement {
 
 	/**
 	 * Returns the condition in the if statement.
-	 * 
+	 *
 	 * @return the condition {@code IASTExpression}. May return {@code null} if the 'if'
 	 *     statement has condition declaration instead of condition expression
 	 *     (see {@link org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement}).
@@ -54,21 +54,21 @@ public interface IASTIfStatement extends IASTStatement {
 
 	/**
 	 * Sets the condition in the if statement.
-	 * 
+	 *
 	 * @param condition {@code IASTExpression}
 	 */
 	public void setConditionExpression(IASTExpression condition);
 
 	/**
 	 * Returns the statement that is executed if the condition is true.
-	 * 
+	 *
 	 * @return the then clause {@code IASTStatement}
 	 */
 	public IASTStatement getThenClause();
 
 	/**
 	 * Sets the statement that is executed if the condition is true.
-	 * 
+	 *
 	 * @param thenClause {@code IASTStatement}
 	 */
 	public void setThenClause(IASTStatement thenClause);
@@ -76,14 +76,14 @@ public interface IASTIfStatement extends IASTStatement {
 	/**
 	 * Returns the statement that is executed if the condition is false. This clause
 	 * is optional and returns null if there is none.
-	 * 
+	 *
 	 * @return the else clause or {@code null} {@code IASTStatement}
 	 */
 	public IASTStatement getElseClause();
 
 	/**
 	 * Sets the else clause.
-	 * 
+	 *
 	 * @param elseClause {@code IASTStatement}
 	 */
 	public void setElseClause(IASTStatement elseClause);

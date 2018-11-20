@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -30,8 +31,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
 
 /**
  * A TreeContentProvider that supports asyncronous computation of child nodes.
@@ -46,10 +45,10 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 	protected static final Object[] NO_CHILDREN = new Object[0];
 
 	private Object fInput;
-	private HashMap<Object, Object[]> fChildNodes = new HashMap<Object, Object[]>();
-	private HashSet<Object> fHighPriorityTasks = new HashSet<Object>();
-	private HashSet<Object> fLowPriorityTasks = new HashSet<Object>();
-	private HashMap<Object, Object[]> fViewUpdates = new HashMap<Object, Object[]>();
+	private HashMap<Object, Object[]> fChildNodes = new HashMap<>();
+	private HashSet<Object> fHighPriorityTasks = new HashSet<>();
+	private HashSet<Object> fLowPriorityTasks = new HashSet<>();
+	private HashMap<Object, Object[]> fViewUpdates = new HashMap<>();
 	private int fViewUpdateDelta;
 	private Job fJob;
 	private Display fDisplay;
@@ -71,7 +70,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 
 	/**
 	 * {@inheritDoc}
-	 * <p> 
+	 * <p>
 	 * This implementation returns the parent for nodes indicating asyncronous computation.
 	 * It returns <code>null</code> for all other elements. It should be overridden and
 	 * called by derived classes.
@@ -89,7 +88,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 	 * Returns the child elements of the given parent element, or <code>null</code>.
 	 * <p>
 	 * The method is called within the UI-thread and shall therefore return null in case
-	 * the computation of the children may take longer. 
+	 * the computation of the children may take longer.
 	 * </p>
 	 * The result is neither modified by the content provider nor the viewer.
 	 *
@@ -104,7 +103,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 	 * Returns the child elements of the given parent element.
 	 * <p>
 	 * The method is called outside the UI-thread. There is no need to report progress, the monitor
-	 * is supplied such that implementations can check for cancel requests. 
+	 * is supplied such that implementations can check for cancel requests.
 	 * </p>
 	 * The result is neither modified by the content provider nor the viewer.
 	 *
@@ -117,7 +116,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 	}
 
 	/**
-	 * Clears all caches and stops asyncronous computations. As a consequence 
+	 * Clears all caches and stops asyncronous computations. As a consequence
 	 * child nodes requested by the viewer have to be computed from scratch.
 	 * <p>
 	 * Derived classes may override this method but must call <code>super.clearCaches()</code>.
@@ -138,7 +137,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 	 */
 	public void recompute() {
 		if (getInput() != null) {
-			fAutoexpand = new HashSet<Object>();
+			fAutoexpand = new HashSet<>();
 			fAutoexpand.addAll(Arrays.asList(fTreeViewer.getVisibleExpandedElements()));
 			fAutoSelect = null;
 			fAutoSelect = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
@@ -261,7 +260,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 							return;
 						}
 						updates = fViewUpdates;
-						fViewUpdates = new HashMap<Object, Object[]>();
+						fViewUpdates = new HashMap<>();
 					}
 					fChildNodes.putAll(updates);
 					if (fTreeViewer instanceof ExtendedTreeViewer) {

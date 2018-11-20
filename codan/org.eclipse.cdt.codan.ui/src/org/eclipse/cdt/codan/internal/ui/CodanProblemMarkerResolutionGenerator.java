@@ -115,7 +115,7 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 			return new IMarkerResolution[0];
 
 		Collection<ConditionalResolution> candidates = conditionalResolutions.get(id);
-		ArrayList<IMarkerResolution> resolutions = new ArrayList<IMarkerResolution>();
+		ArrayList<IMarkerResolution> resolutions = new ArrayList<>();
 
 		if (candidates != null) {
 			candidates.stream().filter(candidate -> candidate.isApplicableFor(marker))
@@ -191,7 +191,7 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 	private static void addResolution(String id, ConditionalResolution res) {
 		Collection<ConditionalResolution> candidates = conditionalResolutions.get(id);
 		if (candidates == null) {
-			candidates = new ArrayList<ConditionalResolution>();
+			candidates = new ArrayList<>();
 			conditionalResolutions.put(id, candidates);
 		}
 		candidates.add(res);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - modified for use in Meson build
  *******************************************************************************/
@@ -18,9 +18,9 @@ import java.nio.file.Paths;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.meson.core.Activator;
 import org.eclipse.cdt.meson.core.IMesonToolChainFile;
 import org.eclipse.cdt.meson.core.IMesonToolChainManager;
-import org.eclipse.cdt.meson.core.Activator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;

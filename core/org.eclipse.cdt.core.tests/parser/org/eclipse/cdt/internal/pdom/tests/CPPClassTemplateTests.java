@@ -507,7 +507,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// template<typename T> class CT;
 	// template<typename T> using A= CT<T>;  	// nesting level 0
 	// template<typename T> class CT {           // nesting level 0
-	//     typedef Alias<T> TYPE;                  
+	//     typedef Alias<T> TYPE;
 	// };
 	public void testPDOMAliasDeclarationNestingLevel() throws Exception {
 		assertDeclarationCount(pdom, "A", 1);

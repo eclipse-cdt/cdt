@@ -28,10 +28,10 @@ import org.eclipse.cdt.core.model.IParent;
  * the version of the C element at the time the comparator was created and the
  * current version of the C element.
  *
- * It performs this operation by locally caching the contents of 
+ * It performs this operation by locally caching the contents of
  * the C element when it is created. When the method buildDeltas() is called, it
  * creates a delta over the cached contents and the new contents.
- * 
+ *
  * This class is similar to the JDT CElementDeltaBuilder class.
  */
 
@@ -213,7 +213,7 @@ public class CElementDeltaBuilder {
 				this.delta.changed(newElement, ICElementDelta.F_MODIFIERS);
 			}
 
-			// The element info should be able to tell if the contents are the same. 
+			// The element info should be able to tell if the contents are the same.
 			if (!oldSourceInfo.hasSameContentsAs(newSourceInfo)) {
 				this.delta.changed(newElement, ICElementDelta.F_CONTENT);
 			}
@@ -245,21 +245,21 @@ public class CElementDeltaBuilder {
 	}
 
 	private void initialize() {
-		this.infos = new HashMap<ICElement, CElementInfo>(20);
-		this.oldPositions = new HashMap<ICElement, ListItem>(20);
-		this.newPositions = new HashMap<ICElement, ListItem>(20);
+		this.infos = new HashMap<>(20);
+		this.oldPositions = new HashMap<>(20);
+		this.newPositions = new HashMap<>(20);
 		this.putOldPosition(this.cElement, new ListItem(null, null));
 		this.putNewPosition(this.cElement, new ListItem(null, null));
 		this.delta = new CElementDelta(cElement);
 
-		// if building a delta on a translation unit or below, 
+		// if building a delta on a translation unit or below,
 		// it's a fine grained delta
 		if (cElement.getElementType() >= ICElement.C_UNIT) {
 			this.delta.fineGrained();
 		}
 
-		this.added = new ArrayList<ICElement>(5);
-		this.removed = new ArrayList<ICElement>(5);
+		this.added = new ArrayList<>(5);
+		this.removed = new ArrayList<>(5);
 	}
 
 	/**
@@ -290,11 +290,11 @@ public class CElementDeltaBuilder {
 	//private boolean isIdentical(CElement e1, CElement e2) {
 	//	if (e1 == null ^ e2 == null)
 	//		return false;
-	//	
+	//
 	//	if (e1 == null)
 	//		return true;
 	//
-	//	return e1.isIdentical(e2);					
+	//	return e1.isIdentical(e2);
 	//}
 	/**
 	 * Answers true if the elements position has not changed.

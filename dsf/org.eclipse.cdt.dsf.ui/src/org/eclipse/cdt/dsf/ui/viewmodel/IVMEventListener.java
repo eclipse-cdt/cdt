@@ -21,14 +21,14 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 
 /**
  * A listener participating in event notifications sent out from VM adapter.
- * 
+ *
  * @since 1.1
  */
 @ConfinedToDsfExecutor("#getExecutor()")
 public interface IVMEventListener {
 
 	/**
-	 * Returns the executor that needs to be used to access this event listener. 
+	 * Returns the executor that needs to be used to access this event listener.
 	 */
 	@ThreadSafe
 	public Executor getExecutor();

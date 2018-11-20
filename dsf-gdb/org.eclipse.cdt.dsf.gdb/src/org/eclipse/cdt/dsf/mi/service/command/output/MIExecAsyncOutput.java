@@ -18,10 +18,10 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 /**
  * Represents an asynchronous OOB record from gdb that notifies the client of
  * state changes on the target (stopped, started, etc).
- * 
+ *
  * <p>
  * All such records are prefixed by *.
- * 
+ *
  * @see MIAsyncRecord
  */
 public class MIExecAsyncOutput extends MIAsyncRecord {

@@ -17,9 +17,9 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
- * 
+ *
  *     -gdb-set solib-search-path COLON-SEPARATED-PATH
- * 
+ *
  */
 public class MIGDBSetSolibSearchPath extends MIGDBSet {
 	/**

@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
  * Interface for C++ expressions. Any full-expressions may contain {@link IASTImplicitDestructorName}s of
  * destructors called at the end of the expression to destroy temporaries created by the expression.
  * A full-expression is an expression that is not a subexpression of another expression.
- * 
+ *
  * @since 5.10
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

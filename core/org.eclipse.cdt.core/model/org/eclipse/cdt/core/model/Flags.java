@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.core.model.IConstants;
 
 /**
  * Utility class for decoding modifier flags in C elements.
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class Flags {
@@ -128,7 +128,7 @@ public final class Flags {
 	}
 
 	/**
-	 * Returns whether the given integer includes the indication that the 
+	 * Returns whether the given integer includes the indication that the
 	 * element is a register storage specifier.
 	 *
 	 * @param flags the flags

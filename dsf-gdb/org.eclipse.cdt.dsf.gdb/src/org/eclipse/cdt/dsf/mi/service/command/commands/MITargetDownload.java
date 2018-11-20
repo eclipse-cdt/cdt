@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MITargetDownloadInfo;
 
 /**
  * This command downloads a file to a remote target.
- * 
+ *
  * @since 3.0
  */
 public class MITargetDownload extends MICommand<MITargetDownloadInfo> {

@@ -60,7 +60,7 @@ public class QObjectDeclarationCompletion {
 	}
 
 	private static Position getPosition(ICEditorContentAssistInvocationContext context) {
-		ITextEditor textEditor = (ITextEditor) context.getEditor().getAdapter(ITextEditor.class);
+		ITextEditor textEditor = context.getEditor().getAdapter(ITextEditor.class);
 		if (textEditor == null)
 			return null;
 

@@ -119,14 +119,14 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * Status code for core exception that is thrown if a pdom grew larger than
 	 * the supported limit.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public static final int STATUS_PDOM_TOO_LARGE = 4;
 
 	/**
 	 * Toolchain not found when inflating a build configuration.
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	public static final int STATUS_BUILD_CONFIG_NOT_VALID = 5;
@@ -161,14 +161,14 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Name of the extension point for contributing a Command Launcher factory
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	public static final String COMMAND_LAUNCHER_FACTORY_SIMPLE_ID = "CommandLauncherFactory"; //$NON-NLS-1$
 	/**
 	 * Full unique name of the extension point for contributing a Command Launcher
 	 * factory
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	public static final String COMMAND_LAUNCHER_FACTORY_UNIQ_ID = PLUGIN_ID + "." + COMMAND_LAUNCHER_FACTORY_SIMPLE_ID; //$NON-NLS-1$
@@ -192,7 +192,7 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Possible configurable option ID.
-	 * 
+	 *
 	 * @see #getDefaultOptions
 	 */
 	public static final String CORE_ENCODING = PLUGIN_ID + ".encoding"; //$NON-NLS-1$
@@ -224,25 +224,25 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Possible configurable option value.
-	 * 
+	 *
 	 * @see #getDefaultOptions()
 	 */
 	public static final String INSERT = "insert"; //$NON-NLS-1$
 	/**
 	 * Possible configurable option value.
-	 * 
+	 *
 	 * @see #getDefaultOptions()
 	 */
 	public static final String DO_NOT_INSERT = "do not insert"; //$NON-NLS-1$
 	/**
 	 * Possible configurable option value.
-	 * 
+	 *
 	 * @see #getDefaultOptions()
 	 */
 	public static final String TAB = "tab"; //$NON-NLS-1$
 	/**
 	 * Possible configurable option value.
-	 * 
+	 *
 	 * @see #getDefaultOptions()
 	 */
 	public static final String SPACE = "space"; //$NON-NLS-1$
@@ -315,7 +315,7 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * Returns the shared working copies currently registered for the default
 	 * buffer factory.
-	 * 
+	 *
 	 * @since 5.1
 	 */
 	public static IWorkingCopy[] getSharedWorkingCopies() {
@@ -449,7 +449,7 @@ public class CCorePlugin extends Plugin {
 	 * ID and their possible constant values.
 	 *
 	 * Note: more options might be added in further releases.
-	 * 
+	 *
 	 * <pre>
 	 * RECOGNIZED OPTIONS:
 	 *
@@ -726,7 +726,7 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * Returns the binary parser extensions for the default settings
 	 * configuration.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public ICConfigExtensionReference[] getDefaultBinaryParserExtensions(IProject project) throws CoreException {
@@ -1076,7 +1076,7 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Get the IProcessList contributed interface for the platform.
-	 * 
+	 *
 	 * @return IProcessList
 	 */
 	public IProcessList getProcessList() throws CoreException {
@@ -1221,11 +1221,11 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Helper function, returning the content type for a filename Same as:
-	 * 
+	 *
 	 * <pre>
 	 * getContentType(null, filename)
 	 * </pre>
-	 * 
+	 *
 	 * @param filename
 	 * @return the content type found, or <code>null</code>
 	 */
@@ -1237,7 +1237,7 @@ public class CCorePlugin extends Plugin {
 	 * Returns the content type for a filename. The method respects project
 	 * specific content type definitions. The lookup prefers case- sensitive
 	 * matches over the others.
-	 * 
+	 *
 	 * @param project
 	 *            a project with possible project specific settings. Can be
 	 *            <code>null</code>
@@ -1524,14 +1524,14 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Prints a message in the log
-	 * 
+	 *
 	 * @param severity
 	 *            - desired severity of the message in the log, one of
 	 *            {@link IStatus#INFO}, {@link IStatus#WARNING} or
 	 *            {@link IStatus#ERROR}
 	 * @param msg
 	 *            - message
-	 * 
+	 *
 	 * @since 5.5
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -1541,14 +1541,14 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Prints a message in the log accompanied by stack trace
-	 * 
+	 *
 	 * @param severity
 	 *            - desired severity of the message in the log, one of
 	 *            {@link IStatus#INFO}, {@link IStatus#WARNING} or
 	 *            {@link IStatus#ERROR}
 	 * @param msg
 	 *            - message
-	 * 
+	 *
 	 * @since 5.5
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -1561,7 +1561,7 @@ public class CCorePlugin extends Plugin {
 	 */
 	public static void log(Throwable e) {
 		if (e instanceof CoreException) {
-			// If the CoreException doesn't have a nested exception, wrap it 
+			// If the CoreException doesn't have a nested exception, wrap it
 			// into another Status object. This ensures that we can see its
 			// stack trace.
 			IStatus status = ((CoreException) e).getStatus();
@@ -1636,7 +1636,7 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Return the given OSGi service.
-	 * 
+	 *
 	 * @param service service class
 	 * @return service
 	 * @since 6.0
@@ -1647,15 +1647,15 @@ public class CCorePlugin extends Plugin {
 		return ref != null ? context.getService(ref) : null;
 	}
 
-	private static final String CDT_FEATURE_ID = "org.eclipse.cdt"; //$NON-NLS-1$  
+	private static final String CDT_FEATURE_ID = "org.eclipse.cdt"; //$NON-NLS-1$
 
 	/**
 	 * Return the version of the CDT feature in this Eclipse installation, if any.
-	 * 
+	 *
 	 * Note that, while this is a method in CCorePlugin, it's not specific to the
 	 * org.eclipse.cdt.core plugin; it returns the version of the entire
 	 * org.eclipse.cdt feature.
-	 * 
+	 *
 	 * @since 6.3
 	 */
 	public static Version getCDTFeatureVersion() {

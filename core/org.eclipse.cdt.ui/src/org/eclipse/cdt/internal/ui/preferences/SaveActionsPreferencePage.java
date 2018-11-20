@@ -14,26 +14,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import static org.eclipse.cdt.ui.PreferenceConstants.ALIGN_ALL_CONST;
 import static org.eclipse.cdt.ui.PreferenceConstants.ENSURE_NEWLINE_AT_EOF;
 import static org.eclipse.cdt.ui.PreferenceConstants.FORMAT_SOURCE_CODE;
 import static org.eclipse.cdt.ui.PreferenceConstants.FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES;
 import static org.eclipse.cdt.ui.PreferenceConstants.REMOVE_TRAILING_WHITESPACE;
 import static org.eclipse.cdt.ui.PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES;
-import static org.eclipse.cdt.ui.PreferenceConstants.ALIGN_ALL_CONST;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 
 /*
  * The page for configuring actions performed when a C/C++ file is saved.
@@ -50,7 +48,7 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 
 	@Override
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, FORMAT_SOURCE_CODE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,

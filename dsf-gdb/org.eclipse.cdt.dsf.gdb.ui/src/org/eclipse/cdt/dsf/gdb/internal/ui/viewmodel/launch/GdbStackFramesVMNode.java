@@ -58,7 +58,7 @@ public class GdbStackFramesVMNode extends StackFramesVMNode {
 			public void run() {
 				IDMContext ctx = event.getDMContext();
 
-				// Is IGDBFocusChangedEvent pertinent for this VMNode? 
+				// Is IGDBFocusChangedEvent pertinent for this VMNode?
 				if (ctx instanceof IFrameDMContext) {
 					IFrameDMContext newFrameFocus = (IFrameDMContext) ctx;
 					IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(newFrameFocus,

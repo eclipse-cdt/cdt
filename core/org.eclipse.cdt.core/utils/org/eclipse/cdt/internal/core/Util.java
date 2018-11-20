@@ -39,10 +39,10 @@ public class Util {
 	 * will return true on Windows, but false on UNIX. Conversely, "/some/file" will return false on Windows,
 	 * true on Linux. "somefile.txt", "some/file", "./some/file", and "../some/file" will all return false on
 	 * all hosts.
-	 * 
+	 *
 	 * <p>
 	 * UNC paths ("\\some\dir") are recognized as native on Windows.
-	 * 
+	 *
 	 * @param filename
 	 *            a file specification. Slashes do not need to be in native format or consistent, except for a
 	 *            UNC path, where both prefix slashes must be either forward or backwards.
@@ -60,7 +60,7 @@ public class Util {
 			}
 			return false;
 		} else {
-			// So much simpler on Linux/UNIX (and MacOS now?)  
+			// So much simpler on Linux/UNIX (and MacOS now?)
 			return filename.length() > 1 && isSlash(filename.charAt(0));
 		}
 	}

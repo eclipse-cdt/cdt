@@ -78,7 +78,8 @@ public class FPDataPane extends FPAbstractPane {
 			// Check to see if a second decimal point or exponent was entered
 
 			if ((character == '.' && FPutilities.countMatches(cellString, ".") > 0 //$NON-NLS-1$
-					&& cellString.indexOf('.') != subCellPosition) || (character == 'e' && FPutilities.countMatches(cellString, "e") > 0 //$NON-NLS-1$
+					&& cellString.indexOf('.') != subCellPosition)
+					|| (character == 'e' && FPutilities.countMatches(cellString, "e") > 0 //$NON-NLS-1$
 							&& cellString.indexOf('e') != subCellPosition))
 				return;
 

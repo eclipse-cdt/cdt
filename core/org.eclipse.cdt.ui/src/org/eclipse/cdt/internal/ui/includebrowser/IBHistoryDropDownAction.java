@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.includebrowser;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
@@ -21,10 +23,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class IBHistoryDropDownAction extends Action implements IMenuCreator {
 

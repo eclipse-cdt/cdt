@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Navid Mehregani (TI) - Bug 289526 - Migrate the Restart feature to the new one, as supported by the platform
@@ -43,32 +43,32 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
  * for the launch object.  But it also manages the creation and destruction
  * of the session-based adapters which are returned by the
  * IDMContext.getAdapter() methods.
- * 
+ *
  * When extending the GdbAdapterFactory, it is important to register all the
  * types declaratively (in the plugin.xml) that the factory can adapt the
  * extended launch to.
- * 
+ *
  * See the plugin.xml that references GdbAdapterFactory for the current list,
  * and it should match {@link #getAdapterList()}.
  */
 @ThreadSafe
 public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
 	/**
-	 * Active adapter sets.  They are accessed using the launch instance 
-	 * which owns the debug services session. 
+	 * Active adapter sets.  They are accessed using the launch instance
+	 * which owns the debug services session.
 	 */
 	private static Map<GdbLaunch, GdbSessionAdapters> fgLaunchAdapterSets = Collections
 			.synchronizedMap(new HashMap<>());
 
 	/**
 	 * Map of launches for which adapter sets have already been disposed.
-	 * This map (used as a set) is maintained in order to avoid re-creating an 
-	 * adapter set after the launch was removed from the launch manager, but 
-	 * while the launch is still being held by other classes which may 
-	 * request its adapters.  A weak map is used to avoid leaking 
+	 * This map (used as a set) is maintained in order to avoid re-creating an
+	 * adapter set after the launch was removed from the launch manager, but
+	 * while the launch is still being held by other classes which may
+	 * request its adapters.  A weak map is used to avoid leaking
 	 * memory once the launches are no longer referenced.
 	 * <p>
-	 * Access to this map is synchronized using the fgLaunchAdapterSets 
+	 * Access to this map is synchronized using the fgLaunchAdapterSets
 	 * instance.
 	 * </p>
 	 */
@@ -97,8 +97,8 @@ public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
 
 		GdbLaunch launch = (GdbLaunch) adaptableObject;
 
-		// Check for valid session.  
-		// Note: even if the session is no longer active, the adapter set 
+		// Check for valid session.
+		// Note: even if the session is no longer active, the adapter set
 		// should still be returned.  This is because the view model may still
 		// need to show elements representing a terminated process/thread/etc.
 		DsfSession session = launch.getSession();
@@ -111,7 +111,7 @@ public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
 
 		GdbSessionAdapters adapterSet;
 		synchronized (fgLaunchAdapterSets) {
-			// The adapter set for the given launch was already disposed.  
+			// The adapter set for the given launch was already disposed.
 			// Return a null adapter.
 			if (fgDisposedLaunchAdapterSets.containsKey(launch)) {
 				return null;
@@ -125,7 +125,7 @@ public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
 				// Note that we must do this here because fgDisposedLaunchAdapterSets
 				// may not already know that the launch has been removed because of a race
 				// condition with the caller which is also processing a launchRemoved method.
-				// Bug 334687 
+				// Bug 334687
 				if (session.isActive() == false) {
 					return null;
 				}

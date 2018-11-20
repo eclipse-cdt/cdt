@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2015 Wind River Systems, Inc. and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- *     Markus Schorn - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Markus Schorn - initial API and implementation
  *     IBM Corporation - Bug 112366
  *     Sergey Prigogin (Google)
  ******************************************************************************/
@@ -23,6 +23,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -46,12 +51,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
-
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
 /**
  * Abstract base for all different rename processors used by the top processor.
@@ -161,7 +160,7 @@ public abstract class CRenameProcessorDelegate {
 
 	/**
 	 * Builds an index-based file filter for the name search.
-	 * 
+	 *
 	 * @param bindings bindings being renamed
 	 * @return A set of files containing references to the bindings.
 	 */

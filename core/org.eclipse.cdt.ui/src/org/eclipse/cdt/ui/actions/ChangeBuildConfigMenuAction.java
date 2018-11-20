@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.IConfigManager;
+import org.eclipse.cdt.ui.newui.ManageConfigSelector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -23,12 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.IConfigManager;
-import org.eclipse.cdt.ui.newui.ManageConfigSelector;
-
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 
 /**
  * Action which changes active build configuration of the current project

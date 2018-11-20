@@ -20,7 +20,7 @@ import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
  * Makefile : ( statement ) *
- * statement : command | ..  
+ * statement : command | ..
  * command : <tab> prefix_command string <nl>
  * prefix_command : '-' | '@' | '+'
  */

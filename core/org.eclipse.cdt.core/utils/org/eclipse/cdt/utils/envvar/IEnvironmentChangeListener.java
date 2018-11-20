@@ -16,7 +16,7 @@ package org.eclipse.cdt.utils.envvar;
 /**
  * Interface for listeners to changes in environment variables defined by user
  * on CDT Environment page in Preferences.
- * 
+ *
  * @since 5.5
  */
 public interface IEnvironmentChangeListener {

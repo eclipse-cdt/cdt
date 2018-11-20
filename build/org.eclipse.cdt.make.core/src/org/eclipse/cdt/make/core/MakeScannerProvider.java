@@ -123,8 +123,8 @@ public class MakeScannerProvider extends ScannerProvider {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		ICStorageElement storage = descriptor.getProjectStorageElement(CDESCRIPTOR_ID);
 
-		ArrayList<String> includes = new ArrayList<String>();
-		ArrayList<String> symbols = new ArrayList<String>();
+		ArrayList<String> includes = new ArrayList<>();
+		ArrayList<String> symbols = new ArrayList<>();
 		for (ICStorageElement child : storage.getChildren()) {
 			if (child.getName().equals(INCLUDE_PATH)) {
 				// Add the path to the property list
@@ -145,7 +145,7 @@ public class MakeScannerProvider extends ScannerProvider {
 		String[] includes = info.getIncludePaths();
 		ICProject cProject = CoreModel.getDefault().create(info.getProject());
 		IPathEntry[] entries = cProject.getRawPathEntries();
-		List<IPathEntry> cPaths = new ArrayList<IPathEntry>(Arrays.asList(entries));
+		List<IPathEntry> cPaths = new ArrayList<>(Arrays.asList(entries));
 
 		Iterator<IPathEntry> cpIter = cPaths.iterator();
 		while (cpIter.hasNext()) {

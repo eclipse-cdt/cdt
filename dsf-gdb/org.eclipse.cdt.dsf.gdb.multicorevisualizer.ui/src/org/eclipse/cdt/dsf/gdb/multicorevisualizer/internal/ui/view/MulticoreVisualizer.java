@@ -118,7 +118,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * The Multicore Visualizer is a generic visualizer that displays
  * CPUs, cores, threads graphically.
- * 
+ *
  * This visualizer uses the CDT Visualizer framework.
  */
 @SuppressWarnings("restriction")
@@ -160,8 +160,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	/** Debug view selection changed listener, attached to Debug View. */
 	protected ISelectionChangedListener m_debugViewSelectionChangedListener = null;
 
-	/** Unique id that differentiates the possible multiple instances of the MV. 
-	 * It's derived from the secondary view Part id of the view associated to the 
+	/** Unique id that differentiates the possible multiple instances of the MV.
+	 * It's derived from the secondary view Part id of the view associated to the
 	 * current instance of the MV. */
 	protected String m_visualizerInstanceId = null;
 
@@ -286,7 +286,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	@Override
 	public void initializeVisualizer() {
 		fEventListener = new MulticoreVisualizerEventListener(this);
-		m_cpuCoreContextsCache = new ArrayList<IDMContext>();
+		m_cpuCoreContextsCache = new ArrayList<>();
 		m_visualizerInstanceId = getViewer().getView().getViewSite().getSecondaryId();
 
 		// The first visualizer view will have a null secondary id - override that
@@ -297,7 +297,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	}
 
 	/**
-	 * Initialize the persistent parameters 
+	 * Initialize the persistent parameters
 	 */
 	protected void initializePersistentParameters(String visualizerInstanceId) {
 		// setting managers
@@ -511,15 +511,15 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 
 		m_enableLoadMetersAction = new EnableLoadMetersAction(getLoadMetersEnabled());
 		m_enableLoadMetersAction.init(this);
-		// enable the load meter sub-menu 
+		// enable the load meter sub-menu
 		m_enableLoadMetersAction.setEnabled(true);
 
-		m_setLoadMeterPeriodActions = new ArrayList<SetLoadMeterPeriodAction>();
+		m_setLoadMeterPeriodActions = new ArrayList<>();
 		m_setLoadMeterPeriodActions.add(new SetLoadMeterPeriodAction(
 				MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.SetLoadMeterPeriod.fast.text"), //$NON-NLS-1$
 				LOAD_METER_TIMER_FAST));
 
-		// TODO: the default load meter refresh speed is set here but we could instead rely on the value saved in the data store 
+		// TODO: the default load meter refresh speed is set here but we could instead rely on the value saved in the data store
 		SetLoadMeterPeriodAction defaultAction = new SetLoadMeterPeriodAction(
 				MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.SetLoadMeterPeriod.medium.text"), //$NON-NLS-1$
 				LOAD_METER_TIMER_MEDIUM);
@@ -570,14 +570,14 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		m_selectAllAction.setEnabled(enabled);
 		m_refreshAction.setEnabled(enabled);
 
-		// enable "filter-to selection" menu item if there is a 
+		// enable "filter-to selection" menu item if there is a
 		// canvas selection
 		m_setFilterAction.setEnabled(m_canvas.hasSelection());
 
 		// enable "Clear filter" menu item if filter is active
 		m_clearFilterAction.setEnabled(isCanvasFilterActive());
 
-		// show the load meter refresh speed sub-menu only 
+		// show the load meter refresh speed sub-menu only
 		// if the load meters are enabled
 		m_loadMetersRefreshSubSubmenu.setVisible(getLoadMetersEnabled());
 
@@ -699,7 +699,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		createActions();
 
 		// display debug buttons only if MV is not pinned
-		// note: if in the future we want to display the debug buttons even 
+		// note: if in the future we want to display the debug buttons even
 		// when pinned, all that needs to be done it to remove this check.
 		if (!m_pinToDbgSessionAction.isChecked()) {
 			// only show the debug actions in toolbar, if configured to do so
@@ -786,12 +786,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	@Override
 	public void visualizerSelected() {
 		updateActions();
-	};
+	}
 
 	/** Invoked when another visualizer has been selected, hiding this one. */
 	@Override
 	public void visualizerDeselected() {
-	};
+	}
 
 	// --- workbench selection management ---
 
@@ -918,7 +918,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		// event, listened-to by VisualizerViewer, that causes it to raise
 		// its own VISUALIZER_CHANGED event. See bug 442584 for details
 
-		// for now do a non-change to the selection to trigger a call to 
+		// for now do a non-change to the selection to trigger a call to
 		// VisualizerView#updateUI()
 		setSelection(getSelection());
 	}
@@ -965,7 +965,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 			VisualizerModel model = m_canvas.getModel();
 			if (model != null) {
 
-				Set<Object> selected = new HashSet<Object>();
+				Set<Object> selected = new HashSet<>();
 
 				for (Object item : items) {
 
@@ -1181,7 +1181,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 
 	// --- Visualizer model update methods ---
 
-	/** 
+	/**
 	 * Starts visualizer model request.
 	 */
 	protected void getVisualizerModel(final VisualizerModel model) {
@@ -1230,8 +1230,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 
 					ICPUDMContext cpu = null;
 					if (coreContexts != null && coreContexts.length > 0) {
-						// TODO: This keeps the functionality to the same level before change: 459114, 
-						// although it's noted that this does not cover the possibility to have multiple CPU's 
+						// TODO: This keeps the functionality to the same level before change: 459114,
+						// although it's noted that this does not cover the possibility to have multiple CPU's
 						// within the list of resolved cores
 						cpu = DMContexts.getAncestorOfType(coreContexts[0], ICPUDMContext.class);
 					}
@@ -1389,14 +1389,14 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		// If we can't get the real Linux OS tid, fallback to using the gdb thread id
 		int osTid = (osTIDValue == null) ? tid : Integer.parseInt(osTIDValue);
 
-		// add thread if not already there - there is a potential race condition where a 
-		// thread can be added twice to the model: once at model creation and once more 
+		// add thread if not already there - there is a potential race condition where a
+		// thread can be added twice to the model: once at model creation and once more
 		// through the listener.   Checking at both places to prevent this.
 		VisualizerThread t = model.getThread(tid);
 		if (t == null) {
 			model.addThread(new VisualizerThread(core, pid, osTid, tid, state, frame));
 		}
-		// if the thread is already in the model, update it's parameters.  
+		// if the thread is already in the model, update it's parameters.
 		else {
 			t.setCore(core);
 			t.setTID(osTid);
@@ -1428,7 +1428,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 					m_canvas.requestUpdate();
 				}
 				if (m_updateLoadMeterTimer != null) {
-					// re-start timer 
+					// re-start timer
 					m_updateLoadMeterTimer.start();
 				}
 			}
@@ -1456,7 +1456,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 			l = Integer.valueOf(load.getLoad());
 		}
 
-		// CPU context? Update the correct CPU in the model 
+		// CPU context? Update the correct CPU in the model
 		if (context instanceof ICPUDMContext) {
 			ICPUDMContext cpuContext = (ICPUDMContext) context;
 			VisualizerCPU cpu = model.getCPU(Integer.parseInt(cpuContext.getId()));

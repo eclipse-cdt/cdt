@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.model;
 
 /**
  * Represents a package declaration in a C translation unit.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

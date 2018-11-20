@@ -19,4 +19,4 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
  */
 public enum VisualizerExecutionState {
 	RUNNING, SUSPENDED, CRASHED, EXITED
-};
+}

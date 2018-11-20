@@ -16,12 +16,12 @@ package org.eclipse.cdt.utils.debug;
 
 /**
  * DebugType
- *  
+ *
  */
 public class DebugType {
 
 	/**
-	 *  
+	 *
 	 */
 	protected DebugType() {
 	}

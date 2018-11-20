@@ -23,7 +23,7 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- * 
+ *
  * @since Jul 23, 2002
  */
 public interface ICDebugHelpContextIds {
@@ -59,7 +59,7 @@ public interface ICDebugHelpContextIds {
 	public static final String MODULE_DETAIL_PANE_COPY_ACTION = PREFIX + "detail_pane_copy_action_context"; //$NON-NLS-1$
 
 	// Views & Editors
-	/** 
+	/**
 	 * The memory view is part of the platform, the context id is assigned there.
 	 */
 	public static final String MEMORY_VIEW = PREFIX + "MemoryView_context"; //$NON-NLS-1$

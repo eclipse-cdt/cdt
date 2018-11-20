@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
- * 
+ *
  * @since 1.0
  */
 public class DsfPlugin extends Plugin {
@@ -72,7 +72,7 @@ public class DsfPlugin extends Plugin {
 	/**
 	 * Writes [message] to stdout, but only if the top level 'debug' tracing
 	 * option for this plugin has been turned on
-	 * 
+	 *
 	 * @param message
 	 */
 	public static void debug(String message) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestMessage;
+import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.xml.sax.SAXException;
 
@@ -65,7 +65,7 @@ public class OutputHandler {
 
 		/**
 		 * The constructor.
-		 * 
+		 *
 		 * @param enterRegex the regular expression by which the state should be
 		 * entered
 		 */
@@ -75,7 +75,7 @@ public class OutputHandler {
 
 		/**
 		 * The constructor.
-		 * 
+		 *
 		 * @param enterRegex the regular expression by which the state should be
 		 * entered
 		 * @param groupCount groups count in a regular expression. It is used
@@ -89,7 +89,7 @@ public class OutputHandler {
 		/**
 		 * Checks whether the specified string matches the enter pattern
 		 * (regular expression). If it is so the state should be entered.
-		 * 
+		 *
 		 * @param line input line (token)
 		 * @return true if matches and false otherwise
 		 * @throws TestingException if groups count does not match the defined
@@ -112,7 +112,7 @@ public class OutputHandler {
 
 		/**
 		 * Returns the matched group value by index.
-		 * 
+		 *
 		 * @param groupNumber group index
 		 * @return group value
 		 */
@@ -122,7 +122,7 @@ public class OutputHandler {
 
 		/**
 		 * Action that triggers on state enter.
-		 * 
+		 *
 		 * @param previousState previous state
 		 * @throws TestingException if testing error is detected
 		 */
@@ -131,7 +131,7 @@ public class OutputHandler {
 
 		/**
 		 * Action that triggers on state exit.
-		 * 
+		 *
 		 * @param previousState next state
 		 * @throws TestingException if testing error is detected
 		 */
@@ -141,7 +141,7 @@ public class OutputHandler {
 		/**
 		 * Common routine that constructs full test suite name by name and type
 		 * parameter.
-		 * 
+		 *
 		 * @param name test suite name
 		 * @param typeParameter type parameter
 		 * @return full test suite name
@@ -175,7 +175,7 @@ public class OutputHandler {
 
 		/**
 		 * Provides access to the matched type parameter.
-		 * 
+		 *
 		 * @return type parameter value
 		 */
 		public String getTypeParameter() {
@@ -195,7 +195,7 @@ public class OutputHandler {
 		/**
 		 * Extract current test case and test suite names and notify Tests
 		 * Runner Core about test case start.
-		 * 
+		 *
 		 * @throws TestingException if extracted test suite name does not match
 		 * last entered test suite name.
 		 */
@@ -237,7 +237,7 @@ public class OutputHandler {
 		 * ("/path/file(line):" with the message text continuing on the same
 		 * line). It is also possible not to specify line number at all
 		 * ("/path/file:").
-		 * 
+		 *
 		 * @throws TestingException if location format cannot be recognized.
 		 */
 		@Override
@@ -276,7 +276,7 @@ public class OutputHandler {
 
 		/**
 		 * Provides access to the message location file name.
-		 * 
+		 *
 		 * @return file name
 		 */
 		public String getMessageFileName() {
@@ -285,7 +285,7 @@ public class OutputHandler {
 
 		/**
 		 * Provides access to the message location line number.
-		 * 
+		 *
 		 * @return line number
 		 */
 		public int getMessageLineNumber() {
@@ -294,7 +294,7 @@ public class OutputHandler {
 
 		/**
 		 * Provides access to the first part of the message.
-		 * 
+		 *
 		 * @return message part
 		 */
 		public String getMessagePart() {
@@ -382,7 +382,7 @@ public class OutputHandler {
 		/**
 		 * Sets the test case execution time, status and notify Tests Runner
 		 * Core about test case end.
-		 * 
+		 *
 		 * @throws TestingException if current test suite or case name does not
 		 * match last entered test suite or case name or if test status is not
 		 * known.
@@ -436,7 +436,7 @@ public class OutputHandler {
 
 		/**
 		 * Notify Tests Runner Core about test suite end.
-		 * 
+		 *
 		 * @throws TestingException if current test suite name does not match
 		 * last entered test suite name.
 		 */
@@ -475,13 +475,13 @@ public class OutputHandler {
 	 *   4 - line number (common style) *
 	 *   5 - line number (Visual Studio style) *
 	 *   6 - file name (if no line number specified) *
-	 * Using: 
+	 * Using:
 	 *   - group 2 with 4 or 5 (if line number was specified)
 	 *   - group 6 (if filename only was specified)
 	 */
 	static private String regexLocation = "((.*)(:(\\d+)|\\((\\d+)\\))|(.*[^):])):"; //$NON-NLS-1$
 
-	// Test statuses representation 
+	// Test statuses representation
 	static private String testStatusOk = "OK"; //$NON-NLS-1$
 	static private String testStatusFailed = "FAILED"; //$NON-NLS-1$
 
@@ -507,7 +507,7 @@ public class OutputHandler {
 	private State stateEmptyTestModuleFinal = new State(".*\\[\\s*PASSED\\s*\\]\\s+0\\s+tests.*"); //$NON-NLS-1$
 
 	// Transitions table
-	private Map<State, State[]> transitions = new HashMap<State, State[]>();
+	private Map<State, State[]> transitions = new HashMap<>();
 	{
 		// NOTE: Next states order is important!
 		transitions.put(from(stateInitial), to(stateInitialized, stateEmptyTestModuleFinal));
@@ -537,7 +537,7 @@ public class OutputHandler {
 	/**
 	 * Runs the parsing process. Initializes the FSM, selects new states with
 	 * transitions table and checks whether the parsing completes successfully.
-	 * 
+	 *
 	 * @param inputStream gtest test module output stream
 	 * @throws IOException if stream reading error happens
 	 * @throws TestingException if testing error happens
@@ -561,7 +561,7 @@ public class OutputHandler {
 			}
 			for (State nextState : possibleNextStates) {
 				if (nextState.match(line)) {
-					// Next state found - send notifications to the states 
+					// Next state found - send notifications to the states
 					currentState.onExit(nextState);
 					State previousState = currentState;
 					currentState = nextState;
@@ -570,7 +570,7 @@ public class OutputHandler {
 				}
 			}
 			// NOTE: We cannot be sure that we cover all the output of gtest with our regular expressions
-			//       (e.g. some framework notes or warnings may be uncovered etc.), so we just skip unmatched 
+			//       (e.g. some framework notes or warnings may be uncovered etc.), so we just skip unmatched
 			//       lines without an error
 		}
 		// Check whether the last line leads to the final state
@@ -584,7 +584,7 @@ public class OutputHandler {
 
 	/**
 	 * Throws the testing exception with unknown internal error prefix and the specified description.
-	 * 
+	 *
 	 * @param additionalInfo additional description of what happens
 	 * @throws SAXException the exception that will be thrown
 	 */
@@ -597,7 +597,7 @@ public class OutputHandler {
 
 	/**
 	 * Helper functions to make code more readable.
-	 * 
+	 *
 	 * @param fromState state to return
 	 * @return passed state
 	 */
@@ -607,7 +607,7 @@ public class OutputHandler {
 
 	/**
 	 * Helper functions to make code more readable.
-	 * 
+	 *
 	 * @param toStates states array to return
 	 * @return passed states array
 	 */

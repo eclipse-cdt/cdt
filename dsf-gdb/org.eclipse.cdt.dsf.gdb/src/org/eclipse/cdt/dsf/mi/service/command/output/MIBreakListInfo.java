@@ -41,7 +41,7 @@ public class MIBreakListInfo extends MIInfo {
 	}
 
 	void parse() {
-		List<MIBreakpoint> aList = new ArrayList<MIBreakpoint>(1);
+		List<MIBreakpoint> aList = new ArrayList<>(1);
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
@@ -87,7 +87,7 @@ public class MIBreakListInfo extends MIInfo {
 
 	/**
 	 * Create a target specific MIBreakpoint
-	 * 
+	 *
 	 * @param value
 	 *            tuple suitable for passing to MIBreakpoint constructor
 	 * @return new breakpoint

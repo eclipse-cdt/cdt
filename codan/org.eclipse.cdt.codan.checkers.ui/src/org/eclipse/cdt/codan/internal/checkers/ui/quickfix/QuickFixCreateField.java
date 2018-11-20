@@ -73,13 +73,13 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 
 	/**
 	 * Suggests a default place to insert a field:
-	 * 
+	 *
 	 * Default place to insert:
 	 * <ul>
 	 * <li>If in a class, after last private field or at the end</li>
 	 * <li>If in a struct, after last public field or at the end</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param composite
 	 *        the composite to search
 	 * @return an ASTNode inside composite to insert before, or null to insert

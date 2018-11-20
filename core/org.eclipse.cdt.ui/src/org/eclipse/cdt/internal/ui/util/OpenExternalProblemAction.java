@@ -17,6 +17,10 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.io.File;
 
+import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -34,12 +38,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.ide.IDE;
-
-import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.model.CModelManager;
 
 public class OpenExternalProblemAction extends ActionDelegate implements IObjectActionDelegate {
 

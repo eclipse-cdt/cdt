@@ -20,14 +20,14 @@ import java.util.List;
 /**
  * Listener interface for finding out when the list of Executable objects in the
  * workspace changes or when the objects themselves change.
- * 
+ *
  * <p>
  * Executable objects are ephemeral representations of Eclipse workspace model
  * elements. A particular executable in the workspace is typically represented
  * by many Executable objects. For example, an executable in the workspace that
  * changes twice can cause the listener's {@link #executablesChanged(List)} to
  * be called with a different Executable instance each of the two times it's invoked.
- * 
+ *
  */
 public interface IExecutablesChangeListener extends EventListener {
 
@@ -40,9 +40,9 @@ public interface IExecutablesChangeListener extends EventListener {
 	 * cleaned
 	 * <li>user deletes one or more executables
 	 * </ul>
-	 * 
+	 *
 	 * Clients can get the list by calling {@link ExecutablesManager#getExecutables()}
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void executablesListChanged();
@@ -54,7 +54,7 @@ public interface IExecutablesChangeListener extends EventListener {
 	 * object provides has changed. One such case is when there's a change in
 	 * the source locators, as such locators guide the Executable in finding the
 	 * local path for the compile path.
-	 * 
+	 *
 	 * <p>
 	 * The Executable instances in the given list have had their caches flushed
 	 * by ExecutableManager. Clients that keep references to Executable objects
@@ -62,7 +62,7 @@ public interface IExecutablesChangeListener extends EventListener {
 	 * managed by ExecutableManager and as such it is the client's
 	 * responsibility to tell those instances to flush when this listener method
 	 * is called. E.g.,
-	 * 
+	 *
 	 * <p><pre>
 	 * public void executablesChanged(List<Executable> executables) {
 	 *    for (Executable e : executables) {
@@ -72,10 +72,10 @@ public interface IExecutablesChangeListener extends EventListener {
 	 *    }
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * <p>
 	 * This is not called when an executable is added or removed
-	 * 
+	 *
 	 * @param executables
 	 * @since 7.0
 	 */

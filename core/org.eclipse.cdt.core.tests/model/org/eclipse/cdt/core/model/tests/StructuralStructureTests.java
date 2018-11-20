@@ -15,7 +15,8 @@ package org.eclipse.cdt.core.model.tests;
 
 import org.eclipse.cdt.core.model.CModelException;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author hamer
@@ -48,7 +49,7 @@ public class StructuralStructureTests extends IStructureTests {
 		suite.addTest(new StructuralStructureTests("testGetBaseTypes")); // C++ only
 		suite.addTest(new StructuralStructureTests("testGetAccessControl")); // C++ only
 
-		// Language Specification tests:		
+		// Language Specification tests:
 		suite.addTest(new StructuralStructureTests("testAnonymousStructObject"));
 		suite.addTest(new StructuralStructureTests("testInnerStruct"));
 

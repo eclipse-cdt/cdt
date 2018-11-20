@@ -127,9 +127,9 @@ public class CProjectHelper {
 
 	/**
 	 * Adds the default binary parser if no binary parser configured.
-	 * 
+	 *
 	 * @param project
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static boolean addDefaultBinaryParser(IProject project) throws CoreException {
 		ICConfigExtensionReference[] binaryParsers = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
  * Debugger service representing module handling logic of a debugger.
- * 
+ *
  * @since 1.0
  */
 public interface IModules extends IDsfService {
@@ -29,7 +29,7 @@ public interface IModules extends IDsfService {
 	/**
 	 * Symbol context represents the space into which module symbols are loaded.
 	 * Traditionally symbols are loaded in context of a process, but for other
-	 * types of debugging, like kernel or no-OS debugging, it's useful to 
+	 * types of debugging, like kernel or no-OS debugging, it's useful to
 	 * separate the concept of a symbol context from a process.
 	 */
 	public interface ISymbolDMContext extends IDMContext {
@@ -48,7 +48,7 @@ public interface IModules extends IDsfService {
 	}
 
 	/**
-	 * Specific event identifying that a new module was loaded into a 
+	 * Specific event identifying that a new module was loaded into a
 	 * symbol context.
 	 */
 	public interface ModuleLoadedDMEvent extends ModulesChangedDMEvent {
@@ -102,13 +102,13 @@ public interface IModules extends IDsfService {
 
 	void getModuleData(IModuleDMContext dmc, DataRequestMonitor<IModuleDMData> rm);
 
-	/** 
-	 * Retrieves the list of modules loaded in given symbol context. 
+	/**
+	 * Retrieves the list of modules loaded in given symbol context.
 	 */
 	void getModules(ISymbolDMContext symCtx, DataRequestMonitor<IModuleDMContext[]> rm);
 
 	/**
-	 * Calculates the line numbers corresponding to the given address. 
+	 * Calculates the line numbers corresponding to the given address.
 	 */
 	void calcLineInfo(ISymbolDMContext symCtx, IAddress address, DataRequestMonitor<LineInfo[]> rm);
 

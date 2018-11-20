@@ -46,7 +46,7 @@ public class SupplierBasedCdtVariableManager {
 		if (contextInfo == null)
 			return new ICdtVariable[0];
 
-		Map<String, ICdtVariable> map = new HashMap<String, ICdtVariable>();
+		Map<String, ICdtVariable> map = new HashMap<>();
 		IVariableContextInfo infos[] = includeParentContexts ? getAllVariableContextInfos(contextInfo)
 				: new IVariableContextInfo[] { contextInfo };
 
@@ -77,7 +77,7 @@ public class SupplierBasedCdtVariableManager {
 		if (contextInfo == null)
 			return null;
 
-		List<IVariableContextInfo> list = new ArrayList<IVariableContextInfo>();
+		List<IVariableContextInfo> list = new ArrayList<>();
 
 		list.add(contextInfo);
 

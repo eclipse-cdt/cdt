@@ -233,7 +233,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			return null;
 		}
 
-		List<String> options = new ArrayList<String>();
+		List<String> options = new ArrayList<>();
 		Matcher optionMatcher = OPTIONS_PATTERN.matcher(line);
 		while (optionMatcher.find()) {
 			String option = optionMatcher.group(OPTION_GROUP);
@@ -282,7 +282,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		if (line == null)
 			return null;
 
-		// If the character preceding the '\' is also '\', it's not a line continuation - 
+		// If the character preceding the '\' is also '\', it's not a line continuation -
 		// the first '\' escapes the second.
 		if (line.length() > 0 && line.charAt(line.length() - 1) == '\\'
 				&& (line.length() == 1 || line.charAt(line.length() - 2) != '\\')) {

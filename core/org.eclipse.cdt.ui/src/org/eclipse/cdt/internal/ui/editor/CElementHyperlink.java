@@ -21,7 +21,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 
 /**
  * C element hyperlink.
- * 
+ *
  * @since 3.0
  */
 public class CElementHyperlink implements IHyperlink {

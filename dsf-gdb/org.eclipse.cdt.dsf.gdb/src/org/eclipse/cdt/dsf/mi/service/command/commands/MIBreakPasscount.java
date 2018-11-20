@@ -18,15 +18,15 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  * -break-passcount TRACEPOINT-NUMBER PASSCOUNT
  *
- * Set the passcount for tracepoint TRACEPOINT_NUMBER to PASSCOUNT. If the breakpoint 
- * referred to by TRACEPOINT_NUMBER is not a tracepoint, an error is emitted. This 
+ * Set the passcount for tracepoint TRACEPOINT_NUMBER to PASSCOUNT. If the breakpoint
+ * referred to by TRACEPOINT_NUMBER is not a tracepoint, an error is emitted. This
  * corresponds to the CLI command 'passcount'.
- *  
+ *
  * Available starting with GDB 7.1
- * 
+ *
  * @since 3.0
  */
 

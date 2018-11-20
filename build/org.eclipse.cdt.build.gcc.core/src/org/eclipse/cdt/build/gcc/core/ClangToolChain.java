@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 /**
  * The Clang toolchain. There's little different from the GCC toolchain other
  * than the toolchain type and name.
- * 
+ *
  * @author dschaefer
  *
  */

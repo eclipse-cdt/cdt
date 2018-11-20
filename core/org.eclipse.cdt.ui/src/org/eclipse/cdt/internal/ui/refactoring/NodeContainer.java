@@ -22,12 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -45,9 +39,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
@@ -57,6 +48,13 @@ import org.eclipse.cdt.internal.corext.refactoring.code.flow.FlowContext;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.FlowInfo;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.InputFlowAnalyzer;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.Selection;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 
 public class NodeContainer {
 	private final List<IASTNode> nodes;
@@ -65,7 +63,7 @@ public class NodeContainer {
 
 	public NodeContainer() {
 		super();
-		nodes = new ArrayList<IASTNode>();
+		nodes = new ArrayList<>();
 	}
 
 	public final int size() {
@@ -84,7 +82,7 @@ public class NodeContainer {
 		if (names != null) {
 			return;
 		}
-		names = new ArrayList<NameInformation>();
+		names = new ArrayList<>();
 		final int startOffset = getStartOffset();
 		final int endOffset = getEndOffset();
 
@@ -165,8 +163,8 @@ public class NodeContainer {
 
 			Set<IVariable> externalReads = getVariablesReadOutside();
 
-			Set<IASTName> declarations = new HashSet<IASTName>();
-			interfaceNames = new ArrayList<NameInformation>();
+			Set<IASTName> declarations = new HashSet<>();
+			interfaceNames = new ArrayList<>();
 
 			for (NameInformation nameInfo : names) {
 				IASTName declarationName = nameInfo.getDeclarationName();
@@ -253,7 +251,7 @@ public class NodeContainer {
 		for (NameInformation nameInfo : getInterfaceNames()) {
 			if (nameInfo.mustBeReturnValue() == isReturnValue) {
 				if (selectedNames == null) {
-					selectedNames = new ArrayList<NameInformation>();
+					selectedNames = new ArrayList<>();
 				}
 				selectedNames.add(nameInfo);
 			}

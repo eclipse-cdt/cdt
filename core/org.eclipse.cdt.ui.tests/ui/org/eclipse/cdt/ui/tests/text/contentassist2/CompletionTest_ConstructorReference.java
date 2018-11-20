@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Constructor_Reference
  * Bug#
  *

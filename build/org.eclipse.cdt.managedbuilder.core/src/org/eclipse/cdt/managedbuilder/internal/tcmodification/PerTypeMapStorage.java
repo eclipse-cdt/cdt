@@ -20,13 +20,13 @@ import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 
 /**
  * The class implements the storage of maps (Map<K, V>) organized by types extending
- * {@link IRealBuildObjectAssociation}. 
+ * {@link IRealBuildObjectAssociation}.
  *
  * @param <K> - the type of keys of the map
  * @param <V> - the type of values in the map
  */
 public class PerTypeMapStorage<K extends IRealBuildObjectAssociation, V> implements Cloneable {
-	private ObjectTypeBasedStorage<Map<K, V>> fStorage = new ObjectTypeBasedStorage<Map<K, V>>();
+	private ObjectTypeBasedStorage<Map<K, V>> fStorage = new ObjectTypeBasedStorage<>();
 
 	public Map<K, V> getMap(int type, boolean create) {
 		Map<K, V> map = fStorage.get(type);
@@ -39,7 +39,7 @@ public class PerTypeMapStorage<K extends IRealBuildObjectAssociation, V> impleme
 
 	protected Map<K, V> createMap(Map<K, V> map) {
 		if (map == null) {
-			return new HashMap<K, V>();
+			return new HashMap<>();
 		}
 		@SuppressWarnings("unchecked")
 		Map<K, V> clone = (Map<K, V>) ((HashMap<K, V>) map).clone();

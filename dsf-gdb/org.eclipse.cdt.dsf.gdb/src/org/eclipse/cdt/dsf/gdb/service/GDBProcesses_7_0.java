@@ -7,12 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     John Dallaway - GDB 7.x MI thread details field ignored (Bug 325556)
- *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748) 
+ *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748)
  *     Andy Jin (QNX) - Not output thread osId as a string when it is null (Bug 397039)
  *     Marc Khouzam (Ericsson) - Move IBreakpointsTargetDMContext from MIContainerDMC
  *                               to GDBContainerDMC to ease inheritance (Bug 389945)
@@ -128,7 +128,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	private final static int MAX_NUMBER_EXITED_PROCESS = 5;
 
 	// Below is the context hierarchy that is implemented between the
-	// MIProcesses service and the MIRunControl service for the MI 
+	// MIProcesses service and the MIRunControl service for the MI
 	// implementation of DSF:
 	//
 	//                        MIControlDMContext (ICommandControlDMContext)
@@ -159,7 +159,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		 * Instead clients should call {@link IMIProcesses#createExecutionContext()}
 		 * to create instances of this context based on the thread ID.
 		 * <p/>
-		 * 
+		 *
 		 * @param sessionId Session that this context belongs to.
 		 * @param containerDmc The container that this context belongs to.
 		 * @param threadDmc The thread context parents of this context.
@@ -207,7 +207,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	}
 
 	/**
-	 * Context representing a thread group of GDB/MI. 
+	 * Context representing a thread group of GDB/MI.
 	 */
 	@Immutable
 	static class MIContainerDMC extends AbstractDMContext implements IMIContainerDMContext, IDisassemblyDMContext {
@@ -220,7 +220,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		 * Constructor for the context.  It should not be called directly by clients.
 		 * Instead clients should call {@link IMIProcesses#createContainerContext
 		 * to create instances of this context based on the group name.
-		 * 
+		 *
 		 * @param sessionId Session that this context belongs to.
 		 * @param processDmc The process context that is the parent of this context.
 		 * @param groupId GDB/MI thread group identifier.
@@ -263,7 +263,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	}
 
 	/**
-	 * Context representing a thread. 
+	 * Context representing a thread.
 	 * @since 4.0
 	 */
 	@Immutable
@@ -278,7 +278,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		 * Instead clients should call {@link IMIProcesses#createThreadContext}
 		 * to create instances of this context based on the thread ID.
 		 * <p/>
-		 * 
+		 *
 		 * @param sessionId Session that this context belongs to.
 		 * @param processDmc The process that this thread belongs to.
 		 * @param id thread identifier.
@@ -325,7 +325,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		 * Instead clients should call {@link IMIProcesses#createProcessContext}
 		 * to create instances of this context based on the PID.
 		 * <p/>
-		 * 
+		 *
 		 * @param sessionId Session that this context belongs to.
 		 * @param controlDmc The control context parent of this process.
 		 * @param id process identifier.
@@ -350,7 +350,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 			// We treat the UNKNOWN_PROCESS_ID as a wildcard.  Any processId (except null) will be considered
 			// equal to the UNKNOWN_PROCESS_ID.  This is important because before starting a process, we don't
 			// have a pid yet, but we still need to create a process context, and we must use UNKNOWN_PROCESS_ID.
-			// Bug 336890 
+			// Bug 336890
 
 			if (!baseEquals(obj)) {
 				return false;
@@ -579,7 +579,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 	/**
 	 * Event indicating that an container (debugged process) has started.  This event
-	 * implements the {@link IStartedMDEvent} from the IRunControl service. 
+	 * implements the {@link IStartedMDEvent} from the IRunControl service.
 	 */
 	public static class ContainerStartedDMEvent extends AbstractDMEvent<IExecutionDMContext>
 			implements IStartedDMEvent {
@@ -590,7 +590,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 	/**
 	 * Event indicating that an container is no longer being debugged.  This event
-	 * implements the {@link IExitedMDEvent} from the IRunControl service. 
+	 * implements the {@link IExitedMDEvent} from the IRunControl service.
 	 */
 	public static class ContainerExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> implements IExitedDMEvent {
 		public ContainerExitedDMEvent(IContainerDMContext context) {
@@ -611,11 +611,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	/**
 	 *  A map of thread id to thread group id.  We use this to find out to which threadGroup a thread belongs.
 	 */
-	private Map<String, String> fThreadToGroupMap = new HashMap<String, String>();
+	private Map<String, String> fThreadToGroupMap = new HashMap<>();
 	/**
 	 *  A map of thread group id to process id.  We use this to find out to which pid a group refers.
 	 */
-	private Map<String, String> fGroupToPidMap = new HashMap<String, String>();
+	private Map<String, String> fGroupToPidMap = new HashMap<>();
 
 	private IGDBControl fCommandControl;
 	private IGDBBackend fBackend;
@@ -631,7 +631,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	// We cannot cache this command because it lists all available processes, which can
 	// change at any time.  However, it is inefficient to send more than one of this command at
 	// the same time.  This cache will help us avoid that.  The idea is that we cache the command,
-	// but as soon as it returns, we clear the cache.  So the cache will only trigger for those 
+	// but as soon as it returns, we clear the cache.  So the cache will only trigger for those
 	// overlapping situations.  Using this cache also allows to handle the all-stop case
 	// when the target can be unavailable and instead of hanging, the cache will return an error.
 	private CommandCache fListThreadGroupsAvailableCache;
@@ -687,7 +687,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 	/**
 	* A LRU (least-recently-used) map that limits the amount of exited process list.
-	* Once the limit is reached, oldest exited processes are automatically removed 
+	* Once the limit is reached, oldest exited processes are automatically removed
 	* when new ones are inserted.  This avoids the risk of growing the list
 	* of exited processes too much and showing too many in the debug view.
 	*/
@@ -726,7 +726,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	 */
 	private int fNumConnected;
 
-	/** 
+	/**
 	 * Keeps track if we are dealing with the very first process of GDB.
 	 */
 	private boolean fInitialProcess = true;
@@ -737,7 +737,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 	/**
 	 * This method initializes this service.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The request monitor indicating the operation is finished
 	 */
@@ -754,7 +754,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The call-back object to notify when this service's
 	 *            initialization is done.
@@ -799,7 +799,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	 * This method shuts down this service. It unregisters the service, stops
 	 * receiving service events, and calls the superclass shutdown() method to
 	 * finish the shutdown process.
-	 * 
+	 *
 	 * @return void
 	 */
 	@Override
@@ -858,9 +858,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		return fProcDetachedSet;
 	}
 
-	/** 
+	/**
 	 * Returns the groupId that is associated with the provided pId
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	protected String getGroupFromPid(String pid) {
 		if (pid == null)
@@ -969,7 +969,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		}
 
 		String groupId = containerDmc.getGroupId();
-		List<IMIExecutionDMContext> execDmcList = new ArrayList<IMIExecutionDMContext>();
+		List<IMIExecutionDMContext> execDmcList = new ArrayList<>();
 		Iterator<Map.Entry<String, String>> iterator = getThreadToGroupMap().entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> entry = iterator.next();
@@ -995,7 +995,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 				// where we've deleted the process from our table, but it has
 				// yet to be cleaned up from the view
 				rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
-						"Unavailable info about exited process", null)); //$NON-NLS-1$        	        			
+						"Unavailable info about exited process", null)); //$NON-NLS-1$
 			}
 
 			return;
@@ -1031,7 +1031,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 						// GDB is debugging a new process. Let's fetch its
 						// name and remember it. In order to get the name,
 						// we have to request all running processes, not
-						// just the ones being debugged. We got a lot more 
+						// just the ones being debugged. We got a lot more
 						// information when we request all processes.
 						final String finalPId = id;
 						fListThreadGroupsAvailableCache.execute(
@@ -1075,7 +1075,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 													}
 												} catch (Exception e) {
 													rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-															REQUEST_FAILED, "Could not get process name", e)); //$NON-NLS-1$        	        			
+															REQUEST_FAILED, "Could not get process name", e)); //$NON-NLS-1$
 												}
 											}
 										}
@@ -1092,11 +1092,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 					}
 				} else {
 					// We don't have the name in our map.  This could happen
-					// if a process has terminated but the 
+					// if a process has terminated but the
 					// debug session is not terminated because the preference
 					// to keep GDB running has been selected or because there
 					// are other processes part of that session.
-					name = "Unknown name"; //$NON-NLS-1$					
+					name = "Unknown name"; //$NON-NLS-1$
 				}
 			}
 			rm.setData(new MIThreadDMData(name, id));
@@ -1137,7 +1137,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 								rm.setData(threadData);
 							} else {
 								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
-										"Could not get thread info", null)); //$NON-NLS-1$        	        			
+										"Could not get thread info", null)); //$NON-NLS-1$
 							}
 							rm.done();
 						}
@@ -1488,7 +1488,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 					}
 
 					rm.done(containerDmcs.toArray(new IMIContainerDMContext[containerDmcs.size()]));
-				};
+				}
 			};
 
 			fContainerCommandCache.execute(fCommandFactory.createMIListThreadGroups(controlDmc),
@@ -1553,7 +1553,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		// -list-thread-groups
 		// ^done,groups=[{id="i1",type="process"}]
 		// Just ignore that entry
-		List<IMIContainerDMContext> containerDmcs = new ArrayList<IMIContainerDMContext>(groups.length);
+		List<IMIContainerDMContext> containerDmcs = new ArrayList<>(groups.length);
 		for (IThreadGroupInfo group : groups) {
 			if (group.getPid() == null || group.getPid().isEmpty() || group.getPid().equals("0")) { //$NON-NLS-1$
 				continue;
@@ -1720,14 +1720,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		rm.done();
 	}
 
-	/** 
+	/**
 	 * Creates the container context that is to be used for the new process that will
 	 * be created by the restart operation.
 	 * This container does not have its pid yet, while the container of the process
 	 * that is being restarted does have its pid.
 	 * Also, for GDB 7.0 and 7.1, the groupId being the pid, we cannot use the old
 	 * container's groupId, but must use the default groupId until the pid is created.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	protected IMIContainerDMContext createContainerContextForRestart(String groupId) {
@@ -1776,9 +1776,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 								setData(getData());
 								super.handleCompleted();
-							};
+							}
 						});
-			};
+			}
 		};
 
 		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
@@ -1817,7 +1817,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 	/**
 	 * Removes the process with the specified groupId from the launch.
-	 * 
+	 *
 	 * @return The label used for the console of that process.
 	 */
 	private String removeProcessFromLaunch(String groupId) {
@@ -1844,18 +1844,18 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	 * Add the specified process to the launch.
 	 */
 	private void addProcessToLaunch(Process inferior, String groupId, String label) {
-		// Add the inferior to the launch.  
+		// Add the inferior to the launch.
 		// This cannot be done on the executor or things deadlock.
 		DebugPlugin.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				// Add the inferior
-				// Need to go through DebugPlugin.newProcess so that we can use 
+				// Need to go through DebugPlugin.newProcess so that we can use
 				// the overrideable process factory to allow others to override.
 				// First set attribute to specify we want to create an inferior process.
 				// Bug 210366
 				ILaunch launch = (ILaunch) getSession().getModelAdapter(ILaunch.class);
-				Map<String, String> attributes = new HashMap<String, String>();
+				Map<String, String> attributes = new HashMap<>();
 				attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 						IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
 				IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label != null ? label : "", //$NON-NLS-1$
@@ -1994,7 +1994,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 			if (fNumConnected == 0 && Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 					IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true, null)) {
-				// If the last process we are debugging finishes and does not restart 
+				// If the last process we are debugging finishes and does not restart
 				// let's terminate GDB.  We wait a small delay to see if the process will restart.
 				// We also do this for a remote attach session, since the 'auto terminate' preference
 				// is enabled.  If users want to keep the session alive to attach to another process,
@@ -2046,7 +2046,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 	/*
 	 * Catch =thread-created/exited and =thread-group-exited events to update our
-	 * groupId to threadId map. 
+	 * groupId to threadId map.
 	 */
 	@Override
 	public void eventReceived(Object output) {
@@ -2142,7 +2142,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 						// GDB is no longer debugging this process.  Remove it from our list
 						String name = fDebuggedProcessesAndNames.remove(pId);
 						if (!getDetachedProcesses().remove(groupId)) {
-							// If the process was not detached, 
+							// If the process was not detached,
 							// store it in the list of exited processes.
 							getExitedProcesses().put(groupId, new ExitedProcInfo(pId, name));
 						}

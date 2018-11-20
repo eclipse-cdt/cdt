@@ -16,7 +16,7 @@ package org.eclipse.cdt.managedbuilder.envvar;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 
 /**
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -27,7 +27,7 @@ public interface IEnvironmentVariableSupplier {
 	 *
 	 * @param name the variable name
 	 * @param context the context
-	 * @return the reference to the IBuildEnvironmentVariable interface representing 
+	 * @return the reference to the IBuildEnvironmentVariable interface representing
 	 * the variable of a given name
 	 */
 	IEnvironmentVariable getVariable(String name, Object context);
@@ -35,7 +35,7 @@ public interface IEnvironmentVariableSupplier {
 	/**
 	 *
 	 * @param context the context
-	 * @return the array of IBuildEnvironmentVariable that represents the environment variables 
+	 * @return the array of IBuildEnvironmentVariable that represents the environment variables
 	 */
 	IEnvironmentVariable[] getVariables(Object context);
 }

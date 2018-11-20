@@ -18,11 +18,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
  * -trace-start
- * 
+ *
  * Starts a tracing experiment. The result of this command does not have any fields.
- * 
+ *
  * Available with GDB 7.1
- * 
+ *
  * @since 3.0
  */
 public class MITraceStart extends MICommand<MIInfo> {

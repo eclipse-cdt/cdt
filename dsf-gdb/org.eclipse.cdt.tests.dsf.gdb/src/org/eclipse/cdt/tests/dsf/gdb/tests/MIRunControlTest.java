@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson AB - Initial implementation of Test cases
  *     Simon Marchi (Ericsson) - Add and use runningOnWindows().
@@ -66,7 +66,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 /**
- * Tests MIRunControl class for Multi-threaded application. 
+ * Tests MIRunControl class for Multi-threaded application.
  */
 @RunWith(Parameterized.class)
 public class MIRunControlTest extends BaseParametrizedTestCase {
@@ -197,13 +197,13 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	}
 
 	/*
-	 * For Multi-threaded application - In case of one thread, Thread id should start with 1. 
+	 * For Multi-threaded application - In case of one thread, Thread id should start with 1.
 	 */
 	@Test
 	public void getExecutionContext() throws InterruptedException, ExecutionException, TimeoutException {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
-		 * Create a request monitor 
+		 * Create a request monitor
 		 */
 		final DataRequestMonitor<IExecutionDMContext[]> rm = new DataRequestMonitor<IExecutionDMContext[]>(
 				fRunCtrl.getExecutor(), null) {
@@ -219,7 +219,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
 		/*
-		 * Test getExecutionContexts() when only one thread exist. 
+		 * Test getExecutionContexts() when only one thread exist.
 		 */
 		fRunCtrl.getExecutor().submit(new Runnable() {
 			@Override
@@ -241,7 +241,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				ctxts.length);
 
 		// The ordering of the contexts is not deterministic
-		LinkedList<Integer> ids = new LinkedList<Integer>(Arrays.asList(new Integer[] { 1 }));
+		LinkedList<Integer> ids = new LinkedList<>(Arrays.asList(new Integer[] { 1 }));
 		if (sProgramIsCygwin) {
 			ids.add(2);
 		}
@@ -263,7 +263,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	public void getExecutionContexts() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
-		 * Create a request monitor 
+		 * Create a request monitor
 		 */
 		final DataRequestMonitor<IExecutionDMContext[]> rmExecutionCtxts = new DataRequestMonitor<IExecutionDMContext[]>(
 				fRunCtrl.getExecutor(), null) {
@@ -277,7 +277,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		};
 
 		// Prepare a waiter to make sure we have received the thread started event
-		final ServiceEventWaitor<IStartedDMEvent> startedEventWaitor = new ServiceEventWaitor<IStartedDMEvent>(
+		final ServiceEventWaitor<IStartedDMEvent> startedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IStartedDMEvent.class);
 
 		SyncUtil.runToLocation(SOURCE_NAME + ':' + getLineForTag("LINE_MAIN_AFTER_THREAD_START"));
@@ -316,7 +316,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		Assert.assertEquals("Unexpected number of threads", sProgramIsCygwin ? 3 : 2, data.length);
 
 		// The ordering of the contexts is not deterministic
-		LinkedList<Integer> ids = new LinkedList<Integer>(Arrays.asList(new Integer[] { 1, 2 }));
+		LinkedList<Integer> ids = new LinkedList<>(Arrays.asList(new Integer[] { 1, 2 }));
 		if (sProgramIsCygwin) {
 			ids.add(3);
 		}
@@ -367,7 +367,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 			Assert.fail("No data returned.");
 		else {
 			/*
-			 * getModelData should return StateChangeReason.  
+			 * getModelData should return StateChangeReason.
 			 */
 			Assert.assertEquals("Unexpected state change reason.", StateChangeReason.BREAKPOINT,
 					data.getStateChangeReason());
@@ -375,7 +375,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	}
 
 	/**
-	 * Allows subclasses to override the expected reason for the stop on main.    
+	 * Allows subclasses to override the expected reason for the stop on main.
 	 * @return
 	 */
 	protected StateChangeReason getExpectedMainThreadStopReason() {
@@ -417,7 +417,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 			Assert.fail("No data Returned.");
 		else {
 			/*
-			 * getModelData for Execution DMC in case Step has been performed. 
+			 * getModelData for Execution DMC in case Step has been performed.
 			 */
 			Assert.assertTrue("getModelData for ExecutionDMC in case of step should be STEP.",
 					StateChangeReason.STEP == data.getStateChangeReason());
@@ -430,7 +430,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	@Test
 	public void getModelDataForThreadWhenBreakpoint() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-		/* 
+		/*
 		 * Add a breakpoint
 		 */
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_BEFORE_THREAD_START"), false);
@@ -477,7 +477,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	@Test
 	public void getModelDataForContainer() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-		/* 
+		/*
 		 * Add a breakpoint
 		 */
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":21", false);
@@ -516,7 +516,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	}
 
 	/*
-	 * getExecutionContexts for an invalid container DMC 
+	 * getExecutionContexts for an invalid container DMC
 	 */
 	@Ignore
 	@Test
@@ -568,7 +568,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		//Assert.assertEquals(fRunCtrl.getCache().getCachedContext().size(), 0);
 	}
 
-	//Also test Cache after ContainerResumeEvent 
+	//Also test Cache after ContainerResumeEvent
 	@Test
 	public void resume() throws InterruptedException, ExecutionException, TimeoutException {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -580,7 +580,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				//TestsPlugin.debug("handleCompleted over");
 			}
 		};
-		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<IResumedDMEvent>(
+		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IResumedDMEvent.class);
 
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
@@ -629,7 +629,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 			}
 		};
 
-		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<IResumedDMEvent>(
+		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IResumedDMEvent.class);
 
 		fRunCtrl.getExecutor().submit(new Runnable() {
@@ -641,7 +641,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		try {
 			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
-			//TestsPlugin.debug("DsfMIRunningEvent received");	
+			//TestsPlugin.debug("DsfMIRunningEvent received");
 		} catch (Exception e) {
 			Assert.fail("Exception raised:: " + e.getMessage());
 			e.printStackTrace();
@@ -682,7 +682,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	public void runToLine() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		fRunCtrl.getExecutor().submit(new Runnable() {
@@ -720,16 +720,16 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	}
 
 	/**
-	 * Test that interrupting a running target works 
+	 * Test that interrupting a running target works
 	 */
 	@Test
 	public void interruptRunningTarget() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
-		// Resume the target 
+		// Resume the target
 		fRunCtrl.getExecutor().submit(new Runnable() {
 			@Override
 			public void run() {

@@ -28,7 +28,7 @@ public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 	/**
 	 * {@code INIT_STATEMENT} represents the relationship between an
 	 * {@code ICPPASTSwitchStatement} and its nested {@code IASTStatement}.
-	 * 
+	 *
 	 * @since 6.5
 	 */
 	public static final ASTNodeProperty INIT_STATEMENT = new ASTNodeProperty(
@@ -44,21 +44,21 @@ public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 
 	/**
 	 * In C++, a switch statement can be contorller by a declaration.
-	 * 
+	 *
 	 * @return <code>IASTDeclaration</code>
 	 */
 	public IASTDeclaration getControllerDeclaration();
 
 	/**
 	 * In C++, a switch statement can be contorller by a declaration.
-	 * 
+	 *
 	 * @param d <code>IASTDeclaration</code>
 	 */
 	public void setControllerDeclaration(IASTDeclaration d);
 
 	/**
 	 * Returns the init-statement for a switch.
-	 * 
+	 *
 	 * @return the init-statement, or <code>null</code> if the 'switch' statement doesn't
 	 *    have one.
 	 *
@@ -68,7 +68,7 @@ public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 
 	/**
 	 * Sets the optional init-statement of an switch.
-	 * 
+	 *
 	 * @param statement this statement should either be a <code>IASTSimpleDeclaration</code> or a
 	 *    <code>IASTExpressionStatement</code>.
 	 *
@@ -78,7 +78,7 @@ public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 
 	/**
 	 * Get the <code>IScope</code> represented by this switch.
-	 * 
+	 *
 	 * @return <code>IScope</code>
 	 */
 	public IScope getScope();

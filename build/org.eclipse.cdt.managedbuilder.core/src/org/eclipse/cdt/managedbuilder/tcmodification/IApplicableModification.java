@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 public interface IApplicableModification extends IModification {
 	/**
 	 * applies the settings made to the given modification to the underlying
-	 * resource info 
+	 * resource info
 	 */
 	void apply() throws CoreException;
 }

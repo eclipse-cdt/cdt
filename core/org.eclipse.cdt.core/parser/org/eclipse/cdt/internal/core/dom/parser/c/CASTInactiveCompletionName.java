@@ -37,7 +37,7 @@ public class CASTInactiveCompletionName extends CASTName implements IASTInactive
 	@Override
 	public IBinding[] findBindings(IASTName name, boolean isPrefix) {
 		// 'name' (which is the same as 'this') is not hooked up to the AST, but it
-		// does have a location (offset and length) which we use to compute the 
+		// does have a location (offset and length) which we use to compute the
 		// containing scope.
 		IASTNodeSelector sel = fAst.getNodeSelector(null);
 		IASTNode node = sel.findEnclosingNode(getOffset(), getLength());

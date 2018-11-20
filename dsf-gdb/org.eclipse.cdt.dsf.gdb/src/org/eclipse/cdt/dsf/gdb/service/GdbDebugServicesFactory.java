@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
- *     Nokia - create and use backend service. 
+ *     Nokia - create and use backend service.
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Marc Khouzam (Ericsson) - Support for GDB 7.4 (Bug 367788)
  *     Marc Khouzam (Ericsson) - Include IGDBHardware service for the multicore visualizer (Bug 335027)
@@ -75,9 +75,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	/** @since 4.0 */
 	public static final String GDB_6_8_VERSION = "6.8"; //$NON-NLS-1$
 	/** @since 4.0 */
-	public static final String GDB_7_0_VERSION = "7.0"; //$NON-NLS-1$	
+	public static final String GDB_7_0_VERSION = "7.0"; //$NON-NLS-1$
 	/** @since 4.0 */
-	public static final String GDB_7_1_VERSION = "7.1"; //$NON-NLS-1$	
+	public static final String GDB_7_1_VERSION = "7.1"; //$NON-NLS-1$
 	/** @since 4.0 */
 	public static final String GDB_7_2_VERSION = "7.2"; //$NON-NLS-1$
 	/** @since 4.1 */
@@ -396,11 +396,11 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 
 	/**
-	 * Compares the GDB version of the current debug session with the one specified by 
-	 * parameter 'version'.  Returns -1, 0, or 1 if the current version is less than, 
+	 * Compares the GDB version of the current debug session with the one specified by
+	 * parameter 'version'.  Returns -1, 0, or 1 if the current version is less than,
 	 * equal to, or greater than the specified version, respectively.
 	 * @param version The version to compare with
-	 * @return -1, 0, or 1 if the current version is less than, equal to, or greater than 
+	 * @return -1, 0, or 1 if the current version is less than, equal to, or greater than
 	 * 		   the specified version, respectively.
 	 * @since 4.8
 	 */
@@ -412,11 +412,11 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	 * A static method that will compare the version of GDB for the specified session and
 	 * the minimum GDB version required by the caller.  A warning will be logged if the
 	 * running version is not sufficient.
-	 * 
+	 *
 	 * @param session The debug session running GDB
 	 * @param minVersion The minimum version of GDB required
 	 * @param service The service requesting the check.
-	 *   
+	 *
 	 * @since 4.8
 	 */
 	public static void validateGdbVersion(DsfSession session, String minVersion, IDsfService service) {

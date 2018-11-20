@@ -50,7 +50,7 @@ public class XmlStorageElement implements ICStorageElement {
 	final Object fLock;
 	public Element fElement;
 	private ICStorageElement fParent;
-	protected List<ICStorageElement> fChildList = new ArrayList<ICStorageElement>();
+	protected List<ICStorageElement> fChildList = new ArrayList<>();
 	private volatile boolean fChildrenCreated;
 	private String[] fAttributeFilters;
 	private String[] fChildFilters;
@@ -142,7 +142,7 @@ public class XmlStorageElement implements ICStorageElement {
 	public ICStorageElement[] getChildrenByName(String name) {
 		synchronized (fLock) {
 			createChildren();
-			ArrayList<ICStorageElement> children = new ArrayList<ICStorageElement>();
+			ArrayList<ICStorageElement> children = new ArrayList<>();
 			for (ICStorageElement child : fChildList)
 				if (name.equals(child.getName()))
 					children.add(child);
@@ -397,7 +397,7 @@ public class XmlStorageElement implements ICStorageElement {
 			return false;
 
 		if (attrs.length != 0) {
-			Set<String> set = new HashSet<String>(Arrays.asList(attrs));
+			Set<String> set = new HashSet<>(Arrays.asList(attrs));
 			set.removeAll(Arrays.asList(otherAttrs));
 			if (set.size() != 0)
 				return false;
@@ -440,7 +440,7 @@ public class XmlStorageElement implements ICStorageElement {
 		synchronized (fLock) {
 			NamedNodeMap nodeMap = fElement.getAttributes();
 			int length = nodeMap.getLength();
-			List<String> list = new ArrayList<String>(length);
+			List<String> list = new ArrayList<>(length);
 			for (int i = 0; i < length; i++) {
 				Node node = nodeMap.item(i);
 				String name = node.getNodeName();

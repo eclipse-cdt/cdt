@@ -433,8 +433,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 		List<String> languageIds = getLanguageScope();
 		if (languageIds == null) {
-			languageIds = new ArrayList<String>(1);
-			// "null" language indicates that the provider provides for any language 
+			languageIds = new ArrayList<>(1);
+			// "null" language indicates that the provider provides for any language
 			languageIds.add(null);
 		}
 		for (String languageId : languageIds) {
@@ -640,7 +640,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		specFile = null; // init specFile *before* calling resolveCommand(), can be changed in there
 		currentCommandResolved = resolveCommand(currentLanguageId);
 
-		detectedSettingEntries = new ArrayList<ICLanguageSettingEntry>();
+		detectedSettingEntries = new ArrayList<>();
 		collected = 0;
 	}
 
@@ -678,7 +678,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		try {
 			monitor.beginTask(
 					ManagedMakeMessages.getFormattedString("AbstractBuiltinSpecsDetector.RunningScannerDiscovery", //$NON-NLS-1$
-							getName()), TICKS_EXECUTE_COMMAND + TICKS_OUTPUT_PARSING);
+							getName()),
+					TICKS_EXECUTE_COMMAND + TICKS_OUTPUT_PARSING);
 
 			IConsole console;
 			if (isConsoleEnabled) {
@@ -710,7 +711,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					new String[] { GMAKE_ERROR_PARSER_ID });
 			ConsoleParserAdapter consoleParser = new ConsoleParserAdapter();
 			consoleParser.startup(currentCfgDescription, epm);
-			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+			List<IConsoleParser> parsers = new ArrayList<>();
 			parsers.add(consoleParser);
 
 			buildRunnerHelper.setLaunchParameters(launcher, program, args, buildDirURI, envp);
@@ -753,7 +754,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		if (envMngr == null) {
 			envMngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
 		}
-		List<IEnvironmentVariable> vars = new ArrayList<IEnvironmentVariable>(
+		List<IEnvironmentVariable> vars = new ArrayList<>(
 				Arrays.asList(envMngr.getVariables(currentCfgDescription, true)));
 
 		// On POSIX (Linux, UNIX) systems reset language variables to default (English)
@@ -772,7 +773,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * Create a handy map of environment variables.
 	 */
 	private Map<String, String> createEnvironmentMap(ICConfigurationDescription cfgDescription) {
-		Map<String, String> envMap = new HashMap<String, String>();
+		Map<String, String> envMap = new HashMap<>();
 		for (IEnvironmentVariable var : getEnvironmentVariables()) {
 			String name = var.getName();
 			if (!envMngr.isVariableCaseSensitive()) {
@@ -787,7 +788,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * Convert map of environment variables to array in format "var=value".
 	 */
 	private String[] toEnvp(Map<String, String> environmentMap) {
-		Set<String> envp = new HashSet<String>();
+		Set<String> envp = new HashSet<>();
 		for (Entry<String, String> var : environmentMap.entrySet()) {
 			envp.add(var.getKey() + '=' + var.getValue());
 		}

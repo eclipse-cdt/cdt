@@ -14,12 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.language.settings.providers.AllLanguageSettingsProvidersCoreTests;
 import org.eclipse.cdt.core.settings.model.AllCProjectDescriptionTests;
 import org.eclipse.cdt.core.settings.model.PathSettingsContainerTests;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  *

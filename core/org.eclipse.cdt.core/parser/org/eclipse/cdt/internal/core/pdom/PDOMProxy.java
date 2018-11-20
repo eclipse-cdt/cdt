@@ -49,12 +49,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class PDOMProxy implements IPDOM {
 	private PDOM fDelegate;
 	private int fReadLockCount;
-	private Set<IListener> fListeners = new HashSet<IListener>();
+	private Set<IListener> fListeners = new HashSet<>();
 	private Map<Thread, DebugLockInfo> fLockDebugging;
 
 	public PDOMProxy() {
 		if (PDOM.sDEBUG_LOCKS) {
-			fLockDebugging = new HashMap<Thread, DebugLockInfo>();
+			fLockDebugging = new HashMap<>();
 		}
 	}
 

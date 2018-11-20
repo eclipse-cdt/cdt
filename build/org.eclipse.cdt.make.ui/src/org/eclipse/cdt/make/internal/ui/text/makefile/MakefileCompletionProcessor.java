@@ -107,7 +107,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-		List<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposalList = new ArrayList<>();
 		IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
 		WordPartDetector wordPart = new WordPartDetector(viewer.getDocument(), documentOffset);
 		if (wordPart.isMacro()) {
@@ -139,7 +139,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 
 	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart,
 			IAutomaticVariable[] autoVars) {
-		ArrayList<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>(autoVars.length);
+		ArrayList<ICompletionProposal> proposalList = new ArrayList<>(autoVars.length);
 		String wordPartName = wordPart.getName();
 		BracketHandler bracket = new BracketHandler(wordPartName);
 		String partialName = bracket.followingText;
@@ -165,7 +165,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 
 	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart,
 			IMacroDefinition[] macros) {
-		ArrayList<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>(macros.length);
+		ArrayList<ICompletionProposal> proposalList = new ArrayList<>(macros.length);
 
 		String wordPartName = wordPart.getName();
 		BracketHandler bracket = new BracketHandler(wordPartName);
@@ -192,7 +192,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 
 	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart,
 			IBuiltinFunction[] builtinFuns) {
-		ArrayList<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>(builtinFuns.length);
+		ArrayList<ICompletionProposal> proposalList = new ArrayList<>(builtinFuns.length);
 
 		String wordPartName = wordPart.getName();
 		BracketHandler bracket = new BracketHandler(wordPartName);
@@ -219,7 +219,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	}
 
 	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart, ITargetRule[] targets) {
-		ArrayList<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>(targets.length);
+		ArrayList<ICompletionProposal> proposalList = new ArrayList<>(targets.length);
 
 		String partialName = wordPart.getName();
 		for (ITargetRule target : targets) {
@@ -238,8 +238,8 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		WordPartDetector wordPart = new WordPartDetector(viewer.getDocument(), documentOffset);
 		IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
-		ArrayList<String> contextList = new ArrayList<String>();
-		ArrayList<IContextInformation> contextInformationList = new ArrayList<IContextInformation>();
+		ArrayList<String> contextList = new ArrayList<>();
+		ArrayList<IContextInformation> contextInformationList = new ArrayList<>();
 		if (wordPart.isMacro()) {
 			IDirective[] statements = makefile.getMacroDefinitions();
 			for (IDirective statement : statements) {

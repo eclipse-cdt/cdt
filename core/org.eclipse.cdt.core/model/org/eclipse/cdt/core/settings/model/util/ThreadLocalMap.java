@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ThreadLocalMap {
-	private ThreadLocal<Map<Object, Object>> fLocal = new ThreadLocal<Map<Object, Object>>();
+	private ThreadLocal<Map<Object, Object>> fLocal = new ThreadLocal<>();
 
 	public Object get(Object key) {
 		Map<Object, Object> map = getMap(false);
@@ -45,7 +45,7 @@ public class ThreadLocalMap {
 	private Map<Object, Object> getMap(boolean create) {
 		Map<Object, Object> map = fLocal.get();
 		if (map == null && create) {
-			map = new HashMap<Object, Object>();
+			map = new HashMap<>();
 			fLocal.set(map);
 		}
 		return map;

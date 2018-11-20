@@ -27,7 +27,7 @@ public interface IFolderInfoModification extends IToolListModification {
 	IToolChain[] getCompatibleToolChains();
 
 	/**
-	 * @return compatibility status for the current tool-chain 
+	 * @return compatibility status for the current tool-chain
 	 */
 	CompatibilityStatus getToolChainCompatibilityStatus();
 

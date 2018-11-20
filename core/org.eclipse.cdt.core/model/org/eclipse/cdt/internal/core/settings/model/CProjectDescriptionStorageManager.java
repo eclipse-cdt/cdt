@@ -93,7 +93,7 @@ public class CProjectDescriptionStorageManager {
 	/** Map of StorageType ID -> List of StorageTypes */
 	private volatile Map<String, List<CProjectDescriptionStorageTypeProxy>> storageTypeMap;
 	/** Map from IProject -> AbstractCProjectDescriptionStorage which is responsible for (de)serializing the project */
-	private ConcurrentHashMap<IProject, AbstractCProjectDescriptionStorage> fDescriptionStorageMap = new ConcurrentHashMap<IProject, AbstractCProjectDescriptionStorage>();
+	private ConcurrentHashMap<IProject, AbstractCProjectDescriptionStorage> fDescriptionStorageMap = new ConcurrentHashMap<>();
 
 	private volatile static CProjectDescriptionStorageManager instance;
 
@@ -342,7 +342,7 @@ public class CProjectDescriptionStorageManager {
 	private synchronized void initExtensionPoints() {
 		if (storageTypeMap != null)
 			return;
-		Map<String, List<CProjectDescriptionStorageTypeProxy>> m = new HashMap<String, List<CProjectDescriptionStorageTypeProxy>>();
+		Map<String, List<CProjectDescriptionStorageTypeProxy>> m = new HashMap<>();
 		IExtensionPoint extpoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
 				CPROJ_DESC_STORAGE_EXT_ID);
 		for (IExtension extension : extpoint.getExtensions()) {
@@ -413,7 +413,7 @@ public class CProjectDescriptionStorageManager {
 					resource.setResourceAttributes(resAttr);
 				}
 				IResource[] members = ((IContainer) resource).members();
-				List<IFile> files = new ArrayList<IFile>(members.length);
+				List<IFile> files = new ArrayList<>(members.length);
 				for (IResource member : members) {
 					if (member instanceof IFile && member.getResourceAttributes().isReadOnly()) {
 						files.add((IFile) member);

@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *
  *   Set GDB's working directory.
  * @since 1.1
- * 
+ *
  */
 public class MIEnvironmentCD extends MICommand<MIInfo> {
 	public MIEnvironmentCD(ICommandControlDMContext ctx, String path) {

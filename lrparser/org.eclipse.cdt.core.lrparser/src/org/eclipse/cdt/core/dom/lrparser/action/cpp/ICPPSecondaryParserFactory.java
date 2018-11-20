@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 
 /**
  * Secondary parsers for resolving ambiguities specific to C++.
- * 
+ *
  * @author Mike Kucera
  */
 public interface ICPPSecondaryParserFactory extends ISecondaryParserFactory {

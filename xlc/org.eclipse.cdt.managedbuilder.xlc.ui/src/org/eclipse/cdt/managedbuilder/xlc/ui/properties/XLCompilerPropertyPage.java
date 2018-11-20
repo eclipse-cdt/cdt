@@ -82,7 +82,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 		addField(fPathEditor);
 
-		IProject project = ((IResource) (getElement().getAdapter(IResource.class))).getProject();
+		IProject project = (getElement().getAdapter(IResource.class)).getProject();
 
 		String currentPath = null;
 
@@ -106,7 +106,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 	protected void createVersionEditor() {
 
-		IProject project = ((IResource) (getElement().getAdapter(IResource.class))).getProject();
+		IProject project = (getElement().getAdapter(IResource.class)).getProject();
 		String[] versionEntries = { PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME,
 				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME,
 				PreferenceConstants.P_XL_COMPILER_VERSION_11_NAME };
@@ -181,7 +181,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 	public boolean performOk() {
 		// store the value in the owner text field
 		try {
-			IProject project = ((IResource) (getElement().getAdapter(IResource.class))).getProject();
+			IProject project = (getElement().getAdapter(IResource.class)).getProject();
 
 			if (fPathEditor != null) {
 				project.setPersistentProperty(new QualifiedName("", //$NON-NLS-1$

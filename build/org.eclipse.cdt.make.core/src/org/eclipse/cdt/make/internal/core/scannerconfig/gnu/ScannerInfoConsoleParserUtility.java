@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * Implements error reporting mechanism and file/path translation mechanism
  * Taken from ErrorParserManager and modified.
- * 
+ *
  * @author vhirsl
  */
 public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParserUtility {
@@ -53,9 +53,9 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	public ScannerInfoConsoleParserUtility(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
 		super(project, workingDirectory, markerGenerator);
 
-		fFilesInProject = new HashMap<String, IFile>();
-		fCollectedFiles = new ArrayList<IResource>();
-		fNameConflicts = new ArrayList<String>();
+		fFilesInProject = new HashMap<>();
+		fCollectedFiles = new ArrayList<>();
+		fNameConflicts = new ArrayList<>();
 
 		collectFiles(getProject(), fCollectedFiles);
 
@@ -188,7 +188,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	}
 
 	public List<String> translateRelativePaths(IFile file, String fileName, List<String> includes) {
-		List<String> translatedIncludes = new ArrayList<String>(includes.size());
+		List<String> translatedIncludes = new ArrayList<>(includes.size());
 		for (String include : includes) {
 			IPath includePath = new Path(include);
 			if (includePath.isUNC()) {
@@ -204,7 +204,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 						final String error = MakeMessages
 								.getString("ConsoleParser.Nonexistent_Include_Path_Error_Message"); //$NON-NLS-1$
 						TraceUtil.outputError(error, include);
-						//						generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);				
+						//						generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);
 					}
 				}
 			} else {
@@ -236,7 +236,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 						generateMarker(file, -1, error, IMarkerGenerator.SEVERITY_WARNING, fileName);
 						break;
 					} else {
-						// remove common segments at the end 
+						// remove common segments at the end
 						IPath tPath = new Path(fileName);
 						if (fileName.startsWith(".")) { //$NON-NLS-1$
 							tPath = tPath.removeFirstSegments(1);
@@ -257,7 +257,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 				if (!dir.exists()) {
 					final String error = MakeMessages.getString("ConsoleParser.Nonexistent_Include_Path_Error_Message"); //$NON-NLS-1$
 					TraceUtil.outputError(error, include);
-					//					generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);				
+					//					generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);
 				}
 			}
 			// TODO VMIR for now add unresolved paths as well

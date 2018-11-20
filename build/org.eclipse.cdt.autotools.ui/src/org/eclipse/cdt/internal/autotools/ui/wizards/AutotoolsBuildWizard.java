@@ -45,7 +45,7 @@ public class AutotoolsBuildWizard extends AbstractCWizard {
 	public static final String AUTOTOOLS_TOOLCHAIN_ID = "org.eclipse.linuxtools.cdt.autotools.core.toolChain"; //$NON-NLS-1$
 
 	/**
-	 * Creates and returns an array of items to be displayed 
+	 * Creates and returns an array of items to be displayed
 	 */
 	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {

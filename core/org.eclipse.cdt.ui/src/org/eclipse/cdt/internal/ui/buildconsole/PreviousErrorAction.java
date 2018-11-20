@@ -15,9 +15,8 @@
 
 package org.eclipse.cdt.internal.ui.buildconsole;
 
-import org.eclipse.jface.action.Action;
-
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.jface.action.Action;
 
 /**
  * Retard console document to the previous error reported by compiler

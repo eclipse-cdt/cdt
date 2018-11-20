@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -36,7 +36,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Adapter to create breakpoints in PDA files.
  * <p>
- * This class is identical to the corresponding in PDA debugger implemented in 
+ * This class is identical to the corresponding in PDA debugger implemented in
  * org.eclipse.debug.examples.ui.
  * </p>
  */
@@ -44,6 +44,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 		ITextEditor textEditor = getEditor(part);
 		if (textEditor != null) {
@@ -71,6 +72,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleLineBreakpoints(IWorkbenchPart part, ISelection selection) {
 		return getEditor(part) != null;
 	}
@@ -78,7 +80,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/**
 	 * Returns the editor being used to edit a PDA file, associated with the
 	 * given part, or <code>null</code> if none.
-	 *  
+	 *
 	 * @param part workbench part
 	 * @return the editor being used to edit a PDA file, associated with the
 	 * given part, or <code>null</code> if none
@@ -100,12 +102,14 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) {
 		return false;
 	}
@@ -113,6 +117,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 		String[] variableAndFunctionName = getVariableAndFunctionName(part, selection);
 		if (variableAndFunctionName != null && part instanceof ITextEditor && selection instanceof ITextSelection) {
@@ -145,13 +150,14 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
 		return getVariableAndFunctionName(part, selection) != null;
 	}
 
 	/**
 	 * Returns the variable and function names at the current line, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param part text editor
 	 * @param selection text selection
 	 * @return the variable and function names at the current line, or <code>null</code> if none.
@@ -185,7 +191,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/**
 	 * Returns the name of the function containing the given variable defined at the given
 	 * line number in the specified document.
-	 * 
+	 *
 	 * @param document PDA source file
 	 * @param varName variable name
 	 * @param line line numbner at which the variable is defined
@@ -217,6 +223,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 		if (canToggleWatchpoints(part, selection)) {
 			toggleWatchpoints(part, selection);
@@ -228,6 +235,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
 		return canToggleLineBreakpoints(part, selection) || canToggleWatchpoints(part, selection);
 	}

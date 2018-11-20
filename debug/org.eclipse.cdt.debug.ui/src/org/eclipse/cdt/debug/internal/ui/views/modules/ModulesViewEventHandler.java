@@ -29,8 +29,8 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 
 	private IModuleRetrieval fModuleRetrieval;
 
-	/** 
-	 * Constructor for ModulesViewEventHandler. 
+	/**
+	 * Constructor for ModulesViewEventHandler.
 	 */
 	public ModulesViewEventHandler(AbstractModelProxy proxy, IModuleRetrieval moduleRetrieval) {
 		super(proxy);

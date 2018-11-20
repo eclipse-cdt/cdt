@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -24,12 +28,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 
 /**
  * CompletionProposalComputer based on a specified set of GenericTag objects.
@@ -51,7 +49,7 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 
 	/**
 	 * @param c the character to test
-	 * @return whether the specified character is a tag prefix marker 
+	 * @return whether the specified character is a tag prefix marker
 	 */
 	protected boolean isTagMarker(char c) {
 		for (char candidate : tagMarkers)
@@ -75,7 +73,7 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 				firstNonWS--;
 			String prefix = doc.get(firstNonWS, ivcOffset - firstNonWS);
 			if (prefix.length() > 0 && isTagMarker(prefix.charAt(0))) {
-				List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+				List<ICompletionProposal> proposals = new ArrayList<>();
 				char tagMarker = prefix.charAt(0);
 				for (GenericDocTag tag2 : tags) {
 					String tag = tag2.getTagName();

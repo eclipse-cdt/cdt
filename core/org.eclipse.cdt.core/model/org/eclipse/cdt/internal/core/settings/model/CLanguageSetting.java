@@ -73,8 +73,8 @@ public class CLanguageSetting extends CDataProxy implements ICLanguageSetting {
 		CLanguageData data = getCLanguageData(false);
 		ICLanguageSettingEntry entries[] = data.getEntries(kind);
 		if (entries != null)
-			return new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
-		return new ArrayList<ICLanguageSettingEntry>();
+			return new ArrayList<>(Arrays.asList(entries));
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class CLanguageSetting extends CDataProxy implements ICLanguageSetting {
 				else
 					exts = new String[0];
 			}
-	
+
 			return exts;
 		}
 	*/
@@ -139,40 +139,40 @@ public class CLanguageSetting extends CDataProxy implements ICLanguageSetting {
 		private Map fillNameToEntryMap(ICLanguageSettingEntry entries[], Map map){
 			if(map == null)
 				map = new HashMap();
-	
+
 			for(int i = 0; i < entries.length; i++){
 				ICLanguageSettingEntry entry = entries[i];
 				map.put(entry.getName(), entry);
 			}
 			return map;
 		}
-	
-	
+
+
 		private class SettingChangeInfo implements ICSettingsChangeInfo {
 			CLanguageData fData;
 			ICLanguageSettingEntry fNewEntries[];
 			int fKind;
 			ICLanguageSettingEntryInfo fAddedInfo[];
 			ICLanguageSettingEntry fRemoved[];
-	
+
 			SettingChangeInfo(int kind, ICLanguageSettingEntry newEntries[], CLanguageData data){
 				fNewEntries = newEntries;
 				fData = data;
 				fKind = kind;
 			}
-	
+
 			SettingChangeInfo(int kind, ICLanguageSettingEntryInfo addedEntriesInfo[], ICLanguageSettingEntry removed[], CLanguageData data){
 				fAddedInfo = addedEntriesInfo;
 				fRemoved = removed;
 				fData = data;
 				fKind = kind;
 			}
-	
+
 			public ICLanguageSettingEntryInfo[] getAddedEntriesInfo() {
 				// TODO Auto-generated method stub
 				return null;
 			}
-	
+
 			public ICLanguageSettingEntry[] getEntries() {
 				if(fNewEntries == null){
 					ICLanguageSettingEntry oldEntries[] = fData.getSettingEntries(fKind);
@@ -181,26 +181,26 @@ public class CLanguageSetting extends CDataProxy implements ICLanguageSetting {
 						ICLanguageSettingEntry entry = oldEntries[i];
 						if(entry.getKind() != fKind)
 							continue;
-	
+
 						list.add(entry);
 					}
-	
-	
+
+
 				}
 				return fNewEntries;
 			}
-	
+
 			public int getKind() {
 				return fKind;
 			}
-	
+
 			public ICLanguageSettingEntry[] getRemovedEntries() {
 				// TODO Auto-generated method stub
 				return null;
 			}
-	
+
 		}
-	
+
 		public void changeEntries(ICLanguageSettingEntryInfo[] added, ICLanguageSettingEntry[] removed) {
 			CLanguageData data = getCLanguageData(true);
 			Map map = null;
@@ -210,7 +210,7 @@ public class CLanguageSetting extends CDataProxy implements ICLanguageSetting {
 			if(removed != null && removed.length > 0){
 				map = sortEntries(removed, false, map);
 			}
-	
+
 			if(map != null){
 				for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
 					Map.Entry entry = (Map.Entry)iter.next();
@@ -224,16 +224,16 @@ public class CLanguageSetting extends CDataProxy implements ICLanguageSetting {
 					ICLanguageSettingEntry sortedRemoved[] = rList != null ?
 							(ICLanguageSettingEntry[])rList.toArray(new ICLanguageSettingEntry[rList.size()])
 								: null;
-	
+
 					data.changeEntries(kind, sortedAdded, sortedRemoved);
 				}
 			}
 		}
-	
+
 		private Map sortEntries(ICLanguageSettingEntry entries[], boolean added, Map map){
 			if(map == null)
 				map = new HashMap();
-	
+
 			int index = added ? 0 : 1;
 			for(int i = 0; i < entries.length; i++){
 				ICLanguageSettingEntry entry = entries[i];

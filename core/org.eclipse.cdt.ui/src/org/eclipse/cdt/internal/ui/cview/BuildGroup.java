@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -42,8 +43,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is the action group for workspace actions such as Build
@@ -75,7 +74,7 @@ public class BuildGroup extends CViewActionGroup {
 		@Override
 		public void run() {
 			// Ensure we correctly save files in all referenced projects before build
-			Set<IProject> prjs = new HashSet<IProject>();
+			Set<IProject> prjs = new HashSet<>();
 			for (IResource resource : getSelectedResources()) {
 				IProject project = resource.getProject();
 				if (project != null) {
@@ -170,7 +169,7 @@ public class BuildGroup extends CViewActionGroup {
 	 * <p>
 	 * No disabled action should be on the context menu.
 	 * </p>
-	 * 
+	 *
 	 * @param menu
 	 *            context menu to add actions to
 	 */
@@ -234,7 +233,7 @@ public class BuildGroup extends CViewActionGroup {
 
 	/**
 	 * Returns whether there are builders configured on the given project.
-	 * 
+	 *
 	 * @return <code>true</code> if it has builders, <code>false</code> if
 	 *         not, or if this could not be determined
 	 */

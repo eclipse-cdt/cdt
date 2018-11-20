@@ -27,7 +27,7 @@ public class IBRemoveFromView extends Action {
 
 	/**
 	 * Constructs a Remove From View action.
-	 * 
+	 *
 	 * @param view the Include Browser view
 	 */
 	public IBRemoveFromView(IBViewPart view) {

@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -29,6 +27,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+
+import junit.framework.Test;
 
 /**
  * Tests behavior related to location representation in the PDOM

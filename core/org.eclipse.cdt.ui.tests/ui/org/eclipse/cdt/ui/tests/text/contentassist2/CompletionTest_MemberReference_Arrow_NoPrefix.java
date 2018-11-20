@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Member_Reference, with NO prefix
  * After an ->
  *

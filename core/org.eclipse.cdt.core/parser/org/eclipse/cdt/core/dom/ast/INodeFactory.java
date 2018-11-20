@@ -11,7 +11,7 @@
  * Contributors:
  *     Mike Kucera (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  *     Thoams Corbat (IFS)
  *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
@@ -28,20 +28,20 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
 /**
  * Factory for creating AST nodes. This interface contains factory methods
  * for nodes that are available for both C and C++.
- * 
+ *
  * Extending interfaces should use covariant return types where appropriate to
- * allow the construction of language-specific versions of certain nodes. 
- * 
+ * allow the construction of language-specific versions of certain nodes.
+ *
  * Most methods accept child nodes as parameters when constructing a new node.
  * For convenience it is always allowed to pass null for any of these parameters.
- * In this case the newly constructed node may be initialized using its 
+ * In this case the newly constructed node may be initialized using its
  * set() and add() methods instead.
- * 
+ *
  * Nodes created by this factory are not frozen, i.e. for any node created by this
  * factory the following holds <code> node.isFrozen() == false </code>.
- * 
+ *
  * None of the factory methods should return null.
- * 
+ *
  * @since 5.1
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -229,7 +229,7 @@ public interface INodeFactory {
 	/**
 	 * Provides the end offset for a node. The offset is an artificial numbers that identifies the
 	 * position of a node in the translation unit. It is not a file-offset. You can obtain a
-	 * valid offset via {@link IToken#getEndOffset()} from a token provided by the scanner for 
+	 * valid offset via {@link IToken#getEndOffset()} from a token provided by the scanner for
 	 * this translation unit.
 	 * <par> May throw an exception when the node provided was not created by this factory.
 	 * @param node a node created by this factory
@@ -270,7 +270,7 @@ public interface INodeFactory {
 	/**
 	 * @deprecated Use newGCCAttributeList() instead.
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @since 5.7 
+	 * @since 5.7
 	 */
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier newGCCAttributeSpecifier();

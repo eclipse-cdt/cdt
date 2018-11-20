@@ -16,7 +16,7 @@ package org.eclipse.cdt.debug.internal.ui;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 /**
- * The source viewer configuration used in the Details pane of the variables, 
+ * The source viewer configuration used in the Details pane of the variables,
  * registers and expressions views.
  */
 public class DetailsViewerConfiguration extends SourceViewerConfiguration {

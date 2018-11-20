@@ -90,7 +90,7 @@ public class MulticoreVisualizerLoadMeter extends MulticoreVisualizerGraphicObje
 
 	/**
 	 * @return the load value.  If the value is undefined (null),  zero is
-	 * returned.  Method isLoadDefined() can be used to determine is the load 
+	 * returned.  Method isLoadDefined() can be used to determine is the load
 	 * value is defined, in the cases where the difference is important
 	 * if needed.
 	 */
@@ -201,11 +201,11 @@ public class MulticoreVisualizerLoadMeter extends MulticoreVisualizerGraphicObje
 		// display nothing if load meter is not enabled
 		if (!m_enabled)
 			return;
-		// "display only if overload" mode applicable? 
+		// "display only if overload" mode applicable?
 		if (getLoad() < m_overloadThreshold && m_showOnlyIfOverload)
 			return;
 
-		// is there an actual value to display yet? 
+		// is there an actual value to display yet?
 		if (isLoadDefined()) {
 			load = Integer.toString(getLoad());
 		}

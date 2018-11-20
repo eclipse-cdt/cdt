@@ -21,8 +21,6 @@ package org.eclipse.cdt.core.settings.model;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -33,6 +31,8 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestSuite;
 
 public class ExternalSettingsProviderTests extends BaseTestCase {
 	private static final String PROJ_NAME_PREFIX = "espt_";
@@ -356,7 +356,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 		des = model.getProjectDescription(project, false);
 		cfgDes = des.getConfigurations()[0];
 		ICFolderDescription root = cfgDes.getRootFolderDescription();
-		HashMap<String, ICLanguageSetting> languageSettingsById = new HashMap<String, ICLanguageSetting>();
+		HashMap<String, ICLanguageSetting> languageSettingsById = new HashMap<>();
 		for (ICLanguageSetting s : root.getLanguageSettings()) {
 			languageSettingsById.put(s.getLanguageId(), s);
 		}
@@ -388,7 +388,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 		des = model.getProjectDescription(project, false);
 		cfgDes = des.getConfigurations()[0];
 		root = cfgDes.getRootFolderDescription();
-		languageSettingsById = new HashMap<String, ICLanguageSetting>();
+		languageSettingsById = new HashMap<>();
 		for (ICLanguageSetting s : root.getLanguageSettings()) {
 			languageSettingsById.put(s.getLanguageId(), s);
 		}

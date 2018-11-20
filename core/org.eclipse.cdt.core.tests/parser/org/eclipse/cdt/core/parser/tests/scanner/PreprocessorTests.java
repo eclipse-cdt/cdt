@@ -1283,7 +1283,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	public void testC99_6_7_5_3_5_Bug104869() throws Exception {
 		initializeScanner();
 		// read in expected tokens
-		List<IToken> expect = new ArrayList<IToken>();
+		List<IToken> expect = new ArrayList<>();
 		IToken t = fScanner.nextToken();
 		while (t.getType() != IToken.tDECR) {
 			expect.add(t);

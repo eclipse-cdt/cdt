@@ -16,6 +16,12 @@ package org.eclipse.cdt.internal.ui.wizards.settingswizards;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -23,13 +29,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A settings processor that imports and exports symbols.
@@ -96,7 +95,7 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 
 	@Override
 	protected void readSettings(ICLanguageSetting setting, Element language) throws SettingsImportExportException {
-		List<ICLanguageSettingEntry> macros = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> macros = new ArrayList<>();
 
 		List<Element> macrosNodes = XMLUtils.extractChildElements(language, MACRO_ELEMENT);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@ package org.eclipse.cdt.codan.core.model.cfg;
 
 /**
  * Control Flow Graph Node factory
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface INodeFactory {

@@ -94,7 +94,7 @@ import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 /**
  * Base class for toggle adapter to create/remove CDT breakpoints.  Clients may
  * extend this class to gather additional data prior to creating the breakpoints.
- * 
+ *
  * @since 7.2
  */
 abstract public class AbstractToggleBreakpointAdapter
@@ -289,20 +289,20 @@ abstract public class AbstractToggleBreakpointAdapter
 	}
 
 	/**
-	 * Updates the breakpoint for given part and selection.  
-	 * Depending on the flags and on whether a breakpoint exists, this method 
-	 * executes the toggle action.   
-	 * 
-	 * @param toggle Whether the toggle action is requested.  If 
+	 * Updates the breakpoint for given part and selection.
+	 * Depending on the flags and on whether a breakpoint exists, this method
+	 * executes the toggle action.
+	 *
+	 * @param toggle Whether the toggle action is requested.  If
 	 * true and the breakpoint currently exists, it will cause the
-	 * toggle action to either remove breakpoint or edit its properties.  
+	 * toggle action to either remove breakpoint or edit its properties.
 	 * Otherwise a new breakpoint will be created.
-	 * @param interactive If true the toggle adapter should open a dialog before 
-	 * creating a breakpoint, or open a properties dialog on an existing 
-	 * breakpoint. 
+	 * @param interactive If true the toggle adapter should open a dialog before
+	 * creating a breakpoint, or open a properties dialog on an existing
+	 * breakpoint.
 	 * @param part Workbench part where the toggle action is to be executed.
-	 * @param selection Current selection on which the toggle action is to be 
-	 * executed. 
+	 * @param selection Current selection on which the toggle action is to be
+	 * executed.
 	 * @throws CoreException Any error in creating or editing the breakpoint.
 	 */
 	private void updateBreakpoints(boolean toggle, boolean interactive, IWorkbenchPart part, ISelection selection)
@@ -410,7 +410,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	/**
 	 * Updates a watchpoint. Depending on the flags and on whether a breakpoint
 	 * exists, this method executes the toggle action.
-	 * 
+	 *
 	 * @param toggle
 	 *            Whether the toggle action is requested. If true and the
 	 *            breakpoint currently exists, it will cause the toggle action
@@ -555,14 +555,13 @@ abstract public class AbstractToggleBreakpointAdapter
 				job.schedule();
 			}
 		}
-		;
 
 		watchpointTarget.getSize(new GetSizeRequest());
 
 	}
 
 	/**
-	 * Returns the C model element at the given selection. 
+	 * Returns the C model element at the given selection.
 	 * @param part Workbench part where the selection is.
 	 * @param selection Selection in part.
 	 * @return C model element if found.
@@ -615,7 +614,7 @@ abstract public class AbstractToggleBreakpointAdapter
 
 	/**
 	 * Returns the variable object at the given selection.
-	 * Returns the C model element at the given selection. 
+	 * Returns the C model element at the given selection.
 	 * @param part Workbench part where the selection is.
 	 * @param selection Selection in part.
 	 * @return C model variable, if found.
@@ -678,7 +677,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	}
 
 	/**
-	 * Returns the resource being edited in the given workbench part. 
+	 * Returns the resource being edited in the given workbench part.
 	 * @param part Workbench part to check.
 	 * @return Resource being edited.
 	 */
@@ -730,10 +729,10 @@ abstract public class AbstractToggleBreakpointAdapter
 	}
 
 	/**
-	 * Returns the resource file containing the C model element. 
-	 * 
+	 * Returns the resource file containing the C model element.
+	 *
 	 * @param declaration model element
-	 * @return resource for c model element. Cannot be null, will return workspace root when no resource file can be found.  
+	 * @return resource for c model element. Cannot be null, will return workspace root when no resource file can be found.
 	 */
 
 	protected IResource getElementResource(IDeclaration declaration) {
@@ -815,7 +814,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	 * Returns the text editor associated with the given part or <code>null</code>
 	 * if none. In case of a multi-page editor, this method should be used to retrieve
 	 * the correct editor to perform the breakpoint operation on.
-	 * 
+	 *
 	 * @param part workbench part
 	 * @return text editor part or <code>null</code>
 	 */
@@ -829,7 +828,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	/**
 	 * Resolves the {@link IBreakpoint} from the given editor and ruler information. Returns <code>null</code>
 	 * if no breakpoint exists or the operation fails.
-	 * 
+	 *
 	 * @param editor the editor
 	 * @param info the current ruler information
 	 * @return the {@link IBreakpoint} from the current editor position or <code>null</code>
@@ -869,7 +868,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	 * Opens the properties dialog for the given breakpoint. This method can be
 	 * used on an existing breakpoint or on a blank breakpoint which doesn't
 	 * have an associated marker yet.
-	 * 
+	 *
 	 * @param bp
 	 *            The breakpoint to edit. This breakpoint may not have an
 	 *            associated marker yet.
@@ -903,7 +902,7 @@ abstract public class AbstractToggleBreakpointAdapter
 
 	/**
 	 * Finds the line breakpoint at the given location.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            Source handle for the line breakpoint.
 	 * @param resource
@@ -920,7 +919,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	/**
 	 * Creates a line breakpoint at the given location.
 	 * @param interactive true if action should open a dialog to let user edit
-	 * breakpoint properties prior to creation. 
+	 * breakpoint properties prior to creation.
 	 * @param part Workbench part where action was invoked.
 	 * @param source Handle Source handle for the new breakpoint.
 	 * @param resource Resource to create breakpoint on.
@@ -932,7 +931,7 @@ abstract public class AbstractToggleBreakpointAdapter
 
 	/**
 	 * Finds the function breakpoint at the given location.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            Source handle for the line breakpoint.
 	 * @param resource
@@ -949,13 +948,13 @@ abstract public class AbstractToggleBreakpointAdapter
 	/**
 	 * Creates a function breakpoint at the given location.
 	 * @param interactive true if action should open a dialog to let user edit
-	 * breakpoint properties prior to creation. 
+	 * breakpoint properties prior to creation.
 	 * @param part Workbench part where action was invoked.
 	 * @param source Handle Source handle for the new breakpoint.
 	 * @param resource Resource to create breakpoint on.
-	 * @param charStart Beginning of range where function is located. Can be 
+	 * @param charStart Beginning of range where function is located. Can be
 	 * -1 if not known.
-	 * @param charStart End of range where function is located. Can be 
+	 * @param charStart End of range where function is located. Can be
 	 * -1 if not known.
 	 * @param lineNumber Line number where the function is located.
 	 * @throws CoreException Exception while creating breakpoint.
@@ -965,12 +964,12 @@ abstract public class AbstractToggleBreakpointAdapter
 
 	/**
 	 * Finds the watchpoint with given expression.
-	 * 
+	 *
 	 * @param sourceHandle Source handle for the line breakpoint.
 	 * @param resource Resource of the line breakpoint.
 	 * @param expression Expression of the breakpoint.
 	 * @return Watchpoing with given parameters, if found.
-	 * @throws CoreException Exception thrown while reading breakpoints'  
+	 * @throws CoreException Exception thrown while reading breakpoints'
 	 */
 	protected abstract ICWatchpoint findWatchpoint(String sourceHandle, IResource resource, String expression)
 			throws CoreException;
@@ -978,13 +977,13 @@ abstract public class AbstractToggleBreakpointAdapter
 	/**
 	 * Creates a watchpoint at the given location.
 	 * @param interactive true if action should open a dialog to let user edit
-	 * breakpoint properties prior to creation. 
+	 * breakpoint properties prior to creation.
 	 * @param part Workbench part where action was invoked.
 	 * @param source Handle Source handle for the new breakpoint.
 	 * @param resource Resource to create breakpoint on.
-	 * @param charStart Beginning of range where variable is located. Can be 
+	 * @param charStart Beginning of range where variable is located. Can be
 	 * -1 if not known.
-	 * @param charStart End of range where variable is located. Can be 
+	 * @param charStart End of range where variable is located. Can be
 	 * -1 if not known.
 	 * @param lineNumber Line number where the variable is located.
 	 * @throws CoreException Exception while creating breakpoint.
@@ -996,7 +995,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	/**
 	 * Creates an event breakpoint of the given type.
 	 * @param interactive true if action should open a dialog to let user edit
-	 * breakpoint properties prior to creation. 
+	 * breakpoint properties prior to creation.
 	 * @param part Workbench part where action was invoked.
 	 * @param resource Resource to create breakpoint on.
 	 * @param type Type of event breakpoint.

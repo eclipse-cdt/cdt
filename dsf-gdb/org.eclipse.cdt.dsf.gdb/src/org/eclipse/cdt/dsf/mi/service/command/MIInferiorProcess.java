@@ -65,11 +65,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * This Process implementation tracks one of the inferiors that is being debugged 
+ * This Process implementation tracks one of the inferiors that is being debugged
  * by GDB.  The process object, although not displayed in the Debug view, is used to
  * channel the STDIO of the inferior process to the console view.
- * 
- * @see org.eclipse.debug.core.model.IProcess 
+ *
+ * @see org.eclipse.debug.core.model.IProcess
  */
 public class MIInferiorProcess extends Process implements IEventListener, ICommandListener {
 
@@ -100,16 +100,16 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 	private boolean fDisposed = false;
 
 	/**
-	 * Counter for tracking console commands sent by services.  
-	 * 
-	 * The CLI 'monitor' command produces target output which should 
+	 * Counter for tracking console commands sent by services.
+	 *
+	 * The CLI 'monitor' command produces target output which should
 	 * not be written to the target console, since it is in response to a CLI
 	 * command.  In fact, CLI commands should never have their output sent
 	 * to the target console.
-	 *   
-	 * This counter is incremented any time a CLI command is seen.  It is 
-	 * decremented whenever a CLI command is finished.  When counter 
-	 * value is 0, the inferior process writes the target output. 
+	 *
+	 * This counter is incremented any time a CLI command is seen.  It is
+	 * decremented whenever a CLI command is finished.  When counter
+	 * value is 0, the inferior process writes the target output.
 	 */
 	private int fSuppressTargetOutputCounter = 0;
 
@@ -136,9 +136,9 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 	}
 
 	/**
-	 * Creates an inferior process object which uses the given output stream 
+	 * Creates an inferior process object which uses the given output stream
 	 * to write the user standard input into.
-	 *  
+	 *
 	 * @param container The process that this inferior represents
 	 * @param gdbOutputStream The output stream to use to write user IO into.
 	 * @since 4.0
@@ -149,9 +149,9 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 	}
 
 	/**
-	 * Creates an inferior process object which uses the given terminal 
+	 * Creates an inferior process object which uses the given terminal
 	 * to write the user standard input into.
-	 *  
+	 *
 	 * @param container The process that this inferior represents
 	 * @param p The terminal to use to write user IO into.
 	 * @since 4.0
@@ -209,7 +209,7 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 
 		}
 
-		// Note: We do not have any err stream from gdb/mi so this gdb 
+		// Note: We do not have any err stream from gdb/mi so this gdb
 		// err channel instead.
 		fErrorStreamPiped = new PipedOutputStream();
 		PipedInputStream errorStream = null;
@@ -310,7 +310,7 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 						rm.setData(0);
 						rm.done();
 					} else if (!fTerminated) {
-						// This will cause ExecutionException to be thrown with a CoreException, 
+						// This will cause ExecutionException to be thrown with a CoreException,
 						// which will in turn contain the IllegalThreadStateException.
 						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
 								"Inferior is still running.", new IllegalThreadStateException())); //$NON-NLS-1$
@@ -459,7 +459,7 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 
 	@Override
 	public void commandQueued(ICommandToken token) {
-		// No action 
+		// No action
 	}
 
 	@Override
@@ -471,7 +471,7 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 
 	@Override
 	public void commandRemoved(ICommandToken token) {
-		// No action 
+		// No action
 	}
 
 	@Override
@@ -499,7 +499,7 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 					// Only mark this process as terminated if it was already
 					// started.  This was to protect ourselves in the case of
 					// a restart, where we used to create the new inferior before
-					// killing the old one.  In that case we would get the exited 
+					// killing the old one.  In that case we would get the exited
 					// event of the old inferior, which we had to ignore.
 					//
 					setTerminated();

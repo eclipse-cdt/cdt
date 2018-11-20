@@ -17,8 +17,6 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 
 import java.util.Collections;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
@@ -33,6 +31,8 @@ import org.eclipse.cdt.internal.core.pdom.indexer.PDOMNullIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.TestSuite;
 
 /**
  * Scanner2Tests ported to use the CPreprocessor
@@ -195,7 +195,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 		String baseFile = "#include <foo.h>"; //$NON-NLS-1$
 		String i1Next = "int one;\n"; //$NON-NLS-1$
 		String i2Next = "int two;\n"; //$NON-NLS-1$
-		String i3Next = "int three;\n"; //$NON-NLS-1$   	
+		String i3Next = "int three;\n"; //$NON-NLS-1$
 
 		IFile base = importFile("base.cpp", baseFile); //$NON-NLS-1$
 		importFile("foo.h", i1Next); //$NON-NLS-1$

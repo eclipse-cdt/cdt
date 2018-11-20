@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,22 +22,22 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * Object used to combine several DM Contexts found in a tree path of a viewer 
- * update.  This object allows the view model to pass complete data model context 
- * information found in the view to the services.  
- * 
+ * Object used to combine several DM Contexts found in a tree path of a viewer
+ * update.  This object allows the view model to pass complete data model context
+ * information found in the view to the services.
+ *
  * @since 1.0
  */
 public class CompositeDMVMContext extends CompositeDMContext {
 
 	/**
 	 * Have to pass in an empty array of contexts to parent constructor
-	 * in order to be able to calculate the 
+	 * in order to be able to calculate the
 	 */
 	private static IDMContext[] EMPTY_CONTEXTS_ARRAY = new IDMContext[0];
 
 	/**
-	 * The list of parent contexts derived from the input object and 
+	 * The list of parent contexts derived from the input object and
 	 * the path.  It is calculated on demand.
 	 */
 	private IDMContext[] fParents;
@@ -49,12 +49,12 @@ public class CompositeDMVMContext extends CompositeDMContext {
 		this(update.getViewerInput(), update.getElementPath());
 	}
 
-	/** 
-	 * Creates a composite context based on a viewer input and a tree path. 
+	/**
+	 * Creates a composite context based on a viewer input and a tree path.
 	 */
 	public CompositeDMVMContext(Object viewerInputObject, TreePath treePath) {
 		super(EMPTY_CONTEXTS_ARRAY);
-		List<IDMContext> parentsList = new ArrayList<IDMContext>(treePath.getSegmentCount() + 1);
+		List<IDMContext> parentsList = new ArrayList<>(treePath.getSegmentCount() + 1);
 		for (int i = treePath.getSegmentCount() - 1; i >= 0; i--) {
 			if (treePath.getSegment(i) instanceof IDMVMContext) {
 				parentsList.add(((IDMVMContext) treePath.getSegment(i)).getDMContext());

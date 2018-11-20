@@ -37,7 +37,7 @@ public class MISharedLibEvent extends MIStoppedEvent {
 		fLibrary = library;
 	}
 
-	/** The library that was loaded, as reported by gdb. 
+	/** The library that was loaded, as reported by gdb.
 	 * @since 3.0*/
 	public String getLibrary() {
 		return fLibrary;

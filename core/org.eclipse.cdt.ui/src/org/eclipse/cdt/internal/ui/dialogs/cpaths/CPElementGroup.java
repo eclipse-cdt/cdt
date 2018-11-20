@@ -35,13 +35,13 @@ public class CPElementGroup {
 	public CPElementGroup(IResource resource) {
 		this.kind = -1;
 		this.resource = resource;
-		this.childrenListMap = new LinkedHashMap<Integer, List<CPElement>>(2);
+		this.childrenListMap = new LinkedHashMap<>(2);
 	}
 
 	public CPElementGroup(CPElement parent, int kind) {
 		this.parent = parent;
 		this.kind = kind;
-		this.childrenList = new ArrayList<CPElement>();
+		this.childrenList = new ArrayList<>();
 	}
 
 	public IResource getResource() {
@@ -126,9 +126,9 @@ public class CPElementGroup {
 		if (elements.length > 0) {
 			if (childrenListMap != null) {
 				childrenListMap.put(Integer.valueOf(elements[0].getEntryKind()),
-						new ArrayList<CPElement>(Arrays.asList(elements)));
+						new ArrayList<>(Arrays.asList(elements)));
 			} else {
-				childrenList = new ArrayList<CPElement>(Arrays.asList(elements));
+				childrenList = new ArrayList<>(Arrays.asList(elements));
 			}
 		}
 	}
@@ -162,7 +162,7 @@ public class CPElementGroup {
 		}
 		Collection<List<CPElement>> lists = childrenListMap.values();
 		Iterator<List<CPElement>> iter = lists.iterator();
-		List<CPElement> children = new ArrayList<CPElement>();
+		List<CPElement> children = new ArrayList<>();
 		while (iter.hasNext()) {
 			children.addAll(iter.next());
 		}
@@ -196,7 +196,7 @@ public class CPElementGroup {
 		} else {
 			children = childrenListMap.get(Integer.valueOf(kind));
 			if (children == null && create) {
-				children = new ArrayList<CPElement>();
+				children = new ArrayList<>();
 				childrenListMap.put(Integer.valueOf(kind), children);
 			}
 		}

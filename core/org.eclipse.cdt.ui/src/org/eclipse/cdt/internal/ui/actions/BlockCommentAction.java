@@ -40,7 +40,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
  * Common block comment code.
- * 
+ *
  * @since 3.0
  */
 public abstract class BlockCommentAction extends TextEditorAction {
@@ -55,15 +55,15 @@ public abstract class BlockCommentAction extends TextEditorAction {
 	}
 
 	/**
-	 * An edit is a kind of <code>DocumentEvent</code>, in this case an edit instruction, that is 
-	 * affiliated with a <code>Position</code> on a document. The offset of the document event is 
-	 * not stored statically, but taken from the affiliated <code>Position</code>, which gets 
+	 * An edit is a kind of <code>DocumentEvent</code>, in this case an edit instruction, that is
+	 * affiliated with a <code>Position</code> on a document. The offset of the document event is
+	 * not stored statically, but taken from the affiliated <code>Position</code>, which gets
 	 * updated when other edits occur.
 	 */
 	static class Edit extends DocumentEvent {
 
 		/**
-		 * Factory for edits which manages the creation, installation and destruction of 
+		 * Factory for edits which manages the creation, installation and destruction of
 		 * position categories, position updaters etc. on a certain document. Once a factory has
 		 * been obtained, <code>Edit</code> objects can be obtained from it which will be linked to
 		 * the document by positions of one position category.
@@ -94,7 +94,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 
 			/**
 			 * Creates a new edition on the document of this factory.
-			 * 
+			 *
 			 * @param offset the offset of the edition at the point when is created.
 			 * @param length the length of the edition (not updated via the position update mechanism)
 			 * @param text the text to be replaced on the document
@@ -118,7 +118,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 			}
 
 			/**
-			 * Releases the position category on the document and uninstalls the position updater. 
+			 * Releases the position category on the document and uninstalls the position updater.
 			 * <code>Edit</code>s managed by this factory are not updated after this call.
 			 */
 			public void release() {
@@ -140,7 +140,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 
 		/**
 		 * Creates a new edition on <code>document</code>, taking its offset from <code>position</code>.
-		 * 
+		 *
 		 * @param document the document being edited
 		 * @param length the length of the edition
 		 * @param text the replacement text of the edition
@@ -161,7 +161,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 
 		/**
 		 * Executes the edition on document. The offset is taken from the position.
-		 * 
+		 *
 		 * @throws BadLocationException if the execution of the document fails.
 		 */
 		public void perform() throws BadLocationException {
@@ -212,7 +212,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 			runInternal(selection, docExtension, factory);
 
 		} catch (BadLocationException e) {
-			// can happen on concurrent modification, deletion etc. of the document 
+			// can happen on concurrent modification, deletion etc. of the document
 			// -> don't complain, just bail out
 		} catch (BadPartitioningException e) {
 			// should not happen
@@ -228,7 +228,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 
 	/**
 	 * Calls <code>perform</code> on all <code>Edit</code>s in <code>edits</code>.
-	 * 
+	 *
 	 * @param edits a list of <code>Edit</code>s
 	 * @throws BadLocationException if an <code>Edit</code> threw such an exception.
 	 */
@@ -241,9 +241,9 @@ public abstract class BlockCommentAction extends TextEditorAction {
 
 	/**
 	 * Ensures that the editor is modifyable. If the editor is an instance of
-	 * <code>ITextEditorExtension2</code>, its <code>validateEditorInputState</code> method 
+	 * <code>ITextEditorExtension2</code>, its <code>validateEditorInputState</code> method
 	 * is called, otherwise, the result of <code>isEditable</code> is returned.
-	 * 
+	 *
 	 * @param editor the editor to be checked
 	 * @return <code>true</code> if the editor is editable, <code>false</code> otherwise
 	 */
@@ -272,9 +272,9 @@ public abstract class BlockCommentAction extends TextEditorAction {
 	}
 
 	/**
-	 * Returns the editor's selection, or <code>null</code> if no selection can be obtained or the 
+	 * Returns the editor's selection, or <code>null</code> if no selection can be obtained or the
 	 * editor is <code>null</code>.
-	 * 
+	 *
 	 * @return the selection of the action's editor, or <code>null</code>
 	 */
 	protected ITextSelection getCurrentSelection() {
@@ -292,10 +292,10 @@ public abstract class BlockCommentAction extends TextEditorAction {
 
 	/**
 	 * Runs the real command once all the editor, document, and selection checks have succeeded.
-	 * 
+	 *
 	 * @param selection the current selection we are being called for
 	 * @param docExtension the document extension where we get the partitioning from
-	 * @param factory the edit factory we can use to create <code>Edit</code>s 
+	 * @param factory the edit factory we can use to create <code>Edit</code>s
 	 * @throws BadLocationException if an edition fails
 	 * @throws BadPartitioningException if a partitioning call fails
 	 */
@@ -304,7 +304,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 
 	/**
 	 * Checks whether <code>selection</code> is valid.
-	 * 
+	 *
 	 * @param selection the selection to check
 	 * @return <code>true</code> if the selection is valid, <code>false</code> otherwise
 	 */
@@ -312,7 +312,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 
 	/**
 	 * Returns the text to be inserted at the selection start.
-	 * 
+	 *
 	 * @return the text to be inserted at the selection start
 	 */
 	protected String getCommentStart() {
@@ -322,7 +322,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 
 	/**
 	 * Returns the text to be inserted at the selection end.
-	 * 
+	 *
 	 * @return the text to be inserted at the selection end
 	 */
 	protected String getCommentEnd() {

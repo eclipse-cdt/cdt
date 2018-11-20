@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
@@ -30,6 +28,8 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+
+import junit.framework.TestSuite;
 
 public class ASTNodeSelectorTest extends AST2TestBase {
 

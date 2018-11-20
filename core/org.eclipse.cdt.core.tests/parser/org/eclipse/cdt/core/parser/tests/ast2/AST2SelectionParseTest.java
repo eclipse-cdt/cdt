@@ -137,7 +137,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "printf"); //$NON-NLS-1$		
+		assertEquals(((IFunction) name.resolveBinding()).getName(), "printf"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, offset1, length);
 		assertNotNull(node);
 		assertTrue(node instanceof IASTName);
@@ -1003,7 +1003,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 
 	public void testBug78435() throws Exception {
 		Writer writer = new StringWriter();
-		writer.write("int itself;          //A\n"); //$NON-NLS-1$ 
+		writer.write("int itself;          //A\n"); //$NON-NLS-1$
 		writer.write("void f(int itself){} //B\n"); //$NON-NLS-1$
 
 		String code = writer.toString();
@@ -1616,7 +1616,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	public void testBug86126() throws Exception {
 		String header = "foo" + System.currentTimeMillis() + ".h";
 		String source = "blah" + System.currentTimeMillis() + ".c";
-		importFile(header, "int x;\r\n"); //$NON-NLS-1$ 
+		importFile(header, "int x;\r\n"); //$NON-NLS-1$
 		String code = "#include \"" + header + "\"\r\n"; //$NON-NLS-1$
 		IFile file = importFile(source, code);
 		int offset1 = code.indexOf("#include \"" + header + "\""); //$NON-NLS-1$

@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICScope;
 
 /**
  * TODO maybe rename to IC99InternalScope or something else.
- * 
+ *
  * @author Mike Kucera
  */
 public interface IC99Scope extends ICScope {

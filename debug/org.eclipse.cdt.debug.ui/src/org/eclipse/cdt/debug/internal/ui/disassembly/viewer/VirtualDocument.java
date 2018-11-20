@@ -201,7 +201,7 @@ public class VirtualDocument extends Document {
 			Position[] positions = getPositions(CATEGORY_LINE);
 			if (lineNumber < positions.length) {
 				Iterator it = annotationModel.getAnnotationIterator();
-				ArrayList<Annotation> oldAnnotations = new ArrayList<Annotation>(3);
+				ArrayList<Annotation> oldAnnotations = new ArrayList<>(3);
 				while (it.hasNext()) {
 					Annotation ann = (Annotation) it.next();
 					if (positions[lineNumber].equals(annotationModel.getPosition(ann))) {

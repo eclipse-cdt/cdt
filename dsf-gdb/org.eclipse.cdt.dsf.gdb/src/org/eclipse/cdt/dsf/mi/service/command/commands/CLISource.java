@@ -17,11 +17,11 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *     source FILE
  *
  *  Source a file of commands
- * 
+ *
  */
 public class CLISource extends CLICommand<MIInfo> {
 	/**

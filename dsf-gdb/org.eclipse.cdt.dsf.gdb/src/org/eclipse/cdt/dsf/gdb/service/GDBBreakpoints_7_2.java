@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Ericsson - Initial API and implementation 
+ *     Ericsson - Initial API and implementation
  *     Marc Khouzam (Ericsson) - Support for fast tracepoints (Bug 346320)
  *     Marc Khouzam (Ericsson) - Fetch groupIds when getting breakpoints (Bug 360735)
  *******************************************************************************/
@@ -54,7 +54,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0 {
 
 	private enum TracepointMode {
 		FAST_THEN_NORMAL, FAST_ONLY, NORMAL_ONLY
-	};
+	}
 
 	private TracepointMode fTracepointMode = TracepointMode.NORMAL_ONLY;
 
@@ -95,9 +95,9 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0 {
 		super.shutdown(requestMonitor);
 	}
 
-	/** 
+	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * Starting with GDB 7.2, also provides information about which process each breakpoint applies to.
 	 */
 	@Override
@@ -252,11 +252,11 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0 {
 						// Flag the event
 						getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
 
-						// Tracepoints are created with no passcount (passcount are not 
+						// Tracepoints are created with no passcount (passcount are not
 						// the same thing as ignore-count, which is not supported by
 						// tracepoints).  We have to set the passcount manually now.
 						// Same for commands.
-						Map<String, Object> delta = new HashMap<String, Object>();
+						Map<String, Object> delta = new HashMap<>();
 						delta.put(MIBreakpoints.PASS_COUNT, getProperty(attributes, MIBreakpoints.PASS_COUNT, 0));
 						delta.put(MIBreakpoints.COMMANDS, getProperty(attributes, MIBreakpoints.COMMANDS, "")); //$NON-NLS-1$
 						modifyBreakpoint(dmc, delta, drm, false);
@@ -313,7 +313,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0 {
 	 * about which thread-group a breakpoint applies to?
 	 * The use of this method allows us to avoid duplicating code.
 	 * See Bug 402217
-	 * 
+	 *
 	 * @return true if the information is available (GDB >= 7.6),
 	 *         false otherwise.
 	 * @since 4.2

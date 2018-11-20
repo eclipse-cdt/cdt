@@ -24,7 +24,7 @@ public class CPPTemplateTypeParameterParserprs
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static byte isKeyword[] = IsKeyword.isKeyword;
 
@@ -238,7 +238,7 @@ public class CPPTemplateTypeParameterParserprs
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static short baseCheck[] = BaseCheck.baseCheck;
 
@@ -252,7 +252,7 @@ public class CPPTemplateTypeParameterParserprs
 	@Override
 	public final int rhs(int index) {
 		return rhs[index];
-	};
+	}
 
 	public interface BaseAction {
 		public final static char baseAction[] = { 191, 5, 154, 94, 94, 30, 30, 81, 81, 39, 39, 42, 42, 218, 1, 1, 16,
@@ -604,7 +604,7 @@ public class CPPTemplateTypeParameterParserprs
 				0, 1, 263, 0, 367, 95, 0, 35, 73, 0, 263, 254, 0, 313, 4934, 0, 263, 253, 0, 6996, 1, 0, 6992, 1, 0, 1,
 				263, 3573, 0, 6993, 263, 0, 3574, 263, 0, 6996, 420, 0, 6995, 420, 0, 3586, 263, 0, 10, 12, 0, 8, 10,
 				12, 0, 3656, 227, 0, 218, 5147, 0, 3659, 420, 0, 8, 12, 0 };
-	};
+	}
 
 	public final static char baseAction[] = BaseAction.baseAction;
 
@@ -618,7 +618,7 @@ public class CPPTemplateTypeParameterParserprs
 	@Override
 	public final int lhs(int index) {
 		return lhs[index];
-	};
+	}
 
 	public interface TermCheck {
 		public final static byte termCheck[] = { 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
@@ -761,7 +761,7 @@ public class CPPTemplateTypeParameterParserprs
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 64, 0, 0, 0, 68,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static byte termCheck[] = TermCheck.termCheck;
 
@@ -968,7 +968,7 @@ public class CPPTemplateTypeParameterParserprs
 				6998, 6998, 6998, 6998, 6998, 6998, 6998, 6998, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984,
 				6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984, 6984,
 				6998, 6984, 6984, 6984, 6998, 6984, 6984, 6984, 6998 };
-	};
+	}
 
 	public final static char termAction[] = TermAction.termAction;
 
@@ -1008,7 +1008,7 @@ public class CPPTemplateTypeParameterParserprs
 				367, 608, 510, 709, 427, 955, 427, 436, 1050, 436, 455, 455, 453, 434, 455, 709, 709, 211, 433, 367, 64,
 				709, 770, 436, 912, 504, 912, 453, 353, 955, 912, 758, 64, 912, 912, 642, 436, 211, 436, 709, 353, 471,
 				436, 433, 366, 608, 608, 947, 471, 434, 871, 709, 912, 707, 63, 436, 912, 709, 707, 707, 436 };
-	};
+	}
 
 	public final static char asb[] = Asb.asb;
 
@@ -1060,7 +1060,7 @@ public class CPPTemplateTypeParameterParserprs
 				39, 9, 3, 8, 6, 7, 5, 4, 1, 2, 71, 0, 41, 23, 13, 56, 26, 14, 28, 29, 15, 16, 30, 31, 17, 18, 32, 57,
 				33, 10, 58, 19, 22, 20, 24, 21, 12, 11, 25, 9, 3, 7, 39, 63, 61, 65, 88, 27, 62, 54, 4, 5, 8, 6, 1, 2,
 				55, 0 };
-	};
+	}
 
 	public final static byte asr[] = Asr.asr;
 
@@ -1097,7 +1097,7 @@ public class CPPTemplateTypeParameterParserprs
 				169, 12, 32, 153, 32, 169, 297, 206, 302, 160, 302, 296, 32, 12, 302, 155, 83, 302, 302, 32, 206, 12,
 				206, 169, 160, 31, 206, 116, 153, 137, 137, 158, 85, 12, 183, 169, 302, 75, 82, 206, 302, 169, 75, 12,
 				206 };
-	};
+	}
 
 	public final static char nasb[] = Nasb.nasb;
 
@@ -1119,7 +1119,7 @@ public class CPPTemplateTypeParameterParserprs
 				10, 9, 13, 3, 1, 0, 133, 5, 50, 93, 0, 2, 132, 0, 2, 4, 113, 110, 111, 112, 13, 69, 0, 39, 4, 2, 9, 10,
 				5, 172, 0, 5, 50, 93, 95, 0, 5, 50, 93, 115, 48, 4, 0, 113, 69, 13, 110, 111, 112, 190, 0, 54, 4, 98, 5,
 				27, 0, 197, 5, 52, 0, 52, 5, 30, 0, 5, 52, 116, 0 };
-	};
+	}
 
 	public final static char nasr[] = Nasr.nasr;
 
@@ -1135,7 +1135,7 @@ public class CPPTemplateTypeParameterParserprs
 				58, 78, 44, 121, 33, 30, 118, 119, 96, 108, 49, 50, 56, 57, 59, 69, 71, 72, 85, 92, 17, 18, 65, 21, 22,
 				6, 23, 24, 25, 26, 27, 32, 4, 15, 16, 28, 29, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 51, 80, 81, 82, 5,
 				117, 3, 123, 62, 116 };
-	};
+	}
 
 	public final static char terminalIndex[] = TerminalIndex.terminalIndex;
 
@@ -1155,7 +1155,7 @@ public class CPPTemplateTypeParameterParserprs
 				178, 0, 193, 0, 0, 0, 202, 0, 205, 211, 0, 223, 224, 0, 0, 229, 232, 0, 234, 236, 0, 240, 241, 242, 245,
 				0, 0, 249, 124, 0, 150, 153, 0, 181, 0, 184, 0, 0, 208, 221, 226, 0, 0, 230, 231, 233, 235, 0, 238, 239,
 				244, 250, 253, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static char nonterminalIndex[] = NonterminalIndex.nonterminalIndex;
 
@@ -1171,7 +1171,7 @@ public class CPPTemplateTypeParameterParserprs
 				551, 555, 645, 649, 653, 110, 7, 110, 410, 426, 439, 460, 479, 543, 129, 129, 245, 439, 566, 582, 593,
 				604, 220, 513, 69, 69, 169, 235, 238, 69, 254, 275, 238, 238, 69, 369, 492, 499, 169, 69, 668, 123, 355,
 				414, 454, 486, 472, 69, 355, 401, 190, 117, 452, 657, 664, 657, 664, 78, 420, 150, 117, 117, 264 };
-	};
+	}
 
 	public final static char scopePrefix[] = ScopePrefix.scopePrefix;
 
@@ -1187,7 +1187,7 @@ public class CPPTemplateTypeParameterParserprs
 				666, 11, 114, 379, 379, 379, 464, 483, 535, 133, 138, 249, 443, 570, 570, 570, 570, 224, 517, 72, 72, 5,
 				5, 241, 243, 257, 5, 278, 278, 243, 108, 5, 257, 5, 528, 5, 126, 358, 417, 457, 489, 475, 547, 538, 404,
 				193, 108, 108, 659, 659, 661, 661, 80, 422, 152, 215, 200, 266 };
-	};
+	}
 
 	public final static char scopeSuffix[] = ScopeSuffix.scopeSuffix;
 
@@ -1203,7 +1203,7 @@ public class CPPTemplateTypeParameterParserprs
 				12, 130, 178, 85, 84, 84, 64, 41, 157, 114, 114, 68, 84, 18, 18, 18, 18, 102, 20, 186, 182, 201, 100,
 				109, 74, 80, 73, 172, 89, 139, 86, 162, 161, 192, 157, 17, 178, 139, 116, 83, 22, 45, 157, 157, 85, 48,
 				178, 79, 155, 44, 155, 44, 185, 116, 110, 48, 48, 72 };
-	};
+	}
 
 	public final static char scopeLhs[] = ScopeLhs.scopeLhs;
 
@@ -1218,7 +1218,7 @@ public class CPPTemplateTypeParameterParserprs
 				72, 113, 1, 72, 1, 39, 1, 39, 39, 73, 118, 72, 72, 72, 72, 72, 118, 1, 72, 1, 72, 72, 72, 71, 71, 4, 1,
 				1, 5, 72, 64, 64, 64, 64, 72, 3, 1, 1, 72, 72, 3, 1, 118, 72, 1, 1, 1, 39, 72, 118, 72, 6, 72, 1, 55,
 				70, 71, 72, 64, 1, 55, 75, 74, 39, 39, 4, 4, 4, 4, 3, 1, 69, 1, 1, 3 };
-	};
+	}
 
 	public final static byte scopeLa[] = ScopeLa.scopeLa;
 
@@ -1234,7 +1234,7 @@ public class CPPTemplateTypeParameterParserprs
 				267, 267, 267, 267, 247, 6, 65, 78, 78, 78, 112, 327, 129, 175, 175, 134, 78, 267, 267, 267, 267, 362,
 				267, 26, 53, 24, 362, 364, 181, 358, 181, 59, 186, 177, 78, 50, 56, 132, 129, 267, 65, 177, 1, 78, 268,
 				104, 129, 129, 78, 68, 65, 11, 101, 150, 101, 150, 26, 1, 175, 68, 68, 181 };
-	};
+	}
 
 	public final static char scopeStateSet[] = ScopeStateSet.scopeStateSet;
 
@@ -1272,7 +1272,7 @@ public class CPPTemplateTypeParameterParserprs
 				197, 166, 126, 10, 0, 136, 2, 0, 126, 0, 227, 3, 124, 276, 166, 126, 10, 0, 276, 166, 126, 10, 0, 135,
 				2, 0, 126, 0, 227, 3, 135, 0, 227, 3, 140, 0, 159, 60, 140, 0, 278, 0, 31, 0, 31, 139, 0, 165, 0, 134,
 				0, 159, 3, 0 };
-	};
+	}
 
 	public final static char scopeRhs[] = ScopeRhs.scopeRhs;
 
@@ -1304,7 +1304,7 @@ public class CPPTemplateTypeParameterParserprs
 				2052, 2005, 1958, 1911, 1864, 1817, 1770, 1723, 1676, 1629, 600, 1424, 1372, 1565, 1519, 1277, 1173,
 				1126, 1222, 0, 901, 891, 803, 653, 4666, 4585, 4572, 3167, 4435, 3889, 645, 3849, 0, 4727, 4850, 4724,
 				1076, 0 };
-	};
+	}
 
 	public final static char scopeState[] = ScopeState.scopeState;
 
@@ -1342,7 +1342,7 @@ public class CPPTemplateTypeParameterParserprs
 				3, 123, 159, 123, 188, 127, 164, 239, 3, 71, 238, 174, 238, 320, 149, 75, 238, 127, 127, 97, 337, 174,
 				152, 211, 152, 319, 127, 3, 152, 297, 325, 152, 152, 127, 70, 204, 161, 286, 159, 203, 68, 121, 317,
 				152, 203, 9, 152 };
-	};
+	}
 
 	public final static char inSymb[] = InSymb.inSymb;
 
@@ -1398,28 +1398,33 @@ public class CPPTemplateTypeParameterParserprs
 				"template_argument_list", "template_argument", "type_name_specifier_inTemplate",
 				"type_name_declaration_specifie" + "rs_inTemplate", "type_specifier_seq_inTemplate", "handler",
 				"exception_declaration", "type_id_list" };
-	};
+	}
 
 	public final static String name[] = Name.name;
 
+	@Override
 	public final String name(int index) {
 		return name[index];
 	}
 
 	public final static int ERROR_SYMBOL = 62, SCOPE_UBOUND = 121, SCOPE_SIZE = 122, MAX_NAME_LENGTH = 43;
 
+	@Override
 	public final int getErrorSymbol() {
 		return ERROR_SYMBOL;
 	}
 
+	@Override
 	public final int getScopeUbound() {
 		return SCOPE_UBOUND;
 	}
 
+	@Override
 	public final int getScopeSize() {
 		return SCOPE_SIZE;
 	}
 
+	@Override
 	public final int getMaxNameLength() {
 		return MAX_NAME_LENGTH;
 	}
@@ -1430,42 +1435,52 @@ public class CPPTemplateTypeParameterParserprs
 
 	public final static boolean BACKTRACK = true;
 
+	@Override
 	public final int getNumStates() {
 		return NUM_STATES;
 	}
 
+	@Override
 	public final int getNtOffset() {
 		return NT_OFFSET;
 	}
 
+	@Override
 	public final int getLaStateOffset() {
 		return LA_STATE_OFFSET;
 	}
 
+	@Override
 	public final int getMaxLa() {
 		return MAX_LA;
 	}
 
+	@Override
 	public final int getNumRules() {
 		return NUM_RULES;
 	}
 
+	@Override
 	public final int getNumNonterminals() {
 		return NUM_NONTERMINALS;
 	}
 
+	@Override
 	public final int getNumSymbols() {
 		return NUM_SYMBOLS;
 	}
 
+	@Override
 	public final int getSegmentSize() {
 		return SEGMENT_SIZE;
 	}
 
+	@Override
 	public final int getStartState() {
 		return START_STATE;
 	}
 
+	@Override
 	public final int getStartSymbol() {
 		return lhs[0];
 	}
@@ -1474,55 +1489,68 @@ public class CPPTemplateTypeParameterParserprs
 		return IDENTIFIER_SYMBOL;
 	}
 
+	@Override
 	public final int getEoftSymbol() {
 		return EOFT_SYMBOL;
 	}
 
+	@Override
 	public final int getEoltSymbol() {
 		return EOLT_SYMBOL;
 	}
 
+	@Override
 	public final int getAcceptAction() {
 		return ACCEPT_ACTION;
 	}
 
+	@Override
 	public final int getErrorAction() {
 		return ERROR_ACTION;
 	}
 
+	@Override
 	public final boolean isValidForParser() {
 		return isValidForParser;
 	}
 
+	@Override
 	public final boolean getBacktrack() {
 		return BACKTRACK;
 	}
 
+	@Override
 	public final int originalState(int state) {
 		return -baseCheck[state];
 	}
 
+	@Override
 	public final int asi(int state) {
 		return asb[originalState(state)];
 	}
 
+	@Override
 	public final int nasi(int state) {
 		return nasb[originalState(state)];
 	}
 
+	@Override
 	public final int inSymbol(int state) {
 		return inSymb[originalState(state)];
 	}
 
+	@Override
 	public final int ntAction(int state, int sym) {
 		return baseAction[state + sym];
 	}
 
+	@Override
 	public final int tAction(int state, int sym) {
 		int i = baseAction[state], k = i + sym;
 		return termAction[termCheck[k] == sym ? k : i];
 	}
 
+	@Override
 	public final int lookAhead(int la_state, int sym) {
 		int k = la_state + sym;
 		return termAction[termCheck[k] == sym ? k : la_state];

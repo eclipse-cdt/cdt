@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,14 +18,14 @@ import org.eclipse.ui.IMarkerResolution;
 
 /**
  * Interface for codan marker resolution
- * 
+ *
  * @since 2.0
  */
 public interface ICodanMarkerResolution extends IMarkerResolution {
 	/**
 	 * Override is extra checks is required to determine applicability of marker
 	 * resolution
-	 * 
+	 *
 	 * @param marker
 	 * @return
 	 */

@@ -20,9 +20,9 @@ import java.util.EventListener;
 /**
  * An interface to be implemented by objects interested in path variable
  * creation, removal and value change events.
- * 
+ *
  * <p>Clients may implement this interface.</p>
- * 
+ *
  * @since 3.0
  */
 public interface IPathEntryVariableChangeListener extends EventListener {

@@ -31,7 +31,7 @@ public interface ICPPASTFunctionTryBlockDeclarator extends ICPPASTFunctionDeclar
 
 	/**
 	 * Add a catch handler.
-	 * 
+	 *
 	 * @param statement
 	 *            <code>ICPPASTCatchHandler</code>
 	 */
@@ -39,7 +39,7 @@ public interface ICPPASTFunctionTryBlockDeclarator extends ICPPASTFunctionDeclar
 
 	/**
 	 * Get catch handlers.
-	 * 
+	 *
 	 * @return <code>ICPPASTCatchHandler</code>
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();

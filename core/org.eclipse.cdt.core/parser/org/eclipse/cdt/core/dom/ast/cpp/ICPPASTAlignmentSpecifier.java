@@ -15,9 +15,9 @@ import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
 
 /**
  * A C++ alignment-specifier.
- * 
+ *
  * In the C++ grammar, an alignment-specifier is an attribute-specifier.
- * 
+ *
  * @since 6.0
  */
 public interface ICPPASTAlignmentSpecifier extends IASTAlignmentSpecifier, ICPPASTAttributeSpecifier {

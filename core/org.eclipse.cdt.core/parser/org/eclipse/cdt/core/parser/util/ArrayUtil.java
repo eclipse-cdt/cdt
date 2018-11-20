@@ -33,8 +33,8 @@ public abstract class ArrayUtil {
 	private static final int DEFAULT_LENGTH = 2;
 
 	/**
-	 * Assumes that array contains {@code null}s at the end, only. 
-	 * Appends element after the last non-{@code null} element. 
+	 * Assumes that array contains {@code null}s at the end, only.
+	 * Appends element after the last non-{@code null} element.
 	 * If the array is {@code null} or not large enough, a larger one is allocated, using
 	 * the given class object.
 	 */
@@ -61,8 +61,8 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * Assumes that array contains {@code null}s at the end, only. 
-	 * Appends element after the last non-{@code null} element. 
+	 * Assumes that array contains {@code null}s at the end, only.
+	 * Appends element after the last non-{@code null} element.
 	 * If the array is not large enough, a larger one is allocated.
 	 * Null <code>array</code> is supported for backward compatibility only and only when T is
 	 * Object.
@@ -122,7 +122,7 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * Assumes that array contains {@code null}s at the end, only. 
+	 * Assumes that array contains {@code null}s at the end, only.
 	 * Appends object using the current length of the array.
 	 * @since 5.1
 	 */
@@ -150,12 +150,12 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * Assumes that array contains {@code null}s at the end, only. 
+	 * Assumes that array contains {@code null}s at the end, only.
 	 * Appends object using the current length of the array.
 	 * @param array The array to append to. Not {@code null}
 	 * @param currentLength The number of non-{@code null} elements in the array
 	 * @param obj The object to append. Not {@code null}
-	 * @return The modified array, which may be the same as the first parameter. 
+	 * @return The modified array, which may be the same as the first parameter.
 	 * @since 5.4
 	 */
 	public static <T> T[] appendAt(T[] array, int currentLength, T obj) {
@@ -177,7 +177,7 @@ public abstract class ArrayUtil {
 	 * if {@code forceNew} is {@code true}, a new array will always be created.
 	 * if {@code forceNew} is {@code false}, a new array will only be created if the original array
 	 * contained {@code null} entries.
-	 *  
+	 *
 	 * @param c the type of the new array
 	 * @param array the array to be trimmed
 	 * @param forceNew
@@ -212,7 +212,7 @@ public abstract class ArrayUtil {
 	 * if {@code forceNew} is {@code true}, a new array will always be created.
 	 * if {@code forceNew} is {@code false}, a new array will only be created if the original array
 	 * contained {@code null} entries.
-	 *  
+	 *
 	 * @param array the array to be trimmed
 	 * @param forceNew
 	 * @since 5.2
@@ -234,7 +234,7 @@ public abstract class ArrayUtil {
 	/**
 	 * Trims the given array and returns a new array with no {@code null} entries.
 	 * Assumes that {@code null}s can be found at the end, only.
-	 *  
+	 *
 	 * @param array the array to be trimmed
 	 * @since 5.2
 	 */
@@ -246,11 +246,11 @@ public abstract class ArrayUtil {
 	 * Trims the given array and returns a new array with no {@code null} entries.
 	 * Assumes that {@code null}s can be found at the end, only.
 	 * Similar to {@link #trimAt(Class, Object[], int)}, but uses the new length instead of index.
-	 *  
+	 *
 	 * @param array the array to be trimmed
 	 * @param newLength the new length of the array, has to be less or equal than
 	 *     the current length.
-	 * @return the modified array, which may be the same as the first parameter. 
+	 * @return the modified array, which may be the same as the first parameter.
 	 * @since 5.4
 	 */
 	public static <T> T[] trim(T[] array, int newLength) {
@@ -267,9 +267,9 @@ public abstract class ArrayUtil {
 	 * @param c The type of the element of the returned array if there was not enough free space
 	 *     in the destination array.
 	 * @param dest The destination array. The elements of the source array are added to this array
-	 *     if there is enough free space in it. May be {@code null}. 
-	 * @param source The source array. May not be {@code null}. 
-	 * @return The concatenated array, which may be the same as the first parameter. 
+	 *     if there is enough free space in it. May be {@code null}.
+	 * @param source The source array. May not be {@code null}.
+	 * @return The concatenated array, which may be the same as the first parameter.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] addAll(Class<T> c, T[] dest, Object[] source) {
@@ -310,9 +310,9 @@ public abstract class ArrayUtil {
 	 * Takes contents of the two arrays up to the first {@code null} element and concatenates them.
 	 *
 	 * @param dest The destination array. The elements of the source array are added to this array
-	 *     if there is enough free space in it. May be {@code null}. 
-	 * @param source The source array. May not be {@code null}. 
-	 * @return The concatenated array, which may be the same as the first parameter. 
+	 *     if there is enough free space in it. May be {@code null}.
+	 * @param source The source array. May not be {@code null}.
+	 * @return The concatenated array, which may be the same as the first parameter.
 	 * @since 5.2
 	 */
 	@SuppressWarnings("unchecked")
@@ -399,10 +399,10 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * Assumes that array contains {@code null}s at the end, only. 
+	 * Assumes that array contains {@code null}s at the end, only.
 	 * Returns whether the specified array contains the specified object. Comparison is by
 	 * object identity.
-	 * 
+	 *
 	 * @param array the array to search
 	 * @param obj the object to search for
 	 * @return true if the specified array contains the specified object, or the specified array is
@@ -413,7 +413,7 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * Assumes that array contains {@code null}s at the end, only. 
+	 * Assumes that array contains {@code null}s at the end, only.
 	 * Returns the index into the specified array of the specified object, or -1 if the array does
 	 * not contain the object, or if the array is {@code null}.  Comparison is by equals().
 	 *
@@ -457,9 +457,9 @@ public abstract class ArrayUtil {
 	 * of the non-{@code null} elements.
 	 *
 	 * If there are no {@code null}s in the original array then the original array is returned.
-	
+
 	 * Note that this method should only be used when the placement of {@code null}s within
-	 * the array is unknown (due to performance efficiency).  
+	 * the array is unknown (due to performance efficiency).
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] removeNulls(Class<T> c, T[] array) {
@@ -493,7 +493,7 @@ public abstract class ArrayUtil {
 	 * If there are no {@code null}s in the original array then the original array is returned.
 	 * <p>
 	 * Note that this method should only be used when the placement of {@code null}s within
-	 * the array is unknown (due to performance efficiency).  
+	 * the array is unknown (due to performance efficiency).
 	 * @since 5.2
 	 */
 	@SuppressWarnings("unchecked")
@@ -553,7 +553,7 @@ public abstract class ArrayUtil {
 
 	/**
 	 * Inserts the {@code obj} at the beginning of the array, shifting the whole thing one index
-	 * Assumes that array contains {@code null}s at the end, only. 
+	 * Assumes that array contains {@code null}s at the end, only.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] prepend(Class<T> c, T[] array, T obj) {
@@ -581,7 +581,7 @@ public abstract class ArrayUtil {
 
 	/**
 	 * Inserts the {@code obj} at the beginning of the array, shifting the whole thing one index
-	 * Assumes that array contains {@code null}s at the end, only. 
+	 * Assumes that array contains {@code null}s at the end, only.
 	 * array must not be {@code null}.
 	 * @since 5.2
 	 */
@@ -633,7 +633,7 @@ public abstract class ArrayUtil {
 
 	/**
 	 * Stores the specified array contents in a new array of specified runtime type.
-	 * 
+	 *
 	 * @param target the runtime type of the new array
 	 * @param source the source array
 	 * @return the current array stored in a new array with the specified runtime type,
@@ -679,7 +679,7 @@ public abstract class ArrayUtil {
 	/**
 	 * Returns a new array that contains all of the elements of the given array except
 	 * the first one.
-	 * 
+	 *
 	 * @throws NullPointerException if {@code array} is {@code null}
 	 * @throws IllegalArgumentException if {@code array} is empty
 	 * @since 5.1
@@ -700,14 +700,14 @@ public abstract class ArrayUtil {
 	/**
 	 * Returns a new array that contains elements of the given array except duplicates and
 	 * {@code null}s. Duplicates are determined by {@link Object#equals(Object)} method.
-	 * 
+	 *
 	 * @throws NullPointerException if {@code array} is {@code null}
 	 * @since 5.5
 	 */
 	public static <T> T[] removeDuplicates(T[] array) {
 		int k = 0;
 		if (array.length >= 16) {
-			HashSet<T> set = new HashSet<T>(array.length);
+			HashSet<T> set = new HashSet<>(array.length);
 			for (int i = 0; i < array.length; i++) {
 				T obj = array[i];
 				if (obj != null && set.add(obj)) {
@@ -767,7 +767,7 @@ public abstract class ArrayUtil {
 				++resultIndex;
 			} else {
 				if (result == array) {
-					// There will be at most array.length - 1 filtered elements. 
+					// There will be at most array.length - 1 filtered elements.
 					result = Arrays.copyOf(array, array.length - 1);
 					Arrays.fill(result, i, result.length, null);
 				}

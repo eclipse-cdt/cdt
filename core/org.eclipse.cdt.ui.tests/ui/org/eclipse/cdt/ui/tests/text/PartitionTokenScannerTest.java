@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -30,7 +27,9 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 
-import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Compares two <code>IParitionTokenScanner</code>s for performance.

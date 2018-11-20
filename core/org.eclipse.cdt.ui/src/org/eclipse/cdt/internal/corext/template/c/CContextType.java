@@ -14,10 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * A context type for C/C++ code.

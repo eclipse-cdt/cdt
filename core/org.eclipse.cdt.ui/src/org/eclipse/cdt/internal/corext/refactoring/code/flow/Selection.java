@@ -14,11 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.refactoring.code.flow;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.text.IRegion;
-
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.text.IRegion;
 
 public class Selection {
 	/** Flag indicating that the AST node somehow intersects with the selection. */

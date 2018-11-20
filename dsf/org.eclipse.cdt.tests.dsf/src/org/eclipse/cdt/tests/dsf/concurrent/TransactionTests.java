@@ -7,22 +7,22 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.cdt.dsf.concurrent.RequestCache;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateInDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestCache;
 import org.eclipse.cdt.dsf.concurrent.Transaction;
 import org.eclipse.cdt.tests.dsf.TestDsfExecutor;
 import org.eclipse.core.runtime.CoreException;
@@ -148,7 +148,7 @@ public class TransactionTests {
 		// Wait until the cache starts data retrieval.
 		waitForRetrieveRm(false);
 
-		// Set the data without using an executor.  
+		// Set the data without using an executor.
 		((DataRequestMonitor<Integer>) fRetrieveRms[0]).setData(1);
 		fRetrieveRms[0].done();
 

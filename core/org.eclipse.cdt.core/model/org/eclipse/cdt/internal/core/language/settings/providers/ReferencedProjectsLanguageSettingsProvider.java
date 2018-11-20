@@ -61,7 +61,7 @@ public class ReferencedProjectsLanguageSettingsProvider extends LanguageSettings
 
 		try {
 			recursiveCallIndicator.set(true);
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> entries = new ArrayList<>();
 			ICConfigurationDescription[] refCfgDescriptions = CoreModelUtil
 					.getReferencedConfigurationDescriptions(cfgDescription, false);
 			for (ICConfigurationDescription refCfgDescription : refCfgDescriptions) {
@@ -78,7 +78,7 @@ public class ReferencedProjectsLanguageSettingsProvider extends LanguageSettings
 				}
 			}
 
-			return LanguageSettingsStorage.getPooledList(new ArrayList<ICLanguageSettingEntry>(entries));
+			return LanguageSettingsStorage.getPooledList(new ArrayList<>(entries));
 		} finally {
 			recursiveCallIndicator.set(false);
 		}

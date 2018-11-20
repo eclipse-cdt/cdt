@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 /**
  * An ASTVisitor that visits every return statement in a function
  * body and calls onReturnStatement() on it.
- * 
+ *
  * @since 6.3
  */
 public abstract class ReturnStatementVisitor extends ASTVisitor {
@@ -40,7 +40,7 @@ public abstract class ReturnStatementVisitor extends ASTVisitor {
 	}
 
 	/**
-	 * Gets the function being visited. 
+	 * Gets the function being visited.
 	 */
 	protected IASTFunctionDefinition getFunction() {
 		return fFunction;

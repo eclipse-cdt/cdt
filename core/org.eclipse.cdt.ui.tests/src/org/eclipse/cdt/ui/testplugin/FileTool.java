@@ -29,12 +29,11 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-
-import org.eclipse.core.filebuffers.FileBuffers;
 
 /**
  * Copied from org.eclipse.core.filebuffers.tests.
@@ -54,7 +53,7 @@ public class FileTool {
 	 * Unzips the given zip file to the given destination directory
 	 * extracting only those entries the pass through the given
 	 * filter.
-	 * 
+	 *
 	 * @param zipFile the zip file to unzip
 	 * @param dstDir the destination directory
 	 * @throws IOException in case of problem
@@ -109,7 +108,7 @@ public class FileTool {
 	 * Returns the given file path with its separator
 	 * character changed from the given old separator to the
 	 * given new separator.
-	 * 
+	 *
 	 * @param path a file path
 	 * @param oldSeparator a path separator character
 	 * @param newSeparator a path separator character
@@ -124,7 +123,7 @@ public class FileTool {
 	/**
 	 * Copies all bytes in the given source file to
 	 * the given destination file.
-	 * 
+	 *
 	 * @param source the given source file
 	 * @param destination the given destination file
 	 * @throws IOException in case of error
@@ -149,7 +148,7 @@ public class FileTool {
 	 * Copies all bytes in the given source stream to
 	 * the given destination stream. Neither streams
 	 * are closed.
-	 * 
+	 *
 	 * @param source the given source stream
 	 * @param destination the given destination stream
 	 * @throws IOException in case of error
@@ -166,7 +165,7 @@ public class FileTool {
 
 	/**
 	 * Copies the given source file to the given destination file.
-	 * 
+	 *
 	 * @param src the given source file
 	 * @param dst the given destination file
 	 * @throws IOException in case of error

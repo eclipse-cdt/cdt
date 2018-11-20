@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Scanner info for a given build configuration.
- * 
+ *
  * @since 6.1
  */
 public class ScannerInfoCache {

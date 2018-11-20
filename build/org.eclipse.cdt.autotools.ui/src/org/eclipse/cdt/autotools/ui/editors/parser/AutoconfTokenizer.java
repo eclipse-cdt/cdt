@@ -94,7 +94,7 @@ public class AutoconfTokenizer {
 		isM4Context = flag;
 	}
 
-	/** 
+	/**
 	 * Set the m4 quote delimiters
 	 */
 	public void setM4Quote(String open, String close) {
@@ -102,7 +102,7 @@ public class AutoconfTokenizer {
 		this.m4CloseQuote = close;
 	}
 
-	/** 
+	/**
 	 * Set the m4 comment delimiters
 	 */
 	public void setM4Comment(String open, String close) {
@@ -133,7 +133,7 @@ public class AutoconfTokenizer {
 			ch = chars[offset];
 		}
 
-		// in shell mode, strip comments up to eol 
+		// in shell mode, strip comments up to eol
 		if (!isM4Context && ch == '#') {
 			while (offset < chars.length) {
 				ch = chars[offset];
@@ -306,7 +306,7 @@ public class AutoconfTokenizer {
 	}
 
 	private Token parseQuote() {
-		// read text, honoring nested quotes, but don't put the outermost quotes in the token  
+		// read text, honoring nested quotes, but don't put the outermost quotes in the token
 
 		StringBuilder buffer = new StringBuilder();
 
@@ -384,7 +384,7 @@ public class AutoconfTokenizer {
 		}
 	}
 
-	/** 
+	/**
 	 * Look ahead for the given string.  If found, return true, and have
 	 * offset updated.  Otherwise, return false with offset unchanged.
 	 * @param keyword

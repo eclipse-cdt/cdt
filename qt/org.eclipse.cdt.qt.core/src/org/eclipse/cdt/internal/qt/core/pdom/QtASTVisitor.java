@@ -271,8 +271,8 @@ public class QtASTVisitor extends ASTVisitor {
 		// three.  Two lists are created during this processing.  Then those lists are uses to create
 		// the QEnum instances.
 
-		List<EnumDecl> enumDecls = new ArrayList<QtASTVisitor.EnumDecl>();
-		Map<String, String> flagAliases = new HashMap<String, String>();
+		List<EnumDecl> enumDecls = new ArrayList<>();
+		Map<String, String> flagAliases = new HashMap<>();
 
 		for (IASTPreprocessorMacroExpansion expansion : expansions) {
 

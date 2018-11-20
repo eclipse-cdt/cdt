@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
@@ -65,7 +65,7 @@ public interface IBinaryParser extends IAdaptable {
 		int getType();
 
 		/**
-		 * 
+		 *
 		 * @return the binary contents.
 		 */
 		InputStream getContents() throws IOException;
@@ -226,7 +226,7 @@ public interface IBinaryParser extends IAdaptable {
 
 	/**
 	 * Creates an IBinaryFile.
-	 * 
+	 *
 	 * @param path
 	 * @throws IOException
 	 */
@@ -238,7 +238,7 @@ public interface IBinaryParser extends IAdaptable {
 	String getFormat();
 
 	/**
-	 * True if the resource is a binary. 
+	 * True if the resource is a binary.
 	 * @param hints
 	 * @param path
 	 */

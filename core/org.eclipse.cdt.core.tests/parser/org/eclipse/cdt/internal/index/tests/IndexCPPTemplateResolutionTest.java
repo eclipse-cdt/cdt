@@ -3044,7 +3044,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	struct base {
 	//		constexpr base() {}
 	//	};
-	//    
+	//
 	//	template <typename T>
 	//	struct derived : base<T> {
 	//		constexpr derived() : base<T>() {}
@@ -3066,7 +3066,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	template <typename F>
 	//	struct S {
 	//	    F f;
-	//	};    
+	//	};
 	//
 	//	template <typename F>
 	//	auto foo(F f) -> decltype(S<F>{f});
@@ -3099,8 +3099,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	//	template<typename T> struct traits;
 
-	//	template <typename> struct M;    
-	//	    
+	//	template <typename> struct M;
+	//
 	//	template<typename T>
 	//	struct traits<M<T>> {
 	//	  typedef T type;
@@ -3154,7 +3154,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	};
 	//
 	//	void waldo(char);
-	//	        
+	//
 	//	void foo(sub_match<Iter> w) {
 	//	    waldo(w);
 	//	}
@@ -3221,8 +3221,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	}
 
 	//	template <typename T> T&& declval();
-	//	  
-	//	template <typename Value, typename Func, 
+	//
+	//	template <typename Value, typename Func,
 	//	          typename Requires = decltype(declval<Func>()(declval<Value>()))>
 	//	void apply(Value, Func);
 	//

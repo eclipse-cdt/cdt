@@ -16,12 +16,6 @@
 
 package org.eclipse.cdt.core.cdescriptor.tests;
 
-import junit.extensions.TestSetup;
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.CProjectNature;
@@ -43,10 +37,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import junit.extensions.TestSetup;
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 /**
  * This class exists because the tests in CDescriptorTests
  * are not fixed.
- * This class corresponds to the version of 
+ * This class corresponds to the version of
  * CDescrptorTests before the changes made in cdt.core 5.1
  * (CVS version 1.12)
  */
@@ -59,7 +59,7 @@ public class CDescriptorOldTests extends TestCase {
 
 	/**
 	 * Constructor for CDescriptorTest.
-	 * 
+	 *
 	 * @param name
 	 */
 	public CDescriptorOldTests(String name) {
@@ -232,7 +232,7 @@ public class CDescriptorOldTests extends TestCase {
 									null);
 							ICDescriptor descriptor = CCorePlugin.getDefault().getCDescriptorManager()
 									.getDescriptor(fProject);
-							// perform apply outside descriptor operation to avoid deadlock - http://bugs.eclipse.org/241288 
+							// perform apply outside descriptor operation to avoid deadlock - http://bugs.eclipse.org/241288
 							descriptor.saveProjectData();
 						} catch (Throwable exc) {
 							exception[indexj] = exc;
@@ -259,7 +259,7 @@ public class CDescriptorOldTests extends TestCase {
 	}
 
 	/**
-	 * Count the number of Node.ELEMENT_NODE elements which are a 
+	 * Count the number of Node.ELEMENT_NODE elements which are a
 	 * direct descendent of the parent Element.
 	 * Other nodes (e.g. Text) are ignored
 	 * @param parent

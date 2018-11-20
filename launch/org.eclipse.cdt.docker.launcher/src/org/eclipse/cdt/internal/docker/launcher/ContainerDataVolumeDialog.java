@@ -245,7 +245,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 	 * selected, and set the enablement of the associated {@link Control} at the
 	 * same time (ie: the {@link Control} are only enabled when the given
 	 * {@link Button} is selected.
-	 * 
+	 *
 	 * @param button
 	 *            the {@link Button} to bind
 	 * @param mountType
@@ -308,7 +308,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 	/**
 	 * Creates an {@link IContentProposalProvider} to propose
 	 * {@link IDockerContainer} names based on the current text.
-	 * 
+	 *
 	 * @param items
 	 * @return
 	 */

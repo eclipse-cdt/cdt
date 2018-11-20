@@ -15,14 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
-
-import org.eclipse.cdt.core.model.ICModelMarker;
 
 public class ExternalSearchAnnotationModel extends ResourceMarkerAnnotationModel {
 	private final IPath fLocation;

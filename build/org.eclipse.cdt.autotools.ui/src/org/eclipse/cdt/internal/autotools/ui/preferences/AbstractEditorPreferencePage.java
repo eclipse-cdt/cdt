@@ -217,9 +217,9 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 			try {
 				int value = Integer.parseInt(number);
 				if (value < 0)
-					status.setError(MessageFormat.format(errorMessages[1], new Object[] { number })); //$NON-NLS-1$
+					status.setError(MessageFormat.format(errorMessages[1], new Object[] { number }));
 			} catch (NumberFormatException e) {
-				status.setError(MessageFormat.format(errorMessages[1], new Object[] { number })); //$NON-NLS-1$
+				status.setError(MessageFormat.format(errorMessages[1], new Object[] { number }));
 			}
 		}
 		return status;

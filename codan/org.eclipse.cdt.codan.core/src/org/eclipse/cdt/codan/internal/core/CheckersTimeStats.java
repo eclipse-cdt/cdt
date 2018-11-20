@@ -60,7 +60,7 @@ public class CheckersTimeStats {
 		}
 	}
 
-	private Map<String, TimeRecord> records = new HashMap<String, TimeRecord>();
+	private Map<String, TimeRecord> records = new HashMap<>();
 
 	/**
 	 * @param id - checker id

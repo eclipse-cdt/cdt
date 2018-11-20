@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -27,11 +27,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
 
-/** 
+/**
  * Helper class implementation of the {@link IChildrenUpdate} update object.
- * 
+ *
  * @see VMViewerUpdate
- * 
+ *
  * @since 1.0
  */
 public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate {
@@ -44,7 +44,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
 		super(clientUpdate, requestMonitor);
 		fOffset = offset;
 		fLength = length;
-		fElements = length > 0 ? new ArrayList<Object>(length) : new ArrayList<Object>();
+		fElements = length > 0 ? new ArrayList<>(length) : new ArrayList<>();
 	}
 
 	public VMChildrenUpdate(IModelDelta delta, IPresentationContext presentationContext, int offset, int length,
@@ -52,7 +52,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
 		super(delta, presentationContext, rm);
 		fOffset = offset;
 		fLength = length;
-		fElements = length > 0 ? new ArrayList<Object>(length) : new ArrayList<Object>();
+		fElements = length > 0 ? new ArrayList<>(length) : new ArrayList<>();
 	}
 
 	public VMChildrenUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext,
@@ -60,7 +60,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
 		super(elementPath, viewerInput, presentationContext, rm);
 		fOffset = offset;
 		fLength = length;
-		fElements = length > 0 ? new ArrayList<Object>(length) : new ArrayList<Object>();
+		fElements = length > 0 ? new ArrayList<>(length) : new ArrayList<>();
 	}
 
 	@Override
@@ -106,21 +106,21 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
 		DataRequestMonitor<List<Object>> rm = (DataRequestMonitor<List<Object>>) getRequestMonitor();
 
 		/* See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
-		 * 
+		 *
 		 * A flexible hierarchy bug/optimization causes query with incorrect
 		 * IChildrenUpdate[] array length.
 		 *
-		 * The problem manifests itself while deleting a register node. 
+		 * The problem manifests itself while deleting a register node.
 		 * For example, if the register view displays:
 		 *     PC
 		 *     EAX
 		 *     EBX
 		 *     ECX
 		 *     EDX
-		 *  And EBX is deleted, forcing a refresh, the viewer will query 
+		 *  And EBX is deleted, forcing a refresh, the viewer will query
 		 *  for IChildrenUpdate[5] and IChildrenCountUpdate at the same time.
-		 *  
-		 *  To avoid this problem do not generate an error if the list of 
+		 *
+		 *  To avoid this problem do not generate an error if the list of
 		 *  children is smaller than the list of requested indexes.  Also,
 		 *  do not check if any of the elements are null.
 		 */
@@ -131,7 +131,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
 				&& VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
 			StringBuilder str = new StringBuilder();
 			str.append(DsfPlugin.getDebugTime()).append(' ').append(LoggingUtils.toString(this))
-					.append(" marked done; element = ").append(LoggingUtils.toString(getElement())); //$NON-NLS-1$ 
+					.append(" marked done; element = ").append(LoggingUtils.toString(getElement())); //$NON-NLS-1$
 			if (fElements != null && !fElements.isEmpty()) {
 				for (Object element : fElements) {
 					str.append("   ").append(LoggingUtils.toString(element)).append('\n'); //$NON-NLS-1$

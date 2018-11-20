@@ -110,13 +110,13 @@ public final class OptionStringValue {
 
 	/**
 	 * source attachment settings are applicable for the {@link IOption#LIBRARY_FILES} only
-	 * added to fully support the {@link ICLibraryFileEntry} settings 
-	 * 
+	 * added to fully support the {@link ICLibraryFileEntry} settings
+	 *
 	 * @see ICLibraryFileEntry
 	 * @see ICLibraryFileEntry#getSourceAttachmentPath()
 	 * @see ICLibraryFileEntry#getSourceAttachmentRootPath()
 	 * @see ICLibraryFileEntry#getSourceAttachmentPrefixMapping()
-	 * 
+	 *
 	 */
 	public String getSourceAttachmentPath() {
 		return srcPath;
@@ -124,13 +124,13 @@ public final class OptionStringValue {
 
 	/**
 	 * source attachment settings are applicable for the {@link IOption#LIBRARY_FILES} only
-	 * added to fully support the {@link ICLibraryFileEntry} settings 
-	 * 
+	 * added to fully support the {@link ICLibraryFileEntry} settings
+	 *
 	 * @see ICLibraryFileEntry
 	 * @see ICLibraryFileEntry#getSourceAttachmentPath()
 	 * @see ICLibraryFileEntry#getSourceAttachmentRootPath()
 	 * @see ICLibraryFileEntry#getSourceAttachmentPrefixMapping()
-	 * 
+	 *
 	 */
 	public String getSourceAttachmentRootPath() {
 		return srcRootPath;
@@ -138,13 +138,13 @@ public final class OptionStringValue {
 
 	/**
 	 * source attachment settings are applicable for the {@link IOption#LIBRARY_FILES} only
-	 * added to fully support the {@link ICLibraryFileEntry} settings 
-	 * 
+	 * added to fully support the {@link ICLibraryFileEntry} settings
+	 *
 	 * @see ICLibraryFileEntry
 	 * @see ICLibraryFileEntry#getSourceAttachmentPath()
 	 * @see ICLibraryFileEntry#getSourceAttachmentRootPath()
 	 * @see ICLibraryFileEntry#getSourceAttachmentPrefixMapping()
-	 * 
+	 *
 	 */
 	public String getSourceAttachmentPrefixMapping() {
 		return srcPrefixMapping;

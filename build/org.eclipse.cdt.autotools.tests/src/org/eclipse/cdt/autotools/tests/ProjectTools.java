@@ -73,7 +73,7 @@ public class ProjectTools {
 	/**
 	 * Setup routine for tests.
 	 * @return true if setup successful, false otherwise
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static boolean setup() throws CoreException {
 		if (!setupComplete) {
@@ -407,7 +407,7 @@ public class ProjectTools {
 	 * @param project The project
 	 * @param folderName Name of the linked folder in the project
 	 * @param path The URI of the real file/folder
-	 * 
+	 *
 	 * @return
 	 * @throws CoreException
 	 */

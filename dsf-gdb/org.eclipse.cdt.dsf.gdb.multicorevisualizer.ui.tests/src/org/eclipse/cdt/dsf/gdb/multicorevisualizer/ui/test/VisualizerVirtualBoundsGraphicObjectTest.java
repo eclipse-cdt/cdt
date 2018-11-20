@@ -12,13 +12,13 @@
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial API and implementation
  *     Marc Khouzam (Ericsson) - Move to o.e.cdt.dsf.gdb.tests (bug 455237)
- *     Marc Dumais (Ericsson) - Move VisualizerVirtualBoundsGraphicObjectTest 
+ *     Marc Dumais (Ericsson) - Move VisualizerVirtualBoundsGraphicObjectTest
  *                              to o.e.cdt.dsf.gdb.multicoreVisualizer.ui.tests
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test;
 
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.cdt.visualizer.ui.canvas.VirtualBoundsGraphicObject;
+import org.eclipse.swt.graphics.Rectangle;
 import org.junit.Test;
 
 public class VisualizerVirtualBoundsGraphicObjectTest {

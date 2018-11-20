@@ -304,7 +304,7 @@ public class CPPScopeMapper {
 					final String name = getReverseQualifiedName(container);
 					List<UsingDirectiveWrapper> list = fPerName.get(name);
 					if (list == null) {
-						list = new LinkedList<UsingDirectiveWrapper>();
+						list = new LinkedList<>();
 						fPerName.put(name, list);
 					}
 					list.add(new UsingDirectiveWrapper(offset, ud));

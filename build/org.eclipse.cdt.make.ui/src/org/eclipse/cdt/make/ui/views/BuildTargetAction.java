@@ -16,8 +16,8 @@ package org.eclipse.cdt.make.ui.views;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
-import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.TargetBuild;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;

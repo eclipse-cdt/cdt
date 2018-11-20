@@ -17,26 +17,24 @@ package org.eclipse.cdt.ui.tests.text;
 
 import java.util.HashMap;
 
-import junit.framework.Test;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
+import junit.framework.Test;
 
 /**
  * Testing the auto indent strategies.
@@ -155,40 +153,40 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 
 	// class A {
 	// /*X
-	// };  
+	// };
 
 	// class A {
 	// /*
 	//  * X
 	//  */
-	// };  
+	// };
 	public void testInsertNewLine4() {
 		assertNewLineBehaviour();
 	}
 
 	// class A {
 	// /* X
-	// };  
+	// };
 
 	// class A {
-	// /* 
+	// /*
 	//  * X
 	//  */
-	// };  
+	// };
 	public void testInsertNewLine5() {
 		assertNewLineBehaviour();
 	}
 
 	// class A {
 	// /*X
-	//  * 
+	//  *
 	//  */
 	// };
 
 	// class A {
 	// /*
 	//  * X
-	//  * 
+	//  *
 	//  */
 	// };
 	public void testInsertNewLine6() {
@@ -196,13 +194,13 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	}
 
 	// class A {
-	// /*  
+	// /*
 	//  *X
 	//  */
 	// };
 
 	// class A {
-	// /*  
+	// /*
 	//  *
 	//  *X
 	//  */
@@ -212,15 +210,15 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	}
 
 	// class A {
-	// /*  
-	//  *X 
+	// /*
+	//  *X
 	//  */
 	// };
 
 	// class A {
-	// /*  
+	// /*
 	//  *
-	//  *X 
+	//  *X
 	//  */
 	// };
 	public void testInsertNewLine8() {
@@ -228,13 +226,13 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	}
 
 	// class A {
-	// /*  
+	// /*
 	//  * abcd def ghiX
 	//  */
 	// };
 
 	// class A {
-	// /*  
+	// /*
 	//  * abcd def ghi
 	//  * X
 	//  */
@@ -244,13 +242,13 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	}
 
 	// class A {
-	// /*  
+	// /*
 	//  * abcd deXf ghi
 	//  */
 	// };
 
 	// class A {
-	// /*  
+	// /*
 	//  * abcd de
 	//  * Xf ghi
 	//  */
@@ -260,14 +258,14 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	}
 
 	// class A {
-	// /* 
-	//  * 
+	// /*
+	//  *
 	//  */X
 	// };
 
 	// class A {
-	// /* 
-	//  * 
+	// /*
+	//  *
 	//  */
 	// X
 	// };
@@ -275,10 +273,10 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		assertNewLineBehaviour();
 	}
 
-	// /*X*/	
+	// /*X*/
 
 	// /*
-	//  * X 
+	//  * X
 	//  */
 	public void _testInsertNewLine12() {
 		assertNewLineBehaviour();
@@ -286,26 +284,26 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 
 	// class A {
 	// /*Xfoo
-	// };  
+	// };
 
 	// class A {
 	// /*
 	//  * X
 	//  */foo
-	// };  
+	// };
 	public void testInsertNewLine13() {
 		assertNewLineBehaviour();
 	}
 
 	// class A {
 	// /*fooX
-	// };  
+	// };
 
 	// class A {
 	// /*foo
 	//  * X
 	//  */
-	// };  
+	// };
 	public void testInsertNewLine14() {
 		assertNewLineBehaviour();
 	}
@@ -338,7 +336,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//   X
 
 	// /*
-	//   
+	//
 	//   X
 	public void testInsertNewLine17() {
 		assertNewLineBehaviour();
@@ -349,7 +347,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//  */
 
 	// /*
-	//   
+	//
 	//   X
 	//  */
 	public void testInsertNewLine18() {
@@ -529,7 +527,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//	public:
 	//		X
 	//		STATIC void D::foo(int x) {
-	//			
+	//
 	//		}
 	//	};
 	public void testFollowingDeclaration13() throws CoreException {

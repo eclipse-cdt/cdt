@@ -53,13 +53,13 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  *  A dialog to set scanner config discovery options.
- * 
+ *
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
  * for 3.X style projects.
- * 
+ *
  * @author vhirsl
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -74,7 +74,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 	private static final String SC_PROBLEM_REPORTING_ENABLED_BUTTON = "ScannerConfigOptionsDialog.scGroup.problemReporting.enabled.button"; //$NON-NLS-1$
 	private static final String SC_SELECTED_PROFILE_COMBO = "ScannerConfigOptionsDialog.scGroup.selectedProfile.combo"; //$NON-NLS-1$
 	//    private static final String BO_PROVIDER_GROUP_LABEL = "ScannerConfigOptionsDialog.boProvider.group.label"; //$NON-NLS-1$
-	private static final String SC_APPLY_PROGRESS_MESSAGE = "ScannerConfigOptionsDialog.apply.progressMessage"; //$NON-NLS-1$ 
+	private static final String SC_APPLY_PROGRESS_MESSAGE = "ScannerConfigOptionsDialog.apply.progressMessage"; //$NON-NLS-1$
 
 	private Button scEnabledButton;
 	private Button scProblemReportingEnabledButton;
@@ -87,7 +87,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 	//    private boolean persistedProfileChanged = false; // new persisted selected profile different than the old one
 
 	/**
-	 * 
+	 *
 	 */
 	public DiscoveryOptionsBlock() {
 		super(MakeUIPlugin.getResourceString(DIALOG_TITLE));
@@ -230,7 +230,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void enableAllControls() {
 		boolean isSCDEnabled = scEnabledButton.getSelection();
@@ -331,7 +331,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 		ICProject cProject = CoreModel.getDefault().create(project);
 		if (cProject != null) {
 			IPathEntry[] entries = cProject.getRawPathEntries();
-			List<IPathEntry> newEntries = new ArrayList<IPathEntry>(Arrays.asList(entries));
+			List<IPathEntry> newEntries = new ArrayList<>(Arrays.asList(entries));
 			if (!newEntries.contains(container)) {
 				newEntries.add(container);
 				cProject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
@@ -345,7 +345,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 		String profileId = getBuildInfo().getSelectedProfileId();
 		ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(profileId)
 				.getProfileScope();
-		List<IResource> changedResources = new ArrayList<IResource>();
+		List<IResource> changedResources = new ArrayList<>();
 		//        changedResources.add(project.getFullPath());
 		changedResources.add(project);
 		MakeCorePlugin.getDefault().getDiscoveryManager().changeDiscoveredContainer(project, profileScope,

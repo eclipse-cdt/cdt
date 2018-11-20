@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
- *     Axel Mueller            - Bug 306555 - Add support for cast to type / view as array (IExpressions2)     
+ *     Axel Mueller            - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
@@ -150,7 +150,7 @@ public class GdbVariableVMProvider extends VariableVMProvider {
 	/**
 	 * @param store
 	 * @param event
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void handlePropertyChanged(final IPreferenceStore store, final PropertyChangeEvent event) {

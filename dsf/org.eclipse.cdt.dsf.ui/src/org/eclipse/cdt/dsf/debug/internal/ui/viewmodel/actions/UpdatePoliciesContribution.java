@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -32,9 +32,9 @@ import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * Dynamic menu contribution that shows available update policies 
+ * Dynamic menu contribution that shows available update policies
  * in the current view.
- * 
+ *
  * @since 1.1
  */
 public class UpdatePoliciesContribution extends CompoundContributionItem implements IWorkbenchContribution {
@@ -87,7 +87,7 @@ public class UpdatePoliciesContribution extends CompoundContributionItem impleme
 		IVMUpdatePolicy[] policies = cachingProvider.getAvailableUpdatePolicies();
 		IVMUpdatePolicy activePolicy = cachingProvider.getActiveUpdatePolicy();
 
-		List<Action> actions = new ArrayList<Action>(policies.length);
+		List<Action> actions = new ArrayList<>(policies.length);
 		for (IVMUpdatePolicy policy : policies) {
 			Action action = new SelectUpdatePolicyAction(cachingProvider, policy);
 			if (policy.getID().equals(activePolicy.getID())) {

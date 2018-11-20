@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -138,7 +137,7 @@ public class ControlFlowGraphView extends ViewPart {
 					IBasicBlock iBasicBlock = iter.next();
 					dead.add(iBasicBlock);
 				}
-				ArrayList<Object> all = new ArrayList<Object>();
+				ArrayList<Object> all = new ArrayList<>();
 				all.addAll(blocks);
 				// labeled statements disjoined from the rest
 				for (IBasicBlock node : cfg.getNodes()) {
@@ -149,7 +148,7 @@ public class ControlFlowGraphView extends ViewPart {
 					all.add(dead);
 				return all.toArray();
 			} else if (parent instanceof IDecisionNode) {
-				ArrayList<IBasicBlock> blocks = new ArrayList<IBasicBlock>();
+				ArrayList<IBasicBlock> blocks = new ArrayList<>();
 				IBasicBlock[] outgoingNodes = ((IDecisionNode) parent).getOutgoingNodes();
 				for (int i = 0; i < outgoingNodes.length; i++) {
 					IBasicBlock arc = outgoingNodes[i];
@@ -319,7 +318,7 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	protected void processAst(IASTTranslationUnit ast) {
-		final ArrayList<IControlFlowGraph> functions = new ArrayList<IControlFlowGraph>();
+		final ArrayList<IControlFlowGraph> functions = new ArrayList<>();
 		ASTVisitor visitor = new ASTVisitor() {
 			{
 				shouldVisitDeclarations = true;

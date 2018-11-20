@@ -14,9 +14,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -25,28 +36,14 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * This test just checks that hyperlinks are created in the right
- * places. It does not test that the hyperlinks actually take you 
+ * places. It does not test that the hyperlinks actually take you
  * to the right place.
- * 
+ *
  * @author Mike Kucera
  */
 public class HyperlinkTest extends TestCase {
@@ -233,7 +230,7 @@ public class HyperlinkTest extends TestCase {
 
 		assertHyperlink(CPP_CODE.indexOf("Point {") + 1, CPP_CODE.indexOf("Point {"), "Point".length());
 		assertHyperlink(CPP_CODE.indexOf("Point()") + 1, CPP_CODE.indexOf("Point()"), "Point".length());
-		// No-AST hyperlink detection doesn't know that tilde is part of the destructor name. 
+		// No-AST hyperlink detection doesn't know that tilde is part of the destructor name.
 		assertHyperlink(CPP_CODE.indexOf("~Point()") + 1, CPP_CODE.indexOf("~Point()") + 1, "Point".length());
 		assertHyperlink(CPP_CODE.indexOf("set(") + 1, CPP_CODE.indexOf("set("), "set".length());
 		assertHyperlink(CPP_CODE.indexOf("getX()") + 1, CPP_CODE.indexOf("getX()"), "getX".length());

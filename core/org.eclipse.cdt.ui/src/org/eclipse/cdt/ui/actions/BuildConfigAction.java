@@ -28,7 +28,7 @@ public class BuildConfigAction extends ChangeConfigAction {
 
 	/**
 	 * Constructs the action.
-	 * @param projects List of selected managed-built projects 
+	 * @param projects List of selected managed-built projects
 	 * @param configName Build configuration name
 	 * @param accel Number to be used as accelerator
 	 */

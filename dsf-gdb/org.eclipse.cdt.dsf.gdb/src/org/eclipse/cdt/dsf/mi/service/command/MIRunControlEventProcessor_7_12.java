@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 /**
  * Listens to events on the MI channel and takes proper action.
  * Specialization for GDB 7.12.
- * 
+ *
  * @since 5.3
  */
 public class MIRunControlEventProcessor_7_12 extends MIRunControlEventProcessor_7_0

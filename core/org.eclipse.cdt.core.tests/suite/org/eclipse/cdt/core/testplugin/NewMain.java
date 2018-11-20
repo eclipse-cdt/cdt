@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-/** 
+/**
  * Application is responsible for calling core launch api
  */
 public class NewMain extends Main {
@@ -53,7 +53,7 @@ public class NewMain extends Main {
 	 * a scrapbook (i.e., swip-and-doit facility).
 	 */
 	public static void main(String argString) throws Exception {
-		List<String> list = new ArrayList<String>(5);
+		List<String> list = new ArrayList<>(5);
 		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
 			list.add((String) tokens.nextElement());
 		main(list.toArray(new String[list.size()]));

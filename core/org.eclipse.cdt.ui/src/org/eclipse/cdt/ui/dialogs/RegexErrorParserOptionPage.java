@@ -18,6 +18,14 @@ package org.eclipse.cdt.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IErrorParserNamed;
+import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
+import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -63,16 +71,6 @@ import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 
 import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.IErrorParserNamed;
-import org.eclipse.cdt.core.IMarkerGenerator;
-import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
-import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
-import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
-
 /**
  * Options page for RegexErrorParser in Error Parsers Tab of properties/preferences.
  *
@@ -99,7 +97,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	private RegexErrorParser fErrorParser;
 	private boolean fEditable;
 
-	private List<Listener> fListeners = new ArrayList<Listener>();
+	private List<Listener> fListeners = new ArrayList<>();
 
 	/**
 	 * Provides generic implementation for overridden methods.

@@ -25,10 +25,10 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Base class that walks Debug View tree elements.
- * 
+ *
  * Intended to be subclassed by code that needs to walk the content
  * of the Debug View (e.g. to find elements or construct model deltas).
- * 
+ *
  * In the simplest case, a derived class should only need to
  * implement processElement(), and one should then only need
  * to call walk() to walk the tree and get an appropriate delta.
@@ -107,12 +107,12 @@ public class DebugViewTreeWalker {
 
 	// --- tree path utilities ---
 
-	/** 
-	 * Gets tree path of root element(s). 
-	 * Note: each returned path is the root of a distinct debug session 
+	/**
+	 * Gets tree path of root element(s).
+	 * Note: each returned path is the root of a distinct debug session
 	 */
 	public TreePath[] getRootPaths() {
-		List<TreePath> paths = new ArrayList<TreePath>();
+		List<TreePath> paths = new ArrayList<>();
 
 		if (m_viewer != null) {
 			Tree tree = (Tree) m_viewer.getControl();

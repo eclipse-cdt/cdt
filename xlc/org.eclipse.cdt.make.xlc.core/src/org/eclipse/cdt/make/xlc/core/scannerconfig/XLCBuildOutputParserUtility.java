@@ -101,8 +101,8 @@ public class XLCBuildOutputParserUtility {
 	private List<String> fNameConflicts;
 
 	protected XLCBuildOutputParserUtility(IPath baseDirectory, IPath workingDirectory) {
-		fDirectoryStack = new Vector<IPath>();
-		fErrors = new ArrayList<Problem>();
+		fDirectoryStack = new Vector<>();
+		fErrors = new ArrayList<>();
 		this.fBaseDirectory = baseDirectory;
 		if (workingDirectory != null) {
 			pushDirectory(workingDirectory);
@@ -114,8 +114,8 @@ public class XLCBuildOutputParserUtility {
 	 *
 	 */
 	public XLCBuildOutputParserUtility(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
-		fDirectoryStack = new Vector<IPath>();
-		fErrors = new ArrayList<Problem>();
+		fDirectoryStack = new Vector<>();
+		fErrors = new ArrayList<>();
 		this.project = project;
 		fBaseDirectory = getPathForResource(project);
 		if (workingDirectory != null) {

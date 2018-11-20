@@ -21,7 +21,7 @@ public class ByteUtils {
 
 	/**
 	 * Concatenates two bytes to make a short
-	 * 
+	 *
 	 * @param bytes
 	 *            collection of bytes; must provide a minimum of two bytes starting at [offset]
 	 * @param offset
@@ -43,7 +43,7 @@ public class ByteUtils {
 
 	/**
 	 * Concatenates four bytes to make an int
-	 * 
+	 *
 	 * @param bytes
 	 *            collection of bytes; must provide a minimum of four bytes starting at [offset]
 	 * @param offset
@@ -68,7 +68,7 @@ public class ByteUtils {
 
 	/**
 	 * Concatenates eight bytes to make a long
-	 * 
+	 *
 	 * @param bytes
 	 *            collection of bytes; must provide a minimum of eight bytes starting at [offset]
 	 * @param offset

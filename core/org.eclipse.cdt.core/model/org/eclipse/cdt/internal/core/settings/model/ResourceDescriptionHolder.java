@@ -55,7 +55,7 @@ public class ResourceDescriptionHolder {
 	}
 
 	public ICResourceDescription[] getResourceDescriptions(final int kind) {
-		final List<ICResourceDescription> list = new ArrayList<ICResourceDescription>();
+		final List<ICResourceDescription> list = new ArrayList<>();
 		fPathSettingContainer.accept(new IPathSettingsContainerVisitor() {
 
 			@Override
@@ -79,7 +79,7 @@ public class ResourceDescriptionHolder {
 	}
 
 	public ICResourceDescription[] getResourceDescriptions() {
-		final List<Object> list = new ArrayList<Object>();
+		final List<Object> list = new ArrayList<>();
 		fPathSettingContainer.accept(new IPathSettingsContainerVisitor() {
 
 			@Override

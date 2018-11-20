@@ -1,20 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik 
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- * Emanuel Graf & Guido Zgraggen - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Emanuel Graf & Guido Zgraggen - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -22,9 +20,11 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+import junit.framework.TestSuite;
+
 /**
  * @author Guido Zgraggen
- * 
+ *
  */
 public class CommentTests extends AST2TestBase {
 
@@ -200,7 +200,7 @@ public class CommentTests extends AST2TestBase {
 
 	// #ifdef xxx
 	// // comment1
-	// #else 
+	// #else
 	// // comment2
 	// #endif
 	public void testCommentsInInactiveCode_bug183930() throws Exception {
@@ -231,7 +231,7 @@ public class CommentTests extends AST2TestBase {
 		assertNotNull(comments[0].getNodeLocations());
 	}
 
-	// // TODO: shows up in task list 
+	// // TODO: shows up in task list
 	// #include "somefile.h"  // TODO: ignored
 	//
 	// #ifdef WHATEVA // TODO: ignored

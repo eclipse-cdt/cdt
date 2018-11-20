@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2017 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -18,8 +18,6 @@ package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -42,16 +40,15 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
+import org.eclipse.text.edits.TextEditGroup;
 
 /**
  * Handles the extraction of expression nodes, for example, return type determination.
- * 
+ *
  * @author Mirko Stocker
  */
 public class ExpressionExtractor extends FunctionExtractor {
@@ -111,7 +108,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 	}
 
 	private List<ITypedef> getTypedefs(IASTNode extractedNode) {
-		final ArrayList<ITypedef> typeDefs = new ArrayList<ITypedef>();
+		final ArrayList<ITypedef> typeDefs = new ArrayList<>();
 		extractedNode.accept(new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;

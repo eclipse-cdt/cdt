@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -66,6 +66,7 @@ public class PlainTextImporter implements IMemoryImporter {
 
 	private static final int BUFFER_LENGTH = 64 * 1024;
 
+	@Override
 	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties,
 			ImportMemoryDialog parentDialog) {
 		fMemoryBlock = memBlock;
@@ -97,15 +98,15 @@ public class PlainTextImporter implements IMemoryImporter {
 		composite.setLayout(formLayout);
 
 		//		// restore to file address
-		//		
+		//
 		//		fComboRestoreToFileAddress = new Button(composite, SWT.RADIO);
 		//		fComboRestoreToFileAddress.setText("Restore to address specified in the file");
 		//		//comboRestoreToFileAddress.setLayoutData(data);
-		//		
+		//
 		//		// restore to this address
-		//		
+		//
 		//		fComboRestoreToThisAddress = new Button(composite, SWT.RADIO);
-		//		fComboRestoreToThisAddress.setText("Restore to this address: "); 
+		//		fComboRestoreToThisAddress.setText("Restore to this address: ");
 		FormData data = new FormData();
 		//		data.top = new FormAttachment(fComboRestoreToFileAddress);
 		//		fComboRestoreToThisAddress.setLayoutData(data);
@@ -151,11 +152,13 @@ public class PlainTextImporter implements IMemoryImporter {
 
 		fileButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
 				dialog.setText(Messages.getString("PlainTextImporter.ChooseFile")); //$NON-NLS-1$
@@ -175,6 +178,7 @@ public class PlainTextImporter implements IMemoryImporter {
 		});
 
 		fStartText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				boolean valid = true;
 				try {
@@ -193,6 +197,7 @@ public class PlainTextImporter implements IMemoryImporter {
 
 		});
 		fFileText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}
@@ -210,6 +215,7 @@ public class PlainTextImporter implements IMemoryImporter {
 		parent.pack();
 
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				validate();
 			}
@@ -254,14 +260,17 @@ public class PlainTextImporter implements IMemoryImporter {
 		return new File(fFileText.getText().trim());
 	}
 
+	@Override
 	public String getId() {
 		return "PlainTextImporter"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		return Messages.getString("PlainTextImporter.Name"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void importMemory() {
 		Job job = new Job("Memory Import from Plain Text File") { //$NON-NLS-1$
 

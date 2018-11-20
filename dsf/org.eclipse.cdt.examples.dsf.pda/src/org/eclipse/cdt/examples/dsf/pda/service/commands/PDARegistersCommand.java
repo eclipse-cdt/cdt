@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,8 +17,8 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Retrieves registers definition information 
- * 
+ * Retrieves registers definition information
+ *
  * <pre>
  *    C: registers {group name}
  *    R: {register name} {true|false}|{bit field name} {start bit} {bit count} {mnemonic 1} {mnemonic 2} ...#{register name} ...

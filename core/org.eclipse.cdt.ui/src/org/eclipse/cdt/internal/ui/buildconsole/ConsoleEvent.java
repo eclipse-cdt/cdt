@@ -15,9 +15,8 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.util.EventObject;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.cdt.ui.IBuildConsoleEvent;
+import org.eclipse.core.resources.IProject;
 
 public class ConsoleEvent extends EventObject implements IBuildConsoleEvent {
 

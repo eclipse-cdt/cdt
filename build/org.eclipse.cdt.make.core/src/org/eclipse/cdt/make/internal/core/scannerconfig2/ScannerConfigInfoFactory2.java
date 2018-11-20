@@ -218,7 +218,7 @@ public class ScannerConfigInfoFactory2 {
 		public void save() throws CoreException {
 			if (isDirty()) {
 
-				Set<String> idSet = new HashSet<String>(fMap.size() - 1);
+				Set<String> idSet = new HashSet<>(fMap.size() - 1);
 
 				Preference pref = (Preference) fMap.get(new InfoContext(null));
 				pref.store();
@@ -278,7 +278,7 @@ public class ScannerConfigInfoFactory2 {
 	}
 
 	private static abstract class StoreSet implements IScannerConfigBuilderInfo2Set {
-		protected HashMap<InfoContext, IScannerConfigBuilderInfo2> fMap = new HashMap<InfoContext, IScannerConfigBuilderInfo2>();
+		protected HashMap<InfoContext, IScannerConfigBuilderInfo2> fMap = new HashMap<>();
 		protected boolean fIsDirty;
 
 		StoreSet() {
@@ -363,9 +363,9 @@ public class ScannerConfigInfoFactory2 {
 		protected String selectedProfile = EMPTY_STRING;
 		/** Map from profile ID -> default ProfileOptions
 		 *  allows us to avoid storing options to .cproject when they are default .*/
-		protected static Map<String, ProfileOptions> defaultProfiles = new ConcurrentHashMap<String, ProfileOptions>();
+		protected static Map<String, ProfileOptions> defaultProfiles = new ConcurrentHashMap<>();
 		/** Map from profile ID -> ProfileOptions */
-		protected Map<String, ProfileOptions> profileOptionsMap = new LinkedHashMap<String, ProfileOptions>();
+		protected Map<String, ProfileOptions> profileOptionsMap = new LinkedHashMap<>();
 
 		static class ProfileOptions implements Cloneable {
 			protected boolean buildOutputFileActionEnabled;
@@ -457,7 +457,7 @@ public class ScannerConfigInfoFactory2 {
 				this.buildOutputFileActionEnabled = base.buildOutputFileActionEnabled;
 				this.buildOutputFilePath = base.buildOutputFilePath;
 				this.buildOutputParserEnabled = base.buildOutputParserEnabled;
-				this.providerOptionsMap = new LinkedHashMap<String, ProviderOptions>(base.providerOptionsMap);
+				this.providerOptionsMap = new LinkedHashMap<>(base.providerOptionsMap);
 				for (Map.Entry<String, ProviderOptions> entry : providerOptionsMap.entrySet()) {
 					ProviderOptions basePo = entry.getValue();
 					entry.setValue(new ProviderOptions(basePo));
@@ -506,7 +506,7 @@ public class ScannerConfigInfoFactory2 {
 				try {
 					ProfileOptions newProfOpts = (ProfileOptions) super.clone();
 					if (providerOptionsMap != null) {
-						newProfOpts.providerOptionsMap = new LinkedHashMap<String, ProviderOptions>();
+						newProfOpts.providerOptionsMap = new LinkedHashMap<>();
 						for (Map.Entry<String, ProviderOptions> e : providerOptionsMap.entrySet())
 							newProfOpts.providerOptionsMap.put(e.getKey(), e.getValue().clone());
 					}
@@ -597,7 +597,7 @@ public class ScannerConfigInfoFactory2 {
 		 */
 		@Override
 		public List<String> getProfileIdList() {
-			return new ArrayList<String>(profileOptionsMap.keySet());
+			return new ArrayList<>(profileOptionsMap.keySet());
 		}
 
 		/* (non-Javadoc)
@@ -666,7 +666,7 @@ public class ScannerConfigInfoFactory2 {
 		@Override
 		public List<String> getProviderIdList() {
 			ProfileOptions po = profileOptionsMap.get(selectedProfile);
-			return (po != null) ? new ArrayList<String>(po.providerOptionsMap.keySet()) : new ArrayList<String>(0);
+			return (po != null) ? new ArrayList<>(po.providerOptionsMap.keySet()) : new ArrayList<>(0);
 		}
 
 		/* (non-Javadoc)
@@ -856,7 +856,7 @@ public class ScannerConfigInfoFactory2 {
 				}
 			}
 
-			po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>();
+			po.providerOptionsMap = new LinkedHashMap<>();
 			for (String providerId : configuredProfile.getSIProviderIds()) {
 				ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
 				ScannerInfoProvider configuredProvider = configuredProfile.getScannerInfoProviderElement(providerId);
@@ -987,10 +987,10 @@ public class ScannerConfigInfoFactory2 {
 						.getSCProfileConfiguration(selectedProfile);
 				// get the one and only provider id
 				String providerId = configuredProfile.getSIProviderIds().get(0);
-				po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(1);
+				po.providerOptionsMap = new LinkedHashMap<>(1);
 				po.providerOptionsMap.put(providerId, ppo);
 
-				profileOptionsMap = new LinkedHashMap<String, ProfileOptions>(1);
+				profileOptionsMap = new LinkedHashMap<>(1);
 				profileOptionsMap.put(profileId, po);
 
 				// store migrated data
@@ -1012,7 +1012,7 @@ public class ScannerConfigInfoFactory2 {
 					.getSCProfileConfiguration(profileId);
 			List<String> providerIds = configuredProfile.getSIProviderIds();
 			int providerCounter = 0;
-			po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(providerIds.size());
+			po.providerOptionsMap = new LinkedHashMap<>(providerIds.size());
 
 			for (ICStorageElement child : profile.getChildren()) {
 				// buildOutputProvider element
@@ -1106,7 +1106,7 @@ public class ScannerConfigInfoFactory2 {
 			//			ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
 			//					getSCProfileConfiguration(selectedProfile);
 			//			List providerIds = configuredProfile.getSIProviderIds();
-			List<String> providerIds = new ArrayList<String>(po.providerOptionsMap.keySet());
+			List<String> providerIds = new ArrayList<>(po.providerOptionsMap.keySet());
 			for (int i = 0; i < providerIds.size(); ++i) {
 				String providerId = providerIds.get(i);
 				ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
@@ -1221,7 +1221,7 @@ public class ScannerConfigInfoFactory2 {
 						.safeIntern(prefs.getDefaultString(prefix + SCANNER_CONFIG_SELECTED_PROFILE_ID_SUFFIX));
 			}
 			List<String> profileIds = ScannerConfigProfileManager.getInstance().getProfileIds(context);
-			profileOptionsMap = new LinkedHashMap<String, ProfileOptions>(profileIds.size());
+			profileOptionsMap = new LinkedHashMap<>(profileIds.size());
 			for (String profileId : profileIds) {
 				ProfileOptions po = new ProfileOptions();
 				profileOptionsMap.put(profileId, po);
@@ -1240,7 +1240,7 @@ public class ScannerConfigInfoFactory2 {
 				ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance()
 						.getSCProfileConfiguration(profileId);
 				List<String> providerIds = configuredProfile.getSIProviderIds();
-				po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(providerIds.size());
+				po.providerOptionsMap = new LinkedHashMap<>(providerIds.size());
 				for (String providerId : providerIds) {
 					ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
 					po.providerOptionsMap.put(providerId, ppo);

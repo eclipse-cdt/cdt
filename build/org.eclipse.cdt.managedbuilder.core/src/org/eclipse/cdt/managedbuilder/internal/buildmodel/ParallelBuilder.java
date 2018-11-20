@@ -42,9 +42,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
- * This is the main class for parallel internal builder implementation 
+ * This is the main class for parallel internal builder implementation
  *
- * NOTE: This class is subject to change and discuss, 
+ * NOTE: This class is subject to change and discuss,
  * and is currently available in experimental mode only
  */
 public class ParallelBuilder {
@@ -54,7 +54,7 @@ public class ParallelBuilder {
 	public static final int STATUS_INVALID = -1;
 	public static final long MAIN_LOOP_DELAY = 50L;
 
-	private static final String BUILDER_MSG_HEADER = "InternalBuilder.msg.header"; //$NON-NLS-1$ 
+	private static final String BUILDER_MSG_HEADER = "InternalBuilder.msg.header"; //$NON-NLS-1$
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	public static int lastThreadsUsed = 0; // use externally for report purposes only
@@ -66,9 +66,9 @@ public class ParallelBuilder {
 	protected OutputStream err;
 	protected boolean resumeOnErrors;
 	protected boolean buildIncrementally;
-	protected HashSet<BuildQueueElement> unsorted = new HashSet<BuildQueueElement>();
-	protected HashMap<IBuildStep, BuildQueueElement> queueHash = new HashMap<IBuildStep, BuildQueueElement>();
-	protected LinkedList<BuildQueueElement> queue = new LinkedList<BuildQueueElement>();
+	protected HashSet<BuildQueueElement> unsorted = new HashSet<>();
+	protected HashMap<IBuildStep, BuildQueueElement> queueHash = new HashMap<>();
+	protected LinkedList<BuildQueueElement> queue = new LinkedList<>();
 	private IResourceRebuildStateContainer fRebuildStateContainer;
 	private IBuildDescription fDes;
 
@@ -114,7 +114,7 @@ public class ParallelBuilder {
 		}
 
 		/**
-		 * Updates level value 
+		 * Updates level value
 		 */
 		public boolean check(IBuildStep _step, int _level) {
 			if (level < _level && step.equals(_step)) {
@@ -204,7 +204,7 @@ public class ParallelBuilder {
 	 * 1. Resources enqueueing & levelling
 	 * 2. Queue sorting
 	 * 3. Queue dispatching
-	 * 
+	 *
 	 * @param des Build description
 	 * @param cwd Working directory
 	 * @param dirs GenDirInfo?
@@ -472,7 +472,7 @@ public class ParallelBuilder {
 	 */
 	protected int dispatch(BuildProcessManager mgr) {
 		int maxProcesses = mgr.getMaxProcesses();
-		Vector<ActiveBuildStep> active = new Vector<ActiveBuildStep>(Math.min(maxProcesses, 10), 10);
+		Vector<ActiveBuildStep> active = new Vector<>(Math.min(maxProcesses, 10), 10);
 
 		int activeCount = 0;
 		int maxLevel = 0;
@@ -548,7 +548,7 @@ public class ParallelBuilder {
 
 			// Check if we need to schedule another process
 			if (queue.size() != 0 && activeCount < maxProcesses) {
-				// Need to schedule another process 
+				// Need to schedule another process
 				Iterator<BuildQueueElement> iter = queue.iterator();
 
 				// Iterate over build queue
@@ -629,7 +629,7 @@ public class ParallelBuilder {
 	}
 
 	/**
-	 * Prints output to the console 
+	 * Prints output to the console
 	 */
 	protected void printMessage(String msg, OutputStream out) {
 		if (out != null) {

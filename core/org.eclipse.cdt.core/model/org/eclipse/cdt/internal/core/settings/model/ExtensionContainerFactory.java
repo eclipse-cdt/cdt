@@ -153,7 +153,7 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_ID);
 		IExtension exts[] = extensionPoint.getExtensions();
-		fDescriptorMap = new HashMap<String, CExtensionSettingProviderDescriptor>();
+		fDescriptorMap = new HashMap<>();
 
 		for (IExtension ext : exts) {
 			CExtensionSettingProviderDescriptor dr = new CExtensionSettingProviderDescriptor(ext);
@@ -200,9 +200,9 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 	}
 
 	public static void setReferencedProviderIds(ICConfigurationDescription cfg, String ids[]) {
-		Set<String> newIdsSet = new HashSet<String>(Arrays.asList(ids));
-		Set<String> oldIdsSet = new HashSet<String>(Arrays.asList(getReferencedProviderIds(cfg)));
-		Set<String> newIdsSetCopy = new HashSet<String>(newIdsSet);
+		Set<String> newIdsSet = new HashSet<>(Arrays.asList(ids));
+		Set<String> oldIdsSet = new HashSet<>(Arrays.asList(getReferencedProviderIds(cfg)));
+		Set<String> newIdsSetCopy = new HashSet<>(newIdsSet);
 		newIdsSet.removeAll(oldIdsSet);
 		oldIdsSet.removeAll(newIdsSetCopy);
 
@@ -236,9 +236,9 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 	}
 
 	public static void updateReferencedProviderIds(ICConfigurationDescription cfg, String ids[]) {
-		Set<String> newIdsSet = new HashSet<String>(Arrays.asList(ids));
-		Set<String> oldIdsSet = new HashSet<String>(Arrays.asList(getReferencedProviderIds(cfg)));
-		Set<String> newIdsSetCopy = new HashSet<String>(newIdsSet);
+		Set<String> newIdsSet = new HashSet<>(Arrays.asList(ids));
+		Set<String> oldIdsSet = new HashSet<>(Arrays.asList(getReferencedProviderIds(cfg)));
+		Set<String> newIdsSetCopy = new HashSet<>(newIdsSet);
 		newIdsSetCopy.removeAll(oldIdsSet);
 		newIdsSet.removeAll(newIdsSetCopy);
 

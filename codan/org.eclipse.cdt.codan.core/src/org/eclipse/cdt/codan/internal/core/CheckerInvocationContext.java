@@ -34,7 +34,7 @@ public class CheckerInvocationContext implements ICheckerInvocationContext {
 	 */
 	public CheckerInvocationContext(IResource resource) {
 		this.resource = resource;
-		objectStorage = new HashMap<Class<?>, Object>();
+		objectStorage = new HashMap<>();
 	}
 
 	@Override

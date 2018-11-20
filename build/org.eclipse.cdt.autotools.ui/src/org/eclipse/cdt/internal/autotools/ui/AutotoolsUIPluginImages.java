@@ -123,7 +123,7 @@ public class AutotoolsUIPluginImages {
 		//ImageDescriptor desc = getImageRegistry().getDescriptor(relPath);
 		//if(desc == null) {
 		//	desc = createManaged(T + "c" + type, relPath);
-		//}	
+		//}
 		//action.setImageDescriptor(desc);
 	}
 

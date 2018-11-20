@@ -16,6 +16,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.formatter.scanner.Scanner;
+import org.eclipse.cdt.internal.formatter.scanner.Token;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,29 +49,6 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.model.ICLanguageKeywords;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICModelBasedEditor;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-import org.eclipse.cdt.internal.formatter.scanner.Scanner;
-import org.eclipse.cdt.internal.formatter.scanner.Token;
-
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 
@@ -115,7 +112,7 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 
 		if (status == Status.CANCEL_STATUS) {
 			// AST was not available yet or didn't help us to find the hyperlink, try to compute
-			// the hyperlink without it.  
+			// the hyperlink without it.
 			try {
 				// Check partition type.
 				String partitionType = TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING,

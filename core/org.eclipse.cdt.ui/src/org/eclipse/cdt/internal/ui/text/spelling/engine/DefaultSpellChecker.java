@@ -21,10 +21,9 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.text.spelling.SpellingPreferences;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.cdt.internal.ui.text.spelling.SpellingPreferences;
 
 /**
  * Default spell checker for standard text.
@@ -175,7 +174,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// the modifying methods add/checkWord (?)
 		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy = new HashSet<ISpellDictionary>(fDictionaries);
+			copy = new HashSet<>(fDictionaries);
 		}
 
 		ISpellDictionary dictionary = null;
@@ -195,7 +194,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// synchronizing is necessary as this is a write access
 		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy = new HashSet<ISpellDictionary>(fDictionaries);
+			copy = new HashSet<>(fDictionaries);
 		}
 
 		final String addable = word.toLowerCase();
@@ -273,7 +272,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// synchronizing is necessary as this is called from execute
 		Set<ISpellEventListener> copy;
 		synchronized (fListeners) {
-			copy = new HashSet<ISpellEventListener>(fListeners);
+			copy = new HashSet<>(fListeners);
 		}
 		for (ISpellEventListener spellEventListener : copy) {
 			spellEventListener.handle(event);
@@ -290,11 +289,11 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// the modifying methods add/removeDictionary (?)
 		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy = new HashSet<ISpellDictionary>(fDictionaries);
+			copy = new HashSet<>(fDictionaries);
 		}
 
 		ISpellDictionary dictionary = null;
-		final HashSet<RankedWordProposal> proposals = new HashSet<RankedWordProposal>();
+		final HashSet<RankedWordProposal> proposals = new HashSet<>();
 
 		for (final Iterator<ISpellDictionary> iterator = copy.iterator(); iterator.hasNext();) {
 			dictionary = iterator.next();
@@ -320,7 +319,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// synchronizing is necessary as this is called from execute
 		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy = new HashSet<ISpellDictionary>(fDictionaries);
+			copy = new HashSet<>(fDictionaries);
 		}
 
 		if (fIgnored.contains(word.toLowerCase()))

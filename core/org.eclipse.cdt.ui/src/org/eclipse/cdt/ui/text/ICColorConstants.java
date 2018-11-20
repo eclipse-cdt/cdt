@@ -23,7 +23,7 @@ package org.eclipse.cdt.ui.text;
  * implemented.
  * </p>
  * @see org.eclipse.cdt.ui.text.IColorManager
- * 
+ *
  * @since 5.1
  *
  * @noimplement This interface is not intended to be implemented by clients.

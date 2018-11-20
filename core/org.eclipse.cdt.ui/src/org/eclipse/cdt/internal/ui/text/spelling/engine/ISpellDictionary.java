@@ -67,7 +67,7 @@ public interface ISpellDictionary {
 
 	/**
 	 * Tells whether to strip non-letters from word boundaries.
-	 * 
+	 *
 	 * @param state <code>true</code> if non-letters should be stripped
 	 */
 	public void setStripNonLetters(boolean state);

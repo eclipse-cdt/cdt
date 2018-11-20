@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *******************************************************************************/
@@ -83,10 +83,9 @@ public class StepIntoSelectionUtils {
 
 	public static void missedSelectedTarget(StepIntoSelectionActiveOperation stepOperation) {
 		final String functionName = stepOperation.getTargetFunctionDeclaration().getElementName();
-		IStatus status = new Status(
-				IStatus.INFO, GdbPlugin.PLUGIN_ID, IGdbDebugConstants.STATUS_HANDLER_CODE, Messages.StepIntoSelection
-						+ "\n" + NLS.bind(Messages.StepIntoSelection_Execution_did_not_enter_function, functionName), //$NON-NLS-1$
-				null);
+		IStatus status = new Status(IStatus.INFO, GdbPlugin.PLUGIN_ID, IGdbDebugConstants.STATUS_HANDLER_CODE,
+				Messages.StepIntoSelection + "\n" //$NON-NLS-1$
+						+ NLS.bind(Messages.StepIntoSelection_Execution_did_not_enter_function, functionName), null);
 		IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 		if (statusHandler != null) {
 			try {

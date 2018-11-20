@@ -24,7 +24,7 @@ package org.eclipse.cdt.autotools.ui.editors.parser;
 public class AutoconfMacroArgumentElement extends AutoconfElement {
 
 	public AutoconfMacroArgumentElement() {
-		super(""); // //$NON-NLS-N$
+		super(""); //
 	}
 
 	public AutoconfMacroArgumentElement(String name) {

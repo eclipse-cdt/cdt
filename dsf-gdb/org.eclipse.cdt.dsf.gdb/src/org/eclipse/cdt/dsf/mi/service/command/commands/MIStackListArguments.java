@@ -23,7 +23,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListArgumentsInfo;
 
 /**
- * 
+ *
  *    -stack-list-arguments SHOW-VALUES
  *        [ LOW-FRAME HIGH-FRAME ]
  *
@@ -34,7 +34,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListArgumentsInfo;
  *   The SHOW-VALUES argument must have a value of 0 or 1.  A value of 0
  * means that only the names of the arguments are listed, a value of 1
  * means that both names and values of the arguments are printed.
- * 
+ *
  */
 public class MIStackListArguments extends MICommand<MIStackListArgumentsInfo> {
 	public MIStackListArguments(IMIExecutionDMContext execDmc, boolean showValues) {

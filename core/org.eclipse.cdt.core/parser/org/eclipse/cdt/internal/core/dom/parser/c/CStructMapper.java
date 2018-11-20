@@ -60,7 +60,7 @@ public class CStructMapper {
 
 	public ICompositeType mapToAST(ICompositeType type) {
 		if (fStructs == null) {
-			fStructs = new CharArrayMap<IASTName>();
+			fStructs = new CharArrayMap<>();
 			fTranslationUnit.accept(new Visitor());
 		}
 		IASTName name = fStructs.get(type.getNameCharArray());

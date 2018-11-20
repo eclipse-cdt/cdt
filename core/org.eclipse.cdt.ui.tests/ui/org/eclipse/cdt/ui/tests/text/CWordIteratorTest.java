@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
+import org.eclipse.cdt.internal.ui.text.CWordIterator;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.eclipse.cdt.internal.ui.text.CWordIterator;
 
 public class CWordIteratorTest extends BreakIteratorTest {
 

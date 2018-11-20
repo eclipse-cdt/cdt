@@ -22,10 +22,10 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * IProjectExecutablesProvider supplies a list of executables for a project
  * to the Executables Manager.
- * 
+ *
  * @author Warren Paul
  * @since 7.0
- * 
+ *
  */
 public interface IProjectExecutablesProvider {
 

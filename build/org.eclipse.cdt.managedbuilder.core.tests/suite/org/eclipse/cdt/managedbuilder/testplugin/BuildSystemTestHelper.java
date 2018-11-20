@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-import junit.framework.Assert;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -41,6 +39,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.Assert;
 
 public class BuildSystemTestHelper {
 
@@ -125,8 +125,8 @@ public class BuildSystemTestHelper {
 	}
 
 	static public void checkDiff(Object[] expected, Object[] actual) {
-		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<Object>(Arrays.asList(expected));
-		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<Object>(Arrays.asList(actual));
+		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<>(Arrays.asList(expected));
+		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<>(Arrays.asList(actual));
 		LinkedHashSet<? extends Object> set1Copy = new LinkedHashSet<Object>(set1);
 		set1.removeAll(set2);
 		set2.removeAll(set1Copy);

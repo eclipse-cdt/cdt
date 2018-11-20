@@ -765,7 +765,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 */
 	private Vector<IStatus> getGenerationProblems() {
 		if (generationProblems == null) {
-			generationProblems = new Vector<IStatus>();
+			generationProblems = new Vector<>();
 		}
 		return generationProblems;
 	}
@@ -778,7 +778,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @return
 	 */
 	protected String[] getMakeTargets(int buildType) {
-		List<String> args = new ArrayList<String>();
+		List<String> args = new ArrayList<>();
 		switch (buildType) {
 		case CLEAN_BUILD:
 			args.add("clean"); //$NON-NLS-1$
@@ -793,7 +793,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 	protected List<IResource> getResourcesToBuild() {
 		if (resourcesToBuild == null) {
-			resourcesToBuild = new ArrayList<IResource>();
+			resourcesToBuild = new ArrayList<>();
 		}
 		return resourcesToBuild;
 	}
@@ -981,7 +981,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider()
 					.getVariables(cfg, true, true);
 			String[] envp = null;
-			ArrayList<String> envList = new ArrayList<String>();
+			ArrayList<String> envList = new ArrayList<>();
 			if (variables != null) {
 				for (int i = 0; i < variables.length; i++) {
 					envList.add(variables[i].getName() + "=" + variables[i].getValue()); //$NON-NLS-1$
@@ -998,7 +998,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			OutputStream epmOutputStream = epm.getOutputStream();
 
 			// Get the arguments to be passed to make from build model
-			ArrayList<String> makeArgs = new ArrayList<String>();
+			ArrayList<String> makeArgs = new ArrayList<>();
 			String arg = info.getBuildArguments();
 			if (arg.length() > 0) {
 				String[] args = arg.split("\\s"); //$NON-NLS-1$
@@ -1389,12 +1389,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	}
 
 	private Map<IProject, List<IFile>> arrangeFilesByProject(List<IFile> files) {
-		Map<IProject, List<IFile>> projectMap = new HashMap<IProject, List<IFile>>();
+		Map<IProject, List<IFile>> projectMap = new HashMap<>();
 		for (IFile file : files) {
 			IProject project = file.getProject();
 			List<IFile> filesInProject = projectMap.get(project);
 			if (filesInProject == null) {
-				filesInProject = new ArrayList<IFile>();
+				filesInProject = new ArrayList<>();
 				projectMap.put(project, filesInProject);
 			}
 			filesInProject.add(file);
@@ -1442,9 +1442,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		BuildRunnerHelper buildRunnerHelper = new BuildRunnerHelper(project);
 
 		try {
-			monitor.beginTask(
-					ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.buildingProject", //$NON-NLS-1$
-							project.getName()) + ':', TICKS_STREAM_PROGRESS_MONITOR + files.size() * PROGRESS_MONITOR_SCALE);
+			monitor.beginTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.buildingProject", //$NON-NLS-1$
+					project.getName()) + ':', TICKS_STREAM_PROGRESS_MONITOR + files.size() * PROGRESS_MONITOR_SCALE);
 
 			// Get a build console for the project
 			console = CCorePlugin.getDefault().getConsole();
@@ -1484,7 +1483,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				try {
 					IBuildResource buildResource = des.getBuildResource(file);
 
-					Set<IBuildStep> dependentSteps = new HashSet<IBuildStep>();
+					Set<IBuildStep> dependentSteps = new HashSet<>();
 					IBuildIOType depTypes[] = buildResource.getDependentIOTypes();
 					for (IBuildIOType btype : depTypes) {
 						if (btype != null && btype.getStep() != null)
@@ -1585,9 +1584,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		int countDeleted = 0;
 
 		try {
-			monitor.beginTask(
-					ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.cleaningProject", //$NON-NLS-1$
-							project.getName()) + ':', TICKS_STREAM_PROGRESS_MONITOR + files.size() * PROGRESS_MONITOR_SCALE);
+			monitor.beginTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.cleaningProject", //$NON-NLS-1$
+					project.getName()) + ':', TICKS_STREAM_PROGRESS_MONITOR + files.size() * PROGRESS_MONITOR_SCALE);
 
 			// Get a build console for the project
 			console = CCorePlugin.getDefault().getConsole();
@@ -1626,7 +1624,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				try {
 					IBuildResource buildResource = des.getBuildResource(file);
 					if (buildResource != null) {
-						Set<IBuildStep> dependentSteps = new HashSet<IBuildStep>();
+						Set<IBuildStep> dependentSteps = new HashSet<>();
 						IBuildIOType depTypes[] = buildResource.getDependentIOTypes();
 						for (IBuildIOType btype : depTypes) {
 							if (btype != null && btype.getStep() != null)

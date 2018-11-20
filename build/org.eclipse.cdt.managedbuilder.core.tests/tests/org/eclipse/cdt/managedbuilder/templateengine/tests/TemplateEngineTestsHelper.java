@@ -20,8 +20,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -40,18 +38,20 @@ import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
+import junit.framework.TestCase;
+
 /**
- * 
+ *
  * All supporting functions which are not part of Testing class.
- * 
+ *
  * @since 4.0
 */
 
 public class TemplateEngineTestsHelper {
 
 	public static final String LOGGER_FILE_NAME = "TemplateEngineTests"; //$NON-NLS-1$
-	private static List<IProjectType> projectTypes = new ArrayList<IProjectType>();
-	private static List<String> projectTypeNames = new ArrayList<String>();
+	private static List<IProjectType> projectTypes = new ArrayList<>();
+	private static List<String> projectTypeNames = new ArrayList<>();
 
 	/**
 	 * get the url of a xml template, by passing the xml file name.

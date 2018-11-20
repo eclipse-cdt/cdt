@@ -27,7 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 
 /**
- * Reads the text contents from a reader of HTML contents and translates 
+ * Reads the text contents from a reader of HTML contents and translates
  * the tags or cut them out.
  */
 public class HTML2TextReader extends SubstitutionTextReader {
@@ -67,7 +67,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 
 	/**
 	 * Transforms the html text from the reader to formatted text.
-	 * @param presentation If not <code>null</code>, formattings will be applied to 
+	 * @param presentation If not <code>null</code>, formattings will be applied to
 	 * the presentation.
 	*/
 	public HTML2TextReader(Reader reader, TextPresentation presentation) {
@@ -200,7 +200,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 				return null;
 
 			int tagLen = buf.length();
-			// needs special treatment for comments 
+			// needs special treatment for comments
 			if ((tagLen >= 3 && "!--".equals(buf.substring(0, 3))) //$NON-NLS-1$
 					&& !(tagLen >= 5 && "--!".equals(buf.substring(tagLen - 3)))) { //$NON-NLS-1$
 				// unfinished comment

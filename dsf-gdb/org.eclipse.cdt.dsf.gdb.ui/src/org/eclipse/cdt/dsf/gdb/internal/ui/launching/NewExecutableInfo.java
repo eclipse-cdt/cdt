@@ -25,8 +25,8 @@ import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
- * This class provides information required to start 
- * debugging an executable. 
+ * This class provides information required to start
+ * debugging an executable.
  */
 public class NewExecutableInfo {
 
@@ -35,7 +35,7 @@ public class NewExecutableInfo {
 	final private SessionType fSessionType;
 	private String fHostPath = ""; //$NON-NLS-1$
 
-	private Map<String, Object> fAttributes = new HashMap<String, Object>();
+	private Map<String, Object> fAttributes = new HashMap<>();
 
 	public NewExecutableInfo(SessionType sessionType) {
 		super();
@@ -64,7 +64,7 @@ public class NewExecutableInfo {
 	}
 
 	/**
-	 * For remote sessions returns the path of the executable 
+	 * For remote sessions returns the path of the executable
 	 * on the target. Otherwise returns null.
 	 */
 	public String getTargetPath() {

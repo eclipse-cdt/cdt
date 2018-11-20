@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 public interface IConsole {
 	/**
 	 * Start the console for a given project.
-	 * 
+	 *
 	 * @param project - the project to start the console.
 	 */
 	void start(IProject project);

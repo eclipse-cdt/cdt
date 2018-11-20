@@ -36,7 +36,7 @@ public class PathEntryStoreChangedEvent extends EventObject {
 	private final IProject project;
 
 	/**
-	 * 
+	 *
 	 */
 	public PathEntryStoreChangedEvent(IPathEntryStore store, IProject project, int flags) {
 		super(store);

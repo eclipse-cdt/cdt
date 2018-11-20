@@ -27,7 +27,7 @@ import org.eclipse.core.resources.IWorkspace;
 
 /**
  * This supplier suplies the macros that represent the Managed Build environment variables
- * 
+ *
  * @since 3.0
  */
 public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {

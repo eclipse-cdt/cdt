@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
@@ -40,8 +40,8 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * GDB Debugger control implementation.  This implementation extends the 
- * base MI control implementation to provide the GDB-specific debugger 
+ * GDB Debugger control implementation.  This implementation extends the
+ * base MI control implementation to provide the GDB-specific debugger
  * features.  This includes:<br>
  * - CLI console support,<br>
  * - inferior process status tracking.<br>

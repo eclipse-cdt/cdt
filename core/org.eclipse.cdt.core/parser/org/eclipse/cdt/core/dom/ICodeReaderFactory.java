@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 /**
  * This is the interface that an AST Service uses to delegate the construction
  * of a CodeReader.
- * 
+ *
  * @author jcamelon
  * @deprecated replaced by {@link IncludeFileContentProvider}
  * @noreference This interface is not intended to be referenced by clients.
@@ -35,7 +35,7 @@ public interface ICodeReaderFactory {
 
 	/**
 	 * Create CodeReader for translation unit
-	 * 
+	 *
 	 * @param path
 	 *            Canonical Path representing path location for file to be
 	 *            opened
@@ -45,7 +45,7 @@ public interface ICodeReaderFactory {
 
 	/**
 	 * Create CodeReader for inclusion.
-	 * 
+	 *
 	 * @param path
 	 * @return CodeReader for contents at that path.
 	 */

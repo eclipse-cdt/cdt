@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	@Override
@@ -64,7 +64,7 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND,
 				systemBackground.getRed() + "," + systemBackground.getGreen() + "," + systemBackground.getBlue());
 
-		// Set the default background colors, for known memory spaces 
+		// Set the default background colors, for known memory spaces
 		IMemorySpacePreferencesHelper util = TraditionalMemoryRenderingFactory.getMemorySpacesPreferencesHelper();
 		Map<String, String> prefKeyToColor = util.getMemorySpaceDefaultColors();
 

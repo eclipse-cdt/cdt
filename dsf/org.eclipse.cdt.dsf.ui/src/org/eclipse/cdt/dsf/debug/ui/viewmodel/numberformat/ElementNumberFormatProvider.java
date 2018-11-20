@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -51,10 +51,10 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 
 /**
- * Default implementation of the {@link IElementFormatProvider}.  It can be 
- * used within any {@link IVMProvider} to store and persist number-formats 
+ * Default implementation of the {@link IElementFormatProvider}.  It can be
+ * used within any {@link IVMProvider} to store and persist number-formats
  * selected by user for different elements.
- * 
+ *
  * @since 2.5
  */
 public class ElementNumberFormatProvider implements IElementFormatProvider {
@@ -163,7 +163,7 @@ public class ElementNumberFormatProvider implements IElementFormatProvider {
 			@Override
 			protected void handleCompleted() {
 				if (!elementsToRefresh.isEmpty()) {
-					// Send the event to all DSF sessions as they share the same view and the 
+					// Send the event to all DSF sessions as they share the same view and the
 					// change of format will affect them as well.  This is because they key
 					// we use from this implementation of getElementKey() is not specific to
 					// a session (and should not be if we want to have proper persistence).

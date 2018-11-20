@@ -208,7 +208,7 @@ public class CExternalSettingsDeltaProcessor {
 
 	private static <T extends ICSettingEntry> List<T> calculateUpdatedEntries(T current[], ICSettingEntry added[],
 			ICSettingEntry removed[]) {
-		LinkedHashMap<EntryContentsKey, ICSettingEntry> map = new LinkedHashMap<EntryContentsKey, ICSettingEntry>();
+		LinkedHashMap<EntryContentsKey, ICSettingEntry> map = new LinkedHashMap<>();
 		boolean changed = false;
 		if (added != null) {
 			CDataUtil.fillEntriesMapByContentsKey(map, added);
@@ -235,7 +235,7 @@ public class CExternalSettingsDeltaProcessor {
 		}
 		@SuppressWarnings("unchecked")
 		Collection<T> values = (Collection<T>) map.values();
-		return changed ? new ArrayList<T>(values) : null;
+		return changed ? new ArrayList<>(values) : null;
 	}
 
 	private static boolean isSettingCompatible(ICLanguageSetting setting, CExternalSetting provider) {

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -29,6 +29,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 public class PDAContentAssistProcessor implements IContentAssistProcessor {
 
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		int index = offset - 1;
 		StringBuilder prefix = new StringBuilder();
@@ -45,7 +46,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
 			}
 		}
 
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 		String[] keywords = PDAScanner.fgKeywords;
 		if (prefix.length() > 0) {
 			String word = prefix.toString();
@@ -72,6 +73,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		return null;
 	}
@@ -79,6 +81,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
@@ -86,6 +89,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
@@ -93,6 +97,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
@@ -100,6 +105,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
 	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}

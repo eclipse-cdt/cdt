@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - Adapter to use with DSF
@@ -67,7 +67,7 @@ class InstructionPointerManager {
 
 		/**
 		 * Constructs an instruction pointer image.
-		 * 
+		 *
 		 * @param frame stack frame the instruction pointer is associated with
 		 * @param annotationType the type of annotation to display (annotation identifier)
 		 * @param text the message to display with the annotation as hover help
@@ -81,7 +81,7 @@ class InstructionPointerManager {
 
 		/**
 		 * Returns this annotation's image.
-		 * 
+		 *
 		 * @return image
 		 */
 		protected Image getImage() {
@@ -202,18 +202,18 @@ class InstructionPointerManager {
 
 	/**
 	 * Clients must not instantiate this class.
-	 * 
+	 *
 	 * @param presentation
 	 *            the custom instruction pointer presentation or
 	 *            <code>null</code> to use the default presentation
 	 */
 	public InstructionPointerManager(IInstructionPointerPresentation presentation) {
 		fPresentation = presentation;
-		fAnnotationWrappers = new LinkedList<AnnotationWrapper>();
+		fAnnotationWrappers = new LinkedList<>();
 	}
 
 	/**
-	 * Add an instruction pointer annotation in the specified editor for the 
+	 * Add an instruction pointer annotation in the specified editor for the
 	 * specified stack frame.
 	 */
 	public void addAnnotation(ITextEditor textEditor, IStack.IFrameDMContext frame, Position position,

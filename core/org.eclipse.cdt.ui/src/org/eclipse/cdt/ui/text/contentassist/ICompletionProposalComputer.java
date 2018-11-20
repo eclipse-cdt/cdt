@@ -26,7 +26,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  * Contributions to the <tt>org.eclipse.cdt.ui.completionProposalComputer</tt> extension point
  * must implement this interface.
  * </p>
- * 
+ *
  * @since 4.0
  */
 public interface ICompletionProposalComputer {
@@ -41,7 +41,7 @@ public interface ICompletionProposalComputer {
 
 	/**
 	 * Returns a list of completion proposals valid at the given invocation context.
-	 * 
+	 *
 	 * @param context the context of the content assist invocation
 	 * @param monitor a progress monitor to report progress. The monitor is private to this
 	 *        invocation, i.e. there is no need for the receiver to spawn a sub monitor.
@@ -52,7 +52,7 @@ public interface ICompletionProposalComputer {
 
 	/**
 	 * Returns context information objects valid at the given invocation context.
-	 * 
+	 *
 	 * @param context the context of the content assist invocation
 	 * @param monitor a progress monitor to report progress. The monitor is private to this
 	 *        invocation, i.e. there is no need for the receiver to spawn a sub monitor.
@@ -64,7 +64,7 @@ public interface ICompletionProposalComputer {
 	/**
 	 * Returns the reason why this computer was unable to produce any completion proposals or
 	 * context information.
-	 * 
+	 *
 	 * @return an error message or <code>null</code> if no error occurred
 	 */
 	String getErrorMessage();

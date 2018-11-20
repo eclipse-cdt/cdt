@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -45,7 +45,7 @@ public class UnaryExpressionTests extends TestBase {
 		assertEvaluationEquals(2);
 	}
 
-	// constexpr int function() { 
+	// constexpr int function() {
 	//   int n { 0 };
 	//   int m { n++ };
 	//   int o { n++ };
@@ -57,7 +57,7 @@ public class UnaryExpressionTests extends TestBase {
 		assertEvaluationEquals(2);
 	}
 
-	// constexpr int function() { 
+	// constexpr int function() {
 	//   int n { 0 };
 	//   int m { n-- };
 	//   int o { n-- };
@@ -69,7 +69,7 @@ public class UnaryExpressionTests extends TestBase {
 		assertEvaluationEquals(-2);
 	}
 
-	// constexpr int function() { 
+	// constexpr int function() {
 	//   int n { 0 };
 	//   int m { --n };
 	//   int o { --n };
@@ -81,7 +81,7 @@ public class UnaryExpressionTests extends TestBase {
 		assertEvaluationEquals(-2);
 	}
 
-	// constexpr int function() { 
+	// constexpr int function() {
 	//   int n { 0 };
 	//   int m { ++n };
 	//   int o { ++n };
@@ -93,7 +93,7 @@ public class UnaryExpressionTests extends TestBase {
 		assertEvaluationEquals(2);
 	}
 
-	// constexpr int function() { 
+	// constexpr int function() {
 	//   int n { 0 };
 	//   return n++;
 	// }
@@ -103,7 +103,7 @@ public class UnaryExpressionTests extends TestBase {
 		assertEvaluationEquals(0);
 	}
 
-	// constexpr int function() { 
+	// constexpr int function() {
 	//   int n { 0 };
 	//   return n++;
 	// }
@@ -113,7 +113,7 @@ public class UnaryExpressionTests extends TestBase {
 		assertEvaluationEquals(0);
 	}
 
-	// constexpr int function() { 
+	// constexpr int function() {
 	//   int n { 0 };
 	//   return ++n;
 	// }
@@ -123,7 +123,7 @@ public class UnaryExpressionTests extends TestBase {
 		assertEvaluationEquals(1);
 	}
 
-	// constexpr int function() { 
+	// constexpr int function() {
 	//   int n { 0 };
 	//   return --n;
 	// }
@@ -139,7 +139,7 @@ public class UnaryExpressionTests extends TestBase {
 	//	  return x;
 	//	}
 
-	//	constexpr int x = f();	
+	//	constexpr int x = f();
 	public void testPrefixIncrementReturnsLvalue() throws Exception {
 		assertEvaluationEquals(4);
 	}

@@ -83,7 +83,7 @@ public class TemplateCore {
 			throw new TemplateInitializationException(
 					"Unable to load project template. Location URL is null for " + templateInfo.getTemplateId()); //$NON-NLS-1$
 		templateDescriptor = new TemplateDescriptor(descriptorURL, templateInfo.getPluginId());
-		valueStore = new ValueStore<String>(this);
+		valueStore = new ValueStore<>(this);
 		valueStore.putAll(templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement()));
 		valueStore.putAll(TemplateEngine.getSharedDefaults());
 		valueStore.put("projectType", templateInfo.getProjectType()); //$NON-NLS-1$
@@ -99,7 +99,7 @@ public class TemplateCore {
 	 * @return Set
 	 */
 	public Set<String> getAllMissingMacrosInProcesses() {
-		Set<String> set = new TreeSet<String>(allMacrosInProcesses);
+		Set<String> set = new TreeSet<>(allMacrosInProcesses);
 		for (Iterator<String> iter = set.iterator(); iter.hasNext();) {
 			if (valueStore.get(iter.next()) != null) {
 				iter.remove();

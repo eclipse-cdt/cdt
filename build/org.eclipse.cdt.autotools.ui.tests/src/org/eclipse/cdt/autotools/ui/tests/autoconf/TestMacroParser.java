@@ -39,7 +39,7 @@ public class TestMacroParser extends BaseParserTest {
 
 	@Test
 	public void testComments() {
-		// 
+		//
 		String text = "dnl first line\n" + "dnl second line\n";
 		AutoconfElement root = parse(text);
 		Object[] kids = root.getChildren();
@@ -50,7 +50,7 @@ public class TestMacroParser extends BaseParserTest {
 
 	@Test
 	public void testMacroParsing1() {
-		// 
+		//
 		String text = "AC_REQUIRE([AM_SANITY_CHECK])\n" + "";
 		AutoconfElement root = parse(text);
 		assertTreeStructure(root, new String[] { "AC_REQUIRE", "AM_SANITY_CHECK", null });
@@ -76,7 +76,7 @@ public class TestMacroParser extends BaseParserTest {
 
 	@Test
 	public void testMacroParsing2() {
-		// 
+		//
 		String text = "AC_TWO_ARGS(first,second)\n" + "";
 		AutoconfElement root = parse(text);
 		assertTreeStructure(root, new String[] { "AC_TWO_ARGS", "first", "second", null });
@@ -104,7 +104,7 @@ public class TestMacroParser extends BaseParserTest {
 
 	@Test
 	public void testMacroParsing3() {
-		// 
+		//
 		String text = "AC_ONE_ARG( [quoted( arg ), second] )\n" + "";
 		AutoconfElement root = parse(text);
 		assertTreeStructure(root, new String[] { "AC_ONE_ARG", "quoted( arg ), second", null });
@@ -130,7 +130,7 @@ public class TestMacroParser extends BaseParserTest {
 
 	@Test
 	public void testMacroParsing4() {
-		// 
+		//
 		String text = "AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSION],\r\n"
 				+ "         [AM_AUTOMAKE_VERSION([1.4-p6])])\r\n" + "\r\n" + "";
 		AutoconfElement root = parse(text);
@@ -225,7 +225,7 @@ public class TestMacroParser extends BaseParserTest {
 	public void testNoFalseUnmatchedRightParen() {
 		String text = "AC_BAD_MACRO()\n" + "(\n" + "cd foo;\n" + "if test -f myfile; then exit 1; fi\n" + ")\n";
 
-		// nothing but the macro and 'if' is detected as meaningful 
+		// nothing but the macro and 'if' is detected as meaningful
 		AutoconfElement root = parse(text);
 		assertEquals(2, root.getChildren().length);
 		assertTrue(root.getChildren()[0] instanceof AutoconfMacroElement);

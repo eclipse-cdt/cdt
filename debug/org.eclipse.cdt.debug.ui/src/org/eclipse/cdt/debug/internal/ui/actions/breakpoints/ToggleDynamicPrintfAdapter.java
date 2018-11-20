@@ -32,7 +32,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Toggles a dynamic printf in a C/C++ editor.
- * 
+ *
  * @since 7.5
  */
 public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter {
@@ -48,11 +48,11 @@ public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter 
 			IResource resource, int lineNumber) throws CoreException {
 		if (interactive) {
 			ICDynamicPrintf dprintf = (ICDynamicPrintf) CDIDebugModel.createBlankLineDynamicPrintf();
-			Map<String, Object> attributes = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<>();
 			CDIDebugModel.setLineBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), lineNumber, true,
 					0, ""); //$NON-NLS-1$
 
-			// Although the user will be given the opportunity to provide the printf string 
+			// Although the user will be given the opportunity to provide the printf string
 			// in the properties dialog, we pre-fill it with the default string to be nice
 			attributes.put(ICDynamicPrintf.PRINTF_STRING,
 					NLS.bind(Messages.Default_LineDynamicPrintf_String, escapeBackslashes(sourceHandle), lineNumber));
@@ -79,11 +79,11 @@ public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter 
 			IResource resource, String functionName, int charStart, int charEnd, int lineNumber) throws CoreException {
 		if (interactive) {
 			ICDynamicPrintf dprintf = (ICDynamicPrintf) CDIDebugModel.createBlankFunctionDynamicPrintf();
-			Map<String, Object> attributes = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<>();
 			CDIDebugModel.setFunctionBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), functionName,
 					charStart, charEnd, lineNumber, true, 0, ""); //$NON-NLS-1$
 
-			// Although the user will be given the opportunity to provide the printf string 
+			// Although the user will be given the opportunity to provide the printf string
 			// in the properties dialog, we pre-fill it with the default string to be nice
 			dprintf.setPrintfString(NLS.bind(Messages.Default_FunctionDynamicPrintf_String,
 					escapeBackslashes(sourceHandle), functionName));

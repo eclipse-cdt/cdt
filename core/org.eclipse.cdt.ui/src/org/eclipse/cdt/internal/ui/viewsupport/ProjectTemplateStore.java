@@ -20,6 +20,7 @@ import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Assert;
@@ -28,8 +29,6 @@ import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * @since 5.0
@@ -111,7 +110,7 @@ public final class ProjectTemplateStore {
 		if (fProjectStore != null) {
 			fProjectStore.load();
 
-			Set<String> datas = new HashSet<String>();
+			Set<String> datas = new HashSet<>();
 			TemplatePersistenceData[] data = fProjectStore.getTemplateData(false);
 			for (TemplatePersistenceData element : data) {
 				String id = element.getId();

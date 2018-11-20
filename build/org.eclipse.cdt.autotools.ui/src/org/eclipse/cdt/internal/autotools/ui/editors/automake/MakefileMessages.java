@@ -33,7 +33,7 @@ public class MakefileMessages {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @return the resource bundle message
 	 */
@@ -48,7 +48,7 @@ public class MakefileMessages {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @param args an array of substitution strings
 	 * @return the resource bundle message

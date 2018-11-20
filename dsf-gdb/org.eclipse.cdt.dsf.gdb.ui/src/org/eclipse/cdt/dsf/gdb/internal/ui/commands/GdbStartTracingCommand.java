@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -24,8 +24,8 @@ import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl2;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -38,7 +38,7 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * Command to start the tracing experiment
- * 
+ *
  * @since 2.1
  */
 public class GdbStartTracingCommand extends AbstractDebugCommand implements IStartTracingHandler {
@@ -77,7 +77,7 @@ public class GdbStartTracingCommand extends AbstractDebugCommand implements ISta
 							@Override
 							protected void handleCompleted() {
 								traceControl.startTracing(dmc, rm);
-							};
+							}
 						});
 					} else {
 						traceControl.startTracing(dmc, rm);
@@ -147,7 +147,7 @@ public class GdbStartTracingCommand extends AbstractDebugCommand implements ISta
 	 * Re-selection of the debug context will be forced by the Debug Model through a StartTracing event.
 	 * Therefore, the enablement of this command will be refreshed, so we don't need to keep it enabled.
 	 * In fact, it is better to have it disabled right after selection to avoid a double-click
-	 * 
+	 *
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#isRemainEnabled(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */

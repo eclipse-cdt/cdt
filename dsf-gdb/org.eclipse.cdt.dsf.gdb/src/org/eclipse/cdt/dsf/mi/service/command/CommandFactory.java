@@ -257,7 +257,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
 
 /**
  * Factory to create MI/CLI commands.
- * 
+ *
  * @since 3.0
  */
 public class CommandFactory {
@@ -500,21 +500,21 @@ public class CommandFactory {
 
 	public ICommand<MIDataEvaluateExpressionInfo> createMIDataEvaluateExpression(ICommandControlDMContext ctx,
 			String expr) {
-		return new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(ctx, expr);
+		return new MIDataEvaluateExpression<>(ctx, expr);
 	}
 
 	public ICommand<MIDataEvaluateExpressionInfo> createMIDataEvaluateExpression(IMIExecutionDMContext execDmc,
 			String expr) {
-		return new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(execDmc, expr);
+		return new MIDataEvaluateExpression<>(execDmc, expr);
 	}
 
 	public ICommand<MIDataEvaluateExpressionInfo> createMIDataEvaluateExpression(IFrameDMContext frameDmc,
 			String expr) {
-		return new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(frameDmc, expr);
+		return new MIDataEvaluateExpression<>(frameDmc, expr);
 	}
 
 	public ICommand<MIDataEvaluateExpressionInfo> createMIDataEvaluateExpression(IExpressionDMContext exprDmc) {
-		return new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(exprDmc);
+		return new MIDataEvaluateExpression<>(exprDmc);
 	}
 
 	public ICommand<MIDataListRegisterNamesInfo> createMIDataListRegisterNames(IContainerDMContext ctx) {
@@ -931,11 +931,11 @@ public class CommandFactory {
 	}
 
 	public ICommand<MIInfo> createMIInterpreterExec(IDMContext ctx, String interpreter, String cmd) {
-		return new MIInterpreterExec<MIInfo>(ctx, interpreter, cmd);
+		return new MIInterpreterExec<>(ctx, interpreter, cmd);
 	}
 
 	public ICommand<MIInfo> createMIInterpreterExecConsole(IDMContext ctx, String cmd) {
-		return new MIInterpreterExecConsole<MIInfo>(ctx, cmd);
+		return new MIInterpreterExecConsole<>(ctx, cmd);
 	}
 
 	/** @since 4.0 */

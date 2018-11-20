@@ -26,10 +26,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
@@ -47,6 +43,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class ManagedProject21MakefileTests extends TestCase {
 	private IPath resourcesLocation = new Path(
@@ -99,7 +99,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 				}
 			});
 
-			projectList = new ArrayList<IProject>(projectZips.length);
+			projectList = new ArrayList<>(projectZips.length);
 			for (int i = 0; i < projectZips.length; i++) {
 				try {
 					String projectName = projectZips[i].getName();
@@ -125,7 +125,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 			try {
 				IProject project = ManagedBuildTestHelper.createProject(projName, null, location, projectTypeId);
 				if (project != null)
-					projectList = new ArrayList<IProject>(1);
+					projectList = new ArrayList<>(1);
 				projectList.add(project);
 			} catch (Exception e) {
 			}

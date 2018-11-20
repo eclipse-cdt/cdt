@@ -19,9 +19,9 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.ui.newui.CLocationOutputTab;
 
 /**
- * The same as CLocationOutputTab - but can be hidden 
- * in case of managed project 
- * 
+ * The same as CLocationOutputTab - but can be hidden
+ * in case of managed project
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

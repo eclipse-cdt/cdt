@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Dumais (Ericsson) - initial implementation
  *******************************************************************************/
@@ -26,14 +26,14 @@ import org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPlugin;
 import org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-/** 
- * This class encapsulates the messy details of dealing with preferences 
- * entries that have unpredictable key names. This is necessary because the 
+/**
+ * This class encapsulates the messy details of dealing with preferences
+ * entries that have unpredictable key names. This is necessary because the
  * preference store does not allow getting a list of the keys, just a lookup
- * by exact key. So the work-around is to use one key to save a csv string, 
- * containing the information necessary to reconstruct the keys for the 
- * unpredictable entries. 
- * 
+ * by exact key. So the work-around is to use one key to save a csv string,
+ * containing the information necessary to reconstruct the keys for the
+ * unpredictable entries.
+ *
  * @since 1.4
  */
 public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelper {
@@ -63,8 +63,8 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 	*/
 	@Override
 	public void updateMemorySpaces(String[] ids) {
-		List<String> inputIdList = new ArrayList<String>(Arrays.asList(ids));
-		List<String> knownIdList = new ArrayList<String>(Arrays.asList(getMemorySpaceIds()));
+		List<String> inputIdList = new ArrayList<>(Arrays.asList(ids));
+		List<String> knownIdList = new ArrayList<>(Arrays.asList(getMemorySpaceIds()));
 		int nextIdIndex = knownIdList.size();
 		boolean newIds;
 
@@ -86,7 +86,7 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 	}
 
 	/**
-	 * Saves a set of memory space ids, as a CSV string, into the 
+	 * Saves a set of memory space ids, as a CSV string, into the
 	 * preferences store
 	 */
 	private void setMemorySpaceIds(String[] memorySpaces) {
@@ -111,7 +111,7 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.ui.internal.IMemorySpacesPreferencesUtil#getMemorySpacesLabels()
 	 */
 	@Override
@@ -133,14 +133,14 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.ui.internal.IMemorySpacesPreferencesUtil#getMemorySpaceDefaultColors()
 	 */
 	@Override
 	public Map<String, String> getMemorySpaceDefaultColors() {
 		String prefix = TraditionalRenderingPreferenceConstants.MEM_MEMORY_SPACE_ID_PREFIX;
 		String[] ids = getMemorySpaceIds();
-		Map<String, String> mapKeyToColor = new HashMap<String, String>();
+		Map<String, String> mapKeyToColor = new HashMap<>();
 		String key, color;
 		for (int i = 0; i < ids.length; i++) {
 			key = prefix + ids[i];
@@ -162,7 +162,7 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 	/**
 	 * @return a csv string representation of a color. A color array is defined
 	 *  in this class. The entry returned corresponds to the index parameter, and
-	 *  wraps around if the index is greater than the number of defined colors 
+	 *  wraps around if the index is greater than the number of defined colors
 	 */
 	private String getColor(int index) {
 		// wrap-around if we have exhausted the pool

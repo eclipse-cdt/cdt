@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class PDAVirtualMachine {
@@ -59,7 +59,7 @@ public class PDAVirtualMachine {
 		String fName;
 		String fGroup = "<no_group>";
 		boolean fIsWriteable = true;
-		Map<String, BitField> fBitFields = new LinkedHashMap<String, BitField>(0);
+		Map<String, BitField> fBitFields = new LinkedHashMap<>(0);
 		int fValue;
 	}
 
@@ -71,10 +71,10 @@ public class PDAVirtualMachine {
 		String fName;
 		int fBitOffset;
 		int fBitCount;
-		Map<String, Integer> fMnemonics = new LinkedHashMap<String, Integer>(0);
+		Map<String, Integer> fMnemonics = new LinkedHashMap<>(0);
 	}
 
-	Map<String, Register> fRegisters = new LinkedHashMap<String, Register>(0);
+	Map<String, Register> fRegisters = new LinkedHashMap<>(0);
 
 	class Args {
 		final String[] fArgs;
@@ -141,7 +141,7 @@ public class PDAVirtualMachine {
 		Map<String, Integer> fThreadLabels;
 
 		/** The stack of stack frames (the control stack) */
-		final List<Frame> fFrames = new LinkedList<Frame>();
+		final List<Frame> fFrames = new LinkedList<>();
 
 		/** Current stack frame (not includced in fFrames) */
 		Frame fCurrentFrame;
@@ -170,7 +170,7 @@ public class PDAVirtualMachine {
 		}
 	}
 
-	final Map<Integer, PDAThread> fThreads = new LinkedHashMap<Integer, PDAThread>();
+	final Map<Integer, PDAThread> fThreads = new LinkedHashMap<>();
 
 	int fNextThreadId = 1;
 
@@ -186,7 +186,7 @@ public class PDAVirtualMachine {
 
 	/** Each stack frame is a mapping of variable names to values. */
 	class Frame {
-		final Map<String, Object> fLocalVariables = new LinkedHashMap<String, Object>();
+		final Map<String, Object> fLocalVariables = new LinkedHashMap<>();
 
 		/**
 		 * The name of the function in this frame
@@ -327,7 +327,7 @@ public class PDAVirtualMachine {
 	 * Breakpoints are stored per each each line of code.  The boolean indicates
 	 * whether the whole VM should suspend or just the triggering thread.
 	 */
-	final Map<Integer, Boolean> fBreakpoints = new HashMap<Integer, Boolean>();
+	final Map<Integer, Boolean> fBreakpoints = new HashMap<>();
 
 	/**
 	 * The suspend flag is true if the VM should suspend running the program and
@@ -373,7 +373,7 @@ public class PDAVirtualMachine {
 	OutputStream fEventStream;
 
 	/** The eventstops table holds which events cause suspends and which do not. */
-	final Map<String, Boolean> fEventStops = new HashMap<String, Boolean>();
+	final Map<String, Boolean> fEventStops = new HashMap<>();
 	{
 		fEventStops.put("unimpinstr", false);
 		fEventStops.put("nosuchlabel", false);
@@ -383,13 +383,13 @@ public class PDAVirtualMachine {
 	 * The watchpoints table holds watchpoint information.
 	 * <p/>
 	 * variablename_stackframedepth => N
-	 * <ul> 
-	 * <li>N = 0 is no watch</li> 
+	 * <ul>
+	 * <li>N = 0 is no watch</li>
 	 * <li>N = 1 is read watch</li>
 	 * <li>N = 2 is write watch</li>
 	 * <li>N = 3 is both, etc.</li>
 	 */
-	final Map<String, Integer> fWatchpoints = new HashMap<String, Integer>();
+	final Map<String, Integer> fWatchpoints = new HashMap<>();
 
 	public static void main(String[] args) {
 		String programFile = args.length >= 1 ? args[0] : null;
@@ -438,7 +438,7 @@ public class PDAVirtualMachine {
 		// Load all the code into memory
 		try (FileReader fileReader = new FileReader(inputFile)) {
 			StringWriter stringWriter = new StringWriter();
-			List<String> code = new LinkedList<String>();
+			List<String> code = new LinkedList<>();
 			int c = fileReader.read();
 			while (c != -1) {
 				if (c == '\n') {
@@ -464,7 +464,7 @@ public class PDAVirtualMachine {
 	 * Initializes the labels map
 	 */
 	Map<String, Integer> mapLabels(String[] code) {
-		Map<String, Integer> labels = new HashMap<String, Integer>();
+		Map<String, Integer> labels = new HashMap<>();
 		for (int i = 0; i < code.length; i++) {
 			if (code[i].length() != 0 && code[i].charAt(0) == ':') {
 				labels.put(code[i].substring(1), i);
@@ -552,10 +552,10 @@ public class PDAVirtualMachine {
 						thread.fRun = false;
 					} else if (thread.fStepReturn) {
 						// If this thread is in a step-return operation, check
-						// if we've returned from a call.  
+						// if we've returned from a call.
 						instruction = thread.fThreadCode[thread.fCurrentFrame.fPC];
 						if ("return".equals(instruction)) {
-							// Note: this will only be triggered if the current 
+							// Note: this will only be triggered if the current
 							// thread also has the fStepReturn flag set.
 							if (fStepReturnVM) {
 								fSuspendVM = thread.fID + " step";
@@ -597,7 +597,7 @@ public class PDAVirtualMachine {
 	void doOneInstruction(PDAThread thread, String instr) {
 		StringTokenizer tokenizer = new StringTokenizer(instr);
 		String op = tokenizer.nextToken();
-		List<String> tokens = new LinkedList<String>();
+		List<String> tokens = new LinkedList<>();
 		while (tokenizer.hasMoreTokens()) {
 			tokens.add(tokenizer.nextToken());
 		}
@@ -749,7 +749,7 @@ public class PDAVirtualMachine {
 		}
 
 		String command = tokenizer.nextToken();
-		List<String> tokens = new LinkedList<String>();
+		List<String> tokens = new LinkedList<>();
 		while (tokenizer.hasMoreTokens()) {
 			tokens.add(tokenizer.nextToken());
 		}
@@ -827,7 +827,7 @@ public class PDAVirtualMachine {
 		Frame frame = sfnumber >= thread.fFrames.size() ? thread.fCurrentFrame : thread.fFrames.get(sfnumber);
 
 		String varDot = var + ".";
-		List<String> children = new ArrayList<String>();
+		List<String> children = new ArrayList<>();
 		for (String localVar : frame.fLocalVariables.keySet()) {
 			if (localVar.startsWith(varDot) && localVar.indexOf('.', varDot.length() + 1) == -1) {
 				children.add(localVar);
@@ -985,7 +985,7 @@ public class PDAVirtualMachine {
 	}
 
 	void debugGroups(Args args) {
-		TreeSet<String> groups = new TreeSet<String>();
+		TreeSet<String> groups = new TreeSet<>();
 		for (Register reg : fRegisters.values()) {
 			groups.add(reg.fGroup);
 		}
@@ -1188,13 +1188,13 @@ public class PDAVirtualMachine {
 			return;
 		}
 
-		// Set suspend to null to allow the debug loop to exit back to the 
-		// instruction loop and thus run an instruction. However, we want to 
-		// come back to the debug loop right away, so the step flag is set to 
-		// true which will cause the suspend flag to get set to true when we 
+		// Set suspend to null to allow the debug loop to exit back to the
+		// instruction loop and thus run an instruction. However, we want to
+		// come back to the debug loop right away, so the step flag is set to
+		// true which will cause the suspend flag to get set to true when we
 		// get to the next instruction.
 		if (fSuspendVM != null) {
-			// All threads are suspended, so suspend all threads again when 
+			// All threads are suspended, so suspend all threads again when
 			// step completes.
 			fSuspendVM = null;
 			fStepVM = true;

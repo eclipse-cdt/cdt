@@ -42,7 +42,7 @@ public class DisassemblyToggleBreakpointsTarget extends AbstractDisassemblyBreak
 	protected void createLineBreakpointInteractive(IWorkbenchPart part, String sourceHandle, IResource resource,
 			int lineNumber) throws CoreException {
 		ICLineBreakpoint lineBp = CDIDebugModel.createBlankLineBreakpoint();
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		CDIDebugModel.setLineBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), lineNumber, true, 0,
 				""); //$NON-NLS-1$
 		openBreakpointPropertiesDialog(lineBp, part, resource, attributes);
@@ -60,7 +60,7 @@ public class DisassemblyToggleBreakpointsTarget extends AbstractDisassemblyBreak
 	protected void createAddressBreakpointInteractive(IWorkbenchPart part, IResource resource, IAddress address)
 			throws CoreException {
 		ICLineBreakpoint lineBp = CDIDebugModel.createBlankAddressBreakpoint();
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		CDIDebugModel.setAddressBreakpointAttributes(attributes, null, null, getBreakpointType(), -1, address, true, 0,
 				""); //$NON-NLS-1$
 		openBreakpointPropertiesDialog(lineBp, part, resource, attributes);

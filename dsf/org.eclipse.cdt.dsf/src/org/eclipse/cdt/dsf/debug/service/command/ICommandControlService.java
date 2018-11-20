@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,17 +18,17 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
- * Service which acts as a command control. 
- * 
+ * Service which acts as a command control.
+ *
  * @since 1.1
  */
 public interface ICommandControlService extends ICommandControl, IDsfService {
 
 	/**
 	 * Context representing a command control service.  All contexts which
-	 * originate from a given command control service, should have that 
+	 * originate from a given command control service, should have that
 	 * control's context in their hierarchy.
-	 * 
+	 *
 	 * @see ICommandControlService#getContext()
 	 */
 	public interface ICommandControlDMContext extends IDMContext {
@@ -43,17 +43,17 @@ public interface ICommandControlService extends ICommandControl, IDsfService {
 	 * Event indicating that the back end process has started.
 	 */
 	public interface ICommandControlInitializedDMEvent extends IDMEvent<ICommandControlDMContext> {
-	};
+	}
 
 	/**
 	 * Event indicating that the back end process has terminated.
 	 */
 	public interface ICommandControlShutdownDMEvent extends IDMEvent<ICommandControlDMContext> {
-	};
+	}
 
 	/**
-	 * Returns the identifier of this command control service.  It can be used 
-	 * to distinguish between multiple instances of command control services.   
+	 * Returns the identifier of this command control service.  It can be used
+	 * to distinguish between multiple instances of command control services.
 	 */
 	public String getId();
 
@@ -63,7 +63,7 @@ public interface ICommandControlService extends ICommandControl, IDsfService {
 	public ICommandControlDMContext getContext();
 
 	/**
-	 * Returns whether this command control is currently active.  A command 
+	 * Returns whether this command control is currently active.  A command
 	 * control service is active if it has been initialized and has not yet
 	 * shut down.
 	 * @return

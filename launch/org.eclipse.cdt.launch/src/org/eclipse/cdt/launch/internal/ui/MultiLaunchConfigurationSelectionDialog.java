@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
@@ -124,7 +124,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	protected Control createDialogArea(Composite parent2) {
 		Composite comp = (Composite) super.createDialogArea(parent2);
 
-		// title bar 
+		// title bar
 		getShell().setText(fForEditing ? LaunchMessages.MultiLaunchConfigurationSelectionDialog_13
 				: LaunchMessages.MultiLaunchConfigurationSelectionDialog_12);
 
@@ -133,7 +133,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 				: LaunchMessages.MultiLaunchConfigurationSelectionDialog_14);
 
 		fStackComposite = new ComboControlledStackComposite(comp, SWT.NONE);
-		HashMap<String, ILaunchGroup> modes = new HashMap<String, ILaunchGroup>();
+		HashMap<String, ILaunchGroup> modes = new HashMap<>();
 		for (ILaunchGroup launchGroup : launchGroups) {
 			if (!modes.containsKey(launchGroup.getMode())) {
 				modes.put(launchGroup.getMode(), launchGroup);
@@ -270,7 +270,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	}
 
 	public ILaunchConfiguration[] getSelectedLaunchConfigurations() {
-		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> configs = new ArrayList<>();
 		if (fSelection != null && !fSelection.isEmpty()) {
 			for (Iterator<?> iter = ((IStructuredSelection) fSelection).iterator(); iter.hasNext();) {
 				Object selection = iter.next();

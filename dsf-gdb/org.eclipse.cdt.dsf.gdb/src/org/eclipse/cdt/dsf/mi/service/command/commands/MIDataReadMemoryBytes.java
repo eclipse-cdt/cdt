@@ -23,15 +23,15 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * -data-read-memory-bytes [ -o BYTE-OFFSET ]
  *                           ADDRESS COUNT
  * where:
- * 
+ *
  * `ADDRESS'
  *     An expression specifying the address of the first memory word to be
  *     read.  Complex expressions containing embedded white space should
  *     be quoted using the C convention.
- *     
+ *
  * `COUNT'
  *     The number of addressable units to read.  This should be an integer literal.
- *     
+ *
  * `BYTE-OFFSET'
  *     The offset in addressable units relative to ADDRESS at which to start
  *     reading.  This should be an integer literal.  This option is

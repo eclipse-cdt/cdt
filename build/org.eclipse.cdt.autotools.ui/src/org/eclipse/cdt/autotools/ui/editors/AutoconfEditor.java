@@ -102,8 +102,8 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 
 	/** The information provider used to present focusable information shells. */
 	private InformationPresenter fInformationPresenter;
-	/** 
-	 * This editor's projection support 
+	/**
+	 * This editor's projection support
 	 */
 
 	ProjectionSupport fProjectionSupport;
@@ -273,9 +273,9 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 
 	/**
 	 * Handle the case whereby the Autoconf or Automake macro versions to use
-	 * for this project are changed in which case we want to invalidate and reparse 
+	 * for this project are changed in which case we want to invalidate and reparse
 	 * the document.
-	 * 
+	 *
 	 * @param sourceViewer
 	 */
 	protected void handleVersionChange(ISourceViewer sourceViewer) {
@@ -433,7 +433,7 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 
 		/**
 		 * Tries to make a text hover focusable (or "sticky").
-		 * 
+		 *
 		 * @param sourceViewer the source viewer to display the hover over
 		 * @param textHover the hover to make focusable
 		 * @return <code>true</code> if successful, <code>false</code> otherwise
@@ -477,7 +477,7 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 
 		/**
 		 * Tries to make an annotation hover focusable (or "sticky").
-		 * 
+		 *
 		 * @param sourceViewer the source viewer to display the hover over
 		 * @param annotationHover the hover to make focusable
 		 * @return <code>true</code> if successful, <code>false</code> otherwise
@@ -511,7 +511,7 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 
 				IInformationControlCreator controlCreator = null;
 
-				//    			/* 
+				//    			/*
 				//    			 * XXX: This is a hack to avoid API changes at the end of 3.2,
 				//    			 * and should be fixed for 3.3, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=137967
 				//    			 */
@@ -580,7 +580,7 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 	/**
 	 * Adds the given listener.
 	 * Has no effect if an identical listener was not already registered.
-	 * 
+	 *
 	 * @param listener	The reconcile listener to be added
 	 */
 	@Override
@@ -593,7 +593,7 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 	/**
 	 * Removes the given listener.
 	 * Has no effect if an identical listener was not already registered.
-	 * 
+	 *
 	 * @param listener	the reconcile listener to be removed
 	 */
 	final void removeReconcilingParticipant(IReconcilingParticipant listener) {
@@ -628,7 +628,7 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 	@Override
 	protected void createActions() {
 		super.createActions();
-		// TODO: Figure out how to do this later. 		
+		// TODO: Figure out how to do this later.
 		//  	fFoldingGroup= new FoldingActionGroup(this, getSourceViewer());
 
 		// Sticky hover support
@@ -650,14 +650,14 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 	}
 
 	/**
-	 * The <code>AbstractTextEditor</code> implementation of this 
+	 * The <code>AbstractTextEditor</code> implementation of this
 	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
 	 * source viewer. Subclasses may extend.
-	 * 
-	 * We attach our own mouseDown listener on the menu bar, 
+	 *
+	 * We attach our own mouseDown listener on the menu bar,
 	 * and our own listener for cursor/key/selection events to update cursor position in
 	 * status bar.
-	
+
 	 * @param parent Parent composite of the control.
 	 */
 	@Override

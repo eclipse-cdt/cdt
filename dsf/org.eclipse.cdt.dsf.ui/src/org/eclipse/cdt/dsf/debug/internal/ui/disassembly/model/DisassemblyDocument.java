@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Bug 315443
@@ -61,16 +61,16 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * Use the add/remove methods. Note that we're not the only ones that
 	 * manipulate the list. This list should be accessed only from the GUI thread
 	 */
-	private final List<AddressRangePosition> fInvalidAddressRanges = new ArrayList<AddressRangePosition>();
+	private final List<AddressRangePosition> fInvalidAddressRanges = new ArrayList<>();
 
 	/**
 	 * For ease of troubleshooting, don't add or remove from this list directly.
 	 * Use the add/remove methods. Note that we're not the only ones that
 	 * manipulate the list. This list should be accessed only from the GUI thread
 	 */
-	private final List<SourcePosition> fInvalidSource = new ArrayList<SourcePosition>();
+	private final List<SourcePosition> fInvalidSource = new ArrayList<>();
 
-	private final Map<IStorage, SourceFileInfo> fFileInfoMap = new HashMap<IStorage, SourceFileInfo>();
+	private final Map<IStorage, SourceFileInfo> fFileInfoMap = new HashMap<>();
 
 	private int fMaxFunctionLength = 0;
 	private BigInteger fMaxOpcodeLength = null;
@@ -221,11 +221,11 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * Computes the index in the list of positions at which a position with the
 	 * given address would be inserted. The position is supposed to become the
 	 * first in this list of all positions with the same offset.
-	 * 
+	 *
 	 * @param positions the list in which the index is computed
 	 * @param address the address for which the index is computed
 	 * @return the computed index
-	 * 
+	 *
 	 */
 	protected int computeIndexInPositionListFirst(List<Position> positions, BigInteger address) {
 		int size = positions.size();
@@ -271,11 +271,11 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * Computes the index in the list of positions at which a position with the
 	 * given address would be inserted. The position is supposed to become the
 	 * last but one in this list of all positions with the same address.
-	 * 
+	 *
 	 * @param positions the list in which the index is computed
 	 * @param address the address for which the index is computed
 	 * @return the computed index
-	 * 
+	 *
 	 */
 	protected int computeIndexInPositionListLast(List<Position> positions, BigInteger address) {
 		int size = positions.size();
@@ -320,11 +320,11 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * Computes the index in the list of positions at which a position with the
 	 * given offset would be inserted. The position is supposed to become the
 	 * last in this list of all positions with the same offset.
-	 * 
+	 *
 	 * @param positions the list in which the index is computed
 	 * @param offset the offset for which the index is computed
 	 * @return the computed index
-	 * 
+	 *
 	 * @see IDocument#computeIndexInCategory(String, int)
 	 * @deprecated Use {@link #computeIndexInPositionListLast(List, BigInteger)}
 	 * as it is for managing lists of AddressRangePositions
@@ -377,7 +377,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 
 	/**
 	 * Returns the position for the supplied category and index.
-	 * 
+	 *
 	 * @param category
 	 * @param index
 	 * @return a Position matching the category and index, or <code>null</code>.
@@ -442,7 +442,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 
 	/**
 	 * Compute the address of the given document line number.
-	 * 
+	 *
 	 * @param line
 	 * @return the address of the given document line number, -1 if no valid
 	 *         address can be computed
@@ -460,7 +460,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 
 	/**
 	 * Compute the address off the given document offset.
-	 * 
+	 *
 	 * @param offset
 	 * @return the address of the given document offset, -1 if no valid address
 	 *         can be computed
@@ -558,7 +558,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 
 	/**
 	 * Compute document position of the given source line.
-	 * 
+	 *
 	 * @param file  the file as an <code>IStorage</code>
 	 * @param lineNumber  the 0-based line number
 	 * @return the document position or <code>null</code>
@@ -570,7 +570,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 
 	/**
 	 * Compute document position of the given source line.
-	 * 
+	 *
 	 * @param fileName  the file name, may be a raw debugger path or the path to an external file
 	 * @param lineNumber  the 0-based line number
 	 * @return the document position or <code>null</code>
@@ -585,7 +585,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 
 	/**
 	 * Compute document position of the given source line.
-	 * 
+	 *
 	 * @param info
 	 * @param lineNumber  the 0-based line number
 	 * @return the document position or <code>null</code>
@@ -1267,7 +1267,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @param address
 	 * @param fi
 	 * @param firstLine
-	 * @param lastLine 
+	 * @param lastLine
 	 * @return
 	 */
 	public AddressRangePosition insertInvalidSource(AddressRangePosition pos, BigInteger address, SourceFileInfo fi,
@@ -1326,7 +1326,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			String replacement = invalidate ? "...\n" : null; //$NON-NLS-1$
 			int replaceLen = replacement != null ? replacement.length() : 0;
 			AddressRangePosition lastPos = null;
-			ArrayList<AddressRangePosition> toRemove = new ArrayList<AddressRangePosition>();
+			ArrayList<AddressRangePosition> toRemove = new ArrayList<>();
 			Iterator<Position> it = getModelPositionIterator(startAddress);
 			while (it.hasNext()) {
 				AddressRangePosition pos = (AddressRangePosition) it.next();
@@ -1428,7 +1428,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	public boolean removeInvalidSourcePosition(SourcePosition srcPos) {
 		assert isGuiThread();
 		if (DEBUG)
-			System.out.println("Removing invalid source position from list: " + srcPos); //$NON-NLS-1$		
+			System.out.println("Removing invalid source position from list: " + srcPos); //$NON-NLS-1$
 		return fInvalidSource.remove(srcPos);
 	}
 
@@ -1471,7 +1471,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		}
 		BigInteger startAddress = BigInteger.ZERO;
 		BigInteger addressLength = BigInteger.ZERO;
-		ArrayList<AddressRangePosition> toRemove = new ArrayList<AddressRangePosition>();
+		ArrayList<AddressRangePosition> toRemove = new ArrayList<>();
 		try {
 			Iterator<Position> it = getPositionIterator(DisassemblyDocument.CATEGORY_MODEL, startAddress);
 			while (it.hasNext()) {

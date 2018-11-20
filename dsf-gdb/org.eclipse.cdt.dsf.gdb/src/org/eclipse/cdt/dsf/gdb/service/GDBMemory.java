@@ -10,7 +10,7 @@
  *
  * Contributors:
  * 		Mentor Graphics - Initial API and implementation
- * 		John Dallaway - Add methods to get the endianness and address size (Bug 225609) 
+ * 		John Dallaway - Add methods to get the endianness and address size (Bug 225609)
  * 		Philippe Gil (AdaCore) - Switch to c language when getting sizeof(void *) when required (Bug 421541)
  *      Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
@@ -58,17 +58,17 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	private IGDBControl fCommandControl;
 
 	/**
-	 * Cache of the address sizes for each memory context. 
+	 * Cache of the address sizes for each memory context.
 	 */
-	private Map<IMemoryDMContext, Integer> fAddressSizes = new HashMap<IMemoryDMContext, Integer>();
+	private Map<IMemoryDMContext, Integer> fAddressSizes = new HashMap<>();
 
 	/**
-	 * Cache of the addressable sizes for each memory context. 
+	 * Cache of the addressable sizes for each memory context.
 	 */
-	private Map<IMemoryDMContext, Integer> fAddressableSizes = new HashMap<IMemoryDMContext, Integer>();
+	private Map<IMemoryDMContext, Integer> fAddressableSizes = new HashMap<>();
 
 	/**
-	 * Cache of the endianness for each memory context. 
+	 * Cache of the endianness for each memory context.
 	 */
 	private Map<IMemoryDMContext, Boolean> fIsBigEndian = new HashMap<>();
 
@@ -136,7 +136,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 			private Step[] steps = null;
 
 			private void determineSteps() {
-				ArrayList<Step> stepsList = new ArrayList<Step>();
+				ArrayList<Step> stepsList = new ArrayList<>();
 
 				if (fAddressSizes.get(memContext) == null) {
 					stepsList.add(new Step() {
@@ -339,7 +339,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	}
 
 	/**
-	 * Address size is determined by space, in octets, used to store an address value (e.g. a pointer) on a target system. 
+	 * Address size is determined by space, in octets, used to store an address value (e.g. a pointer) on a target system.
 	 *
 	 * <p>NOTE: Implementation requires addressable memory size to be known</p>
 	 * @param memContext
@@ -357,7 +357,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 					@Override
 					protected void handleSuccess() {
 						try {
-							// 'sizeof' returns number of bytes (aka 'chars'). 
+							// 'sizeof' returns number of bytes (aka 'chars').
 							// Multiply with byte size in octets to get storage required to hold a pointer.
 							Integer ptrBytes = Integer.decode(getData().getValue());
 							drm.setData(ptrBytes * getAddressableSize(memContext));
@@ -373,18 +373,18 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	/**
 	 * The minimum addressable size is determined by the space used to store a "char" on a target system
 	 * This is then resolved by retrieving a hex representation of -1 casted to the size of a "char"
-	 * e.g. from GDB command line 
+	 * e.g. from GDB command line
 	 *    > p/x (char)-1
-	 *    > $7 = 0xffff 
-	 *    
+	 *    > $7 = 0xffff
+	 *
 	 * Since two hex characters are representing one octet, for the above example this method should return 2
 	 * @since 4.4
-	 * 
+	 *
 	 */
 	protected void readAddressableSize(IMemoryDMContext memContext, final DataRequestMonitor<Integer> drm) {
-		//We use a CLI command here instead of the expression services, since the target may not be available 
-		//e.g. when using a remote launch.  
-		// Using MI directly is a possibility although there is no way to specify the required output format to hex. 
+		//We use a CLI command here instead of the expression services, since the target may not be available
+		//e.g. when using a remote launch.
+		// Using MI directly is a possibility although there is no way to specify the required output format to hex.
 		CommandFactory commandFactory = fCommandControl.getCommandFactory();
 		fCommandControl.queueCommand(commandFactory.createCLIAddressableSize(memContext),
 				new DataRequestMonitor<CLIAddressableSizeInfo>(ImmediateExecutor.getInstance(), drm) {

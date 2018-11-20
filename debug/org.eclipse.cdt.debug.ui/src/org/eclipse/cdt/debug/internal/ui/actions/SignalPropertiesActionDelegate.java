@@ -36,7 +36,7 @@ public class SignalPropertiesActionDelegate extends ActionDelegate implements IO
 
 	/**
 	 * Constructor for SignalPropertiesActionDelegate.
-	 * 
+	 *
 	 */
 	public SignalPropertiesActionDelegate() {
 		super();

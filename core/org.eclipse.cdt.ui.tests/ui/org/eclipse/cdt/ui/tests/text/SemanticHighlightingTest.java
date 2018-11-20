@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
@@ -24,17 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.swt.graphics.RGB;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -46,19 +35,28 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.testplugin.Accessor;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingPresenter;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.testplugin.Accessor;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.swt.graphics.RGB;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -207,7 +205,7 @@ public class SemanticHighlightingTest extends TestCase {
 
 		List<String>[] expected = new List[lines];
 		for (int i = 0; i < lines; ++i) {
-			expected[i] = new ArrayList<String>();
+			expected[i] = new ArrayList<>();
 		}
 		for (IASTComment comment : fAST.getComments()) {
 			String contents = new String(comment.getComment());
@@ -221,7 +219,7 @@ public class SemanticHighlightingTest extends TestCase {
 
 		List<String>[] actual = new List[lines];
 		for (int i = 0; i < lines; ++i) {
-			actual[i] = new ArrayList<String>();
+			actual[i] = new ArrayList<>();
 		}
 		for (Position p : getSemanticHighlightingPositions()) {
 			assertTrue(p instanceof HighlightedPosition);
@@ -292,7 +290,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//class ClassContainer : Base1, Base2 {              //$class,class,class
 	//    friend void friendFunc();                      //$functionDeclaration
 	//    friend class FriendClass;                      //$class
-	//    
+	//
 	//public:
 	//    static int staticPubField;                     //$staticField
 	//    const int constPubField;                       //$field
@@ -311,7 +309,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//    class pubStruct{};                             //$class
 	//    class pubUnion{};                              //$class
 	//    typedef pubClass pubTypedef;                   //$class,typedef
-	//    
+	//
 	//protected:
 	//    static const int constStaticProtField = 12;    //$staticField
 	//    static int staticProtField;                    //$staticField
@@ -326,7 +324,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//    class protStruct{};                            //$class
 	//    class protUnion{};                             //$class
 	//    typedef protClass protTypedef;                 //$class,typedef
-	//    
+	//
 	//private:
 	//    static const int constStaticPrivField = 12;    //$staticField
 	//    static int staticPrivField;                    //$staticField
@@ -447,13 +445,13 @@ public class SemanticHighlightingTest extends TestCase {
 	//class Base2 {};                                    //$class
 	//
 	//class ClassContainer : Base1, Base2 {              //$class,class,class
-	//    
+	//
 	//public:
 	//    enum class pubEnumerationClass {pubEnum};      //$enumClass,enumerator
-	//    
+	//
 	//protected:
 	//    enum class protEnumerationClass {protEnum};    //$enumClass,enumerator
-	//    
+	//
 	//private:
 	//    enum class privEnumerationClass {privEnum};    //$enumClass,enumerator
 	//
@@ -465,8 +463,8 @@ public class SemanticHighlightingTest extends TestCase {
 
 	//  class C {                                        //$class
 	//    template <typename T> void bar(T);             //$templateParameter,methodDeclaration,templateParameter
-	//  };  
-	//  
+	//  };
+	//
 	//  template <typename U>                            //$templateParameter
 	//  void foo(U u) {                                  //$functionDeclaration,templateParameter,parameterVariable
 	//    C().bar(u);                                    //$class,method,parameterVariable
@@ -546,7 +544,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//	void foo(int param) {                            //$functionDeclaration,parameterVariable
 	//		int local;                                   //$localVariableDeclaration
 	//		[local, param](){};                          //$class,localVariable,parameterVariable
-	//	}    
+	//	}
 	public void testLocalVariableInLambdaCapture_486679() throws Exception {
 		makeAssertions();
 	}
@@ -642,7 +640,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//	#define IF(bit, t, f) IF_ ## bit(t, f)           //$macroDefinition
 	//	#define WALDO                                    //$macroDefinition
 	//	#define MAIN(...) int main() { __VA_ARGS__ }     //$macroDefinition
-	//	
+	//
 	//	MAIN                                             //$macroSubstitution
 	//	(
 	//	    int x;                                       //$localVariableDeclaration
@@ -665,7 +663,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//	void foo(int&);                                  //$functionDeclaration
 	//	struct S {                                       //$class
 	//		int x;                                       //$field
-	//  };                                     
+	//  };
 	//	void bar(int x) {                                //$functionDeclaration,parameterVariable
 	//		foo(x);                                      //$function,variablePassedByNonconstRef
 	//		S s;                                         //$class,localVariableDeclaration

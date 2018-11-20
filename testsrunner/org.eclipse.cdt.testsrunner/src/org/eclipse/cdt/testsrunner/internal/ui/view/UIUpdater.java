@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,11 +21,11 @@ import java.util.Set;
 
 import org.eclipse.cdt.testsrunner.internal.model.ITestingSessionsManagerListener;
 import org.eclipse.cdt.testsrunner.internal.model.TestingSessionsManager;
+import org.eclipse.cdt.testsrunner.model.ITestCase;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
+import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
 import org.eclipse.cdt.testsrunner.model.ITestingSessionListener;
-import org.eclipse.cdt.testsrunner.model.ITestCase;
-import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -75,7 +75,7 @@ public class UIUpdater {
 	/** Time interval over which the UI should be updated. */
 	private static final int REFRESH_INTERVAL = 200;
 
-	/** 
+	/**
 	 * Storage for the UI changes that should be done on update.
 	 */
 	private class UIChangesCache {
@@ -102,19 +102,19 @@ public class UIUpdater {
 		 * Set of tree objects on which <code>refresh()</code> should be called
 		 * during the next UI update.
 		 */
-		private Set<Object> treeItemsToRefresh = new HashSet<Object>();
+		private Set<Object> treeItemsToRefresh = new HashSet<>();
 
 		/**
 		 * Set of tree objects on which <code>update()</code> should be called
 		 * during the next UI update.
 		 */
-		private Set<Object> treeItemsToUpdate = new HashSet<Object>();
+		private Set<Object> treeItemsToUpdate = new HashSet<>();
 
 		/** Tree object that should be revealed during the next UI update. */
 		private Object treeItemToReveal;
 
 		/** Map of tree objects that should be expanded or collapsed to their new states. */
-		private Map<Object, Boolean> treeItemsToExpand = new LinkedHashMap<Object, Boolean>();
+		private Map<Object, Boolean> treeItemsToExpand = new LinkedHashMap<>();
 
 		UIChangesCache() {
 			resetChanges();
@@ -141,7 +141,7 @@ public class UIUpdater {
 		/**
 		 * Schedules the view caption update to the path to specified test item
 		 * during the next UI update.
-		 * 
+		 *
 		 * @param testItem specified test item
 		 */
 		public void scheduleViewCaptionChange(ITestItem testItem) {
@@ -153,7 +153,7 @@ public class UIUpdater {
 		/**
 		 * Schedules the <code>update()</code> call for the specified tree
 		 * object during the next UI update.
-		 * 
+		 *
 		 * @param item tree object to update
 		 */
 		public void scheduleTreeItemUpdate(Object item) {
@@ -165,7 +165,7 @@ public class UIUpdater {
 		/**
 		 * Schedules the revealing of the specified tree object. Overrides
 		 * the previously specified tree object to reveal (if any).
-		 * 
+		 *
 		 * @param item tree object to reveal
 		 */
 		public void scheduleTreeItemReveal(Object item) {
@@ -177,7 +177,7 @@ public class UIUpdater {
 		/**
 		 * Schedules the expanding or collapsing of the specified tree object.
 		 * Overrides the previous state for the same tree object (if any).
-		 * 
+		 *
 		 * @param item tree object to expand or collapse
 		 * @param expandedState true if the node is expanded, and false if
 		 * collapsed
@@ -191,7 +191,7 @@ public class UIUpdater {
 		/**
 		 * Schedules the <code>refresh()</code> call for the specified tree
 		 * object during the next UI update.
-		 * 
+		 *
 		 * @param item tree object to refresh
 		 */
 		public void scheduleTreeItemRefresh(Object item) {
@@ -237,7 +237,7 @@ public class UIUpdater {
 						treeViewer.setExpandedState(entry.getKey(), entry.getValue());
 					}
 				}
-				// All changes are applied, remove them 
+				// All changes are applied, remove them
 				resetChangesImpl();
 			}
 		}
@@ -315,7 +315,7 @@ public class UIUpdater {
 
 		/**
 		 * Common implementation for test case and test suite entering.
-		 * 
+		 *
 		 * @param testItem test case or test suite
 		 */
 		private void enterTestItem(ITestItem testItem) {
@@ -436,7 +436,7 @@ public class UIUpdater {
 	/**
 	 * Returns whether tests hierarchy scrolling should be done during the
 	 * testing process.
-	 * 
+	 *
 	 * @return auto scroll state
 	 */
 	public boolean getAutoScroll() {
@@ -446,7 +446,7 @@ public class UIUpdater {
 	/**
 	 * Sets whether whether tests hierarchy scrolling should be done during the
 	 * testing process.
-	 * 
+	 *
 	 * @param autoScroll new filter state
 	 */
 	public void setAutoScroll(boolean autoScroll) {

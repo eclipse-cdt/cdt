@@ -20,6 +20,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.FieldEditor;
@@ -43,14 +49,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
-
 public class ScalabilityPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	// Files with this number of lines will trigger scalability mode
@@ -72,14 +70,14 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 
 	private ScalabilityIntegerFieldEditor fMaximumTokens;
 
-	private final Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
+	private final Map<Object, String> fCheckBoxes = new HashMap<>();
 
 	/**
 	 * List of master/slave listeners when there's a dependency.
-	 * 
+	 *
 	 * @see #createDependency(Button, String, Control)
 	 */
-	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<Object>();
+	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<>();
 
 	public ScalabilityPreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());

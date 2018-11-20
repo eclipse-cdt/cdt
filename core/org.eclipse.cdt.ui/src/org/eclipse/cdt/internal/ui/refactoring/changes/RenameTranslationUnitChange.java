@@ -14,17 +14,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.changes;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
 
 public final class RenameTranslationUnitChange extends AbstractCElementRenameChange {
 

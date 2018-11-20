@@ -31,7 +31,7 @@ import org.eclipse.jface.text.Region;
 
 /**
  * A {@link IndexTypeReference} tailored for index bindings.
- * 
+ *
  * @since 4.0
  */
 public class IndexTypeReference extends TypeReference {

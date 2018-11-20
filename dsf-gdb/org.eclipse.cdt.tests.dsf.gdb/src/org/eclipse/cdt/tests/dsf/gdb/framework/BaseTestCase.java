@@ -87,7 +87,7 @@ import org.junit.rules.Timeout;
  */
 @SuppressWarnings("restriction")
 public class BaseTestCase {
-	/** 
+	/**
 	 * When used, the tests will use a GDB called 'gdb'.  This uses
 	 * whatever GDB is installed on the machine where the tests are run.
 	 */
@@ -127,7 +127,7 @@ public class BaseTestCase {
 	// This allows a SuiteGdb to set an attribute
 	// The suite is responsible for clearing those attributes
 	// once it is finished
-	private static Map<String, Object> globalLaunchAttributes = new HashMap<String, Object>();
+	private static Map<String, Object> globalLaunchAttributes = new HashMap<>();
 
 	private static Process gdbserverProc;
 
@@ -188,7 +188,7 @@ public class BaseTestCase {
 
 	/**
 	 * Return whether this is a remote session.
-	 * 
+	 *
 	 * WARNING: This method must only be called after launch attributes are initialized.
 	 */
 	public boolean isRemoteSession() {
@@ -199,11 +199,11 @@ public class BaseTestCase {
 	/**
 	 * Validate that the gdb version launched is the one that was targeted.
 	 * Will fail the test if the versions don't match.
-	 * 
+	 *
 	 * @param launch The launch in which we can find the gdb version
 	 */
 	protected void validateGdbVersion(GdbLaunch launch) throws Exception {
-	};
+	}
 
 	/**
 	 * We listen for the target to stop at the main breakpoint. This listener is
@@ -337,7 +337,7 @@ public class BaseTestCase {
 	/**
 	 * Make sure we are starting with a clean/known state. That means no
 	 * existing launch configurations.
-	 * 
+	 *
 	 * XXX: Bugs 512180 and 501906, limit this call to only those test that
 	 * really need a clean state. This does not remove the race condition, but
 	 * does improve it somewhat.
@@ -362,7 +362,7 @@ public class BaseTestCase {
 
 	protected void setLaunchAttributes() {
 		// Clear all launch attributes before starting a new test
-		launchAttributes = new HashMap<String, Object>();
+		launchAttributes = new HashMap<>();
 
 		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + DEFAULT_EXEC_NAME);
 
@@ -521,9 +521,9 @@ public class BaseTestCase {
 	 * individual test to cleanup the launch. If the launch is not cleaned up, subsequent
 	 * tests will fail due to checks in {@link #doBeforeTest()} that verify state is clean
 	 * and no launches are currently running.
-	 * 
+	 *
 	 * This method is blocking until the breakpoint at main in the program is reached.
-	 * 
+	 *
 	 * @return the new launch created
 	 */
 	protected GdbLaunch doLaunchInner() throws Exception {

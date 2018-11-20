@@ -339,7 +339,7 @@ public class PathEntryUtil {
 
 	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
 		// Check duplication.
-		Set<IPathEntry> entrySet = new HashSet<IPathEntry>(entries.length);
+		Set<IPathEntry> entrySet = new HashSet<>(entries.length);
 		for (IPathEntry entry : entries) {
 			if (entry != null) {
 				if (entrySet.contains(entry)) {
@@ -543,7 +543,7 @@ public class PathEntryUtil {
 	}
 
 	public static List<IPathEntry> checkForDuplication(List<IPathEntry> pathEntries, int type) {
-		List<IPathEntry> duplicate = new ArrayList<IPathEntry>(pathEntries.size());
+		List<IPathEntry> duplicate = new ArrayList<>(pathEntries.size());
 		for (int i = 0; i < pathEntries.size(); ++i) {
 			IPathEntry pathEntry = pathEntries.get(i);
 			if (pathEntry.getEntryKind() == type) {

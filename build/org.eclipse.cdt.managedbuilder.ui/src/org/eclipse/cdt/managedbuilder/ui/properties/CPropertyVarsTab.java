@@ -102,7 +102,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	};
 
 	private boolean fShowSysMacros = false;
-	private Set<String> fIncorrectlyDefinedMacrosNames = new HashSet<String>();
+	private Set<String> fIncorrectlyDefinedMacrosNames = new HashSet<>();
 
 	private TableViewer tv;
 	private Label fStatusLabel;
@@ -545,7 +545,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		if (cfgd == null) {
 			chkVars();
 			if (fShowSysMacros) {
-				List<ICdtVariable> lst = new ArrayList<ICdtVariable>(_vars.length);
+				List<ICdtVariable> lst = new ArrayList<>(_vars.length);
 				ICdtVariable[] uvars = prefvars.getMacros();
 				for (int i = 0; i < uvars.length; i++) {
 					lst.add(uvars[i]);
@@ -567,7 +567,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			}
 		}
 
-		ArrayList<ICdtVariable> list = new ArrayList<ICdtVariable>(_vars.length);
+		ArrayList<ICdtVariable> list = new ArrayList<>(_vars.length);
 		for (int i = 0; i < _vars.length; i++) {
 			if (_vars[i] != null && (fShowSysMacros || isUserVar(_vars[i])))
 				list.add(_vars[i]);

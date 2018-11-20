@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,28 +22,28 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 
 /**
- * Class used by the PropertiesBasedLabelProvider to generate store 
- * label attributes related to a single column.  Each column info is 
+ * Class used by the PropertiesBasedLabelProvider to generate store
+ * label attributes related to a single column.  Each column info is
  * configured with an array of attributes (there are currently four
- * types of attributes: text, image, font, and color), which are 
- * evaluated in order to generate the label.  
+ * types of attributes: text, image, font, and color), which are
+ * evaluated in order to generate the label.
  * <p/>
  * Clients are not intended to extend this class.
- * 
+ *
  * @see PropertiesBasedLabelProvider
- * 
+ *
  * @since 1.0
  */
 @ThreadSafe
 public class LabelColumnInfo {
-	/** 
-	 * Calculated list of property names that need to be retrieved to 
+	/**
+	 * Calculated list of property names that need to be retrieved to
 	 * generate the label for this column.
 	 */
 	private String[] fPropertyNames;
 
 	/**
-	 * Array of label attribute objects.   
+	 * Array of label attribute objects.
 	 */
 	private LabelAttribute[] fLabelAttributes;
 
@@ -54,7 +54,7 @@ public class LabelColumnInfo {
 	public LabelColumnInfo(LabelAttribute[] attributes) {
 		fLabelAttributes = attributes;
 
-		List<String> names = new LinkedList<String>();
+		List<String> names = new LinkedList<>();
 		for (LabelAttribute attr : attributes) {
 			for (String name : attr.getPropertyNames()) {
 				names.add(name);
@@ -81,13 +81,13 @@ public class LabelColumnInfo {
 
 	/**
 	 * Returns the list of configured label attributes for this column.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void setLabelAttributes(LabelAttribute[] attributes) {
 		fLabelAttributes = attributes;
 
-		List<String> names = new LinkedList<String>();
+		List<String> names = new LinkedList<>();
 		for (LabelAttribute attr : attributes) {
 			for (String name : attr.getPropertyNames()) {
 				names.add(name);
@@ -99,7 +99,7 @@ public class LabelColumnInfo {
 
 	/**
 	 * Inserts an attribute in front of all the other existing attributes.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public void insertAttribute(LabelAttribute attribute) {
@@ -117,13 +117,13 @@ public class LabelColumnInfo {
 	/**
 	 * Updates the label parameters for this column based on the provided
 	 * properties.  The label information is written to the givne label
-	 * update under the given column index.   
-	 * 
+	 * update under the given column index.
+	 *
 	 * @param update Update to write to.
 	 * @param columnIndex Column to write label information under.
 	 * @param status Result of the properties update
 	 * @param properties Map of properties to use to generate the label.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public void updateColumn(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {

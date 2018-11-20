@@ -19,14 +19,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoTypeInfo;
 
 /**
- * 
+ *
  *     -var-info-type NAME
  *
  *   Returns the type of the specified variable NAME.  The type is
  * returned as a string in the same format as it is output by the GDB CLI:
  *
  *     type=TYPENAME
- * 
+ *
  */
 public class MIVarInfoType extends MICommand<MIVarInfoTypeInfo> {
 	/**

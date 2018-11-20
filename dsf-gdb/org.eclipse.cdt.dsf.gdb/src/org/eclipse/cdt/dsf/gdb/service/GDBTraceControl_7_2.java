@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *   Ericsson - Initial API and implementation
  *   Dmitry Kozlov (Mentor Graphics) - Add support for IGDBTraceControl2 (Bug 390827)
@@ -57,7 +57,7 @@ import org.osgi.framework.BundleContext;
 /**
  * This class implements the IGDBTraceControl interface which gives access
  * to the debugger's tracing functionality.
- * 
+ *
  * @since 3.0
  */
 public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTraceControl2, ICachingService {
@@ -435,7 +435,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 
 	/**
 	 * This method initializes this service.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The request monitor indicating the operation is finished
 	 */
@@ -452,7 +452,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The call-back object to notify when this service's
 	 *            initialization is done.
@@ -476,7 +476,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	 * This method shuts down this service. It unregisters the service, stops
 	 * receiving service events, and calls the superclass shutdown() method to
 	 * finish the shutdown process.
-	 * 
+	 *
 	 * @return void
 	 */
 	@Override
@@ -1004,7 +1004,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 							// We could rely on the TraceRecordSelectedChangedEvent to update all the views, but this
 							// would require a lot of changes.
 							// Notice that looking at a new trace record should behave in the same manner
-							// as when the debugger suspends during normal execution; therefore we can simply 
+							// as when the debugger suspends during normal execution; therefore we can simply
 							// trigger an MIStoppedEvent, as if reported by GDB.  Note that we do this already for
 							// cases where GDB is missing such a event (like older versions of GDB when using a CLI command)
 							IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);

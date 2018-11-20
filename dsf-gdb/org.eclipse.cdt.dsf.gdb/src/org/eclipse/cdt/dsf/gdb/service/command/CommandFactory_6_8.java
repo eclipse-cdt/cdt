@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 
 /**
- * A command factory for commands that should only be used starting with GDB 6.8 
+ * A command factory for commands that should only be used starting with GDB 6.8
  * @since 4.0 */
 public class CommandFactory_6_8 extends CommandFactory {
 

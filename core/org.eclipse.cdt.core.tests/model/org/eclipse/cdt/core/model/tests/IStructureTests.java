@@ -15,9 +15,6 @@ package org.eclipse.cdt.core.model.tests;
 
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IField;
@@ -25,6 +22,9 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author bnicolle
@@ -78,7 +78,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		suite.addTest(new IStructureTests("testGetBaseTypes")); // C++ only
 		suite.addTest(new IStructureTests("testGetAccessControl")); // C++ only
 
-		// Language Specification tests:		
+		// Language Specification tests:
 		suite.addTest(new IStructureTests("testAnonymousStructObject"));
 		suite.addTest(new IStructureTests("testInnerStruct"));
 
@@ -331,7 +331,7 @@ public class IStructureTests extends IntegratedCModelTest {
 			myBaseTypes = myStructDerived.getSuperClassesNames();
 
 			ASTAccessVisibility[] myExpectedAccessControl = {
-					// TODO #38986: expect appropriate access control tags 
+					// TODO #38986: expect appropriate access control tags
 					ASTAccessVisibility.PUBLIC, ASTAccessVisibility.PROTECTED, ASTAccessVisibility.PRIVATE };
 			assertEquals(myExpectedAccessControl.length, myBaseTypes.length);
 			for (int i = 0; i < myBaseTypes.length; i++) {

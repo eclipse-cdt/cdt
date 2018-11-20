@@ -49,7 +49,7 @@ public class PathEntryContainerUpdatesOperation extends CModelOperation {
 	@Override
 	protected void executeOperation() throws CModelException {
 		PathEntryManager pathEntryManager = PathEntryManager.getDefault();
-		ArrayList<CElementDelta> list = new ArrayList<CElementDelta>(events.length);
+		ArrayList<CElementDelta> list = new ArrayList<>(events.length);
 		for (int i = 0; i < events.length; ++i) {
 			PathEntryContainerChanged event = events[i];
 			ICElement celement = CoreModel.getDefault().create(event.getPath());

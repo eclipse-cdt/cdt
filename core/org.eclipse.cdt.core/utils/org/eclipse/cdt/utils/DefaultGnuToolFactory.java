@@ -24,7 +24,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	protected ICExtension fExtension;
 
 	/**
-	 * 
+	 *
 	 */
 	public DefaultGnuToolFactory(ICExtension ext) {
 		fExtension = ext;

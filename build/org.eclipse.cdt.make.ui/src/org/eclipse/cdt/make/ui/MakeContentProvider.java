@@ -95,7 +95,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			}
 		} else if (obj instanceof IContainer) {
 			IContainer container = (IContainer) obj;
-			ArrayList<Object> children = new ArrayList<Object>();
+			ArrayList<Object> children = new ArrayList<>();
 
 			boolean isAddingSourceRoots = !bFlatten && (container instanceof IProject)
 					&& CCorePlugin.showSourceRootsAtTopOfProject();
@@ -135,7 +135,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			return children.toArray();
 
 		} else if (obj instanceof TargetSourceContainer) {
-			ArrayList<Object> children = new ArrayList<Object>();
+			ArrayList<Object> children = new ArrayList<>();
 			try {
 				IContainer container = ((TargetSourceContainer) obj).getContainer();
 				IResource[] resources = container.members();
@@ -177,7 +177,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	@Override
 	public Object[] getElements(Object obj) {
 		if (bFlatten) {
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
 			Object[] children = getChildren(obj);
 			for (int i = 0; i < children.length; i++) {
 				list.add(children[i]);
@@ -313,7 +313,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			return;
 		}
 
-		Set<IProject> affectedProjects = new HashSet<IProject>();
+		Set<IProject> affectedProjects = new HashSet<>();
 		for (IMakeTarget target : event.getTargets()) {
 			IContainer container = target.getContainer();
 			affectedProjects.add(container.getProject());
@@ -355,7 +355,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			return;
 		}
 
-		Set<IProject> affectedProjects = new HashSet<IProject>();
+		Set<IProject> affectedProjects = new HashSet<>();
 		collectAffectedProjects(delta, affectedProjects);
 
 		// If the view is being filtered or source roots shown,
@@ -428,7 +428,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * Check if the resource is in the list of source entries.
-	
+
 	 * @param rc - resource to check.
 	 * @return {@code true} if the resource is a source folder, {@code false} otherwise.
 	 *

@@ -19,14 +19,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.util.StringUtil;
+import org.eclipse.core.runtime.IPath;
 
 class InclusionRequest {
 	private static final String UNINITIALIZED = "uninitialized"; //$NON-NLS-1$
@@ -41,7 +40,7 @@ class InclusionRequest {
 	/**
 	 * @param binding the binding that requires inclusion
 	 * @param declaringHeaders headers that can be included to declare the binding and paths
-	 *     that can be used to include them 
+	 *     that can be used to include them
 	 * @param reachable indicates whether the headers were previously included or not
 	 */
 	public InclusionRequest(IBinding binding, Map<IIndexFile, IPath> declaringHeaders, boolean reachable) {

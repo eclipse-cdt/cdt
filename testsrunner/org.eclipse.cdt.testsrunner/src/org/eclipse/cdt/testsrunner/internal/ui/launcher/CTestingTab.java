@@ -38,13 +38,13 @@ import org.eclipse.swt.widgets.Label;
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CTestingTab extends CLaunchConfigurationTab {
 
 	/**
-	 * Tab identifier used for ordering of tabs added using the 
+	 * Tab identifier used for ordering of tabs added using the
 	 * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
 	 * extension point.
 	 */
@@ -88,7 +88,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 			}
 		});
 
-		// Create a tests runner description label 
+		// Create a tests runner description label
 		testsRunnerProviderDescriptionLabel = new Label(pageComposite, SWT.WRAP);
 		GridData testsRunnerProviderLabelGD = new GridData(GridData.FILL_BOTH);
 		testsRunnerProviderLabelGD.horizontalSpan = 2;
@@ -105,7 +105,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 	/**
 	 * Returns the information for the currently selected Tests Runner provider
 	 * plug-in.
-	 * 
+	 *
 	 * @return Tests Runner provide plug-in information
 	 */
 	private ITestsRunnerProviderInfo getCurrentTestsRunnerProviderInfo() {
@@ -115,7 +115,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 	/**
 	 * Returns the information for the Tests Runner provide plug-in specified by
 	 * index.
-	 * 
+	 *
 	 * @param comboIndex index in combo widget
 	 * @return Tests Runner provide plug-in information
 	 */
@@ -126,7 +126,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 	/**
 	 * Returns the description for the currently selected Tests Runner provide
 	 * plug-in.
-	 * 
+	 *
 	 * @return the description
 	 */
 	private String getCurrentTestsRunnerDescription() {

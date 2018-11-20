@@ -22,6 +22,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.ui.dialogs.TableTextCellEditor;
+import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.resource.JFaceResources;
@@ -62,13 +67,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
 
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-
-import org.eclipse.cdt.internal.ui.dialogs.TableTextCellEditor;
-import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
-
 /**
  * A special control to edit and reorder method parameters.
  */
@@ -106,7 +104,7 @@ public class ChangeParametersControl extends Composite {
 		}
 
 		private NameInformation[] removeMarkedAsDeleted(List<NameInformation> params) {
-			List<NameInformation> result = new ArrayList<NameInformation>(params.size());
+			List<NameInformation> result = new ArrayList<>(params.size());
 			for (Iterator<NameInformation> iter = params.iterator(); iter.hasNext();) {
 				NameInformation info = iter.next();
 				if (!info.isDeleted())
@@ -311,7 +309,7 @@ public class ChangeParametersControl extends Composite {
 		fTypeContext = typeContext;
 		fParamNameProposals = paramNameProposals;
 
-		ArrayList<String> properties = new ArrayList<String>();
+		ArrayList<String> properties = new ArrayList<>();
 		indexType = properties.size();
 		properties.add("type"); //$NON-NLS-1$
 
@@ -586,7 +584,7 @@ public class ChangeParametersControl extends Composite {
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Set<String> excludedParamNames = new HashSet<String>(fParameters.size());
+				Set<String> excludedParamNames = new HashSet<>(fParameters.size());
 				for (int i = 0; i < fParameters.size(); i++) {
 					NameInformation info = fParameters.get(i);
 					excludedParamNames.add(info.getNewName());
@@ -677,7 +675,7 @@ public class ChangeParametersControl extends Composite {
 	private void addCellEditors() {
 		fTableViewer.setColumnProperties(columnProperties);
 
-		ArrayList<CellEditor> editors = new ArrayList<CellEditor>();
+		ArrayList<CellEditor> editors = new ArrayList<>();
 		TableTextCellEditor cellEditorType = new TableTextCellEditor(fTableViewer, indexType);
 		editors.add(cellEditorType);
 		if (indexDirection >= 0) {
@@ -749,8 +747,8 @@ public class ChangeParametersControl extends Composite {
 	}
 
 	private static void moveUp(List<NameInformation> elements, List<NameInformation> move) {
-		List<NameInformation> res = new ArrayList<NameInformation>(elements.size());
-		List<NameInformation> deleted = new ArrayList<NameInformation>();
+		List<NameInformation> res = new ArrayList<>(elements.size());
+		List<NameInformation> deleted = new ArrayList<>();
 		NameInformation floating = null;
 		for (Iterator<NameInformation> iter = elements.iterator(); iter.hasNext();) {
 			NameInformation curr = iter.next();
@@ -803,7 +801,7 @@ public class ChangeParametersControl extends Composite {
 
 	private SubjectControlContentAssistant installParameterNameContentAssist(Text text) {
 		return null;
-		// TODO(sprigogin): Implement to support parameter name content assist. 
+		// TODO(sprigogin): Implement to support parameter name content assist.
 		//		VariableNamesProcessor processor= new VariableNamesProcessor(fParamNameProposals);
 		//		SubjectControlContentAssistant contentAssistant= ControlContentAssistHelper.createCContentAssistant(processor);
 		//		fNameContentAssistHandler= ContentAssistHandler.createHandlerForText(text, contentAssistant);

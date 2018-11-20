@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Single_Name_Reference in parameter passing
  * Bug#
  *

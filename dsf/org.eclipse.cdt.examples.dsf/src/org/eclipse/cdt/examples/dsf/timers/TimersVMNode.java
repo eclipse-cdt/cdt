@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -41,7 +41,7 @@ import org.eclipse.swt.graphics.RGB;
 
 /**
  * View model node that defines how timer DMContexts are displayed in the view. Timers
- * change with every tick of the timer, so the label has to be repained 
+ * change with every tick of the timer, so the label has to be repained
  * upon timer tick events.
  * @see TimerDMContext
  */
@@ -89,7 +89,7 @@ class TimersVMNode extends AbstractDMVMNode implements IElementLabelProvider, IE
 			return;
 		}
 
-		// Retrieve the timer DMContexts, create the corresponding VMCs array, and 
+		// Retrieve the timer DMContexts, create the corresponding VMCs array, and
 		// set them as result.
 		TimerDMContext[] timers = timerService.getTimers();
 		fillUpdateWithVMCs(update, timers);
@@ -141,7 +141,7 @@ class TimersVMNode extends AbstractDMVMNode implements IElementLabelProvider, IE
 
 	@Override
 	public int getDeltaFlags(Object e) {
-		// This node generates delta if the timers have changed, or if the 
+		// This node generates delta if the timers have changed, or if the
 		// label has changed.
 		if (e instanceof TimerService.TimerTickDMEvent) {
 			return IModelDelta.STATE;
@@ -157,7 +157,7 @@ class TimersVMNode extends AbstractDMVMNode implements IElementLabelProvider, IE
 			// Add delta indicating that the given timer has changed.
 			parentDelta.addNode(createVMContext(((TimerService.TimerTickDMEvent) e).getDMContext()), IModelDelta.STATE);
 		} else if (e instanceof TimerService.TimersChangedEvent) {
-			// The list of timers has changed, which means that the parent 
+			// The list of timers has changed, which means that the parent
 			// node needs to refresh its contents, which in turn will re-fetch the
 			// elements from this node.
 			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);

@@ -18,7 +18,7 @@ package org.eclipse.cdt.make.core.makefile;
  * The application shall ensure that this special target is specified without prerequesites.
  * The commands specified with this target shall replace the default
  * commands associated with this special target.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

@@ -16,13 +16,13 @@ package org.eclipse.cdt.core.model.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author hamer
@@ -89,8 +89,8 @@ public class StructuralTemplateTests extends ITemplateTests {
 			}
 		}
 		{
-			// Methods and Functions are tested together as 
-			// Function declarations in Quick Parse mode 
+			// Methods and Functions are tested together as
+			// Function declarations in Quick Parse mode
 			// are considered Method Declarations in Structural parse mode
 			List arrayElements = getTemplateMethods(tu);
 			arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD));

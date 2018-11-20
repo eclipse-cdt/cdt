@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,9 +22,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
- * The default implementation of the refresh all debug target which 
+ * The default implementation of the refresh all debug target which
  * calls the active VM providers, to ask them to refresh.
- * 
+ *
  * @since 1.1
  */
 public class DefaultRefreshAllTarget implements IRefreshAllTarget {

@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
@@ -19,13 +19,13 @@ import java.util.Set;
 
 /**
  * Helps to generate new unused names.
- * 
+ *
  * @author Mirko Stocker
  *
  */
 public class PseudoNameGenerator {
 
-	private final Set<String> names = new HashSet<String>();
+	private final Set<String> names = new HashSet<>();
 
 	public void addExistingName(String name) {
 		names.add(name);

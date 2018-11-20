@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
@@ -25,8 +26,6 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
-
-import org.eclipse.cdt.core.model.ICElement;
 
 public class THDropTargetListener implements DropTargetListener {
 	private ICElement fInput;

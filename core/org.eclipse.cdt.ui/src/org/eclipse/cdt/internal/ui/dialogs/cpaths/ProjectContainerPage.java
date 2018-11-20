@@ -17,6 +17,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IProjectEntry;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,17 +41,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.IProjectEntry;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 
 public class ProjectContainerPage extends WizardPage implements IPathEntryContainerPage {
 
@@ -138,7 +136,7 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 	}
 
 	private void initializeView() {
-		List<ICProject> list = new ArrayList<ICProject>();
+		List<ICProject> list = new ArrayList<>();
 		List<IPathEntry> current;
 		try {
 			current = Arrays.asList(fCProject.getRawPathEntries());

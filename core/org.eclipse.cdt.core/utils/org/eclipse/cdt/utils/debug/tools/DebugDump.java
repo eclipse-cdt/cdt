@@ -31,7 +31,7 @@ import org.eclipse.cdt.utils.elf.Elf;
 
 /**
  * DebugDump
- *  
+ *
  */
 public class DebugDump implements IDebugEntryRequestor {
 
@@ -92,7 +92,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterCompilationUnit(java.lang.String, long)
 	 */
 	@Override
@@ -104,7 +104,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#exitCompilationUnit(long)
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterInclude(java.lang.String)
 	 */
 	@Override
@@ -133,7 +133,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#exitInclude()
 	 */
 	@Override
@@ -144,7 +144,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterFunction(java.lang.String, int, boolean, long)
 	 */
 	@Override
@@ -160,7 +160,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#exitFunction(long)
 	 */
 	@Override
@@ -183,7 +183,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterCodeBlock(long)
 	 */
 	@Override
@@ -200,7 +200,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#exitCodeBlock(long)
 	 */
 	@Override
@@ -212,7 +212,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptStatement(int, long)
 	 */
 	@Override
@@ -231,7 +231,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptIntegerConst(java.lang.String, long)
 	 */
 	@Override
@@ -242,7 +242,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptFloatConst(java.lang.String, double)
 	 */
 	@Override
@@ -253,7 +253,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptTypeConst(java.lang.String,
 	 *      org.eclipse.cdt.utils.debug.DebugType, int)
 	 */
@@ -265,7 +265,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptParameter(java.lang.String, int, int, long)
 	 */
 	@Override
@@ -279,7 +279,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptVariable(java.lang.String, int, int, long)
 	 */
 	@Override
@@ -290,7 +290,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptCaughtException(java.lang.String,
 	 *      org.eclipse.cdt.utils.debug.DebugType, long)
 	 */
@@ -300,7 +300,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptTypeDef(java.lang.String, org.eclipse.cdt.utils.debug.DebugType)
 	 */
 	@Override

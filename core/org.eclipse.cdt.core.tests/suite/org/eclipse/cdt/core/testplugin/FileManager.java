@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ public class FileManager {
 	HashSet<IFile> fileHandles;
 
 	public FileManager() {
-		fileHandles = new HashSet<IFile>();
+		fileHandles = new HashSet<>();
 	}
 
 	public void addFile(IFile file) {

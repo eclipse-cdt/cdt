@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -40,6 +40,7 @@ public class PDAEditor extends AbstractDecoratedTextEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
 	 */
+	@Override
 	protected void createActions() {
 		super.createActions();
 		ResourceBundle bundle = ResourceBundle

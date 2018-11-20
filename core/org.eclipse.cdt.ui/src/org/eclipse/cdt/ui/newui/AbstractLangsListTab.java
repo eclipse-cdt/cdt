@@ -22,6 +22,29 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.model.ILanguageDescriptor;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.model.util.CDTListComparator;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICExternalSetting;
+import org.eclipse.cdt.core.settings.model.ICFileDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICMultiFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
+import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.MultiLanguageSetting;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsImages;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -54,31 +77,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-
-import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
-import org.eclipse.cdt.core.model.ILanguageDescriptor;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.model.util.CDTListComparator;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICExternalSetting;
-import org.eclipse.cdt.core.settings.model.ICFileDescription;
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICMultiFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
-import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingBase;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.MultiLanguageSetting;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsImages;
-import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
-import org.eclipse.cdt.internal.ui.newui.Messages;
-import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 
 public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected Table table;
@@ -408,7 +406,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	}
 
 	protected LinkedList<ICLanguageSettingEntry> getIncs() {
-		LinkedList<ICLanguageSettingEntry> l = new LinkedList<ICLanguageSettingEntry>();
+		LinkedList<ICLanguageSettingEntry> l = new LinkedList<>();
 		List<ICLanguageSettingEntry> lst = getSettingEntriesList(getKind());
 		if (lst != null) {
 			for (ICLanguageSettingEntry ent : lst) {
@@ -475,7 +473,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	}
 
 	private void updateExport() {
-		exported = new ArrayList<ICSettingEntry>();
+		exported = new ArrayList<>();
 		ICExternalSetting[] extSettings = getResDesc().getConfiguration().getExternalSettings();
 		if (!(extSettings == null || extSettings.length == 0)) {
 			for (ICExternalSetting extSetting : extSettings) {
@@ -533,7 +531,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICLanguageSetting[] langSettings = (ICLanguageSetting[]) ms.getItems();
 		ICLanguageSettingEntry[][] es = ms.getSettingEntriesM(getKind());
 		for (int i = 0; i < langSettings.length; i++) {
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(es[i]));
+			List<ICLanguageSettingEntry> entries = new ArrayList<>(Arrays.asList(es[i]));
 			if (del != null) {
 				for (ICLanguageSettingEntry entry : entries) {
 					if (entry.getName().equals(del.getName())) {
@@ -844,7 +842,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICLanguageSetting[] fs = conv2LS(CDTPrefUtil.getListForDisplay(lsArray2D, comp));
 		lsets = new ICLanguageSetting[fs.length];
 		for (int i = 0; i < fs.length; i++) {
-			ArrayList<ICLanguageSetting> list = new ArrayList<ICLanguageSetting>(lsArray2D.length);
+			ArrayList<ICLanguageSetting> list = new ArrayList<>(lsArray2D.length);
 			for (ICLanguageSetting[] lsArray : lsArray2D) {
 				int x = Arrays.binarySearch(lsArray, fs[i], comp);
 				if (x >= 0)

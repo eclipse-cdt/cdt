@@ -46,7 +46,7 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 	 */
 	public static final String TOGGLE_C_TRACEPOINT_TARGET_ID = CDebugUIPlugin.PLUGIN_ID + ".toggleCTracepointTarget"; //$NON-NLS-1$
 
-	private static final Set<String> TOGGLE_TARGET_IDS_ALL = new HashSet<String>(1);
+	private static final Set<String> TOGGLE_TARGET_IDS_ALL = new HashSet<>(1);
 	static {
 		TOGGLE_TARGET_IDS_ALL.add(TOGGLE_C_TRACEPOINT_TARGET_ID);
 	}

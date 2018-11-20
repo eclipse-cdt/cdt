@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - modified for use in Container build
  *******************************************************************************/
@@ -64,7 +64,7 @@ import org.eclipse.linuxtools.docker.ui.Activator;
 /**
  * The Container GCC toolchain. It represents a GCC that will run in a Docker
  * Container. It can be overridden to change environment variable settings.
- * 
+ *
  * @since 1.2
  */
 public class ContainerGCCToolChain extends PlatformObject implements IToolChain, IToolChain2 {

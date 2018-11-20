@@ -79,7 +79,7 @@ public class DiscoveredPathContainer implements IPathEntryContainer {
 		IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
 		IPath[] includes = info.getIncludePaths();
 		Map<String, String> syms = info.getSymbols();
-		List<IPathEntry> entries = new ArrayList<IPathEntry>(includes.length + syms.size());
+		List<IPathEntry> entries = new ArrayList<>(includes.length + syms.size());
 		for (IPath inc : includes) {
 			entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, inc, true));
 		}

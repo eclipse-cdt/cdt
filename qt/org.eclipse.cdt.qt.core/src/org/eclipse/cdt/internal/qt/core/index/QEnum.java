@@ -26,7 +26,7 @@ public class QEnum implements IQEnum {
 	public QEnum(String name, boolean isFlag, List<IEnumerator> enumerators) {
 		this.name = name;
 		this.isFlag = isFlag;
-		this.enumerators = new ArrayList<IQEnum.Enumerator>(enumerators.size());
+		this.enumerators = new ArrayList<>(enumerators.size());
 		for (IEnumerator enumerator : enumerators)
 			this.enumerators.add(new Enumerator(enumerator));
 	}

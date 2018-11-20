@@ -16,7 +16,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 /**
  * Some utilities around the display hint provided by the python pretty printers
  * via MI.
- * 
+ *
  * @since 4.0
  */
 public class MIDisplayHint {
@@ -81,7 +81,7 @@ public class MIDisplayHint {
 
 	/**
 	 * Create the hint from the given string.
-	 * 
+	 *
 	 * @param text The string representation to parse in order to initialize from.
 	 */
 	public MIDisplayHint(String text) {

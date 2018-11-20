@@ -18,7 +18,7 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
 
 /**
  * Command handler for the "Debug New Executable" command.
- * 
+ *
  * @since 7.3
  */
 public interface IDebugNewExecutableHandler extends IDebugCommandHandler {

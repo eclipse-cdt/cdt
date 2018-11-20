@@ -30,7 +30,7 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 
 /**
  * Contain info about the GDB/MI breakpoint.
- * 
+ *
  * (gdb)
  * -break-insert main
  * ^done,bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",times="0"}
@@ -61,12 +61,12 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
  * bkpt={number="5",type="tracepoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",thread="0",thread="0",times="0"}
  * bkpt={number="1",type="tracepoint",disp="keep",enabled="y",addr="0x0041bca0",func="main",file="hello.c",line="4",times="0",pass="4",original-location="hello.c:4"},
  * bkpt={number="5",type="fast tracepoint",disp="keep",enabled="y",addr="0x0804852d",func="testTracepoints()",file="TracepointTestApp.cc",fullname="/local/src/TracepointTestApp.cc",line="84",times="0",original-location="TracepointTestApp.cc:84"}
- * 
+ *
  * Pending breakpoint
  * -break-insert -f NotLoadedLibrary.c:26
  * &"No source file named NotLoadedLibrary.c.\n"
  * ^done,bkpt={number="9",type="breakpoint",disp="keep",enabled="y",addr="<PENDING>",pending="NotLoadedLibrary.c:26",times="0",original-location="NotLoadedLibrary.c:26"}
- * 
+ *
  * Note that any breakpoint that fails to install will be marked as pending when the -f option is used.
  * <p>
  * <b>Note on using constructor directly:</b></a> As this class can be extended by third-parties it is
@@ -105,7 +105,7 @@ public class MIBreakpoint {
 	boolean isWWpt = false;
 	boolean isHdw = false;
 
-	// Indicate if we are dealing with a tracepoint. 
+	// Indicate if we are dealing with a tracepoint.
 	// (if its a fast or normal tracepoint can be known through the 'type' field)
 	boolean isTpt = false;
 
@@ -118,7 +118,7 @@ public class MIBreakpoint {
 	/** See {@link #isDynamicPrintf()} */
 	private boolean isDynPrintf;
 
-	/** 
+	/**
 	 * A pending breakpoint is a breakpoint that did not install properly,
 	 * but that will be kept in the hopes that it installs later, triggered by
 	 * the loading of a library.
@@ -129,7 +129,7 @@ public class MIBreakpoint {
 	/**
 	 * The list of groupIds to which this breakpoint applies.
 	 * This field is only reported by MI starting with GDB 7.6.
-	 * null will be returned if this field is not present. 
+	 * null will be returned if this field is not present.
 	 */
 	private String[] groupIds;
 
@@ -148,7 +148,7 @@ public class MIBreakpoint {
 	 * See {@link MIBreakpoint} class comment "Note on using constructor
 	 * directly"
 	 * <p>
-	 * 
+	 *
 	 * @param other
 	 *            breakpoint to copy from
 	 */
@@ -191,7 +191,7 @@ public class MIBreakpoint {
 	 * See {@link MIBreakpoint} class comment "Note on using constructor
 	 * directly"
 	 * <p>
-	 * 
+	 *
 	 * @param tuple
 	 *            data received from GDB
 	 */
@@ -202,7 +202,7 @@ public class MIBreakpoint {
 	/**
 	 * This constructor is used for catchpoints. Catchpoints are not yet
 	 * supported in MI, so we end up using CLI.
-	 * 
+	 *
 	 * <p>
 	 * Note that this poses at least one challenge for us. Normally, upon
 	 * creating a breakpoint/watchpoint/tracepoint via mi, we get back a command
@@ -216,7 +216,7 @@ public class MIBreakpoint {
 	 * construct at creation time, and the one we get by asking gdb for the
 	 * breakpoint list). The most we can do is compare the breakpoint number.
 	 * That for sure should be the same.
-	 * 
+	 *
 	 * <p>
 	 * The detail we get from querying the breakpoint list, BTW, won't even
 	 * reveal that it's a catchpoint. gdb simply reports it as a breakpoint,
@@ -227,17 +227,17 @@ public class MIBreakpoint {
 	 * that same breakpoint number, and a consumer of that MIBreakpoint won't be
 	 * able to tell it's a catchpoint. Quite the mess. Wish gdb would treat
 	 * catchpoints like first class citizens.
-	 * 
+	 *
 	 * <p>
 	 * See {@link MIBreakpoint} class comment "Note on using constructor directly"
-	 * 
+	 *
 	 * @param cliResult
 	 *            the output from the CLI command. Example:
 	 *            "Catchpoint 1 (catch)"
 	 * @since 3.0
 	 */
 	public MIBreakpoint(String cliResult) {
-		if (cliResult.startsWith("Catchpoint ")) { //$NON-NLS-1$ 
+		if (cliResult.startsWith("Catchpoint ")) { //$NON-NLS-1$
 			String bkptNumber = ""; //$NON-NLS-1$
 
 			StringTokenizer tokenizer = new StringTokenizer(cliResult);
@@ -267,7 +267,7 @@ public class MIBreakpoint {
 	}
 
 	///////////////////////////////////////////////////////////////////////////
-	// Properties getters 
+	// Properties getters
 	///////////////////////////////////////////////////////////////////////////
 
 	/** @since 5.0 */
@@ -350,7 +350,7 @@ public class MIBreakpoint {
 	 * If isCatchpoint is true, then this indicates the type of catchpoint
 	 * (event), as reported by gdb in its response to the CLI catch command.
 	 * E.g., 'catch' or 'fork'
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public String getCatchpointType() {
@@ -414,7 +414,7 @@ public class MIBreakpoint {
 	 * This method will return true for both fast and normal tracepoints.
 	 * To know of fast vs normal tracepoint use {@link getType()} and look
 	 * for "tracepoint" or "fast tracepoint"
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public boolean isTracepoint() {
@@ -423,7 +423,7 @@ public class MIBreakpoint {
 
 	/**
 	 * Indicates if we are dealing with a catchpoint.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public boolean isCatchpoint() {
@@ -432,7 +432,7 @@ public class MIBreakpoint {
 
 	/**
 	 * Indicates if we are dealing with a dynamic printf.
-	 * 
+	 *
 	 * @since 4.4
 	 */
 	public boolean isDynamicPrintf() {
@@ -442,7 +442,7 @@ public class MIBreakpoint {
 	/**
 	 * Returns the passcount of a tracepoint.  Will return 0 if this
 	 * breakpoint is not a tracepoint.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public int getPassCount() {
@@ -462,7 +462,7 @@ public class MIBreakpoint {
 
 	/**
 	 * Return the commands associated with this breakpoint (or tracepoint)
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public String getCommands() {
@@ -471,7 +471,7 @@ public class MIBreakpoint {
 
 	/**
 	 * Sets the commands associated with this breakpoint (or tracepoint)
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void setCommands(String cmds) {
@@ -481,7 +481,7 @@ public class MIBreakpoint {
 	/**
 	 * Return the string the dynamic printf will print.
 	 * Returns null if this breakpoint is not a dynamic printf
-	 * 
+	 *
 	 * @since 4.4
 	 */
 	public String getPrintfString() {
@@ -508,7 +508,7 @@ public class MIBreakpoint {
 
 	/**
 	 * Returns wether this breakpoint is pending
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public boolean isPending() {
@@ -518,7 +518,7 @@ public class MIBreakpoint {
 	/**
 	 * Returns the thread-groups to which this breakpoint applies.
 	 * Returns null if the data is not known.
-	 * 
+	 *
 	 * @since 4.2
 	 */
 	public String[] getGroupIds() {
@@ -527,7 +527,7 @@ public class MIBreakpoint {
 
 	/**
 	 * Sets the list of thread-groups to which this breakpoint applies.
-	 * 
+	 *
 	 * @since 4.2
 	 */
 	public void setGroupIds(String[] groups) {
@@ -657,7 +657,7 @@ public class MIBreakpoint {
 	}
 
 	private void parseGroups(MIList list) {
-		List<String> groups = new ArrayList<String>();
+		List<String> groups = new ArrayList<>();
 
 		MIValue[] values = list.getMIValues();
 		for (int i = 0; i < values.length; i++) {

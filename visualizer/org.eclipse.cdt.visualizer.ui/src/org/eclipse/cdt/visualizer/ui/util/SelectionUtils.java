@@ -42,26 +42,32 @@ public class SelectionUtils {
 
 	/** "Empty" or undefined selection. */
 	public static class EmptySelection implements ISelection, IStructuredSelection {
+		@Override
 		public boolean isEmpty() {
 			return true;
 		}
 
+		@Override
 		public Iterator<Object> iterator() {
-			return new ArrayList<Object>().iterator();
+			return new ArrayList<>().iterator();
 		}
 
+		@Override
 		public List<Object> toList() {
-			return new ArrayList<Object>();
+			return new ArrayList<>();
 		}
 
+		@Override
 		public int size() {
 			return 0;
 		}
 
+		@Override
 		public Object getFirstElement() {
 			return null;
 		}
 
+		@Override
 		public Object[] toArray() {
 			return new Object[0];
 		}
@@ -107,7 +113,7 @@ public class SelectionUtils {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			result = structuredSelection.size();
 		} else if (selection instanceof ISelection) {
-			result = ((ISelection) selection).isEmpty() ? 0 : 1;
+			result = selection.isEmpty() ? 0 : 1;
 		}
 		// collections are not ISelections, this just makes the method a little more generic
 		else if (selection instanceof Collection) {
@@ -129,12 +135,12 @@ public class SelectionUtils {
 		List<Object> result = null;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			result = new ArrayList<Object>((List<?>) structuredSelection.toList());
+			result = new ArrayList<Object>(structuredSelection.toList());
 		} else if (selection instanceof Collection) {
 			Collection<?> collection = (Collection<?>) selection;
-			result = new ArrayList<Object>(collection);
+			result = new ArrayList<>(collection);
 		} else {
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
 			list.add(selection);
 			result = list;
 		}
@@ -227,7 +233,7 @@ public class SelectionUtils {
 	/** Creates list from array/set of elements */
 	public static List<Object> toList(Collection<?> collection) {
 		int size = (collection == null) ? 0 : collection.size();
-		List<Object> result = new ArrayList<Object>(size);
+		List<Object> result = new ArrayList<>(size);
 		if (collection != null)
 			result.addAll(collection);
 		return result;
@@ -254,7 +260,7 @@ public class SelectionUtils {
 			result = workbench.getActiveWorkbenchWindow();
 			if (result == null) {
 				if (workbench.getWorkbenchWindowCount() > 0) {
-					result = (IWorkbenchWindow) workbench.getWorkbenchWindows()[0];
+					result = workbench.getWorkbenchWindows()[0];
 				}
 			}
 		}

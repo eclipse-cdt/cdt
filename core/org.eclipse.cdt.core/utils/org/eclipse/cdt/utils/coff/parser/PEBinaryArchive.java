@@ -20,8 +20,8 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.utils.AR;
-import org.eclipse.cdt.utils.BinaryFile;
 import org.eclipse.cdt.utils.AR.ARHeader;
+import org.eclipse.cdt.utils.BinaryFile;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -33,7 +33,7 @@ public class PEBinaryArchive extends BinaryFile implements IBinaryArchive {
 	public PEBinaryArchive(PEParser parser, IPath path) throws IOException {
 		super(parser, path, IBinaryFile.ARCHIVE);
 		new AR(path.toOSString()).dispose(); // check file type
-		children = new ArrayList<IBinaryObject>(5);
+		children = new ArrayList<>(5);
 	}
 
 	/**

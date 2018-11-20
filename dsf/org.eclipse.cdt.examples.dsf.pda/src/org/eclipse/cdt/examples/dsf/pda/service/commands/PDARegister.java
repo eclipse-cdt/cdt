@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,8 +21,8 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 
 /**
  * Object representing a register in the registers command results.
- * 
- * @see PDARCommand 
+ *
+ * @see PDARCommand
  */
 @Immutable
 public class PDARegister {
@@ -39,7 +39,7 @@ public class PDARegister {
 		fName = regSt.nextToken();
 		fWritable = Boolean.parseBoolean(regSt.nextToken());
 
-		List<PDABitField> bitFieldsList = new ArrayList<PDABitField>();
+		List<PDABitField> bitFieldsList = new ArrayList<>();
 		while (st.hasMoreTokens()) {
 			bitFieldsList.add(new PDABitField(st.nextToken()));
 		}

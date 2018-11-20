@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 
 /**
  * -gdb-set substitute-path from to
- * 
+ *
  * @since 5.0
  */
 public class MISetSubstitutePath extends MIGDBSet {

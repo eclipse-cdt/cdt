@@ -22,22 +22,22 @@ public interface IEnableDisableTarget {
 
 	/**
 	 * Returns whether this object supports enable/disable operations.
-	 * 
+	 *
 	 * @return whether this object supports enable/disable operations
 	 */
 	boolean canEnableDisable();
 
 	/**
 	 * Returns whether this object is enabled.
-	 * 
-	 * @return <code>true</code> if this obvject is enabled, 
+	 *
+	 * @return <code>true</code> if this obvject is enabled,
 	 * 		   or <code>false</code> otherwise.
 	 */
 	boolean isEnabled();
 
 	/**
 	 * Enables/disables this object
-	 * 
+	 *
 	 * @param enabled enablement flag value
 	 * @throws DebugException
 	 */

@@ -17,7 +17,7 @@ package org.eclipse.cdt.make.core.makefile;
  * .SUFFIXES
  * Prerequesites of .SUFFIXES shall be appended to the list of known suffixes and are
  * used in conjunction with the inference rules.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

@@ -28,7 +28,7 @@ public interface ICPPBasicType extends IBasicType {
 	@Deprecated
 	public static final int LAST = IS_LONG_LONG;
 
-	/** 
+	/**
 	 * @since 4.0
 	 * @deprecated use {@link #getModifiers()}, instead.
 	 * @noreference This method is not intended to be referenced by clients.

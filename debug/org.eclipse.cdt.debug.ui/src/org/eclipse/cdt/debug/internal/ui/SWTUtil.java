@@ -50,7 +50,7 @@ public class SWTUtil {
 	/**
 	 * Returns the shell for the given widget. If the widget doesn't represent
 	 * a SWT object that manage a shell, <code>null</code> is returned.
-	 * 
+	 *
 	 * @return the shell for the given widget
 	 */
 	public static Shell getShell(Widget widget) {
@@ -89,7 +89,7 @@ public class SWTUtil {
 	/**
 	 * Sets width and height hint for the button control. <b>Note:</b> This
 	 * is a NOP if the button's layout data is not an instance of <code>GridData</code>.
-	 * 
+	 *
 	 * @param the button for which to set the dimension hint
 	 */
 	public static void setButtonDimensionHint(Button button) {

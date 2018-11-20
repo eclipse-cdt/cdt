@@ -13,15 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.cdt.internal.ui.wizards.folderwizard.NewFolderWizardMessages;
 import org.eclipse.cdt.internal.ui.wizards.folderwizard.NewSourceFolderWizardPage;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class NewSourceFolderCreationWizard extends NewElementWizard {
 	private NewSourceFolderWizardPage fPage;

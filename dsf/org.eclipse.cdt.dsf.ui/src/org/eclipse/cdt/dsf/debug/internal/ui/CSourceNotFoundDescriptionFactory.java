@@ -85,14 +85,14 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 	/**
 	 * Creates a brief description of stack frame data. Based on code in
 	 * StackFrameVMNode.
-	 * 
+	 *
 	 * @param frame
 	 * @return the frame description
 	 */
 	private static ICSourceNotFoundDescription getFrameDescription(IStack.IFrameDMData frame) {
 		String formatString = ""; //$NON-NLS-1$
 		String[] propertyNames = null;
-		HashMap<String, Object> properties = new HashMap<String, Object>();
+		HashMap<String, Object> properties = new HashMap<>();
 		fillFrameDataProperties(properties, frame);
 
 		Integer line = (Integer) properties.get(ILaunchVMConstants.PROP_FRAME_LINE);

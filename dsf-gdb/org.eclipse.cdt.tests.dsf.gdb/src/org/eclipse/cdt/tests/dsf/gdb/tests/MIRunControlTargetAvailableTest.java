@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
  *******************************************************************************/
@@ -43,7 +43,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 /**
- * Tests MIRunControl class for for the execWhileTargetAvailable() method. 
+ * Tests MIRunControl class for for the execWhileTargetAvailable() method.
  */
 @RunWith(Parameterized.class)
 public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
@@ -96,7 +96,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for a single operation with a single step when the target is stopped. 
+	 * for a single operation with a single step when the target is stopped.
 	 */
 	@Test
 	public void executeSingleStepSingleOpWhileTargetStopped() throws Throwable {
@@ -129,7 +129,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		// Now resume the target and check that we stop at the breakpoint.
 
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		SyncUtil.resume();
@@ -140,7 +140,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for a single operation with a single step when the target is running. 
+	 * for a single operation with a single step when the target is running.
 	 */
 	@Test
 	public void executeSingleStepSingleOpWhileTargetRunning() throws Throwable {
@@ -159,7 +159,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 		} };
 
 		// The target is currently stopped so we resume it
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		SyncUtil.resume();
@@ -182,7 +182,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for a single operation with multiple steps when the target is stopped. 
+	 * for a single operation with multiple steps when the target is stopped.
 	 */
 	@Test
 	public void executeMultiStepSingleOpWhileTargetStopped() throws Throwable {
@@ -236,7 +236,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		// Now resume the target three times and check that we stop three times.
 		for (int i = 0; i < steps.length; i++) {
-			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 					getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
@@ -249,7 +249,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
 	 * for a single operation with multiple steps when the target is stopped
-	 * and one of the steps fails. 
+	 * and one of the steps fails.
 	 */
 	@Test
 	public void executeMultiStepSingleOpWhileTargetStoppedWithError() throws Throwable {
@@ -311,7 +311,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for a single operation with multiple steps when the target is running. 
+	 * for a single operation with multiple steps when the target is running.
 	 */
 	@Test
 	public void executeMultiStepSingleOpWhileTargetRunning() throws Throwable {
@@ -351,7 +351,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 		} };
 
 		// The target is currently stopped so we resume it
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		SyncUtil.resume();
@@ -372,7 +372,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			// Wait up to 3 second for the target to suspend. Should happen within two seconds.
 			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
-			suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(getGDBLaunch().getSession(),
+			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
 					ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
@@ -383,7 +383,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
 	 * for a single operation with multiple steps when the target is running
-	 * and one of the steps fails. 
+	 * and one of the steps fails.
 	 */
 	@Test
 	public void executeMultiStepSingleOpWhileTargetRunningWithError() throws Throwable {
@@ -425,7 +425,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 		} };
 
 		// The target is currently stopped so we resume it
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		SyncUtil.resume();
@@ -454,7 +454,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for concurrent operations with a single step when the target is stopped. 
+	 * for concurrent operations with a single step when the target is stopped.
 	 */
 	@Test
 	public void executeSingleStepConcurrentOpWhileTargetStopped() throws Throwable {
@@ -487,7 +487,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 					@Override
 					protected void handleCompleted() {
 						rm.done();
-					};
+					}
 				};
 
 				int index;
@@ -505,7 +505,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		for (int i = 0; i < steps.length; i++) {
 			// Now resume the target and check that we stop at all the breakpoints.
-			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 					getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
@@ -517,7 +517,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for concurrent operations with a single step when the target is running. 
+	 * for concurrent operations with a single step when the target is running.
 	 */
 	@Test
 	public void executeSingleStepConcurrentOpWhileTargetRunning() throws Throwable {
@@ -542,7 +542,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 		}
 
 		// The target is currently stopped so we resume it
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		SyncUtil.resume();
@@ -554,7 +554,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 					@Override
 					protected void handleCompleted() {
 						rm.done();
-					};
+					}
 				};
 
 				int index;
@@ -575,7 +575,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
 			// Now resume the target and check that we stop at all the breakpoints.
-			suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(getGDBLaunch().getSession(),
+			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
 					ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
@@ -584,7 +584,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for concurrent operations with a single step when the target is stopped. 
+	 * for concurrent operations with a single step when the target is stopped.
 	 * This tests verifies that we properly handle concurrent operations that are sent
 	 * while other operations are already being run.
 	 */
@@ -636,7 +636,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		for (int i = 0; i < 2; i++) {
 			// The target is currently stopped so we resume it
-			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 					getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
@@ -648,7 +648,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for concurrent operations with a single step when the target is running. 
+	 * for concurrent operations with a single step when the target is running.
 	 * This tests verifies that we properly handle concurrent operations that are sent
 	 * while other operations are already being run.
 	 */
@@ -686,7 +686,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 		} };
 
 		// The target is currently stopped so we resume it
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		SyncUtil.resume();
@@ -707,7 +707,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
 			// Now resume the target and check that we stop at all the breakpoints.
-			suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(getGDBLaunch().getSession(),
+			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
 					ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
@@ -716,7 +716,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for concurrent operations with a single step when the target is stopped. 
+	 * for concurrent operations with a single step when the target is stopped.
 	 * This tests verifies that we properly handle concurrent operations that are
 	 * dependent on each other; this means that the second operation needs to complete
 	 * for the second one to complete.
@@ -766,7 +766,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		for (int i = 0; i < 2; i++) {
 			// The target is currently stopped so we resume it
-			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 					getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
@@ -778,7 +778,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Test that the executeWhileTargetAvailale interface works properly
-	 * for concurrent operations with a single step when the target is running. 
+	 * for concurrent operations with a single step when the target is running.
 	 * This tests verifies that we properly handle concurrent operations that are
 	 * dependent on each other; this means that the second operation needs to complete
 	 * for the second one to complete.
@@ -814,7 +814,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 		} };
 
 		// The target is currently stopped so we resume it
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		SyncUtil.resume();
@@ -835,7 +835,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
 			// Now resume the target and check that we stop at all the breakpoints.
-			suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(getGDBLaunch().getSession(),
+			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
 					ISuspendedDMEvent.class);
 
 			SyncUtil.resume();

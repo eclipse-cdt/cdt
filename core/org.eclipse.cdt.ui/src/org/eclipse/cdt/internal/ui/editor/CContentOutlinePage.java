@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -16,6 +16,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
+import org.eclipse.cdt.ui.actions.GenerateActionGroup;
+import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
@@ -29,19 +40,6 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
-import org.eclipse.cdt.ui.actions.GenerateActionGroup;
-import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 
 /**
  * Outline page for C/C++ translation units.
@@ -162,7 +160,7 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 
 	/**
 	 * This action toggles namespace grouping
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	protected static class NamespaceGroupingAction extends Action {
@@ -194,7 +192,7 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 
 	/**
 	 * This action toggles member definition grouping
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	protected static class MemberGroupingAction extends Action {

@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 /**
  * C's elaborated type specifier. (same as IASTElaboratedTypeSpecifier, except
  * for the addition of the restrict keyword.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

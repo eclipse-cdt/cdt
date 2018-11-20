@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -16,6 +16,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.util.CColorManager;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -24,14 +30,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
-
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 /**
  * Tools required to configure a C/C++ source viewer.
@@ -73,7 +71,7 @@ public class CTextTools {
 	}
 
 	/**
-	 * Returns a scanner which is configured to scan 
+	 * Returns a scanner which is configured to scan
 	 * C-specific partitions, which are preprocessor directives, comments,
 	 * and regular C source code.
 	 *
@@ -93,7 +91,7 @@ public class CTextTools {
 
 	/**
 	 * Sets up the document partitioner for the given document for the given partitioning.
-	 * 
+	 *
 	 * @param document
 	 * @param partitioning
 	 * @param owner may be null
@@ -111,7 +109,7 @@ public class CTextTools {
 
 	/**
 	 * Sets up the given document for the default partitioning.
-	 * 
+	 *
 	 * @param document the document to be set up
 	 * @param location the path of the resource backing the document. May be null.
 	 * @param locationKind the type of path specified above. May be null.
@@ -123,7 +121,7 @@ public class CTextTools {
 
 	/**
 	 * Sets up the given document for the default partitioning.
-	 * 
+	 *
 	 * @param document the document to be set up
 	 */
 	public void setupCDocument(IDocument document) {
@@ -132,7 +130,7 @@ public class CTextTools {
 
 	/**
 	 * Get the document partitioning used for the C partitioner.
-	 * 
+	 *
 	 * @return the document partitioning used for the C partitioner
 	 */
 	public String getDocumentPartitioning() {

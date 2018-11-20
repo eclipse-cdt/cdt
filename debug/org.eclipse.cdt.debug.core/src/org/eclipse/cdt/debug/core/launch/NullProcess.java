@@ -22,7 +22,7 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 
 /**
  * A simple process that only spits out a message then terminates.
- * 
+ *
  * @since 8.3
  */
 public class NullProcess extends PlatformObject implements IProcess {

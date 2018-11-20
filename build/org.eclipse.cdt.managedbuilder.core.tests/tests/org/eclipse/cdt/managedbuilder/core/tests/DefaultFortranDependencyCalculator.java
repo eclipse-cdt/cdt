@@ -47,7 +47,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 * Return a list of the names of all modules used by a file
 	 */
 	private String[] findUsedModuleNames(File file) {
-		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<>();
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(file));
@@ -88,7 +88,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 * Return a list of the names of all modules defined in a file
 	 */
 	private String[] findModuleNames(File file) {
-		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<>();
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(file));
@@ -148,7 +148,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 */
 	private IResource[] FindModulesInResources(IProject project, ITool tool, IResource resource,
 			IResource[] resourcesToSearch, String topBuildDir, String[] usedNames) {
-		ArrayList<IResource> modRes = new ArrayList<IResource>();
+		ArrayList<IResource> modRes = new ArrayList<>();
 		for (int ir = 0; ir < resourcesToSearch.length; ir++) {
 			if (resourcesToSearch[ir].equals(resource))
 				continue;
@@ -199,7 +199,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 */
 	@Override
 	public IResource[] findDependencies(IResource resource, IProject project) {
-		ArrayList<IResource> dependencies = new ArrayList<IResource>();
+		ArrayList<IResource> dependencies = new ArrayList<>();
 
 		//  TODO:  This method should be passed the ITool and the relative path of the top build directory
 		//         For now we'll figure this out from the project.
@@ -268,7 +268,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	@Override
 	public IPath[] getOutputNames(ITool tool, IPath[] primaryInputNames) {
 		//  TODO:  This method should be passed the relative path of the top build directory?
-		ArrayList<IPath> outs = new ArrayList<IPath>();
+		ArrayList<IPath> outs = new ArrayList<>();
 		if (primaryInputNames.length > 0) {
 			// Get the names of modules created by this source file
 			String[] modules = findModuleNames(primaryInputNames[0].toFile());

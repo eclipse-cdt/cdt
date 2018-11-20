@@ -91,13 +91,13 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 
 	/**
 	 * Method isCandidate returns true for all projects.
-	 * 
+	 *
 	 * @param project
 	 * @return boolean
 	 */
 	@Override
 	public boolean isCandidate(IProject project) {
-		return true; // all 
+		return true; // all
 	}
 
 	protected IProjectType getProjectType() {

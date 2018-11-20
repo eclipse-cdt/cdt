@@ -20,18 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -61,16 +49,12 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
@@ -79,6 +63,19 @@ import org.eclipse.cdt.internal.ui.refactoring.VariableNameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.util.NameComposer;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.text.edits.TextEditGroup;
 
 /**
  * The main class for the Extract Local Variable refactoring. This refactoring
@@ -144,7 +141,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	private ArrayList<String> findAllDeclaredNames() {
-		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<>();
 		IASTFunctionDefinition funcDef = ASTQueries.findAncestorWithType(target, IASTFunctionDefinition.class);
 		ICPPASTCompositeTypeSpecifier comTypeSpec = getCompositeTypeSpecifier(funcDef);
 		if (comTypeSpec != null) {
@@ -329,8 +326,8 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	 *         proposal should be used as "best guess" (if it exists).
 	 */
 	public String[] guessTempNames() {
-		final List<String> guessedTempNames = new ArrayList<String>();
-		final List<String> usedNames = new ArrayList<String>();
+		final List<String> guessedTempNames = new ArrayList<>();
+		final List<String> usedNames = new ArrayList<>();
 		IASTFunctionDefinition funcDef = ASTQueries.findAncestorWithType(target, IASTFunctionDefinition.class);
 		final IScope scope;
 		if (funcDef != null && funcDef.getBody() instanceof IASTCompoundStatement) {
@@ -478,7 +475,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	private String makeTempName(List<String> usedNames, IScope scope) {
-		List<String> noNames = new ArrayList<String>();
+		List<String> noNames = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			for (String used : usedNames) {
 				String name = used + i; // such as "i2"
@@ -499,7 +496,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	private Map<String, String> getArgumentMap() {
-		Map<String, String> arguments = new HashMap<String, String>();
+		Map<String, String> arguments = new HashMap<>();
 		arguments.put(CRefactoringDescriptor.FILE_NAME, tu.getLocationURI().toString());
 		arguments.put(CRefactoringDescriptor.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
 		arguments.put(ExtractLocalVariableRefactoringDescriptor.NAME, info.getName());

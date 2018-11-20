@@ -193,7 +193,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 
 	private Map<String, Set<String>> getReferencedProperties() {
 		if (fRefPropsMap == null) {
-			fRefPropsMap = new HashMap<String, Set<String>>();
+			fRefPropsMap = new HashMap<>();
 
 			for (int i = 0; i < fExpressions.length; i++) {
 				fExpressions[i].getReferencedProperties(fRefPropsMap);

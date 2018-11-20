@@ -16,6 +16,11 @@ package org.eclipse.cdt.ui.newui;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
+import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -24,17 +29,10 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
-import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
-
 /**
  * This class provides static methods to work with multiple
  * implementors of "ConfigManager" extension point.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -47,7 +45,7 @@ public class ManageConfigSelector {
 	/**
 	 * Searches for IConfigManager which
 	 * can process given projects.
-	 * 
+	 *
 	 * @param obs - list of projects to handle
 	 * @return first matching ConfigManager
 	 */
@@ -65,7 +63,7 @@ public class ManageConfigSelector {
 	/**
 	 * Searches for IConfigManager which
 	 * can process given objects.
-	 * 
+	 *
 	 * @param obs - "raw" array of objects
 	 * @return first matching ConfigManager
 	 */
@@ -75,16 +73,16 @@ public class ManageConfigSelector {
 
 	/**
 	 * Filters "raw" objects array
-	 * 
+	 *
 	 * @param obs - objects to filter
 	 * @return array with only new-style projects included
 	 */
 	public static IProject[] getProjects(Object[] obs) {
-		ArrayList<IProject> lst = new ArrayList<IProject>();
+		ArrayList<IProject> lst = new ArrayList<>();
 		if (obs != null) {
 			for (Object ob : obs) {
 				IProject prj = null;
-				// Extract project from selection 
+				// Extract project from selection
 				if (ob instanceof ICElement) { // for C/C++ view
 					prj = ((ICElement) ob).getCProject().getProject();
 				} else if (ob instanceof IResource) { // for other views
@@ -123,7 +121,7 @@ public class ManageConfigSelector {
 		if (extensions == null)
 			return;
 
-		ArrayList<IConfigManager> list = new ArrayList<IConfigManager>();
+		ArrayList<IConfigManager> list = new ArrayList<>();
 		for (int i = 0; i < extensions.length; ++i) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int k = 0; k < elements.length; k++) {

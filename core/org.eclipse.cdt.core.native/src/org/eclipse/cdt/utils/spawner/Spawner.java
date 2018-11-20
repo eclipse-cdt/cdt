@@ -35,9 +35,9 @@ public class Spawner extends Process {
 	public int TERM = 15;
 
 	/**
-	 * On Windows, what this does is far from easy to explain. 
+	 * On Windows, what this does is far from easy to explain.
 	 * Some of the logic is in the JNI code, some in the spawner.exe code.
-	 * 
+	 *
 	 * <ul>
 	 * <li>If the process this is being raised against was launched by us (the Spawner)
 	 *    <ul>
@@ -45,20 +45,20 @@ public class Spawner extends Process {
 	 *    the 'kill' utility isn't available, send the process a CTRL-C
 	 *    <li>If the process is <i>not</i> a cygwin program, send the process a CTRL-C
 	 *    </ul>
-	 * <li>If the process this is being raised against was <i>not</i> launched by us, use 
-	 * DebugBreakProcess to interrupt it (sending a CTRL-C is easy only if we share a console 
-	 * with the target process) 
+	 * <li>If the process this is being raised against was <i>not</i> launched by us, use
+	 * DebugBreakProcess to interrupt it (sending a CTRL-C is easy only if we share a console
+	 * with the target process)
 	 * </ul>
-	 * 
-	 * On non-Windows, raising this just raises a POSIX SIGINT  
-	 * 
+	 *
+	 * On non-Windows, raising this just raises a POSIX SIGINT
+	 *
 	 */
 	public int INT = 2;
 
 	/**
 	 * A fabricated signal number for use on Windows only. Tells the starter program to send a CTRL-C
 	 * regardless of whether the process is a Cygwin one or not.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public int CTRLC = 1000; // arbitrary high number to avoid collision
@@ -193,7 +193,7 @@ public class Spawner extends Process {
 		if (null == err) {
 			if (fPty != null && !fPty.isConsole()) {
 				// If PTY is used and it's not in "Console" mode, then stderr is
-				// redirected to the PTY's output stream.  Therefore, return a 
+				// redirected to the PTY's output stream.  Therefore, return a
 				// dummy stream for error stream.
 				err = new InputStream() {
 					@Override
@@ -243,7 +243,7 @@ public class Spawner extends Process {
 
 	/**
 	 * See java.lang.Process#destroy ();
-	 * 
+	 *
 	 * Clients are responsible for explicitly closing any streams
 	 * that they have requested through
 	 *   getErrorStream(), getInputStream() or getOutputStream()
@@ -297,8 +297,8 @@ public class Spawner extends Process {
 
 	/**
 	 * On Windows, interrupt the spawned program by send it a CTRL-C (even if it's a Cygwin program). On
-	 * linux, interrupt it by raising a SIGINT. 
-	 * 
+	 * linux, interrupt it by raising a SIGINT.
+	 *
 	 * @since 5.2
 	 */
 	public int interruptCTRLC() {
@@ -427,17 +427,17 @@ public class Spawner extends Process {
 	}
 
 	/**
-	 * Native method use in normal exec() calls. 
+	 * Native method use in normal exec() calls.
 	 */
 	native int exec0(String[] cmdarray, String[] envp, String dir, int[] chan) throws IOException;
 
 	/**
-	 * Native method use in no redirect meaning to streams will created. 
+	 * Native method use in no redirect meaning to streams will created.
 	 */
 	native int exec1(String[] cmdarray, String[] envp, String dir) throws IOException;
 
 	/**
-	 * Native method when executing with a terminal emulation. 
+	 * Native method when executing with a terminal emulation.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public native int exec2(String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD,

@@ -23,8 +23,8 @@ import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Creates a Dynamic Printf interactively, that is with user input as well as context 
- * information gathered from editor location. This action delegate can be 
+ * Creates a Dynamic Printf interactively, that is with user input as well as context
+ * information gathered from editor location. This action delegate can be
  * contributed to an editor with the <code>editorActions</code> extension point.
  * This action is as a factory that creates another action that performs the
  * actual breakpoint toggling. The created action acts on the editor's
@@ -48,7 +48,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * </pre>
  * </p>
  * <p>
- * Clients may refer to this class as an action delegate in plug-in XML. 
+ * Clients may refer to this class as an action delegate in plug-in XML.
  * </p>
  * @see IToggleBreakpointsTargetCExtension
  * @since 7.4
@@ -64,6 +64,7 @@ public class CAddDynamicPrintfInteractiveRulerActionDelegate extends AbstractRul
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
 	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		fDelegate = new CAddDynamicPrintfInteractiveRulerAction(editor, null, rulerInfo);
 		return fDelegate;
@@ -72,6 +73,7 @@ public class CAddDynamicPrintfInteractiveRulerActionDelegate extends AbstractRul
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		if (fEditor != null) {
 			if (fDelegate != null) {
@@ -86,12 +88,14 @@ public class CAddDynamicPrintfInteractiveRulerActionDelegate extends AbstractRul
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fDelegate != null) {
 			fDelegate.dispose();

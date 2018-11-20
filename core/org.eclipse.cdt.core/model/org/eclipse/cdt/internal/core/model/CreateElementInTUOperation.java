@@ -249,7 +249,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	}
 
 	/**
-	 * Inserts the given child into the given JDOM, 
+	 * Inserts the given child into the given JDOM,
 	 * based on the position settings of this operation.
 	 *
 	 * @see #createAfter(ICElement)

@@ -44,7 +44,7 @@ public interface IGDBJtagConnection {
 	/**
 	 * Host specific default device name used by GDB to connect to a device
 	 * @return identifier for the remote device.  It is up to GDB to figure out how to interpret
-	 * the connection string (e.g /dev/COM1, 127.0.0.1:8888, etc.) 
+	 * the connection string (e.g /dev/COM1, 127.0.0.1:8888, etc.)
 	 */
 	public String getDefaultDeviceConnection();
 

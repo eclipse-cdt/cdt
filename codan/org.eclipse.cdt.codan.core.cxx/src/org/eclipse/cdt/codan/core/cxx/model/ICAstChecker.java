@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
  * Checker that can/want to process C/C++ AST (Abstract Syntax Tree) of a
  * program
  * Default implementation {@link AbstractIndexAstChecker}
- * 
+ *
  * Clients may implement and extend this interface.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will
@@ -33,7 +33,7 @@ public interface ICAstChecker extends IChecker {
 	/**
 	 * Runs this checker on a given AST.
 	 * AST locks are obtained by the framework before calling this method.
-	 * 
+	 *
 	 * @param ast the AST.
 	 */
 	void processAst(IASTTranslationUnit ast);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -140,8 +140,8 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public void addExceptionSpecificationTypeId(IASTTypeId typeId);
 
 	/**
-	 * Configures the declarator with an empty exception specification (as opposed to having none). 
-	 * 
+	 * Configures the declarator with an empty exception specification (as opposed to having none).
+	 *
 	 * @since 5.1
 	 */
 	public void setEmptyExceptionSpecification();
@@ -155,7 +155,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public ICPPASTExpression getNoexceptExpression();
 
 	/**
-	 * Sets the noexcept expression. 
+	 * Sets the noexcept expression.
 	 * @since 5.5
 	 */
 	public void setNoexceptExpression(ICPPASTExpression expression);
@@ -193,14 +193,14 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 
 	/**
 	 * Returns whether this function is declared override.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public boolean isOverride();
 
 	/**
 	 * Returns whether this function is declared final.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public boolean isFinal();
@@ -212,7 +212,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public ICPPASTVirtSpecifier[] getVirtSpecifiers();
 
 	/**
-	 * Add a virt-specifiers to this function. 
+	 * Add a virt-specifiers to this function.
 	 * @since 5.7
 	 */
 	public void addVirtSpecifier(ICPPASTVirtSpecifier virtSpecifier);

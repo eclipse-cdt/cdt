@@ -28,7 +28,7 @@ public class DebugTextHover extends AbstractDebugTextHover {
 
 	/**
 	 * Returns the evaluation stack frame, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the evaluation stack frame, or <code>null</code> if none
 	 */
 	protected ICStackFrame getFrame() {

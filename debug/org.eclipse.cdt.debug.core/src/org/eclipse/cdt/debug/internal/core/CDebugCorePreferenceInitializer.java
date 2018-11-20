@@ -29,8 +29,8 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
  */
 public class CDebugCorePreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/** 
-	 * Constructor for CDebugCorePreferenceInitializer. 
+	/**
+	 * Constructor for CDebugCorePreferenceInitializer.
 	 */
 	public CDebugCorePreferenceInitializer() {
 		super();

@@ -14,13 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.cdt.core.model.ICElement;
-
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Action used for the include browser forward / backward buttons

@@ -18,7 +18,7 @@ public interface ICProjectDescriptionPreferences {
 	 * Configuration relation status specifying that the Settings and Build configurations are
 	 * independent of each other, i.e. changing the active configuration will NOT change the settings
 	 * configuration used by the core and vie a versa
-	 *  
+	 *
 	 * @see #getConfigurationRelations()
 	 * @see #setConfigurationRelations(int)
 	 */
@@ -28,7 +28,7 @@ public interface ICProjectDescriptionPreferences {
 	 * Configuration relation status specifying that the Settings and Build configurations are
 	 * settings are linked with each other, i.e. changing the active configuration will change the settings
 	 * configuration used by the core and vie a versa
-	 *  
+	 *
 	 * @see #getConfigurationRelations()
 	 * @see #setConfigurationRelations(int)
 	 */
@@ -36,10 +36,10 @@ public interface ICProjectDescriptionPreferences {
 
 	/**
 	 * returns the CONFIG_xxx status for this project description
-	 * 
+	 *
 	 * @see #CONFIGS_INDEPENDENT
 	 * @see #CONFIGS_LINK_SETTINGS_AND_ACTIVE
-	 * 
+	 *
 	 * @return int
 	 */
 	int getConfigurationRelations();
@@ -47,10 +47,10 @@ public interface ICProjectDescriptionPreferences {
 	/**
 	 * sets the configuration relation status. can be an integer value containing the
 	 * CONFIG_xxx status
-	 * 
+	 *
 	 * @see #CONFIGS_INDEPENDENT
 	 * @see #CONFIGS_LINK_SETTINGS_AND_ACTIVE
-	 * 
+	 *
 	 * @param status
 	 */
 	void setConfigurationRelations(int status);

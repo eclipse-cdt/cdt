@@ -13,17 +13,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.Flags;
 import org.eclipse.cdt.internal.core.model.IConstants;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * @author Peter Graves
  *
  * This is a very simple set of sanity tests for the flags class to make sure
- * there are no very silly problems in the class. It also verifies that there 
+ * there are no very silly problems in the class. It also verifies that there
  * is no overlap in the IConstants.
  */
 public class FlagTests extends TestCase {
@@ -42,8 +42,8 @@ public class FlagTests extends TestCase {
 	 * Sets up the test fixture.
 	 *
 	 * Called before every test case method.
-	 * 
-	 * Example code test the packages in the project 
+	 *
+	 * Example code test the packages in the project
 	 *  "com.qnx.tools.ide.cdt.core"
 	 */
 	@Override

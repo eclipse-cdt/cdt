@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * C++ specific version of enumerations.
- * 
+ *
  * @since 5.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -38,8 +38,8 @@ public interface ICPPEnumeration extends IEnumeration, ICPPBinding {
 
 	/**
 	 * Returns the scope containing the enumerators.
-	 * By the standard the scope is only defined for scoped enums, however it will be returned 
-	 * for any enum. In case the enum has no definition (just opaque declarations) an empty scope 
+	 * By the standard the scope is only defined for scoped enums, however it will be returned
+	 * for any enum. In case the enum has no definition (just opaque declarations) an empty scope
 	 * will be returned.
 	 */
 	ICPPScope asScope();

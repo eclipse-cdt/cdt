@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.util.StringMatcher;
+import org.eclipse.cdt.internal.ui.util.TwoArrayQuickSort;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -33,9 +35,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.internal.ui.util.StringMatcher;
-import org.eclipse.cdt.internal.ui.util.TwoArrayQuickSort;
 
 /**
  * A selection widget that consists of a list and a text entry field. The list
@@ -137,7 +136,7 @@ public class SelectionList extends Composite {
 		if (fList == null || fList.isDisposed() || fList.getSelectionCount() == 0)
 			return Collections.emptyList();
 		int[] listSelection = fList.getSelectionIndices();
-		List<Object> selected = new ArrayList<Object>(listSelection.length);
+		List<Object> selected = new ArrayList<>(listSelection.length);
 		for (int i = 0; i < listSelection.length; i++) {
 			selected.add(fElements[fFilteredElements[listSelection[i]]]);
 		}
@@ -205,7 +204,7 @@ public class SelectionList extends Composite {
 			filter(true);
 	}
 
-	/* 
+	/*
 	 * Non Java-doc
 	 */
 	@Override

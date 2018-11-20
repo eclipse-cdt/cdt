@@ -127,13 +127,13 @@ public class FileScopePreferencePage extends PreferencePage {
 	private ListDialogField<String> createListContents(FileScopeProblemPreference entryToEdit, String key, String label,
 			String descriptor, String[] buttonLabels) {
 		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
-		ListDialogField<String> patternList = new ListDialogField<String>(adapter, buttonLabels,
+		ListDialogField<String> patternList = new ListDialogField<>(adapter, buttonLabels,
 				new ExclusionInclusionLabelProvider(descriptor));
 		patternList.setDialogFieldListener(adapter);
 		patternList.setLabelText(label);
 		patternList.enableButton(IDX_EDIT, false);
 		IPath[] pattern = entryToEdit.getAttribute(key);
-		ArrayList<String> elements = new ArrayList<String>(pattern.length);
+		ArrayList<String> elements = new ArrayList<>(pattern.length);
 		for (int i = 0; i < pattern.length; i++) {
 			String patternName = pattern[i].toString();
 			if (patternName.length() > 0)

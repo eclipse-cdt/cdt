@@ -24,7 +24,7 @@ import org.osgi.service.prefs.Preferences;
 
 /**
  * TODO trigger the indexer?
- * 
+ *
  * @author Mike Kucera
  */
 public class XlcLanguagePreferences {
@@ -62,7 +62,7 @@ public class XlcLanguagePreferences {
 
 	/**
 	 * Returns the preference for the given key.
-	 * 
+	 *
 	 * @param project If null then just the workspace and default preferences will be checked.
 	 */
 	public static String get(XlcPref key, IProject project) {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
  *******************************************************************************/
@@ -47,7 +47,7 @@ import org.osgi.service.prefs.Preferences;
 
 /**
  * Tests that we can perform different operations while the target
- * is running. 
+ * is running.
  */
 @RunWith(Parameterized.class)
 public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase {
@@ -109,7 +109,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 	/**
 	 * Test that the restart operation works properly while the target is running, and
-	 * with the option to kill GDB after the process terminates, enabled.  
+	 * with the option to kill GDB after the process terminates, enabled.
 	 */
 	@Test
 	public void restartWhileTargetRunningKillGDB() throws Throwable {
@@ -137,7 +137,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 	/**
 	 * Test that the restart operation works properly while the target is running, and
-	 * with the option to kill GDB after the process terminates, disabled.  
+	 * with the option to kill GDB after the process terminates, disabled.
 	 */
 	@Test
 	public void restartWhileTargetRunningGDBAlive() throws Throwable {
@@ -165,7 +165,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 	/**
 	 * Test that the terminate operation works properly while the target is running, and
-	 * with the option to kill GDB after the process terminates, enabled. 
+	 * with the option to kill GDB after the process terminates, enabled.
 	 */
 	@Test
 	public void terminateWhileTargetRunningKillGDB() throws Throwable {
@@ -177,7 +177,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we terminate, and confirm that we shutdown right away
 		SyncUtil.resume();
 
-		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
+		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ICommandControlShutdownDMEvent.class);
 
 		// Don't use a query here.  The terminate, because it kills GDB, may not return right away
@@ -203,7 +203,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 	/**
 	 * Test that the terminate operation works properly while the target is running, and
-	 * with the option to kill GDB after the process terminates, disabled. 
+	 * with the option to kill GDB after the process terminates, disabled.
 	 */
 	@Test
 	public void terminateWhileTargetRunningKeepGDBAlive() throws Throwable {
@@ -215,7 +215,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we terminate the process, and confirm that there are no more processes
 		SyncUtil.resume();
 
-		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<IExitedDMEvent>(
+		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IExitedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {
@@ -248,7 +248,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 	/**
 	 * Test that the detach operation works properly while the target is running, and
-	 * with the option to kill GDB after the process terminates, enabled.  
+	 * with the option to kill GDB after the process terminates, enabled.
 	 */
 	@Test
 	public void detachWhileTargetRunningKillGDB() throws Throwable {
@@ -260,7 +260,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we detach the process, and confirm that we are shutdown
 		SyncUtil.resume();
 
-		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
+		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ICommandControlShutdownDMEvent.class);
 
 		// Don't use a query here.  Because GDB will be killed, the call to detach may not return right away
@@ -285,7 +285,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 	/**
 	 * Test that the detach operation works properly while the target is running, and
-	 * with the option to kill GDB after the process terminates, disabled.  
+	 * with the option to kill GDB after the process terminates, disabled.
 	 */
 	@Test
 	public void detachWhileTargetRunningGDBAlive() throws Throwable {
@@ -297,7 +297,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we detach the process, and confirm that we are not longer running
 		SyncUtil.resume();
 
-		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<IExitedDMEvent>(
+		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IExitedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {

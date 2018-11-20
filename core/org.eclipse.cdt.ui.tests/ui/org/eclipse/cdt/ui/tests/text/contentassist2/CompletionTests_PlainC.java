@@ -16,18 +16,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import junit.framework.Test;
 
 /**
  * Completion tests for plain C.
- * 
+ *
  * @since 4.0
  */
 public class CompletionTests_PlainC extends AbstractContentAssistTest {
@@ -60,14 +59,14 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//
 	//enum anEnumeration {
 	//	aFirstEnum,
-	//	aSecondEnum, 
+	//	aSecondEnum,
 	//	aThirdEnum
 	//};
 	//typedef enum anEnumeration anEnumerationType;
 	//
 	//enum xEnumeration {
 	//	xFirstEnum,
-	//	xSecondEnum, 
+	//	xSecondEnum,
 	//	xThirdEnum
 	//};
 	//typedef enum xEnumeration xEnumerationType;
@@ -94,13 +93,13 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//#ifdef ANONYMOUS
 	//enum {
 	//	anonFirstEnum,
-	//	anonSecondEnum, 
+	//	anonSecondEnum,
 	//	anonThirdEnum
 	//};
 	//
 	//enum {
 	//	xanonFirstEnum,
-	//	xanonSecondEnum, 
+	//	xanonSecondEnum,
 	//	xanonThirdEnum
 	//};
 	//
@@ -122,11 +121,11 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//#endif /* ANONYMOUS */
 	//
 	//#ifdef STRUCT_C1
-	//enum E1 {e11, e12};	
+	//enum E1 {e11, e12};
 	//
 	//struct C1_s {
-	//  enum E2 {e21, e22};	
-	//	
+	//  enum E2 {e21, e22};
+	//
 	//  struct C1_s* fMySelf;
 	//
 	//  int m123;
@@ -182,7 +181,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		sourceContent.delete(fCursorOffset, fCursorOffset + CURSOR_LOCATION_TAG.length());
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
 		IFile sourceFile = createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
-		// re-indexing is necessary to parse the header in context of the source. 
+		// re-indexing is necessary to parse the header in context of the source.
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		waitForIndexer(fCProject);
 		return sourceFile;
@@ -519,8 +518,8 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//#define STRUCT_C1
 	///*include*/
 	//typedef struct {
-	//  enum E2 {e21, e22};	
-	//	
+	//  enum E2 {e21, e22};
+	//
 	//  C2* fMySelf;
 	//
 	//  int m123;

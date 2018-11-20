@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -93,7 +93,7 @@ public class GDBRunControl_7_6 extends GDBRunControl_7_0 implements IEventListen
 					if ("record-started".equals(asyncClass) || //$NON-NLS-1$
 							"record-stopped".equals(asyncClass)) { //$NON-NLS-1$
 
-						boolean enable = "record-started".equals(asyncClass); //$NON-NLS-1$	    				
+						boolean enable = "record-started".equals(asyncClass); //$NON-NLS-1$
 						setReverseModeEnabled(enable);
 					}
 				}

@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2012 PalmSource, Inc.and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0 
- * 
- * Contributors: 
- * Ewa Matejska    (PalmSource)       
- * Anna Dushistova (Mentor Graphics) - [314659] move remote launch/debug to DSF 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Ewa Matejska    (PalmSource)
+ * Anna Dushistova (Mentor Graphics) - [314659] move remote launch/debug to DSF
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.launch.remote;

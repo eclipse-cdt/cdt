@@ -20,12 +20,12 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *     -exec-next [count]
  *
  *  Asynchronous command.  Resumes execution of the inferior program,
  *  stopping when the beginning of the next source line is reached.
- * 
+ *
  */
 public class MIExecNext extends MICommand<MIInfo> {
 	public MIExecNext(IExecutionDMContext dmc) {

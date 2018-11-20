@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Eugene Ostroukhov (NVIDIA) - new done(IStatus) method
@@ -27,19 +27,19 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Used to monitor the result of an asynchronous request.  Because of the
- * asynchronous nature of DSF code, a very large number of methods needs to 
- * signal the result of an operation through a call-back.  This class is the base 
- * class for such call backs.  
+ * asynchronous nature of DSF code, a very large number of methods needs to
+ * signal the result of an operation through a call-back.  This class is the base
+ * class for such call backs.
  * <p>
- * The intended use of this class, is that a client who is calling an asynchronous 
- * method, will sub-class RequestMonitor, and implement the method {@link #handleCompleted()}, 
- * or any of the other <code>handle...</code> methods, in order to interpret the 
- * results of the request.  The object implementing the asynchronous method is required 
- * to call the {@link #done()} method on the request monitor object that it received 
- * as an argument.  
+ * The intended use of this class, is that a client who is calling an asynchronous
+ * method, will sub-class RequestMonitor, and implement the method {@link #handleCompleted()},
+ * or any of the other <code>handle...</code> methods, in order to interpret the
+ * results of the request.  The object implementing the asynchronous method is required
+ * to call the {@link #done()} method on the request monitor object that it received
+ * as an argument.
  * </p>
  * <p>
- * The severity of the {@link IStatus> returned by #getStatus() can be used to 
+ * The severity of the {@link IStatus> returned by #getStatus() can be used to
  * determine the success or failure of the asynchronous operation.  By convention
  * the error codes returned by asynchronous method should be interpreted as follows:
  * <ul>
@@ -52,30 +52,30 @@ import org.eclipse.core.runtime.Status;
  * <li>ERROR - An error condition that should probably be reported to the user.</li>
  * <li>CANCEL - The request was canceled, and the asynchronous method was not
  *     completed.</li>
- * </ul>  
+ * </ul>
  * </p>
  * <p>
- * The RequestMonitor constructor accepts an optional "parent" request monitor.  If a 
- * parent monitor is specified, it will automatically be invoked by this monitor when 
- * the request is completed.  The parent option is useful when implementing a method 
- * which is asynchronous (and accepts a request monitor as an argument) and which itself 
- * calls another asynchronous method to complete its operation.  For example, in the 
- * request monitor implementation below, the implementation only needs to override 
- * <code>handleSuccess()</code>, because the base implementation will handle notifying the 
- * parent <code>rm</code> in case the <code>getIngredients()</code> call fails. 
+ * The RequestMonitor constructor accepts an optional "parent" request monitor.  If a
+ * parent monitor is specified, it will automatically be invoked by this monitor when
+ * the request is completed.  The parent option is useful when implementing a method
+ * which is asynchronous (and accepts a request monitor as an argument) and which itself
+ * calls another asynchronous method to complete its operation.  For example, in the
+ * request monitor implementation below, the implementation only needs to override
+ * <code>handleSuccess()</code>, because the base implementation will handle notifying the
+ * parent <code>rm</code> in case the <code>getIngredients()</code> call fails.
  * <pre>
  *     public void createCupCakes(final DataRequestMonitor<CupCake[]> rm) {
  *         getIngredients(new DataRequestMonitor<Ingredients>(fExecutor, rm) {
  *                 public void handleSuccess() {
- *                     rm.setData( new CupCake(getData().getFlour(), getData().getSugar(), 
+ *                     rm.setData( new CupCake(getData().getFlour(), getData().getSugar(),
  *                                             getData().getBakingPowder()));
- *                     rm.done();  
+ *                     rm.done();
  *                 }
  *             });
  *     }
  * </pre>
  * </p>
- * 
+ *
  * @since 1.0
  */
 @ThreadSafe
@@ -83,8 +83,8 @@ public class RequestMonitor extends DsfExecutable {
 
 	/**
 	 * Interface used by RequestMonitor to notify when a given request monitor
-	 * is canceled.  
-	 * 
+	 * is canceled.
+	 *
 	 * @see RequestMonitor
 	 */
 	public static interface ICanceledListener {
@@ -95,22 +95,22 @@ public class RequestMonitor extends DsfExecutable {
 		public void requestCanceled(RequestMonitor rm);
 	}
 
-	/** 
+	/**
 	 * The executor that will be used in order to invoke the handler of the results
 	 * of the request.
 	 */
 	private final Executor fExecutor;
 
 	/**
-	 * The request monitor which was used to call into the method that created this 
-	 * monitor.  
+	 * The request monitor which was used to call into the method that created this
+	 * monitor.
 	 */
 	private final RequestMonitor fParentRequestMonitor;
 
 	private List<ICanceledListener> fCancelListeners;
 
 	/**
-	 * Status 
+	 * Status
 	 */
 	private IStatus fStatus = Status.OK_STATUS;
 	private boolean fCanceled = false;
@@ -123,7 +123,7 @@ public class RequestMonitor extends DsfExecutable {
 	 * developers debug DPF code. Developer can select this field in the
 	 * Variables view and see a monitor backtrace in the details pane. See
 	 * {@link DsfExecutable#DEBUG_MONITORS}.
-	 * 
+	 *
 	 * <p>
 	 * This field is set only when tracing is enabled.
 	 */
@@ -131,7 +131,7 @@ public class RequestMonitor extends DsfExecutable {
 
 	/**
 	 * Constructor with an optional parent monitor.
-	 * 
+	 *
 	 * @param executor
 	 *            This executor will be used to invoke the runnable that will
 	 *            allow processing the completion code of this request monitor.
@@ -147,7 +147,7 @@ public class RequestMonitor extends DsfExecutable {
 		fExecutor = executor;
 		fParentRequestMonitor = parentRequestMonitor;
 
-		// If the parent rm is not null, add ourselves as a listener so that 
+		// If the parent rm is not null, add ourselves as a listener so that
 		// this request monitor will automatically be canceled when the parent
 		// is canceled.
 		if (fParentRequestMonitor != null) {
@@ -168,10 +168,10 @@ public class RequestMonitor extends DsfExecutable {
 		}
 	}
 
-	/** 
-	 * Sets the status of the result of the request.  If status is OK, this 
+	/**
+	 * Sets the status of the result of the request.  If status is OK, this
 	 * method does not need to be called.
-	 * 
+	 *
 	 * @see #done(IStatus)
 	 */
 	public synchronized void setStatus(IStatus status) {
@@ -221,7 +221,7 @@ public class RequestMonitor extends DsfExecutable {
 			}
 		}
 
-		// Call the listeners outside of a synchronized section to reduce the 
+		// Call the listeners outside of a synchronized section to reduce the
 		// risk of deadlocks.
 		if (listeners != null) {
 			for (ICanceledListener listener : listeners) {
@@ -232,18 +232,18 @@ public class RequestMonitor extends DsfExecutable {
 
 	/**
 	 * Returns whether the request was canceled.  Even if the request is
-	 * canceled by the client, the implementor handling the request should 
-	 * still call {@link #done()} in order to complete handling 
-	 * of the request monitor. 
-	 * 
+	 * canceled by the client, the implementor handling the request should
+	 * still call {@link #done()} in order to complete handling
+	 * of the request monitor.
+	 *
 	 * <p>
 	 * A request monitor is considered canceled if either it or its parent was canceled.
-	 * </p> 
+	 * </p>
 	 */
 	public boolean isCanceled() {
 		boolean canceled = false;
 
-		// Avoid holding onto this lock while calling parent RM, which may 
+		// Avoid holding onto this lock while calling parent RM, which may
 		// acquire other locks (bug 329488).
 		synchronized (this) {
 			canceled = fCanceled;
@@ -252,18 +252,18 @@ public class RequestMonitor extends DsfExecutable {
 	}
 
 	/**
-	 * Adds the given listener to list of listeners that are notified when this 
+	 * Adds the given listener to list of listeners that are notified when this
 	 * request monitor is directly canceled.
 	 */
 	public synchronized void addCancelListener(ICanceledListener listener) {
 		if (fCancelListeners == null) {
-			fCancelListeners = new ArrayList<ICanceledListener>(1);
+			fCancelListeners = new ArrayList<>(1);
 		}
 		fCancelListeners.add(listener);
 	}
 
 	/**
-	 * Removes the given listener from the list of listeners that are notified 
+	 * Removes the given listener from the list of listeners that are notified
 	 * when this request monitor is directly canceled.
 	 */
 	public synchronized void removeCancelListener(ICanceledListener listener) {
@@ -274,12 +274,12 @@ public class RequestMonitor extends DsfExecutable {
 
 	/**
 	 * Marks this request as completed.  Once this method is called, the
-	 * monitor submits a runnable to the DSF Executor to call the 
-	 * <code>handle...</code> methods.  
+	 * monitor submits a runnable to the DSF Executor to call the
+	 * <code>handle...</code> methods.
 	 * <p>
-	 * Note: Only one <code>done</code> method should be called and only once, 
+	 * Note: Only one <code>done</code> method should be called and only once,
 	 * for every request issued. Even if the request was canceled.
-	 * </p>  
+	 * </p>
 	 */
 	public synchronized void done() {
 		setSubmitted();
@@ -329,12 +329,12 @@ public class RequestMonitor extends DsfExecutable {
 
 	/**
 	 * Sets status and marks request monitor as completed.
-	 * 
+	 *
 	 * <p>
-	 * Note: Only one <code>done</code> method should be called and only once, 
+	 * Note: Only one <code>done</code> method should be called and only once,
 	 * for every request issued. Even if the request was canceled.
-	 * </p>  
-	 * 
+	 * </p>
+	 *
 	 * @param status Request processing status
 	 * @see #done()
 	 * @see #setStatus(IStatus)
@@ -370,18 +370,18 @@ public class RequestMonitor extends DsfExecutable {
 	 * All handlers are named <code>handleXxxxx</code>. More specifically, the
 	 * base implementation calls {@link #handleSuccess()} if the request
 	 * succeeded, and calls {@link #handleFailure()} otherwise. <br>
-	 * 
+	 *
 	 * The complete hierarchy of handlers is as follows: <br>
 	 * <pre>
-	 * + handleCompleted 
-	 *   - handleSuccess 
-	 *   + handleFailure 
+	 * + handleCompleted
+	 *   - handleSuccess
+	 *   + handleFailure
 	 *     - handleCancel
-	 *     + handleErrororWarning 
-	 *       - handleError 
+	 *     + handleErrororWarning
+	 *       - handleError
 	 *       - handleWarning
 	 * </pre>
-	 * 
+	 *
 	 * <p>
 	 * Note: Sub-classes may override this method.
 	 */
@@ -395,9 +395,9 @@ public class RequestMonitor extends DsfExecutable {
 	}
 
 	/**
-	 * Default handler for a successful the completion of a request.  If this 
-	 * monitor has a parent monitor that was configured by the constructor, that 
-	 * parent monitor is notified.  Otherwise this method does nothing. 
+	 * Default handler for a successful the completion of a request.  If this
+	 * monitor has a parent monitor that was configured by the constructor, that
+	 * parent monitor is notified.  Otherwise this method does nothing.
 	 * {@link #handleFailure()} or cancel otherwise.
 	 * <br>
 	 * Note: Sub-classes may override this method.
@@ -410,7 +410,7 @@ public class RequestMonitor extends DsfExecutable {
 	}
 
 	/**
-	 * The default implementation of a cancellation or an error result of a 
+	 * The default implementation of a cancellation or an error result of a
 	 * request.  The implementation delegates to {@link #handleCancel()} and
 	 * {@link #handleErrorOrWarning()} as needed.
 	 * <br>
@@ -435,7 +435,7 @@ public class RequestMonitor extends DsfExecutable {
 	}
 
 	/**
-	 * The default implementation of an error or warning result of a request.  
+	 * The default implementation of an error or warning result of a request.
 	 * The implementation delegates to {@link #handleError()} and
 	 * {@link #handleWarning()} as needed.
 	 * <br>
@@ -451,10 +451,10 @@ public class RequestMonitor extends DsfExecutable {
 	}
 
 	/**
-	 * The default implementation of an error result of a request.  If this 
-	 * monitor has a parent monitor that was configured by the constructor, that 
+	 * The default implementation of an error result of a request.  If this
+	 * monitor has a parent monitor that was configured by the constructor, that
 	 * parent monitor is configured with a new status containing this error.
-	 * Otherwise the error is logged.  
+	 * Otherwise the error is logged.
 	 * <br>
 	 * Note: Sub-classes may override this method.
 	 */
@@ -472,10 +472,10 @@ public class RequestMonitor extends DsfExecutable {
 	}
 
 	/**
-	 * The default implementation of an error result of a request.  If this 
-	 * monitor has a parent monitor that was configured by the constructor, that 
+	 * The default implementation of an error result of a request.  If this
+	 * monitor has a parent monitor that was configured by the constructor, that
 	 * parent monitor is configured with a new status containing this warning.
-	 * Otherwise the warning is logged.  
+	 * Otherwise the warning is logged.
 	 * <br>
 	 * Note: Sub-classes may override this method.
 	 */
@@ -508,11 +508,11 @@ public class RequestMonitor extends DsfExecutable {
 	}
 
 	/**
-	 * Default handler for when the executor supplied in the constructor 
+	 * Default handler for when the executor supplied in the constructor
 	 * rejects the runnable that is submitted invoke this request monitor.
 	 * This usually happens only when the executor is shutting down.
 	 * <p>
-	 * The default handler creates a new error status for the rejected 
+	 * The default handler creates a new error status for the rejected
 	 * execution and propagates it to the client or logs it.
 	 */
 	protected void handleRejectedExecutionException() {

@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Marc Khouzam (Ericsson) - Initial API and implementation 
+ *     Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -48,7 +48,7 @@ public class GDBBreakpointsManager_7_2 extends GDBBreakpointsManager_7_0 {
 	@Override
 	protected void updateContextOnStartEvent(IStartedDMEvent e) {
 		// No longer need to update the context as the logic
-		// of the base class was to work around an issue with 
+		// of the base class was to work around an issue with
 		// GDB 7.0 and 7.1
 	}
 }

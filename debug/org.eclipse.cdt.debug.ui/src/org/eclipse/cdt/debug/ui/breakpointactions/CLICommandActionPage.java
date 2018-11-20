@@ -14,7 +14,6 @@
 package org.eclipse.cdt.debug.ui.breakpointactions;
 
 import org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction;
-import org.eclipse.cdt.debug.ui.breakpointactions.IBreakpointActionPage;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.swt.widgets.Composite;
 

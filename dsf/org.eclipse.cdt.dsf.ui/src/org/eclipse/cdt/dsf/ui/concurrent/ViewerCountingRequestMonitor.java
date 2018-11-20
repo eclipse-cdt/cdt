@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,12 +19,12 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
- * Counting multi data request monitor that takes a <code>IViewerUpdate</code> 
- * as a parent. If the IViewerUpdate is canceled, this request monitor becomes 
- * canceled as well. 
- * 
+ * Counting multi data request monitor that takes a <code>IViewerUpdate</code>
+ * as a parent. If the IViewerUpdate is canceled, this request monitor becomes
+ * canceled as well.
+ *
  * @see IViewerUpdate.
- * 
+ *
  * @since 1.0
  */
 public class ViewerCountingRequestMonitor extends CountingRequestMonitor {
@@ -39,7 +39,7 @@ public class ViewerCountingRequestMonitor extends CountingRequestMonitor {
 	@Override
 	public synchronized boolean isCanceled() {
 		// isCanceled() is called implicitly by the super-constructor before fUpdate
-		// is initialized.  The fUpdate != null is here to protect against an NPE 
+		// is initialized.  The fUpdate != null is here to protect against an NPE
 		// from that.
 		return (fUpdate != null && fUpdate.isCanceled()) || super.isCanceled();
 	}

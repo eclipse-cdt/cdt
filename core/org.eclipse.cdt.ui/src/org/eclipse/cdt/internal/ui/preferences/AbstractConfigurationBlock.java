@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.PixelConverter;
@@ -46,35 +48,32 @@ import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-
 /**
  * Abstract implementation of a generic {@link IPreferenceConfigurationBlock}.
- * 
+ *
  * @since 4.0
  */
 abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlock {
 	/**
 	 * Use as follows:
-	 * 
+	 *
 	 * <pre>
 	 * SectionManager manager= new SectionManager();
 	 * Composite composite= manager.createSectionComposite(parent);
-	 * 
+	 *
 	 * Composite xSection= manager.createSection("section X"));
 	 * xSection.setLayout(new FillLayout());
 	 * new Button(xSection, SWT.PUSH); // add controls to section..
-	 * 
+	 *
 	 * [...]
-	 * 
+	 *
 	 * return composite; // return main composite
 	 * </pre>
 	 */
 	protected final class SectionManager {
 		/** The preference setting for keeping no section open. */
 		private static final String __NONE = "__none"; //$NON-NLS-1$
-		private final Set<ExpandableComposite> fSections = new HashSet<ExpandableComposite>();
+		private final Set<ExpandableComposite> fSections = new HashSet<>();
 		private boolean fIsBeingManaged = false;
 		private final ExpansionAdapter fListener = new ExpansionAdapter() {
 			@Override
@@ -149,7 +148,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		 * The receiver keeps a reference to the inner body composite, so that
 		 * new sections can be added via <code>createSection</code>.
 		 * </p>
-		 * 
+		 *
 		 * @param parent the parent composite
 		 * @return the newly created composite
 		 */
@@ -172,9 +171,9 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 
 		/**
 		 * Creates an expandable section within the parent created previously by
-		 * calling <code>createSectionComposite</code>. Controls can be added 
+		 * calling <code>createSectionComposite</code>. Controls can be added
 		 * directly to the returned composite, which has no layout initially.
-		 * 
+		 *
 		 * @param label the display name of the section
 		 * @return a composite within the expandable section
 		 */
@@ -211,7 +210,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	protected static final int INDENT = 20;
 	private final OverlayPreferenceStore fStore;
 
-	private final Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
+	private final Map<Object, String> fCheckBoxes = new HashMap<>();
 	private final SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -224,7 +223,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		}
 	};
 
-	private final Map<Object, String> fTextFields = new HashMap<Object, String>();
+	private final Map<Object, String> fTextFields = new HashMap<>();
 	private final ModifyListener fTextFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -233,7 +232,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		}
 	};
 
-	private final ArrayList<Text> fNumberFields = new ArrayList<Text>();
+	private final ArrayList<Text> fNumberFields = new ArrayList<>();
 	private final ModifyListener fNumberFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -243,11 +242,11 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 
 	/**
 	 * List of master/slave listeners when there's a dependency.
-	 * 
+	 *
 	 * @see #createDependency(Button, Control)
 	 * @since 3.0
 	 */
-	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<Object>();
+	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<>();
 
 	private StatusInfo fStatus;
 	private final PreferencePage fMainPage;
@@ -323,7 +322,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	 *  - first element is of type <code>Label</code>
 	 *  - second element is of type <code>Text</code>
 	 * Use <code>getLabelControl</code> and <code>getTextControl</code> to get the 2 controls.
-	 * 
+	 *
 	 * @param composite 	the parent composite
 	 * @param label			the text field's label
 	 * @param key			the preference key

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,7 +54,7 @@ public class CodanEditorUtility {
 
 	/**
 	 * Line is the part the follows # in this URL
-	 * 
+	 *
 	 * @return -1 if not line found in URL, and line number if there is
 	 */
 	public static int getLineFromURL(String fileUrl) {
@@ -136,7 +136,7 @@ public class CodanEditorUtility {
 		String loc2 = marker.getAttribute(IMarker.LOCATION, ""); //$NON-NLS-1$
 		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0);
 		if (loc2.length() > 0) {
-			loc = loc2.replaceAll("[^:]*: ", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
+			loc = loc2.replaceAll("[^:]*: ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return loc + ":" + line; //$NON-NLS-1$
 	}

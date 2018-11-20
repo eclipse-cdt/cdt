@@ -22,14 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.viewers.IDoubleClickListener;
-
+import org.eclipse.cdt.internal.ui.text.c.hover.AnnotationExpansionControl.AnnotationHoverInput;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -50,12 +43,16 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.jface.text.source.VerticalRulerEvent;
-
-import org.eclipse.cdt.internal.ui.text.c.hover.AnnotationExpansionControl.AnnotationHoverInput;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * This class was copied from org.eclipse.jdt.internal.ui.text.java.hover.AnnotationExpansionControl
- * 
+ *
  * @since 6.1
  */
 public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHoverExtension {

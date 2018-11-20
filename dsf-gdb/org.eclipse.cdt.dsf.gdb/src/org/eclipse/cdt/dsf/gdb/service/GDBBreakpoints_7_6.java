@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *   Marc Khouzam (Ericsson) - Initial API and implementation 
+ *   Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;

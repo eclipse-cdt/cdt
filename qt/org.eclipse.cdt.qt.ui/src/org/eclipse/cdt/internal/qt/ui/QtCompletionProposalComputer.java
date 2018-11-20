@@ -116,7 +116,7 @@ public class QtCompletionProposalComputer extends ParsingBasedProposalComputer {
 			return list;
 
 		if (list == null)
-			return new ArrayList<T>(toAdd);
+			return new ArrayList<>(toAdd);
 
 		list.addAll(toAdd);
 		return list;

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -100,7 +100,7 @@ public class UserDefinedLiteralTests extends TestBase {
 		assertEvaluationEquals(5);
 	}
 
-	//	template <char... STR> 
+	//	template <char... STR>
 	//	constexpr unsigned operator"" _l() {
 	//	  return 5;
 	//	}
@@ -125,7 +125,7 @@ public class UserDefinedLiteralTests extends TestBase {
 	//	constexpr unsigned operator "" _l(unsigned long long x) {
 	//		return 10;
 	//	}
-	//	template <char... STR> 
+	//	template <char... STR>
 	//	constexpr unsigned operator"" _l() {
 	//	  	return 20;
 	//	}
@@ -150,7 +150,7 @@ public class UserDefinedLiteralTests extends TestBase {
 	//	constexpr unsigned operator "" _l(long double x) {
 	//		return 10;
 	//	}
-	//	template <char... STR> 
+	//	template <char... STR>
 	//	constexpr unsigned operator"" _l() {
 	//	  	return 20;
 	//	}
@@ -175,7 +175,7 @@ public class UserDefinedLiteralTests extends TestBase {
 	//	constexpr unsigned operator "" _l(unsigned long long x) {
 	//		return 10;
 	//	}
-	//	template <char... STR> 
+	//	template <char... STR>
 	//	constexpr unsigned operator"" _l() {
 	//	  	return 20;
 	//	}
@@ -194,7 +194,7 @@ public class UserDefinedLiteralTests extends TestBase {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
 
-	//	template <char... STR> 
+	//	template <char... STR>
 	//	constexpr unsigned operator"" _l() {
 	//	  	return 20;
 	//	}

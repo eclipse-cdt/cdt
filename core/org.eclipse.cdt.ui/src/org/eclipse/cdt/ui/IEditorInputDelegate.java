@@ -25,14 +25,14 @@ import org.eclipse.ui.IEditorInput;
 public interface IEditorInputDelegate extends IEditorInput {
 	/**
 	 * Returns the editor input delegate for this editor input.
-	 * 
+	 *
 	 * @return editor input delegate
 	 */
 	IEditorInput getDelegate();
 
 	/**
 	 * Returns the storage associated with this editor input.
-	 * 
+	 *
 	 * @return storage associated with this editor input
 	 * @throws CoreException on failure. Reasons include:
 	 */

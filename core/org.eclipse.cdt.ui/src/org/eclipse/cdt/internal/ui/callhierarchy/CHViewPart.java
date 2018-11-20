@@ -17,6 +17,32 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IFunction;
+import org.eclipse.cdt.core.model.IMethod;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.util.TextUtil;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
+import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
+import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
+import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICHEContentProvider;
+import org.eclipse.cdt.ui.actions.CdtActionConstants;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -70,35 +96,6 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IFunction;
-import org.eclipse.cdt.core.model.IMethod;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICHEContentProvider;
-import org.eclipse.cdt.ui.actions.CdtActionConstants;
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
-
-import org.eclipse.cdt.internal.core.util.TextUtil;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
-import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
-import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
-import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
-import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 /**
  * The view part for the include browser.
@@ -367,7 +364,7 @@ public class CHViewPart extends ViewPart {
 
 	/**
 	 * Tells whether the given part reference references this view.
-	 * 
+	 *
 	 * @param partRef the workbench part reference
 	 * @return <code>true</code> if the given part reference references this view
 	 */
@@ -762,7 +759,7 @@ public class CHViewPart extends ViewPart {
 
 		// Escape '&' characters in the message, otherwise SWT interprets them
 		// as mnemonics. '&' characters can appear in the label of a CElement
-		// if the CElement represents a function with arguments of C++ 
+		// if the CElement represents a function with arguments of C++
 		// reference type.
 		message = TextUtil.escape(message, '&');
 
@@ -911,7 +908,7 @@ public class CHViewPart extends ViewPart {
 
 	/**
 	 * Marks the view as pinned.
-	 * 
+	 *
 	 * @param pinned if <code>true</code> the view is marked as pinned
 	 */
 	void setPinned(boolean pinned) {
@@ -920,7 +917,7 @@ public class CHViewPart extends ViewPart {
 
 	/**
 	 * Indicates whether the Call Hierarchy view is pinned.
-	 * 
+	 *
 	 * @return <code>true</code> if the view is pinned, <code>false</code> otherwise
 	 */
 	boolean isPinned() {

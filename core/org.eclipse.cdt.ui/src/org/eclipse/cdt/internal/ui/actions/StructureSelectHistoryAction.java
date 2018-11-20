@@ -15,14 +15,11 @@ package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ISourceRange;
-
 import org.eclipse.cdt.internal.core.model.ext.SourceRange;
-
 import org.eclipse.cdt.internal.ui.editor.SelectionHistory;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 public class StructureSelectHistoryAction extends StructureSelectionAction {
 

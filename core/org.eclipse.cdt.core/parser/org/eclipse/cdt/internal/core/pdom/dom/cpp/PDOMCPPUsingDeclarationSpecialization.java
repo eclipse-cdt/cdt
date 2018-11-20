@@ -43,7 +43,7 @@ class PDOMCPPUsingDeclarationSpecialization extends PDOMCPPSpecialization implem
 			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) using, specialized);
 
-		Set<PDOMBinding> targets = new LinkedHashSet<PDOMBinding>();
+		Set<PDOMBinding> targets = new LinkedHashSet<>();
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + TARGET_BINDINGS);
 		for (IBinding delegate : using.getDelegates()) {
 			PDOMBinding target = getLinkage().adaptBinding(delegate);
@@ -71,7 +71,7 @@ class PDOMCPPUsingDeclarationSpecialization extends PDOMCPPSpecialization implem
 	public IBinding[] getDelegates() {
 		if (delegates == null) {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + TARGET_BINDINGS);
-			final List<IBinding> result = new ArrayList<IBinding>();
+			final List<IBinding> result = new ArrayList<>();
 			try {
 				list.accept(new IPDOMVisitor() {
 					@Override

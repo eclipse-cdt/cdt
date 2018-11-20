@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * HP-UX SOM binary parser
- * 
+ *
  * @author vhirsl
  */
 public class SOMParser extends AbstractCExtension implements IBinaryParser {
@@ -53,7 +53,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 				}
 			}
 
-			//Take a second run at it if the data array failed. 			
+			//Take a second run at it if the data array failed.
 			if (attribute == null) {
 				attribute = SOM.getAttributes(path.toOSString());
 			}

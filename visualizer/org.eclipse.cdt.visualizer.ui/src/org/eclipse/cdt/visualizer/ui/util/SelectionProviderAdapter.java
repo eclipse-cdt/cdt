@@ -64,6 +64,7 @@ public class SelectionProviderAdapter implements ISelectionProvider {
 	/** Adds selection change listener.
 	 *  Default implementation does nothing.
 	 */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		m_selectionManager.addSelectionChangedListener(listener);
 	}
@@ -71,6 +72,7 @@ public class SelectionProviderAdapter implements ISelectionProvider {
 	/** Removes selection change listener.
 	 *  Default implementation does nothing.
 	 */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		m_selectionManager.removeSelectionChangedListener(listener);
 	}
@@ -78,6 +80,7 @@ public class SelectionProviderAdapter implements ISelectionProvider {
 	/** Gets selection.
 	 *  Default implementation does nothing.
 	 */
+	@Override
 	public ISelection getSelection() {
 		return m_selectionManager.getSelection();
 	}
@@ -85,6 +88,7 @@ public class SelectionProviderAdapter implements ISelectionProvider {
 	/** Sets selection.
 	 *  Default implementation does nothing.
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		m_selectionManager.setSelection(selection);
 	}

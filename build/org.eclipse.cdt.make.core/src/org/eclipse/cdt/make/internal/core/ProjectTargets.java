@@ -59,7 +59,7 @@ public class ProjectTargets {
 	private static final String BAD_TARGET = "buidlTarget"; //$NON-NLS-1$
 	private static final String TARGET = "buildTarget"; //$NON-NLS-1$
 
-	private HashMap<IContainer, List<IMakeTarget>> targetMap = new HashMap<IContainer, List<IMakeTarget>>();
+	private HashMap<IContainer, List<IMakeTarget>> targetMap = new HashMap<>();
 
 	private IProject project;
 
@@ -111,7 +111,7 @@ public class ProjectTargets {
 	}
 
 	public void set(IContainer container, IMakeTarget[] targets) throws CoreException {
-		List<IMakeTarget> newList = new ArrayList<IMakeTarget>();
+		List<IMakeTarget> newList = new ArrayList<>();
 		for (IMakeTarget target : targets) {
 			target.setContainer(container);
 			if (newList.contains(target)) {
@@ -142,7 +142,7 @@ public class ProjectTargets {
 					MakeMessages.getString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
 		if (list == null) {
-			list = new ArrayList<IMakeTarget>();
+			list = new ArrayList<>();
 			targetMap.put(target.getContainer(), list);
 		}
 		list.add(target);
@@ -174,7 +174,7 @@ public class ProjectTargets {
 
 	/**
 	 * Persist the MakeTarget as a child of parent
-	 * 
+	 *
 	 * @return created ICStorageElement
 	 */
 	private ICStorageElement createTargetElement(ICStorageElement parent, IMakeTarget target) {
@@ -232,7 +232,7 @@ public class ProjectTargets {
 	/**
 	 * This method loads an old style XML document provided in the input stream
 	 * and returns an ICStorageElemnt wrapping it.
-	 * 
+	 *
 	 * @return ICStorageElement or null
 	 */
 	protected ICStorageElement translateInputStreamToDocument(InputStream input) {

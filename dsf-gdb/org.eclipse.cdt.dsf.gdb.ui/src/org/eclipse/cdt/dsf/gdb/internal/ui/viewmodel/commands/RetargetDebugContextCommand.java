@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial implementation
  *******************************************************************************/
@@ -38,7 +38,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Base class for actions which delegate functionality to an adapter retrieved
  * from the current debug context.
- * 
+ *
  * @since 2.0
  */
 abstract public class RetargetDebugContextCommand extends AbstractHandler implements IDebugContextListener {
@@ -88,8 +88,8 @@ abstract public class RetargetDebugContextCommand extends AbstractHandler implem
 
 	/**
 	 * Returns whether the specific operation is supported.
-	 * 
-	 * @param target the target adapter 
+	 *
+	 * @param target the target adapter
 	 * @param debugContext the selection to verify the operation on
 	 * @return whether the operation can be performed
 	 */
@@ -97,8 +97,8 @@ abstract public class RetargetDebugContextCommand extends AbstractHandler implem
 
 	/**
 	 * Performs the specific operation.
-	 * 
-	 * @param target the target adapter 
+	 *
+	 * @param target the target adapter
 	 * @param debugContext the selection to verify the operation on
 	 * @throws CoreException if an exception occurs
 	 */
@@ -106,7 +106,7 @@ abstract public class RetargetDebugContextCommand extends AbstractHandler implem
 
 	/**
 	 * Returns the type of adapter (target) this command works on.
-	 * 
+	 *
 	 * @return the type of adapter this command works on
 	 */
 	protected abstract Class<?> getAdapterClass();

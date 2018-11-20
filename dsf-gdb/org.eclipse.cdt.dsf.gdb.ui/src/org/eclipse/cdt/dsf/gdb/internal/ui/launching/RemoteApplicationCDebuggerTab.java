@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 /**
  * Debugger tab to use for a remote application launch configuration.
- * 
+ *
  * @since 2.0
  */
 public class RemoteApplicationCDebuggerTab extends CDebuggerTab {

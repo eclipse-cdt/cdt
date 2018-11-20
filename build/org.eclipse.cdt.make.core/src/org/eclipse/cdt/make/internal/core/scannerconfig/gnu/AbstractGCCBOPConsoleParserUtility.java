@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Common utilities for GCC build output console parsers 
- * 
+ * Common utilities for GCC build output console parsers
+ *
  * @author vhirsl
  */
 public abstract class AbstractGCCBOPConsoleParserUtility {
@@ -38,12 +38,12 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
 	private ArrayList<Problem> fErrors;
 
 	/**
-	 * 
+	 *
 	 */
 	public AbstractGCCBOPConsoleParserUtility(IProject project, IPath workingDirectory,
 			IMarkerGenerator markerGenerator) {
-		fDirectoryStack = new Vector<IPath>();
-		fErrors = new ArrayList<Problem>();
+		fDirectoryStack = new Vector<>();
+		fErrors = new ArrayList<>();
 		this.project = project;
 		fBaseDirectory = new Path(EFSExtensionManager.getDefault().getPathFromURI(project.getLocationURI()));
 		if (workingDirectory != null) {

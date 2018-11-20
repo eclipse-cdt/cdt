@@ -67,7 +67,7 @@ public class ManagedConfigStorageElement implements ICStorageElement {
 		if (fChildList == null && create) {
 			IManagedConfigElement children[] = fElement.getChildren();
 
-			fChildList = new ArrayList<IManagedConfigElement>(children.length);
+			fChildList = new ArrayList<>(children.length);
 			fChildList.addAll(Arrays.asList(children));
 		}
 		return fChildList;
@@ -75,7 +75,7 @@ public class ManagedConfigStorageElement implements ICStorageElement {
 
 	@Override
 	public ICStorageElement[] getChildrenByName(String name) {
-		List<ICStorageElement> children = new ArrayList<ICStorageElement>();
+		List<ICStorageElement> children = new ArrayList<>();
 		for (ICStorageElement child : getChildren())
 			if (name.equals(child.getName()))
 				children.add(child);

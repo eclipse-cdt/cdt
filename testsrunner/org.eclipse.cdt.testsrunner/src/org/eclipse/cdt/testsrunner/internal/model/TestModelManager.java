@@ -22,15 +22,15 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.cdt.testsrunner.model.IModelVisitor;
-import org.eclipse.cdt.testsrunner.model.ITestMessage;
-import org.eclipse.cdt.testsrunner.model.ITestModelAccessor;
-import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
-import org.eclipse.cdt.testsrunner.model.ITestingSessionListener;
 import org.eclipse.cdt.testsrunner.model.ITestCase;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestItem.Status;
+import org.eclipse.cdt.testsrunner.model.ITestMessage;
 import org.eclipse.cdt.testsrunner.model.ITestMessage.Level;
+import org.eclipse.cdt.testsrunner.model.ITestModelAccessor;
+import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
+import org.eclipse.cdt.testsrunner.model.ITestingSessionListener;
 
 /**
  * Manages the testing model (creates, fill and update it) and notifies the
@@ -40,14 +40,14 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 
 	/**
 	 * Name of the root test suite.
-	 * 
+	 *
 	 * @note Root test suite is invisible (only its children are visible), so
 	 * the name is not important.
 	 */
 	public static final String ROOT_TEST_SUITE_NAME = "<root>"; //$NON-NLS-1$
 
 	/** Stack of the currently entered (and not existed) test suites. */
-	private Stack<TestSuite> testSuitesStack = new Stack<TestSuite>();
+	private Stack<TestSuite> testSuitesStack = new Stack<>();
 
 	/**
 	 * Currently running test case. There are no nested test cases, so the
@@ -58,16 +58,16 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 	/**
 	 * The mapping of test suite object to the index on which it was inserted to
 	 * the parent.
-	 * 
+	 *
 	 * @note Test suites presence in this map means that test suite was visited
 	 * during the testing process (not visited test suites are removed when
 	 * testing is finished cause they are considered as renamed or removed).
 	 * @note Test suite insert position is important for insertion algorithm.
 	 */
-	private Map<TestItem, Integer> testSuitesIndex = new HashMap<TestItem, Integer>();
+	private Map<TestItem, Integer> testSuitesIndex = new HashMap<>();
 
 	/** Listeners collection. */
-	private List<ITestingSessionListener> listeners = new ArrayList<ITestingSessionListener>();
+	private List<ITestingSessionListener> listeners = new ArrayList<>();
 
 	/** Flag stores whether test execution time should be measured for the session. */
 	private boolean timeMeasurement = false;
@@ -126,7 +126,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 	/**
 	 * Utility class: generalization of insertion algorithm for test suites and
 	 * test cases.
-	 * 
+	 *
 	 * <p>
 	 * The algorithm tries to find the place where the new item should be
 	 * inserted at. If the item with such name does not exist in the current top
@@ -134,7 +134,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 	 * already exists (at the next or previous position) then it should be moved
 	 * from there to the current one.
 	 * </p>
-	 * 
+	 *
 	 * @param <E> test item type (test suite or test case)
 	 */
 	private abstract class TestItemInserter<E extends TestItem> {
@@ -142,7 +142,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 		/**
 		 * Check whether item has the required type (test suite for suites inserter and
 		 * test case for cases one).
-		 * 
+		 *
 		 * @param item test item to check
 		 * @return whether item has the required type
 		 */
@@ -151,7 +151,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 		/**
 		 * Creates a new item type with the specified name and parent (test
 		 * suite for suites inserter and test case for cases one).
-		 * 
+		 *
 		 * @param name name of the new test item
 		 * @param parent parent for the new test item
 		 * @return new test item
@@ -162,7 +162,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 		 * Save new test item in the tracking structures (suite in stack, case
 		 * in current variable). Additional operations (e.g. listeners
 		 * notification about item entering) can be done too.
-		 * 
+		 *
 		 * @param item new test item
 		 */
 		protected abstract void addNewTestItem(E item);
@@ -170,7 +170,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 		/**
 		 * Returns the casted test item if it matches by name and type or
 		 * <code>null</code> if it doesn't.
-		 * 
+		 *
 		 * @param item test item to check
 		 * @param name test item name
 		 * @return casted test item or null
@@ -183,7 +183,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 		/**
 		 * Returns the last insert index for the specified test suite. Returns 0
 		 * if test suite was not inserted yet.
-		 * 
+		 *
 		 * @param testSuite test suite to look up
 		 * @return insert index or 0
 		 */
@@ -195,7 +195,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 		/**
 		 * Notifies the listeners about children update of the specified test
 		 * suite.
-		 * 
+		 *
 		 * @param suite updated test suite
 		 */
 		private void notifyAboutChildrenUpdate(ITestSuite suite) {
@@ -206,7 +206,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 
 		/**
 		 * Inserts the test item by the name.
-		 * 
+		 *
 		 * @param name test item name
 		 */
 		public void insert(String name) {
@@ -479,7 +479,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 
 	/**
 	 * Copies listeners before notifying them to avoid dead-locks.
-	 * 
+	 *
 	 * @return listeners collection copy
 	 */
 	private ITestingSessionListener[] getListenersCopy() {

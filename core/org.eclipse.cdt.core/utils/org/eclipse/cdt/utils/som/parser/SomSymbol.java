@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * SOM symbol specialization
- * 
+ *
  * @author vhirsl
  */
 public class SomSymbol extends Symbol {

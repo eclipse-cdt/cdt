@@ -7,16 +7,16 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
 /**
- * Utility class for easy pretty-printing stack traces.  Local to the 
+ * Utility class for easy pretty-printing stack traces.  Local to the
  * concurrent package.
- * 
+ *
  * @since 1.0
  */
 @Immutable

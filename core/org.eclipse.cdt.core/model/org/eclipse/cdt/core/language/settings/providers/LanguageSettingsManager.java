@@ -229,7 +229,7 @@ public class LanguageSettingsManager {
 			languageSettings = ((ICFolderDescription) rcDescription).getLanguageSettings();
 		}
 
-		List<String> languageIds = new ArrayList<String>();
+		List<String> languageIds = new ArrayList<>();
 		if (languageSettings != null) {
 			for (ICLanguageSetting languageSetting : languageSettings) {
 				if (languageSetting != null) {
@@ -255,7 +255,7 @@ public class LanguageSettingsManager {
 	 *    Never returns {@code null} but empty list if no languages can be found.
 	 */
 	public static List<String> getLanguages(IResource resource, ICConfigurationDescription cfgDescription) {
-		List<String> languageIds = new ArrayList<String>();
+		List<String> languageIds = new ArrayList<>();
 		IPath prjRelPath = resource.getProjectRelativePath();
 		if (resource instanceof IFile) {
 			String langId = null;
@@ -386,18 +386,18 @@ public class LanguageSettingsManager {
 
 	/**
 	 * Create a list of providers with intention to assign to a configuration description.
-	 * 
+	 *
 	 * The list will contain global providers for ones where attribute "prefer-non-shared" is {@code true}
 	 * and a new copy for those where attribute "prefer-non-shared" is {@code false}. Attribute "prefer-non-shared"
 	 * is defined in extension point {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
-	 * 
+	 *
 	 * @param ids - list of providers id which cannot be {@code null}.
 	 * @return a list of language settings providers with given ids.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public static List<ILanguageSettingsProvider> createLanguageSettingsProviders(String[] ids) {
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		List<ILanguageSettingsProvider> providers = new ArrayList<>();
 		for (String id : ids) {
 			ILanguageSettingsProvider provider = null;
 			if (!isPreferShared(id)) {

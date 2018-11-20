@@ -22,12 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -112,7 +110,7 @@ public class CDTPrefUtil {
 
 	// up-level methods
 	public static void readPreferredTCs() {
-		preferredTCs = new LinkedList<String>(Arrays.asList(getStr(KEY_PREFTC).split(DELIMITER)));
+		preferredTCs = new LinkedList<>(Arrays.asList(getStr(KEY_PREFTC).split(DELIMITER)));
 	}
 
 	public static List<String> getPreferredTCs() {
@@ -305,7 +303,7 @@ public class CDTPrefUtil {
 			return EMPTY_ARRAY;
 
 		if (getMultiCfgStringListDisplayMode() == DMODE_CONJUNCTION) {
-			ArrayList<Object> lst = new ArrayList<Object>();
+			ArrayList<Object> lst = new ArrayList<>();
 			for (int i = 0; i < s1.length; i++) {
 				if (s1[i] == null)
 					continue;
@@ -329,7 +327,7 @@ public class CDTPrefUtil {
 			}
 			return lst.toArray();
 		}
-		TreeSet<Object> lst = new TreeSet<Object>(cmp); // set, to avoid doubles
+		TreeSet<Object> lst = new TreeSet<>(cmp); // set, to avoid doubles
 		for (Object[] element : input) {
 			if (element == null || element.length == 0) {
 				continue;
@@ -348,7 +346,7 @@ public class CDTPrefUtil {
 	 */
 	@Deprecated
 	public static List<String> readConfigSets() {
-		return new LinkedList<String>(Arrays.asList(getStr(KEY_CONFSET).split(CONFSETDEL)));
+		return new LinkedList<>(Arrays.asList(getStr(KEY_CONFSET).split(CONFSETDEL)));
 	}
 
 	/**

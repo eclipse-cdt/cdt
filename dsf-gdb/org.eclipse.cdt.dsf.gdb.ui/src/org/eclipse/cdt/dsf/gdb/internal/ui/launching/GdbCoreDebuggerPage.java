@@ -153,7 +153,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
@@ -210,7 +210,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 				int lastSeparatorIndex = gdbCommand.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
 					String cmd = gdbCommand.substring(0, lastSeparatorIndex);
-					// remove double quotes, since they interfere with 
+					// remove double quotes, since they interfere with
 					// "setFilterPath()" below
 					cmd = cmd.replaceAll("\\\"", ""); //$NON-NLS-1$//$NON-NLS-2$
 					dialog.setFilterPath(cmd);
@@ -219,7 +219,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 				if (res == null) {
 					return;
 				}
-				// path contains space(s)? 
+				// path contains space(s)?
 				if (res.contains(" ")) { //$NON-NLS-1$
 					// surround it in double quotes
 					res = '"' + res + '"';
@@ -287,7 +287,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	@Override

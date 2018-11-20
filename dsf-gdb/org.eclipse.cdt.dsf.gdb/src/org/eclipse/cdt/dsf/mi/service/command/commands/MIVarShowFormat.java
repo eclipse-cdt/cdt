@@ -19,14 +19,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowFormatInfo;
 
 /**
- * 
+ *
  *    -var-show-format NAME
  *
  *  Returns the format used to display the value of the object NAME.
  *
  *     FORMAT ==>
  *     FORMAT-SPEC
- * 
+ *
  */
 public class MIVarShowFormat extends MICommand<MIVarShowFormatInfo> {
 	/**

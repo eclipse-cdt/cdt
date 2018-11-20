@@ -18,13 +18,13 @@ import org.eclipse.cdt.dsf.debug.service.IMemory;
 
 /**
  * Provides access to memory related data such as address size and endianness.
- * 
+ *
  * @since 4.2
  */
 public interface IGDBMemory extends IMemory {
 
 	/**
-	 * This method is required to retrieve data from GDB asynchronously. The Platform's 
+	 * This method is required to retrieve data from GDB asynchronously. The Platform's
 	 * memory related API is not asynchronous, so the data can not be acquired on demand.
 	 */
 	public void initializeMemoryData(IMemoryDMContext ctx, RequestMonitor rm);

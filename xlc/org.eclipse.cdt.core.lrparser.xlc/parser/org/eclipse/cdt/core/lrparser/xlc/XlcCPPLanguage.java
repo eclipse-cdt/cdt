@@ -33,12 +33,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 
 /**
- * 
+ *
  * @author Mike Kucera
  */
 public class XlcCPPLanguage extends GPPLanguage {
 
-	public static final String ID = "org.eclipse.cdt.core.lrparser.xlc.cpp"; //$NON-NLS-1$ 
+	public static final String ID = "org.eclipse.cdt.core.lrparser.xlc.cpp"; //$NON-NLS-1$
 
 	private static XlcCPPLanguage DEFAULT = new XlcCPPLanguage();
 
@@ -77,6 +77,7 @@ public class XlcCPPLanguage extends GPPLanguage {
 		return parser;
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}

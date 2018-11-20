@@ -9,15 +9,24 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Dominic Scharfe (COSEDA Technologies GmbH) - initial implementation 
+ *     Dominic Scharfe (COSEDA Technologies GmbH) - initial implementation
  *
  *******************************************************************************/
 package org.eclipse.cdt.codan.checkers.ui.quickfix;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.function.Function;
 
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateNewClass;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -26,13 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import static org.mockito.Mockito.*;
-
-import java.util.function.Function;
-
-import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QuickFixCreateNewClassTest {
@@ -76,7 +78,7 @@ public class QuickFixCreateNewClassTest {
 					return translationUnitViaWorkspace;
 				}
 				throw new RuntimeException("Invalid marker");
-			};
+			}
 		};
 
 		when(toWorkingCopy.apply(translationUnitViaWorkspace)).thenReturn(translationUnitWorkingCopy);
@@ -117,7 +119,7 @@ public class QuickFixCreateNewClassTest {
 	/**
 	 * Test if the marker is applicable if <code>tu.getLanguage()</code> throws
 	 * a {@link CoreException}.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	@Test

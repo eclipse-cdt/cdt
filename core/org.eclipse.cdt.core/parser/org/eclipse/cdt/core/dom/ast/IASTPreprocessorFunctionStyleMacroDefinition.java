@@ -20,7 +20,7 @@ package org.eclipse.cdt.core.dom.ast;
  * </pre>
  * Note: macros that are expanded as parameters to function style macros are not captured in this
  * abstraction.
- *  
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -34,14 +34,14 @@ public interface IASTPreprocessorFunctionStyleMacroDefinition extends IASTPrepro
 
 	/**
 	 * Returns the macro parameters.
-	 * 
+	 *
 	 * @return <code>IASTFunctionStyleMacroParameter[]</code> parameters
 	 */
 	public IASTFunctionStyleMacroParameter[] getParameters();
 
 	/**
 	 * Adds a function-style macro parameter.
-	 * 
+	 *
 	 * @param parm the parameter to add
 	 */
 	public void addParameter(IASTFunctionStyleMacroParameter parm);

@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Nokia - Added support for AbsoluteSourceContainer( 159833 )
- * Wind River Systems - Adapted for use with DSF 
+ * Wind River Systems - Adapted for use with DSF
 *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.sourcelookup;
 
@@ -21,7 +21,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
  * DSF source lookup director.
- * 
+ *
  * When a launch (or the global) source lookup containers are being edited it is
  * an instance of CSourceLookupDirector that is created. However, when using DSF
  * launch, the subclass DsfSourceLookupDirector is actually instantiated because

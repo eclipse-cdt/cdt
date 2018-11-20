@@ -17,6 +17,12 @@ package org.eclipse.cdt.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,14 +32,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate {
 	private ISelection fSelection;
@@ -78,7 +76,7 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 	}
 
 	protected ICElement[] getSelectedCElements() {
-		ArrayList<ICElement> tuSelection = new ArrayList<ICElement>();
+		ArrayList<ICElement> tuSelection = new ArrayList<>();
 		if (fSelection instanceof IStructuredSelection) {
 			IStructuredSelection resources = SelectionConverter.convertSelectionToResources(fSelection);
 			for (Iterator<?> i = resources.iterator(); i.hasNext();) {

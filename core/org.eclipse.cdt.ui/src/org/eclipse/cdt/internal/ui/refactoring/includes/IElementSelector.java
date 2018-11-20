@@ -16,14 +16,14 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 import java.util.Collection;
 
 /**
- * Interface for selecting one of a set of elements. 
+ * Interface for selecting one of a set of elements.
  */
 public interface IElementSelector {
 	/**
 	 * Selects one element from a set of elements.
-	 * 
+	 *
 	 * @param elements the objects to select from
-	 * @return the selected element or {@code null} if nothing was selected 
+	 * @return the selected element or {@code null} if nothing was selected
 	 */
 	public <T> T selectElement(Collection<T> elements);
 }

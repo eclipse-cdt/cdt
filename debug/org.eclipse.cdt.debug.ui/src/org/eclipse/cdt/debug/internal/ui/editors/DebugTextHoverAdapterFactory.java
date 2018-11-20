@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 
 /**
  * Adapter factory adapting an {@link ICStackFrame} to an {@link ICEditorTextHover}.
- * 
+ *
  * @since 7.0
  */
 public class DebugTextHoverAdapterFactory implements IAdapterFactory {

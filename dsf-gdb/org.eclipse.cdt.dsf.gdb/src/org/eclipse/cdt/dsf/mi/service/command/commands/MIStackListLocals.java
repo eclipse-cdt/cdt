@@ -21,13 +21,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListLocalsInfo;
 
 /**
- * 
+ *
  *     -stack-list-locals PRINT-VALUES
  *
  *  Display the local variable names for the current frame.  With an
  * argument of 0 prints only the names of the variables, with argument of 1
  * prints also their values.
- * 
+ *
  */
 public class MIStackListLocals extends MICommand<MIStackListLocalsInfo> {
 

@@ -17,14 +17,13 @@ package org.eclipse.cdt.internal.corext.fix;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.rewrite.ITrackedNodePosition;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.cdt.core.dom.rewrite.ITrackedNodePosition;
 
 public class LinkedProposalPositionGroup {
 	/**
@@ -114,8 +113,8 @@ public class LinkedProposalPositionGroup {
 
 	public LinkedProposalPositionGroup(String groupID) {
 		fGroupId = groupID;
-		fPositions = new ArrayList<PositionInformation>();
-		fProposals = new ArrayList<Proposal>();
+		fPositions = new ArrayList<>();
+		fProposals = new ArrayList<>();
 	}
 
 	public void addPosition(PositionInformation position) {

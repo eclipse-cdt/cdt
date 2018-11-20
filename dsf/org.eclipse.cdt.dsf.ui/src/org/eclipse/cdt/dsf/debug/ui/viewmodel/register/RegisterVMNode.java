@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
@@ -177,8 +177,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 
 	/**
 	 * The label provider delegate.  This VM node will delegate label updates to this provider
-	 * which can be created by sub-classes. 
-	 *  
+	 * which can be created by sub-classes.
+	 *
 	 * @since 2.0
 	 */
 	private IElementLabelProvider fLabelProvider;
@@ -221,11 +221,11 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 	}
 
 	/**
-	 * Creates the label provider delegate.  This VM node will delegate label 
-	 * updates to this provider which can be created by sub-classes.   
-	 *  
-	 * @return Returns the label provider for this node. 
-	 *  
+	 * Creates the label provider delegate.  This VM node will delegate label
+	 * updates to this provider which can be created by sub-classes.
+	 *
+	 * @return Returns the label provider for this node.
+	 *
 	 * @since 2.0
 	 */
 	private LabelBackground columnIdValueBackground;
@@ -285,7 +285,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 
 		PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
 
-		// The name column consists of the register name.  
+		// The name column consists of the register name.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__NAME,
 				new LabelColumnInfo(new LabelAttribute[] {
 						new LabelText(MessagesForRegisterVM.RegisterVMNode_Name_column__text_format,
@@ -293,7 +293,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 						new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER)),
 						new StaleDataLabelForeground(), new VariableLabelFont(), }));
 
-		// The description column contains a brief description of the register. 
+		// The description column contains a brief description of the register.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__DESCRIPTION,
 				new LabelColumnInfo(new LabelAttribute[] {
 						new LabelText(MessagesForRegisterVM.RegisterVMNode_Description_column__text_format,
@@ -324,18 +324,18 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 				}, new StaleDataLabelForeground(), new VariableLabelFont(), }));
 
 		// Value column shows the value in the active value format.
-		// 
-		// In case of error, show the error message in the value column (instead of the usual "...".  This is needed 
+		//
+		// In case of error, show the error message in the value column (instead of the usual "...".  This is needed
 		// for the expressions view, where an invalid expression entered by the user is a normal use case.
 		//
-		// For changed value high-lighting check the value in the active format.  But if the format itself has changed, 
+		// For changed value high-lighting check the value in the active format.  But if the format itself has changed,
 		// ignore the value change.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__VALUE,
 				new LabelColumnInfo(new LabelAttribute[] { new FormattedValueLabelText(), new ErrorLabelText(),
 						new ErrorLabelForeground(), columnIdValueBackground, new StaleDataLabelForeground(),
 						new VariableLabelFont(), }));
 
-		// Expression column is visible only in the expressions view.  It shows the expression string that the user 
+		// Expression column is visible only in the expressions view.  It shows the expression string that the user
 		// entered.  Expression column images are the same as for the name column.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__EXPRESSION,
 				new LabelColumnInfo(new LabelAttribute[] {
@@ -442,13 +442,13 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 	}
 
 	/**
-	 * Update the variable view properties.  The formatted values need to be 
+	 * Update the variable view properties.  The formatted values need to be
 	 * updated in the VM executor thread while the rest of the properties is
 	 * updated in the service session's executor thread.  The implementation
-	 * splits the handling of the updates to accomplish that.  
-	 * 
+	 * splits the handling of the updates to accomplish that.
+	 *
 	 * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	@Override
@@ -459,7 +459,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 				for (int i = 0; i < updates.length; i++) {
 					updates[i].done();
 				}
-			};
+			}
 		};
 		int count = 0;
 
@@ -522,7 +522,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 				for (final IPropertiesUpdate update : updates) {
 					update.done();
 				}
-			};
+			}
 		};
 		int count = 0;
 
@@ -546,7 +546,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 			}
 
 			service.getRegisterData(dmc,
-					// Use the ViewerDataRequestMonitor in order to propagate the update's cancel request. Use an immediate 
+					// Use the ViewerDataRequestMonitor in order to propagate the update's cancel request. Use an immediate
 					// executor to avoid the possibility of a rejected execution exception.
 					new ViewerDataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), update) {
 						@Override
@@ -596,7 +596,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 	 */
 	@Override
 	public void update(IHasChildrenUpdate[] updates) {
-		// As an optimization, always indicate that register groups have 
+		// As an optimization, always indicate that register groups have
 		// children.
 		for (IHasChildrenUpdate update : updates) {
 			update.setHasChilren(true);
@@ -678,8 +678,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 	 */
 	@Override
 	public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
-		// The following events can affect any register's values, 
-		// refresh the contents of the parent element (i.e. all the registers). 
+		// The following events can affect any register's values,
+		// refresh the contents of the parent element (i.e. all the registers).
 		if (e instanceof ISuspendedDMEvent || e instanceof IResumedDMEvent || e instanceof IMemoryChangedEvent
 				|| e instanceof IRegistersChangedDMEvent
 				|| (e instanceof PropertyChangeEvent && (((PropertyChangeEvent) e)
@@ -803,7 +803,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 								});
 					} else {
 						rm.setStatus(new Status(IStatus.WARNING, DsfUIPlugin.PLUGIN_ID,
-								IDsfStatusConstants.INVALID_STATE, "Register service not available", null)); //$NON-NLS-1$                        
+								IDsfStatusConstants.INVALID_STATE, "Register service not available", null)); //$NON-NLS-1$
 						rm.done();
 					}
 				}
@@ -854,9 +854,9 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 	@Override
 	public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta,
 			TreePath path, RequestMonitor rm) {
-		// If the register definition has changed, refresh all the 
-		// expressions in the expression manager.  This is because some 
-		// expressions that were previously invalid, may now represent new 
+		// If the register definition has changed, refresh all the
+		// expressions in the expression manager.  This is because some
+		// expressions that were previously invalid, may now represent new
 		// registers.
 		if (event instanceof IRegistersChangedDMEvent) {
 			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
@@ -877,8 +877,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 	@Override
 	public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
 			final RequestMonitor rm) {
-		// The following events can affect register values, refresh the state 
-		// of the expression. 
+		// The following events can affect register values, refresh the state
+		// of the expression.
 		if (event instanceof IRegisterChangedDMEvent || event instanceof IMemoryChangedEvent
 				|| (event instanceof PropertyChangeEvent && ((PropertyChangeEvent) event)
 						.getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE)) {

@@ -15,18 +15,16 @@ package org.eclipse.cdt.ui.newui;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.PropertyPage;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * This class is intended to handle
@@ -55,7 +53,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  */
 public class CDTPropertyManager {
 
-	private static ArrayList<Object> pages = new ArrayList<Object>();
+	private static ArrayList<Object> pages = new ArrayList<>();
 	private static ICProjectDescription prjd = null;
 	private static boolean saveDone = false;
 	private static IProject project = null;

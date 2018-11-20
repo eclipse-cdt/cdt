@@ -22,15 +22,15 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 
 /**
- * This wizard provides a method by which the user can 
+ * This wizard provides a method by which the user can
  * add a C nature to a project that previously had no nature associated with it.
- * 
+ *
  * This wizard was used for 3.X style projects. It is left here for compatibility
  * reasons only. The wizard is superseded by MBS Project Conversion Wizard,
  * class {@code org.eclipse.cdt.managedbuilder.ui.wizards.ConvertToMakeWizard}.
- * 
+ *
  * @deprecated as of CDT 4.0.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -59,7 +59,7 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 	/**
 	 * Method getWzDescriptionResource,  allows Wizard description label value
 	 * to be changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWzDescriptionResource() {
@@ -69,7 +69,7 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 	/**
 	 * Method getWzTitleResource,  allows Wizard description label value
 	 * to be changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWzTitleResource() {
@@ -79,7 +79,7 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 	/**
 	 * Method getWindowTitleResource, allows Wizard Title label value to be
 	 * changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWindowTitleResource() {
@@ -88,7 +88,7 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 
 	/**
 	  * Method getPrefix,  allows prefix value to be changed by subclasses
-	  * 
+	  *
 	  * @return String
 	  */
 	protected static String getPrefix() {
@@ -97,7 +97,7 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 
 	/**
 	 * Method addPages adds our Simple to C conversion Wizard page.
-	 * 
+	 *
 	 * @see Wizard#addPages
 	 */
 	@Override

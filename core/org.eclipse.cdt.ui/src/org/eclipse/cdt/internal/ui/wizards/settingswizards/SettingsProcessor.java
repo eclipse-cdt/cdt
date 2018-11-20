@@ -17,19 +17,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-
 /**
  * Base class implementing standard import and export functionality
  * for a section of the file.
- * 
+ *
  * @author Mike Kucera
  * @since 5.1
  */
@@ -96,7 +95,7 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 	public void readSectionXML(ICFolderDescription projectRoot, Element section) throws SettingsImportExportException {
 		ICLanguageSetting[] languageSettings = projectRoot.getLanguageSettings();
 
-		Map<String, ICLanguageSetting> languageMap = new HashMap<String, ICLanguageSetting>();
+		Map<String, ICLanguageSetting> languageMap = new HashMap<>();
 		for (ICLanguageSetting language : languageSettings) {
 			languageMap.put(language.getName(), language);
 		}

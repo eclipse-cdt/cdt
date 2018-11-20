@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,13 +20,13 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoPr
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 
 /*
- * We are extending the ROOT VM node for the register view so we can 
- * provide Memento providers for the root node. In the Register VM 
- * Provider we are returning a pseudo VMContext selection when the 
- * original input is a child of an execution context we return a selection  
- * which represents an Execution Context instead.  This ensures that the 
- * Register View does not collapse and redraw when going from frame to frame 
- * when stepping or just when selecting within the view. 
+ * We are extending the ROOT VM node for the register view so we can
+ * provide Memento providers for the root node. In the Register VM
+ * Provider we are returning a pseudo VMContext selection when the
+ * original input is a child of an execution context we return a selection
+ * which represents an Execution Context instead.  This ensures that the
+ * Register View does not collapse and redraw when going from frame to frame
+ * when stepping or just when selecting within the view.
  */
 public class RegisterRootDMVMNode extends RootDMVMNode implements IElementMementoProvider {
 

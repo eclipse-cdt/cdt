@@ -16,13 +16,13 @@ package org.eclipse.cdt.core.dom.lrparser;
 import lpg.lpgjavaruntime.PrsStream;
 
 /**
- * The CPreprocessor from the CDT core returns tokens that 
+ * The CPreprocessor from the CDT core returns tokens that
  * are of the type org.eclipse.cdt.core.parser.IToken,
  * however LPG wants the tokens to be of the type lpg.lpgjavaruntime.IToken.
- * 
+ *
  * So these adapter objects are used to wrap the tokens returned
  * by CPreprocessor so that they can be used with LPG.
- * 
+ *
  * @author Mike Kucera
  */
 public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {

@@ -30,7 +30,7 @@ public class TestConfigElement implements IManagedConfigElement {
 	public TestConfigElement(String name, String[][] attributes, IManagedConfigElement[] children) {
 		this.name = name;
 		this.children = children;
-		this.attributeMap = new TreeMap<String, String>();
+		this.attributeMap = new TreeMap<>();
 		for (int i = 0; i < attributes.length; i++) {
 			attributeMap.put(attributes[i][0], attributes[i][1]);
 		}
@@ -65,7 +65,7 @@ public class TestConfigElement implements IManagedConfigElement {
 	 */
 	@Override
 	public IManagedConfigElement[] getChildren(String elementName) {
-		List<IManagedConfigElement> ret = new ArrayList<IManagedConfigElement>(children.length);
+		List<IManagedConfigElement> ret = new ArrayList<>(children.length);
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].getName().equals(elementName)) {
 				ret.add(children[i]);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.parser.AbstractScannerExtensionConfiguration;
 
 /**
  * A minimalistic scanner configuration for the LR parser.
- * 
+ *
  * @author Mike Kucera
  *
  */

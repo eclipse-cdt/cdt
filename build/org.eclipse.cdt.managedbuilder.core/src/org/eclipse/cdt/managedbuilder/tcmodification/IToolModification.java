@@ -30,10 +30,10 @@ public interface IToolModification extends IModification {
 	CompatibilityStatus getCompatibilityStatus();
 
 	/**
-	 * returns the compatibility status for this tool, 
+	 * returns the compatibility status for this tool,
 	 * i.e. true when the getCompatibilityStatus() returns an non-ERROR status,
 	 * and false otherwise
-	 * 
+	 *
 	 * for project tools specifies whether the tool is compatible
 	 * with the configuration
 	 * for system tools specifies whether the tool can be added to the
@@ -42,7 +42,7 @@ public interface IToolModification extends IModification {
 	boolean isCompatible();
 
 	/**
-	 * returns the tool of the given Modification 
+	 * returns the tool of the given Modification
 	 */
 	ITool getTool();
 

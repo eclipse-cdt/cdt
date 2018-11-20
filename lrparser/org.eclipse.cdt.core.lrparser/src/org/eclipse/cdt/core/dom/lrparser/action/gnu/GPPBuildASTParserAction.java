@@ -17,8 +17,6 @@ import static org.eclipse.cdt.core.parser.util.CollectionUtils.findFirstAndRemov
 
 import java.util.List;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
@@ -38,6 +36,8 @@ import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.ICPPSecondaryParserFactory;
 import org.eclipse.cdt.internal.core.dom.lrparser.gpp.GPPParsersym;
 
+import lpg.lpgjavaruntime.IToken;
+
 public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 	private final ICPPNodeFactory nodeFactory;
 
@@ -53,7 +53,7 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 	/**
 	 * typeof_type_specifier
 	 *     ::= 'typeof' unary_expression
-	 *   
+	 *
 	 * typeof_declaration_specifiers
 	 *     ::= typeof_type_specifier
 	 *       | no_type_declaration_specifiers  typeof_type_specifier
@@ -65,7 +65,7 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 	public void consumeDeclarationSpecifiersTypeof() {
 		List<Object> topScope = astStack.closeScope();
 
-		// There's an expression somewhere on the stack, find it		
+		// There's an expression somewhere on the stack, find it
 		IASTExpression expr = findFirstAndRemove(topScope, IASTExpression.class);
 		//CDT_70_FIX_FROM_50-#7
 		ICPPASTSimpleDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifier();
@@ -115,7 +115,7 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 			declSpec.setImaginary(isImaginary);
 			declSpec.setLongLong(numLong > 1);
 			declSpec.setLong(numLong == 1);
-			//declSpec = gppDeclSpec; 
+			//declSpec = gppDeclSpec;
 		} else {
 			declSpec = nodeFactory.newSimpleDeclSpecifier();
 		}
@@ -183,7 +183,7 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 	}
 
 	/**
-	 * postfix_expression ::= '(' type_id ')' initializer_list      
+	 * postfix_expression ::= '(' type_id ')' initializer_list
 	 */
 	public void consumeExpressionTypeIdInitializer() {
 		IASTInitializerList list = (IASTInitializerList) astStack.pop();

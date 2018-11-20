@@ -17,9 +17,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
 import org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest;
@@ -30,6 +27,8 @@ import org.eclipse.cdt.ui.tests.refactoring.includes.IncludesTestSuite;
 import org.eclipse.cdt.ui.tests.refactoring.rename.RenameRegressionTests;
 import org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.utils.UtilTestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * @author Emanuel Graf

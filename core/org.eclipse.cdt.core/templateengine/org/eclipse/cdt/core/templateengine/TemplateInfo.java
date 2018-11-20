@@ -32,7 +32,7 @@ public class TemplateInfo {
 	private List<?> configs; /*IConfiguration This seems to be used for storing build-system specific configurations*/
 
 	/**
-	 * 
+	 *
 	 * @param templateId
 	 * @param projectTypeId
 	 * @param filterPattern
@@ -131,7 +131,7 @@ public class TemplateInfo {
 	}
 
 	/**
-	 * Checks whether two TemplateInfo object are equal. 
+	 * Checks whether two TemplateInfo object are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {

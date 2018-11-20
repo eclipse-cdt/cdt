@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 /**
  * Similar to IScannerInfoProvider but computes the IScannerInfo
  * based on a String path instead of IResource.
- * 
+ *
  * @see IScannerInfoProvider
  */
 public interface IStandaloneScannerInfoProvider {
@@ -32,13 +32,13 @@ public interface IStandaloneScannerInfoProvider {
 	IScannerInfo getScannerInformation(String path);
 
 	/**
-	 * Returns an IScannerInfo when you don't necessary have access to a path. 
-	 * 
+	 * Returns an IScannerInfo when you don't necessary have access to a path.
+	 *
 	 * This is used by the "parse up front" feature. Since we are parsing
 	 * files outside of the project a "default" IScannerInfo object
 	 * is needed to get the minimal amount of available info in order
 	 * to parse the file.
-	 * @param linkageID 
+	 * @param linkageID
 	 */
 	IScannerInfo getDefaultScannerInformation(int linkageID);
 }

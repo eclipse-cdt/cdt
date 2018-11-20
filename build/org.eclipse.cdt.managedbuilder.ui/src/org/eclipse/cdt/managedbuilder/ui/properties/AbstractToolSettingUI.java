@@ -10,7 +10,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
- * Intel corp. 2007 - modification for new CDT model. 
+ * Intel corp. 2007 - modification for new CDT model.
  * Miwako Tokugawa (Intel Corporation) - Fixed-location tooltip support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
@@ -29,7 +29,7 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	private boolean toolTipBoxNeeded = false;
 
 	/**
-	 * 
+	 *
 	 */
 	protected AbstractToolSettingUI(IResourceInfo info) {
 		this(info, GRID);

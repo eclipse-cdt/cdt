@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Severin Gehwolf 
+ * Copyright (c) 2010, 2013 Severin Gehwolf
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0

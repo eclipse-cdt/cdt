@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IPath;
  * @see ErrorParserManager#addProblemMarker(ProblemMarkerInfo)
  * @see ErrorParserManager#generateMarker(IResource, int, String, int, String)
  * @see ErrorParserManager#generateExternalMarker(IResource, int, String, int, String, IPath)
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ProblemMarkerInfo {
@@ -61,7 +61,7 @@ public class ProblemMarkerInfo {
 
 	/**
 	 * Create a new {@link ProblemMarkerInfo} object.
-	 * 
+	 *
 	 * @param file - the file where the problem has occurred.
 	 * @param lineNumber - the line number of the problem.
 	 * @param description - a description of the problem.
@@ -75,7 +75,7 @@ public class ProblemMarkerInfo {
 
 	/**
 	 * Create a new {@link ProblemMarkerInfo} object.
-	 * 
+	 *
 	 * @param file - the file where the problem has occurred.
 	 * @param lineNumber - the line number of the problem.
 	 * @param startChar - start char of the problem.
@@ -95,14 +95,14 @@ public class ProblemMarkerInfo {
 		this.variableName = variableName;
 		this.externalPath = null;
 		this.type = null;
-		this.attributes = new HashMap<String, String>();
+		this.attributes = new HashMap<>();
 		this.startChar = startChar;
 		this.endChar = endChar;
 	}
 
 	/**
 	 * Create a new {@link ProblemMarkerInfo} object.
-	 * 
+	 *
 	 * @param file - the file where the problem has occurred.
 	 * @param lineNumber - the line number of the problem.
 	 * @param description - a description of the problem.
@@ -130,7 +130,7 @@ public class ProblemMarkerInfo {
 	/**
 	 * Return the value of the attribute with the given key,
 	 * or null if no such attribute exists.
-	 * 
+	 *
 	 * @param key - attribute key.
 	 * @return attribute value
 	 * @since 5.4
@@ -143,7 +143,7 @@ public class ProblemMarkerInfo {
 	 * Set the value of the attribute with the given key
 	 * to the given value, or add one if one does not already
 	 * exist.
-	 * 
+	 *
 	 * @param key - attribute key.
 	 * @param value - new attribute value.
 	 * @since 5.4
@@ -164,7 +164,7 @@ public class ProblemMarkerInfo {
 
 	/**
 	 * Set the type of this problem marker.
-	 * 
+	 *
 	 * @param type - the new type.
 	 * @since 5.4
 	 */
@@ -175,7 +175,7 @@ public class ProblemMarkerInfo {
 	/**
 	 * Flag marker for potential deferred de-duplication. See
 	 * {@link ACBuilder#deDuplicate()}
-	 * 
+	 *
 	 * @return the deferDeDuplication
 	 * @since 6.3
 	 */
@@ -186,7 +186,7 @@ public class ProblemMarkerInfo {
 	/**
 	 * Flag marker for potential deferred de-duplication. See
 	 * {@link ACBuilder#deDuplicate()}
-	 * 
+	 *
 	 * @param deferDeDuplication the deferDeDuplication to set
 	 * @since 6.3
 	 */

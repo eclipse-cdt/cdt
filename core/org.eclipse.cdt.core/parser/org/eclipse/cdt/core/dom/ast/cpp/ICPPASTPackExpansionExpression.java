@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
 /**
- * Pack expansion as it can occur as an element in an expression-lists or as a 
+ * Pack expansion as it can occur as an element in an expression-lists or as a
  * non-type template argument.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.2

@@ -54,7 +54,7 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 
 	/**
 	 * Base specifiers are where a class expresses from whom it inherits.
-	 * 
+	 *
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public static interface ICPPASTBaseSpecifier extends IASTNode, IASTNameOwner, ICPPASTPackExpandable {
@@ -62,7 +62,7 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 
 		/**
 		 * Relation between base specifier and its name specifier.
-		 * 
+		 *
 		 * @since 5.8
 		 */
 		public static final ASTNodeProperty NAME_SPECIFIER = new ASTNodeProperty(
@@ -98,8 +98,8 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 		public IASTName getName();
 
 		/**
-		 * Returns the name specifier inside this base specifier. 
-		 * 
+		 * Returns the name specifier inside this base specifier.
+		 *
 		 * @since 5.8
 		 */
 		public ICPPASTNameSpecifier getNameSpecifier();
@@ -125,7 +125,7 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 
 		/**
 		 * Sets the name specifier for this base specifier. Not allowed on frozen AST.
-		 * 
+		 *
 		 * @since 5.8
 		 */
 		public void setNameSpecifier(ICPPASTNameSpecifier nameSpecifier);
@@ -143,14 +143,14 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 
 	/**
 	 * Returns the base specifiers.
-	 * 
+	 *
 	 * @return {@code ICPPASTBaseSpecifier[]}
 	 */
 	public ICPPASTBaseSpecifier[] getBaseSpecifiers();
 
 	/**
 	 * Adds a base specifier.
-	 * 
+	 *
 	 * @param baseSpec {@code ICPPASTBaseSpecifier}
 	 */
 	public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec);
@@ -175,14 +175,14 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 
 	/**
 	 * Queries whether the type is final.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public boolean isFinal();
 
 	/**
 	 * Sets whether the type is final.
-	 * 
+	 *
 	 * @since 5.5
 	 * @deprecated Use setVirtSpecifier() instead.
 	 */
@@ -196,7 +196,7 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	public ICPPASTClassVirtSpecifier getVirtSpecifier();
 
 	/**
-	 * Sets the class-virt-specifier for this class. 
+	 * Sets the class-virt-specifier for this class.
 	 * @since 5.7
 	 */
 	public void setVirtSpecifier(ICPPASTClassVirtSpecifier virtSpecifier);

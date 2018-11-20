@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 public final class CStringValue implements IValue {
 	private static final Map<Character, Character> escapeSequences;
 	static {
-		Map<Character, Character> map = new HashMap<Character, Character>();
+		Map<Character, Character> map = new HashMap<>();
 		map.put('\'', '\'');
 		map.put('"', '"');
 		map.put('?', '?');

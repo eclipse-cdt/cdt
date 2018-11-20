@@ -26,15 +26,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class represents the generated directory information
- * 
- * NOTE: This class is subject to change and discuss, 
+ *
+ * NOTE: This class is subject to change and discuss,
  * and is currently available in experimental mode only
- *  
+ *
  */
 public class GenDirInfo {
 	private IProject fProject;
 	private IPath fProjPath;
-	private Set<IPath> fDirPathSet = new HashSet<IPath>();
+	private Set<IPath> fDirPathSet = new HashSet<>();
 
 	public GenDirInfo(IProject proj) {
 		fProject = proj;
@@ -68,7 +68,7 @@ public class GenDirInfo {
 					folder.setDerived(true);
 				} catch (CoreException e) {
 					if (DbgUtil.DEBUG)
-						DbgUtil.trace("GenDirInfo: failed to create dir: " + e.getLocalizedMessage()); //$NON-NLS-1$ 
+						DbgUtil.trace("GenDirInfo: failed to create dir: " + e.getLocalizedMessage()); //$NON-NLS-1$
 					//TODO: log the error
 				}
 			}

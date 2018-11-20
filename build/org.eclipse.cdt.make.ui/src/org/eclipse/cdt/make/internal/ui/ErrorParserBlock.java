@@ -43,7 +43,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -62,7 +62,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ErrorParserBlock#getErrorParserIDs(org.eclipse.core.resources.IProject)
 	 */
 	@Override
@@ -81,7 +81,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ErrorParserBlock#saveErrorParsers(org.eclipse.core.resources.IProject,
 	 *      java.lang.String[])
 	 */

@@ -15,6 +15,13 @@
 
 package org.eclipse.cdt.internal.ui.text.spelling;
 
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.IInvocationContext;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.text.IDocument;
@@ -26,15 +33,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.IInvocationContext;
-
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
 
 /**
  * Proposal to add the unknown word to the dictionaries.
@@ -101,7 +99,7 @@ public class AddWordProposal implements ICCompletionProposal {
 	/**
 	 * Asks the user whether he wants to configure
 	 * a user dictionary.
-	 * 
+	 *
 	 * @param shell
 	 * @return <code>true</code> if the user wants to configure the user dictionary
 	 */
@@ -118,7 +116,7 @@ public class AddWordProposal implements ICCompletionProposal {
 	/**
 	 * Tells whether this proposal can ask to
 	 * configure a user dictionary.
-	 * 
+	 *
 	 * @return <code>true</code> if it can ask the user
 	 */
 	static boolean canAskToConfigure() {

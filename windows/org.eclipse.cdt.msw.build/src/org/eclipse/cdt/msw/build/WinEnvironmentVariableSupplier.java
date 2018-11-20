@@ -48,18 +48,22 @@ public class WinEnvironmentVariableSupplier
 			this.operation = operation;
 		}
 
+		@Override
 		public String getDelimiter() {
 			return ";";
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
 
+		@Override
 		public String getValue() {
 			return value;
 		}
 
+		@Override
 		public int getOperation() {
 			return operation;
 		}
@@ -70,20 +74,24 @@ public class WinEnvironmentVariableSupplier
 		initvars();
 	}
 
+	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IManagedProject project,
 			IEnvironmentVariableProvider provider) {
 		return envvars.get(variableName);
 	}
 
+	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		return envvars.get(variableName);
 	}
 
+	@Override
 	public IBuildEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider) {
 		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);
 	}
 
+	@Override
 	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);
@@ -91,7 +99,7 @@ public class WinEnvironmentVariableSupplier
 
 	private static String getSoftwareKey(WindowsRegistry reg, String subkey, String name) {
 		String value = reg.getLocalMachineValue("SOFTWARE\\" + subkey, name);
-		// Visual Studio is a 32 bit application so on Windows 64 the keys will be in Wow6432Node 
+		// Visual Studio is a 32 bit application so on Windows 64 the keys will be in Wow6432Node
 		if (value == null) {
 			value = reg.getLocalMachineValue("SOFTWARE\\Wow6432Node\\" + subkey, name);
 		}
@@ -100,7 +108,7 @@ public class WinEnvironmentVariableSupplier
 
 	// Current support is for Windows SDK 8.0 with Visual C++ 11.0
 	// or Windows SDK 7.1 with Visual C++ 10.0
-	// or Windows SDK 7.0 with Visual C++ 9.0 
+	// or Windows SDK 7.0 with Visual C++ 9.0
 	private static String getSDKDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
 		String sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder");
@@ -125,7 +133,7 @@ public class WinEnvironmentVariableSupplier
 
 	public static IPath[] getIncludePath() {
 		// Include paths
-		List<IPath> includePaths = new ArrayList<IPath>();
+		List<IPath> includePaths = new ArrayList<>();
 		if (sdkDir != null) {
 			includePaths.add(new Path(sdkDir.concat("Include")));
 			includePaths.add(new Path(sdkDir.concat("Include\\gl")));
@@ -144,7 +152,7 @@ public class WinEnvironmentVariableSupplier
 	private static synchronized void initvars() {
 		if (envvars != null)
 			return;
-		envvars = new HashMap<String, IBuildEnvironmentVariable>();
+		envvars = new HashMap<>();
 
 		// The SDK Location
 		sdkDir = getSDKDir();

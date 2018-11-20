@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * @see ICConfigExtensionReference
  * @see ICExtension
  * @see ICDescriptor
- * 
+ *
  * @deprecated replaced with {@link ICConfigExtensionReference} obtained from an {@link ICConfigurationDescription}
  * @noreference This interface is not intended to be referenced by clients.
  */

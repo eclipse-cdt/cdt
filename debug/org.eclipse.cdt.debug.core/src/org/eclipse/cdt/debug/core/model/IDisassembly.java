@@ -24,7 +24,7 @@ public interface IDisassembly extends ICDebugElement {
 
 	/**
 	 * Returns the disassembly block for given stack frame.
-	 * 
+	 *
 	 * @param frame the stack frame for which the disassembly is required
 	 * @return the disassembly block for given stack frame
 	 * @throws DebugException if this method fails.
@@ -33,7 +33,7 @@ public interface IDisassembly extends ICDebugElement {
 
 	/**
 	 * Returns the disassembly block for given stack frame.
-	 * 
+	 *
 	 * @param address the address from which the disassembly starts
 	 * @return the disassembly block for given memory address
 	 * @throws DebugException if this method fails.
@@ -43,7 +43,7 @@ public interface IDisassembly extends ICDebugElement {
 
 	/**
 	 * Returns the address factory associated with this element.
-	 * 
+	 *
 	 * @return the address factory
 	 */
 	IAddressFactory getAddressFactory();

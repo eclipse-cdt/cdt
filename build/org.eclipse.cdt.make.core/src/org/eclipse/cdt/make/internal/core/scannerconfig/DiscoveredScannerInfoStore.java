@@ -76,7 +76,7 @@ public final class DiscoveredScannerInfoStore {
 	/**
 	 * Caches scanner config XML Documents per project using soft references.
 	 */
-	private final Map<IProject, Reference<Document>> fDocumentCache = new HashMap<IProject, Reference<Document>>();
+	private final Map<IProject, Reference<Document>> fDocumentCache = new HashMap<>();
 
 	public static DiscoveredScannerInfoStore getInstance() {
 		if (instance == null) {
@@ -179,7 +179,7 @@ public final class DiscoveredScannerInfoStore {
 					rootElement.setAttribute(ID_ATTR, CDESCRIPTOR_ID);
 					document.appendChild(rootElement);
 				}
-				fDocumentCache.put(project, new SoftReference<Document>(document));
+				fDocumentCache.put(project, new SoftReference<>(document));
 			} catch (IOException e) {
 				MakeCorePlugin.log(e);
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,

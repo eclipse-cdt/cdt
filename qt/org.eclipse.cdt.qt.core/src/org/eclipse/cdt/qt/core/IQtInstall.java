@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Represents an installation of the Qt SDK. Qt installs are defined by the path
  * to the qmake executable.
- * 
+ *
  * @noimplement
  */
 public interface IQtInstall {

@@ -20,16 +20,16 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Maintains a cache of overlay images.
- * 
+ *
  * @since May 30, 2003
  */
 public class OverlayImageCache {
-	private Map<OverlayImageDescriptor, Image> fCache = new HashMap<OverlayImageDescriptor, Image>();
+	private Map<OverlayImageDescriptor, Image> fCache = new HashMap<>();
 
 	/**
 	 * Returns and caches an image corresponding to the specified image
 	 * descriptor.
-	 * 
+	 *
 	 * @param imageDecsriptor
 	 *            the image descriptor
 	 * @return the image

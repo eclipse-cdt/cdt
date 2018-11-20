@@ -20,8 +20,10 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionDelegate2;
+import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate
 		implements IDebugEventSetListener, IActionDelegate2 {

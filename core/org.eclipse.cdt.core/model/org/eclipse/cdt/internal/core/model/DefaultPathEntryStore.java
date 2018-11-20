@@ -91,7 +91,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	public IPathEntry[] getRawPathEntries() throws CoreException {
 		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(fProject, false);
 		if (cdesc != null) {
-			ArrayList<IPathEntry> pathEntries = new ArrayList<IPathEntry>();
+			ArrayList<IPathEntry> pathEntries = new ArrayList<>();
 			ICStorageElement entry = cdesc.getProjectStorageElement(PATH_ENTRY_ID);
 			for (ICStorageElement childNode : entry.getChildrenByName(PATH_ENTRY))
 				pathEntries.add(decodePathEntry(fProject, childNode));

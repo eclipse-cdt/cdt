@@ -242,7 +242,7 @@ public class DBProperties {
 		}
 
 		public static Set<String> getKeySet(final Database db, final BTree index) throws CoreException {
-			final Set<String> result = new HashSet<String>();
+			final Set<String> result = new HashSet<>();
 			index.accept(new IBTreeVisitor() {
 				@Override
 				public int compare(long record) throws CoreException {

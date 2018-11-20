@@ -59,7 +59,7 @@ public interface ICDebugUIConstants {
 	 */
 	public static final String MODULES_VIEW_DETAIL_ID = PREFIX + "ModulesView.detail"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Identifier for an empty group preceeding a
 	 * format group in a menu (value <code>"emptyFormatGroup"</code>).
 	 */
@@ -70,7 +70,7 @@ public interface ICDebugUIConstants {
 	 */
 	public static final String FORMAT_GROUP = "formatGroup"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Identifier for an empty group preceeding a
 	 * refresh group in a menu (value <code>"emptyRefreshGroup"</code>).
 	 */
@@ -82,7 +82,7 @@ public interface ICDebugUIConstants {
 	 */
 	public static final String REFRESH_GROUP = "refreshGroup"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Identifier for an empty group preceeding a
 	 * modules group in a menu (value <code>"emptyModulesGroup"</code>).
 	 */

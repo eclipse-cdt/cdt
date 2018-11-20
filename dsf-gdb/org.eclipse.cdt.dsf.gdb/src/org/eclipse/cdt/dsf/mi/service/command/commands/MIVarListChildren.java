@@ -21,14 +21,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarListChildrenInfo;
 
 /**
- * 
+ *
  *     -var-list-children NAME
  *
  *  Returns a list of the children of the specified variable object:
  *
  *     numchild=N,children={{name=NAME,
  *     numchild=N,type=TYPE},(repeats N times)}
- * 
+ *
  */
 public class MIVarListChildren extends MICommand<MIVarListChildrenInfo> {
 	/**
@@ -46,7 +46,7 @@ public class MIVarListChildren extends MICommand<MIVarListChildrenInfo> {
 	 *            with this index.
 	 * @param to
 	 *            One behind the last child to be listed.
-	 *            
+	 *
 	 * @since 4.0
 	 */
 	public MIVarListChildren(ICommandControlDMContext ctx, String name, int from, int to) {

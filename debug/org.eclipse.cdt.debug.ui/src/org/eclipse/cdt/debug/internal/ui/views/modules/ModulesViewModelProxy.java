@@ -24,8 +24,8 @@ public class ModulesViewModelProxy extends EventHandlerModelProxy {
 
 	private IModuleRetrieval fModuleRetrieval;
 
-	/** 
-	 * Constructor for ModulesViewModelProxy. 
+	/**
+	 * Constructor for ModulesViewModelProxy.
 	 */
 	public ModulesViewModelProxy(IModuleRetrieval moduleRetrieval) {
 		super();

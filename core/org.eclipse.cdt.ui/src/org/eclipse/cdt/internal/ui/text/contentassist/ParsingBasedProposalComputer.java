@@ -20,20 +20,19 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
-import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
 /**
  * The base class for any proposal computers that require a completion node in
  * order to determine its completion proposals.
- * 
+ *
  * @author Bryan Wilkinson
  */
 public abstract class ParsingBasedProposalComputer implements ICompletionProposalComputer {
@@ -72,8 +71,8 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 			IProgressMonitor monitor) {
 		Collection<ICompletionProposal> proposals = computeCompletionProposals(context, monitor);
 		// Remove duplicates
-		proposals = (new LinkedHashSet<ICompletionProposal>(proposals));
-		List<IContextInformation> result = new ArrayList<IContextInformation>();
+		proposals = (new LinkedHashSet<>(proposals));
+		List<IContextInformation> result = new ArrayList<>();
 		for (ICompletionProposal proposal : proposals) {
 			IContextInformation contextInformation = proposal.getContextInformation();
 			if (contextInformation != null) {
@@ -100,7 +99,7 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 
 	/**
 	 * Computes base relevance depending on quality of name / prefix match.
-	 * 
+	 *
 	 * @param prefix  the completion prefix
 	 * @param match  the matching identifier
 	 * @return a relevance value indicating the quality of the name match

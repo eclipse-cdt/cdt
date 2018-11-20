@@ -99,7 +99,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 
 	private void createDelegate(ICProject project, IProgressMonitor monitor)
 			throws CoreException, InterruptedException {
-		HashSet<ITranslationUnit> set = new HashSet<ITranslationUnit>();
+		HashSet<ITranslationUnit> set = new HashSet<>();
 		if ((fUpdateOptions & (IIndexManager.UPDATE_ALL | IIndexManager.UPDATE_CHECK_TIMESTAMPS)) != 0) {
 			TranslationUnitCollector collector = new TranslationUnitCollector(set, set, monitor);
 			boolean haveProject = false;

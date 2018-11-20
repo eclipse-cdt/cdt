@@ -157,14 +157,14 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		isSyncing = value;
 	}
 
-	/** 
+	/**
 	 * Synchronize the current set of configurations for the project with the
 	 * Autotools saved configuration data.  This is required when configuration
 	 * management occurs outside of the Autotools Configure Settings page in the
 	 * Property menu.
-	 * 
+	 *
 	 * @param project to synchronize configurations for
-	 * 
+	 *
 	 */
 	public synchronized void syncConfigurations(IProject project) {
 		setSyncing(true);
@@ -289,7 +289,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	/**
 	 * Clone a configuration and put it on the tmp list if it is not already a saved configuration
 	 * and not already on the tmp list.
-	 * 
+	 *
 	 * @param p project
 	 * @param oldId the id of the old configuration to clone
 	 * @param cfgd the configuration descriptor for the clone
@@ -368,11 +368,11 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	}
 
 	private String xmlEscape(String value) {
-		value = value.replaceAll("\\&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$ 
-		value = value.replaceAll("\\\"", "&quot;"); //$NON-NLS-1$ //$NON-NLS-2$ 
-		value = value.replaceAll("\\\'", "&apos;"); //$NON-NLS-1$ //$NON-NLS-2$ 
-		value = value.replaceAll("\\<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$ 
-		value = value.replaceAll("\\>", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		value = value.replaceAll("\\&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+		value = value.replaceAll("\\\"", "&quot;"); //$NON-NLS-1$ //$NON-NLS-2$
+		value = value.replaceAll("\\\'", "&apos;"); //$NON-NLS-1$ //$NON-NLS-2$
+		value = value.replaceAll("\\<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
+		value = value.replaceAll("\\>", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
 		return value;
 	}
 
@@ -417,12 +417,12 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 									String childName = children.get(k);
 									IConfigureOption childopt = cfg.getOption(childName);
 									p.println("<flagvalue id=\"" + childopt.getName() + "\" value=\"" //$NON-NLS-1$ //$NON-NLS-2$
-											+ xmlEscape(childopt.getValue()) + "\"/>"); //$NON-NLS-3$
+											+ xmlEscape(childopt.getValue()) + "\"/>");
 								}
 								p.println("</flag>"); //$NON-NLS-1$
 							} else if (!opt.isCategory() && !opt.isFlagValue())
 								p.println("<option id=\"" + option.getName() + "\" value=\"" + xmlEscape(opt.getValue()) //$NON-NLS-1$ //$NON-NLS-2$
-										+ "\"/>"); //$NON-NLS-3$
+										+ "\"/>");
 						}
 						p.println("</configuration>"); //$NON-NLS-1$
 						// Sync name field as this configuration is now
@@ -473,7 +473,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 						savedIds.add(id);
 						IAConfiguration cfg = getTmpConfiguration(project, cfgd);
 						cfgs.put(id, cfg); // add to list in case we have a new configuration not yet added to Project Description
-						p.println("<configuration id=\"" + id + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+						p.println("<configuration id=\"" + id + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 						for (int j = 0; j < optionList.length; ++j) {
 							Option option = optionList[j];
 							IConfigureOption opt = cfg.getOption(option.getName());
@@ -492,7 +492,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 						// A remaining id won't appear in our savedIds list.
 						if (!savedIds.contains(id)) {
 							IAConfiguration cfg = i.getValue();
-							p.println("<configuration id=\"" + id + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+							p.println("<configuration id=\"" + id + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 							for (int j = 0; j < optionList.length; ++j) {
 								Option option = optionList[j];
 								IConfigureOption opt = cfg.getOption(option.getName());

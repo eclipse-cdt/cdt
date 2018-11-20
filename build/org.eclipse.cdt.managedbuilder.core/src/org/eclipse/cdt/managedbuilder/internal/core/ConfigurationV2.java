@@ -112,7 +112,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		IProject project = (IProject) target.getOwner();
 
 		// Get the tool references from the target and parent
-		List<IToolReference> allToolRefs = new Vector<IToolReference>(target.getLocalToolReferences());
+		List<IToolReference> allToolRefs = new Vector<>(target.getLocalToolReferences());
 		allToolRefs.addAll(((ConfigurationV2) parentConfig).getLocalToolReferences());
 		for (IToolReference toolRef : allToolRefs) {
 			// Make a new ToolReference based on the tool in the ref
@@ -300,7 +300,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	@Override
 	public ITool[] getFilteredTools(IProject project) {
 		ITool[] localTools = getTools();
-		Vector<ITool> tools = new Vector<ITool>(localTools.length);
+		Vector<ITool> tools = new Vector<>(localTools.length);
 		for (ITool tool : localTools) {
 			try {
 				// Make sure the tool is right for the project
@@ -339,7 +339,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 */
 	protected List<IToolReference> getLocalToolReferences() {
 		if (toolReferences == null) {
-			toolReferences = new ArrayList<IToolReference>();
+			toolReferences = new ArrayList<>();
 		}
 		return toolReferences;
 	}
@@ -362,7 +362,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		// Validate that the tools correspond to the nature
 		IProject project = (IProject) target.getOwner();
 		if (project != null) {
-			List<ITool> validTools = new ArrayList<ITool>();
+			List<ITool> validTools = new ArrayList<>();
 
 			// The target is associated with a real project
 			for (int i = 0; i < tools.length; ++i) {
@@ -448,7 +448,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 * @return List
 	 */
 	protected List<OptionReference> getOptionReferences(ITool tool) {
-		List<OptionReference> references = new ArrayList<OptionReference>();
+		List<OptionReference> references = new ArrayList<>();
 
 		// Get all the option references I add for this tool
 		IToolReference toolRef = getToolReference(tool);

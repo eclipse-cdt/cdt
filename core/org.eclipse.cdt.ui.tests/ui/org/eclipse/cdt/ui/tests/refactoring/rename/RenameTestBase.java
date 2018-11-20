@@ -1,19 +1,24 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2014 Wind River Systems, Inc.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactoringArgument;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameProcessor;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.rename.TextSearchWrapper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,12 +26,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
-
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactoringArgument;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameProcessor;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.rename.TextSearchWrapper;
 
 /**
  * @author markus.schorn@windriver.com
@@ -59,10 +58,10 @@ public class RenameTestBase extends RefactoringTests {
 			}
 
 			fail("Input check on " + newName + " failed. " + rs.getEntryMatchingSeverity(RefactoringStatus.ERROR));
-			// rs.getFirstMessage(RefactoringStatus.ERROR) is not the message displayed in 
+			// rs.getFirstMessage(RefactoringStatus.ERROR) is not the message displayed in
 			// the UI for renaming a method to a constructor, the first message which is only
 			// a warning is shown in the UI. If you click preview, then the error and the warning
-			// is shown. 
+			// is shown.
 			return null;
 		} finally {
 			refactoring.getProcessor().unlockIndex();

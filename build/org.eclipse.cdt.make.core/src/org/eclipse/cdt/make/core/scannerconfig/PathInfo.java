@@ -46,7 +46,7 @@ public final class PathInfo {
 				? (IPath[]) quoteIncludePaths.clone()
 				: EMPTY_PATH_ARRAY;
 		fSymbols = symbols != null && symbols.size() != 0 ? getInternedHashMap(symbols)
-				: new HashMap<String, String>(0);
+				: new HashMap<>(0);
 		fIncludeFiles = includeFiles != null && includeFiles.length != 0 ? (IPath[]) includeFiles.clone()
 				: EMPTY_PATH_ARRAY;
 		fMacroFiles = macroFiles != null && macroFiles.length != 0 ? (IPath[]) macroFiles.clone() : EMPTY_PATH_ARRAY;
@@ -54,7 +54,7 @@ public final class PathInfo {
 
 	/**
 	 * Returns a new HashMap whereby all the strings used as keys and values are interned.
-	 * 
+	 *
 	 * @param oldMap
 	 * @return HashMap<String, String>
 	 */
@@ -63,9 +63,9 @@ public final class PathInfo {
 			return null;
 
 		if (oldMap.isEmpty())
-			return new HashMap<String, String>(oldMap);
+			return new HashMap<>(oldMap);
 
-		HashMap<String, String> newMap = new HashMap<String, String>(oldMap.size());
+		HashMap<String, String> newMap = new HashMap<>(oldMap.size());
 		for (String key : oldMap.keySet()) {
 			newMap.put(SafeStringInterner.safeIntern(key), SafeStringInterner.safeIntern(oldMap.get(key)));
 		}
@@ -74,21 +74,21 @@ public final class PathInfo {
 	}
 
 	/**
-	 * Get include paths  
+	 * Get include paths
 	 */
 	public IPath[] getIncludePaths() {
 		return fIncludePaths.length != 0 ? (IPath[]) fIncludePaths.clone() : EMPTY_PATH_ARRAY;
 	}
 
 	/**
-	 * Get quote include paths (for #include "...") 
+	 * Get quote include paths (for #include "...")
 	 */
 	public IPath[] getQuoteIncludePaths() {
 		return fQuoteIncludePaths.length != 0 ? (IPath[]) fQuoteIncludePaths.clone() : EMPTY_PATH_ARRAY;
 	}
 
 	/**
-	 * Get defined symbols  
+	 * Get defined symbols
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getSymbols() {
@@ -103,7 +103,7 @@ public final class PathInfo {
 	}
 
 	/**
-	 * Get macro files (gcc option -imacros) 
+	 * Get macro files (gcc option -imacros)
 	 */
 	public IPath[] getMacroFiles() {
 		return fMacroFiles.length != 0 ? (IPath[]) fMacroFiles.clone() : EMPTY_PATH_ARRAY;

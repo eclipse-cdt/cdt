@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,12 +17,12 @@ import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * DSF executor service.  Implementations of this executor must ensure
- * that all runnables and callables are executed in the same thread: the 
- * executor's single dispatch thread.  
- * <br>Note: A DSF executor dispatch thread does not necessarily have 
- * to be exclusive to the executor, it could be shared with 
+ * that all runnables and callables are executed in the same thread: the
+ * executor's single dispatch thread.
+ * <br>Note: A DSF executor dispatch thread does not necessarily have
+ * to be exclusive to the executor, it could be shared with
  * another event dispatch service, such as the SWT display dispatch thread.
- * 
+ *
  * @since 1.0
  */
 @ThreadSafe

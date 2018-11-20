@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
+import org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.osgi.util.NLS;
@@ -20,8 +21,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl;
 
 /**
  * Information control for macro expansion.
@@ -34,7 +33,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 
 	/**
 	 * Creates a new control for use as a hover which does not take the focus.
-	 * 
+	 *
 	 * @param parent  parent shell
 	 * @param statusFieldText  text to be displayed in the status field, may be <code>null</code>
 	 */
@@ -45,7 +44,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 
 	/**
 	 * Creates a new control for use as a hover which optionally takes the focus.
-	 * 
+	 *
 	 * @param parent  parent shell
 	 * @param isResizable  whether this control should be resizable
 	 */

@@ -141,7 +141,7 @@ public class FlexibleSignalsView extends AbstractDebugView
 
 	/**
 	 * Returns the presentation context id for this view.
-	 * 
+	 *
 	 * @return context id
 	 */
 	protected String getPresentationContextId() {
@@ -150,7 +150,7 @@ public class FlexibleSignalsView extends AbstractDebugView
 
 	/**
 	 * Returns the style bits for the viewer.
-	 * 
+	 *
 	 * @return SWT style
 	 */
 	protected int getViewerStyle() {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Sergey Prigogin (Google)
@@ -59,9 +59,9 @@ import org.eclipse.core.runtime.Status;
  * This class causes a process to start (run for the first time), or to
  * be restarted.  The complexity is due to the handling of reverse debugging,
  * which this class transparently enables if necessary.
- * 
+ *
  * This sequence is used for GDB >= 7.0 which supports reverse debugging.
- * 
+ *
  * @since 4.0
  */
 public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
@@ -132,7 +132,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		assert containerDmc != null;
 		if (attributes == null) {
 			// If no attributes are specified, simply use an empty map.
-			attributes = new HashMap<String, Object>();
+			attributes = new HashMap<>();
 		}
 
 		fContainerDmc = containerDmc;
@@ -159,7 +159,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		return null;
 	}
 
-	/** 
+	/**
 	 * Initialize the members of the StartOrRestartProcessSequence_7_0 class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */
@@ -191,7 +191,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		rm.done();
 	}
 
-	/** 
+	/**
 	 * Rollback method for {@link #stepInitializeBaseSequence()}
 	 */
 	@RollBack("stepInitializeBaseSequence")
@@ -283,7 +283,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	@Execute
 	public void stepInitializeInputOutput(final RequestMonitor rm) {
 		if (fBackend.getSessionType() == SessionType.REMOTE) {
-			// The program input and output for a remote session is handled by gdbserver. 
+			// The program input and output for a remote session is handled by gdbserver.
 			// Therefore, no need to create a pty.
 			fPty = null;
 			rm.done();
@@ -361,8 +361,8 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		}
 	}
 
-	/** 
-	 * @since 4.7 
+	/**
+	 * @since 4.7
 	 * @deprecated The creation of MIInferiorProcess has been moved to the IGDBProcesses service
 	 */
 	@Deprecated
@@ -370,8 +370,8 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		return new MIInferiorProcess(container, outputStream);
 	}
 
-	/** 
-	 * @since 4.7 
+	/**
+	 * @since 4.7
 	 * @deprecated The creation of MIInferiorProcess has been moved to the IGDBProcesses service
 	 */
 	@Deprecated
@@ -485,7 +485,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 
 	/**
 	 * Finally, if we are enabling reverse, and the userSymbolStop is not on main,
-	 * we should do a continue because we are currently stopped on main but that 
+	 * we should do a continue because we are currently stopped on main but that
 	 * is not what the user requested
 	 */
 	@Execute

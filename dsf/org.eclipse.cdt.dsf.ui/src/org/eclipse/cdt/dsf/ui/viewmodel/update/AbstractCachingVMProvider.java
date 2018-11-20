@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -62,7 +62,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Base implementation of a caching view model provider.
- * 
+ *
  * @since 1.0
  */
 public class AbstractCachingVMProvider extends AbstractVMProvider
@@ -94,7 +94,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	 * components of this key are the viewer input and the path, they uniquely
 	 * identify an element.  The root element is used to track when a given
 	 * root element is no longer in the cache and can therefore be disposed.
-	 * The node is needed because different nodes have different lists of 
+	 * The node is needed because different nodes have different lists of
 	 * children for the same parent element.
 	 */
 	private static class ElementDataKey {
@@ -175,7 +175,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	}
 
 	/**
-	 * Entry with cached element data. 
+	 * Entry with cached element data.
 	 */
 	private static class ElementDataEntry extends Entry implements ICacheEntry {
 		ElementDataEntry(ElementDataKey key) {
@@ -186,7 +186,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 		 * Counter of flush operations performed on this entry.  It is used
 		 * by caching update operations to make sure that an update which
 		 * was issued for a given entry is still valid for that entry when
-		 * it is completed by the node. 
+		 * it is completed by the node.
 		 */
 		int fFlushCounter = 0;
 
@@ -196,18 +196,18 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 		 */
 		Boolean fDirty = false;
 
-		/** 
-		 * Cached {@link IHasChildrenUpdate} result. 
+		/**
+		 * Cached {@link IHasChildrenUpdate} result.
 		 */
 		Boolean fHasChildren = null;
 
-		/** 
-		 * Cached {@link IChildrenCountUpdate} result. 
+		/**
+		 * Cached {@link IChildrenCountUpdate} result.
 		 */
 		Integer fChildrenCount = null;
 
 		/**
-		 * Flag indicating that all the children of the given element are 
+		 * Flag indicating that all the children of the given element are
 		 * already cached.
 		 */
 		boolean fAllChildrenKnown = false;
@@ -219,14 +219,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 
 		/**
 		 * Map containing element properties.
-		 * 
+		 *
 		 * @since 2.0
 		 */
 		Map<String, Object> fProperties = null;
 
 		/**
 		 * Previous known element properties.
-		 * 
+		 *
 		 * @since 2.0
 		 */
 		Map<String, Object> fArchiveProperties = null;
@@ -243,18 +243,18 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 				Integer childrenCount = fChildrenCount;
 				childrenCount = childrenCount != null ? childrenCount : 0;
 				int capacity = Math.max((childrenCount.intValue() * 4) / 3, 32);
-				fChildren = new HashMap<Integer, Object>(capacity);
+				fChildren = new HashMap<>(capacity);
 			}
 		}
 
 		@Override
 		public String toString() {
-			return fKey.toString() + " = " + //$NON-NLS-1$ 
+			return fKey.toString() + " = " + //$NON-NLS-1$
 					"[hasChildren=" + fHasChildren + ", " + //$NON-NLS-1$ //$NON-NLS-2$
 					"childrenCount=" + fChildrenCount + //$NON-NLS-1$
-					", children=" + fChildren + //$NON-NLS-1$ 
-					", properties=" + fProperties + //$NON-NLS-1$ 
-					", oldProperties=" + fArchiveProperties + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
+					", children=" + fChildren + //$NON-NLS-1$
+					", properties=" + fProperties + //$NON-NLS-1$
+					", oldProperties=" + fArchiveProperties + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		@Override
@@ -305,7 +305,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 
 	/**
 	 * A key for a special marker entry in the cache.  This marker entry is used
-	 * to optimize repeated flushing of the cache.  
+	 * to optimize repeated flushing of the cache.
 	 * @see AbstractCachingVMProvider#flush(List)
 	 */
 	private static class FlushMarkerKey {
@@ -344,7 +344,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 
 	/**
 	 * Marker used to keep track of whether any entries with the given
-	 * root element are present in the cache.  
+	 * root element are present in the cache.
 	 */
 	private static class RootElementMarkerKey {
 
@@ -396,15 +396,15 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 
 	private IVMUpdatePolicy[] fAvailableUpdatePolicies;
 
-	public Map<Object, RootElementMarkerKey> fRootMarkers = new HashMap<Object, RootElementMarkerKey>();
+	public Map<Object, RootElementMarkerKey> fRootMarkers = new HashMap<>();
 
 	/**
-	 * Hash map holding cache data.  To store the cache information, the cache uses a 
-	 * combination of this hash map and a double-linked list running through all 
+	 * Hash map holding cache data.  To store the cache information, the cache uses a
+	 * combination of this hash map and a double-linked list running through all
 	 * the entries in the cache.  The linked list is used to organize the cache entries
-	 * in least recently used (LRU) order.  This ordering is then used to delete least 
+	 * in least recently used (LRU) order.  This ordering is then used to delete least
 	 * recently used entries in the cache and keep the cache from growing indefinitely.
-	 * Also, the ordering is used to optimize the flushing of the cache data (see 
+	 * Also, the ordering is used to optimize the flushing of the cache data (see
 	 * {@link FlushMarkerKey} for more details).
 	 */
 	private final Map<Object, Entry> fCacheData = Collections.synchronizedMap(new HashMap<Object, Entry>(200, 0.75f));
@@ -457,7 +457,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	public void setActiveUpdatePolicy(IVMUpdatePolicy updatePolicy) {
 		getPresentationContext().setProperty(SELECTED_UPDATE_MODE, updatePolicy.getID());
 
-		// Repaint the view to allow elements using the PROP_UPDATE_POLICY_ID 
+		// Repaint the view to allow elements using the PROP_UPDATE_POLICY_ID
 		// property to repaint themselves.
 		for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {
 			if (!proxyStrategy.isDisposed()) {
@@ -490,14 +490,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 
 	@Override
 	public void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
-		LinkedList<IHasChildrenUpdate> missUpdates = new LinkedList<IHasChildrenUpdate>();
+		LinkedList<IHasChildrenUpdate> missUpdates = new LinkedList<>();
 		for (final IHasChildrenUpdate update : updates) {
 			// Find or create the cache entry for the element of this update.
 			ElementDataKey key = makeEntryKey(node, update);
 			final ElementDataEntry entry = getElementDataEntry(key, true);
 			updateRootElementMarker(key.fRootElement, node, update);
 
-			// Check if the cache entry has this request result cached. 
+			// Check if the cache entry has this request result cached.
 			if (entry.fHasChildren != null) {
 				// Cache Hit!  Just return the value.
 				if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null
@@ -514,8 +514,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 						new VMHasChildrenUpdate(update, new ViewerDataRequestMonitor<Boolean>(getExecutor(), update) {
 							@Override
 							protected void handleCompleted() {
-								// Update completed.  Write value to cache only if update succeeded 
-								// and the cache entry wasn't flushed in the mean time. 
+								// Update completed.  Write value to cache only if update succeeded
+								// and the cache entry wasn't flushed in the mean time.
 								if (isSuccess()) {
 									if (flushCounter == entry.fFlushCounter) {
 										if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null
@@ -548,7 +548,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 		final ElementDataEntry entry = getElementDataEntry(key, true);
 		updateRootElementMarker(key.fRootElement, node, update);
 
-		// Check if the cache entry has this request result cached. 
+		// Check if the cache entry has this request result cached.
 		if (entry.fChildrenCount != null) {
 			// Cache Hit!  Just return the value.
 			if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null
@@ -565,8 +565,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 					new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
 						@Override
 						protected void handleCompleted() {
-							// Update completed.  Write value to cache only if update succeeded 
-							// and the cache entry wasn't flushed in the mean time. 
+							// Update completed.  Write value to cache only if update succeeded
+							// and the cache entry wasn't flushed in the mean time.
 							if (isSuccess()) {
 								if (flushCounter == entry.fFlushCounter) {
 									if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null
@@ -597,7 +597,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 		final int flushCounter = entry.fFlushCounter;
 		if (entry.fChildren == null || (update.getOffset() < 0 && !entry.fAllChildrenKnown)) {
 			// Need to retrieve all the children if there is no children information yet.
-			// Or if the client requested all children (offset = -1, length -1) and all 
+			// Or if the client requested all children (offset = -1, length -1) and all
 			// the children are not yet known.
 			IChildrenUpdate updateProxy = new VMChildrenUpdate(update, update.getOffset(), update.getLength(),
 					new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update) {
@@ -642,23 +642,23 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 							if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null
 									|| getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
 								DsfUIPlugin
-										.debug("cacheCanceledChildren(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+										.debug("cacheCanceledChildren(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							}
 							super.handleCancel();
 						}
 					});
 			super.updateNode(node, updateProxy);
 		} else if (update.getOffset() < 0) {
-			// The update requested all children.  Fill in all children assuming that 
+			// The update requested all children.  Fill in all children assuming that
 			// the children array is complete.
 
 			if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null
 					|| getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
 				DsfUIPlugin.debug("cacheHitChildren(node = " + node + ", update = " + update + ", children = " //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-						+ entry.fChildren.keySet() + ")"); //$NON-NLS-1$ 
+						+ entry.fChildren.keySet() + ")"); //$NON-NLS-1$
 			}
 
-			// The following assert should never fail given the first if statement. 
+			// The following assert should never fail given the first if statement.
 			assert entry.fAllChildrenKnown;
 
 			// we have all of the children in cache; return from cache
@@ -668,9 +668,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 			update.done();
 		} else {
 			// Update for a partial list of children was requested.
-			// Iterate through the known children and make a list of missing 
-			// indexes.   
-			List<Integer> childrenMissingFromCache = new LinkedList<Integer>();
+			// Iterate through the known children and make a list of missing
+			// indexes.
+			List<Integer> childrenMissingFromCache = new LinkedList<>();
 			for (int i = update.getOffset(); i < update.getOffset() + update.getLength(); i++) {
 				childrenMissingFromCache.add(i);
 			}
@@ -688,20 +688,20 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 			if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null
 					|| getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
 				DsfUIPlugin.debug("cachePartialHitChildren(node = " + node + ", update = " + update + ", missing = " //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-						+ childrenMissingFromCache + ")"); //$NON-NLS-1$ 
+						+ childrenMissingFromCache + ")"); //$NON-NLS-1$
 			}
 
 			if (!childrenMissingFromCache.isEmpty()) {
 				// Note: it is possible that entry.fAllChildrenKnown == true at this point.
 				// This can happen if the node's has children implementation returns true
-				// while the actual children update returns with no elements.  A node 
+				// while the actual children update returns with no elements.  A node
 				// may do this for optimization reasons.  I.e. sometimes it may be more
 				// efficient to ask the user to expand a node to see if it has any
 				// children.
 
-				// Some children were not found in the cache, create separate 
+				// Some children were not found in the cache, create separate
 				// proxy updates for the continuous ranges of missing children.
-				List<IChildrenUpdate> partialUpdates = new ArrayList<IChildrenUpdate>(2);
+				List<IChildrenUpdate> partialUpdates = new ArrayList<>(2);
 				final CountingRequestMonitor multiRm = new ViewerCountingRequestMonitor(getExecutor(), update);
 				while (!childrenMissingFromCache.isEmpty()) {
 					final int offset = childrenMissingFromCache.get(0);
@@ -722,7 +722,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 												|| getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
 											DsfUIPlugin.debug("cachePartialSaveChildren(node = " + node + ", update = " //$NON-NLS-1$//$NON-NLS-2$
 													+ update + ", saved = {" + offset + "->" //$NON-NLS-1$//$NON-NLS-2$
-													+ (offset + getData().size()) + "})"); //$NON-NLS-1$ 
+													+ (offset + getData().size()) + "})"); //$NON-NLS-1$
 										}
 										entry.ensureChildrenMap();
 									}
@@ -754,16 +754,16 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	}
 
 	/**
-	 * Flushes the cache with given DMC as the root element. 
-	 * @param dmcToFlush DM Context which is the root of the flush operation.  Entries 
+	 * Flushes the cache with given DMC as the root element.
+	 * @param dmcToFlush DM Context which is the root of the flush operation.  Entries
 	 * for all DMCs that have this DMC as their ancestor will be flushed.  If this
-	 * parameter is null, then all entries are flushed. 
+	 * parameter is null, then all entries are flushed.
 	 * @param archive
 	 */
 	private void flush(FlushMarkerKey flushKey) {
 		if (DEBUG_CACHE
 				&& (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-			DsfUIPlugin.debug("cacheFlushing(" + flushKey + ")"); //$NON-NLS-1$ //$NON-NLS-2$  
+			DsfUIPlugin.debug("cacheFlushing(" + flushKey + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		// For each entry that has the given context as a parent, perform the flush.
 		// Iterate through the cache entries backwards.  This means that we will be
@@ -803,7 +803,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 						}
 						elementDataEntry.fProperties = null;
 
-						// There is no archived data, which means that this entry is empty, so remove it from cache 
+						// There is no archived data, which means that this entry is empty, so remove it from cache
 						// completely.
 						if (elementDataEntry.fArchiveProperties == null) {
 							fCacheData.remove(entry.fKey);
@@ -850,12 +850,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	}
 
 	/**
-	 * Listener used to detect when the viewer is finished updating itself 
-	 * after a model event.  The  
+	 * Listener used to detect when the viewer is finished updating itself
+	 * after a model event.  The
 	 */
-	// Warnings for use of ITreeModelViewer.  ITreeModelViewer is an internal 
+	// Warnings for use of ITreeModelViewer.  ITreeModelViewer is an internal
 	// interface in platform, but it is more generic than the public TreeModelViewer.
-	// Using ITreeModelViewer will allow us to write unit tests using the 
+	// Using ITreeModelViewer will allow us to write unit tests using the
 	// VirtualTreeModelViewer.
 	private class ViewUpdateFinishedListener implements IViewerUpdateListener, IModelChangedListener {
 		private final ITreeModelViewer fViewer;
@@ -932,7 +932,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 						trace(event, null, proxyStrategy, EventHandlerAction.firedDeltaFor);
 					}
 
-					// If we need to wait for the view to finish updating, then before posting the delta to the 
+					// If we need to wait for the view to finish updating, then before posting the delta to the
 					// viewer install a listener, which will in turn call rm.done().
 					if (fDelayEventHandleForViewUpdate) {
 						ITreeModelViewer viewer = (ITreeModelViewer) proxyStrategy.getViewer();
@@ -967,10 +967,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 		// Iterate through the current active proxies to try to find a proxy with the same
 		// element and re-use it if found.  Only disposed proxies can be re-used because
 		// multiple viewers cannot use the same proxy.
-		// 
-		// Unlike in the base class, do not remove proxies just because they were disposed 
-		// by the viewer.  These proxies can contain modification history for variables in 
-		// their cache.  The proxies will be removed once their cache entries are emptied.  
+		//
+		// Unlike in the base class, do not remove proxies just because they were disposed
+		// by the viewer.  These proxies can contain modification history for variables in
+		// their cache.  The proxies will be removed once their cache entries are emptied.
 		// See rootElementRemovedFromCache().
 		IVMModelProxy proxy = null;
 		for (Iterator<IVMModelProxy> itr = getActiveModelProxies().iterator(); itr.hasNext();) {
@@ -984,9 +984,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 			proxy = createModelProxyStrategy(element);
 			getActiveModelProxies().add(proxy);
 		} else if (proxy.isDisposed()) {
-			// DSF is capable of re-using old proxies which were previously 
+			// DSF is capable of re-using old proxies which were previously
 			// disposed.  However, the viewer which installs a proxy using
-			// a background job to install the proxy calls 
+			// a background job to install the proxy calls
 			// IModelProxy.isDisposed(), to check whether the proxy was disposed
 			// before it could be installed.  We need to clear the disposed flag
 			// of the re-used proxy here, otherwise the proxy will never get used.
@@ -1050,11 +1050,11 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	}
 
 	/**
-	 * This is the only method that should be used to access a cache entry.  
-	 * It creates a new entry if needed and it maintains the ordering in 
-	 * the least-recently-used linked list.   
+	 * This is the only method that should be used to access a cache entry.
+	 * It creates a new entry if needed and it maintains the ordering in
+	 * the least-recently-used linked list.
 	 * @param create Create the entry if needed.
-	 * @return cache element entry, may be <code>null</code> if entry does 
+	 * @return cache element entry, may be <code>null</code> if entry does
 	 * not exist and the create parameter is <code>false</code>
 	 */
 	private ElementDataEntry getElementDataEntry(ElementDataKey key, boolean create) {
@@ -1076,7 +1076,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 		// Update the root element marker:
 		// - ensure that the root marker is root markers' map,
 		// - ensure that the root marker is in the cache map,
-		// - and ensure that it's at the end of the cache. 
+		// - and ensure that it's at the end of the cache.
 		RootElementMarkerKey rootMarker = fRootMarkers.get(rootElement);
 		if (rootMarker == null) {
 			rootMarker = new RootElementMarkerKey(rootElement);
@@ -1100,7 +1100,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 			if (rootElementChildren != null) {
 				entry.fHasChildren = rootElementChildren.length > 0;
 				entry.fChildrenCount = rootElementChildren.length;
-				entry.fChildren = new HashMap<Integer, Object>(entry.fChildrenCount * 4 / 3);
+				entry.fChildren = new HashMap<>(entry.fChildrenCount * 4 / 3);
 				for (int i = 0; i < rootElementChildren.length; i++) {
 					entry.fChildren.put(i, rootElementChildren[i]);
 				}
@@ -1112,7 +1112,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 					.getInitialRootElementProperties(rootElement);
 
 			if (rootElementProperties != null) {
-				entry.fProperties = new HashMap<String, Object>((rootElementProperties.size() + 1) * 4 / 3);
+				entry.fProperties = new HashMap<>((rootElementProperties.size() + 1) * 4 / 3);
 				entry.fProperties.putAll(rootElementProperties);
 				entry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, true);
 				entry.fDirty = true;
@@ -1164,7 +1164,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 			}
 		} else {
 			// Sort the updates by the node.
-			Map<IVMNode, List<IPropertiesUpdate>> nodeUpdatesMap = new HashMap<IVMNode, List<IPropertiesUpdate>>();
+			Map<IVMNode, List<IPropertiesUpdate>> nodeUpdatesMap = new HashMap<>();
 			for (IPropertiesUpdate update : updates) {
 				// Get the VM Context for last element in path.
 				IVMNode node = getNodeForElement(update.getElement());
@@ -1192,10 +1192,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	/**
 	 * Convenience method that finds the VM node corresponding to given element.
 	 * It returns <code>null</code> if the element is not a VM context.
-	 * 
+	 *
 	 * @param element Element to find the VM Node for.
 	 * @return View Model Node that this element was created by, or <code>null</code>.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	private IVMNode getNodeForElement(Object element) {
@@ -1206,14 +1206,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	}
 
 	protected void updateNode(final IVMNode node, IPropertiesUpdate[] updates) {
-		LinkedList<IPropertiesUpdate> missUpdates = new LinkedList<IPropertiesUpdate>();
+		LinkedList<IPropertiesUpdate> missUpdates = new LinkedList<>();
 		for (final IPropertiesUpdate update : updates) {
 			// Find or create the cache entry for the element of this update.
 			ElementDataKey key = makeEntryKey(node, update);
 			final ElementDataEntry entry = getElementDataEntry(key, true);
 			updateRootElementMarker(key.fRootElement, node, update);
 
-			// The request can be retrieved from cache if all the properties that were requested in the update are 
+			// The request can be retrieved from cache if all the properties that were requested in the update are
 			// found in the map.
 			if (entry.fProperties != null && entry.fProperties.keySet().containsAll(update.getProperties())) {
 				// Cache Hit!  Just return the value.
@@ -1229,15 +1229,15 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 				update.setStatus((IStatus) entry.fProperties.get(PROP_UPDATE_STATUS));
 				update.done();
 			} else {
-				// Cache miss!  Check if already cached properties can be re-used. 
+				// Cache miss!  Check if already cached properties can be re-used.
 				Set<String> missingProperties = null;
 				if (entry.fProperties != null) {
-					missingProperties = new HashSet<String>(update.getProperties().size() * 4 / 3);
+					missingProperties = new HashSet<>(update.getProperties().size() * 4 / 3);
 					missingProperties.addAll(update.getProperties());
 					missingProperties.removeAll(entry.fProperties.keySet());
 
 					if (entry.fDirty) {
-						// Cache miss, BUT the entry is dirty already.  Determine which properties can still be updated 
+						// Cache miss, BUT the entry is dirty already.  Determine which properties can still be updated
 						// (if any), then request the missing properties from node, or return an error.
 						if (getActiveUpdatePolicy() instanceof IVMUpdatePolicyExtension) {
 							IVMUpdatePolicyExtension updatePolicyExt = (IVMUpdatePolicyExtension) getActiveUpdatePolicy();
@@ -1247,14 +1247,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 									itr.remove();
 									PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(missingProperty,
 											DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE,
-													"Cache contains stale data.  Refresh view.", null));//$NON-NLS-1$                                    
+													"Cache contains stale data.  Refresh view.", null));//$NON-NLS-1$
 								}
 							}
 						} else {
 							PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(
 									missingProperties.toArray(new String[missingProperties.size()]),
 									DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE,
-											"Cache contains stale data.  Refresh view.", null));//$NON-NLS-1$                                    
+											"Cache contains stale data.  Refresh view.", null));//$NON-NLS-1$
 							missingProperties.clear();
 						}
 						if (missingProperties.isEmpty()) {
@@ -1285,7 +1285,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 									// We are caching the result of this update.  Copy the properties from the update
 									// to the cached properties map.
 									if (entry.fProperties == null) {
-										entry.fProperties = new HashMap<String, Object>((getData().size() + 3) * 4 / 3);
+										entry.fProperties = new HashMap<>((getData().size() + 3) * 4 / 3);
 										if (update.getProperties().contains(PROP_CACHE_ENTRY_DIRTY)) {
 											entry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, entry.fDirty);
 										}
@@ -1294,10 +1294,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 									cachedProperties = entry.fProperties;
 									cachedProperties.putAll(getData());
 
-									// Make sure that all the properties that were requested by the update object are in 
-									// the cache entry's properties map. It's possible he ViewerDataRequestMonitor was able 
-									// to provide us only a subset of the requested ones. We want to prevent that from 
-									// causing future cache misses, since a cache hit requires the cache entry to contain 
+									// Make sure that all the properties that were requested by the update object are in
+									// the cache entry's properties map. It's possible he ViewerDataRequestMonitor was able
+									// to provide us only a subset of the requested ones. We want to prevent that from
+									// causing future cache misses, since a cache hit requires the cache entry to contain
 									// all requested properties. Use a null value for the missing items.
 									for (String property : _missingProperties) {
 										if (!getData().containsKey(property)) {
@@ -1305,28 +1305,28 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 										}
 									}
 
-									// Merge status from properties that came back from the node into the status that's in 
-									// the cache. 
+									// Merge status from properties that came back from the node into the status that's in
+									// the cache.
 									cachedStatus = (PropertiesUpdateStatus) cachedProperties.get(PROP_UPDATE_STATUS);
 									cachedStatus = PropertiesUpdateStatus.mergePropertiesStatus(cachedStatus,
 											missUpdateStatus, _missingProperties);
 									cachedProperties.put(PROP_UPDATE_STATUS, cachedStatus);
 								} else {
-									// We are not caching the result of this update, but we should still return valid data 
-									// to the client.  In case the update was canceled we can also return valid data to the 
-									// client even if the client is likely to ignore it since the cost of doing so is 
+									// We are not caching the result of this update, but we should still return valid data
+									// to the client.  In case the update was canceled we can also return valid data to the
+									// client even if the client is likely to ignore it since the cost of doing so is
 									// relatively low.
-									// Create a temporary cached properties map and add existing cache and node update 
+									// Create a temporary cached properties map and add existing cache and node update
 									// properties to it.
 									if (entry.fProperties != null) {
-										cachedProperties = new HashMap<String, Object>(
+										cachedProperties = new HashMap<>(
 												(entry.fProperties.size() + getData().size() + 3) * 4 / 3);
 										cachedProperties.putAll(entry.fProperties);
 										cachedStatus = PropertiesUpdateStatus.mergePropertiesStatus(
 												(PropertiesUpdateStatus) cachedProperties.get(PROP_UPDATE_STATUS),
 												missUpdateStatus, _missingProperties);
 									} else {
-										cachedProperties = new HashMap<String, Object>((getData().size() + 3) * 4 / 3);
+										cachedProperties = new HashMap<>((getData().size() + 3) * 4 / 3);
 										cachedStatus = missUpdateStatus;
 									}
 									cachedProperties.putAll(getData());
@@ -1342,7 +1342,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 								}
 
 								// If there is archive data available, calculate the requested changed value properties.
-								// Do not calculate the changed flags if the entry has been flushed. 
+								// Do not calculate the changed flags if the entry has been flushed.
 								if (entry.fArchiveProperties != null && flushCounter == entry.fFlushCounter) {
 									for (String updateProperty : update.getProperties()) {
 										if (updateProperty.startsWith(PROP_IS_CHANGED_PREFIX)) {
@@ -1410,7 +1410,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	 * for a particular proxy.
 	 * <p>
 	 * Note: this method is duplicated from AbstractVMProvider.
-	 * 
+	 *
 	 * @param event
 	 *            the event being handled
 	 * @param skippedOrCanceledEvent

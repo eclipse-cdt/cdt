@@ -16,17 +16,15 @@ package org.eclipse.cdt.internal.ui.util;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.cdt.internal.ui.CStatusConstants;
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.internal.ui.CStatusConstants;
-import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The default exception handler shows an error dialog when one of its handle methods
@@ -50,7 +48,7 @@ public class ExceptionHandler {
 	/**
 	 * Handles the given <code>CoreException</code>. The workbench shell is used as a parent
 	 * for the dialog window.
-	 * 
+	 *
 	 * @param e the <code>CoreException</code> to be handled
 	 * @param title the dialog window's window title
 	 * @param message message to be displayed by the dialog window
@@ -60,8 +58,8 @@ public class ExceptionHandler {
 	}
 
 	/**
-	 * Handles the given <code>CoreException</code>. 
-	 * 
+	 * Handles the given <code>CoreException</code>.
+	 *
 	 * @param e the <code>CoreException</code> to be handled
 	 * @param parent the dialog window's parent shell
 	 * @param title the dialog window's window title
@@ -72,9 +70,9 @@ public class ExceptionHandler {
 	}
 
 	/**
-	 * Handles the given <code>InvocationTargetException</code>. The workbench shell is used 
+	 * Handles the given <code>InvocationTargetException</code>. The workbench shell is used
 	 * as a parent for the dialog window.
-	 * 
+	 *
 	 * @param e the <code>InvocationTargetException</code> to be handled
 	 * @param title the dialog window's window title
 	 * @param message message to be displayed by the dialog window
@@ -84,8 +82,8 @@ public class ExceptionHandler {
 	}
 
 	/**
-	 * Handles the given <code>InvocationTargetException</code>. 
-	 * 
+	 * Handles the given <code>InvocationTargetException</code>.
+	 *
 	 * @param e the <code>InvocationTargetException</code> to be handled
 	 * @param parent the dialog window's parent shell
 	 * @param title the dialog window's window title

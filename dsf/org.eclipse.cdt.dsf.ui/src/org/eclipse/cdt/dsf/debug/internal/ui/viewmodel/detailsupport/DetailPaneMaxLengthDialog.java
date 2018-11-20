@@ -7,9 +7,9 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
- *     IBM Corporation - initial API and implementation 
+ *     IBM Corporation - initial API and implementation
  *     Wind River Systems, Inc. - extended implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport;
@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Provides a dialog for changing the maximum length allowed in the detail pane
- * 
+ *
  * @since 3.0
  */
 public class DetailPaneMaxLengthDialog extends TrayDialog {
@@ -49,7 +49,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 
 	/**
 	 * Constructs a new dialog on the given shell.
-	 * 
+	 *
 	 * @param parent shell
 	 */
 	public DetailPaneMaxLengthDialog(Shell parent) {
@@ -147,7 +147,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 
 	/**
 	 * Returns the string typed into this input dialog.
-	 * 
+	 *
 	 * @return the input string
 	 * @since 3.3
 	 */

@@ -102,7 +102,7 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int,
 	 *      int)
 	 */
@@ -114,7 +114,7 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
 	 */
 	@Override

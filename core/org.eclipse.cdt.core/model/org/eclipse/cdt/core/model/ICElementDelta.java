@@ -17,18 +17,18 @@ import org.eclipse.core.resources.IResourceDelta;
 
 /**
  * A C element delta describes changes in C element between two discrete
- * points in time.  Given a delta, clients can access the element that has 
+ * points in time.  Given a delta, clients can access the element that has
  * changed, and any children that have changed.
  * <p>
- * Deltas have a different status depending on the kind of change they represent.  
+ * Deltas have a different status depending on the kind of change they represent.
  * The list below summarizes each status (as returned by <code>getKind</code>)
  * and its meaning:
  * <ul>
- *  <li><code>ADDED</code> - The element described by the delta 
+ *  <li><code>ADDED</code> - The element described by the delta
  *  has been added.
- *  <li><code>REMOVED</code> - The element described by the delta 
+ *  <li><code>REMOVED</code> - The element described by the delta
  *  has been removed.
- *  <li><code>CHANGED</code> - The element described by the delta 
+ *  <li><code>CHANGED</code> - The element described by the delta
  *  has been changed in some way.
  *  </li>
  * </ul>
@@ -46,7 +46,7 @@ import org.eclipse.core.resources.IResourceDelta;
  * <p>
  * Note that the move change flags only describe the changes to a single element, they
  * do not imply anything about the parent or children of the element.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -95,10 +95,10 @@ public interface ICElementDelta {
 	public int F_MOVED_TO = 0x0020;
 
 	/**
-	 * Change flag indicating that the element has changed position relatively to its siblings. 
-	 * If the element is an <code>IPackageFragmentRoot</code>,  a classpath entry corresponding 
+	 * Change flag indicating that the element has changed position relatively to its siblings.
+	 * If the element is an <code>IPackageFragmentRoot</code>,  a classpath entry corresponding
 	 * to the element has changed position in the project's classpath.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public int F_REORDER = 0x00100;
@@ -223,7 +223,7 @@ public interface ICElementDelta {
 	/**
 	 * Returns an element describing this element before it was moved
 	 * to its current location, or <code>null</code> if the
-	 * <code>F_MOVED_FROM</code> change flag is not set. 
+	 * <code>F_MOVED_FROM</code> change flag is not set.
 	 */
 	public ICElement getMovedFromElement();
 

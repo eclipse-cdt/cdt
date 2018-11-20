@@ -20,8 +20,8 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
 
 /**
  * Creates adapters for retargettable actions in debug platform.
- * Contributed via <code>org.eclipse.core.runtime.adapters</code> 
- * extension point. 
+ * Contributed via <code>org.eclipse.core.runtime.adapters</code>
+ * extension point.
  */
 public class RetargettableActionAdapterFactory implements IAdapterFactory {
 

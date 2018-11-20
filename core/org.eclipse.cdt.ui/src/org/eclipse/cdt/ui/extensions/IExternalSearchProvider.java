@@ -15,13 +15,12 @@ package org.eclipse.cdt.ui.extensions;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface for classes implementing the org.eclipse.cdt.ui.externalSearchProviders extension

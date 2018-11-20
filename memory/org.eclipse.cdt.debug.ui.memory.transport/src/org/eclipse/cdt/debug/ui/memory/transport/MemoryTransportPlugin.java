@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ public class MemoryTransportPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the currently active workbench window shell or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the currently active workbench window shell or <code>null</code>
 	 */
 	public static Shell getShell() {
@@ -64,7 +64,7 @@ public class MemoryTransportPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Get settings section from plugin dialog settings 
+	 * Get settings section from plugin dialog settings
 	 * @param node - required section. Will create a new one if does not exist
 	 * @return dialog settings
 	 */

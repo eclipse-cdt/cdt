@@ -7,13 +7,13 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  *     Dmitry Kozlov (CodeSourcery)
  *     Tomasz Wesolowski
  *     Andrew Gvozdev (Quoin Inc.) - moved usage involving registry to CDTSharedImages
@@ -25,6 +25,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -33,9 +35,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is internal class with some helper methods for handling images.
@@ -46,7 +45,7 @@ public class CPluginImages {
 	public static final IPath ICONS_PATH = new Path("$nl$/icons"); //$NON-NLS-1$
 
 	/** Converter from CPluginImages key to CDTSharedImages key */
-	private static Map<String, String> fPathMap = new HashMap<String, String>();
+	private static Map<String, String> fPathMap = new HashMap<>();
 
 	private static final String NAME_PREFIX = CUIPlugin.PLUGIN_ID + '.';
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
@@ -589,7 +588,7 @@ public class CPluginImages {
 	/**
 	 * Creates an image descriptor which is managed by internal registry in CDTSharedImages.
 	 * {@code name} is assumed to start with "org.eclipse.cdt.ui."
-	 * 
+	 *
 	 * @deprecated as of CDT 8.0 with deprecation of {@link #get(String)}.
 	 */
 	@Deprecated
@@ -607,10 +606,10 @@ public class CPluginImages {
 	/**
 	 * Get an image from internal image registry. The image is managed by the registry and
 	 * must not be disposed by the caller.
-	 * 
+	 *
 	 * @param key - one of {@code CPluginImages.IMG_} constants.
 	 * @return the image corresponding the given key.
-	 * 
+	 *
 	 * @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImage(String)}.
 	 */
 	@Deprecated
@@ -670,7 +669,7 @@ public class CPluginImages {
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
 	 * are retrieved from the *tool16 folders.
-	 * 
+	 *
 	 * @param action	the action
 	 * @param iconName	the icon name
 	 */
@@ -681,7 +680,7 @@ public class CPluginImages {
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
 	 * are retrieved from the *lcl16 folders.
-	 * 
+	 *
 	 * @param action	the action
 	 * @param iconName	the icon name
 	 */
@@ -705,7 +704,7 @@ public class CPluginImages {
 		//ImageDescriptor desc = getImageRegistry().getDescriptor(relPath);
 		//if(desc == null) {
 		//	desc = createManaged(T + "c" + type, relPath);
-		//}	
+		//}
 		//action.setImageDescriptor(desc);
 	}
 }

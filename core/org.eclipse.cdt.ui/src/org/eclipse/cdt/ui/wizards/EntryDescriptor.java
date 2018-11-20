@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * This class stores data for each tree item

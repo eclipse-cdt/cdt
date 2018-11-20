@@ -67,7 +67,7 @@ public class Buffer implements IBuffer {
 	@Override
 	public void addBufferChangedListener(IBufferChangedListener listener) {
 		if (this.changeListeners == null) {
-			this.changeListeners = new ArrayList<IBufferChangedListener>(5);
+			this.changeListeners = new ArrayList<>(5);
 		}
 		if (!this.changeListeners.contains(listener)) {
 			this.changeListeners.add(listener);

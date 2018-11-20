@@ -38,7 +38,7 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 			}
 		}
 
-		private List<ListenerCount> register = new ArrayList<ListenerCount>();
+		private List<ListenerCount> register = new ArrayList<>();
 
 		public void registerListener(MockListenerRegisterer listener) {
 			for (ListenerCount lc : register) {

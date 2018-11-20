@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor;
+import junit.framework.Test;
 
 public class InitializersInCallHierarchyTest extends CallHierarchyBaseTest {
 

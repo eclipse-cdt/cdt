@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,21 +17,21 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Executes next instruction 
- * 
+ * Executes next instruction
+ *
  * <pre>
  * If VM running:
  *    C: step {thread_id}
  *    R: ok
  *    E: resumed {thread_id} client
  *    E: suspended {thread_id} step
- *    
+ *
  * If VM suspended:
  *    C: step {thread_id}
  *    R: ok
  *    E: vmresumed client
  *    E: vmsuspended {thread_id} step
- *    
+ *
  * Errors:
  *    error: invalid thread
  * </pre>

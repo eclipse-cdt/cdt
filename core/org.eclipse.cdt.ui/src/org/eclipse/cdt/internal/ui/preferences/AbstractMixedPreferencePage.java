@@ -18,24 +18,24 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A preference that on preference from the UI plugin, as well the CDT core.
- * 
+ *
  * Currently only supporting boolean preferences.
  */
 public abstract class AbstractMixedPreferencePage extends AbstractPreferencePage {
 
 	protected OverlayPreferenceStore corePrefsOverlayStore;
 
-	private Map<Button, String> corePrefsCheckBoxes = new HashMap<Button, String>();
+	private Map<Button, String> corePrefsCheckBoxes = new HashMap<>();
 	private SelectionListener corePrefsCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {

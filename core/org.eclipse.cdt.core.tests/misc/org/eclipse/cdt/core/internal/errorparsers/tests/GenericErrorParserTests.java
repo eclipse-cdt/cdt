@@ -22,8 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
@@ -33,6 +31,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.TestCase;
 
 /**
  * This test is designed to exercise the error parser capabilities.
@@ -46,7 +46,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 
 	/**
 	 * Constructor for IndexManagerTest.
-	 * 
+	 *
 	 * @param name
 	 */
 	public GenericErrorParserTests(String name) {
@@ -222,7 +222,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 			numWarnings = 0;
 			numInfos = 0;
 			uniqFiles = new ArrayList(0);
-			descriptions = new ArrayList<String>(0);
+			descriptions = new ArrayList<>(0);
 			fFileNameComparator = new FileNameComparator();
 		}
 	}

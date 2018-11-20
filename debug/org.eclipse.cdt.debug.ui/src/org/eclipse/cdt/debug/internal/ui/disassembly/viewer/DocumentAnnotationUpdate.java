@@ -22,7 +22,7 @@ import org.eclipse.cdt.debug.ui.disassembly.IDocumentPresentation;
 import org.eclipse.jface.text.source.Annotation;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DocumentAnnotationUpdate: 
+ * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DocumentAnnotationUpdate:
  * //TODO Add description.
  */
 public class DocumentAnnotationUpdate extends DocumentUpdate implements IDocumentElementAnnotationUpdate {
@@ -35,7 +35,7 @@ public class DocumentAnnotationUpdate extends DocumentUpdate implements IDocumen
 		super(presentationContext, root, base, element);
 		fAnnotationProvider = annotationProvider;
 		fIndex = index;
-		fAnnotations = new ArrayList<Annotation>();
+		fAnnotations = new ArrayList<>();
 	}
 
 	/* (non-Javadoc)

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -34,8 +34,8 @@ class ExpressionsChangedUpdateTester implements IElementUpdateTester {
 			return ExpressionsManualUpdatePolicy.FLUSH;
 		}
 
-		// If the expressions were modified, flush the entries which are under the 
-		// given expression. To do that, check whether the element path contains one 
+		// If the expressions were modified, flush the entries which are under the
+		// given expression. To do that, check whether the element path contains one
 		// of the changed expressions.
 		if (fEvent.getType().equals(ExpressionsChangedEvent.Type.CHANGED)) {
 			for (int i = 0; i < path.getSegmentCount(); i++) {

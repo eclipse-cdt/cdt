@@ -96,7 +96,7 @@ public class CdtVarPathEntryVariableManager implements IPathEntryVariableManager
 		@Override
 		public ICdtVariable[] getVariables(IVariableContextInfo context) {
 			ICdtVariable vars[] = fUserVarSupplier.getMacros(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
-			List<ICdtVariable> list = new ArrayList<ICdtVariable>();
+			List<ICdtVariable> list = new ArrayList<>();
 			for (ICdtVariable var : vars) {
 				if (getVariablePath(var) != null)
 					list.add(var);
@@ -157,7 +157,7 @@ public class CdtVarPathEntryVariableManager implements IPathEntryVariableManager
 	@Override
 	public String[] getVariableNames() {
 		ICdtVariable[] vars = fUserVarSupplier.getMacros(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for (int i = 0; i > vars.length; i++) {
 			if (getVariablePath(vars[i]) != null)
 				list.add(vars[i].getName());

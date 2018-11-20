@@ -25,15 +25,15 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 /**
  * -dprintf-insert [ -t ] [ -f ] [ -d ]
  *       [ -c CONDITION ] [ -i IGNORE-COUNT ]
- *       [ -p THREAD ] [ LOCATION ] [ FORMAT ] [ ARGUMENT ] 
- *  
+ *       [ -p THREAD ] [ LOCATION ] [ FORMAT ] [ ARGUMENT ]
+ *
  * If specified, LOCATION, can be one of:
  *  * function
  *  * filename:linenum
  *  * filename:function
  *  * *address
- * 
- * 
+ *
+ *
  * The possible optional parameters of this command are:
  *
  * '-t'
@@ -46,19 +46,19 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *      Initialize the IGNORE-COUNT.
  *
  * '-f'
- *      If location cannot be parsed (for example if it refers to unknown files or 
+ *      If location cannot be parsed (for example if it refers to unknown files or
  *      functions), create a pending dprintf. Without this flag, if a location
  *      cannot be parsed, the dprintf will not be created and an error will be
  *      reported.
  *
  * '-d'
  *      Create a disabled dprintf.
- *      
+ *
  * '-p THREAD'
  *      THREAD on which to apply the dprintf
- *      
+ *
  * Available with GDB 7.7.
- * 
+ *
  * @since 4.4
  */
 public class MIDPrintfInsert extends MICommand<MIBreakInsertInfo> {
@@ -90,7 +90,7 @@ public class MIDPrintfInsert extends MICommand<MIBreakInsertInfo> {
 
 		String[] opts = new String[i];
 
-		// Fill in the optional parameters  
+		// Fill in the optional parameters
 		i = 0;
 		if (isTemporary) {
 			opts[i] = "-t"; //$NON-NLS-1$
@@ -131,7 +131,7 @@ public class MIDPrintfInsert extends MICommand<MIBreakInsertInfo> {
 	}
 
 	private Adjustable[] createParameters(String location, String printfStr) {
-		List<Adjustable> paramsList = new ArrayList<Adjustable>();
+		List<Adjustable> paramsList = new ArrayList<>();
 
 		paramsList.add(new MIStandardParameterAdjustable(location));
 

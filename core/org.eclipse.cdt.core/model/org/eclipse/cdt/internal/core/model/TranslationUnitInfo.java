@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
  * The Element Info of a Translation Unit.
  */
 class TranslationUnitInfo extends OpenableInfo {
-	/** 
+	/**
 	 * Timestamp of original resource at the time this element
 	 * was opened or last updated.
 	 */

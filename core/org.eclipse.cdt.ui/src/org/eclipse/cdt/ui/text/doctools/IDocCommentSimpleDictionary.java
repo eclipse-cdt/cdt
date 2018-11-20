@@ -14,7 +14,7 @@
 package org.eclipse.cdt.ui.text.doctools;
 
 /**
- * This interface is a simplified means of obtaining spelling support. 
+ * This interface is a simplified means of obtaining spelling support.
  * @since 5.0
  */
 public interface IDocCommentSimpleDictionary extends IDocCommentDictionary {

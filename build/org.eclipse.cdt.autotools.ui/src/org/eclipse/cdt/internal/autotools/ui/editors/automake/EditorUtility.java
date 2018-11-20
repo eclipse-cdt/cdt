@@ -122,10 +122,10 @@ public class EditorUtility {
 	 * Utility method to open an editor for the given file system location
 	 * using {@link #getEditorInputForLocation(IPath, ICElement)} to create
 	 * the editor input.
-	 * 
+	 *
 	 * @param location  a file system location
 	 * @param element  an element related to the target file, may be <code>null</code>
-	 * @throws PartInitException 
+	 * @throws PartInitException
 	 */
 	public static IEditorPart openInEditor(IPath location, ICElement element) throws PartInitException {
 		IEditorInput input = getEditorInputForLocation(location, element);
@@ -139,7 +139,7 @@ public class EditorUtility {
 	 * assuming the location points to an existing file in the file system.
 	 * The <code>ICElement</code> is used to determine the associated project
 	 * in case the location can not be resolved to a workspace <code>IFile</code>.
-	 * 
+	 *
 	 * @param location  a valid file system location
 	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an editor input
@@ -193,7 +193,7 @@ public class EditorUtility {
 	 * Utility method to resolve a file system location to a workspace resource.
 	 * If a context element is given and there are multiple matches in the workspace,
 	 * a resource with the same project of the context element are preferred.
-	 * 
+	 *
 	 * @param location  a valid file system location
 	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an <code>IFile</code> or <code>null</code>
@@ -235,7 +235,7 @@ public class EditorUtility {
 	/**
 	 * Determine the editor id from the given file name using
 	 * the workspace-wide content-type definitions.
-	 * 
+	 *
 	 * @param name  the file name
 	 * @return a valid editor id, never <code>null</code>
 	 */
@@ -256,7 +256,7 @@ public class EditorUtility {
 	 * mechanism is used to determine the correct editor id.
 	 * If that fails, the editor id is determined by file name and extension using
 	 * the workspace-wide content-type definitions.
-	 * 
+	 *
 	 * @param input  the editor input
 	 * @param inputObject  the input object (used to create the editor input) or <code>null</code>
 	 * @return a valid editor id, never <code>null</code>

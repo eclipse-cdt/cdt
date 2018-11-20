@@ -214,7 +214,7 @@ public final class TraceVarDetailsDialog extends Dialog {
 	/**
 	 * Set the visibility of the warning. Should be set to true when there
 	 * is a problem creating the specific variable; false otherwise
-	 * 
+	 *
 	 * @param visible
 	 *            True for visible, false for hidden.
 	 */

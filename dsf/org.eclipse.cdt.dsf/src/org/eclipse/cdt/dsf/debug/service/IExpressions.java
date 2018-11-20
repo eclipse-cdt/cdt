@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson           - Update for GDB/MI
@@ -27,9 +27,9 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 
 /**
  * Expressions service provides access to the debugger's expression evaluator. This service has
- * dependencies on the Stack service, as it is be used to provide context for an 
+ * dependencies on the Stack service, as it is be used to provide context for an
  * expression to be evaluated.
- * 
+ *
  * @since 1.0
  */
 @SuppressWarnings("nls")
@@ -40,17 +40,17 @@ public interface IExpressions extends IFormattedValues {
 	 */
 	public interface IExpressionDMContext extends IFormattedDataDMContext {
 		/**
-		 * Returns a fully qualified expression string represented by this context.  This 
+		 * Returns a fully qualified expression string represented by this context.  This
 		 * expression string is the same as the string that is sent to the debug engine to be
-		 * evaluated in context of a stack frame, thread, or a symbol context.   
+		 * evaluated in context of a stack frame, thread, or a symbol context.
 		 */
 		String getExpression();
 	}
 
 	/**
-	 * To avoid SWT performance issues large arrays are divided into partitions. 
+	 * To avoid SWT performance issues large arrays are divided into partitions.
 	 * This interface represents the context of such a partition.
-	 * 
+	 *
 	 * @since 2.3
 	 */
 	public interface IIndexedPartitionDMContext extends IExpressionDMContext {
@@ -61,7 +61,7 @@ public interface IExpressions extends IFormattedValues {
 		public String getParentExpression();
 
 		/**
-		 * Returns the index of the partition's first element in the parent array. 
+		 * Returns the index of the partition's first element in the parent array.
 		 */
 		public int getIndex();
 
@@ -73,16 +73,16 @@ public interface IExpressions extends IFormattedValues {
 
 	/**
 	 * Represents a group of expressions.  A group of expressions is a list of
-	 * possibly unrelated expressions which are somehow described by an 
+	 * possibly unrelated expressions which are somehow described by an
 	 * expression-group string.
-	 * 
+	 *
 	 * Examples of expression-groups that the service could choose to support are:
 	 * 	"myVar1; myVar2"
 	 *  "=myVar*"
-	 * 
+	 *
 	 * The sub-expressions of an expression-group are the individual expressions
 	 * making up this group.
-	 * 
+	 *
 	 * @since 2.4
 	 */
 	public interface IExpressionGroupDMContext extends IExpressionDMContext {
@@ -104,7 +104,7 @@ public interface IExpressions extends IFormattedValues {
 		int getSize();
 
 		/**
-		 * @return The memory space 
+		 * @return The memory space
 		 * @since 2.7
 		 */
 		default String getMemorySpaceID() {
@@ -113,18 +113,18 @@ public interface IExpressions extends IFormattedValues {
 	}
 
 	/**
-	 * A representation of an expression location that does not correspond to 
-	 * an address.  
-	 * 
+	 * A representation of an expression location that does not correspond to
+	 * an address.
+	 *
 	 * @since 2.1
 	 */
 	public interface IExpressionDMLocation extends IExpressionDMAddress {
 
 		/**
 		 * A constant that can be returned by {@link IExpressionDMAddress#getAddress()}
-		 * to represent an invalid address.  Implementations of 
-		 * <code>IExpressionDMLocation</code> can return this constant if no  
-		 * valid address can be returned for a given expression location.  
+		 * to represent an invalid address.  Implementations of
+		 * <code>IExpressionDMLocation</code> can return this constant if no
+		 * valid address can be returned for a given expression location.
 		 */
 		public static final IAddress INVALID_ADDRESS = new IAddress() {
 			@Override
@@ -214,7 +214,7 @@ public interface IExpressions extends IFormattedValues {
 
 		/**
 		 * This enumerates the possible basic types that an expression can have.
-		 * 
+		 *
 		 * @see getBasicType().
 		 */
 		enum BasicType {
@@ -228,9 +228,9 @@ public interface IExpressions extends IFormattedValues {
 		}
 
 		/**
-		 * If this expression is a sub-expression of another expression, this method returns 
-		 * the expression relative to the parent of this expression.  Otherwise this method 
-		 * will return the same string as {@link #getExpression()}. 
+		 * If this expression is a sub-expression of another expression, this method returns
+		 * the expression relative to the parent of this expression.  Otherwise this method
+		 * will return the same string as {@link #getExpression()}.
 		 */
 		String getName();
 
@@ -282,7 +282,7 @@ public interface IExpressions extends IFormattedValues {
 
 	/**
 	 * Retrieves the expression DM data object for the given expression context(<tt>dmc</tt>).
-	 * 
+	 *
 	 * @param dmc
 	 *            The ExpressionDMC for the expression to be evaluated.
 	 * @param rm
@@ -293,10 +293,10 @@ public interface IExpressions extends IFormattedValues {
 	/**
 	 * Retrieves the address and size of an expression given by the expression context(<tt>dmc</tt>).
 	 * Non-lvalues do not have an addresses (e.g., "x + 5").  When the expression
-	-    * has no address, the request monitor will have an error with code 
+	-    * has no address, the request monitor will have an error with code
 	 * <code>IDsfStatusConstants.REQUEST_FAILED</code> and the data request
 	 * monitor will contain null.
-	 * 
+	 *
 	 * @param dmc
 	 *            The ExpressionDMC for the expression
 	 * @param rm
@@ -306,13 +306,13 @@ public interface IExpressions extends IFormattedValues {
 
 	/**
 	 * Returns the data model context object for the specified expression in the context
-	 * specified by <b>ctx</b>.   
-	 * 
+	 * specified by <b>ctx</b>.
+	 *
 	 * @param ctx: Context in which to evaluate the expression.  This context could include the
 	 * PC location, stack frame, thread, or just a symbol context.
-	 *                
+	 *
 	 * @param expression: The expression to evaluate.
-	 * 
+	 *
 	 * @return  An expression data model context object that must be passed to the appropriate
 	 *          data retrieval routine to obtain the value of the expression.
 	 */
@@ -321,30 +321,30 @@ public interface IExpressions extends IFormattedValues {
 	/**
 	 * Retrieves the sub-expressions of the given expression.  Sub-expressions are fields of a struct, union,
 	 * or class, the enumerators of an enumeration, and the element of an array.
-	 * <br> 
+	 * <br>
 	 * Note: Clients may call this method on any valid expression context, and before calling any other
-	 * method to evaluate the expression value.  It is up to the implementation to internally evaluate the 
-	 * expression if needed, in order to calculate sub expressions.    
-	 * 
+	 * method to evaluate the expression value.  It is up to the implementation to internally evaluate the
+	 * expression if needed, in order to calculate sub expressions.
+	 *
 	 * @param exprCtx: The data model context representing an expression.
-	 * 
-	 * @param rm: Request completion monitor containing an array of all sub-expressions   
+	 *
+	 * @param rm: Request completion monitor containing an array of all sub-expressions
 	 */
 	void getSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor<IExpressionDMContext[]> rm);
 
 	/**
-	 * Retrieves a particular range of sub-expressions of the given expression.  
-	 * Sub-expressions are fields of a struct, union, or class, the enumerators 
+	 * Retrieves a particular range of sub-expressions of the given expression.
+	 * Sub-expressions are fields of a struct, union, or class, the enumerators
 	 * of an enumeration, and the element of an array.
-	 * <br> 
+	 * <br>
 	 * Note: Clients may call this method on any valid expression context, and before calling any other
-	 * method to evaluate the expression value.  It is up to the implementation to internally evaluate the 
-	 * expression if needed, in order to calculate sub expressions.    
-	 * 
+	 * method to evaluate the expression value.  It is up to the implementation to internally evaluate the
+	 * expression if needed, in order to calculate sub expressions.
+	 *
 	 * @param exprCtx: The data model context representing an expression.
 	 *        startIndex: Index of the first sub-expression to retrieve
 	 *        length: Total number of sub-expressions to retrieve
-	 * 
+	 *
 	 * @param rm: Request completion monitor containing an array of the requested
 	 *            range of sub-expressions
 	 */
@@ -354,13 +354,13 @@ public interface IExpressions extends IFormattedValues {
 	/**
 	 * Retrieves the number of sub-expressions of the given expression.  Sub-expressions are fields of a struct, union,
 	 * or class, the enumerators of an enumeration, and the element of an array.
-	 * <br> 
+	 * <br>
 	 * Note: Clients may call this method on any valid expression context, and before calling any other
-	 * method to evaluate the expression value.  It is up to the implementation to internally evaluate the 
-	 * expression if needed, in order to calculate sub expressions.    
-	 * 
+	 * method to evaluate the expression value.  It is up to the implementation to internally evaluate the
+	 * expression if needed, in order to calculate sub expressions.
+	 *
 	 * @param exprCtx: The data model context representing an expression.
-	 * 
+	 *
 	 * @param rm: Request completion monitor containing the number of sub-expressions
 	 *            of the specified expression
 	 */
@@ -369,20 +369,20 @@ public interface IExpressions extends IFormattedValues {
 	/**
 	 * For object oriented languages, this method returns the expressions representing base types of
 	 * the given expression type.
-	 * <br> 
+	 * <br>
 	 * Note: Clients may call this method on any valid expression context, and before calling any other
-	 * method to evaluate the expression value.  It is up to the implementation to internally evaluate the 
-	 * expression if needed, in order to calculate sub expressions.    
-	 * 
+	 * method to evaluate the expression value.  It is up to the implementation to internally evaluate the
+	 * expression if needed, in order to calculate sub expressions.
+	 *
 	 * @param exprContext: The data model context representing an expression.
-	 * 
+	 *
 	 * @param rm: Request completion monitor.
 	 */
 	void getBaseExpressions(IExpressionDMContext exprContext, DataRequestMonitor<IExpressionDMContext[]> rm);
 
 	/**
 	 * This method indicates if an expression can be written to.
-	 * 
+	 *
 	 * @param expressionContext: The data model context representing an expression.
 	 *
 	 * @param rm: Data Request monitor containing True if this expression's value can be edited.  False otherwise.
@@ -391,13 +391,13 @@ public interface IExpressions extends IFormattedValues {
 
 	/**
 	 * This method supports the writing/modifying the value of the expression.
-	 * 
+	 *
 	 * @param expressionContext: The data model context representing an expression.
-	 * 
+	 *
 	 * @param expressionValue: The new value of the expression as a String.
-	 * 
+	 *
 	 * @param formatId: The format ID specifying the format of parameter <b>expressionValue</b>.
-	 * 
+	 *
 	 * @param rm: Request completion monitor.
 	 */
 	void writeExpression(IExpressionDMContext expressionContext, String expressionValue, String formatId,

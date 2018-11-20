@@ -16,7 +16,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 
 /**
- * Common interface for PDOM template definitions. 
+ * Common interface for PDOM template definitions.
  */
 public interface IPDOMCPPTemplateParameterOwner {
 	ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param);

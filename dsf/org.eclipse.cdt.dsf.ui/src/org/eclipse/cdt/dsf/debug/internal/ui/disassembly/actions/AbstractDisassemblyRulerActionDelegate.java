@@ -39,7 +39,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * adapter (inner) action on menu and mouse action on the vertical ruler.<p>
  * Extending classes must implement the factory method
  * <code>createAction(IDisassemblyPart, IVerticalRulerInfo)</code>.
- * 
+ *
  * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate
  */
 public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDelegate

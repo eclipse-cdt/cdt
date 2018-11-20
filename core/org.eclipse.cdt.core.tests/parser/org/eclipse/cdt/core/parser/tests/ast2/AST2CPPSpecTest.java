@@ -16,8 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -46,6 +44,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+
+import junit.framework.TestSuite;
 
 /**
  * Examples taken from the c++-specification.
@@ -2250,7 +2250,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//
 	//  void c() const& {}
 	//  void d() const&& {}
-	//   
+	//
 	//  void e() volatile & {}
 	//  void f() volatile && {}
 	//

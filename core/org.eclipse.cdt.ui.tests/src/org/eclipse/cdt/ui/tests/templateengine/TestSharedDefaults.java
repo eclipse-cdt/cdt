@@ -18,13 +18,12 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import org.eclipse.cdt.core.templateengine.SharedDefaults;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
 * Executes all the test cases of SharedDefaults backend functionality
@@ -54,7 +53,7 @@ public class TestSharedDefaults extends BaseTestCase {
 
 	/**
 	 * Get a value from the backend storage
-	 * 
+	 *
 	 * @return the value for this key or null if no value exist for this key
 	 */
 	private String getValueFromBackEndStorate(String key) throws Exception {
@@ -79,7 +78,7 @@ public class TestSharedDefaults extends BaseTestCase {
 
 	/**
 	 * This test checks if data gets added to the back end
-	 * New data gets persisted in SharedDefault XML file 
+	 * New data gets persisted in SharedDefault XML file
 	 */
 	public void testAddToBackEndStorage() throws Exception {
 		sharedDefaults.addToBackEndStorage(TEST_KEY, TEST_VALUE);
@@ -92,7 +91,7 @@ public class TestSharedDefaults extends BaseTestCase {
 	/**
 	 * This tests the updateToBackEndStorage of SharedDefaults
 	 * to verify whether the key-value pair gets updated with new value
-	 * New data gets persisted in SharedDefault XML file 
+	 * New data gets persisted in SharedDefault XML file
 	 */
 	public void testUpdateToBackEndStorage() throws Exception {
 		sharedDefaults.addToBackEndStorage(TEST_KEY, TEST_VALUE);

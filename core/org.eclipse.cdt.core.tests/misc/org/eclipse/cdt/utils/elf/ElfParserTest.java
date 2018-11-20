@@ -54,13 +54,13 @@ public class ElfParserTest extends TestCase {
 
 	/*
 	 * The most probable cause for failing one of the following tests
-	 * 
+	 *
 	 * testLE64DYNwithInterpELFoutsideHintsError_Bug512822
 	 * testLE32DYNwithInterpELFoutsideHintsError_Bug512822
-	 * 
+	 *
 	 * is that the hint buffer size has been changed and the test binaries
 	 * are too small and need to be updated to reflect this change as well.
-	 * 
+	 *
 	 * The original files have been manually created using nasm. See the
 	 * *.asm files inside resources/elf/{inside_hints,outside_hints}/ for
 	 * further details.

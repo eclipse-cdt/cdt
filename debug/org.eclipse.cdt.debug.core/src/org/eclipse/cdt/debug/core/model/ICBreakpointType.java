@@ -19,10 +19,10 @@ import org.eclipse.core.runtime.CoreException;
 public interface ICBreakpointType {
 	/**
 	 * Breakpoint attribute storing the type of the breakpoint
-	 * This attribute is a <code>int</code>. Strictly speaking, 
-	 * types are even values, but the least-significant bit 
-	 * is used to qualify it as temporary. See {@link #TEMPORARY} 
-	 * 
+	 * This attribute is a <code>int</code>. Strictly speaking,
+	 * types are even values, but the least-significant bit
+	 * is used to qualify it as temporary. See {@link #TEMPORARY}
+	 *
 	 * @since 5.0
 	 */
 	public static final String TYPE = "org.eclipse.cdt.debug.core.breakpointType"; //$NON-NLS-1$
@@ -41,13 +41,13 @@ public interface ICBreakpointType {
 	 * installation mechanism (hardware vs software) is up to the discretion of
 	 * the debugger backend A common backend approach is to try one way first
 	 * and then the other if the first attempt fails.
-	 * 
+	 *
 	 * <p>
 	 * In the future, we will expose a preference that lets the user dictate his
 	 * preference to the backend. That is, the user will be able to say "I want
 	 * the backend to install regular breakpoints using hardware breakpoint
 	 * capabilities on the target."
-	 * 
+	 *
 	 * <p>
 	 * It's important to realize that how a backend ends up installing the
 	 * breakpoint does not alter the type of the breakpoint in the Eclipse/CDT
@@ -61,7 +61,7 @@ public interface ICBreakpointType {
 	 * A HARDWARE breakpoint is a line, function or address breakpoint that the
 	 * user wants installed using a hardware breakpoint facility on the target.
 	 * If it cannot be installed that way, it should not be installed at all.
-	 * 
+	 *
 	 * For example, the hardware may have a breakpoint register where an address
 	 * can be set. The target will halt itself when the PC matches that register
 	 * value. Hardware breakpoints have several advantages. They're
@@ -78,12 +78,12 @@ public interface ICBreakpointType {
 	 * user wants installed by swapping out instructions in the target code
 	 * memory with an opcode that causes the target to halt. If it cannot be
 	 * installed that way, it should not be installed at all.
-	 * 
+	 *
 	 * The only advantage to software breakpoints is that there is no limit to
 	 * how many can be set. The disadvantages are that they are intrusive and
 	 * thus more difficult to install/uninstall/manage and, of course, they
 	 * can't be set in ROM code.
-	 * 
+	 *
 	 */
 	final static public int SOFTWARE = 0x2 << 1;
 
@@ -94,26 +94,26 @@ public interface ICBreakpointType {
 
 	/**
 	 * Returns the type of this breakpoint
-	 * 
+	 *
 	 * @return type of breakpoint. Defaults to REGULAR if property does not
 	 *         exists in the underlying marker.
 	 * @exception CoreException
 	 *                if unable to access the property on this breakpoint's
 	 *                underlying marker
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public int getType() throws CoreException;
 
 	/**
 	 * Sets the type of this breakpoint.
-	 * 
+	 *
 	 * @param type
 	 *            breakpoint type
 	 * @exception CoreException
 	 *                if unable to access the property on this breakpoint's
 	 *                underlying marker
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public void setType(int type) throws CoreException;

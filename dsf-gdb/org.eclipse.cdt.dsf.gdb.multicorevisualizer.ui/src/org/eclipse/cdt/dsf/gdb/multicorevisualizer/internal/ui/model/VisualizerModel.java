@@ -23,8 +23,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-/** 
- * Class representing the state of the data to display in the MulticoreVisualizer. 
+/**
+ * Class representing the state of the data to display in the MulticoreVisualizer.
  */
 public class VisualizerModel {
 	// --- members ---
@@ -54,9 +54,9 @@ public class VisualizerModel {
 	/** Constructor */
 	public VisualizerModel(String sessionId) {
 		m_sessionId = sessionId;
-		m_cpus = new ArrayList<VisualizerCPU>();
-		m_cpuMap = new Hashtable<Integer, VisualizerCPU>();
-		m_threads = new ArrayList<VisualizerThread>();
+		m_cpus = new ArrayList<>();
+		m_cpuMap = new Hashtable<>();
+		m_threads = new ArrayList<>();
 	}
 
 	/** Dispose method */
@@ -179,7 +179,7 @@ public class VisualizerModel {
 		return m_threads;
 	}
 
-	/** 
+	/**
 	 * Finds thread(s) by process ID.
 	 * If no threads are found, returns null rather
 	 * than an empty list.
@@ -189,14 +189,14 @@ public class VisualizerModel {
 		for (VisualizerThread thread : m_threads) {
 			if (thread.getPID() == processId) {
 				if (result == null)
-					result = new ArrayList<VisualizerThread>();
+					result = new ArrayList<>();
 				result.add(thread);
 			}
 		}
 		return result;
 	}
 
-	/** 
+	/**
 	 * Find a thread by GDB threadId.
 	 * Since thread ids are unique across a GDB session,
 	 * we can uniquely find a thread based on its id.
@@ -223,7 +223,7 @@ public class VisualizerModel {
 		m_threads.remove(thread);
 	}
 
-	/** 
+	/**
 	 * Removes thread by GDB threadId.
 	 */
 	public void removeThread(int threadId) {

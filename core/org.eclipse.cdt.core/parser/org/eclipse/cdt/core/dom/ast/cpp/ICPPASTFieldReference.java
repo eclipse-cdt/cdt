@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 /**
  * Certain field references in C++ require the use the keyword template to
  * specify the parse.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -33,7 +33,7 @@ public interface ICPPASTFieldReference extends IASTFieldReference, ICPPASTExpres
 
 	/**
 	 * Sets the template keyword used.
-	 * 
+	 *
 	 * @param value
 	 */
 	public void setIsTemplate(boolean value);

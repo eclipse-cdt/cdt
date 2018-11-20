@@ -35,7 +35,7 @@ import org.eclipse.debug.core.ILaunchesListener2;
 /**
  * A console manager for GDB sessions which adds and removes
  * gdb cli consoles.
- * 
+ *
  * There is a single such console per debug session.
  * This console interacts directly with the GDB process using
  * the standard GDB CLI interface.
@@ -156,7 +156,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 				fSession.getExecutor().submit(new DsfRunnable() {
 					@Override
 					public void run() {
-						// Look for backend service right away.  It probably 
+						// Look for backend service right away.  It probably
 						// won't be available yet but we must make sure.
 						DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(),
 								fSession.getId());
@@ -215,7 +215,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 			// No need to open the view manually as it is associated with the Debug view
 			// and is handled through the automatic view management system.
 			// It will be opened by the platform.
-			// See http://eclip.se/509897 
+			// See http://eclip.se/509897
 			// Make sure the Debugger Console view is visible but do not force it to the top
 			// getDebuggerConsoleManager().openConsoleView();
 		}

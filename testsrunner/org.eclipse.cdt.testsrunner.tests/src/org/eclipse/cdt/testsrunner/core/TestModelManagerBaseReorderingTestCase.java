@@ -16,20 +16,20 @@ package org.eclipse.cdt.testsrunner.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.testsrunner.internal.model.TestModelManager;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 
+import junit.framework.TestCase;
+
 /**
- * Base test case for test suites & test cases reordering in TestModelManager. 
+ * Base test case for test suites & test cases reordering in TestModelManager.
  */
 @SuppressWarnings("nls")
 public abstract class TestModelManagerBaseReorderingTestCase extends TestCase {
 
 	protected TestModelManager modelManager;
-	protected List<String> expectedSuitesOrder = new ArrayList<String>();
+	protected List<String> expectedSuitesOrder = new ArrayList<>();
 
 	protected abstract ITestSuite createTestsHierarchy();
 

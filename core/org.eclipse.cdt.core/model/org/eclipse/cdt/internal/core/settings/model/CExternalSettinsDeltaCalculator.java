@@ -52,7 +52,7 @@ class CExternalSettinsDeltaCalculator {
 
 		ExtSettingsDelta(CExternalSetting setting) {
 			fSetting = setting;
-			fEntryChangeStore = new KindBasedStore<ICSettingEntry[][]>(false);
+			fEntryChangeStore = new KindBasedStore<>(false);
 		}
 
 		ExtSettingsDelta(CExternalSetting setting, boolean added) {
@@ -90,8 +90,8 @@ class CExternalSettinsDeltaCalculator {
 
 		ICSettingEntry[][] getEntriesDelta() {
 			int kinds[] = KindBasedStore.getLanguageEntryKinds();
-			List<ICSettingEntry> added = new ArrayList<ICSettingEntry>();
-			List<ICSettingEntry> removed = new ArrayList<ICSettingEntry>();
+			List<ICSettingEntry> added = new ArrayList<>();
+			List<ICSettingEntry> removed = new ArrayList<>();
 			for (int kind : kinds) {
 				ICSettingEntry[][] d = getEntriesDelta(kind);
 				if (d == null)
@@ -172,7 +172,7 @@ class CExternalSettinsDeltaCalculator {
 					.fillEntriesMapByContentsKey(new LinkedHashMap<EntryContentsKey, ICSettingEntry>(), entries1);
 			Map<EntryContentsKey, ICSettingEntry> map2 = CDataUtil
 					.fillEntriesMapByContentsKey(new LinkedHashMap<EntryContentsKey, ICSettingEntry>(), entries2);
-			Map<EntryContentsKey, ICSettingEntry> map1Copy = new LinkedHashMap<EntryContentsKey, ICSettingEntry>(map1);
+			Map<EntryContentsKey, ICSettingEntry> map1Copy = new LinkedHashMap<>(map1);
 			//			Set set1 = new HashSet(Arrays.asList(entries1));
 			//			Set set2 = new HashSet(Arrays.asList(entries2));
 			//			Set set1Copy = new HashSet(set1);
@@ -220,7 +220,7 @@ class CExternalSettinsDeltaCalculator {
 	}
 
 	private static Map<ExtSettingMapKey, ICExternalSetting> toSettingsKeyMap(ICExternalSetting[] settings) {
-		Map<ExtSettingMapKey, ICExternalSetting> map = new HashMap<ExtSettingMapKey, ICExternalSetting>();
+		Map<ExtSettingMapKey, ICExternalSetting> map = new HashMap<>();
 		for (ICExternalSetting setting : settings) {
 			if (map.put(new ExtSettingMapKey(setting), setting) != null)
 				throw new IllegalArgumentException();
@@ -235,7 +235,7 @@ class CExternalSettinsDeltaCalculator {
 		if (oldSettings == null || oldSettings.length == 0)
 			return createDeltas(newSettings, true);
 
-		LinkedList<ExtSettingsDelta> deltaList = new LinkedList<ExtSettingsDelta>();
+		LinkedList<ExtSettingsDelta> deltaList = new LinkedList<>();
 
 		Map<ExtSettingMapKey, ICExternalSetting> newMap = toSettingsKeyMap(newSettings);
 		Map<ExtSettingMapKey, ICExternalSetting> oldMap = toSettingsKeyMap(oldSettings);
@@ -279,7 +279,7 @@ class CExternalSettinsDeltaCalculator {
 	Set<ICSettingEntry> calculateUpdatedEntries(ICSettingEntry current[], ICSettingEntry added[],
 			ICSettingEntry removed[]) {
 		//	EntryComparator comparator = new EntryComparator();
-		LinkedHashSet<ICSettingEntry> set = new LinkedHashSet<ICSettingEntry>();
+		LinkedHashSet<ICSettingEntry> set = new LinkedHashSet<>();
 		set.addAll(Arrays.asList(current));
 		set.addAll(Arrays.asList(added));
 		set.removeAll(Arrays.asList(removed));
@@ -291,8 +291,8 @@ class CExternalSettinsDeltaCalculator {
 		if (deltas == null || deltas.length == 0)
 			return null;
 
-		Map<EntryNameKey, ICSettingEntry> addedMap = new LinkedHashMap<EntryNameKey, ICSettingEntry>();
-		Map<EntryNameKey, ICSettingEntry> removedMap = new LinkedHashMap<EntryNameKey, ICSettingEntry>();
+		Map<EntryNameKey, ICSettingEntry> addedMap = new LinkedHashMap<>();
+		Map<EntryNameKey, ICSettingEntry> removedMap = new LinkedHashMap<>();
 		for (ExtSettingsDelta delta : deltas) {
 			ICSettingEntry[][] change = delta.getEntriesDelta(kind);
 			if (change == null)

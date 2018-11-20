@@ -83,7 +83,7 @@ public abstract class BaseParserTest {
 	 * cleared out before use
 	 * @param parser
 	 * @param document
-	 * @return root 
+	 * @return root
 	 */
 	protected AutoconfElement parseWithHandlers(IDocument document) {
 		AutoconfParser parser = new AutoconfParser(errorHandler, macroDetector, macroValidator);
@@ -100,7 +100,7 @@ public abstract class BaseParserTest {
 	 * Parse the document in 'string' twice, once without any handlers and once with the standard error or macro handlers,
 	 * cleared out before use
 	 * @param string
-	 * @return root 
+	 * @return root
 	 */
 	protected AutoconfElement parse(String string) {
 		AutoconfElement tree = parse(string, false);

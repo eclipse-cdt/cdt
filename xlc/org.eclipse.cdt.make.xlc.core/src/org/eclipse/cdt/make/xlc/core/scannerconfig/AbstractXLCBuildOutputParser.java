@@ -226,8 +226,8 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 	 * @return array of commands
 	 */
 	protected String[][] tokenize(String line, boolean escapeInsideDoubleQuotes) {
-		ArrayList<String[]> commands = new ArrayList<String[]>();
-		ArrayList<String> tokens = new ArrayList<String>();
+		ArrayList<String[]> commands = new ArrayList<>();
+		ArrayList<String> tokens = new ArrayList<>();
 		StringBuffer token = new StringBuffer();
 
 		final char[] input = line.toCharArray();
@@ -388,7 +388,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 
 	protected List<String> getFileExtensionsList() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		List<String> extensions = new LinkedList<String>();
+		List<String> extensions = new LinkedList<>();
 		IContentType cSource = manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
 		IContentType cppSource = manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
@@ -408,7 +408,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 
 	protected String[] getFileExtensions() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		List<String> extensions = new LinkedList<String>();
+		List<String> extensions = new LinkedList<>();
 		IContentType cSource = manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
 		IContentType cppSource = manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 

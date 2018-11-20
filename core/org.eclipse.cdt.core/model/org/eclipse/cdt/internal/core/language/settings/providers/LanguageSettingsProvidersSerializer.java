@@ -110,9 +110,9 @@ public class LanguageSettingsProvidersSerializer {
 	private static final String VALUE_COPY_OF_EXTENSION = "extension"; //$NON-NLS-1$
 
 	/** Cache of true (raw) workspace providers */
-	private static Map<String, ILanguageSettingsProvider> rawGlobalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
+	private static Map<String, ILanguageSettingsProvider> rawGlobalWorkspaceProviders = new HashMap<>();
 	/** Cache of workspace providers wrappers */
-	private static Map<String, ILanguageSettingsProvider> globalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
+	private static Map<String, ILanguageSettingsProvider> globalWorkspaceProviders = new HashMap<>();
 
 	private static ListenerList<ILanguageSettingsChangeListener> fLanguageSettingsChangeListeners = new ListenerList<>(
 			ListenerList.IDENTITY);
@@ -267,7 +267,7 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	private static class LanguageSettingsChangeEvent implements ILanguageSettingsChangeEvent {
 		private String projectName = null;
-		private Map<String/*cfg*/, LanguageSettingsDelta> deltaMap = new HashMap<String, LanguageSettingsDelta>();
+		private Map<String/*cfg*/, LanguageSettingsDelta> deltaMap = new HashMap<>();
 
 		/**
 		 * The act of creating event resets internal delta count in configuration state.
@@ -337,7 +337,7 @@ public class LanguageSettingsProvidersSerializer {
 				Set<String> paths = delta.getAffectedResourcePaths();
 				if (!paths.isEmpty()) {
 					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-					Set<IResource> resources = new HashSet<IResource>();
+					Set<IResource> resources = new HashSet<>();
 					for (String path : paths) {
 						IResource rc = project.findMember(path);
 						if (rc != null) {
@@ -428,7 +428,7 @@ public class LanguageSettingsProvidersSerializer {
 	 *    is passed user defined providers are cleared.
 	 */
 	private static void setWorkspaceProvidersInternal(List<ILanguageSettingsProvider> providers) {
-		Map<String, ILanguageSettingsProvider> rawNewProviders = new HashMap<String, ILanguageSettingsProvider>();
+		Map<String, ILanguageSettingsProvider> rawNewProviders = new HashMap<>();
 
 		// add given providers
 		if (providers != null) {
@@ -513,9 +513,9 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	private static List<LanguageSettingsChangeEvent> createLanguageSettingsChangeEvents(
 			List<ILanguageSettingsBroadcastingProvider> providers) {
-		List<LanguageSettingsChangeEvent> events = new ArrayList<LanguageSettingsChangeEvent>();
+		List<LanguageSettingsChangeEvent> events = new ArrayList<>();
 
-		List<String> providerIds = new ArrayList<String>();
+		List<String> providerIds = new ArrayList<>();
 		for (ILanguageSettingsBroadcastingProvider provider : providers) {
 			providerIds.add(provider.getId());
 		}
@@ -552,8 +552,8 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
-		List<ILanguageSettingsBroadcastingProvider> broadcastingWorkspaceProviders = new ArrayList<ILanguageSettingsBroadcastingProvider>();
-		List<LanguageSettingsSerializableProvider> serializingWorkspaceProviders = new ArrayList<LanguageSettingsSerializableProvider>();
+		List<ILanguageSettingsBroadcastingProvider> broadcastingWorkspaceProviders = new ArrayList<>();
+		List<LanguageSettingsSerializableProvider> serializingWorkspaceProviders = new ArrayList<>();
 		for (ILanguageSettingsProvider provider : rawGlobalWorkspaceProviders.values()) {
 			if (provider instanceof ILanguageSettingsBroadcastingProvider) {
 				broadcastingWorkspaceProviders.add((ILanguageSettingsBroadcastingProvider) provider);
@@ -687,8 +687,8 @@ public class LanguageSettingsProvidersSerializer {
 			Element rootElement = doc.getDocumentElement();
 			NodeList providerNodes = rootElement.getElementsByTagName(ELEM_PROVIDER);
 
-			List<String> userDefinedProvidersIds = new ArrayList<String>(providerNodes.getLength());
-			providers = new ArrayList<ILanguageSettingsProvider>(providerNodes.getLength());
+			List<String> userDefinedProvidersIds = new ArrayList<>(providerNodes.getLength());
+			providers = new ArrayList<>(providerNodes.getLength());
 
 			for (int i = 0; i < providerNodes.getLength(); i++) {
 				Node providerNode = providerNodes.item(i);
@@ -1019,7 +1019,7 @@ public class LanguageSettingsProvidersSerializer {
 				continue;
 			}
 
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			String cfgId = XmlUtil.determineAttributeValue(cfgNode, ATTR_ID);
 
 			NodeList extensionNodes = cfgNode.getChildNodes();
@@ -1208,7 +1208,7 @@ public class LanguageSettingsProvidersSerializer {
 					String[] ids = ((ILanguageSettingsProvidersKeeper) cfgDescription)
 							.getDefaultLanguageSettingsProvidersIds();
 					if (ids != null) {
-						List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(
+						List<ILanguageSettingsProvider> providers = new ArrayList<>(
 								ids.length);
 						for (String id : ids) {
 							if (LanguageSettingsExtensionManager.isPreferShared(id)) {
@@ -1267,7 +1267,7 @@ public class LanguageSettingsProvidersSerializer {
 	 * @return list of workspace providers.
 	 */
 	public static List<ILanguageSettingsProvider> getWorkspaceProviders() {
-		ArrayList<ILanguageSettingsProvider> workspaceProviders = new ArrayList<ILanguageSettingsProvider>();
+		ArrayList<ILanguageSettingsProvider> workspaceProviders = new ArrayList<>();
 		for (ILanguageSettingsProvider rawProvider : rawGlobalWorkspaceProviders.values()) {
 			workspaceProviders.add(getWorkspaceProvider(rawProvider.getId()));
 		}
@@ -1317,7 +1317,7 @@ public class LanguageSettingsProvidersSerializer {
 	 * for a given project description - collecting from all configurations.
 	 */
 	private static List<ICListenerAgent> getListeners(ICProjectDescription prjDescription) {
-		List<ICListenerAgent> listeners = new ArrayList<ICListenerAgent>();
+		List<ICListenerAgent> listeners = new ArrayList<>();
 		if (prjDescription != null) {
 			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
 				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
@@ -1341,7 +1341,7 @@ public class LanguageSettingsProvidersSerializer {
 	 * Pick from the list providers which are listeners, i.e. instances of type {@link ICListenerAgent}.
 	 */
 	private static List<ICListenerAgent> selectListeners(Collection<ILanguageSettingsProvider> values) {
-		List<ICListenerAgent> listeners = new ArrayList<ICListenerAgent>();
+		List<ICListenerAgent> listeners = new ArrayList<>();
 		for (ILanguageSettingsProvider provider : values) {
 			if (provider instanceof ICListenerAgent)
 				listeners.add((ICListenerAgent) provider);
@@ -1354,7 +1354,7 @@ public class LanguageSettingsProvidersSerializer {
 	 * for a given project description - collecting from all configurations.
 	 */
 	private static List<ListenerAssociation> getListenersAssociations(ICProjectDescription prjDescription) {
-		List<ListenerAssociation> associations = new ArrayList<ListenerAssociation>();
+		List<ListenerAssociation> associations = new ArrayList<>();
 		if (prjDescription != null) {
 			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
 				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
@@ -1552,8 +1552,8 @@ public class LanguageSettingsProvidersSerializer {
 			return null;
 		}
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		List<String> alreadyAdded = new ArrayList<String>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
+		List<String> alreadyAdded = new ArrayList<>();
 
 		List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription)
 				.getLanguageSettingProviders();
@@ -1657,7 +1657,7 @@ public class LanguageSettingsProvidersSerializer {
 	 * @return newly cloned list.
 	 */
 	public static List<ILanguageSettingsProvider> cloneProviders(List<ILanguageSettingsProvider> baseProviders) {
-		List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>();
+		List<ILanguageSettingsProvider> newProviders = new ArrayList<>();
 		for (ILanguageSettingsProvider provider : baseProviders) {
 			if (provider instanceof ILanguageSettingsEditableProvider) {
 				ILanguageSettingsEditableProvider newProvider = LanguageSettingsManager
@@ -1668,7 +1668,7 @@ public class LanguageSettingsProvidersSerializer {
 			}
 			newProviders.add(provider);
 		}
-		return new ArrayList<ILanguageSettingsProvider>(newProviders);
+		return new ArrayList<>(newProviders);
 	}
 
 }

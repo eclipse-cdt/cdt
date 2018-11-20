@@ -15,10 +15,10 @@
 package org.eclipse.cdt.debug.core.breakpointactions;
 
 /**
- * 
+ *
  * THIS INTERFACE IS PROVISIONAL AND WILL CHANGE IN THE FUTURE PLUG-INS USING
  * THIS INTERFACE WILL NEED TO BE REVISED TO WORK WITH FUTURE VERSIONS OF CDT.
- * 
+ *
  */
 
 public interface IResumeActionEnabler {

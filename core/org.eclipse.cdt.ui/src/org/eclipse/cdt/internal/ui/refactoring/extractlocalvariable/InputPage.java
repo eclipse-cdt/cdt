@@ -1,21 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Tom Ball (Google)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
 
+import org.eclipse.cdt.internal.ui.refactoring.VariableNameInformation;
+import org.eclipse.cdt.internal.ui.refactoring.dialogs.LabeledTextField;
+import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
+import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -26,15 +30,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.internal.ui.refactoring.VariableNameInformation;
-import org.eclipse.cdt.internal.ui.refactoring.dialogs.LabeledTextField;
-import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
-import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
-
 /**
  * Input verification page for the ExtractLocalVariable refactoring, cloned
  * from org.eclipse.cdt.internal.ui.refactoring.extractconstant.InputPage.
- * 
+ *
  * @author Tom Ball
  */
 public class InputPage extends UserInputWizardPage {

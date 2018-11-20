@@ -43,7 +43,7 @@ public class PathEntryContainerChanged {
 	IPath fPath;
 
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param type
 	 */

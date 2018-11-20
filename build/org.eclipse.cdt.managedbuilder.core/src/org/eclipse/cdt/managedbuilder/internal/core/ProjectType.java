@@ -286,7 +286,7 @@ public class ProjectType extends BuildObject
 	 */
 	private List<Configuration> getConfigurationList() {
 		if (configList == null) {
-			configList = new ArrayList<Configuration>();
+			configList = new ArrayList<>();
 		}
 		return configList;
 	}
@@ -296,7 +296,7 @@ public class ProjectType extends BuildObject
 	 */
 	private Map<String, IConfiguration> getConfigurationMap() {
 		if (configMap == null) {
-			configMap = new HashMap<String, IConfiguration>();
+			configMap = new HashMap<>();
 		}
 		return configMap;
 	}
@@ -768,7 +768,7 @@ public class ProjectType extends BuildObject
 
 	@Override
 	public String[] getRequiredTypeIds() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		List<Configuration> list = getConfigurationList();
 		for (int i = 0; i < list.size(); i++) {
 			result.addAll(Arrays.asList((list.get(i)).getRequiredTypeIds()));
@@ -778,7 +778,7 @@ public class ProjectType extends BuildObject
 
 	@Override
 	public String[] getSupportedTypeIds() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		List<Configuration> list = getConfigurationList();
 		for (int i = 0; i < list.size(); i++) {
 			result.addAll(Arrays.asList((list.get(i)).getSupportedTypeIds()));
@@ -788,7 +788,7 @@ public class ProjectType extends BuildObject
 
 	@Override
 	public String[] getSupportedValueIds(String typeId) {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		List<Configuration> list = getConfigurationList();
 		for (int i = 0; i < list.size(); i++) {
 			result.addAll(Arrays.asList((list.get(i)).getSupportedValueIds(typeId)));

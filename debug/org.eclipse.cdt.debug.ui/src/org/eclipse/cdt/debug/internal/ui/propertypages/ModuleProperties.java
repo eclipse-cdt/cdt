@@ -15,10 +15,11 @@ package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.cdt.debug.core.model.ICModule;
 
 /**
- * A module's properties store. 
+ * A module's properties store.
  */
 public class ModuleProperties {
 
@@ -71,8 +72,8 @@ public class ModuleProperties {
 		return new ModuleProperties(module);
 	}
 
-	/** 
-	 * Constructor for ModuleProperties. 
+	/**
+	 * Constructor for ModuleProperties.
 	 */
 	private ModuleProperties(ICModule module) {
 		fProperties = new ArrayList<>(10);

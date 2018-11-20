@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * Represents the mapping between goto statements and the label statements
  * the go to.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

@@ -55,14 +55,14 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Adds memory blocks to the Memory view.
- * 
+ *
  * <p>
- * CDT adapter logic will link us to a CMemoryBlockRetrievalExtension  
+ * CDT adapter logic will link us to a CMemoryBlockRetrievalExtension
  * if and only if the CDI backend support memory spaces. When this is the case,
  * the platform will call us to add a memory monitor to the Memory view. We
- * must put up a dialog, handle the user input, create the memory blocks 
- * with default renderings and add them to the view. 
- *   
+ * must put up a dialog, handle the user input, create the memory blocks
+ * with default renderings and add them to the view.
+ *
  * <p>
  * @since 3.2
  *
@@ -129,8 +129,8 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 								if (isSuccess()) {
 									String[] memorySpaces = getMemorySpaces();
 
-									// We shouldn't be using the custom dialog 
-									// if there are none or only one memory 
+									// We shouldn't be using the custom dialog
+									// if there are none or only one memory
 									// spaces involved.
 									// https://bugs.eclipse.org/bugs/show_bug.cgi?id=309032#c50
 									if (memorySpaces.length >= 2) {
@@ -139,7 +139,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 									}
 								}
 
-								// If we get here, then the custom dialog isn't 
+								// If we get here, then the custom dialog isn't
 								// necessary. Use the standard (platform) one
 								invokePlatformAction(renderingSite);
 							}
@@ -155,7 +155,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 
 	/**
 	 * Invoke the platform's Add Memory Block action.
-	 * 
+	 *
 	 * @param site the rendering site
 	 */
 	void invokePlatformAction(IMemoryRenderingSite site) {
@@ -170,7 +170,6 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 				super.dispose();
 			}
 		}
-		;
 		PlatformAction action = new PlatformAction(site);
 		action.run();
 		action.dispose();
@@ -189,7 +188,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 
 		String input = dialog.enteredExpression() ? dialog.getExpression() : dialog.getAddress();
 
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		if (input.length() == 0)
 			list.add(""); //$NON-NLS-1$
@@ -230,8 +229,8 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		return (IDebugUIConstants.ID_MEMORY_VIEW.equals(part.getSite().getId()));
 	}
 
-	// In order to avoid duplicating the addMemoryBlocks method--one 
-	// version for expressions, one for memory-space+address, we pass in a 
+	// In order to avoid duplicating the addMemoryBlocks method--one
+	// version for expressions, one for memory-space+address, we pass in a
 	// an opaque parameter and let the logic within addMemoryBlocks
 	// differentiate where needed via isinstanceof
 
@@ -402,7 +401,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 	/**
 	 * Execute runnable on UI thread if the current thread is not an UI thread.
 	 * Otherwise execute it directly.
-	 * 
+	 *
 	 * @param runnable
 	 *            the runnable to execute
 	 */

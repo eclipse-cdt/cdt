@@ -37,7 +37,7 @@ public interface IScannerExtensionConfiguration {
 
 	/**
 	 * Support for GNU extension "Dollar Signs in Identifier Names".
-	 * 
+	 *
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Dollar-Signs.html"
 	 * @return <code>true</code>, if $ should be supported in identifiers
 	 */
@@ -51,7 +51,7 @@ public interface IScannerExtensionConfiguration {
 	 */
 	public boolean supportAtSignInIdentifiers();
 
-	/** 
+	/**
 	 * Support for block-comments comments using /% %/.
 	 * @return <code>true</code>, if /% should be interpreted as the start of a block-comment which is
 	 * ended by %/
@@ -62,7 +62,7 @@ public interface IScannerExtensionConfiguration {
 	/**
 	 * Support for (deprecated) GNU minimum and maximum operators (<code>&lt;?</code>
 	 * and <code>&gt;?</code>).
-	 * 
+	 *
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Deprecated-Features.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
@@ -72,7 +72,7 @@ public interface IScannerExtensionConfiguration {
 	/**
 	 * Support for additional numeric literal suffix characters, like e.g. 'i'
 	 * and 'j' for GNU Complex number literals.
-	 * 
+	 *
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Complex.html"
 	 * @return an array of chars or <code>null</code>, if no additional
 	 *         suffixes should be allowed
@@ -81,7 +81,7 @@ public interface IScannerExtensionConfiguration {
 
 	/**
 	 * Support for additional keywords.
-	 * 
+	 *
 	 * @return a mapping of keyword name to one of the constants defined in
 	 *         {@link IToken} or <code>null</code> for no additional keywords.
 	 */
@@ -95,7 +95,7 @@ public interface IScannerExtensionConfiguration {
 
 	/**
 	 * Support for additional preprocessor directives.
-	 * 
+	 *
 	 * @return a mapping of preprocessor directive keyword to one of the
 	 *         constants defined in
 	 *         {@link org.eclipse.cdt.core.parser.IPreprocessorDirective IPreprocessorDirective}

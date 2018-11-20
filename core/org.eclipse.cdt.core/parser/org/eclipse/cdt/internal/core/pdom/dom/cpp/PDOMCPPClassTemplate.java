@@ -219,7 +219,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		try {
-			ArrayList<PDOMCPPClassTemplatePartialSpecialization> partials = new ArrayList<PDOMCPPClassTemplatePartialSpecialization>();
+			ArrayList<PDOMCPPClassTemplatePartialSpecialization> partials = new ArrayList<>();
 			for (PDOMCPPClassTemplatePartialSpecialization partial = getFirstPartial(); partial != null; partial = partial
 					.getNextPartial()) {
 				partials.add(partial);

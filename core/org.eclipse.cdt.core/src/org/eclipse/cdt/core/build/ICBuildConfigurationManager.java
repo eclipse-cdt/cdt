@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * The OSGi service that manages the mapping from platform build configuration
  * to CDT build configuration.
- * 
+ *
  * @since 6.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -28,7 +28,7 @@ public interface ICBuildConfigurationManager {
 
 	/**
 	 * Return the build configuration provider with the given id.
-	 * 
+	 *
 	 * @param id
 	 * @return build configuration provider
 	 */
@@ -50,7 +50,7 @@ public interface ICBuildConfigurationManager {
 
 	/**
 	 * Create a new build configuration to be owned by a provider.
-	 * 
+	 *
 	 * @param provider
 	 * @param project
 	 * @param configName
@@ -64,7 +64,7 @@ public interface ICBuildConfigurationManager {
 	/**
 	 * Create a new build configuration for a given project using a given
 	 * toolchain and builds for a given launch mode.
-	 * 
+	 *
 	 * @param project
 	 *            project for the config
 	 * @param toolChain
@@ -81,7 +81,7 @@ public interface ICBuildConfigurationManager {
 	/**
 	 * Create a new build configuration for a given project using a toolchain with
 	 * the given properties and that builds for a given launch mode.
-	 * 
+	 *
 	 * @deprecated clients really need to pick which toolchain they want a build
 	 *             config for. This method pretty much picks one at random.
 	 * @param project
@@ -100,7 +100,7 @@ public interface ICBuildConfigurationManager {
 
 	/**
 	 * Called by providers to add new build configurations as they are created.
-	 * 
+	 *
 	 * @param buildConfig
 	 *            platform build configuration
 	 * @param cConfig
@@ -111,7 +111,7 @@ public interface ICBuildConfigurationManager {
 	/**
 	 * Return the CDT build configuration associated with the given Platform
 	 * build configuration.
-	 * 
+	 *
 	 * @param buildConfig
 	 * @return the matching CDT build configuration
 	 */
@@ -121,7 +121,7 @@ public interface ICBuildConfigurationManager {
 	 * Does this build system support this project. This is determined by
 	 * searching the build configuration providers looking to see if any of them
 	 * support this project.
-	 * 
+	 *
 	 * @param project
 	 * @return is this project supported by this build system
 	 * @throws CoreException

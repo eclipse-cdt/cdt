@@ -125,7 +125,7 @@ public class StatusInfo implements IStatus {
 	}
 
 	/**
-	 * Returns a string representation of the status, suitable 
+	 * Returns a string representation of the status, suitable
 	 * for debugging purposes only.
 	 */
 	@Override

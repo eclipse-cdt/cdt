@@ -87,7 +87,7 @@ public class PerFileSettingsCalculator {
 
 		void add(ILangSettingInfo info) {
 			if (fLangInfoList == null)
-				fLangInfoList = new ArrayList<ILangSettingInfo>();
+				fLangInfoList = new ArrayList<>();
 			fLangInfoList.add(info);
 		}
 	}
@@ -130,9 +130,9 @@ public class PerFileSettingsCalculator {
 		}
 
 		public void add(int index, PathFilePathInfo value) {
-			List<PathFilePathInfo> list = checkResize(index) ? new ArrayList<PathFilePathInfo>() : fStore[index];
+			List<PathFilePathInfo> list = checkResize(index) ? new ArrayList<>() : fStore[index];
 			if (list == null) {
-				list = new ArrayList<PathFilePathInfo>();
+				list = new ArrayList<>();
 				fStore[index] = list;
 			}
 
@@ -157,7 +157,7 @@ public class PerFileSettingsCalculator {
 
 		public List<PathFilePathInfo>[] getLists() {
 			int size = fMaxIndex + 1;
-			List<List<PathFilePathInfo>> list = new ArrayList<List<PathFilePathInfo>>(size);
+			List<List<PathFilePathInfo>> list = new ArrayList<>(size);
 			List<PathFilePathInfo> l;
 			for (int i = 0; i < size; i++) {
 				l = fStore[i];
@@ -214,13 +214,13 @@ public class PerFileSettingsCalculator {
 
 		public void add(PathFilePathInfo pInfo) {
 			if (fPathFilePathInfoMap == null)
-				fPathFilePathInfoMap = new HashMap<PathInfo, List<PathFilePathInfo>>(3);
+				fPathFilePathInfoMap = new HashMap<>(3);
 
 			PathInfo fileInfo = pInfo.fInfo;
 			List<PathFilePathInfo> list = fileInfo == fMaxMatchInfo ? fMaxMatchInfoList
 					: fPathFilePathInfoMap.get(fileInfo);
 			if (list == null) {
-				List<PathFilePathInfo> emptyList = new ArrayList<PathFilePathInfo>();
+				List<PathFilePathInfo> emptyList = new ArrayList<>();
 				fPathFilePathInfoMap.put(fileInfo, emptyList);
 				if (fMaxMatchInfo == null) {
 					fMaxMatchInfo = fileInfo;
@@ -342,7 +342,7 @@ public class PerFileSettingsCalculator {
 
 		private HashSet<String> calcExtsSet() {
 			if (fExtsSet == null)
-				fExtsSet = new HashSet<String>(Arrays.asList(fExts));
+				fExtsSet = new HashSet<>(Arrays.asList(fExts));
 			return fExtsSet;
 		}
 
@@ -473,7 +473,7 @@ public class PerFileSettingsCalculator {
 
 		void internalAdd(ExtsSetSettings setting) {
 			if (fExtsSetToExtsSetSettingsMap == null) {
-				fExtsSetToExtsSetSettingsMap = new HashMap<ExtsSet, ExtsSetSettings>();
+				fExtsSetToExtsSetSettingsMap = new HashMap<>();
 			}
 
 			ExtsSetSettings cur = fExtsSetToExtsSetSettingsMap.get(setting.fExtsSet);
@@ -507,7 +507,7 @@ public class PerFileSettingsCalculator {
 		//		}
 
 		public RcSetSettings[] getChildren(final boolean includeCurrent) {
-			final List<RcSetSettings> list = new ArrayList<RcSetSettings>();
+			final List<RcSetSettings> list = new ArrayList<>();
 			fContainer.accept(new IPathSettingsContainerVisitor() {
 
 				@Override
@@ -572,7 +572,7 @@ public class PerFileSettingsCalculator {
 		String[] exts = setting.fExtsSet.fExts;
 		String ext;
 		if (map == null) {
-			map = new HashMap<String, ExtsSetSettings>();
+			map = new HashMap<>();
 			forceAdd = true;
 		}
 
@@ -611,7 +611,7 @@ public class PerFileSettingsCalculator {
 			path = rcData.getPath();
 			curRcSet = rcSet.createChild(path, rcData, false);
 			if (rcData.getType() == ICSettingBase.SETTING_FILE) {
-				fileMap = new HashMap<ExtsSet, ExtsSetSettings>(1);
+				fileMap = new HashMap<>(1);
 				fileSetting = createExtsSetSettings(path, (CFileData) rcData);
 				fileMap.put(fileSetting.fExtsSet, fileSetting);
 				curRcSet.internalSetSettingsMap(fileMap);
@@ -664,7 +664,7 @@ public class PerFileSettingsCalculator {
 	private static void addEmptyLanguageInfos(RcSettingInfo rcInfo, CLanguageData[] lDatas) {
 		ArrayList<ILangSettingInfo> list = rcInfo.fLangInfoList;
 		if (list == null) {
-			list = new ArrayList<ILangSettingInfo>(lDatas.length);
+			list = new ArrayList<>(lDatas.length);
 			rcInfo.fLangInfoList = list;
 		} else {
 			list.ensureCapacity(lDatas.length);
@@ -682,7 +682,7 @@ public class PerFileSettingsCalculator {
 		IPath projRelPath;
 		CResourceData rcData;
 		//		RcSetSettings dataSetting;
-		List<IRcSettingInfo> list = new ArrayList<IRcSettingInfo>(pfpis.length);
+		List<IRcSettingInfo> list = new ArrayList<>(pfpis.length);
 		RcSettingInfo rcInfo;
 		LangSettingInfo lInfo;
 		CLanguageData lData;
@@ -723,7 +723,7 @@ public class PerFileSettingsCalculator {
 
 					if (rcInfo == null) {
 						rcInfo = new RcSettingInfo(rootData);
-						tmpList = new ArrayList<ILangSettingInfo>(lDatas.length - k);
+						tmpList = new ArrayList<>(lDatas.length - k);
 						rcInfo.fLangInfoList = tmpList;
 					}
 
@@ -777,7 +777,7 @@ public class PerFileSettingsCalculator {
 				if (lData != null) {
 					rcInfo = new RcSettingInfo(rcData);
 					lInfo = new LangSettingInfo(lData, pInfo);
-					tmpList = new ArrayList<ILangSettingInfo>(1);
+					tmpList = new ArrayList<>(1);
 					tmpList.add(lInfo);
 					rcInfo.fLangInfoList = tmpList;
 					list.add(rcInfo);
@@ -806,7 +806,7 @@ public class PerFileSettingsCalculator {
 		RcSetSettings settings[] = rootSetting.getChildren(true);
 		RcSetSettings setting;
 		CResourceData rcData;
-		List<IRcSettingInfo> resultList = new ArrayList<IRcSettingInfo>();
+		List<IRcSettingInfo> resultList = new ArrayList<>();
 		LangSettingInfo langInfo;
 		RcSettingInfo rcInfo;
 		PathInfo pathInfo;
@@ -838,7 +838,7 @@ public class PerFileSettingsCalculator {
 					if (pathInfo != null) {
 						langInfo = new LangSettingInfo(extSetting.fBaseLangData, pathInfo);
 						rcInfo = new RcSettingInfo(rcData);
-						rcInfo.fLangInfoList = new ArrayList<ILangSettingInfo>(1);
+						rcInfo.fLangInfoList = new ArrayList<>(1);
 						rcInfo.fLangInfoList.add(langInfo);
 						resultList.add(rcInfo);
 					}
@@ -846,7 +846,7 @@ public class PerFileSettingsCalculator {
 			} else {
 				if (setting.fExtsSetToExtsSetSettingsMap.size() != 0) {
 					rcInfo = new RcSettingInfo(rcData);
-					rcInfo.fLangInfoList = new ArrayList<ILangSettingInfo>(setting.fExtsSetToExtsSetSettingsMap.size());
+					rcInfo.fLangInfoList = new ArrayList<>(setting.fExtsSetToExtsSetSettingsMap.size());
 					resultList.add(rcInfo);
 
 					Collection<ExtsSetSettings> values = setting.fExtsSetToExtsSetSettingsMap.values();
@@ -1008,7 +1008,7 @@ public class PerFileSettingsCalculator {
 
 	private static HashMap<ExtsSet, ExtsSetSettings> createExtsSetSettingsMap(CFolderData data) {
 		CLanguageData[] lDatas = data.getLanguageDatas();
-		HashMap<ExtsSet, ExtsSetSettings> map = new HashMap<ExtsSet, ExtsSetSettings>(lDatas.length);
+		HashMap<ExtsSet, ExtsSetSettings> map = new HashMap<>(lDatas.length);
 		ExtsSetSettings settings;
 
 		if (lDatas.length != 0) {
@@ -1028,7 +1028,7 @@ public class PerFileSettingsCalculator {
 		IPath path;
 		PathInfo info, storedInfo;
 		ListIndexStore store = new ListIndexStore(10);
-		HashMap<PathInfo, PathInfo> infoMap = new HashMap<PathInfo, PathInfo>();
+		HashMap<PathInfo, PathInfo> infoMap = new HashMap<>();
 		//		LinkedHashMap result;
 
 		Set<Entry<IResource, PathInfo>> entrySet = map.entrySet();

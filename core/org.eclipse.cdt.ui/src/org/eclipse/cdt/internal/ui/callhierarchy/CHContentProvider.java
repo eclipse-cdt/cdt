@@ -17,11 +17,6 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -36,15 +31,17 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICHEContentProvider;
-import org.eclipse.cdt.ui.ICHENode;
-
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
-
 import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICHEContentProvider;
+import org.eclipse.cdt.ui.ICHENode;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * This is the content provider for the call hierarchy.
@@ -214,7 +211,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	CHNode[] createNodes(CHNode node, CalledByResult result) throws CoreException {
-		ArrayList<CHNode> nodes = new ArrayList<CHNode>();
+		ArrayList<CHNode> nodes = new ArrayList<>();
 		ICElement[] elements = result.getElements();
 		for (ICElement element : elements) {
 			if (element != null) {
@@ -251,7 +248,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 
 	CHNode[] createNodes(CHNode node, CallsToResult callsTo) throws CoreException {
 		ITranslationUnit tu = CModelUtil.getTranslationUnit(node.getRepresentedDeclaration());
-		ArrayList<CHNode> result = new ArrayList<CHNode>();
+		ArrayList<CHNode> result = new ArrayList<>();
 		CElementSet[] elementSets = callsTo.getElementSets();
 		for (CElementSet elementSet : elementSets) {
 			CElementSet set = elementSet;

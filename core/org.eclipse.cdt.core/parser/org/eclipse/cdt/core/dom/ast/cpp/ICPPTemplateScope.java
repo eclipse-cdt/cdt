@@ -17,12 +17,12 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
- * A separate template scope is used for each template declaration. This leads to a 
- * non-hierarchical structure of scopes. E.g. for a method of a class-template the 
+ * A separate template scope is used for each template declaration. This leads to a
+ * non-hierarchical structure of scopes. E.g. for a method of a class-template the
  * declaration and definition will nests in different template-scopes. Therefore
- * {@link IScope#getParent()} will never return a template scope unless the method is 
+ * {@link IScope#getParent()} will never return a template scope unless the method is
  * called for a template-scope that directly nests in another one.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

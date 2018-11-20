@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,7 @@ import org.eclipse.cdt.testsrunner.model.ITestingSession;
 
 /**
  * Testing sessions manager listener is notified of testing sessions management.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -25,7 +25,7 @@ public interface ITestingSessionsManagerListener {
 
 	/**
 	 * Notifies the listener that the specified testing session was activated.
-	 * 
+	 *
 	 * @param testingSession the activated testing session
 	 */
 	void sessionActivated(ITestingSession testingSession);

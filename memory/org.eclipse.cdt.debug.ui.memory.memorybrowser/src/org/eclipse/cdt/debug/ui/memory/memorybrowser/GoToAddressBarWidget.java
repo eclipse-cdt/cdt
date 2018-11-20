@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -76,7 +76,7 @@ public class GoToAddressBarWidget {
 	 */
 	public Control createControl(Composite parent) {
 		fComposite = new Composite(parent, SWT.NONE);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(fComposite, // FIXME 	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fComposite, // FIXME
 				".GoToAddressComposite_context"); //$NON-NLS-1$
 
 		GridLayout layout = new GridLayout();
@@ -107,9 +107,9 @@ public class GoToAddressBarWidget {
 	private void addExpressionToHistoryPersistence(Object context, String expr, String memorySpace) {
 		/*
 		 * Get the saved expressions if any.
-		 * 
+		 *
 		 * They are in the form
-		 * 
+		 *
 		 *     expression,expression,.....,expression
 		 */
 		ILaunch launch = getLaunch(context);
@@ -131,7 +131,7 @@ public class GoToAddressBarWidget {
 					/*
 					 * Parse through the list creating an ordered array for display.
 					 */
-					ArrayList<String> list = new ArrayList<String>();
+					ArrayList<String> list = new ArrayList<>();
 					while (st.hasMoreElements()) {
 						String expression = (String) st.nextElement();
 						list.add(expression);
@@ -162,7 +162,7 @@ public class GoToAddressBarWidget {
 	/**
 	 * Clear all expression history persisted in the launch configuration that
 	 * created the given debug context
-	 * 
+	 *
 	 * @param context
 	 *            the debug context. In practice, this will always be a process
 	 *            context
@@ -207,7 +207,7 @@ public class GoToAddressBarWidget {
 	/**
 	 * Get the expression history persisted in the launch configuration for the
 	 * given debug context and memory space (where applicable)
-	 * 
+	 *
 	 * @param context
 	 *            the debug context. In practice, this will always be a process
 	 *            context
@@ -221,9 +221,9 @@ public class GoToAddressBarWidget {
 	private String[] getSavedExpressions(Object context, String memorySpace) throws CoreException {
 		/*
 		 * Get the saved expressions if any.
-		 * 
+		 *
 		 * They are in the form
-		 * 
+		 *
 		 *     expression,expression,.....,expression
 		 */
 
@@ -243,7 +243,7 @@ public class GoToAddressBarWidget {
 		/*
 		 * Parse through the list creating an ordered array for display.
 		 */
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		while (st.hasMoreElements()) {
 			list.add(st.nextToken());
 		}
@@ -254,7 +254,7 @@ public class GoToAddressBarWidget {
 	 * Populate the expression history combobox based on the history persisted
 	 * in the launch configuration for the given context and memory space (where
 	 * applicable)
-	 * 
+	 *
 	 * @param context
 	 *            the debug context. In practice, this will always be a process
 	 *            context
@@ -267,7 +267,7 @@ public class GoToAddressBarWidget {
 			// (expression) field. It's an input field; don't trample anything
 			// the user may have previously entered or is in the process of
 			// entering (see bugzilla 356346). removeAll() clears all the
-			// entries and the field. remove(beg, end) leaves the field in-tact 
+			// entries and the field. remove(beg, end) leaves the field in-tact
 			// as long as it's not asked to remove the entry the user selected
 			// to set the current field value. So, if the current expression
 			// corresponds to an entry, we purge all the entries but that one.
@@ -324,7 +324,7 @@ public class GoToAddressBarWidget {
 	/**
 	 * Clears the history of expressions for the given debug context, both in
 	 * the GUI and the persistence data
-	 * 
+	 *
 	 * @param context
 	 *            the debug context. In practice, this will always be a process
 	 *            context.
@@ -353,6 +353,7 @@ public class GoToAddressBarWidget {
 		 */
 		Combo combo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
 		combo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateButtons();
 			}
@@ -417,7 +418,7 @@ public class GoToAddressBarWidget {
 
 	/**
 	 * Update expression text from the widget
-	 * @param text 
+	 * @param text
 	 */
 	public void setExpressionText(String text) {
 		fExpression.setText(text);
@@ -455,7 +456,7 @@ public class GoToAddressBarWidget {
 		ILaunch launch = null;
 		if (context instanceof IAdaptable) {
 			adaptable = (IAdaptable) context;
-			launch = ((ILaunch) adaptable.getAdapter(ILaunch.class));
+			launch = (adaptable.getAdapter(ILaunch.class));
 		}
 
 		return launch;
@@ -465,7 +466,7 @@ public class GoToAddressBarWidget {
 	/**
 	 * Get the identifier for the given context if it is a recurring one. See
 	 * {@link IRecurringDebugContext}
-	 * 
+	 *
 	 * @param context
 	 *            the debug context
 	 * @return the ID or UNKNOWN_CONTEXT_ID if the context is non-recurring or
@@ -475,8 +476,7 @@ public class GoToAddressBarWidget {
 		String id = UNKNOWN_CONTEXT_ID;
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
-			IRecurringDebugContext recurringDebugContext = (IRecurringDebugContext) adaptable
-					.getAdapter(IRecurringDebugContext.class);
+			IRecurringDebugContext recurringDebugContext = adaptable.getAdapter(IRecurringDebugContext.class);
 			if (recurringDebugContext != null) {
 				try {
 					id = recurringDebugContext.getContextID();
@@ -494,7 +494,7 @@ public class GoToAddressBarWidget {
 	 * Get a key that we can use to persist the expression history for the given
 	 * debug context and memory space (where applicable). The key is used within
 	 * the scope of a launch configuration.
-	 * 
+	 *
 	 * @param contextID
 	 *            a recurring debug context ID; see
 	 *            {@link IRecurringDebugContext}

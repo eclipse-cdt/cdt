@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.parser.util;
 /**
  * A matcher for content assist-like application to determine whether names
  * match the user provided text.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.3
@@ -30,13 +30,13 @@ public interface IContentAssistMatcher {
 	 * calculated and used for binary searches.
 	 * In the compare method used by your binary search, return 0 for any string
 	 * that starts with the returned string.
-	 * 
+	 *
 	 * @return Such a string.
 	 */
 	char[] getPrefixForBinarySearch();
 
 	/**
-	 * @return If false, calling @{@link #match(char[])} can be skipped if a 
+	 * @return If false, calling @{@link #match(char[])} can be skipped if a
 	 *         name survived a binary search using the prefix returned by
 	 *         @{@link #getPrefixForBinarySearch()} as key.
 	 */
@@ -44,9 +44,9 @@ public interface IContentAssistMatcher {
 
 	/**
 	 * Matches the given name following the rules of content assist.
-	 * 
+	 *
 	 * @param name
-	 * 
+	 *
 	 * @return True if the name matches.
 	 */
 	boolean match(char[] name);

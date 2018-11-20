@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -19,18 +19,16 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.IAsmLanguage;
+import org.eclipse.cdt.internal.ui.text.CWhitespaceRule;
+import org.eclipse.cdt.ui.text.AbstractCScanner;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.jface.text.rules.WordRule;
-
-import org.eclipse.cdt.core.model.IAsmLanguage;
-import org.eclipse.cdt.ui.text.AbstractCScanner;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-
-import org.eclipse.cdt.internal.ui.text.CWhitespaceRule;
 
 /*
  * An assembly code scanner.
@@ -53,7 +51,7 @@ public final class AsmCodeScanner extends AbstractCScanner {
 
 	protected List<IRule> createRules() {
 		IToken token;
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 
 		// Add rule(s) for single line comments
 		token = getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);

@@ -18,6 +18,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -34,21 +42,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
-
 /**
  * The preference block for configuring styles of different categories of include statements.
  */
 public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 	private final List<IncludeGroupStyle> styles;
-	private final Map<IncludeKind, Category> categories = new HashMap<IncludeKind, Category>();
+	private final Map<IncludeKind, Category> categories = new HashMap<>();
 	private TreeListDialogField<Category> categoryTree;
 	private PixelConverter pixelConverter;
 	private StackLayout editorAreaStack;
@@ -101,7 +100,7 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 		composite.setLayout(layout);
 
 		IncludeStyleAdapter adapter = new IncludeStyleAdapter();
-		categoryTree = new TreeListDialogField<Category>(adapter, null, new IncludeStyleLabelProvider());
+		categoryTree = new TreeListDialogField<>(adapter, null, new IncludeStyleLabelProvider());
 		categoryTree.setDialogFieldListener(adapter);
 		categoryTree.setLabelText(PreferencesMessages.IncludeCategoriesBlock_header_categories);
 		categoryTree.setViewerComparator(adapter);
@@ -135,7 +134,7 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 		editorArea.setFont(parent.getFont());
 		editorAreaStack = new StackLayout();
 		editorArea.setLayout(editorAreaStack);
-		Map<IncludeKind, IncludeGroupStyle> stylesByKind = new HashMap<IncludeKind, IncludeGroupStyle>();
+		Map<IncludeKind, IncludeGroupStyle> stylesByKind = new HashMap<>();
 		for (IncludeGroupStyle style : styles) {
 			if (style.getIncludeKind() != IncludeKind.MATCHING_PATTERN)
 				stylesByKind.put(style.getIncludeKind(), style);
@@ -189,7 +188,7 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 		Category(IncludeKind includeKind, Category parent) {
 			this.includeKind = includeKind;
 			this.parent = parent;
-			children = new ArrayList<Category>();
+			children = new ArrayList<>();
 			index = parent != null ? parent.addChild(this) : 0;
 		}
 

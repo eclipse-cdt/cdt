@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Interface for all sorts of variables: local, parameter, global, field.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

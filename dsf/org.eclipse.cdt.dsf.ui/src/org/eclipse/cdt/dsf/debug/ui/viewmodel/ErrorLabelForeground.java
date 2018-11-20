@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -25,12 +25,12 @@ import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
 /**
- * Label attribute that sets the label color to the standard workbench 
+ * Label attribute that sets the label color to the standard workbench
  * error color.  The color is activated when the property update contains
- * a status with error codes: {@link IDsfStatusConstants#INTERNAL_ERROR}, 
- * {@link IDsfStatusConstants#REQUEST_FAILED}, or 
+ * a status with error codes: {@link IDsfStatusConstants#INTERNAL_ERROR},
+ * {@link IDsfStatusConstants#REQUEST_FAILED}, or
  * {@link IDsfStatusConstants#NOT_SUPPORTED}.
- * 
+ *
  * @since 2.2
  */
 public class ErrorLabelForeground extends LabelForeground {

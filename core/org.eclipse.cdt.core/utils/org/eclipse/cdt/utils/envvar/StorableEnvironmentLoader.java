@@ -47,14 +47,14 @@ import org.xml.sax.SAXException;
 /**
  * This class implements the common functionality that allows
  * storing and loading environment variable settings from eclipse properties
- * 
+ *
  * @since 3.0
  */
 public abstract class StorableEnvironmentLoader {
 
 	/**
 	 * this interface represents the preference node and the preference name
-	 * that are used for holding the environment data 
+	 * that are used for holding the environment data
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
@@ -68,7 +68,7 @@ public abstract class StorableEnvironmentLoader {
 
 		/**
 		 * Name in the preference store
-		 * @return the key in the preference node to use for loading preferences 
+		 * @return the key in the preference node to use for loading preferences
 		 */
 		String getPrefName();
 	}
@@ -97,11 +97,11 @@ public abstract class StorableEnvironmentLoader {
 
 	/**
 	 * Loads the environment from the context's {@link ISerializeInfo}.
-	 * 
+	 *
 	 * NB the environment in the {@link ISerializeInfo} need not be available
-	 * yet. The {@link ISerializeInfo} may be held by the {@link StorableEnvironment} 
+	 * yet. The {@link ISerializeInfo} may be held by the {@link StorableEnvironment}
 	 * to pick up any external changes in the environment.
-	 * 
+	 *
 	 * @param context
 	 * @param readOnly
 	 * @return StorableEnvironment
@@ -115,7 +115,7 @@ public abstract class StorableEnvironmentLoader {
 	}
 
 	/*
-	 * stores the given environment 
+	 * stores the given environment
 	 */
 	protected void storeEnvironment(StorableEnvironment env, Object context, boolean force, boolean flush)
 			throws CoreException {

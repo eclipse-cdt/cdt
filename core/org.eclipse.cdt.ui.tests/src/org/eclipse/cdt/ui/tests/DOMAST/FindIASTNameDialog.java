@@ -17,6 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.IFindReplaceTargetExtension3;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -36,18 +45,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.JFaceColors;
-
-import org.eclipse.jface.text.IFindReplaceTarget;
-import org.eclipse.jface.text.IFindReplaceTargetExtension;
-import org.eclipse.jface.text.IFindReplaceTargetExtension3;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -56,7 +53,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 
 /**
- * Find/Replace dialog. The dialog is opened on a particular 
+ * Find/Replace dialog. The dialog is opened on a particular
  * target but can be re-targeted. Internally used by the <code>FindReplaceAction</code>
  */
 class FindIASTNameDialog extends Dialog {
@@ -79,7 +76,7 @@ class FindIASTNameDialog extends Dialog {
 		@Override
 		public void shellActivated(ShellEvent e) {
 			String oldText = fFindField.getText(); // XXX workaround for 10766
-			List<String> oldList = new ArrayList<String>();
+			List<String> oldList = new ArrayList<>();
 			oldList.addAll(fFindHistory);
 
 			readConfiguration();
@@ -88,7 +85,7 @@ class FindIASTNameDialog extends Dialog {
 
 			updateCombo(fFindField, fFindHistory);
 			if (!fFindHistory.equals(oldList) && !fFindHistory.isEmpty())
-				fFindField.setText((String) fFindHistory.get(0));
+				fFindField.setText(fFindHistory.get(0));
 			else
 				fFindField.setText(oldText);
 			if (findFieldHadFocus())
@@ -105,7 +102,7 @@ class FindIASTNameDialog extends Dialog {
 		/**
 		 * Returns <code>true</code> if the find field had focus,
 		 * <code>false</code> if it did not.
-		 * 
+		 *
 		 * @return <code>true</code> if the find field had focus,
 		 *         <code>false</code> if it did not
 		 */
@@ -115,7 +112,7 @@ class FindIASTNameDialog extends Dialog {
 			 * is already gone when shellDeactivated is called. On the other
 			 * hand focus has already been restored when shellActivated is
 			 * called.
-			 * 
+			 *
 			 * Therefore, we select and give focus if either
 			 * fGiveFocusToFindField is true or the find field has focus.
 			 */
@@ -188,7 +185,7 @@ class FindIASTNameDialog extends Dialog {
 	/**
 	 * Tells whether an initial find operation is needed
 	 * before the replace operation.
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	private boolean fNeedsInitialFindBeforeReplace;
 	/**
@@ -251,7 +248,7 @@ class FindIASTNameDialog extends Dialog {
 		updateTarget(target, false);
 
 		fDialogPositionInit = null;
-		fFindHistory = new ArrayList<String>(HISTORY_SIZE - 1);
+		fFindHistory = new ArrayList<>(HISTORY_SIZE - 1);
 
 		fWrapInit = false;
 		fCaseInit = false;
@@ -622,7 +619,7 @@ class FindIASTNameDialog extends Dialog {
 	/**
 	 * Returns the position of the specified search string, or <code>-1</code> if the string can
 	 * not be found when searching using the given options.
-	 * 
+	 *
 	 * @param findString the string to search for
 	 * @param startPosition the position at which to start the search
 	 * @param forwardSearch the direction of the search
@@ -663,15 +660,15 @@ class FindIASTNameDialog extends Dialog {
 
 	/**
 	 * Searches for a string starting at the given offset and using the specified search
-	 * directives. If a string has been found it is selected and its start offset is 
+	 * directives. If a string has been found it is selected and its start offset is
 	 * returned.
 	 *
 	 * @param offset the offset at which searching starts
 	 * @param findString the string which should be found
 	 * @param forwardSearch the direction of the search
 	 * @param caseSensitive <code>true</code> performs a case sensitive search, <code>false</code> an insensitive search
-	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself 
-	 * @param regExSearch if <code>true</code> findString represents a regular expression 
+	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself
+	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @return the position of the specified string, or -1 if the string has not been found
 	 * @since 3.0
 	 */
@@ -690,7 +687,7 @@ class FindIASTNameDialog extends Dialog {
 	 * expanded if the underlying target supports it. Returns the region of the
 	 * inserted text; note that the returned selection covers the expanded
 	 * pattern in case of regex replace.
-	 * 
+	 *
 	 * @param replaceString the replace string (or a regex pattern)
 	 * @param regExReplace <code>true</code> if <code>replaceString</code>
 	 *        is a pattern
@@ -708,16 +705,16 @@ class FindIASTNameDialog extends Dialog {
 
 	/**
 	 * Returns whether the specified search string can be found using the given options.
-	 * 
+	 *
 	 * @param findString the string to search for
 	 * @param forwardSearch the direction of the search
 	 * @param caseSensitive	should the search be case sensitive
 	 * @param wrapSearch	should the search wrap to the start/end if arrived at the end/start
 	 * @param wholeWord does the search string represent a complete word
 	 * @param incremental is this an incremental search
-	 * @param regExSearch if <code>true</code> findString represents a regular expression 
+	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @return <code>true</code> if the search string can be found using the given options
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch,
@@ -767,7 +764,7 @@ class FindIASTNameDialog extends Dialog {
 	// ------- accessors ---------------------------------------
 
 	/**
-	 * Retrieves the string to search for from the appropriate text input field and returns it. 
+	 * Retrieves the string to search for from the appropriate text input field and returns it.
 	 * @return the search string
 	 */
 	private String getFindString() {
@@ -883,7 +880,7 @@ class FindIASTNameDialog extends Dialog {
 			} else {
 				if (BLANK_STRING.equals(fFindField.getText())) {
 					if (fFindHistory.size() > 0)
-						fFindField.setText((String) fFindHistory.get(0));
+						fFindField.setText(fFindHistory.get(0));
 					else
 						fFindField.setText(BLANK_STRING);
 				}
@@ -920,7 +917,7 @@ class FindIASTNameDialog extends Dialog {
 
 	/**
 	 * Retrieves and returns the regEx option from the appropriate check box.
-	 * 
+	 *
 	 * @return <code>true</code> if case sensitive
 	 * @since 3.0
 	 */
@@ -934,7 +931,7 @@ class FindIASTNameDialog extends Dialog {
 	/**
 	 * If the target supports regular expressions search retrieves and returns
 	 * regEx option from appropriate check box.
-	 * 
+	 *
 	 * @return <code>true</code> if regEx is available and checked
 	 * @since 3.0
 	 */
@@ -970,9 +967,9 @@ class FindIASTNameDialog extends Dialog {
 	/**
 	 * Returns <code>true</code> if searching should be restricted to entire
 	 * words, <code>false</code> if not. This is the case if the respective
-	 * checkbox is turned on, regex is off, and the checkbox is enabled, i.e. 
+	 * checkbox is turned on, regex is off, and the checkbox is enabled, i.e.
 	 * the current find string is an entire word.
-	 * 
+	 *
 	 * @return <code>true</code> if the search is restricted to whole words
 	 */
 	private boolean isWholeWordSearch() {
@@ -1035,12 +1032,12 @@ class FindIASTNameDialog extends Dialog {
 		if (editor == null)
 			return null;
 
-		return (IEditorStatusLine) editor.getAdapter(IEditorStatusLine.class);
+		return editor.getAdapter(IEditorStatusLine.class);
 	}
 
 	/**
 	 * Sets the given status message in the status line.
-	 * 
+	 *
 	 * @param error <code>true</code> if it is an error
 	 * @param message the error message
 	 */
@@ -1085,7 +1082,7 @@ class FindIASTNameDialog extends Dialog {
 
 	/**
 	 * Locates the user's findString in the text of the target.
-	 * 
+	 *
 	 * @param mustInitIncrementalBaseLocation <code>true</code> if base location must be initialized
 	 * @since 3.0
 	 */
@@ -1122,7 +1119,7 @@ class FindIASTNameDialog extends Dialog {
 
 	/**
 	 * Attaches the given layout specification to the <code>component</code>.
-	 * 
+	 *
 	 * @param component the component
 	 * @param horizontalAlignment horizontal alignment
 	 * @param grabExcessHorizontalSpace grab excess horizontal space
@@ -1139,9 +1136,9 @@ class FindIASTNameDialog extends Dialog {
 		component.setLayoutData(gd);
 	}
 
-	/** 
+	/**
 	 * Updates the enabled state of the buttons.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private void updateButtonState() {
@@ -1160,7 +1157,7 @@ class FindIASTNameDialog extends Dialog {
 	/**
 	 * Tests whether each character in the given
 	 * string is a letter.
-	 * 
+	 *
 	 * @param str
 	 * @return <code>true</code> if the given string is a word
 	 * @since 3.0
@@ -1259,7 +1256,7 @@ class FindIASTNameDialog extends Dialog {
 		fGiveFocusToFindField = true;
 	}
 
-	/** 
+	/**
 	 * Sets the parent shell of this dialog to be the given shell.
 	 *
 	 * @param shell the new parent shell
@@ -1283,7 +1280,7 @@ class FindIASTNameDialog extends Dialog {
 	/**
 	 * Returns the dialog settings object used to share state
 	 * between several find/replace dialogs.
-	 * 
+	 *
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {

@@ -23,7 +23,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0 };
-	};
+	}
 
 	public final static byte isKeyword[] = IsKeyword.isKeyword;
 
@@ -88,7 +88,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				0, 0, 0, 0, -53, 0, 0, 0, 0, 0, 0, -150, -149, 0, -202, 0, 0, 0, -103, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				-201, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -161, -194, -195, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static short baseCheck[] = BaseCheck.baseCheck;
 
@@ -102,7 +102,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 	@Override
 	public final int rhs(int index) {
 		return rhs[index];
-	};
+	}
 
 	public interface BaseAction {
 		public final static char baseAction[] = { 87, 11, 102, 24, 24, 23, 23, 39, 39, 69, 69, 1, 1, 2, 2, 2, 2, 3, 3,
@@ -186,7 +186,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				292, 342, 205, 1389, 1653, 1212, 938, 193, 1757, 1577, 1653, 1757, 260, 28, 1757, 1757, 1757, 1757,
 				1714, 1198, 1757, 1757, 225, 230, 234, 1757, 1757, 1757, 1449, 1757, 1757, 1757, 328, 1757, 0, 20, 179,
 				0, 1, 1983, 0, 1, 1994, 0 };
-	};
+	}
 
 	public final static char baseAction[] = BaseAction.baseAction;
 
@@ -200,7 +200,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 	@Override
 	public final int lhs(int index) {
 		return lhs[index];
-	};
+	}
 
 	public interface TermCheck {
 		public final static byte termCheck[] = { 0, 0, 1, 2, 3, 4, 0, 6, 7, 8, 0, 10, 11, 12, 0, 14, 15, 16, 17, 18, 19,
@@ -231,7 +231,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				9, 60, 0, 13, 0, 0, 0, 0, 0, 30, 0, 13, 13, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static byte termCheck[] = TermCheck.termCheck;
 
@@ -280,7 +280,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				1151, 1783, 1784, 1763, 268, 1983, 1151, 349, 253, 189, 268, 1786, 1422, 349, 253, 1757, 2601, 189, 189,
 				349, 492, 1757, 185, 1757, 1757, 1757, 1757, 1757, 1762, 1757, 184, 206, 1757, 1757, 1757, 1757, 1757,
 				1757, 464, 1757, 1757, 1757, 1757, 1757, 1757, 1757, 1757, 1757, 1757, 1757, 1757, 1757, 1757, 374 };
-	};
+	}
 
 	public final static char termAction[] = TermAction.termAction;
 
@@ -300,7 +300,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				45, 45, 170, 305, 236, 289, 173, 200, 71, 173, 222, 224, 228, 224, 200, 78, 231, 263, 54, 100, 371, 286,
 				238, 173, 73, 224, 200, 54, 263, 3, 82, 45, 263, 54, 286, 170, 169, 200, 429, 54, 428, 67, 295, 200, 45,
 				264, 73, 54, 67 };
-	};
+	}
 
 	public final static char asb[] = Asb.asb;
 
@@ -326,7 +326,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				36, 34, 35, 33, 32, 37, 38, 40, 41, 42, 22, 18, 12, 17, 20, 19, 6, 7, 8, 0, 21, 23, 24, 25, 26, 1, 3, 2,
 				15, 16, 14, 4, 10, 11, 27, 28, 51, 0, 14, 4, 10, 11, 53, 54, 47, 48, 55, 56, 57, 58, 61, 62, 63, 64, 65,
 				68, 69, 60, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 50, 30, 43, 80, 13, 59, 66, 5, 29, 0 };
-	};
+	}
 
 	public final static byte asr[] = Asr.asr;
 
@@ -345,7 +345,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				91, 121, 41, 105, 55, 7, 48, 9, 55, 57, 13, 13, 121, 89, 120, 75, 55, 70, 15, 113, 7, 48, 41, 41, 70,
 				20, 41, 7, 23, 25, 57, 27, 109, 105, 53, 48, 70, 23, 7, 42, 22, 13, 7, 23, 27, 121, 121, 70, 16, 23, 41,
 				53, 72, 70, 13, 41, 53, 23, 77 };
-	};
+	}
 
 	public final static byte nasb[] = Nasb.nasb;
 
@@ -360,7 +360,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				23, 43, 42, 35, 33, 11, 0, 56, 0, 11, 88, 0, 65, 60, 61, 62, 63, 53, 28, 0, 39, 0, 27, 50, 0, 43, 42,
 				35, 33, 27, 0, 92, 66, 0, 23, 42, 43, 11, 0, 27, 50, 11, 25, 0, 52, 46, 0, 49, 11, 45, 0, 43, 42, 27, 0,
 				80, 11, 49, 0, 93, 11, 25, 0, 11, 49, 67, 0, 11, 87, 0, 11, 23, 0 };
-	};
+	}
 
 	public final static char nasr[] = Nasr.nasr;
 
@@ -374,7 +374,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				60, 63, 68, 72, 81, 82, 83, 84, 12, 13, 42, 90, 47, 52, 56, 61, 62, 66, 67, 74, 75, 78, 79, 80, 91, 54,
 				70, 73, 16, 17, 30, 89, 93, 4, 14, 15, 18, 19, 20, 21, 29, 31, 22, 23, 24, 25, 26, 92, 5, 27, 28, 32,
 				33, 34, 35, 36, 37, 38, 39, 40, 41, 94, 45, 46, 49, 50, 51, 53, 57, 58, 59, 65, 71, 77, 88 };
-	};
+	}
 
 	public final static char terminalIndex[] = TerminalIndex.terminalIndex;
 
@@ -390,7 +390,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				134, 135, 137, 0, 139, 144, 99, 103, 104, 119, 122, 123, 124, 125, 126, 129, 0, 138, 142, 0, 0, 143,
 				152, 162, 95, 0, 0, 0, 141, 0, 151, 156, 161, 0, 163, 164, 0, 165, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static char nonterminalIndex[] = NonterminalIndex.nonterminalIndex;
 
@@ -402,7 +402,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 	public interface ScopePrefix {
 		public final static char scopePrefix[] = { 82, 113, 92, 35, 41, 121, 12, 136, 21, 51, 69, 28, 47, 103, 152, 162,
 				166, 145, 1, 1, 32, 56, 79, 170, 6, 107, 156, 127, 99, 59, 59, 59 };
-	};
+	}
 
 	public final static char scopePrefix[] = ScopePrefix.scopePrefix;
 
@@ -414,7 +414,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 	public interface ScopeSuffix {
 		public final static char scopeSuffix[] = { 90, 90, 90, 4, 4, 90, 18, 142, 26, 4, 26, 26, 4, 101, 26, 26, 4, 149,
 				4, 4, 26, 4, 26, 26, 9, 110, 159, 130, 101, 66, 61, 74 };
-	};
+	}
 
 	public final static char scopeSuffix[] = ScopeSuffix.scopeSuffix;
 
@@ -426,7 +426,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 	public interface ScopeLhs {
 		public final static char scopeLhs[] = { 62, 60, 62, 26, 26, 60, 46, 108, 44, 26, 38, 44, 26, 67, 6, 5, 5, 19,
 				100, 99, 42, 26, 35, 3, 86, 67, 5, 109, 67, 38, 36, 38 };
-	};
+	}
 
 	public final static char scopeLhs[] = ScopeLhs.scopeLhs;
 
@@ -438,7 +438,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 	public interface ScopeLa {
 		public final static byte scopeLa[] = { 43, 43, 43, 50, 50, 43, 43, 86, 30, 50, 30, 30, 50, 66, 30, 30, 50, 59,
 				50, 50, 30, 50, 30, 30, 60, 1, 30, 92, 66, 2, 2, 2 };
-	};
+	}
 
 	public final static byte scopeLa[] = ScopeLa.scopeLa;
 
@@ -450,7 +450,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 	public interface ScopeStateSet {
 		public final static byte scopeStateSet[] = { 23, 23, 23, 27, 27, 23, 17, -1, 31, 27, 9, 31, 27, 5, 38, 38, 38,
 				67, 1, 3, 31, 27, 9, 38, 93, 5, 38, -1, 5, 9, 9, 9 };
-	};
+	}
 
 	public final static byte scopeStateSet[] = ScopeStateSet.scopeStateSet;
 
@@ -467,7 +467,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				185, 44, 0, 142, 0, 99, 0, 184, 104, 142, 0, 104, 142, 0, 141, 99, 0, 172, 104, 13, 183, 94, 182, 158,
 				0, 172, 104, 13, 182, 158, 0, 197, 85, 0, 77, 2, 101, 97, 99, 0, 197, 116, 138, 2, 89, 0, 53, 0, 0, 138,
 				69, 111, 0, 29, 118, 0, 164, 2, 21, 0, 164, 2, 0, 97, 105, 0, 181, 2, 98, 0, 138, 9, 98, 0, 138, 2, 0 };
-	};
+	}
 
 	public final static char scopeRhs[] = ScopeRhs.scopeRhs;
 
@@ -483,7 +483,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				470, 1535, 1520, 1509, 1308, 1140, 1020, 673, 1500, 1492, 1381, 1084, 1028, 483, 578, 1092, 1056, 1036,
 				492, 1000, 980, 959, 938, 586, 917, 557, 349, 896, 875, 854, 833, 812, 791, 770, 749, 728, 707, 686,
 				317, 639, 513, 417, 396, 0 };
-	};
+	}
 
 	public final static char scopeState[] = ScopeState.scopeState;
 
@@ -503,7 +503,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				104, 120, 104, 113, 113, 141, 104, 2, 143, 13, 172, 142, 173, 104, 176, 94, 177, 152, 29, 190, 52, 9,
 				191, 104, 149, 104, 104, 104, 176, 152, 60, 29, 132, 60, 140, 52, 9, 149, 148, 186, 172, 184, 59, 141,
 				2, 104, 152, 140, 29, 29, 59, 143 };
-	};
+	}
 
 	public final static char inSymb[] = InSymb.inSymb;
 
@@ -540,28 +540,33 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 				"abstract_declarator", "direct_abstract_declarator", "basic_direct_abstract_declarat" + "or",
 				"array_direct_abstract_declarat" + "or", "initializer_seq", "designated_initializer", "designation",
 				"designator_list", "designator" };
-	};
+	}
 
 	public final static String name[] = Name.name;
 
+	@Override
 	public final String name(int index) {
 		return name[index];
 	}
 
 	public final static int ERROR_SYMBOL = 51, SCOPE_UBOUND = 31, SCOPE_SIZE = 32, MAX_NAME_LENGTH = 38;
 
+	@Override
 	public final int getErrorSymbol() {
 		return ERROR_SYMBOL;
 	}
 
+	@Override
 	public final int getScopeUbound() {
 		return SCOPE_UBOUND;
 	}
 
+	@Override
 	public final int getScopeSize() {
 		return SCOPE_SIZE;
 	}
 
+	@Override
 	public final int getMaxNameLength() {
 		return MAX_NAME_LENGTH;
 	}
@@ -572,42 +577,52 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 
 	public final static boolean BACKTRACK = true;
 
+	@Override
 	public final int getNumStates() {
 		return NUM_STATES;
 	}
 
+	@Override
 	public final int getNtOffset() {
 		return NT_OFFSET;
 	}
 
+	@Override
 	public final int getLaStateOffset() {
 		return LA_STATE_OFFSET;
 	}
 
+	@Override
 	public final int getMaxLa() {
 		return MAX_LA;
 	}
 
+	@Override
 	public final int getNumRules() {
 		return NUM_RULES;
 	}
 
+	@Override
 	public final int getNumNonterminals() {
 		return NUM_NONTERMINALS;
 	}
 
+	@Override
 	public final int getNumSymbols() {
 		return NUM_SYMBOLS;
 	}
 
+	@Override
 	public final int getSegmentSize() {
 		return SEGMENT_SIZE;
 	}
 
+	@Override
 	public final int getStartState() {
 		return START_STATE;
 	}
 
+	@Override
 	public final int getStartSymbol() {
 		return lhs[0];
 	}
@@ -616,55 +631,68 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
 		return IDENTIFIER_SYMBOL;
 	}
 
+	@Override
 	public final int getEoftSymbol() {
 		return EOFT_SYMBOL;
 	}
 
+	@Override
 	public final int getEoltSymbol() {
 		return EOLT_SYMBOL;
 	}
 
+	@Override
 	public final int getAcceptAction() {
 		return ACCEPT_ACTION;
 	}
 
+	@Override
 	public final int getErrorAction() {
 		return ERROR_ACTION;
 	}
 
+	@Override
 	public final boolean isValidForParser() {
 		return isValidForParser;
 	}
 
+	@Override
 	public final boolean getBacktrack() {
 		return BACKTRACK;
 	}
 
+	@Override
 	public final int originalState(int state) {
 		return -baseCheck[state];
 	}
 
+	@Override
 	public final int asi(int state) {
 		return asb[originalState(state)];
 	}
 
+	@Override
 	public final int nasi(int state) {
 		return nasb[originalState(state)];
 	}
 
+	@Override
 	public final int inSymbol(int state) {
 		return inSymb[originalState(state)];
 	}
 
+	@Override
 	public final int ntAction(int state, int sym) {
 		return baseAction[state + sym];
 	}
 
+	@Override
 	public final int tAction(int state, int sym) {
 		int i = baseAction[state], k = i + sym;
 		return termAction[termCheck[k] == sym ? k : i];
 	}
 
+	@Override
 	public final int lookAhead(int la_state, int sym) {
 		int k = la_state + sym;
 		return termAction[termCheck[k] == sym ? k : la_state];

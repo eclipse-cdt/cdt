@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Marc-Andre Laperle
  *     Sergey Prigogin (Google)
@@ -20,17 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -58,10 +47,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
@@ -69,11 +55,22 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
 /**
  * Main class of the ImplementMethodRefactoring (Source generator).
  * Checks conditions, finds insert location and generates the ImplementationNode.
- * 
+ *
  * @author Mirko Stocker, Lukas Felber, Emanuel Graf
  */
 public class ImplementMethodRefactoring extends CRefactoring {
@@ -87,7 +84,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		super(element, selection, project);
 		data = new ImplementMethodData();
 		methodDefinitionInsertLocationFinder = new MethodDefinitionInsertLocationFinder();
-		insertLocations = new HashMap<IASTSimpleDeclaration, InsertLocation>();
+		insertLocations = new HashMap<>();
 	}
 
 	@Override
@@ -124,7 +121,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			throws OperationCanceledException, CoreException {
 		final SubMonitor sm = SubMonitor.convert(pm, 2);
 		IASTTranslationUnit ast = getAST(tu, sm.newChild(1));
-		final List<IASTSimpleDeclaration> list = new ArrayList<IASTSimpleDeclaration>();
+		final List<IASTSimpleDeclaration> list = new ArrayList<>();
 		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitDeclarations = true;
@@ -321,7 +318,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 	}
 
 	private IFile[] getAllFilesToModify() {
-		List<IFile> files = new ArrayList<IFile>(2);
+		List<IFile> files = new ArrayList<>(2);
 		IFile file = (IFile) tu.getResource();
 		if (file != null) {
 			files.add(file);

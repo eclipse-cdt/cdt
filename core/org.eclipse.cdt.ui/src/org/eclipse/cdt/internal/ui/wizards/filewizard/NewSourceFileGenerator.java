@@ -18,11 +18,9 @@ package org.eclipse.cdt.internal.ui.wizards.filewizard;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.eclipse.cdt.internal.ui.util.NameComposer;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.util.NameComposer;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -40,7 +38,7 @@ public class NewSourceFileGenerator {
 	/**
 	 * Creates a header file name from the given class name. This is the file name
 	 * to be used when the class is created. eg. "MyClass" -> "MyClass.h"
-	 * 
+	 *
 	 * @param className the class name
 	 * @return the header file name for the given class
 	 */
@@ -62,7 +60,7 @@ public class NewSourceFileGenerator {
 	/**
 	 * Creates a source file name from the given class name. This is the file name
 	 * to be used when the class is created. e.g. "MyClass" -> "MyClass.cpp"
-	 * 
+	 *
 	 * @param className the class name
 	 * @return the source file name for the given class
 	 */
@@ -84,7 +82,7 @@ public class NewSourceFileGenerator {
 	/**
 	 * Creates a file name for the unit test from the given class name. This is the file name
 	 * to be used when the test is created. e.g. "MyClass" -> "MyClass_test.cpp"
-	 * 
+	 *
 	 * @param className the class name
 	 * @return the test file name for the given class
 	 */

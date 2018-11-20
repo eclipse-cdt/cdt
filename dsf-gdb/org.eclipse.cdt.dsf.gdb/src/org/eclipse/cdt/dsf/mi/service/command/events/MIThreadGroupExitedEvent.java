@@ -45,8 +45,8 @@ public class MIThreadGroupExitedEvent extends MIEvent<IProcessDMContext> {
 	 * Returns the exit code of the process or null if there is no exit code.
 	 * Note that this information is only available with GDB 7.3;
 	 * null will be returned for older GDB versions.
-	 * 
-	 * @since 4.2 
+	 *
+	 * @since 4.2
 	 */
 	public String getExitCode() {
 		return fExitCode;

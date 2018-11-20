@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ package org.eclipse.cdt.dsf.debug.ui;
  * A default hover provided by DSF.  Any hover provided by another
  * debugger integration using DSF will automatically override this one
  * based on the <code>BestMatchHover</code> class.
- * 
+ *
  * @since 2.1
  */
 public class DsfDebugTextHover extends AbstractDsfDebugTextHover {

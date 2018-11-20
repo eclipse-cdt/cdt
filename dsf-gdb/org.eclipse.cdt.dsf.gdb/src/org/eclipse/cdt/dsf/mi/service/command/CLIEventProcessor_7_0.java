@@ -11,8 +11,8 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
- *     Ericsson AB          - Additional handling of events 
- *     Ericsson             - Version 7.0  
+ *     Ericsson AB          - Additional handling of events
+ *     Ericsson             - Version 7.0
  *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
  *******************************************************************************/
 
@@ -75,12 +75,12 @@ public class CLIEventProcessor_7_0 implements IEventProcessor {
 
 	@Override
 	public void commandQueued(ICommandToken token) {
-		// No action 
+		// No action
 	}
 
 	@Override
 	public void commandRemoved(ICommandToken token) {
-		// No action 
+		// No action
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class CLIEventProcessor_7_0 implements IEventProcessor {
 		if (isSettingBreakpoint(operation) || isSettingWatchpoint(operation) || isChangeBreakpoint(operation)
 				|| isDeletingBreakpoint(operation)) {
 			// We know something change, we just do not know what.
-			// So the easiest way is to let the top layer handle it. 
+			// So the easiest way is to let the top layer handle it.
 			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc,
 					IBreakpointsTargetDMContext.class);
 			if (bpTargetDmc != null) {
@@ -215,7 +215,7 @@ public class CLIEventProcessor_7_0 implements IEventProcessor {
 
 	/**
 	 * Return true if the operation is a stepping operation.
-	 * 
+	 *
 	 * @param operation
 	 * @return
 	 */

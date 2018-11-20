@@ -21,9 +21,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * A dynamic contribution of items to build configurations of a working set.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public class BuildWorkingSetConfigsContribution extends AbstractWorkingSetConfigsContribution {
@@ -38,7 +38,7 @@ public class BuildWorkingSetConfigsContribution extends AbstractWorkingSetConfig
 
 	/**
 	 * Initializes me with my working set.
-	 * 
+	 *
 	 * @param workingSet
 	 *            my working set
 	 */

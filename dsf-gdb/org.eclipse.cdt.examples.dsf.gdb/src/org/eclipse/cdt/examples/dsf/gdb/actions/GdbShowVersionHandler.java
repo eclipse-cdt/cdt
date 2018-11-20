@@ -135,7 +135,7 @@ public class GdbShowVersionHandler implements IShowVersionHandler {
 		 * command may be issued again while it is still running, however with
 		 * this particular command it is very fast so that is unlikely. In
 		 * addition for this command no harm comes if it is issued twice.
-		 * 
+		 *
 		 * Most commands return false here because they need to be reenabled by
 		 * some operation. For example continue would only be reenabled by the
 		 * state change in the backend to being suspended again.

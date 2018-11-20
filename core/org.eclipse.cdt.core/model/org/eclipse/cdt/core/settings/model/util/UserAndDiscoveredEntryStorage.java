@@ -71,7 +71,7 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 			level.addEntries(getUserEntries());
 			break;
 		case DISCOVERY_ENTRIES_LEVEL:
-			HashSet<String> set = new HashSet<String>();
+			HashSet<String> set = new HashSet<>();
 			ICLanguageSettingEntry[] entries = getDiscoveredEntries(set);
 			level.addEntries(entries);
 			if (set.size() != 0)

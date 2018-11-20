@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -25,10 +25,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * A convenience class that allows a client to retrieve data from services 
+ * A convenience class that allows a client to retrieve data from services
  * synchronously from a non-dispatch thread.  This class is different from
  * a Callable<V> in that it allows the implementation code to calculate
- * the result in several dispatches, rather than requiring it to return the 
+ * the result in several dispatches, rather than requiring it to return the
  * data at end of Callable#call method.
  * <p>
  * Usage:<br/>
@@ -39,19 +39,19 @@ import org.eclipse.core.runtime.Status;
  *             rm.done();
  *         }
  *     }
- *     
+ *
  *     DsfExecutor executor = getExecutor();
  *     DataQuery query = new DataQuery();
  *     executor.submit(query);
- *     
+ *
  *     try {
  *         Data data = query.get();
  *     }
- *     
+ *
  * </pre>
- * <p> 
+ * <p>
  * @see java.util.concurrent.Callable
- * 
+ *
  * @since 1.0
  */
 @ThreadSafe
@@ -84,12 +84,12 @@ abstract public class Query<V> extends DsfRunnable implements Future<V> {
 			fExecuted = true;
 			return true;
 		}
-	};
+	}
 
 	private final QueryRm fRm = new QueryRm();
 
-	/** 
-	 * The no-argument constructor 
+	/**
+	 * The no-argument constructor
 	 */
 	public Query() {
 	}
@@ -142,7 +142,7 @@ abstract public class Query<V> extends DsfRunnable implements Future<V> {
 	}
 
 	/**
-	 * Don't try to interrupt the DSF executor thread, just ignore the request 
+	 * Don't try to interrupt the DSF executor thread, just ignore the request
 	 * if set.
 	 */
 	@Override
@@ -182,8 +182,8 @@ abstract public class Query<V> extends DsfRunnable implements Future<V> {
 
 	/**
 	 * Completes the query with the given exception.
-	 * 
-	 * @deprecated Query implementations should call the request monitor to 
+	 *
+	 * @deprecated Query implementations should call the request monitor to
 	 * set the exception status directly.
 	 */
 	@Deprecated

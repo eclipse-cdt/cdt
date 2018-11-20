@@ -62,7 +62,7 @@ public class TargetBuild {
 		if (!BuildAction.isSaveAllSet())
 			return;
 
-		List<IProject> projects = new ArrayList<IProject>();
+		List<IProject> projects = new ArrayList<>();
 		for (int i = 0; i < targets.length; ++i) {
 			IMakeTarget target = targets[i];
 			projects.add(target.getProject());

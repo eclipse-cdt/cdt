@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 
+ *
  */
 public class VMTest1 extends VMTestBase implements IViewerUpdatesListenerConstants {
 
@@ -125,7 +125,7 @@ public class VMTest1 extends VMTestBase implements IViewerUpdatesListenerConstan
 		Query<Map<String, Object>> suspendedQuery = new Query<Map<String, Object>>() {
 			@Override
 			protected void execute(DataRequestMonitor<Map<String, Object>> rm) {
-				Set<String> properties = new HashSet<String>();
+				Set<String> properties = new HashSet<>();
 				properties.add(ILaunchVMConstants.PROP_IS_SUSPENDED);
 
 				containerPropProvider.update(new VMPropertiesUpdate[] { new VMPropertiesUpdate(properties,

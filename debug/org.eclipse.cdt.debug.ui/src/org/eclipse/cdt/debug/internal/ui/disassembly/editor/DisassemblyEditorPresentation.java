@@ -21,7 +21,7 @@ import org.eclipse.cdt.debug.ui.disassembly.IDocumentPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyEditorPresentation: 
+ * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyEditorPresentation:
  */
 public class DisassemblyEditorPresentation extends PresentationContext implements IDocumentPresentation {
 

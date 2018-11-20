@@ -35,7 +35,7 @@ class PDOMCache {
 	private static Object singletonMutex = new Object();
 
 	private PDOMCache() {
-		this.path2pdom = new HashMap<File, PDOM>();
+		this.path2pdom = new HashMap<>();
 	}
 
 	/**
@@ -52,7 +52,7 @@ class PDOMCache {
 
 	/**
 	 * Returns the mapped PDOM for the path specified, if such a pdom is not already known about
-	 * then one is created using the location converter specified. 
+	 * then one is created using the location converter specified.
 	 * @param path
 	 * @param converter
 	 * @return a PDOM instance or null if the PDOM version was too old

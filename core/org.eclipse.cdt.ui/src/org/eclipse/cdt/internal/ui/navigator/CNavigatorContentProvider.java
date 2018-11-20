@@ -19,6 +19,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.internal.core.model.CModel;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.ui.cview.CViewContentProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -39,21 +51,6 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.core.model.CModel;
-import org.eclipse.cdt.internal.core.model.CModelManager;
-
-import org.eclipse.cdt.internal.ui.cview.CViewContentProvider;
 
 /**
  * A content provider populating a Common Navigator view with CDT model content.
@@ -387,7 +384,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 
 	/**
 	 * Converts the shape modification to use ICElements.
-	 * 
+	 *
 	 * @param modification
 	 *            the shape modification to convert
 	 * @return <code>true</code> if the shape modification set was modified
@@ -416,14 +413,14 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 
 	/**
 	 * Converts the given set to ICElements.
-	 * 
+	 *
 	 * @param currentChildren
 	 *            The set of current children that would be contributed or
 	 *            refreshed in the viewer.
 	 * @return <code>true</code> if the input set was modified
 	 */
 	private boolean convertToCElements(Set<Object> currentChildren) {
-		LinkedHashSet<ICElement> convertedChildren = new LinkedHashSet<ICElement>();
+		LinkedHashSet<ICElement> convertedChildren = new LinkedHashSet<>();
 		ICElement newChild;
 		for (Iterator<Object> iter = currentChildren.iterator(); iter.hasNext();) {
 			Object child = iter.next();

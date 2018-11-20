@@ -2449,12 +2449,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			final int lt = LTcatchEOF(1);
 			if (allowAttrib && (lt == IGCCToken.t__attribute__)) {
 				if (result == null) {
-					result = new ArrayList<IASTAttributeSpecifier>();
+					result = new ArrayList<>();
 				}
 				result.add(__attribute__());
 			} else if (allowDeclspec && (lt == IGCCToken.t__declspec)) {
 				if (result == null) {
-					result = new ArrayList<IASTAttributeSpecifier>();
+					result = new ArrayList<>();
 				}
 				result.add(__declspec());
 			} else {

@@ -2424,8 +2424,8 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 
 		// Collect files and folders
-		final Set<IFile> files = new HashSet<IFile>();
-		final Set<IFolder> folders = new HashSet<IFolder>();
+		final Set<IFile> files = new HashSet<>();
+		final Set<IFolder> folders = new HashSet<>();
 		folders.add(root);
 		root.accept(new IResourceVisitor() {
 			@Override

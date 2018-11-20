@@ -43,7 +43,7 @@ import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
  * A project in the workspace. Source is searched for in the root project
  * folder and all folders within the project recursively. Optionally,
  * referenced projects may be searched as well.
- * 
+ *
  * Source elements returned from <code>findSourceElements(...)</code> are instances of
  * <code>IFile</code>.
  * <p>
@@ -67,7 +67,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 
 	/**
 	 * Constructs a project source container.
-	 * 
+	 *
 	 * @param project the project to search for source in
 	 * @param referenced whether referenced projects should be considered
 	 */
@@ -79,7 +79,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 
 	/**
 	 * Returns the project this source container references.
-	 * 
+	 *
 	 * @return the project this source container references
 	 */
 	public IProject getProject() {
@@ -118,13 +118,13 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 		if (fProject == null)
 			return EMPTY;
 
-		ArrayList<Object> sources = new ArrayList<Object>();
+		ArrayList<Object> sources = new ArrayList<>();
 
-		// An IllegalArgumentException is thrown from the "getFile" method 
-		// if the path created by appending the file name to the container 
+		// An IllegalArgumentException is thrown from the "getFile" method
+		// if the path created by appending the file name to the container
 		// path doesn't conform with Eclipse resource restrictions.
-		// To prevent the interruption of the search procedure we check 
-		// if the path is valid before passing it to "getFile".		
+		// To prevent the interruption of the search procedure we check
+		// if the path is valid before passing it to "getFile".
 		if (validateFile(name)) {
 			IFile file = fProject.getFile(new Path(name));
 			if (file.exists()) {
@@ -151,7 +151,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 			}
 		}
 
-		// Check sub-folders		
+		// Check sub-folders
 		if ((isFindDuplicates() && true) || (sources.isEmpty() && true)) {
 			ISourceContainer[] containers = getSourceContainers();
 			for (int i = 0; i < containers.length; i++) {
@@ -216,7 +216,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 			if (isSearchReferencedProjects()) {
 				IProject[] projects = SourceUtils.getAllReferencedProjects(fProject);
 				ISourceContainer[] folders = createFolderSourceContainers(fProject);
-				List<ISourceContainer> containers = new ArrayList<ISourceContainer>(folders.length + projects.length);
+				List<ISourceContainer> containers = new ArrayList<>(folders.length + projects.length);
 				for (ISourceContainer folder : folders) {
 					containers.add(folder);
 				}
@@ -236,7 +236,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 
 	private ISourceContainer[] createFolderSourceContainers(IProject project) throws CoreException {
 		IResource[] resources = project.members();
-		List<FolderSourceContainer> list = new ArrayList<FolderSourceContainer>(resources.length);
+		List<FolderSourceContainer> list = new ArrayList<>(resources.length);
 		for (IResource resource : resources) {
 			if (resource.getType() == IResource.FOLDER) {
 				list.add(new FolderSourceContainer((IFolder) resource, true));
@@ -250,8 +250,8 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	}
 
 	/**
-	 * Validates the given string as a path for a file in this container. 
-	 * 
+	 * Validates the given string as a path for a file in this container.
+	 *
 	 * @param name path name
 	 */
 	private boolean validateFile(String name) {
@@ -264,7 +264,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 
 	/**
 	 * Returns whether referenced projects are considered.
-	 * 
+	 *
 	 * @return whether referenced projects are considered
 	 */
 	public boolean isSearchReferencedProjects() {

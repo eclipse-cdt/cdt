@@ -160,7 +160,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		final Map<IASTPreprocessorIncludeStatement, Symbols> fSymbolMap = new HashMap<>();
 		final Set<IASTPreprocessorIncludeStatement> fContextIncludes = new HashSet<>();
 		final List<IStatus> fStatuses = new ArrayList<>();
-		Map<String, String> fReplacementHeaders; // Replacement headers keyed by file paths. 
+		Map<String, String> fReplacementHeaders; // Replacement headers keyed by file paths.
 
 		public Data(IASTTranslationUnit ast, FileInAST[] selectedFiles, IWritableIndex index) {
 			fAST = ast;
@@ -549,7 +549,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		if ((fSkipReferences & SKIP_MACRO_REFERENCES) == 0) {
 
 			// Get a tree of definitions built by IndexerASTVisitor during its traversal.
-			// This is used to find enclosing definitions for macro references. 
+			// This is used to find enclosing definitions for macro references.
 			IndexerASTVisitor.Definition definitionTree = visitor.getDefinitionTree();
 
 			LocationMap lm = ast.getAdapter(LocationMap.class);

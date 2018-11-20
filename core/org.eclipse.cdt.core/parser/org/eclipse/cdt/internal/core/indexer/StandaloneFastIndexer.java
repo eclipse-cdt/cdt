@@ -29,16 +29,16 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A standalone tool for populating an index.  This indexer optimizes for 
+ * A standalone tool for populating an index.  This indexer optimizes for
  * speed at the expense of accuracy.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  * </p>
- * 
+ *
  * @since 4.0
  */
 public class StandaloneFastIndexer extends StandaloneIndexer {

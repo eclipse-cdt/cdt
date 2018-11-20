@@ -19,11 +19,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.cdt.ui.text.IColorManager;
 
 /**
  * CDT color manager.

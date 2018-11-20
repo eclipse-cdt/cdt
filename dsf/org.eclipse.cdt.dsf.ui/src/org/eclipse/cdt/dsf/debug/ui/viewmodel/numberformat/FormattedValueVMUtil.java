@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -39,14 +39,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * A helper class for View Model Node implementations that support elements 
- * to be formatted using different number formats.  The various static methods in 
+ * A helper class for View Model Node implementations that support elements
+ * to be formatted using different number formats.  The various static methods in
  * this class handle populating the properties of an IPropertiesUpdate using data
  * retrieved from a DSF service implementing {@link IFormattedValues} interface.
- * 
+ *
  * @see org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider
  * @see org.eclipse.cdt.dsf.debug.service.IFormattedValues
- * 
+ *
  * @since 2.0
  */
 public class FormattedValueVMUtil {
@@ -58,9 +58,9 @@ public class FormattedValueVMUtil {
 			.synchronizedMap(new TreeMap<String, Map<String, String>>());
 
 	/**
-	 * Common map of user-readable labels for format IDs.  
+	 * Common map of user-readable labels for format IDs.
 	 */
-	private static Map<String, String> fFormatLabels = new HashMap<String, String>(8);
+	private static Map<String, String> fFormatLabels = new HashMap<>(8);
 
 	static {
 		setFormatLabel(IFormattedValues.NATURAL_FORMAT,
@@ -76,9 +76,9 @@ public class FormattedValueVMUtil {
 	}
 
 	/**
-	 * Adds a user-readable label for a given format ID.  If a given view model has a custom format ID, it can 
-	 * add its label to the map of format IDs using this method. 
-	 * 
+	 * Adds a user-readable label for a given format ID.  If a given view model has a custom format ID, it can
+	 * add its label to the map of format IDs using this method.
+	 *
 	 * @param formatId Format ID to set the label for.
 	 * @param label User-readable label for a format.
 	 */
@@ -100,8 +100,8 @@ public class FormattedValueVMUtil {
 	}
 
 	/**
-	 * Returns an element property representing an element value in a given format.  
-	
+	 * Returns an element property representing an element value in a given format.
+
 	 * @deprecated Replaced by {@link #getPropertyForFormatId(String, String)}
 	 */
 	@Deprecated
@@ -110,14 +110,14 @@ public class FormattedValueVMUtil {
 	}
 
 	/**
-	 * Returns an element property representing an element value in a given format.  
-	 * 
+	 * Returns an element property representing an element value in a given format.
+	 *
 	 * @param Format ID to create the property for.
-	 * @param prefix The prefix for the property that is used to distinguish 
-	 * it from other number format values in a given property map.   May be 
+	 * @param prefix The prefix for the property that is used to distinguish
+	 * it from other number format values in a given property map.   May be
 	 * <code>null</code> or an empty string if no prefix is used.
 	 * @return The generated property name.
-	 * 
+	 *
 	 * @since 2.2
 	 */
 	public static String getPropertyForFormatId(String formatId, String prefix) {
@@ -142,7 +142,7 @@ public class FormattedValueVMUtil {
 		synchronized (fFormatProperties) {
 			Map<String, String> prefixMap = fFormatProperties.get(prefix);
 			if (prefixMap == null) {
-				prefixMap = new TreeMap<String, String>();
+				prefixMap = new TreeMap<>();
 				fFormatProperties.put(prefix, prefixMap);
 			}
 			return prefixMap;
@@ -150,9 +150,9 @@ public class FormattedValueVMUtil {
 	}
 
 	/**
-	 * Returns a format ID based on the element property representing a 
+	 * Returns a format ID based on the element property representing a
 	 * formatted element value.
-	 * 
+	 *
 	 * @deprecated Replaced by {@link #getFormatFromProperty(String, String)}
 	 */
 	@Deprecated
@@ -161,20 +161,20 @@ public class FormattedValueVMUtil {
 	}
 
 	/**
-	 * Returns a format ID based on the element property representing a 
+	 * Returns a format ID based on the element property representing a
 	 * formatted element value.  This method has an additional prefix parameter
-	 * which is used when multiple number formats are stored in a single 
-	 * property map. 
-	 * 
+	 * which is used when multiple number formats are stored in a single
+	 * property map.
+	 *
 	 * @param property The property to extract the format from.
-	 * @param prefix The prefix for the property that is used to distinguish 
-	 * it from other number format values in a given property map.   May be 
+	 * @param prefix The prefix for the property that is used to distinguish
+	 * it from other number format values in a given property map.   May be
 	 * <code>null</code> or an empty string if no prefix is used.
 	 * @return The format ID.
-	 * 
+	 *
 	 * @throws IllegalArgumentException if the property is not a formatted value
 	 * property.
-	 * 
+	 *
 	 * @since 2.2
 	 */
 	public static String getFormatFromProperty(String property, String prefix) {
@@ -202,7 +202,7 @@ public class FormattedValueVMUtil {
 	}
 
 	/**
-	 * Returns the user-selected number format that is saved in the given 
+	 * Returns the user-selected number format that is saved in the given
 	 * presentation context.
 	 */
 	public static String getPreferredFormat(IPresentationContext context) {
@@ -214,21 +214,21 @@ public class FormattedValueVMUtil {
 	}
 
 	/**
-	 * This method fills in the formatted value properties in the given array 
-	 * of property update objects using data retrieved from the given 
-	 * formatted values service.     
-	 * 
-	 * @param updates The array of updates to fill in information to.  This  
-	 * update is used to retrieve the data model context and to write the 
-	 * properties into. Implementation will not directly mark these updates 
+	 * This method fills in the formatted value properties in the given array
+	 * of property update objects using data retrieved from the given
+	 * formatted values service.
+	 *
+	 * @param updates The array of updates to fill in information to.  This
+	 * update is used to retrieve the data model context and to write the
+	 * properties into. Implementation will not directly mark these updates
 	 * complete, but contribute towards that end by marking [monitor] complete.
 	 * @param service The service to be used to retrieve the values from.
 	 * @param dmcType The class type of the data model context.  Some updates
 	 * can contain multiple formatted data data model contexts, and this
-	 * method assures that there is no ambiguity in which context should be 
+	 * method assures that there is no ambiguity in which context should be
 	 * used.
 	 * @param monitor Request monitor used to signal completion of work
-	 * 
+	 *
 	 * @deprecated This method has been replaced by the {@link FormattedValueRetriever}
 	 * utility.
 	 */
@@ -247,7 +247,7 @@ public class FormattedValueVMUtil {
 			@Override
 			protected void handleCompleted() {
 				// Retrieve the formatted values now that we have the available formats (where needed).
-				// Note that we are passing off responsibility of our parent monitor  
+				// Note that we are passing off responsibility of our parent monitor
 				updateFormattedValuesWithAvailableFormats(updates, service, dmcType, availableFormats, monitor);
 
 				// Note: we must not call the update's done method
@@ -287,7 +287,7 @@ public class FormattedValueVMUtil {
 						@Override
 						protected void handleCompleted() {
 							if (isSuccess()) {
-								// Set the result (available formats) into the update object if it was requested 
+								// Set the result (available formats) into the update object if it was requested
 								if (update.getProperties()
 										.contains(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS)) {
 									update.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS,
@@ -372,7 +372,7 @@ public class FormattedValueVMUtil {
 			// format. If the update request contains the property
 			// PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE, and the active format
 			// has not been explicitly requested, then we need an additional
-			// iteration to provide it. 
+			// iteration to provide it.
 			boolean activeFormatValueRequested = false; // does the update object ask for PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE?
 			boolean activeFormatValueHandled = false; // have we come across a specific format request that is the active format?
 			if (update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE)) {
@@ -398,7 +398,7 @@ public class FormattedValueVMUtil {
 						continue;
 					}
 				} else {
-					// the additional iteration to handle the active format 
+					// the additional iteration to handle the active format
 					nextFormat = activeFormat;
 					activeFormatValueHandled = true;
 				}
@@ -406,7 +406,7 @@ public class FormattedValueVMUtil {
 				final boolean _activeFormatValueRequested = activeFormatValueRequested;
 				final FormattedValueDMContext formattedValueDmc = service.getFormattedValueContext(dmc, nextFormat);
 				service.getFormattedExpressionValue(formattedValueDmc,
-						// Here also use the ViewerDataRequestMonitor in order to propagate the update's cancel request. 
+						// Here also use the ViewerDataRequestMonitor in order to propagate the update's cancel request.
 						// Use an immediate executor to avoid the possibility of a rejected execution exception.
 						new ViewerDataRequestMonitor<FormattedValueDMData>(ImmediateExecutor.getInstance(), update) {
 							@Override
@@ -425,7 +425,7 @@ public class FormattedValueVMUtil {
 								countingRm.done();
 
 								// Note: we must not call the update's done method
-							};
+							}
 						});
 				count++;
 			}

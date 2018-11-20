@@ -30,7 +30,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	}
 
 	// /* Start Example(C 4-6) */
-	// #ifdef _ _STDC_IEC_559_ _ // FE_UPWARD defined 
+	// #ifdef _ _STDC_IEC_559_ _ // FE_UPWARD defined
 	// fesetround(FE_UPWARD);
 	// #endif
 	public void test4s6() throws Exception {

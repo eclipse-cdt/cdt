@@ -17,7 +17,6 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -62,6 +61,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class SourceUtils {
 	private static final String NAME_COMMON_SOURCE_LOCATIONS = "commonSourceLocations"; //$NON-NLS-1$
@@ -129,7 +130,7 @@ public class SourceUtils {
 	}
 
 	public static ICSourceLocation[] initializeSourceLocations(Element root) {
-		List<ICSourceLocation> sourceLocations = new LinkedList<ICSourceLocation>();
+		List<ICSourceLocation> sourceLocations = new LinkedList<>();
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {
@@ -180,7 +181,7 @@ public class SourceUtils {
 	}
 
 	static public ISourceContainer[] convertSourceLocations(ICSourceLocation[] locations) {
-		ArrayList<ISourceContainer> containers = new ArrayList<ISourceContainer>(locations.length);
+		ArrayList<ISourceContainer> containers = new ArrayList<>(locations.length);
 		int mappingCount = 0;
 		for (ICSourceLocation location : locations) {
 			if (location instanceof IProjectSourceLocation) {
@@ -219,7 +220,7 @@ public class SourceUtils {
 	}
 
 	public static IProject[] getAllReferencedProjects(IProject project) throws CoreException {
-		Set<IProject> all = new HashSet<IProject>();
+		Set<IProject> all = new HashSet<>();
 		getAllReferencedProjects(all, project);
 		return all.toArray(new IProject[all.size()]);
 	}

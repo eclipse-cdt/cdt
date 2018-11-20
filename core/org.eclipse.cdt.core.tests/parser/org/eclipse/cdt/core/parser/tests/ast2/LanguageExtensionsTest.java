@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -34,8 +32,8 @@ import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.POPCPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.POPCPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -43,6 +41,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
+
+import junit.framework.TestSuite;
 
 /**
  * Testcases for non-gnu language extensions.

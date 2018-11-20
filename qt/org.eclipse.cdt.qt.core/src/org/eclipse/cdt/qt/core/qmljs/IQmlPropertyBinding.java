@@ -17,7 +17,7 @@ public interface IQmlPropertyBinding extends IQmlObjectMember {
 	@Override
 	default public String getType() {
 		return "QMLPropertyBinding"; //$NON-NLS-1$
-	};
+	}
 
 	public IQmlQualifiedID getIdentifier();
 

@@ -22,8 +22,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * A message line. It distinguishs between "normal" messages and errors. 
- * Setting an error message hides a currently displayed message until 
+ * A message line. It distinguishs between "normal" messages and errors.
+ * Setting an error message hides a currently displayed message until
  * <code>clearErrorMessage</code> is called.
  */
 public class MessageLine {
@@ -99,7 +99,7 @@ public class MessageLine {
 
 	/**
 	 * Sets the default error color used by all message lines.
-	 * Note: a call to this method only affects newly created MessageLines not existing ones. 
+	 * Note: a call to this method only affects newly created MessageLines not existing ones.
 	 */
 	public static void setErrorColor(RGB color) {
 		fgErrorRGB = color;

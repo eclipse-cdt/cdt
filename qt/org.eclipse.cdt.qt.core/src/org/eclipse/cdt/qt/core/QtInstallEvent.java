@@ -2,7 +2,7 @@ package org.eclipse.cdt.qt.core;
 
 /**
  * Event that a Qt install change has occured.
- * 
+ *
  * @since 2.1
  */
 public class QtInstallEvent {
@@ -22,7 +22,7 @@ public class QtInstallEvent {
 
 	/**
 	 * Type of the event
-	 * 
+	 *
 	 * @return type of the event
 	 */
 	public int getType() {
@@ -31,7 +31,7 @@ public class QtInstallEvent {
 
 	/**
 	 * Qt install involved in the event
-	 * 
+	 *
 	 * @return Qt install for the event
 	 */
 	public IQtInstall getInstall() {

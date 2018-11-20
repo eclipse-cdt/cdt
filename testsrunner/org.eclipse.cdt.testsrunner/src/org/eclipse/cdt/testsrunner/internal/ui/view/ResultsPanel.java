@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -138,7 +138,7 @@ public class ResultsPanel {
 
 	/**
 	 * Provides access to the tests hierarchy viewer.
-	 * 
+	 *
 	 * @return tests hierarchy viewer
 	 */
 	public TestsHierarchyViewer getTestsHierarchyViewer() {
@@ -147,7 +147,7 @@ public class ResultsPanel {
 
 	/**
 	 * Provides access to the messages viewer.
-	 * 
+	 *
 	 * @return messages viewer
 	 */
 	public MessagesViewer getMessagesViewer() {
@@ -172,7 +172,7 @@ public class ResultsPanel {
 
 	/**
 	 * Sets the widget orientation.
-	 * 
+	 *
 	 * @param orientation new widget orientation (vertical or horizontal; auto
 	 * is not supported)
 	 */
@@ -183,7 +183,7 @@ public class ResultsPanel {
 	/**
 	 * Returns whether only failed tests (and messages for them) should be
 	 * shown.
-	 * 
+	 *
 	 * @return filter state
 	 */
 	public boolean getShowFailedOnly() {
@@ -192,7 +192,7 @@ public class ResultsPanel {
 
 	/**
 	 * Sets whether only failed tests (and messages for them) should be shown.
-	 * 
+	 *
 	 * @param showFailedOnly new filter state
 	 */
 	public void setShowFailedOnly(boolean showFailedOnly) {
@@ -202,7 +202,7 @@ public class ResultsPanel {
 
 	/**
 	 * Restores the value of the checkable action.
-	 * 
+	 *
 	 * @param memento previously saved state to restore the action value from
 	 * @param key tag name that is used to restore the value
 	 * @param action action to restore
@@ -217,7 +217,7 @@ public class ResultsPanel {
 
 	/**
 	 * Restores the state of the widget.
-	 * 
+	 *
 	 * @param memento previously saved state
 	 */
 	public void restoreState(IMemento memento) {
@@ -234,7 +234,7 @@ public class ResultsPanel {
 
 	/**
 	 * Saves the state of the widget.
-	 * 
+	 *
 	 * @param memento where to save the state
 	 */
 	public void saveState(IMemento memento) {

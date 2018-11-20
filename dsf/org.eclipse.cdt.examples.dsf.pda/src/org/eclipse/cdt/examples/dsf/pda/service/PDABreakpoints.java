@@ -44,8 +44,8 @@ import org.osgi.framework.BundleContext;
  */
 public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 	/**
-	 * Context representing a PDA line breakpoint.  In PDA debugger, since there is only 
-	 * one file being debugged at a time, a breakpoint is uniquely identified using the 
+	 * Context representing a PDA line breakpoint.  In PDA debugger, since there is only
+	 * one file being debugged at a time, a breakpoint is uniquely identified using the
 	 * line number only.
 	 */
 	@Immutable
@@ -75,7 +75,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 	}
 
 	/**
-	 * Context representing a watch point.  In PDA debugger, a watchpoint is 
+	 * Context representing a watch point.  In PDA debugger, a watchpoint is
 	 * uniquely identified using the function and variable.
 	 */
 	@Immutable
@@ -120,11 +120,11 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 	private PDACommandControl fCommandControl;
 
 	// Breakpoints currently installed
-	private Set<IBreakpointDMContext> fBreakpoints = new HashSet<IBreakpointDMContext>();
+	private Set<IBreakpointDMContext> fBreakpoints = new HashSet<>();
 
 	/**
 	 * The service constructor
-	 * 
+	 *
 	 * @param session The debugging session this service belongs to.
 	 */
 	public PDABreakpoints(DsfSession session) {
@@ -186,16 +186,16 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 			DataRequestMonitor<IBreakpointDMContext> rm) {
 		Boolean enabled = (Boolean) attributes.get(IBreakpoint.ENABLED);
 		if (enabled != null && !enabled.booleanValue()) {
-			// If the breakpoint is disabled, just fail the request. 
+			// If the breakpoint is disabled, just fail the request.
 			PDAPlugin.failRequest(rm, REQUEST_FAILED, "Breakpoint is disabled");
 		} else {
 			String type = (String) attributes.get(ATTR_BREAKPOINT_TYPE);
 
 			if (PDA_LINE_BREAKPOINT.equals(type)) {
-				// Retrieve the PDA program context from the context given in the 
-				// argument.  This service is typically only called by the 
+				// Retrieve the PDA program context from the context given in the
+				// argument.  This service is typically only called by the
 				// breakpoints mediator, which was called with the program context
-				// in the services initialization sequence.  So checking if 
+				// in the services initialization sequence.  So checking if
 				// programCtx != null is mostly a formality.
 				PDAVirtualMachineDMContext programCtx = DMContexts.getAncestorOfType(context,
 						PDAVirtualMachineDMContext.class);
@@ -214,8 +214,8 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 
 	private void doInsertBreakpoint(PDAVirtualMachineDMContext programCtx, final Map<String, Object> attributes,
 			final DataRequestMonitor<IBreakpointDMContext> rm) {
-		// Compare the program path in the breakpoint with the path in the PDA 
-		// program context. Only insert the breakpoint if the program matches. 
+		// Compare the program path in the breakpoint with the path in the PDA
+		// program context. Only insert the breakpoint if the program matches.
 		String program = (String) attributes.get(ATTR_PROGRAM_PATH);
 		if (!programCtx.getProgram().equals(program)) {
 			PDAPlugin.failRequest(rm, REQUEST_FAILED, "Invalid file name");
@@ -229,8 +229,8 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 			return;
 		}
 
-		// Create a new breakpoint context object and check that it's not 
-		// installed already. PDA can only track a single breakpoint at a 
+		// Create a new breakpoint context object and check that it's not
+		// installed already. PDA can only track a single breakpoint at a
 		// given line, attempting to set the second breakpoint should fail.
 		final BreakpointDMContext breakpointCtx = new BreakpointDMContext(getSession().getId(),
 				fCommandControl.getContext(), line);
@@ -239,11 +239,11 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 			return;
 		}
 
-		// Add the new breakpoint context to the list of known breakpoints.  
-		// Adding it here, before the set command is completed will prevent 
-		// a possibility of a second breakpoint being installed in the same 
+		// Add the new breakpoint context to the list of known breakpoints.
+		// Adding it here, before the set command is completed will prevent
+		// a possibility of a second breakpoint being installed in the same
 		// location while this breakpoint is being processed.  It will also
-		// allow the breakpoint to be removed or updated even while it is 
+		// allow the breakpoint to be removed or updated even while it is
 		// still being processed here.
 		fBreakpoints.add(breakpointCtx);
 		fCommandControl.queueCommand(new PDASetBreakpointCommand(fCommandControl.getContext(), line, false),
@@ -284,7 +284,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 		Boolean isModification = (Boolean) attributes.get(PDAWatchpoint.MODIFICATION);
 		isModification = isModification != null ? isModification : Boolean.FALSE;
 
-		// Create a new watchpoint context object and check that it's not 
+		// Create a new watchpoint context object and check that it's not
 		// installed already. PDA can only track a single watchpoint for a given
 		// function::variable, attempting to set the second breakpoint should fail.
 		final WatchpointDMContext watchpointCtx = new WatchpointDMContext(getSession().getId(),
@@ -304,11 +304,11 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 			watchOperation = PDAWatchCommand.WatchOperation.WRITE;
 		}
 
-		// Add the new breakpoint context to the list of known breakpoints.  
-		// Adding it here, before the set command is completed will prevent 
-		// a possibility of a second breakpoint being installed in the same 
+		// Add the new breakpoint context to the list of known breakpoints.
+		// Adding it here, before the set command is completed will prevent
+		// a possibility of a second breakpoint being installed in the same
 		// location while this breakpoint is being processed.  It will also
-		// allow the breakpoint to be removed or updated even while it is 
+		// allow the breakpoint to be removed or updated even while it is
 		// still being processed here.
 		fBreakpoints.add(watchpointCtx);
 		fCommandControl.queueCommand(
@@ -322,7 +322,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 
 					@Override
 					protected void handleFailure() {
-						// Since the command failed, we need to remove the breakpoint from 
+						// Since the command failed, we need to remove the breakpoint from
 						// the existing breakpoint set.
 						fBreakpoints.remove(watchpointCtx);
 						super.handleFailure();
@@ -347,8 +347,8 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 	}
 
 	private void doRemoveBreakpoint(BreakpointDMContext bpCtx, RequestMonitor rm) {
-		// Remove the breakpoint from the table right away, so that even when 
-		// the remove is being processed, a new breakpoint can be created at the same 
+		// Remove the breakpoint from the table right away, so that even when
+		// the remove is being processed, a new breakpoint can be created at the same
 		// location.
 		fBreakpoints.remove(bpCtx);
 
@@ -384,14 +384,14 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 				return;
 			}
 
-			// PDA debugger can only track one watchpoint in the same location, 
-			// so we can simply remove the existing context from the set and 
-			// call insert again.  
+			// PDA debugger can only track one watchpoint in the same location,
+			// so we can simply remove the existing context from the set and
+			// call insert again.
 			fBreakpoints.remove(bpCtx);
 			doInsertWatchpoint(attributes, new DataRequestMonitor<IBreakpointDMContext>(getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
-					// The inserted watchpoint context will equal the 
+					// The inserted watchpoint context will equal the
 					// current context.
 					assert bpCtx.equals(getData());
 					rm.done();

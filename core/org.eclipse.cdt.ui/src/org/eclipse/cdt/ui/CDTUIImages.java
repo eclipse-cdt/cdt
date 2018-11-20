@@ -21,17 +21,17 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Images for {@link org.eclipse.cdt.utils.ui.controls.FileListControl}.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
- * 
+ *
  * @deprecated as of CDT 8.0. Use {@link CDTSharedImages}.
  */
 @Deprecated
 public class CDTUIImages {
 	private static final String ICONS = "icons/"; //$NON-NLS-1$
 	/** Converter from CPluginImages key to CDTSharedImages key */
-	private static Map<String, String> fPathMap = new HashMap<String, String>();
+	private static Map<String, String> fPathMap = new HashMap<>();
 
 	private static final String NAME_PREFIX = CUIPlugin.PLUGIN_ID + '.';
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
@@ -67,10 +67,10 @@ public class CDTUIImages {
 	/**
 	 * Get an image from internal image registry. The image is managed by the registry and
 	 * must not be disposed by the caller.
-	 * 
+	 *
 	 * @param key - one of {@code CDTUIImages.IMG_} constants.
 	 * @return the image corresponding the given key.
-	 * 
+	 *
 	 * @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImage(String)}.
 	 */
 	@Deprecated

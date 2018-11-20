@@ -10,8 +10,6 @@
  */
 package org.eclipse.cdt.qt.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -22,6 +20,8 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorPart;
+
+import junit.framework.TestCase;
 
 public class QtContentAssistantTests extends TestCase {
 
@@ -187,5 +187,5 @@ public class QtContentAssistantTests extends TestCase {
 		public CharSequence computeIdentifierPrefix() throws BadLocationException {
 			return null;
 		}
-	};
+	}
 }

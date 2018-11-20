@@ -51,7 +51,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 
 	/**
 	 * Collects all nodes with given name, passing the filter.
-	 * 
+	 *
 	 * @param linkage
 	 * @param name
 	 * @param prefixLookup
@@ -131,7 +131,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 
 	/**
 	 * Return true to continue the visit.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected boolean addNode(PDOMNamedNode node) throws CoreException {
 		if ((contentAssistMatcher == null) || contentAssistMatcher.match(node.getDBName().getChars())) {

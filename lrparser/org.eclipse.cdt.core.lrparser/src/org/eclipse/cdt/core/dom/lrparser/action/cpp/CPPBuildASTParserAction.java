@@ -13,18 +13,61 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.cpp;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.*;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.findFirstAndRemove;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_ColonColon;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_Completion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_EndOfCompletion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LeftBracket;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LeftParen;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_RightBracket;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_RightParen;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_SemiColon;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_auto;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_bool;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_char;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_class;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_const;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_delete;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_double;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_enum;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_explicit;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_extern;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_float;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_for;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_friend;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_identifier;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_inline;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_int;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_long;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_mutable;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_new;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_private;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_protected;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_public;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_register;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_short;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_signed;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_static;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_struct;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_typedef;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_typename;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_union;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_unsigned;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_virtual;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_void;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_volatile;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_wchar_t;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
-import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -118,11 +161,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousTemplateArgum
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
+import lpg.lpgjavaruntime.IToken;
+
 /**
- * Semantic actions that build the AST during the parse. 
+ * Semantic actions that build the AST during the parse.
  * These are the actions that are specific to the C++ parser, the superclass
  * contains actions that can be shared with the C99 parser.
- * 
+ *
  * @author Mike Kucera
  */
 @SuppressWarnings("restriction")
@@ -137,7 +182,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	protected final ICPPSecondaryParserFactory parserFactory;
 
 	/** Stack that provides easy access to the current class name, used to disambiguate declarators. */
-	protected final LinkedList<IASTName> classNames = new LinkedList<IASTName>();
+	protected final LinkedList<IASTName> classNames = new LinkedList<>();
 
 	/**
 	 * @param parser
@@ -283,7 +328,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void consumeExpressionFieldReference(boolean isPointerDereference, boolean hasTemplateKeyword) {
 		IASTName name = (IASTName) astStack.pop();
@@ -452,7 +497,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	/**
 	 * template_id
 	 *     ::= identifier_name '<' <openscope-ast> template_argument_list_opt '>'
-	 *     
+	 *
 	 * operator_function_id
 	 *     ::= operator_id '<' <openscope-ast> template_argument_list_opt '>'
 	 */
@@ -772,13 +817,13 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	/**
 	 * nested_name_specifier
 	 *     ::= class_or_namespace_name '::' nested_name_specifier_with_template
-	 *       | class_or_namespace_name '::' 
+	 *       | class_or_namespace_name '::'
 	 *
 	 * nested_name_specifier_with_template
 	 *     ::= class_or_namespace_name_with_template '::' nested_name_specifier_with_template
 	 *       | class_or_namespace_name_with_template '::'
-	 *       
-	 *        
+	 *
+	 *
 	 * Creates and updates a list of the nested names on the stack.
 	 * Important: the names in the list are in *reverse* order,
 	 * this is because the actions fire in reverse order.
@@ -789,7 +834,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if (hasNested)
 			names = (LinkedList<IASTName>) astStack.pop();
 		else
-			names = new LinkedList<IASTName>();
+			names = new LinkedList<>();
 
 		IASTName name = (IASTName) astStack.pop();
 		names.add(name);
@@ -804,7 +849,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * The template keyword is optional but must be the leftmost token.
-	 * 
+	 *
 	 * This just throws away the template keyword.
 	 */
 	public void consumeNameWithTemplateKeyword() {
@@ -829,7 +874,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * Creates a qualified name from a list of names (that must be in reverse order).
-	 * 
+	 *
 	 * @param names List of name nodes in reverse order
 	 */
 	private IASTName createQualifiedName(LinkedList<IASTName> names, int startOffset, int endOffset,
@@ -855,9 +900,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * Consumes grammar sub-rules of the following form:
-	 * 
+	 *
 	 * dcolon_opt nested_name_specifier_opt keyword_opt name
-	 * 
+	 *
 	 * Where name is any rule that produces an IASTName node on the stack.
 	 * Does not place the resulting node on the stack, returns it instead.
 	 */
@@ -969,7 +1014,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	/**
 	 * original_namespace_definition
 	 *     ::= 'namespace' identifier_name '{' <openscope-ast> declaration_seq_opt '}'
-	 *    
+	 *
 	 * extension_namespace_definition
 	 *     ::= 'namespace' original_namespace_name '{' <openscope-ast> declaration_seq_opt '}'
 	 *
@@ -1055,7 +1100,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	/**
 	 * Sets a token specifier.
 	 * Needs to be overrideable for new decl spec keywords.
-	 * 
+	 *
 	 * @param token Allows subclasses to override this method and use any
 	 * object to determine how to set a specifier.
 	 */
@@ -1180,7 +1225,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	//	 */
 	public void consumeDeclarationSpecifiersTypeName() {
 		List<Object> topScope = astStack.closeScope();
-		// There's a name somewhere on the stack, find it		
+		// There's a name somewhere on the stack, find it
 		IASTName typeName = findFirstAndRemove(topScope, IASTName.class);
 
 		// TODO what does the second argument mean?
@@ -1207,7 +1252,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * elaborated_type_specifier
 	 *     ::= class_keyword dcolon_opt nested_name_specifier_opt identifier_name
 	 *       | class_keyword dcolon_opt nested_name_specifier_opt template_opt template_id_name
-	 *       | 'enum' dcolon_opt nested_name_specifier_opt identifier_name      
+	 *       | 'enum' dcolon_opt nested_name_specifier_opt identifier_name
 	 */
 	public void consumeTypeSpecifierElaborated(boolean hasOptionalTemplateKeyword) {
 		IASTName name = subRuleQualifiedName(hasOptionalTemplateKeyword);
@@ -1240,7 +1285,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 *     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
 	 */
 	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
-		List<Object> declarators = hasDeclaratorList ? astStack.closeScope() : new ArrayList<Object>();
+		List<Object> declarators = hasDeclaratorList ? astStack.closeScope() : new ArrayList<>();
 		ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) astStack.pop(); // may be null
 
 		List<IToken> ruleTokens = stream.getRuleTokens();
@@ -1257,7 +1302,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			IASTName name = createName(stream.getLeftIToken());
 			declSpec = nodeFactory.newTypedefNameSpecifier(name);
 			ParserUtil.setOffsetAndLength(declSpec, offset(name), length(name));
-			declarators = new ArrayList<Object>(); // throw away the bogus declarator
+			declarators = new ArrayList<>(); // throw away the bogus declarator
 		}
 
 		// can happen if implicit int is used
@@ -1300,12 +1345,12 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		// simple ambiguity resolutions
 		//		if(declSpecifier.isFriend())
 		//			resolveAmbiguousDeclaratorsToFunction(declaration);
-		//		
+		//
 		//		if(declSpecifier instanceof IASTSimpleDeclSpecifier) {
 		//			IASTSimpleDeclSpecifier simple = (IASTSimpleDeclSpecifier) declSpecifier;
 		//			if(simple.getType() == IASTSimpleDeclSpecifier.t_void && declaration.getDeclarators()[0].getPointerOperators().length == 0)
 		//				resolveAmbiguousDeclaratorsToFunction(declaration);
-		//			
+		//
 		//		}
 
 		astStack.push(declaration);
@@ -1597,7 +1642,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * function_direct_declarator
-	 *     ::= basic_direct_declarator '(' <openscope-ast> parameter_declaration_clause ')' 
+	 *     ::= basic_direct_declarator '(' <openscope-ast> parameter_declaration_clause ')'
 	 *         <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
 	 */
 	public void consumeDirectDeclaratorFunctionDeclarator(boolean hasDeclarator) {
@@ -1689,12 +1734,12 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * function_definition
-	 *     ::= declaration_specifiers_opt function_direct_declarator 
+	 *     ::= declaration_specifiers_opt function_direct_declarator
 	 *         <openscope-ast> ctor_initializer_list_opt function_body
-	 *         
-	 *       | declaration_specifiers_opt function_direct_declarator 
+	 *
+	 *       | declaration_specifiers_opt function_direct_declarator
 	 *         'try' <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq
-	 *         
+	 *
 	 */
 	public void consumeFunctionDefinition(boolean isTryBlockDeclarator) {
 		List<Object> handlers = isTryBlockDeclarator ? astStack.closeScope() : Collections.emptyList();
@@ -1772,7 +1817,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * type_parameter
-	 *     ::= 'class' identifier_name_opt -- simple type template parameter     
+	 *     ::= 'class' identifier_name_opt -- simple type template parameter
 	 *       | 'class' identifier_name_opt '=' type_id
 	 *       | 'typename' identifier_name_opt
 	 *       | 'typename' identifier_name_opt '=' type_id
@@ -1808,15 +1853,15 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	/**
 	 * Simple type template parameters using the 'class' keyword are being parsed
 	 * wrong due to an ambiguity between type_parameter and parameter_declaration.
-	 * 
+	 *
 	 * eg) template <class T>
-	 * 
+	 *
 	 * The 'class T' part is being parsed as an elaborated type specifier instead
 	 * of a simple type template parameter.
-	 * 
+	 *
 	 * This method detects the incorrect parse, throws away the incorrect AST fragment,
 	 * and replaces it with the correct AST fragment.
-	 * 
+	 *
 	 * Yes its a hack.
 	 */
 	public void consumeTemplateParamterDeclaration() {

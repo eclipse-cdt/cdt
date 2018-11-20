@@ -280,7 +280,7 @@ public class CProject extends Openable implements ICProject {
 	@Override
 	public Map<String, String> getOptions(boolean inheritCCoreOptions) {
 		// initialize to the defaults from CCorePlugin options pool
-		Map<String, String> options = inheritCCoreOptions ? CCorePlugin.getOptions() : new HashMap<String, String>(5);
+		Map<String, String> options = inheritCCoreOptions ? CCorePlugin.getOptions() : new HashMap<>(5);
 
 		IEclipsePreferences preferences = getPreferences();
 		if (preferences == null)
@@ -629,7 +629,7 @@ public class CProject extends Openable implements ICProject {
 
 	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
 		List<ISourceRoot> sourceRoots = computeSourceRoots();
-		List<ICContainer> children = new ArrayList<ICContainer>(sourceRoots.size());
+		List<ICContainer> children = new ArrayList<>(sourceRoots.size());
 		children.addAll(sourceRoots);
 
 		boolean projectIsSourceRoot = false;

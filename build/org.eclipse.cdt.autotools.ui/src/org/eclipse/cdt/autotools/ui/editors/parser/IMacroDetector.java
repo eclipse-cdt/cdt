@@ -15,7 +15,7 @@
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
 /**
- * Clients implement this interface to detect whether a given identifier 
+ * Clients implement this interface to detect whether a given identifier
  * represents a known or potential macro in m4 or configure.ac text.
  * @author eswartz
  *

@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.rewrite.ITrackedNodePosition;
-
 import org.eclipse.cdt.internal.corext.fix.LinkedProposalPositionGroup.PositionInformation;
 
 public class LinkedProposalModel {
@@ -32,7 +31,7 @@ public class LinkedProposalModel {
 		}
 
 		if (fPositionGroups == null) {
-			fPositionGroups = new HashMap<String, LinkedProposalPositionGroup>();
+			fPositionGroups = new HashMap<>();
 		}
 		fPositionGroups.put(positionGroup.getGroupId(), positionGroup);
 	}

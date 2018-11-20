@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.cdt.core.model.ITranslationUnitHolder;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * A text editor whose contents are represented by the C model.

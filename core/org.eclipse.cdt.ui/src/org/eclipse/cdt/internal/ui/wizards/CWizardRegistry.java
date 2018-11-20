@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
@@ -24,8 +25,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Convenience class for drop-in C/C++ Wizard contributions.
@@ -49,9 +48,9 @@ public class CWizardRegistry {
 
 	/**
 	 * Checks if wizard supports C projects.
-	 * 
+	 *
 	 * @param element the wizard element
-	 * 
+	 *
 	 * @return <code>true</code> if the given wizard element applies to a C Project
 	 */
 	public static boolean isCProjectWizard(IConfigurationElement element) {
@@ -61,9 +60,9 @@ public class CWizardRegistry {
 
 	/**
 	 * Checks if wizard supports C++ project.
-	 * 
+	 *
 	 * @param element the wizard element
-	 * 
+	 *
 	 * @return <code>true</code> if the given wizard element applies to a C++ Project
 	 */
 	public static boolean isCCProjectWizard(IConfigurationElement element) {
@@ -73,7 +72,7 @@ public class CWizardRegistry {
 
 	/**
 	 * Returns IDs of all C/C++ project wizards contributed to the workbench.
-	 * 
+	 *
 	 * @return an array of wizard ids
 	 */
 	public static String[] getProjectWizardIDs() {
@@ -94,11 +93,11 @@ public class CWizardRegistry {
 	 *         </description>
 	 *      </wizard>
 	 *
-	 * 
+	 *
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getProjectWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IConfigurationElement[] elements = getAllWizardElements();
 		for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -140,7 +139,7 @@ public class CWizardRegistry {
 
 	/**
 	 * Returns IDs of all C/C++ type wizards contributed to the workbench.
-	 * 
+	 *
 	 * @return an array of wizard ids
 	 */
 	public static String[] getTypeWizardIDs() {
@@ -156,16 +155,16 @@ public class CWizardRegistry {
 	 *         id="xx.MyCWizard">
 	 *         <class class="org.xx.MyCWizard">
 	 *             <parameter name="ctype" value="true" />
-	 *         </class> 
+	 *         </class>
 	 *         <description>
 	 *             My C Wizard
 	 *         </description>
 	 *      </wizard>
-	 * 
+	 *
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getTypeWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IConfigurationElement[] elements = getAllWizardElements();
 		for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -200,7 +199,7 @@ public class CWizardRegistry {
 
 	/**
 	 * Returns IDs of all C/C++ file wizards contributed to the workbench.
-	 * 
+	 *
 	 * @return an array of wizard ids
 	 */
 	public static String[] getFileWizardIDs() {
@@ -216,16 +215,16 @@ public class CWizardRegistry {
 	 *         id="xx.MyCWizard">
 	 *         <class class="org.xx.MyCFileWizard">
 	 *             <parameter name="cfile" value="true" />
-	 *         </class> 
+	 *         </class>
 	 *         <description>
 	 *             My C File Wizard
 	 *         </description>
 	 *      </wizard>
-	 * 
+	 *
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getFileWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IConfigurationElement[] elements = getAllWizardElements();
 		for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -260,7 +259,7 @@ public class CWizardRegistry {
 
 	/**
 	 * Returns IDs of all C/C++ folder wizards contributed to the workbench.
-	 * 
+	 *
 	 * @return an array of wizard ids
 	 */
 	public static String[] getFolderWizardIDs() {
@@ -276,16 +275,16 @@ public class CWizardRegistry {
 	 *         id="xx.MyCWizard">
 	 *         <class class="org.xx.MyCFolderWizard">
 	 *             <parameter name="cfolder" value="true" />
-	 *         </class> 
+	 *         </class>
 	 *         <description>
 	 *             My C Folder Wizard
 	 *         </description>
 	 *      </wizard>
-	 * 
+	 *
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getFolderWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IConfigurationElement[] elements = getAllWizardElements();
 		for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -319,7 +318,7 @@ public class CWizardRegistry {
 	}
 
 	private static String[] getWizardIDs(IConfigurationElement[] elements) {
-		List<String> idList = new ArrayList<String>();
+		List<String> idList = new ArrayList<>();
 
 		// add C wizards first
 		for (int i = 0; i < elements.length; ++i) {
@@ -346,8 +345,8 @@ public class CWizardRegistry {
 	}
 
 	private static IAction[] createActions(IConfigurationElement[] elements) {
-		List<String> idList = new ArrayList<String>();
-		List<IAction> actionList = new ArrayList<IAction>();
+		List<String> idList = new ArrayList<>();
+		List<IAction> actionList = new ArrayList<>();
 
 		// add C wizards first
 		for (int i = 0; i < elements.length; ++i) {
@@ -408,11 +407,11 @@ public class CWizardRegistry {
 	 *             My C Wizard
 	 *         </description>
 	 *      </wizard>
-	 * 
+	 *
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getAllWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
 				PL_NEW);
 		if (extensionPoint != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,7 +59,7 @@ public class TestingSession implements ITestingSession {
 	/**
 	 * Total tests counter. It is -1 by default, that means that total tests
 	 * count is not available.
-	 * 
+	 *
 	 * @see getTotalCounter()
 	 */
 	private int totalCounter = -1;
@@ -70,22 +70,22 @@ public class TestingSession implements ITestingSession {
 	/**
 	 * Test counters map by test status. They are used to quickly provide simple
 	 * statistics without model scanning.
-	 * 
+	 *
 	 */
-	private Map<ITestItem.Status, Integer> statusCounters = new EnumMap<ITestItem.Status, Integer>(
+	private Map<ITestItem.Status, Integer> statusCounters = new EnumMap<>(
 			ITestItem.Status.class);
 
 	/**
 	 * The flag stores whether the testing session contains errors at the
 	 * moment.
-	 * 
+	 *
 	 * @see hasErrors()
 	 */
 	private boolean hasErrors = false;
 
 	/**
 	 * The flag stores whether the testing session was stopped by user.
-	 * 
+	 *
 	 * @see wasStopped()
 	 */
 	private boolean wasStopped = false;
@@ -137,7 +137,7 @@ public class TestingSession implements ITestingSession {
 
 	/**
 	 * The constructor.
-	 * 
+	 *
 	 * @param launch connected launch object
 	 * @param testsRunnerProviderInfo the information about the tests runner
 	 * @param previousSession is used to determine total tests count & for tests
@@ -201,7 +201,7 @@ public class TestingSession implements ITestingSession {
 
 	/**
 	 * Starts the processing of the test module output.
-	 * 
+	 *
 	 * @param inputStream test module output stream
 	 */
 	public void run(InputStream inputStream) {

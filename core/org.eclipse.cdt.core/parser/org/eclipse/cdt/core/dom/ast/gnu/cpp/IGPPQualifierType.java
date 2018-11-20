@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 public interface IGPPQualifierType extends IQualifierType {
 	/**
 	 * is this a restrict type
-	 * 
+	 *
 	 */
 	public boolean isRestrict();
 }

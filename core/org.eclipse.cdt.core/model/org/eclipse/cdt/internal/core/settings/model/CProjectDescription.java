@@ -52,7 +52,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	private volatile IProject fProject;
 	private final ICSettingsStorage fStorage;
 	private final ICStorageElement fRootStorageElement;
-	private final HashMap<String, ICConfigurationDescription> fCfgMap = new LinkedHashMap<String, ICConfigurationDescription>();
+	private final HashMap<String, ICConfigurationDescription> fCfgMap = new LinkedHashMap<>();
 	private boolean fIsReadOnly;
 	private boolean fIsModified;
 	private Map<QualifiedName, Object> fPropertiesMap;

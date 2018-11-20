@@ -45,12 +45,12 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	private ArrayList<MapEntrySourceContainer> fContainers;
 	private boolean fIsMappingWithBackendEnabled = true;
 
-	/** 
-	 * Constructor for MappingSourceContainer. 
+	/**
+	 * Constructor for MappingSourceContainer.
 	 */
 	public MappingSourceContainer(String name) {
 		fName = name;
-		fContainers = new ArrayList<MapEntrySourceContainer>();
+		fContainers = new ArrayList<>();
 	}
 
 	/* (non-Javadoc)
@@ -90,7 +90,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 		CoreException single = null;
 		MultiStatus multiStatus = null;
 		if (isFindDuplicates()) {
-			results = new ArrayList<Object>();
+			results = new ArrayList<>();
 		}
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];

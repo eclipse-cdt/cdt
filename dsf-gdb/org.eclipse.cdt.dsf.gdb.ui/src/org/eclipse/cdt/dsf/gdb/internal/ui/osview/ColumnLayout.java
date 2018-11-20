@@ -25,8 +25,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
  */
 class ColumnLayout {
 	private String fResourceClass;
-	private Map<String, Boolean> fVisible = new HashMap<String, Boolean>();
-	private Map<String, Integer> fWidth = new HashMap<String, Integer>();
+	private Map<String, Boolean> fVisible = new HashMap<>();
+	private Map<String, Integer> fWidth = new HashMap<>();
 	private Integer fSortColumn = null;
 	private Integer fSortDirection = null;
 

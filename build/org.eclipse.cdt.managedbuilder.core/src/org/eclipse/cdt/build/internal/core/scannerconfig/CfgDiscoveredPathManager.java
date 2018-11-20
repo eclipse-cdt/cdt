@@ -219,7 +219,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 				.getSettingInfos(cInfo.fLoadContext.getConfiguration().getOwner().getProject(), data, info, true);
 
 		CResourceData rcDatas[] = data.getResourceDatas();
-		Map<IPath, CResourceData> rcDataMap = new HashMap<IPath, CResourceData>();
+		Map<IPath, CResourceData> rcDataMap = new HashMap<>();
 		CResourceData rcData;
 		for (int i = 0; i < rcDatas.length; i++) {
 			rcData = rcDatas[i];

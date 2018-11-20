@@ -19,7 +19,7 @@ public interface IQmlStatementBlock extends IQmlASTNode {
 	@Override
 	default public String getType() {
 		return "QMLStatementBlock"; //$NON-NLS-1$
-	};
+	}
 
 	public List<IJSStatement> getBody();
 }

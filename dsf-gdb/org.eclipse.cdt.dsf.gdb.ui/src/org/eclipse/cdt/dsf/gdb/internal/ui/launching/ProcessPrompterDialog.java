@@ -151,7 +151,7 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 
 	/**
 	 * Validate only upper selected elements. Lower list is always disabled.
-	 * 
+	 *
 	 * @see #createLowerList(Composite)
 	 */
 	@Override

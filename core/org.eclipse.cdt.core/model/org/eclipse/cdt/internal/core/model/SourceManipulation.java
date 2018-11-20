@@ -279,7 +279,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 			// optional: parameters
 			String[] mementoParams = {};
 			if (memento.hasMoreTokens()) {
-				List<String> params = new ArrayList<String>();
+				List<String> params = new ArrayList<>();
 				do {
 					token = memento.nextToken();
 					if (token.charAt(0) != CEM_PARAMETER) {

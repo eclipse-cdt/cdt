@@ -11,7 +11,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
- *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 240208)   
+ *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 240208)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
@@ -66,15 +66,15 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 /**
  * Abstract implementation of a container view model node.
  * Clients need to implement {@link #updateLabelInSessionThread(ILabelUpdate[])}.
- * 
+ *
  * @since 1.1
  */
 public abstract class AbstractContainerVMNode extends AbstractExecutionContextVMNode
 		implements IElementLabelProvider, IElementPropertiesProvider {
 	/**
 	 * The label provider delegate.  This VM node will delegate label updates to this provider
-	 * which can be created by sub-classes. 
-	 *  
+	 * which can be created by sub-classes.
+	 *
 	 * @since 2.0
 	 */
 	private IElementLabelProvider fLabelProvider;
@@ -85,11 +85,11 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 	}
 
 	/**
-	 * Creates the label provider delegate.  This VM node will delegate label 
-	 * updates to this provider which can be created by sub-classes.   
-	 *  
-	 * @return Returns the label provider for this node. 
-	 *  
+	 * Creates the label provider delegate.  This VM node will delegate label
+	 * updates to this provider which can be created by sub-classes.
+	 *
+	 * @return Returns the label provider for this node.
+	 *
 	 * @since 2.0
 	 */
 	protected IElementLabelProvider createLabelProvider() {
@@ -112,7 +112,7 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 							@Override
 							public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 								return Boolean.TRUE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
-							};
+							}
 						},
 						new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET)), }));
 
@@ -126,7 +126,7 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 
 	/**
 	 * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	@Override
@@ -323,22 +323,22 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 		IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>) e).getDMContext() : null;
 
 		if (e instanceof IContainerResumedDMEvent) {
-			// Container resumed: 
-			// - If not stepping, update the container and the execution 
-			// contexts under it.  
-			// - If stepping, do nothing to avoid too many updates.  If a 
-			// time-out is reached before the step completes, the 
+			// Container resumed:
+			// - If not stepping, update the container and the execution
+			// contexts under it.
+			// - If stepping, do nothing to avoid too many updates.  If a
+			// time-out is reached before the step completes, the
 			// ISteppingTimedOutEvent will trigger a full refresh.
 			if (((IContainerResumedDMEvent) e).getReason() != IRunControl.StateChangeReason.STEP) {
 				parentDelta.addNode(createVMContext(((IDMEvent<?>) e).getDMContext()), IModelDelta.CONTENT);
 			}
 		} else if (e instanceof IContainerSuspendedDMEvent) {
-			// Container suspended.  Do nothing here to give the stack the 
-			// priority in updating. The container and threads will update as 
-			// a result of FullStackRefreshEvent. 
+			// Container suspended.  Do nothing here to give the stack the
+			// priority in updating. The container and threads will update as
+			// a result of FullStackRefreshEvent.
 		} else if (e instanceof SteppingTimedOutEvent) {
-			// Stepping time-out indicates that a step operation is taking 
-			// a long time, and the view needs to be refreshed to show 
+			// Stepping time-out indicates that a step operation is taking
+			// a long time, and the view needs to be refreshed to show
 			// the user that the program is running.
 			// If the step was issued for the whole container refresh
 			// the whole container.
@@ -347,8 +347,8 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 			}
 		} else if (e instanceof IExitedDMEvent) {
 			// An exited event could either be for a thread within a container
-			// or for the container itself.  
-			// If a container exited, refresh the parent element so that the 
+			// or for the container itself.
+			// If a container exited, refresh the parent element so that the
 			// container may be removed.
 			// If a thread exited within a container, refresh that container.
 			if (dmc instanceof IContainerDMContext) {
@@ -361,9 +361,9 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 			}
 		} else if (e instanceof IStartedDMEvent) {
 			// A started event could either be for a thread within a container
-			// or for the container itself.  
-			// If a container started, issue an expand and select event to 
-			// show the threads in the new container. 
+			// or for the container itself.
+			// If a container started, issue an expand and select event to
+			// show the threads in the new container.
 			// Note: the EXPAND flag implies refreshing the parent element.
 			if (dmc instanceof IContainerDMContext) {
 				parentDelta.addNode(createVMContext(dmc), IModelDelta.EXPAND | IModelDelta.SELECT);
@@ -374,13 +374,13 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 				}
 			}
 		} else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
-			// Model Proxy install event is generated when the model is first 
+			// Model Proxy install event is generated when the model is first
 			// populated into the view.  This happens when a new debug session
-			// is started or when the view is first opened.  
-			// In both cases, if there are already thread containers in the debug model, 
+			// is started or when the view is first opened.
+			// In both cases, if there are already thread containers in the debug model,
 			// the desired user behavior is to show the containers and to select
-			// the first thread.  
-			// If the container is suspended, do not select it, instead, 
+			// the first thread.
+			// If the container is suspended, do not select it, instead,
 			// one of its threads will be selected.
 			getContainerVMCForModelProxyInstallEvent(parentDelta,
 					new DataRequestMonitor<VMContextInfo>(getExecutor(), requestMonitor) {
@@ -421,14 +421,14 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 	}
 
 	/**
-	 * Builds a delta in response to automatic refresh event generated after 
-	 * every suspend event.  
+	 * Builds a delta in response to automatic refresh event generated after
+	 * every suspend event.
 	 * <p>
-	 * As opposed to the StackFrameVMNode handling of the refresh event, the 
-	 * container handles only the refresh events for container suspended events, 
+	 * As opposed to the StackFrameVMNode handling of the refresh event, the
+	 * container handles only the refresh events for container suspended events,
 	 * and it refreshes the entire container.
 	 * <p>
-	 * The default behavior is to check if the thread is still stepping or 
+	 * The default behavior is to check if the thread is still stepping or
 	 * suspended and refresh the stack trace.
 	 */
 	protected void buildDeltaForFullStackRefreshEvent(final IContainerDMContext containerCtx,
@@ -445,7 +445,7 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 						return;
 					}
 
-					// Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
+					// Refresh the whole list of stack frames unless the target is already stepping the next command.  In
 					// which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
 					// refresh the whole stack trace with every step would slow down stepping too much.
 					boolean isStepping = false;

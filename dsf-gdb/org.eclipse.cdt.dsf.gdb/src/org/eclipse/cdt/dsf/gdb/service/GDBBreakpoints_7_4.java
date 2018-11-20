@@ -45,9 +45,9 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Breakpoints service for GDB 7.4.
- * Using breakpoint notifications introduced in 7.4 supports synchronization between the breakpoints 
+ * Using breakpoint notifications introduced in 7.4 supports synchronization between the breakpoints
  * set from the GDB console and the Breakpoints view as well as the tracepoints reported form trace files.
- * 
+ *
  * @since 4.2
  */
 public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventListener {
@@ -172,7 +172,7 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 			final DataRequestMonitor<IBreakpointDMContext> finalRm) {
 		final MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
 		if (bs != null) {
-			// Skip the breakpoints set from the console or from outside of Eclipse 
+			// Skip the breakpoints set from the console or from outside of Eclipse
 			// because they are already installed on the target.
 			bs.getTargetBreakpoint(context, attributes, new DataRequestMonitor<MIBreakpoint>(getExecutor(), finalRm) {
 				@Override
@@ -203,7 +203,7 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 			final DataRequestMonitor<IBreakpointDMContext> drm) {
 		final MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
 		if (bs != null) {
-			// Skip the breakpoints set from the console or from outside of Eclipse 
+			// Skip the breakpoints set from the console or from outside of Eclipse
 			// because they are already installed on the target.
 			bs.getTargetBreakpoint(context, attributes, new DataRequestMonitor<MIBreakpoint>(getExecutor(), drm) {
 				@Override
@@ -234,7 +234,7 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 			final DataRequestMonitor<IBreakpointDMContext> drm) {
 		final MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
 		if (bs != null) {
-			// Skip the breakpoints set from the console or from outside of Eclipse 
+			// Skip the breakpoints set from the console or from outside of Eclipse
 			// because they are already installed on the target.
 			bs.getTargetBreakpoint(context, attributes, new DataRequestMonitor<MIBreakpoint>(getExecutor(), drm) {
 				@Override

@@ -56,7 +56,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Returns the default pin element color descriptor.
-	 * 
+	 *
 	 * @return the color descriptor
 	 */
 	public static IPinElementColorDescriptor getDefaultPinElementColorDescriptor() {
@@ -65,7 +65,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Encodes cloned part secondary id.
-	 * 
+	 *
 	 * @param secondaryId the part's secondary id.
 	 * @return an encoded part secondary id, can be <code>null</code>.
 	 */
@@ -75,7 +75,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Decodes cloned part secondary id.
-	 * 
+	 *
 	 * @param secondaryId the part's secondary id
 	 * @return a decoded part secondary id
 	 */
@@ -87,7 +87,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Determine whether the view part is a cloned part.
-	 * 
+	 *
 	 * @param part the view part
 	 * @return true if it is a cloned part
 	 */
@@ -98,7 +98,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Determine whether the view reference is a cloned part.
-	 *  
+	 *
 	 * @param ref the view reference
 	 * @return true if it is a cloned part
 	 */
@@ -109,7 +109,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Returns whether the id has the <code>PIN_CLONE_VIEW_TAG</code>.
-	 * 
+	 *
 	 * @param id view id
 	 * @return true if it has the tag, otherwise false
 	 */
@@ -119,7 +119,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Set the part title to include the secondary id as part of the title.
-	 * 
+	 *
 	 * @param part the view part
 	 */
 	public static void setPartTitle(IViewPart part) {
@@ -152,7 +152,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Set the part content description.
-	 * 
+	 *
 	 * @param part the part
 	 * @param description the new description
 	 */
@@ -170,7 +170,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Returns whether the debug context selection is pinnable.
-	 * 
+	 *
 	 * @param part the workbench part were the pin action is triggered
 	 * @param selection the debug context selection
 	 * @return true if all elements are pinnable, otherwise false
@@ -192,9 +192,9 @@ public class PinCloneUtils {
 					}
 				}
 
-				// TODO: support for CDI				
+				// TODO: support for CDI
 				//				/* support CDebugElement */
-				//				if (!pinnable && (element instanceof ICDebugElement)) {					
+				//				if (!pinnable && (element instanceof ICDebugElement)) {
 				//					pinnable = true;
 				//				}
 
@@ -209,7 +209,7 @@ public class PinCloneUtils {
 	/**
 	 * Returns the pin element color descriptor for the set of handles. If there are multiple pinned handles,
 	 * then return the default element color descriptor.
-	 * 
+	 *
 	 * @param handles the pinned debug handles
 	 * @param debugContext the debug context to compare with against the handles
 	 * @return the element color descriptor, can be <code>null</code>;
@@ -248,7 +248,7 @@ public class PinCloneUtils {
 
 	/**
 	 * Returns whether the debug context is pinned to any one of these handles.
-	 * 
+	 *
 	 * @param handles the handles
 	 * @param debugContext the debug context
 	 * @return true if pinned to any one of these handles

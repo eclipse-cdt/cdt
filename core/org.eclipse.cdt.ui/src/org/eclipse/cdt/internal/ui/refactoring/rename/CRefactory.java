@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2018 Wind River Systems, Inc. and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  ******************************************************************************/
@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,10 +29,6 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ide.IDE;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IWorkingCopy;
 
 /**
  * Serves to launch the various refactorings.
@@ -99,7 +98,7 @@ public class CRefactory {
 
 	/**
 	 * Rename a resource selected in the navigator
-	 * 
+	 *
 	 * @param shell
 	 * @param selected
 	 */
@@ -119,7 +118,7 @@ public class CRefactory {
 
 	public String[] getCCppPatterns() {
 		IContentType[] cts = Platform.getContentTypeManager().getAllContentTypes();
-		HashSet<String> all = new HashSet<String>();
+		HashSet<String> all = new HashSet<>();
 		for (IContentType candidate : cts) {
 			IContentType type = candidate;
 			boolean useIt = false;

@@ -23,16 +23,16 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * A managed-build implementation of the workspace snapshot project state. It
  * knows how to build the selected configuration without activating it.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 class MBSProjectState extends ProjectState {
 
 	/**
 	 * Initializes me with my project and its description.
-	 * 
+	 *
 	 * @param project
 	 *            my project
 	 * @param desc

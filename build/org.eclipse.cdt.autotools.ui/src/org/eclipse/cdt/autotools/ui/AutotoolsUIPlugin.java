@@ -89,7 +89,7 @@ public class AutotoolsUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @return the resource bundle message
 	 */

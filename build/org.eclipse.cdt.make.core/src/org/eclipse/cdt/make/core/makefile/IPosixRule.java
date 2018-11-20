@@ -17,7 +17,7 @@ package org.eclipse.cdt.make.core.makefile;
  * .POSIX
  * The application shall ensure that this special target is specified without
  * prerequisites or commands.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

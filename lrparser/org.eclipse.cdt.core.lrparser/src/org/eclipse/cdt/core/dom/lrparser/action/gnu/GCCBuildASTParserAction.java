@@ -40,7 +40,7 @@ public class GCCBuildASTParserAction extends C99BuildASTParserAction {
 
 	/**
 	 * designator_base
-	 *     ::= identifier_token ':'		
+	 *     ::= identifier_token ':'
 	 */
 	public void consumeDesignatorFieldGCC() {
 		IASTName name = createName(stream.getLeftIToken());
@@ -63,7 +63,7 @@ public class GCCBuildASTParserAction extends C99BuildASTParserAction {
 	/**
 	 * typeof_type_specifier
 	 *     ::= 'typeof' unary_expression
-	 *   
+	 *
 	 * typeof_declaration_specifiers
 	 *     ::= typeof_type_specifier
 	 *       | no_type_declaration_specifiers  typeof_type_specifier
@@ -75,7 +75,7 @@ public class GCCBuildASTParserAction extends C99BuildASTParserAction {
 	public void consumeDeclarationSpecifiersTypeof() {
 		List<Object> topScope = astStack.closeScope();
 
-		// There's an expression somewhere on the stack, find it		
+		// There's an expression somewhere on the stack, find it
 		IASTExpression expr = findFirstAndRemove(topScope, IASTExpression.class);
 		ICASTSimpleDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifierGCC(expr);
 

@@ -14,12 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.IWorkingSet;
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkingSet;
 
 public class FindRefsInWorkingSetAction extends FindInWorkingSetAction {
 

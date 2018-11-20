@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.ICElement;
-
 import org.eclipse.cdt.internal.ui.browser.opentype.ElementSelectionDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.core.runtime.IStatus;
@@ -49,8 +48,8 @@ public class NewBaseClassSelectionDialog extends ElementSelectionDialog {
 		setDialogSettings(DIALOG_SETTINGS);
 		setVisibleTypes(VISIBLE_TYPES);
 		setStatusLineAboveButtons(true);
-		fTypeList = new ArrayList<ITypeInfo>();
-		fTypeListeners = new ArrayList<ITypeSelectionListener>();
+		fTypeList = new ArrayList<>();
+		fTypeListeners = new ArrayList<>();
 	}
 
 	public void addListener(ITypeSelectionListener listener) {
@@ -64,7 +63,7 @@ public class NewBaseClassSelectionDialog extends ElementSelectionDialog {
 
 	private void notifyTypeAddedListeners(ITypeInfo type) {
 		// first copy listeners in case one calls removeListener
-		List<ITypeSelectionListener> list = new ArrayList<ITypeSelectionListener>(fTypeListeners);
+		List<ITypeSelectionListener> list = new ArrayList<>(fTypeListeners);
 		for (Iterator<ITypeSelectionListener> i = list.iterator(); i.hasNext();) {
 			ITypeSelectionListener listener = i.next();
 			listener.typeAdded(type);
@@ -168,7 +167,7 @@ public class NewBaseClassSelectionDialog extends ElementSelectionDialog {
 
 	/**
 	 * Checks if the base classes need to be verified (i.e. they must exist in the project)
-	 * 
+	 *
 	 * @return <code>true</code> if the base classes should be verified
 	 */
 	public boolean verifyBaseClasses() {

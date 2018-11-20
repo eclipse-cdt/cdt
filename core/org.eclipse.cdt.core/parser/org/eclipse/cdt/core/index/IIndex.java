@@ -395,7 +395,7 @@ public interface IIndex {
 	 *
 	 * @param binding a binding for which names are searched for
 	 * @param flags a combination of {@link #FIND_DECLARATIONS}, {@link #FIND_DEFINITIONS},
-	 * {@link #FIND_REFERENCES}, {@link #SEARCH_ACROSS_LANGUAGE_BOUNDARIES}, and 
+	 * {@link #FIND_REFERENCES}, {@link #SEARCH_ACROSS_LANGUAGE_BOUNDARIES}, and
 	 * {@link #FIND_POTENTIAL_MATCHES}.
 	 * @return an array of names
 	 * @throws CoreException

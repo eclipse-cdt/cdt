@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,12 +17,12 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Retrieves variable value 
- * 
+ * Retrieves variable value
+ *
  * <pre>
  *    C: var  {thread_id} {frame_number} {variable_name}
  *    R: {variable_value}
- *    
+ *
  * Errors:
  *    error: invalid thread
  *    error: variable undefined

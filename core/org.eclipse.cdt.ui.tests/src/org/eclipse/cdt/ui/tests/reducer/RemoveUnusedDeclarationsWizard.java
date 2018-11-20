@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.reducer;
 
-import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
-
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 public class RemoveUnusedDeclarationsWizard extends RefactoringWizard {
 	public RemoveUnusedDeclarationsWizard(RemoveUnusedDeclarationsRefactoring refactoring) {

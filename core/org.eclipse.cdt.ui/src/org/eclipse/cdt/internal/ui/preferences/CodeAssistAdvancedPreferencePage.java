@@ -14,15 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IProject;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 public final class CodeAssistAdvancedPreferencePage extends PropertyAndPreferencePage {
 

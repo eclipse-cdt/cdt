@@ -29,7 +29,7 @@ public class SignalsViewEventHandler extends AbstractDebugEventHandler {
 
 	/**
 	 * Constructs a new event handler on the given view
-	 * 
+	 *
 	 * @param view signals view
 	 */
 	public SignalsViewEventHandler(AbstractDebugView view) {

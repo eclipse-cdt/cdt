@@ -18,6 +18,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -33,15 +37,9 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.osgi.framework.Bundle;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
-
 /**
  * Describes a category extension to the "completionProposalComputer" extension point.
- * 
+ *
  * @since 4.0
  */
 public final class CompletionProposalCategory {
@@ -133,7 +131,7 @@ public final class CompletionProposalCategory {
 
 	/**
 	 * Returns the name of the described extension.
-	 * 
+	 *
 	 * @return Returns the name
 	 */
 	public String getName() {
@@ -144,7 +142,7 @@ public final class CompletionProposalCategory {
 	 * Returns the name of the described extension
 	 * without mnemonic hint in order to be displayed
 	 * in a message.
-	 * 
+	 *
 	 * @return Returns the name
 	 */
 	public String getDisplayName() {
@@ -153,7 +151,7 @@ public final class CompletionProposalCategory {
 
 	/**
 	 * Returns the image descriptor of the described category.
-	 * 
+	 *
 	 * @return the image descriptor of the described category
 	 */
 	public ImageDescriptor getImageDescriptor() {
@@ -162,7 +160,7 @@ public final class CompletionProposalCategory {
 
 	/**
 	 * Sets the separate command state of the category.
-	 * 
+	 *
 	 * @param enabled the new enabled state.
 	 */
 	public void setSeparateCommand(boolean enabled) {
@@ -171,7 +169,7 @@ public final class CompletionProposalCategory {
 
 	/**
 	 * Returns the enablement state of the category.
-	 * 
+	 *
 	 * @return the enablement state of the category
 	 */
 	public boolean isSeparateCommand() {
@@ -203,7 +201,7 @@ public final class CompletionProposalCategory {
 	/**
 	 * Returns {@code true} if the category contains any computers, {@code false}
 	 * otherwise.
-	 * 
+	 *
 	 * @return {@code true} if the category contains any computers, {@code false}
 	 *         otherwise
 	 */
@@ -219,7 +217,7 @@ public final class CompletionProposalCategory {
 	/**
 	 * Returns {@code true} if the category contains any computers in the given partition,
 	 * {@code false} otherwise.
-	 * 
+	 *
 	 * @param partition the partition
 	 * @return {@code true} if the category contains any computers, {@code false} otherwise
 	 */
@@ -250,7 +248,7 @@ public final class CompletionProposalCategory {
 	 * Safely computes completion proposals of all computers of this category through their
 	 * extension. If an extension is disabled, throws an exception or otherwise does not adhere to
 	 * the contract described in {@link ICompletionProposalComputer}, it is disabled.
-	 * 
+	 *
 	 * @param context the invocation context passed on to the extension
 	 * @param partition the partition type where to invocation occurred
 	 * @param monitor the progress monitor passed on to the extension
@@ -276,7 +274,7 @@ public final class CompletionProposalCategory {
 	 * Safely computes context information objects of all computers of this category through their
 	 * extension. If an extension is disabled, throws an exception or otherwise does not adhere to
 	 * the contract described in {@link ICompletionProposalComputer}, it is disabled.
-	 * 
+	 *
 	 * @param context the invocation context passed on to the extension
 	 * @param partition the partition type where to invocation occurred
 	 * @param monitor the progress monitor passed on to the extension
@@ -300,7 +298,7 @@ public final class CompletionProposalCategory {
 
 	/**
 	 * Returns the error message from the computers in this category.
-	 * 
+	 *
 	 * @return the error message from the computers in this category
 	 */
 	public String getErrorMessage() {

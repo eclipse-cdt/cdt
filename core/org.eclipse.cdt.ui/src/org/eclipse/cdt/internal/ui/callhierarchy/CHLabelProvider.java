@@ -17,6 +17,14 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.HashMap;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
@@ -28,16 +36,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CElementImageDescriptor;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
-
 public class CHLabelProvider extends AppearanceAwareLabelProvider {
 	private final static long LABEL_OPTIONS_SIMPLE = CElementLabels.ALL_FULLY_QUALIFIED
 			| CElementLabels.M_PARAMETER_TYPES | CElementLabels.M_APP_RETURNTYPE | CElementLabels.F_APP_TYPE_SIGNATURE
@@ -47,7 +45,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
 	private CUILabelProvider fCLabelProvider = new CUILabelProvider(LABEL_OPTIONS_SIMPLE,
 			CElementImageProvider.OVERLAY_ICONS);
 	private CHContentProvider fContentProvider;
-	private HashMap<String, Image> fCachedImages = new HashMap<String, Image>();
+	private HashMap<String, Image> fCachedImages = new HashMap<>();
 	private Color fColorInactive;
 	private IStyledLabelProvider[] fProviders;
 	private CHViewPart fView;

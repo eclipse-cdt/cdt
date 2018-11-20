@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This represents an elaborated type specifier in the C & C++ language grammar.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -42,14 +42,14 @@ public interface IASTElaboratedTypeSpecifier extends IASTDeclSpecifier, IASTName
 
 	/**
 	 * Returns the kind.
-	 * 
+	 *
 	 * @return int (kind).
 	 */
 	public int getKind();
 
 	/**
 	 * Sets the kind.
-	 * 
+	 *
 	 * @param value int (kind)
 	 */
 	public void setKind(int value);
@@ -63,14 +63,14 @@ public interface IASTElaboratedTypeSpecifier extends IASTDeclSpecifier, IASTName
 
 	/**
 	 * Returns the name.
-	 * 
+	 *
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getName();
 
 	/**
 	 * Sets the name.
-	 * 
+	 *
 	 * @param name
 	 *            <code>IASTName</code>
 	 */

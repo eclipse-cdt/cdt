@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
+import junit.framework.TestSuite;
+
 /**
- * Scanner2Tests ported to use the CPreprocessor plus additional bugs fixed in 
+ * Scanner2Tests ported to use the CPreprocessor plus additional bugs fixed in
  * the CPreprocessor, afterwards.
  */
 public class PreprocessorBugsTests extends PreprocessorTestsBase {
@@ -72,12 +72,12 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	}
 
 	// #define D
-	// #if defined D 
+	// #if defined D
 	//     x;
-	// #endif 
-	// #if defined(D) 
+	// #endif
+	// #if defined(D)
 	//     y;
-	// #endif 
+	// #endif
 	public void testBug186047() throws Exception {
 		initializeScanner();
 
@@ -171,7 +171,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 
 	//	#define BAR1_RX_BLOCK_SIZE 1
 	//	#define MAX(__x,__y) ((__x)>(__y)?(__x):(__y))
-	//	#define BAR_BLOCK_SIZE    (MAX(BAR1_RX_BLOCK_SIZE, 
+	//	#define BAR_BLOCK_SIZE    (MAX(BAR1_RX_BLOCK_SIZE,
 	//	int main(void) {
 	//	   BAR_BLOCK_SIZE;
 	//	}
@@ -238,7 +238,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//	#define ID(x) x
 	//	ID(
 	//	#include "bbb"
-	//	) 
+	//	)
 	//  passed1
 	//
 	//  ID(
@@ -294,8 +294,8 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
-	// #error // 
-	// #warning // 
+	// #error //
+	// #warning //
 	// #pragma  // not marked as problem
 	// #define //
 	// #include //

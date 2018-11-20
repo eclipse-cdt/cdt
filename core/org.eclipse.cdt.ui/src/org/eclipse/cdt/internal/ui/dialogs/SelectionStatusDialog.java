@@ -89,7 +89,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	}
 
 	/**
-	 * Returns the first element of the initial selection or {@code null} 
+	 * Returns the first element of the initial selection or {@code null}
 	 * if there isn't any initial selection.
 	 *
 	 * @return the first element of the initial selection.

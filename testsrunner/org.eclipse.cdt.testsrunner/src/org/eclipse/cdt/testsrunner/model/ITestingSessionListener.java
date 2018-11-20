@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@ package org.eclipse.cdt.testsrunner.model;
 
 /**
  * Testing session listener is notified of testing process going.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -51,7 +51,7 @@ public interface ITestingSessionListener {
 
 	/**
 	 * Notifies the listener that the children of the test suite were updated.
-	 * 
+	 *
 	 * @param testSuite the test suite which require children update
 	 */
 	public void childrenUpdate(ITestSuite testSuite);

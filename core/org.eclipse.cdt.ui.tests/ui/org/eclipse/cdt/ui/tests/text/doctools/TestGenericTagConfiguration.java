@@ -13,16 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.doctools;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.doctools.generic.AbstractGenericTagDocCommentViewerConfiguration;
+import org.eclipse.cdt.ui.text.doctools.generic.GenericDocTag;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.RGB;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.doctools.generic.AbstractGenericTagDocCommentViewerConfiguration;
-import org.eclipse.cdt.ui.text.doctools.generic.GenericDocTag;
 
 public class TestGenericTagConfiguration extends AbstractGenericTagDocCommentViewerConfiguration {
 	public static final RGB DEFAULTRGB = new RGB(63, 95, 191);

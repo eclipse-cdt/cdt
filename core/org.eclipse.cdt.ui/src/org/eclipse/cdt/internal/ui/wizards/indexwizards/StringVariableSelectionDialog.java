@@ -15,6 +15,7 @@
 
 package org.eclipse.cdt.internal.ui.wizards.indexwizards;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -31,8 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * Copied from org.eclipse.debug.ui
  * @since 4.0
@@ -47,7 +46,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	/**
 	 * Constructs a new string substitution variable selection dialog.
-	 *  
+	 *
 	 * @param parent parent shell
 	 */
 	public StringVariableSelectionDialog(Shell parent) {
@@ -62,7 +61,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	/**
 	 * Returns the variable expression the user generated from this
 	 * dialog, or <code>null</code> if none.
-	 *  
+	 *
 	 * @return variable expression the user generated from this
 	 * dialog, or <code>null</code> if none
 	 */
@@ -96,7 +95,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	/**
 	 * Creates an area to display a description of the selected variable
 	 * and a button to configure the variable's argument.
-	 * 
+	 *
 	 * @param parent parent widget
 	 */
 	private void createArgumentArea(Composite parent) {
@@ -157,7 +156,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	/**
 	 * Update variable description and argument button enablement.
-	 * 
+	 *
 	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#handleSelectionChanged()
 	 */
 	@Override
@@ -191,7 +190,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getDialogSettingsSectionName() {

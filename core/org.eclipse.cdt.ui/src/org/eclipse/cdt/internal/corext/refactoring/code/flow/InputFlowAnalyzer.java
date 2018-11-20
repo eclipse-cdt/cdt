@@ -19,9 +19,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.refactoring.code.flow;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.text.IRegion;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
@@ -40,9 +37,10 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.text.IRegion;
 
 public class InputFlowAnalyzer extends FlowAnalyzer {
 

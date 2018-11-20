@@ -99,7 +99,7 @@ public final class InfoContext {
 	/**
 	 * a convenience method that specifies whether this is a default context,
 	 * i.e. the one defined for the project with no extension filters
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isDefaultContext() {

@@ -25,10 +25,10 @@ import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
-/** 
+/**
  * SteppingModeTarget that allows to disable the button when dealing
  * with a post-mortem debugging session.
- * 
+ *
  * @since 2.0
  */
 public class GdbSteppingModeTarget extends DsfSteppingModeTarget {

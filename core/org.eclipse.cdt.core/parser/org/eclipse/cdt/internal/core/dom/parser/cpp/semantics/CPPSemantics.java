@@ -321,7 +321,7 @@ public class CPPSemantics {
 
 	/**
 	 * Get the current point of instantiation / point of lookup for name lookups.
-	 * 
+	 *
 	 * NOTE: This is meant to be used primarily for "declaredBefore" purposes, that is,
 	 *       for determining whether something was declared before or after the point
 	 *       of lookup. It is NOT meant to be used as a general mechanism for accessing
@@ -1537,7 +1537,7 @@ public class CPPSemantics {
 			if (listOfNominated == null) {
 				listOfNominated = new ArrayList<>(1);
 				if (data.usingDirectives.isEmpty()) {
-					data.usingDirectives = new HashMap<ICPPNamespaceScope, List<ICPPNamespaceScope>>();
+					data.usingDirectives = new HashMap<>();
 				}
 				data.usingDirectives.put((ICPPNamespaceScope) appearsIn, listOfNominated);
 			}
@@ -1714,7 +1714,7 @@ public class CPPSemantics {
 				final boolean isUnnamed = nsDef.getName().getLookupKey().length == 0;
 				boolean isInline = nsDef.isInline();
 				// An inline namespace can be re-opened without repeating the inline keyword,
-				// so we need to consult the binding to check inlineness. 
+				// so we need to consult the binding to check inlineness.
 				if (!isUnnamed && !isInline) {
 					IBinding nsBinding = nsDef.getName().resolveBinding();
 					if (nsBinding instanceof ICPPNamespace) {
@@ -3692,7 +3692,7 @@ public class CPPSemantics {
 
 		// The class type may be declared in a header but defined in the AST.
 		// In such a case, we want the constructors as AST bindings (since as
-		// index bindings they would fail declaredBefore() filtering), so map 
+		// index bindings they would fail declaredBefore() filtering), so map
 		// the class type to its AST representation.
 		type = SemanticUtil.mapToAST(type);
 
@@ -4087,7 +4087,7 @@ public class CPPSemantics {
 
 		// Specializations of friend functions are sometimes created in the context
 		// of the file for which the AST is created, and which is thus not in the index
-		// file set. In some cases, an AST binding cannot be created for such 
+		// file set. In some cases, an AST binding cannot be created for such
 		// specializations. To support these cases, consider the binding reachable if
 		// the friend function being specialized is reachable.
 		// This situation only arises in the presence of #includes that are not at
@@ -4554,7 +4554,7 @@ public class CPPSemantics {
 	 * This is similar to CPPVisitor.getDeclType(IASTExpression), but used in cases where the
 	 * original expression was dependent, so we had to represent it as an evaluation and
 	 * instantiate it.
-	 * 
+	 *
 	 * @param eval the (instantiated) evaluation representing the expression
 	 */
 	public static IType getDeclTypeForEvaluation(ICPPEvaluation eval) {

@@ -68,7 +68,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Returns the identifier for the CDI debug model plug-in
-	 * 
+	 *
 	 * @return plugin identifier
 	 */
 	public static String getPluginIdentifier() {
@@ -77,7 +77,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Calculates breakpoint marker ID based on the breakpoint object type.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static String calculateMarkerType(IBreakpoint bp) {
@@ -124,7 +124,7 @@ public class CDIDebugModel {
 	 * Creates and returns a line breakpoint for the source defined by the given
 	 * source handle, at the given line number. The marker associated with the
 	 * breakpoint will be created on the specified resource.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the handle to the breakpoint source
 	 * @param resource
@@ -164,7 +164,7 @@ public class CDIDebugModel {
 	 * Creates and returns a line breakpoint for the source defined by the given
 	 * source handle, at the given line number. The marker associated with the
 	 * breakpoint will be created on the specified resource.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the handle to the breakpoint source
 	 * @param resource
@@ -195,7 +195,7 @@ public class CDIDebugModel {
 	 */
 	public static ICLineBreakpoint createLineBreakpoint(String sourceHandle, IResource resource, int type,
 			int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
 		return new CLineBreakpoint(resource, attributes, register);
 	}
@@ -207,7 +207,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static ICLineBreakpoint createBlankLineBreakpoint() {
@@ -219,7 +219,7 @@ public class CDIDebugModel {
 	 */
 	public static ICLineBreakpoint createLineTracepoint(String sourceHandle, IResource resource, int type,
 			int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
 		return new CLineTracepoint(resource, attributes, register);
 	}
@@ -231,7 +231,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static ICLineBreakpoint createBlankLineTracepoint() {
@@ -244,7 +244,7 @@ public class CDIDebugModel {
 	public static ICLineBreakpoint createLineDynamicPrintf(String sourceHandle, IResource resource, int type,
 			int lineNumber, boolean enabled, int ignoreCount, String condition, String printfStr, boolean register)
 			throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
 		attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
 		return new CLineDynamicPrintf(resource, attributes, register);
@@ -257,7 +257,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.5
 	 */
 	public static ICLineBreakpoint createBlankLineDynamicPrintf() {
@@ -266,7 +266,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Helper function for setting common line breakpoint attributes.
-	 * 
+	 *
 	 * @param attributes
 	 *            Map to write the attributes into.
 	 * @param sourceHandle
@@ -288,7 +288,7 @@ public class CDIDebugModel {
 	 *            The breakpoint condition.
 	 * @param register
 	 *            Whether to add this breakpoint to the breakpoint manager.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static void setLineBreakpointAttributes(Map<String, Object> attributes, String sourceHandle, Integer type,
@@ -321,7 +321,7 @@ public class CDIDebugModel {
 	 * Creates and returns an address breakpoint for the source defined by the
 	 * given source handle, at the given address. The marker associated with the
 	 * breakpoint will be created on the specified resource.
-	 * 
+	 *
 	 * @param module
 	 *            the module name the breakpoint is set in
 	 * @param sourceHandle
@@ -362,7 +362,7 @@ public class CDIDebugModel {
 	 * Creates and returns an address breakpoint for the source defined by the
 	 * given source handle, at the given address. The marker associated with the
 	 * breakpoint will be created on the specified resource.
-	 * 
+	 *
 	 * @param module
 	 *            the module name the breakpoint is set in
 	 * @param sourceHandle
@@ -402,7 +402,7 @@ public class CDIDebugModel {
 	 * Creates and returns an address breakpoint for the source defined by the
 	 * given source handle, at the given address. The marker associated with the
 	 * breakpoint will be created on the specified resource.
-	 * 
+	 *
 	 * @param module
 	 *            the module name the breakpoint is set in
 	 * @param sourceHandle
@@ -436,7 +436,7 @@ public class CDIDebugModel {
 	public static ICAddressBreakpoint createAddressBreakpoint(String module, String sourceHandle, IResource resource,
 			int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition,
 			boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setAddressBreakpointAttributes(attributes, module, sourceHandle, type, lineNumber, address, enabled,
 				ignoreCount, condition);
 		return new CAddressBreakpoint(resource, attributes, register);
@@ -449,7 +449,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static ICAddressBreakpoint createBlankAddressBreakpoint() {
@@ -462,7 +462,7 @@ public class CDIDebugModel {
 	public static ICAddressBreakpoint createAddressTracepoint(String module, String sourceHandle, IResource resource,
 			int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition,
 			boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setAddressBreakpointAttributes(attributes, module, sourceHandle, type, lineNumber, address, enabled,
 				ignoreCount, condition);
 		return new CAddressTracepoint(resource, attributes, register);
@@ -475,7 +475,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static ICAddressBreakpoint createBlankAddressTracepoint() {
@@ -488,7 +488,7 @@ public class CDIDebugModel {
 	public static ICAddressBreakpoint createAddressDynamicPrintf(String module, String sourceHandle, IResource resource,
 			int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition,
 			String printfStr, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setAddressBreakpointAttributes(attributes, module, sourceHandle, type, lineNumber, address, enabled,
 				ignoreCount, condition);
 		attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
@@ -502,7 +502,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.5
 	 */
 	public static ICAddressBreakpoint createBlankAddressDynamicPrintf() {
@@ -511,7 +511,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Helper function for setting common address breakpoint attributes.
-	 * 
+	 *
 	 * @param attributes
 	 *            Map to write the attributes into.
 	 * @param module
@@ -535,7 +535,7 @@ public class CDIDebugModel {
 	 *            the breakpoint condition
 	 * @param register
 	 *            whether to add this breakpoint to the breakpoint manager
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static void setAddressBreakpointAttributes(Map<String, Object> attributes, String module,
@@ -555,7 +555,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static ICWatchpoint createBlankWatchpoint() {
@@ -566,7 +566,7 @@ public class CDIDebugModel {
 	 * Creates and returns a watchpoint for the source defined by the given
 	 * source handle, at the given expression. The marker associated with the
 	 * watchpoint will be created on the specified resource.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the handle to the watchpoint source
 	 * @param resource
@@ -598,8 +598,8 @@ public class CDIDebugModel {
 	public static ICWatchpoint createWatchpoint(String sourceHandle, IResource resource, boolean writeAccess,
 			boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register)
 			throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
-		setWatchPointAttributes(attributes, sourceHandle, resource, writeAccess, readAccess, expression, "", //$NON-NLS-1$ 
+		HashMap<String, Object> attributes = new HashMap<>(10);
+		setWatchPointAttributes(attributes, sourceHandle, resource, writeAccess, readAccess, expression, "", //$NON-NLS-1$
 				BigInteger.ZERO, enabled, ignoreCount, condition);
 		return new CWatchpoint(resource, attributes, register);
 	}
@@ -608,7 +608,7 @@ public class CDIDebugModel {
 	 * Creates and returns a watchpoint for the source defined by the given
 	 * source handle, at the given expression. The marker associated with the
 	 * watchpoint will be created on the specified resource.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the handle to the watchpoint source
 	 * @param resource
@@ -638,14 +638,14 @@ public class CDIDebugModel {
 	 *             status contains the underlying exception responsible for the
 	 *             failure.</li>
 	 *             </ul>
-	 *             
+	 *
 	 * @since 7.3
 	 */
 	public static ICWatchpoint createWatchpoint(String sourceHandle, IResource resource, int type, boolean writeAccess,
 			boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register)
 			throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
-		setWatchPointAttributes(attributes, sourceHandle, resource, type, writeAccess, readAccess, expression, "", //$NON-NLS-1$ 
+		HashMap<String, Object> attributes = new HashMap<>(10);
+		setWatchPointAttributes(attributes, sourceHandle, resource, type, writeAccess, readAccess, expression, "", //$NON-NLS-1$
 				BigInteger.ZERO, enabled, ignoreCount, condition);
 		return new CWatchpoint(resource, attributes, register);
 	}
@@ -654,7 +654,7 @@ public class CDIDebugModel {
 	 * Creates and returns a watchpoint for the source defined by the given
 	 * source handle, at the given expression. The marker associated with the
 	 * watchpoint will be created on the specified resource.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the handle to the watchpoint source
 	 * @param resource
@@ -703,7 +703,7 @@ public class CDIDebugModel {
 			int lineNumber, boolean writeAccess, boolean readAccess, String expression, String memorySpace,
 			BigInteger range, boolean enabled, int ignoreCount, String condition, boolean register)
 			throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setWatchPointAttributes(attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace,
 				range, enabled, ignoreCount, condition);
 		attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
@@ -717,7 +717,7 @@ public class CDIDebugModel {
 	 * source handle, at the given expression and over the given range. The
 	 * marker associated with the watchpoint will be created on the specified
 	 * resource.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the handle to the watchpoint source
 	 * @param resource
@@ -753,7 +753,7 @@ public class CDIDebugModel {
 	public static ICWatchpoint createWatchpoint(String sourceHandle, IResource resource, boolean writeAccess,
 			boolean readAccess, String expression, String memorySpace, BigInteger range, boolean enabled,
 			int ignoreCount, String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setWatchPointAttributes(attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace,
 				range, enabled, ignoreCount, condition);
 		return new CWatchpoint(resource, attributes, register);
@@ -761,7 +761,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Helper function for setting common watchpoint attributes.
-	 * 
+	 *
 	 * @param attributes
 	 *            Map to write the attributes into.
 	 * @param sourceHandle
@@ -787,7 +787,7 @@ public class CDIDebugModel {
 	 *            the breakpoint condition
 	 * @param register
 	 *            whether to add this breakpoint to the breakpoint manager
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static void setWatchPointAttributes(Map<String, Object> attributes, String sourceHandle, IResource resource,
@@ -807,7 +807,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Helper function for setting common watchpoint attributes.
-	 * 
+	 *
 	 * @param attributes
 	 *            Map to write the attributes into.
 	 * @param sourceHandle
@@ -835,7 +835,7 @@ public class CDIDebugModel {
 	 *            the breakpoint condition
 	 * @param register
 	 *            whether to add this breakpoint to the breakpoint manager
-	 *            
+	 *
 	 * @since 7.3
 	 */
 	public static void setWatchPointAttributes(Map<String, Object> attributes, String sourceHandle, IResource resource,
@@ -850,7 +850,7 @@ public class CDIDebugModel {
 	 * Creates and returns a breakpoint for the function defined by the given
 	 * name. The marker associated with the breakpoint will be created on the
 	 * specified resource.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the handle to the breakpoint source
 	 * @param resource
@@ -901,7 +901,7 @@ public class CDIDebugModel {
 	 * Creates and returns a breakpoint for the function defined by the given
 	 * name. The marker associated with the breakpoint will be created on the
 	 * specified resource.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the handle to the breakpoint source
 	 * @param resource
@@ -943,7 +943,7 @@ public class CDIDebugModel {
 	public static ICFunctionBreakpoint createFunctionBreakpoint(String sourceHandle, IResource resource, int type,
 			String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount,
 			String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setFunctionBreakpointAttributes(attributes, sourceHandle, type, function, charStart, charEnd, lineNumber,
 				enabled, ignoreCount, condition);
 		return new CFunctionBreakpoint(resource, attributes, register);
@@ -956,7 +956,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static ICFunctionBreakpoint createBlankFunctionBreakpoint() {
@@ -967,7 +967,7 @@ public class CDIDebugModel {
 	 * Creates and returns a tracepoint for the function defined by the given
 	 * name. The marker associated with the breakpoint will be created on the
 	 * specified resource.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the handle to the breakpoint source
 	 * @param resource
@@ -1010,7 +1010,7 @@ public class CDIDebugModel {
 	public static ICFunctionBreakpoint createFunctionTracepoint(String sourceHandle, IResource resource, int type,
 			String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount,
 			String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setFunctionBreakpointAttributes(attributes, sourceHandle, type, function, charStart, charEnd, lineNumber,
 				enabled, ignoreCount, condition);
 		return new CFunctionTracepoint(resource, attributes, register);
@@ -1023,7 +1023,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static ICFunctionBreakpoint createBlankFunctionTracepoint() {
@@ -1036,7 +1036,7 @@ public class CDIDebugModel {
 	public static ICFunctionBreakpoint createFunctionDynamicPrintf(String sourceHandle, IResource resource, int type,
 			String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount,
 			String condition, String printfStr, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setFunctionBreakpointAttributes(attributes, sourceHandle, type, function, charStart, charEnd, lineNumber,
 				enabled, ignoreCount, condition);
 		attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
@@ -1050,7 +1050,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.5
 	 */
 	public static ICFunctionBreakpoint createBlankFunctionDynamicPrintf() {
@@ -1059,7 +1059,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Helper function for setting common address breakpoint attributes.
-	 * 
+	 *
 	 * @param attributes
 	 *            Map to write the attributes into.
 	 * @param sourceHandle
@@ -1091,7 +1091,7 @@ public class CDIDebugModel {
 	 *            the breakpoint condition
 	 * @param register
 	 *            whether to add this breakpoint to the breakpoint manager
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static void setFunctionBreakpointAttributes(Map<String, Object> attributes, String sourceHandle, int type,
@@ -1107,7 +1107,7 @@ public class CDIDebugModel {
 	 * Returns the line breakpoint that is already registered with the
 	 * breakpoint manager for a source with the given handle and the given
 	 * resource at the given line number.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the source handle
 	 * @param resource
@@ -1144,7 +1144,7 @@ public class CDIDebugModel {
 	 * Returns the watchpoint that is already registered with the breakpoint
 	 * manager for a source with the given handle and the given resource at the
 	 * given expression.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the source handle
 	 * @param resource
@@ -1185,7 +1185,7 @@ public class CDIDebugModel {
 	 * Returns the function breakpoint that is already registered with the
 	 * breakpoint manager for a source with the given handle and the given
 	 * resource with the given function name.
-	 * 
+	 *
 	 * @param sourceHandle
 	 *            the source handle
 	 * @param resource
@@ -1235,7 +1235,7 @@ public class CDIDebugModel {
 	 * Checks whether an event breakpoint with given type and argument already
 	 * exists. If multiple event breakpoints exist that match given parameters,
 	 * only one of them will be returned.
-	 * 
+	 *
 	 * @param type
 	 *            Event type.
 	 * @param arg
@@ -1270,7 +1270,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Creates and registers a new event breakpoint.
-	 * 
+	 *
 	 * @param attributes
 	 *            Map to write the attributes into.
 	 * @param type
@@ -1280,7 +1280,7 @@ public class CDIDebugModel {
 	 * @param register
 	 *            whether to add this breakpoint to the breakpoint manager
 	 * @return an event breakpoint
-	 * 
+	 *
 	 * @throws CoreException
 	 *             if this method fails. Reasons include:
 	 *             <ul>
@@ -1292,7 +1292,7 @@ public class CDIDebugModel {
 	public static ICEventBreakpoint createEventBreakpoint(String type, String arg, boolean register)
 			throws CoreException {
 		final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
-		final Map<String, Object> attributes = new HashMap<String, Object>();
+		final Map<String, Object> attributes = new HashMap<>();
 		setEventBreakpointAttributes(attributes, type, arg);
 		return new CEventBreakpoint(resource, attributes, register);
 
@@ -1300,7 +1300,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Helper function for setting common event breakpoint attributes.
-	 * 
+	 *
 	 * @param attributes
 	 *            Map to write the attributes into.
 	 * @param type
@@ -1309,7 +1309,7 @@ public class CDIDebugModel {
 	 *            Event-specific argument value.
 	 * @param register
 	 *            whether to add this breakpoint to the breakpoint manager
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static void setEventBreakpointAttributes(Map<String, Object> attributes, String type, String arg) {
@@ -1328,7 +1328,7 @@ public class CDIDebugModel {
 	 * client must first create a marker and register the breakpoint. The former
 	 * is accomplished using {@link IBreakpoint#setMarker(IMarker)}, the latter
 	 * using {@link IBreakpointManager#addBreakpoint(IBreakpoint)}.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static ICEventBreakpoint createBlankEventBreakpoint() {
@@ -1337,7 +1337,7 @@ public class CDIDebugModel {
 
 	/**
 	 * Creates a marker for given C breakpoint.
-	 * 
+	 *
 	 * @param breakpoint
 	 *            Breakpoint to create the marker for.
 	 * @param resource
@@ -1348,7 +1348,7 @@ public class CDIDebugModel {
 	 *            Whether to register the breakpoint with breakpoint manager.
 	 * @throws CoreException
 	 *             Error thrown while creating marker.
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public static void createBreakpointMarker(final ICBreakpoint breakpoint, final IResource resource,

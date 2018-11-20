@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Dmitry Kozlov (Mentor Graphics) - Trace control view enhancements (Bug 390827)
@@ -26,7 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  *  @since 2.1
  */
 public class TracepointImageRegistry extends AbstractImageRegistry {
-	private static List<Object[]> fStore = new ArrayList<Object[]>();
+	private static List<Object[]> fStore = new ArrayList<>();
 
 	private static String add(String plugin, String[] dirs, String name) {
 		String key = plugin + '/' + dirs[0] + '/' + name;
@@ -44,7 +44,7 @@ public class TracepointImageRegistry extends AbstractImageRegistry {
 	public static final String ICON_Refresh_Auto = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID,
 			new String[] { "full/obj16" }, "refresh_auto.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String ICON_Disconnected_Tracing = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID,
-			new String[] { "full/obj16" }, "disconnected_tracing.png"); //$NON-NLS-1$ //$NON-NLS-2$    
+			new String[] { "full/obj16" }, "disconnected_tracing.png"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String ICON_Circular_Buffer = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID,
 			new String[] { "full/obj16" }, "circular_buffer.png"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String ICON_Trace_Variables = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID,

@@ -373,7 +373,7 @@ public class ToolReference implements IToolReference {
 	@Override
 	public List<String> getInputExtensions() {
 		String[] exts = getPrimaryInputExtensions();
-		List<String> extList = new ArrayList<String>();
+		List<String> extList = new ArrayList<>();
 		for (int i = 0; i < exts.length; i++) {
 			extList.add(exts[i]);
 		}
@@ -445,7 +445,7 @@ public class ToolReference implements IToolReference {
 	 * @return
 	 */
 	private List<String> getOutputsList() {
-		ArrayList<String> answer = new ArrayList<String>();
+		ArrayList<String> answer = new ArrayList<>();
 		if (outputExtensions != null) {
 			String[] exts = outputExtensions.split(DEFAULT_SEPARATOR);
 			answer.addAll(Arrays.asList(exts));
@@ -632,7 +632,7 @@ public class ToolReference implements IToolReference {
 	@Override
 	public List<OptionReference> getOptionReferenceList() {
 		if (optionReferences == null) {
-			optionReferences = new ArrayList<OptionReference>();
+			optionReferences = new ArrayList<>();
 		}
 		return optionReferences;
 	}

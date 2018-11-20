@@ -20,6 +20,16 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
@@ -32,18 +42,6 @@ import org.eclipse.jface.text.source.projection.IProjectionPosition;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.ui.PartInitException;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
 
 abstract public class FoldingTestBase extends BaseUITestCase {
 
@@ -254,9 +252,8 @@ abstract public class FoldingTestBase extends BaseUITestCase {
 	}
 
 	protected PositionAndCollapsed[] getFoldingPositions() {
-		List<PositionAndCollapsed> positionAndCollapseds = new ArrayList<PositionAndCollapsed>();
-		ProjectionAnnotationModel model = (ProjectionAnnotationModel) fEditor
-				.getAdapter(ProjectionAnnotationModel.class);
+		List<PositionAndCollapsed> positionAndCollapseds = new ArrayList<>();
+		ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 		assertNotNull(model);
 		for (Iterator<Annotation> iter = model.getAnnotationIterator(); iter.hasNext();) {
 			Annotation ann = iter.next();

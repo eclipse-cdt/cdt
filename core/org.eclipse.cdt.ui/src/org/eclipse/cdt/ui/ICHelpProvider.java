@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.ui;
@@ -21,7 +21,7 @@ import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 2.1
  */
 public interface ICHelpProvider {
@@ -39,7 +39,7 @@ public interface ICHelpProvider {
 
 	/**
 	 * get the matching function of a given name
-	 * 
+	 *
 	 * @param helpBooks the array of help books to be searched for help
 	 * @param name the function name for which help is needed
 	 * @return the IFunctionSummary interface
@@ -48,7 +48,7 @@ public interface ICHelpProvider {
 
 	/**
 	 * Get array of matching functions starting with this prefix
-	 * 
+	 *
 	 * @param helpBooks the array of help books to be searched for help
 	 * @param prefix the function name prefix
 	 * @return the IFunctionSummary[] array
@@ -56,7 +56,7 @@ public interface ICHelpProvider {
 	IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, ICHelpBook[] helpBooks, String prefix);
 
 	/**
-	 * 
+	 *
 	 * @param helpBooks the array of help books to be searched for help
 	 * @param name the C/C++ element name for which help is needed
 	 * @return the ICHelpResourceDescriptor[] array representing found help resources

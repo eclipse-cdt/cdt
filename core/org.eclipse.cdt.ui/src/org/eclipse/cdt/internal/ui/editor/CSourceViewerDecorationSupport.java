@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.ITextViewerExtension2;
@@ -25,16 +26,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
-import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
-
 /**
  * <code>SourceViewerDecorationSupport</code> with extension(s):
  * <ul>
  *   <li>inactive code painter</li>
  * </ul>
- * 
+ *
  * @author anton.leherbauer@windriver.com
- * 
+ *
  * @since 4.0
  */
 public class CSourceViewerDecorationSupport extends SourceViewerDecorationSupport {
@@ -65,7 +64,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 
 	/**
 	 * Inherited constructor.
-	 * 
+	 *
 	 * @param sourceViewer
 	 * @param overviewRuler
 	 * @param annotationAccess
@@ -185,7 +184,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 
 	/**
 	 * Returns the shared color for the given key.
-	 * 
+	 *
 	 * @param key the color key string
 	 * @return the shared color for the given key
 	 */
@@ -199,7 +198,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 
 	/**
 	 * Returns the shared color for the given RGB.
-	 * 
+	 *
 	 * @param rgb the rgb
 	 * @return the shared color for the given rgb
 	 */
@@ -266,7 +265,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 
 	/**
 	 * Show inactive code positions.
-	 * 
+	 *
 	 * @param refresh trigger a refresh of the positions
 	 */
 	private void showInactiveCodePositions(boolean refresh) {

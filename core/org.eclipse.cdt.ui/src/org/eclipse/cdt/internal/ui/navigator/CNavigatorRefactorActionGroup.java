@@ -30,7 +30,7 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
  * This is the action group for refactor actions move and rename.
- * 
+ *
  * A clone of org.eclipse.ui.internal.navigator.resources.actions.RefactorActionGroup.
  */
 public class CNavigatorRefactorActionGroup extends ActionGroup {
@@ -44,7 +44,7 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 	private Tree tree;
 
 	/**
-	 *  
+	 *
 	 * @param aShell
 	 * @param aTree
 	 */

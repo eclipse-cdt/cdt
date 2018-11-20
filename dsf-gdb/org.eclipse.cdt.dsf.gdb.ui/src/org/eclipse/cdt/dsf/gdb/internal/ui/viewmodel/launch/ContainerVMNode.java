@@ -7,11 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial API and implementation
  *     Wind River Systems - Factored out AbstractContainerVMNode
- *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)     
+ *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *     Marc Khouzam (Ericsson) - Respect the "Show Full Path" option for the process name (Bug 378418)
  *     Marc Khouzam (Ericsson) - Support for exited processes in the debug view (bug 407340)
  *******************************************************************************/
@@ -166,7 +166,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.RED)
 										: false;
-							};
+							}
 						},
 						/* RUNNING CONTAINER - GREEN PIN */
 						new LabelImage(
@@ -186,7 +186,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.GREEN)
 										: false;
-							};
+							}
 						},
 						/* RUNNING CONTAINER - BLUE PIN */
 						new LabelImage(
@@ -206,7 +206,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.BLUE)
 										: false;
-							};
+							}
 						},
 						/* RUNNING CONTAINER - NO PIN */
 						new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET)) {
@@ -217,7 +217,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 							@Override
 							public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 								return Boolean.FALSE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
-							};
+							}
 						},
 
 						/* SUSPENDED CONTAINER - RED PIN */
@@ -234,7 +234,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.RED) : false;
-							};
+							}
 						},
 						/* SUSPENDED CONTAINER - GREEN PIN */
 						new LabelImage(
@@ -250,7 +250,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.GREEN) : false;
-							};
+							}
 						},
 						/* SUSPENDED CONTAINER - BLUE PIN */
 						new LabelImage(
@@ -266,7 +266,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.BLUE) : false;
-							};
+							}
 						},
 						/* SUSPENDED CONTAINER - NO PIN */
 						new LabelImage(DebugUITools
@@ -310,7 +310,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 					ImmediateExecutor.getInstance(), updates[i]);
 			int count = 0;
 
-			// Create a delegating update which will let the super-class fill in the 
+			// Create a delegating update which will let the super-class fill in the
 			// standard container properties.
 			parentUpdates[i] = new VMDelegatingPropertiesUpdate(updates[i], countringRm);
 			count++;

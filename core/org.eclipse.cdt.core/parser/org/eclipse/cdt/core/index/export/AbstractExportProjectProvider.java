@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Status;
  * An IExportProjectProvider implementation intended to be sub-classed by clients. It
  * provides convenience methods for obtaining options and their parameters from the
  * command-line.
- * 
+ *
  * @see ExternalExportProjectProvider for usage scenarios
  */
 public abstract class AbstractExportProjectProvider implements IExportProjectProvider {

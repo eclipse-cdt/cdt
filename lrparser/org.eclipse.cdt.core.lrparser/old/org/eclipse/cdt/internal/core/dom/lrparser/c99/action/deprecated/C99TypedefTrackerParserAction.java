@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,19 +15,19 @@ package org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated;
 
 import java.util.LinkedList;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.symboltable.TypedefSymbolTable;
+
+import lpg.lpgjavaruntime.IToken;
 
 /**
  * A simple set of trial and undo actions that just keep track
  * of typedef names. This information is then fed back to the parser
  * in order to disambiguate certain parser grammar rules.
- * 
+ *
  * The command design pattern is used to implement undo actions.
- * 
+ *
  * @author Mike Kucera
  */
 public class C99TypedefTrackerParserAction {
@@ -37,17 +37,17 @@ public class C99TypedefTrackerParserAction {
 	// provides limited access to the token stream
 	private final ITokenStream parser;
 
-	// The symbolTable currently in use 
+	// The symbolTable currently in use
 	private TypedefSymbolTable symbolTable = TypedefSymbolTable.EMPTY_TABLE;
 
 	// A stack that keeps track of scopes in the symbol table, used to "close" scopes and to undo the opening of scopes
-	private final LinkedList<TypedefSymbolTable> symbolTableScopeStack = new LinkedList<TypedefSymbolTable>();
+	private final LinkedList<TypedefSymbolTable> symbolTableScopeStack = new LinkedList<>();
 
 	// keeps track of nested declarations
-	private final LinkedList<DeclaratorFrame> declarationStack = new LinkedList<DeclaratorFrame>();
+	private final LinkedList<DeclaratorFrame> declarationStack = new LinkedList<>();
 
 	// "For every action there is an equal and opposite reaction." - Newton's third law
-	private final LinkedList<IUndoAction> undoStack = new LinkedList<IUndoAction>();
+	private final LinkedList<IUndoAction> undoStack = new LinkedList<>();
 
 	/**
 	 * A command object that provides undo functionality.
@@ -91,11 +91,11 @@ public class C99TypedefTrackerParserAction {
 
 	/**
 	 * Called from the grammar file in places where a scope is created.
-	 * 
+	 *
 	 * Scopes are created by compound statements, however special care
 	 * must also be taken with for loops because they may contain
 	 * declarations.
-	 * 
+	 *
 	 * TODO: scope object now need to be handled explicitly
 	 */
 	public void openSymbolScope() {
@@ -295,13 +295,13 @@ public class C99TypedefTrackerParserAction {
 	/**
 	 * This is a special case for the rule:
 	 *     parameter_declaration ::= declaration_specifiers
-	 *     
+	 *
 	 * In this case there is no declarator at all
-	 * 
+	 *
 	 * TODO: creating bindings that have no identifier seems really dumb,
 	 * why does it need to be done? Why not just have a null binding or
 	 * for that matter don't even have a name node
-	 * 
+	 *
 	 */
 	public void consumeParameterDeclarationWithoutDeclarator() {
 		if (DEBUG)
@@ -344,7 +344,7 @@ public class C99TypedefTrackerParserAction {
 	/**
 	 * An abstract declarator used as part of an expression, eg) a cast.
 	 * Only need the type.
-	 * 
+	 *
 	 * TODO: this isn't enough, I need a binding for the abstract declarator
 	 * what I really need is a consumeDeclaratorCompleteTypeId similar to above
 	 */

@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.reducer;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
+import org.eclipse.cdt.internal.ui.util.RowLayouter;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.swt.SWT;
@@ -22,10 +25,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
-import org.eclipse.cdt.internal.ui.util.RowLayouter;
 
 public class RemoveUnusedDeclarationsInputPage extends UserInputWizardPage {
 	public static final String PAGE_NAME = "RemoveUnusedDeclarationsInputPage"; //$NON-NLS-1$

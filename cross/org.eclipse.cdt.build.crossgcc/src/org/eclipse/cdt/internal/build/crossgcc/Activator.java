@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Doug Schaefer - initial API and implementation
  *     Marc-Andre Laperle
@@ -40,6 +40,7 @@ public class Activator extends Plugin {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -49,6 +50,7 @@ public class Activator extends Plugin {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -56,7 +58,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *        status to log
 	 */
@@ -66,7 +68,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *        the exception to be logged
 	 */

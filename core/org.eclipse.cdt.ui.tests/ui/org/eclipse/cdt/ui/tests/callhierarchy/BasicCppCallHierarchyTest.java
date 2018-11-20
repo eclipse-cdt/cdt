@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor;
+import junit.framework.Test;
 
 public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 
@@ -293,7 +292,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	//
 	//  void automatic() {
 	//    MyClass m;
-	//  }		
+	//  }
 	public void testAutomaticConstructor_156668() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
 		IFile file = createFile(getProject(), "testConstructor.cpp", content);
@@ -327,7 +326,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	//		MyClass();
 	//		virtual ~MyClass();
 	//	};
-	// 
+	//
 	//  void heap() {
 	//    MyClass* m= new MyClass();
 	//    delete m;

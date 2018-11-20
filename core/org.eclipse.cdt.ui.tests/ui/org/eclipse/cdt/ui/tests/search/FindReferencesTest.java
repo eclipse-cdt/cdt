@@ -14,6 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.search;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchResult;
+import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
+import org.eclipse.cdt.internal.ui.search.LineSearchElement;
+import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.ui.IEditorPart;
@@ -21,16 +29,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.search.CSearchQuery;
-import org.eclipse.cdt.internal.ui.search.CSearchResult;
-import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
-import org.eclipse.cdt.internal.ui.search.LineSearchElement;
-import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
 
 import junit.framework.TestSuite;
 

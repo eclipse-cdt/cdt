@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -23,11 +27,6 @@ import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
 
 /**
  * Reconciling strategy for assembly translation units.

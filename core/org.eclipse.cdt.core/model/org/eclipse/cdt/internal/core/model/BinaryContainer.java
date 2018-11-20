@@ -45,7 +45,7 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 	public IBinary[] getBinaries() throws CModelException {
 		sync();
 		ICElement[] e = getChildren();
-		ArrayList<IBinary> list = new ArrayList<IBinary>(e.length);
+		ArrayList<IBinary> list = new ArrayList<>(e.length);
 		for (ICElement element : e) {
 			if (element instanceof IBinary) {
 				IBinary bin = (IBinary) element;

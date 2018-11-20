@@ -17,6 +17,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.util.CoreUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -32,14 +38,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.osgi.framework.Bundle;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
-
-import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
 public class CPathContainerDescriptor implements IContainerDescriptor {
 
@@ -276,7 +274,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
 	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
-	private static final String ATT_PAGE_CLASS = "class"; //$NON-NLS-1$	
+	private static final String ATT_PAGE_CLASS = "class"; //$NON-NLS-1$
 
 	private Image pageImage;
 
@@ -366,7 +364,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	}
 
 	public static IContainerDescriptor[] getDescriptors() {
-		ArrayList<IContainerDescriptor> containers = new ArrayList<IContainerDescriptor>();
+		ArrayList<IContainerDescriptor> containers = new ArrayList<>();
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
 				ATT_EXTENSION);

@@ -59,9 +59,9 @@ import org.eclipse.ui.IWorkbenchPartSite;
 /**
  * Creates an information control to display an expression in a hover control.
  * <br/> This class is derivative work from JDT's <code>ExpressionInformationControlCreator</code>.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
- * 
+ *
  * @since 2.1
  */
 @SuppressWarnings("restriction")
@@ -105,7 +105,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		private static final String HEIGHT = "HEIGHT"; //$NON-NLS-1$
 
 		/**
-		 * Dialog setting key for width. 
+		 * Dialog setting key for width.
 		 */
 		private static final String WIDTH = "WIDTH"; //$NON-NLS-1$
 
@@ -117,7 +117,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		/**
 		 * Dialog setting key for details sash weight
 		 */
-		private static final String SASH_WEIGHT_DETAILS = "SashWeightDetails"; //$NON-NLS-1$		
+		private static final String SASH_WEIGHT_DETAILS = "SashWeightDetails"; //$NON-NLS-1$
 
 		/**
 		 * Variable to display.
@@ -196,7 +196,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		/**
 		 * Constructs a new control in the given shell.
-		 * 
+		 *
 		 * @param parentShell shell
 		 * @param resize whether resize is supported
 		 */
@@ -214,7 +214,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			// Bug 417559: The TextViewerHoverManager constrains the size of a newly created
 			// ExpressionInformationControl by 100 chars by 12 chars (602x182). The control
 			// size can be expanded beyond that, however when re-created it will still be constrained.
-			// By removing the constraint in the presence of a non-null IDialogSettings, 
+			// By removing the constraint in the presence of a non-null IDialogSettings,
 			// the size gets restored properly even when previously expanded.
 			Point dialogSettingsSize = getDialogSettingsSize();
 			if (dialogSettingsSize != null) {
@@ -258,7 +258,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		/**
 		 * Returns the dialog settings for this hover or <code>null</code> if none
-		 * 
+		 *
 		 * @param create whether to create the settings
 		 */
 		private IDialogSettings getDialogSettings(boolean create) {
@@ -272,7 +272,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		/**
 		 * Returns an integer value in the given dialog settings or -1 if none.
-		 * 
+		 *
 		 * @param settings dialog settings
 		 * @param key key
 		 * @return value or -1 if not present
@@ -293,7 +293,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		/**
 		 * Persists dialog settings.
-		 * 
+		 *
 		 * @param shell
 		 */
 		private void persistSettings(Shell shell) {
@@ -458,7 +458,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		}
 
 		/**
-		 * Initializes the sash form weights from the preference store (using default values if 
+		 * Initializes the sash form weights from the preference store (using default values if
 		 * no sash weights were stored previously).
 		 */
 		protected void initSashWeights() {
@@ -557,7 +557,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 	/**
 	 * Create expression information control creator with customization options.
-	 * 
+	 *
 	 * @param showDetailPane  if <code>true</code> the detail pane will be shown
 	 * @param expansionLevel  tree level to which the expression should be expanded by default
 	 */

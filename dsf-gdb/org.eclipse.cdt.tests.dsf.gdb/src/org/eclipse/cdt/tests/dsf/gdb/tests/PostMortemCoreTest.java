@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Marc Khouzam (Ericsson) - Added test to handle different cases of core
@@ -76,8 +76,8 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		assumeLocalSession();
 		removeTeminatedLaunchesBeforeTest();
 		setLaunchAttributes();
-		// Can't run the launch right away because each test needs to first set some 
-		// parameters.  The individual tests will be responsible for starting the launch. 
+		// Can't run the launch right away because each test needs to first set some
+		// parameters.  The individual tests will be responsible for starting the launch.
 	}
 
 	@Override
@@ -320,7 +320,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		doLaunch();
 
 		// Create a map of expressions and their expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("0 + 0 - 0", new String[] { "0x0", "0", "0", "0", "0", "0" });
 		tests.put("3 + 4", new String[] { "0x7", "07", "111", "7", "7", "7" });
@@ -343,7 +343,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		doLaunch();
 
 		// Create a map of expressions and their expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("3.14159 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526", "4.2526" });
 		tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
@@ -367,7 +367,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		doLaunch();
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests1 = new HashMap<String, String[]>();
+		Map<String, String[]> tests1 = new HashMap<>();
 
 		tests1.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
 		tests1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999",
@@ -466,7 +466,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 	}
 
 	private IAddress evaluateExpression(IDMContext ctx, String expression) throws Throwable {
-		// Create the expression and format contexts 
+		// Create the expression and format contexts
 		final IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
 		final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpService, expressionDMC,
 				IFormattedValues.HEX_FORMAT);
@@ -489,7 +489,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Executes a group of sub-tests.
-	 * 
+	 *
 	 * @param tests
 	 *            A Map in which the key is an expression to evaluate and the
 	 *            value is an array of expected values, one for each of the

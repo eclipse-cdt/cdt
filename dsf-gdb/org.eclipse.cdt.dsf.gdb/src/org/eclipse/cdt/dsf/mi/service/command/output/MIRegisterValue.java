@@ -51,7 +51,7 @@ public class MIRegisterValue {
 	 * [{number="1",value="0xffff"},{number="xxx",value="yyy"},..]
 	 */
 	public static MIRegisterValue[] getMIRegisterValues(MIList miList) {
-		List<MIRegisterValue> aList = new ArrayList<MIRegisterValue>();
+		List<MIRegisterValue> aList = new ArrayList<>();
 		MIValue[] values = miList.getMIValues();
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] instanceof MITuple) {

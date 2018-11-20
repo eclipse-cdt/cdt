@@ -7,15 +7,16 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @since 2.0
@@ -57,7 +58,7 @@ public class ManagedMakeMessages {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private ManagedMakeMessages() {
 		// No constructor

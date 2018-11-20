@@ -19,7 +19,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Namespace_Reference, with prefix
  * Bug#50471 : Wrong completion kind after the "using" keyword
  *

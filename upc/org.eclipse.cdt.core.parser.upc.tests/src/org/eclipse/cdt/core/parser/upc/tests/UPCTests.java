@@ -7,17 +7,17 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.upc.tests;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.core.lrparser.tests.LRTests;
 import org.eclipse.cdt.core.model.ILanguage;
+
+import junit.framework.TestSuite;
 
 /**
  * Run the C99 tests against the UPC parser

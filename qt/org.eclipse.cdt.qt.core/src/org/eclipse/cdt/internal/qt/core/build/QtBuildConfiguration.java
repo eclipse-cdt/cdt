@@ -456,7 +456,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 	public String[] getMakeCommand() {
 		String buildCommandStr = getProperty(BUILD_COMMAND);
 		if (buildCommandStr != null) {
-			String[] buildCommand = buildCommandStr.split(" "); //$NON-NLS-1$ 
+			String[] buildCommand = buildCommandStr.split(" "); //$NON-NLS-1$
 			Path command = findCommand(buildCommand[0]);
 			if (command == null) {
 				command = findCommand("make"); //$NON-NLS-1$

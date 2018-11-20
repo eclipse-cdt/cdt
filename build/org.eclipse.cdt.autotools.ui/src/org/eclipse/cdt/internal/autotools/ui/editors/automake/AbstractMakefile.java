@@ -31,15 +31,15 @@ import org.eclipse.cdt.make.core.makefile.ITargetRule;
  * statement :   rule | macro_definition | comments | empty
  * rule :  inference_rule | target_rule
  * inference_rule : target ':' <nl> ( <tab> command <nl> ) +
- * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl>
                  [ ( command ) * ]
- * macro_definition : string '=' (string)* 
+ * macro_definition : string '=' (string)*
  * comments : ('#' (string) <nl>) *
  * empty : <nl>
  * command : <tab> prefix_command string <nl>
  * target : string
  * prefix_command : '-' | '@' | '+'
- * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%"
  */
 
 public abstract class AbstractMakefile extends Parent implements IMakefile {

@@ -15,6 +15,13 @@
 
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
+import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -36,20 +43,11 @@ import org.eclipse.ui.IEditorPart;
 
 import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
-import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
-
 /**
  * Implementation of a C completion proposal to be used for quick fix and quick assist
  * proposals that invoke a {@link Change}. The proposal offers a proposal information but no context
  * information.
- * 
+ *
  * @since 5.1
  */
 public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandAccess, ICompletionProposalExtension6 {
@@ -61,7 +59,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 
 	/**
 	 * Constructs a change correction proposal.
-	 * 
+	 *
 	 * @param name The name that is displayed in the proposal selection dialog.
 	 * @param change The change that is executed when the proposal is applied or {@code null}
 	 * if the change will be created by implementors of {@link #createChange()}.
@@ -95,7 +93,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 
 	/**
 	 * Performs the change associated with this proposal.
-	 * 
+	 *
 	 * @param activeEditor The editor currently active or {@code null} if no
 	 *     editor is active.
 	 * @param document The document of the editor currently active or {@code null} if
@@ -198,9 +196,9 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		return str;
 	}
 
-	/** 
+	/**
 	 * Returns the name of the proposal.
-	 * 
+	 *
 	 * @return return the name of the proposal
 	 */
 	public String getName() {
@@ -219,7 +217,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 
 	/**
 	 * Sets the proposal's image or {@code null} if no image is desired.
-	 * 
+	 *
 	 * @param image the desired image.
 	 */
 	public void setImage(Image image) {
@@ -228,7 +226,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 
 	/**
 	 * Returns the change that will be executed when the proposal is applied.
-	 * 
+	 *
 	 * @return returns the change for this proposal.
 	 * @throws CoreException thrown when the change could not be created
 	 */
@@ -243,7 +241,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	 * Creates the text change for this proposal.
 	 * This method is only called once and only when no text change has been passed in
 	 * {@link #ChangeCorrectionProposal(String, Change, int, Image)}.
-	 * 
+	 *
 	 * @return returns the created change.
 	 * @throws CoreException thrown if the creation of the change failed.
 	 */
@@ -253,7 +251,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 
 	/**
 	 * Sets the display name.
-	 * 
+	 *
 	 * @param name the name to set
 	 */
 	public void setDisplayName(String name) {
@@ -284,7 +282,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 
 	/**
 	 * Sets the proposal id to allow assigning a shortcut to the correction proposal.
-	 * 
+	 *
 	 * @param commandId The proposal id for this proposal or {@code null} if no command
 	 *     should be assigned to this proposal.
 	 */

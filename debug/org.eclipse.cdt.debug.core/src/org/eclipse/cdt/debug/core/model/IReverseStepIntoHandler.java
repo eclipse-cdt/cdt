@@ -17,7 +17,7 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
 
 /**
  * Handler interface to perform a reverse StepInto operation
- * 
+ *
  * @since 7.0
  */
 public interface IReverseStepIntoHandler extends IDebugCommandHandler {

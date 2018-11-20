@@ -20,6 +20,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -46,23 +58,9 @@ import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
-
 /**
  * Output tab for C/C++ Project Paths page for 3.X projects.
- * 
+ *
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
  * for 3.X style projects.
  */
@@ -96,7 +94,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 				CPathEntryMessages.OutputPathEntryPage_folders_edit_button,
 				CPathEntryMessages.OutputPathEntryPage_folders_remove_button };
 
-		fOutputList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
+		fOutputList = new TreeListDialogField<>(adapter, buttonLabels, new CPElementLabelProvider());
 		fOutputList.setDialogFieldListener(adapter);
 		fOutputList.setLabelText(CPathEntryMessages.OutputPathEntryPage_folders_label);
 
@@ -247,7 +245,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	protected void outputPageCustomButtonPressed(DialogField field, int index) {
 		if (field == fOutputList) {
 			if (index == IDX_ADD) {
-				List<CPElement> elementsToAdd = new ArrayList<CPElement>(10);
+				List<CPElement> elementsToAdd = new ArrayList<>(10);
 				IProject project = fCurrCProject.getProject();
 				if (project.exists()) {
 					if (hasFolders(project)) {
@@ -270,7 +268,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 					}
 				}
 				if (!elementsToAdd.isEmpty()) {
-					HashSet<CPElement> modifiedElements = new HashSet<CPElement>();
+					HashSet<CPElement> modifiedElements = new HashSet<>();
 					askForAddingExclusionPatternsDialog(elementsToAdd, modifiedElements);
 
 					fOutputList.addElements(elementsToAdd);
@@ -474,7 +472,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		List<IContainer> existingContainers = getExistingContainers(null);
 
 		IProject[] allProjects = fWorkspaceRoot.getProjects();
-		ArrayList<IProject> rejectedElements = new ArrayList<IProject>(allProjects.length);
+		ArrayList<IProject> rejectedElements = new ArrayList<>(allProjects.length);
 		IProject currProject = fCurrCProject.getProject();
 		for (int i = 0; i < allProjects.length; i++) {
 			if (!allProjects[i].equals(currProject)) {
@@ -517,7 +515,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	}
 
 	private List<IContainer> getExistingContainers(CPElement existing) {
-		List<IContainer> res = new ArrayList<IContainer>();
+		List<IContainer> res = new ArrayList<>();
 		List<CPElement> cplist = fOutputList.getElements();
 		for (int i = 0; i < cplist.size(); i++) {
 			CPElement elem = cplist.get(i);
@@ -554,7 +552,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
 	@Override
@@ -564,7 +562,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -573,7 +571,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	@Override

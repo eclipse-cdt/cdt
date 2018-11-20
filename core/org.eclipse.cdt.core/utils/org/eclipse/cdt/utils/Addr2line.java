@@ -116,7 +116,7 @@ public class Addr2line {
 		// In C line number 0 is invalid, line starts at 1 for file, we use
 		// this for validation.
 
-		//IPF_TODO: check 
+		//IPF_TODO: check
 		for (int i = 0; i <= 20; i += 4, address = address.add(i)) {
 			String line = getLine(address);
 			line = parserOutput(line);

@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents a binding which is split over several index fragments.
  * <p>
- * Like the component IIndexBinding objects that make up a CompositeIndexBinding, the 
+ * Like the component IIndexBinding objects that make up a CompositeIndexBinding, the
  * it is only valid to call methods and obtain information while a read-lock is held on the
  * associated IIndex
  */

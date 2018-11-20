@@ -13,15 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.language.settings.providers;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-
-import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Abstract class to implement language settings providers Options page.

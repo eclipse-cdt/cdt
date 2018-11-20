@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Red Hat Inc. - modified for use in Meson build
  *******************************************************************************/
 package org.eclipse.cdt.meson.core;

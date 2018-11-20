@@ -36,7 +36,7 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * Command performing a resume without signal.
- * 
+ *
  * @since 2.1
  */
 public class GdbResumeWithoutSignalCommand extends AbstractDebugCommand implements IResumeWithoutSignalHandler {

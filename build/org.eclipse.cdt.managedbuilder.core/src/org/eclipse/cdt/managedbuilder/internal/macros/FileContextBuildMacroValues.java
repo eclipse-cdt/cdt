@@ -31,8 +31,8 @@ public class FileContextBuildMacroValues implements IFileContextBuildMacroValues
 	private IBuilder fBuilder;
 	private IFileContextBuildMacroValues fSupperClassValues;
 
-	private HashMap<String, String> fValues = new HashMap<String, String>();
-	private HashMap<String, String> fAllValues = new HashMap<String, String>();
+	private HashMap<String, String> fValues = new HashMap<>();
+	private HashMap<String, String> fAllValues = new HashMap<>();
 	private boolean fInitialized;
 
 	public FileContextBuildMacroValues(IBuilder builder, IManagedConfigElement element) {

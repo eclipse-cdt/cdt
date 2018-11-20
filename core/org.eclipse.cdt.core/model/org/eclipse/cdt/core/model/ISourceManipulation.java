@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Common protocol for C elements that support source code manipulations such
  * as copy, move, rename, and delete.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -45,7 +45,7 @@ public interface ISourceManipulation {
 	 * <li> The new name is invalid (INVALID_NAME)
 	 * <li> A child in the container already exists with the same name (NAME_COLLISION)
 	 *		and <code>replace</code> has been specified as <code>false</code>
-	 * <li> The container or this element is read-only (READ_ONLY) 
+	 * <li> The container or this element is read-only (READ_ONLY)
 	 * </ul>
 	 *
 	 * @exception IllegalArgumentException if container is <code>null</code>
@@ -91,7 +91,7 @@ public interface ISourceManipulation {
 	 * <li> The new name is invalid (INVALID_NAME)
 	 * <li> A child in the container already exists with the same name (NAME_COLLISION)
 	 *		and <code>replace</code> has been specified as <code>false</code>
-	 * <li> The container or this element is read-only (READ_ONLY) 
+	 * <li> The container or this element is read-only (READ_ONLY)
 	 * </ul>
 	 *
 	 * @exception IllegalArgumentException if container is <code>null</code>
@@ -115,7 +115,7 @@ public interface ISourceManipulation {
 	 * <li> The new name is invalid (INVALID_NAME)
 	 * <li> A child in the container already exists with the same name (NAME_COLLISION)
 	 *		and <code>replace</code> has been specified as <code>false</code>
-	 * <li> This element is read-only (READ_ONLY) 
+	 * <li> This element is read-only (READ_ONLY)
 	 * </ul>
 	 */
 	void rename(String name, boolean replace, IProgressMonitor monitor) throws CModelException;

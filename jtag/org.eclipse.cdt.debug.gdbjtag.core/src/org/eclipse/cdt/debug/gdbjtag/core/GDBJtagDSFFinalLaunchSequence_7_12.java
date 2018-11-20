@@ -26,7 +26,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
  * Subclass for GDB >= 7.12.
- * 
+ *
  * @since 9.1
  */
 public class GDBJtagDSFFinalLaunchSequence_7_12 extends GDBJtagDSFFinalLaunchSequence_7_7 {
@@ -39,7 +39,7 @@ public class GDBJtagDSFFinalLaunchSequence_7_12 extends GDBJtagDSFFinalLaunchSeq
 	protected String[] getExecutionOrder(String group) {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the steps from the base class
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Add the new step after we source the gdbinit file to make sure the user
 			// cannot change this behavior

@@ -19,12 +19,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarAssignInfo;
 
 /**
- * 
+ *
  *    -var-assign NAME EXPRESSION
  *
  *  Assigns the value of EXPRESSION to the variable object specified by
  * NAME.  The object must be `editable'.
- * 
+ *
  */
 public class MIVarAssign extends MICommand<MIVarAssignInfo> {
 	/**

@@ -98,7 +98,7 @@ import com.google.gson.JsonParseException;
 /**
  * Root class for CDT build configurations. Provides access to the build
  * settings for subclasses.
- * 
+ *
  * @since 6.0
  */
 public abstract class CBuildConfiguration extends PlatformObject implements ICBuildConfiguration, ICBuildConfiguration2,
@@ -738,7 +738,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		}
 
 		IMacroEntry[] macros = CoreModel.getMacroEntries(resPath);
-		Map<String, String> symbolMap = new HashMap<String, String>();
+		Map<String, String> symbolMap = new HashMap<>();
 		for (int i = 0; i < macros.length; ++i) {
 			symbolMap.put(macros[i].getMacroName(), macros[i].getMacroValue());
 		}
@@ -817,7 +817,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	/**
 	 * Parse a string containing compile options into individual argument strings.
-	 * 
+	 *
 	 * @param argString - String to parse
 	 * @return List of arg Strings
 	 */
@@ -989,11 +989,11 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	/**
 	 * Process a compile line for Scanner info in a separate job
-	 * 
+	 *
 	 * @param line - line to process
 	 * @param jobsArray - array of Jobs to keep track of open scanner info jobs
 	 * @return - true if line processed, false otherwise
-	 * 
+	 *
 	 * @since 6.5
 	 */
 	@Override
@@ -1142,7 +1142,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 * Takes a command path and returns either the command path itself if it is
 	 * absolute or the path to the command as it appears in the PATH environment
 	 * variable. Also adjusts the command for Windows's .exe extension.
-	 * 
+	 *
 	 * @since 6.1
 	 */
 	public static Path getCommandFromPath(Path command) {

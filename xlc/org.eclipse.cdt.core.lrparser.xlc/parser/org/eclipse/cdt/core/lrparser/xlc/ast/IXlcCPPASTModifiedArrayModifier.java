@@ -23,35 +23,35 @@ public interface IXlcCPPASTModifiedArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Is the const modifier used?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isConst();
 
 	/**
 	 * Is the static modifier used?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isStatic();
 
 	/**
 	 * Is the restrict modifier used?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isRestrict();
 
 	/**
 	 * Is the volatile modifier used?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isVolatile();
 
 	/**
 	 * Set true/false that the const modifier is used.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -59,7 +59,7 @@ public interface IXlcCPPASTModifiedArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Set true/false that the volatile modifier is used.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -67,7 +67,7 @@ public interface IXlcCPPASTModifiedArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Set true/false that the restrict modifier is used.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -75,7 +75,7 @@ public interface IXlcCPPASTModifiedArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Set true/false that the static modifier is used.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -83,14 +83,14 @@ public interface IXlcCPPASTModifiedArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Is the array variable sized? ( used ... )
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isVariableSized();
 
 	/**
 	 * Set the array to be variable sized dependent upon value.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -98,6 +98,7 @@ public interface IXlcCPPASTModifiedArrayModifier extends IASTArrayModifier {
 
 	/**
 	 */
+	@Override
 	public IXlcCPPASTModifiedArrayModifier copy();
 
 }

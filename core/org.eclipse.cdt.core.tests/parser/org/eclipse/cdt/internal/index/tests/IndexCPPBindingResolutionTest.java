@@ -1972,7 +1972,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//	    int* a;
 	//	    int* b;
 	//	};
-	//	
+	//
 	//	constexpr S waldo = { nullptr, waldo.a };
 
 	//  // empty file

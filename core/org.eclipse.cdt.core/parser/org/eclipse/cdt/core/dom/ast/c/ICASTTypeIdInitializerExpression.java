@@ -18,11 +18,11 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 
 /**
  * C Expression of the format type-id { initializer }
- * 
+ *
  * GCC allows compound literals for c++, therefore the interface was moved to the common
  * ast interfaces ({@link IASTTypeIdInitializerExpression}). For compatibility this interface
  * is kept.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

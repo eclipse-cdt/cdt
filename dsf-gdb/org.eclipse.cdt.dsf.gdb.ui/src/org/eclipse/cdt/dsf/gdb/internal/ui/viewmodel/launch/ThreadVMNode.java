@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson 		  - Modified for multi threaded functionality	
+ *     Ericsson 		  - Modified for multi threaded functionality
  *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
@@ -113,7 +113,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 
 		provider.setColumnInfo(PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS,
 				new LabelColumnInfo(new LabelAttribute[] {
-						// Text is made of the thread name followed by its state and state change reason. 
+						// Text is made of the thread name followed by its state and state change reason.
 						new GdbExecutionContextLabelText(MessagesForGdbLaunchVM.ThreadVMNode_No_columns__text_format,
 								new String[] { ExecutionContextLabelText.PROP_NAME_KNOWN, PROP_NAME,
 										ExecutionContextLabelText.PROP_ID_KNOWN, ILaunchVMConstants.PROP_ID,
@@ -143,7 +143,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.RED)
 										: false;
-							};
+							}
 						},
 						/* RUNNING THREAD - GREEN PIN */
 						new LabelImage(
@@ -163,7 +163,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.GREEN)
 										: false;
-							};
+							}
 						},
 						/* RUNNING THREAD - BLUE PIN */
 						new LabelImage(
@@ -183,7 +183,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.BLUE)
 										: false;
-							};
+							}
 						},
 						/* RUNNING THREAD - NO PIN */
 						new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {
@@ -196,7 +196,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								// prop has been seen to be null during session shutdown [313823]
 								Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED);
 								return (prop != null) ? !prop.booleanValue() : false;
-							};
+							}
 						},
 						/* SUSPENDED THREAD - RED PIN */
 						new LabelImage(
@@ -212,7 +212,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.RED) : false;
-							};
+							}
 						},
 						/* SUSPENDED THREAD - GREEN PIN */
 						new LabelImage(
@@ -228,7 +228,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.GREEN) : false;
-							};
+							}
 						},
 						/* SUSPENDED THREAD - BLUE PIN */
 						new LabelImage(
@@ -244,7 +244,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.BLUE) : false;
-							};
+							}
 						},
 						/* SUSPENDED THREAD - NO PIN */
 						new LabelImage(
@@ -280,7 +280,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								return;
 							}
 
-							List<IExecutionDMContext> execDmcsNotRunning = new ArrayList<IExecutionDMContext>();
+							List<IExecutionDMContext> execDmcsNotRunning = new ArrayList<>();
 							for (IExecutionDMContext execDmc : execDmcs) {
 								// Keep suspended or stepping threads
 								if (runControl.isSuspended(execDmc) || runControl.isStepping(execDmc)) {
@@ -307,7 +307,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 					ImmediateExecutor.getInstance(), updates[i]);
 			int count = 0;
 
-			// Create a delegating update which will let the super-class fill in the 
+			// Create a delegating update which will let the super-class fill in the
 			// standard container properties.
 			parentUpdates[i] = new VMDelegatingPropertiesUpdate(updates[i], countringRm);
 			count++;
@@ -406,10 +406,10 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 			// because a proper refresh will be triggered anyway by the stack frame
 			// being displayed.
 			//
-			// - If not stepping, update the content of the parent, to allow for 
+			// - If not stepping, update the content of the parent, to allow for
 			//   this thread to become hidden.
-			// - If stepping, do nothing to avoid too many updates.  If a 
-			//   time-out is reached before the step completes, the 
+			// - If stepping, do nothing to avoid too many updates.  If a
+			//   time-out is reached before the step completes, the
 			//   ISteppingTimedOutEvent will trigger a refresh.
 			if (((IResumedDMEvent) e).getReason() != IRunControl.StateChangeReason.STEP) {
 				VMDelta ancestorDelta = parentDelta.getParentDelta();
@@ -428,7 +428,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 		getSession().getExecutor().execute(new DsfRunnable() {
 			@Override
 			public void run() {
-				// can we find a thread context in the hierarchy of the IGDBFocusChangedEvent's context? 
+				// can we find a thread context in the hierarchy of the IGDBFocusChangedEvent's context?
 				IDMContext thread = DMContexts.getAncestorOfType(event.getDMContext(), IMIExecutionDMContext.class);
 				final IDMContext newThreadFocus = thread;
 				if (newThreadFocus != null) {

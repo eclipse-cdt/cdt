@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.core.runtime.IPath;
 
 public class CfgProxyCache implements IProxyCache {
-	private HashMap<String, CDataProxy> fProxyMap = new HashMap<String, CDataProxy>();
+	private HashMap<String, CDataProxy> fProxyMap = new HashMap<>();
 	private PathSettingsContainer fPathContainer;
 
 	CfgProxyCache(PathSettingsContainer pathDesContainer) {

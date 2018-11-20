@@ -83,7 +83,7 @@ public interface IWritableIndex extends IIndex {
 	 * @param location the IIndexFileLocation representing the location of the file
 	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
 	 *     variants of the file contents corresponding to different inclusion points.
-	 * @return A created or an existing file.  
+	 * @return A created or an existing file.
 	 */
 	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location, ISignificantMacros macroDictionary)
 			throws CoreException;
@@ -106,7 +106,7 @@ public interface IWritableIndex extends IIndex {
 
 	/**
 	 * Removes an uncommitted file if there is one. Used to recover from a failed index update.
-	 *  
+	 *
 	 * @throws CoreException
 	 */
 	void clearUncommittedFile() throws CoreException;
@@ -157,13 +157,13 @@ public interface IWritableIndex extends IIndex {
 	long getCacheMisses();
 
 	/**
-	 * Returns the primary writable fragment, or <code>null</code> if there is 
+	 * Returns the primary writable fragment, or <code>null</code> if there is
 	 * no writable fragment.
 	 */
 	IWritableIndexFragment getWritableFragment();
 
 	/**
-	 * Flushes all caches to the disk. 
+	 * Flushes all caches to the disk.
 	 */
 	void flush() throws CoreException;
 
@@ -178,13 +178,13 @@ public interface IWritableIndex extends IIndex {
 	void clearResultCache();
 
 	/**
-	 * Changes the inclusions pointing to 'source' to point to 'target', instead. 
+	 * Changes the inclusions pointing to 'source' to point to 'target', instead.
 	 * Both files must belong to the writable fragment.
 	 */
 	void transferIncluders(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException;
 
 	/**
-	 * Changes the inclusion from the context of 'source' to point to 'target', instead. 
+	 * Changes the inclusion from the context of 'source' to point to 'target', instead.
 	 * Both files must belong to the writable fragment.
 	 */
 	void transferContext(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException;

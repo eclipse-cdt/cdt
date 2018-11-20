@@ -36,7 +36,7 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * Command performing a reverse resume.
- * 
+ *
  * @since 2.1
  */
 public class GdbReverseResumeCommand extends AbstractDebugCommand implements IReverseResumeHandler {

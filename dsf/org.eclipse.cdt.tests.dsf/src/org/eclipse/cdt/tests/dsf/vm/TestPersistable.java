@@ -28,13 +28,13 @@ import org.eclipse.ui.IPersistableElement;
  */
 class TestPersistable implements IPersistableElement, IAdaptable {
 
-	HashMap<String, String> map = new HashMap<String, String>();
+	HashMap<String, String> map = new HashMap<>();
 
 	@Override
 	public void saveState(IMemento memento) {
 		HashMap<String, String> clone = null;
 		synchronized (map) {
-			clone = new HashMap<String, String>(map);
+			clone = new HashMap<>(map);
 		}
 		Iterator<Entry<String, String>> it = clone.entrySet().iterator();
 		while (it.hasNext()) {
@@ -46,7 +46,7 @@ class TestPersistable implements IPersistableElement, IAdaptable {
 
 	void restore(IMemento memento) {
 		IMemento[] list = memento.getChildren("variable");
-		HashMap<String, String> clone = new HashMap<String, String>();
+		HashMap<String, String> clone = new HashMap<>();
 		for (int i = 0; i < list.length; i++) {
 			clone.put(list[i].getID(), list[i].getString("format"));
 		}

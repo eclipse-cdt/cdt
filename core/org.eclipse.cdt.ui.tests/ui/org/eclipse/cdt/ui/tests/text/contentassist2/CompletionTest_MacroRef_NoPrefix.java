@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *  IBM Rational Software - Initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Macro_Reference, with no prefix
  * Bug#50487 :Wrong completion kind and prefix after "#ifdef"
  *

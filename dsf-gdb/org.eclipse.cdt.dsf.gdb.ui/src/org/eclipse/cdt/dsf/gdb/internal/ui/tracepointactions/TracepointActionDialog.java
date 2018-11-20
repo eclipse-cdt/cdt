@@ -157,7 +157,7 @@ public class TracepointActionDialog extends Dialog {
 		});
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		tracepointActions = new Vector<ITracepointAction>(TRACEPOINT_ACTIONS_COUNT);
+		tracepointActions = new Vector<>(TRACEPOINT_ACTIONS_COUNT);
 		tracepointActions.add(new CollectAction());
 		tracepointActions.add(new EvaluateAction());
 		// Sub actions of whileStepping cannot be whileStepping

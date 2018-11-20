@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *******************************************************************************/
@@ -45,9 +45,9 @@ public class AsyncCompletionWaitor {
 	 * A timeout of WAIT_FOREVER indicates we wait until the operation is
 	 * completed by a call to waitFinished. Or if we are interrupted with an
 	 * exception.
-	 * 
+	 *
 	 * @param timeout the maximum time to wait in milliseconds
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	public synchronized void waitUntilDone(int timeout) throws InterruptedException {

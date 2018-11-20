@@ -69,7 +69,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 		}
 
 		// this list is allowed to contain duplicate entries, cannot be LinkedHashSet
-		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> list = new ArrayList<>();
 
 		if (languageSettings != null) {
 			for (ICLanguageSetting langSetting : languageSettings) {

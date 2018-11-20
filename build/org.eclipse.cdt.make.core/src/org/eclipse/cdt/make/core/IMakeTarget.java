@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * {@code IMakeTarget} represents a make target item in Make Targets View.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -35,7 +35,7 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	 * @noreference This method is not intended to be referenced by clients.
 	 * Do not use this method to change target name, rather use {@link MakeTargetManager#renameTarget(IMakeTarget, String)}.
 	 * This method is for internal use only.
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void setName(String name);
@@ -46,7 +46,7 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 
 	/**
 	 * Set build target
-	 * 
+	 *
 	 * @deprecated as of CDT 3.0
 	 */
 	@Deprecated
@@ -54,7 +54,7 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 
 	/**
 	 * @deprecated as of CDT 3.0
-	 * 
+	 *
 	 * @return build target
 	 */
 	@Deprecated
@@ -66,14 +66,14 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 
 	/**
 	 * Get the target build container.
-	 * 
-	 * @return IContainer of where target build will be invoked. 
+	 *
+	 * @return IContainer of where target build will be invoked.
 	 */
 	public IContainer getContainer();
 
 	/**
-	 * Make this target temporary on the container, this target will not be persisted, 
-	 * and may not be added to the IMakeTargetManager. 
+	 * Make this target temporary on the container, this target will not be persisted,
+	 * and may not be added to the IMakeTargetManager.
 	 */
 	public void setContainer(IContainer container);
 

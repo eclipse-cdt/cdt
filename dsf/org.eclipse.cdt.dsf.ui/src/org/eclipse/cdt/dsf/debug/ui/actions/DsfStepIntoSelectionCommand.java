@@ -182,7 +182,7 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand
 			}
 		} else {
 			DsfUIPlugin.log(new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID,
-					DebugException.REQUEST_FAILED, "Debug session is not active", null))); //$NON-NLS-1$            
+					DebugException.REQUEST_FAILED, "Debug session is not active", null))); //$NON-NLS-1$
 		}
 	}
 

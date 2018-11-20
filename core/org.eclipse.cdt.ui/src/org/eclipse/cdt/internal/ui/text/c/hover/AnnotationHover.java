@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.ui.text.c.hover;
 /**
  * AnnotationHover
  * This annotation hover shows the description of the
- * selected annotation. 
+ * selected annotation.
  */
 public class AnnotationHover extends AbstractAnnotationHover {
 

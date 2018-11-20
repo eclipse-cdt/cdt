@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.CPPFilt;
@@ -32,7 +33,6 @@ import org.eclipse.cdt.utils.ICygwinToolsFactroy;
 import org.eclipse.cdt.utils.NM;
 import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.Symbol;
-import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.cdt.utils.coff.Coff;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.core.runtime.IPath;
@@ -112,7 +112,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getCPPFilt()
 	 */
 	protected CPPFilt getCPPFilt() {
@@ -125,7 +125,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getObjdump()
 	 */
 	protected Objdump getObjdump() {
@@ -182,7 +182,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		symbolLoadingCPPFilt = getCPPFilt();
 		symbolLoadingCygPath = getCygPath();
 
-		ArrayList<Symbol> list = new ArrayList<Symbol>();
+		ArrayList<Symbol> list = new ArrayList<>();
 		super.loadSymbols(pe, list);
 
 		// Add any global symbols
@@ -264,7 +264,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#addSymbols(org.eclipse.cdt.utils.coff.Coff.Symbol[],
 	 *      byte[], java.util.List)
 	 */

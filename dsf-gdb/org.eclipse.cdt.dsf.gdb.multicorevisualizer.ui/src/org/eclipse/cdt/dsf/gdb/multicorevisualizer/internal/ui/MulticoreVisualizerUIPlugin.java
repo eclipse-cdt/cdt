@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     William R. Swanson (Tilera Corporation) - added resource support
@@ -108,7 +108,7 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -118,7 +118,7 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message to log
 	 */
@@ -128,7 +128,7 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
@@ -180,7 +180,7 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the active workbench window
-	 * 
+	 *
 	 * @return the active workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -197,7 +197,7 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the active workbench shell or <code>null</code> if none
-	 * 
+	 *
 	 * @return the active workbench shell or <code>null</code> if none
 	 */
 	public static Shell getActiveWorkbenchShell() {

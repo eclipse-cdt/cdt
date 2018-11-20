@@ -17,13 +17,11 @@ package org.eclipse.cdt.internal.ui.workingsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 
 class CElementWorkingSetPageContentProvider extends BaseCElementContentProvider {
 
@@ -35,7 +33,7 @@ class CElementWorkingSetPageContentProvider extends BaseCElementContentProvider 
 		if (element instanceof IWorkspaceRoot) {
 			IWorkspaceRoot root = (IWorkspaceRoot) element;
 			IProject[] projects = root.getProjects();
-			List<ICProject> list = new ArrayList<ICProject>(projects.length);
+			List<ICProject> list = new ArrayList<>(projects.length);
 			for (int i = 0; i < projects.length; i++) {
 				if (CoreModel.hasCNature(projects[i])) {
 					list.add(CoreModel.getDefault().create(projects[i]));

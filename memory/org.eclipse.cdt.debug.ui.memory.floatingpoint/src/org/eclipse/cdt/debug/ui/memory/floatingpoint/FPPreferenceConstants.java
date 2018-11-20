@@ -24,7 +24,7 @@ public class FPPreferenceConstants {
 
 	/**
 	 * Initialize preference default values.
-	 * 
+	 *
 	 * @param store
 	 */
 	public static void initializeDefaults(IPreferenceStore store) {

@@ -83,7 +83,7 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if (context instanceof IConfiguration) {
-			List<IBuildEnvironmentVariable> variables = new ArrayList<IBuildEnvironmentVariable>(2);
+			List<IBuildEnvironmentVariable> variables = new ArrayList<>(2);
 			IBuildEnvironmentVariable var = getConfigurationVariable("CWD", (IConfiguration) context); //$NON-NLS-1$
 			if (var != null) {
 				variables.add(var);

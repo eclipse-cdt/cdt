@@ -18,7 +18,7 @@ package org.eclipse.cdt.debug.core.model;
  */
 public interface ICAddressBreakpoint extends ICLineBreakpoint {
 
-	/** 
+	/**
 	 * Breakpoint marker type for this breakpoint type.
 	 * @since 7.2
 	 */

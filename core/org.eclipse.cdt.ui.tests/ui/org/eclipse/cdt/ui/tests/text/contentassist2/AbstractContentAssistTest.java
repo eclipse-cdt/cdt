@@ -28,6 +28,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistMessages;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.contentassist.ParameterGuessingProposal;
+import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -40,27 +58,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
-import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistMessages;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.internal.ui.text.contentassist.ParameterGuessingProposal;
-import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	public static enum CompareType {

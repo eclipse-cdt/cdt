@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.settings.model;
 public class WriteAccessException extends RuntimeException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -4231477296650158708L;
 

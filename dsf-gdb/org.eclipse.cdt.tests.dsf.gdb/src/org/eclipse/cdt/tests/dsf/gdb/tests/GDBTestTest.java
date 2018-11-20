@@ -48,7 +48,7 @@ public class GDBTestTest extends BaseParametrizedTestCase {
 	}
 
 	/**
-	 * Test that test infrastructure allows multiple launches on same launch config. 
+	 * Test that test infrastructure allows multiple launches on same launch config.
 	 */
 	@Test
 	public void testMultipleLaunch() throws Exception {

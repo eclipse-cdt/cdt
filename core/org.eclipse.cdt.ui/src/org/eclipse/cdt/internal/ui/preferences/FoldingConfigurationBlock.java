@@ -17,6 +17,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderDescriptor;
+import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -44,17 +50,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
-
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderDescriptor;
-import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
-
 /**
  * Configures C Editor folding preferences.
- * 
+ *
  * @since 3.0
  */
 class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
@@ -112,15 +110,15 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 		fStore = store;
 		fStore.addKeys(createOverlayStoreKeys());
 		fProviderDescriptors = createListModel();
-		fProviderPreferences = new HashMap<String, ICFoldingPreferenceBlock>();
-		fProviderControls = new HashMap<String, Control>();
+		fProviderPreferences = new HashMap<>();
+		fProviderControls = new HashMap<>();
 	}
 
 	private Map<String, CFoldingStructureProviderDescriptor> createListModel() {
 		CFoldingStructureProviderRegistry reg = CUIPlugin.getDefault().getFoldingStructureProviderRegistry();
 		reg.reloadExtensions();
 		CFoldingStructureProviderDescriptor[] descs = reg.getFoldingProviderDescriptors();
-		Map<String, CFoldingStructureProviderDescriptor> map = new HashMap<String, CFoldingStructureProviderDescriptor>();
+		Map<String, CFoldingStructureProviderDescriptor> map = new HashMap<>();
 		for (int i = 0; i < descs.length; i++) {
 			map.put(descs[i].getId(), descs[i]);
 		}
@@ -129,7 +127,7 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_FOLDING_ENABLED));

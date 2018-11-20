@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -28,13 +28,13 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * Data Request monitor that takes <code>IViewerUpdate</code> as a parent.
  * If the IViewerUpdate is canceled, this request monitor becomes canceled as well.
  * @see IViewerUpdate
- * 
+ *
  * @since 1.0
  */
 public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
 
 	/**
-	 * Same as {@link DsfExecutable#DEBUG_MONITORS} 
+	 * Same as {@link DsfExecutable#DEBUG_MONITORS}
 	 */
 	static private boolean DEBUG_MONITORS = DsfPlugin.DEBUG
 			&& Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$
@@ -88,7 +88,7 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
 		while (true) {
 			StackTraceElement topFrame = null;
 			if (nextupdate != null) {
-				type = "update "; //$NON-NLS-1$  extra space to match length of 'monitor'  
+				type = "update "; //$NON-NLS-1$  extra space to match length of 'monitor'
 				topFrame = getCreatedAtTopFrame(nextupdate);
 				nextrm = getMonitor(nextupdate);
 				nextupdate = null;

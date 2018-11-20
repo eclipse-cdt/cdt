@@ -17,23 +17,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.views.contentoutline.ContentOutline;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
@@ -57,16 +40,31 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.views.contentoutline.ContentOutline;
 
 public class NewClassWizardUtil {
 	/**
 	 * Returns the parent source folder of the given element. If the given
 	 * element is already a source folder, the element itself is returned.
-	 * 
+	 *
 	 * @param element the C Element
 	 * @return the source folder
 	 */
@@ -91,7 +89,7 @@ public class NewClassWizardUtil {
 	/**
 	 * Returns the parent source folder for the given path. If the given
 	 * path is already a source folder, the corresponding C element is returned.
-	 * 
+	 *
 	 * @param path the path
 	 * @return the source folder
 	 */
@@ -123,7 +121,7 @@ public class NewClassWizardUtil {
 
 	/**
 	 * Checks if a given resource is under a source root.
-	 * 
+	 *
 	 * @param resource the resource
 	 * @return <code>true</code> if the resource is under one of the project source roots
 	 */
@@ -135,7 +133,7 @@ public class NewClassWizardUtil {
 
 	/**
 	 * Checks if a given file path is under a source root.
-	 * 
+	 *
 	 * @param path the file path
 	 * @return <code>true</code> if the resource is under one of the project source roots
 	 */
@@ -147,7 +145,7 @@ public class NewClassWizardUtil {
 	/**
 	 * Returns the first source root in the given project. If the project has
 	 * no source roots as children, the project itself is returned.
-	 * 
+	 *
 	 * @param cproject
 	 * @return the source root
 	 */
@@ -170,7 +168,7 @@ public class NewClassWizardUtil {
 
 	/**
 	 * Returns the C Element which corresponds to the given selection.
-	 * 
+	 *
 	 * @param selection the selection to be inspected
 	 * @return a C element matching the selection, or <code>null</code>
 	 * if no C element exists in the given selection
@@ -202,7 +200,7 @@ public class NewClassWizardUtil {
 
 	/**
 	 * Returns the C Element which corresponds to the active editor.
-	 * 
+	 *
 	 * @return a C element matching the active editor, or <code>null</code>
 	 * if no C element can be found
 	 */
@@ -254,7 +252,7 @@ public class NewClassWizardUtil {
 
 	/**
 	 * Returns the workspace root.
-	 * 
+	 *
 	 * @return the workspace root
 	 */
 	public static IWorkspaceRoot getWorkspaceRoot() {
@@ -263,7 +261,7 @@ public class NewClassWizardUtil {
 
 	/**
 	 * Resolves the location of the given class.
-	 * 
+	 *
 	 * @param type the class to resolve
 	 * @param context the runnable context
 	 * @return the class location, or <code>null</code> if not found
@@ -275,7 +273,7 @@ public class NewClassWizardUtil {
 	/**
 	 * Checks whether the given type can be found in the given project or the
 	 * given include paths.
-	 * 
+	 *
 	 * @param type the type
 	 * @param project the project
 	 * @param includePaths the include paths
@@ -326,14 +324,14 @@ public class NewClassWizardUtil {
 	/**
 	 * Search for the given qualified name of the give
 	 * @param typeName  qualified name of the type to search
-	 * @param project  
+	 * @param project
 	 * @param queryType Class of interface type to search for (e.g. ICPPClassType.class)
-	 * @return one of {@link #SEARCH_MATCH_ERROR}, 
+	 * @return one of {@link #SEARCH_MATCH_ERROR},
 	 * {@link #SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE},
-	 * {@link #SEARCH_MATCH_FOUND_ANOTHER_TYPE}, 
+	 * {@link #SEARCH_MATCH_FOUND_ANOTHER_TYPE},
 	 * {@link #SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE},
 	 * {@link #SEARCH_MATCH_FOUND_EXACT} or
-	 * {@link #SEARCH_MATCH_NOTFOUND}.	 
+	 * {@link #SEARCH_MATCH_NOTFOUND}.
 	 */
 	public static int searchForCppType(IQualifiedTypeName typeName, ICProject project, Class<?> queryType) {
 		IIndex index = null;
@@ -370,7 +368,7 @@ public class NewClassWizardUtil {
 					//get the fully qualified name of this binding
 					String bindingFullName = renderQualifiedName(binding.getQualifiedName());
 					Class<? extends ICPPBinding> currentNodeType = binding.getClass();
-					// full binding				
+					// full binding
 					if (queryType.isAssignableFrom(currentNodeType)) {
 						if (bindingFullName.equals(fullyQualifiedTypeName)) {
 							//bug 165636: there is a match only if there is a definition for the binding

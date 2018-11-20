@@ -133,13 +133,13 @@ public class CfgScannerConfigInfoFactory2 {
 			}
 
 			if (fContainer == null) {
-				fContainer = new SoftReference<IScannerConfigBuilderInfo2Set>(container);
+				fContainer = new SoftReference<>(container);
 			}
 			return container;
 		}
 
 		private Map<CfgInfoContext, IScannerConfigBuilderInfo2> createMap() {
-			HashMap<CfgInfoContext, IScannerConfigBuilderInfo2> map = new HashMap<CfgInfoContext, IScannerConfigBuilderInfo2>();
+			HashMap<CfgInfoContext, IScannerConfigBuilderInfo2> map = new HashMap<>();
 			try {
 				IScannerConfigBuilderInfo2Set container = getContainer();
 
@@ -314,7 +314,7 @@ public class CfgScannerConfigInfoFactory2 {
 
 		private Map<CfgInfoContext, IScannerConfigBuilderInfo2> getConfigInfoMap(
 				Map<InfoContext, IScannerConfigBuilderInfo2> baseMap) {
-			Map<CfgInfoContext, IScannerConfigBuilderInfo2> map = new HashMap<CfgInfoContext, IScannerConfigBuilderInfo2>();
+			Map<CfgInfoContext, IScannerConfigBuilderInfo2> map = new HashMap<>();
 
 			for (Entry<InfoContext, IScannerConfigBuilderInfo2> entry : baseMap.entrySet()) {
 				InfoContext baseContext = entry.getKey();

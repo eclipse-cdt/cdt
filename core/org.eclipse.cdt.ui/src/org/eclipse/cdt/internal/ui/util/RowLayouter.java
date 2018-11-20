@@ -13,20 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.core.runtime.Assert;
-
 /**
- * Helper class to layout a number of children if the composite uses a <code>GridLayout</code>. 
- * If the numbers of widgets to be layouted into one row is smaller than the number of columns 
+ * Helper class to layout a number of children if the composite uses a <code>GridLayout</code>.
+ * If the numbers of widgets to be layouted into one row is smaller than the number of columns
  * defined for the grid layout the helper class assigns a corresponing value to the <code>
  * GridData.horizontalSpan</code> field.
- * 
+ *
  * Additionally a row layouter manages a default <code>GridData</code> object for each column.
  * If set this grid data is used for the widget if it doesn't manage its own grid data object.
- * 
+ *
  * Call one of the <code>perform</code> methods to assign the correct grid data objects to
  * a set of widgets according to the number of columns passed to the layouter's constructor.
  */

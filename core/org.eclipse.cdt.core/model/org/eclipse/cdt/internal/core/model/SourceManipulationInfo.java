@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-/** 
- * Element info for ISourceReference elements. 
+/**
+ * Element info for ISourceReference elements.
  */
 class SourceManipulationInfo extends CElementInfo {
 	protected int fStartPos;

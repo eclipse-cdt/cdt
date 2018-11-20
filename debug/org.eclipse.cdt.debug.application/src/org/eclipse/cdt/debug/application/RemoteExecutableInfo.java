@@ -17,7 +17,7 @@
 package org.eclipse.cdt.debug.application;
 
 /**
- * This class provides information required to start debugging a remote executable. 
+ * This class provides information required to start debugging a remote executable.
  */
 public class RemoteExecutableInfo {
 	private final String fHostPath;
@@ -64,7 +64,7 @@ public class RemoteExecutableInfo {
 
 	/**
 	 * Get the build log path.
-	 * 
+	 *
 	 * @return the build log path or null
 	 */
 	public String getBuildLog() {

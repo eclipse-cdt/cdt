@@ -116,7 +116,7 @@ public class QtIndexImpl extends QtIndex {
 				IQmlRegistration qml = QmlRegistration.create(QtIndexImpl.this, binding);
 				if (qml != null) {
 					if (types == null)
-						types = new ArrayList<IQmlRegistration>();
+						types = new ArrayList<>();
 					types.add(qml);
 				}
 			}

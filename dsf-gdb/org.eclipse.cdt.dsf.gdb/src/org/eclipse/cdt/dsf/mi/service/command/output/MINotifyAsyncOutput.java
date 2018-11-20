@@ -19,10 +19,10 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * Represents an asynchronous OOB record from gdb that provides supplementary,
  * important information that is likely of interest to the client, e.g.,
  * notification that a new breakpoint has been created.
- * 
+ *
  * <p>
  * All such output is prefixed by `='.
- * 
+ *
  * @see MIAsyncRecord
  */
 public class MINotifyAsyncOutput extends MIAsyncRecord {

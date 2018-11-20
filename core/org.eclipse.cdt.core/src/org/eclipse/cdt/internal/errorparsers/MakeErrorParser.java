@@ -78,7 +78,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 			// Turning off for now, bug 203269
 			// This is reporting an error on the line 'make -j8 ...'
 			//		new ErrorPattern("(make.*\\d+\\s+\\w+.*)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1$
-			//			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {				
+			//			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 			//				super.recordError(matcher, eoParser);
 			//				return true;
 			//			}
@@ -214,7 +214,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 					return true;
 				}
 			},
-			//Recursive variable `xxx' references itself (eventually). Stop.		
+			//Recursive variable `xxx' references itself (eventually). Stop.
 			new ErrorPattern("(make.*Recursive variable `.*' references itself \\(eventually\\).\\s*Stop.)", 1, //$NON-NLS-1$
 					IMarkerGenerator.SEVERITY_ERROR_RESOURCE) {
 				@Override
@@ -223,7 +223,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 					return true;
 				}
 			},
-			//Unterminated variable reference. Stop.		
+			//Unterminated variable reference. Stop.
 			new ErrorPattern("(make.*[uU]nterminated variable reference.\\s*Stop.)", 1, //$NON-NLS-1$
 					IMarkerGenerator.SEVERITY_ERROR_RESOURCE) {
 				@Override

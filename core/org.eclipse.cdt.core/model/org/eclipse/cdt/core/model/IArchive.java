@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.model;
 /**
  * An IArchive represents a group of files combined  into  a
  * single file(the Archive), for example 'libXX.a'.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

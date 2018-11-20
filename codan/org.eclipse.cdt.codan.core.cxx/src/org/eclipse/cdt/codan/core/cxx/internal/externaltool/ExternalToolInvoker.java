@@ -43,7 +43,7 @@ public class ExternalToolInvoker {
 
 	/**
 	 * Invokes an external tool.
-	 * 
+	 *
 	 * @param parameters the parameters to pass to the external tool executable.
 	 * @param settings user-configurable settings.
 	 * @param argsSeparator separates the arguments to pass to the external tool

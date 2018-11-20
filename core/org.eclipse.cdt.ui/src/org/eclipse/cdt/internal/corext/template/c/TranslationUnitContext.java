@@ -16,6 +16,12 @@
 
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.corext.util.Strings;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -23,14 +29,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-import org.eclipse.cdt.internal.corext.util.Strings;
 
 /**
  * A translation unit context.
@@ -46,7 +44,7 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 
 	/**
 	 * Creates a translation unit context.
-	 * 
+	 *
 	 * @param type the context type
 	 * @param document the document
 	 * @param completionOffset the completion position within the document
@@ -62,7 +60,7 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 
 	/**
 	 * Creates a translation unit context.
-	 * 
+	 *
 	 * @param type the context type
 	 * @param document the document
 	 * @param completionPosition the completion position within the document
@@ -137,7 +135,7 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 
 	/**
 	 * Sets whether evaluation is forced or not.
-	 * 
+	 *
 	 * @param evaluate <code>true</code> in order to force evaluation,
 	 *            <code>false</code> otherwise
 	 */

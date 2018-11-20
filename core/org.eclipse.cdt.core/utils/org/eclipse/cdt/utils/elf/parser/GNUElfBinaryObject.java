@@ -20,12 +20,12 @@ import java.util.List;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.Symbol;
-import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
 import org.eclipse.core.runtime.IPath;

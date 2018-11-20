@@ -73,7 +73,7 @@ public class MatchKey<T extends BuildObject> {
 		return true;
 		/*		IOption options[] = buildObject.getOptions();
 				IOption otherOptions[] = bo.getOptions();
-				
+
 				if(!ListComparator.match(options,
 						otherOptions,
 						new Comparator(){
@@ -81,8 +81,8 @@ public class MatchKey<T extends BuildObject> {
 						return ((Option)o1).matches((Option)o2);
 					}
 				}))
-					return false; 
-				
+					return false;
+
 				return true;
 				*/
 	}

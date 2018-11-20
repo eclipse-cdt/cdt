@@ -34,16 +34,16 @@ import org.eclipse.ui.PlatformUI;
  * target selection exists, the "debuggerActive" System property is set to true.
  * This property is used to make the "Run to Line", "Resume at Line",
  * "Move to Line" and "Add Watch Expression" actions
- * visible in editors only if there is a running debug session. 
+ * visible in editors only if there is a running debug session.
  */
 public class EvaluationContextManager implements IWindowListener, IDebugContextListener {
 
-	// Avoid referencing the cdt.debug.ui plugin for this constnat so that the 
+	// Avoid referencing the cdt.debug.ui plugin for this constnat so that the
 	// cdt.debug.ui is not automatically activated
 	// Bug 343867.
 	private static final String CDT_DEBUG_UI_PLUGIN_ID = "org.eclipse.cdt.debug.ui"; //$NON-NLS-1$
 
-	// Must use the same ID than the base CDT uses since we want to enable actions that are registered by base CDT. 
+	// Must use the same ID than the base CDT uses since we want to enable actions that are registered by base CDT.
 	private final static String DEBUGGER_ACTIVE = CDT_DEBUG_UI_PLUGIN_ID + ".debuggerActive"; //$NON-NLS-1$
 
 	protected static EvaluationContextManager fgManager;

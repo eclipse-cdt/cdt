@@ -18,15 +18,13 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.internal.ui.viewsupport.ProblemsLabelDecorator.ProblemsLabelChangedEvent;
 import org.eclipse.core.resources.IResource;
-
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
 
 /**
  * Extends a  TableViewer to allow more performance when showing error ticks.
@@ -114,7 +112,7 @@ public class ProblemTableViewer extends TableViewer {
 
 		Object[] changed = event.getElements();
 		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
-			ArrayList<Object> others = new ArrayList<Object>(changed.length);
+			ArrayList<Object> others = new ArrayList<>(changed.length);
 			for (int i = 0; i < changed.length; i++) {
 				Object curr = changed[i];
 				if (curr instanceof IResource) {

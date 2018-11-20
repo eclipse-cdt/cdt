@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.IDocument;
@@ -29,21 +30,19 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.ui.text.ICPartitions;
-
 /**
  * Action that encloses the editor's current selection with C block comment terminators
  * (<code>&#47;&#42;</code> and <code>&#42;&#47;</code>).
- * 
+ *
  * @since 3.0
  */
 public class AddBlockCommentAction extends BlockCommentAction {
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 */
@@ -58,7 +57,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 		if (!(docExtension instanceof IDocument))
 			return;
 
-		List<Edit> edits = new LinkedList<Edit>();
+		List<Edit> edits = new LinkedList<>();
 
 		ITypedRegion firstPartition = docExtension.getPartition(ICPartitions.C_PARTITIONING, selection.getOffset(),
 				false);
@@ -86,7 +85,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 
 	/**
 	 * Add enclosing comment tags for the whole area to be commented
-	 * 
+	 *
 	 * @param commentArea initial comment area which can be adjusted
 	 * @param lastPartition last partition
 	 * @param doc document
@@ -145,7 +144,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	/**
 	 * Make all inside partitions join in one comment, in particular remove
 	 * all enclosing comment tokens of the inside partitions.
-	 * 
+	 *
 	 * @param commentArea comment area region
 	 * @param partition first partition
 	 * @param docExtension document
@@ -169,7 +168,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 					|| partition.getType() == ICPartitions.C_MULTI_LINE_DOC_COMMENT) {
 				// already in a comment - remove start/end tokens
 				edits.add(factory.createEdit(partition.getOffset(), startCommentTokenLength, "")); //$NON-NLS-1$
-				edits.add(factory.createEdit(partitionEnd - endCommentTokenLength, endCommentTokenLength, "")); //$NON-NLS-1$	
+				edits.add(factory.createEdit(partitionEnd - endCommentTokenLength, endCommentTokenLength, "")); //$NON-NLS-1$
 			}
 			// advance to next partition
 			prevPartitionEnd = partitionEnd;
@@ -185,7 +184,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	/**
 	 * Returns whether <code>partType</code> is special, i.e. a <code>String</code>,
 	 * <code>Character</code>, or <code>Comment</code> partition.
-	 * 
+	 *
 	 * @param partType the partition type to check
 	 * @return <code>true</code> if <code>partType</code> is special, <code>false</code> otherwise
 	 */

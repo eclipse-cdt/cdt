@@ -33,11 +33,11 @@ import org.eclipse.core.runtime.Platform;
  * that the path component of the URI is a direct representation of the absolute path to the file in the
  * physical filesystem. Also, operations will by default respect the syntax and semantics of the local EFS
  * filesystem, if operations are performed with respect to it.
- * 
+ *
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
  * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
- * 
+ *
  * @author crecoskie
  * @noextend This class is not intended to be extended by clients.
  * @since 5.2
@@ -57,7 +57,7 @@ public class EFSExtensionManager {
 	private static String EXTENSION_ID = "EFSExtensionProvider"; //$NON-NLS-1$
 
 	private EFSExtensionManager() {
-		fSchemeToExtensionProviderMap = new HashMap<String, EFSExtensionProvider>();
+		fSchemeToExtensionProviderMap = new HashMap<>();
 		loadExtensions();
 	}
 
@@ -101,8 +101,8 @@ public class EFSExtensionManager {
 	 * If the EFS store represented by locationURI is backed by a physical file, gets the path corresponding
 	 * to the underlying file.  The path returned is suitable for use in constructing a {@link Path} object.  This
 	 * method will return the corresponding path regardless of whether or not the EFS store actually exists.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param locationURI
 	 * @return String representing the path, or <code>null</code> if there is an error or if the store
 	 * is not backed by a physical file.
@@ -122,7 +122,7 @@ public class EFSExtensionManager {
 	 * In the case of a virtual filesystem, where URIs in the given filesystem are just soft links in EFS to
 	 * URIs in other filesystems, returns the URI that this URI links to. If the filesystem is not virtual,
 	 * then this method acts as an identity mapping.
-	 * 
+	 *
 	 * @param locationURI
 	 * @return A URI corresponding to the linked store, or <code>null</code> on error.
 	 */
@@ -141,7 +141,7 @@ public class EFSExtensionManager {
 	 * Creates a new URI which clones the contents of the original URI, but with the path replaced by the
 	 * given path, such that calling getPathFromURI() on the returned URI will return the given path. Returns
 	 * null on error.
-	 * 
+	 *
 	 * @param locationOnSameFilesystem
 	 * @param path
 	 * @return the new URI, or <code>null</code> on error
@@ -162,11 +162,11 @@ public class EFSExtensionManager {
 	 * another path (say, on the local machine), this method returns the path that the store maps to. I.e., it
 	 * returns the path that the path returned by getPathFromURI(URI locationURI) maps to. If there is no such
 	 * mapping, then an identity mapping of the paths is assumed.
-	 * 
+	 *
 	 * Typically if a filesystem maps one filesytem to another, it will place the mapped path in the path
 	 * field of its URIs (which the default implementation assumes), but this is not guaranteed to be so for
 	 * all filesystem implementations.
-	 * 
+	 *
 	 * @return String representing the path, or <code>null</code> on error.
 	 */
 	public String getMappedPath(URI locationURI) {
@@ -183,7 +183,7 @@ public class EFSExtensionManager {
 	/**
 	 * Returns true if the given URI is part of a virtual filesystem and thus points to another underlying
 	 * URI. Returns false otherwise. By default, filesystems are assumed to be non-virtual.
-	 * 
+	 *
 	 * @param locationURI
 	 * @return boolean
 	 */
@@ -199,9 +199,9 @@ public class EFSExtensionManager {
 
 	/**
 	 * Creates a new URI with the same components as the baseURI, except that calling
-	 * getPathFromURI() on the new URI will return a path that has the extension appended to 
+	 * getPathFromURI() on the new URI will return a path that has the extension appended to
 	 * the path returned by baseURI.getPathFromURI()
-	 * 
+	 *
 	 * @param baseURI
 	 * @param extension
 	 * @return the new URI, or <code>null</code> on error.

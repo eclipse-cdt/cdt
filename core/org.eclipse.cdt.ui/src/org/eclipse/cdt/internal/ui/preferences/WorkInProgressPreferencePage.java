@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -32,8 +33,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * Preference page for work in progress.
  */
@@ -47,9 +46,9 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	 */
 	public WorkInProgressPreferencePage() {
 		setPreferenceStore(getPreferenceStore());
-		fRadioButtons = new ArrayList<Button>();
-		fCheckBoxes = new ArrayList<Button>();
-		fTextControls = new ArrayList<Text>();
+		fRadioButtons = new ArrayList<>();
+		fCheckBoxes = new ArrayList<>();
+		fTextControls = new ArrayList<>();
 	}
 
 	Button addCheckBox(Composite parent, String label, String key) {

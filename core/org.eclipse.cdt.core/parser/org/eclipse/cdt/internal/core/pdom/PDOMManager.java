@@ -1288,7 +1288,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * Note. This will acquire a write lock while the pdom is exported
 	 * @param targetLocation a location that does not currently exist
 	 * @param newConverter
-	 * @param monitor 
+	 * @param monitor
 	 * @throws CoreException
 	 * @throws IllegalArgumentException if a file exists at targetLocation
 	 */
@@ -1339,7 +1339,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	/**
 	 * Resets the pdom for the project with the provided stream.
-	 * @param monitor 
+	 * @param monitor
 	 * @throws CoreException
 	 * @throws OperationCanceledException in case the thread was interrupted
 	 * @since 4.0
@@ -1680,7 +1680,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					return new MultiStatus(CCorePlugin.PLUGIN_ID, IStatus.OK, "Index timestamp for '" //$NON-NLS-1$
 							+ file.getLocation().getFullPath() + "' is " + diff + " msec older than " //$NON-NLS-1$ //$NON-NLS-2$
 							+ location + "(" //$NON-NLS-1$
-							+ SimpleDateFormat.getDateTimeInstance().format(new Date(resource.getLocalTimeStamp())) + ")", null); //$NON-NLS-1$
+							+ SimpleDateFormat.getDateTimeInstance().format(new Date(resource.getLocalTimeStamp()))
+							+ ")", null); //$NON-NLS-1$
 				}
 
 				// If it is up-to-date, the includes have not changed and may be read from the index.

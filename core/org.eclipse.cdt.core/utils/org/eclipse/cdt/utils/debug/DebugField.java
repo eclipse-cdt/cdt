@@ -16,7 +16,7 @@ package org.eclipse.cdt.utils.debug;
 
 /**
  * DebugEnumField
- *  
+ *
  */
 public class DebugField {
 
@@ -26,7 +26,7 @@ public class DebugField {
 	int bits;
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugField(String name, DebugType type, int offset, int bits) {
 		this.name = name;

@@ -34,9 +34,9 @@ public interface ICDescriptorManager {
 	 * Return the ICDescriptor for the project.  If project doesn't contain
 	 * an ICDescriptor then one is created.
 	 * Equivalent to: {@code ICDescriptorManager#getDescriptor(project, true)}
-	 * 
+	 *
 	 * Users should consider batching changes in an ICDescriptorOperation
-	 * 
+	 *
 	 * @see ICDescriptorManager#getDescriptor(IProject, boolean)
 	 * @param project
 	 * @return ICDescriptor
@@ -47,9 +47,9 @@ public interface ICDescriptorManager {
 	/**
 	 * Return the ICDescriptor for the project.  If project doesn't contain
 	 * an ICDescriptor and create == true, then one is created
-	 * 
+	 *
 	 * Users should consider batching changes in an ICDescriptorOperation
-	 * 
+	 *
 	 * @param project
 	 * @param create
 	 * @return ICDescriptor
@@ -59,7 +59,7 @@ public interface ICDescriptorManager {
 
 	/**
 	 * Atomically runs the descriptor operation on the current project's configuration
-	 * 
+	 *
 	 * The descriptor is automatically 'applied' after the CDescriptorOperation has been run
 	 * @param project
 	 * @param op
@@ -72,7 +72,7 @@ public interface ICDescriptorManager {
 	/**
 	 * Runs the ICDescriptorOperation on the provided ICProjectDescription. The changes are reconciled into
 	 * the provided ICProjectDescription.
-	 * 
+	 *
 	 * Currently this project description may be different from the current project description
 	 * @param project
 	 * @param des

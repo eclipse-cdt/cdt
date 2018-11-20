@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
@@ -28,14 +31,9 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
-
 /**
  * Action to run content assist on a specific proposal category.
- * 
+ *
  * @since 4.0
  */
 final class SpecificContentAssistAction extends Action implements IUpdate {
@@ -55,7 +53,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 
 	/**
 	 * Creates a new action for a certain proposal category.
-	 * 
+	 *
 	 * @param category
 	 */
 	public SpecificContentAssistAction(CompletionProposalCategory category) {
@@ -85,7 +83,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 
 	/**
 	 * Sets the active editor part.
-	 * 
+	 *
 	 * @param part the editor, possibly <code>null</code>
 	 */
 	public void setActiveEditor(IEditorPart part) {
@@ -113,7 +111,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 	/**
 	 * Computes the partition type at the selection start and checks whether the proposal category
 	 * has any computers for this partition.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return <code>true</code> if there are any computers for the selection
 	 */

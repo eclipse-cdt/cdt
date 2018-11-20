@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.dialogfields;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -23,8 +24,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.core.runtime.Assert;
 
 /**
  * Dialog field describing a group with buttons (Checkboxes, radio buttons..)
@@ -200,7 +199,7 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 		}
 	}
 
-	// ------ model access	
+	// ------ model access
 
 	/**
 	 * Returns the selection state of a button contained in the group.

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2012 QNX Software Systems and others.
- * 
+ *
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,13 +20,13 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Interface for debugger event breakpoints. Example of event breakpoint
  * is break on raising exception in C++, or break on receiving signal.
- * 
+ *
  * @sinse 5.0
  * @since 7.0
  */
 public interface ICEventBreakpoint extends ICBreakpoint {
 
-	/** 
+	/**
 	 * Breakpoint marker type for this breakpoint type.
 	 * @since 7.2
 	 */
@@ -37,10 +37,10 @@ public interface ICEventBreakpoint extends ICBreakpoint {
 	 * this indicates what type of event the breakpoint catches--e.g., a C++
 	 * exception throw, a library load, a thread exit, etc. Event types are
 	 * contributed via the "breakpointContribution" extension point.
-	 * 
+	 *
 	 * <p>
 	 * This attribute is a <code>String</code>.
-	 * 
+	 *
 	 */
 	public static final String EVENT_TYPE_ID = "org.eclipse.cdt.debug.core.eventbreakpoint_event_id"; //$NON-NLS-1$
 
@@ -50,12 +50,12 @@ public interface ICEventBreakpoint extends ICBreakpoint {
 	 * representation of another type (it may be a number, for example).
 	 * Currently, an event type can have only one argument
 	 */
-	public static final String EVENT_ARG = "org.eclipse.cdt.debug.core.eventbreakpoint_event_arg"; //$NON-NLS-1$	
+	public static final String EVENT_ARG = "org.eclipse.cdt.debug.core.eventbreakpoint_event_arg"; //$NON-NLS-1$
 
 	/**
 	 * Get the event breakpoint type. Same as querying the property
 	 * {@link #EVENT_TYPE_ID}
-	 * 
+	 *
 	 * @return event breakpoint type id (not null)
 	 * @throws CoreException
 	 */
@@ -65,7 +65,7 @@ public interface ICEventBreakpoint extends ICBreakpoint {
 	 * Get the event argument, if the type has one. Currently, an event type can
 	 * have at most one argument. Same as querying the property
 	 * {@link #EVENT_ARG}
-	 * 
+	 *
 	 * @return event argument, or null if not applicable
 	 * @throws CoreException
 	 */

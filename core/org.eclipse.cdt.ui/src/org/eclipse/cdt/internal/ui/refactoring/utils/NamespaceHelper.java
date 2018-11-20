@@ -1,24 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -32,13 +29,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Helper class to find Namespace informations.
@@ -48,12 +45,12 @@ public class NamespaceHelper {
 	/**
 	 * Returns the qualified name of all namespaces that are defined at the specified translation
 	 * unit and offset.
-	 * 
+	 *
 	 * @param translationUnit
 	 * @param offset
 	 * @param astCache
 	 * @return ICPPASTQualifiedName with the names of all namespaces
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static ICPPASTName[] getSurroundingNamespace(final ITranslationUnit translationUnit, final int offset,
 			CRefactoringContext astCache) throws CoreException {

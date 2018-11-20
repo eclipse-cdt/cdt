@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,12 +30,12 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParser;
 
 /**
  * ILanguage implementation for the C++ parser.
- * 
+ *
  * @author Mike Kucera
  */
 public class ISOCPPLanguage extends BaseExtensibleLanguage {
 
-	public static final String ID = "org.eclipse.cdt.core.lrparser.isocpp"; //$NON-NLS-1$ 
+	public static final String ID = "org.eclipse.cdt.core.lrparser.isocpp"; //$NON-NLS-1$
 
 	private static ISOCPPLanguage DEFAULT = new ISOCPPLanguage();
 

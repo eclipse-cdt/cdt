@@ -38,12 +38,12 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 	private IProgressMonitor monitor = null;
 	private int monitorCheckCounter = 0;
 
-	private List<PDOMMacroContainer> macros = new ArrayList<PDOMMacroContainer>();
+	private List<PDOMMacroContainer> macros = new ArrayList<>();
 
 	/**
 	 * Collects all nodes with given name, passing the filter. If prefixLookup is set to
 	 * <code>true</code> a binding is considered if its name starts with the given prefix.
-	 * 
+	 *
 	 * @param linkage
 	 * @param name
 	 * @param prefixLookup

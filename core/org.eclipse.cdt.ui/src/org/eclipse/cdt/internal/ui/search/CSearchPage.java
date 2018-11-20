@@ -18,6 +18,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.util.RowLayouter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -58,19 +69,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.util.RowLayouter;
 
 /**
  * @author Doug Schaefer
@@ -178,7 +176,7 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 		}
 
 		// get the list of elements for the scope
-		Set<ICElement> elements = new HashSet<ICElement>();
+		Set<ICElement> elements = new HashSet<>();
 		String scopeDescription = ""; //$NON-NLS-1$
 		switch (getContainer().getSelectedScope()) {
 		case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
@@ -342,7 +340,7 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 	 * Creates a composite with a highlighted Note entry and a message text.
 	 * This is designed to take up the full width of the page.<br>
 	 * This method has been copied from class {@link PreferencePage}
-	 * 
+	 *
 	 * @param font the font to use
 	 * @param composite the parent composite
 	 * @param title the title of the note
@@ -478,7 +476,7 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 		gd.horizontalIndent = -gd.horizontalIndent;
 		patternCombo.setLayoutData(gd);
 
-		// Ignore case checkbox		
+		// Ignore case checkbox
 		caseSensitiveButton = new Button(result, SWT.CHECK);
 		caseSensitiveButton.setText(CSearchMessages.CSearchPage_expression_caseSensitive);
 		gd = new GridData();

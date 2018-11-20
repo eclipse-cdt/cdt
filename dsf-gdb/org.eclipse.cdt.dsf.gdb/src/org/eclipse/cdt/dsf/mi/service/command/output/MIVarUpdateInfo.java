@@ -29,7 +29,7 @@ public class MIVarUpdateInfo extends MIInfo {
 
 	public MIVarUpdateInfo(MIOutput record) {
 		super(record);
-		List<MIVarChange> aList = new ArrayList<MIVarChange>();
+		List<MIVarChange> aList = new ArrayList<>();
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
@@ -123,7 +123,7 @@ public class MIVarUpdateInfo extends MIInfo {
 					}
 				} else if (var.equals("new_children")) { //$NON-NLS-1$
 					if (change != null) {
-						List<MIVar> newChildren = new ArrayList<MIVar>();
+						List<MIVar> newChildren = new ArrayList<>();
 						parseNewChildren(value, newChildren);
 						change.setNewChildren(newChildren.toArray(new MIVar[newChildren.size()]));
 					}

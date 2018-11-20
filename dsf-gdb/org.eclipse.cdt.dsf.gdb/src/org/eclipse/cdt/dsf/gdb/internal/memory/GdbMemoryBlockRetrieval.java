@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Texas Instruments, Freescale Semiconductor - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
@@ -65,7 +65,7 @@ import com.ibm.icu.text.MessageFormat;
  * A specialization of the DSF memory block retrieval implementation supporting
  * memory spaces. The memory space support is provisional, thus this class is
  * internal.
- * 
+ *
  * @author Alain Lee and John Cortell
  */
 public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements IMemorySpaceAwareMemoryBlockRetrieval {
@@ -75,7 +75,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements 
 	// No need to use the constants in our base class. Serializing and
 	// recreating the blocks is done entirely by us
 	private static final String MEMORY_BLOCK_EXPRESSION_LIST = "memoryBlockExpressionList"; //$NON-NLS-1$
-	private static final String ATTR_EXPRESSION_LIST_CONTEXT = "context"; //$NON-NLS-1$   
+	private static final String ATTR_EXPRESSION_LIST_CONTEXT = "context"; //$NON-NLS-1$
 	private static final String MEMORY_BLOCK_EXPRESSION = "gdbmemoryBlockExpression"; //$NON-NLS-1$
 	private static final String ATTR_MEMORY_BLOCK_EXPR_LABEL = "label"; //$NON-NLS-1$
 	private static final String ATTR_MEMORY_BLOCK_EXPR_ADDRESS = "address"; //$NON-NLS-1$
@@ -192,7 +192,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements 
 				offset = 1;
 			}
 			// Now, try to parse the expression. If a NumberFormatException is
-			// thrown, then it wasn't a simple numerical expression and we go 
+			// thrown, then it wasn't a simple numerical expression and we go
 			// to plan B (attempt an expression evaluation)
 			blockAddress = new BigInteger(expression.substring(offset), base);
 
@@ -219,11 +219,11 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements 
 		/*
 		 * At this point, we only resolved the requested memory block
 		 * start address and we have no idea of the block's length.
-		 * 
+		 *
 		 * The renderer will provide this information when it calls
 		 * getBytesFromAddress() i.e. after the memory block holder has
 		 * been instantiated.
-		 * 
+		 *
 		 * The down side is that every time we switch renderer, for the
 		 * same memory block, a trip to the target could result. However,
 		 * the memory request cache should save the day.
@@ -304,7 +304,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements 
 		IMemorySpaces service = fMemorySpaceServiceTracker.getService();
 		if (service != null) {
 			final IMemorySpaces.DecodeResult result = service.decodeAddress(str);
-			if (result != null) { // service can return null to tell use to use default decoding 
+			if (result != null) { // service can return null to tell use to use default decoding
 				return new DecodeResult() {
 					@Override
 					public String getMemorySpaceId() {
@@ -438,7 +438,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements 
 						expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL, memoryBlock.getExpression());
 					}
 				} else {
-					assert false; // should never happen (see getExtendedMemoryBlock()), but we can handle it. 
+					assert false; // should never happen (see getExtendedMemoryBlock()), but we can handle it.
 					expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL, memoryBlock.getExpression());
 				}
 				expressionList.appendChild(expression);
@@ -466,7 +466,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements 
 		// Process the block list specific to this memory context
 		// FIXME: (Bug228573) We only process the first entry...
 		if (root.getAttribute(ATTR_EXPRESSION_LIST_CONTEXT).equals(CONTEXT_RESERVED)) {
-			List<IMemoryBlock> blocks = new ArrayList<IMemoryBlock>();
+			List<IMemoryBlock> blocks = new ArrayList<>();
 			NodeList expressionList = root.getChildNodes();
 			int length = expressionList.getLength();
 			for (int i = 0; i < length; ++i) {
@@ -483,7 +483,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements 
 							memorySpaceID = entry.getAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID);
 							if (memorySpaceID.length() == 0) {
 								memorySpaceID = null;
-								assert false : "should have either no memory space or a valid (non-empty) ID"; //$NON-NLS-1$	
+								assert false : "should have either no memory space or a valid (non-empty) ID"; //$NON-NLS-1$
 							} else {
 								if (memoryContext instanceof IMemorySpaceDMContext) {
 									//The context is already a memory space context, make sure the ids are consistent

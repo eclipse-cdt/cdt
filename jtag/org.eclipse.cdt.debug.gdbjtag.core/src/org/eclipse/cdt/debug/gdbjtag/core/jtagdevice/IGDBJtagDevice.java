@@ -27,7 +27,7 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * Device reset command
-	 * 
+	 *
 	 * @param commands
 	 *            implementation should populate the collection with the gdb
 	 *            commands that will reset the device, or leave the collection
@@ -38,14 +38,14 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * Default device delay in millisecond
-	 * 
+	 *
 	 * @return delay in second
 	 */
 	public int getDefaultDelay();
 
 	/**
 	 * Target needs some delay in order to initialize
-	 * 
+	 *
 	 * @param delay
 	 *            delay in second
 	 * @param commands
@@ -59,7 +59,7 @@ public interface IGDBJtagDevice {
 	/**
 	 * Target needs to be in pause mode in order to do JTAG debug. This should
 	 * happen before the target MMU takes control
-	 * 
+	 *
 	 * @param commands
 	 *            implementation should populate the collection with the gdb
 	 *            commands that will halt the target, or leave the collection
@@ -70,7 +70,7 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * Commands to connect to remote JTAG device
-	 * 
+	 *
 	 * @param ip
 	 *            host name of IP address of JTAG device
 	 * @param port
@@ -89,7 +89,7 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * Commands to download the executable binary to target
-	 * 
+	 *
 	 * @param imageFileName
 	 *            executable binary file name
 	 * @param imageOffset
@@ -105,7 +105,7 @@ public interface IGDBJtagDevice {
 	/**
 	 * Commands to get gdb to consume the symbolics information in the given
 	 * file
-	 * 
+	 *
 	 * @param symbolFileName
 	 *            symbols file name
 	 * @param symbolOffset
@@ -120,7 +120,7 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * Commands to set initial program counter
-	 * 
+	 *
 	 * @param pc
 	 *            program counter
 	 * @param commands
@@ -132,7 +132,7 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * Commands to set initial breakpoint
-	 * 
+	 *
 	 * @param stopAt
 	 *            initial breakpoint location
 	 * @param commands
@@ -145,7 +145,7 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * De-freeze the target in order to start debugging
-	 * 
+	 *
 	 * @param commands
 	 *            implementation should populate the collection with the gdb
 	 *            commands that will resume the target, or leave the collection
@@ -156,7 +156,7 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * Device specific default hostname of IP address
-	 * 
+	 *
 	 * @return default hostname of IP address
 	 * @deprecated an implementor should adapt to IGDBJtagConnection instead of
 	 *             implementing this method (implementation should throw
@@ -167,7 +167,7 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * Device specific default port number
-	 * 
+	 *
 	 * @return default port number
 	 * @deprecated an implementor should adapt to IGDBJtagConnection instead of
 	 *             implementing this method (implementation should throw

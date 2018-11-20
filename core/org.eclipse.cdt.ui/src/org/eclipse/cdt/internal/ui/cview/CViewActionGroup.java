@@ -30,13 +30,13 @@ import org.eclipse.ui.views.navigator.WorkspaceActionGroup;
 /**
  * This is the action group for all the view actions.
  * It delegates to several subgroups for most of the actions.
- * 
+ *
  * @see GotoActionGroup
  * @see OpenFileGroup
  * @see RefactorActionGroup
  * @see SortAndFilterActionGroup
  * @see WorkspaceActionGroup
- * 
+ *
  */
 public abstract class CViewActionGroup extends ActionGroup {
 
@@ -47,7 +47,7 @@ public abstract class CViewActionGroup extends ActionGroup {
 
 	/**
 	 * Constructs a new navigator action group and creates its actions.
-	 * 
+	 *
 	 * @param cview the CView
 	 */
 	public CViewActionGroup(CView cview) {
@@ -115,7 +115,7 @@ public abstract class CViewActionGroup extends ActionGroup {
 	/**
 	 * Runs the default action in the group.
 	 * Does nothing by default.
-	 * 
+	 *
 	 * @param selection the current selection
 	 */
 	public void runDefaultAction(IStructuredSelection selection) {

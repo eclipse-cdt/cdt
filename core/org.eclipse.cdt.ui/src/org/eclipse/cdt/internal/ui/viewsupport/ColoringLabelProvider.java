@@ -14,17 +14,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
-
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.jface.viewers.StyledString.Styler;
+import org.eclipse.jface.viewers.ViewerColumn;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 
 public class ColoringLabelProvider extends DecoratingStyledCellLabelProvider implements ILabelProvider {
 	public static final Styler HIGHLIGHT_STYLE = StyledString.createColorRegistryStyler(null,

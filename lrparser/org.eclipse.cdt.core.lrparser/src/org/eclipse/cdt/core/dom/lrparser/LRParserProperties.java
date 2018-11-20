@@ -17,22 +17,22 @@ package org.eclipse.cdt.core.dom.lrparser;
 public final class LRParserProperties {
 
 	/**
-	 * The LR parsers do not actually skip the parsing of function bodies, 
+	 * The LR parsers do not actually skip the parsing of function bodies,
 	 * but this option does have the effect of not generating AST nodes
 	 * for function bodies.
-	 * 
+	 *
 	 * TODO this is not implemented yet in the LR parser
-	 * 
+	 *
 	 * Possible values: "true", null
 	 */
 	public static final String SKIP_FUNCTION_BODIES = "org.eclipse.cdt.core.dom.lrparser.skipFunctionBodies";
 
 	/**
-	 * Instructs the parser not to create AST nodes for expressions 
+	 * Instructs the parser not to create AST nodes for expressions
 	 * within aggregate initializers when they do not contain names.
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=253690
-	 * 
+	 *
 	 * Possible values: "true", null
 	 */
 	public static final String SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS = "org.eclipse.cdt.core.dom.lrparser.skipTrivialExpressionsInAggregateInitializers";

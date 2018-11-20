@@ -24,7 +24,7 @@ public final class CompoundRecordIterator implements IRecordIterator {
 
 	/**
 	 * Initializes the compound iterator.
-	 * 
+	 *
 	 * @param iterators the iterators to concatenate
 	 */
 	public CompoundRecordIterator(IRecordIterator... iterators) {

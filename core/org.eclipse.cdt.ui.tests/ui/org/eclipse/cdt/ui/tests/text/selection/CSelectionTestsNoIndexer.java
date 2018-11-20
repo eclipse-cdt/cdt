@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -19,9 +19,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -33,22 +38,14 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.FileManager;
-
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-
-import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * It is required to test the selection performance independent of the indexer to make sure that the DOM is functioning properly.
- * 
+ *
  * Indexer bugs can drastically influence the correctness of these tests so the indexer has to be off when performing them.
- * 
+ *
  * @author dsteffle
  */
 public class CSelectionTestsNoIndexer extends BaseSelectionTests {
@@ -628,15 +625,15 @@ public class CSelectionTestsNoIndexer extends BaseSelectionTests {
 		assertEquals(11, ((ASTNode) decl).getLength());
 	}
 
-	// int myFunc(var) 
-	// int var; 
-	// { 
-	//     return var; 
-	// } 
+	// int myFunc(var)
+	// int var;
+	// {
+	//     return var;
+	// }
 	//
-	// int main(void) 
-	// { 
-	//     return myFunc(0); 
+	// int main(void)
+	// {
+	//     return myFunc(0);
 	// }
 	public void testKRstyleFunctions_Bug221635() throws Exception {
 		String code = getContentsForTest(1)[0].toString();

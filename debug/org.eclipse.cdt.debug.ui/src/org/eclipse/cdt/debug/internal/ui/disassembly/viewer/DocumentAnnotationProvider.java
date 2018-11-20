@@ -24,7 +24,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DocumentAnnotationProvider: 
+ * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DocumentAnnotationProvider:
  * //TODO Add description.
  */
 public class DocumentAnnotationProvider {

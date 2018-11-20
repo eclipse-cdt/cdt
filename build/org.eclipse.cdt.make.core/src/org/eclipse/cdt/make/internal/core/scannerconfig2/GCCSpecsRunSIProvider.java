@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Runs a command to retrieve compiler intrinsic scanner info from 'specs' file.
- * 
+ *
  * @author vhirsl
  */
 public class GCCSpecsRunSIProvider extends DefaultRunSIProvider {
@@ -48,7 +48,7 @@ public class GCCSpecsRunSIProvider extends DefaultRunSIProvider {
 				// replace string variables in compile arguments
 				// TODO Vmir - use string variable replacement
 				for (int i = 0; i < fCompileArguments.length; ++i) {
-					fCompileArguments[i] = fCompileArguments[i].replaceAll("\\$\\{plugin_state_location\\}", //$NON-NLS-1$ 
+					fCompileArguments[i] = fCompileArguments[i].replaceAll("\\$\\{plugin_state_location\\}", //$NON-NLS-1$
 							MakeCorePlugin.getWorkingDirectory().toString());
 					fCompileArguments[i] = fCompileArguments[i].replaceAll("\\$\\{specs_file\\}", targetFile); //$NON-NLS-1$
 				}

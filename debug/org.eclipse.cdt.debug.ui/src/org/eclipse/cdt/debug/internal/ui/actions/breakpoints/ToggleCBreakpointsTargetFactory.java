@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -32,14 +32,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * 
+ *
  */
 public class ToggleCBreakpointsTargetFactory implements IToggleBreakpointsTargetFactory {
 
 	public static String TOGGLE_C_BREAKPOINT_TARGET_ID = CDebugUIPlugin.getUniqueIdentifier()
 			+ ".toggleCBreakpointTarget"; //$NON-NLS-1$
 
-	private static Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
+	private static Set<String> TOGGLE_TARGET_IDS = new HashSet<>(1);
 	static {
 		TOGGLE_TARGET_IDS.add(TOGGLE_C_BREAKPOINT_TARGET_ID);
 	}

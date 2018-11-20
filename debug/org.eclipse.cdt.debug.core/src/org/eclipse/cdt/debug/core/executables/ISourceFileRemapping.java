@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.IPath;
 /**
  * ISourceFileRemapping is used by the Executables Manager when finding missing
  * source files.
- * 
+ *
  * @author Ken Ryall
- * 
+ *
  */
 public interface ISourceFileRemapping {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,7 +55,7 @@ public class ProgressCountPanel extends Composite {
 
 	/**
 	 * Sets the testing session to show information about.
-	 * 
+	 *
 	 * @param testingSession testing session or null to set default empty
 	 * session
 	 */
@@ -76,7 +76,7 @@ public class ProgressCountPanel extends Composite {
 
 	/**
 	 * Sets the widget orientation.
-	 * 
+	 *
 	 * @param orientation new widget orientation (vertical or horizontal; auto
 	 * is not supported)
 	 */

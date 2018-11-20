@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.extensions;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface for classes implementing the org.eclipse.cdt.ui.callHierarchyProviders extension

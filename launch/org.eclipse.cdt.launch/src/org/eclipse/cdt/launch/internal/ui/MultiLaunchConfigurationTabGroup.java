@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
@@ -142,7 +142,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 			}
 
-			// launch mode 
+			// launch mode
 			if (columnIndex == 1)
 				return el.mode;
 
@@ -213,7 +213,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 		/**
 		 * Helper method to create a push button.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent control
 		 * @param key
@@ -264,7 +264,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 	static class GroupLaunchTab extends AbstractLaunchConfigurationTab {
 		protected CheckboxTreeViewer treeViewer;
-		protected List<LaunchElement> input = new ArrayList<LaunchElement>();
+		protected List<LaunchElement> input = new ArrayList<>();
 		private String mode;
 
 		public GroupLaunchTab(String mode) {
@@ -394,7 +394,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				 */
 				private int[] getMultiSelectionIndices() {
 					StructuredSelection sel = (StructuredSelection) treeViewer.getSelection();
-					List<Integer> indices = new ArrayList<Integer>();
+					List<Integer> indices = new ArrayList<>();
 
 					for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 						MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) iter
@@ -483,7 +483,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 		@Override
 		public void initializeFrom(ILaunchConfiguration configuration) {
-			// replace the input from previously shown launch configurations 
+			// replace the input from previously shown launch configurations
 			input = MultiLaunchConfigurationDelegate.createLaunchElements(configuration,
 					new ArrayList<LaunchElement>());
 			if (treeViewer != null) {

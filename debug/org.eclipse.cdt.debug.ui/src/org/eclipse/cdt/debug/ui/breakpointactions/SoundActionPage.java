@@ -56,7 +56,7 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 	private SoundActionComposite editor = null;
 	private String mediaPath = ""; //$NON-NLS-1$
 
-	private ArrayList<File> recentSounds = new ArrayList<File>();
+	private ArrayList<File> recentSounds = new ArrayList<>();
 
 	private SoundAction soundAction;
 
@@ -156,7 +156,7 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 			return;
 		}
 
-		recentSounds = new ArrayList<File>();
+		recentSounds = new ArrayList<>();
 
 		Element root = null;
 		DocumentBuilder parser;

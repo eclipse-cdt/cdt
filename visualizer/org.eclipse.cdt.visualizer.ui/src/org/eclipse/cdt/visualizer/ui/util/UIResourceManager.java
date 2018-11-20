@@ -75,6 +75,7 @@ public class UIResourceManager extends ResourceManager {
 	}
 
 	/** Dispose method */
+	@Override
 	public void dispose() {
 		disposeImageRegistry();
 		disposeFontRegistry();
@@ -84,6 +85,7 @@ public class UIResourceManager extends ResourceManager {
 	// --- parent manager management ---
 
 	/** Sets parent resource manager, if any */
+	@Override
 	public void setParentManager(ResourceManager parentManager) {
 		super.setParentManager(parentManager);
 		if (parentManager instanceof UIResourceManager) {
@@ -94,6 +96,7 @@ public class UIResourceManager extends ResourceManager {
 	}
 
 	/** Gets parent UI resource manager, if any */
+	@Override
 	public UIResourceManager getParentManager() {
 		return m_parentUIManager;
 	}
@@ -347,14 +350,14 @@ public class UIResourceManager extends ResourceManager {
 
 	/**
 	 * Returns the current SWT display.
-	 * 
+	 *
 	 * The method first checks whether the caller already has
 	 * an associated display. If so, this display is returned.
 	 * Otherwise the method returns the default display.
-	 * 
+	 *
 	 * This allows GUIUtils to work in contexts like tests
 	 * where the SWT display has not already been defined.
-	 * 
+	 *
 	 * (Credit: Borrowed from DebugUIPlugin.)
 	 */
 	public static Display getDisplay() {

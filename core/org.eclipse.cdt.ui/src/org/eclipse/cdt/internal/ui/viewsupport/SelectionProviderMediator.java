@@ -29,7 +29,7 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
 
 public class SelectionProviderMediator implements ISelectionProvider {
-	private Map<Control, ISelectionProvider> fProviders = new HashMap<Control, ISelectionProvider>();
+	private Map<Control, ISelectionProvider> fProviders = new HashMap<>();
 	private ISelectionProvider fActiveProvider = null;
 	private ISelectionChangedListener fSelectionChangedListener;
 	private FocusListener fFocusListener;

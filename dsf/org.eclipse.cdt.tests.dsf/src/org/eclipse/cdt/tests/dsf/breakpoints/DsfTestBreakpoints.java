@@ -70,13 +70,13 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 
 		@Override
 		public String toString() {
-			return "breakpointsTarget(" + fId + ")"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+			return "breakpointsTarget(" + fId + ")"; //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
 	/**
-	 * Context representing a PDA line breakpoint.  In PDA debugger, since there is only 
-	 * one file being debugged at a time, a breakpoint is uniquely identified using the 
+	 * Context representing a PDA line breakpoint.  In PDA debugger, since there is only
+	 * one file being debugged at a time, a breakpoint is uniquely identified using the
 	 * line number only.
 	 */
 	@Immutable
@@ -104,7 +104,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 
 		@Override
 		public String toString() {
-			return baseToString() + ".breakpoint(" + fId + "-" + fSubId + ")"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+			return baseToString() + ".breakpoint(" + fId + "-" + fSubId + ")"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		}
 	}
 
@@ -113,7 +113,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 		public final Map<String, Object> fAttributes;
 
 		public BreakpointDMData(Map<String, Object> attributes) {
-			fAttributes = Collections.unmodifiableMap(new HashMap<String, Object>(attributes));
+			fAttributes = Collections.unmodifiableMap(new HashMap<>(attributes));
 		}
 
 		@Override
@@ -205,11 +205,11 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 	}
 
 	// Breakpoints currently installed
-	private Map<BreakpointDMContext, BreakpointDMData> fBreakpoints = new HashMap<BreakpointDMContext, BreakpointDMData>();
+	private Map<BreakpointDMContext, BreakpointDMData> fBreakpoints = new HashMap<>();
 
 	/**
 	 * The service constructor
-	 * 
+	 *
 	 * @param session The debugging session this service belongs to.
 	 */
 	public DsfTestBreakpoints(DsfSession session) {
@@ -270,7 +270,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 			DataRequestMonitor<IBreakpointDMContext> rm) {
 		Boolean enabled = (Boolean) attributes.get(IBreakpoint.ENABLED);
 		if (enabled != null && !enabled.booleanValue()) {
-			// If the breakpoint is disabled, just fail the request. 
+			// If the breakpoint is disabled, just fail the request.
 			DsfTestPlugin.failRequest(rm, REQUEST_FAILED, "Breakpoint is disabled");
 		} else {
 			BreakpointsTargetDMContext targetCtx = DMContexts.getAncestorOfType(context,
@@ -298,8 +298,8 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 			return;
 		}
 
-		// Create a new breakpoint context object and check that it's not 
-		// installed already. PDA can only track a single breakpoint at a 
+		// Create a new breakpoint context object and check that it's not
+		// installed already. PDA can only track a single breakpoint at a
 		// given line, attempting to set the second breakpoint should fail.
 		final BreakpointDMContext breakpointCtx = new BreakpointDMContext(getSession().getId(), targetCtx, id, subId);
 		if (fBreakpoints.containsKey(breakpointCtx)) {
@@ -307,11 +307,11 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 			return;
 		}
 
-		// Add the new breakpoint context to the list of known breakpoints.  
-		// Adding it here, before the set command is completed will prevent 
-		// a possibility of a second breakpoint being installed in the same 
+		// Add the new breakpoint context to the list of known breakpoints.
+		// Adding it here, before the set command is completed will prevent
+		// a possibility of a second breakpoint being installed in the same
 		// location while this breakpoint is being processed.  It will also
-		// allow the breakpoint to be removed or updated even while it is 
+		// allow the breakpoint to be removed or updated even while it is
 		// still being processed here.
 		fBreakpoints.put(breakpointCtx, new BreakpointDMData(attributes));
 		rm.setData(breakpointCtx);
@@ -355,7 +355,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 		}
 
 		if (bpCtx instanceof BreakpointDMContext) {
-			Map<String, Object> newAttrs = new HashMap<String, Object>(fBreakpoints.get(bpCtx).getAttributes());
+			Map<String, Object> newAttrs = new HashMap<>(fBreakpoints.get(bpCtx).getAttributes());
 			newAttrs.putAll(attributes);
 			fBreakpoints.put((BreakpointDMContext) bpCtx, new BreakpointDMData(newAttrs));
 			getSession().dispatchEvent(new BreakpointsRemovedEvent((BreakpointDMContext) bpCtx), getProperties());

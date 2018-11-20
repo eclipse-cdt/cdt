@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson                    - Updated hover to use the new Details format
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * Debug editor text hover for GDB.
- * 
+ *
  * @since 2.1
  */
 public class GdbDebugTextHover extends AbstractDsfDebugTextHover {

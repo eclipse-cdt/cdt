@@ -15,9 +15,9 @@
 
 package org.eclipse.cdt.core.parser.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.parser.util.SegmentMatcher;
+
+import junit.framework.TestCase;
 
 public class SegmentMatcherTest extends TestCase {
 
@@ -110,7 +110,7 @@ public class SegmentMatcherTest extends TestCase {
 		assertFalse(matchSegments("_$$", "__"));
 		assertFalse(matchSegments("__$", "__"));
 
-		// require everything to be exactly the same from start up until the first section 
+		// require everything to be exactly the same from start up until the first section
 		assertTrue(matchSegments("__f", "__fooBar"));
 		assertTrue(matchSegments("__fooB", "__fooBar"));
 		assertFalse(matchSegments("_fooB", "__fooBar"));

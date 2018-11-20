@@ -78,10 +78,10 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 		private Object[] fElements = null;
 
-		/** 
+		/**
 		 * Constructs a new job to perform a debug request (for example, step)
 		 * in the background.
-		 * 
+		 *
 		 * @param name job name
 		 */
 		public DebugRequestJob(String name) {
@@ -109,7 +109,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 		/**
 		 * Sets the selection to operate on.
-		 * 
+		 *
 		 * @param elements
 		 */
 		public void setTargets(Object[] elements) {
@@ -218,7 +218,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}
 
 	/**
-	 * AbstractDebugActionDelegates come in 2 flavors: IViewActionDelegate, 
+	 * AbstractDebugActionDelegates come in 2 flavors: IViewActionDelegate,
 	 * IWorkbenchWindowActionDelegate delegates.
 	 * </p>
 	 * <ul>
@@ -232,7 +232,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * IWorkbenchWindowActionDelegate's listen to selection changes
 	 * in the debug view only.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
@@ -300,7 +300,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/**
 	 * Returns this action's view part, or <code>null</code>
 	 * if not installed in a view.
-	 * 
+	 *
 	 * @return view part or <code>null</code>
 	 */
 	protected IViewPart getView() {
@@ -310,9 +310,9 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/**
 	 * Initialize this delegate, updating this delegate's
 	 * presentation.
-	 * As well, all of the flavors of AbstractDebugActionDelegates need to 
+	 * As well, all of the flavors of AbstractDebugActionDelegates need to
 	 * have the initial enabled state set with a call to update(IAction, ISelection).
-	 * 
+	 *
 	 * @param action the presentation for this action
 	 * @return whether the action was initialized
 	 */
@@ -338,7 +338,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 	/**
 	 * Returns the most recent selection
-	 * 
+	 *
 	 * @return structured selection
 	 */
 	protected IStructuredSelection getSelection() {
@@ -347,7 +347,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 	/**
 	 * Sets the most recent selection
-	 * 
+	 *
 	 * @parm selection structured selection
 	 */
 	private void setSelection(IStructuredSelection selection) {

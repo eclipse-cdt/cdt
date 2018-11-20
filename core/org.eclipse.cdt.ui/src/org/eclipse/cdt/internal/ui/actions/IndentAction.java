@@ -17,6 +17,17 @@ package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.IndentUtil;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.text.CIndenter;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -39,20 +50,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension3;
 import org.eclipse.ui.texteditor.TextEditorAction;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.IndentUtil;
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.CIndenter;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * Indents a line or range of lines in a C document to its correct position. No complete

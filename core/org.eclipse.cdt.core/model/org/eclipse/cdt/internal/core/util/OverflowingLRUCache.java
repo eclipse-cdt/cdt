@@ -24,7 +24,7 @@ import java.util.Enumeration;
  *	elements which are explicitly removed.
  *
  *	<p>If the cache cannot remove enough old elements to add new elements
- *	it will grow beyond <code>fSpaceLimit</code>. Later, it will attempt to 
+ *	it will grow beyond <code>fSpaceLimit</code>. Later, it will attempt to
  *	shink back to the maximum space limit.
  *
  *	The method <code>close</code> should attempt to close the element.  If
@@ -35,16 +35,16 @@ import java.util.Enumeration;
  *	<code>setSpaceLimit</code>.  Explicitly calling the <code>shrink</code> method
  *	will also cause the cache to attempt to shrink.
  *
- *	<p>The cache calculates the used space of all elements which implement 
+ *	<p>The cache calculates the used space of all elements which implement
  *	<code>ILRUCacheable</code>.  All other elements are assumed to be of size one.
  *
  *	<p>Use the <code>#peek(Object)</code> and <code>#disableTimestamps()</code> method to
  *	circumvent the timestamp feature of the cache.  This feature is intended to be used
- *	only when the <code>#close(LRUCacheEntry)</code> method causes changes to the cache.  
- *	For example, if a parent closes its children when </code>#close(LRUCacheEntry)</code> is called, 
- *	it should be careful not to change the LRU linked list.  It can be sure it is not causing 
+ *	only when the <code>#close(LRUCacheEntry)</code> method causes changes to the cache.
+ *	For example, if a parent closes its children when </code>#close(LRUCacheEntry)</code> is called,
+ *	it should be careful not to change the LRU linked list.  It can be sure it is not causing
  *	problems by calling <code>#peek(Object)</code> instead of <code>#get(Object)</code> method.
- *	
+ *
  *	@see LRUCache
  *
  * This class is similar to the JDT OverflowingLRUCache class.
@@ -66,8 +66,8 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 
 	/**
 	 * Creates an OverflowingLRUCache with default sizes.
-	 * 
-	 * This is required to create a cache with a hash map that is not 
+	 *
+	 * This is required to create a cache with a hash map that is not
 	 * dependent on the initial size of the cache (i.e. if the cache is
 	 * relative to size of entries and not the number of entries).
 	 */
@@ -76,7 +76,7 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	}
 
 	/**
-	 * Creates a OverflowingLRUCache. 
+	 * Creates a OverflowingLRUCache.
 	 * @param size Size limit of cache.
 	 */
 	public OverflowingLRUCache(int size) {
@@ -84,7 +84,7 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	}
 
 	/**
-	 * Creates a OverflowingLRUCache. 
+	 * Creates a OverflowingLRUCache.
 	 * @param size Size limit of cache.
 	 * @param overflow Size of the overflow.
 	 */
@@ -129,18 +129,18 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	 */
 	public Enumeration<T> elements() {
 		if (fEntryQueue == null)
-			return new LRUCacheEnumerator<T>(null);
-		LRUCacheEnumerator.LRUEnumeratorElement<T> head = new LRUCacheEnumerator.LRUEnumeratorElement<T>(
+			return new LRUCacheEnumerator<>(null);
+		LRUCacheEnumerator.LRUEnumeratorElement<T> head = new LRUCacheEnumerator.LRUEnumeratorElement<>(
 				fEntryQueue._fValue);
 		LRUCacheEntry<K, T> currentEntry = fEntryQueue._fNext;
 		LRUCacheEnumerator.LRUEnumeratorElement<T> currentElement = head;
 		while (currentEntry != null) {
-			currentElement.fNext = new LRUCacheEnumerator.LRUEnumeratorElement<T>(currentEntry._fValue);
+			currentElement.fNext = new LRUCacheEnumerator.LRUEnumeratorElement<>(currentEntry._fValue);
 			currentElement = currentElement.fNext;
 
 			currentEntry = currentEntry._fNext;
 		}
-		return new LRUCacheEnumerator<T>(head);
+		return new LRUCacheEnumerator<>(head);
 	}
 
 	public double fillingRatio() {
@@ -158,7 +158,7 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	}
 
 	/**
-	 * Returns the load factor for the cache.  The load factor determines how 
+	 * Returns the load factor for the cache.  The load factor determines how
 	 * much space is reclaimed when the cache exceeds its space limit.
 	 * @return double
 	 */
@@ -268,7 +268,7 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 				return "Class: " + fClass + " has " + fCount + " entries."; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
 			}
 		}
-		java.util.HashMap<Class<?>, Temp> h = new java.util.HashMap<Class<?>, Temp>();
+		java.util.HashMap<Class<?>, Temp> h = new java.util.HashMap<>();
 		while (keys.hasMoreElements()) {
 			entry = fEntryTable.get(keys.nextElement());
 			Class<?> key = entry._fValue.getClass();
@@ -289,7 +289,7 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	 *	Removes the entry from the entry queue.
 	 *	Calls <code>privateRemoveEntry</code> with the external functionality enabled.
 	 *
-	 * @param shuffle indicates whether we are just shuffling the queue 
+	 * @param shuffle indicates whether we are just shuffling the queue
 	 * (i.e., the entry table is left alone).
 	 */
 	@Override
@@ -302,10 +302,10 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	 *	without checking if it can be removed.  It is assumed that the client has already closed
 	 *	the element it is trying to remove (or will close it promptly).
 	 *
-	 *	If <i>external</i> is false, and the entry could not be closed, it is not removed and the 
+	 *	If <i>external</i> is false, and the entry could not be closed, it is not removed and the
 	 *	pointers are not changed.
 	 *
-	 *	@param shuffle indicates whether we are just shuffling the queue 
+	 *	@param shuffle indicates whether we are just shuffling the queue
 	 *	(i.e., the entry table is left alone).
 	 */
 	protected void privateRemoveEntry(LRUCacheEntry<K, T> entry, boolean shuffle, boolean external) {
@@ -367,7 +367,7 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 
 			/**
 			 * Replace the entry in the cache if it would not overflow
-			 * the cache.  Otherwise flush the entry and re-add it so as 
+			 * the cache.  Otherwise flush the entry and re-add it so as
 			 * to keep cache within budget
 			 */
 			int oldSpace = entry._fSpace;
@@ -405,7 +405,7 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	}
 
 	/**
-	 * Sets the load factor for the cache.  The load factor determines how 
+	 * Sets the load factor for the cache.  The load factor determines how
 	 * much space is reclaimed when the cache exceeds its space limit.
 	 * @param newLoadFactor double
 	 * @throws IllegalArgumentException when the new load factor is not in (0.0, 1.0]
@@ -451,7 +451,7 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	}
 
 	/**
-	 * Updates the timestamp for the given entry, ensuring that the queue is 
+	 * Updates the timestamp for the given entry, ensuring that the queue is
 	 * kept in correct order.  The entry must exist.
 	 *
 	 * <p>This method will do nothing if timestamps have been disabled.

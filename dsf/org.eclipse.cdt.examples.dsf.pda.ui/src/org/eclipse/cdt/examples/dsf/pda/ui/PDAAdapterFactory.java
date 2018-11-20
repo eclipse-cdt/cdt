@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -36,6 +36,7 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 @SuppressWarnings({ "restriction" })
 public class PDAAdapterFactory implements IAdapterFactory {
 	// This IAdapterFactory method returns adapters for the PDA launch object only.
+	@Override
 	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (!(adaptableObject instanceof PDALaunch))
@@ -43,8 +44,8 @@ public class PDAAdapterFactory implements IAdapterFactory {
 
 		PDALaunch launch = (PDALaunch) adaptableObject;
 
-		// Check for valid session.  
-		// Note: even if the session is no longer active, the adapter set 
+		// Check for valid session.
+		// Note: even if the session is no longer active, the adapter set
 		// should still be returned.  This is because the view model may still
 		// need to show elements representing a terminated process/thread/etc.
 		DsfSession session = launch.getSession();
@@ -66,6 +67,7 @@ public class PDAAdapterFactory implements IAdapterFactory {
 			return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
 	public Class[] getAdapterList() {
 		return new Class[] { IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class };

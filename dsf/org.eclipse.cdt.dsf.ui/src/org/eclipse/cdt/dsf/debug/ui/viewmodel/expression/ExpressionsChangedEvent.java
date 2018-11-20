@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,13 +19,13 @@ import java.util.Set;
 import org.eclipse.debug.core.model.IExpression;
 
 /**
- * Object representing a change in configured expressions.  This event is 
+ * Object representing a change in configured expressions.  This event is
  * object is used when generating a model delta.
  */
 public class ExpressionsChangedEvent {
 
 	/**
-	 * Enumeration for the type of change in expressions. 
+	 * Enumeration for the type of change in expressions.
 	 * @since 2.2
 	 */
 	public enum Type {

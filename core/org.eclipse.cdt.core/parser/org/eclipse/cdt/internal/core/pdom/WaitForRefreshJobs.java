@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * Postpones indexer setup until there are no running refresh jobs.
  */
 public class WaitForRefreshJobs extends IndexerSetupParticipant {
-	private Set<ICProject> fProjects = new HashSet<ICProject>();
+	private Set<ICProject> fProjects = new HashSet<>();
 	private Set<Job> fRefreshJobs = Collections.synchronizedSet(new HashSet<Job>());
 
 	private IJobChangeListener fJobListener = new IJobChangeListener() {
@@ -85,7 +85,7 @@ public class WaitForRefreshJobs extends IndexerSetupParticipant {
 			if (isRefreshing())
 				return;
 			projects = fProjects;
-			fProjects = new HashSet<ICProject>();
+			fProjects = new HashSet<>();
 		}
 
 		for (ICProject project : projects) {

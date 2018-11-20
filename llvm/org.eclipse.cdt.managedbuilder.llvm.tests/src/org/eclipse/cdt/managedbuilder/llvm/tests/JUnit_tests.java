@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 
 /**
  * Automated testing with JUnit.
- * 
+ *
  * @author Petri Tuononen
  *
  */

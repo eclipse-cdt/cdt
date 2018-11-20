@@ -43,7 +43,7 @@ import org.eclipse.debug.core.DebugPlugin;
  */
 public class StandardExecutableProvider implements IProjectExecutablesProvider {
 
-	List<String> supportedNatureIds = new ArrayList<String>();
+	List<String> supportedNatureIds = new ArrayList<>();
 
 	public StandardExecutableProvider() {
 		supportedNatureIds.add(CProjectNature.C_NATURE_ID);
@@ -57,7 +57,7 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 
 	@Override
 	public List<Executable> getExecutables(IProject project, IProgressMonitor monitor) {
-		List<Executable> executables = new ArrayList<Executable>();
+		List<Executable> executables = new ArrayList<>();
 
 		ICProject cproject = CModelManager.getDefault().create(project);
 		try {
@@ -78,7 +78,7 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 			if (projDesc != null) {
 				ICConfigurationDescription cfg = projDesc.getActiveConfiguration();
 				if (cfg != null) {
-					binaries = new ArrayList<IBinary>(allBinaries.length);
+					binaries = new ArrayList<>(allBinaries.length);
 					ICOutputEntry[] cfgOutDirs = cfg.getBuildSetting().getOutputDirectories();
 					for (IBinary allBinary : allBinaries) {
 						for (ICOutputEntry outdir : cfgOutDirs) {
@@ -108,7 +108,7 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 					IPath exePath = binary.getResource().getLocation();
 					if (exePath == null)
 						exePath = binary.getPath();
-					List<ISourceFileRemapping> srcRemappers = new ArrayList<ISourceFileRemapping>(2);
+					List<ISourceFileRemapping> srcRemappers = new ArrayList<>(2);
 					ISourceFileRemappingFactory[] factories = ExecutablesManager.getExecutablesManager()
 							.getSourceFileRemappingFactories();
 					for (ISourceFileRemappingFactory factory : factories) {

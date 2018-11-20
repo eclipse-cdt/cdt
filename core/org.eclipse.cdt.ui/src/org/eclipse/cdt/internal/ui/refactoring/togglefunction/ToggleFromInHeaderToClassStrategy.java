@@ -1,22 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import java.util.List;
-
-import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -32,11 +30,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
-
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.text.edits.TextEditGroup;
 
 public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStrategy {
 	private TextEditGroup infoText;

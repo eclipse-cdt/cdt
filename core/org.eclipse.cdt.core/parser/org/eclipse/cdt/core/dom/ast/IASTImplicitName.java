@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * An implicit name is used to resolve uses of implicit bindings, such as overloaded operators.
- * 
+ *
  * Implicit names are not generated unless they resolve to something.
  *
  * @see ASTVisitor#shouldVisitImplicitNames
@@ -29,7 +29,7 @@ public interface IASTImplicitName extends IASTName {
 	/**
 	 * {@inheritDoc}
 	 * Redeclared with strengthened postcondition.
-	 * 
+	 *
 	 * Will not return {@code null}, but may return a problem binding, for example for an implicit
 	 * constructor call.
 	 */
@@ -38,10 +38,10 @@ public interface IASTImplicitName extends IASTName {
 
 	/**
 	 * Returns {@code true} if this node is an alternate.
-	 * 
+	 *
 	 * Sometimes more than one implicit name is generated for the same binding but with different
 	 * offsets, when this happens the additional names generated are considered alternates.
-	 * 
+	 *
 	 * @see ASTVisitor#shouldVisitImplicitNameAlternates
 	 */
 	public boolean isAlternate();
@@ -53,10 +53,10 @@ public interface IASTImplicitName extends IASTName {
 
 	/**
 	 * This method is not supported on implicit names.
-	 * 
+	 *
 	 * Implicit names are not copied when an AST is copied, instead the implicit names are
 	 * regenerated when needed.
-	 * 
+	 *
 	 * @throws UnsupportedOperationException always
 	 */
 	@Override

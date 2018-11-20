@@ -113,7 +113,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	private IBreakpoints fBreakpointService;
 	private MIBreakpointsSynchronizer fBreakpointsSynchronizer;
 
-	private List<IBreakpointsChangedEvent> fBreakpointEvents = new ArrayList<IBreakpointsChangedEvent>();
+	private List<IBreakpointsChangedEvent> fBreakpointEvents = new ArrayList<>();
 
 	@Override
 	@Before
@@ -510,10 +510,10 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 
 	private void testConsoleBreakpointStandard(Class<? extends ICBreakpoint> type, Map<String, Object> attributes,
 			Runnable flushCache) throws Throwable {
-		// Set a console breakpoint and verify that 
-		// the corresponding platform breakpoint is created 
+		// Set a console breakpoint and verify that
+		// the corresponding platform breakpoint is created
 		// and its install count is 1 if the breakpoint is installed
-		// and 0 if the breakpoint is pending. 
+		// and 0 if the breakpoint is pending.
 		// Check for a duplicate target breakpoint.
 		setConsoleBreakpoint(type, attributes);
 		MIBreakpoint[] miBpts = getTargetBreakpoints();
@@ -523,50 +523,50 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		Assert.assertTrue(getPlatformBreakpointCount() == 1);
 		ICBreakpoint plBpt = findPlatformBreakpoint(type, attributes);
 		Assert.assertTrue(plBpt instanceof CBreakpoint);
-		// We can't rely on IBreakpointsAddedEvent because it is fired 
+		// We can't rely on IBreakpointsAddedEvent because it is fired
 		// before the install count is incremented.
 		if (!miBpts[0].isPending()) {
 			// If the target breakpoint is not pending wait
 			// until the install count becomes 1.
 			waitForInstallCountChange((CBreakpoint) plBpt, 1);
 		} else {
-			// For pending breakpoints the install count is expected to remain 
+			// For pending breakpoints the install count is expected to remain
 			// unchanged. Give it some time and verify that it is 0.
 			Thread.sleep(1000);
 			Assert.assertTrue(((CBreakpoint) plBpt).getInstallCount() == 0);
 		}
 
-		// Disable the console breakpoint and verify that 
+		// Disable the console breakpoint and verify that
 		// the platform breakpoint is disabled.
 		enableConsoleBreakpoint(miBpts[0].getNumber(), false);
 		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(!plBpt.isEnabled());
 
-		// Enable the console breakpoint and verify that 
+		// Enable the console breakpoint and verify that
 		// the platform breakpoint is enabled.
 		enableConsoleBreakpoint(miBpts[0].getNumber(), true);
 		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(plBpt.isEnabled());
 
-		// Set the condition of the console breakpoint and 
-		// verify that the platform breakpoint's condition 
+		// Set the condition of the console breakpoint and
+		// verify that the platform breakpoint's condition
 		// is updated.
 		setConsoleBreakpointCondition(miBpts[0].getNumber(), "path==0");
 		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(plBpt.getCondition().equals("path==0"));
 
-		// Reset the condition of the console breakpoint and 
-		// verify that the platform breakpoint's condition 
+		// Reset the condition of the console breakpoint and
+		// verify that the platform breakpoint's condition
 		// is updated.
 		setConsoleBreakpointCondition(miBpts[0].getNumber(), "");
 		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(plBpt.getCondition().isEmpty());
 
-		// Delete the console breakpoint and verify that 
+		// Delete the console breakpoint and verify that
 		// the install count of the platform breakpoint is 0.
 		deleteConsoleBreakpoint(miBpts[0].getNumber());
 		flushCache.run();
@@ -583,8 +583,8 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		Thread.sleep(3000); // One second was not enough
 		Assert.assertTrue("Install count no longer 0", ((CBreakpoint) plBpt).getInstallCount() == 0);
 
-		// Set the console breakpoint again and verify that 
-		// the install count of the platform breakpoint is 1 
+		// Set the console breakpoint again and verify that
+		// the install count of the platform breakpoint is 1
 		// for installed breakpoints and 0 for pending breakpoints.
 		setConsoleBreakpoint(type, attributes);
 		miBpts = getTargetBreakpoints();
@@ -605,13 +605,13 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		if (!miBpts[0].isPending()) {
 			waitForInstallCountChange((CBreakpoint) plBpt, 1);
 		} else {
-			// For pending breakpoints the install count is expected to remain 
+			// For pending breakpoints the install count is expected to remain
 			// unchanged. Give it some time and verify that it is 0.
 			Thread.sleep(1000);
 			Assert.assertTrue(((CBreakpoint) plBpt).getInstallCount() == 0);
 		}
 
-		// Remove the platform breakpoint and verify that 
+		// Remove the platform breakpoint and verify that
 		// the target breakpoint is deleted.
 		deletePlatformBreakpoint(plBpt);
 
@@ -819,7 +819,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	}
 
 	private Map<String, Object> getLocationBreakpointAttributes(Class<? extends ICBreakpoint> type, boolean valid) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		if (ICFunctionBreakpoint.class.equals(type)) {
 			map.put(ATTR_FILE_NAME, (valid) ? SOURCE_NAME_VALID : SOURCE_NAME_INVALID);
 			map.put(ATTR_FUNCTION, (valid) ? FUNCTION_VALID : FUNCTION_INVALID);
@@ -837,7 +837,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	public Map<String, Object> getWatchpointAttributes(Class<? extends ICWatchpoint> type, boolean read, boolean write)
 			throws Throwable {
 		Assert.assertTrue(read || write);
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put(ATTR_EXPRESSION, EXPRESSION_VALID);
 		map.put(ATTR_READ, Boolean.valueOf(read));
 		map.put(ATTR_WRITE, Boolean.valueOf(write));

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson           - Updated for latest DSF version
@@ -24,12 +24,12 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
- * This interface provides access to the OS's process 
+ * This interface provides access to the OS's process
  * information, manipulation methods, and debugging methods.
- * This service provides a relatively simple interface for 
+ * This service provides a relatively simple interface for
  * manipulating processes as compared with a full-blown
- * remote target debugger. 
- * 
+ * remote target debugger.
+ *
  * @since 1.1
  */
 public interface IProcesses extends IDsfService {
@@ -79,8 +79,8 @@ public interface IProcesses extends IDsfService {
 
 	/**
 	 * Retrieves the debugging context that characterizes the specified thread
-	 * or process context.  
-	 * 
+	 * or process context.
+	 *
 	 * @param dmc The thread or process dmc for which we want the debugging context
 	 * @param rm The request monitor that will contain the debugging context.
 	 *           null if no such context exists
@@ -102,10 +102,10 @@ public interface IProcesses extends IDsfService {
 	void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm);
 
 	/**
-	 * Attaches debugger to the given process.     
+	 * Attaches debugger to the given process.
 	 * When attaching to a process, a debugging context can now be used to characterize the process.
-	 * This method can optionally choose to return this IDMContext inside the DataRequestMonitor.  
-	 * This can be useful for backends that do not have the ability to obtain the different 
+	 * This method can optionally choose to return this IDMContext inside the DataRequestMonitor.
+	 * This can be useful for backends that do not have the ability to obtain the different
 	 * debugging IDMContexts through {@link #getProcessesBeingDebugged(IDMContext, DataRequestMonitor)
 	 */
 	void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IDMContext> rm);
@@ -154,7 +154,7 @@ public interface IProcesses extends IDsfService {
 	 * @param dmc The processor or core on which we want to start and debug the new process.
 	 * @param file Process image to use for the new process.
 	 * @param attributes Attributes that give information on the process to be debugged
-	 * @param rm Request completion monitor, to be filled in with the 
+	 * @param rm Request completion monitor, to be filled in with the
 	 *           debugging context that can now be used to characterize the process
 	 */
 	void debugNewProcess(IDMContext dmc, String file, Map<String, Object> attributes,
@@ -162,7 +162,7 @@ public interface IProcesses extends IDsfService {
 
 	/**
 	 * Retrieves the list of processes which are currently under debugger control.
-	 * 
+	 *
 	 * @param dmc The processor or core for which to list processes being debugged
 	 * @param rm Request completion monitor which contains all debugging contexts representing
 	 *           the processes being debugged.  Note that each of these contexts should also have

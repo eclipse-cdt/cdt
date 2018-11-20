@@ -51,7 +51,7 @@ public class ExposedPortModel extends BaseDatabindingModel implements Comparable
 	/**
 	 * Parses and converts the {@link List} of the given {@link String} values
 	 * into a {@link List} of {@link ExposedPortModel}
-	 * 
+	 *
 	 * @param exposedPortInfos
 	 *            the input values
 	 * @return the corresponding {@link ExposedPortModel}s
@@ -70,8 +70,8 @@ public class ExposedPortModel extends BaseDatabindingModel implements Comparable
 	/**
 	 * Converts a collection of ExposedPortModel to a {@link List} of
 	 * {@link String} values
-	 * 
-	 * 
+	 *
+	 *
 	 * @param exposedPorts
 	 *            collection of ExposedPortModel instances
 	 * @return the corresponding {@link List} of {@link String}s
@@ -90,7 +90,7 @@ public class ExposedPortModel extends BaseDatabindingModel implements Comparable
 	/**
 	 * Parse the given value and returns an instance of
 	 * {@link ExposedPortModel}.
-	 * 
+	 *
 	 * @param exposedPortInfo
 	 *            the value to parse
 	 * @return the corresponding {@link ExposedPortModel}
@@ -116,7 +116,7 @@ public class ExposedPortModel extends BaseDatabindingModel implements Comparable
 
 	/**
 	 * Full constructor
-	 * 
+	 *
 	 * @param privatePort
 	 * @param portType
 	 * @param hostAddress
@@ -134,7 +134,7 @@ public class ExposedPortModel extends BaseDatabindingModel implements Comparable
 
 	/**
 	 * Create an ExposedPortModel from its toString output
-	 * 
+	 *
 	 * @param stringValue
 	 * @return ExposedPortModel
 	 */

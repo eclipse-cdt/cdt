@@ -19,15 +19,14 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.help.IHelpResource;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.eclipse.cdt.ui.ICHelpBook;
 import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+import org.eclipse.help.IHelpResource;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class CHelpBook implements ICHelpBook {
 	private static final String ATTR_TITLE = "title"; //$NON-NLS-1$
@@ -43,7 +42,7 @@ public class CHelpBook implements ICHelpBook {
 	private TreeMap<String, CHelpEntry> entries;
 
 	public CHelpBook(Element e) {
-		entries = new TreeMap<String, CHelpEntry>();
+		entries = new TreeMap<>();
 
 		if (e.hasAttribute(ATTR_TITLE))
 			title = e.getAttribute(ATTR_TITLE).trim();
@@ -127,7 +126,7 @@ public class CHelpBook implements ICHelpBook {
 		}
 
 		if (col.size() > 0) {
-			ArrayList<IFunctionSummary> out = new ArrayList<IFunctionSummary>(col.size());
+			ArrayList<IFunctionSummary> out = new ArrayList<>(col.size());
 			for (CHelpEntry he : col)
 				for (IFunctionSummary fs : he.getFunctionSummary())
 					out.add(fs);

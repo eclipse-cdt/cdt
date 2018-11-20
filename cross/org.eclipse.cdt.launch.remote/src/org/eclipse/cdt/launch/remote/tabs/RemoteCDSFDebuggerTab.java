@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * Anna Dushistova (Mentor Graphics) - initial API and implementation
  * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs

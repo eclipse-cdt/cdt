@@ -28,8 +28,8 @@ public class FlexibleSignalsViewEventHandler extends DebugEventHandler {
 
 	private Object fTarget;
 
-	/** 
-	 * Constructor for SignalsViewEventHandler. 
+	/**
+	 * Constructor for SignalsViewEventHandler.
 	 */
 	public FlexibleSignalsViewEventHandler(AbstractModelProxy proxy, Object target) {
 		super(proxy);

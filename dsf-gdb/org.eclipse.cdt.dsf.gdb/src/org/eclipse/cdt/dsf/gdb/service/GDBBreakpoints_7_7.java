@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * Breakpoints service for GDB 7.7.
  * This version supports dynamic printf
- * 
+ *
  * @since 4.4
  */
 public class GDBBreakpoints_7_7 extends GDBBreakpoints_7_6 {
@@ -96,7 +96,7 @@ public class GDBBreakpoints_7_7 extends GDBBreakpoints_7_6 {
 			final DataRequestMonitor<IBreakpointDMContext> drm) {
 		final MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
 		if (bs != null) {
-			// Skip the dprintf set from the console or from outside of Eclipse 
+			// Skip the dprintf set from the console or from outside of Eclipse
 			// because they are already installed on the target.
 			bs.getTargetBreakpoint(context, attributes, new DataRequestMonitor<MIBreakpoint>(getExecutor(), drm) {
 				@Override

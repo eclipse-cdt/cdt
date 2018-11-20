@@ -409,7 +409,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	/**
 	 * Sets the default preferences.
-	 * 
+	 *
 	 * @see PreferencePage#performDefaults()
 	 */
 	@Override

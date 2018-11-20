@@ -37,7 +37,7 @@ public class TreeNavigator {
 	}
 
 	/**
-	 * Find the first valid item of the selection. 
+	 * Find the first valid item of the selection.
 	 * @return the first valid item in the selection or <code>null</code>
 	 */
 	public TreeItem getSelectedItem() {
@@ -55,7 +55,7 @@ public class TreeNavigator {
 	}
 
 	/**
-	 * Find the first valid item on the given level. All parents have to be valid also. 
+	 * Find the first valid item on the given level. All parents have to be valid also.
 	 * @param level the level to search, use <code>0</code> for the root nodes of the tree.
 	 * @param fwd if set to false the tree is searched reverse from the buttom.
 	 * @return the first item on the given level, or <code>null</code>
@@ -72,7 +72,7 @@ public class TreeNavigator {
 		return getFirstOnLevel(item.getItems(), level - 1, fwd);
 	}
 
-	/** 
+	/**
 	 * Combines the methods {@link TreeNavigator#getSelectedItem()} and
 	 * {@link TreeNavigator#getFirstItemOnLevel(int, boolean)}.
 	 * @param level the level to search, use <code>0</code> for the root nodes of the tree.

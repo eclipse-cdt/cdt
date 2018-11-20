@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -19,13 +19,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 
 /**
  * Convenience implementation for {@link ICTokenScanner}.
@@ -33,7 +32,7 @@ import org.eclipse.cdt.ui.IPropertyChangeParticipant;
  * <p>
  * Clients may instantiate and extend this class.
  * </p>
- * 
+ *
  * @since 5.1
  */
 public abstract class AbstractCScanner extends BufferedRuleBasedScanner implements ICTokenScanner {
@@ -42,17 +41,17 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner implemen
 
 	/**
 	 * Create a new scanner for the given token store with default buffer size.
-	 * 
+	 *
 	 * @param tokenStore
 	 */
 	public AbstractCScanner(ITokenStore tokenStore) {
 		fTokenStore = tokenStore;
-		fParticipants = new ArrayList<IPropertyChangeParticipant>();
+		fParticipants = new ArrayList<>();
 	}
 
 	/**
 	 * Create a new scanner for the given token store and buffer size.
-	 * 
+	 *
 	 * @param tokenStore
 	 * @param size
 	 */

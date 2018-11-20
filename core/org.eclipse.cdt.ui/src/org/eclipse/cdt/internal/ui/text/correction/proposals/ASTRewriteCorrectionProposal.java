@@ -7,13 +7,16 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
+import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CUIStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.IDocument;
@@ -23,17 +26,12 @@ import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.text.edits.TextEdit;
 
-import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.ui.CUIStatus;
-
 /**
  * A proposal for quick fixes and quick assists that works on a AST rewriter.
  * Either a rewriter is directly passed in the constructor or method {@link #getRewrite()}
  * is overridden to provide the AST rewriter that is evaluated to the document when the
  * proposal is applied.
- * 
+ *
  * @since 5.1
  */
 public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
@@ -41,7 +39,7 @@ public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
 
 	/**
 	 * Constructs a AST rewrite correction proposal.
-	 * 
+	 *
 	 * @param name the display name of the proposal.
 	 * @param tu the translation unit that is modified.
 	 * @param rewrite the AST rewrite that is invoked when the proposal is applied or
@@ -88,7 +86,7 @@ public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
 	/**
 	 * Returns the rewriter that has been passed in the constructor. Implementors can override this
 	 * method to create the rewriter lazy. This method will only be called once.
-	 * 
+	 *
 	 * @return returns the rewriter to be used.
 	 * @throws CoreException an exception is thrown when the rewriter could not be created.
 	 */

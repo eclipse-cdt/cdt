@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -34,23 +34,23 @@ import org.eclipse.core.runtime.Status;
  * A type of {@link Sequence} which uses reflection and annotations to
  * declare its different {@link Sequence.Step}.  It can be used to make
  * larger DSF sequences more readable and easier to override.
- * 
+ *
  * The order of execution of the {@code @Execute} methods is determined by
- * the {@link #getExecutionOrder()} method. 
- * 
+ * the {@link #getExecutionOrder()} method.
+ *
  * {@code @Execute} methods can be grouped in a hierarchical set of groups,
  * which should be included in the result of {@link #getExecutionOrder()}.
  * Using groups can make overriding slightly simpler.
- * 
+ *
  * A usage example follows: <code><pre>
  *    public class MyReflectionSequence extends ReflectionSequence {
  *
  *        public MyReflectionSequence(DsfExecutor executor) {
  *            super(executor);
  *        }
- *        
+ *
  *        protected static final String GROUP_INIT = "GROUP_INIT";
- *   
+ *
  *        {@code @Override}
  *        protected String[] getExecutionOrder(String group) {
  *           if (GROUP_TOP_LEVEL.equals(group)) {
@@ -59,12 +59,12 @@ import org.eclipse.core.runtime.Status;
  *               // other groups.
  *               return new String[] { GROUP_INIT, "step3", "step4" };
  *           }
- *           
+ *
  *           // Now deal with the content of sub-groups
  *           if (GROUP_INIT.equals(group)) {
  *               return new String[] { "step1", "step2" };
  *           }
- *           
+ *
  *           // An invalid group was requested
  *           return null;
  *        }
@@ -72,35 +72,35 @@ import org.eclipse.core.runtime.Status;
  *        {@code @Execute}
  *        public void step1(RequestMonitor rm) {
  *            // Do something
- *            rm.done(); 
+ *            rm.done();
  *        }
  *
  *        {@code @RollBack("step1")}
  *        public void rollBack1(RequestMonitor rm) {
  *        	// Rollback what was done in step1()
- *        	rm.done(); 
+ *        	rm.done();
  *        }
  *
  *        {@code @Execute}
  *        public void step2(RequestMonitor rm) {
  *            // Do something else
- *            rm.done(); 
+ *            rm.done();
  *        }
- *        
+ *
  *        {@code @Execute}
  *        public void step3(RequestMonitor rm) {
  *            // Do something else
- *            rm.done(); 
+ *            rm.done();
  *        }
  *
  *        {@code @Execute}
  *        public void step4(RequestMonitor rm) {
  *            // Do something else
- *            rm.done(); 
+ *            rm.done();
  *        }
  *    }
  * </pre></code>
- * 
+ *
  * @since 2.2
  */
 abstract public class ReflectionSequence extends Sequence {
@@ -150,7 +150,7 @@ abstract public class ReflectionSequence extends Sequence {
 			assert executeMethod != null;
 
 			fExecuteMethod = executeMethod;
-			;
+
 			fRollbackMethod = rollbackMethod;
 		}
 
@@ -200,12 +200,12 @@ abstract public class ReflectionSequence extends Sequence {
 
 	/**
 	 * This method must return the execution order of {@code @Execute} methods and/or groups.
-	 * 
+	 *
 	 * @param groupName The name of a group for which the list of {@code @Execute} methods
 	 *                  or sub-groups should be returned in the order they should be executed.
 	 *                  If the concept of groups is not used, then this parameter can be ignored,
 	 *                  at the top-level ordering should be returned.
-	 *                  
+	 *
 	 * @return An array containing the list of @Execute methods and groups in the order
 	 *         they should be executed, or null if the specified groupName is unknown.
 	 */
@@ -224,7 +224,7 @@ abstract public class ReflectionSequence extends Sequence {
 
 	private List<Step> getGroupSteps(String groupId, Map<String, Method> executeMethods,
 			Map<String, Method> rollBackMethods) {
-		List<Step> steps = new ArrayList<Step>(executeMethods.size());
+		List<Step> steps = new ArrayList<>(executeMethods.size());
 
 		String[] order = getExecutionOrder(groupId);
 		if (order == null) {
@@ -244,7 +244,7 @@ abstract public class ReflectionSequence extends Sequence {
 	}
 
 	private Map<String, Method> getAnnotatedMethods(Class<? extends Annotation> annotationType) {
-		Map<String, Method> retVal = new HashMap<String, Method>();
+		Map<String, Method> retVal = new HashMap<>();
 		try {
 			Method[] methods = getClass().getMethods();
 			for (Method method : methods) {
@@ -252,12 +252,12 @@ abstract public class ReflectionSequence extends Sequence {
 					Class<?>[] paramTypes = method.getParameterTypes();
 					if (paramTypes.length != 1) { // must have one and only param, the RequestMonitor
 						throw new IllegalArgumentException("Method " + //$NON-NLS-1$
-								method.getDeclaringClass().getSimpleName() + "#" + method.getName() + //$NON-NLS-1$ 
+								method.getDeclaringClass().getSimpleName() + "#" + method.getName() + //$NON-NLS-1$
 								" must have a single parameter"); //$NON-NLS-1$
 					} else {
 						if (annotationType.equals(Execute.class)) {
 							retVal.put(method.getName(), method);
-						} else {// @Rollback 
+						} else {// @Rollback
 							retVal.put(method.getAnnotation(RollBack.class).value(), method);
 						}
 					}

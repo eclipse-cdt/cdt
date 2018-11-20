@@ -36,6 +36,7 @@ public class ProcessList implements IProcessList {
 	 * Insert the method's description here.
 	 * @see IProcessList#getProcessList
 	 */
+	@Override
 	public IProcessInfo[] getProcessList() {
 		Process ps;
 		BufferedReader psOutput;
@@ -54,7 +55,7 @@ public class ProcessList implements IProcessList {
 		try {
 			String lastline;
 			while ((lastline = psOutput.readLine()) != null) {
-				//The format of the output should be 
+				//The format of the output should be
 				//PID space name
 
 				lastline = lastline.trim();

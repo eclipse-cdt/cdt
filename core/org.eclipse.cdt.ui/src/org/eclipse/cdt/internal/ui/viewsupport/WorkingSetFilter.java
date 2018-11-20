@@ -81,7 +81,7 @@ public class WorkingSetFilter {
 			fResourceFilter = null;
 		} else {
 			IAdaptable[] input = workingSetFilter.getElements();
-			fResourceFilter = new HashMap<IPath, Object>();
+			fResourceFilter = new HashMap<>();
 			for (int i = 0; i < input.length; i++) {
 				IAdaptable adaptable = input[i];
 				IResource res = adaptable.getAdapter(IResource.class);

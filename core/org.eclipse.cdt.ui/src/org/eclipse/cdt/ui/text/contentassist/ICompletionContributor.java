@@ -15,15 +15,14 @@ package org.eclipse.cdt.ui.text.contentassist;
 
 import java.util.List;
 
-import org.eclipse.jface.text.ITextViewer;
-
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.jface.text.ITextViewer;
 
 /**
  * This interface must be implemented by clients extending the extension point
  * <tt>org.eclipse.cdt.core.completionContributors</tt>.
- * 
+ *
  * @deprecated Clients should extend the new extension point
  *             <tt>completionProprosalComputer</tt> and implement interface
  *             {@link ICompletionProposalComputer}
@@ -34,7 +33,7 @@ public interface ICompletionContributor {
 
 	/**
 	 * This method allows the contributor to add to the list of proposals
-	 * 
+	 *
 	 * @param viewer the text viewer where completion is occuring
 	 * @param offset the offset into the text where the completion is occuring
 	 * @param completionNode the completion node produced by the parser for the offset

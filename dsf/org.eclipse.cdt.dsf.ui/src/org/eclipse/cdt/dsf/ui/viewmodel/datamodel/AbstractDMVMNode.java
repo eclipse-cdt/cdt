@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -46,7 +46,7 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * View model node based on a single IDMContext type. All the elements created
  * by this node are of that type.
- * 
+ *
  * @since 1.0
  */
 abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode {
@@ -70,7 +70,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 		}
 
 		/**
-		 * The IAdaptable implementation.  If the adapter is the DM context, 
+		 * The IAdaptable implementation.  If the adapter is the DM context,
 		 * return the context, otherwise delegate to IDMContext.getAdapter().
 		 */
 		@SuppressWarnings("unchecked")
@@ -112,17 +112,17 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 
 	private DsfServicesTracker fServicesTracker;
 
-	/** 
-	 * Concrete class type that the elements of this schema node are based on.  
-	 * This type is used by the standard event processing logic to find the 
+	/**
+	 * Concrete class type that the elements of this schema node are based on.
+	 * This type is used by the standard event processing logic to find the
 	 * element in the event which is managed by this VM node.
-	 * 
+	 *
 	 * @see #getContextsForEvent(VMDelta, Object, DataRequestMonitor)
 	 */
 	private Class<? extends IDMContext> fDMCClassType;
 
-	/** 
-	 * Constructor initializes instance data, except for the child nodes.  
+	/**
+	 * Constructor initializes instance data, except for the child nodes.
 	 * Child nodes must be initialized by calling setChildNodes()
 	 * @param session
 	 * @param dmcClassType
@@ -173,7 +173,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 		if (!super.checkUpdate(update))
 			return false;
 
-		// Extract the VMC from the update (whatever the update sub-class. 
+		// Extract the VMC from the update (whatever the update sub-class.
 		Object element = update.getElement();
 		if (element instanceof IDMVMContext) {
 			// If update element is a DMC, check if session is still alive.
@@ -246,7 +246,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 			getSession().getExecutor().execute(new DsfRunnable() {
 				@Override
 				public void run() {
-					// After every dispatch, must check if update still valid. 
+					// After every dispatch, must check if update still valid.
 					for (IChildrenUpdate update : updates) {
 						if (!checkUpdate(update))
 							continue;
@@ -265,9 +265,9 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 	abstract protected void updateElementsInSessionThread(IChildrenUpdate update);
 
 	/**
-	 * Utility method that takes an array of DMC object and creates a 
-	 * corresponding array of IVMContext elements base on that.   
-	 * @param parent The parent for generated IVMContext elements. 
+	 * Utility method that takes an array of DMC object and creates a
+	 * corresponding array of IVMContext elements base on that.
+	 * @param parent The parent for generated IVMContext elements.
 	 * @param dmcs Array of DMC objects to build return array on.
 	 * @return Array of IVMContext objects.
 	 */
@@ -282,7 +282,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 	/**
 	 * Fill update request with view model contexts based on given data model contexts.
 	 * Assumes that data model context elements start at index 0.
-	 * 
+	 *
 	 * @param update  the viewer update request
 	 * @param dmcs  the data model contexts
 	 */
@@ -292,11 +292,11 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 
 	/**
 	 * Fill update request with view model contexts based on given data model contexts.
-	 * 
+	 *
 	 * @param update  the viewer update request
 	 * @param dmcs  the data model contexts
 	 * @param firstIndex  the index of the first data model context
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	protected void fillUpdateWithVMCs(IChildrenUpdate update, IDMContext[] dmcs, int firstIndex) {
@@ -320,14 +320,14 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 	 * Creates a default CompositeDMVMContext which represents the selection.
 	 * This can be overridden by view model providers which for their own purposes.
 	 * @param update defines the selection to be updated to
-	 * @return DM Context which represent the current selection 
+	 * @return DM Context which represent the current selection
 	 */
 	protected IDMContext createCompositeDMVMContext(IViewerUpdate update) {
 		return new CompositeDMVMContext(update);
 	}
 
 	/**
-	 * Searches for a DMC of given type in the tree path contained in given 
+	 * Searches for a DMC of given type in the tree path contained in given
 	 * VMC.  Only a DMC in the same session will be returned.
 	 * @param <V> Type of the DMC that will be returned.
 	 * @param vmc VMC element to search.
@@ -369,7 +369,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 	/**
 	 * This method looks for a specific DMC, used in a IVMNode type. If found, its index is returned, else
 	 * index 0.
-	 * 
+	 *
 	 * @param nodeType the node to search on
 	 * @param wantedCtx the dmc we are looking-for
 	 * @param parentDelta delta for the parent VMNode

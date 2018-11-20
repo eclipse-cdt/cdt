@@ -50,15 +50,15 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * This class provides a skeletal implementation of the ILanguage interface
  * for the DOM parser framework.
- * 
+ *
  * This class uses the template method pattern, derived classes need only implement
  * {@link AbstractCLikeLanguage#getScannerExtensionConfiguration(IScannerInfo info)},
  * {@link AbstractCLikeLanguage#getParserLanguage()} and
  * {@link AbstractCLikeLanguage#createParser(IScanner scanner, ParserMode parserMode,
  *                                           IParserLogService logService, IIndex index)}.
- * 
+ *
  * @see AbstractScannerExtensionConfiguration
- * 
+ *
  * @since 5.0
  */
 public abstract class AbstractCLikeLanguage extends AbstractLanguage implements ICLanguageKeywords {
@@ -70,7 +70,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			shouldVisitNames = true;
 		}
 
-		private List<IASTName> nameList = new ArrayList<IASTName>();
+		private List<IASTName> nameList = new ArrayList<>();
 
 		@Override
 		public int visit(IASTName name) {
@@ -216,7 +216,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 	/**
 	 * Creates the parser.
-	 * 
+	 *
 	 * @param scanner  the IScanner to get tokens from
 	 * @param log  the parser log service
 	 * @param index  the index to help resolve bindings
@@ -233,7 +233,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 	/**
 	 * Create the parser with additional settings.
-	 * 
+	 *
 	 * @param scanner  the IScanner to get tokens from
 	 * @param log  the parser log service
 	 * @param index  the index to help resolve bindings

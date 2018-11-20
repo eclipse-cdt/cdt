@@ -19,7 +19,7 @@ package org.eclipse.cdt.dsf.internal;
  * org.eclipse.cdt.internal.core. The idea is for core parts of DSF (ones that
  * don't have debug in package name) to have very limited dependencies on other
  * plugins.
- * 
+ *
  * @since 2.1
  */
 public class LoggingUtils {
@@ -28,17 +28,17 @@ public class LoggingUtils {
 	 * Return a string that uniquely identifies a Java object reference, in the
 	 * form "classname@id", where 'classname' is the simple or package qualified
 	 * name of the object's class, and 'id' is the hash code.
-	 * 
+	 *
 	 * Why not just use obj.toString()? That method is often overridden, and so
 	 * cannot be relied on for a representation that uniquely identifies the
 	 * object in the VM space.
-	 * 
+	 *
 	 * @param obj
 	 *            the object reference to stringify
 	 * @param simpleClassName
 	 *            if true, use the class's simple name, otherwise the package
 	 *            qualified one
-	 * 
+	 *
 	 * @return the stringified representation of the object reference
 	 */
 	public static String toString(Object obj, boolean simpleClassName) {
@@ -68,7 +68,7 @@ public class LoggingUtils {
 	/**
 	 * Flatten out an array of strings into one string, in the form
 	 * "{s1, s2, s3, ...}"
-	 * 
+	 *
 	 * @param strings
 	 *            the array of string
 	 * @return the flattened representation
@@ -88,7 +88,7 @@ public class LoggingUtils {
 	/**
 	 * General string utility for removing newline and space character from the
 	 * end of a string. Typically used when logging an object's toString()
-	 * 
+	 *
 	 * @param str
 	 *            the string
 	 * @return the string without trailing newlines

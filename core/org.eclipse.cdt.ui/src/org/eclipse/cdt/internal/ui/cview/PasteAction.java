@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -31,14 +32,12 @@ import org.eclipse.ui.actions.CopyProjectOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-
 /**
  * Standard action for pasting resources on the clipboard to the selected resource's location.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 2.0
  */
 /*package*/
@@ -78,7 +77,7 @@ public class PasteAction extends SelectionListenerAction {
 	/**
 	 * Returns the actual target of the paste action. Returns null
 	 * if no valid target is selected.
-	 * 
+	 *
 	 * @return the actual target of the paste action
 	 */
 	private IResource getTarget() {
@@ -99,9 +98,9 @@ public class PasteAction extends SelectionListenerAction {
 
 	/**
 	 * Returns whether any of the given resources are linked resources.
-	 * 
+	 *
 	 * @param resources resource to check for linked type. may be null
-	 * @return true=one or more resources are linked. false=none of the 
+	 * @return true=one or more resources are linked. false=none of the
 	 * 	resources are linked
 	 */
 	private boolean isLinked(IResource[] resources) {
@@ -166,7 +165,7 @@ public class PasteAction extends SelectionListenerAction {
 
 	/**
 	 * The <code>PasteAction</code> implementation of this
-	 * <code>SelectionListenerAction</code> method enables this action if 
+	 * <code>SelectionListenerAction</code> method enables this action if
 	 * a resource compatible with what is on the clipboard is selected.
 	 */
 	@Override
@@ -199,8 +198,8 @@ public class PasteAction extends SelectionListenerAction {
 		if (getSelectedNonResources().size() > 0)
 			return false;
 
-		// targetResource is null if no valid target is selected or 
-		// selection is empty	
+		// targetResource is null if no valid target is selected or
+		// selection is empty
 		IResource targetResource = getTarget();
 		if (targetResource == null)
 			return false;
@@ -209,7 +208,7 @@ public class PasteAction extends SelectionListenerAction {
 		// open project) or multiple file selection with the same parent
 		List<?> selectedResources = getSelectedResources();
 		if (selectedResources.size() > 1) {
-			// if more than one resource is selected the selection has 
+			// if more than one resource is selected the selection has
 			// to be all files with the same parent
 			for (int i = 0; i < selectedResources.size(); i++) {
 				IResource resource = (IResource) selectedResources.get(i);

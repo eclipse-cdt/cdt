@@ -112,50 +112,50 @@ public class CoreModelUtil {
 	/**
 	 * Answers true if the pattern matches the given name, false otherwise. This char[] pattern matching accepts wild-cards '*' and
 	 * '?'.
-	 * 
+	 *
 	 * When not case sensitive, the pattern is assumed to already be lowercased, the name will be lowercased character per character
 	 * as comparing. If name is null, the answer is false. If pattern is null, the answer is true if name is not null. <br>
 	 * <br>
 	 * For example:
 	 * <ol>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   pattern = { '?', 'b', '*' }
 	 *   name = { 'a', 'b', 'c' , 'd' }
 	 *   isCaseSensitive = true
 	 *   result =&gt; true
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   pattern = { '?', 'b', '?' }
 	 *   name = { 'a', 'b', 'c' , 'd' }
 	 *   isCaseSensitive = true
 	 *   result =&gt; false
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   pattern = { 'b', '*' }
 	 *   name = { 'a', 'b', 'c' , 'd' }
 	 *   isCaseSensitive = true
 	 *   result =&gt; false
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param pattern
 	 *            the given pattern
 	 * @param name
@@ -181,9 +181,9 @@ public class CoreModelUtil {
 	 * For example:
 	 * <ol>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   pattern = { '?', 'b', '*' }
 	 *   patternStart = 1
 	 *   patternEnd = 3
@@ -192,14 +192,14 @@ public class CoreModelUtil {
 	 *   nameEnd = 4
 	 *   isCaseSensitive = true
 	 *   result =&gt; true
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   pattern = { '?', 'b', '*' }
 	 *   patternStart = 1
 	 *   patternEnd = 2
@@ -208,12 +208,12 @@ public class CoreModelUtil {
 	 *   nameEnd = 2
 	 *   isCaseSensitive = true
 	 *   result =&gt; false
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param pattern
 	 *            the given pattern
 	 * @param patternStart
@@ -293,13 +293,13 @@ public class CoreModelUtil {
 
 	/**
 	 * Answers true if the pattern matches the filepath using the pathSepatator, false otherwise.
-	 * 
+	 *
 	 * Path char[] pattern matching, accepting wild-cards '**', '*' and '?' (using Ant directory tasks conventions, also see
 	 * "http://jakarta.apache.org/ant/manual/dirtasks.html#defaultexcludes"). Path pattern matching is enhancing regular pattern
 	 * matching in supporting extra rule where '**' represent any folder combination. Special rule: - foo\ is equivalent to foo\**
 	 * When not case sensitive, the pattern is assumed to already be lowercased, the name will be lowercased character per character
 	 * as comparing.
-	 * 
+	 *
 	 * @param pattern
 	 *            the given pattern
 	 * @param filepath
@@ -445,29 +445,29 @@ public class CoreModelUtil {
 	 * For example:
 	 * <ol>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   toBeFound = 'c'
 	 *   array = { ' a', 'b', 'c', 'd' }
 	 *   result =&gt; 2
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   toBeFound = 'e'
 	 *   array = { ' a', 'b', 'c', 'd' }
 	 *   result =&gt; -1
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound
 	 *            the character to search
 	 * @param array
@@ -490,43 +490,43 @@ public class CoreModelUtil {
 	 * For example:
 	 * <ol>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   toBeFound = 'c'
 	 *   array = { ' a', 'b', 'c', 'd' }
 	 *   start = 2
 	 *   result =&gt; 2
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   toBeFound = 'c'
 	 *   array = { ' a', 'b', 'c', 'd' }
 	 *   start = 3
 	 *   result =&gt; -1
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
-	 * 
+	 *
 	 *   toBeFound = 'e'
 	 *   array = { ' a', 'b', 'c', 'd' }
 	 *   start = 1
 	 *   result =&gt; -1
-	 *  
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound
 	 *            the character to search
 	 * @param array
@@ -624,7 +624,7 @@ public class CoreModelUtil {
 
 	/**
 	 * Returns the translation unit for the location given or <code>null</code>.
-	 * @throws CModelException 
+	 * @throws CModelException
 	 */
 	public static ITranslationUnit findTranslationUnitForLocation(IIndexFileLocation ifl, ICProject preferredProject)
 			throws CModelException {
@@ -683,7 +683,7 @@ public class CoreModelUtil {
 
 	/**
 	 * Returns the configuration descriptions referenced directly by the specified
-	 * configuration description. The result will not contain duplicates. Returns 
+	 * configuration description. The result will not contain duplicates. Returns
 	 * an empty array if there are no referenced configuration descriptions.
 	 *
 	 * @param cfgDes
@@ -695,7 +695,7 @@ public class CoreModelUtil {
 
 	public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes,
 			boolean writable) {
-		List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
+		List<ICConfigurationDescription> result = new ArrayList<>();
 
 		if (cfgDes != null) {
 			Map<String, String> map = cfgDes.getReferenceInfo();
@@ -740,7 +740,7 @@ public class CoreModelUtil {
 	 * Returns the list of all configuration descriptions which directly reference
 	 * the specified configuration description. Returns an empty array if there are
 	 * no referencing configuration descriptions.
-	 * 
+	 *
 	 * @since 4.0
 	 * @param cfgDes
 	 * @param writable - specifies whether the returned descriptions should be writable or read-only
@@ -749,7 +749,7 @@ public class CoreModelUtil {
 	 */
 	public static ICConfigurationDescription[] getReferencingConfigurationDescriptions(
 			ICConfigurationDescription cfgDes, boolean writable) {
-		List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
+		List<ICConfigurationDescription> result = new ArrayList<>();
 
 		if (cfgDes != null) {
 			CoreModel core = CoreModel.getDefault();
@@ -784,7 +784,7 @@ public class CoreModelUtil {
 	public static String[] getBinaryParserIds(ICConfigurationDescription[] cfgs) {
 		if (cfgs == null || cfgs.length == 0)
 			return null;
-		ArrayList<String> pids = new ArrayList<String>();
+		ArrayList<String> pids = new ArrayList<>();
 		for (ICConfigurationDescription cfg : cfgs) {
 			ICTargetPlatformSetting tps = cfg.getTargetPlatformSetting();
 			String[] ids = tps.getBinaryParserIds();
@@ -811,7 +811,7 @@ public class CoreModelUtil {
 
 	/**
 	 * Instantiate binary parser for given extension reference.
-	 * 
+	 *
 	 * @param ref  binary parser extension reference
 	 * @return a binary parser instance
 	 * @throws CoreException  if the parser could not be created

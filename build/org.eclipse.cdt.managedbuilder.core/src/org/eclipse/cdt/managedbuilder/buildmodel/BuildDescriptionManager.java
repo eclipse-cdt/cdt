@@ -36,10 +36,10 @@ import org.eclipse.core.runtime.Path;
 /**
  *
  * This class represents the build description manager
- * The build description manager is the entry point 
+ * The build description manager is the entry point
  * for all build description-related operations
  *
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -65,7 +65,7 @@ public class BuildDescriptionManager {
 	 */
 	public static final int DEPFILES = 1 << 3;
 
-	private Set<IBuildStep> fVisitedSteps = new HashSet<IBuildStep>();
+	private Set<IBuildStep> fVisitedSteps = new HashSet<>();
 	private boolean fUp;
 	private IBuildDescription fInfo;
 
@@ -82,12 +82,12 @@ public class BuildDescriptionManager {
 	 * @param flags specifies how the build description should be generated
 	 * and what information it should contain.
 	 * Can contain the following flags:
-	 * BuildDescriptionManager.REBUILD, 
+	 * BuildDescriptionManager.REBUILD,
 	 * BuildDescriptionManager.REMOVED,
 	 * BuildDescriptionManager.DEPS,
-	 * BuildDescriptionManager.DEPFILES 
-	 * 
-	 * @see BuildDescriptionManager#REBUILD 
+	 * BuildDescriptionManager.DEPFILES
+	 *
+	 * @see BuildDescriptionManager#REBUILD
 	 * @see BuildDescriptionManager#REMOVED
 	 * @see BuildDescriptionManager#DEPS
 	 * @see BuildDescriptionManager#DEPFILES
@@ -111,14 +111,14 @@ public class BuildDescriptionManager {
 	 * runs though all steps in build description in the dependency order
 	 * and notifies the visitor callback
 	 * the order in which steps are enumerated depends on the "up" argument
-	 *  
+	 *
 	 * @param visitor represents the visitor callback
 	 * @param des represents the build description
 	 * @param up specifies the order in which build steps are to be enumerated
-	 * if true, enumeration will be performed starting from the input step and 
-	 * ending with the output state. Otherwise enumeration will be performed 
-	 * in the reversed order 
-	 * 
+	 * if true, enumeration will be performed starting from the input step and
+	 * ending with the output state. Otherwise enumeration will be performed
+	 * in the reversed order
+	 *
 	 * @throws CoreException if the operation fails
 	 */
 	static public void accept(IStepVisitor visitor, IBuildDescription des, boolean up) throws CoreException {
@@ -168,7 +168,7 @@ public class BuildDescriptionManager {
 	}
 
 	public static IBuildStep[] getSteps(IBuildStep step, boolean input) {
-		Set<IBuildStep> set = new HashSet<IBuildStep>();
+		Set<IBuildStep> set = new HashSet<>();
 
 		IBuildIOType args[] = input ? step.getInputIOTypes() : step.getOutputIOTypes();
 
@@ -194,7 +194,7 @@ public class BuildDescriptionManager {
 	}
 
 	public static IBuildResource[] filterGeneratedBuildResources(IBuildResource rc[], int rcState) {
-		List<IBuildResource> list = new ArrayList<IBuildResource>();
+		List<IBuildResource> list = new ArrayList<>();
 
 		addBuildResources(rc, list, rcState);
 		return list.toArray(new IBuildResource[list.size()]);
@@ -235,7 +235,7 @@ public class BuildDescriptionManager {
 	/**
 	 * returns the project resource for the given build resource or null
 	 * if the project does not contain the build resource
-	 * 
+	 *
 	 * @param bRc build resource
 	 * @return IResource
 	 */
@@ -251,12 +251,12 @@ public class BuildDescriptionManager {
 
 	/**
 	 * cleans the resources to be rebuilt
-	 * 
+	 *
 	 * @param des build description
 	 */
 	public static void cleanGeneratedRebuildResources(IBuildDescription des) throws CoreException {
 		IBuildResource bRcs[] = filterGeneratedBuildResources(des.getResources(), REMOVED | REBUILD);
-		List<Object[]> failList = new ArrayList<Object[]>();
+		List<Object[]> failList = new ArrayList<>();
 
 		for (int i = 0; i < bRcs.length; i++) {
 			if (!bRcs[i].isProjectResource())

@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -42,6 +40,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestCase;
 
 /**
  * @author jcamelon
@@ -170,7 +170,7 @@ public class QuickParser2Tests extends TestCase {
 
 	/**
 	 * Test code: bool myFunction(int parm1 = 3 * 4, double parm2);
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testFunctionDeclarationWithParameters() throws Exception {
@@ -859,12 +859,12 @@ public class QuickParser2Tests extends TestCase {
 
 	//    public void testBug36247() throws Exception {
 	//        Writer code = new StringWriter();
-	//        code.write("class A {\n"); 
-	//        code.write("INLINE_DEF int f ();\n"); 
-	//        code.write("INLINE_DEF A   g ();"); 
-	//        code.write("INLINE_DEF A * h ();"); 
-	//        code.write("INLINE_DEF A & unlock(void);"); 
-	//        code.write("};"); 
+	//        code.write("class A {\n");
+	//        code.write("INLINE_DEF int f ();\n");
+	//        code.write("INLINE_DEF A   g ();");
+	//        code.write("INLINE_DEF A * h ();");
+	//        code.write("INLINE_DEF A & unlock(void);");
+	//        code.write("};");
 	//        parse(code.toString());
 	//    }
 
@@ -926,7 +926,7 @@ public class QuickParser2Tests extends TestCase {
 	//		assertEquals(1, declarators.size());
 	//		Declarator functionDeclarator = (Declarator)declarators.get(0);
 	//		assertEquals(functionDeclarator.getName().toString(), "myFunction");
-	//        
+	//
 	//		ParameterDeclarationClause pdc = functionDeclarator.getParms();
 	//		assertNotNull(pdc);
 	//		List parameterDecls = pdc.getDeclarations();
@@ -944,14 +944,14 @@ public class QuickParser2Tests extends TestCase {
 	//		assertEquals("parm2", parm2.getDeclSpecifier().getName().toString());
 	//		List parm2Decls = parm2.getDeclarators();
 	//		assertEquals(1, parm2Decls.size());
-	//        
+	//
 	//		ParameterDeclaration parm3 = (ParameterDeclaration)parameterDecls.get(2
 	//);
 	//		assertNotNull(parm3.getDeclSpecifier().getName());
 	//		assertEquals("parm3", parm3.getDeclSpecifier().getName().toString());
 	//		List parm3Decls = parm3.getDeclarators();
 	//		assertEquals(1, parm3Decls.size());
-	//        
+	//
 	//		OldKRParameterDeclarationClause clause = pdc.getOldKRParms();
 	//		assertNotNull(clause);
 	//		assertEquals(clause.getDeclarations().size(), 2);
@@ -971,7 +971,7 @@ public class QuickParser2Tests extends TestCase {
 	//		assertFalse(po1.isConst());
 	//		assertFalse(po1.isVolatile());
 	//		assertEquals(po1.getType(), PointerOperator.t_pointer);
-	//        
+	//
 	//		SimpleDeclaration declaration =
 	// (SimpleDeclaration)clause.getDeclarations().get(1);
 	//		assertEquals(declaration.getDeclSpecifier().getType(),
@@ -1242,37 +1242,37 @@ public class QuickParser2Tests extends TestCase {
 
 	//	public void testBug44370() throws Exception
 	//	{
-	//		parse("#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n"); 
+	//		parse("#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n");
 	//		Iterator macros = quickParseCallback.getMacros();
 	//		assertNotNull(macros);
 	//		assertTrue(macros.hasNext());
 	//		IASTMacro swap = (IASTMacro) macros.next();
 	//		assertFalse(macros.hasNext());
-	//		assertEquals(swap.getName(), "SWAP"); 
+	//		assertEquals(swap.getName(), "SWAP");
 	//		assertEquals(swap.getMacroType(),
 	// IMacroDescriptor.MacroType.FUNCTION_LIKE);
 	//		String[] params = swap.getParameters();
 	//		assertEquals(params.length, 2);
-	//		assertEquals(params[0], "x"); 
-	//		assertEquals(params[1], "y"); 
+	//		assertEquals(params[0], "x");
+	//		assertEquals(params[1], "y");
 	//		String completeSignature = swap.getCompleteSignature().trim();
 	//		assertEquals(completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}");
-	// 
+	//
 	//		assertEquals(swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}");
-	// 
+	//
 	//		IToken[] tokens = swap.getTokenizedExpansion();
 	//		validateToken(tokens[0], IToken.tLBRACE);
-	//		validateIdentifier(tokens[1], "x"); 
+	//		validateIdentifier(tokens[1], "x");
 	//		validateToken(tokens[2], IToken.tBITORASSIGN);
-	//		validateIdentifier(tokens[3], "y"); 
+	//		validateIdentifier(tokens[3], "y");
 	//		validateToken(tokens[4], IToken.tSEMI);
-	//		validateIdentifier(tokens[5], "y"); 
+	//		validateIdentifier(tokens[5], "y");
 	//		validateToken(tokens[6], IToken.tBITORASSIGN);
-	//		validateIdentifier(tokens[7], "x"); 
+	//		validateIdentifier(tokens[7], "x");
 	//		validateToken(tokens[8], IToken.tSEMI);
-	//		validateIdentifier(tokens[9], "x"); 
+	//		validateIdentifier(tokens[9], "x");
 	//		validateToken(tokens[10], IToken.tBITORASSIGN);
-	//		validateIdentifier(tokens[11], "y"); 
+	//		validateIdentifier(tokens[11], "y");
 	//		validateToken(tokens[12], IToken.tSEMI);
 	//		validateToken(tokens[13], IToken.tRBRACE);
 	//	}

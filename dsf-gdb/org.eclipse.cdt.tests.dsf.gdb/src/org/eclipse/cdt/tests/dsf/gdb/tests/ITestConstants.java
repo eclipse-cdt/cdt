@@ -55,7 +55,7 @@ public class ITestConstants {
 		System.arraycopy(ALL_SUPPORTED_VERSIONS, 0, ALL_KNOWN_VERSIONS, 0, ALL_SUPPORTED_VERSIONS.length);
 		System.arraycopy(ALL_UNSUPPORTED_VERSIONS, 0, ALL_KNOWN_VERSIONS, ALL_SUPPORTED_VERSIONS.length,
 				ALL_UNSUPPORTED_VERSIONS.length);
-	};
+	}
 
 	// Attribute that allows a test to request not to start gdbserver even if the session is a remote one
 	public static final String LAUNCH_GDB_SERVER = TestsPlugin.PLUGIN_ID + ".launchGdbServer";

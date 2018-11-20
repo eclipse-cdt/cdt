@@ -13,28 +13,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.navigator;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.navigator.ICommonContentExtensionSite;
-import org.eclipse.ui.navigator.ICommonLabelProvider;
-
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-
 import org.eclipse.cdt.internal.ui.cview.CViewLabelProvider;
 import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
+import org.eclipse.ui.navigator.ICommonLabelProvider;
 
 /**
  * A label provider suitable for the Common Navigator providing also
  * status message text for the current selected item.
- * 
+ *
  * @see org.eclipse.cdt.internal.ui.cview.CView#createLabelProvider
  * @see org.eclipse.cdt.internal.ui.cview.CView#getStatusLineMessage
  */

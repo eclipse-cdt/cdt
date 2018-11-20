@@ -43,7 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Implements the reverse debug breakpoint action
- *   
+ *
  *@since 7.3
  */
 public class ReverseDebugAction extends AbstractBreakpointAction {
@@ -61,7 +61,7 @@ public class ReverseDebugAction extends AbstractBreakpointAction {
 		public static REVERSE_DEBUG_ACTIONS_ENUM getValue(int index) {
 			return REVERSE_DEBUG_ACTIONS_ENUM.values()[index];
 		}
-	};
+	}
 
 	private REVERSE_DEBUG_ACTIONS_ENUM fOperation;
 

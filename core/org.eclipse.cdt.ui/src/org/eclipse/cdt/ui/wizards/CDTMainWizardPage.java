@@ -19,6 +19,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -49,13 +54,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-import org.eclipse.cdt.ui.newui.PageLayout;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 public class CDTMainWizardPage extends WizardNewProjectCreationPage implements IWizardItemsListListener {
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.NewModelProjectWizardPage"; //$NON-NLS-1$
@@ -278,7 +276,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		if (extensions == null)
 			return null;
 
-		List<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
+		List<EntryDescriptor> items = new ArrayList<>();
 		for (int i = 0; i < extensions.length; ++i) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (IConfigurationElement element : elements) {
@@ -312,7 +310,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		// items filtering
 		if (ls != null) { // NULL means call from prefs
 			List<EntryDescriptor> filteredItems = ls.filterItems(items);
-			List<EntryDescriptor> newItems = new ArrayList<EntryDescriptor>(filteredItems);
+			List<EntryDescriptor> newItems = new ArrayList<>(filteredItems);
 
 			// Add parent folders
 			for (EntryDescriptor ed : filteredItems) {
@@ -399,8 +397,8 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		//  Sorting is disabled because of users requests
 		//	Collections.sort(items, CDTListComparator.getInstance());
 
-		ArrayList<TreeItem> placedTreeItemsList = new ArrayList<TreeItem>(items.size());
-		ArrayList<EntryDescriptor> placedEntryDescriptorsList = new ArrayList<EntryDescriptor>(items.size());
+		ArrayList<TreeItem> placedTreeItemsList = new ArrayList<>(items.size());
+		ArrayList<EntryDescriptor> placedEntryDescriptorsList = new ArrayList<>(items.size());
 		for (EntryDescriptor wd : items) {
 			if (wd.getParentId() == null) {
 				wd.setPath(wd.getId());

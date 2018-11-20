@@ -27,7 +27,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
 	/**
 	 * Constructs an empty LRUCache with the specified limit on the number of items in the cache.
-	 * 
+	 *
 	 * @param limit - the maximum number of items to keep in the cache.
 	 */
 	public LRUCache(int limit) {
@@ -37,7 +37,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
 	/**
 	 * Constructs an empty LRUCache with the specified initial capacity and limit on the number of items in the cache.
-	 * 
+	 *
 	 * @param initialCapacity - initial capacity.
 	 * @param limit - the maximum number of items to keep in the cache.
 	 */

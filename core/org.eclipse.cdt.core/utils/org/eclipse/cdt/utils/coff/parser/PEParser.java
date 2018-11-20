@@ -22,8 +22,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.coff.PE;
-import org.eclipse.cdt.utils.coff.PEConstants;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
+import org.eclipse.cdt.utils.coff.PEConstants;
 import org.eclipse.core.runtime.IPath;
 
 /**

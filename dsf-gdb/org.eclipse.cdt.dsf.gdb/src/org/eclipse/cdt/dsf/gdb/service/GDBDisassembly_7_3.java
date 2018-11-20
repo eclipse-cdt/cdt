@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     William Riley (Renesas) - Bug 357270
@@ -43,7 +43,7 @@ public class GDBDisassembly_7_3 extends MIDisassembly implements IDisassembly3 {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.dsf.service.AbstractDsfService#initialize(org.eclipse
 	 * .cdt.dsf.concurrent.RequestMonitor)

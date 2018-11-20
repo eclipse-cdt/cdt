@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 
 /**
  * Declarator for c++.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.2
@@ -30,7 +30,7 @@ public interface ICPPASTDeclarator extends IASTDeclarator {
 	public boolean declaresParameterPack();
 
 	/**
-	 * Set whether the declarator contains an ellipsis, denoting a pack expansion. 
+	 * Set whether the declarator contains an ellipsis, denoting a pack expansion.
 	 * Not allowed on a frozen AST.
 	 */
 	public void setDeclaresParameterPack(boolean val);

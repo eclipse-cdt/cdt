@@ -41,7 +41,7 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 	private String[] fPropertyNamesColor;
 	/**
 	 * Preference keys for boolean preferences which are <code>true</code>,
-	 * iff the corresponding token should be rendered bold. 
+	 * iff the corresponding token should be rendered bold.
 	 */
 	private String[] fPropertyNamesBold;
 	/**
@@ -50,7 +50,7 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 	 */
 	private String[] fPropertyNamesItalic;
 
-	/** 
+	/**
 	 * Returns the list of preference keys which define the tokens
 	 * used in the rules of this scanner.
 	 */

@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * invalid on the local machine (the executable may have been built on another machine). In all cases, the
  * file is found on the local machine by using source locators (see ISourceLocator). ISourceFinder is a front
  * end to that search capability.
- * 
+ *
  * <p>
  * CDT has:
  * <ul>
@@ -38,12 +38,12 @@ import org.eclipse.core.runtime.IAdaptable;
  * that spawned the launch, but technically, they could be different. The ILaunch API allows any source
  * locator to be associated with a launch.
  * </ul>
- * 
+ *
  * <p>
  * So, when trying to translate a source file specification in the debug information to a local file, there
  * are a variety of locators that need to be considered. An ISourceFinder shields client code from having to
  * worry about those details. A client simply wants to find a file locally.
- * 
+ *
  * <p>
  * This interface provides two choices for searching. One caters to logic involved in actively debugging a
  * binary (e.g., a breakpoint is hit). The other is for use when there is no debug-session context (double
@@ -51,11 +51,11 @@ import org.eclipse.core.runtime.IAdaptable;
  * only the locator associated with the ILaunch. The latter will use the locator of any relevant launch or
  * launch configuration. In all cases, the global locator is consulted if no other locator has converted the
  * file.
- * 
+ *
  * <p>
  * A new instance is created every time a Binary object is queried for this interface. Clients must call
  * {@link #dispose()} when it is done with the object.
- * 
+ *
  * @since 5.2
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -73,7 +73,7 @@ public interface ISourceFinder {
 	 * that the common locator's containers are automatically added to every launch configuration locator. So,
 	 * in effect, the common locator is always searched, and always last.
 	 * </ol>
-	 * 
+	 *
 	 * In the first two cases, only the first locator of the first matching launch or launch configuration is
 	 * used, even if that locator doesn't find the file. Potentially, another matching one could find the
 	 * file, but it could easily get very expensive to iterate through numerous matches that way. Searching
@@ -84,7 +84,7 @@ public interface ISourceFinder {
 	 * for launch and configurations changes, though, so we find a new locator when the active locator is no
 	 * longer relevant. Note that calls to {@link #toLocalPath(IAdaptable, String)} have no effect on the
 	 * active locator we use in this method.
-	 * 
+	 *
 	 * @param compilationPath
 	 *            the path of a file as found in the debug information
 	 * @return if we are able to find the file, the location on the host machine, otherwise null. The result
@@ -105,7 +105,7 @@ public interface ISourceFinder {
 	/**
 	 * Clients must call this to ensure that the object properly cleans up. E.g., a source finder may register
 	 * itself as a listener for changes that would effect how it searches for files. Calling this method will
-	 * allow it to unregister itself. 
+	 * allow it to unregister itself.
 	 */
 	public void dispose();
 }

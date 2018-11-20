@@ -16,6 +16,9 @@ package org.eclipse.cdt.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -44,11 +47,6 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * C Project wizard that creates a new project resource in

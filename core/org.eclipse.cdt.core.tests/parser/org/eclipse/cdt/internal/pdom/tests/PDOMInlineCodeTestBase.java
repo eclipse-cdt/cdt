@@ -35,6 +35,7 @@ public class PDOMInlineCodeTestBase extends PDOMTestBase {
 	protected PDOM pdom;
 	protected ICProject cproject;
 
+	@Override
 	public void setUp() throws Exception {
 		cproject = CProjectHelper.createCCProject("classTemplateTests" + System.currentTimeMillis(), "bin",
 				IPDOMManager.ID_NO_INDEXER);

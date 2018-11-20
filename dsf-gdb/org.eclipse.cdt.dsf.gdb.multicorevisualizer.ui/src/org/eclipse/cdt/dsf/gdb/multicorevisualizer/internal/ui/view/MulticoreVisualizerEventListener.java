@@ -78,8 +78,8 @@ public class MulticoreVisualizerEventListener {
 
 	// --- event handlers ---
 
-	/** 
-	 * Invoked when a thread or process is suspended. 
+	/**
+	 * Invoked when a thread or process is suspended.
 	 * Updates both state of the thread and the core it's running on
 	 */
 	@DsfServiceEventHandler
@@ -267,10 +267,10 @@ public class MulticoreVisualizerEventListener {
 			return;
 		final String sessionId = context.getSessionId();
 
-		// all-stop mode? 
-		// If so we can't ask GDB for more info about the new thread at this moment.  
-		// So we still add it to the model, on core zero and with a OS thread id of 
-		// zero.  The next time the execution is stopped, the model will be re-created 
+		// all-stop mode?
+		// If so we can't ask GDB for more info about the new thread at this moment.
+		// So we still add it to the model, on core zero and with a OS thread id of
+		// zero.  The next time the execution is stopped, the model will be re-created
 		// and show the correct thread ids and cores.
 		if (isSessionAllStop(sessionId) && context instanceof IMIExecutionDMContext) {
 			final IMIExecutionDMContext execDmc = (IMIExecutionDMContext) context;
@@ -294,8 +294,8 @@ public class MulticoreVisualizerEventListener {
 
 			int osTid = 0;
 
-			// add thread if not already there - there is a potential race condition where a 
-			// thread can be added twice to the model: once at model creation and once more 
+			// add thread if not already there - there is a potential race condition where a
+			// thread can be added twice to the model: once at model creation and once more
 			// through the listener.   Checking at both places to prevent this.
 			if (model.getThread(tid) == null) {
 				model.addThread(new VisualizerThread(vCore, pid, osTid, tid, VisualizerExecutionState.RUNNING));
@@ -354,12 +354,12 @@ public class MulticoreVisualizerEventListener {
 								osTid = Integer.parseInt(data.getId());
 							} catch (NumberFormatException e) {
 								// I've seen a case at startup where GDB is not ready to
-								// return the osTID so we get null.  
+								// return the osTID so we get null.
 								// That is ok, we'll be refreshing right away at startup
 							}
 
-							// add thread if not already there - there is a potential race condition where a 
-							// thread can be added twice to the model: once at model creation and once more 
+							// add thread if not already there - there is a potential race condition where a
+							// thread can be added twice to the model: once at model creation and once more
 							// through the listener.   Checking at both places to prevent this.
 							if (model.getThread(tid) == null) {
 								model.addThread(
@@ -386,10 +386,10 @@ public class MulticoreVisualizerEventListener {
 		final MulticoreVisualizerCanvas canvas = fVisualizer.getMulticoreVisualizerCanvas();
 
 		if (context instanceof IContainerDMContext) {
-			// process exited 
+			// process exited
 
-			// Note: this is required because we noticed that in GDB 7.6 and older, 
-			// the "thread exited" signal is not sent for the local detach case.  
+			// Note: this is required because we noticed that in GDB 7.6 and older,
+			// the "thread exited" signal is not sent for the local detach case.
 			// see bug 409512
 			DsfServicesTracker tracker = new DsfServicesTracker(MulticoreVisualizerUIPlugin.getBundleContext(),
 					context.getSessionId());

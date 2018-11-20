@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public final class EmptyIterator<T> implements Iterator<T> {
-	public static final EmptyIterator<?> EMPTY_ITERATOR = new EmptyIterator<Object>();
+	public static final EmptyIterator<?> EMPTY_ITERATOR = new EmptyIterator<>();
 
 	@SuppressWarnings("unchecked")
 	public static <T> EmptyIterator<T> empty() {

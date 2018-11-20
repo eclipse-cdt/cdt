@@ -36,10 +36,10 @@ public class CLIInfoThreadsInfo extends MIInfo {
 	 * <code>
 	 * &lt;x&gt; Thread &lt;y&gt; (LWP &lt;z&gt;)
 	 * </code>
-	 * 
+	 *
 	 * <p>
 	 * Where 'y' is a hex number with a '0x' prefix.
-	 * 
+	 *
 	 * <p>
 	 * Note that the output likely includes non-LWP threads, but they are
 	 * intentionally ignored
@@ -55,8 +55,8 @@ public class CLIInfoThreadsInfo extends MIInfo {
 	 * <code>
 	 * &lt;x&gt; Thread &lt;y&gt; (&lt;text&gt;)
 	 * </code>
-	 * 
-	 * <p>where 'y' is not necessarily numeric and (&lt;text&gt;) is optional 
+	 *
+	 * <p>where 'y' is not necessarily numeric and (&lt;text&gt;) is optional
 	 */
 	private static final Pattern RESULT_PATTERN = Pattern
 			.compile("(^\\*?\\s*\\d+)(\\s*[Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(\\S+(\\s*\\(.*?\\))?)", Pattern.MULTILINE); //$NON-NLS-1$
@@ -104,7 +104,7 @@ public class CLIInfoThreadsInfo extends MIInfo {
 	}
 
 	protected void parse() {
-		info = new ArrayList<ThreadInfo>();
+		info = new ArrayList<>();
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIOOBRecord[] oobs = out.getMIOOBRecords();
@@ -120,7 +120,7 @@ public class CLIInfoThreadsInfo extends MIInfo {
 	}
 
 	protected void parseThreadInfo(String str, List<ThreadInfo> info) {
-		// Fetch the OS ThreadId & Find the current thread 
+		// Fetch the OS ThreadId & Find the current thread
 		// Here is an example output from GDB which shows normal threads as well as
 		// LWP process threads. We ignore non-LWP threads.
 		//
@@ -135,7 +135,7 @@ public class CLIInfoThreadsInfo extends MIInfo {
 		//
 		// However, 'info threads' output varies, and depends on the gdbserver
 		//
-		// [example B, observed with FreeBSD] 
+		// [example B, observed with FreeBSD]
 		// (gdb) info threads
 		//   6 Thread 1286 (tid 38473, running)  0x00000000 in ?? ()
 		//   5 Thread 1029 (tid 34369, running)  0x00000000 in ?? ()
@@ -147,11 +147,11 @@ public class CLIInfoThreadsInfo extends MIInfo {
 		//    from /cygdrive/c/WINDOWS/system32/ntdll.dll
 		// * 1 thread 5264.0x16f8  main (argc=1, argv=0x661f00) at MultiThread.cc:16
 		//
-		// Note that windows gdbs returns lower case "thread" , so the matcher 
-		// needs to be case-insensitive. 
+		// Note that windows gdbs returns lower case "thread" , so the matcher
+		// needs to be case-insensitive.
 		//
-		// The original code favored the format in example A and so we will 
-		// continue to give it precedence. The newly added support for formats 
+		// The original code favored the format in example A and so we will
+		// continue to give it precedence. The newly added support for formats
 		// B and C will have lower precedence.
 		if (!str.isEmpty()) {
 			Matcher matcher = RESULT_PATTERN_LWP.matcher(str); // example A

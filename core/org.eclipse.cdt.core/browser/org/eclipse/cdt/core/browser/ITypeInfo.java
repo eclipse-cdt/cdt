@@ -43,7 +43,7 @@ public interface ITypeInfo {
 	 */
 	public IQualifiedTypeName getQualifiedTypeName();
 
-	/** 
+	/**
 	 * Returns the originating locations where this type was declared.
 	 * @return all known source references, or an empty
 	 * array if none found.
@@ -52,8 +52,8 @@ public interface ITypeInfo {
 
 	/**
 	 * Returns the real location where type was declared.
-	 * 
-	 * @return the parsed source reference (with offset and length), 
+	 *
+	 * @return the parsed source reference (with offset and length),
 	 * or <code>null</code> if not found.
 	 */
 	public ITypeReference getResolvedReference();

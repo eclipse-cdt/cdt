@@ -98,7 +98,7 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 		boolean checkSet = true;
 		if (vars != null && vars.length != 0) {
 			if (set == null) {
-				set = new HashSet<String>();
+				set = new HashSet<>();
 				checkSet = false;
 			}
 

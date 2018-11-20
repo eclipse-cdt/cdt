@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -36,9 +36,9 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
 /**
- * Layout node for the standard ILaunch object.  This node can only be used at 
+ * Layout node for the standard ILaunch object.  This node can only be used at
  * the root of a hierarchy.  It does not implement the label provider
- * functionality, so the default adapters should be used to retrieve the label.  
+ * functionality, so the default adapters should be used to retrieve the label.
  */
 public class LaunchRootVMNode extends RootVMNode implements IRootVMNode {
 	public static class LaunchesEvent {
@@ -61,7 +61,7 @@ public class LaunchRootVMNode extends RootVMNode implements IRootVMNode {
 
 	@Override
 	public String toString() {
-		return "LaunchRootVMNode"; //$NON-NLS-1$ 
+		return "LaunchRootVMNode"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class LaunchRootVMNode extends RootVMNode implements IRootVMNode {
 		ILaunch rootLaunch = (ILaunch) rootObject;
 
 		/*
-		 * Create the root of the delta.  Since the launch object is not at the 
+		 * Create the root of the delta.  Since the launch object is not at the
 		 * root of the view, create the delta with the path to the launch.
 		 */
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();

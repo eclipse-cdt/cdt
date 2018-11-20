@@ -32,12 +32,12 @@ import org.eclipse.cdt.internal.core.SafeStringInterner;
 public class SymbolEntry {
 	private static final String UNSPECIFIED_VALUE = "1"; //$NON-NLS-1$
 	private String name;
-	private Map<String, Boolean> values; // Values can be either in the active (selected) group or in the removed group 
+	private Map<String, Boolean> values; // Values can be either in the active (selected) group or in the removed group
 
 	public SymbolEntry(String name, String value, boolean active) {
 		this.name = SafeStringInterner.safeIntern(name);
 		if (values == null) {
-			values = new LinkedHashMap<String, Boolean>(1);
+			values = new LinkedHashMap<>(1);
 		}
 		values.put(SafeStringInterner.safeIntern(value), Boolean.valueOf(active));
 	}
@@ -81,14 +81,14 @@ public class SymbolEntry {
 
 	/**
 	 * Utility function to retrieve values as a set.
-	 * 
+	 *
 	 * @param format - false = raw
 	 * @param subset - false = all
 	 * @param active - false = removed
 	 * @return List
 	 */
 	private List<String> get(boolean format, boolean subset, boolean active) {
-		List<String> rv = new ArrayList<String>(values.size());
+		List<String> rv = new ArrayList<>(values.size());
 		for (String val : values.keySet()) {
 			if (subset && (values.get(val)).booleanValue() != active)
 				continue;
@@ -106,7 +106,7 @@ public class SymbolEntry {
 	 * @return List
 	 */
 	public List<String> getValuesOnly(boolean active) {
-		List<String> rv = new ArrayList<String>(values.size());
+		List<String> rv = new ArrayList<>(values.size());
 		for (Object element : values.keySet()) {
 			String val = (String) element;
 			if ((values.get(val)).booleanValue() == active) {

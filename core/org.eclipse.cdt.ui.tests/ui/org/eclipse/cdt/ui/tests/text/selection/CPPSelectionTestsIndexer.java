@@ -16,15 +16,6 @@ package org.eclipse.cdt.ui.tests.text.selection;
 
 import java.io.IOException;
 
-import junit.framework.Test;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -37,9 +28,16 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+
+import junit.framework.Test;
 
 /**
  * Test Ctrl-F3/F3 with the DOM Indexer for a C++ project.
@@ -98,21 +96,21 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	}
 
 	// // header
-	// class Point{ 
-	//  public:    
-	//     Point(): xCoord(0){} 
-	//     Point& operator=(const Point &rhs){return *this;}    
+	// class Point{
+	//  public:
+	//     Point(): xCoord(0){}
+	//     Point& operator=(const Point &rhs){return *this;}
 	//     void* operator new [ ] (unsigned int);
-	//  private:                             
-	//     int xCoord;                          
-	//  };                                   
+	//  private:
+	//     int xCoord;
+	//  };
 
 	// // source
 	// #include "test93281.h"
 	// static const Point zero;
-	// int main(int argc, char **argv) {        
-	//    Point *p2 = new Point();         
-	//    p2->    operator // /* operator */ // F3 in the middle 
+	// int main(int argc, char **argv) {
+	//    Point *p2 = new Point();
+	//    p2->    operator // /* operator */ // F3 in the middle
 	//    // of "operator" should work
 	//    // \
 	//    /* */
@@ -122,7 +120,7 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	//    //
 	//    [ /* sweet */ ] //
 	//    (2);
-	//    return (0);                          
+	//    return (0);
 	// }
 	public void testBug93281() throws Exception {
 		StringBuilder[] buffers = getContents(2);
@@ -222,8 +220,8 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	// int MyInt;
 	// extern const int MyConst = 42;
 	// void MyFunc(int a) { cout << a << endl; }
-	// class MyClass;          
-	// struct MyStruct;        
+	// class MyClass;
+	// struct MyStruct;
 	public void testBasicDefinition() throws Exception {
 		StringBuilder[] buffers = getContents(2);
 		String hcode = buffers[0].toString();
@@ -329,7 +327,7 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 
 	// // the header
 	// class X {
-	// public: 
+	// public:
 	//    X(int); // openReferences fails to find the constructor in g()
 	// };
 
@@ -337,7 +335,7 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	// X f(X);
 	// void g()
 	// {
-	//    X b = f(X(2)); // openDeclarations on X(int) shall find constructor 
+	//    X b = f(X(2)); // openDeclarations on X(int) shall find constructor
 	// }
 	public void testBug86829A() throws Exception {
 		StringBuilder[] buffers = getContents(2);
@@ -389,29 +387,29 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	}
 
 	// // the header
-	// extern int a; 				// declares 
-	// extern const int c = 1; 		// defines 
-	// struct S {int a; int b;}; 	// defines 
-	// struct X { 					// defines 
-	//    int x; 					// defines nonstatic data member 
-	//    static int y; 			// declares static data member 
-	//    X(): x(0) { } 			// defines a constructor of 
+	// extern int a; 				// declares
+	// extern const int c = 1; 		// defines
+	// struct S {int a; int b;}; 	// defines
+	// struct X { 					// defines
+	//    int x; 					// defines nonstatic data member
+	//    static int y; 			// declares static data member
+	//    X(): x(0) { } 			// defines a constructor of
 	// };
-	// enum E {up, down}; 			// defines 
-	// namespace N {int d;} 		// defines 
-	// namespace N1 = N; 			// defines 
-	// int f(int);  				// declares 
-	// extern X anotherX; 			// declares 
+	// enum E {up, down}; 			// defines
+	// namespace N {int d;} 		// defines
+	// namespace N1 = N; 			// defines
+	// int f(int);  				// declares
+	// extern X anotherX; 			// declares
 
 	// #include "testCPPSpecDeclsDefs.h"
-	// int a; 						// defines 
-	// int X::y = 1; 				// defines 
+	// int a; 						// defines
+	// int X::y = 1; 				// defines
 	// X anX; 						// defines variable, implicitly calls ctor
 	// extern const int c; 			// declares
 	// int f(int x) {return x+a;}   // defines
 	// struct S; 					// declares
-	// typedef int Int; 			// declares 
-	// using N::d; 					// declares 
+	// typedef int Int; 			// declares
+	// using N::d; 					// declares
 	// S s;
 	// Int lhs= s.a+s.b+up+down+anX+0;
 	public void testCPPSpecDeclsDefs() throws Exception {
@@ -536,7 +534,7 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 		offset1 = scode.indexOf("d;");
 		decl = testF3(hfile, offset0);
 		assertNode("d", offset0, decl);
-		// 	    does not work, created separate testcase        
+		// 	    does not work, created separate testcase
 		//        decl= testF3(file, offset1);
 		//        assertNode("d", offset0, decl);
 
@@ -560,10 +558,10 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	}
 
 	// // the header
-	// namespace N {int d;} 		// defines 
+	// namespace N {int d;} 		// defines
 
 	// #include "testBug168533.h"
-	// using N::d; 					// declares 
+	// using N::d; 					// declares
 	// int a= d;
 	public void testBug168533() throws Exception {
 		StringBuilder[] buffers = getContents(2);
@@ -1108,7 +1106,7 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 		assertEquals("s.c", ((FileEditorInput) input).getFile().getName());
 	}
 
-	//    #define ADD_TEXT(txt1,txt2) txt1" "txt2 
+	//    #define ADD_TEXT(txt1,txt2) txt1" "txt2
 	//    #define ADD(a,b) (a + b)
 	//    void main(void) {
 	//    #if defined(ADD_TEXT) && defined(ADD)
@@ -1144,7 +1142,7 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	//		x[6];
 	//		X* xx = new X();
 	//		delete xx;
-	//	}    
+	//	}
 	public void testNavigationToImplicitNames() throws Exception {
 		StringBuilder[] buffers = getContents(1);
 		String code = buffers[0].toString();
@@ -1330,7 +1328,7 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	//    (
 	//        Waldo waldo;
 	//        waldo.find();
-	//    )        
+	//    )
 	public void testDeclarationInMacroArgment_509733() throws Exception {
 		String code = getAboveComment();
 		IFile file = importFile("test.cpp", code);

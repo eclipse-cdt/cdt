@@ -20,7 +20,7 @@ import org.eclipse.cdt.make.core.makefile.ISpecialRule;
  *  If you specify prerequisites for `.LOW_RESOLUTION_TIME', `make'
  *  assumes that these files are created by commands that generate low
  *  resolution time stamps.
- *  
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

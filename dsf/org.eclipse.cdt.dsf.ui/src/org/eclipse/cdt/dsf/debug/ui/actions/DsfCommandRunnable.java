@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Marc Khouzam (Ericsson) - Added support for multiple selection (bug 330974)
@@ -47,8 +47,8 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
 	}
 
 	/**
-	 * Return all selected contexts. 
-	 * @since 2.3 
+	 * Return all selected contexts.
+	 * @since 2.3
 	 */
 	public IExecutionDMContext[] getContexts() {
 		return fContexts;
@@ -86,7 +86,7 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
 
 		// Extract all selected execution contexts, using a set to avoid duplicates.  Duplicates will
 		// happen if multiple stack frames of the same thread are selected.
-		Set<IExecutionDMContext> execDmcSet = new HashSet<IExecutionDMContext>(request.getElements().length);
+		Set<IExecutionDMContext> execDmcSet = new HashSet<>(request.getElements().length);
 		for (Object element : request.getElements()) {
 			if (element instanceof IDMVMContext) {
 				IDMVMContext vmc = (IDMVMContext) element;

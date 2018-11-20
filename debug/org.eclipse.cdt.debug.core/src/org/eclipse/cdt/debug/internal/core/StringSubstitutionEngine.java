@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
@@ -75,7 +75,7 @@ public class StringSubstitutionEngine {
 
 	/**
 	 * Performs recursive string substitution and returns the resulting string.
-	 * 
+	 *
 	 * @param expression expression to resolve
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @param resolveVariables if the variables should be resolved during the substitution
@@ -87,7 +87,7 @@ public class StringSubstitutionEngine {
 	public String performStringSubstitution(String expression, boolean reportUndefinedVariables,
 			boolean resolveVariables, IStringVariableManager manager) throws CoreException {
 		substitute(expression, reportUndefinedVariables, resolveVariables, manager);
-		List<HashSet<String>> resolvedVariableSets = new ArrayList<HashSet<String>>();
+		List<HashSet<String>> resolvedVariableSets = new ArrayList<>();
 		while (fSubs) {
 			HashSet<String> resolved = substitute(fResult.toString(), reportUndefinedVariables, true, manager);
 
@@ -95,7 +95,7 @@ public class StringSubstitutionEngine {
 				HashSet<String> prevSet = resolvedVariableSets.get(i);
 
 				if (prevSet.equals(resolved)) {
-					HashSet<String> conflictingSet = new HashSet<String>();
+					HashSet<String> conflictingSet = new HashSet<>();
 					for (HashSet<String> set : resolvedVariableSets) {
 						conflictingSet.addAll(set);
 					}
@@ -135,7 +135,7 @@ public class StringSubstitutionEngine {
 	/**
 	 * Makes a substitution pass of the given expression returns a Set of the variables that were
 	 * resolved in this pass.
-	 *  
+	 *
 	 * @param expression source expression
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @param resolveVariables whether to resolve the value of any variables
@@ -146,10 +146,10 @@ public class StringSubstitutionEngine {
 	private HashSet<String> substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables,
 			IStringVariableManager manager) throws CoreException {
 		fResult = new StringBuilder(expression.length());
-		fStack = new Stack<VariableReference>();
+		fStack = new Stack<>();
 		fSubs = false;
 
-		HashSet<String> resolvedVariables = new HashSet<String>();
+		HashSet<String> resolvedVariables = new HashSet<>();
 
 		int pos = 0;
 		int state = SCAN_FOR_START;
@@ -235,8 +235,8 @@ public class StringSubstitutionEngine {
 	}
 
 	/**
-	 * Resolve and return the value of the given variable reference, possibly {@code null}. 
-	 * 
+	 * Resolve and return the value of the given variable reference, possibly {@code null}.
+	 *
 	 * @param var the {@link VariableReference} to try and resolve
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @param resolveVariables whether to resolve the variables value or just to validate that

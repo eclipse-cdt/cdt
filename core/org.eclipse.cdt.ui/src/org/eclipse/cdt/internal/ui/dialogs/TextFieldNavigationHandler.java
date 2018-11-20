@@ -17,6 +17,8 @@ package org.eclipse.cdt.internal.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.CWordIterator;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -48,10 +50,6 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 import com.ibm.icu.text.BreakIterator;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.text.CWordIterator;
 
 /**
  * Support for camelCase-aware sub-word navigation in dialog fields.
@@ -365,7 +363,7 @@ public class TextFieldNavigationHandler {
 						if (fSubmissions != null)
 							return fSubmissions;
 
-						fSubmissions = new ArrayList<Submission>();
+						fSubmissions = new ArrayList<>();
 
 						ICommandService commandService = PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 						IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);

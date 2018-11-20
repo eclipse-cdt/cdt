@@ -16,9 +16,9 @@ package org.eclipse.cdt.internal.core.pdom.indexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
+import org.eclipse.cdt.internal.core.pdom.PDOM.ChangeEvent;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
-import org.eclipse.cdt.internal.core.pdom.PDOM.ChangeEvent;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**

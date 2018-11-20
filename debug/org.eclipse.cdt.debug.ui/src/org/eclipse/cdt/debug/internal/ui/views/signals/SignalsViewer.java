@@ -48,7 +48,7 @@ public class SignalsViewer extends TableViewer {
 
 	/**
 	 * Constructor for SignalsViewer
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 */

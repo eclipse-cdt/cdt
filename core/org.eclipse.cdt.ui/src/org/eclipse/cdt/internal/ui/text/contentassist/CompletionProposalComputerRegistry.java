@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
@@ -45,16 +48,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
-
 /**
  * A registry for all extensions to the
  * <code>org.eclipse.cdt.ui.completionProposalComputer</code>
  * extension point.
- * 
+ *
  * @since 4.0
  */
 public final class CompletionProposalComputerRegistry {
@@ -69,7 +67,7 @@ public final class CompletionProposalComputerRegistry {
 	 * <p>
 	 * TODO keep this or add some other singleton, e.g. CUIPlugin?
 	 * </p>
-	 * 
+	 *
 	 * @return the singleton instance
 	 */
 	public static synchronized CompletionProposalComputerRegistry getDefault() {
@@ -85,26 +83,26 @@ public final class CompletionProposalComputerRegistry {
 	 * {@link String}, value type:
 	 * {@linkplain List List&lt;CompletionProposalComputerDescriptor&gt;}).
 	 */
-	private final Map<String, List<CompletionProposalComputerDescriptor>> fDescriptorsByPartition = new HashMap<String, List<CompletionProposalComputerDescriptor>>();
+	private final Map<String, List<CompletionProposalComputerDescriptor>> fDescriptorsByPartition = new HashMap<>();
 	/**
 	 * Unmodifiable versions of the sets stored in
 	 * <code>fDescriptorsByPartition</code> (key type: {@link String},
 	 * value type:
 	 * {@linkplain List List&lt;CompletionProposalComputerDescriptor&gt;}).
 	 */
-	private final Map<String, List<CompletionProposalComputerDescriptor>> fPublicDescriptorsByPartition = new HashMap<String, List<CompletionProposalComputerDescriptor>>();
+	private final Map<String, List<CompletionProposalComputerDescriptor>> fPublicDescriptorsByPartition = new HashMap<>();
 	/**
 	 * All descriptors (element type:
 	 * {@link CompletionProposalComputerDescriptor}).
 	 */
-	private final List<CompletionProposalComputerDescriptor> fDescriptors = new ArrayList<CompletionProposalComputerDescriptor>();
+	private final List<CompletionProposalComputerDescriptor> fDescriptors = new ArrayList<>();
 	/**
 	 * Unmodifiable view of <code>fDescriptors</code>
 	 */
 	private final List<CompletionProposalComputerDescriptor> fPublicDescriptors = Collections
 			.unmodifiableList(fDescriptors);
 
-	private final List<CompletionProposalCategory> fCategories = new ArrayList<CompletionProposalCategory>();
+	private final List<CompletionProposalCategory> fCategories = new ArrayList<>();
 	private final List<CompletionProposalCategory> fPublicCategories = Collections.unmodifiableList(fCategories);
 	/**
 	 * <code>true</code> if this registry has been loaded.
@@ -135,7 +133,7 @@ public final class CompletionProposalComputerRegistry {
 	 * computing proposals, it is therefore imperative to copy the returned list before iterating
 	 * over it.
 	 * </p>
-	 * 
+	 *
 	 * @param partition
 	 *        the partition type for which to retrieve the computer descriptors
 	 * @return the list of extensions to the <code>completionProposalComputer</code> extension
@@ -160,7 +158,7 @@ public final class CompletionProposalComputerRegistry {
 	 * computing proposals, it is therefore imperative to copy the returned list before iterating
 	 * over it.
 	 * </p>
-	 * 
+	 *
 	 * @return the list of extensions to the <code>completionProposalComputer</code> extension
 	 *         point (element type: {@link CompletionProposalComputerDescriptor})
 	 */
@@ -178,7 +176,7 @@ public final class CompletionProposalComputerRegistry {
 	 * There are no duplicate elements in the returned list. The returned list may change if
 	 * plug-ins are loaded or unloaded while the application is running.
 	 * </p>
-	 * 
+	 *
 	 * @return list of proposal categories contributed to the
 	 *         <code>completionProposalComputer</code> extension point (element type:
 	 *         {@link CompletionProposalCategory})
@@ -211,11 +209,11 @@ public final class CompletionProposalComputerRegistry {
 	 */
 	public void reload() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		List<IConfigurationElement> elements = new ArrayList<IConfigurationElement>(
+		List<IConfigurationElement> elements = new ArrayList<>(
 				Arrays.asList(registry.getConfigurationElementsFor(CUIPlugin.getPluginId(), EXTENSION_POINT)));
 
-		Map<String, List<CompletionProposalComputerDescriptor>> map = new HashMap<String, List<CompletionProposalComputerDescriptor>>();
-		List<CompletionProposalComputerDescriptor> all = new ArrayList<CompletionProposalComputerDescriptor>();
+		Map<String, List<CompletionProposalComputerDescriptor>> map = new HashMap<>();
+		List<CompletionProposalComputerDescriptor> all = new ArrayList<>();
 
 		List<CompletionProposalCategory> categories = getCategories(elements);
 		for (IConfigurationElement element : elements) {
@@ -227,7 +225,7 @@ public final class CompletionProposalComputerRegistry {
 					String partition = (String) element2;
 					List<CompletionProposalComputerDescriptor> list = map.get(partition);
 					if (list == null) {
-						list = new ArrayList<CompletionProposalComputerDescriptor>();
+						list = new ArrayList<>();
 						map.put(partition, list);
 					}
 					list.add(desc);
@@ -275,11 +273,11 @@ public final class CompletionProposalComputerRegistry {
 	private List<CompletionProposalCategory> getCategories(List<IConfigurationElement> elements) {
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		String preference = store.getString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES);
-		Set<String> disabled = new HashSet<String>();
+		Set<String> disabled = new HashSet<>();
 		StringTokenizer tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
 		while (tok.hasMoreTokens())
 			disabled.add(tok.nextToken());
-		Map<String, Integer> ordered = new HashMap<String, Integer>();
+		Map<String, Integer> ordered = new HashMap<>();
 		preference = store.getString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER);
 		tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
@@ -289,7 +287,7 @@ public final class CompletionProposalComputerRegistry {
 			ordered.put(id, Integer.valueOf(rank));
 		}
 
-		List<CompletionProposalCategory> categories = new ArrayList<CompletionProposalCategory>();
+		List<CompletionProposalCategory> categories = new ArrayList<>();
 		for (Iterator<IConfigurationElement> iter = elements.iterator(); iter.hasNext();) {
 			IConfigurationElement element = iter.next();
 			try {
@@ -325,7 +323,7 @@ public final class CompletionProposalComputerRegistry {
 
 	/**
 	 * Log the status and inform the user about a misbehaving extension.
-	 * 
+	 *
 	 * @param descriptor the descriptor of the misbehaving extension
 	 * @param status a status object that will be logged
 	 */
@@ -377,14 +375,14 @@ public final class CompletionProposalComputerRegistry {
 	}
 
 	/**
-	 * Returns the names of contributors affected by disabling a category. 
-	 * 
+	 * Returns the names of contributors affected by disabling a category.
+	 *
 	 * @param category the category that would be disabled
 	 * @param culprit the culprit plug-in, which is not included in the returned list
 	 * @return the names of the contributors other than <code>culprit</code> that contribute to <code>category</code> (element type: {@link String})
 	 */
 	private Set<String> getAffectedContributors(CompletionProposalCategory category, IContributor culprit) {
-		Set<String> affectedPlugins = new HashSet<String>();
+		Set<String> affectedPlugins = new HashSet<>();
 		for (CompletionProposalComputerDescriptor desc : getProposalComputerDescriptors()) {
 			CompletionProposalCategory cat = desc.getCategory();
 			if (cat.equals(category)) {

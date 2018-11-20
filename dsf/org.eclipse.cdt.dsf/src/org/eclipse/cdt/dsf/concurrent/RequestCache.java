@@ -1,29 +1,29 @@
-/******************************************************************************* 
- * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others. 
+/*******************************************************************************
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
  *
- * This program and the accompanying materials  
- * are made available under the terms of the Eclipse Public License 2.0  
- * which accompanies this distribution, and is available at  
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *   
- * Contributors: 
- *     Wind River Systems - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
 import org.eclipse.core.runtime.IStatus;
 
-/** 
+/**
  * A general purpose cache, which caches the result of a single request.
  * Sub classes need to implement {@link #retrieve(DataRequestMonitor)} to fetch
- * data from the data source.  Clients are responsible for calling 
- * {@link #disable()} and {@link #reset()} to manage the state of the cache in 
+ * data from the data source.  Clients are responsible for calling
+ * {@link #disable()} and {@link #reset()} to manage the state of the cache in
  * response to events from the data source.
  * <p>
- * This cache requires an executor to use.  The executor is used to synchronize 
- * access to the cache state and data.   
+ * This cache requires an executor to use.  The executor is used to synchronize
+ * access to the cache state and data.
  * </p>
  * @since 2.2
  */
@@ -38,7 +38,7 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
 
 	@Override
 	protected final void retrieve() {
-		// Make sure to cancel the previous rm.  This may lead to the rm being 
+		// Make sure to cancel the previous rm.  This may lead to the rm being
 		// canceled twice, but that's not harmful.
 		if (fRm != null) {
 			fRm.cancel();
@@ -67,15 +67,15 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
 			@Override
 			public boolean isCanceled() {
 				return super.isCanceled() || RequestCache.this.isCanceled();
-			};
+			}
 		};
 		retrieve(fRm);
 	}
 
-	/** 
-	 * Sub-classes should override this method to retrieve the cache data 
-	 * from its source. 
-	 * 
+	/**
+	 * Sub-classes should override this method to retrieve the cache data
+	 * from its source.
+	 *
 	 * @param rm Request monitor for completion of data retrieval.
 	 */
 	protected abstract void retrieve(DataRequestMonitor<V> rm);

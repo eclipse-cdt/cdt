@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -146,7 +146,7 @@ public class LRCPPTests extends AST2CPPTests {
 	public void testDecltype_294730() throws Exception {
 	}
 
-	//Defaulted and deleted functions 
+	//Defaulted and deleted functions
 	@Override
 	public void testDefaultedAndDeletedFunctions_305978() throws Exception {
 	}
@@ -172,7 +172,7 @@ public class LRCPPTests extends AST2CPPTests {
 	public void testInlineNamespace_305980d() throws Exception {
 	}
 
-	//New wording for C++0x lambdas 
+	//New wording for C++0x lambdas
 	@Override
 	public void testLambdaExpression_316307a() throws Exception {
 	}
@@ -264,63 +264,63 @@ public class LRCPPTests extends AST2CPPTests {
 	//    		super.testBug87424();
 	//    		fail();
 	//    	} catch(AssertionFailedError _) {
-	//    	} 
+	//    	}
 	//    }
 	//
-	//    
+	//
 	//    @Override
 	//	public void testBug95757() throws Exception { // gcc extension
 	//    	try {
 	//    		super.testBug95757();
 	//    		fail();
 	//    	} catch(AssertionFailedError _) {
-	//    	} 
+	//    	}
 	//    }
-	//    
+	//
 	//    @Override
 	//	public void testBug108202() throws Exception { // gcc attributes not supported
 	//    	try {
 	//    		super.testBug108202();
 	//    		fail();
 	//    	} catch(AssertionFailedError _) {
-	//    	} 
+	//    	}
 	//    }
-	//    
-	//    
+	//
+	//
 	//    @Override
 	//	public void testBug195701() throws Exception { // gcc attributes not supported
 	//    	try {
 	//    		super.testBug195701();
 	//    		fail();
 	//    	} catch(AssertionFailedError _) {
-	//    	} 
+	//    	}
 	//    }
-	//    
+	//
 	//    @Override
 	//	public void testBug179712() throws Exception { // gcc attributes not supported
 	//    	try {
 	//    		super.testBug179712();
 	//    		fail();
 	//    	} catch(AssertionFailedError _) {
-	//    	} 
+	//    	}
 	//    }
-	//    
+	//
 	//    @Override
 	//    public void testBug240567() throws Exception { // gcc
 	//    	try {
 	//    		super.testBug240567();
 	//    		fail();
 	//    	} catch(AssertionFailedError _) {
-	//    	} 
+	//    	}
 	//    }
-	//    
+	//
 	//    @Override
 	//    public void testLiteralsViaOverloads_225534() throws Exception { // gcc, I think
 	//    	try {
 	//    		super.testLiteralsViaOverloads_225534();
 	//    		fail();
 	//    	} catch(AssertionFailedError _) {
-	//    	} 
+	//    	}
 	//    }
 
 	@Override

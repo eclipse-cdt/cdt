@@ -16,6 +16,7 @@ package org.eclipse.cdt.ui.dialogs;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
@@ -23,8 +24,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 
 /**
  * Input Dialog for validating regular expression syntax.

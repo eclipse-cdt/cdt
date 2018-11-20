@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.ui.dnd;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -33,8 +34,6 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.part.ResourceTransfer;
-
-import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * ResourceTransferDropAdapter
@@ -112,7 +111,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 			operation.copyResources(sources, target);
 		} else {
 			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(getShell(), "Move Resource Action", //$NON-NLS-1$
-					"Move Resource Action");//$NON-NLS-1$	
+					"Move Resource Action");//$NON-NLS-1$
 			sources = checker.checkReadOnlyResources(sources);
 			MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
 			operation.copyResources(sources, target);
@@ -130,11 +129,11 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 
 	/**
 	 * Returns the resource selection from the LocalSelectionTransfer.
-	 * 
+	 *
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources() {
-		ArrayList<IResource> selectedResources = new ArrayList<IResource>();
+		ArrayList<IResource> selectedResources = new ArrayList<>();
 
 		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 		if (selection instanceof IStructuredSelection) {

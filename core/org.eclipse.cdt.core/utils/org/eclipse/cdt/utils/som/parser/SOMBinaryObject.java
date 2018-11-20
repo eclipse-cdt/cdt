@@ -34,14 +34,14 @@ import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.som.AR;
-import org.eclipse.cdt.utils.som.SOM;
 import org.eclipse.cdt.utils.som.AR.ARHeader;
+import org.eclipse.cdt.utils.som.SOM;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
  * Binary file in HP-UX SOM format
- * 
+ *
  * @author vhirsl
  */
 public class SOMBinaryObject extends BinaryObjectAdapter {
@@ -74,7 +74,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
 	@Override
@@ -91,7 +91,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
 	@Override
@@ -108,7 +108,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
 	@Override
@@ -186,7 +186,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadSymbols(SOM som) throws IOException {
-		ArrayList<Symbol> list = new ArrayList<Symbol>();
+		ArrayList<Symbol> list = new ArrayList<>();
 
 		SOM.Symbol[] peSyms = som.getSymbols();
 		byte[] table = som.getStringTable();

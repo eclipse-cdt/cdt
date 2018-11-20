@@ -18,12 +18,12 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *      -exec-arguments ARGS
  *
  *   Set the inferior program arguments, to be used in the next `-exec-run'.
  *   Equivalent to using {@link MIGDBSetArgs}
- * 
+ *
  * @since 4.0
  */
 public class MIExecArguments extends MICommand<MIInfo> {

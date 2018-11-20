@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *     Ted R Williams (Mentor Graphics, Inc.) - address space enhancements
@@ -116,14 +116,14 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * A lightweight rendering container.
- * 
+ *
  * Debug model requirements:
  * 		IMemoryBlockExtension (IMemoryBlock not supported)
  * 		IMemoryBlockRetrievalExtension
  * <p>
  * Rendering requirements:
  * 		IRepositionableMemoryRendering
- * 
+ *
  */
 
 @SuppressWarnings("restriction") /* Debug Platform's Flexible hierarchy is still provisional */
@@ -148,9 +148,9 @@ public class MemoryBrowser extends ViewPart
 	 * elements of a "process" (process, threads, frames) have the same
 	 * retrieval object.
 	 */
-	private Map<IMemoryBlockRetrieval, CTabFolder> fContextFolders = new HashMap<IMemoryBlockRetrieval, CTabFolder>();
+	private Map<IMemoryBlockRetrieval, CTabFolder> fContextFolders = new HashMap<>();
 
-	private List<IMemoryRenderingContainer> fCurrentContainers = new ArrayList<IMemoryRenderingContainer>();
+	private List<IMemoryRenderingContainer> fCurrentContainers = new ArrayList<>();
 
 	private final static String KEY_CONTEXT = "CONTEXT"; //$NON-NLS-1$
 	private final static String KEY_CONTAINER = "CONTAINER"; //$NON-NLS-1$
@@ -174,7 +174,7 @@ public class MemoryBrowser extends ViewPart
 	 * created on its behalf. There will be more than one rendering if the
 	 * backend supports memory spaces, there is more than one such space, and
 	 * the user has viewed memory in multiple memory spaces within that tab.
-	 * The value is a map of memory-space-ID==>IMemoryRendering.  
+	 * The value is a map of memory-space-ID==>IMemoryRendering.
 	 */
 	private final static String KEY_RENDERINGS = "RENDERINGS"; //$NON-NLS-1$
 
@@ -200,7 +200,7 @@ public class MemoryBrowser extends ViewPart
 	private final static String KEY_EXPRESSION = "EXPRESSION"; //$NON-NLS-1$
 
 	/**
-	 * Property we attach to a CTabItem to track the address associated with 
+	 * Property we attach to a CTabItem to track the address associated with
 	 * KEY_EXPRESSION. Value is a BigInteger
 	 */
 	private final static String KEY_EXPRESSION_ADDRESS = "EXPRESSION_ADDRESS"; //$NON-NLS-1$
@@ -398,9 +398,9 @@ public class MemoryBrowser extends ViewPart
 	}
 
 	/**
-	 * Returns the presentation context id for this view.  Used to support the 
-	 * pin and clone feature patch from bug 145635. 
-	 * 
+	 * Returns the presentation context id for this view.  Used to support the
+	 * pin and clone feature patch from bug 145635.
+	 *
 	 * @return context id
 	 */
 	private String getPresentationContextId() {
@@ -429,6 +429,7 @@ public class MemoryBrowser extends ViewPart
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (DebugEvent event : events) {
 			Object source = event.getSource();
@@ -438,10 +439,12 @@ public class MemoryBrowser extends ViewPart
 		}
 	}
 
+	@Override
 	public IMemoryRenderingContainer getContainer(String id) {
 		return null;
 	}
 
+	@Override
 	public IMemoryRenderingContainer[] getMemoryRenderingContainers() {
 		IMemoryRenderingContainer[] containerList = new IMemoryRenderingContainer[fCurrentContainers.size()];
 		for (int idx = 0; idx < fCurrentContainers.size(); idx++) {
@@ -450,6 +453,7 @@ public class MemoryBrowser extends ViewPart
 		return containerList;
 	}
 
+	@Override
 	public IMemoryRenderingSynchronizationService getSynchronizationService() {
 		return null;
 	}
@@ -491,6 +495,7 @@ public class MemoryBrowser extends ViewPart
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.memory.memorybrowser.api.IMemoryBrowser#getActiveRetrieval()
 	 */
+	@Override
 	public IMemoryBlockRetrieval getActiveRetrieval() {
 		final CTabFolder activeFolder = (CTabFolder) fStackLayout.topControl;
 		if (activeFolder == null)
@@ -571,6 +576,7 @@ public class MemoryBrowser extends ViewPart
 							}
 
 							runOnUIThread(new Runnable() {
+								@Override
 								public void run() {
 									CTabItem selection = activeFolder.getSelection();
 									selection.setData(KEY_EXPRESSION, expression);
@@ -580,8 +586,9 @@ public class MemoryBrowser extends ViewPart
 								}
 							});
 						} catch (final DebugException e1) {
-							// widgets update require Display 
+							// widgets update require Display
 							runOnUIThread(new Runnable() {
+								@Override
 								public void run() {
 									fGotoAddressBar.handleExpressionStatus(
 											new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID,
@@ -617,7 +624,7 @@ public class MemoryBrowser extends ViewPart
 
 			label = null;
 
-			// If a memory space is involved, we want to include its ID in the label 
+			// If a memory space is involved, we want to include its ID in the label
 			String memorySpaceID = (String) tab.getData(KEY_MEMORY_SPACE);
 			if (memorySpaceID != null) {
 				IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval) tab.getParent().getData(KEY_RETRIEVAL);
@@ -652,13 +659,12 @@ public class MemoryBrowser extends ViewPart
 			}
 
 			label += ' ' + renderingType;
-			;
 
 			// Allow the memory block to customize the label. The platform's
 			// Memory view support this (it was done in the call to
 			// rendering.getLabel() above)
 			IMemoryBlock block = rendering.getMemoryBlock();
-			ILabelDecorator labelDec = (ILabelDecorator) block.getAdapter(ILabelDecorator.class);
+			ILabelDecorator labelDec = block.getAdapter(ILabelDecorator.class);
 			if (labelDec != null) {
 				String newLabel = labelDec.decorateText(label, rendering);
 				if (newLabel != null) {
@@ -692,8 +698,9 @@ public class MemoryBrowser extends ViewPart
 			}
 		});
 
-		// listener to dispose rendering resources for all tab items when view part is closed 
+		// listener to dispose rendering resources for all tab items when view part is closed
 		folder.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				for (CTabItem tab : folder.getItems()) {
 					disposeTab(tab);
@@ -763,6 +770,7 @@ public class MemoryBrowser extends ViewPart
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				MemoryBrowser.this.fillContextMenu(manager);
 			}
@@ -810,104 +818,131 @@ public class MemoryBrowser extends ViewPart
 
 	private IMemoryRenderingType[] getRenderingTypes() {
 		return MemoryRenderingManager.getDefault().getRenderingTypes(new IMemoryBlockExtension() {
+			@Override
 			public void connect(Object client) {
 			}
 
+			@Override
 			public void disconnect(Object client) {
 			}
 
+			@Override
 			public void dispose() throws DebugException {
 			}
 
+			@Override
 			public int getAddressSize() throws DebugException {
 				return 0;
 			}
 
+			@Override
 			public int getAddressableSize() throws DebugException {
 				return 0;
 			}
 
+			@Override
 			public BigInteger getBigBaseAddress() throws DebugException {
 				return null;
 			}
 
+			@Override
 			public BigInteger getBigLength() throws DebugException {
 				return null;
 			}
 
+			@Override
 			public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException {
 				return null;
 			}
 
+			@Override
 			public MemoryByte[] getBytesFromOffset(BigInteger unitOffset, long addressableUnits) throws DebugException {
 				return null;
 			}
 
+			@Override
 			public Object[] getConnections() {
 				return null;
 			}
 
+			@Override
 			public String getExpression() {
 				return null;
 			}
 
+			@Override
 			public BigInteger getMemoryBlockEndAddress() throws DebugException {
 				return null;
 			}
 
+			@Override
 			public IMemoryBlockRetrieval getMemoryBlockRetrieval() {
 				return null;
 			}
 
+			@Override
 			public BigInteger getMemoryBlockStartAddress() throws DebugException {
 				return null;
 			}
 
+			@Override
 			public void setBaseAddress(BigInteger address) throws DebugException {
 			}
 
+			@Override
 			public void setValue(BigInteger offset, byte[] bytes) throws DebugException {
 			}
 
+			@Override
 			public boolean supportBaseAddressModification() throws DebugException {
 				return false;
 			}
 
+			@Override
 			public boolean supportsChangeManagement() {
 				return false;
 			}
 
+			@Override
 			public byte[] getBytes() throws DebugException {
 				return null;
 			}
 
+			@Override
 			public long getLength() {
 				return 0;
 			}
 
+			@Override
 			public long getStartAddress() {
 				return 0;
 			}
 
+			@Override
 			public void setValue(long offset, byte[] bytes) throws DebugException {
 			}
 
+			@Override
 			public boolean supportsValueModification() {
 				return false;
 			}
 
+			@Override
 			public IDebugTarget getDebugTarget() {
 				return null;
 			}
 
+			@Override
 			public ILaunch getLaunch() {
 				return null;
 			}
 
+			@Override
 			public String getModelIdentifier() {
 				return null;
 			}
 
+			@Override
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			public Object getAdapter(Class adapter) {
 				return null;
@@ -920,16 +955,18 @@ public class MemoryBrowser extends ViewPart
 		getControl().setFocus();
 	}
 
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		handleDebugContextChanged(((StructuredSelection) event.getContext()).getFirstElement());
 	}
 
 	private final class MemoryBrowserRenderingContainer implements IMemoryRenderingContainer {
-		private final List<IMemoryRendering> renderings = new ArrayList<IMemoryRendering>();
+		private final List<IMemoryRendering> renderings = new ArrayList<>();
 
 		private MemoryBrowserRenderingContainer() {
 		}
 
+		@Override
 		public void addMemoryRendering(IMemoryRendering rendering) {
 			// do not allow duplicated objects
 			if (!renderings.contains(rendering)) {
@@ -937,27 +974,33 @@ public class MemoryBrowser extends ViewPart
 			}
 		}
 
+		@Override
 		public IMemoryRendering getActiveRendering() {
 			return renderings.isEmpty() ? null : renderings.get(renderings.size() - 1);
 		}
 
+		@Override
 		public String getId() {
 			return ID;
 		}
 
+		@Override
 		public String getLabel() {
 			IMemoryRendering rendering = getActiveRendering();
 			return rendering != null ? rendering.getLabel() : null;
 		}
 
+		@Override
 		public IMemoryRenderingSite getMemoryRenderingSite() {
 			return MemoryBrowser.this;
 		}
 
+		@Override
 		public IMemoryRendering[] getRenderings() {
 			return renderings.toArray(new IMemoryRendering[renderings.size()]);
 		}
 
+		@Override
 		public void removeMemoryRendering(IMemoryRendering rendering) {
 			renderings.remove(rendering);
 		}
@@ -972,6 +1015,7 @@ public class MemoryBrowser extends ViewPart
 			this.newRendering = newRendering;
 		}
 
+		@Override
 		public void propertyChange(final PropertyChangeEvent event) {
 			WorkbenchJob job = new WorkbenchJob("MemoryBrowser PropertyChanged") { //$NON-NLS-1$
 				@Override
@@ -993,10 +1037,12 @@ public class MemoryBrowser extends ViewPart
 			implements IMemorySpaceAwareMemoryBlockRetrieval.GetMemorySpacesRequest {
 		String[] fMemorySpaces;
 
+		@Override
 		public String[] getMemorySpaces() {
 			return fMemorySpaces;
 		}
 
+		@Override
 		public void setMemorySpaces(String[] memorySpaceIds) {
 			fMemorySpaces = memorySpaceIds;
 		}
@@ -1012,8 +1058,8 @@ public class MemoryBrowser extends ViewPart
 
 		if (context instanceof IAdaptable) {
 			adaptable = (IAdaptable) context;
-			retrieval = ((IMemoryBlockRetrieval) adaptable.getAdapter(IMemoryBlockRetrieval.class));
-			launch = ((ILaunch) adaptable.getAdapter(ILaunch.class));
+			retrieval = (adaptable.getAdapter(IMemoryBlockRetrieval.class));
+			launch = (adaptable.getAdapter(ILaunch.class));
 		}
 
 		if (retrieval != null && launch != null && !launch.isTerminated()) {
@@ -1040,7 +1086,7 @@ public class MemoryBrowser extends ViewPart
 	/**
 	 * Called to update the tab once the asynchronous query for memory spaces
 	 * has returned a result.
-	 * 
+	 *
 	 * @param retrieval
 	 *            the retrieval object associated with the newly active debug
 	 *            context
@@ -1052,6 +1098,7 @@ public class MemoryBrowser extends ViewPart
 	private void updateTab(final IMemoryBlockRetrieval retrieval, final Object context, final String[] memorySpaces) {
 		// GUI activity must be on the main thread
 		runOnUIThread(new Runnable() {
+			@Override
 			public void run() {
 				if (fGotoAddressBarControl.isDisposed() || fGotoMemorySpaceControl.isDisposed()) {
 					return;
@@ -1065,7 +1112,7 @@ public class MemoryBrowser extends ViewPart
 				CTabFolder tabFolder = fContextFolders.get(retrieval);
 				if (tabFolder != null) {
 					fStackLayout.topControl = tabFolder;
-					CTabItem tabItem = (CTabItem) tabFolder.getSelection();
+					CTabItem tabItem = tabFolder.getSelection();
 					if (tabItem != null) {
 						getSite().getSelectionProvider()
 								.setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
@@ -1074,9 +1121,11 @@ public class MemoryBrowser extends ViewPart
 				} else {
 					tabFolder = createTabFolder(fRenderingsComposite);
 					tabFolder.addSelectionListener(new SelectionListener() {
+						@Override
 						public void widgetDefaultSelected(SelectionEvent e) {
 						}
 
+						@Override
 						public void widgetSelected(SelectionEvent e) {
 							CTabItem tabItem = (CTabItem) e.item;
 							updateMemorySpaceControlSelection(tabItem);
@@ -1134,7 +1183,7 @@ public class MemoryBrowser extends ViewPart
 	/**
 	 * Update the expression text in goto address widget to reflect the memory
 	 * rendering expression
-	 * 
+	 *
 	 * @param item
 	 *            the active tab; may be null if in a "fresh" memory browser instance
 	 */
@@ -1180,7 +1229,7 @@ public class MemoryBrowser extends ViewPart
 	/**
 	 * Update the selection in the memory space combobox to reflect the memory
 	 * space being shown in the given tab
-	 * 
+	 *
 	 * @param item
 	 *            the active tab; may be null if in a "fresh" memory browser instance
 	 */
@@ -1189,7 +1238,7 @@ public class MemoryBrowser extends ViewPart
 		if (memorySpaces.length > 0) {
 			// Don't assume that the memory space previously set in the tab
 			// is one of the ones now available. If it isn't, then select
-			// the first available one and update the tab data 
+			// the first available one and update the tab data
 			boolean foundIt = false;
 			if (item != null) {
 				String currentMemorySpace = (String) item.getData(KEY_MEMORY_SPACE);
@@ -1231,14 +1280,14 @@ public class MemoryBrowser extends ViewPart
 	/**
 	 * Populate given tab with a rendering positioned at specified expression and memory space.
 	 * Will create a new rendering if one does not exist for the given memory space
-	 * 
-	 * @param tab item to populate  
+	 *
+	 * @param tab item to populate
 	 * @param retrieval memory service to retrieve memory block from
 	 * @param context memory block would be retrieved
 	 * @param memorySpaceId of the expression or null if not supported
 	 * @param expression from where to retrieve the memory block
 	 * @return return the memory rendering or null if could not be created
-	 * 
+	 *
 	 * @throws DebugException if could not retrieve memory block (e.g. invalid expression)
 	 */
 	private IMemoryRendering populateTabWithRendering(final CTabItem tab, final IMemoryBlockRetrieval retrieval,
@@ -1254,7 +1303,7 @@ public class MemoryBrowser extends ViewPart
 		IMemoryRendering rendering = getRenderings(tab).get(memorySpaceId);
 		if (rendering == null) {
 			// No rendering yet. Create rendering and associated memory block.
-			// createMemoryBlock will throw if expression cannot be resolved 
+			// createMemoryBlock will throw if expression cannot be resolved
 			IMemoryBlockExtension block = createMemoryBlock(retrieval, expression, context, memorySpaceId);
 			try {
 				rendering = type.createRendering();
@@ -1289,6 +1338,7 @@ public class MemoryBrowser extends ViewPart
 		final CTabFolder folder = fContextFolders.get(retrieval);
 		if (folder != null) {
 			Runnable run = new Runnable() {
+				@Override
 				public void run() {
 					for (CTabItem tab : folder.getItems()) {
 						disposeTab(tab);
@@ -1307,22 +1357,26 @@ public class MemoryBrowser extends ViewPart
 
 	class SelectionProviderAdapter implements ISelectionProvider {
 
-		List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
+		List<ISelectionChangedListener> listeners = new ArrayList<>();
 
 		ISelection theSelection = StructuredSelection.EMPTY;
 
+		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
 			listeners.add(listener);
 		}
 
+		@Override
 		public ISelection getSelection() {
 			return theSelection;
 		}
 
+		@Override
 		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			listeners.remove(listener);
 		}
 
+		@Override
 		public void setSelection(ISelection selection) {
 			theSelection = selection;
 			final SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
@@ -1331,6 +1385,7 @@ public class MemoryBrowser extends ViewPart
 			for (int i = 0; i < listenersArray.length; i++) {
 				final ISelectionChangedListener l = (ISelectionChangedListener) listenersArray[i];
 				SafeRunner.run(new SafeRunnable() {
+					@Override
 					public void run() {
 						l.selectionChanged(e);
 					}
@@ -1340,7 +1395,7 @@ public class MemoryBrowser extends ViewPart
 	}
 
 	/**
-	 * create a memory block 
+	 * create a memory block
 	 * @param retrieval memory block retrieval.
 	 * @param expression expression to be evaluated to an addressL
 	 * @param context context for evaluating the expression.  This is typically
@@ -1356,8 +1411,7 @@ public class MemoryBrowser extends ViewPart
 		if (retrieval instanceof IMemoryBlockRetrievalExtension) {
 			retrievalExtension = (IMemoryBlockRetrievalExtension) retrieval;
 		} else if (retrieval instanceof IAdaptable) {
-			retrievalExtension = (IMemoryBlockRetrievalExtension) ((IAdaptable) retrieval)
-					.getAdapter(IMemoryBlockRetrievalExtension.class);
+			retrievalExtension = ((IAdaptable) retrieval).getAdapter(IMemoryBlockRetrievalExtension.class);
 		}
 		if (retrievalExtension != null) {
 			if (retrievalExtension instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
@@ -1375,7 +1429,7 @@ public class MemoryBrowser extends ViewPart
 	}
 
 	/**
-	 * Get a memory address for an expression in a given context.    
+	 * Get a memory address for an expression in a given context.
 	 * @param retrieval
 	 * @param expression
 	 * @param context
@@ -1394,7 +1448,7 @@ public class MemoryBrowser extends ViewPart
 	/**
 	 * Execute runnable on UI thread if the current thread is not an UI thread.
 	 * Otherwise execute it directly.
-	 * 
+	 *
 	 * @param runnable
 	 *            the runnable to execute
 	 */
@@ -1417,6 +1471,7 @@ public class MemoryBrowser extends ViewPart
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.memory.memorybrowser.api.IMemoryBrowser#go(java.lang.String, java.lang.String, boolean)
 	 */
+	@Override
 	public void go(String expression, String memorySpaceId, boolean inNewTab) throws CoreException {
 		if (expression == null) {
 			throw new IllegalArgumentException("expression cannot be null");
@@ -1433,7 +1488,7 @@ public class MemoryBrowser extends ViewPart
 					memorySpaceId = null;
 				}
 			} else {
-				// if caller passed empty string, it means n/a (same as "----" in the selector)			
+				// if caller passed empty string, it means n/a (same as "----" in the selector)
 				memorySpaceId = memorySpaceId.trim();
 				if (memorySpaceId.length() == 0) {
 					memorySpaceId = null;
@@ -1455,6 +1510,7 @@ public class MemoryBrowser extends ViewPart
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.memory.memorybrowser.api.IMemoryBrowser#getSelectedMemorySpace()
 	 */
+	@Override
 	public String getSelectedMemorySpace() {
 		if (!fGotoMemorySpaceControl.isDisposed() && fGotoMemorySpaceControl.isVisible()) {
 			String id = fGotoMemorySpaceControl.getText();

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
@@ -19,9 +19,9 @@ import java.util.Arrays;
 /**
  * Generic DM context used to combine several DM Contexts.  This object allows
  * clients and other services to combine several contexts into one in order to
- * pass them as an argument to a method which takes a generic context as an 
- * argument. 
- * 
+ * pass them as an argument to a method which takes a generic context as an
+ * argument.
+ *
  * @since 1.0
  */
 public class CompositeDMContext implements IDMContext {
@@ -33,7 +33,7 @@ public class CompositeDMContext implements IDMContext {
 	 */
 	private final IDMContext[] fParents;
 
-	/** 
+	/**
 	 * Main constructor provides all data needed to implement the <code>IDMContext</code>
 	 * interface.
 	 * @param parents Array of parent contexts that this composite context is
@@ -44,12 +44,12 @@ public class CompositeDMContext implements IDMContext {
 	}
 
 	/**
-	 * Returns the session ID of the first element in the array of parents of this 
+	 * Returns the session ID of the first element in the array of parents of this
 	 * context.  May return an empty string if the parents array has no elements.
 	 * <p>
-	 * Note: The session ID is primarily used by UI components to get access to the 
+	 * Note: The session ID is primarily used by UI components to get access to the
 	 * correct session and executor for the given context.  The composite context is
-	 * intended to be created by clients which already know the session ID so 
+	 * intended to be created by clients which already know the session ID so
 	 * the fact that this method may not return a reliable result is acceptable.
 	 * </p>
 	 */
@@ -73,7 +73,7 @@ public class CompositeDMContext implements IDMContext {
 	}
 
 	/**
-	 * Returns the given adapter of the last DMVMContext element found in the tree 
+	 * Returns the given adapter of the last DMVMContext element found in the tree
 	 * path of this composite context.  Will return null if no DMVMContext is found
 	 * in path.
 	 * @see #getSessionId()

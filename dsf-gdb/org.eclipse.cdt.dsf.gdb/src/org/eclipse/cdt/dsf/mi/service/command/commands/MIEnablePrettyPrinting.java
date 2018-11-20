@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * -enable-pretty-printing
  *
  * Enables Python based Pretty printing
- * 
+ *
  * @since 4.0
  */
 public class MIEnablePrettyPrinting extends MICommand<MIInfo> {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,14 +36,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Checker to find that class has virtual method and non virtual destructor
- * 
+ *
  * @author Alena Laskavaia
  */
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	public static final String PROBLEM_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
 
 	// Prevent stack overflow in case: class A: public A {};
-	private static HashSet<ICPPClassType> checkedClassTypes = new HashSet<ICPPClassType>();
+	private static HashSet<ICPPClassType> checkedClassTypes = new HashSet<>();
 
 	@Override
 	public void processAst(IASTTranslationUnit ast) {

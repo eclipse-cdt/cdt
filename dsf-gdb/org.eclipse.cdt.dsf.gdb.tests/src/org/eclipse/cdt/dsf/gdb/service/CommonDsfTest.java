@@ -41,10 +41,10 @@ public class CommonDsfTest extends CommonTest {
 	protected static DsfSession fSession = null;
 
 	/**
-	 * Setup the test. 
+	 * Setup the test.
 	 * The session is typically configured once per class load, but we allow subclasses to override this,
-	 * and sometimes re-setup during a test (or interactive debugging). 
-	 * Therefore {@link Before} is used, not {@link BeforeClass}. 
+	 * and sometimes re-setup during a test (or interactive debugging).
+	 * Therefore {@link Before} is used, not {@link BeforeClass}.
 	 */
 	@Before
 	public void setup() {

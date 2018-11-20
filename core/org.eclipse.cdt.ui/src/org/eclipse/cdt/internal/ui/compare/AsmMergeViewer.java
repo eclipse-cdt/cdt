@@ -13,18 +13,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.compare;
 
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.ui.CDTUITools;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
 
 /**
  * A merge viewer for assembly code.
@@ -37,7 +36,7 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 
 	/**
 	 * Create a new assembly merge viewer.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 * @param configuration

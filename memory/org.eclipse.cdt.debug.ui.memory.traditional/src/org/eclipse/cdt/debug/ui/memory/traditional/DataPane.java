@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *     Alvaro Sanchez-leon (Ericsson) - Add hovering support to the traditional memory render (Bug 489505)
@@ -106,7 +106,7 @@ public class DataPane extends AbstractPane {
 				bytesToSet[i].setBigEndian(bytes[i].isBigEndian());
 
 				// for embedded, the user wants feedback that the change will be sent to the target,
-				// even if does not change the value. eventually, maybe we need another color to 
+				// even if does not change the value. eventually, maybe we need another color to
 				// indicate change.
 				//if(bytes[i].getValue() != byteData[i])
 				{
@@ -136,7 +136,7 @@ public class DataPane extends AbstractPane {
 	}
 
 	/**
-	 * @return The width length in pixels needed to draw the characters of an addressable unit 
+	 * @return The width length in pixels needed to draw the characters of an addressable unit
 	 */
 	private int getAddressableWidth() {
 		// derive the number of characters per addressable size e.g. 2 * NumOfOctets for hex representation

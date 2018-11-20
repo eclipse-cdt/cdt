@@ -137,7 +137,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 	 * Given the name of the filed check object, look for it in the log file
 	 * file and then examine the configure script to figure out what the type of
 	 * the check was.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -189,7 +189,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 	/**
 	 * Check the log file for the check for the given name and return the line
 	 * number in configure where the check occurs.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */

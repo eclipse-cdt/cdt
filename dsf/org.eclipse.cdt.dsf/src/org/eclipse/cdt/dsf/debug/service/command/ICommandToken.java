@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ package org.eclipse.cdt.dsf.debug.service.command;
  * Token returned by ICommandControl.queueCommand().  This token can be used
  * to uniquely identify a command when calling ICommandControl.removeCommand()
  * or when implementing the ICommandListener listener methods.
- * 
+ *
  * @since 1.0
  */
 public interface ICommandToken {

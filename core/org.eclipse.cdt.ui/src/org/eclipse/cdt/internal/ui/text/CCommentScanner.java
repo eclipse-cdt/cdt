@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -18,12 +18,11 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.rules.IRule;
-
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.AbstractCScanner;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.rules.IRule;
 
 /**
  * Default token-scanner used for plain (non-documentation-comment) single and multi-line comments, with awareness of

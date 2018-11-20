@@ -651,7 +651,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
 			assertTrue(cfgDescriptions.length > 0);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(detector);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 			// change the default command in all the tools of the toolchain

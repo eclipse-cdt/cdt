@@ -51,7 +51,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			"externalSettings"); //$NON-NLS-1$
 	private static final String EXTERNAL_SETTING_STORAGE_ID = CCorePlugin.PLUGIN_ID + ".externalSettings"; //$NON-NLS-1$
 
-	private Map<String, FactoryDescriptor> fFactoryMap = new HashMap<String, FactoryDescriptor>();
+	private Map<String, FactoryDescriptor> fFactoryMap = new HashMap<>();
 	private static CExternalSettingsManager fInstance;
 
 	private CExternalSettingsManager() {
@@ -147,7 +147,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 				fContainer = fFactoryDr.getFactory().createContainer(containerId, project, cfgDes, previousSettings);
 			} catch (CoreException e) {
 				if (failingProvidersMessages == null)
-					failingProvidersMessages = new HashSet<String>();
+					failingProvidersMessages = new HashSet<>();
 				// only report the error once per session
 				if (!failingProvidersMessages.contains(e.getMessage()))
 					CCorePlugin.log(e.getMessage());
@@ -314,7 +314,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	 */
 	private static class ProjDesCfgList {
 		private ICProjectDescription fProjDes;
-		private List<ICConfigurationDescription> fCfgList = new ArrayList<ICConfigurationDescription>();
+		private List<ICConfigurationDescription> fCfgList = new ArrayList<>();
 
 		public ProjDesCfgList(ICProjectDescription des, Set<String> idSet) {
 			fProjDes = des;
@@ -442,7 +442,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	}
 
 	private List<ICProjectDescription> getModifiedProjDesList(ProjDesCfgList[] lists) {
-		List<ICProjectDescription> list = new ArrayList<ICProjectDescription>();
+		List<ICProjectDescription> list = new ArrayList<>();
 		for (int i = 0; i < lists.length; i++) {
 			if (lists[i].isWritable())
 				list.add(lists[i].fProjDes);
@@ -461,7 +461,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		Set<String> set = null;
 		if (project != null) {
 			if (cfgId != null) {
-				set = new HashSet<String>();
+				set = new HashSet<>();
 				set.add(cfgId);
 			}
 			ProjDesCfgList l = createCfgList(project, set);
@@ -472,7 +472,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		} else {
 			// Project is null -- add all CDT projects & configs in the workspace
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-			List<ProjDesCfgList> list = new ArrayList<ProjDesCfgList>();
+			List<ProjDesCfgList> list = new ArrayList<>();
 			for (IProject p : projects) {
 				ProjDesCfgList l = createCfgList(p, set);
 				if (l != null)

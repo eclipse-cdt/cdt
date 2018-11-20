@@ -28,7 +28,7 @@ public class InvokeMessages {
 	/**
 	 * Returns the string from the resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @return the resource bundle message
 	 */
@@ -43,7 +43,7 @@ public class InvokeMessages {
 	/**
 	 * Returns the formatted string from the resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @param args an array of substituition strings
 	 * @return the resource bundle message

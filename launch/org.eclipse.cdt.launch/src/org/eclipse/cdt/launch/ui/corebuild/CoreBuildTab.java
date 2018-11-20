@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Label;
 /**
  * Launch configuration tab for adjusting Core Build settings. Contents of tab depends on the nature
  * of the project which determines what build system is being used.
- * 
+ *
  * @since 9.1
  */
 public class CoreBuildTab extends AbstractLaunchConfigurationTab {

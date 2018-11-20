@@ -20,6 +20,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -27,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -563,7 +563,7 @@ public class TypeTraits {
 	/**
 	 * Returns true if 'typeToConstruct' is constructible from arguments
 	 * of type 'argumentTypes', as defined in [meta.unary.prop].
-	 * 
+	 *
 	 * If 'checkTrivial' is true, additionally checks if 'typeToConstruct'
 	 * is trivially constructible from said argument types.
 	 */
@@ -575,7 +575,7 @@ public class TypeTraits {
 		}
 		// Invent (the evaluation of) a type constructor expression of the form "T(declval<Args>()...)".
 		// (The standard says a variable declaration of the form "T t(declval<Args>()...)",
-		// but we don't currently type-check variable initialization, and a type constructor expression 
+		// but we don't currently type-check variable initialization, and a type constructor expression
 		// should have the same semantics.)
 		ICPPEvaluation[] arguments = new ICPPEvaluation[argumentTypes.length];
 		for (int i = 0; i < argumentTypes.length; i++) {

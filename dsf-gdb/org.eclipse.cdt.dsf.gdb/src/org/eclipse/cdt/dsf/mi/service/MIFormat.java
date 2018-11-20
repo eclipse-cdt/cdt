@@ -44,7 +44,7 @@ public final class MIFormat {
 	 * like:
 	 *  0xbfffe5f0 "hello"
 	 *  (int *) 0xbfffe2b8
-	 * 
+	 *
 	 * @param buffer
 	 * @return
 	 */

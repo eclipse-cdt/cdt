@@ -13,22 +13,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.ui.IEditorInput;
-
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IEditorInput;
 
 /**
  * Interface for accessing working copies of <code>IMakefile</code>
  * objects. The original  unit is only given indirectly by means
  * of an <code>IEditorInput</code>. The life cycle is as follows:
  * <ul>
- * <li> <code>connect</code> creates and remembers a working copy of the 
+ * <li> <code>connect</code> creates and remembers a working copy of the
  *    unit which is encoded in the given editor input</li>
- * <li> <code>getWorkingCopy</code> returns the working copy remembered on 
+ * <li> <code>getWorkingCopy</code> returns the working copy remembered on
  *   <code>connect</code></li>
- * <li> <code>disconnect</code> destroys the working copy remembered on 
+ * <li> <code>disconnect</code> destroys the working copy remembered on
  *   <code>connect</code></li>
  * </ul>
  * <p>
@@ -46,7 +44,7 @@ public interface IWorkingCopyManager {
 	 * in the given editor input (does nothing if there is no encoded compilation unit).
 	 *
 	 * @param input the editor input
-	 * @exception CoreException if the working copy cannot be created for the 
+	 * @exception CoreException if the working copy cannot be created for the
 	 *    unit
 	 */
 	void connect(IEditorInput input) throws CoreException;
@@ -57,7 +55,7 @@ public interface IWorkingCopyManager {
 	 * in the given editor input will no longer be available. Does nothing if there
 	 * is no encoded compilation unit, or if there is no remembered working copy for
 	 * the compilation unit.
-	 * 
+	 *
 	 * @param input the editor input
 	 */
 	void disconnect(IEditorInput input);

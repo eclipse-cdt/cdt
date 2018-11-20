@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -35,10 +35,10 @@ import org.osgi.framework.BundleContext;
  * The alarm service tracks triggers and alarms.  Triggers have a specified
  * value and can be created and removed independently.  Alarms are created
  * for a specific timer and a trigger, and can indicate whether an alarm is
- * triggered. 
+ * triggered.
  * <p>
  * This service depends on the TimerService, so the TimerService has to be
- * initialized before this service is initialized. 
+ * initialized before this service is initialized.
  * </p>
  */
 public class AlarmService extends AbstractDsfService {
@@ -79,8 +79,8 @@ public class AlarmService extends AbstractDsfService {
 	}
 
 	/**
-	 * Context representing the "triggered" status of an alarm with respect to 
-	 * a specific timer.   
+	 * Context representing the "triggered" status of an alarm with respect to
+	 * a specific timer.
 	 */
 	@Immutable
 	public static class AlarmDMContext extends AbstractDMContext {
@@ -109,7 +109,7 @@ public class AlarmService extends AbstractDsfService {
 	}
 
 	/**
-	 * Event indicating that an alarm has been triggered by a timer. 
+	 * Event indicating that an alarm has been triggered by a timer.
 	 */
 	public class AlarmTriggeredDMEvent extends AbstractDMEvent<AlarmDMContext> {
 		public AlarmTriggeredDMEvent(AlarmDMContext context) {
@@ -118,7 +118,7 @@ public class AlarmService extends AbstractDsfService {
 	}
 
 	private int fTriggerNumberCounter = 1;
-	private Map<TriggerDMContext, Integer> fTriggers = new LinkedHashMap<TriggerDMContext, Integer>();
+	private Map<TriggerDMContext, Integer> fTriggers = new LinkedHashMap<>();
 
 	AlarmService(DsfSession session) {
 		super(session);
@@ -142,7 +142,7 @@ public class AlarmService extends AbstractDsfService {
 	}
 
 	private void doInitialize(RequestMonitor requestMonitor) {
-		// Add this class as a listener for service events, in order to receive 
+		// Add this class as a listener for service events, in order to receive
 		// TimerTickEvent events.
 		getSession().addServiceEventListener(this, null);
 
@@ -169,14 +169,14 @@ public class AlarmService extends AbstractDsfService {
 
 		int timerValue = getServicesTracker().getService(TimerService.class).getTimerValue(event.getDMContext());
 
-		//  If a timer triggers an alarm, this  service needs to issue an alarm 
+		//  If a timer triggers an alarm, this  service needs to issue an alarm
 		// triggered event.
 		checkAlarmsForTimer(timerContext, timerValue);
 	}
 
 	private void checkAlarmsForTimer(TimerDMContext timerContext, int timerValue) {
-		// Check the existing alarms for whether they are triggered by given 
-		// timer.  
+		// Check the existing alarms for whether they are triggered by given
+		// timer.
 		for (Map.Entry<TriggerDMContext, Integer> entry : fTriggers.entrySet()) {
 			if (timerValue == entry.getValue()) {
 				// Generate the AlarmTriggeredEvent
@@ -208,7 +208,7 @@ public class AlarmService extends AbstractDsfService {
 
 	/** Returns true if the given alarm is triggered */
 	public boolean isAlarmTriggered(AlarmDMContext alarmCtx) {
-		// Extract the timer and trigger contexts.  They should always be part 
+		// Extract the timer and trigger contexts.  They should always be part
 		// of the alarm.
 		TimerService.TimerDMContext timerCtx = DMContexts.getAncestorOfType(alarmCtx,
 				TimerService.TimerDMContext.class);
@@ -216,7 +216,7 @@ public class AlarmService extends AbstractDsfService {
 
 		assert triggerCtx != null && timerCtx != null;
 
-		// Find the trigger and check whether the timers value has surpassed it. 
+		// Find the trigger and check whether the timers value has surpassed it.
 		if (fTriggers.containsKey(triggerCtx)) {
 			int timerValue = getServicesTracker().getService(TimerService.class).getTimerValue(timerCtx);
 

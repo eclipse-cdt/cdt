@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,9 +19,9 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Label attribute that fills in the text of an error status into the label 
- * column. 
- * 
+ * Label attribute that fills in the text of an error status into the label
+ * column.
+ *
  * @since 2.0
  */
 public class ErrorLabelText extends LabelText {
@@ -70,5 +70,5 @@ public class ErrorLabelText extends LabelText {
 			return !status.isOK();
 		}
 		return super.checkProperty(propertyName, status, properties);
-	};
+	}
 }

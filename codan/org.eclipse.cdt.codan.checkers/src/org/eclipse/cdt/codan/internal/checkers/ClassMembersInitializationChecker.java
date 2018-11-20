@@ -61,11 +61,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWri
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
- * Checks that class members of simple types (int, float, pointers, 
- * enumeration types, ...) are properly initialized in constructor. 
- * Not initialized members may cause to unstable or random behavior 
+ * Checks that class members of simple types (int, float, pointers,
+ * enumeration types, ...) are properly initialized in constructor.
+ * Not initialized members may cause to unstable or random behavior
  * of methods that are working with their value.
- * 
+ *
  * @author Anton Gorenkov
  */
 public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
@@ -79,7 +79,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 
 	class OnEachClass extends ASTVisitor {
 		// NOTE: Classes can be nested and even can be declared in constructors of the other classes
-		private final Stack<Set<IField>> constructorsStack = new Stack<Set<IField>>();
+		private final Stack<Set<IField>> constructorsStack = new Stack<>();
 		private boolean skipConstructorsWithFCalls = skipConstructorsWithFCalls();
 
 		OnEachClass() {
@@ -247,7 +247,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		}
 
 		/** Checks whether class member of the specified type should be initialized
-		 * 
+		 *
 		 * @param type	Type to check
 		 * @return true if type is:
 		 *     - basic type (int, float, ...)
@@ -255,7 +255,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		 *     - enum
 		 *     - reference (should be initialized in initialization list)
 		 *     - typedef to the another native type.
-		 *     
+		 *
 		 * @note: Not supported types (but maybe should be):
 		 *     - array
 		 *     - union
@@ -268,7 +268,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 					|| (type instanceof ITypedef && isSimpleType(((ITypedef) type).getType())));
 		}
 
-		/** Checks that specified declaration is a class constructor 
+		/** Checks that specified declaration is a class constructor
 		 *  (it is a class member and its name is equal to the class name)
 		 */
 		private ICPPConstructor getConstructor(IASTDeclaration decl) {

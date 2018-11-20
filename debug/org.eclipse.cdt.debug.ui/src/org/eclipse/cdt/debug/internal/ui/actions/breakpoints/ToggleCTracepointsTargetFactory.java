@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Toggle tracepoints target factory for the CEditor.
  * We use a separate factory so that we can control it through an action set.
- * 
+ *
  * @since 6.1
  */
 public class ToggleCTracepointsTargetFactory implements IToggleBreakpointsTargetFactory {
@@ -34,7 +34,7 @@ public class ToggleCTracepointsTargetFactory implements IToggleBreakpointsTarget
 	public static String TOGGLE_C_TRACEPOINT_TARGET_ID = CDebugUIPlugin.getUniqueIdentifier()
 			+ ".toggleCTracepointTarget"; //$NON-NLS-1$
 
-	private static Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
+	private static Set<String> TOGGLE_TARGET_IDS = new HashSet<>(1);
 	static {
 		TOGGLE_TARGET_IDS.add(TOGGLE_C_TRACEPOINT_TARGET_ID);
 	}

@@ -100,7 +100,7 @@ public class MakeTargetDndUtil {
 				return false;
 			}
 
-			List<String> names = new ArrayList<String>(selectedElements.size());
+			List<String> names = new ArrayList<>(selectedElements.size());
 			for (Object element : selectedElements) {
 				if (!(element instanceof IMakeTarget)) {
 					return false;

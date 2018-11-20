@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Vladimir Prus (Mentor Graphics) - initial API and implementation
  *     Dmitry Kozlov (Mentor Graphics) - extend to be inheritance-friendly

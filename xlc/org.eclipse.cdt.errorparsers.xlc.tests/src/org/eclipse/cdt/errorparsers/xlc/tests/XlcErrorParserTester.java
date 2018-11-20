@@ -59,7 +59,7 @@ public class XlcErrorParserTester {
 		private String message;
 	}
 
-	private List<MarkerData> markerDataList = new ArrayList<MarkerData>();
+	private List<MarkerData> markerDataList = new ArrayList<>();
 
 	/*
 	 * Dummy class implementing IMarkerGenerator lets get through testing
@@ -67,10 +67,12 @@ public class XlcErrorParserTester {
 	 */
 	private class MockMarkerGenerator implements IMarkerGenerator {
 
+		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 			// dummy
 		}
 
+		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 			// dummy
 		}

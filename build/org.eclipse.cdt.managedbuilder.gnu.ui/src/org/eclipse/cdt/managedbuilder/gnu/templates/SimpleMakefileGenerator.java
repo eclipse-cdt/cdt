@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     QNX Software Systems - Initial API and implementation
  **********************************************************************/
 
@@ -43,10 +43,10 @@ import org.eclipse.core.runtime.Platform;
  * TODO - this is necessitated because the default macro format for
  * the template engine is $( and ) which is the same as make macros.
  * This replaces that with something more make friendly.
- * 
+ *
  * But at the end of they day, we need a real macro replacement engine
  * like JET, or something...
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -81,7 +81,7 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 					getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.2") + MAKEFILE)); //$NON-NLS-1$
 		}
 
-		Map<String, String> macros = new HashMap<String, String>(template.getValueStore());
+		Map<String, String> macros = new HashMap<>(template.getValueStore());
 		macros.put("exe", Platform.getOS().equals(Platform.OS_WIN32) ? ".exe" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		fileContents = replaceMacros(fileContents, macros);

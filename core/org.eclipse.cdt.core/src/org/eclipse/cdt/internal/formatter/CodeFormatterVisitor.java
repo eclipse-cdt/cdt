@@ -612,7 +612,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * possible, by a {@link TokenRange}.
 	 */
 	private List<Object> getMacroArguments(int expectedNumberOfArguments) {
-		List<TokenRange> argumentRanges = new ArrayList<TokenRange>(expectedNumberOfArguments);
+		List<TokenRange> argumentRanges = new ArrayList<>(expectedNumberOfArguments);
 		TokenRange currentArgument = null;
 		localScanner.resetTo(getCurrentPosition(), scribe.scannerEndPosition);
 		localScanner.getNextToken(); // Skip the opening parenthesis.
@@ -649,7 +649,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 		}
 
-		List<Object> arguments = new ArrayList<Object>(argumentRanges.size());
+		List<Object> arguments = new ArrayList<>(argumentRanges.size());
 		IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
 		for (TokenRange argument : argumentRanges) {
 			IASTNode node = nodeSelector.findNodeInExpansion(argument.getOffset(), argument.getLength());
@@ -2895,7 +2895,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int formatOverloadedLeftShiftChain(IASTBinaryExpression binaryExpression) {
-		List<IASTExpression> elements = new ArrayList<IASTExpression>();
+		List<IASTExpression> elements = new ArrayList<>();
 		IASTExpression node;
 		do {
 			elements.add(binaryExpression.getOperand2());
@@ -4480,10 +4480,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (fileName == null) {
 			return Collections.emptyList();
 		}
-		List<Position> positions = new ArrayList<Position>();
+		List<Position> positions = new ArrayList<>();
 		int inactiveCodeStart = -1;
 		boolean inInactiveCode = false;
-		Stack<Boolean> inactiveCodeStack = new Stack<Boolean>();
+		Stack<Boolean> inactiveCodeStack = new Stack<>();
 
 		IASTPreprocessorStatement[] preprocStmts = translationUnit.getAllPreprocessorStatements();
 

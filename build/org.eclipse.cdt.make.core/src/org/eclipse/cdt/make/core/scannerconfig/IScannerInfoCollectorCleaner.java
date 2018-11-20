@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Utility functions some collectors may need
- * 
+ *
  * @author vhirsl
  */
 public interface IScannerInfoCollectorCleaner {

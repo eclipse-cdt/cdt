@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -22,8 +23,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.actions.ActionGroup;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class SurroundWithActionGroup extends ActionGroup {
 

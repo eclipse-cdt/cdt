@@ -138,8 +138,8 @@ public class ConfigurationModification extends FolderInfoModification implements
 		if (fCompatibilityInfoInited)
 			return;
 
-		fCompatibleBuilders = new HashMap<IBuilder, BuilderCompatibilityInfoElement>();
-		fInCompatibleBuilders = new HashMap<IBuilder, BuilderCompatibilityInfoElement>();
+		fCompatibleBuilders = new HashMap<>();
+		fInCompatibleBuilders = new HashMap<>();
 		ConflictMatchSet conflicts = getParentConflictMatchSet();
 		IBuilder sysBs[] = getAllSysBuilders();
 		@SuppressWarnings("unchecked")
@@ -172,7 +172,7 @@ public class ConfigurationModification extends FolderInfoModification implements
 	@Override
 	public IBuilder[] getCompatibleBuilders() {
 		initCompatibilityInfo();
-		List<IBuilder> l = new ArrayList<IBuilder>(fCompatibleBuilders.size());
+		List<IBuilder> l = new ArrayList<>(fCompatibleBuilders.size());
 		IConfiguration cfg = getResourceInfo().getParent();
 
 		Set<IBuilder> keySet = fCompatibleBuilders.keySet();

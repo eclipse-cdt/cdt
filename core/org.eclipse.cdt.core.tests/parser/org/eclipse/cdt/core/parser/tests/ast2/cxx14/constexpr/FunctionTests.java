@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -64,11 +64,11 @@ public class FunctionTests extends TestBase {
 		assertEvaluationEquals(55);
 	}
 
-	// constexpr int helper(int n) { 
+	// constexpr int helper(int n) {
 	//   int m = 5;
 	//   return m + n;
 	// }
-	// constexpr int function() { 
+	// constexpr int function() {
 	//   int value = helper(5);
 	//   return value + helper(5);
 	// }

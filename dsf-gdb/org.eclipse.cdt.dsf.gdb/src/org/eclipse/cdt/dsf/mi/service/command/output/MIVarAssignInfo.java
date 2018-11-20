@@ -15,7 +15,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * GDB/MI var-assign
- * 
+ *
  * ^done,value="3"
  */
 public class MIVarAssignInfo extends MIInfo {

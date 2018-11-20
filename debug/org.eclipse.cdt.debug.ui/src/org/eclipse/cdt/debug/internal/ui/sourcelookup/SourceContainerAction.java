@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,7 +47,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 
 	/**
 	 * Sets the viewer on which this action operates.
-	 * 
+	 *
 	 * @param viewer the viewer on which this action operates
 	 */
 	public void setViewer(SourceContainerViewer viewer) {
@@ -62,7 +63,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 
 	/**
 	 * Returns the viewer on which this action operates.
-	 * 
+	 *
 	 * @return the viewer on which this action operates
 	 */
 	protected SourceContainerViewer getViewer() {
@@ -72,11 +73,11 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	/**
 	 * Returns the selected items in the list, in the order they are
 	 * displayed.
-	 * 
+	 *
 	 * @return targets for an action
 	 */
 	protected List<ISourceContainer> getOrderedSelection() {
-		List<ISourceContainer> targets = new ArrayList<ISourceContainer>();
+		List<ISourceContainer> targets = new ArrayList<>();
 		List<?> selection = ((IStructuredSelection) getViewer().getSelection()).toList();
 		ISourceContainer[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
@@ -93,7 +94,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	 */
 	protected List<ISourceContainer> getEntriesAsList() {
 		ISourceContainer[] entries = getViewer().getEntries();
-		List<ISourceContainer> list = new ArrayList<ISourceContainer>(entries.length);
+		List<ISourceContainer> list = new ArrayList<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}

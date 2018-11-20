@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -31,6 +29,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.Test;
 
 /**
  * @author Doug Schaefer
@@ -77,7 +77,7 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals("cb", enumerators[1].getName());
 		assertEquals("cc", enumerators[2].getName());
 
-		// Declaration of TestEnum 
+		// Declaration of TestEnum
 		IName[] enumDecls = pdom.findNames(enumeration, IIndex.FIND_DECLARATIONS_DEFINITIONS);
 		assertEquals(1, enumDecls.length);
 		IASTFileLocation loc = enumDecls[0].getFileLocation();
@@ -116,7 +116,7 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals("cppb", enumerators[1].getName());
 		assertEquals("cppc", enumerators[2].getName());
 
-		// Declaration of TestEnum 
+		// Declaration of TestEnum
 		IName[] enumDecls = pdom.findNames(enumeration, IIndex.FIND_DECLARATIONS_DEFINITIONS);
 		assertEquals(1, enumDecls.length);
 		IASTFileLocation loc = enumDecls[0].getFileLocation();

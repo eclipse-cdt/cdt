@@ -7,11 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson 		  - Modified for handling of multiple execution contexts	
- *     Axel Mueller       - Bug 306555 - Add support for cast to type / view as array (IExpressions2)	
+ *     Ericsson 		  - Modified for handling of multiple execution contexts
+ *     Axel Mueller       - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Marc Khouzam (Ericsson) - Added support for expression aliases for return values of functions (bug 341731)
  *     Abeer Bagul (Tensilica) - Extra partition created for arrays of length 20000 or greater (Bug 443687)
@@ -87,9 +87,9 @@ import org.osgi.framework.BundleContext;
 /**
  * This class implements a debugger expression evaluator as a DSF service. The
  * primary interface that clients of this class should use is IExpressions.
- * 
+ *
  * This class used to be name ExpressionService in the 1.1 release.
- * 
+ *
  * @since 2.0
  */
 public class MIExpressions extends AbstractDsfService implements IMIExpressions, ICachingService {
@@ -99,7 +99,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	/**
 	 * A format that gives more details about an expression and supports pretty-printing
 	 * provided by the backend.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String DETAILS_FORMAT = "Details"; //$NON-NLS-1$
@@ -265,7 +265,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			// are not part of memory.  We care about the top-most parent
 			// as it is the only one that can be a register or convenience var.
 			if (getParent() == null) {
-				if (getRelExpr().startsWith("$")) { //$NON-NLS-1$			
+				if (getRelExpr().startsWith("$")) { //$NON-NLS-1$
 					return false;
 				}
 				return true;
@@ -287,9 +287,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		private ExpressionInfo exprInfo;
 
 		/**
-		 * ExpressionDMC Constructor for expression to be evaluated in context of 
+		 * ExpressionDMC Constructor for expression to be evaluated in context of
 		 * a stack frame.
-		 * 
+		 *
 		 * @param sessionId
 		 *            The session ID in which this context is created.
 		 * @param expression
@@ -297,16 +297,16 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		 * @param relExpr
 		 *            The relative expression if this expression was created as a child
 		 * @param frameCtx
-		 *            The parent stack frame context for this ExpressionDMC. 
+		 *            The parent stack frame context for this ExpressionDMC.
 		 */
 		public MIExpressionDMC(String sessionId, String expression, String relExpr, IFrameDMContext frameCtx) {
 			this(sessionId, expression, relExpr, (IDMContext) frameCtx);
 		}
 
 		/**
-		 * ExpressionDMC Constructor for expression to be evaluated in context of 
+		 * ExpressionDMC Constructor for expression to be evaluated in context of
 		 * an thread.
-		 * 
+		 *
 		 * @param sessionId
 		 *            The session ID in which this context is created.
 		 * @param expression
@@ -314,16 +314,16 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		 * @param relExpr
 		 *            The relative expression if this expression was created as a child
 		 * @param execCtx
-		 *            The parent thread context for this ExpressionDMC. 
+		 *            The parent thread context for this ExpressionDMC.
 		 */
 		public MIExpressionDMC(String sessionId, String expression, String relExpr, IMIExecutionDMContext execCtx) {
 			this(sessionId, expression, relExpr, (IDMContext) execCtx);
 		}
 
 		/**
-		 * ExpressionDMC Constructor for expression to be evaluated in context of 
+		 * ExpressionDMC Constructor for expression to be evaluated in context of
 		 * a memory space.
-		 * 
+		 *
 		 * @param sessionId
 		 *            The session ID in which this context is created.
 		 * @param expression
@@ -331,7 +331,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		 * @param relExpr
 		 *            The relative expression if this expression was created as a child
 		 * @param memoryCtx
-		 *            The parent memory space context for this ExpressionDMC. 
+		 *            The parent memory space context for this ExpressionDMC.
 		 */
 		public MIExpressionDMC(String sessionId, String expression, String relExpr, IMemoryDMContext memoryCtx) {
 			this(sessionId, expression, relExpr, (IDMContext) memoryCtx);
@@ -344,14 +344,14 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		/**
 		 * ExpressionDMC Constructor for expression to be evaluated in context
 		 * of a stack frame.
-		 * 
+		 *
 		 * @param sessionId
 		 *            The session ID in which this context is created.
 		 * @param info
 		 *            The expression info that this expression is to use.
 		 * @param frameCtx
 		 *            The parent stack frame context for this ExpressionDMC.
-		 *            
+		 *
 		 * @since 4.0
 		 */
 		public MIExpressionDMC(String sessionId, ExpressionInfo info, IFrameDMContext frameCtx) {
@@ -375,7 +375,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		}
 
 		/**
-		 * 
+		 *
 		 * @return The hash code of this ExpressionDMC object.
 		 */
 		@Override
@@ -384,13 +384,13 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		}
 
 		/**
-		 * 
+		 *
 		 * @return A string representation of this ExpressionDMC (including the
 		 *         expression to which it is bound).
 		 */
 		@Override
 		public String toString() {
-			return baseToString() + ".expr" + exprInfo.toString(); //$NON-NLS-1$ 
+			return baseToString() + ".expr" + exprInfo.toString(); //$NON-NLS-1$
 		}
 
 		/**
@@ -418,7 +418,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 		/**
 		 * @param info
-		 * 
+		 *
 		 * @since 4.0
 		 */
 		public void setExpressionInfo(ExpressionInfo info) {
@@ -741,7 +741,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 		@Override
 		public Map<String, Integer> getEnumerations() {
-			return new HashMap<String, Integer>();
+			return new HashMap<>();
 		}
 
 		@Override
@@ -775,14 +775,14 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		 * actual number of children.  This is because GDB considers
 		 * 'private/protected/public' as an actual level of children, but
 		 * we do not.
-		 * 
+		 *
 		 * This method can be used reliably to know if the expression
 		 * does have children or not.  However, for this particular use,
 		 * the new {@link IExpressionDMDataExtension#hasChildren()} method should be used instead.
-		 * 
+		 *
 		 * To get the correct number of children of an expression, a call
 		 * to {@link IExpressions#getSubExpressionCount} should be used.
-		 * 
+		 *
 		 * @deprecated
 		 */
 		@Deprecated
@@ -828,14 +828,14 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * Event generated every time an expression is changed by the ExpressionService.
-	 * 
+	 *
 	 * A client wishing to receive such events has to register as a service
 	 * event listener and implement the corresponding eventDispatched method.
-	 * 
+	 *
 	 * E.g.:
 	 *
 	 *    getSession().addServiceEventListener(listenerObject, null);
-	 *     
+	 *
 	 *    @DsfServiceEventHandler
 	 *    public void eventDispatched(ExpressionChangedEvent e) {
 	 *       IExpressionDMContext context = e.getDMContext();
@@ -855,24 +855,24 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 */
 	private class ReturnValueAliasing {
 		/**
-		 *  Map of expression to alias.  The expression is the name of the convenience variable 
+		 *  Map of expression to alias.  The expression is the name of the convenience variable
 		 *  storing the return value, e.g., $1 -> "foo() returned"
-		 *  This map allows to quickly find the alias to be used for return value variables. 
+		 *  This map allows to quickly find the alias to be used for return value variables.
 		 */
-		private Map<String, String> fExpressionAliasesMap = new HashMap<String, String>();
+		private Map<String, String> fExpressionAliasesMap = new HashMap<>();
 		/**
 		 * Map of thread to aliases expression list.  This map allows to know which aliases are related
 		 * to a thread of execution.  This is important to allow us to delete aliases when a
 		 * thread exits.  Note that we need a list because we keep all previous aliases until
 		 * the thread exits.
 		 */
-		private Map<IMIExecutionDMContext, List<String>> fThreadToAliasedExpressionsMap = new HashMap<IMIExecutionDMContext, List<String>>();
+		private Map<IMIExecutionDMContext, List<String>> fThreadToAliasedExpressionsMap = new HashMap<>();
 		/**
 		 * Map of thread to the name of the method the thread last stopped in.
 		 * This allows us to create the alias based on the method the thread was in
 		 * before it returned out of the method.
 		 */
-		private Map<IMIExecutionDMContext, String> fThreadToTopMethodName = new HashMap<IMIExecutionDMContext, String>();
+		private Map<IMIExecutionDMContext, String> fThreadToTopMethodName = new HashMap<>();
 
 		/**
 		 * Create an alias for expr with respect to threadDmc.
@@ -889,7 +889,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 			List<String> aliasedExprList = fThreadToAliasedExpressionsMap.get(threadDmc);
 			if (aliasedExprList == null) {
-				aliasedExprList = new ArrayList<String>();
+				aliasedExprList = new ArrayList<>();
 				fThreadToAliasedExpressionsMap.put(threadDmc, aliasedExprList);
 			}
 			aliasedExprList.add(expr);
@@ -907,8 +907,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		 * Clear all aliased expressions related to a particular thread of execution.
 		 * It is good to keep the aliases around as long as the thread is alive;
 		 * even if we won't show the return value automatically, the user
-		 * could add the expression in the expression view, and the alias 
-		 * would then be used. 
+		 * could add the expression in the expression view, and the alias
+		 * would then be used.
 		 */
 		public void clearAliases(IMIExecutionDMContext threadDmc) {
 			List<String> aliasedExprList = fThreadToAliasedExpressionsMap.remove(threadDmc);
@@ -965,7 +965,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	private CommandFactory fCommandFactory;
 	private MIVariableManager varManager;
 
-	/** 
+	/**
 	 * Indicates that we are currently visualizing trace data.
 	 * In this case, some errors should not be reported.
 	 */
@@ -978,7 +978,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * This method initializes this service.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The request monitor indicating the operation is finished
 	 */
@@ -995,7 +995,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The call-back object to notify when this service's
 	 *            initialization is done.
@@ -1037,8 +1037,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * Creates the MI variable manager to be used by this expression service.
-	 * Overriding classes may override to provide a custom services tracker. 
-	 * 
+	 * Overriding classes may override to provide a custom services tracker.
+	 *
 	 * @since 3.0
 	 */
 	protected MIVariableManager createMIVariableManager() {
@@ -1117,15 +1117,15 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * @see IFormattedValues.getFormattedValueContext(IFormattedDataDMContext, String)
-	 * 
+	 *
 	 * @param dmc
 	 *            The context describing the data for which we want to create
 	 *            a Formatted context.
 	 * @param formatId
 	 *            The format that will be used to create the Formatted context
-	 *            
+	 *
 	 * @return A FormattedValueDMContext that can be used to obtain the value
-	 *         of an expression in a specific format. 
+	 *         of an expression in a specific format.
 	 */
 
 	@Override
@@ -1135,13 +1135,13 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * @see IFormattedValues.getAvailableFormats(IFormattedDataDMContext, DataRequestMonitor)
-	 * 
+	 *
 	 * @param dmc
 	 *            The context describing the data for which we want to know
 	 *            which formats are available.
 	 * @param rm
-	 *            The data request monitor for this asynchronous operation. 
-	 *  
+	 *            The data request monitor for this asynchronous operation.
+	 *
 	 */
 
 	@Override
@@ -1151,9 +1151,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	}
 
 	/**
-	 * Obtains the static data of an expression represented 
+	 * Obtains the static data of an expression represented
 	 * by an ExpressionDMC object (<tt>dmc</tt>).
-	 * 
+	 *
 	 * @param dmc
 	 *            The ExpressionDMC for the expression to be evaluated.
 	 * @param rm
@@ -1227,8 +1227,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	}
 
 	/**
-	 * Obtains the address of an expression and the size of its type. 
-	 * 
+	 * Obtains the address of an expression and the size of its type.
+	 *
 	 * @param dmc
 	 *            The ExpressionDMC for the expression.
 	 * @param rm
@@ -1299,10 +1299,10 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 												int size = Integer.parseInt(getData().getValue());
 												rm.setData(new ExpressionDMAddress(addrStr, size, memSpaceId));
 											} catch (NumberFormatException e) {
-												rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-														INVALID_HANDLE,
-														"Unexpected size format from backend: " + getData().getValue(), //$NON-NLS-1$
-														null));
+												rm.setStatus(
+														new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
+																"Unexpected size format from backend: " //$NON-NLS-1$
+																		+ getData().getValue(), null));
 											}
 											rm.done();
 										}
@@ -1314,9 +1314,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * Obtains the value of an expression in a specific format.
-	 * 
+	 *
 	 * @param dmc
-	 *            The context for the format of the value requested and 
+	 *            The context for the format of the value requested and
 	 *            for the expression to be evaluated.  The expression context
 	 *            should be a parent of the FormattedValueDMContext.
 	 * @param rm
@@ -1382,7 +1382,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	}
 
 	/* Not implemented
-	 * 
+	 *
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IExpressions#getBaseExpressions(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
 	 */
@@ -1394,7 +1394,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * Retrieves the children expressions of the specified expression
-	 * 
+	 *
 	 * @param dmc
 	 *            The context for the expression for which the children
 	 *            should be retrieved.
@@ -1408,15 +1408,15 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * Retrieves a range of children expressions of the specified expression
-	 * 
+	 *
 	 * @param exprCtx
 	 *            The context for the expression for which the children
 	 *            should be retrieved.
 	 * @param startIndex
 	 *            The starting index within the list of all children of the parent
-	 *            expression.  Must be a positive integer.  
+	 *            expression.  Must be a positive integer.
 	 * @param length
-	 *            The length or number of elements of the range requested.  
+	 *            The length or number of elements of the range requested.
 	 *            Must be a positive integer.
 	 * @param rm
 	 *            The data request monitor that will contain the requested data
@@ -1553,7 +1553,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * Retrieves the count of children expressions of the specified expression
-	 * 
+	 *
 	 * @param dmc
 	 *            The context for the expression for which the children count
 	 *            should be retrieved.
@@ -1567,7 +1567,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * This method indicates if an expression can be written to.
-	 * 
+	 *
 	 * @param dmc The data model context representing an expression.
 	 *
 	 * @param rm Data Request monitor containing True if this expression's value can be edited.  False otherwise.
@@ -1597,9 +1597,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 	/**
 	 * Changes the value of the specified expression based on the new value and format.
-	 * 
+	 *
 	 * @param dmc
-	 *            The context for the expression for which the value 
+	 *            The context for the expression for which the value
 	 *            should be changed.
 	 * @param expressionValue
 	 *            The new value for the specified expression
@@ -1744,9 +1744,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		varManager.markAllOutOfDate();
 	}
 
-	/** 
-	 * A casted or array-displayed expression. 
-	 * @since 3.0 
+	/**
+	 * A casted or array-displayed expression.
+	 * @since 3.0
 	 */
 	protected class CastedExpressionDMC extends MIExpressionDMC implements ICastedExpressionDMContext {
 
@@ -1786,7 +1786,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			int castingLength = castInfo.getArrayCount();
 			int castingIndex = castInfo.getArrayStartIndex();
 
-			// cast to type 
+			// cast to type
 			if (castType != null && !castType.isEmpty()) {
 				StringBuilder buffer = new StringBuilder();
 				buffer.append('(').append(castType).append(')');
@@ -1794,7 +1794,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 				castExpression = buffer.toString();
 			}
 
-			// cast to array (can be in addition to cast to type) 
+			// cast to array (can be in addition to cast to type)
 			if (castingLength > 0) {
 				StringBuilder buffer = new StringBuilder();
 				buffer.append("*("); //$NON-NLS-1$
@@ -1932,8 +1932,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	}
 
 	/**
-	 * Returns the number of "real" children if it is less or equal to the partition size, 
-	 * otherwise returns the number of partitions. 
+	 * Returns the number of "real" children if it is less or equal to the partition size,
+	 * otherwise returns the number of partitions.
 	 */
 	private int computeNumberOfChildren(int realNumberOfChildren) {
 		int childNum = realNumberOfChildren;

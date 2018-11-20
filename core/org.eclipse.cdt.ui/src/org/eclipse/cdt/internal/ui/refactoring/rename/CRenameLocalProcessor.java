@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2014 Wind River Systems, Inc. and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  ******************************************************************************/
@@ -17,18 +17,15 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 /**
  * Rename processor, setting up input page for a local rename.

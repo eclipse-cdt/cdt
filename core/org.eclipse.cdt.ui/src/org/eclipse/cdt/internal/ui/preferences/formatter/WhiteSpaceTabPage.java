@@ -19,6 +19,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.InnerNode;
+import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.Node;
+import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.OptionNode;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -46,12 +50,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.part.PageBook;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.InnerNode;
-import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.Node;
-import org.eclipse.cdt.internal.ui.preferences.formatter.WhiteSpaceOptions.OptionNode;
-
 public class WhiteSpaceTabPage extends FormatterTabPage {
 
 	/**
@@ -73,7 +71,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 		private Node fLastSelected = null;
 
 		public SyntaxComponent() {
-			fIndexedNodeList = new ArrayList<Node>();
+			fIndexedNodeList = new ArrayList<>();
 			fTree = new WhiteSpaceOptions().createAltTree(fWorkingValues);
 			WhiteSpaceOptions.makeIndexForNodes(fTree, fIndexedNodeList);
 		}
@@ -131,7 +129,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 		}
 
 		public void refreshState() {
-			final ArrayList<OptionNode> checked = new ArrayList<OptionNode>(100);
+			final ArrayList<OptionNode> checked = new ArrayList<>(100);
 			for (Node node : fTree)
 				(node).getCheckedLeafs(checked);
 			fTreeViewer.setGrayedElements(new Object[0]);
@@ -200,7 +198,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 
 	private final class CElementComponent implements ISelectionChangedListener, ICheckStateListener {
 
-		private final String PREF_INNER_INDEX = CUIPlugin.PLUGIN_ID + "formatter_page.white_space.c_view.inner"; //$NON-NLS-1$ 
+		private final String PREF_INNER_INDEX = CUIPlugin.PLUGIN_ID + "formatter_page.white_space.c_view.inner"; //$NON-NLS-1$
 		private final String PREF_OPTION_INDEX = CUIPlugin.PLUGIN_ID + "formatter_page.white_space.c_view.option"; //$NON-NLS-1$
 
 		private final ArrayList<Node> fIndexedNodeList;
@@ -214,7 +212,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 		private Composite fComposite;
 
 		public CElementComponent() {
-			fIndexedNodeList = new ArrayList<Node>();
+			fIndexedNodeList = new ArrayList<>();
 			fTree = new WhiteSpaceOptions().createTreeByCElement(fWorkingValues);
 			WhiteSpaceOptions.makeIndexForNodes(fTree, fIndexedNodeList);
 		}
@@ -242,7 +240,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 				@Override
 				public Object[] getChildren(Object parentElement) {
 					final List<Node> children = ((Node) parentElement).getChildren();
-					final ArrayList<Object> innerChildren = new ArrayList<Object>();
+					final ArrayList<Object> innerChildren = new ArrayList<>();
 					for (Object o : children) {
 						if (o instanceof InnerNode)
 							innerChildren.add(o);
@@ -370,7 +368,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 
 			final List<Node> children = selectedNode.getChildren();
 
-			final ArrayList<OptionNode> optionsChildren = new ArrayList<OptionNode>();
+			final ArrayList<OptionNode> optionsChildren = new ArrayList<>();
 			for (Object o : children) {
 				if (o instanceof OptionNode)
 					optionsChildren.add((OptionNode) o);

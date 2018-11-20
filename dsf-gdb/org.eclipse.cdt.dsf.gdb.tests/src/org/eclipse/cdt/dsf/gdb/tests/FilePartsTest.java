@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Jonah Graham (Kichwa Coders) - Initial Implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.junit.Test;
 
 /**
  * TODO: Move this test closer to the code it is testing.
- * 
+ *
  * At the time I wrote this test, there was no obvious place to put it, a test
  * suite for org.eclipse.cdt.debug.core is needed.
  *

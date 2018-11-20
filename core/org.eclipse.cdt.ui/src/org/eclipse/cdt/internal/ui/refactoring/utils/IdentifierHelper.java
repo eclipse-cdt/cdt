@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     IBM Corporation
  *******************************************************************************/
@@ -19,16 +19,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Class to verify that an identifier meets the C++ rules for valid names.
- * 
+ *
  * @author Thomas Corbat
  */
 public class IdentifierHelper {

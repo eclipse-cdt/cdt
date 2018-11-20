@@ -18,31 +18,31 @@ import java.util.concurrent.Callable;
 
 /**
  * Runnable object that returns a result object.
- * 
+ *
  * This is like Future<V> from the concurrent package,
  * but with a few less bells and whistles.
- * 
+ *
  * Intended to be used, for example, as follows:
- * 
+ *
  * RunnableWithResult<X> runnable = new RunnableWithResult<X>() {
  *   public X call() {
  *     ... do work, return an X object ...
  *   }
  * }
- * 
+ *
  * Thread thread = new Thread(runnable);
  * thread.start();
  * X result = runnable.getResult(0);
- * 
+ *
  * or, to run it on the UI thread...
- * 
+ *
  * GUIUtils.execAndWait(runnable);
  * X result = runnable.getResult(0);
- * 
+ *
  * Note: if you're invoking this from the UI thread,
  * it's important to use execAndWait(), so that the runnable
  * gets a turn on the event loop, otherwise you'll hang the UI!
- * 
+ *
  */
 public class RunnableWithResult<V> implements Runnable, Callable<V> {
 	// --- members ---
@@ -81,6 +81,7 @@ public class RunnableWithResult<V> implements Runnable, Callable<V> {
 	/** Run method.
 	 *  Derived types should override call() rather than this method.
 	 */
+	@Override
 	public void run() {
 		m_done = false;
 		setResult(call());
@@ -95,6 +96,7 @@ public class RunnableWithResult<V> implements Runnable, Callable<V> {
 	/** Method that returns the value.
 	 *  Default implementation returns null.
 	 */
+	@Override
 	public V call() {
 		return null;
 	}

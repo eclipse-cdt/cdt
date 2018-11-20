@@ -90,7 +90,7 @@ import lpg.lpgjavaruntime.IToken;
 
 /**
  * Parser semantic actions that are common to both C and C++.
- * 
+ *
  * @author Mike Kucera
  */
 @SuppressWarnings("restriction")
@@ -178,7 +178,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 
 	/**
 	 * Removes ambiguity nodes from the AST by resolving them.
-	 * 
+	 *
 	 * @see AbstractGNUSourceCodeParser#resolveAmbiguities()
 	 */
 	private static void resolveAmbiguityNodes(IASTTranslationUnit tu) {
@@ -195,8 +195,8 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	}
 
 	/**
-	 * block_item ::= declaration | statement 
-	 * 
+	 * block_item ::= declaration | statement
+	 *
 	 * TODO, be careful where exactly in the grammar this is called, it may be called unnecessarily
 	 */
 	public void consumeStatementDeclarationWithDisambiguation() {
@@ -253,14 +253,14 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	/**
 	 * Returns true if the given declaration has unspecified type,
 	 * in this case the type defaults to int and is know as "implicit int".
-	 * 
+	 *
 	 * With implicit int a lot of language constructs can be accidentally parsed
 	 * as declarations:
-	 * 
+	 *
 	 * eg) x = 1;
 	 * Should be an assignment statement but can also be parsed as a declaration
 	 * of a variable x, of unspecified type, initialized to 1.
-	 * 
+	 *
 	 * These cases are easy to detect (using this method) and the wrong interpretation
 	 * as a declaration is discarded.
 	 */
@@ -286,9 +286,9 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 
 		// Strip the quotes from string literals, this is just to be consistent
 		// with the dom parser (i.e. to make a test pass)
-		//		if(kind == IASTLiteralExpression.lk_string_literal && 
+		//		if(kind == IASTLiteralExpression.lk_string_literal &&
 		//				rep.startsWith("\"") && rep.endsWith("\"")) {
-		//			rep = rep.substring(1, rep.length()-1);			
+		//			rep = rep.substring(1, rep.length()-1);
 		//		}
 
 		IASTLiteralExpression expr = nodeFactory.newLiteralExpression(kind, rep);
@@ -456,7 +456,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 
 	/**
 	 * labeled_statement ::= label_identifier ':' statement
-	 * label_identifier ::= identifier 
+	 * label_identifier ::= identifier
 	 */
 	public void consumeStatementLabeled() {
 		IASTStatement body = (IASTStatement) astStack.pop();
@@ -527,7 +527,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 
 	/**
 	 * compound_statement ::= <openscope> '{' block_item_list '}'
-	 * 
+	 *
 	 * block_item_list ::= block_item | block_item_list block_item
 	 */
 	public void consumeStatementCompoundStatement(boolean hasStatementsInBody) {
@@ -617,7 +617,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	/**
 	 * declarator
 	 *     ::= <openscope-ast> ptr_operator_seq direct_declarator
-	 *     
+	 *
 	 * abstract_declarator
 	 *     ::= <openscope-ast> ptr_operator_seq
 	 *       | <openscope-ast> ptr_operator_seq direct_declarator
@@ -639,7 +639,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	/**
 	 * init_declarator
 	 *     ::= declarator initializer
-	 *     
+	 *
 	 * @param hasDeclarator in C++ its possible for a parameter declaration to specifiy
 	 *        a default value without also specifying a named declarator
 	 */
@@ -685,10 +685,10 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	}
 
 	/**
-	 * parameter_declaration ::= declaration_specifiers   
+	 * parameter_declaration ::= declaration_specifiers
 	 */
 	public void consumeParameterDeclarationWithoutDeclarator() {
-		// offsets need to be calculated differently in this case		
+		// offsets need to be calculated differently in this case
 		final int endOffset = stream.getRightIToken().getEndOffset();
 
 		IASTName name = nodeFactory.newName();
@@ -707,29 +707,29 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 
 	/**
 	 * TODO: do I really want to share declaration rules between the two parsers.
-	 * Even if there is potential for reuse it still may be cleaner to leave the 
+	 * Even if there is potential for reuse it still may be cleaner to leave the
 	 * common stuff to just simple expressions and statements.
-	 * 
+	 *
 	 * For C99:
-	 * 
+	 *
 	 * declaration ::= declaration_specifiers <openscope> init_declarator_list ';'
 	 * declaration ::= declaration_specifiers  ';'
-	 * 
-	 * 
+	 *
+	 *
 	 * For C++:
-	 * 
+	 *
 	 * simple_declaration
 	 *     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
-	 *     
-	 *     
+	 *
+	 *
 	 * TODO Make both grammars the same here.
 	 */
 	//	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
 	//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-	//		
+	//
 	//		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
 	//		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
-	//		
+	//
 	//		// do not generate nodes for extra EOC tokens
 	//		if(matchTokens(parser.getRuleTokens(), CPPParsersym.TK_EndOfCompletion))
 	//			return;
@@ -740,13 +740,13 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	//		}
 	//
 	//		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
-	//		
+	//
 	//		for(Object declarator : declarators)
 	//			declaration.addDeclarator((IASTDeclarator)declarator);
 	//
 	//		setOffsetAndLength(declaration);
 	//		astStack.push(declaration);
-	//		
+	//
 	//		if(TRACE_AST_STACK) System.out.println(astStack);
 	//	}
 
@@ -772,8 +772,8 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	}
 
 	/**
-	 *  array_modifier 
-	 *      ::= '[' ']' 
+	 *  array_modifier
+	 *      ::= '[' ']'
 	 *        | '[' assignment_expression ']'
 	 */
 	public void consumeDirectDeclaratorArrayModifier(boolean hasAssignmentExpr) {
@@ -829,7 +829,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	}
 
 	/**
-	 * Pops a simple declarator from the stack, converts it into 
+	 * Pops a simple declarator from the stack, converts it into
 	 * a FunctionDeclator, then pushes it.
 	 * TODO: is this the best way of doing this?
 	 * TODO, rename this method, its an accidental overload
@@ -869,13 +869,13 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	//	 */
 	//	public void consumeDirectDeclaratorArrayDeclarator() {
 	//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-	//		
+	//
 	//		IASTArrayModifier arrayModifier = (IASTArrayModifier) astStack.pop();
 	//		addArrayModifier(arrayModifier);
 	//	}
 
 	/**
-	 * direct_abstract_declarator   
+	 * direct_abstract_declarator
 	 *     ::= array_modifier
 	 *       | direct_abstract_declarator array_modifier
 	 */
@@ -976,8 +976,8 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 
 	/**
 	 * struct_declarator
-	 *     ::= ':' constant_expression  
-	 *       | declarator ':' constant_expression		
+	 *     ::= ':' constant_expression
+	 *       | declarator ':' constant_expression
 	 */
 	public void consumeBitField(boolean hasDeclarator) {
 		IASTExpression expr = (IASTExpression) astStack.pop();

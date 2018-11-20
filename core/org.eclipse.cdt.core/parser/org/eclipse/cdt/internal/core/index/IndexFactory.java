@@ -16,7 +16,16 @@
 
 package org.eclipse.cdt.internal.core.index;
 
-import static org.eclipse.cdt.core.index.IIndexManager.*;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_DEPENDENCIES;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_DEPENDENT;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_SEARCH;
+import static org.eclipse.cdt.core.index.IIndexManager.ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,7 +77,7 @@ public class IndexFactory {
 		Collection<ICProject> indexProjects = getProjects(projects, addDependencies, addDependent,
 				new HashSet<IProject>());
 
-		HashMap<String, IIndexFragment> fragments = new LinkedHashMap<String, IIndexFragment>();
+		HashMap<String, IIndexFragment> fragments = new LinkedHashMap<>();
 		for (ICProject cproject : indexProjects) {
 			IIndexFragment pdom = fPDOMManager.getPDOM(cproject);
 			if (pdom != null) {
@@ -97,7 +106,7 @@ public class IndexFactory {
 
 	private Collection<ICProject> getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent,
 			Set<IProject> handled) {
-		List<ICProject> result = new ArrayList<ICProject>();
+		List<ICProject> result = new ArrayList<>();
 
 		for (ICProject cproject : projects) {
 			checkAddProject(cproject, handled, result);

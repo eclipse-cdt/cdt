@@ -29,7 +29,7 @@ public class EnvironmentChangeEvent implements IEnvironmentChangeEvent {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param oldVars - set of environment variables before the change.
 	 * @param newVars - set of environment variables after the change.
 	 */

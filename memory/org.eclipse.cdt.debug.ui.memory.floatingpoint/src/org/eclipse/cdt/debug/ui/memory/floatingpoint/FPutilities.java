@@ -31,7 +31,7 @@ import org.eclipse.ui.progress.UIJob;
 public class FPutilities {
 	private static final int BYTE_MASK = 0xFF;
 
-	// ANSI C "Smallest" and "largest" negative and positive float and double values 
+	// ANSI C "Smallest" and "largest" negative and positive float and double values
 
 	public static final float floatNegMax = -3.40282347E+38f; // Largest negative float value; farthest from zero
 	public static final float floatNegMin = -1.17549435E-38f; // Smallest negative float value; closest to zero
@@ -44,11 +44,11 @@ public class FPutilities {
 	public static final double doublePosMin = 2.2250738585072014E-308; // Smallest positive double value
 
 	public enum FPDataType {
-		// Value (for persisteance), Bitsize of type, Number of internal precision decimal digits, Default displayed precision 
+		// Value (for persisteance), Bitsize of type, Number of internal precision decimal digits, Default displayed precision
 
 		FLOAT(10, 32, 7, 8), // C/C++ single-precision "float"
 		DOUBLE(20, 64, 15, 8), // C/C++ double-precision "double"
-		FLOAT_80(30, 80, 19, 16), // Extended precision 
+		FLOAT_80(30, 80, 19, 16), // Extended precision
 		FLOAT_96(40, 96, 0, 0), // TODO: unknown internal decimal digit precision; C/C++ extended-precision "long double"
 
 		// Future work
@@ -197,7 +197,7 @@ public class FPutilities {
 
 		// Create and initialize a DecimalFormat object for scientific notation.  Specify a space
 		// for the preceding plus-sign, which lines up the first significant digit, decimal point
-		// and exponent character.  Define the symbol strings for "Not a Number" and "Infinity."  
+		// and exponent character.  Define the symbol strings for "Not a Number" and "Infinity."
 
 		DecimalFormat df = new DecimalFormat("0.0E0"); //$NON-NLS-1$
 		df.setPositivePrefix(" "); //$NON-NLS-1$
@@ -207,7 +207,7 @@ public class FPutilities {
 		dfSymbols.setInfinity(FPRenderingMessages.getString("FPRendering.INFINITY")); //$NON-NLS-1$
 		df.setDecimalFormatSymbols(dfSymbols);
 
-		// Set the integer and fraction digits for normalized scientific notation.  
+		// Set the integer and fraction digits for normalized scientific notation.
 
 		df.setMinimumIntegerDigits(1);
 		df.setMaximumIntegerDigits(1);
@@ -287,7 +287,7 @@ public class FPutilities {
 		return memoryBytes;
 	}
 
-	// Check the character for being valid for number entry, both standard and scientific notation 
+	// Check the character for being valid for number entry, both standard and scientific notation
 
 	public static boolean validEditCharacter(char character) {
 		return (character >= '0' && character <= '9') || character == '+' || character == '-' || character == 'e'
@@ -301,7 +301,7 @@ public class FPutilities {
 		//  - A minimum of one digit preceding the optional exponent character is required.
 		//  - Allowable characters: 0-9, a decimal point, '+' and '-' number
 		//    signs, exponent characters 'e' and 'E', and spaces.
-		// 
+		//
 		// Strings may also have:
 		//      - One [optional] decimal point
 		//      - A maximum of two [optional] number signs (one before the number and one after the exponent character)
@@ -353,7 +353,7 @@ public class FPutilities {
 		return digit;
 	}
 
-	// Return a string of the specified length filled with the specified character 
+	// Return a string of the specified length filled with the specified character
 
 	public static String fillString(int length, char character) {
 		if (length < 1)
@@ -387,7 +387,7 @@ public class FPutilities {
 		if (depth == 0)
 			depth = 4; // Default depth if zero supplied
 
-		// Get the stack frames for the current thread; start at the offset  
+		// Get the stack frames for the current thread; start at the offset
 
 		StackTraceElement[] seArray = Thread.currentThread().getStackTrace();
 

@@ -35,7 +35,7 @@ public class Objdump {
 			params = new String[0];
 		} else {
 			// FIXME: This is wrong we have to check for quoted strings.
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			StringTokenizer st = new StringTokenizer(param);
 			while (st.hasMoreTokens()) {
 				list.add(st.nextToken());

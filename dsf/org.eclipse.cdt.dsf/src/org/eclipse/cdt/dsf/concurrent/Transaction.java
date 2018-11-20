@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -46,7 +46,7 @@ public abstract class Transaction<V> {
 	 * data points are perpetually becoming stale, then we'll indefinitely wait
 	 * for them to stabilize. The caller should cancel its request monitor in
 	 * order to get us to stop waiting.
-	 * 
+	 *
 	 * @param rm Request completion monitor.
 	 */
 	public void request(DataRequestMonitor<V> rm) {
@@ -71,11 +71,11 @@ public abstract class Transaction<V> {
 	 * abort the transaction, but in the case of InvalidCacheException, we
 	 * schedule an asynchronous call that will re-invoke the transaction
 	 * logic once the cache object has been updated from the source.
-	 * 
+	 *
 	 * @return the cached data if it's valid, otherwise an exception is thrown
-	 * @throws Transaction.InvalidCacheException Exception indicating that a 
+	 * @throws Transaction.InvalidCacheException Exception indicating that a
 	 * cache is not valid and transaction will need to be rescheduled.
-	 * @throws CoreException Exception indicating that one of the caches is 
+	 * @throws CoreException Exception indicating that one of the caches is
 	 * in error state and transaction cannot be processed.
 	 */
 	abstract protected V process() throws InvalidCacheException, CoreException;
@@ -120,7 +120,7 @@ public abstract class Transaction<V> {
 	/**
 	 * Clients must call one of our validate methods prior to using (calling
 	 * getData()) on data cache object.
-	 * 
+	 *
 	 * @param cache
 	 *            the object being validated
 	 * @throws InvalidCacheException

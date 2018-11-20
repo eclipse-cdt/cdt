@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
  * This interface represents a delete expression. delete [] operand;
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -34,7 +34,7 @@ public interface ICPPASTDeleteExpression extends ICPPASTExpression, IASTImplicit
 
 	/**
 	 * Get the operand.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getOperand();
@@ -47,7 +47,7 @@ public interface ICPPASTDeleteExpression extends ICPPASTExpression, IASTImplicit
 
 	/**
 	 * Set this to be the global delete function called.
-	 * 
+	 *
 	 * @param global
 	 *            boolean
 	 */
@@ -55,14 +55,14 @@ public interface ICPPASTDeleteExpression extends ICPPASTExpression, IASTImplicit
 
 	/**
 	 * Is this the global delete function called?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isGlobal();
 
 	/**
 	 * Set this to be a vector delete. ([])
-	 * 
+	 *
 	 * @param vectored
 	 *            boolean
 	 */
@@ -70,7 +70,7 @@ public interface ICPPASTDeleteExpression extends ICPPASTExpression, IASTImplicit
 
 	/**
 	 * Is this a delete[] ?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isVectored();

@@ -18,8 +18,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
@@ -36,9 +34,11 @@ import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
+import junit.framework.Assert;
+
 /**
  * All supporting functions which are not part of Testing class.
- * 
+ *
  * @since 4.0
 */
 public class TemplateEngineTestsHelper {
@@ -64,7 +64,7 @@ public class TemplateEngineTestsHelper {
 
 	public static TemplateCore[] getTestTemplates() {
 		TemplateCore[] templates = TemplateEngine.getDefault().getTemplates();
-		List<TemplateCore> testTemplates = new ArrayList<TemplateCore>();
+		List<TemplateCore> testTemplates = new ArrayList<>();
 		for (int i = 0; i < templates.length; i++) {
 			if (templates[i].getTemplateType().equals("TestTemplate")) {
 				testTemplates.add(templates[i]);

@@ -13,19 +13,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.editor;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
 import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Tests for org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder.

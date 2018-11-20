@@ -168,7 +168,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		if (fParent.getMemoryBlock() != null) {
 			// This is base address from user.
 			// Honor it if the block has no limits or the base is within the block limits.
-			// Fix Bug 414519.  
+			// Fix Bug 414519.
 			BigInteger base = fParent.getBigBaseAddress();
 
 			fViewportAddress = fParent.getMemoryBlockStartAddress();

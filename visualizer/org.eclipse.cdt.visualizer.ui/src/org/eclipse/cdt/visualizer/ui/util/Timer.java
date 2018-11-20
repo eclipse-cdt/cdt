@@ -88,11 +88,13 @@ public class Timer implements ActionListener, Runnable {
 	 * Invoked each time the timer fires.
 	 * Default implementation invokes the run() method on the UI thread.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		GUIUtils.exec(this);
 	}
 
 	/** Invoked each time the timer fires. */
+	@Override
 	public void run() {
 	}
 

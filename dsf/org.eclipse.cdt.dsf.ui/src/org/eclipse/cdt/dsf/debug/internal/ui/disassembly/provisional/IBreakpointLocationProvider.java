@@ -27,13 +27,13 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
  * If a breakpoint adapts to this interface, its position in the viewer is
  * determined by the information provided by the location provider.
  * </p>
- * 
+ *
  * <p>
  * Breakpoints implementing either {@link ICAddressBreakpoint} or {@link ILineBreakpoint}
  * need not provide a location provider but may do so in order to override default
  * location retrieval.
- * </p> 
- * 
+ * </p>
+ *
  * <p>
  * The annotation position will be determined with the following ordering:
  * <ol>
@@ -50,7 +50,7 @@ public interface IBreakpointLocationProvider {
 	/**
 	 * Returns the line number of the breakpoint or -1 if no line number is
 	 * available.
-	 * 
+	 *
 	 * @param breakpoint the breakpoint
 	 * @param debugContext the debug context of the view
 	 * @return the line number or -1
@@ -60,7 +60,7 @@ public interface IBreakpointLocationProvider {
 	/**
 	 * Returns the source file path of the breakpoint or <code>null</code> if no
 	 * source file is associated with this breakpoint.
-	 * 
+	 *
 	 * @param breakpoint the breakpoint
 	 * @param debugContext the debug context of the view
 	 * @return the file path, can be <code>null</code>
@@ -70,7 +70,7 @@ public interface IBreakpointLocationProvider {
 	/**
 	 * Returns the label address of the breakpoint or <code>null</code> if no
 	 * label is associated with this breakpoint.
-	 * 
+	 *
 	 * @param breakpoint the breakpoint
 	 * @param debugContext the debug context of the view
 	 * @return the label address, can be <code>null</code>
@@ -79,13 +79,13 @@ public interface IBreakpointLocationProvider {
 
 	/**
 	 * Returns the addresses of the breakpoint.
-	 * 
+	 *
 	 * <p>
 	 * <i>Currently there can only be one annotation per breakpoint. Therefore
 	 * an annotation is created only for the first valid address. Support for
 	 * multiple annotations per breakpoint is up for future enhancements. </i>
 	 * </p>
-	 * 
+	 *
 	 * @param breakpoint the breakpoint
 	 * @param debugContext the debug context of the view
 	 * @return the addresses, can be <code>null</code>

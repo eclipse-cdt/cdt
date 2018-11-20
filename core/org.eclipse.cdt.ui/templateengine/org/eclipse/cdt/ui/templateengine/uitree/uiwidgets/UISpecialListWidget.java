@@ -15,17 +15,16 @@ package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 
 import java.util.Arrays;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-
 import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.utils.ui.controls.FileListControl;
 import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * This gives a Label and UISpecialList Widget.

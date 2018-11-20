@@ -34,7 +34,7 @@ public class TestTemplateEngineBugs extends BaseTestCase {
 	}
 
 	private Set<String> set(String... s) {
-		HashSet<String> result = new HashSet<String>();
+		HashSet<String> result = new HashSet<>();
 		result.addAll(Arrays.asList(s));
 		return result;
 	}

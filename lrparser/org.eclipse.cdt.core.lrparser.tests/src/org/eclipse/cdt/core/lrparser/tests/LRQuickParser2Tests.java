@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -60,7 +60,7 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	 }
-	//	 
+	//
 	//	 @Override
 	//	 public void testBug39684() throws Exception {  // typeof is gcc extension
 	//		 try {
@@ -68,7 +68,7 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	 }
-	//	 
+	//
 	//	 @Override
 	//	 public void testBug39698A() throws Exception { // gcc extension
 	//		 try {
@@ -84,7 +84,7 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	}
-	//	
+	//
 	//	@Override
 	//	public void testBug39704B() throws Exception { // gcc extension
 	//		 try {
@@ -92,7 +92,7 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	}
-	//	
+	//
 	//	@Override
 	//	public void testBug39704C() throws Exception { // gcc extension
 	//		 try {
@@ -100,7 +100,7 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	}
-	//	
+	//
 	//	@Override
 	//	public void testBug39677() throws Exception { // gcc extension
 	//		 try {
@@ -108,8 +108,8 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	}
-	//	 
-	//	
+	//
+	//
 	//	@Override
 	//	public void testBug57652() throws Exception { // gcc extension
 	//		 try {
@@ -118,7 +118,7 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//		} catch(AssertionFailedError _) { }
 	//	}
 	//
-	//	
+	//
 	//	@Override
 	//	public void testBug39701A() throws Exception { // gcc extension
 	//		 try {
@@ -126,7 +126,7 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	}
-	//	
+	//
 	//	@Override
 	//	public void testBug39701B() throws Exception { // gcc extension
 	//		 try {
@@ -134,7 +134,7 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	}
-	//	
+	//
 	//	@Override
 	//	public void testBug39701C() throws Exception { // gcc extension
 	//		 try {
@@ -142,19 +142,19 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	}
-	//	
-	//	
+	//
+	//
 	//	@Override
 	//	public void testBug40007() throws Exception { // gcc extension
 	//		 try {
 	//			super.testBug40007();
 	//			fail();
-	//		} catch(AssertionFailedError _) { 
+	//		} catch(AssertionFailedError _) {
 	//		} catch(AssertionError _) {
 	//		}
-	//		
+	//
 	//	}
-	//	
+	//
 	//	@Override
 	//	public void testBug39703() throws Exception { // gcc extension
 	//		 try {
@@ -162,8 +162,8 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	}
-	//	
-	//	
+	//
+	//
 	//	@Override
 	//	public void testBug39554() throws Exception { // gcc extension
 	//		 try {
@@ -171,8 +171,8 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError _) { }
 	//	}
-	//	
-	//	
+	//
+	//
 	//	@Override
 	//	public void testBug39686() throws Exception { // gcc extension
 	//		 try {

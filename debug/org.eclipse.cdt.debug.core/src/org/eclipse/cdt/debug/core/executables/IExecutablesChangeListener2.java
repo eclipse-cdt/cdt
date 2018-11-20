@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Extension of IExecutablesChangeListener which allows listeners to more
  * precisely find out when an Executable is added or removed from the workspace
- * 
+ *
  * @since 7.1
  */
 public interface IExecutablesChangeListener2 extends IExecutablesChangeListener {

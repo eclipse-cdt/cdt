@@ -266,9 +266,9 @@ public class PropertyManager {
 			value = new String(bytes);
 		}
 
-		/* FIX for Bug 405744: Properties.store() always starts the serialzed string with 
-		 * a timestamp comment. That constantly changing comment causes the preference-store 
-		 * to perform many unnecessary file-writes into the workspace metadata, even when 
+		/* FIX for Bug 405744: Properties.store() always starts the serialzed string with
+		 * a timestamp comment. That constantly changing comment causes the preference-store
+		 * to perform many unnecessary file-writes into the workspace metadata, even when
 		 * the properties don't change. The comment is ignored by Properties.load(), so
 		 * just remove it here.
 		 */
@@ -379,7 +379,7 @@ public class PropertyManager {
 		map = propsToMap(props);
 
 		if (map == null)
-			map = new LinkedHashMap<String, Object>();
+			map = new LinkedHashMap<>();
 
 		return map;
 	}

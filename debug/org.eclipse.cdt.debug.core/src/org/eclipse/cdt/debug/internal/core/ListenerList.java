@@ -39,7 +39,7 @@ public class ListenerList {
 	/**
 	 * Creates a listener list with the given initial capacity.
 	 *
-	 * @param capacity the number of listeners which this list can initially accept 
+	 * @param capacity the number of listeners which this list can initially accept
 	 *    without growing its internal representation; must be at least 1
 	 */
 	public ListenerList(int capacity) {

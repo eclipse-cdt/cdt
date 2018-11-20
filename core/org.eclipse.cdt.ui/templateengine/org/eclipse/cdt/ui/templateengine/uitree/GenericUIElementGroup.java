@@ -25,7 +25,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
  * expected from UIElementGroup. This gives behavior expected for PAGES-ONLY
  * type. Any other type of UIElement groups can override the definitions given
  * to methods in this class.
- * 
+ *
  * @since 4.0
  */
 public class GenericUIElementGroup extends UIElement {
@@ -54,13 +54,13 @@ public class GenericUIElementGroup extends UIElement {
 
 	/**
 	 * Call UIElement constructor by passing Attributes as parameter.
-	 * 
+	 *
 	 * @param attributes
 	 */
 	public GenericUIElementGroup(UIGroupTypeEnum type, UIAttributes attributes) {
 		super(attributes);
 		this.type = type;
-		this.childList = new ArrayList<UIElement>();
+		this.childList = new ArrayList<>();
 	}
 
 	/*
@@ -80,7 +80,7 @@ public class GenericUIElementGroup extends UIElement {
 	 */
 	@Override
 	public Map<String, String> getValues() {
-		HashMap<String, String> valueMap = new HashMap<String, String>();
+		HashMap<String, String> valueMap = new HashMap<>();
 		int childCount = getChildCount();
 
 		for (int i = 0; i < childCount; i++) {
@@ -121,7 +121,7 @@ public class GenericUIElementGroup extends UIElement {
 	/**
 	 * getThe child UIElement at the given index. This method throws
 	 * SimpleElementException, if invoked on a InputUIElement.
-	 * 
+	 *
 	 * @see UIElement
 	 * @param index
 	 * @return child uiElement
@@ -134,7 +134,7 @@ public class GenericUIElementGroup extends UIElement {
 	/**
 	 * add the given UIElement to the childList. This method throws
 	 * SimpleElementException, if invoked on a InputUIElement.
-	 * 
+	 *
 	 * @see UIElement
 	 * @param aUIElement
 	 */
@@ -146,7 +146,7 @@ public class GenericUIElementGroup extends UIElement {
 	/**
 	 * returns the child count of UIElement. This method throws
 	 * SimpleElementException, if invoked on a InputUIElement.
-	 * 
+	 *
 	 * @see UIElement
 	 * @return the child count of UIElement
 	 */

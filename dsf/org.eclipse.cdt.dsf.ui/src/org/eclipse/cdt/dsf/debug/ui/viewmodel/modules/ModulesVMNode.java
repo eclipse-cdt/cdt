@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson AB		  - Modules view for DSF implementation
@@ -22,10 +22,10 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IModules;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IModules.IModuleDMContext;
 import org.eclipse.cdt.dsf.debug.service.IModules.IModuleDMData;
 import org.eclipse.cdt.dsf.debug.service.IModules.ISymbolDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUILabelImage;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -55,7 +55,7 @@ import org.eclipse.jface.resource.JFaceResources;
  */
 public class ModulesVMNode extends AbstractDMVMNode implements IElementLabelProvider, IElementPropertiesProvider {
 	/**
-	 * Marker type for the modules VM context.  It allows action enablement 
+	 * Marker type for the modules VM context.  It allows action enablement
 	 * expressions to check for module context type.
 	 */
 	public class ModuleVMContext extends DMVMContext {
@@ -71,18 +71,18 @@ public class ModulesVMNode extends AbstractDMVMNode implements IElementLabelProv
 
 	/**
 	 * The label provider delegate.  This VM node will delegate label updates to this provider
-	 * which can be created by sub-classes. 
-	 *  
+	 * which can be created by sub-classes.
+	 *
 	 * @since 2.0
 	 */
 	private IElementLabelProvider fLabelProvider;
 
 	/**
-	 * Creates the label provider delegate.  This VM node will delegate label 
-	 * updates to this provider which can be created by sub-classes.   
-	 *  
-	 * @return Returns the label provider for this node. 
-	 *  
+	 * Creates the label provider delegate.  This VM node will delegate label
+	 * updates to this provider which can be created by sub-classes.
+	 *
+	 * @return Returns the label provider for this node.
+	 *
 	 * @since 2.0
 	 */
 	protected IElementLabelProvider createLabelProvider() {
@@ -104,7 +104,7 @@ public class ModulesVMNode extends AbstractDMVMNode implements IElementLabelProv
 									return Boolean.TRUE.equals(properties.get(propertyName));
 								}
 								return super.checkProperty(propertyName, status, properties);
-							};
+							}
 						}, new DsfUILabelImage(IDsfDebugUIConstants.IMG_OBJS_SHARED_LIBRARY_SYMBOLS_UNLOADED),
 						new StaleDataLabelBackground(), new LabelFont(JFaceResources
 								.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0]) }));

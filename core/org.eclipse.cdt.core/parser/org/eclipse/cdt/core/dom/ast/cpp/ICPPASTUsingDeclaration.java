@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
  * This interface represents a using declaration.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -37,7 +37,7 @@ public interface ICPPASTUsingDeclaration
 
 	/**
 	 * Was the typename keyword used?
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -45,21 +45,21 @@ public interface ICPPASTUsingDeclaration
 
 	/**
 	 * Set that the typename keyword was/wasn't used.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isTypename();
 
 	/**
 	 * Get the name.
-	 * 
+	 *
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getName();
 
 	/**
 	 * Set the name.
-	 * 
+	 *
 	 * @param name
 	 *            <code>IASTName</code>
 	 */

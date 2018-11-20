@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *******************************************************************************/
@@ -45,7 +45,7 @@ public class MemoryBlockRetrievalManager implements IMemoryBlockRetrievalManager
 	private final String fModelId;
 	private final DsfSession fSession;
 	private final ILaunchConfiguration fLaunchConfig;
-	private final Map<IMemoryDMContext, IMemoryBlockRetrieval> fMapMemDMCToBlockRetrieval = new HashMap<IMemoryDMContext, IMemoryBlockRetrieval>();
+	private final Map<IMemoryDMContext, IMemoryBlockRetrieval> fMapMemDMCToBlockRetrieval = new HashMap<>();
 
 	/**
 	 * Constructor

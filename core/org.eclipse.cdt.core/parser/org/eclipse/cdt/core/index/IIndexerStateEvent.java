@@ -15,14 +15,14 @@ package org.eclipse.cdt.core.index;
 
 /**
  * IndexChangeEvents describe changes to the state of the indexer.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 4.0
  */
 public interface IIndexerStateEvent {
 	/**
-	 * Tests whether the indexer has more work to do. 
+	 * Tests whether the indexer has more work to do.
 	 * @since 4.0
 	 */
 	boolean indexerIsIdle();

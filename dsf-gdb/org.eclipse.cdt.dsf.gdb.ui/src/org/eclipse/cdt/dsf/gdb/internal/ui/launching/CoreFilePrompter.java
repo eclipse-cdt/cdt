@@ -34,7 +34,7 @@ public class CoreFilePrompter implements IStatusHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
 	 *      java.lang.Object)
 	 */

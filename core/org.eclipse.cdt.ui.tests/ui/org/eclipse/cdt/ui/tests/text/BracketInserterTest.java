@@ -15,10 +15,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.testplugin.Accessor;
+import org.eclipse.cdt.ui.testplugin.DisplayHelper;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -38,18 +45,9 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PartInitException;
 
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.testplugin.Accessor;
-import org.eclipse.cdt.ui.testplugin.DisplayHelper;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Tests the automatic bracket insertion feature of the CEditor. Also tests
@@ -419,7 +417,7 @@ public class BracketInserterTest extends TestCase {
 
 	/**
 	 * Type characters into the styled text.
-	 * 
+	 *
 	 * @param characters the characters to type
 	 */
 	private void type(CharSequence characters) {
@@ -429,7 +427,7 @@ public class BracketInserterTest extends TestCase {
 
 	/**
 	 * Type a character into the styled text.
-	 * 
+	 *
 	 * @param character the character to type
 	 */
 	private void type(char character) {
@@ -438,7 +436,7 @@ public class BracketInserterTest extends TestCase {
 
 	/**
 	 * Ensure there is a linked mode and type a character into the styled text.
-	 * 
+	 *
 	 * @param character the character to type
 	 * @param nested whether the linked mode is expected to be nested or not
 	 * @param expectedExitFlags the expected exit flags for the current linked mode after typing the character, -1 for no exit
@@ -472,7 +470,7 @@ public class BracketInserterTest extends TestCase {
 
 	/**
 	 * Type a character into the styled text.
-	 * 
+	 *
 	 * @param character the character to type
 	 * @param keyCode the key code
 	 * @param stateMask the state mask

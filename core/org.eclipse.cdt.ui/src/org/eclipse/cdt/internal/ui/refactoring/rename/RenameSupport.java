@@ -16,6 +16,11 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringExecutionHelper;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringStarter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -30,13 +35,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringExecutionHelper;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringStarter;
 
 /**
  * Central access point to execute rename refactorings.

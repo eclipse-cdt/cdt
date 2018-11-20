@@ -22,6 +22,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IParameter;
@@ -66,18 +74,8 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
-import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-
 /**
- * 	
+ *
  * @since 3.2
  */
 final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlock {
@@ -174,7 +172,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 
 		public PreferenceModel(CompletionProposalComputerRegistry registry) {
 			List<CompletionProposalCategory> categories = registry.getProposalCategories();
-			fElements = new ArrayList<ModelElement>();
+			fElements = new ArrayList<>();
 			for (CompletionProposalCategory category : categories) {
 				if (category.hasComputers()) {
 					fElements.add(new ModelElement(category, this));
@@ -342,7 +340,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 
 	/** element type: {@link ModelElement}. */
 	private final PreferenceModel fModel;
-	private final Map<ImageDescriptor, Image> fImages = new HashMap<ImageDescriptor, Image>();
+	private final Map<ImageDescriptor, Image> fImages = new HashMap<>();
 
 	private CheckboxTableViewer fDefaultViewer;
 	private CheckboxTableViewer fSeparateViewer;
@@ -656,8 +654,8 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 
 	private void updateCheckedState() {
 		final int size = fModel.elements.size();
-		List<ModelElement> defaultChecked = new ArrayList<ModelElement>(size);
-		List<ModelElement> separateChecked = new ArrayList<ModelElement>(size);
+		List<ModelElement> defaultChecked = new ArrayList<>(size);
+		List<ModelElement> separateChecked = new ArrayList<>(size);
 
 		for (Object element2 : fModel.elements) {
 			ModelElement element = (ModelElement) element2;

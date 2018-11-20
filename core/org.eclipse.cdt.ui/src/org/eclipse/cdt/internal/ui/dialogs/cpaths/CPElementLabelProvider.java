@@ -14,6 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IPathEntryContainer;
+import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -28,15 +35,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.IPathEntryContainer;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 
 class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
@@ -424,7 +422,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	@Override
@@ -439,7 +437,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
 	@Override

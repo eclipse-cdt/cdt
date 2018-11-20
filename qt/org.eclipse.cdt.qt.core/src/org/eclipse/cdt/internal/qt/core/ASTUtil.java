@@ -185,7 +185,7 @@ public class ASTUtil {
 	 * Does not return null.
 	 */
 	public static Collection<IQMethod> findMethods(IQObject qobj, QtMethodReference ref) {
-		Set<IQMethod> bindings = new LinkedHashSet<IQMethod>();
+		Set<IQMethod> bindings = new LinkedHashSet<>();
 
 		Iterable<IQMethod> methods = null;
 		switch (ref.getType()) {

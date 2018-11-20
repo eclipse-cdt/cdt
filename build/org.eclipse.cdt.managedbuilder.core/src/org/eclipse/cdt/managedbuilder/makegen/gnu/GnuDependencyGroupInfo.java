@@ -14,7 +14,7 @@
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
 /**
- * 
+ *
  * This class contains the description of a group of generated dependency files,
  * e.g., .d files created by compilations
  *

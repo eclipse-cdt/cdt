@@ -19,7 +19,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing class reference, with no prefix
  * https://bugs.eclipse.org/bugs/show_bug.cgi?id=50621
  * https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860

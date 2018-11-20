@@ -14,16 +14,15 @@
 
 package org.eclipse.cdt.internal.ui.text.folding;
 
+import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
+import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
-import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
-
 /**
  * Describes a contribution to the folding provider extension point.
- * 
+ *
  */
 public final class CFoldingStructureProviderDescriptor {
 
@@ -50,7 +49,7 @@ public final class CFoldingStructureProviderDescriptor {
 
 	/**
 	 * Creates a new descriptor.
-	 * 
+	 *
 	 * @param element the configuration element to read
 	 */
 	CFoldingStructureProviderDescriptor(IConfigurationElement element) {
@@ -73,7 +72,7 @@ public final class CFoldingStructureProviderDescriptor {
 
 	/**
 	 * Creates a folding provider as described in the extension's xml.
-	 * 
+	 *
 	 * @return a new instance of the folding provider described by this
 	 *         descriptor
 	 * @throws CoreException if creation fails
@@ -85,7 +84,7 @@ public final class CFoldingStructureProviderDescriptor {
 
 	/**
 	 * Creates a preferences object as described in the extension's xml.
-	 * 
+	 *
 	 * @return a new instance of the reference provider described by this
 	 *         descriptor
 	 * @throws CoreException if creation fails
@@ -101,7 +100,7 @@ public final class CFoldingStructureProviderDescriptor {
 
 	/**
 	 * Returns the identifier of the described extension.
-	 * 
+	 *
 	 * @return Returns the id
 	 */
 	public String getId() {
@@ -110,7 +109,7 @@ public final class CFoldingStructureProviderDescriptor {
 
 	/**
 	 * Returns the name of the described extension.
-	 * 
+	 *
 	 * @return Returns the name
 	 */
 	public String getName() {

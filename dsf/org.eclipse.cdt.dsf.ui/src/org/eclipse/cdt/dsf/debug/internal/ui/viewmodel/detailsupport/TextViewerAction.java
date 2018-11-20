@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems, Inc. - extended implementation
@@ -34,7 +34,7 @@ public class TextViewerAction extends Action implements IUpdate {
 	/**
 	 * Constructs a new action in the given text viewer with
 	 * the specified operation code.
-	 * 
+	 *
 	 * @param viewer
 	 * @param operationCode
 	 */
@@ -46,10 +46,10 @@ public class TextViewerAction extends Action implements IUpdate {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 * 
+	 *
 	 * Updates the enabled state of the action.
 	 * Fires a property change if the enabled state changes.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.Action#firePropertyChange(String, Object, Object)
 	 */
 	@Override
@@ -66,7 +66,7 @@ public class TextViewerAction extends Action implements IUpdate {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run() 
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
 	public void run() {
@@ -77,7 +77,7 @@ public class TextViewerAction extends Action implements IUpdate {
 
 	/**
 	 * Configures this action with a label, tool tip, and description.
-	 * 
+	 *
 	 * @param text action label
 	 * @param toolTipText action tool tip
 	 * @param description action description

@@ -18,11 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -32,11 +27,14 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.swt.widgets.Display;
 
-/** 
+/**
  * This is the content provider for the include browser.
  */
 public class IBContentProvider extends AsyncTreeContentProvider {
@@ -109,7 +107,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					directiveFile = node.getRepresentedFile();
 				}
 				if (includes.length > 0) {
-					Set<IBNode> result = new LinkedHashSet<IBNode>(includes.length);
+					Set<IBNode> result = new LinkedHashSet<>(includes.length);
 					for (IIndexInclude include : includes) {
 						try {
 							if (fComputeIncludedBy) {
@@ -158,8 +156,8 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					return index.findIncludedBy(files[0]);
 				}
 				if (files.length > 0) {
-					ArrayList<IIndexInclude> list = new ArrayList<IIndexInclude>();
-					HashSet<IIndexFileLocation> handled = new HashSet<IIndexFileLocation>();
+					ArrayList<IIndexInclude> list = new ArrayList<>();
+					HashSet<IIndexFileLocation> handled = new HashSet<>();
 					for (IIndexFile file : files) {
 						final IIndexInclude[] includes = index.findIncludedBy(file);
 						for (IIndexInclude indexInclude : includes) {
@@ -185,8 +183,8 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					return index.findIncludes(files[0]);
 				}
 				if (files.length > 0) {
-					ArrayList<IIndexInclude> list = new ArrayList<IIndexInclude>();
-					HashSet<IIndexFileLocation> handled = new HashSet<IIndexFileLocation>();
+					ArrayList<IIndexInclude> list = new ArrayList<>();
+					HashSet<IIndexFileLocation> handled = new HashSet<>();
 					for (IIndexFile file : files) {
 						final IIndexInclude[] includes = index.findIncludes(file);
 						for (IIndexInclude indexInclude : includes) {

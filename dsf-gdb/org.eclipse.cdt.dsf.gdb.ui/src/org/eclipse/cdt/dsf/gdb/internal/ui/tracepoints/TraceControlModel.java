@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Dmitry Kozlov (Mentor Graphics) - Trace control view enhancements (Bug 390827)
  *******************************************************************************/
@@ -240,7 +240,7 @@ public class TraceControlModel {
 
 	/**
 	 * Get the list of trace variables from the backend.
-	 * 
+	 *
 	 * @return null when the list cannot be obtained.
 	 */
 	public ITraceVariableDMData[] getTraceVarList() {
@@ -263,7 +263,7 @@ public class TraceControlModel {
 										rm.setData(null);
 									}
 									rm.done();
-								};
+								}
 
 							});
 				} else {
@@ -314,7 +314,7 @@ public class TraceControlModel {
 									rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID,
 											IDsfStatusConstants.INVALID_STATE, "Backend error", e)); //$NON-NLS-1$
 									rm.done();
-								};
+								}
 							});
 				} else {
 					FailedTraceVariableCreationException e = new FailedTraceVariableCreationException(
@@ -374,7 +374,7 @@ public class TraceControlModel {
 													new Hashtable<String, String>());
 										}
 									});
-								};
+								}
 							});
 
 				}

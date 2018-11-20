@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.PixelConverter;
@@ -35,20 +38,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-
 /**
  * Configures C/C++ Editor mark occurrences preferences.
- * 
+ *
  * @since 5.0
  */
 class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock {
 	private final OverlayPreferenceStore fStore;
 
-	private final Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
+	private final Map<Object, String> fCheckBoxes = new HashMap<>();
 	private final SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -63,10 +61,10 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 
 	/**
 	 * List of master/slave listeners when there's a dependency.
-	 * 
+	 *
 	 * @see #createDependency(Button, String, Control)
 	 */
-	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<Object>();
+	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<>();
 
 	private StatusInfo fStatus;
 
@@ -79,7 +77,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_MARK_OCCURRENCES));
@@ -95,7 +93,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 
 	/**
 	 * Creates page for mark occurrences preferences.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */

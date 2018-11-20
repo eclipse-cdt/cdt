@@ -14,6 +14,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.template.c.CContext;
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.internal.ui.preferences.CSourcePreviewerUpdater;
+import org.eclipse.cdt.internal.ui.preferences.EditTemplateDialog;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
@@ -41,22 +54,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.texteditor.templates.AbstractTemplatesPage;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.template.c.CContext;
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
-
-import org.eclipse.cdt.internal.ui.preferences.CSourcePreviewerUpdater;
-import org.eclipse.cdt.internal.ui.preferences.EditTemplateDialog;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-
 /**
  * The templates page for the C editor.
  *
@@ -75,7 +72,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Create a new AbstractTemplatesPage for the CEditor
-	 * 
+	 *
 	 * @param cEditor the C editor
 	 */
 	public CTemplatesPage(CEditor cEditor) {
@@ -263,7 +260,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Undomanager - end compound change
-	 * 
+	 *
 	 * @param viewer the viewer
 	 */
 	private void endCompoundChange(ISourceViewer viewer) {
@@ -273,7 +270,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Undomanager - begin a compound change
-	 * 
+	 *
 	 * @param viewer the viewer
 	 */
 	private void beginCompoundChange(ISourceViewer viewer) {
@@ -284,7 +281,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	/**
 	 * Check whether the template is allowed even though the context can't evaluate it. This is
 	 * needed because the Dropping of a template is more lenient than ctl-space invoked code assist.
-	 * 
+	 *
 	 * @param context the template context
 	 * @param template the template
 	 * @return true if the template is allowed
@@ -301,7 +298,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Checks whether the character is a valid character in C template names
-	 * 
+	 *
 	 * @param ch the character
 	 * @return <code>true</code> if the character is part of a template name
 	 */
@@ -311,7 +308,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Get context
-	 * 
+	 *
 	 * @param document the document
 	 * @param template the template
 	 * @param offset the offset
@@ -330,7 +327,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	 * <p>
 	 * FIXME: should trigger code assist to get the context.
 	 * </p>
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset
 	 * @return an array of valid context id
@@ -342,7 +339,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Get the C identifier terminated at the given offset
-	 * 
+	 *
 	 * @param document the document
 	 * @param template the template
 	 * @param offset the offset

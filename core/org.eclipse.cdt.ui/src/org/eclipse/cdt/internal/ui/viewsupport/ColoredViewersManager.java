@@ -17,13 +17,11 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 
@@ -38,7 +36,7 @@ public class ColoredViewersManager implements IPropertyChangeListener {
 	private Set<ColoringLabelProvider> fManagedLabelProviders;
 
 	public ColoredViewersManager() {
-		fManagedLabelProviders = new HashSet<ColoringLabelProvider>();
+		fManagedLabelProviders = new HashSet<>();
 	}
 
 	public void installColoredLabels(ColoringLabelProvider labelProvider) {

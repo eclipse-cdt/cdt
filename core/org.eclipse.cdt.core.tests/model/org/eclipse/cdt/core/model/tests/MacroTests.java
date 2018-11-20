@@ -15,9 +15,6 @@ package org.eclipse.cdt.core.model.tests;
 
 import java.util.Stack;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -27,6 +24,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.ILineTracker;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author bnicolle
@@ -66,14 +66,14 @@ public class MacroTests extends IntegratedCModelTest {
 	}
 
 	public void testBug40759() throws CModelException, BadLocationException {
-		/* This is a list of elements in the test .c file. It will be used 
+		/* This is a list of elements in the test .c file. It will be used
 		 * in a number of places in the tests
 		 */
 		String[] expectedStringList = { "Z", "X", "Y", "SomeName", "A::BCD", "DEFA", "DB", "B::SomeName", "PINT",
 				"myPINT", "foobar" };
 		int[] expectedOffsets = { 8, 26, 39, 55, 89, 114, 130, 152, 187, 212, 227 };
 		int[] expectedLengths = { 1, 1, 1, 1, 8, 4, 2, 18, 4, 6, 6 };
-		/* This is a list of that the types of the above list of elements is 
+		/* This is a list of that the types of the above list of elements is
 		 * expected to be.
 		 */
 		int[] expectedTypes = { ICElement.C_MACRO, ICElement.C_MACRO, ICElement.C_MACRO, ICElement.C_STRUCT,

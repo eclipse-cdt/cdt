@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2015 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
@@ -19,11 +19,6 @@ package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
@@ -62,12 +57,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
-
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.text.edits.TextEditGroup;
 
 public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefactoringStrategy {
 	private class NamespaceFinderVisitor extends ASTVisitor {
@@ -400,14 +397,14 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	}
 
 	private IASTNode searchNamespaceInImplementation(final List<ICPPASTNamespaceDefinition> namespaces) {
-		final Container<IASTNode> result = new Container<IASTNode>();
+		final Container<IASTNode> result = new Container<>();
 		ASTVisitor visitor = new NamespaceFinderVisitor(namespaces, result);
 		this.implAst.accept(visitor);
 		return result.getObject();
 	}
 
 	private List<ICPPASTNamespaceDefinition> getNamespacesToAdd(final List<ICPPASTNamespaceDefinition> namespaces) {
-		final List<ICPPASTNamespaceDefinition> result = new ArrayList<ICPPASTNamespaceDefinition>();
+		final List<ICPPASTNamespaceDefinition> result = new ArrayList<>();
 		this.implAst.accept(new NamespaceFinderVisitor(namespaces, new Container<IASTNode>()) {
 			{
 				shouldVisitTranslationUnit = true;

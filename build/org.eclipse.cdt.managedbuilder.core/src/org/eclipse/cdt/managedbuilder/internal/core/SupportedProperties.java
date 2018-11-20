@@ -32,11 +32,11 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 	public static final String ID = "id"; //$NON-NLS-1$
 	public static final String REQUIRED = "required"; //$NON-NLS-1$
 
-	private HashMap<String, SupportedProperty> fSupportedProperties = new HashMap<String, SupportedProperty>();
+	private HashMap<String, SupportedProperty> fSupportedProperties = new HashMap<>();
 
 	private class SupportedProperty {
 		private boolean fIsRequired;
-		private Set<String> fValues = new HashSet<String>();
+		private Set<String> fValues = new HashSet<>();
 		private String fId;
 
 		SupportedProperty(String id) {
@@ -54,15 +54,15 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 
 		/*		SupportedProperty(IManagedConfigElement el) {
 					fId = el.getAttribute(ID);
-		
+
 		//			IBuildPropertyType type = mngr.getPropertyType(id);
 		//			if(type == null)
 		//				continue;
-		
+
 					fIsRequired = Boolean.valueOf(el.getAttribute(REQUIRED)).booleanValue();
-		
+
 					fValues = new HashSet();
-		
+
 					IManagedConfigElement values[] = el.getChildren();
 					for(int k = 0; k < values.length; k++){
 						IManagedConfigElement value = values[k];
@@ -70,7 +70,7 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 							String valueId = value.getAttribute(ID);
 							if(valueId == null && valueId.length() == 0)
 								continue;
-		
+
 		//					IBuildPropertyValue val = type.getSupportedValue(valueId);
 		//					if(val != null)
 		//						set.add(val.getId());
@@ -118,7 +118,7 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 				//				if(type == null)
 				//					continue;
 
-				Set<String> set = new HashSet<String>();
+				Set<String> set = new HashSet<>();
 
 				IManagedConfigElement values[] = child.getChildren();
 				for (int k = 0; k < values.length; k++) {
@@ -176,7 +176,7 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 
 	@Override
 	public String[] getRequiredTypeIds() {
-		List<String> list = new ArrayList<String>(fSupportedProperties.size());
+		List<String> list = new ArrayList<>(fSupportedProperties.size());
 		Collection<SupportedProperty> values = fSupportedProperties.values();
 		for (SupportedProperty prop : values) {
 			if (prop.isRequired())

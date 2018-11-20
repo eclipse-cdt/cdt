@@ -50,7 +50,7 @@ public class MITuple extends MIValue {
 	 */
 	public MIValue getField(String name) {
 		if (name2value == null) {
-			name2value = new HashMap<String, MIValue>();
+			name2value = new HashMap<>();
 			for (MIResult r : results) {
 				name2value.put(r.getVariable(), r.getMIValue());
 			}

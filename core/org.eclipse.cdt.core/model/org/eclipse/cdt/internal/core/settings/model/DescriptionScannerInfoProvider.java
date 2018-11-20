@@ -190,7 +190,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 	}
 
 	private LinkedHashSet<ICLanguageSettingEntry> getEntriesSet(int kind, ICLanguageSetting[] settings) {
-		LinkedHashSet<ICLanguageSettingEntry> set = new LinkedHashSet<ICLanguageSettingEntry>();
+		LinkedHashSet<ICLanguageSettingEntry> set = new LinkedHashSet<>();
 		ICLanguageSettingEntry[] langEntries;
 		for (ICLanguageSetting setting : settings) {
 			langEntries = setting.getResolvedSettingEntries(kind);
@@ -221,7 +221,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 	}
 
 	private Map<String, String> getValues(ICMacroEntry macroEntries[]) {
-		Map<String, String> macrosMap = new HashMap<String, String>(macroEntries.length);
+		Map<String, String> macrosMap = new HashMap<>(macroEntries.length);
 		String name;
 		String value;
 

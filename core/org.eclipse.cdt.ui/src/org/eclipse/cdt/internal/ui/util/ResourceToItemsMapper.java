@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -25,9 +27,6 @@ import org.eclipse.jface.viewers.IViewerLabelProvider;
 import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Item;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * Helper class for updating error markers and other decorators that work on resources.
@@ -46,8 +45,8 @@ public class ResourceToItemsMapper {
 	private ContentViewer fContentViewer;
 
 	public ResourceToItemsMapper(ContentViewer viewer) {
-		fResourceToItem = new HashMap<IResource, Object>();
-		fReuseLists = new Stack<List<Item>>();
+		fResourceToItem = new HashMap<>();
+		fReuseLists = new Stack<>();
 
 		fContentViewer = viewer;
 	}
@@ -122,7 +121,7 @@ public class ResourceToItemsMapper {
 					list.add(item);
 					fResourceToItem.put(resource, list);
 				}
-			} else { // List			
+			} else { // List
 				@SuppressWarnings("unchecked")
 				List<Item> list = (List<Item>) existingMapping;
 				if (!list.contains(item)) {
@@ -159,7 +158,7 @@ public class ResourceToItemsMapper {
 		if (!fReuseLists.isEmpty()) {
 			return fReuseLists.pop();
 		}
-		return new ArrayList<Item>(2);
+		return new ArrayList<>(2);
 	}
 
 	private void releaseList(List<Item> list) {

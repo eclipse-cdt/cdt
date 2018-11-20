@@ -15,7 +15,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * GDB/MI var-info-path-expression.
- * 
+ *
  * (gdb) -var-info-path-expression C.Base.public.m_size
  * ^done,path_expr=((Base)c).m_size)
  */

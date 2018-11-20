@@ -69,7 +69,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	private int fKind;
 	/**
 	 * The value of a CPPASTLiteralExpression consists of a literal and a suffix.
-	 * 
+	 *
 	 * E.g. 1f        -> literal: 1         suffix: f
 	 *      1ull      -> literal: 1         suffix: ull
 	 *      10.0_udl  -> literal: 10.0      suffix: _udl
@@ -142,7 +142,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 	/**
 	 * Sets the kind, suffix and literal fields of this expression.
-	 * 
+	 *
 	 * @param kind the kind of this literal expression
 	 * @param value the value of this literal expression,
 	 *        this gets split into a literal and a suffix
@@ -156,7 +156,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 	/**
 	 * Adds a suffix to this literal expression.
-	 * 
+	 *
 	 * @param suffix the suffix to be added.
 	 */
 	public void setSuffix(char[] suffix) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,7 +46,7 @@ public abstract class RelaunchSelectedAction extends Action {
 
 	/**
 	 * Returns the launch mode that should be use to run selected test item.
-	 * 
+	 *
 	 * @return launch mode
 	 */
 	protected abstract String getLaunchMode();
@@ -70,7 +70,7 @@ public abstract class RelaunchSelectedAction extends Action {
 
 	/**
 	 * Returns the currently selected items of test hierarchy.
-	 * 
+	 *
 	 * @return array of test items
 	 */
 	private ITestItem[] getSelectedTestItems() {
@@ -86,7 +86,7 @@ public abstract class RelaunchSelectedAction extends Action {
 
 	/**
 	 * Sets actual testing session.
-	 * 
+	 *
 	 * @param testingSession testing session
 	 */
 	public void setTestingSession(ITestingSession testingSession) {

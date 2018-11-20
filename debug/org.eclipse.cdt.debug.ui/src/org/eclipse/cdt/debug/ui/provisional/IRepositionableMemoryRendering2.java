@@ -25,7 +25,7 @@ public interface IRepositionableMemoryRendering2 extends IRepositionableMemoryRe
 
 	/**
 	 * Position the rendering to the given address.
-	 * 
+	 *
 	 * @param address
 	 *            the address to go to
 	 * @param expression

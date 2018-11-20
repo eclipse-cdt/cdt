@@ -131,7 +131,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 				ErrorParserManager epm = new ErrorParserManager(project, markerGenerator,
 						new String[] { GMAKE_ERROR_PARSER_ID });
 
-				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+				List<IConsoleParser> parsers = new ArrayList<>();
 				IConsoleParser parser = ScannerInfoConsoleParserFactory.getESIConsoleParser(project, context,
 						providerId, buildInfo, collector, markerGenerator);
 				if (parser != null) {
@@ -229,7 +229,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 	protected String[] setEnvironment(ICommandLauncher launcher, Properties initialEnv) {
 		Properties props = getEnvMap(launcher, initialEnv);
 		String[] env = null;
-		ArrayList<String> envList = new ArrayList<String>();
+		ArrayList<String> envList = new ArrayList<>();
 		Enumeration<?> names = props.propertyNames();
 		if (names != null) {
 			while (names.hasMoreElements()) {

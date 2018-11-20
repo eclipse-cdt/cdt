@@ -62,7 +62,7 @@ public class Extension extends ExtensionElement {
 	/** Wraps list of raw extension declarations. */
 	public static List<Extension> wrapExtensions(IConfigurationElement[] elements) {
 		int count = (elements == null) ? 0 : elements.length;
-		List<Extension> result = new ArrayList<Extension>(count);
+		List<Extension> result = new ArrayList<>(count);
 		for (int i = 0; i < count; ++i) {
 			result.add(new Extension(elements[i]));
 		}

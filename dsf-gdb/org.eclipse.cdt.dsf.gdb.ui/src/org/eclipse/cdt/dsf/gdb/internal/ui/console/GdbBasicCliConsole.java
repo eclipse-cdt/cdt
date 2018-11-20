@@ -44,7 +44,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class GdbBasicCliConsole extends IOConsole implements IGDBDebuggerConsole {
 
 	/**
-	 * A conversion factor used to resolve number of characters from number of lines 
+	 * A conversion factor used to resolve number of characters from number of lines
 	 */
 	private final static int CHARS_PER_LINE_AVG = 80;
 	private final static int HIGH_WATERMARK_OFFSET_CHARS = 8000;
@@ -220,7 +220,7 @@ public class GdbBasicCliConsole extends IOConsole implements IGDBDebuggerConsole
 
 	private void setBufferLineLimit(int bufferLines) {
 		int chars = bufferLines * CHARS_PER_LINE_AVG;
-		// The buffer will be allowed to grow up-to the high watermark. 
+		// The buffer will be allowed to grow up-to the high watermark.
 		// When high watermark is passed, it will be trimmed-down to the low watermark.
 		// So here add an extra buffer for high watermark.
 		setWaterMarks(chars, chars + HIGH_WATERMARK_OFFSET_CHARS);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -64,7 +64,7 @@ public class TestingProcessFactory implements IProcessFactory {
 	/**
 	 * Creates a wrapper for the specified process to handle its input or error
 	 * stream.
-	 * 
+	 *
 	 * @param launch launch
 	 * @param process process to wrap
 	 * @return wrapped process

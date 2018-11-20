@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
- * <p>This operation creates an instance method. 
+ * <p>This operation creates an instance method.
  *
  * <p>Required Attributes:<ul>
  *  <li>Containing type

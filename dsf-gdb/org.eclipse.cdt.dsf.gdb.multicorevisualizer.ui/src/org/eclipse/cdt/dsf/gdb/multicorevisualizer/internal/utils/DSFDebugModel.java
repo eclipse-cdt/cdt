@@ -50,7 +50,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 
 /** Debugger state information accessors.</br>
- * 
+ *
  *  NOTE: The methods on this class perform asynchronous operations
  *  and the result is reported back via the received request monitor
  */
@@ -301,7 +301,7 @@ public class DSFDebugModel implements IDSFTargetDataProxy {
 		}
 	}
 
-	/** For a suspended thread, let's see why it is suspended, 
+	/** For a suspended thread, let's see why it is suspended,
 	 * to find out if the thread is crashed */
 	@ConfinedToDsfExecutor("sessionState.getDsfSession().getExecutor()")
 	private static void getThreadSuspendReason(DSFSessionState sessionState, IMIExecutionDMContext execContext,

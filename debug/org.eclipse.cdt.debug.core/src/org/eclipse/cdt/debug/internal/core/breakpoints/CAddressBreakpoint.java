@@ -43,13 +43,14 @@ public class CAddressBreakpoint extends AbstractLineBreakpoint implements ICAddr
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
+	@Override
 	public String getMarkerType() {
 		return C_ADDRESS_BREAKPOINT_MARKER;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	@Override

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Doug Schaefer - initial API and implementation
  *     Marc-Andre Laperle - Moved to an operation for a custom wizard page
@@ -31,11 +31,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 /**
  * An operation that runs when the new project wizard finishes for the Cross GCC toolchain.
  * It reuses the information from {@link SetCrossCommandWizardPage} to set build options (prefix and path).
- * It also clears and reruns scanner discovery to account for the modified command. 
+ * It also clears and reruns scanner discovery to account for the modified command.
  *
  */
 public class SetCrossCommandOperation implements IRunnableWithProgress {
 
+	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 		String projectName = (String) MBSCustomPageManager.getPageProperty(SetCrossCommandWizardPage.PAGE_ID,

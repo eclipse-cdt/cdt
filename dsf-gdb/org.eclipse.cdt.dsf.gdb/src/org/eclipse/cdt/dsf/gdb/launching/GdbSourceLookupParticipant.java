@@ -34,7 +34,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
  * Source Lookup Participant that notifies the {@link IGDBSourceLookup} service
  * of changes to the lookup path to allow the source lookup service to update
  * GDB's substituted paths.
- * 
+ *
  * @since 5.0
  */
 @ThreadSafe
@@ -106,7 +106,7 @@ public class GdbSourceLookupParticipant extends DsfSourceLookupParticipant {
 				 * cache, but this method is only called when the source
 				 * containers change which does not happen normally during a
 				 * debug session.
-				 * 
+				 *
 				 * XXX: Adding an event once we finished the update would allow
 				 * other interested parties (such as the Debug View) from being
 				 * notified that the frame data has changed. See Bug 489607.

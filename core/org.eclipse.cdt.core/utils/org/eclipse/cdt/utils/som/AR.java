@@ -37,14 +37,14 @@ public class AR {
 
 	/**
 	 * Archive and archive member header. Does not include 8-byte magic character.
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public class ARHeader {
 		public static final int HEADER_SIZE = 60;
 
 		// fields
-		private byte[] ar_name = new byte[16]; // file member name - '/' terminated 
+		private byte[] ar_name = new byte[16]; // file member name - '/' terminated
 		private byte[] ar_date = new byte[12]; // file member date - decimal
 		private byte[] ar_uid = new byte[6]; // file member user id - decimal
 		private byte[] ar_gid = new byte[6]; // file member group id - decimal
@@ -106,7 +106,7 @@ public class AR {
 
 	/**
 	 * Library Symbol Table header
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public class LSTHeader {
@@ -172,7 +172,7 @@ public class AR {
 	}
 
 	/**
-	 *  Creates a new <code>AR</code> object from the contents of 
+	 *  Creates a new <code>AR</code> object from the contents of
 	 *  the given file.
 	 *
 	 *  @param filename The file to process.
@@ -225,8 +225,8 @@ public class AR {
 
 	/**
 	 *  Get an array of all the object file headers for this archive.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 *    Unable to process the archive file.
 	 * @return An array of headers, one for each object within the archive.
 	 * @see ARHeader
@@ -241,7 +241,7 @@ public class AR {
 		if (memberHeaders != null)
 			return;
 
-		Vector<ARHeader> v = new Vector<ARHeader>();
+		Vector<ARHeader> v = new Vector<>();
 		try {
 			//
 			// Check for EOF condition
@@ -273,7 +273,7 @@ public class AR {
 	}
 
 	private String[] extractFiles(String outdir, String[] names) throws IOException {
-		Vector<String> names_used = new Vector<String>();
+		Vector<String> names_used = new Vector<>();
 		String object_name;
 		int count;
 

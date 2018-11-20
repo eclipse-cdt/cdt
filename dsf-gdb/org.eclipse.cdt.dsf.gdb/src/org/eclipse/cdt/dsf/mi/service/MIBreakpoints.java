@@ -118,7 +118,7 @@ public class MIBreakpoints extends AbstractDsfService
 	 * Property that indicates the kind of catchpoint (.e.g, fork call, C++
 	 * exception throw). Value is the gdb keyword associated with that type, as
 	 * listed in 'help catch'.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String CATCHPOINT_TYPE = PREFIX + ".catchpoint_type"; //$NON-NLS-1$
@@ -127,7 +127,7 @@ public class MIBreakpoints extends AbstractDsfService
 	 * Property that holds arguments for the catchpoint. Value is an array of
 	 * Strings. Never null, but may be empty collection, as most catchpoints are
 	 * argument-less.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String CATCHPOINT_ARGS = PREFIX + ".catchpoint_args"; //$NON-NLS-1$
@@ -149,7 +149,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Returns a map of existing breakpoints for the specified context
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected Map<String, MIBreakpointDMData> getBreakpointMap(IBreakpointsTargetDMContext ctx) {
@@ -158,9 +158,9 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Create an empty breakpoint map and store it with the specific context.
-	 * 
+	 *
 	 * @return The newly created empty map.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected Map<String, MIBreakpointDMData> createNewBreakpointMap(IBreakpointsTargetDMContext ctx) {
@@ -171,7 +171,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Create a new effective breakpoint data object
-	 * 
+	 *
 	 * @param breakpoint
 	 *            backend breakpoint to create DSF object from
 	 * @return breakpoint data object
@@ -186,7 +186,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Create a new MI breakpoint
-	 * 
+	 *
 	 * @param tuple
 	 *            from backend communication
 	 * @return breakpoint
@@ -275,7 +275,7 @@ public class MIBreakpoints extends AbstractDsfService
 		 * @param service       the Breakpoint service
 		 * @param parents       the parent contexts
 		 * @param reference     the DsfMIBreakpoint reference
-		 * 
+		 *
 		 * @since 5.0
 		 */
 		public MIBreakpointDMContext(MIBreakpoints service, IDMContext[] parents, String reference) {
@@ -286,7 +286,7 @@ public class MIBreakpoints extends AbstractDsfService
 		 * @param sessionId       session ID
 		 * @param parents       the parent contexts
 		 * @param reference     the DsfMIBreakpoint reference
-		 * 
+		 *
 		 * @since 5.0
 		 */
 		public MIBreakpointDMContext(String sessionId, IDMContext[] parents, String reference) {
@@ -337,7 +337,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * The service constructor
-	 * 
+	 *
 	 * @param session           The debugging session
 	 */
 	public MIBreakpoints(DsfSession session) {
@@ -595,7 +595,7 @@ public class MIBreakpoints extends AbstractDsfService
 	public void getExecutionContextBreakpoints(IExecutionDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm) {
 		IBreakpointDMContext[] bps = fBreakpointHitMap.get(ctx);
 		if (bps == null && ctx instanceof IContainerDMContext) {
-			List<IBreakpointDMContext> bpsList = new ArrayList<IBreakpointDMContext>(1);
+			List<IBreakpointDMContext> bpsList = new ArrayList<>(1);
 			for (Map.Entry<IExecutionDMContext, IBreakpointDMContext[]> entry : fBreakpointHitMap.entrySet()) {
 
 				if (DMContexts.isAncestorOf(entry.getKey(), ctx)) {
@@ -623,7 +623,7 @@ public class MIBreakpoints extends AbstractDsfService
 	/**
 	 * Creates a gdb location string for a breakpoint/watchpoint/tracepoint
 	 * given its set of properties.
-	 * 
+	 *
 	 * @param attributes
 	 * @return
 	 * @since 3.0
@@ -674,11 +674,11 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Add a breakpoint of type BREAKPOINT
-	 * 
+	 *
 	 * @param context
 	 * @param breakpoint
 	 * @param finalRm
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void addBreakpoint(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes,
@@ -748,7 +748,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 										// By default the breakpoint is enabled at creation
 										// If it wasn't supposed to be, then disable it right away
-										Map<String, Object> delta = new HashMap<String, Object>();
+										Map<String, Object> delta = new HashMap<>();
 										delta.put(IS_ENABLED, getProperty(attributes, IS_ENABLED, true));
 										modifyBreakpoint(dmc, delta, rm, false);
 									}
@@ -768,16 +768,16 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Add a tracepoint.  Currently not supported in this version, but only in our GDB 7.0 version.
-	 * 
+	 *
 	 * @param context
 	 * @param attributes
 	 * @param drm
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void addTracepoint(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes,
 			final DataRequestMonitor<IBreakpointDMContext> drm) {
-		// Not supported 
+		// Not supported
 		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
 		drm.done();
 
@@ -785,7 +785,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Add a breakpoint of type WATCHPOINT
-	 * 
+	 *
 	 * @param context
 	 * @param watchpoint
 	 * @param drm
@@ -844,7 +844,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 				// Condition, ignore count and state can not be specified at watchpoint creation time.
 				// Therefore, we have to update the watchpoint if any of these is present
-				Map<String, Object> delta = new HashMap<String, Object>();
+				Map<String, Object> delta = new HashMap<>();
 				delta.put(CONDITION, getProperty(attributes, CONDITION, NULL_STRING));
 				delta.put(IGNORE_COUNT, getProperty(attributes, IGNORE_COUNT, 0));
 				delta.put(IS_ENABLED, getProperty(attributes, IS_ENABLED, true));
@@ -867,7 +867,7 @@ public class MIBreakpoints extends AbstractDsfService
 	/**
 	 * Adjust the expression to a format suitable for the debugger back end e.g. adding memory space, range,
 	 * etc..
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	protected String adjustWatchPointExpression(final Map<String, Object> attributes, String origExpression) {
@@ -941,7 +941,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 								// Condition, ignore count and state cannot be specified at creation time.
 								// Therefore, we have to update the catchpoint if any of these is present
-								Map<String, Object> delta = new HashMap<String, Object>();
+								Map<String, Object> delta = new HashMap<>();
 								delta.put(CONDITION, getProperty(attributes, CONDITION, NULL_STRING));
 								delta.put(IGNORE_COUNT, getProperty(attributes, IGNORE_COUNT, 0));
 								delta.put(IS_ENABLED, getProperty(attributes, IS_ENABLED, true));
@@ -963,7 +963,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Add a DynamicPrintf.  Currently not supported in this version, but only in the GDB 7.7 version.
-	 * 
+	 *
 	 * @since 4.4
 	 */
 	protected void addDynamicPrintf(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes,
@@ -1109,7 +1109,7 @@ public class MIBreakpoints extends AbstractDsfService
 	protected void modifyBreakpoint(final IBreakpointDMContext dmc, Map<String, Object> attributes,
 			final RequestMonitor rm, final boolean generateUpdateEvent) {
 		// Use a working copy of the attributes since we are going to tamper happily with them
-		Map<String, Object> properties = new HashMap<String, Object>(attributes);
+		Map<String, Object> properties = new HashMap<>(attributes);
 
 		// Retrieve the breakpoint parameters
 		// At this point, we know their are OK so there is no need to re-validate
@@ -1186,12 +1186,12 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Update the breakpoint condition
-	 * 
+	 *
 	 * @param context
 	 * @param dmc
 	 * @param condition
 	 * @param finalRm
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	protected void changeCondition(final IBreakpointsTargetDMContext context, final String reference,
@@ -1261,12 +1261,12 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Update the breakpoint ignoreCount
-	 * 
+	 *
 	 * @param context
 	 * @param reference
 	 * @param ignoreCount
 	 * @param finalRm
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	protected void changeIgnoreCount(final IBreakpointsTargetDMContext context, final String reference,
@@ -1307,11 +1307,11 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Enable the breakpoint
-	 * 
+	 *
 	 * @param context
 	 * @param reference
 	 * @param finalRm
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	protected void enableBreakpoint(final IBreakpointsTargetDMContext context, final String reference,
@@ -1352,11 +1352,11 @@ public class MIBreakpoints extends AbstractDsfService
 
 	/**
 	 * Disable the breakpoint
-	 * 
+	 *
 	 * @param context
 	 * @param dmc
 	 * @param finalRm
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	protected void disableBreakpoint(final IBreakpointsTargetDMContext context, final String reference,

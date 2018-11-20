@@ -68,7 +68,7 @@ public class LanguageSettingsExtensionManager {
 	 * Extension providers loaded once and used for equality only.
 	 * Those who request extension provider will get copy rather than real instance.
 	 */
-	private static final LinkedHashMap<String, ILanguageSettingsProvider> fExtensionProviders = new LinkedHashMap<String, ILanguageSettingsProvider>();
+	private static final LinkedHashMap<String, ILanguageSettingsProvider> fExtensionProviders = new LinkedHashMap<>();
 
 	/**
 	 * Providers loaded initially via static initializer.
@@ -85,7 +85,7 @@ public class LanguageSettingsExtensionManager {
 	 * Load language settings providers contributed via the extension point.
 	 */
 	synchronized private static void loadProviderExtensions() {
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		List<ILanguageSettingsProvider> providers = new ArrayList<>();
 		loadProviderExtensions(Platform.getExtensionRegistry(), providers);
 
 		// sort by name - the providers defined via extensions are kept in separate list sorted by name
@@ -168,7 +168,7 @@ public class LanguageSettingsExtensionManager {
 	private static void configureExecutableProvider(ILanguageSettingsProvider provider, IConfigurationElement ce) {
 		String ceId = determineAttributeValue(ce, ATTR_ID);
 		String ceName = determineAttributeValue(ce, ATTR_NAME);
-		Map<String, String> ceAttributes = new HashMap<String, String>();
+		Map<String, String> ceAttributes = new HashMap<>();
 		List<String> languages = null;
 		List<ICLanguageSettingEntry> entries = null;
 
@@ -182,7 +182,7 @@ public class LanguageSettingsExtensionManager {
 			String langId = determineAttributeValue(ceLang, ATTR_ID);
 			if (langId.length() > 0) {
 				if (languages == null) {
-					languages = new ArrayList<String>();
+					languages = new ArrayList<>();
 				}
 				languages.add(langId);
 			}
@@ -206,7 +206,7 @@ public class LanguageSettingsExtensionManager {
 						entryValue, null, flags);
 
 				if (entries == null) {
-					entries = new ArrayList<ICLanguageSettingEntry>();
+					entries = new ArrayList<>();
 				}
 				entries.add(entry);
 

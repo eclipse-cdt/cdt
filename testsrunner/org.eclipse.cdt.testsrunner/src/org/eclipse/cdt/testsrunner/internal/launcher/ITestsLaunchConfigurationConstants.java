@@ -16,7 +16,7 @@ package org.eclipse.cdt.testsrunner.internal.launcher;
 /**
  * Constants used for attributes in CDT Unit Testing Support launch
  * configurations.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */

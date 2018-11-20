@@ -17,7 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class PerTypeSetStorage<T> implements Cloneable {
-	private ObjectTypeBasedStorage<Set<T>> fStorage = new ObjectTypeBasedStorage<Set<T>>();
+	private ObjectTypeBasedStorage<Set<T>> fStorage = new ObjectTypeBasedStorage<>();
 
 	public Set<T> getSet(int type, boolean create) {
 		Set<T> set = fStorage.get(type);
@@ -30,7 +30,7 @@ public class PerTypeSetStorage<T> implements Cloneable {
 
 	protected Set<T> createSet(Set<T> set) {
 		if (set == null)
-			return new LinkedHashSet<T>();
+			return new LinkedHashSet<>();
 		@SuppressWarnings("unchecked")
 		Set<T> clone = (Set<T>) ((LinkedHashSet<T>) set).clone();
 		return clone;

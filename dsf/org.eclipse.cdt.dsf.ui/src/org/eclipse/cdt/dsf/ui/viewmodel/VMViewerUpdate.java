@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -15,6 +15,7 @@ package org.eclipse.cdt.dsf.ui.viewmodel;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.cdt.dsf.concurrent.DsfExecutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -29,13 +30,13 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
 
-/** 
- * Helper class implementation of the update objects used with 
- * {@link IElementContentProvider}, {@link IElementLabelProvider}, 
- * and {@link IElementMementoProvider}.  The viewer update can be constructed 
- * using a higher level update object or a set of parameters to fulfill the 
- * <code>IViewerUpdate</code> interface. 
- * 
+/**
+ * Helper class implementation of the update objects used with
+ * {@link IElementContentProvider}, {@link IElementLabelProvider},
+ * and {@link IElementMementoProvider}.  The viewer update can be constructed
+ * using a higher level update object or a set of parameters to fulfill the
+ * <code>IViewerUpdate</code> interface.
+ *
  * @since 1.0
  */
 public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
@@ -136,12 +137,12 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
 	 * information as well as cancel requests are delegated to the given client
 	 * update.
 	 * <p/>
-	 * Note: this update will not automatically call the client update's 
+	 * Note: this update will not automatically call the client update's
 	 * {@link IRequest#done()} method.  The user of this update should supply
-	 * a request monitor which properly completes the client update. 
-	 * 
+	 * a request monitor which properly completes the client update.
+	 *
 	 * @param clientUpdate Client update that this update is based on.
-	 * @param requestMonitor Call-back invoked when this update completes.  
+	 * @param requestMonitor Call-back invoked when this update completes.
 	 */
 	public VMViewerUpdate(IViewerUpdate clientUpdate, RequestMonitor requestMonitor) {
 		fRequestMonitor = requestMonitor;
@@ -151,13 +152,13 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
 	/**
 	 * Request monitor which uses a model delta to calculate the element information.
 	 * This update is useful when calculating a model delta for a given view model node.
-	 * 
+	 *
 	 * @param delta Model delta of a parent element.
 	 * @param presentationContext Presentation context for this update.
-	 * @param requestMonitor Call-back invoked when this update completes.  
+	 * @param requestMonitor Call-back invoked when this update completes.
 	 */
 	public VMViewerUpdate(IModelDelta delta, IPresentationContext presentationContext, RequestMonitor requestMonitor) {
-		List<Object> elementList = new LinkedList<Object>();
+		List<Object> elementList = new LinkedList<>();
 		IModelDelta listDelta = delta;
 		elementList.add(0, listDelta.getElement());
 		while (listDelta.getParentDelta() != null) {
@@ -172,11 +173,11 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
 
 	/**
 	 * Creates a viewer update with the given parameters.
-	 * 
+	 *
 	 * @param elementPath The path to the element for which the update is generated.
 	 * @param viewerInput Input into the viewer of the update.
 	 * @param presentationContext Presentation context for this update.
-	 * @param requestMonitor Call-back invoked when this update completes.  
+	 * @param requestMonitor Call-back invoked when this update completes.
 	 */
 	public VMViewerUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext,
 			RequestMonitor requestMonitor) {

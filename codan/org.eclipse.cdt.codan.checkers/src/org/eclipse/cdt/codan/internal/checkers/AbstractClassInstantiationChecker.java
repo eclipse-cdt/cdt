@@ -51,12 +51,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  * Reports a problem if object of a class cannot be created because
  * class is abstract (it self or its bases have one or more pure virtual
  * functions).
- * 
+ *
  * @author Anton Gorenkov
  */
 public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AbstractClassCreation"; //$NON-NLS-1$
-	private final HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<ICPPClassType, ICPPMethod[]>();
+	private final HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<>();
 
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
@@ -155,9 +155,9 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			return PROCESS_CONTINUE;
 		}
 
-		/** 
-		 *  Resolves constructor by AST Name, then get its owner class 
-		 *  and check whether it is abstract. If it is - report problems 
+		/**
+		 *  Resolves constructor by AST Name, then get its owner class
+		 *  and check whether it is abstract. If it is - report problems
 		 */
 		private void checkClassConstructor(IASTName constructorName) {
 			IBinding binding = constructorName.resolveBinding();
@@ -170,7 +170,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 		}
 
 		/**
-		 *  Tries to resolve qualified name. If it is not available returns simple name. 
+		 *  Tries to resolve qualified name. If it is not available returns simple name.
 		 */
 		private String resolveName(ICPPBinding binding) {
 			try {
@@ -185,7 +185,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 
 		/**
 		 *  Checks whether specified type (class or typedef to the class) is an abstract class.
-		 *  If it is, reports violations on each pure virtual method 
+		 *  If it is, reports violations on each pure virtual method
 		 */
 		private void reportProblemsIfAbstract(IType typeToCheck, IASTNode problemNode) {
 			IType unwindedType = CxxAstUtils.unwindTypedef(typeToCheck);

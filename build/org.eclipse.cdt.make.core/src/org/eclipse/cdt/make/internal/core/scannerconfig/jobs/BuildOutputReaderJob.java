@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Build output reader job
- * 
+ *
  * @author vhirsl
  */
 public class BuildOutputReaderJob extends Job {
@@ -55,7 +55,7 @@ public class BuildOutputReaderJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		IProject project = resource.getProject();
 		monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
-		monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") + //$NON-NLS-1$ 
+		monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") + //$NON-NLS-1$
 				project.getName());
 
 		boolean rc = SCJobsUtil.readBuildOutputFile(project, context, buildInfo, new SubProgressMonitor(monitor, 70));

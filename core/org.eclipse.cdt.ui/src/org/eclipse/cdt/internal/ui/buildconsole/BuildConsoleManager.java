@@ -21,6 +21,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.LocalProjectScope;
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleEvent;
+import org.eclipse.cdt.ui.IBuildConsoleListener;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -51,16 +58,6 @@ import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.osgi.service.prefs.Preferences;
 
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsoleEvent;
-import org.eclipse.cdt.ui.IBuildConsoleListener;
-import org.eclipse.cdt.ui.IBuildConsoleManager;
-
-import org.eclipse.cdt.internal.core.LocalProjectScope;
-
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
-
 public class BuildConsoleManager implements IBuildConsoleManager, IResourceChangeListener, IPropertyChangeListener {
 	/*package*/ static final String PREF_QUALIFIER = CUIPlugin.PLUGIN_ID;
 	public static final String KEY_KEEP_LOG = "keepLog"; //$NON-NLS-1$
@@ -73,7 +70,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	private ListenerList<IBuildConsoleListener> listeners = new ListenerList<>();
 	/** UI console object in which per-project consoles are shown */
 	private BuildConsole fConsole;
-	private Map<IProject, BuildConsolePartitioner> fConsoleMap = new HashMap<IProject, BuildConsolePartitioner>();
+	private Map<IProject, BuildConsolePartitioner> fConsoleMap = new HashMap<>();
 	private Color infoColor;
 	private Color outputColor;
 	private Color errorColor;

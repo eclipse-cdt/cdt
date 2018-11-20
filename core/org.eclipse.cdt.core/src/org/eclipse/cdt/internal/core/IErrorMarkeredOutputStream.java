@@ -18,10 +18,10 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 
-/** 
- * Output stream for use in build console capable of processing markers info 
+/**
+ * Output stream for use in build console capable of processing markers info
  * attached to the output.
- * @since 5.2 
+ * @since 5.2
  */
 public interface IErrorMarkeredOutputStream {
 

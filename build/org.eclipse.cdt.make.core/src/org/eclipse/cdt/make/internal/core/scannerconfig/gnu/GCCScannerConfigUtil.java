@@ -26,11 +26,11 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * GCC related utility class
- * 
+ *
  * @author vhirsl
  */
 public class GCCScannerConfigUtil {
-	public static final String CPP_SPECS_FILE = "specs.cpp"; //$NON-NLS-1$ 
+	public static final String CPP_SPECS_FILE = "specs.cpp"; //$NON-NLS-1$
 	public static final String C_SPECS_FILE = "specs.c"; //$NON-NLS-1$
 
 	public static void createSpecs() {

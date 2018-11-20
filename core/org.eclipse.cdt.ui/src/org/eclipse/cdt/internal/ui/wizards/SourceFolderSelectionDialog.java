@@ -14,22 +14,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards;
 
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
+import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
+import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CElementSorter;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.ui.CElementSorter;
-
-import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
-import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
 
 public class SourceFolderSelectionDialog extends ElementTreeSelectionDialog {
 

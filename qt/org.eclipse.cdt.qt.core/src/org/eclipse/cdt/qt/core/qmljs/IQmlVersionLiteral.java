@@ -17,7 +17,7 @@ public interface IQmlVersionLiteral extends IQmlASTNode {
 	@Override
 	default public String getType() {
 		return "QMLVersionLiteral"; //$NON-NLS-1$
-	};
+	}
 
 	public double getValue();
 

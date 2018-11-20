@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.model.tests;
 
 import java.io.FileInputStream;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -30,13 +28,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import junit.framework.TestCase;
+
 /**
  * @author jcamelon
  *
  */
 public class TranslationUnitBaseTest extends TestCase {
 	/**
-	 * 
+	 *
 	 */
 	public TranslationUnitBaseTest() {
 		super();
@@ -70,15 +70,15 @@ public class TranslationUnitBaseTest extends TestCase {
 	     * Sets up the test fixture.
 	     *
 	     * Called before every test case method.
-	     * 
-	     * Example code test the packages in the project 
+	     *
+	     * Example code test the packages in the project
 	     *  "com.qnx.tools.ide.cdt.core"
 	     */
 	@Override
 	protected void setUp() throws Exception {
 		/***
 		 * The rest of the tests assume that they have a working workspace
-		 * and workspace root object to use to create projects/files in, 
+		 * and workspace root object to use to create projects/files in,
 		 * so we need to get them setup first.
 		 */
 		IWorkspaceDescription desc;

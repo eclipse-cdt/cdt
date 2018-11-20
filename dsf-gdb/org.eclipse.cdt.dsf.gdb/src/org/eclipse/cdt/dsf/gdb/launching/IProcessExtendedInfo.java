@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - Initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public interface IProcessExtendedInfo {
 
 	/**
 	 * Returns a list of cores on which the process is located.
-	 * This list is all cores on which at least one thread of the 
+	 * This list is all cores on which at least one thread of the
 	 * process is located.
 	 * Returns null if that information is not available.
 	 */
@@ -41,7 +41,7 @@ public interface IProcessExtendedInfo {
 
 	/**
 	 * Returns the owner of the process.  Usually the userId
-	 * that started the process.  Returns null if that 
+	 * that started the process.  Returns null if that
 	 * information is not available.
 	 */
 	public String getOwner();

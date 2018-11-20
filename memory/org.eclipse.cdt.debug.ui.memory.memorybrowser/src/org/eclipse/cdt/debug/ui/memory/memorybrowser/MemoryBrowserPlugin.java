@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -80,7 +80,7 @@ public class MemoryBrowserPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
@@ -89,7 +89,7 @@ public class MemoryBrowserPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
+	 *
 	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {

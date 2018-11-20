@@ -15,10 +15,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IActionFilter;
-
-import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * An implementation of the IWorkbenchAdapter for CElements.

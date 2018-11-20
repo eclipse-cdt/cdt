@@ -18,20 +18,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.TreeItem;
-
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author dsteffle
@@ -50,7 +48,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		{
 			shouldVisitNames = true;
 		}
-		public List<IASTName> nameList = new ArrayList<IASTName>();
+		public List<IASTName> nameList = new ArrayList<>();
 
 		String findString = null;
 		boolean caseSensitive = true;

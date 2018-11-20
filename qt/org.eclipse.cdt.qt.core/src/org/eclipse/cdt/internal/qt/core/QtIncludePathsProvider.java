@@ -39,7 +39,7 @@ public class QtIncludePathsProvider extends LanguageSettingsSerializableProvider
 	 * The provider identifies Qt installations by the absolute path to the qmake binary.  The
 	 * include paths relevant to the installations are computed and persisted in {@link QtIncludePaths}.
 	 */
-	private final Map<String, QtIncludePaths> qtInstallHeaders = new HashMap<String, QtIncludePaths>();
+	private final Map<String, QtIncludePaths> qtInstallHeaders = new HashMap<>();
 
 	/**
 	 * The build configuration stores the path to the qmake binary as an environment variable.

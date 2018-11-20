@@ -44,7 +44,7 @@ public class TemplateProcessHandler {
 	private void initialize() {
 		TemplateDescriptor desc = template.getTemplateDescriptor();
 		Element root = desc.getRootElement();
-		conditionalProcessGroupList = new ArrayList<ConditionalProcessGroup>();
+		conditionalProcessGroupList = new ArrayList<>();
 		List<Element> nodeList = TemplateEngine.getChildrenOfElementByTag(root, TemplateDescriptor.IF);
 		for (int j = 0, l = nodeList.size(); j < l; j++) {
 			conditionalProcessGroupList.add(new ConditionalProcessGroup(template, nodeList.get(j), j + 1));
@@ -56,13 +56,13 @@ public class TemplateProcessHandler {
 	}
 
 	/**
-	 * 
-	 * @param monitor 
+	 *
+	 * @param monitor
 	 * @return IStatus, as an array of status info
 	 * @throws ProcessFailureException
 	 */
 	public IStatus[] processAll(IProgressMonitor monitor) throws ProcessFailureException {
-		List<IStatus> allStatuses = new ArrayList<IStatus>();
+		List<IStatus> allStatuses = new ArrayList<>();
 		for (ConditionalProcessGroup cpg : conditionalProcessGroupList) {
 			try {
 				allStatuses.addAll(cpg.process(monitor));
@@ -77,7 +77,7 @@ public class TemplateProcessHandler {
 	 * @return the union of all macros used in this template's process groups
 	 */
 	public Set<String> getAllMacros() {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		for (ConditionalProcessGroup cpg : conditionalProcessGroupList) {
 			Set<String> subSet = cpg.getAllMacros();
 			if (subSet != null) {

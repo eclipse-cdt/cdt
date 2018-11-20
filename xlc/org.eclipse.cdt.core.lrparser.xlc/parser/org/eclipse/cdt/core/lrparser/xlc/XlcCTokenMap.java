@@ -13,8 +13,204 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.xlc;
 
-import static org.eclipse.cdt.core.parser.IToken.*;
-import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.*;
+import static org.eclipse.cdt.core.parser.IToken.tAMPER;
+import static org.eclipse.cdt.core.parser.IToken.tAMPERASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tAND;
+import static org.eclipse.cdt.core.parser.IToken.tARROW;
+import static org.eclipse.cdt.core.parser.IToken.tASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tBITCOMPLEMENT;
+import static org.eclipse.cdt.core.parser.IToken.tBITOR;
+import static org.eclipse.cdt.core.parser.IToken.tBITORASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tCHAR;
+import static org.eclipse.cdt.core.parser.IToken.tCOLON;
+import static org.eclipse.cdt.core.parser.IToken.tCOMMA;
+import static org.eclipse.cdt.core.parser.IToken.tCOMPLETION;
+import static org.eclipse.cdt.core.parser.IToken.tDECR;
+import static org.eclipse.cdt.core.parser.IToken.tDIV;
+import static org.eclipse.cdt.core.parser.IToken.tDIVASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tDOT;
+import static org.eclipse.cdt.core.parser.IToken.tELLIPSIS;
+import static org.eclipse.cdt.core.parser.IToken.tEND_OF_INPUT;
+import static org.eclipse.cdt.core.parser.IToken.tEOC;
+import static org.eclipse.cdt.core.parser.IToken.tEQUAL;
+import static org.eclipse.cdt.core.parser.IToken.tFLOATINGPT;
+import static org.eclipse.cdt.core.parser.IToken.tGT;
+import static org.eclipse.cdt.core.parser.IToken.tGTEQUAL;
+import static org.eclipse.cdt.core.parser.IToken.tIDENTIFIER;
+import static org.eclipse.cdt.core.parser.IToken.tINCR;
+import static org.eclipse.cdt.core.parser.IToken.tINTEGER;
+import static org.eclipse.cdt.core.parser.IToken.tLBRACE;
+import static org.eclipse.cdt.core.parser.IToken.tLBRACKET;
+import static org.eclipse.cdt.core.parser.IToken.tLCHAR;
+import static org.eclipse.cdt.core.parser.IToken.tLPAREN;
+import static org.eclipse.cdt.core.parser.IToken.tLSTRING;
+import static org.eclipse.cdt.core.parser.IToken.tLT;
+import static org.eclipse.cdt.core.parser.IToken.tLTEQUAL;
+import static org.eclipse.cdt.core.parser.IToken.tMINUS;
+import static org.eclipse.cdt.core.parser.IToken.tMINUSASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tMOD;
+import static org.eclipse.cdt.core.parser.IToken.tMODASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tNOT;
+import static org.eclipse.cdt.core.parser.IToken.tNOTEQUAL;
+import static org.eclipse.cdt.core.parser.IToken.tOR;
+import static org.eclipse.cdt.core.parser.IToken.tPLUS;
+import static org.eclipse.cdt.core.parser.IToken.tPLUSASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tQUESTION;
+import static org.eclipse.cdt.core.parser.IToken.tRBRACE;
+import static org.eclipse.cdt.core.parser.IToken.tRBRACKET;
+import static org.eclipse.cdt.core.parser.IToken.tRPAREN;
+import static org.eclipse.cdt.core.parser.IToken.tSEMI;
+import static org.eclipse.cdt.core.parser.IToken.tSHIFTL;
+import static org.eclipse.cdt.core.parser.IToken.tSHIFTLASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tSHIFTR;
+import static org.eclipse.cdt.core.parser.IToken.tSHIFTRASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tSTAR;
+import static org.eclipse.cdt.core.parser.IToken.tSTARASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.tSTRING;
+import static org.eclipse.cdt.core.parser.IToken.tUNKNOWN_CHAR;
+import static org.eclipse.cdt.core.parser.IToken.tUTF16CHAR;
+import static org.eclipse.cdt.core.parser.IToken.tUTF16STRING;
+import static org.eclipse.cdt.core.parser.IToken.tUTF32CHAR;
+import static org.eclipse.cdt.core.parser.IToken.tUTF32STRING;
+import static org.eclipse.cdt.core.parser.IToken.tXOR;
+import static org.eclipse.cdt.core.parser.IToken.tXORASSIGN;
+import static org.eclipse.cdt.core.parser.IToken.t__Bool;
+import static org.eclipse.cdt.core.parser.IToken.t__Complex;
+import static org.eclipse.cdt.core.parser.IToken.t__Imaginary;
+import static org.eclipse.cdt.core.parser.IToken.t_asm;
+import static org.eclipse.cdt.core.parser.IToken.t_auto;
+import static org.eclipse.cdt.core.parser.IToken.t_break;
+import static org.eclipse.cdt.core.parser.IToken.t_case;
+import static org.eclipse.cdt.core.parser.IToken.t_char;
+import static org.eclipse.cdt.core.parser.IToken.t_const;
+import static org.eclipse.cdt.core.parser.IToken.t_continue;
+import static org.eclipse.cdt.core.parser.IToken.t_default;
+import static org.eclipse.cdt.core.parser.IToken.t_do;
+import static org.eclipse.cdt.core.parser.IToken.t_double;
+import static org.eclipse.cdt.core.parser.IToken.t_else;
+import static org.eclipse.cdt.core.parser.IToken.t_enum;
+import static org.eclipse.cdt.core.parser.IToken.t_extern;
+import static org.eclipse.cdt.core.parser.IToken.t_float;
+import static org.eclipse.cdt.core.parser.IToken.t_for;
+import static org.eclipse.cdt.core.parser.IToken.t_goto;
+import static org.eclipse.cdt.core.parser.IToken.t_if;
+import static org.eclipse.cdt.core.parser.IToken.t_inline;
+import static org.eclipse.cdt.core.parser.IToken.t_int;
+import static org.eclipse.cdt.core.parser.IToken.t_long;
+import static org.eclipse.cdt.core.parser.IToken.t_register;
+import static org.eclipse.cdt.core.parser.IToken.t_restrict;
+import static org.eclipse.cdt.core.parser.IToken.t_return;
+import static org.eclipse.cdt.core.parser.IToken.t_short;
+import static org.eclipse.cdt.core.parser.IToken.t_signed;
+import static org.eclipse.cdt.core.parser.IToken.t_sizeof;
+import static org.eclipse.cdt.core.parser.IToken.t_static;
+import static org.eclipse.cdt.core.parser.IToken.t_struct;
+import static org.eclipse.cdt.core.parser.IToken.t_switch;
+import static org.eclipse.cdt.core.parser.IToken.t_typedef;
+import static org.eclipse.cdt.core.parser.IToken.t_union;
+import static org.eclipse.cdt.core.parser.IToken.t_unsigned;
+import static org.eclipse.cdt.core.parser.IToken.t_void;
+import static org.eclipse.cdt.core.parser.IToken.t_volatile;
+import static org.eclipse.cdt.core.parser.IToken.t_while;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_And;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_AndAnd;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_AndAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Arrow;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Assign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Bang;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Caret;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_CaretAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Colon;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Comma;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Completion;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Dot;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_DotDotDot;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_EOF_TOKEN;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_EQ;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_EndOfCompletion;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_GE;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_GT;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Invalid;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_LE;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_LT;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_LeftBrace;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_LeftBracket;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_LeftParen;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_LeftShift;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_LeftShiftAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_MAX;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_MIN;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Minus;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_MinusAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_MinusMinus;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_NE;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Or;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_OrAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_OrOr;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Percent;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_PercentAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Plus;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_PlusAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_PlusPlus;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Question;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_RightBrace;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_RightBracket;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_RightParen;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_RightShift;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_RightShiftAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_SemiColon;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Slash;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_SlashAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Star;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_StarAssign;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_Tilde;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK__Bool;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK__Complex;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK__Imaginary;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK___alignof__;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK___attribute__;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK___declspec;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_asm;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_auto;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_break;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_case;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_char;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_charconst;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_const;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_continue;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_default;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_do;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_double;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_else;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_enum;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_extern;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_float;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_floating;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_for;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_goto;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_identifier;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_if;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_inline;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_int;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_integer;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_long;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_register;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_restrict;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_return;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_short;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_signed;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_sizeof;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_static;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_stringlit;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_struct;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_switch;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_typedef;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_typeof;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_union;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_unsigned;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_void;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_volatile;
+import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.TK_while;
 
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -23,7 +219,7 @@ import org.eclipse.cdt.core.parser.IToken;
 /**
  * Maps tokens types returned by CPreprocessor to token types
  * expected by the C99 parser.
- *  
+ *
  * @author Mike Kucera
  */
 public final class XlcCTokenMap implements IDOMTokenMap {
@@ -34,14 +230,17 @@ public final class XlcCTokenMap implements IDOMTokenMap {
 		keywordMap = XlcKeywords.createC(supportVectors, supportDecimalFloatingPoint);
 	}
 
+	@Override
 	public int getEOFTokenKind() {
 		return TK_EOF_TOKEN;
 	}
 
+	@Override
 	public int getEOCTokenKind() {
 		return TK_EndOfCompletion;
 	}
 
+	@Override
 	public int mapKind(IToken token) {
 
 		switch (token.getType()) {

@@ -125,7 +125,7 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 		InternalXmlStorageElement el = super.createStorage(container, fileName, reCreate, createEmptyIfNotFound,
 				readOnly);
 
-		Queue<ICStorageElement> nodesToCheck = new LinkedList<ICStorageElement>();
+		Queue<ICStorageElement> nodesToCheck = new LinkedList<>();
 		nodesToCheck.addAll(Arrays.asList(el.getChildren()));
 		while (!nodesToCheck.isEmpty()) {
 			ICStorageElement currEl = nodesToCheck.remove();
@@ -182,7 +182,7 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 		// Copy the original passed in element, as we're going to re-write the children
 		InternalXmlStorageElement copy = copyElement(element, false);
 		// Map containing external CConfiguration elements to be serialized
-		Map<String, InternalXmlStorageElement> externalStorageElements = new HashMap<String, InternalXmlStorageElement>();
+		Map<String, InternalXmlStorageElement> externalStorageElements = new HashMap<>();
 
 		// Iterate through the initial children
 		for (ICStorageElement el : copy.getChildren()) {
@@ -190,7 +190,7 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 			if (!CProjectDescriptionManager.MODULE_ID.equals(el.getAttribute(XmlStorage.MODULE_ID_ATTRIBUTE)))
 				continue;
 
-			Queue<ICStorageElement> configStorages = new LinkedList<ICStorageElement>();
+			Queue<ICStorageElement> configStorages = new LinkedList<>();
 			configStorages.addAll(Arrays.asList(el.getChildren()));
 			while (!configStorages.isEmpty()) {
 				InternalXmlStorageElement iEl = (InternalXmlStorageElement) configStorages.remove();

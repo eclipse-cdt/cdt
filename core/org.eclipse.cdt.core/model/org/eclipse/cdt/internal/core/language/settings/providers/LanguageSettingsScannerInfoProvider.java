@@ -94,11 +94,11 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 			return DUMMY_SCANNER_INFO;
 		}
 
-		LinkedHashSet<ICLanguageSettingEntry> includePathEntries = new LinkedHashSet<ICLanguageSettingEntry>();
-		LinkedHashSet<ICLanguageSettingEntry> includePathLocalEntries = new LinkedHashSet<ICLanguageSettingEntry>();
-		LinkedHashSet<ICLanguageSettingEntry> includeFileEntries = new LinkedHashSet<ICLanguageSettingEntry>();
-		LinkedHashSet<ICLanguageSettingEntry> macroFileEntries = new LinkedHashSet<ICLanguageSettingEntry>();
-		LinkedHashSet<ICLanguageSettingEntry> macroEntries = new LinkedHashSet<ICLanguageSettingEntry>();
+		LinkedHashSet<ICLanguageSettingEntry> includePathEntries = new LinkedHashSet<>();
+		LinkedHashSet<ICLanguageSettingEntry> includePathLocalEntries = new LinkedHashSet<>();
+		LinkedHashSet<ICLanguageSettingEntry> includeFileEntries = new LinkedHashSet<>();
+		LinkedHashSet<ICLanguageSettingEntry> macroFileEntries = new LinkedHashSet<>();
+		LinkedHashSet<ICLanguageSettingEntry> macroEntries = new LinkedHashSet<>();
 
 		for (String langId : languageIds) {
 			List<ICLanguageSettingEntry> incSys = LanguageSettingsProvidersSerializer
@@ -127,7 +127,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		String[] includeFiles = convertToLocations(includeFileEntries, cfgDescription);
 		String[] macroFiles = convertToLocations(macroFileEntries, cfgDescription);
 
-		Map<String, String> definedMacros = new HashMap<String, String>();
+		Map<String, String> definedMacros = new HashMap<>();
 		for (ICLanguageSettingEntry entry : macroEntries) {
 			ICMacroEntry macroEntry = (ICMacroEntry) entry;
 			String name = macroEntry.getName();
@@ -252,7 +252,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	 */
 	private String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath,
 			ICConfigurationDescription cfgDescription) {
-		List<String> locations = new ArrayList<String>(entriesPath.size());
+		List<String> locations = new ArrayList<>(entriesPath.size());
 		for (ICLanguageSettingEntry entry : entriesPath) {
 			ICPathEntry entryPath = (ICPathEntry) entry;
 			if (entryPath.isValueWorkspacePath()) {
@@ -321,7 +321,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		IProject project = resource.getProject();
 		List<IScannerInfoChangeListener> list = listenersMap.get(project);
 		if (list == null) {
-			list = new Vector<IScannerInfoChangeListener>();
+			list = new Vector<>();
 			listenersMap.put(project, list);
 		}
 		if (!list.contains(listener)) {

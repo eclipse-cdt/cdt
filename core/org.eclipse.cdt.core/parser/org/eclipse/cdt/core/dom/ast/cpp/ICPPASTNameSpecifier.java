@@ -18,13 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * AST node for elements of the qualifier in a qualified name.
- * 
+ *
  * A name-specifier can either be a name, or a decltype-specifier.
- * 
+ *
  * Note that a decltype-specifier can only appear as the first
  * element of a qualifier, but this constraint is not encoded
  * in the AST.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 5.6

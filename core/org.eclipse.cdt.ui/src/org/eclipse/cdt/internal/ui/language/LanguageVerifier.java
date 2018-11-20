@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
@@ -37,7 +37,7 @@ public class LanguageVerifier {
 
 	public static Map<String, ILanguage> computeAvailableLanguages() {
 		ILanguage[] registeredLanguages = LanguageManager.getInstance().getRegisteredLanguages();
-		Map<String, ILanguage> languages = new TreeMap<String, ILanguage>();
+		Map<String, ILanguage> languages = new TreeMap<>();
 		for (int i = 0; i < registeredLanguages.length; i++) {
 			languages.put(registeredLanguages[i].getId(), registeredLanguages[i]);
 		}
@@ -56,7 +56,7 @@ public class LanguageVerifier {
 
 	public static Set<String> removeMissingLanguages(ProjectLanguageConfiguration config,
 			ICProjectDescription description, Map<String, ILanguage> availableLanguages) {
-		Set<String> missingLanguages = new TreeSet<String>();
+		Set<String> missingLanguages = new TreeSet<>();
 
 		// Check file mappings
 		Iterator<Entry<String, Map<String, String>>> fileConfigurationMappings = config.getFileMappings().entrySet()
@@ -103,11 +103,11 @@ public class LanguageVerifier {
 
 	public static Set<String> removeMissingLanguages(WorkspaceLanguageConfiguration config,
 			Map<String, ILanguage> availableLanguages) {
-		Set<String> missingLanguages = new TreeSet<String>();
+		Set<String> missingLanguages = new TreeSet<>();
 
 		// Check content type mappings
 		Iterator<Entry<String, String>> contentTypeMappings = config.getWorkspaceMappings().entrySet().iterator();
-		List<String> removals = new ArrayList<String>();
+		List<String> removals = new ArrayList<>();
 		while (contentTypeMappings.hasNext()) {
 			Entry<String, String> entry = contentTypeMappings.next();
 			String languageId = entry.getValue();

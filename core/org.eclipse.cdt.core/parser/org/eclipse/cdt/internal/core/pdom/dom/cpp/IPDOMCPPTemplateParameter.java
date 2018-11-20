@@ -38,7 +38,7 @@ public interface IPDOMCPPTemplateParameter extends IInternalPDOMNode, ICPPTempla
 
 	/**
 	 * parameters of template template parameters need to be deleted.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	void forceDelete(PDOMLinkage pdom) throws CoreException;
 }

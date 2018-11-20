@@ -31,9 +31,9 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
- * 
+ *
  * Enter type comment.
- * 
+ *
  * @since Sep 19, 2002
  */
 public abstract class AbstractEditorActionDelegate extends ActionDelegate implements IWorkbenchWindowActionDelegate,

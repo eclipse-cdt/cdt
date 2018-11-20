@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     John Dallaway - Report command execution error (Bug 539455)
@@ -58,14 +58,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * this class is used, other service implementations, such as stack and
  * expressions, can use it to avoid requesting data from debugger back end if
  * another step is about to be executed.
- * 
+ *
  * @since 1.1
  */
 @ConfinedToDsfExecutor("#getExecutor()")
 public final class SteppingController {
 	/**
-	 * Default delay in milliseconds, that it takes the SteppingTimedOutEvent 
-	 * event to be issued after a step is started. 
+	 * Default delay in milliseconds, that it takes the SteppingTimedOutEvent
+	 * event to be issued after a step is started.
 	 * @see SteppingTimedOutEvent
 	 * @see #setStepTimeout(int)
 	 * @see #getStepTimeout()
@@ -73,8 +73,8 @@ public final class SteppingController {
 	public final static int STEPPING_TIMEOUT = 500;
 
 	/**
-	 * The depth of the step queue.  In other words, the maximum number of steps 
-	 * that are queued before the step queue manager is throwing them away. 
+	 * The depth of the step queue.  In other words, the maximum number of steps
+	 * that are queued before the step queue manager is throwing them away.
 	 */
 	public final static int STEP_QUEUE_DEPTH = 2;
 
@@ -89,8 +89,8 @@ public final class SteppingController {
 			.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/stepping")); //$NON-NLS-1$
 
 	/**
-	 * Indicates that the given context has been stepping for some time, 
-	 * and the UI (views and actions) may need to be updated accordingly. 
+	 * Indicates that the given context has been stepping for some time,
+	 * and the UI (views and actions) may need to be updated accordingly.
 	 */
 	public static final class SteppingTimedOutEvent extends AbstractDMEvent<IExecutionDMContext> {
 		private SteppingTimedOutEvent(IExecutionDMContext execCtx) {
@@ -108,7 +108,7 @@ public final class SteppingController {
 	 * blocked until all stepping control participants have indicated completion
 	 * of event processing or the maximum timeout
 	 * {@link SteppingController#MAX_STEP_DELAY} has been reached.
-	 * 
+	 *
 	 * @see SteppingController#addSteppingControlParticipant(ISteppingControlParticipant)
 	 * @see SteppingController#removeSteppingControlParticipant(ISteppingControlParticipant)
 	 */
@@ -153,14 +153,14 @@ public final class SteppingController {
 	private IRunControl fRunControl;
 	private int fQueueDepth = STEP_QUEUE_DEPTH;
 
-	private final Map<IExecutionDMContext, List<StepRequest>> fStepQueues = new HashMap<IExecutionDMContext, List<StepRequest>>();
-	private final Map<IExecutionDMContext, Boolean> fTimedOutFlags = new HashMap<IExecutionDMContext, Boolean>();
-	private final Map<IExecutionDMContext, ScheduledFuture<?>> fTimedOutFutures = new HashMap<IExecutionDMContext, ScheduledFuture<?>>();
+	private final Map<IExecutionDMContext, List<StepRequest>> fStepQueues = new HashMap<>();
+	private final Map<IExecutionDMContext, Boolean> fTimedOutFlags = new HashMap<>();
+	private final Map<IExecutionDMContext, ScheduledFuture<?>> fTimedOutFutures = new HashMap<>();
 
 	/**
 	 * Records the time of the last step for an execution context.
 	 */
-	private final Map<IExecutionDMContext, Long> fLastStepTimes = new HashMap<IExecutionDMContext, Long>();
+	private final Map<IExecutionDMContext, Long> fLastStepTimes = new HashMap<>();
 
 	/**
 	 * Minimum step interval in milliseconds.
@@ -175,7 +175,7 @@ public final class SteppingController {
 	/**
 	 * Map of execution contexts for which a step is in progress.
 	 */
-	private final Map<IExecutionDMContext, List<ISteppingControlParticipant>> fStepInProgress = new HashMap<IExecutionDMContext, List<ISteppingControlParticipant>>();
+	private final Map<IExecutionDMContext, List<ISteppingControlParticipant>> fStepInProgress = new HashMap<>();
 
 	/**
 	 * List of registered stepping control participants.
@@ -228,7 +228,7 @@ public final class SteppingController {
 
 	/**
 	 * Configure the minimum time (in milliseconds) to wait between steps.
-	 * 
+	 *
 	 * @param interval
 	 */
 	@ThreadSafe
@@ -239,7 +239,7 @@ public final class SteppingController {
 	/**
 	 * Configure the step timeout value. This controls the delay how long it takes
 	 * to send out the {@link SteppingTimedOutEvent} after a step has been issued.
-	 * 
+	 *
 	 * @param timeout  The timeout value in milliseconds (must be non-negative).
 	 * @since 2.2
 	 */
@@ -268,7 +268,7 @@ public final class SteppingController {
 	 * stepping is disabled until all participants have indicated completion of
 	 * processing the event.
 	 * </p>
-	 * 
+	 *
 	 * @param participant
 	 */
 	@ThreadSafe
@@ -278,7 +278,7 @@ public final class SteppingController {
 
 	/**
 	 * Unregister given stepping control participant.
-	 * 
+	 *
 	 * @param participant
 	 */
 	@ThreadSafe
@@ -288,7 +288,7 @@ public final class SteppingController {
 
 	/**
 	 * Indicate that participant has completed processing of the last step.
-	 * 
+	 *
 	 * @param execCtx
 	 */
 	public void doneStepping(final IExecutionDMContext execCtx, final ISteppingControlParticipant participant) {
@@ -361,7 +361,7 @@ public final class SteppingController {
 	/**
 	 * Check whether the next step on the given execution context should be delayed
 	 * based on the configured step delay.
-	 * 
+	 *
 	 * @param execCtx
 	 * @return <code>true</code> if the step should be delayed
 	 */
@@ -374,7 +374,7 @@ public final class SteppingController {
 
 	/**
 	 * Compute the delay in milliseconds before the next step for the given context may be executed.
-	 * 
+	 *
 	 * @param execCtx
 	 * @return  the number of milliseconds before the next possible step
 	 */
@@ -427,7 +427,7 @@ public final class SteppingController {
 
 	/**
 	 * Adds a step command to the execution queue for given context.
-	 * @param execCtx Execution context that should perform the step. 
+	 * @param execCtx Execution context that should perform the step.
 	 * @param stepType Type of step to execute.
 	 */
 	public void enqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
@@ -479,14 +479,14 @@ public final class SteppingController {
 
 	/**
 	 * Enqueue the given step for later execution.
-	 * 
+	 *
 	 * @param execCtx
 	 * @param stepType
 	 */
 	private void doEnqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
 		List<StepRequest> stepQueue = fStepQueues.get(execCtx);
 		if (stepQueue == null) {
-			stepQueue = new LinkedList<StepRequest>();
+			stepQueue = new LinkedList<>();
 			fStepQueues.put(execCtx, stepQueue);
 		}
 		if (stepQueue.size() < fQueueDepth) {
@@ -566,19 +566,19 @@ public final class SteppingController {
 
 	/**
 	 * Disable stepping for the given execution context.
-	 * 
+	 *
 	 * @param execCtx
 	 */
 	private void disableStepping(IExecutionDMContext execCtx) {
 		if (!fParticipants.isEmpty()) {
-			fStepInProgress.put(execCtx, new ArrayList<ISteppingControlParticipant>(fParticipants));
+			fStepInProgress.put(execCtx, new ArrayList<>(fParticipants));
 		}
 	}
 
 	/**
 	 * Indicate that processing of the last step has completed and
 	 * the next step can be issued.
-	 * 
+	 *
 	 * @param execCtx
 	 */
 	private void doneStepping(final IExecutionDMContext execCtx) {
@@ -590,7 +590,7 @@ public final class SteppingController {
 
 	/**
 	 * Enable stepping for the given execution context.
-	 * 
+	 *
 	 * @param execCtx
 	 */
 	public void enableStepping(final IExecutionDMContext execCtx) {
@@ -654,9 +654,9 @@ public final class SteppingController {
 		}
 
 		// Cancel all time-out futures related to the event context.  I.e.
-		// - If event is on a container, all child threads are suspended and 
+		// - If event is on a container, all child threads are suspended and
 		// should not issue a stepping time-out event.
-		// - If event is on a thread, and resumed event was on a container then 
+		// - If event is on a thread, and resumed event was on a container then
 		// stepping timeout for container should be canceled as it would affect
 		// suspended thread.
 		for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet()
@@ -684,7 +684,7 @@ public final class SteppingController {
 			final IExecutionDMContext dmc = e.getDMContext();
 			fTimedOutFlags.remove(dmc);
 
-			// Find any time-out futures for contexts that are children of the 
+			// Find any time-out futures for contexts that are children of the
 			// resumed context, and cancel them as they'll be replaced.
 			if (!fTimedOutFutures.containsKey(dmc)) {
 				for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet()

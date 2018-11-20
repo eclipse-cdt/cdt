@@ -36,12 +36,12 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * The RefreshPolicyExceptionDialog allows users to add or edit a refresh exclusion.
- * 
+ *
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
- * 
+ *
  * @author vkong
  * @since 8.0
  *
@@ -65,7 +65,7 @@ public class RefreshPolicyExceptionDialog extends Dialog {
 		setShellStyle(getShellStyle());
 		fContrManager = RefreshExclusionContributionManager.getInstance();
 		fAddException = addException;
-		fExclusionContributors = new LinkedList<RefreshExclusionContributor>(fContrManager.getContributors());
+		fExclusionContributors = new LinkedList<>(fContrManager.getContributors());
 	}
 
 	public RefreshPolicyExceptionDialog(Shell parent, IResource resource, java.util.List<RefreshExclusion> exclusions,

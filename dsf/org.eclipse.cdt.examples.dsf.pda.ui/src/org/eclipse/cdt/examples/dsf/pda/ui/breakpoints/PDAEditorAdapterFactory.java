@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -24,12 +24,13 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Creates a toggle breakpoint adapter
  * <p>
- * This class is identical to the corresponding in PDA debugger implemented in 
+ * This class is identical to the corresponding in PDA debugger implemented in
  * org.eclipse.debug.examples.ui.
  * </p>
  */
 public class PDAEditorAdapterFactory implements IAdapterFactory {
 
+	@Override
 	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof PDAEditor) {
@@ -47,6 +48,7 @@ public class PDAEditorAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
 	public Class[] getAdapterList() {
 		return new Class[] { IToggleBreakpointsTarget.class };

@@ -28,7 +28,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * ^done,value="auto; currently c"
  *
  * the different returned values are:
- * 
+ *
  * (gdb) help set language
  * Set the current source language.
  * The currently understood settings are:

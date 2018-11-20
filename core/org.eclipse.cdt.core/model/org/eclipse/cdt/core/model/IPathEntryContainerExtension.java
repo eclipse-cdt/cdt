@@ -25,7 +25,7 @@ public interface IPathEntryContainerExtension extends IPathEntryContainer {
 	/**
 	 * Returns the set of entries associated with the resource
 	 * and empty array if none.
-	 * 
+	 *
 	 * @param path Workspace relative path.
 	 * @param typeMask type of path entries:
 	 * <li><code>IPathEntry.CDT_INCLUDE</code></li>
@@ -39,7 +39,7 @@ public interface IPathEntryContainerExtension extends IPathEntryContainer {
 
 	/**
 	 * Returns whether there are any path entries for the resource.
-	 * 
+	 *
 	 * @param path Workspace relative path.
 	 */
 	boolean isEmpty(IPath path);

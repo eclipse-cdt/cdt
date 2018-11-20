@@ -117,7 +117,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 * @see org.eclipse.cdt.internal.core.model.CContainer#computeChildren(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.resources.IResource)
 	 */
 	protected boolean computeChildren(OpenableInfo info, IProgressMonitor pm, IResource res) throws CModelException {
-		ArrayList<ICElement> vChildren = new ArrayList<ICElement>();
+		ArrayList<ICElement> vChildren = new ArrayList<>();
 		IPath filePath = null;
 		if (fPath != null) {
 			filePath = fPath;

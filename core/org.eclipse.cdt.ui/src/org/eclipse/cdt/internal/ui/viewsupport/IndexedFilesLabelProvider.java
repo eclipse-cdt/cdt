@@ -14,6 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -22,13 +28,6 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A label provider that marks all translation units that are currently part of the index.
@@ -60,7 +59,7 @@ public class IndexedFilesLabelProvider implements ILightweightLabelDecorator {
 	/**
 	 * Adds the linked resource overlay if the given element is a linked
 	 * resource.
-	 * 
+	 *
 	 * @param element element to decorate
 	 * @param decoration  The decoration we are adding to
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(Object, IDecoration)

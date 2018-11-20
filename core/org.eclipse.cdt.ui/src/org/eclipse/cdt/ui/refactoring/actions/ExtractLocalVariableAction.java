@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 Wind River Systems, Inc. 
+ * Copyright (c) 2005, 2012 Wind River Systems, Inc.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,13 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.refactoring.actions;
 
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.window.IShellProvider;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-
 import org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringRunner;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.window.IShellProvider;
 
 /**
  * Launches an Extract Local Variable refactoring.

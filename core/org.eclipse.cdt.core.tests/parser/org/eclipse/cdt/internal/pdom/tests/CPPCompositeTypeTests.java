@@ -14,13 +14,13 @@
 
 package org.eclipse.cdt.internal.pdom.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about

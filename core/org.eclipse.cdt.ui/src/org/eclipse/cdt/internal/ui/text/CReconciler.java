@@ -14,6 +14,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexChangeEvent;
+import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexerStateEvent;
+import org.eclipse.cdt.core.index.IIndexerStateListener;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -38,25 +53,9 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndexChangeEvent;
-import org.eclipse.cdt.core.index.IIndexChangeListener;
-import org.eclipse.cdt.core.index.IIndexerStateEvent;
-import org.eclipse.cdt.core.index.IIndexerStateListener;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-
 /**
  * A single strategy C reconciler.
- * 
+ *
  * @since 4.0
  */
 public class CReconciler extends MonoReconciler {
@@ -254,7 +253,7 @@ public class CReconciler extends MonoReconciler {
 
 	/**
 	 * Create a reconciler for the given editor and strategy.
-	 * 
+	 *
 	 * @param editor the text editor
 	 * @param strategy  the C reconciling strategy
 	 */

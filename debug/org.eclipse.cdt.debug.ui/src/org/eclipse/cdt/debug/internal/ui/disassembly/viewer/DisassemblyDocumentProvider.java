@@ -29,7 +29,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyDocumentProvider: 
+ * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyDocumentProvider:
  * //TODO Add description.
  */
 public class DisassemblyDocumentProvider implements IDocumentProvider {
@@ -70,7 +70,7 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
 	private Map<Object, DocumentInfo> fDocumentInfos;
 
 	public DisassemblyDocumentProvider() {
-		fDocumentInfos = new HashMap<Object, DocumentInfo>();
+		fDocumentInfos = new HashMap<>();
 	}
 
 	/* (non-Javadoc)

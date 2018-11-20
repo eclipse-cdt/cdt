@@ -24,19 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -91,9 +78,6 @@ import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
@@ -112,7 +96,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
@@ -130,6 +113,20 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.text.edits.TextEditGroup;
 
 public class ExtractFunctionRefactoring extends CRefactoring {
 	public static final String ID = "org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"; //$NON-NLS-1$
@@ -756,9 +753,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTFunctionCallExpression callExpression = new CPPASTFunctionCallExpression();
 		IASTIdExpression idExpression = new CPPASTIdExpression();
 		idExpression.setName(astMethodName);
-		List<IASTInitializerClause> args = new ArrayList<IASTInitializerClause>();
+		List<IASTInitializerClause> args = new ArrayList<>();
 
-		Set<IASTName> declarations = new HashSet<IASTName>();
+		Set<IASTName> declarations = new HashSet<>();
 		IASTName retName = null;
 		boolean theRetName = false;
 
@@ -932,8 +929,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	public List<IASTInitializerClause> getCallParameters() {
-		List<IASTInitializerClause> args = new ArrayList<IASTInitializerClause>();
-		Set<IASTName> declarations = new HashSet<IASTName>();
+		List<IASTInitializerClause> args = new ArrayList<>();
+		Set<IASTName> declarations = new HashSet<>();
 		for (NameInformation nameInfo : info.getParameters()) {
 			addParameterIfPossible(args, declarations, nameInfo);
 		}
@@ -963,7 +960,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private Map<String, String> getArgumentMap() {
-		Map<String, String> arguments = new HashMap<String, String>();
+		Map<String, String> arguments = new HashMap<>();
 		arguments.put(CRefactoringDescriptor.FILE_NAME, tu.getLocationURI().toString());
 		arguments.put(CRefactoringDescriptor.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
 		arguments.put(ExtractFunctionRefactoringDescriptor.NAME, info.getMethodName());
@@ -993,8 +990,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	public RefactoringStatus checkParameterNames() {
 		RefactoringStatus result = new RefactoringStatus();
 		List<NameInformation> parameters = info.getParameters();
-		Set<String> usedNames = new HashSet<String>();
-		Set<IASTName> declarations = new HashSet<IASTName>();
+		Set<String> usedNames = new HashSet<>();
+		Set<IASTName> declarations = new HashSet<>();
 		for (NameInformation nameInfo : container.getNames()) {
 			IASTName declaration = nameInfo.getDeclarationName();
 			if (declarations.add(declaration) && !parameters.contains(nameInfo)) {

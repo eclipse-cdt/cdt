@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IInclude;
@@ -24,6 +22,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+
+import junit.framework.Test;
 
 /**
  * Tests for C model inactive code parsing.

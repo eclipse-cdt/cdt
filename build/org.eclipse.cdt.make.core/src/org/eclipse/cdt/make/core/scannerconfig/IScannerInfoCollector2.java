@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * New scanner info collector interface - Eclipse dependent
- * 
+ *
  * @author vhirsl
  */
 public interface IScannerInfoCollector2 extends IScannerInfoCollector {
@@ -28,7 +28,7 @@ public interface IScannerInfoCollector2 extends IScannerInfoCollector {
 	public void setProject(IProject project);
 
 	/**
-	 * Relegate discovered scanner configuration to a scanner info provider 
+	 * Relegate discovered scanner configuration to a scanner info provider
 	 */
 	public void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException;
 

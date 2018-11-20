@@ -7,17 +7,16 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ITrackedNodePosition;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * A proposal for quick fixes and quick assists that works on a AST rewriter and enters the

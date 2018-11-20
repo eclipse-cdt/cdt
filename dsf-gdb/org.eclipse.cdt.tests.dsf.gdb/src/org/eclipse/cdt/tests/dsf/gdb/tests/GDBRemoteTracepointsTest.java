@@ -659,7 +659,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 				getLineForTag("4_BYTE"), getLineForTag("5_BYTE") };
 
 		for (int i = 0; i < lineNumbers.length; i++) {
-			attributes = new HashMap<String, Object>();
+			attributes = new HashMap<>();
 			attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 			attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 			attributes.put(MIBreakpoints.LINE_NUMBER, lineNumbers[i]);
@@ -739,7 +739,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 					passed.add(byteCount);
 				}
 			}
-			assertEquals("Some byte length were not seen", new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5)), passed);
+			assertEquals("Some byte length were not seen", new HashSet<>(Arrays.asList(1, 2, 3, 4, 5)), passed);
 		} catch (AssertionError | Exception e) {
 			throw new AssertionError(
 					"Failed to verify instruction lengths. Output from GDB's disassemble:\n" + miInfo.toString(), e);
@@ -785,7 +785,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	public void disableTracepoints() throws Throwable {
 		createTracepoints();
 
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(MIBreakpoints.IS_ENABLED, false);
 		// Disable all tracepoints
 		for (IBreakpointDMContext tp : fTracepoints) {
@@ -804,7 +804,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	public void enableTracepoints() throws Throwable {
 		disableTracepoints();
 
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(MIBreakpoints.IS_ENABLED, true);
 		// Enable all tracepoints
 		for (IBreakpointDMContext tp : fTracepoints) {
@@ -823,7 +823,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	public void tracepointPasscount() throws Throwable {
 		createTracepoints();
 
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		// Set passcount for all tracepoints
 		for (int i = 0; i < fTracepoints.length; i++) {
 			if (fTracepoints[i] == null)
@@ -844,7 +844,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	public void tracepointCondition() throws Throwable {
 		createTracepoints();
 
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		// Set conditions for all tracepoints
 		for (int i = 0; i < fTracepoints.length; i++) {
 			if (fTracepoints[i] == null)
@@ -865,7 +865,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	public void tracepointActions() throws Throwable {
 		createTracepoints();
 
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		// Set conditions for all tracepoints
 		for (int i = 0; i < fTracepoints.length; i++) {
 			if (fTracepoints[i] == null)
@@ -949,7 +949,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 				getLineForTag("4_BYTE"), getLineForTag("5_BYTE") };
 
 		for (int i = 0; i < lineNumbers.length; i++) {
-			attributes = new HashMap<String, Object>();
+			attributes = new HashMap<>();
 			attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 			attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 			attributes.put(MIBreakpoints.LINE_NUMBER, lineNumbers[i]);
@@ -1237,7 +1237,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 		createTracepoints();
 
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		// Set conditions for all tracepoints
 		delta.put(MIBreakpoints.COMMANDS, action1.getName());
 		updateBreakpoint(fTracepoints[0], delta);

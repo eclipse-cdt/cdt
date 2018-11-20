@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
  * ITemplatesListProvider
- * 
+ *
  * @since 4.0
  */
 public interface ITemplatesListProvider extends ITreeContentProvider {

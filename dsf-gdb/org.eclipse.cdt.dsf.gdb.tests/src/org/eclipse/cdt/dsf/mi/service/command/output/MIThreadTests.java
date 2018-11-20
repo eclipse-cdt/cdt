@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Freescale  - Initial API and Implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Moved from cdt.tests.dsf.gdb (Bug 437562)

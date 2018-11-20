@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 
 /**
  * Binding for implicit method templates.
- * 
+ *
  * Used for the function call operator and pointer-to-function conversion operator
  * of a generic lambda.
  */

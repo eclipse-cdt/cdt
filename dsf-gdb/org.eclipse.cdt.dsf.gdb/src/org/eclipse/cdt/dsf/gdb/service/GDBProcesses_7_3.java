@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.cdt.utils.pty.PTY;
 
 /**
  * Version for GDB 7.3
- * 
+ *
  * @since 4.7
  */
 public class GDBProcesses_7_3 extends GDBProcesses_7_2_1 {

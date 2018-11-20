@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Provides programmatic access to language mappings for the workspace. 
- * 
+ * Provides programmatic access to language mappings for the workspace.
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -35,7 +35,7 @@ public class WorkspaceLanguageConfiguration {
 	 * language mappings defined.
 	 */
 	public WorkspaceLanguageConfiguration() {
-		fMappings = new TreeMap<String, String>();
+		fMappings = new TreeMap<>();
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class WorkspaceLanguageConfiguration {
 	 * @param mappings
 	 */
 	public void setWorkspaceMappings(Map<String, String> mappings) {
-		fMappings = new TreeMap<String, String>(mappings);
+		fMappings = new TreeMap<>(mappings);
 	}
 
 	/**

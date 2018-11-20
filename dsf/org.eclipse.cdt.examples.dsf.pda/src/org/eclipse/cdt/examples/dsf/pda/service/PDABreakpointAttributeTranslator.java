@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -38,18 +38,18 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
- * Translator between {@link PDALineBreakpoint} object attributes and 
- * attributes used by the {@link PDABreakpoints} service.  
+ * Translator between {@link PDALineBreakpoint} object attributes and
+ * attributes used by the {@link PDABreakpoints} service.
  * <p>
- * The attribute translator is used by the standard {@link BreakpointsMediator} 
+ * The attribute translator is used by the standard {@link BreakpointsMediator}
  * service to map between platform breakpoint attributes and target-side DSF
  * breakpoint attributes.  Thus, this object encapsulates the model-specific
- * functionality of synchronizing target side and IDE-side breakpoint objects.  
+ * functionality of synchronizing target side and IDE-side breakpoint objects.
  * </p>
  */
 public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTranslator2 {
 
-	// Arrays of common attributes between the two breakpoint types.  These 
+	// Arrays of common attributes between the two breakpoint types.  These
 	// attributes can be copied directly without translation.
 	private static final String[] fgPDALineBreakpointAttributes = { IBreakpoint.ENABLED, IMarker.LINE_NUMBER, };
 	private static final String[] fgPDAWatchpointAttributes = { IBreakpoint.ENABLED, PDAWatchpoint.FUNCTION_NAME,
@@ -57,7 +57,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 
 	private static final String[] fgCDTWatchpointAttributes = { IBreakpoint.ENABLED, PDAWatchpoint.FUNCTION_NAME, };
 
-	// PDA breakpoints translator doesn't keep any state and it doesn't 
+	// PDA breakpoints translator doesn't keep any state and it doesn't
 	// need to initialize or clean up.
 	@Override
 	public void initialize(BreakpointsMediator2 mediator) {
@@ -80,10 +80,10 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 
 	private List<Map<String, Object>> getCBreakpointAttributes(ICLineBreakpoint bp, boolean bpManagerEnabled)
 			throws CoreException {
-		Map<String, Object> attrs = new HashMap<String, Object>();
+		Map<String, Object> attrs = new HashMap<>();
 
-		// Check that the marker exists and retrieve its attributes.  
-		// Due to accepted race conditions, the breakpiont marker may become null 
+		// Check that the marker exists and retrieve its attributes.
+		// Due to accepted race conditions, the breakpiont marker may become null
 		// while this method is being invoked.  In this case throw an exception
 		// and let the caller handle it.
 		IMarker marker = bp.getMarker();
@@ -105,20 +105,20 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 			attrs.put(IBreakpoint.ENABLED, false);
 		}
 
-		// The breakpoint mediator allows for multiple target-side breakpoints 
-		// to be created for each IDE breakpoint.  Although in case of PDA this 
+		// The breakpoint mediator allows for multiple target-side breakpoints
+		// to be created for each IDE breakpoint.  Although in case of PDA this
 		// feature is never used, we still have to return a list of attributes.
-		List<Map<String, Object>> retVal = new ArrayList<Map<String, Object>>(1);
+		List<Map<String, Object>> retVal = new ArrayList<>(1);
 		retVal.add(attrs);
 		return retVal;
 	}
 
 	private List<Map<String, Object>> getCWatchpointAttributes(ICWatchpoint bp, boolean bpManagerEnabled)
 			throws CoreException {
-		Map<String, Object> attrs = new HashMap<String, Object>();
+		Map<String, Object> attrs = new HashMap<>();
 
-		// Check that the marker exists and retrieve its attributes.  
-		// Due to accepted race conditions, the breakpiont marker may become null 
+		// Check that the marker exists and retrieve its attributes.
+		// Due to accepted race conditions, the breakpiont marker may become null
 		// while this method is being invoked.  In this case throw an exception
 		// and let the caller handle it.
 		IMarker marker = bp.getMarker();
@@ -143,20 +143,20 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 			attrs.put(IBreakpoint.ENABLED, false);
 		}
 
-		// The breakpoint mediator allows for multiple target-side breakpoints 
-		// to be created for each IDE breakpoint.  Although in case of PDA this 
+		// The breakpoint mediator allows for multiple target-side breakpoints
+		// to be created for each IDE breakpoint.  Although in case of PDA this
 		// feature is never used, we still have to return a list of attributes.
-		List<Map<String, Object>> retVal = new ArrayList<Map<String, Object>>(1);
+		List<Map<String, Object>> retVal = new ArrayList<>(1);
 		retVal.add(attrs);
 		return retVal;
 	}
 
 	private List<Map<String, Object>> getPDABreakpointAttributes(IBreakpoint bp, boolean bpManagerEnabled)
 			throws CoreException {
-		Map<String, Object> attrs = new HashMap<String, Object>();
+		Map<String, Object> attrs = new HashMap<>();
 
-		// Check that the marker exists and retrieve its attributes.  
-		// Due to accepted race conditions, the breakpiont marker may become null 
+		// Check that the marker exists and retrieve its attributes.
+		// Due to accepted race conditions, the breakpiont marker may become null
 		// while this method is being invoked.  In this case throw an exception
 		// and let the caller handle it.
 		IMarker marker = bp.getMarker();
@@ -184,10 +184,10 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 			attrs.put(IBreakpoint.ENABLED, false);
 		}
 
-		// The breakpoint mediator allows for multiple target-side breakpoints 
-		// to be created for each IDE breakpoint.  Although in case of PDA this 
+		// The breakpoint mediator allows for multiple target-side breakpoints
+		// to be created for each IDE breakpoint.  Although in case of PDA this
 		// feature is never used, we still have to return a list of attributes.
-		List<Map<String, Object>> retVal = new ArrayList<Map<String, Object>>(1);
+		List<Map<String, Object>> retVal = new ArrayList<>(1);
 		retVal.add(attrs);
 		return retVal;
 	}
@@ -206,7 +206,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 		// PDA debugger only allows updating of the action property of the watchpoint.
 		// All other breakpoint updates will require a re-installation.
 		if (bp instanceof PDAWatchpoint) {
-			Map<String, Object> deltaCopy = new HashMap<String, Object>(attributes);
+			Map<String, Object> deltaCopy = new HashMap<>(attributes);
 			deltaCopy.remove(PDAWatchpoint.ACCESS);
 			deltaCopy.remove(PDAWatchpoint.MODIFICATION);
 			return !deltaCopy.isEmpty();
@@ -232,7 +232,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 			try {
 				if (eventType == BreakpointEventType.ADDED) {
 					cbp.incrementInstallCount();
-					// Testing for Bug 360280 - [breakpoints] Reposition breakpoints when planted on invalid line                    
+					// Testing for Bug 360280 - [breakpoints] Reposition breakpoints when planted on invalid line
 					//                    if (cbp instanceof ICLineBreakpoint2) {
 					//                        ICLineBreakpoint2 lbp2 = (ICLineBreakpoint2)cbp;
 					//                        lbp2.setInstalledLineNumber(lbp2.getRequestedLine() + 1);

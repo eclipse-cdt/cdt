@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -21,18 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.text.edits.TextEditGroup;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -56,12 +44,10 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
-
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
@@ -71,6 +57,17 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.text.edits.TextEditGroup;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * @author Guido Zgraggen IFS
@@ -195,8 +192,8 @@ public class HideMethodRefactoring extends CRefactoring {
 			IIndexBinding methodBinding = index.adaptBinding(methodName.resolveBinding());
 			if (methodBinding == null)
 				return null;
-			List<IASTName> references = new ArrayList<IASTName>();
-			Set<String> searchedFiles = new HashSet<String>();
+			List<IASTName> references = new ArrayList<>();
+			Set<String> searchedFiles = new HashSet<>();
 			IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
 			SubMonitor loopProgress = sm.newChild(3).setWorkRemaining(dirtyEditors.length);
 			for (IEditorPart editor : dirtyEditors) {
@@ -260,7 +257,7 @@ public class HideMethodRefactoring extends CRefactoring {
 	}
 
 	private List<IASTName> findAllMarkedNames() throws OperationCanceledException, CoreException {
-		final ArrayList<IASTName> namesVector = new ArrayList<IASTName>();
+		final ArrayList<IASTName> namesVector = new ArrayList<>();
 
 		IASTTranslationUnit ast = getAST(tu, null);
 		ast.accept(new ASTVisitor() {
@@ -291,7 +288,7 @@ public class HideMethodRefactoring extends CRefactoring {
 	}
 
 	private Map<String, String> getArgumentMap() {
-		Map<String, String> arguments = new HashMap<String, String>();
+		Map<String, String> arguments = new HashMap<>();
 		arguments.put(CRefactoringDescriptor.FILE_NAME, tu.getLocationURI().toString());
 		arguments.put(CRefactoringDescriptor.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
 		return arguments;

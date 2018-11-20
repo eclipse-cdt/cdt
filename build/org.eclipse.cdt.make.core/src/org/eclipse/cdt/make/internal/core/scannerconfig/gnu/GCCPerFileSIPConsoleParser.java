@@ -71,11 +71,11 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
 
 		if (line.startsWith(COMMAND_ID_BEGIN)) {
 			commandId = Integer.parseInt(line.substring(COMMAND_ID_BEGIN.length()));
-			symbols = new ArrayList<String>();
-			includes = new ArrayList<String>();
-			quoteIncludes = new ArrayList<String>();
+			symbols = new ArrayList<>();
+			includes = new ArrayList<>();
+			quoteIncludes = new ArrayList<>();
 		} else if (line.startsWith(COMMAND_ID_END)) {
-			Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+			Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<>();
 			scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
 			scannerInfo.put(ScannerInfoTypes.QUOTE_INCLUDE_PATHS, quoteIncludes);
 			scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);

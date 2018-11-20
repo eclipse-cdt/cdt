@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,13 +27,11 @@ import org.eclipse.ui.actions.CompoundContributionItem;
 
 import com.ibm.icu.text.Collator;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * Common API of dynamic contribution of items to manipulate configurations of a working set.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 abstract class AbstractWorkingSetConfigsContribution extends CompoundContributionItem {
@@ -58,7 +57,7 @@ abstract class AbstractWorkingSetConfigsContribution extends CompoundContributio
 
 	/**
 	 * Initializes me with my working set.
-	 * 
+	 *
 	 * @param workingSet
 	 *            my working set
 	 */
@@ -75,7 +74,7 @@ abstract class AbstractWorkingSetConfigsContribution extends CompoundContributio
 		}
 
 		// sort the configurations by name
-		List<IWorkingSetConfiguration> configs = new java.util.ArrayList<IWorkingSetConfiguration>(
+		List<IWorkingSetConfiguration> configs = new java.util.ArrayList<>(
 				getWorkingSet().getConfigurations());
 		Collections.sort(configs, configOrdering);
 
@@ -91,19 +90,19 @@ abstract class AbstractWorkingSetConfigsContribution extends CompoundContributio
 
 	/**
 	 * Creates a contribution item for a specific configuration of my working set.
-	 * 
+	 *
 	 * @param config
 	 *            a configuration of my working set
 	 * @param index
 	 *            the index of the contribution in the composite
-	 *            
+	 *
 	 * @return the contribution
 	 */
 	protected abstract IContributionItem createContribution(IWorkingSetConfiguration config, int index);
 
 	/**
 	 * Obtains my working set. It may be lazily determined from the current workbench selection.
-	 * 
+	 *
 	 * @return my working set
 	 */
 	protected IWorkingSetProxy getWorkingSet() {

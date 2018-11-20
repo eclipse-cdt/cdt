@@ -596,7 +596,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 						setErrorMessage(Messages.getString("GDBJtagStartupTab.imageFileName_does_not_exist"));
 						return false;
 					}
-				} catch (CoreException e) { // string substitution throws this if expression doesn't resolve 
+				} catch (CoreException e) { // string substitution throws this if expression doesn't resolve
 					setErrorMessage(Messages.getString("GDBJtagStartupTab.imageFileName_does_not_exist"));
 					return false;
 				}
@@ -619,7 +619,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 						setErrorMessage(Messages.getString("GDBJtagStartupTab.symbolsFileName_does_not_exist"));
 						return false;
 					}
-				} catch (CoreException e) { // string substitution throws this if expression doesn't resolve 
+				} catch (CoreException e) { // string substitution throws this if expression doesn't resolve
 					setErrorMessage(Messages.getString("GDBJtagStartupTab.symbolsFileName_does_not_exist"));
 					return false;
 				}

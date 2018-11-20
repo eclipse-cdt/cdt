@@ -11,7 +11,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Mike Kucera
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 

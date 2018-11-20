@@ -24,6 +24,39 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.cdt.internal.corext.codemanipulation.InclusionContext;
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.corext.util.Strings;
+import org.eclipse.cdt.internal.formatter.scanner.Scanner;
+import org.eclipse.cdt.internal.formatter.scanner.Token;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
+import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.CodeGeneration;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -43,42 +76,6 @@ import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.browser.IQualifiedTypeName;
-import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IIncludeEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.CodeGeneration;
-import org.eclipse.cdt.utils.PathUtil;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
-import org.eclipse.cdt.internal.corext.codemanipulation.InclusionContext;
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-import org.eclipse.cdt.internal.corext.util.Strings;
-import org.eclipse.cdt.internal.formatter.scanner.Scanner;
-import org.eclipse.cdt.internal.formatter.scanner.Token;
-
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
-import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 
 public class NewClassCodeGenerator {
 	private final IPath fHeaderPath;
@@ -182,7 +179,7 @@ public class NewClassCodeGenerator {
 
 	/**
 	 * Creates the new class.
-	 * 
+	 *
 	 * @param monitor a progress monitor to report progress
 	 * @throws CoreException if the creation failed
 	 */
@@ -324,15 +321,15 @@ public class NewClassCodeGenerator {
 
 	/**
 	 * Format given source content according to the project's code style options.
-	 * 
+	 *
 	 * @param content  the source content
 	 * @param tu  the translation unit
 	 * @return the formatted source text or the original if the text could not be formatted successfully
-	 * @throws CModelException 
+	 * @throws CModelException
 	 */
 	private String formatSource(String content, ITranslationUnit tu) throws CModelException {
 		String lineDelimiter = StubUtility.getLineDelimiterUsed(tu);
-		Map<String, Object> options = new HashMap<String, Object>(tu.getCProject().getOptions(true));
+		Map<String, Object> options = new HashMap<>(tu.getCProject().getOptions(true));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
 		TextEdit edit = CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, content, 0, lineDelimiter, options);
 		if (edit != null) {
@@ -539,10 +536,10 @@ public class NewClassCodeGenerator {
 
 	/**
 	 * Retrieve the class comment. Returns the content of the 'type comment' template.
-	 * 
+	 *
 	 * @param tu the translation unit
 	 * @param lineDelimiter the line delimiter to use
-	 * @return the type comment or <code>null</code> if a type comment 
+	 * @return the type comment or <code>null</code> if a type comment
 	 * is not desired
 	 *
 	 * @since 5.0
@@ -569,7 +566,7 @@ public class NewClassCodeGenerator {
 
 	/**
 	 * Returns if comments are added. The settings as specified in the preferences is used.
-	 * 
+	 *
 	 * @param tu
 	 * @return Returns <code>true</code> if comments can be added
 	 * @since 5.0
@@ -625,7 +622,7 @@ public class NewClassCodeGenerator {
 	}
 
 	private List<IMethodStub> getStubs(ASTAccessVisibility access, boolean skipInline) {
-		List<IMethodStub> list = new ArrayList<IMethodStub>();
+		List<IMethodStub> list = new ArrayList<>();
 		if (fMethodStubs != null) {
 			for (int i = 0; i < fMethodStubs.length; ++i) {
 				IMethodStub stub = fMethodStubs[i];
@@ -692,7 +689,7 @@ public class NewClassCodeGenerator {
 		}
 
 		InclusionContext inclusionContext = new InclusionContext(headerTU);
-		List<StyledInclude> includes = new ArrayList<StyledInclude>();
+		List<StyledInclude> includes = new ArrayList<>();
 		for (IPath baseClassLocation : baseClassPaths) {
 			IncludeInfo includeInfo = inclusionContext.getIncludeForHeaderFile(baseClassLocation);
 			if (includeInfo != null) {
@@ -718,7 +715,7 @@ public class NewClassCodeGenerator {
 
 	/**
 	 * Checks if the base classes need to be verified (i.e. they must exist in the project)
-	 * 
+	 *
 	 * @return <code>true</code> if the base classes should be verified
 	 */
 	private boolean verifyBaseClasses() {
@@ -742,8 +739,8 @@ public class NewClassCodeGenerator {
 		//TODO prefs option whether to add to project or parent source folder?
 		IPath addToResourcePath = cProject.getPath();
 		try {
-			List<IPathEntry> pathEntryList = new ArrayList<IPathEntry>();
-			List<IPathEntry> checkEntryList = new ArrayList<IPathEntry>();
+			List<IPathEntry> pathEntryList = new ArrayList<>();
+			List<IPathEntry> checkEntryList = new ArrayList<>();
 
 			IPathEntry[] checkEntries = cProject.getResolvedPathEntries();
 			IPathEntry[] pathEntries = cProject.getRawPathEntries();
@@ -790,7 +787,7 @@ public class NewClassCodeGenerator {
 	private List<IPath> getMissingIncludePaths(IPath projectLocation, List<IPath> includePaths,
 			List<IPath> baseClassPaths) {
 		// check for missing include paths
-		List<IPath> newIncludePaths = new ArrayList<IPath>();
+		List<IPath> newIncludePaths = new ArrayList<>();
 		for (IPath baseClassLocation : baseClassPaths) {
 			// skip any paths inside the same project
 			//TODO possibly a preferences option?
@@ -852,7 +849,7 @@ public class NewClassCodeGenerator {
 			if (info != null) {
 				String[] includePaths = info.getIncludePaths();
 				if (includePaths != null) {
-					List<IPath> list = new ArrayList<IPath>();
+					List<IPath> list = new ArrayList<>();
 					for (int i = 0; i < includePaths.length; ++i) {
 						//TODO do we need to canonicalize these paths first?
 						IPath path = new Path(includePaths[i]);
@@ -868,7 +865,7 @@ public class NewClassCodeGenerator {
 	}
 
 	private List<IPath> getBaseClassPaths(boolean verifyLocation) throws CodeGeneratorException {
-		List<IPath> list = new ArrayList<IPath>();
+		List<IPath> list = new ArrayList<>();
 		for (int i = 0; i < fBaseClasses.length; ++i) {
 			IBaseClassInfo baseClass = fBaseClasses[i];
 			ITypeReference ref = baseClass.getType().getResolvedReference();

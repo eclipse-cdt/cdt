@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Represents a sequence of code tokens.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.4
@@ -35,7 +35,7 @@ public interface IASTTokenList extends IASTToken {
 
 	/**
 	 * Adds a nested token.
-	 * 
+	 *
 	 * @param token a token to be added to the list
 	 */
 	public void addToken(IASTToken token);

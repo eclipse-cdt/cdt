@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Separates the arguments, stored as a single {@code String}, to pass to an external tool. It uses
  * an empty space as the delimiter and supports quoted arguments.
- * 
+ *
  * @since 2.1
  */
 public class ArgsSeparator {
@@ -36,7 +36,7 @@ public class ArgsSeparator {
 		}
 		ParserState state = ParserState.NORMAL;
 		StringBuilder current = new StringBuilder();
-		List<String> args = new ArrayList<String>();
+		List<String> args = new ArrayList<>();
 		boolean lastTokenInQuotes = false;
 		char previous = 0;
 		for (char c : s.toCharArray()) {

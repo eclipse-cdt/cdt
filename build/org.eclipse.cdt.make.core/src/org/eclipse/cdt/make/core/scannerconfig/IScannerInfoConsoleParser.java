@@ -20,13 +20,13 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Parses a line of command output looking for scanner info entries.
- * 
+ *
  * @author vhirsl
  */
 public interface IScannerInfoConsoleParser extends IConsoleParser {
 	/**
 	 * One time initialization of a console parser.
-	 * 
+	 *
 	 * @param collector - scanner info collector
 	 */
 	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector,

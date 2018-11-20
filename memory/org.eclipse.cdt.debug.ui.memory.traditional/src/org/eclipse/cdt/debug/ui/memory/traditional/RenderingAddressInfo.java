@@ -7,9 +7,9 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
- *     Ericsson - initial API and implementation 
+ *     Ericsson - initial API and implementation
  * *******************************************************************************/
 package org.eclipse.cdt.debug.ui.memory.traditional;
 
@@ -128,6 +128,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 		resolveAddressInfoForCurrentSelection(contextService);
 	}
 
+	@Override
 	public void dispose() {
 
 		fSelectedContext = null;
@@ -224,7 +225,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
 
-			final IMemoryBlockAddressInfoRetrieval addrInfo = ((IMemoryBlockAddressInfoRetrieval) adaptable
+			final IMemoryBlockAddressInfoRetrieval addrInfo = (adaptable
 					.getAdapter(IMemoryBlockAddressInfoRetrieval.class));
 
 			if (addrInfo == null) {
@@ -307,7 +308,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 	}
 
 	private String[] orderTypesAscending(Set<String> items) {
-		List<String> collection = new ArrayList<String>(items);
+		List<String> collection = new ArrayList<>(items);
 		Collections.sort(collection);
 		return collection.toArray(new String[collection.size()]);
 	}
@@ -433,7 +434,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 
 	/**
 	 * @param allBaseItems - Set of items sharing the same starting address
-	 * @param baseAddress  - The starting address 
+	 * @param baseAddress  - The starting address
 	 * @param candidateAddress - An address higher than base address
 	 * @return - The set of items that are still overlapping at the incremented address
 	 */
@@ -445,17 +446,17 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 		// Keep info items applicable for the given address
 		BigInteger range = candidateAddress.subtract(baseAddress);
 
-		// sanity check - should not happen 
+		// sanity check - should not happen
 		if (range.compareTo(BigInteger.ZERO) < 0) {
 			// return empty list
 			return items;
 		} else if (range.compareTo(BigInteger.ZERO) == 0) {
-			// Since all items share the same start address, 
+			// Since all items share the same start address,
 			// all items must be valid for a single address span
 			return allBaseItems;
 		}
 
-		// Aggregate elements having a length equal or higher than the span between base address and current address 
+		// Aggregate elements having a length equal or higher than the span between base address and current address
 		for (IMemoryBlockAddressInfoItem item : allBaseItems) {
 			if (item.getRangeInAddressableUnits().compareTo(range) >= 0) {
 				items.add(item);
@@ -543,7 +544,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 
 	@Override
 	public Action[] getDynamicActions() {
-		List<Action> actionList = new ArrayList<Action>(fAddressInfoTypeStatusMap.size());
+		List<Action> actionList = new ArrayList<>(fAddressInfoTypeStatusMap.size());
 		if (getPaneVisible(Rendering.PANE_BINARY)) {
 			for (final String infoType : fAddressInfoTypeStatusMap.keySet()) {
 				Action action = fAddressInfoTypeStatusMap.getAction(infoType);

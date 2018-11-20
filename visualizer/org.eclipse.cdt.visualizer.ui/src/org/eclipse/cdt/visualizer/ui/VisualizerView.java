@@ -20,6 +20,14 @@ package org.eclipse.cdt.visualizer.ui;
 // Java classes
 import java.util.List;
 
+import org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewAction;
+import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
+// Custom classes
+import org.eclipse.cdt.visualizer.ui.events.IVisualizerViewerListener;
+import org.eclipse.cdt.visualizer.ui.events.VisualizerViewerEvent;
+import org.eclipse.cdt.visualizer.ui.util.SelectionProviderAdapter;
+import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
+import org.eclipse.cdt.visualizer.ui.util.WorkbenchSelectionAdapter;
 // SWT/JFace classes
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
@@ -32,18 +40,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-
 // Eclipse/CDT classes
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewAction;
-import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
-
-// Custom classes
-import org.eclipse.cdt.visualizer.ui.events.IVisualizerViewerListener;
-import org.eclipse.cdt.visualizer.ui.events.VisualizerViewerEvent;
-import org.eclipse.cdt.visualizer.ui.util.SelectionProviderAdapter;
-import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
-import org.eclipse.cdt.visualizer.ui.util.WorkbenchSelectionAdapter;
 
 // ----------------------------------------------------------------------------
 // VisualizerView
@@ -51,14 +49,14 @@ import org.eclipse.cdt.visualizer.ui.util.WorkbenchSelectionAdapter;
 
 /**
  * CDT Visualizer View class.
- * 
+ *
  * This is the default implementation of the Visualizer View.
  * It can also serve as a base class for custom visualizer views.
- * 
+ *
  * The Visualizer View is a simple container with a toolbar,
  * which presents an instance of an IVisualizerViewer,
  * and mediates passing of selections to and from the viewer.
- * 
+ *
  * The intent of the VisualizerView class is to encapsulate the
  * standard Eclipse workbench view support, so the viewer does
  * not have to worry about such things.
@@ -97,6 +95,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	}
 
 	/** Dispose method */
+	@Override
 	public void dispose() {
 		super.dispose();
 		setViewer(null);
@@ -145,6 +144,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	// these controls have been created.
 
 	/** Invoked when UI controls need to be created */
+	@Override
 	public void createPartControl(Composite parent) {
 		m_parentControl = parent;
 
@@ -174,6 +174,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	 *  (for example, when loading views from workspace memento information),
 	 *  in which case it should silently do nothing.
 	 */
+	@Override
 	public void setFocus() {
 		if (m_viewer != null)
 			m_viewer.setFocus();
@@ -249,6 +250,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	/** Invoked by WorkbenchSelectionAdapter when selection changes,
 	 *  and by viewer when visualizer selection changes.
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		Object source = event.getSource();
 		if (source instanceof SelectionProviderAdapter) {
@@ -271,7 +273,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 			// Do nothing.
 		}
 		// if the source is another instance of VisualizerView
-		// it's a selection in another (cloned) view. The 
+		// it's a selection in another (cloned) view. The
 		// workbench selection has or will be updated by the
 		// instance of the view where the selection originated,
 		// so no need to do anything
@@ -302,6 +304,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	// --- IVisulizerViewerListener implementation ---
 
 	/** Invoked when visualizer in view has changed. */
+	@Override
 	public void visualizerEvent(IVisualizerViewer source, VisualizerViewerEvent event) {
 		switch (event.getType()) {
 		case VisualizerViewerEvent.VISUALIZER_CHANGED:
@@ -361,22 +364,24 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 
 	// --- view menu support ---
 
-	/** Utility method that returns the menu manager for the view menu 
+	/** Utility method that returns the menu manager for the view menu
 	 * @since 1.2*/
 	protected IMenuManager getViewMenuManager() {
 		IActionBars actionBars = getViewSite().getActionBars();
 		return actionBars.getMenuManager();
 	}
 
-	/** Initialize the view menu 
+	/** Initialize the view menu
 	 * @since 1.2*/
 	protected void initializeMenu() {
 		IMenuManager menuManager = getViewMenuManager();
 		menuManager.addMenuListener(new IMenuListener2() {
+			@Override
 			public void menuAboutToShow(IMenuManager m) {
 				viewMenuShow(m);
 			}
 
+			@Override
 			public void menuAboutToHide(IMenuManager m) {
 				viewMenuHide(m);
 			}
@@ -384,14 +389,14 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	}
 
 	/** Invoked when the viewer is set to do an initial populating of the view
-	 *  menu. Without this, the view menu would not appear. 
+	 *  menu. Without this, the view menu would not appear.
 	 * @since 1.2*/
 	protected void populateMenu() {
 		IMenuManager menuManager = getViewMenuManager();
 		viewMenuShow(menuManager);
 	}
 
-	/** Invoked when view menu is about to be shown. 
+	/** Invoked when view menu is about to be shown.
 	 * @since 1.2*/
 	protected void viewMenuShow(IMenuManager m) {
 		m.removeAll();
@@ -399,7 +404,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 		m.update();
 	}
 
-	/** Invoked when view menu is about to be hidden. 
+	/** Invoked when view menu is about to be hidden.
 	 * @since 1.2*/
 	protected void viewMenuHide(IMenuManager m) {
 	}
@@ -410,10 +415,12 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	protected void initializeContextMenu() {
 		m_contextMenuManager = new MenuManager();
 		m_contextMenuManager.addMenuListener(new IMenuListener2() {
+			@Override
 			public void menuAboutToShow(IMenuManager m) {
 				VisualizerView.this.contextMenuShow(m);
 			}
 
+			@Override
 			public void menuAboutToHide(IMenuManager m) {
 				VisualizerView.this.contextMenuHide(m);
 			}

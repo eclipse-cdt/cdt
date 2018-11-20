@@ -25,7 +25,7 @@ import org.eclipse.cdt.dsf.service.IDsfService;
 /**
  * The TraceControl service provides access to the debugger Tracing functionality.
  * It is used to do such things as start and stop tracing.
- * 
+ *
  * @since 3.0
  */
 public interface IGDBTraceControl extends IDsfService {
@@ -41,10 +41,10 @@ public interface IGDBTraceControl extends IDsfService {
 	 */
 	@Immutable
 	public interface ITraceRecordDMContext extends IDMContext {
-		/** 
+		/**
 		 * Returns the GDB id to the trace record.  Can return null
 		 * if the context does not point to a valid trace record.
-		 * @since 4.0 
+		 * @since 4.0
 		 */
 		String getRecordId();
 	}
@@ -53,27 +53,27 @@ public interface IGDBTraceControl extends IDsfService {
 	 * This is the model data interface that corresponds to ITraceRecordDMContext.
 	 */
 	public interface ITraceRecordDMData extends IDMData {
-		/** 
+		/**
 		 * Return the content of the trace record in the form of a string
-		 * @since 4.0 
+		 * @since 4.0
 		 */
 		String getContent();
 
-		/** 
+		/**
 		 * Return the timestamp of the trace record. Can return null.
-		 * @since 4.0 
+		 * @since 4.0
 		 */
 		String getTimestamp();
 
-		/** 
+		/**
 		 * Return the GDB tracepoint number
-		 * @since 4.0 
+		 * @since 4.0
 		 */
 		String getTracepointNumber();
 
-		/** 
+		/**
 		 * Returns the GDB id to the trace record
-		 * @since 4.0 
+		 * @since 4.0
 		 */
 		String getRecordId();
 	}
@@ -137,7 +137,7 @@ public interface IGDBTraceControl extends IDsfService {
 	public void canLoadTraceData(ITraceTargetDMContext context, DataRequestMonitor<Boolean> rm);
 
 	/**
-	 * Load trace data (all trace records) from the specified file.  A file created from a call to 
+	 * Load trace data (all trace records) from the specified file.  A file created from a call to
 	 * {@link saveTraceData} should have the correct format to be loaded by this call.
 	 */
 	public void loadTraceData(ITraceTargetDMContext context, String file, RequestMonitor rm);
@@ -158,7 +158,7 @@ public interface IGDBTraceControl extends IDsfService {
 
 	public static enum STOP_REASON_ENUM {
 		REQUEST, PASSCOUNT, OVERFLOW, DISCONNECTION, ERROR, UNKNOWN
-	};
+	}
 
 	public interface ITraceStatusDMData extends IDMData {
 		boolean isTracingSupported();
@@ -182,25 +182,25 @@ public interface IGDBTraceControl extends IDsfService {
 
 	/** @since 4.4 */
 	public interface ITraceStatusDMData2 extends ITraceStatusDMData {
-		/** 
+		/**
 		 * Returns the user-name of the user that started or stopped a trace.  Returns an
 		 * empty string if no user-name is available.
 		 */
 		String getUserName();
 
-		/** 
+		/**
 		 * Returns the traces notes related to a started or stopped trace.  Returns an
 		 * empty string if no notes are defined.
 		 */
 		String getNotes();
 
-		/** 
+		/**
 		 * Returns the start-time of an on-going trace.
 		 * Returns an empty string if no start-time is available or if no trace was started.
 		 */
 		String getStartTime();
 
-		/** 
+		/**
 		 * Returns the stop-time of the last trace experiment.
 		 * Returns an empty string if no stop-time is available, if a trace is currently
 		 * running or if no trace was ever started.
@@ -213,19 +213,19 @@ public interface IGDBTraceControl extends IDsfService {
 		 */
 		boolean isTracingFromFile();
 
-		/** 
-		 * Returns true if an ongoing tracing experiment will continue after 
+		/**
+		 * Returns true if an ongoing tracing experiment will continue after
 		 * GDB disconnects from the target.
 		 */
 		boolean isDisconnectedTracingEnabled();
 
-		/** 
+		/**
 		 * Returns true if the buffer being used or to be used to record
 		 * the trace data is a circular buffer (overwriting/flight-recorder), or not.
 		 */
 		boolean isCircularBuffer();
 
-		/** 
+		/**
 		 * Returns the number of created frames of the current trace experiment.
 		 */
 		int getNumberOfCreatedFrames();
@@ -237,21 +237,21 @@ public interface IGDBTraceControl extends IDsfService {
 		 */
 		String getStopErrorDescription();
 
-		/** 
+		/**
 		 * Returns the trace file path when isTracingFromFile() is true.  Can return
 		 * an empty string if the file path is not available.
 		 * Should return null if isTracingFromFile() is false;
 		 */
 		String getTraceFile();
 
-		/** 
-		 * If a trace frame is currently being examined, this method will return 
+		/**
+		 * If a trace frame is currently being examined, this method will return
 		 * its id. Returns null if no trace frame is in focus.
 		 */
 		String getCurrentTraceFrameId();
 
-		/** 
-		 * If a trace frame is currently being examined, this method will return 
+		/**
+		 * If a trace frame is currently being examined, this method will return
 		 * the GDB tracepoint number that triggered the trace record in focus.
 		 * Returns null if no trace frame is in focus (if getCurrentTraceFrameId() == null).
 		 */

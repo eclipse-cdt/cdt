@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Color;
 
 /**
  * Standard color constants.
- * 
+ *
  * This is basically a set of cached color resources
  * for commonly-used colors.
  * These are drawn from an associated UIResourceManager.

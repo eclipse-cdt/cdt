@@ -14,13 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
-import junit.framework.Test;
+import static org.eclipse.cdt.core.parser.tests.VisibilityAsserts.assertVisibility;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.core.runtime.CoreException;
 
-import static org.eclipse.cdt.core.parser.tests.VisibilityAsserts.assertVisibility;
+import junit.framework.Test;
 
 /**
  * @author Thomas Corbat
@@ -33,6 +33,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 		return suite(ClassMemberVisibilityTests.class);
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		setUpSections(1);

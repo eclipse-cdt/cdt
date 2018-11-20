@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * A Standard Build Configuration that simply calls a specified command for
  * build and clean. By default, it calls 'make all' and 'make clean'.
- * 
+ *
  * @since 6.2
  */
 public class StandardBuildConfiguration extends CBuildConfiguration {

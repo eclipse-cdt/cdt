@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.wizards.classwizard;
 
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage;
+import org.eclipse.core.runtime.IStatus;
 
 public class ClassWizardNameTest extends BaseUITestCase {
 

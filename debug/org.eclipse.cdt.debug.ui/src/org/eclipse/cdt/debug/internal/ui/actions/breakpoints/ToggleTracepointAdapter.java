@@ -43,7 +43,7 @@ public class ToggleTracepointAdapter extends AbstractToggleBreakpointAdapter {
 			IResource resource, int lineNumber) throws CoreException {
 		if (interactive) {
 			ICLineBreakpoint lineBp = CDIDebugModel.createBlankLineTracepoint();
-			Map<String, Object> attributes = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<>();
 			CDIDebugModel.setLineBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), lineNumber, true,
 					0, ""); //$NON-NLS-1$
 			openBreakpointPropertiesDialog(lineBp, part, resource, attributes);
@@ -64,7 +64,7 @@ public class ToggleTracepointAdapter extends AbstractToggleBreakpointAdapter {
 			IResource resource, String functionName, int charStart, int charEnd, int lineNumber) throws CoreException {
 		if (interactive) {
 			ICFunctionBreakpoint bp = CDIDebugModel.createBlankFunctionTracepoint();
-			Map<String, Object> attributes = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<>();
 			CDIDebugModel.setFunctionBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), functionName,
 					charStart, charEnd, lineNumber, true, 0, ""); //$NON-NLS-1$
 			openBreakpointPropertiesDialog(bp, part, resource, attributes);
@@ -85,6 +85,7 @@ public class ToggleTracepointAdapter extends AbstractToggleBreakpointAdapter {
 		return false;
 	}
 
+	@Override
 	protected void createWatchpoint(boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource,
 			int charStart, int charEnd, int lineNumber, String expression, String memorySpace, String range)
 			throws CoreException {

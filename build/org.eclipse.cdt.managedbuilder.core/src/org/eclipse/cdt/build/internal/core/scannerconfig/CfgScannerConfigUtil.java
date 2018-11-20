@@ -158,7 +158,7 @@ public class CfgScannerConfigUtil {
 	public static Set<String> getAllScannerDiscoveryProfileIds(IToolChain toolchain) {
 		Assert.isNotNull(toolchain);
 
-		Set<String> profiles = new TreeSet<String>();
+		Set<String> profiles = new TreeSet<>();
 
 		if (toolchain != null) {
 			String toolchainProfileId = null;
@@ -201,7 +201,7 @@ public class CfgScannerConfigUtil {
 			throw new UnsupportedOperationException(msg);
 		}
 
-		Set<String> profiles = new TreeSet<String>();
+		Set<String> profiles = new TreeSet<>();
 
 		for (IInputType inputType : ((Tool) tool).getAllInputTypes()) {
 			for (String profileId : getAllScannerDiscoveryProfileIds(inputType)) {
@@ -233,7 +233,7 @@ public class CfgScannerConfigUtil {
 			throw new UnsupportedOperationException(msg);
 		}
 
-		Set<String> profiles = new TreeSet<String>();
+		Set<String> profiles = new TreeSet<>();
 
 		String attribute = ((InputType) inputType).getLegacyDiscoveryProfileIdAttribute();
 		if (attribute != null) {

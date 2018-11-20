@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,9 +20,9 @@ import java.util.regex.Pattern;
 
 /**
  * Preference representing a problem preference of a basic type.
- * 
+ *
  * @see IProblemPreferenceDescriptor.PreferenceType for types.
- * 
+ *
  */
 public class BasicProblemPreference extends AbstractProblemPreference {
 	protected Object value;
@@ -35,7 +35,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 
 	/**
 	 * Set preferene type
-	 * 
+	 *
 	 * @param type
 	 */
 	public void setType(PreferenceType type) {
@@ -46,7 +46,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 
 	/**
 	 * Generate an info with given key and label
-	 * 
+	 *
 	 * @param key
 	 *        - property id (use in actual property hash of a checker)
 	 * @param label
@@ -61,7 +61,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 
 	/**
 	 * Generate an info with given key and label
-	 * 
+	 *
 	 * @param key
 	 *        - property id (use in actual property hash of a checker)
 	 * @param label
@@ -93,7 +93,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.param.IProblemPreferenceValue#importValue(
 	 * java.lang.String)

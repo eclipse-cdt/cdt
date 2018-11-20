@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
@@ -70,7 +70,7 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 			ICPPASTExpression noexceptExpression) {
 		IASTTypeId[] modifiedExceptions = modificationHelper.createModifiedChildArray(funcDec, exceptions,
 				IASTTypeId.class, commentMap);
-		// It makes a difference whether the exception array is identical to 
+		// It makes a difference whether the exception array is identical to
 		// ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION or not.
 		if (modifiedExceptions.length == 0 && exceptions == ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
 			modifiedExceptions = ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION;

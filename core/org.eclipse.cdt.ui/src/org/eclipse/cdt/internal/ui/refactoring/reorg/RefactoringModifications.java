@@ -14,14 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.reorg;
 
+import org.eclipse.cdt.internal.corext.refactoring.participants.ResourceModifications;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
-
-import org.eclipse.cdt.internal.corext.refactoring.participants.ResourceModifications;
 
 public abstract class RefactoringModifications {
 	private ResourceModifications fResourceModifications;

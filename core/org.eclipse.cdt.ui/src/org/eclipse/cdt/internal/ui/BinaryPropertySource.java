@@ -14,15 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.ui.views.properties.FilePropertySource;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 public class BinaryPropertySource extends FilePropertySource {
 

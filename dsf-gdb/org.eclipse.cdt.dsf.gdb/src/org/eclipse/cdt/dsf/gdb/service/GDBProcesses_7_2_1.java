@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 /**
  * Version for GDB 7.2.1, which does not need a workaround
  * for a bug in GDB 7.2 (Bug 352998)
- * 
+ *
  * @since 4.1
  */
 public class GDBProcesses_7_2_1 extends GDBProcesses_7_2 {

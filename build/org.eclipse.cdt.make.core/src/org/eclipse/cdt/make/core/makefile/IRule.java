@@ -17,7 +17,7 @@ package org.eclipse.cdt.make.core.makefile;
  * There are several kinds of rules: Inference rules, target rules
  * Some make provides special rules for example:
  * .DEFAULT, .IGNORE etc ...
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -29,7 +29,7 @@ public interface IRule extends IParent {
 
 	/**
 	 * @return The rule target name.
-	 * 
+	 *
 	 */
 	ITarget getTarget();
 

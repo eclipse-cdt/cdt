@@ -13,8 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Tree;
@@ -22,7 +21,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor;
+import junit.framework.Test;
 
 public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 
@@ -115,7 +114,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	// // testMethods1.cpp
 	// #include "testMethods.h"
 	// void MyClass::method1() {
-	//    method2(); 
+	//    method2();
 	// }
 	// void MyClass::method3() {
 	// }
@@ -123,7 +122,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	// // testMethods2.cpp
 	// #include "testMethods.h"
 	// void MyClass::method2() {
-	//    method3(); 
+	//    method3();
 	// }
 	public void testMethodsInMultipleFiles() throws Exception {
 		CharSequence[] content = getContentsForTest(3);
@@ -163,7 +162,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	// // testMethods1.cpp
 	// #include "testMethods.h"
 	// void MyClass::method1() {
-	//    method2(); 
+	//    method2();
 	// }
 	// void MyClass::method3() {
 	// }
@@ -171,7 +170,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	// // testMethods2.cpp
 	// #include "testMethods.h"
 	// void MyClass::method2() {
-	//    method3(); 
+	//    method3();
 	// }
 	// void MyClass::method1() {
 	//   method3();
@@ -222,7 +221,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	// // testMethods1.cpp
 	// #include "testMethods.h"
 	// void MyClass::method1() {
-	//    method2(); 
+	//    method2();
 	// }
 	// void MyClass::method3() {
 	// }
@@ -230,7 +229,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	// // testMethods2.cpp
 	// #include "testMethods.h"
 	// void MyClass::method1() {
-	//    method3(); 
+	//    method3();
 	// }
 	// void MyClass::method2() {
 	// }

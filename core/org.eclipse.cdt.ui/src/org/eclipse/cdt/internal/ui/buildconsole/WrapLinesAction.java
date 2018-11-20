@@ -13,12 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.StyledText;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
 /**
  * Toggles word wrapping of the console
@@ -28,7 +26,7 @@ public class WrapLinesAction extends Action {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param viewer - console viewer.
 	 */
 	public WrapLinesAction(BuildConsoleViewer viewer) {

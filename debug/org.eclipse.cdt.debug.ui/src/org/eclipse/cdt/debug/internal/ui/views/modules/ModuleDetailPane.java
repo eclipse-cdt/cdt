@@ -65,7 +65,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
- * 
+ *
  */
 public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, IPropertyChangeListener {
 
@@ -224,7 +224,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
 
 	/**
 	 * Creates the source viewer in the given parent composite
-	 * 
+	 *
 	 * @param parent Parent composite to create the source viewer in
 	 */
 	private void createSourceViewer(Composite parent) {
@@ -350,7 +350,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
 	/**
 	* Adds items to the detail pane's context menu including any extension defined
 	* actions.
-	* 
+	*
 	* @param menu The menu to add the item to.
 	*/
 	protected void fillDetailContextMenu(IMenuManager menu) {
@@ -507,7 +507,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param target find/replace target this class will wrap around.
 		 */
 		public FindReplaceTargetWrapper(IFindReplaceTarget target) {

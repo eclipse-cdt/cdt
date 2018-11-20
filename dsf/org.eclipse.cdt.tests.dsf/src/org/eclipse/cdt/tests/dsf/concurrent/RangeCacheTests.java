@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -120,7 +120,7 @@ public class RangeCacheTests {
 	ICache<List<Integer>> fRangeCache;
 
 	private List<Integer> makeList(long offset, int count) {
-		List<Integer> list = new ArrayList<Integer>(count);
+		List<Integer> list = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
 			list.add((int) (i + offset));
 		}
@@ -148,7 +148,7 @@ public class RangeCacheTests {
 	public void startExecutor() throws ExecutionException, InterruptedException {
 		fExecutor = new TestDsfExecutor();
 		fTestCache = new TestRangeCache();
-		fRetrieveInfos = new TreeSet<RetrieveInfo>();
+		fRetrieveInfos = new TreeSet<>();
 		fRangeCache = null;
 	}
 
@@ -315,7 +315,7 @@ public class RangeCacheTests {
 
 	@Test
 	public void getAndCancelMultipleRangesTest() throws Exception {
-		// Cancel a range, then retrieve the same range 
+		// Cancel a range, then retrieve the same range
 		cancelRange(0, 100, new long[] { 0 }, new int[] { 100 });
 		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
 
@@ -331,7 +331,7 @@ public class RangeCacheTests {
 			@Override
 			public void run() {
 				fTestCache.reset();
-			};
+			}
 		}).get();
 
 		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
@@ -359,7 +359,7 @@ public class RangeCacheTests {
 			@Override
 			public void run() {
 				fTestCache.reset();
-			};
+			}
 		}).get();
 
 		// Retrieve a range in-between two cached ranges
@@ -398,7 +398,7 @@ public class RangeCacheTests {
 			@Override
 			public void run() {
 				fTestCache.reset();
-			};
+			}
 		}).get();
 
 		// Set the data without using an executor.
@@ -424,7 +424,7 @@ public class RangeCacheTests {
 			public void run() {
 				fTestCache.set(0, 100, null, new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID,
 						IDsfStatusConstants.INVALID_STATE, "Cache invalid", null));
-			};
+			}
 		}).get();
 
 		// Retrieve a range cache and check that it immediately contains the error status in it.
@@ -438,7 +438,7 @@ public class RangeCacheTests {
 
 		assertCacheValidWithError(fRangeCache);
 
-		// Request an update from the range and check for exception. 
+		// Request an update from the range and check for exception.
 		TestQuery q = new TestQuery(10, 100);
 
 		fRangeCache = null;

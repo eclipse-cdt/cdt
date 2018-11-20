@@ -26,7 +26,7 @@ public interface IDisassemblyContextProvider {
 
 	/**
 	 * Returns the disassembly context object for <code>element</code>
-	 * 
+	 *
 	 * @param element the element being queried for disassembly context
 	 * @return an object that represents the disassembly context
 	 *      for the given element, or <code>null</code> if the given element

@@ -26,16 +26,16 @@ import org.eclipse.jface.viewers.Viewer;
  * Protocol for the view controller for the project configurations pane of the working set configurations
  * dialog. It takes care of coordinating the user gestures in that pane with the working-set configuration
  * model and vice-versa.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public interface IWorkingSetProjectConfigurationController {
 	/**
 	 * Queries the project configuration in the Working Set Configurations pane that I control.
-	 * 
+	 *
 	 * @return the new working set configuration selection. May be <code>null</code> if there is no selection
 	 */
 	IWorkingSetProjectConfiguration.ISnapshot getProjectConfiguration();
@@ -45,7 +45,7 @@ public interface IWorkingSetProjectConfigurationController {
 	 * {@linkplain #getProjectConfiguration() project configuration} has changed its check-state. The
 	 * controller context can be used to pass back reactions such as to veto the check-state change or to
 	 * signal that some level of UI refresh is required.
-	 * 
+	 *
 	 * @param element
 	 *            an element that has been checked or unchecked
 	 * @param checked
@@ -58,7 +58,7 @@ public interface IWorkingSetProjectConfigurationController {
 	/**
 	 * Computes the initial check-box settings for my tree according to the current state of my
 	 * {@linkplain #getProjectConfiguration() project configuration}.
-	 * 
+	 *
 	 * @param context
 	 *            context in which I can set initial check-states of my elements
 	 */
@@ -68,7 +68,7 @@ public interface IWorkingSetProjectConfigurationController {
 	 * Obtains a content provider for the structure rooted at my {@linkplain #getProjectConfiguration()
 	 * project configuration}. Note that this method will only be called once, and that the caller takes
 	 * responsibility for {@linkplain IContentProvider#dispose() disposing} the content provider.
-	 * 
+	 *
 	 * @return my content provider
 	 */
 	ITreeContentProvider getContentProvider();
@@ -83,10 +83,10 @@ public interface IWorkingSetProjectConfigurationController {
 	 * The viewer argument is useful to obtain information about default font and colors, for label providers
 	 * that implement the optional {@link IFontProvider} and/or {@link IColorProvider} interfaces.
 	 * </p>
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer for which I will provide labels
-	 * 
+	 *
 	 * @return my label provider
 	 */
 	ILabelProvider getLabelProvider(Viewer viewer);
@@ -98,21 +98,21 @@ public interface IWorkingSetProjectConfigurationController {
 	/**
 	 * An interface provided by the Manage Working Set Configurations dialog infrastructure to
 	 * {@link IWorkingSetProjectConfigurationController}s for communication of state changes back to the UI.
-	 * 
+	 *
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 * @noextend This interface is not intended to be extended by clients.
-	 * 
+	 *
 	 * @author Christian W. Damus (damus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	interface IControllerContext {
 		/**
 		 * Queries whether the current working set configuration context is a read-only one. In such cases, I
 		 * should probably disallow check-state changes and other editing.
-		 * 
+		 *
 		 * @return whether the current working set configuration is read-only
-		 * 
+		 *
 		 * @see IWorkingSetConfiguration.ISnapshot#isReadOnly()
 		 */
 		boolean isReadOnly();
@@ -124,12 +124,12 @@ public interface IWorkingSetProjectConfigurationController {
 		 * check state} of a controller and for
 		 * {@linkplain IWorkingSetProjectConfigurationController#checkStateChanged(Object, boolean, IControllerContext)
 		 * vetoing check state changes}.
-		 * 
+		 *
 		 * @param element
 		 *            the element to update checked
 		 * @param checked
 		 *            whether the element should be checked
-		 * 
+		 *
 		 * @see IWorkingSetProjectConfigurationController#checkStateChanged(Object, boolean,
 		 *      IControllerContext)
 		 * @see IWorkingSetProjectConfigurationController#updateCheckState(IControllerContext)
@@ -144,12 +144,12 @@ public interface IWorkingSetProjectConfigurationController {
 		 * check state} of a controller and for
 		 * {@linkplain IWorkingSetProjectConfigurationController#checkStateChanged(Object, boolean, IControllerContext)
 		 * responding to check state changes}.
-		 * 
+		 *
 		 * @param element
 		 *            the element to update checked
 		 * @param checked
 		 *            whether the element should be checked
-		 * 
+		 *
 		 * @see IWorkingSetProjectConfigurationController#checkStateChanged(Object, boolean,
 		 *      IControllerContext)
 		 * @see IWorkingSetProjectConfigurationController#updateCheckState(IControllerContext)
@@ -161,7 +161,7 @@ public interface IWorkingSetProjectConfigurationController {
 		 * Requests an update of the visual appearance of the specified element. The element may be any
 		 * element under my control, or even the {@link IWorkingSetConfiguration} or {@link IWorkingSetProxy}
 		 * that owns my project configuration.
-		 * 
+		 *
 		 * @param element
 		 *            an element to update
 		 */
@@ -170,7 +170,7 @@ public interface IWorkingSetProjectConfigurationController {
 		/**
 		 * Notifies that the specified project configuration's activation state has changed. That is, that it
 		 * is now activated when previously it was not, or vice-versa.
-		 * 
+		 *
 		 * @param project
 		 *            configuration the project configuration that changed
 		 */

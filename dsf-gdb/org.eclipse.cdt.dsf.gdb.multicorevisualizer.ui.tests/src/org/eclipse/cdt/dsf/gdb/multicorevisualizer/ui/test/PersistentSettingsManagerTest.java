@@ -114,7 +114,7 @@ public class PersistentSettingsManagerTest {
 		m_stringParamInstance3 = m_persistentSettingsManager3.getNewParameter(String.class,
 				"Per-instance String Parameter", true, DEFAULT_STRING_VAL_INSTANCE3);
 
-		// This is to simulate a persistent parameter, being "shared" by 3 instances (e.g. views). So, the 3 instances are persisted as a single parameter. 
+		// This is to simulate a persistent parameter, being "shared" by 3 instances (e.g. views). So, the 3 instances are persisted as a single parameter.
 		m_stringGlobalParamInstance1 = m_persistentSettingsManager1.getNewParameter(String.class,
 				"Global String Parameter", false, DEFAULT_STRING_VAL_SHARED);
 		m_stringGlobalParamInstance2 = m_persistentSettingsManager2.getNewParameter(String.class,
@@ -148,7 +148,7 @@ public class PersistentSettingsManagerTest {
 	/** Test persisting one String value */
 	@Test
 	public void testPersistentParamString() throws Exception {
-		// no value persisted yet - should return default 
+		// no value persisted yet - should return default
 		assertEquals(DEFAULT_STRING, m_stringParam.value());
 
 		// set a value
@@ -171,7 +171,7 @@ public class PersistentSettingsManagerTest {
 	/** Test persisting one Boolean value */
 	@Test
 	public void testPersistentParamBoolean() throws Exception {
-		// no value persisted yet - should return default 
+		// no value persisted yet - should return default
 		assertEquals(DEFAULT_BOOLEAN, m_booleanParam.value());
 
 		// set a value
@@ -185,7 +185,7 @@ public class PersistentSettingsManagerTest {
 	/** Test persisting one Integer value */
 	@Test
 	public void testPersistentParamInteger() throws Exception {
-		// no value persisted yet - should return default 
+		// no value persisted yet - should return default
 		assertEquals(DEFAULT_INTEGER, m_integerParam.value());
 
 		// set a value
@@ -363,16 +363,16 @@ public class PersistentSettingsManagerTest {
 	}
 
 	/** This test simulates 3 different instances (e.g. views) writing and reading the same persistent
-	 * parameter. In this case the parameter is defined as "per-instance" (vs "global"), so each 
+	 * parameter. In this case the parameter is defined as "per-instance" (vs "global"), so each
 	 * instance has it's own independent copy of the persistent parameter. */
 	@Test
 	public void testMultipleInstances() throws Exception {
-		// no values persisted yet - should return defaults 
+		// no values persisted yet - should return defaults
 		assertEquals(DEFAULT_STRING_VAL_INSTANCE1, m_stringParamInstance1.value());
 		assertEquals(DEFAULT_STRING_VAL_INSTANCE2, m_stringParamInstance2.value());
 		assertEquals(DEFAULT_STRING_VAL_INSTANCE3, m_stringParamInstance3.value());
 
-		// set values - since the parameters were defined to save values per-instance, they should be 
+		// set values - since the parameters were defined to save values per-instance, they should be
 		// persisted independently (i.e. not overwrite each other)
 		String randomString1 = getRandomString();
 		String randomString2 = getRandomString();
@@ -401,12 +401,12 @@ public class PersistentSettingsManagerTest {
 	 * copy is shared between the instances. */
 	@Test
 	public void testGlobalParamsWithMultipleInstances() throws Exception {
-		// no values persisted yet - should return defaults 
+		// no values persisted yet - should return defaults
 		assertEquals(DEFAULT_STRING_VAL_SHARED, m_stringGlobalParamInstance1.value());
 		assertEquals(DEFAULT_STRING_VAL_SHARED, m_stringGlobalParamInstance2.value());
 		assertEquals(DEFAULT_STRING_VAL_SHARED, m_stringGlobalParamInstance3.value());
 
-		// set values - since the parameters were defined to save values per-instance, they should be 
+		// set values - since the parameters were defined to save values per-instance, they should be
 		// persisted independently
 		String randomString1 = getRandomString();
 		String randomString2 = getRandomString();

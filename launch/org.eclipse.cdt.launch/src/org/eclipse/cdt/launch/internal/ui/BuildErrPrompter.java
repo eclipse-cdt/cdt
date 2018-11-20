@@ -63,7 +63,7 @@ public class BuildErrPrompter implements IStatusHandler {
 	 * if it was the active one. This argument should be non-empty ONLY if a
 	 * not-active configuration was built.
 	 * <ul>
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
 	 *      java.lang.Object)
 	 */

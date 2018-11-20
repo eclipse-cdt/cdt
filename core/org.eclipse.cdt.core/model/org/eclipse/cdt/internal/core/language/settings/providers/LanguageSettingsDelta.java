@@ -64,7 +64,7 @@ public class LanguageSettingsDelta {
 			return paths;
 		}
 
-		paths = new TreeSet<String>();
+		paths = new TreeSet<>();
 
 		LanguageSettingsStorage oldCombinedStorage = combineStorage(oldLanguageSettingsState);
 		LanguageSettingsStorage newCombinedStorage = combineStorage(newLanguageSettingsState);

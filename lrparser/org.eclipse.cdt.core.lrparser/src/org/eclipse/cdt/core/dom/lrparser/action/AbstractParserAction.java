@@ -17,13 +17,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+
+import lpg.lpgjavaruntime.IToken;
 
 @SuppressWarnings("restriction")
 public abstract class AbstractParserAction {
@@ -32,8 +32,8 @@ public abstract class AbstractParserAction {
 	 * Used with very simple optional rules that just say
 	 * that some particular token or keyword is optional.
 	 * The presence of the PLACE_HOLDER on the stack means that the keyword
-	 * was parsed, the presence of null means the keyword wasn't parsed. 
-	 * 
+	 * was parsed, the presence of null means the keyword wasn't parsed.
+	 *
 	 * @see BuildASTParserAction#consumePlaceHolder()
 	 * @see BuildASTParserAction#consumeEmpty()
 	 */
@@ -98,7 +98,7 @@ public abstract class AbstractParserAction {
 	}
 
 	/**
-	 * Creates a completion node if one does not yet exist and adds the 
+	 * Creates a completion node if one does not yet exist and adds the
 	 * given name to it.
 	 */
 	protected void addNameToCompletionNode(IASTName name, String prefix) {
@@ -130,7 +130,7 @@ public abstract class AbstractParserAction {
 
 	/**
 	 * Runs the given parser on the given token list.
-	 * 
+	 *
 	 */
 	protected <N extends IASTNode> N runSecondaryParser(ISecondaryParser<N> secondaryParser) {
 		return runSecondaryParser(secondaryParser, stream.getRuleTokens());
@@ -190,7 +190,7 @@ public abstract class AbstractParserAction {
 	 * Usually used for very simple optional elements to indicate
 	 * the element was parsed. Usually the existence of an AST node
 	 * on the stack is used instead of the marker, but for simple
-	 * cases like an optional keyword this action is useful. 
+	 * cases like an optional keyword this action is useful.
 	 */
 	public void consumePlaceHolder() {
 		astStack.push(PLACE_HOLDER);

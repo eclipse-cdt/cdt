@@ -19,9 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -43,10 +40,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 
 /**
  * Finds locations of linked names. Used by Rename in File and Rename in Workspace.
@@ -79,7 +77,7 @@ public class LinkedNamesFinder {
 
 		public BindingFinder(IASTTranslationUnit root, IASTNode point) {
 			this.root = root;
-			locations = new ArrayList<IRegion>();
+			locations = new ArrayList<>();
 		}
 
 		public void find(IBinding target) {
@@ -187,13 +185,13 @@ public class LinkedNamesFinder {
 		 * may belong to multiple macro bindings with the same name. Macro names are also
 		 * looked for in the comments of #else and #endif statements.
 		 * Comments of #else and #endif statements related to #ifdef or #ifndef are searched
-		 * for the macro name referenced by the #if[n]def. 
-		 * @param target a binding representing a macro. 
+		 * for the macro name referenced by the #if[n]def.
+		 * @param target a binding representing a macro.
 		 */
 		private void findMacro(IMacroBinding target) {
 			findBinding(target);
 			char[] nameChars = target.getNameCharArray();
-			List<IASTName> ifdefNameStack = new ArrayList<IASTName>();
+			List<IASTName> ifdefNameStack = new ArrayList<>();
 			IASTPreprocessorStatement[] statements = root.getAllPreprocessorStatements();
 			for (IASTPreprocessorStatement statement : statements) {
 				if (!statement.isPartOfTranslationUnitFile()) {
@@ -310,8 +308,8 @@ public class LinkedNamesFinder {
 		}
 
 		private final ICPPClassType baseClass;
-		private Set<ICPPClassType> subclasses = new HashSet<ICPPClassType>();
-		private Set<IBinding> seenClasses = new HashSet<IBinding>();
+		private Set<ICPPClassType> subclasses = new HashSet<>();
+		private Set<IBinding> seenClasses = new HashSet<>();
 
 		SubclassFinder(ICPPClassType baseClass) {
 			this.baseClass = baseClass;

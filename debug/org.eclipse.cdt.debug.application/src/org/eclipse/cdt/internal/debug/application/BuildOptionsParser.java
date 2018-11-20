@@ -41,7 +41,7 @@ public class BuildOptionsParser implements IWorkspaceRunnable, IMarkerGenerator 
 
 	private final IProject project;
 	private final File buildLog;
-	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$ 
+	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$
 
 	public BuildOptionsParser(IProject project, File buildLog) {
 		this.project = project;
@@ -106,4 +106,4 @@ public class BuildOptionsParser implements IWorkspaceRunnable, IMarkerGenerator 
 		// do nothing
 	}
 
-};
+}

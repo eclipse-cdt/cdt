@@ -19,7 +19,7 @@ package org.eclipse.cdt.internal.core.util;
  * considered to occupy one unit of space.
  *
  * @see LRUCache
- * 
+ *
  * This interface is similar to the JDT ILRUCacheable interface.
  */
 public interface ILRUCacheable {

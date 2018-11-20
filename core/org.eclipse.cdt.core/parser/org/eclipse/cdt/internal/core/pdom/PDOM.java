@@ -266,11 +266,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  180.0 - Internal types of enumerators, bug 446711.
 	 *  180.1 - Storing types of unknown members, bug 447728.
 	 *  180.2 - Do not apply significant macros to source files, bug 450888. <<CDT 8.6>>
-	 *  
+	 *
 	 *  CDT 8.7 development (versions not supported on the 8.6.x branch)
 	 *  181.0 - C function type with varargs, bug 452416.
 	 *  182.0 - A flag added to PDOMCPPClassSpecialization, bug 466362. <<CDT 8.7>>
-	 *  
+	 *
 	 *  CDT 8.8 development (versions not supported on the 8.7.x branch)
 	 *  190.0 - Signature change for methods with ref-qualifiers, bug 470014.
 	 *  191.0 - Added EvalID.fIsPointerDeref, bug 472436. <<CDT 8.8>>
@@ -278,21 +278,21 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  CDT 9.0 development (versions not supported on the 8.8.x branch)
 	 *  200.0 - Added PDOMCPPAliasTemplateInstance, bug 486915.
 	 *  201.0 - PDOMCPPBase stores a CPPParameterPackType for pack expansions, bug 487703. <<CDT 9.0>>
-	 *  
+	 *
 	 *  CDT 9.2 development (versions not supported on the 9.0.x branch)
 	 *  202.0 - C++14 constexpr evaluation, bug 490475.
 	 *  203.0 - Use 16 bits to store field position, bug 501616.
 	 *  204.0 - Do not store return expression in index, follow-up to bug 490475.
 	 *  205.0 - Reworked storage of annotations, bug 505832.
 	 *  206.0 - DependentValue split out from IntegralValue.
-	 *  
+	 *
 	 *  CDT 9.3 development (versions not supported on the 9.2.x branch)
 	 *  207.0 - Store a caller record for macro reference names.
 	 *  208.0 - Trigger index rebuild to rebuild corrupted binding reference lists, bug 399147.
 	 *  209.0 - Alias templates and their instances take up more space than required, bug 516385.
 	 *  210.0 - Return type deduction, bug 408470.
 	 *  211.0 - Change representation of alias template instances, bug 516338.
-	 *  
+	 *
 	 *  CDT 9.5 development (version not supported on the 9.4.x branch)
 	 *  212.0 - C++ constexpr if and if init-statement evaluation
 	 *  213.0 - C++ switch init-statement evaluation
@@ -1581,7 +1581,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public void putCachedVariableResult(Long key, IValue result) {
 		synchronized (fVariableResultCache) {
-			fVariableResultCache.put(key, new WeakReference<IValue>(result));
+			fVariableResultCache.put(key, new WeakReference<>(result));
 		}
 	}
 

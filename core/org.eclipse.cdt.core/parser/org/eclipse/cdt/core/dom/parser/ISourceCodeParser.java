@@ -26,10 +26,10 @@ public interface ISourceCodeParser {
 
 	/**
 	 * Compute an abstract syntax tree (AST).
-	 * 
+	 *
 	 * The returned AST is frozen, any attempt modify any of the nodes in
 	 * the AST will result in an IllegalStateException.
-	 * 
+	 *
 	 * @return the AST, should not return <code>null</code>
 	 * @throws ParseError  if parsing has been cancelled or for other reasons
 	 */
@@ -49,7 +49,7 @@ public interface ISourceCodeParser {
 	/**
 	 * Compute an {@link IASTCompletionNode} for code completion.
 	 * @return a completion node or <code>null</code> if none could be computed
-	 * 
+	 *
 	 * @throws ParseError  if parsing has been cancelled or for other reasons
 	 */
 	public IASTCompletionNode getCompletionNode();

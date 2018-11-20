@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Patrick Chuong (Texas Instruments) - 
+ *     Patrick Chuong (Texas Instruments) -
  *     	Update CDT ToggleBreakpointTargetFactory enablement (340177 )
  *****************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
@@ -26,7 +26,7 @@ import org.eclipse.debug.ui.DebugUITools;
 
 /**
  * Disassembly toggle breakpoint factory enablement tester.
- * 
+ *
  * @since 2.2
  */
 public class DisassemblyToggleBreakpointTester extends PropertyTester {

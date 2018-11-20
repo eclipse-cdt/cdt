@@ -26,11 +26,11 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 
 public class BuildSystemSpecificVariableSubstitutor extends SupplierBasedCdtVariableSubstitutor {
-	private static final Set<String> fFileVarsSet = new HashSet<String>(
+	private static final Set<String> fFileVarsSet = new HashSet<>(
 			Arrays.asList(MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_FILE)));
-	private static final Set<String> fOptionVarsSet = new HashSet<String>(
+	private static final Set<String> fOptionVarsSet = new HashSet<>(
 			Arrays.asList(MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_OPTION)));
-	private static final Set<String> fToolVarsSet = new HashSet<String>(
+	private static final Set<String> fToolVarsSet = new HashSet<>(
 			Arrays.asList(MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_TOOL)));
 
 	public BuildSystemSpecificVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue,

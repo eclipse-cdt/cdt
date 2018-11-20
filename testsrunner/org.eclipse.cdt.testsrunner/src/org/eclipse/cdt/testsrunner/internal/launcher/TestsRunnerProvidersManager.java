@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,13 +36,13 @@ public class TestsRunnerProvidersManager {
 	/**
 	 * Provides access to information about all registered Tests Runner
 	 * Plug-ins.
-	 * 
+	 *
 	 * @return array of tests runner plug-ins descriptors
 	 */
 	public TestsRunnerProviderInfo[] getTestsRunnersProviderInfo() {
 		if (testsRunnerProviders == null) {
 			// Initialize tests runners info
-			List<TestsRunnerProviderInfo> testsRunnerProvidersList = new ArrayList<TestsRunnerProviderInfo>();
+			List<TestsRunnerProviderInfo> testsRunnerProvidersList = new ArrayList<>();
 			for (IConfigurationElement element : Platform.getExtensionRegistry()
 					.getConfigurationElementsFor(TESTS_RUNNER_EXTENSION_POINT_ID)) {
 				testsRunnerProvidersList.add(new TestsRunnerProviderInfo(element));
@@ -56,7 +56,7 @@ public class TestsRunnerProvidersManager {
 	/**
 	 * Provides access to information about Tests Runner Plug-in referred in the
 	 * specified launch configuration.
-	 * 
+	 *
 	 * @return tests runner plug-in descriptor
 	 */
 	public TestsRunnerProviderInfo getTestsRunnerProviderInfo(ILaunchConfiguration launchConf) throws CoreException {
@@ -68,7 +68,7 @@ public class TestsRunnerProvidersManager {
 	/**
 	 * Provides access to information about Tests Runner Plug-in with the
 	 * specified ID.
-	 * 
+	 *
 	 * @return tests runner plug-in descriptor
 	 */
 	private TestsRunnerProviderInfo getTestsRunnerProviderInfo(String testsRunnerProviderId) {

@@ -16,14 +16,12 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.dnd.BasicSelectionTransferDragAdapter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-
-import org.eclipse.cdt.internal.ui.dnd.BasicSelectionTransferDragAdapter;
 
 public class SelectionTransferDragAdapter extends BasicSelectionTransferDragAdapter {
 

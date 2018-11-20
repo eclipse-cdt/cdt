@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson           - Added tracepoint support (284286)
@@ -45,10 +45,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * Input for breakpoint properties dialog.  It captures both the 
+ * Input for breakpoint properties dialog.  It captures both the
  * selected breakpoint object as well as the selected debug context.
  * This combined context can then be used by breakpoint property
- * pages to access model and target specific breakpoint settings.  
+ * pages to access model and target specific breakpoint settings.
  */
 public class CBreakpointContext extends PlatformObject implements ICBreakpointContext {
 
@@ -78,7 +78,7 @@ public class CBreakpointContext extends PlatformObject implements ICBreakpointCo
 	private final CBreakpointPreferenceStore fPreferenceStore;
 
 	/**
-	 * Creates a new breakpoint context with given breakpoint and debug 
+	 * Creates a new breakpoint context with given breakpoint and debug
 	 * context selection.
 	 */
 	public CBreakpointContext(ICBreakpoint breakpoint, ISelection debugContext) {
@@ -119,16 +119,20 @@ public class CBreakpointContext extends PlatformObject implements ICBreakpointCo
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider implementation
 	 */
+	@Override
 	public IWorkbenchPart getPart() {
 		return null;
 	}
 
+	@Override
 	public void addDebugContextListener(IDebugContextListener listener) {
 	}
 
+	@Override
 	public void removeDebugContextListener(IDebugContextListener listener) {
 	}
 
+	@Override
 	public ISelection getActiveContext() {
 		return fDebugContext;
 	}
@@ -136,7 +140,7 @@ public class CBreakpointContext extends PlatformObject implements ICBreakpointCo
 
 /**
  * Action filter for the breakpoint context, which allows property
- * pages to filter their activation based on the debug model ID of 
+ * pages to filter their activation based on the debug model ID of
  * the active debug context.
  */
 class CBreakpointContextActionFilter implements IActionFilter {
@@ -253,8 +257,8 @@ class CBreakpointContextAdapterFactory implements IAdapterFactory {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object obj, Class<T> adapterType) {
-		// Note: only return the breakpoint object as an adapter if it has 
-		// an associated marker.  Otherwise the property pages will throw multiple 
+		// Note: only return the breakpoint object as an adapter if it has
+		// an associated marker.  Otherwise the property pages will throw multiple
 		// exceptions.
 		if (adapterType.isInstance(((CBreakpointContext) obj).getBreakpoint())
 				&& ((CBreakpointContext) obj).getBreakpoint().getMarker() != null) {

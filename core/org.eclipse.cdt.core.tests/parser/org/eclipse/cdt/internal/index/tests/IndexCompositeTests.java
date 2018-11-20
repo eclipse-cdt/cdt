@@ -83,7 +83,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	// class B {};
 	public void testPairDisjointContent() throws Exception {
 		CharSequence[] contents = getContentsForTest(2);
-		List<ICProject> projects = new ArrayList<ICProject>();
+		List<ICProject> projects = new ArrayList<>();
 
 		try {
 			ProjectBuilder pb = new ProjectBuilder("projB_" + getName(), true);
@@ -139,7 +139,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	// namespace X { class A2 {}; B2 b; C2 c; }
 	public void testTripleLinear() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
-		List<ICProject> projects = new ArrayList<ICProject>();
+		List<ICProject> projects = new ArrayList<>();
 
 		try {
 			ProjectBuilder pb = new ProjectBuilder("projC_" + getName(), true);
@@ -255,7 +255,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	// void foo(C1 c) {}
 	public void testTripleUpwardV() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
-		List<ICProject> projects = new ArrayList<ICProject>();
+		List<ICProject> projects = new ArrayList<>();
 
 		try {
 			ProjectBuilder pb = new ProjectBuilder("projB_" + getName(), true);
@@ -353,7 +353,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	// namespace X { class A2 {}; }
 	public void testTripleDownwardV() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
-		List<ICProject> projects = new ArrayList<ICProject>();
+		List<ICProject> projects = new ArrayList<>();
 
 		try {
 			ProjectBuilder pb = new ProjectBuilder("projC_" + getName(), true);

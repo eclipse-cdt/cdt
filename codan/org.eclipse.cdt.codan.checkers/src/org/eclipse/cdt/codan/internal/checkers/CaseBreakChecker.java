@@ -193,7 +193,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 * Checks whether {@code statement} (or its last inner statement if it
 		 * is a compound statement) is a {@code IASTNullStatement} and has the
 		 * C++ standard [[fallthrough]] attribute
-		 * 
+		 *
 		 * @param statement The {@code IASTStatement} to check
 		 * @return {@code true} if the {@code statement} has the [[fallthrough]]
 		 *         attribute,
@@ -229,7 +229,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 	/**
 	 * Checks if the given statement is a result of macro expansion with a possible
 	 * exception for the trailing semicolon.
-	 * 
+	 *
 	 * @param statement the statement to check.
 	 * @return <code>true</code> if the statement is a result of macro expansion
 	 */

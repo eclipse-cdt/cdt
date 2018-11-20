@@ -19,10 +19,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+
+import junit.framework.TestCase;
 
 /**
  *
@@ -68,7 +68,7 @@ public class CharArrayMapTest extends TestCase {
 
 	private static long timeMap(char[][] keys) {
 		long start = System.currentTimeMillis();
-		CharArrayMap<Integer> map = new CharArrayMap<Integer>(keys.length);
+		CharArrayMap<Integer> map = new CharArrayMap<>(keys.length);
 		for (int i = 0; i < keys.length; i++) {
 			map.put(keys[i], i);
 		}
@@ -98,7 +98,7 @@ public class CharArrayMapTest extends TestCase {
 		char[] key3 = "third key".toCharArray();
 		char[] key4 = "forth key".toCharArray();
 
-		CharArrayMap<Integer> map = new CharArrayMap<Integer>();
+		CharArrayMap<Integer> map = new CharArrayMap<>();
 		assertTrue(map.isEmpty());
 		assertEquals(0, map.size());
 
@@ -125,7 +125,7 @@ public class CharArrayMapTest extends TestCase {
 		assertTrue(map.containsValue(3));
 		assertTrue(map.containsValue(4));
 
-		Set<Integer> values = new HashSet<Integer>();
+		Set<Integer> values = new HashSet<>();
 		values.add(1);
 		values.add(2);
 		values.add(3);
@@ -178,7 +178,7 @@ public class CharArrayMapTest extends TestCase {
 				"metallica".toCharArray(), "in flames".toCharArray(), "lamb of god".toCharArray(),
 				"carcass".toCharArray() };
 
-		CharArrayMap<Integer> map = new CharArrayMap<Integer>();
+		CharArrayMap<Integer> map = new CharArrayMap<>();
 		assertTrue(map.isEmpty());
 		assertEquals(0, map.size());
 
@@ -200,7 +200,7 @@ public class CharArrayMapTest extends TestCase {
 			assertTrue(map.containsValue(i));
 		}
 
-		Set<Integer> values = new HashSet<Integer>();
+		Set<Integer> values = new HashSet<>();
 		for (int i = 0; i < keys.length; i++) {
 			values.add(i);
 		}
@@ -267,7 +267,7 @@ public class CharArrayMapTest extends TestCase {
 
 	public void testProperFail() {
 		char[] hello = "hello".toCharArray();
-		CharArrayMap<Integer> map = new CharArrayMap<Integer>();
+		CharArrayMap<Integer> map = new CharArrayMap<>();
 		Integer value = 9;
 
 		try {

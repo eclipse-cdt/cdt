@@ -47,7 +47,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @since 2.4
- * 
+ *
  */
 public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetector {
 	private class DsfStepIntoSelectionHyperlink implements IHyperlink {
@@ -58,7 +58,7 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param stepIntoSelectionCommand
 		 * @param region
 		 */

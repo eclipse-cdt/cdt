@@ -78,7 +78,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 
 	/**
 	 * Constructor for IndexManagerTest.
-	 * 
+	 *
 	 * @param name
 	 */
 	public GCCErrorParserTests() {
@@ -104,17 +104,17 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 	 * but was always commented out.
 	 * I brought this up in http://dev.eclipse.org/mhonarc/lists/cdt-dev/msg08668.html
 	 * but did not get any replies.
-	 * 
+	 *
 		public void testMultiLineDescriptionError() throws IOException {
 			runParserTest(GCC_ERROR_STREAM2, GCC_ERROR_STREAM2_ERRORS, GCC_ERROR_STREAM2_WARNINGS, GCC_ERROR_STREAM2_FILENAMES,
 					GCC_ERROR_STREAM2_DESCRIPTIONS, new String[]{GCC_ERROR_PARSER_ID});
 		}
-	
+
 		public void testLongMultiLineDescriptionError() throws IOException {
 			runParserTest(GCC_ERROR_STREAM3, GCC_ERROR_STREAM3_ERRORS, GCC_ERROR_STREAM3_WARNINGS, GCC_ERROR_STREAM3_FILENAMES,
 					GCC_ERROR_STREAM3_DESCRIPTIONS, new String[]{GCC_ERROR_PARSER_ID});
 		}
-	
+
 		public void testMultiFileMultiLineSingleError() throws IOException {
 			runParserTest(GCC_ERROR_STREAM4, GCC_ERROR_STREAM4_ERRORS, GCC_ERROR_STREAM4_WARNINGS, GCC_ERROR_STREAM4_FILENAMES,
 					GCC_ERROR_STREAM4_DESCRIPTIONS, new String[]{GCC_ERROR_PARSER_ID});

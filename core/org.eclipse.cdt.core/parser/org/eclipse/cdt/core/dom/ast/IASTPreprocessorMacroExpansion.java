@@ -14,9 +14,9 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * Models macro expansion found in the source code that is not nested inside another expansion. 
+ * Models macro expansion found in the source code that is not nested inside another expansion.
  * @since 5.0
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

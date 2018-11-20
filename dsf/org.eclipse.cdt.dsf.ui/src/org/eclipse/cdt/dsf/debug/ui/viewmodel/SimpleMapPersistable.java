@@ -29,7 +29,7 @@ import org.eclipse.ui.IPersistableElement;
  * Generic persistable for storing a map of simple values.
  * <br>
  * Currently supported value types are {@link Integer} and {@link String}.
- * 
+ *
  * @since 2.5
  */
 public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable {
@@ -39,7 +39,7 @@ public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable 
 	private static final String KEY_VALUE = "value"; //$NON-NLS-1$
 
 	private Class<V> fType;
-	private Map<String, V> fValues = new TreeMap<String, V>();
+	private Map<String, V> fValues = new TreeMap<>();
 
 	@SuppressWarnings("unchecked")
 	public SimpleMapPersistable(IMemento memento) throws CoreException {
@@ -57,7 +57,7 @@ public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable 
 		}
 
 		IMemento[] list = memento.getChildren(KEY_NAME);
-		Map<String, V> values = new TreeMap<String, V>();
+		Map<String, V> values = new TreeMap<>();
 		for (IMemento elem : list) {
 			values.put(elem.getID(), getValue(elem));
 		}
@@ -79,7 +79,7 @@ public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable 
 	public void saveState(IMemento memento) {
 		Map<String, V> values = null;
 		synchronized (fValues) {
-			values = new TreeMap<String, V>(fValues);
+			values = new TreeMap<>(fValues);
 		}
 
 		IMemento type = memento.createChild(KEY_TYPE);

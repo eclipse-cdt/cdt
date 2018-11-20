@@ -25,7 +25,7 @@ public class NotificationManager /*implements ISettingsChangeListener */ {
 	private List<ISettingsChangeListener> fListeners;
 
 	private NotificationManager() {
-		fListeners = new CopyOnWriteArrayList<ISettingsChangeListener>();
+		fListeners = new CopyOnWriteArrayList<>();
 	}
 
 	public static NotificationManager getInstance() {

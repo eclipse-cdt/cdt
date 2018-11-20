@@ -25,12 +25,12 @@ import org.osgi.framework.BundleContext;
  * Hooks our debug options to the Platform trace functionality.
  * In essence, we can open Window -> Preferences -> Tracing
  * and turn on debug options for this package. The debug output
- * will come out on the console and can be saved directly to 
- * a file. Classes that need to be debugged can call into 
+ * will come out on the console and can be saved directly to
+ * a file. Classes that need to be debugged can call into
  * GdbDebugOptions to get debug flags. If new flags need to be
  * created, they will need to have a unique identifier and added to
  * the .options file in this plugin
- * 
+ *
  * @since 4.1
  *
  */
@@ -51,7 +51,7 @@ public class GdbDebugOptions implements DebugOptionsListener {
 	 * Constructor
 	 */
 	public GdbDebugOptions(BundleContext context) {
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, GdbPlugin.getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}

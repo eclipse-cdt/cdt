@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - Ted Williams - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ *
  * @since 2.0  Moved to different package, exists since 1.0.
  */
 public class SelectUpdatePolicyAction

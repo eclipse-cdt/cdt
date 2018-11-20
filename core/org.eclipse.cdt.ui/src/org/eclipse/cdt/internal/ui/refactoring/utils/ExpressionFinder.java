@@ -1,28 +1,26 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- * Institute for Software - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Institute for Software - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
-
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexName;
-
 import org.eclipse.cdt.internal.ui.refactoring.Container;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Guido Zgraggen IFS
@@ -30,7 +28,7 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
 public class ExpressionFinder {
 
 	public static IASTName findExpressionInTranslationUnit(IASTTranslationUnit transUnit, final IIndexName indexName) {
-		final Container<IASTName> expName = new Container<IASTName>();
+		final Container<IASTName> expName = new Container<>();
 		transUnit.accept(new ASTVisitor() {
 			{
 				shouldVisitNames = true;

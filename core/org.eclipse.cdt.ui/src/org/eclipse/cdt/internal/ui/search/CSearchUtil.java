@@ -14,15 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.ui.IWorkingSet;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.ui.IWorkingSet;
 
 public class CSearchUtil {
 	public static int LRU_WORKINGSET_LIST_SIZE = 3;
@@ -72,7 +70,7 @@ public class CSearchUtil {
 	}
 
 	/**
-	 * Returns true whether 'ch' could the first character of an overloadable C++ operator. 
+	 * Returns true whether 'ch' could the first character of an overloadable C++ operator.
 	 */
 	private static boolean isOperatorChar(char ch) {
 		switch (ch) {
@@ -100,8 +98,8 @@ public class CSearchUtil {
 	 * If 'searchStr' contains the name of an overloadable operator with no
 	 * space between 'operator' and the operator (e.g. 'operator<'), insert
 	 * a space (yielding e.g. 'operator <'). This is necessary because the
-	 * binding names for overloaded operators in the index contain such a 
-	 * space, and the search wouldn't find them otherwise. 
+	 * binding names for overloaded operators in the index contain such a
+	 * space, and the search wouldn't find them otherwise.
 	 */
 	public static String adjustSearchStringForOperators(String searchStr) {
 		int operatorIndex = searchStr.indexOf("operator"); //$NON-NLS-1$

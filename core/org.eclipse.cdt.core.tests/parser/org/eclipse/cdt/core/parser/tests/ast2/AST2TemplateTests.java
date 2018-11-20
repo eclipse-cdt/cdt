@@ -8348,26 +8348,26 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		assertEquals(1, num.longValue());
 	}
 
-	//	template <int> 
+	//	template <int>
 	//	struct A {
 	//	    void waldo();
 	//	};
-	//	    
-	//	template <typename> 
+	//
+	//	template <typename>
 	//	struct traits {
 	//	  enum {
 	//	    E = 1,
 	//	  };
 	//	};
 	//
-	//	template <typename T> 
+	//	template <typename T>
 	//	struct L {
-	//	  enum { 
+	//	  enum {
 	//	      X = traits<T>::E & 1
 	//	  };
 	//	};
-	//	    
-	//	template <typename T> 
+	//
+	//	template <typename T>
 	//	struct B : A<L<T>::X> {
 	//	    using A<L<T>::X>::waldo;
 	//	};
@@ -9068,7 +9068,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 
-	//	template <typename T> 
+	//	template <typename T>
 	//	class meta {
 	//	    typedef T type;
 	//	};
@@ -9643,7 +9643,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//	struct traits {
 	//	    static constexpr int Flags = 1;
 	//	};
-	//	
+	//
 	//	template <typename T>
 	//	struct S {
 	//	    static constexpr int a = traits<T>::Flags;
@@ -10164,7 +10164,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//
 	//	template<typename R1, typename R2>
 	//	struct ratio_multiply {
-	//	    static constexpr int div = gcd<1, R1::den>::value;  
+	//	    static constexpr int div = gcd<1, R1::den>::value;
 	//	    typedef ratio<1, R1::den / div> type;
 	//	};
 	//
@@ -10175,7 +10175,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		helper.findName("waldo").resolveBinding();
 	}
 
-	//	template <typename Ty> 
+	//	template <typename Ty>
 	//	struct has_rbegin_impl {
 	//	    typedef char yes[1];
 	//	    typedef char no[2];
@@ -10246,7 +10246,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 
-	//	template <typename> 
+	//	template <typename>
 	//	using void_t = void;
 	//
 	//	template <typename T, typename = void>
@@ -10594,7 +10594,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//	template <int i0, int i1, int i2, int i3>
 	//	void foo() {
 	//	    constant8f<
-	//	      i0 < 0, i0 < 0, 
+	//	      i0 < 0, i0 < 0,
 	//	      i1 < 0, i1 < 0,
 	//	      i2 < 0, i2 < 0,
 	//	      i3 < 0, i3 < 0>();
@@ -10620,7 +10620,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//
 	//	template <typename, int... I>
 	//	void bar(index_sequence<I...>);
-	//	 
+	//
 	//	void foo() {
 	//	    bar<int>(integer_sequence<0>{});
 	//	}

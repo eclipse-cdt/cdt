@@ -15,8 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
 
-import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeInt;
+import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
 
 import java.io.EOFException;
 import java.io.IOException;

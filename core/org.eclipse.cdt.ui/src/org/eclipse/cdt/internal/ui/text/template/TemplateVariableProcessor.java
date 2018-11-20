@@ -47,8 +47,8 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 
 	/**
 	 * Sets the context type.
-	 * 
-	 * @param contextType the context type 
+	 *
+	 * @param contextType the context type
 	 */
 	public void setContextType(TemplateContextType contextType) {
 		fContextType = contextType;
@@ -56,7 +56,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 
 	/**
 	 * Gets the context type.
-	 * 
+	 *
 	 * @return the context type
 	 */
 	public TemplateContextType getContextType() {
@@ -72,7 +72,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 		if (fContextType == null)
 			return null;
 
-		List<TemplateVariableProposal> proposals = new ArrayList<TemplateVariableProposal>();
+		List<TemplateVariableProposal> proposals = new ArrayList<>();
 
 		String text = viewer.getDocument().get();
 		int start = getStart(text, documentOffset);

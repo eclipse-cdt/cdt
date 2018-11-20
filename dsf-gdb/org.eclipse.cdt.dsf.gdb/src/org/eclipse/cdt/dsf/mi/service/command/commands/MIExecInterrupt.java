@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *      -exec-interrupt [--all | --thread-group ID]
  *
  *  Asynchronous command.  Interrupts the background execution of the
@@ -29,7 +29,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *  interrupt itself only appears in the `^done' output.  If the user is
  *  trying to interrupt a non-running program, an error message will be
  *  printed.
- * 
+ *
  */
 public class MIExecInterrupt extends MICommand<MIInfo> {
 	public MIExecInterrupt(IExecutionDMContext dmc) {

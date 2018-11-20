@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayMap;
 
 /**
  * Enumeration of keywords that UPC adds to C99.
- * 
+ *
  * @author Mike Kucera
  */
 public enum UPCKeyword {
@@ -46,7 +46,7 @@ public enum UPCKeyword {
 
 	private final int tokenKind;
 
-	private static final CharArrayMap<Integer> tokenMap = new CharArrayMap<Integer>();
+	private static final CharArrayMap<Integer> tokenMap = new CharArrayMap<>();
 	private static final String[] upcKeywords;
 	private static final String[] allKeywords;
 

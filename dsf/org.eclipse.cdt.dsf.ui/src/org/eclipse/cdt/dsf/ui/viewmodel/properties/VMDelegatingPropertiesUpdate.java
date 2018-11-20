@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * Properties update used as to collect property data from the provider.
- * 
+ *
  * @since 2.0
  */
 public class VMDelegatingPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpdate {
@@ -70,6 +70,6 @@ public class VMDelegatingPropertiesUpdate extends VMViewerUpdate implements IPro
 
 	@Override
 	public String toString() {
-		return "VMDelegatingPropertiesUpdate -> " + fParentUpdate; //$NON-NLS-1$ 
+		return "VMDelegatingPropertiesUpdate -> " + fParentUpdate; //$NON-NLS-1$
 	}
 }

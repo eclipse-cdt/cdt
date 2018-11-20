@@ -79,7 +79,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -89,7 +89,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message to log
 	 */
@@ -99,7 +99,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
@@ -108,10 +108,10 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	private void setDefaultLaunchDelegates() {
-		// Set the default launch delegates as early as possible, and do it only once (Bug 312997) 
+		// Set the default launch delegates as early as possible, and do it only once (Bug 312997)
 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
 
-		HashSet<String> debugSet = new HashSet<String>();
+		HashSet<String> debugSet = new HashSet<>();
 		debugSet.add(ILaunchManager.DEBUG_MODE);
 
 		ILaunchConfigurationType remoteCfg = launchMgr.getLaunchConfigurationType(HARDWARE_LAUNCH_TYPE);

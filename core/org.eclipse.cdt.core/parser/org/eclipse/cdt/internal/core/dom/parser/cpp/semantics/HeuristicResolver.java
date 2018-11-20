@@ -398,7 +398,7 @@ public class HeuristicResolver {
 	}
 
 	/**
-	 * Heuristically choose between the primary template and any partial specializations 
+	 * Heuristically choose between the primary template and any partial specializations
 	 * for a deferred template instance.
 	 */
 	private static ICPPClassTemplate chooseTemplateForDeferredInstance(ICPPDeferredClassInstance instance) {

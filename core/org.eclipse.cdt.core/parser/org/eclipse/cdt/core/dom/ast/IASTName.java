@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.IName;
 /**
  * This class represents a name in the program that represents a semantic object
  * in the program.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -32,7 +32,7 @@ public interface IASTName extends IASTNode, IName {
 	public static final IASTName[] EMPTY_NAME_ARRAY = {};
 
 	/**
-	 * Returns the name including qualification and template arguments. 
+	 * Returns the name including qualification and template arguments.
 	 */
 	@Override
 	public char[] toCharArray();
@@ -47,24 +47,24 @@ public interface IASTName extends IASTNode, IName {
 	/**
 	 * Returns the semantic object attached to this name.  May be null if this name
 	 * has not yet been semantically resolved (@see resolveBinding)
-	 * @return <code>IBinding</code> if it has been resolved, otherwise null 
+	 * @return <code>IBinding</code> if it has been resolved, otherwise null
 	 */
 	public IBinding getBinding();
 
 	/**
 	 * Resolves the semantic object this name is referring to.
-	 * 
+	 *
 	 * @return <code>IBinding</code> binding
 	 */
 	public IBinding resolveBinding();
 
 	/**
-	 * Returns the role of this name. If the name needs to be resolved to determine that and 
+	 * Returns the role of this name. If the name needs to be resolved to determine that and
 	 * {@code allowResolution} is set to {@code false}, then {@link IASTNameOwner#r_unclear}
-	 * is returned.  
-	 * 
+	 * is returned.
+	 *
 	 * @param allowResolution whether or not resolving the name is allowed.
-	 * @return {@link IASTNameOwner#r_definition}, {@link IASTNameOwner#r_declaration}, 
+	 * @return {@link IASTNameOwner#r_definition}, {@link IASTNameOwner#r_declaration},
 	 * 		   {@link IASTNameOwner#r_reference},  {@link IASTNameOwner#r_unclear}.
 	 * @since 5.0
 	 */
@@ -72,7 +72,7 @@ public interface IASTName extends IASTNode, IName {
 
 	/**
 	 * Returns the completion context for this name.
-	 * 
+	 *
 	 * @return {@code IASTCompletionContext} the context for completion
 	 */
 	public IASTCompletionContext getCompletionContext();
@@ -117,13 +117,13 @@ public interface IASTName extends IASTNode, IName {
 	@Override
 	public IASTName copy(CopyStyle style);
 
-	/** 
+	/**
 	 * Sets the semantic object for this name to be the given binding
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setBinding(IBinding binding);
 
-	/** 
+	/**
 	 * Returns the key for looking up this name in a scope.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

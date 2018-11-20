@@ -46,7 +46,7 @@ public final class QMakeEnvProviderManager {
 	 * @return the list of extensions
 	 */
 	private static List<QMakeEnvProviderDescriptor> loadDescriptors() {
-		List<QMakeEnvProviderDescriptor> descriptors = new ArrayList<QMakeEnvProviderDescriptor>();
+		List<QMakeEnvProviderDescriptor> descriptors = new ArrayList<>();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(Activator.ID,
 				Activator.QMAKE_ENV_PROVIDER_EXT_POINT_NAME);
 		for (IConfigurationElement element : elements) {

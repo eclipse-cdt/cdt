@@ -33,7 +33,7 @@ public class AttributeUtil {
 
 	/**
 	 * Returns {@code true} if a declarator has an attribute with one of the given names.
-	 * The {@code names} array is assumed to be small. 
+	 * The {@code names} array is assumed to be small.
 	 */
 	public static boolean hasAttribute(IASTAttributeOwner node, String[] names) {
 		IASTAttribute[] attributes = node.getAttributes();

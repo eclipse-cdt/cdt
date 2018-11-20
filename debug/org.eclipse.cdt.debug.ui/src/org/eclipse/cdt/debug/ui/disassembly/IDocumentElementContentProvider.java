@@ -16,7 +16,7 @@ package org.eclipse.cdt.debug.ui.disassembly;
 
 /**
  * Provides a content for a virtual source viewer.
- * 
+ *
  * This interface is experimental.
  */
 public interface IDocumentElementContentProvider {
@@ -32,7 +32,7 @@ public interface IDocumentElementContentProvider {
 	/**
 	 * Updates the source content as requested by the given update.
 	 * This method is called when the viewer requires to update it's content.
-	 * 
+	 *
 	 * @param update specifies the lines to update and stores result
 	 */
 	public void updateContent(IDocumentElementContentUpdate update);

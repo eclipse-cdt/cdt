@@ -16,9 +16,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -27,6 +24,9 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about

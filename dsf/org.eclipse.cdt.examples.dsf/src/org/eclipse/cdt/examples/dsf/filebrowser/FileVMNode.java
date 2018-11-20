@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -42,9 +42,9 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 /**
- * File view model node which returns file elements that are found in the directory 
- * specified by the parent element.  The child nodes of this node are fixed to 
- * reference this element, and therefore this node will recursively populate 
+ * File view model node which returns file elements that are found in the directory
+ * specified by the parent element.  The child nodes of this node are fixed to
+ * reference this element, and therefore this node will recursively populate
  * the contents of the tree reflecting the underlying filesystem directories.
  * <br>
  * Note: this node does NOT sub-class the {@link org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMNode}
@@ -75,7 +75,7 @@ class FileVMNode implements IElementLabelProvider, IVMNode {
 		throw new UnsupportedOperationException("This node does not support children."); //$NON-NLS-1$
 	}
 
-	/** 
+	/**
 	 * List of child nodes containing only a reference to this.
 	 */
 	private final IVMNode[] fChildNodes = { this };
@@ -176,15 +176,15 @@ class FileVMNode implements IElementLabelProvider, IVMNode {
 	private static final File[] EMPTY_FILE_LIST = new File[0];
 
 	/**
-	 * Retrieves the list of files for this node.  The list of files is based 
-	 * on the parent element in the tree, which must be of type FileVMC. 
-	 * 
-	 * @param update Update object containing the path (and the parent element) 
+	 * Retrieves the list of files for this node.  The list of files is based
+	 * on the parent element in the tree, which must be of type FileVMC.
+	 *
+	 * @param update Update object containing the path (and the parent element)
 	 * in the tree viewer.
-	 * @return List of files contained in the directory specified in the 
-	 * update object.  An empty list if the parent element is not a directory. 
-	 * @throws ClassCastException If the parent element contained in the update 
-	 * is NOT of type FileVMC. 
+	 * @return List of files contained in the directory specified in the
+	 * update object.  An empty list if the parent element is not a directory.
+	 * @throws ClassCastException If the parent element contained in the update
+	 * is NOT of type FileVMC.
 	 */
 	private File[] getFiles(IViewerUpdate update) {
 		FileVMContext vmc = (FileVMContext) update.getElement();
@@ -222,7 +222,7 @@ class FileVMNode implements IElementLabelProvider, IVMNode {
 	public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset,
 			final RequestMonitor requestMonitor) {
 		/*
-		 * The FileLayoutNode is recursive, with itself as the only child.  In this 
+		 * The FileLayoutNode is recursive, with itself as the only child.  In this
 		 * method the delta is calculated for a full path VMContext elements, and the
 		 * implementation of this method is not recursive.
 		 */
@@ -238,12 +238,12 @@ class FileVMNode implements IElementLabelProvider, IVMNode {
 					/*
 					 * Requirements for a selection event to be issued is that the file exist, and
 					 * that the parentDelta contain a FileVMC of a parent directory as its element.
-					 *  
-					 * The test for first the former requirement could be performed inside getDeltaFlags() 
-					 * but getDeltaFlags() is synchronous, so it is better to perform this test here using 
+					 *
+					 * The test for first the former requirement could be performed inside getDeltaFlags()
+					 * but getDeltaFlags() is synchronous, so it is better to perform this test here using
 					 * a background thread (job).
-					 * 
-					 *  The latter is requirement is needed because this node does not have the algorithm 
+					 *
+					 *  The latter is requirement is needed because this node does not have the algorithm
 					 *  calculate the complete list of root nodes.  That algorithm is implemented inside the
 					 *  {@link FileSystemRootsLayoutNode#updateElements} method.
 					 */
@@ -254,11 +254,11 @@ class FileVMNode implements IElementLabelProvider, IVMNode {
 						parentFile = ((FileVMContext) parentDelta.getElement()).getFile();
 					}
 
-					// The file has to exist in order for us to be able to select 
-					// it in the tree. 
+					// The file has to exist in order for us to be able to select
+					// it in the tree.
 					if (eventFile.exists() && parentFile != null) {
 						// Create a list containing all files in path
-						List<File> filePath = new LinkedList<File>();
+						List<File> filePath = new LinkedList<>();
 						for (File file = eventFile; file != null
 								&& !file.equals(parentFile); file = file.getParentFile()) {
 							filePath.add(0, file);
@@ -299,12 +299,12 @@ class FileVMNode implements IElementLabelProvider, IVMNode {
 	}
 
 	/**
-	 * Override the behavior which checks for delta flags of all the child nodes, 
-	 * because we would get stuck in a recursive loop.  Instead call only the child 
+	 * Override the behavior which checks for delta flags of all the child nodes,
+	 * because we would get stuck in a recursive loop.  Instead call only the child
 	 * nodes which are not us.
 	 */
 	protected Map<IVMNode, Integer> getChildNodesWithDeltas(Object e) {
-		Map<IVMNode, Integer> nodes = new HashMap<IVMNode, Integer>();
+		Map<IVMNode, Integer> nodes = new HashMap<>();
 		for (final IVMNode childNode : getChildNodes()) {
 			int delta = childNode.getDeltaFlags(e);
 			if (delta != IModelDelta.NO_CHANGE) {

@@ -74,10 +74,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		PRECMD, PREANN, PSTCMD, PSTANN
 	}
 
-	private Set<String> set1 = new TreeSet<String>();
-	private Set<String> set2 = new TreeSet<String>();
-	private Set<String> set3 = new TreeSet<String>();
-	private Set<String> set4 = new TreeSet<String>();
+	private Set<String> set1 = new TreeSet<>();
+	private Set<String> set2 = new TreeSet<>();
+	private Set<String> set3 = new TreeSet<>();
+	private Set<String> set4 = new TreeSet<>();
 
 	private static final String[] rcbsApplicabilityRules = {
 			Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override,
@@ -292,7 +292,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	}
 
 	private ITool[] getRcbsTools(IResourceInfo rcConfig) {
-		List<ITool> list = new ArrayList<ITool>();
+		List<ITool> list = new ArrayList<>();
 		ITool tools[] = rcConfig.getTools();
 
 		for (int i = 0; i < tools.length; i++) {

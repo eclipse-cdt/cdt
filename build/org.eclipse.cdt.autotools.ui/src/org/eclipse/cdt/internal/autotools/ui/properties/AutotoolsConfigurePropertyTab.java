@@ -143,7 +143,7 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		 *  This method updates the context of the build property pages
 		 *   - Which configuration/resource configuration is selected
 		 *   - Which tool/option category is selected
-		 *    
+		 *
 		 *  It is called:
 		 *   - When a property page becomes visible
 		 *   - When the user changes the configuration selection

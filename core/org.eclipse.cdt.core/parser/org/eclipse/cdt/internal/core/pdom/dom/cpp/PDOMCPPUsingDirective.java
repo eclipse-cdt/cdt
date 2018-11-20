@@ -28,10 +28,10 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Stores using directives for global or namespace scope. Directives for block-scopes 
+ * Stores using directives for global or namespace scope. Directives for block-scopes
  * are not persisted in the index.
  * For performance reasons the directives are not stored with their container. Rather
- * than that they are stored with the file, in which they are encountered. 
+ * than that they are stored with the file, in which they are encountered.
  * When parsing a file the directives from headers that are skipped are collected.
  */
 public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {

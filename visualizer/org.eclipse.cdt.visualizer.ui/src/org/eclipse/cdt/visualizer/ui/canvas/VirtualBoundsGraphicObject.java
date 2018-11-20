@@ -40,10 +40,10 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 	protected Rectangle m_virtualBounds = new Rectangle(0, 0, 0, 0);
 
 	/** List of children objects contained in this one */
-	protected ArrayList<VirtualBoundsGraphicObject> m_childrenObjects = new ArrayList<VirtualBoundsGraphicObject>();
+	protected ArrayList<VirtualBoundsGraphicObject> m_childrenObjects = new ArrayList<>();
 
 	/** Map of contained objects and their identifying labels. for quick look-up */
-	protected HashMap<String, VirtualBoundsGraphicObject> m_childrenObjectsMap = new HashMap<String, VirtualBoundsGraphicObject>();
+	protected HashMap<String, VirtualBoundsGraphicObject> m_childrenObjectsMap = new HashMap<>();
 
 	/** Whether the container's boundaries should be drawn */
 	protected boolean m_drawContainerBounds = true;
@@ -234,9 +234,9 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 		float ow = 0.0f;
 		float oh = 0.0f;
 
-		ox = (float) this.getBounds().x
+		ox = this.getBounds().x
 				+ childsVirtualBounds.x * ((float) this.getBounds().width / (this.getVirtualBounds().width));
-		oy = (float) this.getBounds().y
+		oy = this.getBounds().y
 				+ childsVirtualBounds.y * ((float) this.getBounds().height / this.getVirtualBounds().height);
 		ow = ((float) childsVirtualBounds.width / this.getVirtualBounds().width) * this.getBounds().width;
 		oh = ((float) childsVirtualBounds.height / this.getVirtualBounds().height) * this.getBounds().height;
@@ -262,7 +262,7 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 
 	/** Returns a list of child objects of a given derived class, optionally recursing through child objects */
 	public ArrayList<VirtualBoundsGraphicObject> getChildObjects(Class<?> type, boolean recurse) {
-		ArrayList<VirtualBoundsGraphicObject> objs = new ArrayList<VirtualBoundsGraphicObject>();
+		ArrayList<VirtualBoundsGraphicObject> objs = new ArrayList<>();
 
 		for (VirtualBoundsGraphicObject o : this.getAllObjects(recurse)) {
 			if (type.isInstance(o)) {
@@ -295,7 +295,7 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 
 	/** Gets all objects from this container. Optionally recurse to all sub-objects */
 	public ArrayList<VirtualBoundsGraphicObject> getAllObjects(boolean recurse) {
-		ArrayList<VirtualBoundsGraphicObject> list = new ArrayList<VirtualBoundsGraphicObject>();
+		ArrayList<VirtualBoundsGraphicObject> list = new ArrayList<>();
 		for (VirtualBoundsGraphicObject o : m_childrenObjects) {
 			list.add(o);
 			if (recurse) {
@@ -307,7 +307,7 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 
 	/** Returns a list of selectable objects */
 	public List<VirtualBoundsGraphicObject> getSelectableObjects() {
-		List<VirtualBoundsGraphicObject> list = new ArrayList<VirtualBoundsGraphicObject>();
+		List<VirtualBoundsGraphicObject> list = new ArrayList<>();
 		for (VirtualBoundsGraphicObject o : m_childrenObjects) {
 			if (o.isSelectable()) {
 				list.add(o);

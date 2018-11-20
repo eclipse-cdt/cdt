@@ -130,8 +130,8 @@ public class MacroExpander {
 	private final CharArrayMap<PreprocessorMacro> fDictionary;
 	private final LocationMap fLocationMap;
 	private final LexerOptions fLexOptions;
-	private ArrayList<IASTName> fImplicitMacroExpansions = new ArrayList<IASTName>();
-	private ArrayList<ImageLocationInfo> fImageLocationInfos = new ArrayList<ImageLocationInfo>();
+	private ArrayList<IASTName> fImplicitMacroExpansions = new ArrayList<>();
+	private ArrayList<ImageLocationInfo> fImageLocationInfos = new ArrayList<>();
 	private boolean fCompletionMode;
 	private int fStartOffset;
 	private int fEndOffset;
@@ -173,7 +173,7 @@ public class MacroExpander {
 		fEndOffset = identifier.getEndOffset();
 		fCompletionMode = completionMode;
 
-		IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden = new IdentityHashMap<PreprocessorMacro, PreprocessorMacro>();
+		IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden = new IdentityHashMap<>();
 
 		// setup input sequence
 		TokenSource input = new TokenSource(lexer);
@@ -232,7 +232,7 @@ public class MacroExpander {
 			fStartOffset = identifier.getOffset();
 			fEndOffset = identifier.getEndOffset();
 			fCompletionMode = false;
-			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden = new IdentityHashMap<PreprocessorMacro, PreprocessorMacro>();
+			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden = new IdentityHashMap<>();
 
 			// setup input sequence
 			TokenSource input = new TokenSource(lexer);

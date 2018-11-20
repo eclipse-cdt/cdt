@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This node represents a null statement, ';'
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarEvaluateExpressionInfo;
 
 /**
- * 
+ *
  *     -var-evaluate-expression NAME
  *
  *  Evaluates the expression that is represented by the specified
@@ -29,7 +29,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarEvaluateExpressionInfo
  * specified for the object:
  *
  *      value=VALUE
- * 
+ *
  */
 public class MIVarEvaluateExpression extends MICommand<MIVarEvaluateExpressionInfo> {
 

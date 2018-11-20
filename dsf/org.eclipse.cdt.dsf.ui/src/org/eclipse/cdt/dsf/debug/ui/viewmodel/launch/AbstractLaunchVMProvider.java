@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson			  - Modified for new functionality	
+ *     Ericsson			  - Modified for new functionality
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
@@ -68,7 +68,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 	 */
 	private static final int FRAME_UPDATE_DELAY = 200;
 
-	private final Map<IExecutionDMContext, ScheduledFuture<?>> fRefreshStackFramesFutures = new HashMap<IExecutionDMContext, ScheduledFuture<?>>();
+	private final Map<IExecutionDMContext, ScheduledFuture<?>> fRefreshStackFramesFutures = new HashMap<>();
 
 	private IPropertyChangeListener fPreferencesListener;
 
@@ -96,7 +96,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 				cStore.getBoolean(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY));
 		cStore.addPropertyChangeListener(fPreferencesListener);
 
-		// Register the LaunchVM provider as a listener to debug and launch 
+		// Register the LaunchVM provider as a listener to debug and launch
 		// events.  These events are used by the launch and processes nodes.
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
@@ -128,8 +128,8 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 				}
 			});
 		} catch (RejectedExecutionException e) {
-			// Ignore.  This exception could be thrown if the provider is being 
-			// shut down.  
+			// Ignore.  This exception could be thrown if the provider is being
+			// shut down.
 		}
 	}
 
@@ -206,7 +206,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 	}
 
 	/**
-	 * Returns the future for the given execution context or for any child of the 
+	 * Returns the future for the given execution context or for any child of the
 	 * given execution context.
 	 */
 	private ScheduledFuture<?> getRefreshFuture(IExecutionDMContext execCtx) {
@@ -272,14 +272,14 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 				}
 			});
 		} catch (RejectedExecutionException e) {
-			// Ignore.  This exception could be thrown if the provider is being 
-			// shut down.  
+			// Ignore.  This exception could be thrown if the provider is being
+			// shut down.
 		}
 	}
 
 	@Override
 	protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
-		// To optimize view performance when stepping rapidly, skip events that came 
+		// To optimize view performance when stepping rapidly, skip events that came
 		// before the last suspended events.  However, the debug view can get suspended
 		// events for different threads, so make sure to skip only the events if they
 		// were in the same hierarchy as the last suspended event.

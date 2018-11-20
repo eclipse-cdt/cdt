@@ -37,14 +37,14 @@ public class LanguageSettingsStorage implements Cloneable {
 	/** Storage to keep settings entries. */
 	protected Map<String, // languageId
 			Map<String, // resource project path
-					List<ICLanguageSettingEntry>>> fStorage = new HashMap<String, Map<String, List<ICLanguageSettingEntry>>>();
+					List<ICLanguageSettingEntry>>> fStorage = new HashMap<>();
 
 	/**
 	 * Pool of LSE lists implemented as WeakHashSet. That allows to gain memory savings
 	 * at the expense of CPU time. WeakHashSet handles garbage collection when a list is not
 	 * referenced anywhere else. See JavaDoc {@link java.lang.ref.WeakReference} about weak reference objects.
 	 */
-	private static WeakHashSet<List<ICLanguageSettingEntry>> listPool = new WeakHashSetSynchronized<List<ICLanguageSettingEntry>>();
+	private static WeakHashSet<List<ICLanguageSettingEntry>> listPool = new WeakHashSetSynchronized<>();
 
 	/**
 	 * Returns the list of setting entries for the given resource and language.
@@ -108,7 +108,7 @@ public class LanguageSettingsStorage implements Cloneable {
 			if (entries != null) {
 				Map<String, List<ICLanguageSettingEntry>> langMap = fStorage.get(languageId);
 				if (langMap == null) {
-					langMap = new HashMap<String, List<ICLanguageSettingEntry>>();
+					langMap = new HashMap<>();
 					fStorage.put(languageId, langMap);
 				}
 				List<ICLanguageSettingEntry> sortedEntries = getPooledList(sortEntries(entries), false);
@@ -148,7 +148,7 @@ public class LanguageSettingsStorage implements Cloneable {
 	 * of the provider, so the set can contain {@code null}.
 	 */
 	public Set<String> getLanguages() {
-		return new HashSet<String>(fStorage.keySet());
+		return new HashSet<>(fStorage.keySet());
 	}
 
 	/**
@@ -162,9 +162,9 @@ public class LanguageSettingsStorage implements Cloneable {
 	public Set<String> getResourcePaths(String languageId) {
 		Map<String, List<ICLanguageSettingEntry>> rcPathsMap = fStorage.get(languageId);
 		if (rcPathsMap == null) {
-			return new HashSet<String>();
+			return new HashSet<>();
 		}
-		return new HashSet<String>(rcPathsMap.keySet());
+		return new HashSet<>(rcPathsMap.keySet());
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class LanguageSettingsStorage implements Cloneable {
 		}
 
 		if (copy) {
-			entries = new ArrayList<ICLanguageSettingEntry>(entries);
+			entries = new ArrayList<>(entries);
 		}
 		pooledList = Collections.unmodifiableList(entries);
 		return listPool.add(pooledList);
@@ -222,13 +222,13 @@ public class LanguageSettingsStorage implements Cloneable {
 	@Override
 	public LanguageSettingsStorage clone() throws CloneNotSupportedException {
 		LanguageSettingsStorage storageClone = (LanguageSettingsStorage) super.clone();
-		storageClone.fStorage = new HashMap<String, Map<String, List<ICLanguageSettingEntry>>>();
+		storageClone.fStorage = new HashMap<>();
 		synchronized (fStorage) {
 			Set<Entry<String, Map<String, List<ICLanguageSettingEntry>>>> entrySetLang = fStorage.entrySet();
 			for (Entry<String, Map<String, List<ICLanguageSettingEntry>>> entryLang : entrySetLang) {
 				String langId = entryLang.getKey();
 				Map<String, List<ICLanguageSettingEntry>> mapRc = entryLang.getValue();
-				Map<String, List<ICLanguageSettingEntry>> mapRcClone = new HashMap<String, List<ICLanguageSettingEntry>>();
+				Map<String, List<ICLanguageSettingEntry>> mapRcClone = new HashMap<>();
 				Set<Entry<String, List<ICLanguageSettingEntry>>> entrySetRc = mapRc.entrySet();
 				for (Entry<String, List<ICLanguageSettingEntry>> entryRc : entrySetRc) {
 					String rcProjectPath = entryRc.getKey();

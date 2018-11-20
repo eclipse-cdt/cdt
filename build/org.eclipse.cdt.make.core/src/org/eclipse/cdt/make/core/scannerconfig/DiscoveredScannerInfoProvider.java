@@ -35,10 +35,10 @@ import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * Provider of both user specified and discovered scanner info
- * 
+ *
  * @deprecated as of CDT 4.0.
  * @author vhirsl
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -65,7 +65,7 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
 	 */
 	@Override
@@ -79,7 +79,7 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
@@ -90,7 +90,7 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
@@ -117,7 +117,7 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 			ICProject cProject = CoreModel.getDefault().create(project);
 			if (cProject != null) {
 				IPathEntry[] entries = cProject.getRawPathEntries();
-				List<IPathEntry> newEntries = new ArrayList<IPathEntry>(Arrays.asList(entries));
+				List<IPathEntry> newEntries = new ArrayList<>(Arrays.asList(entries));
 				if (!newEntries.contains(container)) {
 					newEntries.add(container);
 					cProject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), null);

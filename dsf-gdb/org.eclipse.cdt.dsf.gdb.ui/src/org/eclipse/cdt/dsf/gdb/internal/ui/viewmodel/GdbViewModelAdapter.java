@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -27,8 +27,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-/* 
- * 
+/*
+ *
  */
 @ThreadSafe
 public class GdbViewModelAdapter extends AbstractDebugVMAdapter {

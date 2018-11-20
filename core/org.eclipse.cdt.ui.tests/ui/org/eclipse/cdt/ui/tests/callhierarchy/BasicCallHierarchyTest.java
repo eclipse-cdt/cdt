@@ -15,21 +15,18 @@ package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import java.io.IOException;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.core.model.CoreModelMessages;
+import org.eclipse.cdt.internal.ui.callhierarchy.CHNode;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PartInitException;
 
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-
-import org.eclipse.cdt.internal.core.model.CoreModelMessages;
-
-import org.eclipse.cdt.internal.ui.callhierarchy.CHNode;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
+import junit.framework.Test;
 
 public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private static final String ANON = CoreModelMessages.getString("CElementLabels.anonymous");

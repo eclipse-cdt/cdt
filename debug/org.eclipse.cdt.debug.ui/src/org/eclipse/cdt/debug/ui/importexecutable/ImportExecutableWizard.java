@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.FileDialog;
  * Reference implementation of a wizard that imports executables.
  * Create your own version to import specific kinds of executables
  * with product specific messages and launch configuration types.
- * 
+ *
  *
  */
 public class ImportExecutableWizard extends AbstractImportExecutableWizard {

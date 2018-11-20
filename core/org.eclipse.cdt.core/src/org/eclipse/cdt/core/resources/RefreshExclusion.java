@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,16 +27,16 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * A RefreshExclusion represents a rule for excluding certain resources from being refreshed.
- * 
+ *
  * Clients should extend this class to provide support for their own custom exclusions.
- * 
+ *
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
  * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
- * 
+ *
  * @author crecoskie
  * @since 5.3
- * 
+ *
  */
 public abstract class RefreshExclusion implements Cloneable {
 
@@ -56,7 +56,7 @@ public abstract class RefreshExclusion implements Cloneable {
 			RefreshExclusion parentExclusion, IResource parentResource, RefreshScopeManager manager)
 			throws CoreException {
 
-		List<RefreshExclusion> exclusions = new LinkedList<RefreshExclusion>();
+		List<RefreshExclusion> exclusions = new LinkedList<>();
 
 		// the parent element might contain any number of exclusions... iterate through the list
 		ICStorageElement[] children = parentElement.getChildren();
@@ -138,9 +138,9 @@ public abstract class RefreshExclusion implements Cloneable {
 	}
 
 	protected String fContributorId = ""; //$NON-NLS-1$
-	protected List<ExclusionInstance> fExclusionInstanceList = new LinkedList<ExclusionInstance>();
+	protected List<ExclusionInstance> fExclusionInstanceList = new LinkedList<>();
 	protected ExclusionType fExclusionType = ExclusionType.RESOURCE;
-	protected List<RefreshExclusion> fNestedExclusions = new LinkedList<RefreshExclusion>();
+	protected List<RefreshExclusion> fNestedExclusions = new LinkedList<>();
 
 	protected RefreshExclusion fParentExclusion;
 
@@ -148,7 +148,7 @@ public abstract class RefreshExclusion implements Cloneable {
 
 	/**
 	 * Adds an instance to the list of instances of this exclusion.
-	 * 
+	 *
 	 * @param exclusionInstance
 	 */
 	public synchronized void addExclusionInstance(ExclusionInstance exclusionInstance) {
@@ -186,7 +186,7 @@ public abstract class RefreshExclusion implements Cloneable {
 	public abstract String getName();
 
 	/**
-	 * 
+	 *
 	 * @return an unmodifiable list of exclusions to this exclusion.
 	 */
 	public synchronized List<RefreshExclusion> getNestedExclusions() {
@@ -195,7 +195,7 @@ public abstract class RefreshExclusion implements Cloneable {
 
 	/**
 	 * If this is a nested exclusion, returns the exclusion which is the direct parent of this one.
-	 * 
+	 *
 	 * @return RefreshExclusion
 	 */
 	public synchronized RefreshExclusion getParentExclusion() {
@@ -204,7 +204,7 @@ public abstract class RefreshExclusion implements Cloneable {
 
 	/**
 	 * If this exclusion is a direct descendant of a resource, returns that resource. Otherwise, returns null;
-	 * 
+	 *
 	 * @return IResource
 	 */
 	public synchronized IResource getParentResource() {
@@ -270,7 +270,7 @@ public abstract class RefreshExclusion implements Cloneable {
 
 	/**
 	 * Removes an exclusion instance from the list of instances of this exclusion.
-	 * 
+	 *
 	 * @param exclusionInstance
 	 */
 	public synchronized void removeExclusionInstance(ExclusionInstance exclusionInstance) {
@@ -279,7 +279,7 @@ public abstract class RefreshExclusion implements Cloneable {
 
 	/**
 	 * Removes the given nested exclusion. The exclusion must be a direct child of this exclusion.
-	 * 
+	 *
 	 * @param exclusion
 	 */
 	public synchronized void removeNestedExclusion(RefreshExclusion exclusion) {
@@ -300,7 +300,7 @@ public abstract class RefreshExclusion implements Cloneable {
 
 	/**
 	 * Sets the parent resource of this exclusion.
-	 * 
+	 *
 	 * @param parentResource
 	 *            the parent resource to set
 	 */
@@ -315,7 +315,7 @@ public abstract class RefreshExclusion implements Cloneable {
 
 	/**
 	 * Tests a given resource to see if this exclusion applies to it.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to be tested.
 	 * @return true if the resource triggers the exclusion, false otherwise (including if this exclusion does
@@ -326,7 +326,7 @@ public abstract class RefreshExclusion implements Cloneable {
 	/**
 	 * Tests this exclusion and recursively test all of its nested exclusions to determine whether this
 	 * exclusion should be triggered or not.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to be tested
 	 * @return true if the exclusion is triggered, false otherwise (including if this exclusion does not

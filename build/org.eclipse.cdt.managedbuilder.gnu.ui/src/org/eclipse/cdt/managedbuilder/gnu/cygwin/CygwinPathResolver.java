@@ -238,7 +238,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 				InputStream ein = proc.getInputStream();
 				try {
 					BufferedReader d1 = new BufferedReader(new InputStreamReader(ein));
-					ArrayList<String> ls = new ArrayList<String>(10);
+					ArrayList<String> ls = new ArrayList<>(10);
 					String s;
 					while ((s = d1.readLine()) != null) {
 						ls.add(s);

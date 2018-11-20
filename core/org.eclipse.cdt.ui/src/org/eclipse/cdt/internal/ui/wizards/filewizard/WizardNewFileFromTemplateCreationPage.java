@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
+import org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -48,11 +51,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
-
-import org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage;
-
 /**
  * A new file creation wizard page with support for templates.
  *
@@ -66,7 +64,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 
 	/**
 	 * Create a new 'file from template' page.
-	 * 
+	 *
 	 * @param pageName
 	 * @param selection
 	 */
@@ -127,7 +125,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 			templateName = template.getName();
 		}
 		if (templateName != null) {
-			data = new HashMap<String, String>();
+			data = new HashMap<>();
 			data.put(CodeTemplatePreferencePage.DATA_SELECT_TEMPLATE, templateName);
 		}
 		PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(), prefPageId,
@@ -255,7 +253,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 			}
 		}
 		IContentType[] contentTypes = matcher.findContentTypesFor(fileName);
-		List<String> result = new ArrayList<String>(contentTypes.length * 2);
+		List<String> result = new ArrayList<>(contentTypes.length * 2);
 		for (int i = 0; i < contentTypes.length; i++) {
 			IContentType contentType = contentTypes[i];
 			String id = contentType.getId();

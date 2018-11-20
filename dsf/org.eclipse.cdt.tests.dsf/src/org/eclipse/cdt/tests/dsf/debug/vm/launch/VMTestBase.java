@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *******************************************************************************/
@@ -65,7 +65,7 @@ public class VMTestBase {
 
 	@Before
 	public void baseBeforeMethod() throws Exception {
-		Map<String, Object> attrs = new HashMap<String, Object>();
+		Map<String, Object> attrs = new HashMap<>();
 
 		initLaunchAttributes(attrs);
 
@@ -91,7 +91,7 @@ public class VMTestBase {
 		SessionStartedListener newSessionListener = new SessionStartedListener() {
 			@Override
 			public void sessionStarted(DsfSession session) {
-				eventWaitor[0] = new ServiceEventWaitor<IStartedDMEvent>(session, IStartedDMEvent.class);
+				eventWaitor[0] = new ServiceEventWaitor<>(session, IStartedDMEvent.class);
 			}
 		};
 

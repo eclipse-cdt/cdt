@@ -16,11 +16,11 @@ package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
 /**
  * A facade for a FunctionalMap that is used just to track typedef
  * declarations.
- * 
+ *
  * This class acts like a set. No information needs to be associated
  * with a typedef declaration, all we need to know is if the identifier
  * has been declared as a typedef.
- * 
+ *
  * @author Mike Kucera
  */
 public class TypedefSymbolTable {
@@ -34,7 +34,7 @@ public class TypedefSymbolTable {
 	private final FunctionalMap<String, Object> map;
 
 	/**
-	 * Constructors are private, start with EMPTY_TABLE 
+	 * Constructors are private, start with EMPTY_TABLE
 	 * and build it up using insert().
 	 */
 	private TypedefSymbolTable() {

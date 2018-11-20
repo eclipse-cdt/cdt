@@ -40,7 +40,7 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#installingBreakpoint(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
@@ -51,7 +51,7 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointInstalled(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
@@ -61,7 +61,7 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint, java.util.Map)
 	 */
@@ -88,7 +88,7 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint[])
 	 */
@@ -103,8 +103,8 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 						if (((ICBreakpoint) breakpoints[i]).decrementInstallCount() == 0)
 							DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(breakpoints[i]);
 					} catch (CoreException e) {
-						// ensureMarker throws this exception 
-						// if breakpoint has already been deleted 
+						// ensureMarker throws this exception
+						// if breakpoint has already been deleted
 					}
 				}
 			}

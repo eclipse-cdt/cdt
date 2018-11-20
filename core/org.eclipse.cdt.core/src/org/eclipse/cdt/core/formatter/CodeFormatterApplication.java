@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     Mustafa Yuecel - initial implementation - adapted from org.eclipse.jdt.core
  *******************************************************************************/
@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ToolFactory;
-import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -38,9 +37,9 @@ import org.eclipse.text.edits.TextEdit;
 
 /**
  * Implements an Eclipse Application for org.eclipse.cdt.core.CodeFormatter.
- * 
+ *
  * <p>On MacOS, when invoked using the Eclipse executable, the "user.dir" property is set to the folder
- * in which the eclipse.ini file is located. This makes it harder to use relative paths to point to the 
+ * in which the eclipse.ini file is located. This makes it harder to use relative paths to point to the
  * files to be formatted or the configuration file to use to set the code formatter's options.</p>
  *
  * <p>There are a couple improvements that could be made: 1. Make a list of all the
@@ -150,7 +149,7 @@ public class CodeFormatterApplication implements IApplication {
 
 	private File[] processCommandLine(String[] argsArray) {
 
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 		for (int i = 0, max = argsArray.length; i < max; i++) {
 			args.add(argsArray[i]);
 		}
@@ -162,7 +161,7 @@ public class CodeFormatterApplication implements IApplication {
 
 		int mode = DEFAULT_MODE;
 
-		ArrayList<File> filesToFormat = new ArrayList<File>();
+		ArrayList<File> filesToFormat = new ArrayList<>();
 
 		loop: while (index < argCount) {
 			String currentArg = argsArray[index++];

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -32,10 +32,10 @@ import org.osgi.framework.BundleContext;
 
 /**
  * Timer service tracks a set of timers, which are created per user request.
- * The timers are represented using a Data Model context object, which 
+ * The timers are represented using a Data Model context object, which
  * implements {@link IDMContext}.  Each timers value, which can be retrieved
- * by calling {@link #getTimerValue(TimerDMContext)}, is incremented every 
- * second.  When a timer value is incremented the TimerService issues a 
+ * by calling {@link #getTimerValue(TimerDMContext)}, is incremented every
+ * second.  When a timer value is incremented the TimerService issues a
  * {@link TimerTickDMEvent}.
  */
 public class TimerService extends AbstractDsfService {
@@ -59,7 +59,7 @@ public class TimerService extends AbstractDsfService {
 			return fNumber;
 		}
 
-		// Timer context objects are created as needed and not cached, so the 
+		// Timer context objects are created as needed and not cached, so the
 		// equals method implementation is critical.
 		@Override
 		public boolean equals(Object other) {
@@ -78,8 +78,8 @@ public class TimerService extends AbstractDsfService {
 	}
 
 	/**
-	 * Event indicating that a timer's value has incremented.  The context in 
-	 * the event points to the timer that has changed.   
+	 * Event indicating that a timer's value has incremented.  The context in
+	 * the event points to the timer that has changed.
 	 */
 	public class TimerTickDMEvent extends AbstractDMEvent<TimerDMContext> {
 		public TimerTickDMEvent(TimerDMContext context) {
@@ -91,9 +91,9 @@ public class TimerService extends AbstractDsfService {
 	private int fTimerNumberCounter = 1;
 
 	// Use a linked hash in order to be able to return an ordered list of timers.
-	private Map<TimerDMContext, Integer> fTimers = new LinkedHashMap<TimerDMContext, Integer>();
+	private Map<TimerDMContext, Integer> fTimers = new LinkedHashMap<>();
 
-	private Map<TimerDMContext, Future<?>> fTimerFutures = new HashMap<TimerDMContext, Future<?>>();
+	private Map<TimerDMContext, Future<?>> fTimerFutures = new HashMap<>();
 
 	TimerService(DsfSession session) {
 		super(session);
@@ -153,7 +153,7 @@ public class TimerService extends AbstractDsfService {
 		fTimers.put(newTimer, 0);
 
 		// Create a new runnable that will execute every second and increment
-		// the timer value.  The returned future is the handle that allows 
+		// the timer value.  The returned future is the handle that allows
 		// for canceling the scheduling of the runnable.
 		Future<?> timerFuture = getExecutor().scheduleAtFixedRate(new Runnable() {
 			@Override

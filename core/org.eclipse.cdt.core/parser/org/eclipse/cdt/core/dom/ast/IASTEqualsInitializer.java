@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * Initializer with equals sign (copy initialization) as in <code>int x= 0;</code>.
  * @since 5.2
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

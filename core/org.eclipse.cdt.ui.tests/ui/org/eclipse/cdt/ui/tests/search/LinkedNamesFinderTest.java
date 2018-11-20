@@ -17,19 +17,16 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestSuite;
-
-import org.eclipse.jface.text.IRegion;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-
 import org.eclipse.cdt.internal.core.parser.ParserException;
-
 import org.eclipse.cdt.internal.ui.search.LinkedNamesFinder;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.jface.text.IRegion;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestSuite;
 
 /**
  * Tests for LinkedNamesFinder class.
@@ -87,7 +84,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//	  void m(int x);
 	//	  void m(int x, int y);
 	//	};
-	//  
+	//
 	//	void A::m(int x) {}
 	//	void A::m(int x, int y) {}
 	public void testMethodParameter() throws Exception {
@@ -104,7 +101,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//    A(int x);
 	//    ~A();
 	//	};
-	//  
+	//
 	//	A::A() {}
 	//	A::A(int x) {}
 	//	A::~A() {}
@@ -133,7 +130,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//    virtual void m(int a);
 	//    virtual void m();
 	//	};
-	//  
+	//
 	//	class B : public A {
 	//	public:
 	//    void m();

@@ -24,8 +24,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class CDebugUIPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/** 
-	 * Constructor for CDebugUIPreferenceInitializer. 
+	/**
+	 * Constructor for CDebugUIPreferenceInitializer.
 	 */
 	public CDebugUIPreferenceInitializer() {
 		super();

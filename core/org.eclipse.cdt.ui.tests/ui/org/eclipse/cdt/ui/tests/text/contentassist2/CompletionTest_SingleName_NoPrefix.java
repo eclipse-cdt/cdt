@@ -18,8 +18,8 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
- * Testing Single name reference, with prefix 
+ *
+ * Testing Single name reference, with prefix
  *
  */
 public class CompletionTest_SingleName_NoPrefix extends CompletionProposalsBaseTest {

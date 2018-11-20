@@ -17,7 +17,7 @@ public interface IQmlPropertyType extends IQmlASTNode {
 	@Override
 	default public String getType() {
 		return "QMLPropertyType"; //$NON-NLS-1$
-	};
+	}
 
 	public boolean isPrimitive();
 

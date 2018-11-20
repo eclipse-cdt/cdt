@@ -19,12 +19,12 @@ import org.eclipse.jface.text.IDocument;
 /**
  * A single token parsed from an autotools-style file.  This represents m4 and sh
  * tokens.  Punctuation characters shared by both are not in a namespace.
- * 
+ *
  * @author eswartz
  *
  */
 public class Token implements ITokenConstants {
-	/** Type: 
+	/** Type:
 	 * @see ITokenConstants
 	 */
 	final int type;

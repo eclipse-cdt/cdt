@@ -113,7 +113,7 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 	private static IMakeTarget[] prepareMakeTargetsFromString(String multilineText, IContainer container) {
 		if (container != null) {
 			String[] lines = multilineText.split("[\n\r]"); //$NON-NLS-1$
-			List<IMakeTarget> makeTargets = new ArrayList<IMakeTarget>(lines.length);
+			List<IMakeTarget> makeTargets = new ArrayList<>(lines.length);
 			for (String command : lines) {
 				command = command.trim();
 				if (command.length() > 0) {

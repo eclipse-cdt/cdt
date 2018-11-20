@@ -26,7 +26,7 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 
 /**
  * GDB/MI thread group parsing.
- * 
+ *
  *  The description field can be different depending on the target we are connected to.
  *
  *  -list-thread-groups --available:
@@ -36,21 +36,21 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                {id="166",type="process",description="name: JUnitProcess_PT, type 1094605, locked: N, system: N, state: Idle"}]
  *
  *          	  {id="3602",type="process",description="/usr/sbin/dhcdbd --system",user="root"}
- *          
- *  -list-thread-groups: 
+ *
+ *  -list-thread-groups:
  *  ^done,groups=[{id="162",type="process",pid="162"}]
  *
  *  -list-thread-groups GROUPID, in the case of a running thread or a stopped thread:
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT (Ready) 1030373359 44441",frame={level="0",addr="0x00000000",func="??",args=[]},state="stopped"}]
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT Idle 981333916 42692",state="running"}]
- *  
- *  As of GDB 7.1, a new 'core' output field has been added.  This field is a list 
- *  of integers, each identifying a core that one thread of the group is running on. 
+ *
+ *  As of GDB 7.1, a new 'core' output field has been added.  This field is a list
+ *  of integers, each identifying a core that one thread of the group is running on.
  *  This field may be absent if such information is not available.
- *  
+ *
  *  -list-thread-groups
  *  ^done,groups=[{id="12779",type="process",pid="12779",cores=["3"]}]
- *    
+ *
  *  -list-thread-groups 12779
  *   ^done,threads=[{id="10",
  *                   target-id="Thread 0xb3d58ba0 (LWP 12876)",
@@ -72,9 +72,9 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                   frame={level="0",addr="0x08048609",func="main",args=[],file="../src/NonStop.cpp",fullname="/local/runtime-TestDSF/NonStop/src/NonStop.cpp",line="44"},
  *                   state="stopped",
  *                   core="3"}]
- *                   
+ *
  *  As of GDB 7.1, the --recurse option has been added and causes a different output
- *  
+ *
  *  -list-thread-groups --recurse 1
  *  ^done,groups=[{id="12779",
  *                 type="process",
@@ -102,11 +102,11 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                           core="3"}
  *                         ]
  *                }]
- *  
+ *
  * Example of outputs by version on Linux
- * 
+ *
  * GDB 7.0
- *  
+ *
  *  (when no inferior is running)
  * -list-thread-groups
  * ^done,groups=[]
@@ -114,29 +114,29 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  * (with an inferior running)
  * -list-thread-groups
  * ^done,groups=[{id="19386",type="process",pid="19386"}]
- * 
+ *
  * -list-thread-groups 19386
  * ^done,threads=[{id="1",target-id="process 19386",frame={level="0",addr="0x08048618",func="main",args=[],file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},state="stopped"}]
- * 
- * -list-thread-groups --available 
+ *
+ * -list-thread-groups --available
  * ^done,groups=[{id="19371",type="process",description="gdb.7.0 -i mi testing/a.out",user="lmckhou"},{id="19386",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19413",type="process",description="sleep 5",user="lmckhou"}]
- * 
+ *
  * GDB 7.1
- * 
+ *
  * (when no inferior is running)
  * -list-thread-groups
  * ^done,groups=[{id="0",type="process",pid="0"}]
- * 
+ *
  * (with an inferior running)
  * -list-thread-groups
  * ^done,groups=[{id="19424",type="process",pid="19424",cores=["3"]}]
- * 
+ *
  * -list-thread-groups 19424
  * ^done,threads=[{id="1",target-id="process 19424",frame={level="0",addr="0x08048618",func="main",args=[],file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},state="stopped",core="3"}]
- * 
+ *
  * -list-thread-groups --available
  * ^done,groups=[{id="19418",type="process",description="gdb.7.1 -i mi testing/a.out",user="lmckhou"},{id="19424",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19438",type="process",description="sleep 5",user="lmckhou"}]
- * 
+ *
  * -list-thread-groups --recurse 1
  * ^done,groups=[{id="i2",type="process",pid="11805",executable="/home/lmckhou/Consumer",cores=["0","1"],
  *                threads=[{id="6",target-id="Thread 0xb6516b70 (LWP 11811)",state="running",core="1"},
@@ -153,23 +153,23 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                         {id="1",target-id="Thread 0xb7d1bb30 (LWP 11793)",state="running",core="1"}]}]
  *
  * GDB 7.2
- * 
+ *
  * (when no inferior is running)
  * -list-thread-groups
  * ^done,groups=[{id="i1",type="process",executable="/local/lmckhou/testing/a.out"}]
- * 
+ *
  * (with an inferior running)
  * -list-thread-groups
  * ^done,groups=[{id="i1",type="process",pid="19451",executable="/local/lmckhou/testing/a.out",cores=["2"]}]
- * 
+ *
  * -list-thread-groups i1
  * ^done,threads=[{id="1",target-id="process 19451",frame={level="0",addr="0x08048618",func="main",args=[],file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},state="stopped",core="2"}]
- * 
+ *
  * -list-thread-groups --available
  * ^done,groups=[{id="19445",type="process",description="gdb.7.2 -i mi testing/a.out",user="lmckhou"},{id="19451",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19462",type="process",description="sleep 5",user="lmckhou"}]
  *
  * GDB 7.9
- * 
+ *
  * -list-thread-groups
  * ^done,groups=[{id="i1",type="process",exit-code="0",executable="/home/lmckhou/runtime-TestDSF/DSFTestApp/Debug/DSFTestApp"}]
  *
@@ -206,7 +206,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		/**@since 4.0 */
 		String getExecutable();
 
-		/** 
+		/**
 		 * @return the exit code of this thread group.
 		 *         null if not applicable or not available.
 		 * @since 4.7
@@ -272,10 +272,10 @@ public class MIListThreadGroupsInfo extends MIInfo {
 				// If we didn't get the form "name: " then we expect to have the form
 				//   "/usr/sbin/dhcdbd --system"
 				// or (starting with GDB 7.4)
-				//   "[migration/0]"  where the integer represents the core, if the process 
+				//   "[migration/0]"  where the integer represents the core, if the process
 				//                    has an instance of many cores
 				//   "[kacpid]"       when the process only runs on one core
-				//   "[async/mgr]"          
+				//   "[async/mgr]"
 				//   "[jbd2/dm-1-8]"
 				//   The brackets indicate that the startup parameters are not available
 				//   We handle this case by removing the brackets and the core indicator
@@ -501,7 +501,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 
 	/** @since 4.4 */
 	protected String[] parseCores(MIList list) {
-		List<String> cores = new ArrayList<String>();
+		List<String> cores = new ArrayList<>();
 
 		MIValue[] values = list.getMIValues();
 		for (int i = 0; i < values.length; i++) {

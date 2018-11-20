@@ -17,9 +17,6 @@ package org.eclipse.cdt.core.model.tests;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
@@ -39,6 +36,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * @author Peter Graves
@@ -68,15 +68,15 @@ public class BinaryTests extends TestCase {
 	 * Sets up the test fixture.
 	 *
 	 * Called before every test case method.
-	 * 
-	 * Example code test the packages in the project 
+	 *
+	 * Example code test the packages in the project
 	 *  "com.qnx.tools.ide.cdt.core"
 	 */
 	@Override
 	protected void setUp() throws Exception {
 		/***
 		 * The tests assume that they have a working workspace
-		 * and workspace root object to use to create projects/files in, 
+		 * and workspace root object to use to create projects/files in,
 		 * so we need to get them setup first.
 		 */
 		workspace = ResourcesPlugin.getWorkspace();
@@ -94,7 +94,7 @@ public class BinaryTests extends TestCase {
 
 		testProject = CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
 
-		// since our test require that we can read the debug info from the exe we must set the GNU elf 
+		// since our test require that we can read the debug info from the exe we must set the GNU elf
 		// binary parser since the default (generic elf binary parser) does not do this.
 		ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
 		ICConfigurationDescription defaultConfig = projDesc.getDefaultSettingConfiguration();
@@ -204,7 +204,7 @@ public class BinaryTests extends TestCase {
 		expSyms = new ExpectedStrings(myStrings);
 
 		/***
-		 * Grab the IBinary we want to test, and find all the elements in all 
+		 * Grab the IBinary we want to test, and find all the elements in all
 		 * the binarie and make sure we get everything we expect.
 		 */
 		myBinary = CProjectHelper.findBinary(testProject, "test_g");
@@ -242,7 +242,7 @@ public class BinaryTests extends TestCase {
 	}
 
 	/***
-	 * A very small set of tests to make usre Binary.getCPU() seems to return 
+	 * A very small set of tests to make usre Binary.getCPU() seems to return
 	 * something sane for the most common exe type (x86) and one other (ppc)
 	 * This is not a in depth test at all.
 	 */
@@ -312,7 +312,7 @@ public class BinaryTests extends TestCase {
 
 	}
 
-	/*** 
+	/***
 	 * Simple tests for getText
 	 */
 	public void testGetText() throws CModelException {
@@ -408,7 +408,7 @@ public class BinaryTests extends TestCase {
 
 	/***
 	 *  Simple sanity test to make sure Binary.isBinary returns true
-	 *  
+	 *
 	 */
 	public void testIsBinary() throws CoreException, FileNotFoundException, Exception {
 		IBinary myBinary;

@@ -32,7 +32,7 @@ public final class DebugVisibility {
 	private int id;
 
 	/**
-	 * 
+	 *
 	 */
 	private DebugVisibility(int id) {
 		this.id = id;

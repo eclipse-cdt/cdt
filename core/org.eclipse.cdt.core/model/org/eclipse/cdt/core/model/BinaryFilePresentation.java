@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 
 /**
  * Allows to configure the presentation of binaries.
- * 
+ *
  * <p> Clients may create subclasses. </p>
- * @since 4.0.1. 
+ * @since 4.0.1.
  */
 public abstract class BinaryFilePresentation {
 
@@ -47,7 +47,7 @@ public abstract class BinaryFilePresentation {
 
 	/**
 	 * Determines whether a binary is to be shown as part of the binary container.
-	 * The default implementation returns <code>true</code> for executables and 
+	 * The default implementation returns <code>true</code> for executables and
 	 * dynamic libraries.
 	 */
 	public boolean showInBinaryContainer() {

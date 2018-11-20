@@ -304,7 +304,7 @@ public class CCorePreferenceConstants {
 	public static final boolean DEFAULT_SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS = true;
 
 	/**
-	 * The maximum number of trivial expressions that are parsed in initializer lists. This preference 
+	 * The maximum number of trivial expressions that are parsed in initializer lists. This preference
 	 * is considered only if <code>SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS</code> is set to true.
 	 * <p>
 	 * Value is of type <code>int</code>.

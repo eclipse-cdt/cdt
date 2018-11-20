@@ -19,12 +19,11 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * @author bgheorgh

@@ -19,6 +19,14 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
+import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -37,32 +45,22 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
-import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
-
 /**
- * Base class for build configuration actions. 
+ * Base class for build configuration actions.
  */
 public class ChangeBuildConfigActionBase {
 
 	/**
 	 * List of selected managed-built projects
 	 */
-	protected HashSet<IProject> fProjects = new HashSet<IProject>();
+	protected HashSet<IProject> fProjects = new HashSet<>();
 
 	/**
 	 * Fills the menu with build configurations which are common for all selected projects
 	 * @param menu The menu to fill
 	 */
 	protected void fillMenu(Menu menu) {
-		// This should not happen 
+		// This should not happen
 		if (menu == null)
 			return;
 
@@ -70,7 +68,7 @@ public class ChangeBuildConfigActionBase {
 		for (MenuItem item2 : items)
 			item2.dispose();
 
-		SortedSet<String> configNames = new TreeSet<String>();
+		SortedSet<String> configNames = new TreeSet<>();
 		String sCurrentConfig = null;
 		boolean bCurrentConfig = true;
 		for (IProject prj : fProjects) {
@@ -178,9 +176,9 @@ public class ChangeBuildConfigActionBase {
 	}
 
 	/**
-	 * selectionChanged() event handler. Fills the list of managed-built projects 
+	 * selectionChanged() event handler. Fills the list of managed-built projects
 	 * based on the selection. If some non-managed-built projects are selected,
-	 * disables the action. 
+	 * disables the action.
 	 * @param action The action
 	 * @param selection The selection
 	 */
@@ -315,7 +313,7 @@ public class ChangeBuildConfigActionBase {
 		// call ourselves recursively
 		//
 		if (badObject || fProjects.isEmpty()) {
-			// Check for lone CDT project in workspace 
+			// Check for lone CDT project in workspace
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			if (projects != null && projects.length == 1) {
 				IProject project = projects[0];

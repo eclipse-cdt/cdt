@@ -68,7 +68,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
 	@Override
@@ -80,7 +80,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override

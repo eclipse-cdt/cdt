@@ -90,7 +90,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	protected Button fWorkspaceSettingsButton;
 	/** @since 6.1 */
 	protected Link fWorkpsaceSettingsLink;
-	protected final Map<IPath, Boolean> fBinaryExeCache = new HashMap<IPath, Boolean>();
+	protected final Map<IPath, Boolean> fBinaryExeCache = new HashMap<>();
 	protected Label fProjLabel;
 	protected Text fProjText;
 	protected Button fProjButton;
@@ -203,7 +203,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 */
 	protected ICProject[] getCProjects() throws CModelException {
 		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
-		ArrayList<ICProject> list = new ArrayList<ICProject>(cproject.length);
+		ArrayList<ICProject> list = new ArrayList<>(cproject.length);
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
 			try {

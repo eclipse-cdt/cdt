@@ -36,7 +36,7 @@ public interface IExtendedScannerInfo extends IScannerInfo {
 	 * <p>
 	 * In order to suppress the use of the directory of the current file (side effect of gcc option
 	 * -I-) you can pass '-' as one of the include paths. Other than that, the '-' will not have an
-	 * effect, in particular it will not split the include path as the -I- option would do. 
+	 * effect, in particular it will not split the include path as the -I- option would do.
 	 */
 	public String[] getLocalIncludePath();
 }

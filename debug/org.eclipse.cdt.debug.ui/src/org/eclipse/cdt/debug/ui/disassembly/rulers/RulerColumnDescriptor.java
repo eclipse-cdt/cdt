@@ -211,7 +211,7 @@ public final class RulerColumnDescriptor {
 	 * Returns <code>true</code> if this contribution matches the passed disassembly part , <code>false</code> if not.
 	 *
 	 * @param disassembly the disassembly part to check
-	 * @return <code>true</code> if this contribution targets the passed disassembly part 
+	 * @return <code>true</code> if this contribution targets the passed disassembly part
 	 */
 	public boolean matchesPart(IWorkbenchPart disassembly) {
 		Assert.isLegal(disassembly != null);

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -37,7 +38,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.TextEditorAction;
-import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 
 /**
  * An action which toggles comment prefixes on the selected lines.
@@ -179,7 +179,7 @@ public final class MakefileToggleCommentAction extends TextEditorAction {
 	 * the beginning of a line) completely containing the current selection.
 	 *
 	 * Note, the implementation has to match {@link TextViewer}.getTextBlockFromSelection().
-	 * 
+	 *
 	 * @param selection The selection to use
 	 * @param document The document
 	 * @return the region describing the text block comprising the given selection
@@ -335,7 +335,7 @@ public final class MakefileToggleCommentAction extends TextEditorAction {
 		fPrefixesMap = null;
 
 		String[] types = configuration.getConfiguredContentTypes(sourceViewer);
-		Map<String, String[]> prefixesMap = new HashMap<String, String[]>(types.length);
+		Map<String, String[]> prefixesMap = new HashMap<>(types.length);
 		for (String type : types) {
 			String[] prefixes = configuration.getDefaultPrefixes(sourceViewer, type);
 			if (prefixes != null && prefixes.length > 0) {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,9 +22,9 @@ package org.eclipse.cdt.tests.dsf;
  *         public void run() {
  *             value.fValue = 1;
  *         }
- *     }); 
+ *     });
  *     Assert.assertTrue(value.fValue == 1);
- * </pre> 
+ * </pre>
  */
 public class ValueHolder<V> {
 	public V fValue;

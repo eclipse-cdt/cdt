@@ -46,7 +46,7 @@ public class AutotoolsProjectTest2 {
 	}
 
 	/**
-	 * Test sample project which has a hello world program. The top-level 
+	 * Test sample project which has a hello world program. The top-level
 	 * contains autogen.sh which will build configure, but not run it.
 	 * The hello world source is found in
 	 * src/sample/hello.c so configuration must create multiple

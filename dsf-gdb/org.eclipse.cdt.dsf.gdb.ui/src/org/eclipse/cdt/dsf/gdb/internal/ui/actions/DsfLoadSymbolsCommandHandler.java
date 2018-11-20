@@ -126,8 +126,8 @@ public class DsfLoadSymbolsCommandHandler extends AbstractHandler {
 
 	/**
 	 * Refresh all VMProviders applying to element, as they could each need to change due to the new symbols.
-	 * 
-	 * @param element The element used to establish which VMProviders should refresh 
+	 *
+	 * @param element The element used to establish which VMProviders should refresh
 	 */
 	private void doRefresh(DsfSession session, Object element) {
 		if (element != null) {

@@ -17,8 +17,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.eclipse.cdt.testsrunner.model.IModelVisitor;
 import org.eclipse.cdt.testsrunner.model.ITestCase;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
@@ -27,6 +25,8 @@ import org.eclipse.cdt.testsrunner.model.ITestMessage;
 import org.eclipse.cdt.testsrunner.model.ITestMessage.Level;
 import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
+
+import junit.framework.Assert;
 
 /**
  * Mock for the {@see ITestModelUpdater}.
@@ -162,9 +162,9 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 		}
 	}
 
-	private LinkedList<MethodInfo> methodCalls = new LinkedList<MethodInfo>();
+	private LinkedList<MethodInfo> methodCalls = new LinkedList<>();
 	private boolean replayMode = false;
-	private Set<String> skippedMethods = new HashSet<String>();
+	private Set<String> skippedMethods = new HashSet<>();
 
 	// NOTE: Test suites nesting is not supported yet cause there is no need in it
 	private FakeTestSuite currentTestSuite = new FakeTestSuite();

@@ -13,21 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.doctools;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener;
-
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test comment ownership mapping

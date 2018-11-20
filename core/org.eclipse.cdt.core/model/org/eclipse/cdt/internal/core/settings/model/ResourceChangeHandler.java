@@ -73,11 +73,11 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		CProjectDescriptionManager fMngr = CProjectDescriptionManager.getInstance();
 
 		/** Map of modified project descriptions to update */
-		Map<IProject, ICProjectDescription> fProjDesMap = new HashMap<IProject, ICProjectDescription>();
+		Map<IProject, ICProjectDescription> fProjDesMap = new HashMap<>();
 		/** Set of removed resources */
-		Collection<IProject> fRemovedProjects = new HashSet<IProject>();
+		Collection<IProject> fRemovedProjects = new HashSet<>();
 		/** Map of moved & removed resources: 'from' -> 'to'; 'to' may be null for removed resources */
-		Map<IResource, IResource> fMovedResources = new HashMap<IResource, IResource>();
+		Map<IResource, IResource> fMovedResources = new HashMap<>();
 
 		@Override
 		public void handleProjectClose(IProject project) {
@@ -116,7 +116,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			for (ICSourceEntry entrie : entries) {
 				if (entrie.getFullPath().equals(rcFullPath)) {
 					if (updatedList == null) {
-						updatedList = new ArrayList<ICSourceEntry>(Arrays.asList(entries));
+						updatedList = new ArrayList<>(Arrays.asList(entries));
 					}
 					updatedList.remove(num);
 				} else {

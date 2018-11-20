@@ -19,9 +19,9 @@ import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 
 /**
  * This class is a wrapper/implementor class for OverflowingLRUCache.
- * 
+ *
  * It uses CodeReaderCacheEntry (which implements ILRUCacheable) to specify that the size of
- * the cache should be relative to the size of the entries and not the number of entries. 
+ * the cache should be relative to the size of the entries and not the number of entries.
  * @deprecated
  */
 @Deprecated
@@ -54,7 +54,7 @@ public class CodeReaderLRUCache extends OverflowingLRUCache<String, CodeReaderCa
 
 	/**
 	 * Removes an entry from the cache and returns the entry that was removed if found.
-	 * Otherwise null is returned. 
+	 * Otherwise null is returned.
 	 */
 	@Override
 	public CodeReader remove(String key) {
@@ -67,7 +67,7 @@ public class CodeReaderLRUCache extends OverflowingLRUCache<String, CodeReaderCa
 	}
 
 	/**
-	 * Puts a CodeReader into the cache by wrapping it with a CodeReaderCacheEntry first. 
+	 * Puts a CodeReader into the cache by wrapping it with a CodeReaderCacheEntry first.
 	 * This way the proper size of the element in the cache can be determined
 	 * via the CodeReaderCacheEntry.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -84,7 +84,7 @@ public class MessagesViewer {
 
 		/**
 		 * The shared image ID corresponding to the message level filter action.
-		 * 
+		 *
 		 * @return shared image ID
 		 */
 		public String getImageId() {
@@ -94,7 +94,7 @@ public class MessagesViewer {
 		/**
 		 * The message levels that should be shown if current message level
 		 * filter action is set.
-		 * 
+		 *
 		 * @return array of message levels
 		 */
 		public ITestMessage.Level[] getLevels() {
@@ -104,7 +104,7 @@ public class MessagesViewer {
 		/**
 		 * Checks whether the specified message level should be shown if current
 		 * message level filter action is set.
-		 * 
+		 *
 		 * @param messageLevel message level to search
 		 * @return <code>true</code> if found
 		 */
@@ -195,11 +195,11 @@ public class MessagesViewer {
 		/**
 		 * Creates a messages set with a custom comparator. It is used for the
 		 * ordered messages showing.
-		 * 
+		 *
 		 * @return set to store the test messages
 		 */
 		private TreeSet<ITestMessage> createMessagesSet() {
-			return new TreeSet<ITestMessage>(new Comparator<ITestMessage>() {
+			return new TreeSet<>(new Comparator<ITestMessage>() {
 
 				@Override
 				public int compare(ITestMessage message1, ITestMessage message2) {
@@ -244,17 +244,17 @@ public class MessagesViewer {
 		/**
 		 * Creates a list to store the test messages. It is used for the
 		 * unordered messages showing.
-		 * 
+		 *
 		 * @return list to store the test messages
 		 */
 		private ArrayList<ITestMessage> createMessagesList() {
-			return new ArrayList<ITestMessage>();
+			return new ArrayList<>();
 		}
 
 		/**
 		 * Creates a collection to store the test messages depending on whether
 		 * ordering is required.
-		 * 
+		 *
 		 * @return collection to store the test messages
 		 */
 		private Collection<ITestMessage> createMessagesCollection() {
@@ -263,7 +263,7 @@ public class MessagesViewer {
 
 		/**
 		 * Run messages collecting for the specified test items.
-		 * 
+		 *
 		 * @param testItems test items array
 		 */
 		private void collectMessages(ITestItem[] testItems) {
@@ -283,7 +283,7 @@ public class MessagesViewer {
 		/**
 		 * Returns the full (file path) or short (file name only) file path view
 		 * depending on the filter set.
-		 * 
+		 *
 		 * @param location test object location
 		 * @return file path
 		 */
@@ -358,7 +358,7 @@ public class MessagesViewer {
 	private boolean showFileNameOnly = false;
 
 	/** The set of message level to show the messages with. */
-	private Set<ITestMessage.Level> acceptedMessageLevels = new HashSet<ITestMessage.Level>();
+	private Set<ITestMessage.Level> acceptedMessageLevels = new HashSet<>();
 
 	/** Specifies whether test messages ordering is on or off. */
 	private boolean orderingMode = false;
@@ -380,8 +380,8 @@ public class MessagesViewer {
 	}
 
 	/**
-	 * Initializes the viewer context menu. 
-	 * 
+	 * Initializes the viewer context menu.
+	 *
 	 * @param viewSite view
 	 * @param sessionsManager testing sessions manager
 	 * @param workbench workbench
@@ -441,7 +441,7 @@ public class MessagesViewer {
 
 	/**
 	 * Handles the context menu showing.
-	 * 
+	 *
 	 * @param manager context menu manager
 	 */
 	private void handleMenuAboutToShow(IMenuManager manager) {
@@ -452,7 +452,7 @@ public class MessagesViewer {
 
 	/**
 	 * Provides access to the main widget of the messages viewer.
-	 * 
+	 *
 	 * @return main widget of the messages viewer
 	 */
 	public TableViewer getTableViewer() {
@@ -461,7 +461,7 @@ public class MessagesViewer {
 
 	/**
 	 * Sets the test items for which the messages should be shown.
-	 * 
+	 *
 	 * @param testItems test items array
 	 */
 	public void showItemsMessages(ITestItem[] testItems) {
@@ -479,7 +479,7 @@ public class MessagesViewer {
 
 	/**
 	 * Returns whether the messages only for the failed tests should be shown.
-	 * 
+	 *
 	 * @return filter state
 	 */
 	public boolean getShowFailedOnly() {
@@ -488,7 +488,7 @@ public class MessagesViewer {
 
 	/**
 	 * Sets whether the messages only for the failed tests should be shown.
-	 * 
+	 *
 	 * @param showFailedOnly new filter state
 	 */
 	public void setShowFailedOnly(boolean showFailedOnly) {
@@ -500,7 +500,7 @@ public class MessagesViewer {
 
 	/**
 	 * Returns whether short or long view for file paths should be shown.
-	 * 
+	 *
 	 * @return filter state
 	 */
 	public boolean getShowFileNameOnly() {
@@ -509,7 +509,7 @@ public class MessagesViewer {
 
 	/**
 	 * Sets whether short or long view for file paths should be shown.
-	 * 
+	 *
 	 * @param showFileNameOnly new filter state
 	 */
 	public void setShowFileNameOnly(boolean showFileNameOnly) {
@@ -521,7 +521,7 @@ public class MessagesViewer {
 
 	/**
 	 * Returns whether test messages should be ordered by location.
-	 * 
+	 *
 	 * @return messages ordering state
 	 */
 	public boolean getOrderingMode() {
@@ -530,7 +530,7 @@ public class MessagesViewer {
 
 	/**
 	 * Sets whether test messages should be ordered by location.
-	 * 
+	 *
 	 * @param orderingMode new messages ordering state
 	 */
 	public void setOrderingMode(boolean orderingMode) {
@@ -542,7 +542,7 @@ public class MessagesViewer {
 
 	/**
 	 * Adds the filter message level filters by the message filter action level.
-	 * 
+	 *
 	 * @param levelFilter message filter action level
 	 * @param refresh specifies whether viewer should be refreshed after filter
 	 * update (small optimization: avoid many updates on initialization)
@@ -559,7 +559,7 @@ public class MessagesViewer {
 	/**
 	 * Removed the filter message level filters by the message filter action
 	 * level.
-	 * 
+	 *
 	 * @param levelFilter message filter action level
 	 */
 	public void removeLevelFilter(LevelFilter levelFilter) {

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -16,16 +16,17 @@ package org.eclipse.cdt.utils.xcoff;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import com.ibm.icu.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.coff.ReadMemoryAccess;
 
+import com.ibm.icu.text.DateFormat;
+
 /**
  * Representation of AIX XCOFF32 binary format
- * 
+ *
  * @author vhirsl
  */
 public class XCoff32 {
@@ -307,8 +308,8 @@ public class XCoff32 {
 														parameter/argument type-check strings used by the binder */
 		public final static int STYP_OVRFLO = 0x8000; /* overflow section:
 														Specifies a relocation or line-number field overflow section.
-														A section header of this type contains the count of relocation 
-														entries and line number entries for some other section. 
+														A section header of this type contains the count of relocation
+														entries and line number entries for some other section.
 														This section header is required when either of the counts
 														exceeds 65,534. */
 
@@ -394,7 +395,7 @@ public class XCoff32 {
 						}
 						try {
 							Lineno[] nos = getLinenos();
-							for (int i = 0; i < nos.length; i++) { 
+							for (int i = 0; i < nos.length; i++) {
 								buffer.append(nos[i]);
 							}
 						} catch (IOException e) {
@@ -643,7 +644,7 @@ public class XCoff32 {
 			getRandomAccessFile();
 			rfile.seek(offset);
 			int numSymbols = getFileHeader().f_nsyms;
-			ArrayList<Symbol> symList = new ArrayList<Symbol>(numSymbols);
+			ArrayList<Symbol> symList = new ArrayList<>(numSymbols);
 			for (int i = 0; i < numSymbols; ++i) {
 				Symbol v = new Symbol(rfile);
 				symList.add(v);
@@ -699,7 +700,7 @@ public class XCoff32 {
 				opthdr = new OptionalHeader(rfile, startingOffset + FileHeader.FILHSZ);
 			}
 			if (filehdr.f_opthdr < OptionalHeader.AOUTHDRSZ) {
-				// auxiliary header does not contain needed information, 
+				// auxiliary header does not contain needed information,
 				// must load section headers
 				getSectionHeaders();
 				for (int i = 0; i < filehdr.f_nscns; ++i) {

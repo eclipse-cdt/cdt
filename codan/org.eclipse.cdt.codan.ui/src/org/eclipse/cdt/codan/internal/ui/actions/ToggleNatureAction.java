@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Alena Laskavaia 
+ * Copyright (c) 2009, 2015 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -75,7 +75,7 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 
 	/**
 	 * Toggles Codan nature on a project
-	 * 
+	 *
 	 * @param project the project to have Codan nature added or removed
 	 */
 	public void toggleNature(IProject project, boolean add) {

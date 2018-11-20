@@ -56,26 +56,26 @@ public class ManagedOptionValueHandler implements IManagedOptionValueHandler {
 		String configLabel = "???"; //$NON-NLS-1$
 		String holderLabel = "???"; //$NON-NLS-1$
 		String eventLabel  = "???"; //$NON-NLS-1$
-		
+
 		if (configuration instanceof IConfiguration) {
 			configLabel = "IConfiguration"; //$NON-NLS-1$
 		} else if (configuration instanceof IResourceConfiguration) {
 			configLabel = "IResourceConfiguration"; //$NON-NLS-1$
 		}
-		
+
 		if (holder instanceof IToolChain) {
 			holderLabel = "IToolChain"; //$NON-NLS-1$
 		} else if (holder instanceof ITool) {
 			holderLabel = "ITool"; //$NON-NLS-1$
 		}
-		
+
 		switch (event) {
 		case EVENT_OPEN:       eventLabel = "EVENT_OPEN"; break;       //$NON-NLS-1$
 		case EVENT_APPLY:      eventLabel = "EVENT_APPLY"; break;      //$NON-NLS-1$
 		case EVENT_SETDEFAULT: eventLabel = "EVENT_SETDEFAULT"; break; //$NON-NLS-1$
 		case EVENT_CLOSE:      eventLabel = "EVENT_CLOSE"; break;      //$NON-NLS-1$
 		}
-		
+
 		// Print the event
 		System.out.println(eventLabel + "(" +              //$NON-NLS-1$
 				           configLabel + " = " +           //$NON-NLS-1$

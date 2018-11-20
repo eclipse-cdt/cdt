@@ -56,10 +56,10 @@ public final class ChunkCache {
 		}
 	}
 
-	/**                                                                   
-	 * Evicts a chunk from the page table and the chunk table.            
+	/**
+	 * Evicts a chunk from the page table and the chunk table.
 	 * After this method returns, {@link #fPointer}  will contain
-	 * the index of the evicted chunk within the page table.              
+	 * the index of the evicted chunk within the page table.
 	 */
 	private void evictChunk() {
 		/*
@@ -100,17 +100,17 @@ public final class ChunkCache {
 		}
 	}
 
-	/**                                                                           
+	/**
 	 * Returns the maximum size of the chunk cache in bytes.
 	 */
 	public synchronized long getMaxSize() {
 		return (long) fPageTable.length * Database.CHUNK_SIZE;
 	}
 
-	/**                                                                           
+	/**
 	 * Clears the page table and changes it to hold chunks with
-	 * maximum total memory of <code>maxSize</code>.       
-	 * @param maxSize the total size of the chunks in bytes.                
+	 * maximum total memory of <code>maxSize</code>.
+	 * @param maxSize the total size of the chunks in bytes.
 	 */
 	public synchronized void setMaxSize(long maxSize) {
 		final int newLength = computeLength(maxSize);

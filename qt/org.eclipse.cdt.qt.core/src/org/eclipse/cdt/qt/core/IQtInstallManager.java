@@ -19,21 +19,21 @@ import org.eclipse.cdt.core.build.IToolChain;
  * The manager for Qt Installs. Qt Installs are Qt installation trees that are produced in a Qt
  * platform build. They have a spec which selects the os and cpu architecture and are managed by an
  * instance of the qmake builder.
- * 
+ *
  * @noimplement
  */
 public interface IQtInstallManager {
 
 	/**
 	 * Returns all the registered Qt installs.
-	 * 
+	 *
 	 * @return all Qt Installs
 	 */
 	public Collection<IQtInstall> getInstalls();
 
 	/**
 	 * Register a new Qt Install
-	 * 
+	 *
 	 * @param install
 	 *            new Qt Install
 	 */
@@ -41,7 +41,7 @@ public interface IQtInstallManager {
 
 	/**
 	 * Return a Qt install that is managed by the given qmake.
-	 * 
+	 *
 	 * @param qmakePath
 	 *            path to qmake
 	 * @return QT install managed by that qmake
@@ -50,7 +50,7 @@ public interface IQtInstallManager {
 
 	/**
 	 * Returns the Qt installs that have the matching spec.
-	 * 
+	 *
 	 * @param spec
 	 *            spec for the Qt installs, e.g. macosx-clang
 	 * @return all Qt installs that have that spec
@@ -59,7 +59,7 @@ public interface IQtInstallManager {
 
 	/**
 	 * Deregister a given Qt install
-	 * 
+	 *
 	 * @param install
 	 *            Qt install to deregister
 	 */
@@ -69,7 +69,7 @@ public interface IQtInstallManager {
 	 * Check whether the given toolchain supports the given Qt Install. This is done by checking the
 	 * OS and CPU arch of the toolchain and returning whether the Qt install supports that
 	 * combination.
-	 * 
+	 *
 	 * @param install
 	 *            Qt Install to check
 	 * @param toolChain
@@ -80,7 +80,7 @@ public interface IQtInstallManager {
 
 	/**
 	 * Add a listener for Qt install changes
-	 * 
+	 *
 	 * @param listener
 	 *            listener to add
 	 */
@@ -88,7 +88,7 @@ public interface IQtInstallManager {
 
 	/**
 	 * Remove a listener for Qt install changes
-	 * 
+	 *
 	 * @param listener
 	 *            listener to remove
 	 */

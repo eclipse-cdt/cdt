@@ -131,7 +131,7 @@ public class MapProblemPreference extends AbstractProblemPreference
 	public Object clone() {
 		MapProblemPreference map = (MapProblemPreference) super.clone();
 		synchronized (hash) {
-			map.hash = Collections.synchronizedMap(new LinkedHashMap<String, IProblemPreference>(hash));
+			map.hash = Collections.synchronizedMap(new LinkedHashMap<>(hash));
 		}
 		// now we have to clone the values too
 		for (Entry<String, IProblemPreference> entry : map.hash.entrySet()) {
@@ -255,7 +255,7 @@ public class MapProblemPreference extends AbstractProblemPreference
 	@Override
 	public Object getValue() {
 		synchronized (hash) {
-			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+			LinkedHashMap<String, Object> map = new LinkedHashMap<>();
 			for (Iterator<IProblemPreference> iterator = hash.values().iterator(); iterator.hasNext();) {
 				IProblemPreference pref = iterator.next();
 				map.put(pref.getKey(), pref.getValue());

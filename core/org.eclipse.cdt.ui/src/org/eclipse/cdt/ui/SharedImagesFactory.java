@@ -42,7 +42,7 @@ import org.osgi.framework.Bundle;
  * <p>
  * See {@link CDTSharedImages} for an example of using this factory.
  * </p>
- * 
+ *
  * @since 5.7
  *
  */
@@ -51,11 +51,11 @@ public class SharedImagesFactory {
 
 	private Bundle bundle;
 	private ImageRegistry imageRegistry;
-	private Map<String, URL> urlMap = new HashMap<String, URL>();
+	private Map<String, URL> urlMap = new HashMap<>();
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param plugin - the plugin where the images are defined.
 	 */
 	public SharedImagesFactory(Plugin plugin) {

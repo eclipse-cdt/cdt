@@ -68,7 +68,7 @@ import org.eclipse.osgi.util.NLS;
 /**
  * AbstractCLaunchDelegate2 is used by most DSF based debuggers. It replaces AbstractCLaunchDelegate
  * which is the launch delegate used by most CDI based debuggers.
- * 
+ *
  * While it is technically possible to merge the two, AbstractCLaunchDelegate has been left
  * unmodified because it is commonly used by CDT clients and contains lots of obscure code
  * created long ago to handle issues whose relevance is unclear today.
@@ -100,7 +100,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 
 	/**
 	 * Recursively creates a set of projects referenced by the current project
-	 * 
+	 *
 	 * @param proj
 	 *            The current project
 	 * @param referencedProjSet
@@ -132,7 +132,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * project will, under the covers, cause its CDT-referenced projects to be
 	 * built as well (a function of CDT build). So, any files in such projects
 	 * should be saved before launch.
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String)
 	 */
@@ -148,9 +148,9 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 			String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 			if (orderedNames != null) {
 				//Projects may not be in the build order but should still be built if selected
-				ArrayList<IProject> unorderedProjects = new ArrayList<IProject>(projectSet.size());
+				ArrayList<IProject> unorderedProjects = new ArrayList<>(projectSet.size());
 				unorderedProjects.addAll(projectSet);
-				orderedProjList = new ArrayList<IProject>(projectSet.size());
+				orderedProjList = new ArrayList<>(projectSet.size());
 
 				for (String projectName : orderedNames) {
 					for (IProject proj : unorderedProjects) {
@@ -177,7 +177,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 
 	/**
 	 * Searches for compile errors in the specified project
-	 * Used in finalLaunchCheck() 
+	 * Used in finalLaunchCheck()
 	 * @param proj
 	 *            The project to search
 	 * @return true if compile errors exist, otherwise false
@@ -199,7 +199,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	/**
 	 * Throws a core exception with an error status object built from the given
 	 * message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message
 	 *            the status message
 	 * @param exception
@@ -229,7 +229,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 
 	/**
 	 * Builds the project referenced in the launch configuration
-	 * 
+	 *
 	 * @param configuration
 	 *            the configuration being launched
 	 * @param mode
@@ -318,7 +318,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * LaunchConfigurationDelegate#buildProjects(IProject[], IProgressMonitor).
 	 * It builds only one project and it builds a particular CDT build
 	 * configuration of it. It was added to address bug 309126 and 312709
-	 * 
+	 *
 	 * @param project
 	 *            the project to build
 	 * @param buildConfigID
@@ -366,7 +366,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 						for (ICommand command : commands) {
 							Map<String, String> args = command.getArguments();
 							if (args == null) {
-								args = new HashMap<String, String>(cfgIdArgs);
+								args = new HashMap<>(cfgIdArgs);
 							} else {
 								args.putAll(cfgIdArgs);
 							}
@@ -526,7 +526,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				if (buildFailed || existsProblems(project)) {
 					// There's a build error in the main project
 
-					// Put up the error dialog. 
+					// Put up the error dialog.
 					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(uiPromptStatus);
 					if (prompter != null) {
 						continueLaunch = ((Boolean) prompter.handleStatus(promptStatusMainProj,
@@ -546,7 +546,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 						}
 
 						if (existsProblems(proj)) {
-							// Put up the error dialog. 
+							// Put up the error dialog.
 							IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(uiPromptStatus);
 							prompter = DebugPlugin.getDefault().getStatusHandler(uiPromptStatus);
 							if (prompter != null) {
@@ -603,12 +603,12 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * Expands and returns the working directory attribute of the given launch
 	 * configuration. Returns <code>null</code> if a working directory is not
 	 * specified.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return an absolute path to a directory, or <code>null</code> if unspecified
 	 * @throws CoreException if unable to retrieve the associated launch
 	 * configuration attribute or if unable to resolve any variables
-	 * 
+	 *
 	 * @since 7.3
 	 */
 	protected IPath getWorkingDirectoryPath(ILaunchConfiguration config) throws CoreException {
@@ -616,7 +616,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		if (location != null) {
 			String expandedLocation = VariablesPlugin.getDefault().getStringVariableManager()
 					.performStringSubstitution(location);
-			;
+
 			if (!expandedLocation.isEmpty()) {
 				return new Path(expandedLocation);
 			}
@@ -628,7 +628,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * Verifies the working directory specified by the given launch
 	 * configuration exists, and returns that working directory, or
 	 * <code>null</code> if none is specified.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the working directory specified by the given launch
@@ -673,7 +673,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * Verify that the program name of the configuration can be found as a file.
 	 * This method supports a program name without a corresponding project,
 	 * as long as the program name is specified with an absolute path.
-	 * 
+	 *
 	 * @return Absolute path of the program location
 	 * @since 7.3
 	 */

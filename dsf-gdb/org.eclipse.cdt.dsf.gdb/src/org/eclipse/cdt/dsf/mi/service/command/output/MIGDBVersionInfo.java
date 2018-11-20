@@ -15,17 +15,12 @@
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIConsoleStreamOutput;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 
 /**
  * '-gdb-version' Show version information for gdb.
  *
  * sample output:
- * 
+ *
  * -gdb-version
  * ~"GNU gdb (Ubuntu 7.7-0ubuntu3.1) 7.7\n"
  * ~"Copyright (C) 2014 Free Software Foundation, Inc.\n"

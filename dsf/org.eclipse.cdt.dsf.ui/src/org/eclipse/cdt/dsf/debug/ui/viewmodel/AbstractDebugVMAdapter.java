@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 /**
  * Base class for VM adapters used for implementing a debugger integration.
- * 
+ *
  * @since 1.1
  */
 public class AbstractDebugVMAdapter extends AbstractDMVMAdapter implements ISteppingControlParticipant {
@@ -60,7 +60,7 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter implements IStep
 				@Override
 				public void run() {
 					fController.doneStepping(suspendedEvent.getDMContext(), AbstractDebugVMAdapter.this);
-				};
+				}
 			});
 		}
 	}

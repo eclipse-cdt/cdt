@@ -19,28 +19,25 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.utils.PathUtil;
-
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeSearchPath;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeSearchPathElement;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
-
 import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
+import org.eclipse.cdt.utils.PathUtil;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class InclusionContext {
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -282,7 +279,7 @@ public class InclusionContext {
 				name = getRelativePath(header);
 			}
 			if (name == null) {
-				name = header.toPortableString(); // Last resort. 
+				name = header.toPortableString(); // Last resort.
 			}
 		}
 		return new IncludeInfo(name, style.isAngleBrackets());
@@ -330,7 +327,7 @@ public class InclusionContext {
 	 * Sets the effective translation unit location that overrides the default value obtained by
 	 * calling {@code getTranslationUnit().getLocation()}.
 	 *
-	 * @param location the file system location to set 
+	 * @param location the file system location to set
 	 */
 	public void setTranslationUnitLocation(IPath location) {
 		this.fTuLocation = location;

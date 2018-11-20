@@ -45,7 +45,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 	public static final String EMPTY_PROJECT = Messages.AbstractCWizard_0;
 
 	/**
-	 * Creates and returns an array of items to be displayed 
+	 * Creates and returns an array of items to be displayed
 	 */
 	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
@@ -54,7 +54,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 		IBuildPropertyValue[] vs = bpt.getSupportedValues();
 		Arrays.sort(vs, BuildListComparator.getInstance());
 
-		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
+		ArrayList<EntryDescriptor> items = new ArrayList<>();
 		// new style project types
 		for (int i = 0; i < vs.length; i++) {
 			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(MBSWizardHandler.ARTIFACT, vs[i].getId(),
@@ -88,7 +88,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 				continue; // not supported
 			String nattr = pt.getNameAttribute();
 			if (nattr == null || nattr.length() == 0)
-				continue; // new proj style 
+				continue; // new proj style
 			MBSWizardHandler h = new MBSWizardHandler(pt, parent, wizard);
 			IToolChain[] tcs = ManagedBuildManager.getExtensionToolChains(pt);
 			for (int i = 0; i < tcs.length; i++) {

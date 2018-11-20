@@ -22,16 +22,16 @@ public interface ICastToArray extends ICastToType {
 
 	/**
 	 * Returns whether this element can be currently casted to array.
-	 * 
+	 *
 	 * @return whether this element can be currently casted to array
 	 */
 	boolean canCastToArray();
 
 	/**
 	 * Performs the casting. The element is transformed to the array of the same type.
-	 *  
-	 * @param startIndex the index of the first element of the array. 0 means that 
-	 * the original element is the first member of the array. 
+	 *
+	 * @param startIndex the index of the first element of the array. 0 means that
+	 * the original element is the first member of the array.
 	 * @param length tha array size
 	 * @throws DebugException
 	 */

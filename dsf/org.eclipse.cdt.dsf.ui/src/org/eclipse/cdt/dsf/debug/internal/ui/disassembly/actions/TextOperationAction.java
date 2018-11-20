@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class TextOperationAction extends Action implements IUpdate {
 	/**
 	 * Updates the enabled state of the action.
 	 * Fires a property change if the enabled state changes.
-	 * 
+	 *
 	 * @see Action#firePropertyChange(String, Object, Object)
 	 */
 	@Override

@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 /**
  * This interface represents a designated initializer,
  * e.g. struct x y = { .z = 4, .t[1] = 3 };
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

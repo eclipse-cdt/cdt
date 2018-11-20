@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Ed Swartz (Nokia)
- *     Martin Oberhuber (Wind River) - bug 398195: consider external API in IB 
+ *     Martin Oberhuber (Wind River) - bug 398195: consider external API in IB
  *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.includebrowser;
@@ -19,6 +19,31 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.actions.CollapseAllAction;
+import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
+import org.eclipse.cdt.internal.ui.actions.ExpandAllAction;
+import org.eclipse.cdt.internal.ui.navigator.OpenCElementAction;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
+import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
+import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
+import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -89,33 +114,6 @@ import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.CoreModelUtil;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.actions.CollapseAllAction;
-import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
-import org.eclipse.cdt.internal.ui.actions.ExpandAllAction;
-import org.eclipse.cdt.internal.ui.navigator.OpenCElementAction;
-import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
-import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
-import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
-import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
-import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
-
 /**
  * The view part for the include browser.
  */
@@ -133,7 +131,7 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 	private IMemento fMemento;
 	private boolean fShowsMessage;
 	private IBNode fLastNavigationNode;
-	private ArrayList<ITranslationUnit> fHistoryEntries = new ArrayList<ITranslationUnit>(MAX_HISTORY_SIZE);
+	private ArrayList<ITranslationUnit> fHistoryEntries = new ArrayList<>(MAX_HISTORY_SIZE);
 
 	// widgets
 	private PageBook fPagebook;

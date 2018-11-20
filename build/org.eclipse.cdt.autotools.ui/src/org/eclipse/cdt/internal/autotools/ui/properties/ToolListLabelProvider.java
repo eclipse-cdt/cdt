@@ -57,7 +57,7 @@ public class ToolListLabelProvider extends LabelProvider {
 			defaultImage = IMG_TOOL;
 		}
 
-		// Use default icon for display 
+		// Use default icon for display
 		return defaultImage;
 	}
 
@@ -82,7 +82,7 @@ public class ToolListLabelProvider extends LabelProvider {
 
 	/**
 	 * Disposing any images that were allocated for it.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	@Override
@@ -90,5 +90,5 @@ public class ToolListLabelProvider extends LabelProvider {
 		if (descriptor != null && manager != null) {
 			manager.destroyImage(descriptor);
 		}
-	};
+	}
 }

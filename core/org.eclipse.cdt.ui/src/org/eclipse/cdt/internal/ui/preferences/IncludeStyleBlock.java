@@ -19,14 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * The preference block for configuring style of include statements.
@@ -74,7 +72,7 @@ public class IncludeStyleBlock extends TabConfigurationBlock {
 	}
 
 	private static Map<IncludeKind, Key> createKeyMap() {
-		Map<IncludeKind, Key> map = new HashMap<IncludeKind, Key>();
+		Map<IncludeKind, Key> map = new HashMap<>();
 		map.put(IncludeKind.RELATED, KEY_STYLE_RELATED);
 		map.put(IncludeKind.PARTNER, KEY_STYLE_PARTNER);
 		map.put(IncludeKind.IN_SAME_FOLDER, KEY_STYLE_SAME_FOLDER);

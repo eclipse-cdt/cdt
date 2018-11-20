@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -542,7 +542,7 @@ public class ConstructorTests extends TestBase {
 
 	//	struct X {
 	//		constexpr X(int y):y{2*y} {}
-	//		int y;	
+	//		int y;
 	//	};
 	//	struct Base {
 	//		X x{5};

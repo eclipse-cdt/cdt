@@ -46,7 +46,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	 * settings, or <code>null</code> if none. Note, if possible we will
 	 * return the IBinary based on config entry as this may be more usefull then
 	 * just the project.
-	 * 
+	 *
 	 * @return C element context.
 	 */
 	protected ICElement getContext(ILaunchConfiguration config, String platform) {

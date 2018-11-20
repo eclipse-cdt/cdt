@@ -22,15 +22,15 @@ public interface IGlobalVariableDescriptor {
 
 	/**
 	 * Returns the name of the global variable
-	 * 
+	 *
 	 * @return the name of the global variable
 	 */
 	public String getName();
 
 	/**
-	 * Returns the path of the source file that contains 
+	 * Returns the path of the source file that contains
 	 * the definition of the global variable.
-	 *  
+	 *
 	 * @return the path of the source file
 	 */
 	public IPath getPath();

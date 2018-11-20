@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * The parsed output of the data-disassemble command. The output format is
  * determined by the mode field on the request.
- * 
+ *
  * -data-disassemble -s $pc -e "$pc + 20" -- 0
  * ^done,asm_insns=[
  * {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
@@ -29,7 +29,7 @@ import java.util.List;
  * {address="0x000107c8",func-name="main",offset="12",inst="or %o2, 0x140, %o1\t! 0x11940 <_lib_version+8>"},
  * {address="0x000107cc",func-name="main",offset="16",inst="sethi %hi(0x11800), %o2"},
  * {address="0x000107d0",func-name="main",offset="20",inst="or %o2, 0x168, %o4\t! 0x11968 <_lib_version+48>"}]
- * 
+ *
  * -data-disassemble -f basics.c -l 32 -- 0
  * ^done,asm_insns=[
  * {address="0x000107bc",func-name="main",offset="0",inst="save %sp, -112, %sp"},
@@ -38,7 +38,7 @@ import java.util.List;
  * [...]
  * {address="0x0001081c",func-name="main",offset="96",inst="ret "},
  * {address="0x00010820",func-name="main",offset="100",inst="restore "}]
- * 
+ *
  * -data-disassemble -f basics.c -l 32 -n 3 -- 1
  * ^done,asm_insns=[
  * src_and_asm_line={line="31",file="/dir1/dir2/basics.c",line_asm_insn=[
@@ -46,7 +46,7 @@ import java.util.List;
  * src_and_asm_line={line="32",file="/dir1/dir2/basics.c",line_asm_insn=[
  * {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
  * {address="0x000107c4",func-name="main",offset="8",inst="sethi %hi(0x11800), %o2"}]}]
- * 
+ *
  */
 
 public class MIDataDisassembleInfo extends MIInfo {
@@ -79,8 +79,8 @@ public class MIDataDisassembleInfo extends MIInfo {
 	 *  parse its value.
 	 */
 	private void parse() {
-		List<MIInstruction> asmList = new ArrayList<MIInstruction>();
-		List<MIMixedInstruction> srcList = new ArrayList<MIMixedInstruction>();
+		List<MIInstruction> asmList = new ArrayList<>();
+		List<MIMixedInstruction> srcList = new ArrayList<>();
 
 		if (isDone()) {
 			MIOutput out = getMIOutput();
@@ -108,13 +108,13 @@ public class MIDataDisassembleInfo extends MIInfo {
 	 *  Parse the back-end result. Depending on the requested mode
 	 *  ("-- 0" or "-- 1" on the request), the result has one of the
 	 *  following forms:
-	 *  
+	 *
 	 *  [1] Mode == 0 (assembly instructions only)
 	 *      {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
 	 *      {address="0x000107c4",func-name="main",offset="8",inst="sethi %hi(0x11800), %o2"},
 	 *      ...,
 	 *      {address="0x00010820",func-name="main",offset="100",inst="restore "}
-	 * 
+	 *
 	 *  [2] Mode == 1 (Mixed source and assembly code)
 	 *      src_and_asm_line={
 	 *          line="31",file="/dir1/dir2/basics.c",

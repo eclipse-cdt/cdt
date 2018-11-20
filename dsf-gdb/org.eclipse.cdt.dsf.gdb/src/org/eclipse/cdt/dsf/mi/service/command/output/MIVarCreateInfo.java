@@ -22,7 +22,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * ^done,name="var1",numchild="0",value="11",type="int"
  * -var-create "-" * buf
  * ^done,name="var1",numchild="6",value=[6]",type="char [6]"
- * 
+ *
  * Note that the value is returned in the output, as of GDB6.7
  */
 public class MIVarCreateInfo extends MIInfo {
@@ -46,7 +46,7 @@ public class MIVarCreateInfo extends MIInfo {
 	/**
 	 * @return Whether the created variable's value and children are provided
 	 *         by a pretty printer.
-	 *         
+	 *
 	 * @since 4.0
 	 */
 	public boolean isDynamic() {
@@ -57,7 +57,7 @@ public class MIVarCreateInfo extends MIInfo {
 	 * @return The number of children. If {@link #isDynamic()} returns true,
 	 *         the returned value only reflects the number of children currently
 	 *         fetched by gdb. Check {@link #hasMore()} in order to find out
-	 *         whether the are more children. 
+	 *         whether the are more children.
 	 */
 	public int getNumChildren() {
 		return child.getNumChild();
@@ -68,7 +68,7 @@ public class MIVarCreateInfo extends MIInfo {
 	 *         method returns whether there are children in addition to the
 	 *         currently fetched, i.e. whether there are more children than
 	 *         {@link #getNumChildren()} returns.
-	 *         
+	 *
 	 * @since 4.0
 	 */
 	public boolean hasMore() {
@@ -86,7 +86,7 @@ public class MIVarCreateInfo extends MIInfo {
 	/**
 	 * @return Whether the underlying value conceptually represents a string,
 	 *         array, or map.
-	 *         
+	 *
 	 * @since 4.0
 	 */
 	public MIDisplayHint getDisplayHint() {

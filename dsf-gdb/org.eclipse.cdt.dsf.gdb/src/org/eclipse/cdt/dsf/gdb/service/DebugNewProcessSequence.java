@@ -7,12 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
- *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
+ *     Marc Khouzam (Ericsson) - Support setting the path in which the core file
  *                               dialog should start (Bug 362039)
- *     Sergey Prigogin (Google) - Bug 381804 
+ *     Sergey Prigogin (Google) - Bug 381804
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -55,7 +55,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 
-/** 
+/**
  * This sequence is used to start debugging a new process.
  *
  * @since 4.0
@@ -117,7 +117,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		return null;
 	}
 
-	/** 
+	/**
 	 * Initialize the members of the DebugNewProcessSequence class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */
@@ -144,9 +144,9 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		rm.done();
 	}
 
-	/** 
+	/**
 	 * Rollback method for {@link #stepInitializeBaseSequence()}
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@RollBack("stepInitializeBaseSequence")
 	public void rollBackInitializeBaseSequence(RequestMonitor rm) {
@@ -223,7 +223,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		}
 	}
 
-	/** 
+	/**
 	 * If we are dealing with a remote debugging session, connect to the target.
 	 * @since 4.0
 	 */
@@ -264,7 +264,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	protected static class PromptForCoreJob extends Job {
 		/**
 		 * The initial path that should be used in the prompt for the core file
-		 * @since 4.1 
+		 * @since 4.1
 		 */
 		protected String fInitialPath;
 		protected DataRequestMonitor<String> fRequestMonitor;
@@ -314,9 +314,9 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 
 			return Status.OK_STATUS;
 		}
-	};
+	}
 
-	/** 
+	/**
 	 * If we are dealing with a postmortem session, connect to the core/trace file.
 	 * @since 4.0
 	 */

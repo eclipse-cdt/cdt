@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson			  - Additional handling of events  	
+ *     Ericsson			  - Additional handling of events
  *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -109,7 +109,7 @@ public class MIRunControlEventProcessor implements IEventProcessor {
 	}
 
 	/**
-	 * This processor must be disposed before the control service is un-registered. 
+	 * This processor must be disposed before the control service is un-registered.
 	 */
 	@Override
 	public void dispose() {
@@ -121,14 +121,14 @@ public class MIRunControlEventProcessor implements IEventProcessor {
 	@Override
 	public void eventReceived(Object output) {
 		for (MIOOBRecord oobr : ((MIOutput) output).getMIOOBRecords()) {
-			List<MIEvent<?>> events = new LinkedList<MIEvent<?>>();
+			List<MIEvent<?>> events = new LinkedList<>();
 			if (oobr instanceof MIExecAsyncOutput) {
 				MIExecAsyncOutput exec = (MIExecAsyncOutput) oobr;
 				// Change of state.
 				String state = exec.getAsyncClass();
 				if ("stopped".equals(state)) { //$NON-NLS-1$
-					// Re-set the thread and stack level to -1 when stopped event is recvd. 
-					// This is to synchronize the state between GDB back-end and AbstractMIControl. 
+					// Re-set the thread and stack level to -1 when stopped event is recvd.
+					// This is to synchronize the state between GDB back-end and AbstractMIControl.
 					fCommandControl.resetCurrentThreadLevel();
 					fCommandControl.resetCurrentStackLevel();
 
@@ -254,8 +254,8 @@ public class MIRunControlEventProcessor implements IEventProcessor {
 	}
 
 	/**
-	 * Create an execution context given an exec-async-output OOB record 
-	 * 
+	 * Create an execution context given an exec-async-output OOB record
+	 *
 	 * @since 3.0
 	 */
 	protected IExecutionDMContext getExecutionContext(MIExecAsyncOutput exec) {
@@ -426,7 +426,7 @@ public class MIRunControlEventProcessor implements IEventProcessor {
 			} else if ("error".equals(state)) { //$NON-NLS-1$
 			} else if ("done".equals(state)) { //$NON-NLS-1$
 				// For GDBs older than 7.0, GDB does not trigger a *stopped event
-				// when it stops due to a CLI command.  We have to trigger the 
+				// when it stops due to a CLI command.  We have to trigger the
 				// MIStoppedEvent ourselves
 				if (cmd instanceof CLICommand<?>) {
 					// It is important to limit this to runControl operations (e.g., 'next', 'continue', 'jump')

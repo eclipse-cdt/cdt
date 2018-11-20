@@ -14,8 +14,8 @@
 
 package org.eclipse.cdt.core.autotools.core;
 
-import org.eclipse.cdt.core.build.CBuilder;
 import org.eclipse.cdt.core.autotools.core.internal.Activator;
+import org.eclipse.cdt.core.build.CBuilder;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;

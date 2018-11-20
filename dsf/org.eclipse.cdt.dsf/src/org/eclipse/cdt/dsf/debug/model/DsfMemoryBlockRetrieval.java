@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson Communication - upgrade IF to IMemoryBlockRetrievalExtension
@@ -64,19 +64,19 @@ import org.w3c.dom.NodeList;
 
 /**
  * Implementation of memory access API of the Eclipse standard debug model.
- * 
+ *
  * The DsfMemoryBlockRetrieval is not an actual memory block but rather a
- * reference to the memory address space for an execution context (e.g. a 
- * process) within a debug session. From this debug 'context', memory blocks 
+ * reference to the memory address space for an execution context (e.g. a
+ * process) within a debug session. From this debug 'context', memory blocks
  * can then be read/written.
- * 
+ *
  * Note: For the reference application, The IMemoryBlockRetrievalExtension
  * is implemented. This will result in getExtendedMemoryBlock() being called
  * when a memory block is selected from the platform memory pane.
- * 
+ *
  * However, if the 'simpler' IMemoryBlockRetrieval is to be implemented, the
  * code will still be functional after some trivial adjustments.
- * 
+ *
  * @since 1.0
  */
 public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBlockRetrievalExtension {
@@ -98,7 +98,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param modelId
 	 * @param dmc
 	 * @throws DebugException
@@ -174,9 +174,9 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	/*
 	 * In the launch configuration file, the memory block entry is structured
 	 *  as follows (note: this differs from CDI):
-	 * 
+	 *
 	 *  <stringAttribute
-	 *     key="org.eclipse.dsf.launch.MEMORY_BLOCKS" 
+	 *     key="org.eclipse.dsf.launch.MEMORY_BLOCKS"
 	 *     value="<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 	 *         <memoryBlockExpressionList context=[memory context ID]>
 	 *             <memoryBlockExpression label=[monitor label] address=[base address]/>
@@ -199,7 +199,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	private static final String ATTR_DEBUGGER_MEMORY_BLOCKS = DSF_LAUNCH_ID + ".MEMORY_BLOCKS"; //$NON-NLS-1$
 
 	private static final String MEMORY_BLOCK_EXPRESSION_LIST = "memoryBlockExpressionList"; //$NON-NLS-1$
-	private static final String ATTR_EXPRESSION_LIST_CONTEXT = "context"; //$NON-NLS-1$   
+	private static final String ATTR_EXPRESSION_LIST_CONTEXT = "context"; //$NON-NLS-1$
 	private static final String MEMORY_BLOCK_EXPRESSION = "memoryBlockExpression"; //$NON-NLS-1$
 	private static final String ATTR_MEMORY_BLOCK_EXPR_LABEL = "label"; //$NON-NLS-1$
 	private static final String ATTR_MEMORY_BLOCK_EXPR_ADDRESS = "address"; //$NON-NLS-1$
@@ -237,7 +237,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 * Create memory blocks based on the given memento (obtained from the launch
 	 * configuration) and add them to the platform's IMemoryBlockManager. The
 	 * memento was previously created by {@link #getMemento()}
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void createBlocksFromConfiguration(IMemoryDMContext memoryCtx, String memento) throws CoreException {
@@ -253,7 +253,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		// Process the block list specific to this memory context
 		// FIXME: (Bug228573) We only process the first entry...
 		if (root.getAttribute(ATTR_EXPRESSION_LIST_CONTEXT).equals(fContextString)) {
-			List<IMemoryBlock> blocks = new ArrayList<IMemoryBlock>();
+			List<IMemoryBlock> blocks = new ArrayList<>();
 			NodeList expressionList = root.getChildNodes();
 			int length = expressionList.getLength();
 			for (int i = 0; i < length; ++i) {
@@ -305,7 +305,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 * object (blocks currently registered with the platform's
 	 * IMemoryBlockManager). We will be expected to recreate the blocks in
 	 * {@link #createBlocksFromConfiguration(IMemoryDMContext, String)}.
-	 * 
+	 *
 	 * @return a string memento
 	 * @throws CoreException
 	 */
@@ -377,7 +377,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
 	@Override
@@ -400,7 +400,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension#getExtendedMemoryBlock(java.lang.String,
 	 *      java.lang.Object)
 	 */
@@ -449,7 +449,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 				offset = 1;
 			}
 			// Now, try to parse the expression. If a NumberFormatException is
-			// thrown, then it wasn't a simple numerical expression and we go 
+			// thrown, then it wasn't a simple numerical expression and we go
 			// to plan B (attempt an expression evaluation)
 			blockAddress = new BigInteger(expression.substring(offset), base);
 
@@ -468,11 +468,11 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		/*
 		 * At this point, we only resolved the requested memory block
 		 * start address and we have no idea of the block's length.
-		 * 
+		 *
 		 * The renderer will provide this information when it calls
 		 * getBytesFromAddress() i.e. after the memory block holder has
 		 * been instantiated.
-		 * 
+		 *
 		 * The down side is that every time we switch renderer, for the
 		 * same memory block, a trip to the target could result. However,
 		 * the memory request cache should save the day.
@@ -544,8 +544,8 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	}
 
 	/**
-	 * Return the model ID specified at construction 
-	 * 
+	 * Return the model ID specified at construction
+	 *
 	 * @since 2.1
 	 */
 	protected String getModelId() {

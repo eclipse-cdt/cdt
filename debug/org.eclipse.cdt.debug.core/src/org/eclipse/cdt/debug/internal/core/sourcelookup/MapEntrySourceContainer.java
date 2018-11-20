@@ -74,7 +74,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	 *
 	 * @param path
 	 * @return converted string
-	 * 
+	 *
 	 * @deprecated createPath existed as a solution to try and store non-current
 	 *             platform paths in an IPath, however that was limited.
 	 *             createPath only exists for legacy case (see
@@ -154,7 +154,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 
 		if (path != null) {
 			IFile[] wsFiles = ResourceLookup.findFilesForLocation(path);
-			ArrayList<IFile> list = new ArrayList<IFile>();
+			ArrayList<IFile> list = new ArrayList<>();
 			for (int j = 0; j < wsFiles.length; ++j) {
 				if (wsFiles[j].exists()) {
 					list.add(wsFiles[j]);

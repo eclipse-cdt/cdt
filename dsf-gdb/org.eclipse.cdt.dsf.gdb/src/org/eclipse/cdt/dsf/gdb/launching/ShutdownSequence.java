@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -90,7 +90,7 @@ public class ShutdownSequence extends Sequence {
 					String.format("(%s=%s)", IDsfService.PROP_SESSION_ID, fSessionId).intern()); //$NON-NLS-1$
 
 			if (serviceRefs != null) {
-				List<IDsfService> services = new ArrayList<IDsfService>(serviceRefs.length);
+				List<IDsfService> services = new ArrayList<>(serviceRefs.length);
 				for (ServiceReference<?> ref : serviceRefs) {
 					Object serviceObj = GdbPlugin.getBundleContext().getService(ref);
 					if (serviceObj instanceof IDsfService) {

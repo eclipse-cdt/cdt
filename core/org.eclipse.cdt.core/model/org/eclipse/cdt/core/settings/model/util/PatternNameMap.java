@@ -172,7 +172,7 @@ public class PatternNameMap {
 		if (hasPatternsMap()) {
 			List<PathSettingsContainer> list;
 			if (val != null) {
-				list = new ArrayList<PathSettingsContainer>(3);
+				list = new ArrayList<>(3);
 				list.add(val);
 			} else {
 				list = null;
@@ -187,13 +187,13 @@ public class PatternNameMap {
 				strCA = entry.getKey();
 				if (CoreModelUtil.match(strCA.getCharArray(), nameCharArray, true)) {
 					if (list == null)
-						list = new ArrayList<PathSettingsContainer>(2);
+						list = new ArrayList<>(2);
 					list.add(entry.getValue());
 				}
 			}
 			return list;
 		} else if (val != null) {
-			List<PathSettingsContainer> list = new ArrayList<PathSettingsContainer>(1);
+			List<PathSettingsContainer> list = new ArrayList<>(1);
 			list.add(val);
 			return list;
 		}
@@ -214,7 +214,7 @@ public class PatternNameMap {
 
 		PathSettingsContainer oldValue;
 		if (fChildrenMap == null) {
-			fChildrenMap = new HashMap<String, PathSettingsContainer>();
+			fChildrenMap = new HashMap<>();
 			oldValue = null;
 		} else {
 			oldValue = fChildrenMap.get(name);
@@ -227,7 +227,7 @@ public class PatternNameMap {
 		} else if (isPatternName(name)) {
 			StringCharArray strCA = new StringCharArray(name);
 			if (fPatternMap == null)
-				fPatternMap = new HashMap<StringCharArray, PathSettingsContainer>();
+				fPatternMap = new HashMap<>();
 
 			fPatternMap.put(strCA, value);
 		}

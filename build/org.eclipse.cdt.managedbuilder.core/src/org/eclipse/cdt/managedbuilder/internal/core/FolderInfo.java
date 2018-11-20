@@ -286,7 +286,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			return localTools;
 		}
 		IProject project = (IProject) manProj.getOwner();
-		Vector<Tool> tools = new Vector<Tool>(localTools.length);
+		Vector<Tool> tools = new Vector<>(localTools.length);
 		for (ITool t : localTools) {
 			Tool tool = (Tool) t;
 			if (!tool.isEnabled(this))
@@ -432,7 +432,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 	@Override
 	public CLanguageData[] getCLanguageDatas() {
-		List<CLanguageData> list = new ArrayList<CLanguageData>();
+		List<CLanguageData> list = new ArrayList<>();
 		for (ITool t : getFilteredTools())
 			for (CLanguageData d : t.getCLanguageDatas())
 				list.add(d);
@@ -488,7 +488,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	private Map<String, String> typeIdsToMap(String[] ids, IBuildObjectProperties props) {
-		Map<String, String> map = new HashMap<String, String>(ids.length);
+		Map<String, String> map = new HashMap<>(ids.length);
 		for (String id : ids) {
 			IBuildProperty prop = props.getProperty(id);
 			map.put(id, prop.getValue().getId());
@@ -497,7 +497,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	private Map<String, String> propsToMap(IBuildProperty props[]) {
-		Map<String, String> map = new HashMap<String, String>(props.length);
+		Map<String, String> map = new HashMap<>(props.length);
 		for (IBuildProperty p : props)
 			map.put(p.getPropertyType().getId(), p.getValue().getId());
 		return map;
@@ -591,7 +591,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 			@Override
 			public String[] getRequiredTypeIds() {
-				List<String> list = new ArrayList<String>();
+				List<String> list = new ArrayList<>();
 
 				list.addAll(Arrays.asList(tc.getRequiredTypeIds(false)));
 
@@ -604,7 +604,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 			@Override
 			public String[] getSupportedTypeIds() {
-				List<String> list = new ArrayList<String>();
+				List<String> list = new ArrayList<>();
 
 				list.addAll(Arrays.asList(tc.getSupportedTypeIds(false)));
 
@@ -617,7 +617,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 			@Override
 			public String[] getSupportedValueIds(String typeId) {
-				List<String> list = new ArrayList<String>();
+				List<String> list = new ArrayList<>();
 
 				list.addAll(Arrays.asList(tc.getSupportedValueIds(typeId, false)));
 
@@ -651,9 +651,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	public boolean isPropertiesModificationCompatible(IToolChain tc) {
-		Map<String, String> requiredMap = new HashMap<String, String>();
-		Map<String, String> unsupportedMap = new HashMap<String, String>();
-		Set<String> undefinedSet = new HashSet<String>();
+		Map<String, String> requiredMap = new HashMap<>();
+		Map<String, String> unsupportedMap = new HashMap<>();
+		Set<String> undefinedSet = new HashSet<>();
 		if (!checkPropertiesModificationCompatibility(tc, requiredMap, unsupportedMap, undefinedSet))
 			return false;
 		return true;
@@ -661,7 +661,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 	private Set<String> getRequiredUnspecifiedProperties() {
 		IBuildObjectProperties props = null;
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		IConfiguration cfg = getParent();
 
 		if (cfg != null)
@@ -799,8 +799,8 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	private ITool[][] getBestMatches(ITool[] tools1, ITool[] tools2) {
-		HashSet<ITool> set = new HashSet<ITool>(Arrays.asList(tools2));
-		List<ITool[]> list = new ArrayList<ITool[]>(tools1.length);
+		HashSet<ITool> set = new HashSet<>(Arrays.asList(tools2));
+		List<ITool[]> list = new ArrayList<>(tools1.length);
 		for (ITool tool1 : tools1) {
 			ITool bestMatchTool = null;
 			int num = 0;
@@ -919,7 +919,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	private LinkedHashMap<Object, ITool> createRealToExtToolMap(ITool[] tools, boolean extValues) {
-		LinkedHashMap<Object, ITool> map = new LinkedHashMap<Object, ITool>();
+		LinkedHashMap<Object, ITool> map = new LinkedHashMap<>();
 		for (ITool t : tools) {
 			Tool realTool = (Tool) ManagedBuildManager.getRealTool(t);
 			MatchKey<Tool> key = realTool.getMatchKey();
@@ -993,7 +993,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		if (!isRoot())
 			return;
 
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		String[] ids = toolChain.getTargetToolList();
 		boolean targetToolsModified = false;
 		set.addAll(Arrays.asList(ids));
@@ -1031,7 +1031,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	private ITool findCompatibleTargetTool(ITool tool, ITool allTools[]) {
 		IProject project = getParent().getOwner().getProject();
 		String exts[] = ((Tool) tool).getAllOutputExtensions(project);
-		Set<String> extsSet = new HashSet<String>(Arrays.asList(exts));
+		Set<String> extsSet = new HashSet<>(Arrays.asList(exts));
 		ITool compatibleTool = null;
 		for (ITool t : allTools) {
 			String otherExts[] = ((Tool) t).getAllOutputExtensions(project);
@@ -1068,7 +1068,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	private Set<String> getToolOutputVars(ITool tool) {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 
 		IOutputType types[] = tool.getOutputTypes();
 		for (IOutputType type : types) {
@@ -1163,14 +1163,14 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 	@SuppressWarnings("unchecked")
 	private ITool[][] calculateConflictingTools(ITool[] newTools) {
-		HashSet<ITool> set = new HashSet<ITool>();
+		HashSet<ITool> set = new HashSet<>();
 		set.addAll(Arrays.asList(newTools));
-		List<ITool[]> result = new ArrayList<ITool[]>();
+		List<ITool[]> result = new ArrayList<>();
 		for (Iterator<ITool> iter = set.iterator(); iter.hasNext();) {
 			ITool t = iter.next();
 			iter.remove();
 			HashSet<ITool> tmp = (HashSet<ITool>) set.clone();
-			List<ITool> list = new ArrayList<ITool>();
+			List<ITool> list = new ArrayList<>();
 			for (Iterator<ITool> tmpIt = tmp.iterator(); tmpIt.hasNext();) {
 				ITool other = tmpIt.next();
 				String conflicts[] = getConflictingInputExts(t, other);
@@ -1195,8 +1195,8 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		IProject project = getParent().getOwner().getProject();
 		String ext1[] = ((Tool) tool1).getAllInputExtensions(project);
 		String ext2[] = ((Tool) tool2).getAllInputExtensions(project);
-		Set<String> set1 = new HashSet<String>(Arrays.asList(ext1));
-		Set<String> result = new HashSet<String>();
+		Set<String> set1 = new HashSet<>(Arrays.asList(ext1));
+		Set<String> result = new HashSet<>();
 		for (String e : ext2) {
 			if (set1.remove(e))
 				result.add(e);
@@ -1211,13 +1211,13 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		added = checked[1];
 		ITool newTools[] = calculateToolsArray(removed, added);
 		ITool[][] conflicting = calculateConflictingTools(filterTools(newTools, getParent().getManagedProject()));
-		Map<String, String> unspecifiedRequiredProps = new HashMap<String, String>();
-		Map<String, String> unspecifiedProps = new HashMap<String, String>();
-		Set<String> undefinedSet = new HashSet<String>();
+		Map<String, String> unspecifiedRequiredProps = new HashMap<>();
+		Map<String, String> unspecifiedProps = new HashMap<>();
+		Set<String> undefinedSet = new HashSet<>();
 		IConfiguration cfg = getParent();
 		ITool[] nonManagedTools = null;
 		if (cfg.isManagedBuildOn() && cfg.supportsBuild(true)) {
-			List<ITool> list = new ArrayList<ITool>();
+			List<ITool> list = new ArrayList<>();
 			for (ITool t : newTools)
 				if (!t.supportsBuild(true))
 					list.add(t);

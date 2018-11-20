@@ -17,9 +17,6 @@ package org.eclipse.cdt.core.model.tests;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
@@ -35,6 +32,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * @author Peter Graves
@@ -59,7 +59,7 @@ public class ArchiveTests extends TestCase {
 		super(name);
 		/***
 		* The assume that they have a working workspace
-		* and workspace root object to use to create projects/files in, 
+		* and workspace root object to use to create projects/files in,
 		* so we need to get them setup first.
 		*/
 		workspace = ResourcesPlugin.getWorkspace();
@@ -76,8 +76,8 @@ public class ArchiveTests extends TestCase {
 	 * Sets up the test fixture.
 	 *
 	 * Called before every test case method.
-	 * 
-	 * Example code test the packages in the project 
+	 *
+	 * Example code test the packages in the project
 	 *  "com.qnx.tools.ide.cdt.core"
 	 */
 	@Override
@@ -161,7 +161,7 @@ public class ArchiveTests extends TestCase {
 		int x;
 
 		/****
-		 * Setup the expected strings for the binaries, and the elements within 
+		 * Setup the expected strings for the binaries, and the elements within
 		 * the binaries
 		 */
 		myStrings = new String[2];
@@ -178,8 +178,8 @@ public class ArchiveTests extends TestCase {
 		expObj[1] = new ExpectedStrings(myStrings);
 
 		/***
-		 * Grab the archive we want to test, and find all the binaries and 
-		 * all the elements in all the binaries and make sure we get 
+		 * Grab the archive we want to test, and find all the binaries and
+		 * all the elements in all the binaries and make sure we get
 		 * everything we expect.
 		 */
 		myArchive = CProjectHelper.findArchive(testProject, "libtestlib_g.a");
@@ -204,7 +204,7 @@ public class ArchiveTests extends TestCase {
 
 	/***
 	 *  Simple sanity test to make sure Archive.isArchive returns true
-	 *  
+	 *
 	 */
 	public void testIsArchive() throws CoreException, FileNotFoundException {
 		IArchive myArchive;

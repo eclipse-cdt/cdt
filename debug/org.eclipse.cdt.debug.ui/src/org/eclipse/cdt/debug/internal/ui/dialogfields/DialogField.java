@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Label;
  * from the creation time of the widgets.
  * - support for automated layouting.
  * - enable / disable, set focus a concept of the base class.
- * 
+ *
  * DialogField have a label.
  */
 public class DialogField {

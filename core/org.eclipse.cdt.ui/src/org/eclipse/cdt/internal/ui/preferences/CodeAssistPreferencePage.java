@@ -21,6 +21,9 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,10 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /**
  * Content Assist preference page.
@@ -57,7 +56,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 				ContentAssistPreference.PREFIX_COMPLETION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				ContentAssistPreference.GUESS_ARGUMENTS));
-		//		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.TIMEOUT_DELAY));		
+		//		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.TIMEOUT_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING,
 				ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING,
@@ -107,13 +106,13 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// search scope (no longer supported)
 		// The following three radio buttons are grouped together
-		//		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupTitle; 
+		//		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupTitle;
 		//		Group searchGroup = addGroupBox(contentAssistComposite, label, 2);
-		//		
-		//		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentFileOption; 
+		//
+		//		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentFileOption;
 		//		addRadioButton(searchGroup, label, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, 0);
-		//		
-		//		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentProjectOption; 
+		//
+		//		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentProjectOption;
 		//		addRadioButton(searchGroup, label, ContentAssistPreference.PROJECT_SEARCH_SCOPE, 0);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&

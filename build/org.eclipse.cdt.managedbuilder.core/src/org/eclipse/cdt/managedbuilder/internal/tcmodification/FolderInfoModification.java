@@ -100,9 +100,9 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	}
 
 	private static class ToolChainApplicabilityPaths {
-		private Set<IPath> fFileInfoPaths = new HashSet<IPath>();
-		private Set<IPath> fFolderInfoPaths = new HashSet<IPath>();
-		private Map<Tool, Set<IPath>> fToolPathMap = new HashMap<Tool, Set<IPath>>();
+		private Set<IPath> fFileInfoPaths = new HashSet<>();
+		private Set<IPath> fFolderInfoPaths = new HashSet<>();
+		private Map<Tool, Set<IPath>> fToolPathMap = new HashMap<>();
 	}
 
 	public static class ToolChainCompatibilityInfoElement {
@@ -143,7 +143,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		initCompatibilityInfo();
 		FolderInfo foInfo = (FolderInfo) getResourceInfo();
 
-		List<ToolChain> l = new ArrayList<ToolChain>(fCompatibleToolChains.size());
+		List<ToolChain> l = new ArrayList<>(fCompatibleToolChains.size());
 		Set<ToolChain> keySet = fCompatibleToolChains.keySet();
 		for (ToolChain tc : keySet) {
 			if (tc != fRealToolChain && foInfo.isToolChainCompatible(fRealToolChain, tc))
@@ -177,8 +177,8 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		if (fCompatibilityInfoInited)
 			return;
 
-		fCompatibleToolChains = new HashMap<ToolChain, ToolChainCompatibilityInfoElement>();
-		fInCompatibleToolChains = new HashMap<ToolChain, ToolChainCompatibilityInfoElement>();
+		fCompatibleToolChains = new HashMap<>();
+		fInCompatibleToolChains = new HashMap<>();
 		ConflictMatchSet parentConflicts = getParentConflictMatchSet();
 		ToolChain sysTCs[] = (ToolChain[]) getAllSysToolChains();
 
@@ -259,7 +259,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		for (String ext : exts) {
 			if (inputExts.contains(ext)) {
 				if (curInputExts == null)
-					curInputExts = new HashSet<String>(Arrays.asList(fromTool.getPrimaryInputExtensions()));
+					curInputExts = new HashSet<>(Arrays.asList(fromTool.getPrimaryInputExtensions()));
 
 				if (curInputExts.contains(ext)) {
 					return true;
@@ -272,7 +272,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	@Override
 	protected Set<Tool> getExtensionConflictToolSet(Tool tool, Tool[] tools) {
 		String exts[] = tool.getPrimaryInputExtensions();
-		Set<String> extsSet = new HashSet<String>(Arrays.asList(exts));
+		Set<String> extsSet = new HashSet<>(Arrays.asList(exts));
 		Set<Tool> conflictsSet = null;
 		for (int i = 0; i < tools.length; i++) {
 			Tool t = tools[i];
@@ -280,7 +280,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 				continue;
 			if (TcModificationUtil.containCommonEntries(extsSet, t.getPrimaryInputExtensions())) {
 				if (conflictsSet == null)
-					conflictsSet = new HashSet<Tool>();
+					conflictsSet = new HashSet<>();
 
 				conflictsSet.add(t);
 			}
@@ -336,7 +336,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		if (toolSet != null) {
 			for (IRealBuildObjectAssociation oa : toolSet) {
 				Tool tool = (Tool) oa;
-				Set<IPath> set = new HashSet<IPath>();
+				Set<IPath> set = new HashSet<>();
 				toolPathsMap.put(tool, set);
 				set.add(path);
 			}

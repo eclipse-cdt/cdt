@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 /**
- * 
+ *
  */
 public class SWTBotTreeItemAssertions extends AbstractSWTBotAssertions<SWTBotTreeItemAssertions, SWTBotTreeItem> {
 

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * primarily by other services that need to access source-path mappings, such
  * as the breakpoints service.  For UI components, the platform source lookup
  * interfaces could be sufficient.
- * 
+ *
  * @since 1.0
  */
 public interface ISourceLookup extends IDsfService {

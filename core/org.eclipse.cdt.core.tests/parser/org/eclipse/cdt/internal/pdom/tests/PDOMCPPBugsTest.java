@@ -18,8 +18,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.io.File;
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -48,6 +46,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.Test;
 
 /**
  * Tests bugs found in the PDOM.

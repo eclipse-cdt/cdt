@@ -34,7 +34,7 @@ public abstract class QtPDOMVisitor implements IPDOMVisitor {
 	public static class All<T> extends QtPDOMVisitor {
 
 		private final Class<T> cls;
-		public final ArrayList<T> list = new ArrayList<T>();
+		public final ArrayList<T> list = new ArrayList<>();
 
 		public All(Class<T> cls) {
 			this.cls = cls;

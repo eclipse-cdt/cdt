@@ -10,7 +10,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Nokia - adapt to new command framework 
+ * Nokia - adapt to new command framework
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -22,6 +22,10 @@ import org.eclipse.cdt.debug.core.model.ICastToArray;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -49,10 +53,6 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.IEvaluationContext;
 
 /**
  * The delegate of the "Display As Array" action.
@@ -96,7 +96,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 		 */
 		@Override
@@ -108,7 +108,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 		 */
 		@Override
@@ -131,7 +131,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 		 */
 		@Override
@@ -212,7 +212,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 		 */
 		@Override
@@ -282,7 +282,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 	}
 
 	private ICastToArray[] getCastToArray(Object evaluationContext) {
-		List<ICastToArray> castableItems = new ArrayList<ICastToArray>();
+		List<ICastToArray> castableItems = new ArrayList<>();
 		if (evaluationContext instanceof IEvaluationContext) {
 			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
 			if (s instanceof IStructuredSelection) {

@@ -13,7 +13,7 @@
  *     Ken Ryall (Nokia) - bug 178731
  *     Ericsson - Support for tracepoint post-mortem debugging
  *     IBM Corporation
- *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
+ *     Marc Khouzam (Ericsson) - Support setting the path in which the core file
  *                               dialog should start (Bug 362039)
  *     Anton Gorenkov
  *     Marc Khouzam (Ericsson) - Move from dsf.gdb to cdt.launch
@@ -75,7 +75,7 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 public class CMainTab2 extends CAbstractMainTab {
 
 	/**
-	 * Tab identifier used for ordering of tabs added using the 
+	 * Tab identifier used for ordering of tabs added using the
 	 * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
 	 * extension point.
 	 */
@@ -267,7 +267,7 @@ public class CMainTab2 extends CAbstractMainTab {
 	/**
 	 * Show a dialog that lets the user select a file.
 	 * This method allows to set the title of the dialog.
-	 * 
+	 *
 	 * @param title The title the dialog should show.
 	 */
 	protected String handleBrowseButtonSelected(String title) {
@@ -601,7 +601,7 @@ public class CMainTab2 extends CAbstractMainTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	@Override
@@ -611,7 +611,7 @@ public class CMainTab2 extends CAbstractMainTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	@Override

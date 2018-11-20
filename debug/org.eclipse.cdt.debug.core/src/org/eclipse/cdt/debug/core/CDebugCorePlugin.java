@@ -88,10 +88,10 @@ public class CDebugCorePlugin extends Plugin {
 	public static final String DEBUGGER_ELEMENT = "debugger"; //$NON-NLS-1$
 
 	public static final String BREAKPOINT_ACTION_EXTENSION_POINT_ID = "BreakpointActionType"; //$NON-NLS-1$
-	public static final String ACTION_TYPE_ELEMENT = "actionType"; //$NON-NLS-1$	
+	public static final String ACTION_TYPE_ELEMENT = "actionType"; //$NON-NLS-1$
 
 	public static final String BREAKPOINT_EXTENSION_EXTENSION_POINT_ID = "BreakpointExtension"; //$NON-NLS-1$
-	public static final String BREAKPOINT_EXTENSION_ELEMENT = "breakpointExtension"; //$NON-NLS-1$    
+	public static final String BREAKPOINT_EXTENSION_ELEMENT = "breakpointExtension"; //$NON-NLS-1$
 
 	/**
 	 * Dummy source lookup director needed to manage common source containers.
@@ -110,7 +110,7 @@ public class CDebugCorePlugin extends Plugin {
 
 	/**
 	 * Returns the shared instance.
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static CDebugCorePlugin getDefault() {
@@ -119,7 +119,7 @@ public class CDebugCorePlugin extends Plugin {
 
 	/**
 	 * Returns the workspace instance.
-	 * 
+	 *
 	 * @return the workspace instance
 	 */
 	public static IWorkspace getWorkspace() {
@@ -128,7 +128,7 @@ public class CDebugCorePlugin extends Plugin {
 
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
-	 * 
+	 *
 	 * @return the unique identifier of this plugin
 	 */
 	public static String getUniqueIdentifier() {
@@ -137,8 +137,8 @@ public class CDebugCorePlugin extends Plugin {
 
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
-	 * @param t throwable to log 
+	 *
+	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
 		Throwable top = t;
@@ -157,7 +157,7 @@ public class CDebugCorePlugin extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
@@ -166,7 +166,7 @@ public class CDebugCorePlugin extends Plugin {
 
 	/**
 	 * Logs the specified message with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(String message) {
@@ -186,7 +186,7 @@ public class CDebugCorePlugin extends Plugin {
 
 	/**
 	 * Adds the given breakpoint listener to the debug model.
-	 * 
+	 *
 	 * @param listener breakpoint listener
 	 */
 	public void addCBreakpointListener(ICBreakpointListener listener) {
@@ -195,7 +195,7 @@ public class CDebugCorePlugin extends Plugin {
 
 	/**
 	 * Removes the given breakpoint listener from the debug model.
-	 * 
+	 *
 	 * @param listener breakpoint listener
 	 */
 	public void removeCBreakpointListener(ICBreakpointListener listener) {
@@ -204,7 +204,7 @@ public class CDebugCorePlugin extends Plugin {
 
 	/**
 	 * Returns the list of breakpoint listeners registered with this plugin.
-	 *   
+	 *
 	 * @return the list of breakpoint listeners registered with this plugin
 	 */
 	public Object[] getCBreakpointListeners() {
@@ -301,7 +301,7 @@ public class CDebugCorePlugin extends Plugin {
 				}
 			}
 			if (convertingFromLegacyFormat) {
-				// Add three source containers that used to be present implicitly. 
+				// Add three source containers that used to be present implicitly.
 				ISourceContainer[] oldContainers = fCommonSourceLookupDirector.getSourceContainers();
 				ISourceContainer[] containers = new ISourceContainer[oldContainers.length + 3];
 				int i = 0;
@@ -347,7 +347,7 @@ public class CDebugCorePlugin extends Plugin {
 	}
 
 	private void setDefaultLaunchDelegates() {
-		// Set the default launch delegates as early as possible, and do it only once (Bug 312997) 
+		// Set the default launch delegates as early as possible, and do it only once (Bug 312997)
 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
 
 		HashSet<String> debugSet = new HashSet<>();

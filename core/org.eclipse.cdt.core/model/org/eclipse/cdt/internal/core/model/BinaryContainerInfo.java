@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.ICElement;
 public class BinaryContainerInfo extends OpenableInfo {
 
 	/**
-	 * Constructs a new C Model Info 
+	 * Constructs a new C Model Info
 	 */
 	protected BinaryContainerInfo(CElement element) {
 		super(element);

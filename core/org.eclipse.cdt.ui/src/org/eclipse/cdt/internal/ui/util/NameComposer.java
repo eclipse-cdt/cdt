@@ -17,11 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.ibm.icu.text.BreakIterator;
-
+import org.eclipse.cdt.internal.ui.text.CBreakIterator;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
-import org.eclipse.cdt.internal.ui.text.CBreakIterator;
+import com.ibm.icu.text.BreakIterator;
 
 /**
  * Composes names according to a particular style. A seed name is split into
@@ -45,7 +44,7 @@ public class NameComposer {
 
 	/**
 	 * Creates a name composer for a given style.
-	 * 
+	 *
 	 * @param capitalization capitalization transformation applied to a name. Possible values: <ul>
 	 * <li>PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL,</li>
 	 * <li>PreferenceConstants.NAME_STYLE_CAPITALIZATION_UPPER_CASE,</li>
@@ -66,7 +65,7 @@ public class NameComposer {
 
 	/**
 	 * Composes a name according to the composer's style based on a seed name.
-	 * 
+	 *
 	 * @param seedName the name used as an inspiration
 	 * @return the composed name
 	 */
@@ -77,7 +76,7 @@ public class NameComposer {
 
 	/**
 	 * Composes a name according to the composer's style based on a seed words.
-	 * 
+	 *
 	 * @param words the words that that should be combined to form the name
 	 * @return the composed name
 	 */
@@ -155,7 +154,7 @@ public class NameComposer {
 	/**
 	 * Creates a NameComposer such that it would compose {@code composedName} given {@code seedName}
 	 * as a seed.
-	 *  
+	 *
 	 * @param seedName the seed name
 	 * @param composedName the composed name
 	 * @param defaultCapitalization used to disambiguate capitalization if it cannot be uniquely
@@ -163,7 +162,7 @@ public class NameComposer {
 	 * @param defaultWordDelimiter used to disambiguate word delimiter if it cannot be uniquely
 	 *     determined from the composed name
 	 * @return a name composer based on the composed name, or {@code null} if such name composer
-	 *     does not exist  
+	 *     does not exist
 	 */
 	public static NameComposer createByExample(String seedName, String composedName, int defaultCapitalization,
 			String defaultWordDelimiter) {

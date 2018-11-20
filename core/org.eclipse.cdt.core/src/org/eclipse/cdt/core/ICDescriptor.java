@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Element;
 
 /**
- * @deprecated as this API is not configuration aware. Replaced by 
- * {@link ICConfigurationDescription} which can be fetched with 
+ * @deprecated as this API is not configuration aware. Replaced by
+ * {@link ICConfigurationDescription} which can be fetched with
  * {@link ICProjectDescription#getConfigurations()}
  * @noreference This interface is not intended to be referenced by clients.
  */
@@ -65,7 +65,7 @@ public interface ICDescriptor {
 
 	/**
 	 * Create an ICExtensionReference for the given extensionPointId with id = id.
-	 * 
+	 *
 	 * This is not CConfigurationDescription aware and so is added to all configurations in the project.
 	 * You should instead use:
 	 * {@link ICConfigurationDescription#create(String, String)}

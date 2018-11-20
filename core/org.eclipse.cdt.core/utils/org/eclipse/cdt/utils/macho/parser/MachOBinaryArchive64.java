@@ -34,7 +34,7 @@ public class MachOBinaryArchive64 extends BinaryFile implements IBinaryArchive {
 	public MachOBinaryArchive64(IBinaryParser parser, IPath p) throws IOException {
 		super(parser, p, IBinaryFile.ARCHIVE);
 		new AR(p.toOSString()).dispose(); // check file type
-		children = new ArrayList<IBinaryObject>(5);
+		children = new ArrayList<>(5);
 	}
 
 	/**

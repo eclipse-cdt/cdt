@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  **********************************************************************/
@@ -18,7 +18,6 @@ package org.eclipse.cdt.internal.ui.util;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.help.HelpSystem;
@@ -33,7 +32,7 @@ import org.eclipse.swt.events.HelpListener;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * 
+ *
  * @since 2.1
  */
 public class CUIHelp {
@@ -55,7 +54,7 @@ public class CUIHelp {
 
 		/*
 		* @see HelpListener#helpRequested(HelpEvent)
-		* 
+		*
 		*/
 		@Override
 		public void helpRequested(HelpEvent e) {
@@ -69,7 +68,7 @@ public class CUIHelp {
 
 	/**
 	 * A dynamic help context provider.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final class CUIHelpContextProvider implements IContextProvider {

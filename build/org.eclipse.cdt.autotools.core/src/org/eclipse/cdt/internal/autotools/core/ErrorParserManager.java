@@ -7,13 +7,13 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *     James Blackburn (Broadcom) - Bug 247838
  *     Andrew Gvozdev (Quoin Inc)
- *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation  
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.core;
 
@@ -27,7 +27,9 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
+import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IErrorParser2;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
 import org.eclipse.cdt.utils.EFSExtensionManager;
@@ -37,11 +39,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.URIUtil;
 
 /**
- * The purpose of ErrorParserManager is to delegate the work of error parsing 
+ * The purpose of ErrorParserManager is to delegate the work of error parsing
  * build output to {@link IErrorParser}s, assist in finding {@link IResource}s, and
  * help create appropriate error/warning/info markers to be displayed
  * by the Problems view.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 @SuppressWarnings("restriction")
@@ -76,7 +78,7 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param project - project being built.
 	 * @param markerGenerator - marker generator able to create markers.
 	 */
@@ -86,9 +88,9 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * URI based constructor.
-	 * 
+	 *
 	 * @param project - project being built.
-	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed. 
+	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed.
 	 * @param markerGenerator - marker generator able to create markers.
 	 * @since 2.0
 	 */
@@ -132,7 +134,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectory} and {@link #popDirectory} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace}).
 	 * The intention is to handle make output of commands "pushd dir" and "popd".
-	 * 
+	 *
 	 * @param dir - another directory level to keep in stack -- corresponding to 'pushd'.
 	 */
 	public void pushDirectory(IPath dir) {
@@ -154,7 +156,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectoryURI} and {@link #popDirectoryURI} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace}).
 	 * The intention is to handle make output of commands "pushd dir" and "popd".
-	 * 
+	 *
 	 * @param dir - another directory level to keep in stack -- corresponding to 'pushd'.
 	 * @since 5.1
 	 */
@@ -171,7 +173,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectoryURI(URI)} and {@link #popDirectoryURI()} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace(IPath)}).
 	 * The intention is to handle make output of commands "pushd" and "popd".
-	 * 
+	 *
 	 * @return previous build directory location corresponding 'popd' command.
 	 * @since 5.1
 	 */
@@ -241,8 +243,8 @@ public class ErrorParserManager extends OutputStream {
 		outputLine(line, marker);
 	}
 
-	/** 
-	 * Conditionally output line to outputStream. If stream 
+	/**
+	 * Conditionally output line to outputStream. If stream
 	 * supports error markers, use it, otherwise use conventional stream
 	 */
 	private void outputLine(String line, ProblemMarkerInfo marker) {
@@ -274,7 +276,7 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Add marker to the list of error markers.
-	 * 
+	 *
 	 * @param file - resource to add the new marker.
 	 * @param lineNumber - line number of the error.
 	 * @param desc - description of the error.
@@ -288,7 +290,7 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Add marker to the list of error markers.
-	 * 
+	 *
 	 * @param file - resource to add the new marker.
 	 * @param lineNumber - line number of the error.
 	 * @param desc - description of the error.
@@ -309,8 +311,8 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Add the given marker to the list of error markers.
-	 * 
-	 * @param problemMarkerInfo - The marker to be added 
+	 *
+	 * @param problemMarkerInfo - The marker to be added
 	 */
 	public void addProblemMarker(AutotoolsProblemMarkerInfo problemMarkerInfo) {
 		fErrors.add(problemMarkerInfo.getMarker());
@@ -328,7 +330,7 @@ public class ErrorParserManager extends OutputStream {
 	/**
 	 * Method setOutputStream.
 	 * Note: you have to close this stream explicitly
-	 * don't rely on ErrorParserManager.close(). 
+	 * don't rely on ErrorParserManager.close().
 	 * @param os - output stream
 	 */
 	public void setOutputStream(OutputStream os) {
@@ -336,9 +338,9 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Method getOutputStream. 
+	 * Method getOutputStream.
 	 * Note: you have to close this stream explicitly
-	 * don't rely on ErrorParserManager.close(). 
+	 * don't rely on ErrorParserManager.close().
 	 * @return OutputStream
 	 */
 	public OutputStream getOutputStream() {
@@ -348,8 +350,8 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * @see java.io.OutputStream#close()
-	 * Note: don't rely on this method to close underlying OutputStream, 
-	 * close it explicitly 
+	 * Note: don't rely on this method to close underlying OutputStream,
+	 * close it explicitly
 	 */
 	@Override
 	public synchronized void close() {
@@ -389,7 +391,7 @@ public class ErrorParserManager extends OutputStream {
 
 	// This method examines contents of currentLine buffer
 	// if it contains whole line this line is checked by error
-	// parsers (processLine method). 
+	// parsers (processLine method).
 	// If flush is true rest of line is checked by error parsers.
 	private void checkLine(boolean flush) {
 		String buffer = currentLine.toString();

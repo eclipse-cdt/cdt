@@ -18,7 +18,7 @@ package org.eclipse.cdt.make.core.makefile;
  * Prerequisites of this special target are targets themselves; this shall case
  * commands associated with them not to be written to the standard output before
  * they are executed.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

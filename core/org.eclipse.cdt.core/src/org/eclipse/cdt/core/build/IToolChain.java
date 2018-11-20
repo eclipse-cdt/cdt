@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IAdaptable;
 /**
  * Toolchains are a collection of tools that take the source code and converts
  * it into an executable system.
- * 
+ *
  * @since 6.0
  */
 public interface IToolChain extends IAdaptable {
@@ -50,21 +50,21 @@ public interface IToolChain extends IAdaptable {
 
 	/**
 	 * The provider of the toolchain.
-	 * 
+	 *
 	 * @return toolchain provider
 	 */
 	IToolChainProvider getProvider();
 
 	/**
 	 * The ID of the toolchain
-	 * 
+	 *
 	 * @return toolchain ID
 	 */
 	String getId();
 
 	/**
 	 * The version of the toolchain
-	 * 
+	 *
 	 * @deprecated the version doesn't matter. id's for a given type must be unique.
 	 * @return toolchain version
 	 */
@@ -73,7 +73,7 @@ public interface IToolChain extends IAdaptable {
 
 	/**
 	 * The user friendly name for the toolchain
-	 * 
+	 *
 	 * @return toolchain name
 	 */
 	String getName();
@@ -81,7 +81,7 @@ public interface IToolChain extends IAdaptable {
 	/**
 	 * The type id for the toolchain. The combination of type id and toolchain id
 	 * uniquely identify the toolchain in the system.
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	default String getTypeId() {
@@ -93,7 +93,7 @@ public interface IToolChain extends IAdaptable {
 	/**
 	 * Returns an property of the toolchain. Used to determine applicability of
 	 * a toolchain for a given situation.
-	 * 
+	 *
 	 * @param key
 	 *            key of the property
 	 * @return value of the property or null if the toolchain does not have that
@@ -103,7 +103,7 @@ public interface IToolChain extends IAdaptable {
 
 	/**
 	 * Set a property on the toolchain.
-	 * 
+	 *
 	 * @param key
 	 *            key of the property
 	 * @param value
@@ -114,7 +114,7 @@ public interface IToolChain extends IAdaptable {
 	/**
 	 * Return the environment variables to be set when invoking the tools in the
 	 * toolchain.
-	 * 
+	 *
 	 * @return environment variables
 	 */
 	IEnvironmentVariable[] getVariables();
@@ -122,7 +122,7 @@ public interface IToolChain extends IAdaptable {
 	/**
 	 * Return the environment variable of the given name used when invoking the
 	 * toolchain.
-	 * 
+	 *
 	 * @param name
 	 *            environment variable name
 	 * @return environment variable value
@@ -132,7 +132,7 @@ public interface IToolChain extends IAdaptable {
 	/**
 	 * Returns the error parser IDs use to create error markers for builds with
 	 * this toolchain.
-	 * 
+	 *
 	 * @return error parser IDs
 	 */
 	String[] getErrorParserIds();
@@ -140,7 +140,7 @@ public interface IToolChain extends IAdaptable {
 	/**
 	 * Returns the IDs for the binary parsers that can parse the build output of
 	 * the toolchain.
-	 * 
+	 *
 	 * @return binary parser IDs for this toolchain
 	 */
 	String getBinaryParserId();
@@ -148,7 +148,7 @@ public interface IToolChain extends IAdaptable {
 	/**
 	 * Get the scanner info for a given build config, command, base scanner
 	 * info, resource and build directory.
-	 * 
+	 *
 	 * @param buildConfig
 	 *            the build configuration this scanner info applies to
 	 * @param command
@@ -181,7 +181,7 @@ public interface IToolChain extends IAdaptable {
 	 * Return the default scanner info for this toolchain. This is used before
 	 * any build information is available to provide at least a minimal scanner
 	 * info based on the compiler built-ins.
-	 * 
+	 *
 	 * @param buildConfig
 	 *            the build configuration this scanner info applies to
 	 * @param baseScannerInfo
@@ -201,7 +201,7 @@ public interface IToolChain extends IAdaptable {
 
 	/**
 	 * Returns the absolute path of the tool represented by the command
-	 * 
+	 *
 	 * @param command
 	 *            the command as it usually appears on the command line
 	 * @return the absolute path to the tool for the command
@@ -210,14 +210,14 @@ public interface IToolChain extends IAdaptable {
 
 	/**
 	 * Returns the list of compiler tools.
-	 * 
+	 *
 	 * @return list of compiler tools
 	 */
 	String[] getCompileCommands();
 
 	/**
 	 * Returns the list of compiler tools for a given language.
-	 * 
+	 *
 	 * @param language
 	 *            the language for the commands
 	 * @return the compile commands for the language
@@ -229,7 +229,7 @@ public interface IToolChain extends IAdaptable {
 
 	/**
 	 * Returns the list of resources referenced in a compile command.
-	 * 
+	 *
 	 * @param command
 	 *            the compile command
 	 * @param buildDirectoryURI
@@ -249,7 +249,7 @@ public interface IToolChain extends IAdaptable {
 	/**
 	 * Strips the resources from the compile command. Use to produce the common
 	 * parts of the command shared by a number of resources.
-	 * 
+	 *
 	 * @param command
 	 *            the original compile command
 	 * @param resources

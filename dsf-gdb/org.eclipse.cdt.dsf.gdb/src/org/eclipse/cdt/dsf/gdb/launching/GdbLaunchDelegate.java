@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems   - Initial API and implementation
  * Windriver and Ericsson - Updated for DSF
- * IBM Corporation 
+ * IBM Corporation
  * Ericsson               - Added support for Mac OS
  * Ericsson               - Added support for post-mortem trace files
  * Abeer Bagul (Tensilica) - Allow to better override GdbLaunch (bug 339550)
@@ -265,14 +265,14 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 	}
 
 	/**
-	 * Return the label to be used for the CLI node 
+	 * Return the label to be used for the CLI node
 	 * @since 4.6
 	 */
 	protected String getCLILabel(ILaunchConfiguration config, String gdbVersion) throws CoreException {
 		return LaunchUtils.getGDBPath(config).toString().trim() + " (" + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/** 
+	/**
 	 * This method takes care of cleaning up any resources allocated by the launch, as early as
 	 * the call to getLaunch(), whenever the launch is cancelled or does not complete properly.
 	 * @since 5.0 */
@@ -289,13 +289,13 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 			gdbLaunch.getSession().getExecutor().execute(launchShutdownQuery);
 
 			// wait for the shutdown to finish.
-			// The Query.get() method is a synchronous call which blocks until the 
-			// query completes.  
+			// The Query.get() method is a synchronous call which blocks until the
+			// query completes.
 			try {
 				launchShutdownQuery.get();
 			} catch (InterruptedException e) {
 				throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
-						"InterruptedException while shutting down debugger launch " + launch, e)); //$NON-NLS-1$ 
+						"InterruptedException while shutting down debugger launch " + launch, e)); //$NON-NLS-1$
 			} catch (ExecutionException e) {
 				throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
 						"Error in shutting down debugger launch " + launch, e)); //$NON-NLS-1$
@@ -360,7 +360,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 	/**
 	 * Modify the ILaunchConfiguration to set the DebugPlugin.ATTR_PROCESS_FACTORY_ID attribute,
 	 * so as to specify the process factory to use.
-	 * 
+	 *
 	 * This attribute should only be set if it is not part of the configuration already, to allow
 	 * other code to set it to something else.
 	 * @since 4.1
@@ -386,8 +386,8 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 		// that we need to start using it.
 
 		// Need to configure the source locator before returning the launch
-		// because once the launch is created and added to the launch manager, 
-		// the adapters will be created for the whole session, including 
+		// because once the launch is created and added to the launch manager,
+		// the adapters will be created for the whole session, including
 		// the source lookup adapter.
 		launch.setSourceLocator(getSourceLocator(configuration, launch.getSession()));
 		return launch;
@@ -397,11 +397,11 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 	 * Creates an object of GdbLaunch.
 	 * Subclasses who wish to just replace the GdbLaunch object with a sub-classed GdbLaunch
 	 * should override this method.
-	 * Subclasses who wish to replace the GdbLaunch object as well as change the 
+	 * Subclasses who wish to replace the GdbLaunch object as well as change the
 	 * initialization sequence of the launch, should override getLaunch() as well as this method.
-	 * Subclasses who wish to create a launch class which does not subclass GdbLaunch, 
+	 * Subclasses who wish to create a launch class which does not subclass GdbLaunch,
 	 * are advised to override getLaunch() directly.
-	 * 
+	 *
 	 * @param configuration The launch configuration
 	 * @param mode The launch mode - "run", "debug", "profile"
 	 * @param locator The source locator.  Can be null.
@@ -417,7 +417,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 	/**
 	 * Returns a sequence that will create and initialize the different DSF services.
 	 * Subclasses that wish to add/remove services can override this method.
-	 * 
+	 *
 	 * @param session The current DSF session
 	 * @param launch  The current launch
 	 * @param rm      The progress monitor that is to be used to cancel the sequence if so desired.
@@ -446,8 +446,8 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 	/**
 	 * Creates an object of DsfSourceLookupDirector with the given DsfSession.
 	 * Subclasses who wish to just replace the source locator object with a sub-classed source locator
-	 * should override this method. 
-	 * Subclasses who wish to replace the source locator object as well as change the 
+	 * should override this method.
+	 * Subclasses who wish to replace the source locator object as well as change the
 	 * initialization sequence of the source locator, should override getSourceLocator()
 	 * as well as this method.
 	 * Subclasses who wish to create a source locator which does not subclass DsfSourceLookupDirector,

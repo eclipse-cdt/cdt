@@ -94,7 +94,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
 	 * @since 1.5
@@ -108,7 +108,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @return the resource bundle message
 	 */
@@ -124,7 +124,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @param args an array of substituition strings
 	 * @return the resource bundle message
@@ -187,7 +187,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Return set of Autotool configuration options for a given build configuration id.
-	 * 
+	 *
 	 * @param project existing autotools project
 	 * @param cfgId configuration id
 	 * @return a copy of Autotools configurations for the given configuration id
@@ -205,7 +205,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	 * @param cfgId configuation id
 	 * @param options set of updated Autotool configuration options
 	 * @throws CoreException if project is not valid Autotools project or cfgId does not exist
-	 * 
+	 *
 	 * @since 1.2
 	 */
 	public void updateAutotoolCfgOptions(IProject project, String cfgId, Map<String, IAutotoolsOption> options)

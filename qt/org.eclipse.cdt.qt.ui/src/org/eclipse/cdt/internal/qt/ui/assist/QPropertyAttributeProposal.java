@@ -118,7 +118,7 @@ public class QPropertyAttributeProposal {
 
 		// Return all the methods, including inherited and non-visible ones.
 		ICPPMethod[] methods = cls.getMethods();
-		List<ICPPMethod> filtered = new ArrayList<ICPPMethod>(methods.length);
+		List<ICPPMethod> filtered = new ArrayList<>(methods.length);
 		for (ICPPMethod method : methods)
 			if (methodAttribute.keep(method))
 				filtered.add(method);
@@ -126,7 +126,7 @@ public class QPropertyAttributeProposal {
 		// TODO Choose the overload that is the best match -- closest parameter type and fewest
 		//      parameters with default values.
 
-		List<QPropertyAttributeProposal> proposals = new ArrayList<QPropertyAttributeProposal>();
+		List<QPropertyAttributeProposal> proposals = new ArrayList<>();
 		for (ICPPMethod method : getMethods(context, methodAttribute))
 			proposals.add(new QPropertyAttributeProposal(method.getName(), getDisplay(cls, method),
 					methodAttribute.getRelevance(method)));
@@ -158,7 +158,7 @@ public class QPropertyAttributeProposal {
 		if (qobj == null)
 			return Collections.emptyList();
 
-		List<QPropertyAttributeProposal> proposals = new ArrayList<QPropertyAttributeProposal>();
+		List<QPropertyAttributeProposal> proposals = new ArrayList<>();
 		for (IQMethod qMethod : qobj.getSignals().all())
 			proposals.add(new QPropertyAttributeProposal(qMethod.getName(), IMethodAttribute.BaseRelevance));
 
@@ -467,7 +467,7 @@ public class QPropertyAttributeProposal {
 			if (binding == null)
 				return null;
 
-			return (ICPPClassType) binding.getAdapter(ICPPClassType.class);
+			return binding.getAdapter(ICPPClassType.class);
 		} catch (CoreException e) {
 			Activator.log(e);
 		}
@@ -488,7 +488,7 @@ public class QPropertyAttributeProposal {
 
 		// Return all the methods, including inherited and non-visible ones.
 		ICPPMethod[] methods = cls.getMethods();
-		List<ICPPMethod> filtered = new ArrayList<ICPPMethod>(methods.length);
+		List<ICPPMethod> filtered = new ArrayList<>(methods.length);
 		for (ICPPMethod method : methods)
 			if (methodAttribute.keep(method))
 				filtered.add(method);

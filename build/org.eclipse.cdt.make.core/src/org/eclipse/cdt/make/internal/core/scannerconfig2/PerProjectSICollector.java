@@ -85,13 +85,13 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	protected boolean scPersisted = false;
 
 	public PerProjectSICollector() {
-		discoveredSI = new HashMap<ScannerInfoTypes, List<String>>();
+		discoveredSI = new HashMap<>();
 		//		discoveredIncludes = new ArrayList();
 		//		discoveredSymbols = new ArrayList();
 		//		discoveredTSO = new ArrayList();
 		//
-		sumDiscoveredIncludes = new ArrayList<String>();
-		sumDiscoveredSymbols = new LinkedHashMap<String, SymbolEntry>();
+		sumDiscoveredIncludes = new ArrayList<>();
+		sumDiscoveredSymbols = new LinkedHashMap<>();
 	}
 
 	/* (non-Javadoc)
@@ -151,7 +151,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 
 					List<String> discovered = discoveredSI.get(siType);
 					if (discovered == null) {
-						discovered = new ArrayList<String>(delta);
+						discovered = new ArrayList<>(delta);
 						discoveredSI.put(siType, discovered);
 					} else {
 						final boolean addSorted = !isBuiltinConfig && siType.equals(ScannerInfoTypes.INCLUDE_PATHS);
@@ -224,7 +224,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 				monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
 				try {
 					// update scanner configuration
-					List<IResource> resourceDelta = new ArrayList<IResource>(1);
+					List<IResource> resourceDelta = new ArrayList<>(1);
 					resourceDelta.add(project);
 					MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(context, pathInfo,
 							context.isDefaultContext(), resourceDelta);
@@ -275,12 +275,12 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 
 			// Step 3. Merge scanner config from steps 1 and 2
 			// order is important, use list to preserve it
-			ArrayList<String> persistedKeyList = new ArrayList<String>(persistedIncludes.keySet());
+			ArrayList<String> persistedKeyList = new ArrayList<>(persistedIncludes.keySet());
 			addedIncludes = addItemsWithOrder(persistedKeyList, finalSumIncludes, true);
 
 			LinkedHashMap<String, Boolean> newPersistedIncludes;
 			if (addedIncludes) {
-				newPersistedIncludes = new LinkedHashMap<String, Boolean>(persistedKeyList.size());
+				newPersistedIncludes = new LinkedHashMap<>(persistedKeyList.size());
 				for (String include : persistedKeyList) {
 					if (persistedIncludes.containsKey(include)) {
 						newPersistedIncludes.put(include, persistedIncludes.get(include));
@@ -338,7 +338,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 			LinkedHashMap<String, SymbolEntry> persistedSymbols = discPathInfo.getSymbolMap();
 
 			// Step 3. Merge scanner config from steps 1 and 2
-			LinkedHashMap<String, SymbolEntry> candidateSymbols = new LinkedHashMap<String, SymbolEntry>(
+			LinkedHashMap<String, SymbolEntry> candidateSymbols = new LinkedHashMap<>(
 					persistedSymbols);
 			addedSymbols |= ScannerConfigUtil.scAddSymbolEntryMap2SymbolEntryMap(candidateSymbols,
 					sumDiscoveredSymbols);
@@ -519,7 +519,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 		ICProject cProject = CoreModel.getDefault().create(project);
 		if (cProject != null) {
 			IPathEntry[] entries = cProject.getRawPathEntries();
-			List<IPathEntry> newEntries = new ArrayList<IPathEntry>(Arrays.asList(entries));
+			List<IPathEntry> newEntries = new ArrayList<>(Arrays.asList(entries));
 			if (!newEntries.contains(container)) {
 				newEntries.add(container);
 				cProject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);

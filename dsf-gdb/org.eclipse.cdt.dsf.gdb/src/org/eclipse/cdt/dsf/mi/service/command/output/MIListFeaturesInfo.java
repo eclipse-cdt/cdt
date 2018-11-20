@@ -16,16 +16,16 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 import java.util.ArrayList;
 import java.util.List;
 
-/** 
+/**
  * Example output is:
- * 
+ *
  *     (gdb) -list-features
  *     ^done,result=["feature1","feature2"]
  * @since 4.0
  */
 public class MIListFeaturesInfo extends MIInfo {
 
-	private List<String> fFeatures = new ArrayList<String>();
+	private List<String> fFeatures = new ArrayList<>();
 
 	public MIListFeaturesInfo(MIOutput out) {
 		super(out);

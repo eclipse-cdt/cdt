@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Kichwa Coders - initial API and implementation
  *******************************************************************************/
@@ -18,11 +18,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowNewConsoleInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  * -gdb-show new-console
- * 
+ *
  * @since 5.4
- * 
+ *
  */
 public class MIGDBShowNewConsole extends MIGDBShow<MIGDBShowNewConsoleInfo> {
 

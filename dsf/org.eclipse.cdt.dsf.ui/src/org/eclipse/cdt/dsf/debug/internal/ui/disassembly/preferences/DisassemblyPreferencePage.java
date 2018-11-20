@@ -43,9 +43,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class DisassemblyPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private List<Button> fCheckBoxes = new ArrayList<Button>();
-	private List<Combo> fComboBoxes = new ArrayList<Combo>();
-	private ArrayList<Text> fNumberFields = new ArrayList<Text>();
+	private List<Button> fCheckBoxes = new ArrayList<>();
+	private List<Combo> fComboBoxes = new ArrayList<>();
+	private ArrayList<Text> fNumberFields = new ArrayList<>();
 	private ModifyListener fNumberFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {

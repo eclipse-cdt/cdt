@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class BuildResource implements IBuildResource {
-	private List<BuildIOType> fDepArgs = new ArrayList<BuildIOType>();
+	private List<BuildIOType> fDepArgs = new ArrayList<>();
 	private BuildIOType fProducerArg;
 	private boolean fNeedsRebuild;
 	private boolean fIsRemoved;
@@ -226,7 +226,7 @@ public class BuildResource implements IBuildResource {
 
 	@Override
 	public IBuildStep[] getDependentSteps() {
-		Set<IBuildStep> set = new HashSet<IBuildStep>();
+		Set<IBuildStep> set = new HashSet<>();
 		for (Iterator<BuildIOType> iter = fDepArgs.iterator(); iter.hasNext();) {
 			set.add(iter.next().getStep());
 		}

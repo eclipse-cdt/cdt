@@ -15,12 +15,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-
 /**
- * Base class for search matches found by various index searches. 
+ * Base class for search matches found by various index searches.
  */
 public class CSearchMatch extends Match {
 	private boolean fIsPolymorphicCall;

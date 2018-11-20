@@ -61,7 +61,7 @@ public class GNUMakefileChecker extends ACBuilder {
 		}
 	}
 
-	protected Map<IProject, IMakefileValidator> validatorMap = new HashMap<IProject, IMakefileValidator>();
+	protected Map<IProject, IMakefileValidator> validatorMap = new HashMap<>();
 
 	public GNUMakefileChecker() {
 	}

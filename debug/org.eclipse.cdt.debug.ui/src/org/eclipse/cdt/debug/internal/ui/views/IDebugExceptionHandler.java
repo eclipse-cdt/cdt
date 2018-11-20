@@ -21,7 +21,7 @@ import org.eclipse.debug.core.DebugException;
 public interface IDebugExceptionHandler {
 	/**
 	 * Handles the given debug exception.
-	 * 
+	 *
 	 * @param e debug exception
 	 */
 	public abstract void handleException(DebugException e);

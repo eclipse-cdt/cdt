@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 /**
  * Expand all nodes.

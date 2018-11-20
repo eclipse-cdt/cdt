@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Dmitry Kozlov (Mentor Graphics) - Initial API and implementation
 *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 
 /**
  * -gdb-set disconnected-tracing on | off
- * 
+ *
  * Sets disconnected-tracing on or off.
  * @since 4.4
  */

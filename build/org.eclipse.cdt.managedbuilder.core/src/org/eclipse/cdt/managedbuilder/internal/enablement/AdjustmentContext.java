@@ -36,7 +36,7 @@ public class AdjustmentContext {
 	//				fAdjusted = adjusted;
 	//			}
 	//		}
-	//		
+	//
 	//		boolean isAdjusted(){
 	//			return fAdjusted;
 	//		}
@@ -51,7 +51,7 @@ public class AdjustmentContext {
 	//		return fType;
 	//	}
 
-	private HashMap<String, Boolean> fMap = new HashMap<String, Boolean>();
+	private HashMap<String, Boolean> fMap = new HashMap<>();
 
 	public void addAdjustedState(String attr, boolean adjusted) {
 		Boolean b = fMap.get(attr);
@@ -64,7 +64,7 @@ public class AdjustmentContext {
 		if (fMap.size() == 0)
 			return new String[0];
 
-		ArrayList<String> list = new ArrayList<String>(fMap.size());
+		ArrayList<String> list = new ArrayList<>(fMap.size());
 		Set<Entry<String, Boolean>> entrySet = fMap.entrySet();
 		for (Entry<String, Boolean> entry : entrySet) {
 			Boolean b = entry.getValue();

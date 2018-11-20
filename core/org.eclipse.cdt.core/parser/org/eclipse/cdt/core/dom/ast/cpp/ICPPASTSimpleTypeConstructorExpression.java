@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
  *   simple-type-specifier braced-init-list
  *   typename-specifier (expression-list?)
  *   typename-specifier braced-init-list
- *   
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

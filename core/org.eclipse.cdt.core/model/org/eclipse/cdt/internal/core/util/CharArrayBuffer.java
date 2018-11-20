@@ -18,18 +18,18 @@ package org.eclipse.cdt.internal.core.util;
  * The <code>CharArrayBuffer</code> is intended as a lightweight partial
  * implementation of the StringBuffer class, but using <code>char[]'s</code>
  * instead of Strings.
- * 
+ *
  * <p>
  * The <code>CharArrayBuffer</code> maintains a list of <code>char[]'s</code>
  * which don't get appended until the user asks for them. The following code
  * illustrates how to use the class.
- * 
+ *
  * <code>
  * CharArrayBuffer buffer = new CharArrayBuffer(myCharArray);
  * buffer.append(moreBytes, 0, someLength);
  * myCharArray = buffer.getContents();
  * </code>
- * 
+ *
  * <p>
  * NOTE: This class is not Thread safe!
  */
@@ -73,7 +73,7 @@ public class CharArrayBuffer {
 	/**
 	 * Creates a <code>CharArrayBuffer</code> with the default buffer size,
 	 * and sets the first element in the buffer to be the given char[].
-	 * 
+	 *
 	 * @param first -
 	 *            the first element to be placed in the buffer, ignored if null
 	 */
@@ -84,7 +84,7 @@ public class CharArrayBuffer {
 	/**
 	 * Creates a <code>CharArrayBuffer</code> with the given buffer size, and
 	 * sets the first element in the buffer to be the given char array.
-	 * 
+	 *
 	 * @param first -
 	 *            the first element of the buffer, ignored if null.
 	 * @param size -
@@ -102,7 +102,7 @@ public class CharArrayBuffer {
 
 	/**
 	 * Creates a <code>CharArrayBuffer</code> with the given buffer size.
-	 * 
+	 *
 	 * @param size -
 	 *            the size of the buffer.
 	 */
@@ -112,7 +112,7 @@ public class CharArrayBuffer {
 
 	/**
 	 * Appends the entire given char array. Given for convenience.
-	 * 
+	 *
 	 * @param src -
 	 *            a char array which is appended to the end of the buffer.
 	 */
@@ -124,7 +124,7 @@ public class CharArrayBuffer {
 
 	/**
 	 * Appends a sub array of the given array to the buffer.
-	 * 
+	 *
 	 * @param src -
 	 *            the next array of characters to be appended to the buffer,
 	 *            ignored if null
@@ -132,7 +132,7 @@ public class CharArrayBuffer {
 	 *            the start index in the src array.
 	 * @param length -
 	 *            the number of characters from start to be appended
-	 * 
+	 *
 	 * @throws ArrayIndexOutOfBoundsException -
 	 *             if arguments specify an array index out of bounds.
 	 */
@@ -165,7 +165,7 @@ public class CharArrayBuffer {
 
 	/**
 	 * Appends the given char. Given for convenience.
-	 * 
+	 *
 	 * @param c -
 	 *            a char which is appended to the end of the buffer.
 	 */
@@ -177,7 +177,7 @@ public class CharArrayBuffer {
 	/**
 	 * Appends the given String to the buffer. Given for convenience, use
 	 * #append(char[]) if possible
-	 * 
+	 *
 	 * @param src -
 	 *            a char array which is appended to the end of the buffer.
 	 */

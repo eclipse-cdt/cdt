@@ -299,11 +299,11 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			// provider configured with non-null parameters
 			MockBuiltinSpecsDetectorExecutedFlag provider = new MockBuiltinSpecsDetectorExecutedFlag();
-			List<String> languages = new ArrayList<String>();
+			List<String> languages = new ArrayList<>();
 			languages.add(LANGUAGE_ID);
-			Map<String, String> properties = new HashMap<String, String>();
+			Map<String, String> properties = new HashMap<>();
 			properties.put(ATTR_PARAMETER, CUSTOM_COMMAND_1);
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> entries = new ArrayList<>();
 			ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE",
 					ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 			entries.add(entry);
@@ -349,9 +349,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		// create instance to compare to
 		MockDetectorCloneable provider = new MockDetectorCloneable();
 
-		List<String> languages = new ArrayList<String>();
+		List<String> languages = new ArrayList<>();
 		languages.add(LANGUAGE_ID);
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE",
 				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		entries.add(entry);
@@ -361,7 +361,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		assertTrue(provider.equals(clone0));
 
 		// configure provider
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put(ATTR_PARAMETER, CUSTOM_COMMAND_1);
 		provider.configureProvider(PROVIDER_ID, PROVIDER_NAME, languages, entries, properties);
 		assertEquals(false, provider.isConsoleEnabled());
@@ -410,7 +410,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		// check entries
 		{
 			MockDetectorCloneable clone = provider.clone();
-			List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> entries2 = new ArrayList<>();
 			entries2.add(new CMacroEntry("MACRO2", "VALUE2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY));
 			clone.setSettingEntries(null, null, null, entries2);
 			assertFalse(provider.equals(clone));
@@ -489,7 +489,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			// create provider
 			MockBuiltinSpecsDetectorExecutedFlag provider = new MockBuiltinSpecsDetectorExecutedFlag();
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> entries = new ArrayList<>();
 			entries.add(new CIncludePathEntry("path0", 1));
 			provider.setSettingEntries(null, null, null, entries);
 			// serialize entries
@@ -708,7 +708,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
 			// Create provider
 			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(provider);
 			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
 			// Write to project description

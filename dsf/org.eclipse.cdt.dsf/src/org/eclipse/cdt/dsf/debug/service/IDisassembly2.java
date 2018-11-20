@@ -20,15 +20,15 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 /**
  * This interface extends the disassembly service with support for
  * address alignment extension request.
- * 
+ *
  * @since 2.2
  */
 public interface IDisassembly2 extends IDisassembly {
 	/**
 	 * Aligns the given opCode address. This method will be call for each
-	 * disassembly request, the service should try to resolve 
+	 * disassembly request, the service should try to resolve
 	 * the given address and align it to a valid opCode address.
-	 * 
+	 *
 	 * @param context context of the disassembly code
 	 * @param address the address to align
 	 * @param drm aligned address

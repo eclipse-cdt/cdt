@@ -471,7 +471,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			buildDirURI = getBuildDirURI(mappedRootURI);
 		}
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 
 		List<String> options = parseOptions(line);
 		if (options != null) {
@@ -916,7 +916,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * Find all resources in the folder which might be represented by relative path passed.
 	 */
 	private static List<IResource> findPathInFolder(IPath path, IContainer folder) {
-		List<IResource> paths = new ArrayList<IResource>();
+		List<IResource> paths = new ArrayList<>();
 		IResource resource = folder.findMember(path);
 		if (resource != null) {
 			paths.add(resource);
@@ -939,7 +939,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * Determine which resource in workspace is the best fit to parsedName passed.
 	 */
 	private IResource findBestFitInWorkspace(String parsedName) {
-		Set<String> referencedProjectsNames = new LinkedHashSet<String>();
+		Set<String> referencedProjectsNames = new LinkedHashSet<>();
 		if (currentCfgDescription != null) {
 			Map<String, String> refs = currentCfgDescription.getReferenceInfo();
 			referencedProjectsNames.addAll(refs.keySet());
@@ -1205,7 +1205,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	protected String getPatternFileExtensions() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 
-		Set<String> fileExts = new HashSet<String>();
+		Set<String> fileExts = new HashSet<>();
 
 		IContentType contentTypeCpp = manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 		fileExts.addAll(Arrays.asList(contentTypeCpp.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
@@ -1221,7 +1221,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * This {@link EFSExtensionProvider} is capable to translate EFS paths to and from local
 	 * file-system. Added mostly for Cygwin translations.
-	 * 
+	 *
 	 * This usage of {@link EFSExtensionProvider} is somewhat a misnomer. This provider is not
 	 * an "extension" provider but rather a wrapper on {@link EFSExtensionManager} which in fact
 	 * will use genuine {@link EFSExtensionProvider}s defined as extensions.

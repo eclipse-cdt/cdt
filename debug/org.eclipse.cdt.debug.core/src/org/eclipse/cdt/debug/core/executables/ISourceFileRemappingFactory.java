@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.model.IBinary;
 /**
  * Factory that creates an ISourceFileRemapping instance for a particular binary
  * object
- * 
+ *
  * @since 7.0
  */
 public interface ISourceFileRemappingFactory {

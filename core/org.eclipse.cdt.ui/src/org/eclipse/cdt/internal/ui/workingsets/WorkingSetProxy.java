@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IMemento;
@@ -29,15 +30,13 @@ import org.eclipse.ui.IWorkingSet;
 import com.ibm.icu.text.UCharacterIterator;
 import com.ibm.icu.text.UForwardCharacterIterator;
 
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-
 /**
  * Default implementation of the {@link IWorkingSetProxy} interface.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public class WorkingSetProxy implements IWorkingSetProxy {
@@ -59,7 +58,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 	/**
 	 * Sets my name. This <b>does not</b> change the name of the working set that I represent. Rather, it
 	 * changes <i>which</i> working set I represent.
-	 * 
+	 *
 	 * @param name
 	 *            my new name
 	 */
@@ -74,7 +73,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 
 	@Override
 	public Collection<IProject> resolveProjects() {
-		Set<IProject> result = new java.util.HashSet<IProject>();
+		Set<IProject> result = new java.util.HashSet<>();
 
 		IWorkingSet resolvedWS = resolve();
 		if (resolvedWS != null) {
@@ -97,7 +96,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 
 	private Map<String, IWorkingSetConfiguration> getConfigurationsMap() {
 		if (configurations == null) {
-			configurations = new java.util.HashMap<String, IWorkingSetConfiguration>();
+			configurations = new java.util.HashMap<>();
 		}
 
 		return configurations;
@@ -128,7 +127,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 	 * Queries whether the specified configuration is transient, meaning that it should not be persisted in
 	 * the working set configuration store. The default implementation just returns <code>false</code>;
 	 * subclasses may redefine as required.
-	 * 
+	 *
 	 * @param config
 	 *            a working set configuration
 	 * @return whether it should be omitted from persistence
@@ -151,7 +150,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 	/**
 	 * Creates a new child working set configuration element. Subclasses may override to create custom
 	 * implementations.
-	 * 
+	 *
 	 * @return the new working set configuration
 	 */
 	protected IWorkingSetConfiguration createWorkingSetConfiguration() {
@@ -160,7 +159,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 
 	/**
 	 * Provides simple access to the child configurations, to remove the specified configuration.
-	 * 
+	 *
 	 * @param config
 	 *            a configuration to remove
 	 */
@@ -170,7 +169,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 
 	/**
 	 * Provides simple access to the child configurations, to add the specified configuration.
-	 * 
+	 *
 	 * @param config
 	 *            a configuration to add
 	 */
@@ -193,11 +192,11 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 
 	/**
 	 * The default implementation of a mutable working set snapshot.
-	 * 
+	 *
 	 * @noextend This class is not intended to be subclassed by clients.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	public static class Snapshot extends WorkingSetProxy implements IWorkingSetProxy.ISnapshot {
@@ -206,7 +205,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 
 		/**
 		 * Initializes me with the current workspace snapshot.
-		 * 
+		 *
 		 * @param workingSet
 		 *            the original working set element to copy
 		 * @param workspace
@@ -253,7 +252,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 		 * Heuristically attempts to select reasonable default project configurations for a new working-set
 		 * configuration. This implementation does a best-effort match of project configuration names against
 		 * the working set configuration name.
-		 * 
+		 *
 		 * @param newConfig
 		 *            the new working set configuration
 		 */

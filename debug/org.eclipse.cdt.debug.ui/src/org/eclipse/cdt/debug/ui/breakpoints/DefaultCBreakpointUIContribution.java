@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2012 QNX Software Systems and others.
- * 
+ *
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,8 +40,8 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 	private String markerType;
 	private String modelId;
 	private String attType;
-	private Map<String, String> valueLabels = new LinkedHashMap<String, String>();
-	private Map<String, String> conditions = new HashMap<String, String>();
+	private Map<String, String> valueLabels = new LinkedHashMap<>();
+	private Map<String, String> conditions = new HashMap<>();
 
 	DefaultCBreakpointUIContribution(IConfigurationElement config) {
 		fConfig = config;
@@ -168,7 +168,7 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 
 	public void addValue(String value, String valueLabel) {
 		valueLabels.put(value, valueLabel);
-	};
+	}
 
 	public void addContionEquals(String property, String value) {
 		conditions.put(property, value);

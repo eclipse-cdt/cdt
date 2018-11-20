@@ -33,6 +33,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 		return suite(ClassMemberVisibilityTests.class);
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		setUpSections(1);

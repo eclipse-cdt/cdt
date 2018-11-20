@@ -71,6 +71,7 @@ public abstract class AbstractPane extends Canvas {
 	protected boolean fPaneVisible = true;
 
 	class AbstractPaneMouseListener implements MouseListener {
+		@Override
 		public void mouseUp(MouseEvent me) {
 			positionCaret(me.x, me.y);
 
@@ -83,6 +84,7 @@ public abstract class AbstractPane extends Canvas {
 			fSelectionInProgress = fSelectionStarted = false;
 		}
 
+		@Override
 		public void mouseDown(MouseEvent me) {
 			AbstractPane.this.forceFocus();
 
@@ -114,6 +116,7 @@ public abstract class AbstractPane extends Canvas {
 			}
 		}
 
+		@Override
 		public void mouseDoubleClick(MouseEvent me) {
 			handleMouseDoubleClick(me);
 		}
@@ -121,6 +124,7 @@ public abstract class AbstractPane extends Canvas {
 	}
 
 	class AbstractPaneMouseMoveListener implements MouseMoveListener {
+		@Override
 		public void mouseMove(MouseEvent me) {
 			if (fSelectionStarted) {
 				fSelectionInProgress = true;
@@ -130,6 +134,7 @@ public abstract class AbstractPane extends Canvas {
 	}
 
 	class AbstractPaneFocusListener implements FocusListener {
+		@Override
 		public void focusLost(FocusEvent fe) {
 			IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
 			if (TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY
@@ -143,12 +148,14 @@ public abstract class AbstractPane extends Canvas {
 			AbstractPane.this.fSelectionStartAddress = null;
 		}
 
+		@Override
 		public void focusGained(FocusEvent fe) {
 		}
 
 	}
 
 	class AbstractPaneKeyListener implements KeyListener {
+		@Override
 		public void keyPressed(KeyEvent ke) {
 			fOldSubCellCaretPosition = fSubCellCaretPosition;
 			if ((ke.stateMask & SWT.SHIFT) != 0) {
@@ -226,12 +233,14 @@ public abstract class AbstractPane extends Canvas {
 			}
 		}
 
+		@Override
 		public void keyReleased(KeyEvent ke) {
 			// do nothing
 		}
 	}
 
 	class AbstractPanePaintListener implements PaintListener {
+		@Override
 		public void paintControl(PaintEvent pe) {
 			AbstractPane.this.paint(pe);
 		}

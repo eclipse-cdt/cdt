@@ -25,10 +25,12 @@ public class XlcLRCPPImplicitNameTests extends LRCPPImplicitNameTests {
 		return suite(XlcLRCPPImplicitNameTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

@@ -119,6 +119,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 			return specifiers;
 		}
 
+		@Override
 		public int visit(IASTAttributeSpecifier specifier) {
 			specifiers.add(specifier);
 			return PROCESS_CONTINUE;

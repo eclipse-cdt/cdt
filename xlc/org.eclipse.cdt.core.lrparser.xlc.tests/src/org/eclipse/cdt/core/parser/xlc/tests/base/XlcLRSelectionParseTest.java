@@ -33,10 +33,12 @@ public class XlcLRSelectionParseTest extends LRSelectionParseTest {
 		return new TestSuite(XlcLRSelectionParseTest.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

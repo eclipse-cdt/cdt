@@ -148,6 +148,7 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		fGDBServerCommandText.setLayoutData(data);
 		fGDBServerCommandText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -162,6 +163,7 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		fGDBServerPortNumberText.setLayoutData(data);
 		fGDBServerPortNumberText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -186,6 +188,7 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		fRemoteTimeoutValueText.setToolTipText(Messages.Gdbserver_Settings_Remotetimeout_tooltip);
 		fRemoteTimeoutValueText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}

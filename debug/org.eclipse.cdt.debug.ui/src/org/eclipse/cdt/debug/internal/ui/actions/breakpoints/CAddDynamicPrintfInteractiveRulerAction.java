@@ -82,6 +82,7 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		IDocument document = getDocument();
 		if (document == null) {
@@ -159,6 +160,7 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		IDocument document = getDocument();
 		if (document != null) {

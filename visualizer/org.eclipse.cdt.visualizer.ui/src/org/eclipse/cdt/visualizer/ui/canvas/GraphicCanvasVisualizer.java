@@ -49,6 +49,7 @@ public class GraphicCanvasVisualizer extends Visualizer {
 	}
 
 	/** Dispose method. */
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
@@ -56,6 +57,7 @@ public class GraphicCanvasVisualizer extends Visualizer {
 	// --- control management ---
 
 	/** Creates and returns visualizer control on specified parent. */
+	@Override
 	public Control createControl(Composite parent) {
 		if (m_control == null) {
 			GraphicCanvas canvas = createCanvas(parent);
@@ -67,6 +69,7 @@ public class GraphicCanvasVisualizer extends Visualizer {
 	}
 
 	/** Invoked when visualizer control should be disposed. */
+	@Override
 	public void disposeControl() {
 		if (m_control != null) {
 			disposeCanvas();
@@ -101,16 +104,19 @@ public class GraphicCanvasVisualizer extends Visualizer {
 	// --- menu/toolbar management ---
 
 	/** Invoked when visualizer is selected, to populate the toolbar. */
+	@Override
 	public void populateToolBar(IToolBarManager toolBarManager) {
 	}
 
 	/** Invoked when visualizer is selected, to populate the toolbar's menu. */
+	@Override
 	public void populateMenu(IMenuManager menuManager) {
 	}
 
 	// --- context menu handling ---
 
 	/** Invoked when visualizer view's context menu is invoked, to populate it. */
+	@Override
 	public void populateContextMenu(IMenuManager menuManager) {
 	}
 

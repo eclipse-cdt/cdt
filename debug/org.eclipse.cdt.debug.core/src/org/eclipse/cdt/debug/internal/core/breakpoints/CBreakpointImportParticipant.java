@@ -34,6 +34,7 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 	 * org.eclipse.debug.core.model.IBreakpointImportParticipant#matches(java
 	 * .util.Map, org.eclipse.debug.core.model.IBreakpoint)
 	 */
+	@Override
 	public boolean matches(Map<String, Object> attributes, IBreakpoint breakpoint) throws CoreException {
 		if (attributes == null || breakpoint == null) {
 			return false;

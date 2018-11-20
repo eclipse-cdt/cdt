@@ -106,6 +106,7 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 				: ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
 	}
 
+	@Override
 	public IStringVariable[] getVariables() {
 		IStringVariable[] variables = variableManager.getVariables();
 		for (int i = 0; i < variables.length; i++) {
@@ -116,14 +117,17 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 		return variables;
 	}
 
+	@Override
 	public IValueVariable[] getValueVariables() {
 		return variableManager.getValueVariables();
 	}
 
+	@Override
 	public IValueVariable getValueVariable(String name) {
 		return variableManager.getValueVariable(name);
 	}
 
+	@Override
 	public IDynamicVariable[] getDynamicVariables() {
 		IDynamicVariable[] variables = variableManager.getDynamicVariables();
 		for (int i = 0; i < variables.length; i++) {
@@ -132,6 +136,7 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 		return variables;
 	}
 
+	@Override
 	public IDynamicVariable getDynamicVariable(String name) {
 		IDynamicVariable var = variableManager.getDynamicVariable(name);
 		if (var == null)
@@ -147,47 +152,58 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 		return var;
 	}
 
+	@Override
 	public String getContributingPluginId(IStringVariable variable) {
 		return variableManager.getContributingPluginId(variable);
 	}
 
+	@Override
 	public String performStringSubstitution(String expression) throws CoreException {
 		return performStringSubstitution(expression, true);
 	}
 
+	@Override
 	public String performStringSubstitution(String expression, boolean reportUndefinedVariables) throws CoreException {
 		return new StringSubstitutionEngine().performStringSubstitution(expression, reportUndefinedVariables, true,
 				this);
 	}
 
+	@Override
 	public void validateStringVariables(String expression) throws CoreException {
 		new StringSubstitutionEngine().validateStringVariables(expression, this);
 	}
 
+	@Override
 	public IValueVariable newValueVariable(String name, String description) {
 		return variableManager.newValueVariable(name, description);
 	}
 
+	@Override
 	public IValueVariable newValueVariable(String name, String description, boolean readOnly, String value) {
 		return variableManager.newValueVariable(name, description, readOnly, value);
 	}
 
+	@Override
 	public void addVariables(IValueVariable[] variables) throws CoreException {
 		variableManager.addVariables(variables);
 	}
 
+	@Override
 	public void removeVariables(IValueVariable[] variables) {
 		variableManager.removeVariables(variables);
 	}
 
+	@Override
 	public void addValueVariableListener(IValueVariableListener listener) {
 		variableManager.addValueVariableListener(listener);
 	}
 
+	@Override
 	public void removeValueVariableListener(IValueVariableListener listener) {
 		variableManager.removeValueVariableListener(listener);
 	}
 
+	@Override
 	public String generateVariableExpression(String varName, String arg) {
 		return variableManager.generateVariableExpression(varName, arg);
 	}

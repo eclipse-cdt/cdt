@@ -57,6 +57,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 
@@ -81,6 +82,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		fProgramText.setLayoutData(gd);
 		fProgramText.setFont(font);
 		fProgramText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -88,6 +90,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 
 		fProgramButton = createPushButton(comp, "&Browse...", null); //$NON-NLS-1$
 		fProgramButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				browsePDAFiles();
 			}
@@ -113,12 +116,14 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		//#ifdef ex1
 		//#		// TODO: Exercise 1 - retrieve the program path attribute from the launch configuration
@@ -142,6 +147,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String program = fProgramText.getText().trim();
 		if (program.length() == 0) {
@@ -158,6 +164,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return "Main";
 	}
@@ -165,6 +172,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -189,6 +197,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return PDAUIPlugin.getDefault().getImageRegistry().get(PDAUIPlugin.IMG_OBJ_PDA);
 	}

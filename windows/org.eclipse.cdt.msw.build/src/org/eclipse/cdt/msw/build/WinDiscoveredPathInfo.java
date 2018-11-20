@@ -53,18 +53,22 @@ public class WinDiscoveredPathInfo implements IDiscoveredPathInfo {
 		symbols.put("__int64", "long long");
 	}
 
+	@Override
 	public IPath[] getIncludePaths() {
 		return paths;
 	}
 
+	@Override
 	public IProject getProject() {
 		return null;
 	}
 
+	@Override
 	public IDiscoveredScannerInfoSerializable getSerializable() {
 		return null;
 	}
 
+	@Override
 	public Map<String, String> getSymbols() {
 		return symbols;
 	}

@@ -493,6 +493,7 @@ public class CDebugUIUtils {
 	 * exposed via getEditorId. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=516470
 	 * @deprecated Deprecated on creation as this is waiting for Bug 516470 to be resolved
 	 */
+	@Deprecated
 	private static IUnassociatedEditorStrategy getUnassociatedEditorStrategy(boolean allowInteractive) {
 		String preferedStrategy = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getString(IDE.UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY);

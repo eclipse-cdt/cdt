@@ -56,6 +56,7 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 	private IDocument fDocument;
 	private IVerticalRulerInfo fRulerInfo;
 	private IToggleBreakpointsTargetManagerListener fListener = new IToggleBreakpointsTargetManagerListener() {
+		@Override
 		public void preferredTargetsChanged() {
 			update();
 		}
@@ -86,6 +87,7 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		IDocument document = getDocument();
 		if (document == null) {
@@ -167,6 +169,7 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		IDocument document = getDocument();
 		if (document != null) {

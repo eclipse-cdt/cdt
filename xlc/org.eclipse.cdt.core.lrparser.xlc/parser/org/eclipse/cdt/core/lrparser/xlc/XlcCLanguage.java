@@ -53,6 +53,7 @@ public class XlcCLanguage extends GCCLanguage {
 				index, properties);
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}

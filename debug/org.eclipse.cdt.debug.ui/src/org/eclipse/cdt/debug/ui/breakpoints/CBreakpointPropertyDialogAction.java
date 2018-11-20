@@ -140,6 +140,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		CBreakpointContext bpContext = getCBreakpointContext();
 		if (bpContext != null) {
@@ -206,6 +207,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(!selection.isEmpty());
 	}

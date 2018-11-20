@@ -61,6 +61,7 @@ public class SRecordExporter implements IMemoryExporter {
 
 	private IDialogSettings fProperties;
 
+	@Override
 	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties,
 			ExportMemoryDialog parentDialog) {
 		fMemoryBlock = memBlock;
@@ -68,6 +69,7 @@ public class SRecordExporter implements IMemoryExporter {
 		fProperties = properties;
 
 		Composite composite = new Composite(parent, SWT.NONE) {
+			@Override
 			public void dispose() {
 				fProperties.put(TRANSFER_FILE, fFileText.getText().trim());
 				fProperties.put(TRANSFER_START, fStartText.getText().trim());
@@ -208,11 +210,13 @@ public class SRecordExporter implements IMemoryExporter {
 
 		fileButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
 				dialog.setText(Messages.getString("SRecordExporter.ChooseFile")); //$NON-NLS-1$
@@ -232,6 +236,7 @@ public class SRecordExporter implements IMemoryExporter {
 		});
 
 		fStartText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				try {
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -265,11 +270,13 @@ public class SRecordExporter implements IMemoryExporter {
 				validate();
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 			}
 		});
 
 		fEndText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				try {
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -303,12 +310,14 @@ public class SRecordExporter implements IMemoryExporter {
 				validate();
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 			}
 
 		});
 
 		fLengthText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				try {
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -356,16 +365,19 @@ public class SRecordExporter implements IMemoryExporter {
 				validate();
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 
 			}
 		});
 
 		fFileText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				validate();
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 
 			}
@@ -383,6 +395,7 @@ public class SRecordExporter implements IMemoryExporter {
 		 *  speed of the draw of the dialog.
 		 */
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				validate();
 			}
@@ -465,16 +478,20 @@ public class SRecordExporter implements IMemoryExporter {
 		fParentDialog.setValid(isValid);
 	}
 
+	@Override
 	public String getId() {
 		return "srecord"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		return Messages.getString("SRecordExporter.Name"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void exportMemory() {
 		Job job = new Job("Memory Export to S-Record File") { //$NON-NLS-1$
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					// FIXME 4 byte default

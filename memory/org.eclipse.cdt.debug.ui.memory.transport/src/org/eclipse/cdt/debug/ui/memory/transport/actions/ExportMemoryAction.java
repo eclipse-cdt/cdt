@@ -37,6 +37,7 @@ public class ExportMemoryAction implements IViewActionDelegate {
 
 	private IMemoryRenderingSite fView;
 
+	@Override
 	public void init(IViewPart view) {
 		if (view instanceof IMemoryRenderingSite)
 			fView = (IMemoryRenderingSite) view;
@@ -109,6 +110,7 @@ public class ExportMemoryAction implements IViewActionDelegate {
 		return new BlockAndAddress(memBlock, initialStartAddr);
 	}
 
+	@Override
 	public void run(IAction action) {
 
 		ISelection selection = fView.getSite().getSelectionProvider().getSelection();
@@ -122,6 +124,7 @@ public class ExportMemoryAction implements IViewActionDelegate {
 		dialog.getResult();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		action.setEnabled(getMemoryBlockAndInitialStartAddress(selection).block != null);
 	}

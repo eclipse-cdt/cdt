@@ -34,6 +34,7 @@ public interface IQtBuildConfiguration extends ICBuildConfiguration {
 	@Deprecated
 	Path getProgramPath() throws CoreException;
 
+	@Override
 	String getLaunchMode();
 
 	IQtInstall getQtInstall();

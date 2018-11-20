@@ -149,12 +149,14 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static short baseCheck[] = BaseCheck.baseCheck;
 
+	@Override
 	public final int baseCheck(int index) {
 		return baseCheck[index];
 	}
 
 	public final static short rhs[] = baseCheck;
 
+	@Override
 	public final int rhs(int index) {
 		return rhs[index];
 	};
@@ -353,12 +355,14 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char baseAction[] = BaseAction.baseAction;
 
+	@Override
 	public final int baseAction(int index) {
 		return baseAction[index];
 	}
 
 	public final static char lhs[] = baseAction;
 
+	@Override
 	public final int lhs(int index) {
 		return lhs[index];
 	};
@@ -475,6 +479,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static byte termCheck[] = TermCheck.termCheck;
 
+	@Override
 	public final int termCheck(int index) {
 		return termCheck[index];
 	}
@@ -637,6 +642,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char termAction[] = TermAction.termAction;
 
+	@Override
 	public final int termAction(int index) {
 		return termAction[index];
 	}
@@ -665,6 +671,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char asb[] = Asb.asb;
 
+	@Override
 	public final int asb(int index) {
 		return asb[index];
 	}
@@ -705,6 +712,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static byte asr[] = Asr.asr;
 
+	@Override
 	public final int asr(int index) {
 		return asr[index];
 	}
@@ -731,6 +739,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char nasb[] = Nasb.nasb;
 
+	@Override
 	public final int nasb(int index) {
 		return nasb[index];
 	}
@@ -748,6 +757,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char nasr[] = Nasr.nasr;
 
+	@Override
 	public final int nasr(int index) {
 		return nasr[index];
 	}
@@ -762,6 +772,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char terminalIndex[] = TerminalIndex.terminalIndex;
 
+	@Override
 	public final int terminalIndex(int index) {
 		return terminalIndex[index];
 	}
@@ -778,6 +789,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char nonterminalIndex[] = NonterminalIndex.nonterminalIndex;
 
+	@Override
 	public final int nonterminalIndex(int index) {
 		return nonterminalIndex[index];
 	}
@@ -792,6 +804,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char scopePrefix[] = ScopePrefix.scopePrefix;
 
+	@Override
 	public final int scopePrefix(int index) {
 		return scopePrefix[index];
 	}
@@ -806,6 +819,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char scopeSuffix[] = ScopeSuffix.scopeSuffix;
 
+	@Override
 	public final int scopeSuffix(int index) {
 		return scopeSuffix[index];
 	}
@@ -820,6 +834,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char scopeLhs[] = ScopeLhs.scopeLhs;
 
+	@Override
 	public final int scopeLhs(int index) {
 		return scopeLhs[index];
 	}
@@ -833,6 +848,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static byte scopeLa[] = ScopeLa.scopeLa;
 
+	@Override
 	public final int scopeLa(int index) {
 		return scopeLa[index];
 	}
@@ -847,6 +863,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char scopeStateSet[] = ScopeStateSet.scopeStateSet;
 
+	@Override
 	public final int scopeStateSet(int index) {
 		return scopeStateSet[index];
 	}
@@ -875,6 +892,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char scopeRhs[] = ScopeRhs.scopeRhs;
 
+	@Override
 	public final int scopeRhs(int index) {
 		return scopeRhs[index];
 	}
@@ -898,6 +916,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char scopeState[] = ScopeState.scopeState;
 
+	@Override
 	public final int scopeState(int index) {
 		return scopeState[index];
 	}
@@ -925,6 +944,7 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static char inSymb[] = InSymb.inSymb;
 
+	@Override
 	public final int inSymb(int index) {
 		return inSymb[index];
 	}
@@ -970,24 +990,29 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static String name[] = Name.name;
 
+	@Override
 	public final String name(int index) {
 		return name[index];
 	}
 
 	public final static int ERROR_SYMBOL = 38, SCOPE_UBOUND = 94, SCOPE_SIZE = 95, MAX_NAME_LENGTH = 38;
 
+	@Override
 	public final int getErrorSymbol() {
 		return ERROR_SYMBOL;
 	}
 
+	@Override
 	public final int getScopeUbound() {
 		return SCOPE_UBOUND;
 	}
 
+	@Override
 	public final int getScopeSize() {
 		return SCOPE_SIZE;
 	}
 
+	@Override
 	public final int getMaxNameLength() {
 		return MAX_NAME_LENGTH;
 	}
@@ -998,42 +1023,52 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 
 	public final static boolean BACKTRACK = true;
 
+	@Override
 	public final int getNumStates() {
 		return NUM_STATES;
 	}
 
+	@Override
 	public final int getNtOffset() {
 		return NT_OFFSET;
 	}
 
+	@Override
 	public final int getLaStateOffset() {
 		return LA_STATE_OFFSET;
 	}
 
+	@Override
 	public final int getMaxLa() {
 		return MAX_LA;
 	}
 
+	@Override
 	public final int getNumRules() {
 		return NUM_RULES;
 	}
 
+	@Override
 	public final int getNumNonterminals() {
 		return NUM_NONTERMINALS;
 	}
 
+	@Override
 	public final int getNumSymbols() {
 		return NUM_SYMBOLS;
 	}
 
+	@Override
 	public final int getSegmentSize() {
 		return SEGMENT_SIZE;
 	}
 
+	@Override
 	public final int getStartState() {
 		return START_STATE;
 	}
 
+	@Override
 	public final int getStartSymbol() {
 		return lhs[0];
 	}
@@ -1042,55 +1077,68 @@ public class XlcCParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCParsers
 		return IDENTIFIER_SYMBOL;
 	}
 
+	@Override
 	public final int getEoftSymbol() {
 		return EOFT_SYMBOL;
 	}
 
+	@Override
 	public final int getEoltSymbol() {
 		return EOLT_SYMBOL;
 	}
 
+	@Override
 	public final int getAcceptAction() {
 		return ACCEPT_ACTION;
 	}
 
+	@Override
 	public final int getErrorAction() {
 		return ERROR_ACTION;
 	}
 
+	@Override
 	public final boolean isValidForParser() {
 		return isValidForParser;
 	}
 
+	@Override
 	public final boolean getBacktrack() {
 		return BACKTRACK;
 	}
 
+	@Override
 	public final int originalState(int state) {
 		return -baseCheck[state];
 	}
 
+	@Override
 	public final int asi(int state) {
 		return asb[originalState(state)];
 	}
 
+	@Override
 	public final int nasi(int state) {
 		return nasb[originalState(state)];
 	}
 
+	@Override
 	public final int inSymbol(int state) {
 		return inSymb[originalState(state)];
 	}
 
+	@Override
 	public final int ntAction(int state, int sym) {
 		return baseAction[state + sym];
 	}
 
+	@Override
 	public final int tAction(int state, int sym) {
 		int i = baseAction[state], k = i + sym;
 		return termAction[termCheck[k] == sym ? k : i];
 	}
 
+	@Override
 	public final int lookAhead(int la_state, int sym) {
 		int k = la_state + sym;
 		return termAction[termCheck[k] == sym ? k : la_state];

@@ -353,6 +353,7 @@ public class GoToAddressBarWidget {
 		 */
 		Combo combo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
 		combo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateButtons();
 			}

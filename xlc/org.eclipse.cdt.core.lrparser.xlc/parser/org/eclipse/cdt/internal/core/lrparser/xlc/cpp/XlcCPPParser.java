@@ -110,6 +110,7 @@ public class XlcCPPParser extends PrsStream
 		return btParser.getFirstToken();
 	}
 
+	@Override
 	public IToken getLeftIToken() {
 		return super.getIToken(getLeftSpan());
 	}
@@ -118,6 +119,7 @@ public class XlcCPPParser extends PrsStream
 		return btParser.getLastToken();
 	}
 
+	@Override
 	public IToken getRightIToken() {
 		return super.getIToken(getRightSpan());
 	}
@@ -155,6 +157,7 @@ public class XlcCPPParser extends PrsStream
 		}
 	}
 
+	@Override
 	public String[] orderedTerminalSymbols() {
 		return XlcCPPParsersym.orderedTerminalSymbols;
 	}
@@ -238,11 +241,13 @@ public class XlcCPPParser extends PrsStream
 
 	}
 
+	@Override
 	public void addToken(IToken token) {
 		token.setKind(mapKind(token.getKind())); // TODO does mapKind need to be called?
 		super.addToken(token);
 	}
 
+	@Override
 	public IASTTranslationUnit parse() {
 		// this has to be done, or... kaboom!
 		setStreamLength(getSize());
@@ -255,19 +260,23 @@ public class XlcCPPParser extends PrsStream
 		return (IASTTranslationUnit) action.getParseResult();
 	}
 
+	@Override
 	public IASTCompletionNode getCompletionNode() {
 		return compNode;
 	}
 
 	// uncomment this method to use with backtracking parser
+	@Override
 	public List<IToken> getRuleTokens() {
 		return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
 	}
 
+	@Override
 	public String[] getOrderedTerminalSymbols() {
 		return XlcCPPParsersym.orderedTerminalSymbols;
 	}
 
+	@Override
 	@SuppressWarnings("nls")
 	public String getName() {
 		return "XlcCPPParser";
@@ -275,6 +284,7 @@ public class XlcCPPParser extends PrsStream
 
 	private GNUBuildASTParserAction gnuAction;
 
+	@Override
 	public void ruleAction(int ruleNumber) {
 		switch (ruleNumber) {
 

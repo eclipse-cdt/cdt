@@ -25,10 +25,12 @@ public class XlcLRSemanticsTests extends LRSemanticsTests {
 		return suite(XlcLRSemanticsTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

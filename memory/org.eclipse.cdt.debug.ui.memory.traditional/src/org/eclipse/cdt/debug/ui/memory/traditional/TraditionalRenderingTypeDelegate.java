@@ -20,6 +20,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate;
 
 public class TraditionalRenderingTypeDelegate implements IMemoryRenderingTypeDelegate {
 
+	@Override
 	public IMemoryRendering createRendering(String id) throws CoreException {
 		return new TraditionalRendering(id);
 	}

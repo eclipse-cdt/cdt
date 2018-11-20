@@ -119,16 +119,20 @@ public class CBreakpointContext extends PlatformObject implements ICBreakpointCo
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider implementation
 	 */
+	@Override
 	public IWorkbenchPart getPart() {
 		return null;
 	}
 
+	@Override
 	public void addDebugContextListener(IDebugContextListener listener) {
 	}
 
+	@Override
 	public void removeDebugContextListener(IDebugContextListener listener) {
 	}
 
+	@Override
 	public ISelection getActiveContext() {
 		return fDebugContext;
 	}

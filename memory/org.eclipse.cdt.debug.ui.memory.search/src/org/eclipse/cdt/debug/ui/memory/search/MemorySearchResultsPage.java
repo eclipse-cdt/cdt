@@ -57,23 +57,29 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 
 	private ISearchResultViewPart fPart;
 
+	@Override
 	public void queryAdded(ISearchQuery query) {
 	}
 
+	@Override
 	public void queryFinished(ISearchQuery query) {
 	}
 
+	@Override
 	public void queryRemoved(ISearchQuery query) {
 	}
 
+	@Override
 	public void queryStarting(ISearchQuery query) {
 	}
 
+	@Override
 	public String getID() {
 
 		return MemorySearchPlugin.getUniqueIdentifier();
 	}
 
+	@Override
 	public String getLabel() {
 		if (fQuery == null)
 			return Messages.getString("MemorySearchResultsPage.LabelMemorySearch"); //$NON-NLS-1$
@@ -81,25 +87,32 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 			return fQuery.getLabel();
 	}
 
+	@Override
 	public Object getUIState() {
 
 		return fTreeViewer.getSelection();
 	}
 
+	@Override
 	public void restoreState(IMemento memento) {
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 
+	@Override
 	public void setID(String id) {
 	}
 
+	@Override
 	public void setInput(ISearchResult search, Object uiState) {
 		if (search instanceof MemorySearchResult) {
 			((MemorySearchResult) search).addListener(new ISearchResultListener() {
+				@Override
 				public void searchResultChanged(SearchResultEvent e) {
 					Display.getDefault().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							fTreeViewer.refresh();
 						}
@@ -109,6 +122,7 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 		}
 	}
 
+	@Override
 	public void setViewPart(ISearchResultViewPart part) {
 		fPart = part;
 	}
@@ -124,25 +138,31 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 
 		fTreeViewer.setContentProvider(new ITreeContentProvider() {
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				viewer.refresh();
 			}
 
+			@Override
 			public Object[] getChildren(Object parentElement) {
 				return new Object[0];
 			}
 
+			@Override
 			public Object getParent(Object element) {
 				return null;
 			}
 
+			@Override
 			public boolean hasChildren(Object element) {
 				return false;
 			}
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 
 				if (fQuery == null)
@@ -156,6 +176,7 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 		fTreeViewer.setInput(new Object());
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				if (event.getSelection() instanceof StructuredSelection) {
 					IMemoryRenderingContainer containers[] = ((IMemorySearchQuery) fQuery).getMemoryView()
@@ -193,6 +214,7 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 
 		fTreeViewer.setLabelProvider(new ILabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				if (element instanceof MemoryMatch)
 					return "0x" + ((MemoryMatch) element).getStartAddress().toString(16); //$NON-NLS-1$
@@ -200,20 +222,25 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 				return element.toString();
 			}
 
+			@Override
 			public Image getImage(Object element) {
 				return null;
 			}
 
+			@Override
 			public void addListener(ILabelProviderListener listener) {
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public boolean isLabelProperty(Object element, String property) {
 				return false;
 			}
 
+			@Override
 			public void removeListener(ILabelProviderListener listener) {
 			}
 		});
@@ -227,17 +254,21 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 
 	private IQueryListener createQueryListener() {
 		return new IQueryListener() {
+			@Override
 			public void queryAdded(ISearchQuery query) {
 			}
 
+			@Override
 			public void queryRemoved(ISearchQuery query) {
 				queryStarting(query);
 			}
 
+			@Override
 			public void queryStarting(final ISearchQuery query) {
 				fQuery = query;
 
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						fPart.updateLabel();
 
@@ -247,6 +278,7 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 				});
 			}
 
+			@Override
 			public void queryFinished(final ISearchQuery query) {
 			}
 		};

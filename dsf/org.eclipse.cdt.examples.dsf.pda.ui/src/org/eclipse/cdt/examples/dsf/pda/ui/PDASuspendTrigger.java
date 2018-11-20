@@ -39,6 +39,7 @@ public class PDASuspendTrigger extends DsfSuspendTrigger {
 	protected void getLaunchTopContainers(final DataRequestMonitor<IContainerDMContext[]> rm) {
 		try {
 			getSession().getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
 					PDACommandControl control = getServicesTracker().getService(PDACommandControl.class);
 					if (control != null) {

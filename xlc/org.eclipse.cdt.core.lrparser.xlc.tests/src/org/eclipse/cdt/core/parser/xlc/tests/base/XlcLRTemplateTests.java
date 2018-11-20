@@ -25,10 +25,12 @@ public class XlcLRTemplateTests extends LRTemplateTests {
 		return suite(XlcLRTemplateTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

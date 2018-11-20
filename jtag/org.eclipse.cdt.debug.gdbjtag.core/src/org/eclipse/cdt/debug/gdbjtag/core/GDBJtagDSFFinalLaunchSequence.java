@@ -225,6 +225,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	 * Rollback method for {@link #stepInitializeJTAGFinalLaunchSequence()}
 	 * @since 4.0
 	 */
+	@Override
 	@RollBack("stepInitializeJTAGFinalLaunchSequence")
 	public void rollBackInitializeFinalLaunchSequence(RequestMonitor rm) {
 		if (fTracker != null)

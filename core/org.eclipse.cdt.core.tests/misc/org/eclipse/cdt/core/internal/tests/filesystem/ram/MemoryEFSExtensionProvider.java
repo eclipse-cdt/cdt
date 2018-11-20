@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.EFSExtensionProvider;
  */
 public class MemoryEFSExtensionProvider extends EFSExtensionProvider {
 
+	@Override
 	public String getMappedPath(URI locationURI) {
 
 		String path = locationURI.getPath();

@@ -42,6 +42,7 @@ public class CodanMarkerGenerator implements IMarkerGenerator {
 		this.reporter = reporter;
 	}
 
+	@Override
 	@Deprecated
 	public void addMarker(IResource file, int lineNumber, String description, int severity, String variableName) {
 		addMarker(new ProblemMarkerInfo(file, lineNumber, description, severity, variableName));

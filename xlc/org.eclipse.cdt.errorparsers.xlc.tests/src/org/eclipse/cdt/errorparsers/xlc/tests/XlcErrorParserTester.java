@@ -67,10 +67,12 @@ public class XlcErrorParserTester {
 	 */
 	private class MockMarkerGenerator implements IMarkerGenerator {
 
+		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 			// dummy
 		}
 
+		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 			// dummy
 		}

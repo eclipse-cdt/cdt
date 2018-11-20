@@ -36,6 +36,7 @@ public class ProcessList implements IProcessList {
 	 * Insert the method's description here.
 	 * @see IProcessList#getProcessList
 	 */
+	@Override
 	public IProcessInfo[] getProcessList() {
 		Process ps;
 		BufferedReader psOutput;

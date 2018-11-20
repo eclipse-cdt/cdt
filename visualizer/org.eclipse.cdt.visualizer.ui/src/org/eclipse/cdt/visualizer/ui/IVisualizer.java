@@ -151,15 +151,19 @@ public interface IVisualizer extends ISelectionProvider {
 	// --- selection changed event handling ---
 
 	/** Adds external listener for selection change events. */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener);
 
 	/** Removes external listener for selection change events. */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener);
 
 	/** Gets current externally-visible selection. */
+	@Override
 	public ISelection getSelection();
 
 	/** Sets current externally-visible selection. */
+	@Override
 	public void setSelection(ISelection selection);
 
 }

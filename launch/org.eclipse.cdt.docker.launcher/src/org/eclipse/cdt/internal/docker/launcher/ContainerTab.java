@@ -728,6 +728,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 		connectionSelector.addModifyListener(connectionModifyListener);
 	}
 
+	@Override
 	public void listChanged(IDockerConnection c, java.util.List<IDockerImage> list) {
 		setErrorMessage(null);
 		final IDockerImage[] finalList = list.toArray(new IDockerImage[0]);

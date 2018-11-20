@@ -71,10 +71,12 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		return finish;
 	}
 
+	@Override
 	public String getName() {
 		return Messages.SetCrossCommandWizardPage_name;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		composite = new Composite(parent, SWT.NULL);
 
@@ -95,6 +97,7 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		}
 		prefixTxt.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updatePrefixProperty();
 			}
@@ -113,6 +116,7 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		pathTxt.setLayoutData(layoutData);
 		pathTxt.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updatePathProperty();
 			}
@@ -122,9 +126,11 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		button.setText(Messages.SetCrossCommandWizardPage_browse);
 		button.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dirDialog = new DirectoryDialog(composite.getShell(), SWT.APPLICATION_MODAL);
 				String browsedDirectory = dirDialog.open();
@@ -137,42 +143,53 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		button.setLayoutData(layoutData);
 	}
 
+	@Override
 	public Control getControl() {
 		return composite;
 	}
 
+	@Override
 	public String getDescription() {
 		return Messages.SetCrossCommandWizardPage_description;
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
 
+	@Override
 	public Image getImage() {
 		return wizard.getDefaultPageImage();
 	}
 
+	@Override
 	public String getMessage() {
 		return null;
 	}
 
+	@Override
 	public String getTitle() {
 		return Messages.SetCrossCommandWizardPage_title;
 	}
 
+	@Override
 	public void performHelp() {
 	}
 
+	@Override
 	public void setDescription(String description) {
 	}
 
+	@Override
 	public void setImageDescriptor(ImageDescriptor image) {
 	}
 
+	@Override
 	public void setTitle(String title) {
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			finish = true;
@@ -180,6 +197,7 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		composite.setVisible(visible);
 	}
 
+	@Override
 	public void dispose() {
 	}
 

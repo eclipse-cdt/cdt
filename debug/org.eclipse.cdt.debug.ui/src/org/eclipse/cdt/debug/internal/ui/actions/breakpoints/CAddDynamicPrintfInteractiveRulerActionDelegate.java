@@ -64,6 +64,7 @@ public class CAddDynamicPrintfInteractiveRulerActionDelegate extends AbstractRul
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
 	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		fDelegate = new CAddDynamicPrintfInteractiveRulerAction(editor, null, rulerInfo);
 		return fDelegate;
@@ -72,6 +73,7 @@ public class CAddDynamicPrintfInteractiveRulerActionDelegate extends AbstractRul
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		if (fEditor != null) {
 			if (fDelegate != null) {
@@ -86,12 +88,14 @@ public class CAddDynamicPrintfInteractiveRulerActionDelegate extends AbstractRul
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fDelegate != null) {
 			fDelegate.dispose();

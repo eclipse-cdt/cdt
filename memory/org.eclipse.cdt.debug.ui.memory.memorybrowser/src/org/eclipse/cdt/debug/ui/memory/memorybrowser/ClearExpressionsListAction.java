@@ -23,10 +23,12 @@ public class ClearExpressionsListAction implements IViewActionDelegate {
 
 	private IViewPart fView;
 
+	@Override
 	public void init(IViewPart view) {
 		fView = view;
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (fView instanceof MemoryBrowser) {
 			MemoryBrowser browser = (MemoryBrowser) fView;
@@ -34,6 +36,7 @@ public class ClearExpressionsListAction implements IViewActionDelegate {
 		}
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 }

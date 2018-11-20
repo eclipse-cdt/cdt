@@ -110,6 +110,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 							if (session != null) {
 								try {
 									session.getExecutor().execute(new DsfRunnable() {
+										@Override
 										public void run() {
 											DsfServicesTracker tracker = new DsfServicesTracker(
 													Activator.getBundleContext(), session.getId());
@@ -166,6 +167,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 							// partially started already.
 							try {
 								l.getSession().getExecutor().execute(new DsfRunnable() {
+									@Override
 									public void run() {
 										l.shutdownSession(new ImmediateRequestMonitor());
 									}

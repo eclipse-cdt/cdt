@@ -266,6 +266,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		getVerticalBar().addSelectionListener(createVerticalBarSelectinListener());
 
 		this.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent pe) {
 				pe.gc.setBackground(Rendering.this.getTraditionalRendering().getColorBackground());
 				pe.gc.fillRectangle(0, 0, Rendering.this.getBounds().width, Rendering.this.getBounds().height);
@@ -275,9 +276,11 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		setLayout();
 
 		this.addControlListener(new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent ce) {
 			}
 
+			@Override
 			public void controlResized(ControlEvent ce) {
 				packColumns();
 			}
@@ -369,10 +372,12 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 	protected SelectionListener createHorizontalBarSelectionListener() {
 		return new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent se) {
 				Rendering.this.layout();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent se) {
 				// do nothing
 			}
@@ -381,6 +386,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 	protected SelectionListener createVerticalBarSelectinListener() {
 		return new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent se) {
 				switch (se.detail) {
 				case SWT.ARROW_DOWN:
@@ -421,6 +427,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent se) {
 				// do nothing
 			}
@@ -519,6 +526,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 	static int suspendCount = 0;
 
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		if (this.isDisposed())
 			return;
@@ -562,6 +570,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	protected void handleSuspend(boolean isBreakpointHit) {
 		if (getUpdateMode() == UPDATE_ALWAYS || (getUpdateMode() == UPDATE_ON_BREAKPOINT && isBreakpointHit)) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					archiveDeltas();
 					refresh();
@@ -573,6 +582,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	protected void handleChange() {
 		if (getUpdateMode() == UPDATE_ALWAYS) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					archiveDeltas();
 					refresh();
@@ -696,6 +706,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			start();
 		}
 
+		@Override
 		public void dispose() {
 			fDisposed = true;
 			synchronized (fQueue) {
@@ -712,6 +723,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			fHistoryCache = new MemoryUnit[fHistoryDepth];
 		}
 
+		@Override
 		public void refresh() {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -721,6 +733,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			}
 		}
 
+		@Override
 		public void archiveDeltas() {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -849,6 +862,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				fCache.bytes = cachedBytesFinal;
 
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						// generate deltas
 						for (int historyIndex = 0; historyIndex < getHistoryDepth(); historyIndex++) {
@@ -897,6 +911,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		}
 
 		// bytes will be fetched from cache
+		@Override
 		public TraditionalMemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -940,6 +955,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return bytes;
 		}
 
+		@Override
 		public boolean containsEditedCell(BigInteger address) {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -954,6 +970,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return fEditBuffer.get(address);
 		}
 
+		@Override
 		public void clearEditBuffer() {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -962,6 +979,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			Rendering.this.redrawPanes();
 		}
 
+		@Override
 		public void writeEditBuffer() {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -992,6 +1010,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			clearEditBuffer();
 		}
 
+		@Override
 		public void setEditedValue(BigInteger address, TraditionalMemoryByte[] bytes) {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -1043,15 +1062,18 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		private BigInteger fEndHigh;
 		private BigInteger fEndLow;
 
+		@Override
 		public void clear() {
 			fEndHigh = fEndLow = fStartHigh = fStartLow = null;
 			redrawPanes();
 		}
 
+		@Override
 		public boolean hasSelection() {
 			return fStartHigh != null && fStartLow != null && fEndHigh != null && fEndLow != null;
 		}
 
+		@Override
 		public boolean isSelected(BigInteger address) {
 			// do we have valid start and end addresses
 			if (getEnd() == null || getStart() == null)
@@ -1071,6 +1093,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return false;
 		}
 
+		@Override
 		public void setStart(BigInteger high, BigInteger low) {
 			if (high == null && low == null) {
 				if (fStartHigh != null && fStartLow != null) {
@@ -1098,6 +1121,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				redrawPanes();
 		}
 
+		@Override
 		public void setEnd(BigInteger high, BigInteger low) {
 			if (high == null && low == null) {
 				if (fEndHigh != null && fEndLow != null) {
@@ -1125,6 +1149,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				redrawPanes();
 		}
 
+		@Override
 		public BigInteger getHigh() {
 			if (!hasSelection())
 				return null;
@@ -1132,6 +1157,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return getStart().max(getEnd());
 		}
 
+		@Override
 		public BigInteger getLow() {
 			if (!hasSelection())
 				return null;
@@ -1139,6 +1165,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return getStart().min(getEnd());
 		}
 
+		@Override
 		public BigInteger getStart() {
 			// if there is no start, return null
 			if (fStartHigh == null)
@@ -1162,10 +1189,12 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				return fStartLow;
 		}
 
+		@Override
 		public BigInteger getStartLow() {
 			return fStartLow;
 		}
 
+		@Override
 		public BigInteger getEnd() {
 			// if there is no end, return null
 			if (fEndHigh == null)
@@ -1595,6 +1624,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		fParent.setTargetMemoryLittleEndian(littleEndian);
 		fIsTargetLittleEndian = littleEndian;
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				fireSettingsChanged();
 				layoutPanes();
@@ -1614,6 +1644,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		fireSettingsChanged();
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (isShowCrossReferenceInfo()) {
 					resolveAddressInfoForCurrentSelection();

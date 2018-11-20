@@ -40,6 +40,7 @@ public class TestCanvas extends GraphicCanvas {
 	}
 
 	/** Dispose method. */
+	@Override
 	public void dispose() {
 		cleanupDefaultCanvas();
 		super.dispose();
@@ -68,6 +69,7 @@ public class TestCanvas extends GraphicCanvas {
 	/** Invoked when canvas repaint event is raised.
 	 *  Default implementation clears canvas to background color.
 	 */
+	@Override
 	public void paintCanvas(GC gc) {
 		super.paintCanvas(gc);
 

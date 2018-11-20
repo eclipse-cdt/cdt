@@ -218,6 +218,7 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 		}
 	}
 
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		// Dispose the set of adapters for a launch only after the launch is
 		// removed from the view.  If the launch is terminated, the adapters
@@ -229,12 +230,15 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 		}
 	}
 
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 	}
 
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 

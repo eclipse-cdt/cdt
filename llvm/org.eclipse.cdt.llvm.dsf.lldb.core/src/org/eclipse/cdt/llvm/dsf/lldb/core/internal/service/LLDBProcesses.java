@@ -166,6 +166,7 @@ public class LLDBProcesses extends GDBProcesses_7_4 {
 		}
 	}
 
+	@Override
 	@DsfServiceEventHandler
 	public void eventDispatched(IExitedDMEvent e) {
 		if (e.getDMContext() instanceof IMIContainerDMContext && getNumConnected() == 0) {

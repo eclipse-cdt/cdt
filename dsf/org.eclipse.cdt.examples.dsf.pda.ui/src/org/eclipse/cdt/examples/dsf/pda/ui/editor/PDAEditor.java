@@ -40,6 +40,7 @@ public class PDAEditor extends AbstractDecoratedTextEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
 	 */
+	@Override
 	protected void createActions() {
 		super.createActions();
 		ResourceBundle bundle = ResourceBundle

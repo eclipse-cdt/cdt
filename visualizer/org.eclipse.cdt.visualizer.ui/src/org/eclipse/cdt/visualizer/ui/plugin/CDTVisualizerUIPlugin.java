@@ -67,6 +67,7 @@ public class CDTVisualizerUIPlugin extends AbstractUIPlugin {
 	// --- plugin startup/shutdown methods ---
 
 	/** Invoked when plugin is loaded. */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		s_plugin = this;
@@ -80,6 +81,7 @@ public class CDTVisualizerUIPlugin extends AbstractUIPlugin {
 	}
 
 	/** Invoked when plugin is stopped. */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		// clean up resource management
 		cleanupPluginResources();

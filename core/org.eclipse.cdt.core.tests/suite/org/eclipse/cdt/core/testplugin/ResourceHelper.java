@@ -700,6 +700,7 @@ public class ResourceHelper {
 	 *
 	 * @deprecated Use {@link #cleanUp(String)} instead so test name can be printed in diagnostics
 	 */
+	@Deprecated
 	public static void cleanUp() throws CoreException, IOException {
 		cleanUp("<unknown>");
 	}

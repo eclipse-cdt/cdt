@@ -33,6 +33,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class AnnotationHover implements IAnnotationHover {
 
+	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		IAnnotationModel annotationModel = sourceViewer.getAnnotationModel();
 		Iterator<?> iterator = annotationModel.getAnnotationIterator();

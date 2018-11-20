@@ -90,6 +90,7 @@ public class PDAVirtualMachineVMNode extends AbstractContainerVMNode implements 
 
 	private final String MEMENTO_NAME = "PDAPROGRAM_MEMENTO_NAME"; //$NON-NLS-1$
 
+	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
 
 		for (IElementCompareRequest request : requests) {
@@ -115,6 +116,7 @@ public class PDAVirtualMachineVMNode extends AbstractContainerVMNode implements 
 		}
 	}
 
+	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 
 		for (IElementMementoRequest request : requests) {

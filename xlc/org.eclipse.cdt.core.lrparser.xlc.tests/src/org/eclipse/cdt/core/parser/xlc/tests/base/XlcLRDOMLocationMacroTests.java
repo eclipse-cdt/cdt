@@ -25,10 +25,12 @@ public class XlcLRDOMLocationMacroTests extends LRDOMLocationMacroTests {
 		return suite(XlcLRDOMLocationMacroTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

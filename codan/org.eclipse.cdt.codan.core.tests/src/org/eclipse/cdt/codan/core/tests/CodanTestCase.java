@@ -125,6 +125,7 @@ public class CodanTestCase extends BaseTestCase {
 			final String projectName = "CodanProjTest_" + System.currentTimeMillis();
 			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			workspace.run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					// Create the cproject
 					ICProject cproject = cpp
@@ -143,6 +144,7 @@ public class CodanTestCase extends BaseTestCase {
 	protected void indexFiles() throws CoreException, InterruptedException {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				cproject.getProject().refreshLocal(1, monitor);
 			}

@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class PDAWatchpointFunctionFieldEditorFactory implements IFieldEditorFactory {
 
+	@Override
 	public FieldEditor createFieldEditor(String name, String labelText, Composite parent) {
 		return new StringFieldEditor(name, labelText, parent);
 	}

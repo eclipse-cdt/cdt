@@ -43,6 +43,7 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 		super(adapter, context, session);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void getActiveFormat(IPresentationContext context, IVMNode node, Object viewerInput, TreePath elementPath,
 			DataRequestMonitor<String> rm) {
@@ -82,6 +83,7 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 		return;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setActiveFormat(IPresentationContext context, IVMNode[] node, Object viewerInput,
 			TreePath[] elementPath, String format) {
@@ -115,6 +117,7 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 		}
 	}
 
+	@Override
 	public boolean supportFormat(IVMContext context) {
 		if (context instanceof VariableVMNode.VariableExpressionVMC) {
 			return true;

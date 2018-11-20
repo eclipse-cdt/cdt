@@ -25,10 +25,12 @@ public class XlcLRDOMLocationTests extends LRDOMLocationTests {
 		return suite(XlcLRDOMLocationTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

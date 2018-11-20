@@ -62,6 +62,7 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage
 			Link link = new Link(page, SWT.NONE);
 			link.setText(PreferenceMessages.XlcLanguageOptionsPreferencePage_link);
 			link.addListener(SWT.Selection, new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					PreferencesUtil.createPreferenceDialogOn(getShell(), event.text, null, null).open();
 				}
@@ -104,10 +105,12 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage
 		return isPropertyPage() ? (IProject) element.getAdapter(IProject.class) : null;
 	}
 
+	@Override
 	public IAdaptable getElement() {
 		return element;
 	}
 
+	@Override
 	public void setElement(IAdaptable element) {
 		this.element = element;
 	}
@@ -116,6 +119,7 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage
 		return element != null;
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
 	}

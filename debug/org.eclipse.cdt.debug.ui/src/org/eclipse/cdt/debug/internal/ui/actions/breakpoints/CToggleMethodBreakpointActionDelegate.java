@@ -36,6 +36,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CToggleMethodBreakpointActionDelegate extends CToggleBreakpointObjectActionDelegate {
 
+	@Override
 	protected void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection,
 			Event event) throws CoreException {
 		if ((event.stateMask & SWT.MOD1) != 0 && target instanceof IToggleBreakpointsTargetCExtension

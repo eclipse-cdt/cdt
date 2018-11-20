@@ -38,18 +38,22 @@ public class XlcCASTVectorTypeSpecifier extends CASTSimpleDeclSpecifier implemen
 		return copy(copy, style);
 	}
 
+	@Override
 	public boolean isPixel() {
 		return isPixel;
 	}
 
+	@Override
 	public void setPixel(boolean isPixel) {
 		this.isPixel = isPixel;
 	}
 
+	@Override
 	public boolean isBool() {
 		return isBool;
 	}
 
+	@Override
 	public void setBool(boolean isBool) {
 		this.isBool = isBool;
 	}

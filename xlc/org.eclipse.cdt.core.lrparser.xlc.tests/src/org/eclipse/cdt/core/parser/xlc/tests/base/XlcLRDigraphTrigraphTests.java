@@ -26,6 +26,7 @@ public class XlcLRDigraphTrigraphTests extends LRDigraphTrigraphTests {
 		return new TestSuite(XlcLRDigraphTrigraphTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}

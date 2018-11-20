@@ -70,6 +70,7 @@ public class SRecordImporter implements IMemoryImporter {
 
 	private static final int BUFFER_LENGTH = 64 * 1024;
 
+	@Override
 	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties,
 			ImportMemoryDialog parentDialog) {
 		fMemoryBlock = memBlock;
@@ -77,6 +78,7 @@ public class SRecordImporter implements IMemoryImporter {
 		fProperties = properties;
 
 		Composite composite = new Composite(parent, SWT.NONE) {
+			@Override
 			public void dispose() {
 				fProperties.put(TRANSFER_FILE, fFileText.getText().trim());
 				fProperties.put(TRANSFER_START, fStartText.getText().trim());
@@ -126,9 +128,11 @@ public class SRecordImporter implements IMemoryImporter {
 
 		fComboRestoreToFileAddress.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validate();
 			}
@@ -136,9 +140,11 @@ public class SRecordImporter implements IMemoryImporter {
 
 		fComboRestoreToThisAddress.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -182,11 +188,13 @@ public class SRecordImporter implements IMemoryImporter {
 
 		fileButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
 				dialog.setText(Messages.getString("SRecordImporter.ChooseFile")); //$NON-NLS-1$
@@ -206,6 +214,7 @@ public class SRecordImporter implements IMemoryImporter {
 		});
 
 		fStartText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				try {
 					boolean restoreToAddress = fComboRestoreToThisAddress.getSelection();
@@ -227,11 +236,13 @@ public class SRecordImporter implements IMemoryImporter {
 				}
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 			}
 		});
 
 		fFileText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}
@@ -267,6 +278,7 @@ public class SRecordImporter implements IMemoryImporter {
 		parent.pack();
 
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				validate();
 			}
@@ -318,17 +330,21 @@ public class SRecordImporter implements IMemoryImporter {
 		return new File(fFileText.getText().trim());
 	}
 
+	@Override
 	public String getId() {
 		return "srecord"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		return Messages.getString("SRecordImporter.Name"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void importMemory() {
 		Job job = new Job("Memory Import from S-Record File") { //$NON-NLS-1$
 
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 
 				try {

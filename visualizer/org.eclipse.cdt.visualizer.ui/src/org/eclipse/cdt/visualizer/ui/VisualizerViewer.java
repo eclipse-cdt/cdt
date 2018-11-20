@@ -109,12 +109,14 @@ public class VisualizerViewer extends PageBook
 	}
 
 	/** Dispose method. */
+	@Override
 	public void dispose() {
 		cleanupVisualizerViewer();
 		super.dispose();
 	}
 
 	/** Overridden to permit subclassing of SWT component */
+	@Override
 	protected void checkSubclass() {
 		// Do nothing.
 		// (Superclass implementation throws "Subclassing not allowed" exception.)
@@ -129,6 +131,7 @@ public class VisualizerViewer extends PageBook
 
 		// Event listener support
 		m_listeners = new ListenerList(this, "VisualizerViewer event listeners") {
+			@Override
 			public void raise(Object listener, Object event) {
 				if (listener instanceof IVisualizerViewerListener && event instanceof VisualizerViewerEvent) {
 					IVisualizerViewerListener typedListener = (IVisualizerViewerListener) listener;
@@ -148,6 +151,7 @@ public class VisualizerViewer extends PageBook
 
 		// Listen to paint event to draw "No visualizers" warning if needed.
 		this.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				VisualizerViewer.this.paint(e.gc);
 			}
@@ -170,11 +174,13 @@ public class VisualizerViewer extends PageBook
 	// --- accessors ---
 
 	/** Gets containing view. */
+	@Override
 	public VisualizerView getView() {
 		return m_view;
 	}
 
 	/** Returns non-localized unique name for selected visualizer. */
+	@Override
 	public String getVisualizerName() {
 		String result = "visualizer";
 		if (m_currentVisualizer != null)
@@ -183,6 +189,7 @@ public class VisualizerViewer extends PageBook
 	}
 
 	/** Returns localized name to display for selected visualizer. */
+	@Override
 	public String getVisualizerDisplayName() {
 		String result = "Visualizer";
 		if (m_currentVisualizer != null)
@@ -191,6 +198,7 @@ public class VisualizerViewer extends PageBook
 	}
 
 	/** Returns localized tooltip text to display for selected visualizer. */
+	@Override
 	public String getVisualizerDescription() {
 		String result = "Visualizer";
 		if (m_currentVisualizer != null)
@@ -201,6 +209,7 @@ public class VisualizerViewer extends PageBook
 	// --- control management ---
 
 	/** Gets viewer control. */
+	@Override
 	public Control getControl() {
 		return this;
 	}
@@ -211,6 +220,7 @@ public class VisualizerViewer extends PageBook
 	 * Invoked by VisualizerView when currently selected presentation,
 	 * if any, should take the focus.
 	 */
+	@Override
 	public boolean setFocus() {
 		boolean result = false;
 		if (m_currentVisualizer != null) {
@@ -226,11 +236,13 @@ public class VisualizerViewer extends PageBook
 	// --- viewer events ---
 
 	/** Adds listener for viewer events. */
+	@Override
 	public void addVisualizerViewerListener(IVisualizerViewerListener listener) {
 		m_listeners.addListener(listener);
 	}
 
 	/** Removes listener for viewer events. */
+	@Override
 	public void removeVisualizerViewerListener(IVisualizerViewerListener listener) {
 		m_listeners.removeListener(listener);
 	}
@@ -352,12 +364,14 @@ public class VisualizerViewer extends PageBook
 	// --- menu/toolbar management ---
 
 	/** Invoked when visualizer is selected, to populate the toolbar. */
+	@Override
 	public void populateToolBar(IToolBarManager toolBarManager) {
 		if (m_currentVisualizer != null)
 			m_currentVisualizer.populateToolBar(toolBarManager);
 	}
 
 	/** Invoked when visualizer is selected, to populate the toolbar's menu. */
+	@Override
 	public void populateMenu(IMenuManager menuManager) {
 		if (m_currentVisualizer != null)
 			m_currentVisualizer.populateMenu(menuManager);
@@ -368,12 +382,14 @@ public class VisualizerViewer extends PageBook
 	/** Invoked when context menu gesture happens on current
 	 *  visualizer control.
 	 */
+	@Override
 	public void menuDetected(MenuDetectEvent e) {
 		// raise event to allow view to show context menu
 		raiseContextMenuEvent(e.x, e.y);
 	}
 
 	/** Invoked when context menu is about to be shown. */
+	@Override
 	public void populateContextMenu(IMenuManager m) {
 		if (m_currentVisualizer != null) {
 			m_currentVisualizer.populateContextMenu(m);
@@ -381,6 +397,7 @@ public class VisualizerViewer extends PageBook
 	}
 
 	/** Gets context menu location. */
+	@Override
 	public Point getContextMenuLocation() {
 		return m_view.getContextMenuLocation();
 	}
@@ -405,11 +422,13 @@ public class VisualizerViewer extends PageBook
 	// Delegate to selection manager.
 
 	/** Adds external listener for selection change events. */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		m_selectionManager.addSelectionChangedListener(listener);
 	}
 
 	/** Removes external listener for selection change events. */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		if (m_selectionManager != null) {
 			m_selectionManager.removeSelectionChangedListener(listener);
@@ -422,11 +441,13 @@ public class VisualizerViewer extends PageBook
 	}
 
 	/** Gets current externally-visible selection. */
+	@Override
 	public ISelection getSelection() {
 		return m_selectionManager.getSelection();
 	}
 
 	/** Sets externally-visible selection. */
+	@Override
 	public void setSelection(ISelection selection) {
 		m_selectionManager.setSelection(selection);
 	}
@@ -452,6 +473,7 @@ public class VisualizerViewer extends PageBook
 	 * selection. Also invokes workbenchSelectionChanged() on visualizer
 	 * so it can update itself accordingly.
 	 */
+	@Override
 	public void workbenchSelectionChanged(ISelection selection) {
 		// See if we need to change visualizers to handle selection type.
 		IVisualizer handles = null;
@@ -511,6 +533,7 @@ public class VisualizerViewer extends PageBook
 	}
 
 	/** Invoked when visualizer's selection changes. */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		// Publish changed visualizer selection to any listeners.
 		setSelection(event.getSelection());

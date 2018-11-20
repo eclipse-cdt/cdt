@@ -48,6 +48,7 @@ public class GraphicCanvas extends BufferedCanvas {
 		super(parent);
 		m_objects = new ArrayList<IGraphicObject>();
 		Listener mouseListener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				switch (event.type) {
 				case SWT.MouseEnter:
@@ -66,6 +67,7 @@ public class GraphicCanvas extends BufferedCanvas {
 	}
 
 	/** Dispose method. */
+	@Override
 	public void dispose() {
 		if (m_objects != null) {
 			m_objects.clear();
@@ -113,6 +115,7 @@ public class GraphicCanvas extends BufferedCanvas {
 	// --- painting methods ---
 
 	/** Paints elements on canvas. */
+	@Override
 	public void paintCanvas(GC gc) {
 		// paint background first
 		clearCanvas(gc);

@@ -25,10 +25,12 @@ public class XlcLRGCCTests extends LRGCCTests {
 		return suite(XlcLRGCCTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

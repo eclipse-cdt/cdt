@@ -54,6 +54,7 @@ public class PDATerminateCommand implements ITerminateHandler {
 	}
 
 	// Run control may not be available after a connection is terminated and shut down.
+	@Override
 	public void canExecute(final IEnabledStateRequest request) {
 		// Terminate can only operate on a single element.
 		if (request.getElements().length != 1 || !(request.getElements()[0] instanceof IDMVMContext)) {
@@ -75,6 +76,7 @@ public class PDATerminateCommand implements ITerminateHandler {
 
 		try {
 			fSession.getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
 					// Get the processes service and the exec context.
 					PDACommandControl commandControl = fTracker.getService(PDACommandControl.class);
@@ -99,12 +101,14 @@ public class PDATerminateCommand implements ITerminateHandler {
 		}
 	}
 
+	@Override
 	public boolean execute(final IDebugCommandRequest request) {
 		// Skip the checks and assume that this method is called only if the action
 		// was enabled.
 
 		try {
 			fSession.getExecutor().submit(new DsfRunnable() {
+				@Override
 				public void run() {
 					// If the command control service is available, attempt to terminate the program.
 					PDACommandControl commandControl = fTracker.getService(PDACommandControl.class);

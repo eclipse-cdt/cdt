@@ -51,6 +51,7 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 		return suite(ExtractConstantRefactoringTest.class);
 	}
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		extractedConstantName = "EXTRACTED";

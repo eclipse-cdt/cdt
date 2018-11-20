@@ -43,10 +43,12 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 	 * org.eclipse.cdt.codan.core.model.ICIndexChecker#processUnit(org.eclipse
 	 * .cdt.core.model.ITranslationUnit)
 	 */
+	@Override
 	public void processUnit(ITranslationUnit unit) {
 		final IProblem pt = getProblemById(ER_ID, getFile());
 		try {
 			unit.accept(new ICElementVisitor() {
+				@Override
 				public boolean visit(ICElement element) {
 					if (element.getElementType() == ICElement.C_FUNCTION) {
 						String parameter = (String) getPreference(pt, PARAM_KEY);
@@ -73,6 +75,7 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 	 * org.eclipse.cdt.codan.core.model.ICheckerWithPreferences#initParameters
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
+	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		IProblemPreference info = new BasicProblemPreference(PARAM_KEY, "Name Pattern");

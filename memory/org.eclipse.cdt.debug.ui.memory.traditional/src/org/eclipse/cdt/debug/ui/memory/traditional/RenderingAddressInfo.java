@@ -128,6 +128,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 		resolveAddressInfoForCurrentSelection(contextService);
 	}
 
+	@Override
 	public void dispose() {
 
 		fSelectedContext = null;

@@ -36,6 +36,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  */
 public class SetCrossCommandOperation implements IRunnableWithProgress {
 
+	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 		String projectName = (String) MBSCustomPageManager.getPageProperty(SetCrossCommandWizardPage.PAGE_ID,

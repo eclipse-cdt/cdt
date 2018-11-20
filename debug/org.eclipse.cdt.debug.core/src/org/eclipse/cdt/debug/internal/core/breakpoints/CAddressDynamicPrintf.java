@@ -40,6 +40,7 @@ public class CAddressDynamicPrintf extends AbstractDynamicPrintf implements ICAd
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
+	@Override
 	public String getMarkerType() {
 		return C_ADDRESS_DYNAMICPRINTF_MARKER;
 	}

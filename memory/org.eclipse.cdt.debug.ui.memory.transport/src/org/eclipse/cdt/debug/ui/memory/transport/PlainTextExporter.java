@@ -62,6 +62,7 @@ public class PlainTextExporter implements IMemoryExporter {
 
 	private IDialogSettings fProperties;
 
+	@Override
 	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties,
 			ExportMemoryDialog parentDialog) {
 		fMemoryBlock = memBlock;
@@ -213,6 +214,7 @@ public class PlainTextExporter implements IMemoryExporter {
 		});
 
 		fStartText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				try {
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -246,11 +248,13 @@ public class PlainTextExporter implements IMemoryExporter {
 				validate();
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 			}
 		});
 
 		fEndText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				try {
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -284,12 +288,14 @@ public class PlainTextExporter implements IMemoryExporter {
 				validate();
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 			}
 
 		});
 
 		fLengthText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				try {
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -337,16 +343,19 @@ public class PlainTextExporter implements IMemoryExporter {
 				validate();
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 
 			}
 		});
 
 		fFileText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				validate();
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 			}
 		});
@@ -362,6 +371,7 @@ public class PlainTextExporter implements IMemoryExporter {
 		 *  speed of the draw of the dialog.
 		 */
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				validate();
 			}
@@ -436,14 +446,17 @@ public class PlainTextExporter implements IMemoryExporter {
 		fParentDialog.setValid(isValid);
 	}
 
+	@Override
 	public String getId() {
 		return "PlainTextExporter"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		return Messages.getString("PlainTextExporter.Name"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void exportMemory() {
 		Job job = new Job("Memory Export to Plain Text File") { //$NON-NLS-1$
 			@Override

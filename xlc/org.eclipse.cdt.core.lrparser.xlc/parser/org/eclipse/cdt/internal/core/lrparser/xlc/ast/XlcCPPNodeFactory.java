@@ -28,10 +28,12 @@ public class XlcCPPNodeFactory extends CPPNodeFactory implements IXlcCPPNodeFact
 		return DEFAULT_INSTANCE;
 	}
 
+	@Override
 	public IXlcCPPASTVectorTypeSpecifier newVectorTypeSpecifier() {
 		return new XlcCPPASTVectorTypeSpecifier();
 	}
 
+	@Override
 	public IXlcCPPASTModifiedArrayModifier newModifiedArrayModifier(IASTExpression expr) {
 		return new XlcCPPASTModifiedArrayModifier(expr);
 	}

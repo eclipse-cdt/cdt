@@ -71,6 +71,7 @@ public class PDAThreadsVMNode extends AbstractThreadVMNode implements IElementLa
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
 	 */
+	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
 		for (IElementCompareRequest request : requests) {
 			Object element = request.getElement();
@@ -93,6 +94,7 @@ public class PDAThreadsVMNode extends AbstractThreadVMNode implements IElementLa
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
 	 */
+	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 		for (IElementMementoRequest request : requests) {
 			Object element = request.getElement();

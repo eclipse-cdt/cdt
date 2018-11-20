@@ -108,32 +108,39 @@ public class MouseMonitor {
 	protected void attach(Control control) {
 		detach(m_control);
 		control.addMouseListener(m_mouseButtonListener = new MouseListener() {
+			@Override
 			public void mouseDown(MouseEvent e) {
 				mouseDownHandler(e.button, e.x, e.y, e.stateMask);
 			}
 
+			@Override
 			public void mouseUp(MouseEvent e) {
 				mouseUpHandler(e.button, e.x, e.y, e.stateMask);
 			}
 
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				mouseDoubleClickHandler(e.button, e.x, e.y, e.stateMask);
 			}
 		});
 		control.addMouseMoveListener(m_mouseMoveListener = new MouseMoveListener() {
+			@Override
 			public void mouseMove(MouseEvent e) {
 				mouseMoveHandler(e.x, e.y, e.stateMask);
 			}
 		});
 		control.addMouseTrackListener(m_mouseTrackListener = new MouseTrackListener() {
+			@Override
 			public void mouseEnter(MouseEvent e) {
 				mouseEnterHandler(e.x, e.y);
 			}
 
+			@Override
 			public void mouseExit(MouseEvent e) {
 				mouseExitHandler(e.x, e.y);
 			}
 
+			@Override
 			public void mouseHover(MouseEvent e) {
 				mouseHoverHandler(e.x, e.y);
 			}

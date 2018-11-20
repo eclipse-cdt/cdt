@@ -78,6 +78,7 @@ public class LLDBLaunch extends GdbLaunch {
 	 * TODO: GdbLaunch.getGDBPath() and setGDBPath() should reference each other
 	 * in the javadoc to make sure extenders override both.
 	 */
+	@Override
 	public IPath getGDBPath() {
 		String lldbPath = getAttribute(ILLDBLaunchConfigurationConstants.ATTR_DEBUG_NAME);
 		if (lldbPath != null) {
@@ -87,6 +88,7 @@ public class LLDBLaunch extends GdbLaunch {
 		return getLLDBPath(getLaunchConfiguration());
 	}
 
+	@Override
 	public void setGDBPath(String path) {
 		setAttribute(ILLDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, path);
 	}
@@ -114,6 +116,7 @@ public class LLDBLaunch extends GdbLaunch {
 		return retVal;
 	}
 
+	@Override
 	protected String getDefaultGDBPath() {
 		return getDefaultLLDBPath();
 	}

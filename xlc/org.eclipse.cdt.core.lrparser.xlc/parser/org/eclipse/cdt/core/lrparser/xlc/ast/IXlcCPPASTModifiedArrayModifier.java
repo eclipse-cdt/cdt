@@ -98,6 +98,7 @@ public interface IXlcCPPASTModifiedArrayModifier extends IASTArrayModifier {
 
 	/**
 	 */
+	@Override
 	public IXlcCPPASTModifiedArrayModifier copy();
 
 }

@@ -25,6 +25,7 @@ public class XlcLRCompletionParseTest extends LRCompletionParseTest {
 		return new TestSuite(XlcLRCompletionParseTest.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}

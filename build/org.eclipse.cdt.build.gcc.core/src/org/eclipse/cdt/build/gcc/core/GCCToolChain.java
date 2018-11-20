@@ -500,6 +500,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		includePathReaderThread.start();
 
 		Thread macroReaderThread = new Thread("Macro reader") {
+			@Override
 			public void run() {
 				// Now the defines off the output stream
 				try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {

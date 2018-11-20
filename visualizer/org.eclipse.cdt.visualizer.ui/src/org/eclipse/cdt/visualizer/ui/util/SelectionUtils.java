@@ -42,26 +42,32 @@ public class SelectionUtils {
 
 	/** "Empty" or undefined selection. */
 	public static class EmptySelection implements ISelection, IStructuredSelection {
+		@Override
 		public boolean isEmpty() {
 			return true;
 		}
 
+		@Override
 		public Iterator<Object> iterator() {
 			return new ArrayList<Object>().iterator();
 		}
 
+		@Override
 		public List<Object> toList() {
 			return new ArrayList<Object>();
 		}
 
+		@Override
 		public int size() {
 			return 0;
 		}
 
+		@Override
 		public Object getFirstElement() {
 			return null;
 		}
 
+		@Override
 		public Object[] toArray() {
 			return new Object[0];
 		}

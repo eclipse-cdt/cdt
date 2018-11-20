@@ -53,29 +53,34 @@ public class TestCanvasVisualizer extends GraphicCanvasVisualizer {
 	// --- IVisualizer implementation ---
 
 	/** Returns non-localized unique name for this visualizer. */
+	@Override
 	public String getName() {
 		return "default";
 	}
 
 	/** Returns localized name to display for this visualizer. */
+	@Override
 	public String getDisplayName() {
 		// TODO: use a string resource here.
 		return "Test Visualizer";
 	}
 
 	/** Returns localized tooltip text to display for this visualizer. */
+	@Override
 	public String getDescription() {
 		// TODO: use a string resource here.
 		return "Test visualizer (for debugging only).";
 	}
 
 	/** Creates and returns visualizer canvas control. */
+	@Override
 	public GraphicCanvas createCanvas(Composite parent) {
 		m_canvas = new TestCanvas(parent);
 		return m_canvas;
 	}
 
 	/** Invoked after visualizer control creation, */
+	@Override
 	protected void initializeCanvas(GraphicCanvas canvas) {
 		m_canvas.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		m_canvas.setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLACK));
@@ -87,6 +92,7 @@ public class TestCanvasVisualizer extends GraphicCanvasVisualizer {
 	 * Tests whether if the IVisualizer can display the selection
 	 * (or something reachable from it).
 	 */
+	@Override
 	public int handlesSelection(ISelection selection) {
 		// By default, we don't support anything.
 		// Changing this to return 1 enables the test canvas.
@@ -96,6 +102,7 @@ public class TestCanvasVisualizer extends GraphicCanvasVisualizer {
 	/**
 	 * Invoked by VisualizerViewer when workbench selection changes.
 	 */
+	@Override
 	public void workbenchSelectionChanged(ISelection selection) {
 		String text = SelectionUtils.toString(selection);
 		m_canvas.setText(text);

@@ -56,6 +56,7 @@ public class VisualizerViewerEvent extends Event {
 	}
 
 	/** Dispose method. */
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
@@ -63,6 +64,7 @@ public class VisualizerViewerEvent extends Event {
 	// --- Object methods ---
 
 	/** Converts event type to string */
+	@Override
 	public String typeToString(int type) {
 		String result = "";
 		switch (type) {

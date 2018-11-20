@@ -25,10 +25,12 @@ public class XlcLRInactiveCodeTests extends LRInactiveCodeTests {
 		return suite(XlcLRInactiveCodeTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

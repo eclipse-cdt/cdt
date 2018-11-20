@@ -103,6 +103,7 @@ class SessionAdapterSet {
 
 		// Initialize debug model provider
 		fDebugModelProvider = new IDebugModelProvider() {
+			@Override
 			public String[] getModelIdentifiers() {
 				return new String[] { PDAPlugin.ID_PDA_DEBUG_MODEL };
 			}

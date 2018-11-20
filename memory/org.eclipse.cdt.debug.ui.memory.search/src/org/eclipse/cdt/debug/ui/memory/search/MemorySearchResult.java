@@ -36,19 +36,23 @@ public class MemorySearchResult implements ISearchResult {
 		fLabel = label;
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 
 		return null;
 	}
 
+	@Override
 	public String getLabel() {
 		return fLabel;
 	}
 
+	@Override
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}
 
+	@Override
 	public String getTooltip() {
 
 		return fLabel;
@@ -75,11 +79,13 @@ public class MemorySearchResult implements ISearchResult {
 		}
 	}
 
+	@Override
 	public void addListener(ISearchResultListener l) {
 		listeners.addElement(l);
 
 	}
 
+	@Override
 	public void removeListener(ISearchResultListener l) {
 		listeners.removeElement(l);
 	}

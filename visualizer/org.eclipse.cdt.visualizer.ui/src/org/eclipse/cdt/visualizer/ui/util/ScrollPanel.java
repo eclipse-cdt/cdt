@@ -46,12 +46,14 @@ public class ScrollPanel extends ScrolledComposite {
 	}
 
 	/** Dispose method. */
+	@Override
 	public void dispose() {
 		cleanupScrollPanel();
 		super.dispose();
 	}
 
 	/** Overridden to permit subclassing */
+	@Override
 	protected void checkSubclass() {
 		// do nothing -- superclass implementation throws a "Subclassing not allowed" exception
 	}

@@ -25,10 +25,12 @@ public class XlcLRCSpecTests extends LRCSpecTests {
 		return suite(XlcLRCSpecTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

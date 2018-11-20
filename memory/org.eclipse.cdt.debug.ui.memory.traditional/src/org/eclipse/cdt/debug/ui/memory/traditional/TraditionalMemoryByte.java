@@ -32,10 +32,12 @@ public class TraditionalMemoryByte extends MemoryByte implements IMemoryByte {
 		super(byteValue, byteFlags);
 	}
 
+	@Override
 	public boolean isEdited() {
 		return isEdited;
 	}
 
+	@Override
 	public void setEdited(boolean edited) {
 		isEdited = edited;
 	}

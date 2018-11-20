@@ -25,10 +25,12 @@ public class XlcLRUtilTests extends LRUtilTests {
 		return suite(XlcLRUtilTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

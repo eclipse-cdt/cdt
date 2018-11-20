@@ -26,16 +26,20 @@ public class XlcCompletionHangingTest extends LRCompletionHangingTest {
 	}
 
 	//TODO ??? overwrite some failed test cases
+	@Override
 	public void testCompletionTemplateClassForCPP() throws Exception {
 	}
 
+	@Override
 	public void testCompletionGnuCPP() throws Exception {
 	}
 
+	@Override
 	protected XlcCLanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected XlcCPPLanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

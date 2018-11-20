@@ -25,10 +25,12 @@ public class XlcLRDOMPreprocessorInformationTest extends LRDOMPreprocessorInform
 		return suite(XlcLRDOMPreprocessorInformationTest.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

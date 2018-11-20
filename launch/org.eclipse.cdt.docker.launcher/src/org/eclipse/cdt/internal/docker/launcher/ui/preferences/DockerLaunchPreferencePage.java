@@ -37,6 +37,7 @@ public class DockerLaunchPreferencePage extends FieldEditorPreferencePage implem
 	 * GUI blocks needed to manipulate various types of preferences. Each field
 	 * editor knows how to save and restore itself.
 	 */
+	@Override
 	public void createFieldEditors() {
 		defaultImage = new StringFieldEditor(PreferenceConstants.DEFAULT_IMAGE, Messages.Default_Image,
 				getFieldEditorParent());
@@ -54,6 +55,7 @@ public class DockerLaunchPreferencePage extends FieldEditorPreferencePage implem
 	 * @see
 	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

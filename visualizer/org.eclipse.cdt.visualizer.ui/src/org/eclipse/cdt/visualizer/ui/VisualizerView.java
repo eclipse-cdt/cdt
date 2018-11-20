@@ -95,6 +95,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	}
 
 	/** Dispose method */
+	@Override
 	public void dispose() {
 		super.dispose();
 		setViewer(null);
@@ -143,6 +144,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	// these controls have been created.
 
 	/** Invoked when UI controls need to be created */
+	@Override
 	public void createPartControl(Composite parent) {
 		m_parentControl = parent;
 
@@ -172,6 +174,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	 *  (for example, when loading views from workspace memento information),
 	 *  in which case it should silently do nothing.
 	 */
+	@Override
 	public void setFocus() {
 		if (m_viewer != null)
 			m_viewer.setFocus();
@@ -247,6 +250,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	/** Invoked by WorkbenchSelectionAdapter when selection changes,
 	 *  and by viewer when visualizer selection changes.
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		Object source = event.getSource();
 		if (source instanceof SelectionProviderAdapter) {
@@ -300,6 +304,7 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	// --- IVisulizerViewerListener implementation ---
 
 	/** Invoked when visualizer in view has changed. */
+	@Override
 	public void visualizerEvent(IVisualizerViewer source, VisualizerViewerEvent event) {
 		switch (event.getType()) {
 		case VisualizerViewerEvent.VISUALIZER_CHANGED:
@@ -371,10 +376,12 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	protected void initializeMenu() {
 		IMenuManager menuManager = getViewMenuManager();
 		menuManager.addMenuListener(new IMenuListener2() {
+			@Override
 			public void menuAboutToShow(IMenuManager m) {
 				viewMenuShow(m);
 			}
 
+			@Override
 			public void menuAboutToHide(IMenuManager m) {
 				viewMenuHide(m);
 			}
@@ -408,10 +415,12 @@ public class VisualizerView extends ViewPart implements IVisualizerViewerListene
 	protected void initializeContextMenu() {
 		m_contextMenuManager = new MenuManager();
 		m_contextMenuManager.addMenuListener(new IMenuListener2() {
+			@Override
 			public void menuAboutToShow(IMenuManager m) {
 				VisualizerView.this.contextMenuShow(m);
 			}
 
+			@Override
 			public void menuAboutToHide(IMenuManager m) {
 				VisualizerView.this.contextMenuHide(m);
 			}

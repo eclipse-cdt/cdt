@@ -105,6 +105,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		fIsCanceled = canceled;
 	}
 
+	@Override
 	public void save() throws IOException {
 		if (!fIsCanceled && fContext != null && fContext.getBreakpoint() != null) {
 			ICBreakpoint bp = fContext.getBreakpoint();
@@ -181,6 +182,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		}
 		if (!changedProperties.isEmpty()) {
 			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					Iterator<String> changed = changedProperties.iterator();
 					while (changed.hasNext()) {
@@ -261,22 +263,27 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 	///////////////////////////////////////////////////////////////////////
 	// IPreferenceStore
 
+	@Override
 	public boolean needsSaving() {
 		return fIsDirty && !fIsCanceled;
 	}
 
+	@Override
 	public boolean contains(String name) {
 		return fProperties.containsKey(name);
 	}
 
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.add(listener);
 	}
 
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.remove(listener);
 	}
 
+	@Override
 	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
 		Object[] listeners = fListeners.getListeners();
 		// Do we need to fire an event.
@@ -289,6 +296,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		}
 	}
 
+	@Override
 	public boolean getBoolean(String name) {
 		boolean retVal = false;
 		Object o = fProperties.get(name);
@@ -298,6 +306,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		return retVal;
 	}
 
+	@Override
 	public int getInt(String name) {
 		int retVal = 0;
 		Object o = fProperties.get(name);
@@ -307,6 +316,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		return retVal;
 	}
 
+	@Override
 	public String getString(String name) {
 		String retVal = ""; //$NON-NLS-1$
 		Object o = fProperties.get(name);
@@ -316,46 +326,57 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		return retVal;
 	}
 
+	@Override
 	public double getDouble(String name) {
 		return 0;
 	}
 
+	@Override
 	public float getFloat(String name) {
 		return 0;
 	}
 
+	@Override
 	public long getLong(String name) {
 		return 0;
 	}
 
+	@Override
 	public boolean isDefault(String name) {
 		return false;
 	}
 
+	@Override
 	public boolean getDefaultBoolean(String name) {
 		return false;
 	}
 
+	@Override
 	public double getDefaultDouble(String name) {
 		return 0;
 	}
 
+	@Override
 	public float getDefaultFloat(String name) {
 		return 0;
 	}
 
+	@Override
 	public int getDefaultInt(String name) {
 		return 0;
 	}
 
+	@Override
 	public long getDefaultLong(String name) {
 		return 0;
 	}
 
+	@Override
 	public String getDefaultString(String name) {
 		return null;
 	}
 
+	@Override
 	public void putValue(String name, String value) {
 		Object oldValue = fProperties.get(name);
 		if (oldValue == null || !oldValue.equals(value)) {
@@ -364,27 +385,35 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		}
 	}
 
+	@Override
 	public void setDefault(String name, double value) {
 	}
 
+	@Override
 	public void setDefault(String name, float value) {
 	}
 
+	@Override
 	public void setDefault(String name, int value) {
 	}
 
+	@Override
 	public void setDefault(String name, long value) {
 	}
 
+	@Override
 	public void setDefault(String name, String defaultObject) {
 	}
 
+	@Override
 	public void setDefault(String name, boolean value) {
 	}
 
+	@Override
 	public void setToDefault(String name) {
 	}
 
+	@Override
 	public void setValue(String name, boolean value) {
 		boolean oldValue = getBoolean(name);
 		if (oldValue != value) {
@@ -394,6 +423,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		}
 	}
 
+	@Override
 	public void setValue(String name, int value) {
 		int oldValue = getInt(name);
 		if (oldValue != value) {
@@ -403,6 +433,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		}
 	}
 
+	@Override
 	public void setValue(String name, String value) {
 		Object oldValue = fProperties.get(name);
 		if ((oldValue == null && value != null) || (oldValue != null && !oldValue.equals(value))) {
@@ -412,12 +443,15 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 		}
 	}
 
+	@Override
 	public void setValue(String name, float value) {
 	}
 
+	@Override
 	public void setValue(String name, double value) {
 	}
 
+	@Override
 	public void setValue(String name, long value) {
 	}
 

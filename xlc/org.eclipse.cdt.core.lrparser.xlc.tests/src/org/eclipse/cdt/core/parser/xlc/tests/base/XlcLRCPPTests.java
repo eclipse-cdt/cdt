@@ -27,16 +27,19 @@ public class XlcLRCPPTests extends LRCPPTests {
 	}
 
 	//CDT_70_FIX_FROM_50-#9
+	@Override
 	public void testStaticAssertions_294730() throws Exception {
 		String code = getAboveComment();
 		code = code.replaceAll("static_assert", "__static_assert");
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

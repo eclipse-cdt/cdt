@@ -17,6 +17,7 @@ package org.eclipse.cdt.debug.internal.core;
  * @deprecated This interface has been moved to a public package.  Use
  * {@link org.eclipse.cdt.debug.core.ICWatchpointTarget} instead.
  */
+@Deprecated
 public interface ICWatchpointTarget extends org.eclipse.cdt.debug.core.ICWatchpointTarget {
 
 }

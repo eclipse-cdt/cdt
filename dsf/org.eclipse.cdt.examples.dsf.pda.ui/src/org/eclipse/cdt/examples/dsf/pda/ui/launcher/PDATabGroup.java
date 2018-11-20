@@ -32,6 +32,7 @@ public class PDATabGroup extends AbstractLaunchConfigurationTabGroup {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
+	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		//#ifdef ex1
 		//#		// TODO: Exercise 1 - add the PDA main tab, source lookup tab and common

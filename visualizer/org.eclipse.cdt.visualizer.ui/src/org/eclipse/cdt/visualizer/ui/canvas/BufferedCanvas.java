@@ -52,6 +52,7 @@ public class BufferedCanvas extends Canvas implements PaintListener, ControlList
 	}
 
 	/** Dispose method. */
+	@Override
 	public void dispose() {
 		super.dispose();
 		cleanupBufferedCanvas();
@@ -80,11 +81,13 @@ public class BufferedCanvas extends Canvas implements PaintListener, ControlList
 	// --- event handlers ---
 
 	/** Invoked when control is moved/resized */
+	@Override
 	public void controlMoved(ControlEvent e) {
 		// do nothing, we don't care
 	}
 
 	/** Invoked when control is resized */
+	@Override
 	public void controlResized(ControlEvent e) {
 		resized(getBounds());
 	}
@@ -124,6 +127,7 @@ public class BufferedCanvas extends Canvas implements PaintListener, ControlList
 	// --- paint methods ---
 
 	/** Invoked when control needs to be repainted */
+	@Override
 	public void paintControl(PaintEvent e) {
 		// Handle last paint event of a cluster.
 		if (e.count <= 1) {
@@ -184,6 +188,7 @@ public class BufferedCanvas extends Canvas implements PaintListener, ControlList
 	// --- update methods ---
 
 	/** Redraws control */
+	@Override
 	public void update() {
 		// guard against update events that happen
 		// after app has shut down

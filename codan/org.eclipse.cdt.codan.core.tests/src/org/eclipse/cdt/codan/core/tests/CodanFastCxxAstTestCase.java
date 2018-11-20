@@ -157,6 +157,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	void runCodan(IASTTranslationUnit tu) {
 		IProblemReporter problemReporter = CodanRuntime.getInstance().getProblemReporter();
 		CodanRuntime.getInstance().setProblemReporter(new IProblemReporter() {
+			@Override
 			public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
 				codanproblems.add(new ProblemInstance(problemId, loc, args));
 			}

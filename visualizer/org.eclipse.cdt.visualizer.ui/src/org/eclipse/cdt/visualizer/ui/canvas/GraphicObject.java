@@ -139,11 +139,13 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 	// --- accessors ---
 
 	/** Gets data object associated with this view element. */
+	@Override
 	public Object getData() {
 		return m_data;
 	}
 
 	/** Sets data object associated with this view element. */
+	@Override
 	public void setData(Object data) {
 		m_data = data;
 	}
@@ -222,11 +224,13 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 	}
 
 	/** Returns true if element bounds contains point. */
+	@Override
 	public boolean contains(int x, int y) {
 		return m_bounds.contains(x, y);
 	}
 
 	/** Returns true if element bounds are within specified rectangle. */
+	@Override
 	public boolean isWithin(Rectangle region) {
 		return (region.x <= m_bounds.x && region.y <= m_bounds.y
 				&& region.x + region.width >= m_bounds.x + m_bounds.width
@@ -276,6 +280,7 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 	// --- methods ---
 
 	/** Invoked to allow element to paint itself on the viewer canvas */
+	@Override
 	public void paint(GC gc, boolean decorations) {
 		if (isVisible()) {
 			// Set GC to reflect object properties, if set.
@@ -329,6 +334,7 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 	}
 
 	/** Returns true if object has decorations to paint. */
+	@Override
 	public boolean hasDecorations() {
 		return false;
 	}

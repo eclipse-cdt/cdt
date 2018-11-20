@@ -81,6 +81,7 @@ public class RunnableWithResult<V> implements Runnable, Callable<V> {
 	/** Run method.
 	 *  Derived types should override call() rather than this method.
 	 */
+	@Override
 	public void run() {
 		m_done = false;
 		setResult(call());
@@ -95,6 +96,7 @@ public class RunnableWithResult<V> implements Runnable, Callable<V> {
 	/** Method that returns the value.
 	 *  Default implementation returns null.
 	 */
+	@Override
 	public V call() {
 		return null;
 	}

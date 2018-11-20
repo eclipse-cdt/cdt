@@ -36,6 +36,7 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 @SuppressWarnings({ "restriction" })
 public class PDAAdapterFactory implements IAdapterFactory {
 	// This IAdapterFactory method returns adapters for the PDA launch object only.
+	@Override
 	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (!(adaptableObject instanceof PDALaunch))
@@ -66,6 +67,7 @@ public class PDAAdapterFactory implements IAdapterFactory {
 			return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
 	public Class[] getAdapterList() {
 		return new Class[] { IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class };

@@ -26,6 +26,7 @@ public class XlcCNodeFactory extends CNodeFactory implements IXlcCNodeFactory {
 		return DEFAULT_INSTANCE;
 	}
 
+	@Override
 	public IXlcCASTVectorTypeSpecifier newVectorTypeSpecifier() {
 		return new XlcCASTVectorTypeSpecifier();
 	}

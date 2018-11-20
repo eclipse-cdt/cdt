@@ -38,6 +38,7 @@ public class GrepChecker extends AbstractCheckerWithProblemPreferences {
 	public final static String ID = "org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblemError";
 	private static final String PARAM_STRING_LIST = "searchlist";
 
+	@Override
 	public synchronized boolean processResource(IResource resource) {
 		if (!shouldProduceProblems(resource))
 			return false;

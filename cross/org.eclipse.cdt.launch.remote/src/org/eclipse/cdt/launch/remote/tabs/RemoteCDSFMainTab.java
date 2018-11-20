@@ -118,6 +118,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		/* If the local binary path changes, modify the remote binary location */
 		fProgText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				setLocalPathForRemotePath();
 			}
@@ -194,6 +195,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		connectionCombo.setLayoutData(gd);
 		connectionCombo.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				useDefaultsFromConnection();
 				updateConnectionButtons();
@@ -260,6 +262,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		remoteProgText.setLayoutData(gd);
 		remoteProgText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -288,6 +291,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		preRunText.setLayoutData(gd);
 		preRunText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}

@@ -40,11 +40,13 @@ public class FindAction implements IViewActionDelegate {
 		return fSearchDialogProperties;
 	}
 
+	@Override
 	public void init(IViewPart view) {
 		if (view instanceof IMemoryRenderingSite)
 			fView = (IMemoryRenderingSite) view;
 	}
 
+	@Override
 	public void run(IAction action) {
 		ISelection selection = fView.getSite().getSelectionProvider().getSelection();
 
@@ -89,6 +91,7 @@ public class FindAction implements IViewActionDelegate {
 
 	private static IAction fAction = null;
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 
 		if (action.getId().equals(FIND_NEXT_ID)) {

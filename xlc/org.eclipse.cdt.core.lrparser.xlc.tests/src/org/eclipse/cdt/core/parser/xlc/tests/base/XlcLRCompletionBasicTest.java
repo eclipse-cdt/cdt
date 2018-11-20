@@ -25,10 +25,12 @@ public class XlcLRCompletionBasicTest extends LRCompletionBasicTest {
 		return suite(XlcLRCompletionBasicTest.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

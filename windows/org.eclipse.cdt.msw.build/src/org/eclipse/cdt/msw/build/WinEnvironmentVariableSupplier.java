@@ -48,18 +48,22 @@ public class WinEnvironmentVariableSupplier
 			this.operation = operation;
 		}
 
+		@Override
 		public String getDelimiter() {
 			return ";";
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
 
+		@Override
 		public String getValue() {
 			return value;
 		}
 
+		@Override
 		public int getOperation() {
 			return operation;
 		}
@@ -70,20 +74,24 @@ public class WinEnvironmentVariableSupplier
 		initvars();
 	}
 
+	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IManagedProject project,
 			IEnvironmentVariableProvider provider) {
 		return envvars.get(variableName);
 	}
 
+	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		return envvars.get(variableName);
 	}
 
+	@Override
 	public IBuildEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider) {
 		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);
 	}
 
+	@Override
 	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);

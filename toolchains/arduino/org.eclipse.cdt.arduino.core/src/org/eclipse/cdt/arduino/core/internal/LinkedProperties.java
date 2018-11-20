@@ -26,10 +26,12 @@ public class LinkedProperties extends Properties {
 		return Collections.list(keys());
 	}
 
+	@Override
 	public Enumeration<Object> keys() {
 		return Collections.<Object>enumeration(keys);
 	}
 
+	@Override
 	public Object put(Object key, Object value) {
 		keys.add(key);
 		return super.put(key, value);

@@ -46,6 +46,7 @@ public class CAddressTracepoint extends AbstractTracepoint implements ICAddressB
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
+	@Override
 	public String getMarkerType() {
 		return C_ADDRESS_TRACEPOINT_MARKER;
 	}

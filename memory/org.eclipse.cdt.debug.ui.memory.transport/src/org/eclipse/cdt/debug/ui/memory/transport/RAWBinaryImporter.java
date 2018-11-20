@@ -63,6 +63,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 
 	private static final int BUFFER_LENGTH = 64 * 1024;
 
+	@Override
 	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties,
 			ImportMemoryDialog parentDialog) {
 		fMemoryBlock = memBlock;
@@ -133,9 +134,11 @@ public class RAWBinaryImporter implements IMemoryImporter {
 
 		fileButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
 				dialog.setText(Messages.getString("RAWBinaryImporter.ChooseFile")); //$NON-NLS-1$
@@ -155,6 +158,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 		});
 
 		fStartText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				boolean valid = true;
 				try {
@@ -173,6 +177,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 
 		});
 		fFileText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}
@@ -190,6 +195,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 		parent.pack();
 
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				validate();
 			}
@@ -234,14 +240,17 @@ public class RAWBinaryImporter implements IMemoryImporter {
 		return new File(fFileText.getText().trim());
 	}
 
+	@Override
 	public String getId() {
 		return "rawbinary"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		return Messages.getString("RAWBinaryImporter.Name"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void importMemory() {
 		Job job = new Job("Memory Import from RAW Binary File") { //$NON-NLS-1$
 

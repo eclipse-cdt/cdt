@@ -27,23 +27,29 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class WinScannerInfoCollector implements IScannerInfoCollector3 {
 
+	@Override
 	public void contributeToScannerConfig(Object resource, Map scannerInfo) {
 	}
 
+	@Override
 	public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
 		return null;
 	}
 
+	@Override
 	public IDiscoveredPathInfo createPathInfoObject() {
 		return new WinDiscoveredPathInfo();
 	}
 
+	@Override
 	public void setInfoContext(InfoContext context) {
 	}
 
+	@Override
 	public void setProject(IProject project) {
 	}
 
+	@Override
 	public void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException {
 	}
 

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1bb997bb_102898a7",
+        "filename": "core/org.eclipse.cdt.core.win32/library/cdt-win32.sln",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-11-20T18:04:29Z",
+      "side": 1,
+      "message": "Normally visual studio solution \u0026 project files would be kept with Windows line endings as they may not work correctly with Unix endings. Can be handled using a .gitattributes file.",
+      "revId": "796d78e3e4b4299aabc1ba726763e53cb609efa6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

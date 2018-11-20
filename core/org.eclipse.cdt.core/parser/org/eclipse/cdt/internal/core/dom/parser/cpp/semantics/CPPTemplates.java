@@ -1238,6 +1238,15 @@ public class CPPTemplates {
 		}
 
 		if (type instanceof ITypeContainer) {
+			if (type instanceof ICPPAliasTemplateInstance) {
+				ICPPTemplateArgument[] args = ((ICPPAliasTemplateInstance) type).getTemplateArguments();
+				for (ICPPTemplateArgument arg : args) {
+					r = combinePackSize(r, determinePackSize(arg, tpMap));
+					if (r < 0) {
+						return r;
+					}
+				}
+			}
 			final ITypeContainer typeContainer = (ITypeContainer) type;
 			r = combinePackSize(r, determinePackSize(typeContainer.getType(), tpMap));
 		}

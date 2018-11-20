@@ -11075,4 +11075,24 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper bh = new AST2AssertionHelper(getAboveComment(), CPP);
 		bh.assertProblem("B<A>", 4);
 	}
+	
+	//	struct my_type {};
+	//
+	//	template <class>
+	//	using my_type_alias = my_type;
+	//
+	//	template <class... Ts>
+	//	struct foo {
+	//	    template <class... Vs>
+	//	    static int select(my_type_alias<Ts>..., Vs...);
+	//	    
+	//	    using type = decltype(select(Ts()...));
+	//	};
+	//
+	//	template <class> struct trigger{};
+	//
+	//	using A = trigger<foo<my_type>::type>;
+	public void testParameterPackInAliasTemplateArgs_540741() throws Exception {
+		parseAndCheckBindings();
+	}
 }

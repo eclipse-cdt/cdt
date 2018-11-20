@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <template type="ProjTempl" version="1.0" supplier="Eclipse.org" revision="1.0" author="Intel Corporation"
-		copyright="Copyright (c) 2011 Red Hat, Inc. All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html"
+		copyright="Copyright (c) 2011 Red Hat, Inc. This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at https://www.eclipse.org/legal/epl-2.0/
+ at
+ at SPDX-License-Identifier: EPL-2.0"
 		id="AutotoolsSharedLibraryProject" label="%AutotoolsSharedLibrary.template.label" description="%AutotoolsSharedLibrary.template.description"
 		 help="help.html">
 

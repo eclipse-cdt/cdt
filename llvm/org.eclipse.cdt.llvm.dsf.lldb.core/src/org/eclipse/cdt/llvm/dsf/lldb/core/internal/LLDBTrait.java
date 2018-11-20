@@ -28,7 +28,6 @@ import org.eclipse.debug.core.ILaunch;
  * The code can call {@link #isTraitOf(DsfSession)} to know whether or know the
  * session (i.e. running LLDB) has that trait.
  *
- * @noimplement This interface is not intended to be implemented by clients.
  * @noreference This enum is not intended to be referenced by clients.
  */
 public enum LLDBTrait {

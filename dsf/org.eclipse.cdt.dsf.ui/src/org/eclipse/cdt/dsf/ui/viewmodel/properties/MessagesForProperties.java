@@ -15,9 +15,6 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
 import org.eclipse.osgi.util.NLS;
 
-/**
- * @noinstantiate This class is not intended to be instantiated by clients.
- */
 class MessagesForProperties extends NLS {
     public static String DefaultLabelMessage_label;
     public static String PropertiesUpdateStatus_message;

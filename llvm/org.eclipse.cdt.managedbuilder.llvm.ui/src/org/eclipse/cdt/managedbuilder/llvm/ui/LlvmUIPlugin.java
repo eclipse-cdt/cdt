@@ -36,7 +36,6 @@ import org.osgi.framework.BundleContext;
  * The main plugin class to be used in the desktop.
  *
  * @noextend This class is not intended to be subclassed by clients.
- * @noimplement This class is not intended to be instantiated by clients.
  */
 public class LlvmUIPlugin extends AbstractUIPlugin {
 

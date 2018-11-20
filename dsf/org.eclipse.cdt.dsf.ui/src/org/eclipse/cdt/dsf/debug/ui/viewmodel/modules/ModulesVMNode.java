@@ -104,7 +104,7 @@ public class ModulesVMNode extends AbstractDMVMNode implements IElementLabelProv
 									return Boolean.TRUE.equals(properties.get(propertyName));
 								}
 								return super.checkProperty(propertyName, status, properties);
-							};
+							}
 						}, new DsfUILabelImage(IDsfDebugUIConstants.IMG_OBJS_SHARED_LIBRARY_SYMBOLS_UNLOADED),
 						new StaleDataLabelBackground(), new LabelFont(JFaceResources
 								.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0]) }));

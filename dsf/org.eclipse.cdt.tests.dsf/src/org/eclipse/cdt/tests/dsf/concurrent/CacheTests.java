@@ -556,7 +556,7 @@ public class CacheTests {
 			@Override
 			protected synchronized void canceled() {
 				canceledCalled[0] = true;
-			};
+			}
 		};
 
 		// Request data from cache
@@ -657,13 +657,13 @@ public class CacheTests {
 					@Override
 					public synchronized void done() {
 						// Avoid clearing cancel listeners list
-					};
+					}
 
 					@Override
 					protected void handleSuccess() {
 						rm.setData(fTestCache.getData());
 						rm.done();
-					};
+					}
 				};
 
 				fTestCache.update(rmBad[0]);

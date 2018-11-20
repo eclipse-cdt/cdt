@@ -1380,6 +1380,6 @@ public class FindReplaceDialog extends SelectionDialog {
 
 	interface IMemorySearchQuery extends ISearchQuery {
 		public IMemoryRenderingSite getMemoryView();
-	};
+	}
 
 }

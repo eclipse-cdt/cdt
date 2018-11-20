@@ -208,7 +208,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 			}
 			return super.getAdapter(adapter);
 		}
-	};
+	}
 
 	private static boolean isConvenienceVariable(String expr) {
 		// GDB convenience variables are variables that start with a $ followed

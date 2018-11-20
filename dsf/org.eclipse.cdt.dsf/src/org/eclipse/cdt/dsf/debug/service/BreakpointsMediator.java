@@ -369,7 +369,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 						protected IStatus run(IProgressMonitor monitor) {
 							fAttributeTranslator.updateBreakpointStatus(bp);
 							return Status.OK_STATUS;
-						};
+						}
 					}.schedule();
 
 					countingRm.done();
@@ -424,7 +424,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 					protected IStatus run(IProgressMonitor monitor) {
 						fAttributeTranslator.updateBreakpointStatus(breakpoint);
 						return Status.OK_STATUS;
-					};
+					}
 				}.schedule();
 				rm.done();
 			}
@@ -503,7 +503,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 					protected IStatus run(IProgressMonitor monitor) {
 						fAttributeTranslator.updateBreakpointStatus(breakpoint);
 						return Status.OK_STATUS;
-					};
+					}
 				}.schedule();
 
 				rm.done();
@@ -616,7 +616,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 					protected IStatus run(IProgressMonitor monitor) {
 						fAttributeTranslator.updateBreakpointStatus(breakpoint);
 						return Status.OK_STATUS;
-					};
+					}
 				}.schedule();
 
 				super.handleCompleted();
@@ -854,7 +854,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 										protected IStatus run(IProgressMonitor monitor) {
 											breakpointChanged(breakpoint, delta);
 											return Status.OK_STATUS;
-										};
+										}
 									}.schedule();
 								}
 							}

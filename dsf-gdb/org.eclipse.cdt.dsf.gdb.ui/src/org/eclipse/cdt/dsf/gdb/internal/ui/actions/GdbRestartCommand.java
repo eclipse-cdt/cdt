@@ -112,7 +112,7 @@ public class GdbRestartCommand implements IRestartHandler {
 								@Override
 								protected void handleCompleted() {
 									request.done();
-								};
+								}
 							});
 				} else {
 					request.done();

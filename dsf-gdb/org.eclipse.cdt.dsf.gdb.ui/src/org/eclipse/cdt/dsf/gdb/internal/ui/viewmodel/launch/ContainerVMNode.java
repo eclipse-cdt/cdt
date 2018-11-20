@@ -166,7 +166,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.RED)
 										: false;
-							};
+							}
 						},
 						/* RUNNING CONTAINER - GREEN PIN */
 						new LabelImage(
@@ -186,7 +186,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.GREEN)
 										: false;
-							};
+							}
 						},
 						/* RUNNING CONTAINER - BLUE PIN */
 						new LabelImage(
@@ -206,7 +206,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.BLUE)
 										: false;
-							};
+							}
 						},
 						/* RUNNING CONTAINER - NO PIN */
 						new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET)) {
@@ -217,7 +217,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 							@Override
 							public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 								return Boolean.FALSE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
-							};
+							}
 						},
 
 						/* SUSPENDED CONTAINER - RED PIN */
@@ -234,7 +234,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.RED) : false;
-							};
+							}
 						},
 						/* SUSPENDED CONTAINER - GREEN PIN */
 						new LabelImage(
@@ -250,7 +250,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.GREEN) : false;
-							};
+							}
 						},
 						/* SUSPENDED CONTAINER - BLUE PIN */
 						new LabelImage(
@@ -266,7 +266,7 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.BLUE) : false;
-							};
+							}
 						},
 						/* SUSPENDED CONTAINER - NO PIN */
 						new LabelImage(DebugUITools

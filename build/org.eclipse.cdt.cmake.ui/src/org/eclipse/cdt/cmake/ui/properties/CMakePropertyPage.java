@@ -216,7 +216,7 @@ public class CMakePropertyPage extends PropertyPage {
 
 	public enum ParseState {
 		INIT, SEENCOMMENT
-	};
+	}
 
 	/**
 	 * Parse output of cmake -LAH call to determine options to show to user

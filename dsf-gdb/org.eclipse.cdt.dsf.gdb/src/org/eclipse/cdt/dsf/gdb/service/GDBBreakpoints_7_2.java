@@ -54,7 +54,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0 {
 
 	private enum TracepointMode {
 		FAST_THEN_NORMAL, FAST_ONLY, NORMAL_ONLY
-	};
+	}
 
 	private TracepointMode fTracepointMode = TracepointMode.NORMAL_ONLY;
 

@@ -168,7 +168,7 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 
 	public void addValue(String value, String valueLabel) {
 		valueLabels.put(value, valueLabel);
-	};
+	}
 
 	public void addContionEquals(String property, String value) {
 		conditions.put(property, value);

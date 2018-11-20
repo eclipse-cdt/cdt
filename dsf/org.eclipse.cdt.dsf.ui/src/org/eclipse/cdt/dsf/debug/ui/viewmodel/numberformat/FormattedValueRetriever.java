@@ -546,7 +546,7 @@ public class FormattedValueRetriever {
 								// Note: we must not call the update's done method, instead call counting RM done.
 								countingRm.done();
 
-							};
+							}
 						});
 				count++;
 			}

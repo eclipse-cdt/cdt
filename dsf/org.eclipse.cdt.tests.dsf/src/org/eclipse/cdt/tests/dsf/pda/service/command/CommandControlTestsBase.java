@@ -62,7 +62,6 @@ public class CommandControlTestsBase {
 				fCommandControl.initialize(rm);
 			}
 		}
-		;
 
 		fExecutor = new DefaultDsfExecutor();
 		fSession = DsfSession.startSession(fExecutor, "PDA Test");
@@ -104,7 +103,6 @@ public class CommandControlTestsBase {
 				fCommandControl.shutdown(rm);
 			}
 		}
-		;
 
 		if (fExecutor != null) {
 			ShutdownCommandServiceQuery shutdownQuery = new ShutdownCommandServiceQuery();
@@ -118,7 +116,6 @@ public class CommandControlTestsBase {
 				fPDABackend.shutdown(rm);
 			}
 		}
-		;
 
 		if (fExecutor != null) {
 			ShutdownBackendServiceQuery shutdownQuery = new ShutdownBackendServiceQuery();

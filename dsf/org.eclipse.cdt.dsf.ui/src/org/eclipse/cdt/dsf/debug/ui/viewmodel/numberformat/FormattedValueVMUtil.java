@@ -425,7 +425,7 @@ public class FormattedValueVMUtil {
 								countingRm.done();
 
 								// Note: we must not call the update's done method
-							};
+							}
 						});
 				count++;
 			}

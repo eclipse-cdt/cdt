@@ -304,7 +304,6 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 			} else {
 				clear();
 			}
-			;
 		}
 
 		public FramesCacheInfo getThreadFramesCache(String threadId) {
@@ -1120,7 +1119,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 										// for more. There is chance that gdb will actually return correct frames later
 										// and one frame is not enough in many case to debug anything
 										rm.done(fFramesCache.getThreadFramesCache(threadId).getValidStackDepth());
-									};
+									}
 								});
 					}
 				}

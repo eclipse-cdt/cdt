@@ -61,7 +61,7 @@ public class ReverseDebugAction extends AbstractBreakpointAction {
 		public static REVERSE_DEBUG_ACTIONS_ENUM getValue(int index) {
 			return REVERSE_DEBUG_ACTIONS_ENUM.values()[index];
 		}
-	};
+	}
 
 	private REVERSE_DEBUG_ACTIONS_ENUM fOperation;
 

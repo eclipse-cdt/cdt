@@ -821,7 +821,7 @@ public class SyncUtil {
 								@Override
 								protected void handleSuccess() {
 									rm.done(localsDMData.toArray(new IVariableDMData[localsDMData.size()]));
-								};
+								}
 							};
 
 							for (IVariableDMContext varDmc : varDmcs) {

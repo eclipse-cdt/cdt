@@ -50,7 +50,7 @@ public class StartOrRestartProcessSequence_7_12 extends StartOrRestartProcessSeq
 				fReverseService = tracker.getService(GDBRunControl_7_12.class);
 				tracker.dispose();
 				rm.done();
-			};
+			}
 		});
 	}
 

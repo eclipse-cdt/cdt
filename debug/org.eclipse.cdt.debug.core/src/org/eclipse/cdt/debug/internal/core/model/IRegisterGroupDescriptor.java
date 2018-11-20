@@ -43,5 +43,5 @@ public interface IRegisterGroupDescriptor {
 	 */
 	default String getContainerId() {
 		return null;
-	};
+	}
 }

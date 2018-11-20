@@ -75,7 +75,7 @@ public class GdbSaveTraceDataCommand extends AbstractDebugCommand implements ISa
 			@Override
 			public void run() {
 				fileName[0] = promptForFileName();
-			};
+			}
 		});
 
 		if (fileName[0] != null) {

@@ -24,7 +24,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static byte isKeyword[] = IsKeyword.isKeyword;
 
@@ -288,7 +288,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				0, 0, 0, 0, 0, -234, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -458, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -511, 0, 0, 0, 0, 0, -340, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public interface BaseCheck1 {
 		public final static short baseCheck1[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -308,7 +308,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static short baseCheck[] = new short[BaseCheck0.baseCheck0.length + BaseCheck1.baseCheck1.length];
 	{
@@ -316,7 +316,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 		System.arraycopy(BaseCheck0.baseCheck0, 0, baseCheck, index, BaseCheck0.baseCheck0.length);
 		index += BaseCheck0.baseCheck0.length;
 		System.arraycopy(BaseCheck1.baseCheck1, 0, baseCheck, index, BaseCheck1.baseCheck1.length);
-	};
+	}
 
 	@Override
 	public final int baseCheck(int index) {
@@ -328,7 +328,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 	@Override
 	public final int rhs(int index) {
 		return rhs[index];
-	};
+	}
 
 	public interface BaseAction0 {
 		public final static char baseAction0[] = { 214, 5, 158, 82, 82, 32, 32, 106, 106, 48, 48, 41, 41, 214, 1, 1, 15,
@@ -749,7 +749,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				106, 76, 77, 105, 3397, 9900, 9900, 9900, 9900, 4077, 5151, 35, 1703, 32, 4863, 9900, 27, 30, 31, 1654,
 				1590, 26, 28, 2249, 296, 23, 25, 50, 2263, 3864, 76, 77, 9900, 9900, 9900, 262, 9900, 9900, 9900, 9900,
 				9900, 9900, 9900, 9900, 759, 9900, 9900 };
-	};
+	}
 
 	public interface BaseAction1 {
 		public final static char baseAction1[] = { 9900, 9900, 9900, 9900, 9900, 9900, 9900, 9900, 239, 249, 4745, 700,
@@ -835,7 +835,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				0, 1198, 95, 0, 9938, 95, 0, 39, 95, 0, 366, 95, 0, 9912, 649, 638, 419, 0, 649, 638, 0, 35, 73, 0,
 				4155, 419, 0, 1358, 657, 658, 0, 1227, 657, 658, 0, 1198, 657, 658, 0, 657, 658, 0, 313, 4350, 0, 8, 12,
 				0, 218, 5723, 0 };
-	};
+	}
 
 	public final static char baseAction[] = new char[BaseAction0.baseAction0.length + BaseAction1.baseAction1.length];
 	{
@@ -843,7 +843,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 		System.arraycopy(BaseAction0.baseAction0, 0, baseAction, index, BaseAction0.baseAction0.length);
 		index += BaseAction0.baseAction0.length;
 		System.arraycopy(BaseAction1.baseAction1, 0, baseAction, index, BaseAction1.baseAction1.length);
-	};
+	}
 
 	@Override
 	public final int baseAction(int index) {
@@ -855,7 +855,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 	@Override
 	public final int lhs(int index) {
 		return lhs[index];
-	};
+	}
 
 	public interface TermCheck {
 		public final static char termCheck[] = { 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
@@ -1092,7 +1092,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				0, 0, 72, 0, 0, 0, 0, 127, 128, 127, 128, 0, 65, 0, 0, 127, 128, 0, 0, 0, 73, 0, 129, 73, 75, 0, 0, 134,
 				0, 79, 0, 0, 75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static char termCheck[] = TermCheck.termCheck;
 
@@ -1447,7 +1447,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				9900, 9900, 9900, 9900, 9900, 9900, 9900, 1613, 9900, 9900, 9900, 9900, 4255, 1256, 4255, 1256, 9900,
 				9888, 9900, 9900, 4255, 1256, 9900, 9900, 9900, 9888, 9900, 9287, 8396, 9743, 9900, 9900, 9290, 9900,
 				9905, 9900, 9900, 9751 };
-	};
+	}
 
 	public final static char termAction[] = TermAction.termAction;
 
@@ -1494,7 +1494,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				994, 955, 952, 911, 911, 304, 1397, 1397, 1269, 1058, 891, 1343, 261, 261, 330, 330, 330, 261, 1397,
 				468, 994, 953, 598, 834, 1397, 914, 911, 1397, 1397, 318, 1566, 92, 330, 330, 955, 1397, 834, 914, 914,
 				156, 156, 320, 1299, 780, 955, 914, 1621, 1263, 363 };
-	};
+	}
 
 	public final static char asb[] = Asb.asb;
 
@@ -1566,7 +1566,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				59, 62, 60, 58, 63, 72, 1, 4, 3, 2, 5, 0, 65, 14, 5, 11, 10, 84, 13, 12, 6, 1, 4, 3, 2, 8, 9, 7, 0, 11,
 				10, 17, 15, 21, 22, 16, 20, 18, 19, 38, 44, 35, 40, 43, 42, 36, 39, 32, 33, 34, 41, 45, 78, 7, 1, 4, 13,
 				12, 6, 8, 9, 3, 2, 72, 5, 79, 14, 73, 0 };
-	};
+	}
 
 	public final static char asr[] = Asr.asr;
 
@@ -1609,7 +1609,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				12, 172, 156, 76, 150, 116, 215, 13, 215, 120, 191, 211, 215, 130, 122, 197, 13, 317, 317, 169, 262, 83,
 				13, 81, 13, 12, 240, 240, 79, 317, 116, 150, 13, 94, 120, 317, 197, 122, 317, 317, 197, 13, 74, 12, 12,
 				215, 317, 120, 83, 197, 141, 141, 266, 314, 13, 215, 83, 317, 151, 261 };
-	};
+	}
 
 	public final static char nasb[] = Nasb.nasb;
 
@@ -1633,7 +1633,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				116, 117, 128, 13, 67, 0, 110, 109, 43, 4, 87, 0, 118, 67, 13, 115, 116, 117, 204, 0, 57, 40, 5, 32, 0,
 				5, 40, 53, 92, 103, 0, 4, 10, 9, 13, 3, 1, 0, 48, 4, 2, 9, 10, 5, 189, 0, 5, 53, 92, 133, 51, 4, 0, 31,
 				5, 4, 43, 119, 0, 5, 57, 135, 0, 47, 221, 31, 5, 0 };
-	};
+	}
 
 	public final static char nasr[] = Nasr.nasr;
 
@@ -1649,7 +1649,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				128, 125, 58, 98, 68, 96, 106, 19, 1, 44, 100, 126, 82, 108, 20, 123, 136, 137, 63, 83, 30, 101, 33,
 				124, 17, 18, 113, 54, 55, 61, 62, 64, 70, 74, 76, 77, 90, 97, 21, 22, 32, 6, 23, 24, 25, 26, 27, 122, 4,
 				15, 16, 28, 29, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 45, 46, 5, 56, 85, 86, 87, 3, 138, 67, 121 };
-	};
+	}
 
 	public final static char terminalIndex[] = TerminalIndex.terminalIndex;
 
@@ -1670,7 +1670,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				217, 0, 226, 0, 238, 239, 0, 0, 245, 252, 0, 256, 257, 258, 261, 0, 0, 265, 0, 273, 0, 275, 0, 0, 282,
 				284, 285, 0, 0, 165, 168, 0, 196, 0, 199, 0, 0, 223, 236, 242, 0, 0, 246, 247, 249, 251, 0, 254, 255,
 				260, 266, 269, 270, 0, 0, 274, 0, 0, 277, 0, 283, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static char nonterminalIndex[] = NonterminalIndex.nonterminalIndex;
 
@@ -1688,7 +1688,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				198, 198, 311, 377, 64, 198, 398, 417, 64, 64, 198, 545, 662, 669, 311, 198, 838, 46, 52, 64, 105, 250,
 				523, 590, 630, 52, 33, 645, 198, 265, 457, 523, 265, 265, 484, 577, 332, 484, 75, 75, 96, 96, 244, 96,
 				96, 96, 96, 628, 827, 834, 75, 75, 100, 393, 827, 834, 207, 596, 292, 244, 393, 244, 406 };
-	};
+	}
 
 	public final static char scopePrefix[] = ScopePrefix.scopePrefix;
 
@@ -1706,7 +1706,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				380, 382, 16, 94, 62, 62, 382, 44, 94, 16, 94, 698, 94, 49, 55, 67, 108, 253, 526, 593, 108, 659, 36,
 				648, 717, 260, 460, 708, 268, 279, 501, 580, 335, 487, 80, 88, 98, 147, 44, 529, 531, 533, 535, 44, 829,
 				829, 77, 85, 102, 395, 831, 831, 209, 598, 294, 357, 388, 342, 408 };
-	};
+	}
 
 	public final static char scopeSuffix[] = ScopeSuffix.scopeSuffix;
 
@@ -1724,7 +1724,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				182, 181, 215, 177, 17, 66, 18, 88, 97, 195, 125, 135, 97, 22, 40, 58, 177, 121, 91, 177, 121, 121, 117,
 				99, 51, 117, 148, 141, 157, 237, 195, 137, 132, 131, 130, 94, 175, 56, 148, 141, 245, 87, 175, 56, 199,
 				135, 115, 51, 87, 51, 71 };
-	};
+	}
 
 	public final static char scopeLhs[] = ScopeLhs.scopeLhs;
 
@@ -1741,7 +1741,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				79, 79, 5, 1, 111, 79, 1, 1, 1, 65, 79, 111, 79, 10, 79, 1, 79, 8, 84, 1, 67, 86, 84, 79, 3, 78, 1, 1,
 				75, 67, 1, 1, 75, 90, 85, 1, 1, 1, 37, 1, 65, 1, 68, 66, 66, 65, 6, 6, 1, 1, 104, 13, 6, 6, 5, 1, 75, 1,
 				12, 1, 5 };
-	};
+	}
 
 	public final static char scopeLa[] = ScopeLa.scopeLa;
 
@@ -1759,7 +1759,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				138, 128, 130, 165, 124, 165, 187, 171, 378, 111, 5, 18, 56, 53, 268, 510, 268, 171, 111, 490, 378, 13,
 				111, 273, 493, 61, 53, 376, 478, 53, 376, 376, 376, 111, 466, 376, 24, 182, 380, 389, 490, 380, 385,
 				385, 385, 29, 58, 140, 24, 182, 374, 450, 58, 140, 50, 13, 376, 466, 450, 466, 165 };
-	};
+	}
 
 	public final static char scopeStateSet[] = ScopeStateSet.scopeStateSet;
 
@@ -1803,7 +1803,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				0, 217, 71, 59, 0, 261, 5, 140, 230, 193, 141, 23, 0, 140, 230, 193, 141, 23, 0, 151, 2, 0, 140, 0, 261,
 				5, 139, 295, 193, 141, 23, 0, 295, 193, 141, 23, 0, 150, 2, 0, 140, 0, 261, 5, 150, 0, 261, 5, 155, 0,
 				184, 72, 155, 0, 313, 0, 31, 0, 31, 154, 0, 192, 0, 149, 0, 184, 5, 0 };
-	};
+	}
 
 	public final static char scopeRhs[] = ScopeRhs.scopeRhs;
 
@@ -1844,7 +1844,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				6546, 4904, 8229, 0, 8396, 7230, 8273, 7953, 8433, 7949, 2658, 7579, 7555, 6751, 5329, 5617, 8363, 8336,
 				6971, 6776, 6029, 5795, 5723, 5651, 5579, 5507, 5435, 5363, 5291, 5219, 5147, 4739, 4636, 8149, 7215,
 				7083, 7004, 7951, 7934, 7644, 7577, 7510, 7439, 7422, 6546, 0 };
-	};
+	}
 
 	public final static char scopeState[] = ScopeState.scopeState;
 
@@ -1887,7 +1887,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				225, 169, 357, 142, 5, 169, 329, 142, 169, 140, 261, 261, 6, 5, 142, 78, 243, 14, 223, 141, 141, 315,
 				261, 251, 86, 233, 185, 320, 184, 263, 142, 104, 375, 194, 74, 66, 223, 223, 136, 355, 169, 142, 263,
 				169, 169, 142, 5, 282, 169, 142, 376, 86, 73 };
-	};
+	}
 
 	public final static char inSymb[] = InSymb.inSymb;
 
@@ -1950,7 +1950,7 @@ public class XlcCPPParserprs implements lpg.lpgjavaruntime.ParseTable, XlcCPPPar
 				"typeof_declaration_specifiers", "typeof_type_specifier", "vector_type", "vector_type_specifier",
 				"all_specifier_qualifiers", "all_specifier_qualifier_list", "array_modifier_type_qualifiers",
 				"type_qualifier_list" };
-	};
+	}
 
 	public final static String name[] = Name.name;
 

@@ -77,7 +77,7 @@ public class GdbStartTracingCommand extends AbstractDebugCommand implements ISta
 							@Override
 							protected void handleCompleted() {
 								traceControl.startTracing(dmc, rm);
-							};
+							}
 						});
 					} else {
 						traceControl.startTracing(dmc, rm);

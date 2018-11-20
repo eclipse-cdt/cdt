@@ -70,5 +70,5 @@ public class ErrorLabelText extends LabelText {
 			return !status.isOK();
 		}
 		return super.checkProperty(propertyName, status, properties);
-	};
+	}
 }

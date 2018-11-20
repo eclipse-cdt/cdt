@@ -38,7 +38,7 @@ public interface IGDBControl extends IMICommandControl {
 	 */
 	default Process getGDBBackendProcess() {
 		return getCLIProcess();
-	};
+	}
 
 	/**
 	 * @deprecated The return value of this method was too

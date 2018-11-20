@@ -254,7 +254,7 @@ public class ExecutablesManager extends PlatformObject
 			this.projectsToRefresh = projectsToRefresh;
 			super.schedule();
 		}
-	};
+	}
 
 	/** The search job. We only let one of these run at any one time */
 	private SearchJob searchJob = new SearchJob();

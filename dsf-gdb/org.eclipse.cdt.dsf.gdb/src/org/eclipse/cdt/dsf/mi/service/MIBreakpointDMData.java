@@ -55,7 +55,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		TRACEPOINT,
 		/** @since 4.4 */
 		DYNAMICPRINTF
-	};
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 	// Constructors

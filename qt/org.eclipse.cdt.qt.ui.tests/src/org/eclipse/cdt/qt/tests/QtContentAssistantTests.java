@@ -187,5 +187,5 @@ public class QtContentAssistantTests extends TestCase {
 		public CharSequence computeIdentifierPrefix() throws BadLocationException {
 			return null;
 		}
-	};
+	}
 }

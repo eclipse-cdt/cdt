@@ -99,7 +99,7 @@ public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implem
 											rm.done();
 										}
 									});
-								};
+								}
 							});
 				} else {
 					rm.done();
@@ -146,7 +146,7 @@ public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implem
 										protected void handleSuccess() {
 											rm.setData(!getData());
 											rm.done();
-										};
+										}
 									});
 								} else {
 									rm.setData(false);
@@ -156,7 +156,7 @@ public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implem
 								rm.setData(false);
 								rm.done();
 							}
-						};
+						}
 					});
 				} else {
 					rm.setData(false);

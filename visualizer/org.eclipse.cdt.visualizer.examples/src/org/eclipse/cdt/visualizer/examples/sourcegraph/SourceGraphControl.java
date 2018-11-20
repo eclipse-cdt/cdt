@@ -78,8 +78,8 @@ public class SourceGraphControl extends BufferedCanvas {
 			int cmp = (c1 < c2) ? -1 : (c1 > c2) ? 1 : 0;
 			// we want to sort in descending order, so negate result
 			return -cmp;
-		};
-	};
+		}
+	}
 
 	/** List of characters we discovered and their occurrences. */
 	ArrayList<CharStat> m_characters;

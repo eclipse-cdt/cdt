@@ -263,7 +263,7 @@ public class TraceControlModel {
 										rm.setData(null);
 									}
 									rm.done();
-								};
+								}
 
 							});
 				} else {
@@ -314,7 +314,7 @@ public class TraceControlModel {
 									rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID,
 											IDsfStatusConstants.INVALID_STATE, "Backend error", e)); //$NON-NLS-1$
 									rm.done();
-								};
+								}
 							});
 				} else {
 					FailedTraceVariableCreationException e = new FailedTraceVariableCreationException(
@@ -374,7 +374,7 @@ public class TraceControlModel {
 													new Hashtable<String, String>());
 										}
 									});
-								};
+								}
 							});
 
 				}

@@ -17,7 +17,7 @@ public interface IQmlObjectBinding extends IQmlBinding {
 	@Override
 	default public String getType() {
 		return "QMLObjectBinding"; //$NON-NLS-1$
-	};
+	}
 
 	public IQmlQualifiedID getIdentifier();
 

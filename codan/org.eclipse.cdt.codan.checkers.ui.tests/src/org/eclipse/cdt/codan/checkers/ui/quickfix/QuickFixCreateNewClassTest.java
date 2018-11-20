@@ -78,7 +78,7 @@ public class QuickFixCreateNewClassTest {
 					return translationUnitViaWorkspace;
 				}
 				throw new RuntimeException("Invalid marker");
-			};
+			}
 		};
 
 		when(toWorkingCopy.apply(translationUnitViaWorkspace)).thenReturn(translationUnitWorkingCopy);

@@ -144,7 +144,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				validate();
 				updateDialogButtons();
 			}
-		};
+		}
 
 		abstract class AbstractEditingSupport extends EditingSupport {
 
@@ -189,7 +189,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 			abstract Object doGetValue(CommandTimeoutEntry entry);
 
 			abstract ICellEditorValidator getValidator();
-		};
+		}
 
 		private TableViewer fViewer;
 		private Button fAddButton;

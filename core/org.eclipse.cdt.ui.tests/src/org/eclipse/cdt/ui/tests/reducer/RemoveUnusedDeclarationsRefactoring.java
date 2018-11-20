@@ -359,7 +359,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 			}
 		}
 		return false;
-	};
+	}
 
 	private static Collection<IASTName> getDeclaredNames(IASTDeclaration declaration) {
 		while (declaration instanceof ICPPASTTemplateDeclaration) {

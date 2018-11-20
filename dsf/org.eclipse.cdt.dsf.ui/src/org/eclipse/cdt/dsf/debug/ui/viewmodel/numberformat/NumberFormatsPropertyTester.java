@@ -62,7 +62,7 @@ public class NumberFormatsPropertyTester extends PropertyTester {
 		AVAILABLE_FORMATS.add(IFormattedValues.OCTAL_FORMAT);
 		AVAILABLE_FORMATS.add(IFormattedValues.BINARY_FORMAT);
 		AVAILABLE_FORMATS.add(IFormattedValues.STRING_FORMAT);
-	};
+	}
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {

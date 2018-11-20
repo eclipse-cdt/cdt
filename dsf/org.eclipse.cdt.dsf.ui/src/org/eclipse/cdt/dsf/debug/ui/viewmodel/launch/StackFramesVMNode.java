@@ -169,7 +169,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 						String function = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 						return line != null && line >= 0 && file != null && !file.isEmpty() && function != null
 								&& function.contains(")"); //$NON-NLS-1$
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__add_parens__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS, ILaunchVMConstants.PROP_FRAME_FUNCTION,
 								ILaunchVMConstants.PROP_FRAME_FILE, ILaunchVMConstants.PROP_FRAME_LINE,
@@ -181,7 +181,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 						String function = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 						return line != null && line >= 0 && file != null && !file.isEmpty()
 								&& (function == null || !function.contains(")")); //$NON-NLS-1$
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS, ILaunchVMConstants.PROP_FRAME_FUNCTION,
 								ILaunchVMConstants.PROP_FRAME_MODULE }) {
@@ -191,7 +191,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 						String module = (String) properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
 						return function != null && !function.isEmpty() && function.contains(")") && //$NON-NLS-1$
 						module != null && !module.isEmpty();
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__add_parens__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS, ILaunchVMConstants.PROP_FRAME_FUNCTION,
 								ILaunchVMConstants.PROP_FRAME_MODULE }) {
@@ -201,14 +201,14 @@ public class StackFramesVMNode extends AbstractDMVMNode
 						String module = (String) properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
 						return function != null && !function.isEmpty() && !function.contains(")") && //$NON-NLS-1$
 						module != null && !module.isEmpty();
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_function__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS, ILaunchVMConstants.PROP_FRAME_MODULE }) {
 					@Override
 					public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 						String module = (String) properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
 						return module != null && !module.isEmpty();
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS,
 								ILaunchVMConstants.PROP_FRAME_FUNCTION }) {
@@ -216,7 +216,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 					public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 						String function = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 						return function != null && !function.isEmpty() && function.contains(")"); //$NON-NLS-1$
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__add_parens__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS,
 								ILaunchVMConstants.PROP_FRAME_FUNCTION }) {
@@ -224,7 +224,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 					public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 						String function = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 						return function != null && !function.isEmpty() && !function.contains(")"); //$NON-NLS-1$
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__Address_only__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS }),
 						new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING)) {
@@ -235,7 +235,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 							@Override
 							public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 								return Boolean.FALSE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
-							};
+							}
 						}, new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME)) }));
 
 		return provider;

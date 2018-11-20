@@ -239,7 +239,7 @@ public class MesonPropertyPage extends PropertyPage {
 
 	public enum ParseState {
 		INIT, GROUP, OPTION, OPTION_WITH_VALUES, ARGS
-	};
+	}
 
 	@Override
 	public boolean performOk() {

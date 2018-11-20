@@ -93,7 +93,7 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
 											rm.done();
 										}
 									});
-								};
+								}
 							});
 				} else {
 					rm.done();
@@ -151,9 +151,9 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
 								protected void handleSuccess() {
 									// Can do visualization if we are tracing.
 									rm.done(!getData());
-								};
+								}
 							});
-						};
+						}
 					});
 				} else {
 					rm.done(false);

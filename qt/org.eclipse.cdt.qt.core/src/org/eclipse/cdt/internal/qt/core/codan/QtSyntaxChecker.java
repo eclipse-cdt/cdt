@@ -100,5 +100,5 @@ public class QtSyntaxChecker extends AbstractIndexAstChecker implements IChecker
 			else
 				reportProblem(Activator.QT_SYNTAX_ERR_ID, node, NLS.bind(message, args));
 		}
-	};
+	}
 }

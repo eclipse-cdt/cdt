@@ -451,7 +451,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 			}
 		}
 		fNodesListCache = list.toArray(new IVMNode[list.size()]);
-		;
+		
 		return fNodesListCache;
 	}
 

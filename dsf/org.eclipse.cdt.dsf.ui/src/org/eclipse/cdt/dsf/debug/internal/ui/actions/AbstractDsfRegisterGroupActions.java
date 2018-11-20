@@ -535,7 +535,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 																								} catch (CoreException e) {
 																									failed(e);
 																								}
-																							};
+																							}
 																						});
 																			}
 																		});
@@ -749,11 +749,11 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 																																} catch (CoreException e) {
 																																	failed(e);
 																																}
-																															};
+																															}
 																														});
 																											}
 																										});
-																					};
+																					}
 
 																				});
 																	}
@@ -929,7 +929,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 								notifyUser(getStatus().getMessage());
 							}
 
-						};
+						}
 					});
 		}
 	}
@@ -950,7 +950,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 								notifyUser(getStatus().getMessage());
 							}
 
-						};
+						}
 					});
 		}
 	}

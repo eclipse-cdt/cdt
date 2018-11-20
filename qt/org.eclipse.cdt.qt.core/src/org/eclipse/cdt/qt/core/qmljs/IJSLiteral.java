@@ -20,7 +20,7 @@ public interface IJSLiteral extends IJSExpression {
 	@Override
 	default public String getType() {
 		return "Literal"; //$NON-NLS-1$
-	};
+	}
 
 	/**
 	 * @return String, Boolean, Integer, Double, or Regular Expression

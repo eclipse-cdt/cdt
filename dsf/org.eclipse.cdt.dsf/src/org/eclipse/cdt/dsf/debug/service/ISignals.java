@@ -26,6 +26,6 @@ public interface ISignals extends IDsfService {
 	 * Marker interface for a context for which signals can be set.
 	 */
 	public interface ISignalsDMContext extends IDMContext {
-	};
+	}
 
 }

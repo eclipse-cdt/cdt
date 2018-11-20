@@ -32,7 +32,7 @@ public class PDAWatchCommand extends AbstractPDACommand<PDACommandResult> {
 
 	public enum WatchOperation {
 		READ, WRITE, BOTH, NONE
-	};
+	}
 
 	private static int getWatchOperationCode(WatchOperation operation) {
 		switch (operation) {

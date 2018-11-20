@@ -82,7 +82,7 @@ import org.osgi.framework.BundleContext;
 public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpointsListener {
 	public enum BreakpointEventType {
 		ADDED, REMOVED, MODIFIED
-	};
+	}
 
 	/**
 	 * The attribute translator that this service will use to map the platform
@@ -802,7 +802,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 												targetBPs.put(dmc,
 														getData().toArray(new ITargetBreakpointInfo[getData().size()]));
 												super.handleSuccess();
-											};
+											}
 										});
 							}
 						});
@@ -1099,7 +1099,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 								protected void handleSuccess() {
 									targetBPs.put(dmc, getData().toArray(new ITargetBreakpointInfo[getData().size()]));
 									super.handleSuccess();
-								};
+								}
 							});
 					bpTargetsCoutingRMCount++;
 				} else {
@@ -1177,7 +1177,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 			protected IStatus run(IProgressMonitor monitor) {
 				fAttributeTranslator2.updateBreakpointsStatus(eventBPs, eventType);
 				return Status.OK_STATUS;
-			};
+			}
 		}.schedule();
 
 	}

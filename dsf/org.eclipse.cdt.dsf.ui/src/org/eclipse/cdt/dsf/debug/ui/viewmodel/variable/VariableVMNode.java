@@ -398,7 +398,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 						+ FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT));
 				return Boolean.TRUE.equals(stringChanged)
 						|| (Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged));
-			};
+			}
 		};
 
 		columnNoColumnsBackground = new LabelBackground(
@@ -511,7 +511,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 					public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 						Boolean changed = (Boolean) properties.get(PROP_VARIABLE_ADDRESS_CHANGED);
 						return Boolean.TRUE.equals(changed);
-					};
+					}
 				}, new StaleDataLabelForeground(), new VariableLabelFont(), }));
 
 		// Description column is shown in the expression view, but is not supported for variables.
@@ -615,7 +615,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 								Boolean activeChanged = (Boolean) properties
 										.get(IDebugVMConstants.PROP_IS_ACTIVE_FORMATTED_VALUE_CHANGED);
 								return Boolean.TRUE.equals(stringChanged) || Boolean.TRUE.equals(activeChanged);
-							};
+							}
 						}, columnNoColumnsBackground, new StaleDataLabelBackground(), new VariableLabelFont(), }));
 
 		return provider;
@@ -654,7 +654,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 				for (int i = 0; i < updates.length; i++) {
 					updates[i].done();
 				}
-			};
+			}
 		};
 		int count = 0;
 
@@ -712,7 +712,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 				for (final IPropertiesUpdate update : updates) {
 					update.done();
 				}
-			};
+			}
 		};
 		int count = 0;
 

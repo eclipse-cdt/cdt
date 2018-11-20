@@ -21,7 +21,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 public class BreakpointsChangedEvent {
 	public enum Type {
 		ADDED, REMOVED, CHANGED
-	};
+	}
 
 	private final Type fType;
 	private final IBreakpoint[] fBreakpoints;

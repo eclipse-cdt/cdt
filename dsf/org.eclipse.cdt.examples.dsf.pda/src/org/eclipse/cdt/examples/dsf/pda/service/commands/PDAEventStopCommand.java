@@ -33,7 +33,7 @@ public class PDAEventStopCommand extends AbstractPDACommand<PDACommandResult> {
 
 	public enum Event {
 		UNIMPINSTR, NOSUCHLABEL
-	};
+	}
 
 	public PDAEventStopCommand(PDAVirtualMachineDMContext context, Event event, boolean enable) {
 		super(context,

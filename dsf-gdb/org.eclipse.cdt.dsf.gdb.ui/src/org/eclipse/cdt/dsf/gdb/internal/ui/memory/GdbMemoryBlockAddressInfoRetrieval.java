@@ -94,7 +94,7 @@ public class GdbMemoryBlockAddressInfoRetrieval implements IMemoryBlockAddressIn
 									@Override
 									protected void handleCompleted() {
 										request.done();
-									};
+									}
 								};
 
 								for (final IGdbMemoryAddressInfoTypeRetrieval infoProvider : infoTypeProviders) {

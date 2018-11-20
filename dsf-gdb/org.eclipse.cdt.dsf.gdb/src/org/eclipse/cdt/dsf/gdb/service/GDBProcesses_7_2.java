@@ -618,7 +618,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 												// Detach failed
 												getDetachedProcesses().remove(containerDmc.getGroupId());
 												super.handleFailure();
-											};
+											}
 										});
 							}
 						}

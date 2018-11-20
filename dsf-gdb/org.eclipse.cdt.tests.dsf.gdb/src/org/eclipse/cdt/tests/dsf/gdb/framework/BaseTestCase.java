@@ -203,7 +203,7 @@ public class BaseTestCase {
 	 * @param launch The launch in which we can find the gdb version
 	 */
 	protected void validateGdbVersion(GdbLaunch launch) throws Exception {
-	};
+	}
 
 	/**
 	 * We listen for the target to stop at the main breakpoint. This listener is

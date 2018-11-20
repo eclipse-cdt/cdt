@@ -31,7 +31,7 @@ public interface IQmlProgram extends IQmlASTNode {
 	@Override
 	default public String getType() {
 		return "QMLProgram"; //$NON-NLS-1$
-	};
+	}
 
 	public Modes getMode();
 

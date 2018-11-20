@@ -143,7 +143,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.RED)
 										: false;
-							};
+							}
 						},
 						/* RUNNING THREAD - GREEN PIN */
 						new LabelImage(
@@ -163,7 +163,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.GREEN)
 										: false;
-							};
+							}
 						},
 						/* RUNNING THREAD - BLUE PIN */
 						new LabelImage(
@@ -183,7 +183,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 										? !prop.booleanValue() && pin_prop.booleanValue()
 												&& pin_color_prop.equals(IPinElementColorDescriptor.BLUE)
 										: false;
-							};
+							}
 						},
 						/* RUNNING THREAD - NO PIN */
 						new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {
@@ -196,7 +196,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								// prop has been seen to be null during session shutdown [313823]
 								Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED);
 								return (prop != null) ? !prop.booleanValue() : false;
-							};
+							}
 						},
 						/* SUSPENDED THREAD - RED PIN */
 						new LabelImage(
@@ -212,7 +212,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.RED) : false;
-							};
+							}
 						},
 						/* SUSPENDED THREAD - GREEN PIN */
 						new LabelImage(
@@ -228,7 +228,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.GREEN) : false;
-							};
+							}
 						},
 						/* SUSPENDED THREAD - BLUE PIN */
 						new LabelImage(
@@ -244,7 +244,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR);
 								return (pin_prop != null && pin_color_prop != null) ? pin_prop.booleanValue()
 										&& pin_color_prop.equals(IPinElementColorDescriptor.BLUE) : false;
-							};
+							}
 						},
 						/* SUSPENDED THREAD - NO PIN */
 						new LabelImage(

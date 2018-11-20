@@ -532,7 +532,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		} else {
 			targetBreakpointModified(bpTargetDMC, plBpt, miBpt);
 		}
-	};
+	}
 
 	/**
 	 * Some operations that are passed to platform require a number or delays before

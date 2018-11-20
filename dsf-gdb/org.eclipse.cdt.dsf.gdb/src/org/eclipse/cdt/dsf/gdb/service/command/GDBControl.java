@@ -805,7 +805,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 				protected void handleErrorOrWarning() {
 					GdbPlugin.getDefault().getLog().log(getStatus());
 					super.handleErrorOrWarning();
-				};
+				}
 			});
 
 			IStatus status = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IGdbDebugConstants.STATUS_HANDLER_CODE,
@@ -916,7 +916,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			protected void handleErrorOrWarning() {
 				GdbPlugin.getDefault().getLog().log(getStatus());
 				super.handleErrorOrWarning();
-			};
+			}
 		});
 	}
 

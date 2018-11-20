@@ -428,7 +428,7 @@ public class PDARegisters extends AbstractDsfService implements IRegisters, IEve
 				}
 				rm.setData(groups);
 				rm.done();
-			};
+			}
 		});
 	}
 
@@ -457,7 +457,7 @@ public class PDARegisters extends AbstractDsfService implements IRegisters, IEve
 						}
 						rm.setData(groups);
 						rm.done();
-					};
+					}
 				});
 
 	}

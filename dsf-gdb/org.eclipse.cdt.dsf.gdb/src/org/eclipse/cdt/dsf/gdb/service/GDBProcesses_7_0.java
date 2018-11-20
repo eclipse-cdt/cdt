@@ -1488,7 +1488,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 					}
 
 					rm.done(containerDmcs.toArray(new IMIContainerDMContext[containerDmcs.size()]));
-				};
+				}
 			};
 
 			fContainerCommandCache.execute(fCommandFactory.createMIListThreadGroups(controlDmc),
@@ -1776,9 +1776,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 								setData(getData());
 								super.handleCompleted();
-							};
+							}
 						});
-			};
+			}
 		};
 
 		IRunControl runControl = getServicesTracker().getService(IRunControl.class);

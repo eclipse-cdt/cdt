@@ -163,7 +163,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 				}
 			});
 		}
-	};
+	}
 
 	private final Map<TreePath, ContainerBreakpointsCache> fContainerBreakpointsCacheMap = new HashMap<>();
 

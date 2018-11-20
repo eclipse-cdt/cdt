@@ -148,7 +148,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 											@Override
 											protected void handleSuccess() {
 												rm.done(getData().getFormattedValue());
-											};
+											}
 										});
 								return;
 							}

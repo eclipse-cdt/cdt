@@ -170,7 +170,6 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 				super.dispose();
 			}
 		}
-		;
 		PlatformAction action = new PlatformAction(site);
 		action.run();
 		action.dispose();

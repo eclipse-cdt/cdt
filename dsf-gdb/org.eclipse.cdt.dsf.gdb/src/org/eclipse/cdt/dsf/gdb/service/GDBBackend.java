@@ -325,18 +325,18 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	@Override
 	public OutputStream getMIOutputStream() {
 		return fProcess.getOutputStream();
-	};
+	}
 
 	@Override
 	public InputStream getMIInputStream() {
 		return fProcess.getInputStream();
-	};
+	}
 
 	/** @since 4.1 */
 	@Override
 	public InputStream getMIErrorStream() {
 		return fProcess.getErrorStream();
-	};
+	}
 
 	@Override
 	public String getId() {

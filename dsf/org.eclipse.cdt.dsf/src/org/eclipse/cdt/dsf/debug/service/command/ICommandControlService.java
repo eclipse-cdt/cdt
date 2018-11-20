@@ -43,13 +43,13 @@ public interface ICommandControlService extends ICommandControl, IDsfService {
 	 * Event indicating that the back end process has started.
 	 */
 	public interface ICommandControlInitializedDMEvent extends IDMEvent<ICommandControlDMContext> {
-	};
+	}
 
 	/**
 	 * Event indicating that the back end process has terminated.
 	 */
 	public interface ICommandControlShutdownDMEvent extends IDMEvent<ICommandControlDMContext> {
-	};
+	}
 
 	/**
 	 * Returns the identifier of this command control service.  It can be used

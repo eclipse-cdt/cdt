@@ -106,4 +106,4 @@ public class BuildOptionsParser implements IWorkspaceRunnable, IMarkerGenerator 
 		// do nothing
 	}
 
-};
+}

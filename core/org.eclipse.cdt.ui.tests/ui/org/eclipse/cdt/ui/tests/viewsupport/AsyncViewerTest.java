@@ -89,7 +89,7 @@ public class AsyncViewerTest extends BaseUITestCase {
 			}
 			return n.fChildren;
 		}
-	};
+	}
 
 	private class MyLabelProvider extends LabelProvider {
 		@Override

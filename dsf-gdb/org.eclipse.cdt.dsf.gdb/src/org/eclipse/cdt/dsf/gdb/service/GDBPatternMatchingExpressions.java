@@ -128,7 +128,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		@Override
 		public IDMContext[] getParents() {
 			return fExprDelegate.getParents();
-		};
+		}
 
 		@Override
 		public <T> T getAdapter(Class<T> adapterType) {

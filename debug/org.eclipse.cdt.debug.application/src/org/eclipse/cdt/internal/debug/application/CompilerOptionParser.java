@@ -175,4 +175,4 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 
 		return currentFolder;
 	}
-};
+}

@@ -177,7 +177,6 @@ public class DsfTerminateCommand implements ITerminateHandler {
 		class ScheduledFutureWrapper {
 			ScheduledFuture<?> fFuture;
 		}
-		;
 
 		final ScheduledFutureWrapper fFutureWrapper = new ScheduledFutureWrapper();
 

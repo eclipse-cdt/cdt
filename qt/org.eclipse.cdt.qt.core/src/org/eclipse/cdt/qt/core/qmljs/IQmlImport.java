@@ -17,7 +17,7 @@ public interface IQmlImport extends IQmlHeaderItem {
 	@Override
 	default public String getType() {
 		return "QMLImport"; //$NON-NLS-1$
-	};
+	}
 
 	public IQmlModule getModule();
 

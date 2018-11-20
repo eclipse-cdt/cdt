@@ -29,13 +29,13 @@ public interface ICWatchpointTarget {
 		int getSize(); // returns -1 if size not available
 
 		void setSize(int size);
-	};
+	}
 
 	interface CanCreateWatchpointRequest extends IRequest {
 		boolean getCanCreate();
 
 		void setCanCreate(boolean value);
-	};
+	}
 
 	/**
 	 * Determine if a watchpoint can be set on the element. The result does not

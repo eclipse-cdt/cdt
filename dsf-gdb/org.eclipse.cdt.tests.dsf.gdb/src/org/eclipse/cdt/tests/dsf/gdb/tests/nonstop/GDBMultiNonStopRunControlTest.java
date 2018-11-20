@@ -106,7 +106,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 
 	private abstract class AsyncRunnable<V> {
 		public abstract void run(DataRequestMonitor<V> drm);
-	};
+	}
 
 	private <V> V runAsyncCall(final AsyncRunnable<V> runnable) throws Exception {
 		return runAsyncCall(runnable, false);

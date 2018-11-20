@@ -1263,7 +1263,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 			this.steps = steps;
 			this.rm = rm;
 		}
-	};
+	}
 
 	// The set of threads that we will actually be suspended to make the containers suspended.
 	private Set<IMIExecutionDMContext> fExecutionDmcToSuspendSet = new HashSet<>();
@@ -1526,7 +1526,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 						}
 					});
 		}
-	};
+	}
 
 	/**
 	 * Suspended all the threads we have selected.
@@ -1558,7 +1558,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 						// We weren't able to suspend, so abort the operation
 						fDisableNextSignalEventDmcSet.remove(thread);
 						super.handleFailure();
-					};
+					}
 				});
 			}
 		}
@@ -1568,7 +1568,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 			Sequence.Step restoreStep = new RestoreTargetStateStep();
 			restoreStep.execute(rm);
 		}
-	};
+	}
 
 	/**
 	 * This step of the sequence takes care of executing all the steps that
@@ -1611,7 +1611,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 				executeSteps(fOperationsPending.poll());
 			}
 		}
-	};
+	}
 
 	/**
 	 * If the sequence had to interrupt the execution context of interest,
@@ -1666,7 +1666,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 						});
 			}
 		}
-	};
+	}
 
 	/* ******************************************************************************
 	 * End of section to support operations even when the target is unavailable.

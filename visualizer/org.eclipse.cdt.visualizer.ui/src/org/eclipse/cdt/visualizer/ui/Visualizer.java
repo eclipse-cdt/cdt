@@ -155,12 +155,12 @@ abstract public class Visualizer implements IVisualizer, ISelectionProvider, ISe
 	/** Invoked when visualizer has been selected. */
 	@Override
 	public void visualizerSelected() {
-	};
+	}
 
 	/** Invoked when another visualizer has been selected, hiding this one. */
 	@Override
 	public void visualizerDeselected() {
-	};
+	}
 
 	// --- control management ---
 

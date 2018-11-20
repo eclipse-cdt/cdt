@@ -464,7 +464,7 @@ public class MIBreakpointsManager extends AbstractDsfService
 									((IMIBreakpointsTrackingListener) o).breakpointTrackingStarted(dmc);
 								}
 								rm.done();
-							};
+							}
 						});
 					}
 				});
@@ -1092,7 +1092,7 @@ public class MIBreakpointsManager extends AbstractDsfService
 						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_PARAMETER,
 								getStatus().getException()));
 						rm.done();
-					};
+					}
 				});
 			}
 		};
@@ -1158,7 +1158,7 @@ public class MIBreakpointsManager extends AbstractDsfService
 					protected void handleSuccess() {
 						addBreakpointProblemMarker(breakpoint, errorMessage, IMarker.SEVERITY_WARNING);
 						updateRM.setDoneCount(0);
-					};
+					}
 				});
 			}
 		};
@@ -1619,7 +1619,7 @@ public class MIBreakpointsManager extends AbstractDsfService
 					fBreakpointActionManager.executeActions(breakpoint,
 							new BreakpointActionAdapter(getExecutor(), getServicesTracker(), context));
 					return Status.OK_STATUS;
-				};
+				}
 			}.schedule();
 		}
 	}

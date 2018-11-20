@@ -80,7 +80,7 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 								request.setEnabled(false);
 							} else {
 								request.setEnabled(getData());
-								;
+								
 							}
 							request.done();
 						}
@@ -226,7 +226,7 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 												rm.setData(contDmcs.toArray(new IContainerDMContext[contDmcs.size()]));
 											}
 											rm.done();
-										};
+										}
 									});
 						} else {
 							rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Service is not available.")); //$NON-NLS-1$

@@ -555,7 +555,6 @@ abstract public class AbstractToggleBreakpointAdapter
 				job.schedule();
 			}
 		}
-		;
 
 		watchpointTarget.getSize(new GetSizeRequest());
 

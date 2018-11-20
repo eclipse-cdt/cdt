@@ -54,7 +54,7 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 		public void setCanCreate(boolean value) {
 			fCanCreate = value;
 		}
-	};
+	}
 
 	/**
 	 * Record the target variable/expression

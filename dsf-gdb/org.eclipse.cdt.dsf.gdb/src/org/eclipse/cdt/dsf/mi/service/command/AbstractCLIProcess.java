@@ -100,7 +100,7 @@ public abstract class AbstractCLIProcess extends Process implements IEventListen
 	// prompt but it isn't.  So we do it ourselves.
 	private enum PromptType {
 		IN_PRIMARY_PROMPT, IN_SECONDARY_PROMPT, IN_SECONDARY_PROMPT_MISSING
-	};
+	}
 
 	private PromptType fPrompt = PromptType.IN_PRIMARY_PROMPT;
 

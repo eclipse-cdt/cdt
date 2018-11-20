@@ -216,7 +216,7 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
 			return false;
 		}
 		return s1.getMessage().equals(s2.getMessage());
-	};
+	}
 
 	/**
 	 * Convenience method that returns and optionally creates a properties

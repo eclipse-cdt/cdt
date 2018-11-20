@@ -60,7 +60,7 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter implements IStep
 				@Override
 				public void run() {
 					fController.doneStepping(suspendedEvent.getDMContext(), AbstractDebugVMAdapter.this);
-				};
+				}
 			});
 		}
 	}

@@ -83,7 +83,7 @@ public class RmPerformanceTests extends TestCase {
 						@Override
 						protected void handleCompleted() {
 							// do not call parent so it can be reused
-						};
+						}
 					};
 					rm.done();
 				}

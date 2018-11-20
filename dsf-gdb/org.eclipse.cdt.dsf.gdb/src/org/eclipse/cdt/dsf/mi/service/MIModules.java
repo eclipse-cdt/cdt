@@ -276,7 +276,7 @@ public class MIModules extends AbstractDsfService implements IModules2, ICaching
 												getProperties());
 									}
 									rm.done();
-								};
+								}
 							});
 						}
 					});

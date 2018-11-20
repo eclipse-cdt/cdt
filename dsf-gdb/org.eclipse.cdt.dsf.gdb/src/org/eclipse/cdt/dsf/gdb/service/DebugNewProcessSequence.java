@@ -314,7 +314,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 
 			return Status.OK_STATUS;
 		}
-	};
+	}
 
 	/**
 	 * If we are dealing with a postmortem session, connect to the core/trace file.

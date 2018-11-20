@@ -97,7 +97,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 		public Document[] getDocuments() {
 			return documents;
 		}
-	};
+	}
 
 	private static Map<String, Document> acHoverDocs;
 	private static Map<String, Document> amHoverDocs;

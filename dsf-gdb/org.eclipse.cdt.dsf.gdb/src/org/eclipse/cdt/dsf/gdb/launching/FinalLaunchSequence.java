@@ -463,7 +463,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 								//   	        	                fCommandControl.queueCommand(
 								//   	        	   	                	new MIGDBSetSysroot(fCommandControl.getContext()),
 								//   	        	   	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-							};
+							}
 						});
 			} else {
 				requestMonitor.done();

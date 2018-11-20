@@ -441,12 +441,12 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 				protected void handleCancel() {
 					Sequence.this.cancel(false);
 					cancelExecution();
-				};
+				}
 
 				@Override
 				protected void handleErrorOrWarning() {
 					abortExecution(getStatus(), true);
-				};
+				}
 
 				@Override
 				protected void handleRejectedExecutionException() {

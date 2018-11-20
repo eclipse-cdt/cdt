@@ -90,5 +90,5 @@ public class ToolListLabelProvider extends LabelProvider {
 		if (descriptor != null && manager != null) {
 			manager.destroyImage(descriptor);
 		}
-	};
+	}
 }

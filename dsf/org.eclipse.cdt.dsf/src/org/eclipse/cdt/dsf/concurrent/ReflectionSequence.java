@@ -150,7 +150,7 @@ abstract public class ReflectionSequence extends Sequence {
 			assert executeMethod != null;
 
 			fExecuteMethod = executeMethod;
-			;
+			
 			fRollbackMethod = rollbackMethod;
 		}
 

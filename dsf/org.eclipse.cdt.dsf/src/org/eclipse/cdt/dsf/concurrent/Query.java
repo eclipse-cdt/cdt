@@ -84,7 +84,7 @@ abstract public class Query<V> extends DsfRunnable implements Future<V> {
 			fExecuted = true;
 			return true;
 		}
-	};
+	}
 
 	private final QueryRm fRm = new QueryRm();
 

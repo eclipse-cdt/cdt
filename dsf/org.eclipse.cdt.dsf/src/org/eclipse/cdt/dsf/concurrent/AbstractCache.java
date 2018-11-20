@@ -48,7 +48,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
 				}
 			});
 		}
-	};
+	}
 
 	private RequestCanceledListener fRequestCanceledListener = new RequestCanceledListener();
 

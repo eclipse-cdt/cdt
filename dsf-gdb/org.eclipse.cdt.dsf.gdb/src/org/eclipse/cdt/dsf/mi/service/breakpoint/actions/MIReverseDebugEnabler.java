@@ -39,7 +39,7 @@ public class MIReverseDebugEnabler implements IReverseDebugEnabler {
 
 	private static enum REVERSE_DEBUG_MODE {
 		ENABLE, DISABLE, TOGGLE
-	};
+	}
 
 	/**
 	 * @param executor

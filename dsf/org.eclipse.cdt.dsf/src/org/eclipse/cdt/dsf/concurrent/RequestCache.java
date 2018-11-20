@@ -67,7 +67,7 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
 			@Override
 			public boolean isCanceled() {
 				return super.isCanceled() || RequestCache.this.isCanceled();
-			};
+			}
 		};
 		retrieve(fRm);
 	}

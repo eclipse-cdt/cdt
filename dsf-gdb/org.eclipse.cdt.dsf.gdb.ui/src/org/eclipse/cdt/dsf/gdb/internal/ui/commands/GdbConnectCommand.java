@@ -188,7 +188,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
 			return Status.OK_STATUS;
 		}
-	};
+	}
 
 	/**
 	 * This job will prompt the user for a path to the binary to use,
@@ -253,7 +253,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 												fProcessNameToBinaryMap.put(fProcName, finalBinaryPath);
 											}
 											fRm.done();
-										};
+										}
 									});
 
 						} else {
@@ -380,7 +380,6 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 				}
 			}
 		}
-		;
 		// Trigger the first query
 		new ProcessRequestMonitor(ImmediateExecutor.getInstance()).done();
 	}
@@ -641,7 +640,6 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 					}
 				}
 			}
-			;
 
 			// Trigger the first attach.
 			new AttachToProcessRequestMonitor().done();

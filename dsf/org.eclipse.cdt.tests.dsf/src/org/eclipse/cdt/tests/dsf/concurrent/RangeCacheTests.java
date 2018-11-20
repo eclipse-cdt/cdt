@@ -331,7 +331,7 @@ public class RangeCacheTests {
 			@Override
 			public void run() {
 				fTestCache.reset();
-			};
+			}
 		}).get();
 
 		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
@@ -359,7 +359,7 @@ public class RangeCacheTests {
 			@Override
 			public void run() {
 				fTestCache.reset();
-			};
+			}
 		}).get();
 
 		// Retrieve a range in-between two cached ranges
@@ -398,7 +398,7 @@ public class RangeCacheTests {
 			@Override
 			public void run() {
 				fTestCache.reset();
-			};
+			}
 		}).get();
 
 		// Set the data without using an executor.
@@ -424,7 +424,7 @@ public class RangeCacheTests {
 			public void run() {
 				fTestCache.set(0, 100, null, new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID,
 						IDsfStatusConstants.INVALID_STATE, "Cache invalid", null));
-			};
+			}
 		}).get();
 
 		// Retrieve a range cache and check that it immediately contains the error status in it.

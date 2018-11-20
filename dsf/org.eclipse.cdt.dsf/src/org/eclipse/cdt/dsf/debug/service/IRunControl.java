@@ -55,7 +55,7 @@ public interface IRunControl extends IDsfService {
 
 		/** @since 2.1 */
 		EVENT_BREAKPOINT
-	};
+	}
 
 	/**
 	 * Indicates that the given thread has suspended.
@@ -170,7 +170,7 @@ public interface IRunControl extends IDsfService {
 		 * @since 2.0
 		 */
 		INSTRUCTION_STEP_RETURN
-	};
+	}
 
 	boolean isStepping(IExecutionDMContext context);
 

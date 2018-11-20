@@ -659,7 +659,7 @@ public class MemoryBrowser extends ViewPart
 			}
 
 			label += ' ' + renderingType;
-			;
+			
 
 			// Allow the memory block to customize the label. The platform's
 			// Memory view support this (it was done in the call to

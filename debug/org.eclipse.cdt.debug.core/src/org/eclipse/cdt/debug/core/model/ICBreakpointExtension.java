@@ -53,5 +53,5 @@ public interface ICBreakpointExtension {
 	 */
 	default public String getExtensionMessage() {
 		return ""; //$NON-NLS-1$
-	};
+	}
 }

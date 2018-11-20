@@ -38,7 +38,6 @@ public class Launching {
 				fBackendService.initialize(rm);
 			}
 		}
-		;
 
 		fBackendService = new PDABackend(session, launch, pdaProgram);
 		InitializeBackendServiceQuery initQuery = new InitializeBackendServiceQuery();

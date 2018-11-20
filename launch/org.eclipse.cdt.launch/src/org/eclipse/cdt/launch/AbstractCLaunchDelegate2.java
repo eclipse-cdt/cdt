@@ -616,7 +616,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		if (location != null) {
 			String expandedLocation = VariablesPlugin.getDefault().getStringVariableManager()
 					.performStringSubstitution(location);
-			;
+			
 			if (!expandedLocation.isEmpty()) {
 				return new Path(expandedLocation);
 			}

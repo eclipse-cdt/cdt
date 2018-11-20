@@ -19,7 +19,7 @@ public interface IQmlSignalDefinition extends IQmlObjectMember {
 	@Override
 	default public String getType() {
 		return "QMLSignalDefinition"; //$NON-NLS-1$
-	};
+	}
 
 	public IJSIdentifier getIdentifier();
 

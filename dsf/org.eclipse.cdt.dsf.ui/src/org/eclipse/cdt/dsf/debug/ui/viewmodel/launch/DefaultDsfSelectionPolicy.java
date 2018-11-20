@@ -216,7 +216,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 									rm.setData(getData()
 											.getStateChangeReason() == IRunControl.StateChangeReason.CONTAINER);
 									rm.done();
-								};
+								}
 							});
 				} else {
 					// If container is not suspended it's running, then do not override the selection.

@@ -1406,7 +1406,7 @@ abstract class CopyAction extends Action {
 	// blocks on a Job.
 	public enum CopyType {
 		UNDEFINED, BINARY, TEXT, ADDRESS, ALL, DEFAULT
-	};
+	}
 
 	private Rendering fRendering;
 	private int fClipboardType = DND.CLIPBOARD;

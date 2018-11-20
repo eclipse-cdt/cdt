@@ -487,7 +487,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 					@Override
 					protected void handleCompleted() {
 						rm.done();
-					};
+					}
 				};
 
 				int index;
@@ -554,7 +554,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 					@Override
 					protected void handleCompleted() {
 						rm.done();
-					};
+					}
 				};
 
 				int index;

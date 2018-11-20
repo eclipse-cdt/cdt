@@ -27,7 +27,7 @@ public interface IChangeReverseMethodHandler extends IReverseToggleHandler, IDeb
 	 */
 	enum ReverseDebugMethod {
 		OFF, SOFTWARE, HARDWARE, BRANCH_TRACE, PROCESSOR_TRACE, GDB_TRACE
-	};
+	}
 
 	/**
 	 * Sets the value for the reverse debugging method to be used when the button is toggled.

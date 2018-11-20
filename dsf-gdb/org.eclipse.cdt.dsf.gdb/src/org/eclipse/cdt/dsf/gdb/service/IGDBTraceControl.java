@@ -158,7 +158,7 @@ public interface IGDBTraceControl extends IDsfService {
 
 	public static enum STOP_REASON_ENUM {
 		REQUEST, PASSCOUNT, OVERFLOW, DISCONNECTION, ERROR, UNKNOWN
-	};
+	}
 
 	public interface ITraceStatusDMData extends IDMData {
 		boolean isTracingSupported();

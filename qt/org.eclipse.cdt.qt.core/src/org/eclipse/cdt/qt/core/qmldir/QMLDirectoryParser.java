@@ -284,7 +284,7 @@ public class QMLDirectoryParser {
 			}
 		}
 		throw unexpectedToken();
-	};
+	}
 
 	private QDirInternalCommand parseInternalCommand() {
 		QDirInternalCommand node = new QDirInternalCommand();

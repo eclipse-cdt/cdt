@@ -918,7 +918,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 						@Override
 						public void run() {
 							fController.doneStepping(dmc, DsfSourceDisplayAdapter.this);
-						};
+						}
 					});
 				} catch (RejectedExecutionException e) {
 					// Session is shutdown

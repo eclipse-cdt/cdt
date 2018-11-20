@@ -33,7 +33,7 @@ public class CLIInfoBreak extends CLICommand<CLIInfoBreakInfo> {
 
 	public CLIInfoBreak(IDMContext ctx) {
 		super(ctx, INFO_BREAK);
-	};
+	}
 
 	public CLIInfoBreak(IDMContext ctx, int bpReference) {
 		super(ctx, INFO_BREAK + Integer.toString(bpReference));

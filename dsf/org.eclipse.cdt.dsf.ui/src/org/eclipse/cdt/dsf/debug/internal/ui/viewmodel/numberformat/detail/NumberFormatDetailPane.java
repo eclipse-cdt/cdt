@@ -386,7 +386,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 																}
 
 																detailComputed(null, finalResult.toString());
-															};
+															}
 														}) });
 									}
 								}) });

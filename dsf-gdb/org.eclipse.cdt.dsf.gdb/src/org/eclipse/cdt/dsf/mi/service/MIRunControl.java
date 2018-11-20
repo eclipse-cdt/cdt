@@ -1049,7 +1049,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 			this.steps = steps;
 			this.rm = rm;
 		}
-	};
+	}
 
 	// Keep track of if the target was available or not when we started the operation
 	private boolean fTargetAvailable;
@@ -1323,7 +1323,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 						}
 					});
 		}
-	};
+	}
 
 	/**
 	 * If the execution context of interest is not suspended, this step
@@ -1351,7 +1351,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 						// We weren't able to suspend, so abort the operation
 						fDisableNextSignalEvent = false;
 						super.handleFailure();
-					};
+					}
 				});
 			} else {
 				rm.done();
@@ -1363,7 +1363,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 			Sequence.Step restoreStep = new RestoreTargetStateStep();
 			restoreStep.execute(rm);
 		}
-	};
+	}
 
 	/**
 	 * This step of the sequence takes care of executing all the steps that
@@ -1406,7 +1406,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 				executeSteps(fOperationsPending.poll());
 			}
 		}
-	};
+	}
 
 	/**
 	 * If the sequence had to interrupt the execution context of interest,
@@ -1459,7 +1459,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 				rm.done();
 			}
 		}
-	};
+	}
 
 	/* ******************************************************************************
 	 * End of section to support operations even when the target is unavailable.

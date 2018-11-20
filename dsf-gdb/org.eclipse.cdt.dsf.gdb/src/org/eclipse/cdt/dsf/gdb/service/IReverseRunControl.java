@@ -39,7 +39,7 @@ public interface IReverseRunControl {
 		 * @return the new state of reverse mode.
 		 */
 		boolean isReverseModeEnabled();
-	};
+	}
 
 	/**
 	 * Establish if a reverse-resume operation is allowed on the specified context.

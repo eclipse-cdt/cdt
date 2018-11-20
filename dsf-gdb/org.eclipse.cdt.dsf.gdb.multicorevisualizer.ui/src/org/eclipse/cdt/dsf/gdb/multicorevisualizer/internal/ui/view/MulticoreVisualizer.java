@@ -786,12 +786,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	@Override
 	public void visualizerSelected() {
 		updateActions();
-	};
+	}
 
 	/** Invoked when another visualizer has been selected, hiding this one. */
 	@Override
 	public void visualizerDeselected() {
-	};
+	}
 
 	// --- workbench selection management ---
 

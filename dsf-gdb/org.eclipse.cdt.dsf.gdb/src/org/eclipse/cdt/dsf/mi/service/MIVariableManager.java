@@ -500,14 +500,14 @@ public class MIVariableManager implements ICommandControl {
 		 */
 		public MIDisplayHint getDisplayHint() {
 			return fDisplayHint;
-		};
+		}
 
 		/**
 		 * @since 4.3
 		 */
 		public void setDisplayHint(MIDisplayHint displayHint) {
 			this.fDisplayHint = displayHint;
-		};
+		}
 
 		/**
 		 * @since 4.0
@@ -2392,7 +2392,7 @@ public class MIVariableManager implements ICommandControl {
 													}
 													pendingRm.done();
 												}
-											};
+											}
 										});
 									}
 								} else {

@@ -459,7 +459,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 				for (int i = 0; i < updates.length; i++) {
 					updates[i].done();
 				}
-			};
+			}
 		};
 		int count = 0;
 
@@ -522,7 +522,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 				for (final IPropertiesUpdate update : updates) {
 					update.done();
 				}
-			};
+			}
 		};
 		int count = 0;
 

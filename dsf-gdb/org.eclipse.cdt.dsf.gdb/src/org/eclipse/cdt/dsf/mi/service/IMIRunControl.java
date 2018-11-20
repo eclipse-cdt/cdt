@@ -52,7 +52,7 @@ public interface IMIRunControl extends IRunControl2 {
 	 * @since 4.0
 	 */
 	public interface IRunMode {
-	};
+	}
 
 	/**
 	 * The run-modes supported by GDB.
@@ -61,7 +61,7 @@ public interface IMIRunControl extends IRunControl2 {
 	 */
 	public enum MIRunMode implements IRunMode {
 		ALL_STOP, NON_STOP
-	};
+	}
 
 	/**
 	 * Returns the RunMode that is currently being used by this RunControl service.

@@ -664,7 +664,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 				return fDirection * (v1.compareTo(v2));
 			}
 		}
-	};
+	}
 
 	@Override
 	public void setFocus() {

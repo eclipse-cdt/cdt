@@ -422,7 +422,7 @@ public class CommandCache implements ICommandListener {
 						// protect against the cache being called in non-session thread, but at
 						// the same time avoid adding extra dispatch cycles to command processing.
 						if (fSession.getExecutor().isInExecutorThread()) {
-							;
+							
 							super.done();
 						} else {
 							fSession.getExecutor().execute(new DsfRunnable() {

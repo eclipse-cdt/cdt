@@ -94,7 +94,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 			return super.getMIOutputStream();
 		}
 		return fMIPty.getOutputStream();
-	};
+	}
 
 	@Override
 	public InputStream getMIInputStream() {
@@ -102,7 +102,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 			return super.getMIInputStream();
 		}
 		return fMIPty.getInputStream();
-	};
+	}
 
 	@Override
 	public InputStream getMIErrorStream() {
@@ -110,7 +110,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 			return super.getMIErrorStream();
 		}
 		return fDummyErrorStream;
-	};
+	}
 
 	@Override
 	protected String[] getDebuggerCommandLine() {

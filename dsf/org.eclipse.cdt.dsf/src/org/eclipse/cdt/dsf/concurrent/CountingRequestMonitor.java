@@ -121,5 +121,5 @@ public class CountingRequestMonitor extends RequestMonitor {
 		if ((getStatus() instanceof MultiStatus)) {
 			((MultiStatus) getStatus()).add(status);
 		}
-	};
+	}
 }

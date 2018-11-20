@@ -95,7 +95,7 @@ public class GdbMemoryAddressInfoRegistersRetrieval implements IGdbMemoryAddress
 													}
 												});
 
-									};
+									}
 								});
 					} else {
 						// no valid registers

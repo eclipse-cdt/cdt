@@ -261,7 +261,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 							rm.setData(Boolean.FALSE);
 						}
 						rm.done();
-					};
+					}
 				};
 				int count = 0;
 				for (final IContainerDMContext containerCtx : getData()) {
@@ -273,7 +273,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 										rm.setData(Boolean.TRUE);
 									}
 									crm.done();
-								};
+								}
 							});
 					count++;
 				}
@@ -340,7 +340,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 								rm.setData(Boolean.FALSE);
 							}
 							rm.done();
-						};
+						}
 					};
 					int count = 0;
 					for (IExecutionDMContext execCtx : getData()) {
@@ -353,7 +353,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 												rm.setData(Boolean.TRUE);
 											}
 											crm.done();
-										};
+										}
 									});
 							count++;
 						}

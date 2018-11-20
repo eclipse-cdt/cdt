@@ -134,7 +134,7 @@ Extension point for registration of project configuration factories for handling
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2009 QNX Software Systems and others.  All rights reserved.
+         Copyright (c) 2009 QNX Software Systems and others.
       </documentation>
    </annotation>
 </schema>

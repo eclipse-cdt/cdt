@@ -1,8 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Marc-Andre Laperle and others. All rights reserved. This
+ * Copyright (c) 2012, 2014 Marc-Andre Laperle and others. This
  * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * the Eclipse Public License 2.0 which accompanies this distribution, and is
+ * available at https://www.eclipse.org/legal/epl-2.0/
+ at
+ at SPDX-License-Identifier: EPL-2.0
  * 
  * Contributors: 
  *     Marc-Andre Laperle - initial API and implementation

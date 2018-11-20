@@ -24,16 +24,12 @@ import org.eclipse.core.runtime.IPath;
  */
 public class AutotoolsProblemMarkerInfo {
 
-	public static enum Type{
-		PACKAGE,
-		HEADER,
-		PROG,
+	public static enum Type {
+		PACKAGE, HEADER, PROG,
 		/**
 		 * @since 1.2
 		 */
-		LIB,
-		FILE,
-		GENERIC
+		LIB, FILE, GENERIC
 	}
 
 	private ProblemMarkerInfo marker;
@@ -42,18 +38,19 @@ public class AutotoolsProblemMarkerInfo {
 		this(file, -1, description, severity, null, null, name, type);
 	}
 
-	public AutotoolsProblemMarkerInfo(IResource file, int lineNumber, String description, int severity, String variableName, Type type) {
+	public AutotoolsProblemMarkerInfo(IResource file, int lineNumber, String description, int severity,
+			String variableName, Type type) {
 		this(file, lineNumber, description, severity, variableName, null, null, type);
 	}
 
-	public AutotoolsProblemMarkerInfo(IResource file, int lineNumber, String description, int severity, String variableName, 
-			IPath externalPath, String libraryInfo, Type type) {
+	public AutotoolsProblemMarkerInfo(IResource file, int lineNumber, String description, int severity,
+			String variableName, IPath externalPath, String libraryInfo, Type type) {
 		this.marker = new ProblemMarkerInfo(file, lineNumber, description, severity, variableName, externalPath);
 
 		marker.setAttribute(IAutotoolsMarker.MARKER_PROBLEM_TYPE, type.name());
 		marker.setAttribute(IAutotoolsMarker.MARKER_LIBRARY_INFO, libraryInfo);
 
-		marker.setType (IAutotoolsMarker.AUTOTOOLS_PROBLEM_MARKER);
+		marker.setType(IAutotoolsMarker.AUTOTOOLS_PROBLEM_MARKER);
 	}
 
 	public ProblemMarkerInfo getMarker() {
@@ -64,7 +61,7 @@ public class AutotoolsProblemMarkerInfo {
 		return marker.getAttribute(IAutotoolsMarker.MARKER_PROBLEM_TYPE);
 	}
 
-	public String getLibraryInfo(){
+	public String getLibraryInfo() {
 		return marker.getAttribute(IAutotoolsMarker.MARKER_LIBRARY_INFO);
 	}
 

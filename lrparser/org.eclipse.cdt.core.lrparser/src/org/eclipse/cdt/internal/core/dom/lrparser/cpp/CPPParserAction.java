@@ -18,5 +18,5 @@ import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 class CPPParserAction {
 
 	public CPPBuildASTParserAction builder;
-	
+
 }

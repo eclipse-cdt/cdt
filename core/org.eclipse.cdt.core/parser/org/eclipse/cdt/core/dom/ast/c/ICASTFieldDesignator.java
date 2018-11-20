@@ -43,7 +43,7 @@ public interface ICASTFieldDesignator extends ICASTDesignator {
 	 * @param name <code>IASTName</code>
 	 */
 	public void setName(IASTName name);
-	
+
 	/**
 	 * @since 5.1
 	 */

@@ -40,7 +40,7 @@ public interface ICPPASTConstructorInitializer extends IASTInitializer {
 	 * @since 5.2
 	 */
 	public IASTInitializerClause[] getArguments();
-	
+
 	/**
 	 * Not allowed on frozen ast.
 	 * @since 5.2

@@ -73,11 +73,11 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		if (name == null) {
 			throw new IllegalArgumentException("Name must not be null"); //$NON-NLS-1$
 		}
-		fName= name;
-		fChange= change;
-		fRelevance= relevance;
-		fImage= image;
-		fCommandId= null;
+		fName = name;
+		fChange = change;
+		fRelevance = relevance;
+		fImage = image;
+		fCommandId = null;
 	}
 
 	/*
@@ -88,7 +88,8 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		try {
 			performChange(CUIPlugin.getActivePage().getActiveEditor(), document);
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, CorrectionMessages.ChangeCorrectionProposal_error_title, CorrectionMessages.ChangeCorrectionProposal_error_message);
+			ExceptionHandler.handle(e, CorrectionMessages.ChangeCorrectionProposal_error_title,
+					CorrectionMessages.ChangeCorrectionProposal_error_message);
 		}
 	}
 
@@ -102,31 +103,31 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	 * @throws CoreException Thrown when the invocation of the change failed.
 	 */
 	protected void performChange(IEditorPart activeEditor, IDocument document) throws CoreException {
-		Change change= null;
-		IRewriteTarget rewriteTarget= null;
+		Change change = null;
+		IRewriteTarget rewriteTarget = null;
 		try {
-			change= getChange();
+			change = getChange();
 			if (change != null) {
 				if (document != null) {
 					LinkedModeModel.closeAllModels(document);
 				}
 				if (activeEditor != null) {
-					rewriteTarget= activeEditor.getAdapter(IRewriteTarget.class);
+					rewriteTarget = activeEditor.getAdapter(IRewriteTarget.class);
 					if (rewriteTarget != null) {
 						rewriteTarget.beginCompoundChange();
 					}
 				}
 
 				change.initializeValidationData(new NullProgressMonitor());
-				RefactoringStatus valid= change.isValid(new NullProgressMonitor());
+				RefactoringStatus valid = change.isValid(new NullProgressMonitor());
 				if (valid.hasFatalError()) {
-					IStatus status= new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR,
-						valid.getMessageMatchingSeverity(RefactoringStatus.FATAL), null);
+					IStatus status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR,
+							valid.getMessageMatchingSeverity(RefactoringStatus.FATAL), null);
 					throw new CoreException(status);
 				} else {
-					IUndoManager manager= RefactoringCore.getUndoManager();
+					IUndoManager manager = RefactoringCore.getUndoManager();
 					manager.aboutToPerformChange(change);
-					Change undoChange= change.perform(new NullProgressMonitor());
+					Change undoChange = change.perform(new NullProgressMonitor());
 					manager.changePerformed(change, true);
 					if (undoChange != null) {
 						undoChange.initializeValidationData(new NullProgressMonitor());
@@ -147,12 +148,12 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 
 	@Override
 	public String getAdditionalProposalInfo() {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<p>"); //$NON-NLS-1$
 		try {
-			Change change= getChange();
+			Change change = getChange();
 			if (change != null) {
-				String name= change.getName();
+				String name = change.getName();
 				if (name.length() == 0) {
 					return null;
 				}
@@ -176,25 +177,27 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 
 	@Override
 	public String getDisplayString() {
-		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
+		String shortCutString = CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			return MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut, new Object[] {getName(), shortCutString});
+			return MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
+					new Object[] { getName(), shortCutString });
 		}
 		return getName();
 	}
-	
+
 	@Override
 	public StyledString getStyledDisplayString() {
-		StyledString str= new StyledString(getName());
-		
-		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
+		StyledString str = new StyledString(getName());
+
+		String shortCutString = CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			String decorated= MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut, new Object[] {getName(), shortCutString});
-			return ColoringLabelProvider.decorateStyledString(str, decorated, StyledString.QUALIFIER_STYLER); 
+			String decorated = MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
+					new Object[] { getName(), shortCutString });
+			return ColoringLabelProvider.decorateStyledString(str, decorated, StyledString.QUALIFIER_STYLER);
 		}
 		return str;
 	}
-	
+
 	/** 
 	 * Returns the name of the proposal.
 	 * 
@@ -203,7 +206,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	public String getName() {
 		return fName;
 	}
-	
+
 	@Override
 	public Image getImage() {
 		return fImage;
@@ -220,7 +223,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	 * @param image the desired image.
 	 */
 	public void setImage(Image image) {
-		fImage= image;
+		fImage = image;
 	}
 
 	/**
@@ -231,7 +234,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	 */
 	public final Change getChange() throws CoreException {
 		if (fChange == null) {
-			fChange= createChange();
+			fChange = createChange();
 		}
 		return fChange;
 	}
@@ -239,15 +242,15 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/**
 	 * Creates the text change for this proposal.
 	 * This method is only called once and only when no text change has been passed in
- 	 * {@link #ChangeCorrectionProposal(String, Change, int, Image)}.
- 	 * 
+	 * {@link #ChangeCorrectionProposal(String, Change, int, Image)}.
+	 * 
 	 * @return returns the created change.
 	 * @throws CoreException thrown if the creation of the change failed.
 	 */
 	protected Change createChange() throws CoreException {
 		return new NullChange();
 	}
-	
+
 	/**
 	 * Sets the display name.
 	 * 
@@ -257,7 +260,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		if (name == null) {
 			throw new IllegalArgumentException("Name must not be null"); //$NON-NLS-1$
 		}
-		fName= name;
+		fName = name;
 	}
 
 	@Override
@@ -271,14 +274,14 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	 * @param relevance the relevance to set
 	 */
 	public void setRelevance(int relevance) {
-		fRelevance= relevance;
+		fRelevance = relevance;
 	}
 
 	@Override
 	public String getCommandId() {
 		return fCommandId;
 	}
-	
+
 	/**
 	 * Sets the proposal id to allow assigning a shortcut to the correction proposal.
 	 * 
@@ -286,7 +289,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	 *     should be assigned to this proposal.
 	 */
 	public void setCommandId(String commandId) {
-		fCommandId= commandId;
+		fCommandId = commandId;
 	}
 
 	@Override

@@ -29,26 +29,19 @@ import org.eclipse.jface.text.rules.WordRule;
 
 public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 	@SuppressWarnings("nls")
-	private final static String[] keywords = {
-		"define", "endef", "ifdef", "ifndef",
-		"ifeq", "ifneq", "else", "endif", "include",
-		"-include", "sinclude", "override",
-		"export", "unexport", "vpath"
-	};
+	private final static String[] keywords = { "define", "endef", "ifdef", "ifndef", "ifeq", "ifneq", "else", "endif",
+			"include", "-include", "sinclude", "override", "export", "unexport", "vpath" };
 
-	public static final String[] fTokenProperties = new String[] {
-		ColorManager.MAKE_KEYWORD_COLOR,
-		ColorManager.MAKE_FUNCTION_COLOR,
-		ColorManager.MAKE_MACRO_REF_COLOR,
-		ColorManager.MAKE_MACRO_DEF_COLOR,
-		ColorManager.MAKE_DEFAULT_COLOR
-	};
+	public static final String[] fTokenProperties = new String[] { ColorManager.MAKE_KEYWORD_COLOR,
+			ColorManager.MAKE_FUNCTION_COLOR, ColorManager.MAKE_MACRO_REF_COLOR, ColorManager.MAKE_MACRO_DEF_COLOR,
+			ColorManager.MAKE_DEFAULT_COLOR };
 
 	private final class KeywordDetector implements IWordDetector {
 		@Override
 		public boolean isWordPart(char c) {
 			return Character.isLetterOrDigit(c);
 		}
+
 		@Override
 		public boolean isWordStart(char c) {
 			return Character.isLetterOrDigit(c) || c == '-';
@@ -59,6 +52,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		private KeywordRule() {
 			super(new KeywordDetector());
 		}
+
 		@Override
 		public IToken evaluate(ICharacterScanner scanner) {
 			int offset = fOffset;
@@ -66,8 +60,8 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 			if (token != fDefaultToken) {
 				// check if the keyword starts from beginning of line possibly indented
 				try {
-					int line= fDocument.getLineOfOffset(offset);
-					int start= fDocument.getLineOffset(line);
+					int line = fDocument.getLineOfOffset(offset);
+					int start = fDocument.getLineOffset(line);
 					String ident = fDocument.get(start, offset - start);
 					if (ident.trim().length() > 0) {
 						token = fDefaultToken;

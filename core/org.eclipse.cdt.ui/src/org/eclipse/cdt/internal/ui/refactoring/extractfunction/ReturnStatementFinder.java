@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 /**
  * @author Emanuel Graf IFS
  */
-class ReturnStatementFinder extends ASTVisitor{
+class ReturnStatementFinder extends ASTVisitor {
 	private boolean containsReturnStmt;
 
 	{
@@ -36,7 +36,7 @@ class ReturnStatementFinder extends ASTVisitor{
 		}
 		return ASTVisitor.PROCESS_CONTINUE;
 	}
-	
+
 	public boolean containsReturn() {
 		return containsReturnStmt;
 	}

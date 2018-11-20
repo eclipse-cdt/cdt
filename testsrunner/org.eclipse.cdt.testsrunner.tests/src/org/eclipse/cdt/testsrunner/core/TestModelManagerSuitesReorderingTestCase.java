@@ -17,7 +17,6 @@ import org.eclipse.cdt.testsrunner.internal.model.TestModelManager;
 import org.eclipse.cdt.testsrunner.internal.model.TestSuite;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 
-
 /**
  * Tests on the test suites reordering in TestModelManager.
  */
@@ -38,5 +37,5 @@ public class TestModelManagerSuitesReorderingTestCase extends TestModelManagerBa
 		modelManager.enterTestSuite(name);
 		modelManager.exitTestSuite();
 	}
-	
+
 }

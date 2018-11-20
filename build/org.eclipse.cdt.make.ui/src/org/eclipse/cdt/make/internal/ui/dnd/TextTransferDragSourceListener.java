@@ -102,27 +102,28 @@ public class TextTransferDragSourceListener extends AbstractSelectionDragAdapter
 	 * @return make targets as miltiline text.
 	 */
 	public static String convertSelectedMakeTargetsToText(IStructuredSelection selection) {
-		String targetsText=""; //$NON-NLS-1$
+		String targetsText = ""; //$NON-NLS-1$
 		for (Object selectionItem : selection.toList()) {
 			if (selectionItem instanceof IMakeTarget) {
-				IMakeTarget makeTarget = (IMakeTarget)selectionItem;
+				IMakeTarget makeTarget = (IMakeTarget) selectionItem;
 				String buildCommand;
 				if (makeTarget.isDefaultBuildCmd()) {
 					buildCommand = MakeTargetDndUtil.getProjectBuildCommand(makeTarget.getProject());
 				} else {
-					buildCommand =makeTarget.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
-						MakeTargetDndUtil.DEFAULT_BUILD_COMMAND);
+					buildCommand = makeTarget.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
+							MakeTargetDndUtil.DEFAULT_BUILD_COMMAND);
 				}
-				String buildCommandArguments = makeTarget.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "").trim(); //$NON-NLS-1$
-				if (buildCommandArguments.length()>0) {
+				String buildCommandArguments = makeTarget.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "") //$NON-NLS-1$
+						.trim();
+				if (buildCommandArguments.length() > 0) {
 					buildCommandArguments = ' ' + buildCommandArguments;
 				}
 				String buildTarget = makeTarget.getBuildAttribute(IMakeTarget.BUILD_TARGET, "").trim(); //$NON-NLS-1$
-				if (buildTarget.length()>0) {
+				if (buildTarget.length() > 0) {
 					buildTarget = ' ' + buildTarget;
 				}
 				targetsText = targetsText + buildCommand + buildCommandArguments + buildTarget
-					+ System.getProperty("line.separator"); //$NON-NLS-1$
+						+ System.getProperty("line.separator"); //$NON-NLS-1$
 			}
 		}
 		return targetsText;

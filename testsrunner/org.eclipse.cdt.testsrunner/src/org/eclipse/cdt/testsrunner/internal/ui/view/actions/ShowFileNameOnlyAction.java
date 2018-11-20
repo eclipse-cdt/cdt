@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.ui.view.MessagesViewer;
 import org.eclipse.jface.action.Action;
 
@@ -25,9 +24,8 @@ public class ShowFileNameOnlyAction extends Action {
 
 	private MessagesViewer messagesViewer;
 
-
 	public ShowFileNameOnlyAction(MessagesViewer messagesViewer) {
-		super(ActionsMessages.ShowFileNameOnlyAction_text, AS_CHECK_BOX); 
+		super(ActionsMessages.ShowFileNameOnlyAction_text, AS_CHECK_BOX);
 		this.messagesViewer = messagesViewer;
 		setToolTipText(ActionsMessages.ShowFileNameOnlyAction_tooltip);
 		setChecked(messagesViewer.getShowFileNameOnly());

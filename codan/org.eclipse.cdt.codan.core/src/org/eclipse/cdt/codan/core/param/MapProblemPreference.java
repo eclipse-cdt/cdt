@@ -38,7 +38,8 @@ import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
  */
 public class MapProblemPreference extends AbstractProblemPreference
 		implements IProblemPreferenceCompositeValue, IProblemPreferenceCompositeDescriptor {
-	private Map<String, IProblemPreference> hash = Collections.synchronizedMap(new LinkedHashMap<String, IProblemPreference>());
+	private Map<String, IProblemPreference> hash = Collections
+			.synchronizedMap(new LinkedHashMap<String, IProblemPreference>());
 
 	/**
 	 * Default constructor

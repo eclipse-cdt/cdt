@@ -17,12 +17,12 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
  * Common interface for visualizer model objects
  */
 public interface IVisualizerModelObject {
-	/** Get the ID of this model object */	
+	/** Get the ID of this model object */
 	public int getID();
-	
+
 	/** Get the parent of this model object*/
-	public IVisualizerModelObject getParent();	
-	
+	public IVisualizerModelObject getParent();
+
 	/** Compare two IVisualizerModelObject */
 	public int compareTo(IVisualizerModelObject o);
 }

@@ -48,7 +48,8 @@ public class STDWizardHandler extends MBSWizardHandler {
 		if (tc == null) {
 			full_tcs.put(Messages.StdProjectTypeHandler_0, null);
 		} else {
-			if (tc.isAbstract() || tc.isSystemObject()) return;
+			if (tc.isAbstract() || tc.isSystemObject())
+				return;
 			// 	unlike CWizardHandler, we don't check for configs
 			full_tcs.put(tc.getUniqueRealName(), tc);
 		}
@@ -58,7 +59,8 @@ public class STDWizardHandler extends MBSWizardHandler {
 	 * Note that configurations parameter is ignored
 	 */
 	@Override
-	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)  throws CoreException {
+	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)
+			throws CoreException {
 		try {
 			monitor.beginTask("", 100);//$NON-NLS-1$
 
@@ -83,17 +85,19 @@ public class STDWizardHandler extends MBSWizardHandler {
 		monitor.worked(20);
 		cfgs = CfgHolder.unique(getCfgItems(false));
 		cfgs = CfgHolder.reorder(cfgs);
-		int work = 50/cfgs.length;
-		for (int i=0; i<cfgs.length; i++) {
-			String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain)(cfgs[i].getToolChain())).getId();  //$NON-NLS-1$
-			Configuration cfg = new Configuration(mProj, (ToolChain)cfgs[i].getToolChain(), ManagedBuildManager.calculateChildId(s, null), cfgs[i].getName());
+		int work = 50 / cfgs.length;
+		for (int i = 0; i < cfgs.length; i++) {
+			String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain) (cfgs[i].getToolChain())).getId(); //$NON-NLS-1$
+			Configuration cfg = new Configuration(mProj, (ToolChain) cfgs[i].getToolChain(),
+					ManagedBuildManager.calculateChildId(s, null), cfgs[i].getName());
 			cfgs[i].setConfiguration(cfg);
 			IBuilder bld = cfg.getEditableBuilder();
 			if (bld != null) {
-				if(bld.isInternalBuilder()){
+				if (bld.isInternalBuilder()) {
 					IConfiguration prefCfg = ManagedBuildManager.getPreferenceConfiguration(false);
 					IBuilder prefBuilder = prefCfg.getBuilder();
-					cfg.changeBuilder(prefBuilder, ManagedBuildManager.calculateChildId(cfg.getId(), null), prefBuilder.getName());
+					cfg.changeBuilder(prefBuilder, ManagedBuildManager.calculateChildId(cfg.getId(), null),
+							prefBuilder.getName());
 					bld = cfg.getEditableBuilder();
 					bld.setBuildPath(null);
 				}

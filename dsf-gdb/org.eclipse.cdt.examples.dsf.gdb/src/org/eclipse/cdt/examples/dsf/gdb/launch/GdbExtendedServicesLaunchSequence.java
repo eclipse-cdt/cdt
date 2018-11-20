@@ -38,7 +38,8 @@ public class GdbExtendedServicesLaunchSequence extends ServicesLaunchSequence {
 		moreSteps[steps.length] = new Step() {
 			@Override
 			public void execute(RequestMonitor requestMonitor) {
-				fLaunch.getServiceFactory().createService(IGDBExtendedFunctions.class, fLaunch.getSession()).initialize(requestMonitor);
+				fLaunch.getServiceFactory().createService(IGDBExtendedFunctions.class, fLaunch.getSession())
+						.initialize(requestMonitor);
 			}
 		};
 		return moreSteps;

@@ -38,37 +38,37 @@ public class XlcCLanguage extends GCCLanguage {
 	public static final String ID = "org.eclipse.cdt.core.lrparser.xlc.c"; //$NON-NLS-1$ 
 
 	private static XlcCLanguage DEFAULT = new XlcCLanguage();
-	
+
 	public static XlcCLanguage getDefault() {
 		return DEFAULT;
 	}
-	
+
 	@Override
-	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String, String> properties) {
 		IProject project = getProject(properties);
-		boolean supportVectors  = getPref(XlcPref.SUPPORT_VECTOR_TYPES, project);
+		boolean supportVectors = getPref(XlcPref.SUPPORT_VECTOR_TYPES, project);
 		boolean supportDecimals = getPref(XlcPref.SUPPORT_DECIMAL_FLOATING_POINT_TYPES, project);
-		
-		return new XlcCParser(scanner, new XlcCTokenMap(supportVectors, supportDecimals), getBuiltinBindingsProvider(), index, properties);
+
+		return new XlcCParser(scanner, new XlcCTokenMap(supportVectors, supportDecimals), getBuiltinBindingsProvider(),
+				index, properties);
 	}
-	
+
 	public String getId() {
 		return ID;
 	}
-	
+
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
 		return XlcCScannerExtensionConfiguration.getInstance();
 	}
 
-	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
-		if(ICLanguageKeywords.class.equals(adapter))
+		if (ICLanguageKeywords.class.equals(adapter))
 			return XlcKeywords.ALL_C_KEYWORDS;
-		
+
 		return super.getAdapter(adapter);
 	}
-	
+
 }

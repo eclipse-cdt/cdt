@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
-
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
@@ -49,7 +48,7 @@ public class AddTargetAction extends SelectionListenerAction {
 		Object selection = getSelectedElement();
 		try {
 			if (selection instanceof IMakeTarget) {
-				IMakeTarget makeTarget = (IMakeTarget)selection;
+				IMakeTarget makeTarget = (IMakeTarget) selection;
 				MakeTargetDndUtil.copyOneTarget(makeTarget, makeTarget.getContainer(), DND.DROP_COPY, shell, false);
 			} else {
 				IContainer container = null;
@@ -58,27 +57,28 @@ public class AddTargetAction extends SelectionListenerAction {
 				} else if (selection instanceof IContainer) {
 					container = (IContainer) selection;
 				}
-				if (container!=null) {
+				if (container != null) {
 					MakeTargetDialog dialog = new MakeTargetDialog(shell, container);
 					dialog.open();
 				}
 			}
 		} catch (CoreException e) {
 			MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddTargetAction.exception.title"), //$NON-NLS-1$
-				MakeUIPlugin.getResourceString("AddTargetAction.exception.message"), e); //$NON-NLS-1$
+					MakeUIPlugin.getResourceString("AddTargetAction.exception.message"), e); //$NON-NLS-1$
 		}
 
 	}
 
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return super.updateSelection(selection) && getSelectedElement()!=null;
+		return super.updateSelection(selection) && getSelectedElement() != null;
 	}
 
 	private Object getSelectedElement() {
-		if (getStructuredSelection().size()==1) {
+		if (getStructuredSelection().size() == 1) {
 			Object element = getStructuredSelection().getFirstElement();
-			if (element instanceof IContainer || element instanceof TargetSourceContainer || element instanceof IMakeTarget) {
+			if (element instanceof IContainer || element instanceof TargetSourceContainer
+					|| element instanceof IMakeTarget) {
 				return element;
 			}
 		}

@@ -35,27 +35,27 @@ public class FindBinding {
 
 		public DefaultBindingBTreeComparator(PDOMLinkage linkage) {
 			this.linkage = linkage;
-			this.database= linkage.getDB();
+			this.database = linkage.getDB();
 		}
 
 		@Override
 		public int compare(long record1, long record2) throws CoreException {
 			IString nm1 = PDOMNamedNode.getDBName(database, record1);
 			IString nm2 = PDOMNamedNode.getDBName(database, record2);
-			int cmp= nm1.compareCompatibleWithIgnoreCase(nm2);
+			int cmp = nm1.compareCompatibleWithIgnoreCase(nm2);
 			if (cmp == 0) {
-				long t1= PDOMBinding.getLocalToFileRec(database, record1);
-				long t2= PDOMBinding.getLocalToFileRec(database, record2);
+				long t1 = PDOMBinding.getLocalToFileRec(database, record1);
+				long t2 = PDOMBinding.getLocalToFileRec(database, record2);
 				if (t1 == t2) {
 					t1 = PDOMNode.getNodeType(database, record1);
 					t2 = PDOMNode.getNodeType(database, record2);
 					if (t1 == t2 && t1 == IIndexBindingConstants.ENUMERATOR) {
 						// Allow to insert multiple enumerators into the global index.
-						t1= record1;
-						t2= record2;
+						t1 = record1;
+						t2 = record2;
 					}
 				}
-				cmp= t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
+				cmp = t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
 			}
 			return cmp;
 		}
@@ -67,28 +67,28 @@ public class FindBinding {
 		private final int[] fConstants;
 		private final long fLocalToFile;
 		protected PDOMBinding fResult;
-	
+
 		protected DefaultFindBindingVisitor(PDOMLinkage linkage, char[] name, int[] constants, long localToFile) {
 			fLinkage = linkage;
 			fName = name;
 			fConstants = constants;
-			fLocalToFile= localToFile;
+			fLocalToFile = localToFile;
 		}
-		
+
 		// IBTreeVisitor
 		@Override
 		public int compare(long record) throws CoreException {
 			final Database db = fLinkage.getDB();
 			IString nm1 = PDOMNamedNode.getDBName(db, record);
-			int cmp= nm1.compareCompatibleWithIgnoreCase(fName); 
+			int cmp = nm1.compareCompatibleWithIgnoreCase(fName);
 			if (cmp == 0) {
-				long t1= PDOMBinding.getLocalToFileRec(db, record);
-				long t2= fLocalToFile;
-				cmp= t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
+				long t1 = PDOMBinding.getLocalToFileRec(db, record);
+				long t2 = fLocalToFile;
+				cmp = t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
 			}
 			return cmp;
 		}
-	
+
 		// IBTreeVisitor
 		@Override
 		public boolean visit(long record) throws CoreException {
@@ -96,13 +96,13 @@ public class FindBinding {
 			if (nnode instanceof PDOMBinding) {
 				final PDOMBinding binding = (PDOMBinding) nnode;
 				if (matches(binding)) {
-					fResult= binding;
+					fResult = binding;
 					return false;
 				}
 			}
 			return true;
 		}
-		
+
 		protected boolean matches(PDOMBinding nnode) throws CoreException {
 			if (nnode.hasName(fName)) {
 				int constant = nnode.getNodeType();
@@ -124,7 +124,7 @@ public class FindBinding {
 			if (node instanceof PDOMBinding) {
 				final PDOMBinding nnode = (PDOMBinding) node;
 				if (matches(nnode)) {
-					fResult= nnode;
+					fResult = nnode;
 					throw new OperationCanceledException();
 				}
 			}
@@ -143,11 +143,11 @@ public class FindBinding {
 
 		@Override
 		public int compare(long record1, long record2) throws CoreException {
-			int cmp= super.compare(record1, record2);	// compare names
-			if (cmp == 0) {								// any order will do.
+			int cmp = super.compare(record1, record2); // compare names
+			if (cmp == 0) { // any order will do.
 				if (record1 < record2) {
 					return -1;
-				} else if (record1 > record2) {			
+				} else if (record1 > record2) {
 					return 1;
 				}
 			}
@@ -157,29 +157,33 @@ public class FindBinding {
 
 	public static class MacroBTreeComparator implements IBTreeComparator {
 		final private Database db;
-		
+
 		public MacroBTreeComparator(Database database) {
-			db= database;
+			db = database;
 		}
+
 		@Override
 		public int compare(long record1, long record2) throws CoreException {
-			return compare(PDOMNamedNode.getDBName(db, record1), PDOMNamedNode.getDBName(db, record2));	// compare names
+			return compare(PDOMNamedNode.getDBName(db, record1), PDOMNamedNode.getDBName(db, record2)); // compare names
 		}
+
 		private int compare(IString nameInDB, IString nameInDB2) throws CoreException {
 			return nameInDB.compareCompatibleWithIgnoreCase(nameInDB2);
 		}
 	}
 
-	public static PDOMBinding findBinding(BTree btree, final PDOMLinkage linkage, final char[] name, 
+	public static PDOMBinding findBinding(BTree btree, final PDOMLinkage linkage, final char[] name,
 			final int[] constants, final long localToFileRec) throws CoreException {
-		final DefaultFindBindingVisitor visitor = new DefaultFindBindingVisitor(linkage, name, constants, localToFileRec);
+		final DefaultFindBindingVisitor visitor = new DefaultFindBindingVisitor(linkage, name, constants,
+				localToFileRec);
 		btree.accept(visitor);
 		return visitor.getResult();
 	}
 
-	public static PDOMBinding findBinding(IPDOMNode node, final PDOMLinkage linkage, final char[] name, final int[] constants,
-			long localToFileRec) throws CoreException {
-		final DefaultFindBindingVisitor visitor = new DefaultFindBindingVisitor(linkage, name, constants, localToFileRec);
+	public static PDOMBinding findBinding(IPDOMNode node, final PDOMLinkage linkage, final char[] name,
+			final int[] constants, long localToFileRec) throws CoreException {
+		final DefaultFindBindingVisitor visitor = new DefaultFindBindingVisitor(linkage, name, constants,
+				localToFileRec);
 		try {
 			node.accept(visitor);
 		} catch (OperationCanceledException e) {
@@ -187,4 +191,3 @@ public class FindBinding {
 		return visitor.getResult();
 	}
 }
-

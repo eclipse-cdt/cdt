@@ -36,10 +36,10 @@ import org.eclipse.core.runtime.Assert;
  * @since 5.0.1
  */
 public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmbiguousDeclarator {
-    private IASTDeclarator[] dtors = new IASTDeclarator[2];
-    private int dtorPos= -1;
+	private IASTDeclarator[] dtors = new IASTDeclarator[2];
+	private int dtorPos = -1;
 
-    public CASTAmbiguousDeclarator(IASTDeclarator... decls) {
+	public CASTAmbiguousDeclarator(IASTDeclarator... decls) {
 		for (IASTDeclarator d : decls) {
 			if (d != null) {
 				addDeclarator(d);
@@ -50,7 +50,7 @@ public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmb
 	@Override
 	protected void beforeResolution() {
 		// populate containing scope, so that it will not be affected by the alternative branches.
-		IScope scope= CVisitor.getContainingScope(this);
+		IScope scope = CVisitor.getContainingScope(this);
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).populateCache();
 		}
@@ -58,24 +58,24 @@ public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmb
 
 	@Override
 	public void addDeclarator(IASTDeclarator d) {
-        assertNotFrozen();
-    	if (d != null) {
-    		dtors = ArrayUtil.appendAt(IASTDeclarator.class, dtors, ++dtorPos, d);
-    		d.setParent(this);
+		assertNotFrozen();
+		if (d != null) {
+			dtors = ArrayUtil.appendAt(IASTDeclarator.class, dtors, ++dtorPos, d);
+			d.setParent(this);
 			d.setPropertyInParent(SUBDECLARATOR);
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public IASTDeclarator[] getDeclarators() {
-    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos);
-        return dtors;
-    }
+		dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos);
+		return dtors;
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getNodes() {
-        return getDeclarators();
-    }
+		return getDeclarators();
+	}
 
 	@Override
 	public IASTInitializer getInitializer() {
@@ -104,7 +104,7 @@ public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmb
 
 	@Override
 	public void addAttribute(IASTAttribute attribute) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
@@ -126,25 +126,25 @@ public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmb
 
 	@Override
 	public void addPointerOperator(IASTPointerOperator operator) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
 	@Override
 	public void setInitializer(IASTInitializer initializer) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
 	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
 	@Override
 	public void setNestedDeclarator(IASTDeclarator nested) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 

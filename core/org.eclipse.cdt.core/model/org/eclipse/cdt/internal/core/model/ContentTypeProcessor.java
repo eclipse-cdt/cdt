@@ -54,7 +54,7 @@ public class ContentTypeProcessor extends CModelOperation {
 		ICElement root = fManager.getCModel();
 		fCurrentDelta = new CElementDelta(root);
 	}
-	
+
 	@Override
 	public boolean isReadOnly() {
 		return true;
@@ -70,7 +70,7 @@ public class ContentTypeProcessor extends CModelOperation {
 				processContentType(cprojects[k], contentType, context);
 			}
 		}
-		
+
 		if (fCurrentDelta.getAffectedChildren().length > 0) {
 			addDelta(fCurrentDelta);
 		}
@@ -128,7 +128,7 @@ public class ContentTypeProcessor extends CModelOperation {
 			// if the type is not a TranslationUnit
 			switch (type) {
 			case ICElement.C_PROJECT: {
-				CElementInfo info = (CElementInfo)fManager.peekAtInfo(celement);
+				CElementInfo info = (CElementInfo) fManager.peekAtInfo(celement);
 				if (info != null) {
 					ICElement[] celements = info.getChildren();
 					for (int i = 0; i < celements.length; ++i) {
@@ -138,14 +138,14 @@ public class ContentTypeProcessor extends CModelOperation {
 				break;
 			}
 			case ICElement.C_CCONTAINER: {
-				CElementInfo info = (CElementInfo)fManager.peekAtInfo(celement);
+				CElementInfo info = (CElementInfo) fManager.peekAtInfo(celement);
 				if (info != null) {
 					try {
 						ICElement[] celements = info.getChildren();
 						IResource resource = celement.getResource();
 						IResource[] members = null;
 						if (resource instanceof IContainer) {
-							members = ((IContainer)resource).members();
+							members = ((IContainer) resource).members();
 						}
 						if (members != null) {
 							for (int i = 0; i < members.length; ++i) {
@@ -158,7 +158,7 @@ public class ContentTypeProcessor extends CModelOperation {
 										for (int j = 0; j < celements.length; ++j) {
 											if (celements[j].getElementName().equals(name)) {
 												if (celements[j].getElementType() == ICElement.C_UNIT) {
-													ITranslationUnit unit = (ITranslationUnit)celements[j];
+													ITranslationUnit unit = (ITranslationUnit) celements[j];
 													if (!cType.getId().equals(unit.getContentTypeId())) {
 														if (isRegisteredContentTypeId(cType.getId())) {
 															elementChanged(celements[j]);
@@ -169,7 +169,7 @@ public class ContentTypeProcessor extends CModelOperation {
 												break;
 											}
 										}
-										if (! found) {
+										if (!found) {
 											ICElement newElement = CoreModel.getDefault().create(file);
 											if (newElement != null) {
 												elementAdded(newElement, celement);
@@ -187,12 +187,13 @@ public class ContentTypeProcessor extends CModelOperation {
 					}
 				}
 			}
-			break;
+				break;
 			case ICElement.C_UNIT: {
-				String oldId =  ((ITranslationUnit)celement).getContentTypeId();
+				String oldId = ((ITranslationUnit) celement).getContentTypeId();
 				if (contentType.getId().equals(oldId)) {
 					try {
-						IContentType cType = CCorePlugin.getContentType(celement.getCProject().getProject(), celement.getElementName());
+						IContentType cType = CCorePlugin.getContentType(celement.getCProject().getProject(),
+								celement.getElementName());
 						String newId = (cType != null) ? cType.getId() : ""; //$NON-NLS-1$
 						if (isRegisteredContentTypeId(newId)) {
 							if (!oldId.equals(newId)) {
@@ -217,29 +218,29 @@ public class ContentTypeProcessor extends CModelOperation {
 	 * @param delta
 	 */
 	private void nonCResourcesChanged(ICElement parent) {
-		if (parent instanceof Openable && ((Openable)parent).isOpen()) {
+		if (parent instanceof Openable && ((Openable) parent).isOpen()) {
 			try {
-				CElementInfo info = ((Openable)parent).getElementInfo();
+				CElementInfo info = ((Openable) parent).getElementInfo();
 				switch (parent.getElementType()) {
 				case ICElement.C_MODEL:
-					((CModelInfo)info).setNonCResources(null);
-				break;
+					((CModelInfo) info).setNonCResources(null);
+					break;
 				case ICElement.C_PROJECT:
-					((CProjectInfo)info).setNonCResources(null);
-				break;
+					((CProjectInfo) info).setNonCResources(null);
+					break;
 				case ICElement.C_CCONTAINER:
-					((CContainerInfo)info).setNonCResources(null);
+					((CContainerInfo) info).setNonCResources(null);
 					if (parent instanceof ISourceRoot) {
 						// if sourceRoot == Project we nee to update the nonCResource of the project also.
 						if (parent.getResource() instanceof IProject) {
 							ICElement cproject = parent.getCProject();
-							CProjectInfo pinfo = (CProjectInfo)fManager.peekAtInfo(cproject);
+							CProjectInfo pinfo = (CProjectInfo) fManager.peekAtInfo(cproject);
 							if (pinfo != null) {
 								pinfo.setNonCResources(null);
 							}
 						}
 					}
-				break;
+					break;
 				}
 			} catch (CModelException e) {
 				//
@@ -249,7 +250,7 @@ public class ContentTypeProcessor extends CModelOperation {
 
 	private void elementAdded(ICElement celement, ICElement parent) throws CModelException {
 		if (celement instanceof Openable) {
-			addToParentInfo((Openable)celement);
+			addToParentInfo((Openable) celement);
 		}
 		fCurrentDelta.added(celement);
 		nonCResourcesChanged(parent);
@@ -280,16 +281,16 @@ public class ContentTypeProcessor extends CModelOperation {
 		// For Binary/Archive We can not call close() to do the work
 		// closing will remove the element from the {Binary,Archive}Container
 		// We neef to clear the cache explicitely
-//		if (element instanceof IBinary || element instanceof IArchive) {
-//			closeBinary(element);
-//		} else if (element instanceof Openable) {
-//			close((Openable)element);
-//		}
-//		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
+		//		if (element instanceof IBinary || element instanceof IArchive) {
+		//			closeBinary(element);
+		//		} else if (element instanceof Openable) {
+		//			close((Openable)element);
+		//		}
+		//		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
 		if (element instanceof IOpenable) {
-			((IOpenable)element).close();
+			((IOpenable) element).close();
 		}
-		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT |ICElementDelta.F_CONTENT_TYPE);
+		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT | ICElementDelta.F_CONTENT_TYPE);
 	}
 
 	/**
@@ -301,7 +302,7 @@ public class ContentTypeProcessor extends CModelOperation {
 		// Remove the child from the parent list.
 		ICElement parent = child.getParent();
 		if (parent != null && parent instanceof Parent && fManager.peekAtInfo(parent) != null) {
-			((Parent)parent).removeChild(child);
+			((Parent) parent).removeChild(child);
 		}
 	}
 

@@ -15,12 +15,10 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 /**
  * GDB/MI thread list parsing.
@@ -46,8 +44,9 @@ public class CLIInfoThreadsInfo extends MIInfo {
 	 * Note that the output likely includes non-LWP threads, but they are
 	 * intentionally ignored
 	 */
-    private static final Pattern RESULT_PATTERN_LWP = Pattern.compile(
-        "(^\\*?\\s*\\d+)(\\s*[Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\([Ll][Ww][Pp]\\s*)(\\d*)",  Pattern.MULTILINE); //$NON-NLS-1$
+	private static final Pattern RESULT_PATTERN_LWP = Pattern.compile(
+			"(^\\*?\\s*\\d+)(\\s*[Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\([Ll][Ww][Pp]\\s*)(\\d*)", //$NON-NLS-1$
+			Pattern.MULTILINE);
 
 	/**
 	 * Matcher for 'info threads' output typically returned by gdbservers running
@@ -59,10 +58,10 @@ public class CLIInfoThreadsInfo extends MIInfo {
 	 * 
 	 * <p>where 'y' is not necessarily numeric and (&lt;text&gt;) is optional 
 	 */
-    private static final Pattern RESULT_PATTERN = Pattern.compile(
-        "(^\\*?\\s*\\d+)(\\s*[Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(\\S+(\\s*\\(.*?\\))?)",  Pattern.MULTILINE); //$NON-NLS-1$
-    
-	protected List<ThreadInfo> info; 
+	private static final Pattern RESULT_PATTERN = Pattern
+			.compile("(^\\*?\\s*\\d+)(\\s*[Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(\\S+(\\s*\\(.*?\\))?)", Pattern.MULTILINE); //$NON-NLS-1$
+
+	protected List<ThreadInfo> info;
 
 	public CLIInfoThreadsInfo(MIOutput out) {
 		super(out);
@@ -74,24 +73,34 @@ public class CLIInfoThreadsInfo extends MIInfo {
 		String fGdbId;
 		String fPid;
 		boolean fIsCurrentThread = false;
-		
-		public ThreadInfo(String tid, String pid, String name, boolean isCurrentThread)
-		{
+
+		public ThreadInfo(String tid, String pid, String name, boolean isCurrentThread) {
 			this.fName = name;
 			this.fGdbId = tid;
 			this.fPid = pid;
 			this.fIsCurrentThread = isCurrentThread;
 		}
-		
-		public String getName(){ return fName ;}
+
+		public String getName() {
+			return fName;
+		}
+
 		// GDB id given to a thread. Needed to compare with ID stored in DMC fetched via DsfMIThreadListIds command
-		public String getId(){ return fGdbId; }
-		public String getOsId(){return fPid; }
-		public boolean isCurrentThread(){return fIsCurrentThread; }
+		public String getId() {
+			return fGdbId;
+		}
+
+		public String getOsId() {
+			return fPid;
+		}
+
+		public boolean isCurrentThread() {
+			return fIsCurrentThread;
+		}
 	}
-	
-	public List<ThreadInfo> getThreadInfo(){
-		return info; 
+
+	public List<ThreadInfo> getThreadInfo() {
+		return info;
 	}
 
 	protected void parse() {
@@ -144,8 +153,8 @@ public class CLIInfoThreadsInfo extends MIInfo {
 		// The original code favored the format in example A and so we will 
 		// continue to give it precedence. The newly added support for formats 
 		// B and C will have lower precedence.
-		if(!str.isEmpty() ){
-			Matcher matcher = RESULT_PATTERN_LWP.matcher(str);	// example A
+		if (!str.isEmpty()) {
+			Matcher matcher = RESULT_PATTERN_LWP.matcher(str); // example A
 			boolean isCurrentThread = false;
 			if (matcher.find()) {
 				String id = matcher.group(1).trim();
@@ -154,9 +163,8 @@ public class CLIInfoThreadsInfo extends MIInfo {
 					id = id.substring(1).trim();
 				}
 				info.add(new ThreadInfo(id, matcher.group(5), "", isCurrentThread)); //$NON-NLS-1$
-			} 
-			else {
-				matcher = RESULT_PATTERN.matcher(str);	// examples B and C
+			} else {
+				matcher = RESULT_PATTERN.matcher(str); // examples B and C
 				if (matcher.find()) {
 					String id = matcher.group(1).trim();
 					if (id.charAt(0) == '*') {
@@ -169,4 +177,3 @@ public class CLIInfoThreadsInfo extends MIInfo {
 		}
 	}
 }
-

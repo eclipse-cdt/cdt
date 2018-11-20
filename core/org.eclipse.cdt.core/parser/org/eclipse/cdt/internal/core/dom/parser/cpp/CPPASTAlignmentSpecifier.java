@@ -22,8 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAlignmentSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CPPASTAlignmentSpecifier extends ASTNode implements ICPPASTAlignmentSpecifier,
-		IASTAmbiguityParent {
+public class CPPASTAlignmentSpecifier extends ASTNode implements ICPPASTAlignmentSpecifier, IASTAmbiguityParent {
 	// Precisely one of these is null.
 	private IASTExpression fExpression;
 	private IASTTypeId fTypeId;

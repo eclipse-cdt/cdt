@@ -16,8 +16,6 @@ package org.eclipse.cdt.internal.core.settings.model;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 
-
-
 public interface IExternalSettingsProvider {
 	String getId();
 

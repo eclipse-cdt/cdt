@@ -32,23 +32,22 @@ import org.eclipse.core.runtime.PlatformObject;
 @SuppressWarnings("restriction")
 public class C99Enumeration extends PlatformObject implements IC99Binding, IEnumeration, ITypeable {
 
-	private List<IEnumerator> enumerators = new ArrayList<IEnumerator>();	
+	private List<IEnumerator> enumerators = new ArrayList<IEnumerator>();
 	private String name;
-	
+
 	private IScope scope;
-	
-	
+
 	public C99Enumeration() {
 	}
-	
+
 	public C99Enumeration(String name) {
 		this.name = name;
 	}
-	
+
 	public void addEnumerator(IEnumerator e) {
 		enumerators.add(e);
 	}
-	
+
 	@Override
 	public IEnumerator[] getEnumerators() {
 		return enumerators.toArray(new IEnumerator[enumerators.size()]);
@@ -57,7 +56,7 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -68,42 +67,41 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 		return name.toCharArray();
 	}
 
-
 	@Override
 	public IType getType() {
 		return this;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
-		 if( type == this )
-            return true;
-        if( type instanceof ITypedef)
-            return type.isSameType( this );
+		if (type == this)
+			return true;
+		if (type instanceof ITypedef)
+			return type.isSameType(this);
 
-        return false;
+		return false;
 	}
 
 	@Override
 	public C99Enumeration clone() {
 		try {
 			C99Enumeration clone = (C99Enumeration) super.clone();
-			clone.enumerators = new ArrayList<IEnumerator>();	
-			for(IEnumerator e : enumerators) {
+			clone.enumerators = new ArrayList<IEnumerator>();
+			for (IEnumerator e : enumerators) {
 				// TODO this is wrong, 
 				// IEnumerator is not Cloneable so we are not returning a deep copy here
-				clone.addEnumerator(e); 
+				clone.addEnumerator(e);
 			}
 			return clone;
 		} catch (CloneNotSupportedException e1) {
 			assert false;
 			return null;
 		}
-		
+
 	}
-	
+
 	@Override
-	public ILinkage getLinkage()  {
+	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 

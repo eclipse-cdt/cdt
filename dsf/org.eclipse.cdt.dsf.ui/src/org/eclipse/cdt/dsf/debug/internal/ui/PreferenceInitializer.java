@@ -29,7 +29,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		
+
 		IPreferenceStore prefs = DsfUIPlugin.getDefault().getPreferenceStore();
 
 		/* 

@@ -38,30 +38,30 @@ public interface IDocCommentViewerConfiguration {
 	 * @return whether the region specified is a documentation comment handled by this viewer configuration
 	 */
 	boolean isDocumentationComment(IDocument doc, int offset, int length);
-	
+
 	/**
 	 * @return a ICTokenScanner for tokenising/coloring the appropriate comment region. May return null.
 	 */
 	ICTokenScanner createCommentScanner(ITokenStoreFactory tokenStoreFactory);
-	
+
 	/**
 	 * @return an auto edit strategy suitable for the appropriate comment region. May return null
 	 * in the case where no auto-edit-strategy is required.
 	 */
 	IAutoEditStrategy createAutoEditStrategy();
-	
+
 	/**
 	 * @return a double click strategy suitable for the associated comment-region. May return null in
 	 * the case where no double-click-strategy is required.
 	 */
 	ITextDoubleClickStrategy createDoubleClickStrategy();
-	
+
 	/**
 	 * @return a completion proposal computer suitable for the associated comment-region. May return null in
 	 * the case where no proposal-computer is required.
 	 */
 	ICompletionProposalComputer createProposalComputer();
-	
+
 	/**
 	 * @return a {@link IDocCommentDictionary} suitable for spell-checking. May return null
 	 * in the case where no additional dictionary is required.

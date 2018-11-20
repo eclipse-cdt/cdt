@@ -40,16 +40,20 @@ public final class EntryDescriptor {
 		handler = _h;
 		image = _image;
 	}
+
 	// these parameters are set in constructor only
 	public String getId() {
 		return id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public boolean isCategory() {
 		return isCategory;
 	}
+
 	public Image getImage() {
 		return image;
 	}
@@ -58,40 +62,46 @@ public final class EntryDescriptor {
 	public void setParentId(String pId) {
 		parentId = pId;
 	}
+
 	public String getParentId() {
 		return parentId;
 	}
-	
-	public void setPath(String p) { 
-		path = p; 
-	}
-	public String getPath() { 
-		return path; 
+
+	public void setPath(String p) {
+		path = p;
 	}
 
-	public String[] getPathArray() { 
-		return CDataUtil.stringToArray(path, "/");  //$NON-NLS-1$
+	public String getPath() {
+		return path;
 	}
 
-	public void setParent(EntryDescriptor p) { 
-		parent = p; 
+	public String[] getPathArray() {
+		return CDataUtil.stringToArray(path, "/"); //$NON-NLS-1$
 	}
-	public EntryDescriptor getParent() { 
-		return parent; 
+
+	public void setParent(EntryDescriptor p) {
+		parent = p;
+	}
+
+	public EntryDescriptor getParent() {
+		return parent;
 	}
 
 	public void setHandler(CWizardHandler h) {
 		handler = h;
 	}
+
 	public CWizardHandler getHandler() {
 		return handler;
 	}
+
 	/**
 	 * @since 5.1
 	 */
 	public void setDefaultForCategory(boolean isDefaultForCategory) {
 		this.isDefaultForCategory = isDefaultForCategory;
 	}
+
 	/**
 	 * @since 5.1
 	 */

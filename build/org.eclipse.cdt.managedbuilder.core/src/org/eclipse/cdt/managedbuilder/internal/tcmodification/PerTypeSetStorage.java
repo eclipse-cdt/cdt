@@ -18,36 +18,36 @@ import java.util.Set;
 
 public class PerTypeSetStorage<T> implements Cloneable {
 	private ObjectTypeBasedStorage<Set<T>> fStorage = new ObjectTypeBasedStorage<Set<T>>();
-	
-	public Set<T> getSet(int type, boolean create){
+
+	public Set<T> getSet(int type, boolean create) {
 		Set<T> set = fStorage.get(type);
-		if(set == null && create){
+		if (set == null && create) {
 			set = createSet(null);
 			fStorage.set(type, set);
 		}
 		return set;
 	}
-	
-	protected Set<T> createSet(Set<T> set){
-		if(set == null)
+
+	protected Set<T> createSet(Set<T> set) {
+		if (set == null)
 			return new LinkedHashSet<T>();
 		@SuppressWarnings("unchecked")
-		Set<T> clone = (Set<T>)((LinkedHashSet<T>)set).clone();
+		Set<T> clone = (Set<T>) ((LinkedHashSet<T>) set).clone();
 		return clone;
 	}
 
 	@Override
-	public Object clone(){
+	public Object clone() {
 		try {
 			@SuppressWarnings("unchecked")
-			PerTypeSetStorage<T> clone = (PerTypeSetStorage<T>)super.clone();
+			PerTypeSetStorage<T> clone = (PerTypeSetStorage<T>) super.clone();
 			@SuppressWarnings("unchecked")
-			ObjectTypeBasedStorage<Set<T>> storageClone = (ObjectTypeBasedStorage<Set<T>>)fStorage.clone();
+			ObjectTypeBasedStorage<Set<T>> storageClone = (ObjectTypeBasedStorage<Set<T>>) fStorage.clone();
 			clone.fStorage = storageClone;
 			int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
-			for(int i = 0; i < types.length; i++){
-				Set<T> o = clone.fStorage.get(types[i]); 
-				if(o != null){
+			for (int i = 0; i < types.length; i++) {
+				Set<T> o = clone.fStorage.get(types[i]);
+				if (o != null) {
 					clone.fStorage.set(types[i], createSet(o));
 				}
 			}
@@ -58,14 +58,14 @@ public class PerTypeSetStorage<T> implements Cloneable {
 		return null;
 	}
 
-	public boolean isEmpty(boolean emptySetAsNull){
-		if(fStorage.isEmpty())
+	public boolean isEmpty(boolean emptySetAsNull) {
+		if (fStorage.isEmpty())
 			return true;
-		if(emptySetAsNull){
+		if (emptySetAsNull) {
 			int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
-			for(int i = 0; i < types.length; i++){
-				Set<T> o = fStorage.get(types[i]); 
-				if(o != null && !o.isEmpty())
+			for (int i = 0; i < types.length; i++) {
+				Set<T> o = fStorage.get(types[i]);
+				if (o != null && !o.isEmpty())
 					return false;
 			}
 			return true;

@@ -20,13 +20,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * Internal interface representing types that contain other types
  */
 public interface ITypeContainer extends IType {
-    /**
-     * Returns the type this container contains.
-     */
-    IType getType();
+	/**
+	 * Returns the type this container contains.
+	 */
+	IType getType();
 
-    /**
-     * Sets the type this container contains.
-     */
-    void setType(IType type);
+	/**
+	 * Sets the type this container contains.
+	 */
+	void setType(IType type);
 }

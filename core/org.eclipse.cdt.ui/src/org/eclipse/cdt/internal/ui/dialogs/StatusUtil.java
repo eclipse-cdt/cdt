@@ -40,24 +40,24 @@ public class StatusUtil {
 	 * than ok.
 	 */
 	public static IStatus getMostSevere(IStatus[] status) {
-		IStatus max= null;
-		for (int i= 0; i < status.length; i++) {
-			IStatus curr= status[i];
+		IStatus max = null;
+		for (int i = 0; i < status.length; i++) {
+			IStatus curr = status[i];
 			if (curr.matches(IStatus.ERROR)) {
 				return curr;
 			}
 			if (max == null || curr.getSeverity() > max.getSeverity()) {
-				max= curr;
+				max = curr;
 			}
 		}
 		return max;
 	}
-		
+
 	/**
 	 * Applies the status to the status line of a dialog page.
 	 */
 	public static void applyToStatusLine(DialogPage page, IStatus status) {
-		String message= status.getMessage();
+		String message = status.getMessage();
 		switch (status.getSeverity()) {
 		case IStatus.OK:
 			page.setMessage(message, IMessageProvider.NONE);
@@ -66,18 +66,18 @@ public class StatusUtil {
 		case IStatus.WARNING:
 			page.setMessage(message, IMessageProvider.WARNING);
 			page.setErrorMessage(null);
-			break;				
+			break;
 		case IStatus.INFO:
 			page.setMessage(message, IMessageProvider.INFORMATION);
 			page.setErrorMessage(null);
-			break;			
+			break;
 		default:
 			if (message.length() == 0) {
-				message= null;
+				message = null;
 			}
 			page.setMessage(null);
 			page.setErrorMessage(message);
-			break;		
+			break;
 		}
 	}
 }

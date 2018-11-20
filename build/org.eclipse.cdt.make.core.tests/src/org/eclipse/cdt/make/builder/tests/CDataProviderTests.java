@@ -42,14 +42,14 @@ public class CDataProviderTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CDataProviderTests.class);
 
-//		// Add the relevant tests to the suite
-//		suite.addTest(new StandardBuildTests("testProjectCreation"));
-//		suite.addTest(new StandardBuildTests("testProjectSettings"));
-//		suite.addTest(new StandardBuildTests("testProjectConversion"));
-//		suite.addTest(new StandardBuildTests("testProjectCleanup"));
-//
-//		suite.addTestSuite(ScannerConfigConsoleParserTests.class);
-//		suite.addTestSuite(ScannerConfigDiscoveryTests.class);
+		//		// Add the relevant tests to the suite
+		//		suite.addTest(new StandardBuildTests("testProjectCreation"));
+		//		suite.addTest(new StandardBuildTests("testProjectSettings"));
+		//		suite.addTest(new StandardBuildTests("testProjectConversion"));
+		//		suite.addTest(new StandardBuildTests("testProjectCleanup"));
+		//
+		//		suite.addTestSuite(ScannerConfigConsoleParserTests.class);
+		//		suite.addTestSuite(ScannerConfigDiscoveryTests.class);
 
 		return suite;
 	}
@@ -138,24 +138,25 @@ public class CDataProviderTests extends TestCase {
 				}
 
 				description = project.getDescription();
-//				ICommand[] commands = description.getBuildSpec();
-//				for (int i = 0; i < commands.length; ++i) {
-//					if (commands[i].getBuilderName().equals(ScannerConfigBuilder.BUILDER_ID)) {
-//						return;
-//					}
-//				}
-//				ICommand command = description.newCommand();
-//				command.setBuilderName(ScannerConfigBuilder.BUILDER_ID);
-//				ICommand[] newCommands = new ICommand[commands.length + 1];
-//				System.arraycopy(commands, 0, newCommands, 0, commands.length);
-//				newCommands[commands.length] = command;
-//				description.setBuildSpec(newCommands);
-//				project.setDescription(description, null);
+				//				ICommand[] commands = description.getBuildSpec();
+				//				for (int i = 0; i < commands.length; ++i) {
+				//					if (commands[i].getBuilderName().equals(ScannerConfigBuilder.BUILDER_ID)) {
+				//						return;
+				//					}
+				//				}
+				//				ICommand command = description.newCommand();
+				//				command.setBuilderName(ScannerConfigBuilder.BUILDER_ID);
+				//				ICommand[] newCommands = new ICommand[commands.length + 1];
+				//				System.arraycopy(commands, 0, newCommands, 0, commands.length);
+				//				newCommands[commands.length] = command;
+				//				description.setBuildSpec(newCommands);
+				//				project.setDescription(description, null);
 
-				CCorePlugin.getDefault().createCDTProject(description, project, MakeCorePlugin.CFG_DATA_PROVIDER_ID, new NullProgressMonitor());
+				CCorePlugin.getDefault().createCDTProject(description, project, MakeCorePlugin.CFG_DATA_PROVIDER_ID,
+						new NullProgressMonitor());
 				result[0] = project;
 			}
 		}, null);
-		return (IProject)result[0];
+		return (IProject) result[0];
 	}
 }

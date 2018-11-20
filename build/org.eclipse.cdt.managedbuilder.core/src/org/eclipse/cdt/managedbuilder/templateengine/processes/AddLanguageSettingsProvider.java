@@ -53,7 +53,8 @@ public class AddLanguageSettingsProvider extends ProcessRunner {
 	private static final String PROVIDERS_VARNAME = "languageSettingsProviderIds"; //$NON-NLS-1$
 
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		IProject project = null;
 		String[] extraProviderIds = null;
 
@@ -61,7 +62,7 @@ public class AddLanguageSettingsProvider extends ProcessRunner {
 			String argName = arg.getName();
 			if (PROJECTNAME_VARNAME.equals(argName))
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(arg.getSimpleValue());
-			else if(PROVIDERS_VARNAME.equals(argName))
+			else if (PROVIDERS_VARNAME.equals(argName))
 				extraProviderIds = arg.getSimpleArrayValue();
 		}
 
@@ -90,7 +91,7 @@ public class AddLanguageSettingsProvider extends ProcessRunner {
 
 		try {
 			mngr.setProjectDescription(project, des);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			ManagedBuilderCorePlugin.log(e);
 		}
 	}

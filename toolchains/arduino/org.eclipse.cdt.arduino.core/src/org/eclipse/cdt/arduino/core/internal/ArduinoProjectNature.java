@@ -22,7 +22,7 @@ public class ArduinoProjectNature implements IProjectNature {
 
 	private IProject project;
 	public static final String ID = Activator.getId() + ".arduinoNature"; //$NON-NLS-1$
-	
+
 	@Override
 	public IProject getProject() {
 		return project;

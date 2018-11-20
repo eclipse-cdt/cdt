@@ -53,7 +53,7 @@ public class CProjectSourceContainerType extends AbstractSourceContainerTypeDele
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element element = (Element)node;
+			Element element = (Element) node;
 			if ("project".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("name"); //$NON-NLS-1$
 				IProject project = null;
@@ -63,10 +63,10 @@ public class CProjectSourceContainerType extends AbstractSourceContainerTypeDele
 				String nest = element.getAttribute("referencedProjects"); //$NON-NLS-1$
 				boolean ref = Boolean.parseBoolean(nest);
 				return new CProjectSourceContainer(project, ref);
-			} 
-			abort(InternalSourceLookupMessages.CProjectSourceContainerType_1, null); 
+			}
+			abort(InternalSourceLookupMessages.CProjectSourceContainerType_1, null);
 		}
-		abort(InternalSourceLookupMessages.CProjectSourceContainerType_2, null); 
+		abort(InternalSourceLookupMessages.CProjectSourceContainerType_2, null);
 		return null;
 	}
 }

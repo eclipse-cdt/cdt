@@ -36,7 +36,7 @@ public class ResourcesUtil {
 	 * @param uri - URI of the file.
 	 */
 	public static void refreshWorkspaceFiles(URI uri) {
-		if (uri!=null) {
+		if (uri != null) {
 			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri);
 			for (IFile file : files) {
 				try {

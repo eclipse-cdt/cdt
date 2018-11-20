@@ -17,11 +17,14 @@ import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.core.lrparser.tests.LRDigraphTrigraphTests;
 import org.eclipse.cdt.core.model.ILanguage;
 
-
 public class UPCDigraphTrigraphTests extends LRDigraphTrigraphTests {
 
-	public UPCDigraphTrigraphTests() { }
-	public UPCDigraphTrigraphTests(String name) { super(name); }
+	public UPCDigraphTrigraphTests() {
+	}
+
+	public UPCDigraphTrigraphTests(String name) {
+		super(name);
+	}
 
 	@Override
 	protected ILanguage getCLanguage() {

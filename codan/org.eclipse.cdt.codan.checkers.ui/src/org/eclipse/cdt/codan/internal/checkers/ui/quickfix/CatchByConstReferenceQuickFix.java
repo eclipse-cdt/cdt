@@ -35,5 +35,5 @@ public class CatchByConstReferenceQuickFix extends CatchByReferenceQuickFix {
 		IASTDeclSpecifier replacement = declSpecifier.copy(CopyStyle.withLocations);
 		replacement.setConst(true);
 		return Optional.of(replacement);
-	}	
+	}
 }

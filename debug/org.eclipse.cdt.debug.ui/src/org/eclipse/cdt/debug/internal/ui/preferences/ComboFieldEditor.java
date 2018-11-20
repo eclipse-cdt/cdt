@@ -34,31 +34,31 @@ public class ComboFieldEditor extends FieldEditor {
 	 * The <code>Combo</code> widget.
 	 */
 	protected Combo fCombo;
-	
+
 	/**
 	 * The value (not the name) of the currently selected item in the Combo widget.
 	 */
 	protected String fValue;
-	
+
 	/**
 	 * The names (labels) and underlying values to populate the combo widget.  These should be
 	 * arranged as: { {name1, value1}, {name2, value2}, ...}
 	 */
 	private String[][] fEntryNamesAndValues;
 
-	 /**
-	 * Create combo field editor with all choice values.  
-	 * @param name - property name, must be the same as breakpoint attribute 
-	 * @param labelText - text in front of field
-	 * @param entryNamesAndValues - The names (labels) and underlying values to populate the combo widget.  
-	 * 		These should be arranged as: { {name1, value1}, {name2, value2}, ...}
-	 * @param parent the parent control
-	 */
+	/**
+	* Create combo field editor with all choice values.  
+	* @param name - property name, must be the same as breakpoint attribute 
+	* @param labelText - text in front of field
+	* @param entryNamesAndValues - The names (labels) and underlying values to populate the combo widget.  
+	* 		These should be arranged as: { {name1, value1}, {name2, value2}, ...}
+	* @param parent the parent control
+	*/
 	public ComboFieldEditor(String name, String labelText, String[][] entryNamesAndValues, Composite parent) {
 		init(name, labelText);
 		Assert.isTrue(checkArray(entryNamesAndValues));
 		fEntryNamesAndValues = entryNamesAndValues;
-		createControl(parent);		
+		createControl(parent);
 	}
 
 	/**
@@ -85,15 +85,15 @@ public class ComboFieldEditor extends FieldEditor {
 	 */
 	@Override
 	protected void adjustForNumColumns(int numColumns) {
-		if ( numColumns <= 1 )
+		if (numColumns <= 1)
 			return;
 		int span = numColumns;
 		Control control = getLabelControl();
 		if (control != null) {
-			((GridData)control.getLayoutData()).horizontalSpan = 1;
+			((GridData) control.getLayoutData()).horizontalSpan = 1;
 			--span;
 		}
-		((GridData)fCombo.getLayoutData()).horizontalSpan = span;
+		((GridData) fCombo.getLayoutData()).horizontalSpan = span;
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class ComboFieldEditor extends FieldEditor {
 			getPreferenceStore().setToDefault(getPreferenceName());
 			return;
 		}
-	
+
 		getPreferenceStore().setValue(getPreferenceName(), fValue);
 	}
 
@@ -157,7 +157,7 @@ public class ComboFieldEditor extends FieldEditor {
 			for (int i = 0; i < fEntryNamesAndValues.length; i++) {
 				fCombo.add(fEntryNamesAndValues[i][0], i);
 			}
-			
+
 			fCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent evt) {
@@ -165,17 +165,17 @@ public class ComboFieldEditor extends FieldEditor {
 					String name = fCombo.getText();
 					fValue = getValueForName(name);
 					setPresentsDefaultValue(false);
-					fireValueChanged(VALUE, oldValue, fValue);					
+					fireValueChanged(VALUE, oldValue, fValue);
 				}
 			});
 		}
 		return fCombo;
 	}
-	
+
 	protected Combo getComboBoxControl() {
-	    return fCombo;
+		return fCombo;
 	}
-	
+
 	/**
 	 * Given the name (label) of an entry, return the corresponding value.
 	 */
@@ -188,7 +188,7 @@ public class ComboFieldEditor extends FieldEditor {
 		}
 		return fEntryNamesAndValues[0][0];
 	}
-	
+
 	/**
 	 * Set the name in the combo widget to match the specified value.
 	 */
@@ -209,18 +209,16 @@ public class ComboFieldEditor extends FieldEditor {
 	 * @see org.eclipse.jface.preference.FieldEditor#fireValueChanged(String, Object, Object)
 	 */
 	@Override
-	protected void fireValueChanged( String property, Object oldValue, Object newValue )
-	{
-		super.fireValueChanged( property, oldValue, newValue );
+	protected void fireValueChanged(String property, Object oldValue, Object newValue) {
+		super.fireValueChanged(property, oldValue, newValue);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#setPresentsDefaultValue(boolean)
 	 */
 	@Override
-	protected void setPresentsDefaultValue( boolean b )
-	{
-		super.setPresentsDefaultValue( b );
+	protected void setPresentsDefaultValue(boolean b) {
+		super.setPresentsDefaultValue(b);
 	}
 
 	/**
@@ -236,7 +234,7 @@ public class ComboFieldEditor extends FieldEditor {
 			combo.removeAll();
 		}
 		//load values from contribution
-		for (int i=0; i<fEntryNamesAndValues.length; ++i) {
+		for (int i = 0; i < fEntryNamesAndValues.length; ++i) {
 			combo.add(fEntryNamesAndValues[i][0], i);
 		}
 		fCombo.select(0);

@@ -18,7 +18,6 @@ import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestMessage;
 
-
 /**
  * Tests for {@see GoogleTestsRunner} class
  */
@@ -39,8 +38,7 @@ public class GoogleTestCase extends BaseTestCase {
 	//[  PASSED  ] 0 tests.
 	public void testNoTestCases() {
 	}
-	
-	
+
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -55,14 +53,13 @@ public class GoogleTestCase extends BaseTestCase {
 	public void testTheOnlyTestCase() {
 		mockModelUpdater.skipCalls("setTestStatus");
 		mockModelUpdater.skipCalls("setTestingTime");
-		
+
 		mockModelUpdater.enterTestSuite("DemoTestCase");
 		mockModelUpdater.enterTestCase("DemoTest");
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 3 tests from 1 test case.
 	//[----------] Global test environment set-up.
@@ -81,7 +78,7 @@ public class GoogleTestCase extends BaseTestCase {
 	public void testAFewTestCasesInTheOnlyTestSuites() {
 		mockModelUpdater.skipCalls("setTestStatus");
 		mockModelUpdater.skipCalls("setTestingTime");
-		
+
 		mockModelUpdater.enterTestSuite("DemoTestCase");
 		mockModelUpdater.enterTestCase("DemoTest1");
 		mockModelUpdater.exitTestCase();
@@ -91,8 +88,7 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-	
-	
+
 	//Running main() from gtest_main.cc
 	//[==========] Running 2 tests from 2 test cases.
 	//[----------] Global test environment set-up.
@@ -112,7 +108,7 @@ public class GoogleTestCase extends BaseTestCase {
 	public void testTheOnlyTestCasesInAFewTestSuites() {
 		mockModelUpdater.skipCalls("setTestStatus");
 		mockModelUpdater.skipCalls("setTestingTime");
-		
+
 		mockModelUpdater.enterTestSuite("DemoTestCase");
 		mockModelUpdater.enterTestCase("DemoTest");
 		mockModelUpdater.exitTestCase();
@@ -123,7 +119,6 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 4 tests from 2 test cases.
 	//[----------] Global test environment set-up.
@@ -147,7 +142,7 @@ public class GoogleTestCase extends BaseTestCase {
 	public void testAFewTestCasesWithTheSameNameInDifferentTestSuites() {
 		mockModelUpdater.skipCalls("setTestStatus");
 		mockModelUpdater.skipCalls("setTestingTime");
-		
+
 		mockModelUpdater.enterTestSuite("DemoTestCase1");
 		mockModelUpdater.enterTestCase("DemoTest1");
 		mockModelUpdater.exitTestCase();
@@ -161,7 +156,6 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//Running main() from gtest_main.cc
 	//[==========] Running 4 tests from 1 test case.
@@ -208,28 +202,33 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.skipCalls("enterTestSuite");
 		mockModelUpdater.skipCalls("exitTestSuite");
 		mockModelUpdater.skipCalls("setTestingTime");
-		
+
 		mockModelUpdater.enterTestCase("TestPass");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("TestFail");
-		mockModelUpdater.addTestMessage("demo_file.cc", 38, ITestMessage.Level.Error, "Value of: 2"+EOL+"Expected: 1");
+		mockModelUpdater.addTestMessage("demo_file.cc", 38, ITestMessage.Level.Error,
+				"Value of: 2" + EOL + "Expected: 1");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("TestAFewFails");
-		mockModelUpdater.addTestMessage("demo_file.cc", 42, ITestMessage.Level.Error, "Value of: 2"+EOL+"Expected: 1");
-		mockModelUpdater.addTestMessage("demo_file.cc", 43, ITestMessage.Level.Error, "Value of: 2"+EOL+"Expected: 1");
+		mockModelUpdater.addTestMessage("demo_file.cc", 42, ITestMessage.Level.Error,
+				"Value of: 2" + EOL + "Expected: 1");
+		mockModelUpdater.addTestMessage("demo_file.cc", 43, ITestMessage.Level.Error,
+				"Value of: 2" + EOL + "Expected: 1");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("TestCustomFails");
-		mockModelUpdater.addTestMessage("demo_file.cc", 47, ITestMessage.Level.Error, "Failed"+EOL+"Custom fatal fail!");
-		mockModelUpdater.addTestMessage("demo_file.cc", 48, ITestMessage.Level.Error, "Failed"+EOL+"Another custom fatal fail!");
-		mockModelUpdater.addTestMessage("demo_file.cc", 49, ITestMessage.Level.Error, "Failed"+EOL+"Yet another custom fatal fail!");
+		mockModelUpdater.addTestMessage("demo_file.cc", 47, ITestMessage.Level.Error,
+				"Failed" + EOL + "Custom fatal fail!");
+		mockModelUpdater.addTestMessage("demo_file.cc", 48, ITestMessage.Level.Error,
+				"Failed" + EOL + "Another custom fatal fail!");
+		mockModelUpdater.addTestMessage("demo_file.cc", 49, ITestMessage.Level.Error,
+				"Failed" + EOL + "Yet another custom fatal fail!");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 2 tests from 1 test case.
 	//[----------] Global test environment set-up.
@@ -272,20 +271,27 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.skipCalls("setTestStatus");
 
 		mockModelUpdater.enterTestCase("TestWithSimpleTrace");
-		mockModelUpdater.addTestMessage("demo_file.cc", 36, ITestMessage.Level.Error, "Value of: 2"+EOL+"Expected: 1");
-		mockModelUpdater.addTestMessage("demo_file.cc", 41, ITestMessage.Level.Info, "Trace point #2 in TestWithSimpleTrace");
-		mockModelUpdater.addTestMessage("demo_file.cc", 40, ITestMessage.Level.Info, "Trace point #1 in TestWithSimpleTrace");
+		mockModelUpdater.addTestMessage("demo_file.cc", 36, ITestMessage.Level.Error,
+				"Value of: 2" + EOL + "Expected: 1");
+		mockModelUpdater.addTestMessage("demo_file.cc", 41, ITestMessage.Level.Info,
+				"Trace point #2 in TestWithSimpleTrace");
+		mockModelUpdater.addTestMessage("demo_file.cc", 40, ITestMessage.Level.Info,
+				"Trace point #1 in TestWithSimpleTrace");
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("TestTraceForMultipleFails");
-		mockModelUpdater.addTestMessage("demo_file.cc", 36, ITestMessage.Level.Error, "Value of: 2"+EOL+"Expected: 1");
-		mockModelUpdater.addTestMessage("demo_file.cc", 46, ITestMessage.Level.Info, "Trace point #1 in TestTraceForMultipleFails");
-		mockModelUpdater.addTestMessage("demo_file.cc", 36, ITestMessage.Level.Error, "Value of: 2"+EOL+"Expected: 1");
-		mockModelUpdater.addTestMessage("demo_file.cc", 48, ITestMessage.Level.Info, "Trace point #2 in TestTraceForMultipleFails");
-		mockModelUpdater.addTestMessage("demo_file.cc", 46, ITestMessage.Level.Info, "Trace point #1 in TestTraceForMultipleFails");
+		mockModelUpdater.addTestMessage("demo_file.cc", 36, ITestMessage.Level.Error,
+				"Value of: 2" + EOL + "Expected: 1");
+		mockModelUpdater.addTestMessage("demo_file.cc", 46, ITestMessage.Level.Info,
+				"Trace point #1 in TestTraceForMultipleFails");
+		mockModelUpdater.addTestMessage("demo_file.cc", 36, ITestMessage.Level.Error,
+				"Value of: 2" + EOL + "Expected: 1");
+		mockModelUpdater.addTestMessage("demo_file.cc", 48, ITestMessage.Level.Info,
+				"Trace point #2 in TestTraceForMultipleFails");
+		mockModelUpdater.addTestMessage("demo_file.cc", 46, ITestMessage.Level.Info,
+				"Trace point #1 in TestTraceForMultipleFails");
 		mockModelUpdater.exitTestCase();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -321,15 +327,20 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.skipCalls("setTestingTime");
 		mockModelUpdater.skipCalls("setTestStatus");
 
-		mockModelUpdater.addTestMessage("demo_file_name2.cpp", 40, ITestMessage.Level.Error, "Standard format with file name & line number");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 41, ITestMessage.Level.Error, "Standard format with unknown file name");
-		mockModelUpdater.addTestMessage("demo_file_name2.cpp", 42, ITestMessage.Level.Error, "VS-like format with file name & line number");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 43, ITestMessage.Level.Error, "VS-like format with unknown file name");
-		mockModelUpdater.addTestMessage("demo_file_name2.cpp", DEFAULT_LOCATION_LINE, ITestMessage.Level.Error, "Location with unknown line number");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Error, "Location with unknown file name & line number");
+		mockModelUpdater.addTestMessage("demo_file_name2.cpp", 40, ITestMessage.Level.Error,
+				"Standard format with file name & line number");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 41, ITestMessage.Level.Error,
+				"Standard format with unknown file name");
+		mockModelUpdater.addTestMessage("demo_file_name2.cpp", 42, ITestMessage.Level.Error,
+				"VS-like format with file name & line number");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 43, ITestMessage.Level.Error,
+				"VS-like format with unknown file name");
+		mockModelUpdater.addTestMessage("demo_file_name2.cpp", DEFAULT_LOCATION_LINE, ITestMessage.Level.Error,
+				"Location with unknown line number");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Error,
+				"Location with unknown file name & line number");
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -359,15 +370,20 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.skipCalls("setTestingTime");
 		mockModelUpdater.skipCalls("setTestStatus");
 
-		mockModelUpdater.addTestMessage("demo_file_name2.cpp", 40, ITestMessage.Level.Error, "Standard format with file name & line number");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 41, ITestMessage.Level.Error, "Standard format with unknown file name");
-		mockModelUpdater.addTestMessage("demo_file_name2.cpp", 42, ITestMessage.Level.Error, "VS-like format with file name & line number");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 43, ITestMessage.Level.Error, "VS-like format with unknown file name");
-		mockModelUpdater.addTestMessage("demo_file_name2.cpp", DEFAULT_LOCATION_LINE, ITestMessage.Level.Error, "Location with unknown line number");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Error, "Location with unknown file name & line number");
+		mockModelUpdater.addTestMessage("demo_file_name2.cpp", 40, ITestMessage.Level.Error,
+				"Standard format with file name & line number");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 41, ITestMessage.Level.Error,
+				"Standard format with unknown file name");
+		mockModelUpdater.addTestMessage("demo_file_name2.cpp", 42, ITestMessage.Level.Error,
+				"VS-like format with file name & line number");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 43, ITestMessage.Level.Error,
+				"VS-like format with unknown file name");
+		mockModelUpdater.addTestMessage("demo_file_name2.cpp", DEFAULT_LOCATION_LINE, ITestMessage.Level.Error,
+				"Location with unknown line number");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Error,
+				"Location with unknown file name & line number");
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -394,11 +410,11 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.skipCalls("setTestStatus");
 
 		mockModelUpdater.enterTestCase("TestMultiLineMessage");
-		mockModelUpdater.addTestMessage("demo_file.cc", 40, ITestMessage.Level.Error, "Line 1"+EOL+"Line 2"+EOL+"Line 3");
+		mockModelUpdater.addTestMessage("demo_file.cc", 40, ITestMessage.Level.Error,
+				"Line 1" + EOL + "Line 2" + EOL + "Line 3");
 		mockModelUpdater.exitTestCase();
 	}
-	
-	
+
 	//Running main() from gtest_main.cc
 	//[==========] Running 2 tests from 2 test cases.
 	//[----------] Global test environment set-up.
@@ -435,7 +451,6 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 	}
 
-
 	//Running main() from gtest_main.cc
 	//[==========] Running 3 tests from 1 test case.
 	//[----------] Global test environment set-up.
@@ -465,8 +480,9 @@ public class GoogleTestCase extends BaseTestCase {
 	public void testParametrizedTestsSupport() {
 		mockModelUpdater.enterTestSuite("Inst/DemoTestCase");
 		mockModelUpdater.enterTestCase("Test/0");
-		mockModelUpdater.addTestMessage("demo_file.cc", 50, ITestMessage.Level.Error, "Failed"+EOL+"Param1");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Info, "Instantiated with GetParam() = \"Param1\"");
+		mockModelUpdater.addTestMessage("demo_file.cc", 50, ITestMessage.Level.Error, "Failed" + EOL + "Param1");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Info,
+				"Instantiated with GetParam() = \"Param1\"");
 		mockModelUpdater.setTestingTime(0);
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
@@ -475,15 +491,15 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("Test/2");
-		mockModelUpdater.addTestMessage("demo_file.cc", 50, ITestMessage.Level.Error, "Failed"+EOL+"Param3");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Info, "Instantiated with GetParam() = \"Param3\"");
+		mockModelUpdater.addTestMessage("demo_file.cc", 50, ITestMessage.Level.Error, "Failed" + EOL + "Param3");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Info,
+				"Instantiated with GetParam() = \"Param3\"");
 		mockModelUpdater.setTestingTime(0);
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -505,14 +521,14 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.enterTestSuite("Inst/DemoTestCase");
 		mockModelUpdater.enterTestCase("Test/0");
 		mockModelUpdater.addTestMessage("demo_file.cc", 50, ITestMessage.Level.Error, "Failed");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Info, "Instantiated with GetParam() = 0x4f50cc");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Info,
+				"Instantiated with GetParam() = 0x4f50cc");
 		mockModelUpdater.setTestingTime(0);
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 3 tests from 3 test cases.
 	//[----------] Global test environment set-up.
@@ -548,7 +564,7 @@ public class GoogleTestCase extends BaseTestCase {
 	public void testTypedTestsSupport() {
 		mockModelUpdater.enterTestSuite("DemoTestCase/0(char)");
 		mockModelUpdater.enterTestCase("Test");
-		mockModelUpdater.addTestMessage("demo_file.cc", 60, ITestMessage.Level.Error, "Failed"+EOL+"char type");
+		mockModelUpdater.addTestMessage("demo_file.cc", 60, ITestMessage.Level.Error, "Failed" + EOL + "char type");
 		mockModelUpdater.setTestingTime(0);
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
@@ -561,14 +577,14 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 		mockModelUpdater.enterTestSuite("DemoTestCase/2(unsigned int)");
 		mockModelUpdater.enterTestCase("Test");
-		mockModelUpdater.addTestMessage("demo_file.cc", 60, ITestMessage.Level.Error, "Failed"+EOL+"unsigned int type");
+		mockModelUpdater.addTestMessage("demo_file.cc", 60, ITestMessage.Level.Error,
+				"Failed" + EOL + "unsigned int type");
 		mockModelUpdater.setTestingTime(0);
 		mockModelUpdater.setTestStatus(ITestItem.Status.Failed);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//Unknown line in the output
 	//[==========] Running 1 test from 1 test case.
@@ -594,20 +610,17 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 	}
 
-
 	//
 	public void testNoInput() {
 		// NOTE: The comment above is left blank intentionally
 		expectTestingException();
 	}
 
-	
 	// This is not an input from a Google Test Module
 	public void testAbsolutelyIncorrectInput() {
 		expectTestingException();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -616,11 +629,10 @@ public class GoogleTestCase extends BaseTestCase {
 	public void testUnexpectedOutputEnd() {
 		mockModelUpdater.skipCalls("enterTestSuite");
 		mockModelUpdater.skipCalls("enterTestCase");
-		
+
 		expectTestingException();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -634,11 +646,10 @@ public class GoogleTestCase extends BaseTestCase {
 	//[  PASSED  ] 1 test.
 	public void testTestSuiteNameMismatch1() {
 		mockModelUpdater.skipCalls("enterTestSuite");
-		
+
 		expectTestingException();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -653,11 +664,10 @@ public class GoogleTestCase extends BaseTestCase {
 	public void testTestSuiteNameMismatch2() {
 		mockModelUpdater.skipCalls("enterTestSuite");
 		mockModelUpdater.skipCalls("enterTestCase");
-		
+
 		expectTestingException();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -675,11 +685,10 @@ public class GoogleTestCase extends BaseTestCase {
 		mockModelUpdater.skipCalls("setTestingTime");
 		mockModelUpdater.skipCalls("setTestStatus");
 		mockModelUpdater.skipCalls("exitTestCase");
-		
+
 		expectTestingException();
 	}
 
-	
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.
 	//[----------] Global test environment set-up.
@@ -694,10 +703,9 @@ public class GoogleTestCase extends BaseTestCase {
 	public void testTestCaseNameMismatch() {
 		mockModelUpdater.skipCalls("enterTestSuite");
 		mockModelUpdater.skipCalls("enterTestCase");
-		
+
 		expectTestingException();
 	}
-
 
 	//Running main() from gtest_main.cc
 	//[==========] Running 1 test from 1 test case.

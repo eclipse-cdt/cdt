@@ -24,23 +24,22 @@ import java.io.OutputStream;
  * 
  */
 class ProcessWrapper extends Process {
-	
+
 	/** The real underlying process. */
 	private Process wrappedProcess;
-	
+
 	/** The flag shows whether input stream should be replaced with empty dummy. */
 	private boolean hideInputStream;
 
 	/** The flag shows whether error stream should be replaced with empty dummy. */
 	private boolean hideErrorStream;
-	
 
 	/** Buffer for empty dummy stream. */
 	private byte buffer[] = new byte[0];
 
 	/** Empty dummy stream. */
 	private InputStream emptyInputStream = new ByteArrayInputStream(buffer);
-	
+
 	/**
 	 * The synchronization event: before it happens <code>waitFor()</code> will
 	 * not be called on underlying process object. See also the comments in
@@ -54,7 +53,6 @@ class ProcessWrapper extends Process {
 	 */
 	private boolean streamsClosingIsAllowed = false;
 
-	
 	/**
 	 * The constructor
 	 * 
@@ -67,7 +65,7 @@ class ProcessWrapper extends Process {
 		this.hideInputStream = hideInputStream;
 		this.hideErrorStream = hideErrorStream;
 	}
-	
+
 	@Override
 	public void destroy() {
 		wrappedProcess.destroy();
@@ -104,7 +102,7 @@ class ProcessWrapper extends Process {
 		}
 		return wrappedProcess.waitFor();
 	}
-	
+
 	/**
 	 * Sets up the flag the allows IO streams closing.
 	 */

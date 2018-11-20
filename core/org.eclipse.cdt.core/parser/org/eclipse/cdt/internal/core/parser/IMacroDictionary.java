@@ -10,12 +10,11 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.parser.ISignificantMacros;
-
 
 /**
  * Interface for accessing the macro dictionary of the preprocessor.

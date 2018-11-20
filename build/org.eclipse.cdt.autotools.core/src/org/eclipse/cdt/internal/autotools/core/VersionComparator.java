@@ -33,28 +33,28 @@ public class VersionComparator {
 	public static int compare(String v1, String v2) {
 		String[] v1digits = v1.split("\\.");
 		String[] v2digits = v2.split("\\.");
-		
+
 		for (int i = 0; i < v1digits.length && i < v2digits.length; i++) {
 			int d1 = Integer.valueOf(v1digits[i]);
 			int d2 = Integer.valueOf(v2digits[i]);
-			
+
 			if (d1 < d2)
 				return -1;
-			
+
 			if (d1 > d2)
 				return 1;
 		}
-		
+
 		// At this point all digits have the same value
 		// so the version with the longer string wins
-		
+
 		if (v1digits.length < v2digits.length)
 			return -1;
-		
+
 		if (v1digits.length > v2digits.length)
 			return 1;
 
 		return 0;
 	}
-	
+
 }

@@ -18,7 +18,7 @@ public class Messages extends NLS {
 	public static String ReverseDebugging_ToggleHardwareTrace;
 	public static String ReverseDebugging_ToggleSoftwareTrace;
 	public static String ReverseDebugging_ToggleReverseDebugging;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

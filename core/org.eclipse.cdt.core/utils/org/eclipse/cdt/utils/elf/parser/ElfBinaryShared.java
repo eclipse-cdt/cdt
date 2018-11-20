@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.core.runtime.IPath;
 
-
 public class ElfBinaryShared extends ElfBinaryObject implements IBinaryShared {
 
 	/**

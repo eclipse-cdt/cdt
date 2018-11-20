@@ -90,14 +90,17 @@ public abstract class AbstractBuilderTest extends TestCase {
 	 * Run a build of the specified kind, and verify that the resource changes that
 	 * result match the expectations of the given verifier.
 	 */
-	protected void verifyBuild(final IProject project, final int kind, ResourceDeltaVerifier verifier) throws CoreException {
-		verifyBuild(new IBuildConfiguration[]{project.getActiveBuildConfig()}, kind, verifier);
+	protected void verifyBuild(final IProject project, final int kind, ResourceDeltaVerifier verifier)
+			throws CoreException {
+		verifyBuild(new IBuildConfiguration[] { project.getActiveBuildConfig() }, kind, verifier);
 	}
+
 	/**
 	 * Build the specified configurations, and verify that the resource changes that
 	 * result match the expectations of the given verifier.
 	 */
-	protected void verifyBuild(final IBuildConfiguration[] configs, final int kind, ResourceDeltaVerifier verifier) throws CoreException {
+	protected void verifyBuild(final IBuildConfiguration[] configs, final int kind, ResourceDeltaVerifier verifier)
+			throws CoreException {
 		getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 		getWorkspace().addResourceChangeListener(verifier);
 		try {
@@ -116,7 +119,6 @@ public abstract class AbstractBuilderTest extends TestCase {
 		}
 	}
 
-
 	/**
 	 * Set the active configuration of a project by configuration name
 	 */
@@ -128,26 +130,30 @@ public abstract class AbstractBuilderTest extends TestCase {
 		desc.setActiveConfiguration(cfg);
 		mngr.setProjectDescription(project, desc);
 		// FIXME: enable when cdt.core knows about core.resources build configurations
-//		assertTrue(project.getActiveBuildConfig().getName().equals(cfg.getName()));
+		//		assertTrue(project.getActiveBuildConfig().getName().equals(cfg.getName()));
 	}
 
-	protected Collection<IResource> getProjectBuildExeResources(String projectName, String cfgName, String obj) throws CoreException {
+	protected Collection<IResource> getProjectBuildExeResources(String projectName, String cfgName, String obj)
+			throws CoreException {
 		return getProjectBuildExeResources(projectName, cfgName, obj, true);
 	}
 
 	/**
 	 * The externalBuilder is true for when makefiles are generated, or false for internal builder
 	 */
-	protected Collection<IResource> getProjectBuildExeResources(String projectName, String cfgName, String obj, boolean externalBuilder) throws CoreException {
-		return getProjectBuildExeResources(projectName, cfgName, new String[]{obj}, externalBuilder);
+	protected Collection<IResource> getProjectBuildExeResources(String projectName, String cfgName, String obj,
+			boolean externalBuilder) throws CoreException {
+		return getProjectBuildExeResources(projectName, cfgName, new String[] { obj }, externalBuilder);
 	}
 
-	protected Collection<IResource> getProjectBuildLibResources(String projectName, String cfgName, String obj) throws CoreException {
-		return getProjectBuildLibResources(projectName, cfgName, new String[]{obj});
+	protected Collection<IResource> getProjectBuildLibResources(String projectName, String cfgName, String obj)
+			throws CoreException {
+		return getProjectBuildLibResources(projectName, cfgName, new String[] { obj });
 	}
 
-	protected Collection<IResource> getProjectBuildSharedLibResources(String projectName, String cfgName, String obj) throws CoreException {
-		return getProjectBuildSharedLibResources(projectName, cfgName, new String[]{obj});
+	protected Collection<IResource> getProjectBuildSharedLibResources(String projectName, String cfgName, String obj)
+			throws CoreException {
+		return getProjectBuildSharedLibResources(projectName, cfgName, new String[] { obj });
 	}
 
 	protected IFile getProjectExe(String projectName, String cfgName) throws CoreException {
@@ -156,20 +162,23 @@ public abstract class AbstractBuilderTest extends TestCase {
 		return buildDir.getFile(projectName + (WINDOWS ? ".exe" : ""));
 	}
 
-	protected Collection<IResource> getProjectBuildExeResources(String projectName, String cfgName, String[] objs) throws CoreException {
+	protected Collection<IResource> getProjectBuildExeResources(String projectName, String cfgName, String[] objs)
+			throws CoreException {
 		return getProjectBuildExeResources(projectName, cfgName, objs, true);
 	}
 
 	/**
 	 * The externalBuilder is true for when makefiles are generated, or false for internal builder
 	 */
-	protected Collection<IResource> getProjectBuildExeResources(String projectName, String cfgName, String[] objs, boolean externalBuilder) throws CoreException {
+	protected Collection<IResource> getProjectBuildExeResources(String projectName, String cfgName, String[] objs,
+			boolean externalBuilder) throws CoreException {
 		Collection<IResource> resources = getProjectBuildResources(projectName, cfgName, objs, externalBuilder);
 		resources.add(getProjectExe(projectName, cfgName));
 		return resources;
 	}
 
-	protected Collection<IResource> getProjectBuildLibResources(String projectName, String cfgName, String[] objs) throws CoreException {
+	protected Collection<IResource> getProjectBuildLibResources(String projectName, String cfgName, String[] objs)
+			throws CoreException {
 		Collection<IResource> resources = getProjectBuildResources(projectName, cfgName, objs);
 		IProject project = getWorkspace().getRoot().getProject(projectName);
 		IFolder buildDir = project.getFolder(cfgName);
@@ -177,7 +186,8 @@ public abstract class AbstractBuilderTest extends TestCase {
 		return resources;
 	}
 
-	protected Collection<IResource> getProjectBuildSharedLibResources(String projectName, String cfgName, String[] objs) throws CoreException {
+	protected Collection<IResource> getProjectBuildSharedLibResources(String projectName, String cfgName, String[] objs)
+			throws CoreException {
 		Collection<IResource> resources = getProjectBuildResources(projectName, cfgName, objs);
 		IProject project = getWorkspace().getRoot().getProject(projectName);
 		IFolder buildDir = project.getFolder(cfgName);
@@ -189,7 +199,8 @@ public abstract class AbstractBuilderTest extends TestCase {
 	 * Returns an array of resources expected to be generated by building a project configuration.
 	 * The object files expected to be output can also be specified.
 	 */
-	protected Collection<IResource> getProjectBuildResources(String projectName, String cfgName, String[] objs) throws CoreException {
+	protected Collection<IResource> getProjectBuildResources(String projectName, String cfgName, String[] objs)
+			throws CoreException {
 		return getProjectBuildResources(projectName, cfgName, objs, true);
 	}
 
@@ -198,7 +209,8 @@ public abstract class AbstractBuilderTest extends TestCase {
 	 * The object files expected to be output can also be specified.
 	 * The externalBuilder is true for when makefiles are generated, or false for internal builder
 	 */
-	protected Collection<IResource> getProjectBuildResources(String projectName, String cfgName, String[] objs, boolean externalBuilder) throws CoreException {
+	protected Collection<IResource> getProjectBuildResources(String projectName, String cfgName, String[] objs,
+			boolean externalBuilder) throws CoreException {
 		IProject project = getWorkspace().getRoot().getProject(projectName);
 		IFolder buildDir = project.getFolder(cfgName);
 		Collection<IResource> resources = new LinkedHashSet<IResource>();
@@ -253,13 +265,15 @@ public abstract class AbstractBuilderTest extends TestCase {
 	private List<IMarker> getAllMarkers() throws CoreException {
 		List<IMarker> markers = new ArrayList<IMarker>();
 		for (IProject project : projects)
-			markers.addAll(Arrays.asList(project.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE)));
+			markers.addAll(Arrays
+					.asList(project.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE)));
 		return markers;
 	}
 
 	protected void printAllMarkers() throws CoreException {
 		List<IMarker> markers = getAllMarkers();
-		String[] attributes = new String[] {IMarker.LINE_NUMBER, IMarker.SEVERITY, IMarker.MESSAGE, IMarker.LOCATION /*, ICModelMarker.C_MODEL_MARKER_CONFIGURATION_NAME*/};
+		String[] attributes = new String[] { IMarker.LINE_NUMBER, IMarker.SEVERITY, IMarker.MESSAGE,
+				IMarker.LOCATION /*, ICModelMarker.C_MODEL_MARKER_CONFIGURATION_NAME*/ };
 		StringBuilder sb = new StringBuilder();
 		for (IMarker m : markers) {
 			// Project
@@ -278,7 +292,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 				sb.append(" line ").append(attrs[i]); //$NON-NLS-1$
 			// severity
 			if (attrs[++i] != null) {
-				switch ((Integer)attrs[i++]) {
+				switch ((Integer) attrs[i++]) {
 				case IMarker.SEVERITY_ERROR:
 					sb.append(" ERROR");
 					break;
@@ -291,7 +305,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 				}
 			}
 			// append the rest of the string fields
-			do  {
+			do {
 				if (attrs[i] != null)
 					sb.append(' ').append(attrs[i]);
 			} while (++i < attrs.length);

@@ -37,7 +37,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
-public class PDOMCPPVariableTemplate extends PDOMCPPVariable implements ICPPVariableTemplate, ICPPInstanceCache, IPDOMCPPTemplateParameterOwner {
+public class PDOMCPPVariableTemplate extends PDOMCPPVariable
+		implements ICPPVariableTemplate, ICPPInstanceCache, IPDOMCPPTemplateParameterOwner {
 	private static final int TEMPLATE_PARAMS = PDOMCPPVariable.RECORD_SIZE;
 	private static final int FIRST_PARTIAL = TEMPLATE_PARAMS + Database.PTR_SIZE;
 
@@ -73,11 +74,11 @@ public class PDOMCPPVariableTemplate extends PDOMCPPVariable implements ICPPVari
 	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
-				long rec= getDB().getRecPtr(record + TEMPLATE_PARAMS);
+				long rec = getDB().getRecPtr(record + TEMPLATE_PARAMS);
 				if (rec == 0) {
-					params= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
+					params = IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 				} else {
-					params= PDOMTemplateParameterArray.getArray(this, rec);
+					params = PDOMTemplateParameterArray.getArray(this, rec);
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -110,8 +111,8 @@ public class PDOMCPPVariableTemplate extends PDOMCPPVariable implements ICPPVari
 	public ICPPPartialSpecialization[] getPartialSpecializations() {
 		try {
 			ArrayList<PDOMCPPVariableTemplatePartialSpecialization> partials = new ArrayList<>();
-			for (PDOMCPPVariableTemplatePartialSpecialization partial = getFirstPartial(); partial != null;
-					partial = partial.getNextPartial()) {
+			for (PDOMCPPVariableTemplatePartialSpecialization partial = getFirstPartial(); partial != null; partial = partial
+					.getNextPartial()) {
 				partials.add(partial);
 			}
 
@@ -160,7 +161,7 @@ public class PDOMCPPVariableTemplate extends PDOMCPPVariable implements ICPPVari
 		if (pars == null || pos >= pars.length)
 			return null;
 
-		ICPPTemplateParameter result= pars[pos];
+		ICPPTemplateParameter result = pars[pos];
 		if (param instanceof ICPPTemplateTypeParameter) {
 			if (result instanceof ICPPTemplateTypeParameter)
 				return result;

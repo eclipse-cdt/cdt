@@ -26,27 +26,30 @@ class GdbPinColorTracker {
 	private class Pair {
 		Integer refCount;
 		String context;
+
 		Pair(String context, Integer refCount) {
 			this.context = context;
 			this.refCount = refCount;
 		}
 	}
-	
-	private static List<Pair> gsColorBuckets = Collections.synchronizedList( new ArrayList<Pair>() );
-	
+
+	private static List<Pair> gsColorBuckets = Collections.synchronizedList(new ArrayList<Pair>());
+
 	/**
 	 * The static instance.
 	 */
 	static GdbPinColorTracker INSTANCE = new GdbPinColorTracker();
-	
+
 	/**
 	 * Singleton object - make constructor private.
 	 */
-	private GdbPinColorTracker() {}
-	
+	private GdbPinColorTracker() {
+	}
+
 	int addRef(String context) {
-		if (context == null) return IPinElementColorDescriptor.UNDEFINED;
-		
+		if (context == null)
+			return IPinElementColorDescriptor.UNDEFINED;
+
 		// look in the buckets and see if it is already exist
 		for (int i = 0; i < gsColorBuckets.size(); ++i) {
 			Pair pair = gsColorBuckets.get(i);
@@ -55,10 +58,10 @@ class GdbPinColorTracker {
 				return i % IPinElementColorDescriptor.DEFAULT_COLOR_COUNT;
 			}
 		}
-		
+
 		// if not exist in the buckets, then add to the bucket collection
 		int size = gsColorBuckets.size();
-		int index =  size;
+		int index = size;
 		for (int i = 0; i < size; ++i) {
 			Pair pair = gsColorBuckets.get(i);
 			if (pair.refCount <= 0) {
@@ -70,15 +73,16 @@ class GdbPinColorTracker {
 		gsColorBuckets.add(index, new Pair(context, 1));
 		return (index) % IPinElementColorDescriptor.DEFAULT_COLOR_COUNT;
 	}
-	
+
 	void removeRef(String context) {
-		if (context == null) return;
-		
+		if (context == null)
+			return;
+
 		for (int i = 0; i < gsColorBuckets.size(); ++i) {
 			Pair pair = gsColorBuckets.get(i);
 			if (pair.context.equals(context)) {
 				pair.refCount--;
-				
+
 				return;
 			}
 		}

@@ -64,361 +64,360 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 public class DisassemblyPane implements IPropertyChangeListener {
 
-    private final static int VERTICAL_RULER_WIDTH = 12;
-    private final static String CURRENT_LINE = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
-    private final static String CURRENT_LINE_COLOR = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
+	private final static int VERTICAL_RULER_WIDTH = 12;
+	private final static String CURRENT_LINE = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
+	private final static String CURRENT_LINE_COLOR = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
 
-    private Composite fControl;
-    private VirtualSourceViewer fViewer;
+	private Composite fControl;
+	private VirtualSourceViewer fViewer;
 
-    private IVerticalRuler fVerticalRuler;
-    private IOverviewRuler fOverviewRuler;
+	private IVerticalRuler fVerticalRuler;
+	private IOverviewRuler fOverviewRuler;
 
-    private SourceViewerDecorationSupport fSourceViewerDecorationSupport;
-    private IAnnotationAccess fAnnotationAccess;
-    private MarkerAnnotationPreferences fAnnotationPreferences;
+	private SourceViewerDecorationSupport fSourceViewerDecorationSupport;
+	private IAnnotationAccess fAnnotationAccess;
+	private MarkerAnnotationPreferences fAnnotationPreferences;
 
-    private String fViewContextMenuId;
-    private String fRulerContextMenuId;
+	private String fViewContextMenuId;
+	private String fRulerContextMenuId;
 
-    private MenuManager fTextMenuManager;
-    private MenuManager fRulerMenuManager;
+	private MenuManager fTextMenuManager;
+	private MenuManager fRulerMenuManager;
 
-    private Menu fRulerContextMenu;
-    private Menu fTextContextMenu;
+	private Menu fRulerContextMenu;
+	private Menu fTextContextMenu;
 
-    private IMenuListener fMenuListener;
-    private MouseListener fMouseListener;
+	private IMenuListener fMenuListener;
+	private MouseListener fMouseListener;
 
-    private Map<String, IAction> fActions = new HashMap<String, IAction>( 10 );
+	private Map<String, IAction> fActions = new HashMap<String, IAction>(10);
 
-    public DisassemblyPane( String contextMenuId, String rulerMenuId ) {
-        fAnnotationPreferences = new MarkerAnnotationPreferences();
-        setViewContextMenuId( contextMenuId );
-        setRulerContextMenuId( rulerMenuId );
-    }
+	public DisassemblyPane(String contextMenuId, String rulerMenuId) {
+		fAnnotationPreferences = new MarkerAnnotationPreferences();
+		setViewContextMenuId(contextMenuId);
+		setRulerContextMenuId(rulerMenuId);
+	}
 
-    public void create( Composite parent ) {
-        Composite composite = new Composite( parent, SWT.NONE );
-        composite.setLayout( new GridLayout() );
-        GridData data = new GridData( SWT.FILL, SWT.FILL, true, true );
-        composite.setLayoutData( data );
+	public void create(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		composite.setLayoutData(data);
 
-        fVerticalRuler = createCompositeRuler();
-        fOverviewRuler = createOverviewRuler( getSharedColors() );
+		fVerticalRuler = createCompositeRuler();
+		fOverviewRuler = createOverviewRuler(getSharedColors());
 
-        createActions();
+		createActions();
 
-        fViewer = createViewer( composite, fVerticalRuler, fOverviewRuler );
-        
-        fControl = composite;
+		fViewer = createViewer(composite, fVerticalRuler, fOverviewRuler);
 
-        createViewContextMenu();
-        createRulerContextMenu();
-        
-        if ( fSourceViewerDecorationSupport != null ) {
-            fSourceViewerDecorationSupport.install( getEditorPreferenceStore() );
-        }
-    }
+		fControl = composite;
 
-    public Control getControl() {
-        return fControl;
-    }
+		createViewContextMenu();
+		createRulerContextMenu();
 
-    public VirtualSourceViewer getViewer() {
-        return fViewer;
-    }
+		if (fSourceViewerDecorationSupport != null) {
+			fSourceViewerDecorationSupport.install(getEditorPreferenceStore());
+		}
+	}
 
-    public void dispose() {
-        getEditorPreferenceStore().removePropertyChangeListener( this );
-        JFaceResources.getFontRegistry().removeListener( this );
-        JFaceResources.getColorRegistry().removeListener( this );
-        if ( fSourceViewerDecorationSupport != null ) {
-            fSourceViewerDecorationSupport.dispose();
-            fSourceViewerDecorationSupport = null;
-        }
-        if ( fActions != null ) {
-            fActions.clear();
-            fActions = null;
-        }
-    }
+	public Control getControl() {
+		return fControl;
+	}
 
-    protected void createActions() {
-    }
+	public VirtualSourceViewer getViewer() {
+		return fViewer;
+	}
 
-    public void setAction( String actionID, IAction action ) {
-        Assert.isNotNull( actionID );
-        if ( action == null ) {
-            fActions.remove( actionID );
-        }
-        else {
-            fActions.put( actionID, action );
-        }
-    }
+	public void dispose() {
+		getEditorPreferenceStore().removePropertyChangeListener(this);
+		JFaceResources.getFontRegistry().removeListener(this);
+		JFaceResources.getColorRegistry().removeListener(this);
+		if (fSourceViewerDecorationSupport != null) {
+			fSourceViewerDecorationSupport.dispose();
+			fSourceViewerDecorationSupport = null;
+		}
+		if (fActions != null) {
+			fActions.clear();
+			fActions = null;
+		}
+	}
 
-    public IAction getAction( String actionID ) {
-        Assert.isNotNull( actionID );
-        return fActions.get( actionID );
-    }
+	protected void createActions() {
+	}
 
-    protected void rulerContextMenuAboutToShow( IMenuManager menu ) {
-        menu.add( new Separator( ITextEditorActionConstants.GROUP_REST ) );
-        menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
-        addAction( menu, IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT );
-        addAction( menu, IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT );
-        addAction( menu, IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES );
-    }
+	public void setAction(String actionID, IAction action) {
+		Assert.isNotNull(actionID);
+		if (action == null) {
+			fActions.remove(actionID);
+		} else {
+			fActions.put(actionID, action);
+		}
+	}
 
-    protected void viewContextMenuAboutToShow( IMenuManager menu ) {
-        menu.add( new Separator( ITextEditorActionConstants.GROUP_REST ) );
-        menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
-    }
+	public IAction getAction(String actionID) {
+		Assert.isNotNull(actionID);
+		return fActions.get(actionID);
+	}
 
-    protected void addAction( IMenuManager menu, String group, String actionId ) {
-        IAction action = getAction( actionId );
-        if ( action != null ) {
-            if ( action instanceof IUpdate )
-                ((IUpdate)action).update();
-            IMenuManager subMenu = menu.findMenuUsingPath( group );
-            if ( subMenu != null )
-                subMenu.add( action );
-            else
-                menu.appendToGroup( group, action );
-        }
-    }
+	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		addAction(menu, IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT);
+		addAction(menu, IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT);
+		addAction(menu, IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES);
+	}
 
-    protected void addAction( IMenuManager menu, String actionId ) {
-        IAction action = getAction( actionId );
-        if ( action != null ) {
-            if ( action instanceof IUpdate )
-                ((IUpdate)action).update();
-            menu.add( action );
-        }
-    }
+	protected void viewContextMenuAboutToShow(IMenuManager menu) {
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
 
-    protected final IMenuListener getContextMenuListener() {
-        if ( fMenuListener == null ) {
-            fMenuListener = new IMenuListener() {
+	protected void addAction(IMenuManager menu, String group, String actionId) {
+		IAction action = getAction(actionId);
+		if (action != null) {
+			if (action instanceof IUpdate)
+				((IUpdate) action).update();
+			IMenuManager subMenu = menu.findMenuUsingPath(group);
+			if (subMenu != null)
+				subMenu.add(action);
+			else
+				menu.appendToGroup(group, action);
+		}
+	}
 
-                @Override
-				public void menuAboutToShow( IMenuManager menu ) {
-                    String id = menu.getId();
-                    if ( getRulerContextMenuId().equals( id ) ) {
-//                        setFocus();
-                        rulerContextMenuAboutToShow( menu );
-                    }
-                    else if ( getViewContextMenuId().equals( id ) ) {
-//                        setFocus();
-                        viewContextMenuAboutToShow( menu );
-                    }
-                }
-            };
-        }
-        return fMenuListener;
-    }
+	protected void addAction(IMenuManager menu, String actionId) {
+		IAction action = getAction(actionId);
+		if (action != null) {
+			if (action instanceof IUpdate)
+				((IUpdate) action).update();
+			menu.add(action);
+		}
+	}
 
-    protected final MouseListener getRulerMouseListener() {
-        if ( fMouseListener == null ) {
-            fMouseListener = new MouseListener() {
+	protected final IMenuListener getContextMenuListener() {
+		if (fMenuListener == null) {
+			fMenuListener = new IMenuListener() {
 
-                private boolean fDoubleClicked = false;
+				@Override
+				public void menuAboutToShow(IMenuManager menu) {
+					String id = menu.getId();
+					if (getRulerContextMenuId().equals(id)) {
+						//                        setFocus();
+						rulerContextMenuAboutToShow(menu);
+					} else if (getViewContextMenuId().equals(id)) {
+						//                        setFocus();
+						viewContextMenuAboutToShow(menu);
+					}
+				}
+			};
+		}
+		return fMenuListener;
+	}
 
-                private void triggerAction( String actionID ) {
-                    IAction action = getAction( actionID );
-                    if ( action != null ) {
-                        if ( action instanceof IUpdate )
-                            ((IUpdate)action).update();
-                        if ( action.isEnabled() )
-                            action.run();
-                    }
-                }
+	protected final MouseListener getRulerMouseListener() {
+		if (fMouseListener == null) {
+			fMouseListener = new MouseListener() {
 
-                @Override
-				public void mouseUp( MouseEvent e ) {
-//                    setFocus();
-                    if ( 1 == e.button && !fDoubleClicked )
-                        triggerAction( ITextEditorActionConstants.RULER_CLICK );
-                    fDoubleClicked = false;
-                }
+				private boolean fDoubleClicked = false;
 
-                @Override
-				public void mouseDoubleClick( MouseEvent e ) {
-                    if ( 1 == e.button ) {
-                        fDoubleClicked = true;
-                        triggerAction( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT );
-                    }
-                }
+				private void triggerAction(String actionID) {
+					IAction action = getAction(actionID);
+					if (action != null) {
+						if (action instanceof IUpdate)
+							((IUpdate) action).update();
+						if (action.isEnabled())
+							action.run();
+					}
+				}
 
-                @Override
-				public void mouseDown( MouseEvent e ) {
-                    StyledText text = getViewer().getTextWidget();
-                    if ( text != null && !text.isDisposed() ) {
-                        Display display = text.getDisplay();
-                        Point location = display.getCursorLocation();
-                        getRulerContextMenu().setLocation( location.x, location.y );
-                    }
-                }
-            };
-        }
-        return fMouseListener;
-    }
+				@Override
+				public void mouseUp(MouseEvent e) {
+					//                    setFocus();
+					if (1 == e.button && !fDoubleClicked)
+						triggerAction(ITextEditorActionConstants.RULER_CLICK);
+					fDoubleClicked = false;
+				}
 
-    private Menu getTextContextMenu() {
-        return this.fTextContextMenu;
-    }
+				@Override
+				public void mouseDoubleClick(MouseEvent e) {
+					if (1 == e.button) {
+						fDoubleClicked = true;
+						triggerAction(IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT);
+					}
+				}
 
-    private void setTextContextMenu( Menu textContextMenu ) {
-        this.fTextContextMenu = textContextMenu;
-    }
+				@Override
+				public void mouseDown(MouseEvent e) {
+					StyledText text = getViewer().getTextWidget();
+					if (text != null && !text.isDisposed()) {
+						Display display = text.getDisplay();
+						Point location = display.getCursorLocation();
+						getRulerContextMenu().setLocation(location.x, location.y);
+					}
+				}
+			};
+		}
+		return fMouseListener;
+	}
 
-    protected Menu getRulerContextMenu() {
-        return this.fRulerContextMenu;
-    }
+	private Menu getTextContextMenu() {
+		return this.fTextContextMenu;
+	}
 
-    private void setRulerContextMenu( Menu rulerContextMenu ) {
-        this.fRulerContextMenu = rulerContextMenu;
-    }
+	private void setTextContextMenu(Menu textContextMenu) {
+		this.fTextContextMenu = textContextMenu;
+	}
 
-    public String getRulerContextMenuId() {
-        return fRulerContextMenuId;
-    }
+	protected Menu getRulerContextMenu() {
+		return this.fRulerContextMenu;
+	}
 
-    private void setRulerContextMenuId( String rulerContextMenuId ) {
-        Assert.isNotNull( rulerContextMenuId );
-        fRulerContextMenuId = rulerContextMenuId;
-    }
+	private void setRulerContextMenu(Menu rulerContextMenu) {
+		this.fRulerContextMenu = rulerContextMenu;
+	}
 
-    public String getViewContextMenuId() {
-        return fViewContextMenuId;
-    }
+	public String getRulerContextMenuId() {
+		return fRulerContextMenuId;
+	}
 
-    private void setViewContextMenuId( String viewContextMenuId ) {
-        Assert.isNotNull( viewContextMenuId );
-        fViewContextMenuId = viewContextMenuId;
-    }
+	private void setRulerContextMenuId(String rulerContextMenuId) {
+		Assert.isNotNull(rulerContextMenuId);
+		fRulerContextMenuId = rulerContextMenuId;
+	}
 
-    private void createViewContextMenu() {
-        String id = getViewContextMenuId();
-        fTextMenuManager = new MenuManager( id, id );
-        fTextMenuManager.setRemoveAllWhenShown( true );
-        fTextMenuManager.addMenuListener( getContextMenuListener() );
-        StyledText styledText = getViewer().getTextWidget();
-        setTextContextMenu( fTextMenuManager.createContextMenu( styledText ) );
-        styledText.setMenu( getTextContextMenu() );
-    }
+	public String getViewContextMenuId() {
+		return fViewContextMenuId;
+	}
 
-    private void createRulerContextMenu() {
-        String id = getRulerContextMenuId();
-        fRulerMenuManager = new MenuManager( id, id );
-        fRulerMenuManager.setRemoveAllWhenShown( true );
-        fRulerMenuManager.addMenuListener( getContextMenuListener() );
-        Control rulerControl = fVerticalRuler.getControl();
-        setRulerContextMenu( fRulerMenuManager.createContextMenu( rulerControl ) );
-        rulerControl.setMenu( getRulerContextMenu() );
-        rulerControl.addMouseListener( getRulerMouseListener() );
-    }
+	private void setViewContextMenuId(String viewContextMenuId) {
+		Assert.isNotNull(viewContextMenuId);
+		fViewContextMenuId = viewContextMenuId;
+	}
 
-    protected SourceViewerDecorationSupport getSourceViewerDecorationSupport( ISourceViewer viewer ) {
-        if ( fSourceViewerDecorationSupport == null ) {
-            fSourceViewerDecorationSupport = new SourceViewerDecorationSupport( viewer, getOverviewRuler(), getAnnotationAccess(), getSharedColors() );
-            configureSourceViewerDecorationSupport( fSourceViewerDecorationSupport );
-        }
-        return fSourceViewerDecorationSupport;
-    }
+	private void createViewContextMenu() {
+		String id = getViewContextMenuId();
+		fTextMenuManager = new MenuManager(id, id);
+		fTextMenuManager.setRemoveAllWhenShown(true);
+		fTextMenuManager.addMenuListener(getContextMenuListener());
+		StyledText styledText = getViewer().getTextWidget();
+		setTextContextMenu(fTextMenuManager.createContextMenu(styledText));
+		styledText.setMenu(getTextContextMenu());
+	}
 
-    protected VirtualSourceViewer createViewer( Composite parent, IVerticalRuler vertRuler, IOverviewRuler ovRuler ) {
-        int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
-        VirtualSourceViewer viewer = new VirtualSourceViewer( parent, fVerticalRuler, fOverviewRuler, true, styles );
-        viewer.getControl().setLayoutData( parent.getLayoutData() );
-        viewer.setEditable( false );
-        viewer.getTextWidget().setFont( JFaceResources.getFont( IInternalCDebugUIConstants.DISASSEMBLY_FONT ) );
-        viewer.setRangeIndicator( new DefaultRangeIndicator() );
-        getSourceViewerDecorationSupport( viewer );
-        viewer.configure( new SourceViewerConfiguration() );
-        JFaceResources.getFontRegistry().addListener( this );
-        JFaceResources.getColorRegistry().addListener( this );
-        getEditorPreferenceStore().addPropertyChangeListener( this );
-        return viewer;
-    }
+	private void createRulerContextMenu() {
+		String id = getRulerContextMenuId();
+		fRulerMenuManager = new MenuManager(id, id);
+		fRulerMenuManager.setRemoveAllWhenShown(true);
+		fRulerMenuManager.addMenuListener(getContextMenuListener());
+		Control rulerControl = fVerticalRuler.getControl();
+		setRulerContextMenu(fRulerMenuManager.createContextMenu(rulerControl));
+		rulerControl.setMenu(getRulerContextMenu());
+		rulerControl.addMouseListener(getRulerMouseListener());
+	}
 
-    private IAnnotationAccess createAnnotationAccess() {
-        return new DefaultMarkerAnnotationAccess();
-    }
+	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport(ISourceViewer viewer) {
+		if (fSourceViewerDecorationSupport == null) {
+			fSourceViewerDecorationSupport = new SourceViewerDecorationSupport(viewer, getOverviewRuler(),
+					getAnnotationAccess(), getSharedColors());
+			configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
+		}
+		return fSourceViewerDecorationSupport;
+	}
 
-    private void configureSourceViewerDecorationSupport( SourceViewerDecorationSupport support ) {
-        for( Object pref : fAnnotationPreferences.getAnnotationPreferences() ) {
-            support.setAnnotationPreference( (AnnotationPreference)pref );
-        }
-        support.setCursorLinePainterPreferenceKeys( CURRENT_LINE, CURRENT_LINE_COLOR );
-    }
+	protected VirtualSourceViewer createViewer(Composite parent, IVerticalRuler vertRuler, IOverviewRuler ovRuler) {
+		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
+		VirtualSourceViewer viewer = new VirtualSourceViewer(parent, fVerticalRuler, fOverviewRuler, true, styles);
+		viewer.getControl().setLayoutData(parent.getLayoutData());
+		viewer.setEditable(false);
+		viewer.getTextWidget().setFont(JFaceResources.getFont(IInternalCDebugUIConstants.DISASSEMBLY_FONT));
+		viewer.setRangeIndicator(new DefaultRangeIndicator());
+		getSourceViewerDecorationSupport(viewer);
+		viewer.configure(new SourceViewerConfiguration());
+		JFaceResources.getFontRegistry().addListener(this);
+		JFaceResources.getColorRegistry().addListener(this);
+		getEditorPreferenceStore().addPropertyChangeListener(this);
+		return viewer;
+	}
 
-    private IAnnotationAccess getAnnotationAccess() {
-        if ( fAnnotationAccess == null )
-            fAnnotationAccess = createAnnotationAccess();
-        return fAnnotationAccess;
-    }
+	private IAnnotationAccess createAnnotationAccess() {
+		return new DefaultMarkerAnnotationAccess();
+	}
 
-    private ISharedTextColors getSharedColors() {
-        return EditorsUI.getSharedTextColors();
-    }
+	private void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
+		for (Object pref : fAnnotationPreferences.getAnnotationPreferences()) {
+			support.setAnnotationPreference((AnnotationPreference) pref);
+		}
+		support.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
+	}
 
-    @SuppressWarnings("rawtypes")
-    protected IVerticalRuler createCompositeRuler() {
-        CompositeRuler ruler = new CompositeRuler();
-        ruler.addDecorator( 0, new AnnotationRulerColumn( VERTICAL_RULER_WIDTH, getAnnotationAccess() ) );
-        for( Iterator iter = ruler.getDecoratorIterator(); iter.hasNext(); ) {
-            IVerticalRulerColumn col = (IVerticalRulerColumn)iter.next();
-            if ( col instanceof AnnotationRulerColumn ) {
-                AnnotationRulerColumn column = (AnnotationRulerColumn)col;
-                for( Iterator iter2 = fAnnotationPreferences.getAnnotationPreferences().iterator(); iter2.hasNext(); ) {
-                    AnnotationPreference preference = (AnnotationPreference)iter2.next();
-                    column.addAnnotationType( preference.getAnnotationType() );
-                }
-                column.addAnnotationType( Annotation.TYPE_UNKNOWN );
-                break;
-            }
-        }
-        return ruler;
-    }
+	private IAnnotationAccess getAnnotationAccess() {
+		if (fAnnotationAccess == null)
+			fAnnotationAccess = createAnnotationAccess();
+		return fAnnotationAccess;
+	}
 
-    private IOverviewRuler createOverviewRuler( ISharedTextColors sharedColors ) {
-        IOverviewRuler ruler = new OverviewRuler( getAnnotationAccess(), VERTICAL_RULER_WIDTH, sharedColors );
-        for( Object o : fAnnotationPreferences.getAnnotationPreferences() ) {
-            AnnotationPreference preference = (AnnotationPreference)o;
-            if ( preference.contributesToHeader() )
-                ruler.addHeaderAnnotationType( preference.getAnnotationType() );
-        }
-        return ruler;
-    }
+	private ISharedTextColors getSharedColors() {
+		return EditorsUI.getSharedTextColors();
+	}
 
-    private IOverviewRuler getOverviewRuler() {
-        if ( fOverviewRuler == null )
-            fOverviewRuler = createOverviewRuler( getSharedColors() );
-        return fOverviewRuler;
-    }
+	@SuppressWarnings("rawtypes")
+	protected IVerticalRuler createCompositeRuler() {
+		CompositeRuler ruler = new CompositeRuler();
+		ruler.addDecorator(0, new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess()));
+		for (Iterator iter = ruler.getDecoratorIterator(); iter.hasNext();) {
+			IVerticalRulerColumn col = (IVerticalRulerColumn) iter.next();
+			if (col instanceof AnnotationRulerColumn) {
+				AnnotationRulerColumn column = (AnnotationRulerColumn) col;
+				for (Iterator iter2 = fAnnotationPreferences.getAnnotationPreferences().iterator(); iter2.hasNext();) {
+					AnnotationPreference preference = (AnnotationPreference) iter2.next();
+					column.addAnnotationType(preference.getAnnotationType());
+				}
+				column.addAnnotationType(Annotation.TYPE_UNKNOWN);
+				break;
+			}
+		}
+		return ruler;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    @Override
-	public void propertyChange( PropertyChangeEvent event ) {
-        // TODO Auto-generated method stub
-        
-    }
+	private IOverviewRuler createOverviewRuler(ISharedTextColors sharedColors) {
+		IOverviewRuler ruler = new OverviewRuler(getAnnotationAccess(), VERTICAL_RULER_WIDTH, sharedColors);
+		for (Object o : fAnnotationPreferences.getAnnotationPreferences()) {
+			AnnotationPreference preference = (AnnotationPreference) o;
+			if (preference.contributesToHeader())
+				ruler.addHeaderAnnotationType(preference.getAnnotationType());
+		}
+		return ruler;
+	}
 
-    private IPreferenceStore getEditorPreferenceStore() {
-        return EditorsUI.getPreferenceStore();
-    }
+	private IOverviewRuler getOverviewRuler() {
+		if (fOverviewRuler == null)
+			fOverviewRuler = createOverviewRuler(getSharedColors());
+		return fOverviewRuler;
+	}
 
-    public MenuManager getTextMenuManager() {
-        return fTextMenuManager;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		// TODO Auto-generated method stub
 
-    public MenuManager getRulerMenuManager() {
-        return fRulerMenuManager;
-    }
+	}
 
-    public IVerticalRuler getVerticalRuler() {
-        return fVerticalRuler;
-    }
+	private IPreferenceStore getEditorPreferenceStore() {
+		return EditorsUI.getPreferenceStore();
+	}
+
+	public MenuManager getTextMenuManager() {
+		return fTextMenuManager;
+	}
+
+	public MenuManager getRulerMenuManager() {
+		return fRulerMenuManager;
+	}
+
+	public IVerticalRuler getVerticalRuler() {
+		return fVerticalRuler;
+	}
 }

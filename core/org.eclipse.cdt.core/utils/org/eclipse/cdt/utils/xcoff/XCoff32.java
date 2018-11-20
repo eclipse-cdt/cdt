@@ -30,7 +30,7 @@ import org.eclipse.cdt.utils.coff.ReadMemoryAccess;
  */
 public class XCoff32 {
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-	
+
 	String filename;
 	FileHeader filehdr;
 	OptionalHeader opthdr;
@@ -39,55 +39,55 @@ public class XCoff32 {
 	byte[] string_table;
 	SectionHeader[] scnhdrs;
 	Symbol[] symbols;
-	
+
 	public static class FileHeader {
 		public final static int FILHSZ = 20;
-		
+
 		// Consts
-		public final static int U802TOCMAGIC = 0x01df;	// XCOFF32
-		public final static int U803TOCMAGIC = 0x01e7;	// obsolete XCOFF64 - not used
-		public final static int U803XTOCMAGIC = 0x01ef;	// discontinued AIX XCOFF64
-		public final static int U64_TOCMAGIC = 0x01f7;	// XCOFF64
+		public final static int U802TOCMAGIC = 0x01df; // XCOFF32
+		public final static int U803TOCMAGIC = 0x01e7; // obsolete XCOFF64 - not used
+		public final static int U803XTOCMAGIC = 0x01ef; // discontinued AIX XCOFF64
+		public final static int U64_TOCMAGIC = 0x01f7; // XCOFF64
 
 		// Flags
 		public final static int F_RELFLG = 0x0001; // relocation info stripped from file
-		public final static int F_EXEC = 0x0002;   // file is executable
-							   //  (no unresolved external references)
-		public final static int F_LNNO = 0x0004;   // line numbers stripped from file
-		public final static int F_LSYMS = 0x0008;  // local symbols stripped from file
-		public final static int F_FDPR_PROF = 0x0010;	// file was profiled with fdpr command
-		public final static int F_FDPR_OPTI = 0x0020;	// file was reordered with fdpr command
-		public final static int F_DSA = 0x0040;	// file uses Very Large Program Support
-//		public final static int F_AR16WR = 0x0080; // file is 16-bit little-endian
-//		public final static int F_AR32WR = 0x0100; // file is 32-bit little-endian
-//		public final static int F_AR32W = 0x0200;  // file is 32-bit big-endian
-		public final static int F_DYNLOAD = 0x1000;	// rs/6000 aix: dynamically
-							   // loadable w/imports & exports
-		public final static int F_SHROBJ = 0x2000; 	// rs/6000 aix: file is a shared object
+		public final static int F_EXEC = 0x0002; // file is executable
+		//  (no unresolved external references)
+		public final static int F_LNNO = 0x0004; // line numbers stripped from file
+		public final static int F_LSYMS = 0x0008; // local symbols stripped from file
+		public final static int F_FDPR_PROF = 0x0010; // file was profiled with fdpr command
+		public final static int F_FDPR_OPTI = 0x0020; // file was reordered with fdpr command
+		public final static int F_DSA = 0x0040; // file uses Very Large Program Support
+		//		public final static int F_AR16WR = 0x0080; // file is 16-bit little-endian
+		//		public final static int F_AR32WR = 0x0100; // file is 32-bit little-endian
+		//		public final static int F_AR32W = 0x0200;  // file is 32-bit big-endian
+		public final static int F_DYNLOAD = 0x1000; // rs/6000 aix: dynamically
+		// loadable w/imports & exports
+		public final static int F_SHROBJ = 0x2000; // rs/6000 aix: file is a shared object
 		public final static int F_LOADONLY = 0x4000;// rs/6000 aix: if the object file is a member of an archive;
-							   // it can be loaded by the system loader but the member is ignored by the binder.
+		// it can be loaded by the system loader but the member is ignored by the binder.
 
 		// Fields
-		public short f_magic;	/* 00-01 2 bytes: magic number                 */
-		public short f_nscns;	/* 02-03 2 bytes: number of sections: 2 bytes  */
-		public int f_timdat;	/* 04-07 4 bytes: time & date stamp            */
-		public int f_symptr;	/* 08-11 4 bytes: file pointer to symtab       */
-		public int f_nsyms;		/* 12-15 4 bytes: number of symtab entries     */
-		public short f_opthdr;	/* 16-17 2 bytes: sizeof(optional hdr)         */
-		public short f_flags;	/* 18-19 2 bytes: flags                        */
+		public short f_magic; /* 00-01 2 bytes: magic number                 */
+		public short f_nscns; /* 02-03 2 bytes: number of sections: 2 bytes  */
+		public int f_timdat; /* 04-07 4 bytes: time & date stamp            */
+		public int f_symptr; /* 08-11 4 bytes: file pointer to symtab       */
+		public int f_nsyms; /* 12-15 4 bytes: number of symtab entries     */
+		public short f_opthdr; /* 16-17 2 bytes: sizeof(optional hdr)         */
+		public short f_flags; /* 18-19 2 bytes: flags                        */
 
-		public FileHeader (RandomAccessFile file) throws IOException {
+		public FileHeader(RandomAccessFile file) throws IOException {
 			this(file, file.getFilePointer());
 		}
 
-		public FileHeader (RandomAccessFile file, long offset) throws IOException {
+		public FileHeader(RandomAccessFile file, long offset) throws IOException {
 			file.seek(offset);
 			byte[] hdr = new byte[FILHSZ];
 			file.readFully(hdr);
 			commonSetup(hdr, false);
 		}
 
-		public FileHeader (byte[] hdr, boolean little) throws IOException {
+		public FileHeader(byte[] hdr, boolean little) throws IOException {
 			commonSetup(hdr, little);
 		}
 
@@ -141,34 +141,34 @@ public class XCoff32 {
 	}
 
 	public static class OptionalHeader {
-		public final static int AOUTHDRSZ = 72;	// First 28 bytes same as for COFF
+		public final static int AOUTHDRSZ = 72; // First 28 bytes same as for COFF
 
 		// Fields (as in COFF)
-		public short magic;		/* 2 bytes: type of file (0x010B)               	*/
-		public short vstamp;	/* 2 bytes: version stamp (1)                   	*/
-		public int tsize;		/* 4 bytes: text size in bytes, padded to FW bdry	*/
-		public int dsize;		/* 4 bytes: initialized data "  "               	*/
-		public int bsize;		/* 4 bytes: uninitialized data "   "            	*/
-		public int entry;		/* 4 bytes: entry pt.                           	*/
-		public int text_start;	/* 4 bytes: base of text used for this file     	*/
-		public int data_start;	/* 4 bytes: base of data used for this file     	*/
+		public short magic; /* 2 bytes: type of file (0x010B)               	*/
+		public short vstamp; /* 2 bytes: version stamp (1)                   	*/
+		public int tsize; /* 4 bytes: text size in bytes, padded to FW bdry	*/
+		public int dsize; /* 4 bytes: initialized data "  "               	*/
+		public int bsize; /* 4 bytes: uninitialized data "   "            	*/
+		public int entry; /* 4 bytes: entry pt.                           	*/
+		public int text_start; /* 4 bytes: base of text used for this file     	*/
+		public int data_start; /* 4 bytes: base of data used for this file     	*/
 		// Additional fields
-		public int o_toc;	   	/* 4 bytes: Address of TOC anchor 					*/
-		public short o_snentry;	/* 2 bytes: Section number for entry point			*/
-		public short o_sntext; 	/* 2 bytes: Section number for .text				*/
-		public short o_sndata; 	/* 2 bytes: Section number for .data				*/
-		public short o_sntoc;	/* 2 bytes: Section number for TOC					*/
+		public int o_toc; /* 4 bytes: Address of TOC anchor 					*/
+		public short o_snentry; /* 2 bytes: Section number for entry point			*/
+		public short o_sntext; /* 2 bytes: Section number for .text				*/
+		public short o_sndata; /* 2 bytes: Section number for .data				*/
+		public short o_sntoc; /* 2 bytes: Section number for TOC					*/
 		public short o_snloader;/* 2 bytes: Section number for loader data			*/
-		public short o_snbss;	/* 2 bytes: Section number for .bss					*/
+		public short o_snbss; /* 2 bytes: Section number for .bss					*/
 		public short o_algntext;/* 2 bytes: Maximum alignment for .text				*/
 		public short o_algndata;/* 2 bytes: Maximum alignment for .data				*/
-		public short o_modtype;	/* 2 bytes: Maximum alignment for .data				*/
-		public byte o_cpuflag;	/* 1 byte: Bit flags - cpu types of objects			*/		
-		public byte o_cputype;	/* 1 byte: Reserved for cpu type					*/
-		public int o_maxstack;	/* 4 bytes: Maximum stack size allowed (bytes)		*/
-		public int o_maxdata;	/* 4 bytes: Maximum data size allowed (bytes)		*/
-		public int o_debugger;	/* 4 bytes: Reserved for debuggers					*/
-//		public byte o_resv2[8];	/* 8 bytes: Reserved. Field must contain 0s			*/
+		public short o_modtype; /* 2 bytes: Maximum alignment for .data				*/
+		public byte o_cpuflag; /* 1 byte: Bit flags - cpu types of objects			*/
+		public byte o_cputype; /* 1 byte: Reserved for cpu type					*/
+		public int o_maxstack; /* 4 bytes: Maximum stack size allowed (bytes)		*/
+		public int o_maxdata; /* 4 bytes: Maximum data size allowed (bytes)		*/
+		public int o_debugger; /* 4 bytes: Reserved for debuggers					*/
+		//		public byte o_resv2[8];	/* 8 bytes: Reserved. Field must contain 0s			*/
 
 		public OptionalHeader(RandomAccessFile file) throws IOException {
 			this(file, file.getFilePointer() + FileHeader.FILHSZ);
@@ -178,7 +178,7 @@ public class XCoff32 {
 			file.seek(offset);
 			byte[] hdr = new byte[AOUTHDRSZ];
 			file.readFully(hdr);
-			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, false);	// big endian
+			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, false); // big endian
 			// COFF common
 			magic = memory.getShort();
 			vstamp = memory.getShort();
@@ -253,78 +253,77 @@ public class XCoff32 {
 		public final static String _INFO = ".info"; //$NON-NLS-1$
 
 		/* s_flags "type".  */
-//		public final static int STYP_REG = 0x0000;    /* "regular": allocated, relocated,
-//								loaded */
-//		public final static int STYP_DSECT = 0x0001;  /* "dummy":  relocated only */
-//		public final static int STYP_NOLOAD = 0x0002; /* "noload": allocated, relocated,
-//								not loaded */
-//		public final static int STYP_GROUP = 0x0004;  /* "grouped": formed of input
-//								sections */
-		public final static int STYP_PAD = 0x0008;    /* "padding": not allocated, not
-								relocated, loaded */
-//		public final static int STYP_COPY = 0x0010;   /* "copy": for decision function
-//								used by field update;
-//								not allocated, not relocated,
-//								loaded; reloc & lineno entries
-//								processed normally */
-		public final static int STYP_TEXT = 0x0020;   /* section contains text only.  */
-//		public final static int S_SHRSEG = 0x0020;    /* In 3b Update files (output of
-//								ogen), sections which appear in
-//								SHARED segments of the Pfile
-//								will have the S_SHRSEG flag set
-//								by ogen, to inform dufr that
-//								updating 1 copy of the proc. will
-//								update all process invocations. */
-		public final static int STYP_DATA = 0x0040;   /* section contains data only */
-		public final static int STYP_BSS = 0x0080;    /* section contains bss only */
-		public final static int STYP_EXCEPT = 0x0080;    /* section contains exceptions info only */
-//		public final static int S_NEWFCN = 0x0100;    /* In a minimal file or an update
-//								file, a new function (as
-//								compared with a replaced
-//								function) */
-		public final static int STYP_INFO = 0x0200;   /* comment: not allocated not
-								relocated, not loaded */
-//		public final static int STYP_OVER = 0x0400;   /* overlay: relocated not allocated
-//								or loaded */
-//		public final static int STYP_LIB = 0x0800;    /* for .lib: same as INFO */
-		public final static int STYP_LOADER = 0x1000;  /* loader section:
-								imported symbols,
-								exported symbols,
-								relocation data,
-								type-check information and
-								shared object names */
-//		public final static int STYP_MERGE = 0x2000;  /* merge section -- combines with
-//								text, data or bss sections only */
-		public final static int STYP_DEBUG = 0x2000;  /* debug section - su
-								information used by the symbolic debugger */
-//		public final static int STYP_REVERSE_PAD = 0x4000; /* section will be padded
-//								with no-op instructions
-//								wherever padding is necessary
-//								and there is a word of
-//								contiguous bytes beginning on a
-//								word boundary. */
+		//		public final static int STYP_REG = 0x0000;    /* "regular": allocated, relocated,
+		//								loaded */
+		//		public final static int STYP_DSECT = 0x0001;  /* "dummy":  relocated only */
+		//		public final static int STYP_NOLOAD = 0x0002; /* "noload": allocated, relocated,
+		//								not loaded */
+		//		public final static int STYP_GROUP = 0x0004;  /* "grouped": formed of input
+		//								sections */
+		public final static int STYP_PAD = 0x0008; /* "padding": not allocated, not
+													relocated, loaded */
+		//		public final static int STYP_COPY = 0x0010;   /* "copy": for decision function
+		//								used by field update;
+		//								not allocated, not relocated,
+		//								loaded; reloc & lineno entries
+		//								processed normally */
+		public final static int STYP_TEXT = 0x0020; /* section contains text only.  */
+		//		public final static int S_SHRSEG = 0x0020;    /* In 3b Update files (output of
+		//								ogen), sections which appear in
+		//								SHARED segments of the Pfile
+		//								will have the S_SHRSEG flag set
+		//								by ogen, to inform dufr that
+		//								updating 1 copy of the proc. will
+		//								update all process invocations. */
+		public final static int STYP_DATA = 0x0040; /* section contains data only */
+		public final static int STYP_BSS = 0x0080; /* section contains bss only */
+		public final static int STYP_EXCEPT = 0x0080; /* section contains exceptions info only */
+		//		public final static int S_NEWFCN = 0x0100;    /* In a minimal file or an update
+		//								file, a new function (as
+		//								compared with a replaced
+		//								function) */
+		public final static int STYP_INFO = 0x0200; /* comment: not allocated not
+													relocated, not loaded */
+		//		public final static int STYP_OVER = 0x0400;   /* overlay: relocated not allocated
+		//								or loaded */
+		//		public final static int STYP_LIB = 0x0800;    /* for .lib: same as INFO */
+		public final static int STYP_LOADER = 0x1000; /* loader section:
+														imported symbols,
+														exported symbols,
+														relocation data,
+														type-check information and
+														shared object names */
+		//		public final static int STYP_MERGE = 0x2000;  /* merge section -- combines with
+		//								text, data or bss sections only */
+		public final static int STYP_DEBUG = 0x2000; /* debug section - su
+														information used by the symbolic debugger */
+		//		public final static int STYP_REVERSE_PAD = 0x4000; /* section will be padded
+		//								with no-op instructions
+		//								wherever padding is necessary
+		//								and there is a word of
+		//								contiguous bytes beginning on a
+		//								word boundary. */
 		public final static int STYP_TYPCHK = 0x4000; /* type-check section - contains
-								parameter/argument type-check strings used by the binder */
+														parameter/argument type-check strings used by the binder */
 		public final static int STYP_OVRFLO = 0x8000; /* overflow section:
-								Specifies a relocation or line-number field overflow section.
-								A section header of this type contains the count of relocation 
-								entries and line number entries for some other section. 
-								This section header is required when either of the counts
-								exceeds 65,534. */
+														Specifies a relocation or line-number field overflow section.
+														A section header of this type contains the count of relocation 
+														entries and line number entries for some other section. 
+														This section header is required when either of the counts
+														exceeds 65,534. */
 
-//		public final static int STYP_LIT = 0x8020;  /* Literal data (like STYP_TEXT) */
+		//		public final static int STYP_LIT = 0x8020;  /* Literal data (like STYP_TEXT) */
 
-
-		public byte[] s_name= new byte[8]; // 8 bytes: section name
-		public int s_paddr;    // 4 bytes: physical address, aliased s_nlib
-		public int s_vaddr;    // 4 bytes: virtual address
-		public int s_size;     // 4 bytes: section size
-		public int s_scnptr;   // 4 bytes: file ptr to raw data for section
-		public int s_relptr;   // 4 bytes: file ptr to relocation
-		public int s_lnnoptr;  // 4 bytes: file ptr to line numbers
-		public short s_nreloc;   // 2 bytes: number of relocation entries
-		public short s_nlnno;    // 2 bytes: number of line number entries
-		public int s_flags;    // 4 bytes: flags
+		public byte[] s_name = new byte[8]; // 8 bytes: section name
+		public int s_paddr; // 4 bytes: physical address, aliased s_nlib
+		public int s_vaddr; // 4 bytes: virtual address
+		public int s_size; // 4 bytes: section size
+		public int s_scnptr; // 4 bytes: file ptr to raw data for section
+		public int s_relptr; // 4 bytes: file ptr to relocation
+		public int s_lnnoptr; // 4 bytes: file ptr to line numbers
+		public short s_nreloc; // 2 bytes: number of relocation entries
+		public short s_nlnno; // 2 bytes: number of line number entries
+		public int s_flags; // 4 bytes: flags
 
 		RandomAccessFile sfile;
 
@@ -353,23 +352,23 @@ public class XCoff32 {
 			return data;
 		}
 
-//		public Reloc[] getRelocs() throws IOException {
-//			Reloc[] relocs = new Reloc[s_nreloc];
-//			sfile.seek(s_relptr);
-//			for (int i = 0; i < s_nreloc; i++) {
-//				relocs[i] = new Reloc(sfile);
-//			}
-//			return relocs;
-//		}
-//
-//		public Lineno[] getLinenos() throws IOException {
-//			Lineno[] lines = new Lineno[s_nlnno];
-//			sfile.seek(s_lnnoptr);
-//			for (int i = 0; i < s_nlnno; i++) {
-//				lines[i] = new Lineno(sfile);
-//			}
-//			return lines;
-//		}
+		//		public Reloc[] getRelocs() throws IOException {
+		//			Reloc[] relocs = new Reloc[s_nreloc];
+		//			sfile.seek(s_relptr);
+		//			for (int i = 0; i < s_nreloc; i++) {
+		//				relocs[i] = new Reloc(sfile);
+		//			}
+		//			return relocs;
+		//		}
+		//
+		//		public Lineno[] getLinenos() throws IOException {
+		//			Lineno[] lines = new Lineno[s_nlnno];
+		//			sfile.seek(s_lnnoptr);
+		//			for (int i = 0; i < s_nlnno; i++) {
+		//				lines[i] = new Lineno(sfile);
+		//			}
+		//			return lines;
+		//		}
 
 		@Override
 		public String toString() {
@@ -385,22 +384,22 @@ public class XCoff32 {
 			buffer.append("s_nreloc = ").append(s_nreloc).append(NL); //$NON-NLS-1$
 			buffer.append("s_nlnno = ").append(s_nlnno).append(NL); //$NON-NLS-1$
 			buffer.append("s_flags = ").append(s_flags).append(NL); //$NON-NLS-1$
-/*
-			try {
-				Reloc[] rcs = getRelocs();
-				for (int i = 0; i < rcs.length; i++) {
-					buffer.append(rcs[i]);
-				}
-			} catch (IOException e) {
-			}
-			try {
-				Lineno[] nos = getLinenos();
-				for (int i = 0; i < nos.length; i++) { 
-					buffer.append(nos[i]);
-				}
-			} catch (IOException e) {
-			}
-*/
+			/*
+						try {
+							Reloc[] rcs = getRelocs();
+							for (int i = 0; i < rcs.length; i++) {
+								buffer.append(rcs[i]);
+							}
+						} catch (IOException e) {
+						}
+						try {
+							Lineno[] nos = getLinenos();
+							for (int i = 0; i < nos.length; i++) { 
+								buffer.append(nos[i]);
+							}
+						} catch (IOException e) {
+						}
+			*/
 			return buffer.toString();
 		}
 	}
@@ -411,70 +410,69 @@ public class XCoff32 {
 
 		/* section number, in n_scnum.  */
 		public final static int N_DEBUG = -2;
-		public final static int N_ABS   = -1;
+		public final static int N_ABS = -1;
 		public final static int N_UNDEF = 0;
-		
+
 		/* Storage class, in n_sclass.  */
-		public final static int C_BCOMM = 135;	/* beginning of the common block */
-		public final static int C_BINCL = 108;	/* beginning of include file */
-		public final static int C_BLOCK = 100;	/* beginning or end of inner block */
-		public final static int C_BSTAT = 143;	/* beginning of static block */
-		public final static int C_DECL  = 140;	/* declaration of object (type) */
-		public final static int C_ECOML = 136;	/* local member of common block */
-		public final static int C_ECOMM = 127;	/* end of common block */
-		public final static int C_EINCL = 109;	/* end of include file */
-		public final static int C_ENTRY = 141;	/* alternate entry */
-		public final static int C_ESTAT = 144;	/* end of static block */
-		public final static int C_EXT   = 2;	/* external symbol */
-		public final static int C_FCN   = 101;	/* beginning or end of function */
-		public final static int C_FILE  = 103;	/* source file name and compiler information */
-		public final static int C_FUN   = 142;	/* function or procedure */
-		public final static int C_GSYM  = 128;	/* global variable */
-		public final static int C_HIDEXT = 107;	/* unnamed external symbol */
-		public final static int C_INFO  = 100;	/* comment section reference */
-		public final static int C_LSYM  = 129;	/* automatic variable allocated on stack */
-		public final static int C_NULL  = 0;	/* symbol table entry marked for deletion */
-		public final static int C_PSYM  = 130;	/* argument to subroutine allocated on stack */
-		public final static int C_RPSYM = 132;	/* argument to function or procedure stored in register */
-		public final static int C_RSYM  = 131;	/* register variable */
-		public final static int C_STAT  = 3;	/* static symbol (unknown) */
-		public final static int C_STSYM = 133;	/* statically allocated symbol */
-		public final static int C_TCSYM = 134;	/* reserved */
-		public final static int C_WEAKEXT = 111;/* weak external symbol */ 
+		public final static int C_BCOMM = 135; /* beginning of the common block */
+		public final static int C_BINCL = 108; /* beginning of include file */
+		public final static int C_BLOCK = 100; /* beginning or end of inner block */
+		public final static int C_BSTAT = 143; /* beginning of static block */
+		public final static int C_DECL = 140; /* declaration of object (type) */
+		public final static int C_ECOML = 136; /* local member of common block */
+		public final static int C_ECOMM = 127; /* end of common block */
+		public final static int C_EINCL = 109; /* end of include file */
+		public final static int C_ENTRY = 141; /* alternate entry */
+		public final static int C_ESTAT = 144; /* end of static block */
+		public final static int C_EXT = 2; /* external symbol */
+		public final static int C_FCN = 101; /* beginning or end of function */
+		public final static int C_FILE = 103; /* source file name and compiler information */
+		public final static int C_FUN = 142; /* function or procedure */
+		public final static int C_GSYM = 128; /* global variable */
+		public final static int C_HIDEXT = 107; /* unnamed external symbol */
+		public final static int C_INFO = 100; /* comment section reference */
+		public final static int C_LSYM = 129; /* automatic variable allocated on stack */
+		public final static int C_NULL = 0; /* symbol table entry marked for deletion */
+		public final static int C_PSYM = 130; /* argument to subroutine allocated on stack */
+		public final static int C_RPSYM = 132; /* argument to function or procedure stored in register */
+		public final static int C_RSYM = 131; /* register variable */
+		public final static int C_STAT = 3; /* static symbol (unknown) */
+		public final static int C_STSYM = 133; /* statically allocated symbol */
+		public final static int C_TCSYM = 134; /* reserved */
+		public final static int C_WEAKEXT = 111;/* weak external symbol */
 
 		/* csect storage class, in x_smlas.  */
-		public final static int XMC_PR = 0;		/* program code */
-		public final static int XMC_RO = 1;		/* read only constant */
-		public final static int XMC_DB = 2;		/* debug dictionary table */
-		public final static int XMC_TC = 3;		/* general TOC entry */
-		public final static int XMC_UA = 4;		/* unclassified */
-		public final static int XMC_RW = 5;		/* read/write data */
-		public final static int XMC_GL = 6;		/* global linkage */
-		public final static int XMC_XO = 7;		/* extended operation */
-		public final static int XMC_SV = 8;		/* 32-bit supervisor call descriptor csect */
-		public final static int XMC_BS = 9;		/* BSS class (uninitialized static internal) */
-		public final static int XMC_DS = 10;	/* csect containing a function descriptor */
-		public final static int XMC_UC = 11;	/* unnamed FORTRAN common */
-		public final static int XMC_TI = 12;	/* reserved */
-		public final static int XMC_TB = 13;	/* reserved */
-		public final static int XMC_TC0 = 15;	/* TOC anchor for TOC addressability */
-		public final static int XMC_TD = 16;	/* scalar data entry in TOC */
-		public final static int XMC_SV64 = 17;	/* 64-bit supervisor call descriptor csect */
+		public final static int XMC_PR = 0; /* program code */
+		public final static int XMC_RO = 1; /* read only constant */
+		public final static int XMC_DB = 2; /* debug dictionary table */
+		public final static int XMC_TC = 3; /* general TOC entry */
+		public final static int XMC_UA = 4; /* unclassified */
+		public final static int XMC_RW = 5; /* read/write data */
+		public final static int XMC_GL = 6; /* global linkage */
+		public final static int XMC_XO = 7; /* extended operation */
+		public final static int XMC_SV = 8; /* 32-bit supervisor call descriptor csect */
+		public final static int XMC_BS = 9; /* BSS class (uninitialized static internal) */
+		public final static int XMC_DS = 10; /* csect containing a function descriptor */
+		public final static int XMC_UC = 11; /* unnamed FORTRAN common */
+		public final static int XMC_TI = 12; /* reserved */
+		public final static int XMC_TB = 13; /* reserved */
+		public final static int XMC_TC0 = 15; /* TOC anchor for TOC addressability */
+		public final static int XMC_TD = 16; /* scalar data entry in TOC */
+		public final static int XMC_SV64 = 17; /* 64-bit supervisor call descriptor csect */
 		public final static int XMC_SV3264 = 18;/* supervisor call descriptor csect for both 32-bit and 64-bit */
-		
 
 		// fields
 		public byte[] _n_name = new byte[SYMNMLEN]; /* Symbol name, or pointer into
-								   string table if symbol name
-								   is greater than SYMNMLEN.  */
-		public int n_value; 	/* long. Symbol's value: dependent on section number,
-				       			   storage class and type.  */
-		public short n_scnum; 	/* short, Section number.  */
-		public short n_type;   	/* Unsigned short. Symbolic type. Obsolete in XCOFF */
-		public byte n_sclass; 	/* char, Storage class.  */
-		public byte n_numaux; 	/* char. Nuymber of auxiliary enties.  */
+													string table if symbol name
+													is greater than SYMNMLEN.  */
+		public int n_value; /* long. Symbol's value: dependent on section number,
+							   storage class and type.  */
+		public short n_scnum; /* short, Section number.  */
+		public short n_type; /* Unsigned short. Symbolic type. Obsolete in XCOFF */
+		public byte n_sclass; /* char, Storage class.  */
+		public byte n_numaux; /* char. Nuymber of auxiliary enties.  */
 		private byte[] aux;
-		public byte x_smclas;	/* storage mapping class in csect auxiliary entry */
+		public byte x_smclas; /* storage mapping class in csect auxiliary entry */
 
 		public Symbol(RandomAccessFile file) throws IOException {
 			this(file, file.getFilePointer());
@@ -494,14 +492,11 @@ public class XCoff32 {
 			aux = new byte[n_numaux * SYMSZ];
 			file.readFully(aux);
 			// 11th byte in the last auxiliary entry (csect)
-			x_smclas = (n_numaux > 0) ? aux[aux.length - 7] : 0;	
+			x_smclas = (n_numaux > 0) ? aux[aux.length - 7] : 0;
 		}
 
 		private boolean isLongName() {
-			return (_n_name[0] == 0 && 
-					_n_name[1] == 0 &&
-					_n_name[2] == 0 &&
-					_n_name[3] == 0);
+			return (_n_name[0] == 0 && _n_name[1] == 0 && _n_name[2] == 0 && _n_name[3] == 0);
 		}
 
 		private String getShortName() {
@@ -532,17 +527,15 @@ public class XCoff32 {
 		}
 
 		public boolean isFunction() {
-			return ((n_sclass == C_EXT || n_sclass == C_HIDEXT || n_sclass == C_WEAKEXT) && 
-					n_scnum == opthdr.o_sntext &&
-					!getShortName().equals(SectionHeader._TEXT));
+			return ((n_sclass == C_EXT || n_sclass == C_HIDEXT || n_sclass == C_WEAKEXT) && n_scnum == opthdr.o_sntext
+					&& !getShortName().equals(SectionHeader._TEXT));
 		}
 
 		public boolean isVariable() {
-			return ((n_sclass == C_EXT || n_sclass == C_HIDEXT || n_sclass == C_WEAKEXT) &&
-					(n_scnum == opthdr.o_snbss || n_scnum == opthdr.o_sndata) &&
-					x_smclas != XMC_TC0 && x_smclas != XMC_TC && x_smclas != XMC_DS &&
-					!getShortName().equals(SectionHeader._BSS) &&
-					!getShortName().equals(SectionHeader._DATA));
+			return ((n_sclass == C_EXT || n_sclass == C_HIDEXT || n_sclass == C_WEAKEXT)
+					&& (n_scnum == opthdr.o_snbss || n_scnum == opthdr.o_sndata) && x_smclas != XMC_TC0
+					&& x_smclas != XMC_TC && x_smclas != XMC_DS && !getShortName().equals(SectionHeader._BSS)
+					&& !getShortName().equals(SectionHeader._DATA));
 		}
 
 		@Override
@@ -560,10 +553,10 @@ public class XCoff32 {
 	}
 
 	public static class Attribute {
-		public static final int XCOFF_TYPE_EXE   = 1;
+		public static final int XCOFF_TYPE_EXE = 1;
 		public static final int XCOFF_TYPE_SHLIB = 2;
-		public static final int XCOFF_TYPE_OBJ   = 3;
-		public static final int XCOFF_TYPE_CORE  = 4;
+		public static final int XCOFF_TYPE_OBJ = 3;
+		public static final int XCOFF_TYPE_CORE = 4;
 
 		String cpu;
 		int type;
@@ -573,11 +566,11 @@ public class XCoff32 {
 		public String getCPU() {
 			return cpu;
 		}
-                
+
 		public int getType() {
 			return type;
 		}
-                
+
 		public boolean hasDebug() {
 			return bDebug;
 		}
@@ -591,14 +584,14 @@ public class XCoff32 {
 		Attribute attrib = new Attribute();
 		// Machine type.
 		switch (filehdr.f_magic) {
-			case FileHeader.U802TOCMAGIC:
-				attrib.cpu = "xcoff32"; //$NON-NLS-1$
+		case FileHeader.U802TOCMAGIC:
+			attrib.cpu = "xcoff32"; //$NON-NLS-1$
 			break;
-			case FileHeader.U64_TOCMAGIC:
-				attrib.cpu = "xcoff64"; //$NON-NLS-1$
+		case FileHeader.U64_TOCMAGIC:
+			attrib.cpu = "xcoff64"; //$NON-NLS-1$
 			break;
-			default:
-				attrib.cpu = "unknown"; //$NON-NLS-1$
+		default:
+			attrib.cpu = "unknown"; //$NON-NLS-1$
 			break;
 		}
 
@@ -620,14 +613,14 @@ public class XCoff32 {
 		} else {
 			attrib.bDebug = true;
 		}
-		
+
 		return attrib;
 	}
 
 	public FileHeader getFileHeader() throws IOException {
 		return filehdr;
 	}
-	
+
 	public OptionalHeader getOptionalHeader() throws IOException {
 		return opthdr;
 	}
@@ -666,7 +659,7 @@ public class XCoff32 {
 			if (filehdr.f_nsyms > 0) {
 				getRandomAccessFile();
 				long symbolsize = Symbol.SYMSZ * getFileHeader().f_nsyms;
-				long offset = startingOffset+ getFileHeader().f_symptr + symbolsize;
+				long offset = startingOffset + getFileHeader().f_symptr + symbolsize;
 				rfile.seek(offset);
 				byte[] bytes = new byte[4];
 				rfile.readFully(bytes);
@@ -684,10 +677,10 @@ public class XCoff32 {
 		return string_table;
 	}
 
-    // A hollow entry, to be used with caution in controlled situations
+	// A hollow entry, to be used with caution in controlled situations
 	protected XCoff32() {
 	}
-	
+
 	public XCoff32(String filename) throws IOException {
 		this(filename, 0);
 	}
@@ -711,13 +704,11 @@ public class XCoff32 {
 				getSectionHeaders();
 				for (int i = 0; i < filehdr.f_nscns; ++i) {
 					if ((scnhdrs[i].s_flags & SectionHeader.STYP_TEXT) != 0) {
-						opthdr.o_sntext = (short)(i+1);
-					}
-					else if ((scnhdrs[i].s_flags & SectionHeader.STYP_BSS) != 0) {
-						opthdr.o_snbss = (short)(i+1);
-					}
-					else if ((scnhdrs[i].s_flags & SectionHeader.STYP_DATA) != 0) {
-						opthdr.o_sndata = (short)(i+1);
+						opthdr.o_sntext = (short) (i + 1);
+					} else if ((scnhdrs[i].s_flags & SectionHeader.STYP_BSS) != 0) {
+						opthdr.o_snbss = (short) (i + 1);
+					} else if ((scnhdrs[i].s_flags & SectionHeader.STYP_DATA) != 0) {
+						opthdr.o_sndata = (short) (i + 1);
 					}
 				}
 			}
@@ -764,14 +755,14 @@ public class XCoff32 {
 		} catch (IOException e) {
 		}
 
-//		try {
-//			String[] strings = getStringTable(getStringTable());
-//			for (int i = 0; i < strings.length; i++) {
-//				buffer.append(strings[i]);
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		//		try {
+		//			String[] strings = getStringTable(getStringTable());
+		//			for (int i = 0; i < strings.length; i++) {
+		//				buffer.append(strings[i]);
+		//			}
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
 		return buffer.toString();
 	}
 
@@ -782,7 +773,7 @@ public class XCoff32 {
 		}
 	}
 
-	RandomAccessFile getRandomAccessFile () throws IOException {
+	RandomAccessFile getRandomAccessFile() throws IOException {
 		if (rfile == null) {
 			rfile = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		}
@@ -799,7 +790,7 @@ public class XCoff32 {
 	}
 
 	public static boolean isXCOFF32Header(byte[] hints) {
-		if (hints != null && hints[0] == 0x01 && (hints[1] == (byte)0xdf) ) {
+		if (hints != null && hints[0] == 0x01 && (hints[1] == (byte) 0xdf)) {
 			return true;
 		}
 		return false;

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -37,11 +37,12 @@ class CompositeCPPEnumScope extends CompositeScope implements ICPPEnumScope {
 
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
-		IBinding binding = ((ICPPEnumeration)rbinding).asScope().getBinding(name, resolve, fileSet);
+		IBinding binding = ((ICPPEnumeration) rbinding).asScope().getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
 
-	@Deprecated	@Override
+	@Deprecated
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
@@ -55,13 +56,14 @@ class CompositeCPPEnumScope extends CompositeScope implements ICPPEnumScope {
 	@Override
 	public IBinding[] find(String name, IASTTranslationUnit tu) {
 		IBinding[] preresult = ((ICPPEnumeration) rbinding).asScope().find(name, tu);
-		return processUncertainBindings(preresult);	
+		return processUncertainBindings(preresult);
 	}
 
-	@Override @Deprecated
+	@Override
+	@Deprecated
 	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICPPEnumeration) rbinding).asScope().find(name);
-		return processUncertainBindings(preresult);	
+		return processUncertainBindings(preresult);
 	}
 
 	@Override

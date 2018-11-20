@@ -25,6 +25,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 public class MIGDBSetLanguage extends MIGDBSet {
 
 	public MIGDBSetLanguage(IDMContext ctx, String language) {
-		super(ctx, new String[] {"language", language});  //$NON-NLS-1$
+		super(ctx, new String[] { "language", language }); //$NON-NLS-1$
 	}
 }

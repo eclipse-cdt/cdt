@@ -38,13 +38,13 @@ public class VisibilitySelectionPanel extends Composite {
 
 	public VisibilitySelectionPanel(Composite parent, VisibilityEnum defaultVisibility, int style) {
 		super(parent, style);
-		
+
 		FillLayout compositeLayout = new FillLayout(SWT.HORIZONTAL);
 		setLayout(compositeLayout);
-		GridData gridData = new GridData(SWT.FILL,SWT.BEGINNING, true, false);
+		GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		gridData.horizontalAlignment = GridData.FILL;
 		setLayoutData(gridData);
-		
+
 		createAccessModifierComposite(this);
 		setSelected(defaultVisibility);
 	}
@@ -54,14 +54,14 @@ public class VisibilitySelectionPanel extends Composite {
 		RowLayout groupLayout = new RowLayout(SWT.HORIZONTAL);
 		groupLayout.fill = true;
 		accessModifierGroup.setLayout(groupLayout);
-		accessModifierGroup.setText(Messages.VisibilitySelectionPanel_AccessModifier); 
-		
+		accessModifierGroup.setText(Messages.VisibilitySelectionPanel_AccessModifier);
+
 		publicAccessRadioButton = new Button(accessModifierGroup, SWT.RADIO | SWT.LEFT);
 		publicAccessRadioButton.setText(VisibilityEnum.v_public.toString());
-		
+
 		protectedAccessRadioButton = new Button(accessModifierGroup, SWT.RADIO | SWT.LEFT);
 		protectedAccessRadioButton.setText(VisibilityEnum.v_protected.toString());
-		
+
 		privateAccessRadioButton = new Button(accessModifierGroup, SWT.RADIO | SWT.LEFT);
 		privateAccessRadioButton.setText(VisibilityEnum.v_private.toString());
 	}
@@ -82,8 +82,8 @@ public class VisibilitySelectionPanel extends Composite {
 
 	public Group getGroup() {
 		return accessModifierGroup;
-	}	
-	
+	}
+
 	@Override
 	public void setEnabled(boolean enabled) {
 		accessModifierGroup.setEnabled(enabled);

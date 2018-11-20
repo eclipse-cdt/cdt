@@ -34,21 +34,21 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 public class CSearchElementQuery extends CSearchQuery {
 	private final ISourceReference element;
 	private String label;
-	
+
 	public CSearchElementQuery(ICElement[] scope, ISourceReference element, int flags) {
 		super(scope, flags | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		this.element = element;
-		this.label= (element instanceof ICElement) ?
-				((ICElement) element).getElementName() : CSearchMessages.PDOMSearchElementQuery_something;
+		this.label = (element instanceof ICElement) ? ((ICElement) element).getElementName()
+				: CSearchMessages.PDOMSearchElementQuery_something;
 	}
 
 	@Override
 	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {
 			if (element instanceof ICElement) {
-				IBinding binding= IndexUI.elementToBinding(index, (ICElement) element);
+				IBinding binding = IndexUI.elementToBinding(index, (ICElement) element);
 				if (binding != null) {
-					label= labelForBinding(index, binding, label);
+					label = labelForBinding(index, binding, label);
 					// We should call CPPSemantics.pushLookupPoint() here.
 					// Until we do, instantiation of dependent expressions may not work.
 					createMatches(index, binding);

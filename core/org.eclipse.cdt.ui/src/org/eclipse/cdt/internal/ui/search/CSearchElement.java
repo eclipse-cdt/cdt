@@ -33,7 +33,7 @@ public class CSearchElement implements IAdaptable {
 	private final IIndexFileLocation location;
 
 	public CSearchElement(IIndexFileLocation loc) {
-		this.location= loc;
+		this.location = loc;
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class CSearchElement implements IAdaptable {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapterType) {
 		if (adapterType.isAssignableFrom(IFile.class)) {
-			String fullPath= location.getFullPath();
+			String fullPath = location.getFullPath();
 			if (fullPath != null) {
 				return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
 			}

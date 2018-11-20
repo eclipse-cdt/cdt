@@ -27,7 +27,7 @@ public interface ISourceEntry extends IPathEntry {
 	 * @return IPath[]
 	 */
 	IPath[] getExclusionPatterns();
-	
+
 	/**
 	 * Returns a char based representation of the exclusions patterns full path.
 	 */

@@ -28,11 +28,11 @@ public class BuildCommand implements IBuildCommand {
 	private Map<String, String> fEnv;
 	private IPath fCWD;
 
-	public BuildCommand(IPath cmd, String args[], Map<String, String> env, IPath cwd, BuildStep step){
+	public BuildCommand(IPath cmd, String args[], Map<String, String> env, IPath cwd, BuildStep step) {
 		fCmd = cmd;
-		if(args != null)
+		if (args != null)
 			fArgs = args.clone();
-		if(env != null)
+		if (env != null)
 			fEnv = new HashMap<String, String>(env);
 
 		fCWD = cwd;
@@ -51,7 +51,7 @@ public class BuildCommand implements IBuildCommand {
 	 */
 	@Override
 	public String[] getArgs() {
-		if(fArgs != null)
+		if (fArgs != null)
 			return fArgs.clone();
 		return null;
 	}
@@ -61,7 +61,7 @@ public class BuildCommand implements IBuildCommand {
 	 */
 	@Override
 	public Map<String, String> getEnvironment() {
-		if(fEnv != null)
+		if (fEnv != null)
 			return new HashMap<String, String>(fEnv);
 		return null;
 	}

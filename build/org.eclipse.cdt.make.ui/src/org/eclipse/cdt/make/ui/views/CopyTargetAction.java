@@ -101,9 +101,10 @@ public class CopyTargetAction extends SelectionListenerAction {
 		}
 
 		try {
-			clipboard.setContents(new Object[] { makeTargetTransferData,
-				TextTransferDragSourceListener.convertSelectedMakeTargetsToText(selection) },
-				new Transfer[] { MakeTargetTransfer.getInstance(), TextTransfer.getInstance() });
+			clipboard.setContents(
+					new Object[] { makeTargetTransferData,
+							TextTransferDragSourceListener.convertSelectedMakeTargetsToText(selection) },
+					new Transfer[] { MakeTargetTransfer.getInstance(), TextTransfer.getInstance() });
 
 			// update the enablement of the paste action
 			if (pasteAction != null && pasteAction.getStructuredSelection() != null) {
@@ -111,10 +112,9 @@ public class CopyTargetAction extends SelectionListenerAction {
 			}
 
 		} catch (SWTError e) {
-			MakeUIPlugin.errorDialog(shell,
-				MakeUIPlugin.getResourceString("CopyTargetAction.title.clipboardProblem"), //$NON-NLS-1$
-				MakeUIPlugin.getResourceString("CopyTargetAction.message.clipboardProblem"), //$NON-NLS-1$
-				e);
+			MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("CopyTargetAction.title.clipboardProblem"), //$NON-NLS-1$
+					MakeUIPlugin.getResourceString("CopyTargetAction.message.clipboardProblem"), //$NON-NLS-1$
+					e);
 		}
 
 	}

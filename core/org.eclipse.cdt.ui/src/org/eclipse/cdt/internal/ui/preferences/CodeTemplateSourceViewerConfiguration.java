@@ -45,7 +45,6 @@ import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
 
-
 public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerConfiguration {
 
 	private static class TemplateVariableTextHover implements ITextHover {
@@ -56,7 +55,7 @@ public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerCo
 		 * @param processor the template variable processor
 		 */
 		public TemplateVariableTextHover(TemplateVariableProcessor processor) {
-			fProcessor= processor;
+			fProcessor = processor;
 		}
 
 		/* (non-Javadoc)
@@ -65,21 +64,21 @@ public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerCo
 		@Override
 		public String getHoverInfo(ITextViewer textViewer, IRegion subject) {
 			try {
-				IDocument doc= textViewer.getDocument();
-				int offset= subject.getOffset();
-				if (offset >= 2 && "${".equals(doc.get(offset-2, 2))) { //$NON-NLS-1$
-					String varName= doc.get(offset, subject.getLength());
-					TemplateContextType contextType= fProcessor.getContextType();
+				IDocument doc = textViewer.getDocument();
+				int offset = subject.getOffset();
+				if (offset >= 2 && "${".equals(doc.get(offset - 2, 2))) { //$NON-NLS-1$
+					String varName = doc.get(offset, subject.getLength());
+					TemplateContextType contextType = fProcessor.getContextType();
 					if (contextType != null) {
-						Iterator<?> iter= contextType.resolvers();
+						Iterator<?> iter = contextType.resolvers();
 						while (iter.hasNext()) {
-							TemplateVariableResolver var= (TemplateVariableResolver) iter.next();
+							TemplateVariableResolver var = (TemplateVariableResolver) iter.next();
 							if (varName.equals(var.getType())) {
 								return var.getDescription();
 							}
 						}
 					}
-				}				
+				}
 			} catch (BadLocationException e) {
 			}
 			return null;
@@ -93,30 +92,30 @@ public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerCo
 			if (textViewer != null) {
 				return CWordFinder.findWord(textViewer.getDocument(), offset);
 			}
-			return null;	
+			return null;
 		}
-		
-	} 
-	
+
+	}
+
 	private final TemplateVariableProcessor fProcessor;
 
-	public CodeTemplateSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore store, ITextEditor editor, TemplateVariableProcessor processor) {
+	public CodeTemplateSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore store, ITextEditor editor,
+			TemplateVariableProcessor processor) {
 		super(colorManager, store, editor, ICPartitions.C_PARTITIONING, false);
-		fProcessor= processor;
+		fProcessor = processor;
 	}
-	
+
 	/*
 	 * @see SourceViewerConfiguration#getContentAssistant(ISourceViewer)
 	 */
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
-		
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 
-		ContentAssistant assistant= new ContentAssistant();
+		ContentAssistant assistant = new ContentAssistant();
 		assistant.setContentAssistProcessor(fProcessor, IDocument.DEFAULT_CONTENT_TYPE);
-			// Register the same processor for strings and single line comments to get code completion at the start of those partitions.
+		// Register the same processor for strings and single line comments to get code completion at the start of those partitions.
 		assistant.setContentAssistProcessor(fProcessor, ICPartitions.C_STRING);
 		assistant.setContentAssistProcessor(fProcessor, ICPartitions.C_CHARACTER);
 		assistant.setContentAssistProcessor(fProcessor, ICPartitions.C_SINGLE_LINE_COMMENT);
@@ -135,7 +134,7 @@ public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerCo
 		});
 
 		return assistant;
-	}	
+	}
 
 	/*
 	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String, int)
@@ -149,7 +148,7 @@ public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerCo
 	 * @see org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	@Override
-	public IPresentationReconciler getPresentationReconciler( ISourceViewer sourceViewer) {
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		if (fProcessor.getContextType() instanceof CodeTemplateContextType) {
 			return super.getPresentationReconciler(sourceViewer);
 		}

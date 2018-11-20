@@ -218,7 +218,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 		int start = marker.getAttribute(IMarker.CHAR_START, -1);
 		int end = marker.getAttribute(IMarker.CHAR_END, -1);
 		// The error should not cover the entire class
-		assertTrue((start == -1 && end == -1) ||  // ok, not multi-line
-				   !code.substring(start, end).contains("\n"));
+		assertTrue((start == -1 && end == -1) || // ok, not multi-line
+				!code.substring(start, end).contains("\n"));
 	}
 }

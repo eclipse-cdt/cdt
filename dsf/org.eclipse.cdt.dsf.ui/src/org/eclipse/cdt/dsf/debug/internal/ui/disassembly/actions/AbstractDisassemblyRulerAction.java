@@ -26,18 +26,18 @@ public abstract class AbstractDisassemblyRulerAction extends AbstractDisassembly
 	private final IVerticalRulerInfo fRulerInfo;
 
 	protected AbstractDisassemblyRulerAction(IDisassemblyPart disassemblyPart, IVerticalRulerInfo rulerInfo) {
-		fDisassemblyPart= disassemblyPart;
-		fRulerInfo= rulerInfo;
+		fDisassemblyPart = disassemblyPart;
+		fRulerInfo = rulerInfo;
 	}
-	
+
 	public final IVerticalRulerInfo getRulerInfo() {
 		return fRulerInfo;
 	}
-	
+
 	public final IDocument getDocument() {
 		return getDisassemblyPart().getTextViewer().getDocument();
 	}
-	
+
 	public final IAnnotationModel getAnnotationModel() {
 		return getDisassemblyPart().getTextViewer().getAnnotationModel();
 	}

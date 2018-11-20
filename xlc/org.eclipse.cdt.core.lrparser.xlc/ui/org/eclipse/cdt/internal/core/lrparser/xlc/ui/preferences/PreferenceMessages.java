@@ -21,36 +21,32 @@ public class PreferenceMessages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.lrparser.xlc.ui.preferences.PreferenceMessages"; //$NON-NLS-1$
 
-	private PreferenceMessages() {}
-	
+	private PreferenceMessages() {
+	}
+
 	static {
 		initializeMessages(BUNDLE_NAME, PreferenceMessages.class);
 	}
-	
+
 	public static final String PREFIX = "XlcLanguageOptionsPreferencePage_";
-	
-	
+
 	public static String getMessage(String suffix) {
 		try {
 			Field field = PreferenceMessages.class.getDeclaredField(PREFIX + suffix);
-			return (String)field.get(null);
-			
+			return (String) field.get(null);
+
 		} catch (NoSuchFieldException e) {
 			return null;
 		} catch (IllegalAccessException e) {
 			return null;
 		}
 	}
-	
-	
-	public static String
-		XlcLanguageOptionsPreferencePage_link,
-		XlcLanguageOptionsPreferencePage_group,
-		
-		XlcLanguageOptionsPreferencePage_SUPPORT_VECTOR_TYPES,
-		XlcLanguageOptionsPreferencePage_SUPPORT_DECIMAL_FLOATING_POINT_TYPES,
-		XlcLanguageOptionsPreferencePage_SUPPORT_COMPLEX_IN_CPP,
-		XlcLanguageOptionsPreferencePage_SUPPORT_RESTRICT_IN_CPP,
-	    XlcLanguageOptionsPreferencePage_SUPPORT_STATIC_ASSERT;
-}
 
+	public static String XlcLanguageOptionsPreferencePage_link, XlcLanguageOptionsPreferencePage_group,
+
+			XlcLanguageOptionsPreferencePage_SUPPORT_VECTOR_TYPES,
+			XlcLanguageOptionsPreferencePage_SUPPORT_DECIMAL_FLOATING_POINT_TYPES,
+			XlcLanguageOptionsPreferencePage_SUPPORT_COMPLEX_IN_CPP,
+			XlcLanguageOptionsPreferencePage_SUPPORT_RESTRICT_IN_CPP,
+			XlcLanguageOptionsPreferencePage_SUPPORT_STATIC_ASSERT;
+}

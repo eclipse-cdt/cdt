@@ -41,28 +41,28 @@ import org.eclipse.core.runtime.Assert;
  */
 public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode
 		implements IASTAmbiguousParameterDeclaration, ICPPASTParameterDeclaration {
-    private ICPPASTParameterDeclaration fParameterDecl;
+	private ICPPASTParameterDeclaration fParameterDecl;
 
-    public CPPASTAmbiguousParameterDeclaration(ICPPASTParameterDeclaration decl) {
-    	fParameterDecl= decl;
+	public CPPASTAmbiguousParameterDeclaration(ICPPASTParameterDeclaration decl) {
+		fParameterDecl = decl;
 	}
 
 	@Override
 	public void addParameterDeclaration(IASTParameterDeclaration d) {
 		assert false;
-    }
+	}
 
-    @Override
+	@Override
 	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
-		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
+		final IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
 
 		// Setup the ast to use the alternative
 		owner.replace(this, fParameterDecl);
 		fParameterDecl.accept(resolver);
 
-		IType t= CPPVisitor.createType(fParameterDecl, true);
-		if (!(t instanceof ICPPParameterPackType) ||
-				!CPPTemplates.containsParameterPack(((ICPPParameterPackType) t).getType())) {
+		IType t = CPPVisitor.createType(fParameterDecl, true);
+		if (!(t instanceof ICPPParameterPackType)
+				|| !CPPTemplates.containsParameterPack(((ICPPParameterPackType) t).getType())) {
 			final ICPPASTDeclarator dtor = fParameterDecl.getDeclarator();
 			dtor.setDeclaresParameterPack(false);
 			adjustOffsets(dtor);
@@ -72,7 +72,7 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode
 	}
 
 	private void adjustOffsets(final ICPPASTDeclarator dtor) {
-		IASTPointerOperator[] ptrOps= dtor.getPointerOperators();
+		IASTPointerOperator[] ptrOps = dtor.getPointerOperators();
 		final ASTNode asNode = (ASTNode) dtor;
 		if (ptrOps.length > 0) {
 			final ASTNode first = (ASTNode) ptrOps[0];
@@ -85,13 +85,13 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode
 
 	@Override
 	public IASTParameterDeclaration[] getParameterDeclarations() {
-    	return new IASTParameterDeclaration[] { fParameterDecl };
-    }
+		return new IASTParameterDeclaration[] { fParameterDecl };
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getNodes() {
-        return getParameterDeclarations();
-    }
+		return getParameterDeclarations();
+	}
 
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {

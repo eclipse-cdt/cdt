@@ -59,96 +59,77 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *
  */
 public class MIDataReadMemory extends MICommand<MIDataReadMemoryInfo> {
-	
+
 	int fword_size;
 
-	public MIDataReadMemory(
-	        IDMContext ctx, 
-			long offset,
-			String address,
-			int word_format,
-			int word_size,
-			int rows,
-			int cols,
-			Character asChar)
-	{
+	public MIDataReadMemory(IDMContext ctx, long offset, String address, int word_format, int word_size, int rows,
+			int cols, Character asChar) {
 		super(ctx, "-data-read-memory"); //$NON-NLS-1$
 
 		// Save this for the result parser
 		fword_size = word_size;
 
 		if (offset != 0) {
-			setOptions(new String[] { "-o", Long.toString(offset)}); //$NON-NLS-1$
+			setOptions(new String[] { "-o", Long.toString(offset) }); //$NON-NLS-1$
 		}
 
 		String format = "x"; //$NON-NLS-1$
 		switch (word_format) {
-			case MIFormat.UNSIGNED :
-				format = "u"; //$NON-NLS-1$
-				break;
+		case MIFormat.UNSIGNED:
+			format = "u"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.FLOAT :
-				format = "f"; //$NON-NLS-1$
-				break;
+		case MIFormat.FLOAT:
+			format = "f"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.ADDRESS :
-				format = "a"; //$NON-NLS-1$
-				break;
+		case MIFormat.ADDRESS:
+			format = "a"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.INSTRUCTION :
-				format = "i"; //$NON-NLS-1$
-				break;
+		case MIFormat.INSTRUCTION:
+			format = "i"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.CHAR :
-				format = "c"; //$NON-NLS-1$
-				break;
+		case MIFormat.CHAR:
+			format = "c"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.STRING :
-				format = "s"; //$NON-NLS-1$
-				break;
+		case MIFormat.STRING:
+			format = "s"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.DECIMAL :
-			case MIFormat.NATURAL :
-				format = "d"; //$NON-NLS-1$
-				break;
+		case MIFormat.DECIMAL:
+		case MIFormat.NATURAL:
+			format = "d"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.BINARY :
-				format = "t"; //$NON-NLS-1$
-				break;
+		case MIFormat.BINARY:
+			format = "t"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.OCTAL :
-				format = "o"; //$NON-NLS-1$
-				break;
+		case MIFormat.OCTAL:
+			format = "o"; //$NON-NLS-1$
+			break;
 
-			case MIFormat.HEXADECIMAL :
-			case MIFormat.RAW :
-			default :
-				format = "x"; //$NON-NLS-1$
-				break;
+		case MIFormat.HEXADECIMAL:
+		case MIFormat.RAW:
+		default:
+			format = "x"; //$NON-NLS-1$
+			break;
 		}
 
 		if (asChar == null) {
-			setParameters(
-				new String[] {
-					address,
-					format,
-					Integer.toString(word_size), 
-					Integer.toString(rows),
-					Integer.toString(cols)});
+			setParameters(new String[] { address, format, Integer.toString(word_size), Integer.toString(rows),
+					Integer.toString(cols) });
 		} else {
-			setParameters(
-				new String[] {
-					address,
-					format,
-					Integer.toString(word_size),
-					Integer.toString(rows),
-					Integer.toString(cols),
-					asChar.toString()});
+			setParameters(new String[] { address, format, Integer.toString(word_size), Integer.toString(rows),
+					Integer.toString(cols), asChar.toString() });
 		}
 	}
 
-    @Override
-    public MIDataReadMemoryInfo getResult(MIOutput out)  {
-        return new MIDataReadMemoryInfo(out, fword_size);
-    }
+	@Override
+	public MIDataReadMemoryInfo getResult(MIOutput out) {
+		return new MIDataReadMemoryInfo(out, fword_size);
+	}
 }

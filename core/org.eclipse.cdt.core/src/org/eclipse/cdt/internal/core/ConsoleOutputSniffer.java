@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IConsoleParser;
 
-
 /**
  * Intercepts an output to console and forwards it to console parsers for processing
  */
@@ -94,7 +93,7 @@ public class ConsoleOutputSniffer {
 			int i = 0;
 			while ((i = buffer.indexOf('\n')) != -1) {
 				int eol = i;
-				if (i > 0 && buffer.charAt(i-1) == '\r') {
+				if (i > 0 && buffer.charAt(i - 1) == '\r') {
 					// also get rid of trailing \r in case of Windows line delimiter "\r\n"
 					eol = i - 1;
 				}

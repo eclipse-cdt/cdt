@@ -38,14 +38,14 @@ public class DiscoveredElement {
 	public static final int SYMBOLS_GROUP = 11;
 	public static final int INCLUDE_FILE_GROUP = 12;
 	public static final int MACROS_FILE_GROUP = 13;
-	
+
 	private IProject fProject;
 	private String fEntry;
-	private int fEntryKind; 
+	private int fEntryKind;
 	private boolean fRemoved;
 	private ArrayList<DiscoveredElement> fChildren = new ArrayList<DiscoveredElement>();
 	private DiscoveredElement fParent;
-	
+
 	public DiscoveredElement(IProject project, String entry, int kind, boolean removed, boolean system) {
 		fProject = project;
 		fEntry = entry;
@@ -53,51 +53,46 @@ public class DiscoveredElement {
 		fRemoved = removed;
 	}
 
-	public static DiscoveredElement createNew(DiscoveredElement parent,
-											  IProject project,
-											  String entry,
-											  int kind,
-											  boolean removed,
-											  boolean system) {
+	public static DiscoveredElement createNew(DiscoveredElement parent, IProject project, String entry, int kind,
+			boolean removed, boolean system) {
 		DiscoveredElement rv = null;
 		int parentKind = 0;
 		switch (kind) {
-			case CONTAINER: {
-				rv = new DiscoveredElement(project, entry, kind, removed, system);
-				DiscoveredElement group = new DiscoveredElement(project, null, PATHS_GROUP, false, false);
-				rv.fChildren.add(group);
-				group.setParent(rv);
-				group = new DiscoveredElement(project, null, SYMBOLS_GROUP, false, false);
-				rv.fChildren.add(group);
-				group.setParent(rv);
-				group = new DiscoveredElement(project, null, INCLUDE_FILE_GROUP, false, false);
-				rv.fChildren.add(group);
-				group.setParent(rv);
-				group = new DiscoveredElement(project, null, MACROS_FILE_GROUP, false, false);
-				rv.fChildren.add(group);
-				group.setParent(rv);
-			}
+		case CONTAINER: {
+			rv = new DiscoveredElement(project, entry, kind, removed, system);
+			DiscoveredElement group = new DiscoveredElement(project, null, PATHS_GROUP, false, false);
+			rv.fChildren.add(group);
+			group.setParent(rv);
+			group = new DiscoveredElement(project, null, SYMBOLS_GROUP, false, false);
+			rv.fChildren.add(group);
+			group.setParent(rv);
+			group = new DiscoveredElement(project, null, INCLUDE_FILE_GROUP, false, false);
+			rv.fChildren.add(group);
+			group.setParent(rv);
+			group = new DiscoveredElement(project, null, MACROS_FILE_GROUP, false, false);
+			rv.fChildren.add(group);
+			group.setParent(rv);
+		}
 			return rv;
-			case INCLUDE_PATH:
-				parentKind = PATHS_GROUP;
-				break;
-			case SYMBOL_DEFINITION:
-				parentKind = SYMBOLS_GROUP;
-				break;
-			case INCLUDE_FILE:
-				parentKind = INCLUDE_FILE_GROUP;
-				break;
-			case MACROS_FILE:
-				parentKind = MACROS_FILE_GROUP;
-				break;
+		case INCLUDE_PATH:
+			parentKind = PATHS_GROUP;
+			break;
+		case SYMBOL_DEFINITION:
+			parentKind = SYMBOLS_GROUP;
+			break;
+		case INCLUDE_FILE:
+			parentKind = INCLUDE_FILE_GROUP;
+			break;
+		case MACROS_FILE:
+			parentKind = MACROS_FILE_GROUP;
+			break;
 		}
 		if (parentKind != 0) {
 			if (parent != null) {
 				DiscoveredElement group = null;
 				if (parent.getEntryKind() == parentKind) {
 					group = parent;
-				}
-				else if (parent.getEntryKind() == CONTAINER) {
+				} else if (parent.getEntryKind() == CONTAINER) {
 					for (DiscoveredElement child : parent.fChildren) {
 						if (child.getEntryKind() == parentKind) {
 							group = child;
@@ -114,51 +109,60 @@ public class DiscoveredElement {
 		}
 		return rv;
 	}
+
 	/**
 	 * @return Returns the fProject.
 	 */
 	public IProject getProject() {
 		return fProject;
 	}
+
 	/**
 	 * @return the fEntry.
 	 */
 	public String getEntry() {
 		return fEntry;
 	}
+
 	public void setEntry(String entry) {
 		fEntry = entry;
 	}
+
 	/**
 	 * @return Returns the fEntryKind.
 	 */
 	public int getEntryKind() {
 		return fEntryKind;
 	}
+
 	/**
 	 * @param entryKind The fEntryKind to set.
 	 */
 	public void setEntryKind(int entryKind) {
 		fEntryKind = entryKind;
 	}
+
 	/**
 	 * @return Returns the fRemoved.
 	 */
 	public boolean isRemoved() {
 		return fRemoved;
 	}
+
 	/**
 	 * @param removed The fRemoved to set.
 	 */
 	public void setRemoved(boolean removed) {
 		fRemoved = removed;
 	}
+
 	/**
 	 * @return Returns the fParent.
 	 */
 	public DiscoveredElement getParent() {
 		return fParent;
 	}
+
 	/**
 	 * @param parent The fParent to set.
 	 */
@@ -170,23 +174,23 @@ public class DiscoveredElement {
 	 * @return children of the discovered element 
 	 */
 	public DiscoveredElement[] getChildren() {
-		switch(fEntryKind) {
-			case INCLUDE_PATH:
-			case SYMBOL_DEFINITION:
-			case INCLUDE_FILE:
-			case MACROS_FILE:
-				return new DiscoveredElement[0];
+		switch (fEntryKind) {
+		case INCLUDE_PATH:
+		case SYMBOL_DEFINITION:
+		case INCLUDE_FILE:
+		case MACROS_FILE:
+			return new DiscoveredElement[0];
 		}
 		return fChildren.toArray(new DiscoveredElement[fChildren.size()]);
 	}
 
 	public boolean hasChildren() {
-		switch(fEntryKind) {
-			case INCLUDE_PATH:
-			case SYMBOL_DEFINITION:
-			case INCLUDE_FILE:
-			case MACROS_FILE:
-				return false;
+		switch (fEntryKind) {
+		case INCLUDE_PATH:
+		case SYMBOL_DEFINITION:
+		case INCLUDE_FILE:
+		case MACROS_FILE:
+			return false;
 		}
 		return (fChildren.size() > 0);
 	}

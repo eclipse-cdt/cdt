@@ -35,7 +35,7 @@ public class CPPAliasTemplateInstanceClone extends CPPTypedefClone implements IC
 	private ICPPAliasTemplateInstance getDelegate() {
 		return (ICPPAliasTemplateInstance) delegate;
 	}
-	
+
 	@Override
 	public ICPPAliasTemplate getTemplateDefinition() {
 		return getDelegate().getTemplateDefinition();

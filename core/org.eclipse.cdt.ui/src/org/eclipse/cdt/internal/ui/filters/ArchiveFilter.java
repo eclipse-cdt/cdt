@@ -19,21 +19,19 @@ import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-
-
 /**
  * The ArchiveFilter is a filter used to determine whether
  * a C Archive is shown
  */
 public class ArchiveFilter extends ViewerFilter {
-	
+
 	/* (non-Javadoc)
 	 * Method declared on ViewerFilter.
 	 */
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof IArchive) {
-			if (! (parentElement instanceof IArchiveContainer)) {
+			if (!(parentElement instanceof IArchiveContainer)) {
 				return false;
 			}
 		}

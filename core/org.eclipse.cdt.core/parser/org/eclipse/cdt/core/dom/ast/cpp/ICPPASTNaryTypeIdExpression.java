@@ -24,18 +24,20 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
  * @since 6.0
  */
 public interface ICPPASTNaryTypeIdExpression extends ICPPASTExpression {
-	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("ICPPASTNaryTypeIdExpression.OPERAND [IASTTypeId]"); //$NON-NLS-1$
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
+			"ICPPASTNaryTypeIdExpression.OPERAND [IASTTypeId]"); //$NON-NLS-1$
 
 	public static enum Operator {
 		__is_trivially_constructible,
-		/** @since 6.6 */ __is_constructible
+		/** @since 6.6 */
+		__is_constructible
 	}
 
 	/**
 	 * Returns the operator of the expression.
 	 */
 	public Operator getOperator();
-	
+
 	/**
 	 * Returns the operands of the expression.
 	 */

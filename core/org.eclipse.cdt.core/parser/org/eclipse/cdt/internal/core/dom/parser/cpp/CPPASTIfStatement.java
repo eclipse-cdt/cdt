@@ -32,15 +32,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclarat
  * If statement in C++
  */
 public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIfStatement, ICPPExecutionOwner {
-    private boolean isConstexpr;
-    private IASTStatement initStatement;
-    private IASTExpression condition;
-    private IASTStatement thenClause;
-    private IASTStatement elseClause;
-    private IASTDeclaration condDecl;
-    private IScope scope;
+	private boolean isConstexpr;
+	private IASTStatement initStatement;
+	private IASTExpression condition;
+	private IASTStatement thenClause;
+	private IASTStatement elseClause;
+	private IASTDeclaration condDecl;
+	private IScope scope;
 
-    public CPPASTIfStatement() {
+	public CPPASTIfStatement() {
 	}
 
 	public CPPASTIfStatement(IASTDeclaration condition, IASTStatement thenClause, IASTStatement elseClause) {
@@ -55,7 +55,7 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 		setElseClause(elseClause);
 	}
 
-    @Override
+	@Override
 	public CPPASTIfStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -74,49 +74,49 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 
 	@Override
 	public IASTExpression getConditionExpression() {
-        return condition;
-    }
+		return condition;
+	}
 
-    @Override
+	@Override
 	public void setConditionExpression(IASTExpression condition) {
-        assertNotFrozen();
-        this.condition = condition;
-        if (condition != null) {
+		assertNotFrozen();
+		this.condition = condition;
+		if (condition != null) {
 			condition.setParent(this);
 			condition.setPropertyInParent(CONDITION);
-			condDecl= null;
+			condDecl = null;
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTStatement getThenClause() {
-        return thenClause;
-    }
+		return thenClause;
+	}
 
-    @Override
+	@Override
 	public void setThenClause(IASTStatement thenClause) {
-        assertNotFrozen();
-        this.thenClause = thenClause;
-        if (thenClause != null) {
+		assertNotFrozen();
+		this.thenClause = thenClause;
+		if (thenClause != null) {
 			thenClause.setParent(this);
 			thenClause.setPropertyInParent(THEN);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTStatement getElseClause() {
-        return elseClause;
-    }
+		return elseClause;
+	}
 
-    @Override
+	@Override
 	public void setElseClause(IASTStatement elseClause) {
-        assertNotFrozen();
-        this.elseClause = elseClause;
-        if (elseClause != null) {
+		assertNotFrozen();
+		this.elseClause = elseClause;
+		if (elseClause != null) {
 			elseClause.setParent(this);
 			elseClause.setPropertyInParent(ELSE);
 		}
-    }
+	}
 
 	private static class N {
 		final IASTIfStatement fIfStatement;
@@ -127,61 +127,64 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 		}
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-    	N stack= null;
-    	ICPPASTIfStatement stmt= this;
-    	loop: for (;;) {
-    		if (action.shouldVisitStatements) {
-    			switch (action.visit(stmt)) {
-    			case ASTVisitor.PROCESS_ABORT: return false;
-    			case ASTVisitor.PROCESS_SKIP:
-    				stmt= null;
-    				break loop;
-    			default: break;
-    			}
-    		}
+		N stack = null;
+		ICPPASTIfStatement stmt = this;
+		loop: for (;;) {
+			if (action.shouldVisitStatements) {
+				switch (action.visit(stmt)) {
+				case ASTVisitor.PROCESS_ABORT:
+					return false;
+				case ASTVisitor.PROCESS_SKIP:
+					stmt = null;
+					break loop;
+				default:
+					break;
+				}
+			}
 
-    		if (!((CPPASTIfStatement) stmt).acceptByAttributeSpecifiers(action)) return false;
+			if (!((CPPASTIfStatement) stmt).acceptByAttributeSpecifiers(action))
+				return false;
 
-    		IASTNode child = stmt.getInitializerStatement();
-    		if (child != null && !child.accept(action))
-    			return false;
-    		child = stmt.getConditionExpression();
-    		if (child != null && !child.accept(action))
-    			return false;
-    		child= stmt.getConditionDeclaration();
-    		if (child != null && !child.accept(action))
-    			return false;
-    		child= stmt.getThenClause();
-    		if (child != null && !child.accept(action))
-    			return false;
-    		child= stmt.getElseClause();
-    		if (child instanceof ICPPASTIfStatement) {
-    			if (action.shouldVisitStatements) {
-    				N n= new N(stmt);
-    				n.fNext= stack;
-    				stack= n;
-    			}
-    			stmt= (ICPPASTIfStatement) child;
-    		} else {
-    			if (child != null && !child.accept(action))
-    				return false;
-    			break loop;
-    		}
-    	}
+			IASTNode child = stmt.getInitializerStatement();
+			if (child != null && !child.accept(action))
+				return false;
+			child = stmt.getConditionExpression();
+			if (child != null && !child.accept(action))
+				return false;
+			child = stmt.getConditionDeclaration();
+			if (child != null && !child.accept(action))
+				return false;
+			child = stmt.getThenClause();
+			if (child != null && !child.accept(action))
+				return false;
+			child = stmt.getElseClause();
+			if (child instanceof ICPPASTIfStatement) {
+				if (action.shouldVisitStatements) {
+					N n = new N(stmt);
+					n.fNext = stack;
+					stack = n;
+				}
+				stmt = (ICPPASTIfStatement) child;
+			} else {
+				if (child != null && !child.accept(action))
+					return false;
+				break loop;
+			}
+		}
 
-    	if (action.shouldVisitStatements) {
-    		if (stmt != null && action.leave(stmt) == ASTVisitor.PROCESS_ABORT)
-    			return false;
-    		while (stack != null) {
-    			if (action.leave(stack.fIfStatement) == ASTVisitor.PROCESS_ABORT)
-    				return false;
-    			stack= stack.fNext;
-    		}
-    	}
-        return true;
-    }
+		if (action.shouldVisitStatements) {
+			if (stmt != null && action.leave(stmt) == ASTVisitor.PROCESS_ABORT)
+				return false;
+			while (stack != null) {
+				if (action.leave(stack.fIfStatement) == ASTVisitor.PROCESS_ABORT)
+					return false;
+				stack = stack.fNext;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
@@ -190,22 +193,22 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 			other.setPropertyInParent(child.getPropertyInParent());
 			initStatement = (IASTStatement) other;
 			return;
-		} 
-		
+		}
+
 		if (thenClause == child) {
 			other.setParent(child.getParent());
 			other.setPropertyInParent(child.getPropertyInParent());
 			thenClause = (IASTStatement) other;
 			return;
-		} 
-		
+		}
+
 		if (elseClause == child) {
 			other.setParent(child.getParent());
 			other.setPropertyInParent(child.getPropertyInParent());
 			elseClause = (IASTStatement) other;
 			return;
-		} 
-		
+		}
+
 		if (condition == child || condDecl == child) {
 			if (other instanceof IASTExpression) {
 				setConditionExpression((IASTExpression) other);
@@ -214,25 +217,25 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 			}
 			return;
 		}
-		
+
 		super.replace(child, other);
 	}
 
-    @Override
+	@Override
 	public IASTDeclaration getConditionDeclaration() {
-        return condDecl;
-    }
+		return condDecl;
+	}
 
-    @Override
+	@Override
 	public void setConditionDeclaration(IASTDeclaration d) {
-        assertNotFrozen();
-        condDecl = d;
-        if (d != null) {
+		assertNotFrozen();
+		condDecl = d;
+		if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(CONDITION);
-			condition= null;
+			condition = null;
 		}
-    }
+	}
 
 	@Override
 	public boolean isConstexpr() {
@@ -252,21 +255,21 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 
 	@Override
 	public void setInitializerStatement(IASTStatement statement) {
-        assertNotFrozen();
-        this.initStatement = statement;
-        if (statement != null) {
-        	statement.setParent(this);
-        	statement.setPropertyInParent(INIT_STATEMENT);
-        	statement = null;
+		assertNotFrozen();
+		this.initStatement = statement;
+		if (statement != null) {
+			statement.setParent(this);
+			statement.setPropertyInParent(INIT_STATEMENT);
+			statement = null;
 		}
 	}
 
 	@Override
 	public IScope getScope() {
 		if (scope == null)
-            scope = new CPPBlockScope(this);
-        return scope;
-    }
+			scope = new CPPBlockScope(this);
+		return scope;
+	}
 
 	@Override
 	public ICPPExecution getExecution() {
@@ -274,9 +277,12 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 		ICPPASTExpression conditionExpr = (ICPPASTExpression) getConditionExpression();
 		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner) getConditionDeclaration();
 		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null;
-		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration) conditionDecl.getExecution() : null;
+		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null
+				? (ExecSimpleDeclaration) conditionDecl.getExecution()
+				: null;
 		ICPPExecution thenClauseExec = EvalUtil.getExecutionFromStatement(getThenClause());
 		ICPPExecution elseClauseExec = EvalUtil.getExecutionFromStatement(getElseClause());
-		return new ExecIf(isConstexpr, initStmtExec, conditionExprEval, conditionDeclExec, thenClauseExec, elseClauseExec);
+		return new ExecIf(isConstexpr, initStmtExec, conditionExprEval, conditionDeclExec, thenClauseExec,
+				elseClauseExec);
 	}
 }

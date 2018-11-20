@@ -49,9 +49,9 @@ public abstract class UNCPathConverter {
 	 */
 	public static boolean isUNC(String path) {
 		if (path.length() >= 2) {
-			char c= path.charAt(0);
-			if (c == IPath.SEPARATOR  || c == File.separatorChar) {
-				c= path.charAt(1);
+			char c = path.charAt(0);
+			if (c == IPath.SEPARATOR || c == File.separatorChar) {
+				c = path.charAt(1);
 				return c == IPath.SEPARATOR || c == File.separatorChar;
 			}
 		}

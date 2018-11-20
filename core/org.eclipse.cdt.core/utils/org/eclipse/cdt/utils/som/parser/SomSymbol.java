@@ -38,10 +38,11 @@ public class SomSymbol extends Symbol {
 	 * @param startLine
 	 * @param endLine
 	 */
-	public SomSymbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size, IPath sourceFile, int startLine, int endLine) {
+	public SomSymbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size, IPath sourceFile,
+			int startLine, int endLine) {
 		super(binary, name, type, addr, size, sourceFile, startLine, endLine);
 	}
-	
+
 	/**
 	 * @param binary
 	 * @param name
@@ -59,7 +60,7 @@ public class SomSymbol extends Symbol {
 	@Override
 	public int getLineNumber(long offset) {
 		int line = -1;
-		Addr2line addr2line = ((SOMBinaryObject)binary).getAddr2line(true);
+		Addr2line addr2line = ((SOMBinaryObject) binary).getAddr2line(true);
 		if (addr2line != null) {
 			try {
 				return addr2line.getLineNumber(getAddress().add(offset));

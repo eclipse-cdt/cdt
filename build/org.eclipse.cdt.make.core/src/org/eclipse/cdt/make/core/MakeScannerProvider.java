@@ -76,7 +76,7 @@ public class MakeScannerProvider extends ScannerProvider {
 		MakeScannerInfo scannerInfo = null;
 		// See if there's already one associated with the resource for this
 		// session
-		scannerInfo = (MakeScannerInfo)project.getSessionProperty(scannerInfoProperty);
+		scannerInfo = (MakeScannerInfo) project.getSessionProperty(scannerInfoProperty);
 
 		// Try to load one for the project
 		if (scannerInfo == null) {
@@ -128,10 +128,10 @@ public class MakeScannerProvider extends ScannerProvider {
 		for (ICStorageElement child : storage.getChildren()) {
 			if (child.getName().equals(INCLUDE_PATH)) {
 				// Add the path to the property list
-				includes.add( ((Element)child).getAttribute(PATH));
+				includes.add(((Element) child).getAttribute(PATH));
 			} else if (child.getName().equals(DEFINED_SYMBOL)) {
 				// Add the symbol to the symbol list
-				symbols.add( ((Element)child).getAttribute(SYMBOL));
+				symbols.add(((Element) child).getAttribute(SYMBOL));
 			}
 		}
 		MakeScannerInfo info = new MakeScannerInfo(project);
@@ -148,14 +148,15 @@ public class MakeScannerProvider extends ScannerProvider {
 		List<IPathEntry> cPaths = new ArrayList<IPathEntry>(Arrays.asList(entries));
 
 		Iterator<IPathEntry> cpIter = cPaths.iterator();
-		while(cpIter.hasNext()) {
+		while (cpIter.hasNext()) {
 			int kind = cpIter.next().getEntryKind();
-			if(kind == IPathEntry.CDT_INCLUDE || kind == IPathEntry.CDT_MACRO) {
+			if (kind == IPathEntry.CDT_INCLUDE || kind == IPathEntry.CDT_MACRO) {
 				cpIter.remove();
 			}
 		}
 		for (int i = 0; i < includes.length; i++) {
-			IIncludeEntry include = CoreModel.newIncludeEntry(info.getProject().getFullPath(), null, new Path(includes[i]), true);
+			IIncludeEntry include = CoreModel.newIncludeEntry(info.getProject().getFullPath(), null,
+					new Path(includes[i]), true);
 			if (!cPaths.contains(include)) {
 				cPaths.add(include);
 			}
@@ -163,7 +164,8 @@ public class MakeScannerProvider extends ScannerProvider {
 		Iterator<Entry<String, String>> syms = symbols.entrySet().iterator();
 		while (syms.hasNext()) {
 			Entry<String, String> entry = syms.next();
-			IMacroEntry sym = CoreModel.newMacroEntry(info.getProject().getFullPath(), entry.getKey(), entry.getValue());
+			IMacroEntry sym = CoreModel.newMacroEntry(info.getProject().getFullPath(), entry.getKey(),
+					entry.getValue());
 			if (!cPaths.contains(sym)) {
 				cPaths.add(sym);
 			}

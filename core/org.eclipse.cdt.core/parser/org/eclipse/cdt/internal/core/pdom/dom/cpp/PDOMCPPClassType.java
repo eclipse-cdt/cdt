@@ -65,8 +65,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	private PDOMCPPClassScope fScope; // No need for volatile, all fields of PDOMCPPClassScope are final.
 
-	public PDOMCPPClassType(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType,
-			boolean visibleToAdlOnly) throws CoreException {
+	public PDOMCPPClassType(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType, boolean visibleToAdlOnly)
+			throws CoreException {
 		super(linkage, parent, classType.getNameCharArray());
 
 		setKind(classType);
@@ -93,7 +93,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPClassType) {
-			ICPPClassType ct= (ICPPClassType) newBinding;
+			ICPPClassType ct = (ICPPClassType) newBinding;
 			setKind(ct);
 			setAnonymous(ct);
 			setFinal(ct);
@@ -112,7 +112,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	private void setFinal(ICPPClassType ct) throws CoreException {
 		getDB().putByte(record + FINAL, (byte) (ct.isFinal() ? 1 : 0));
 	}
-	
+
 	@Override
 	public void setVisibleToAdlOnly(boolean visibleToAdlOnly) throws CoreException {
 		getDB().putByte(record + VISIBLE_TO_ADL_ONLY, (byte) (visibleToAdlOnly ? 1 : 0));
@@ -122,14 +122,13 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public boolean mayHaveChildren() {
 		return true;
 	}
-	
+
 	@Override
 	public final void addChild(PDOMNode member) throws CoreException {
-		throw new UnsupportedOperationException("addMember should be called instead to add " +  //$NON-NLS-1$
-				(member instanceof IBinding ? ((IBinding) member).getName() : member.toString()) + 
-				" to " + getName()); //$NON-NLS-1$
+		throw new UnsupportedOperationException("addMember should be called instead to add " + //$NON-NLS-1$
+				(member instanceof IBinding ? ((IBinding) member).getName() : member.toString()) + " to " + getName()); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		PDOMCPPClassScope.acceptViaCache(this, visitor, false);
@@ -160,9 +159,9 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		final PDOMLinkage linkage = getLinkage();
 		PDOMCPPBase firstBase = getFirstBase();
 		for (ICPPBase base : bases) {
-			PDOMCPPBase nextBase= new PDOMCPPBase(linkage, base, classDefName);
+			PDOMCPPBase nextBase = new PDOMCPPBase(linkage, base, classDefName);
 			nextBase.setNextBase(firstBase);
-			firstBase= nextBase;
+			firstBase = nextBase;
 		}
 		setFirstBase(firstBase);
 	}
@@ -171,29 +170,29 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		final PDOM pdom = getPDOM();
 		final Database db = getDB();
 		pdom.removeCachedResult(record + PDOMCPPLinkage.CACHE_BASES);
-		
-		PDOMCPPBase base= getFirstBase();
-		PDOMCPPBase prevBase= null;
-		long nameRec= classDefName.getRecord();
-		boolean deleted= false;
+
+		PDOMCPPBase base = getFirstBase();
+		PDOMCPPBase prevBase = null;
+		long nameRec = classDefName.getRecord();
+		boolean deleted = false;
 		while (base != null) {
 			PDOMCPPBase nextBase = base.getNextBase();
-			long classDefRec= db.getRecPtr(base.getRecord() + PDOMCPPBase.CLASS_DEFINITION);
+			long classDefRec = db.getRecPtr(base.getRecord() + PDOMCPPBase.CLASS_DEFINITION);
 			if (classDefRec == nameRec) {
-				deleted= true;
+				deleted = true;
 				base.delete();
 			} else {
 				if (deleted) {
-					deleted= false;
+					deleted = false;
 					if (prevBase == null) {
 						setFirstBase(base);
 					} else {
 						prevBase.setNextBase(base);
 					}
 				}
-				prevBase= base;
+				prevBase = base;
 			}
-			base= nextBase;
+			base = nextBase;
 		}
 		if (deleted) {
 			if (prevBase == null) {
@@ -222,15 +221,15 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	public void removeFriend(PDOMName pdomName) throws CoreException {
 		PDOMCPPFriend friend = getFirstFriend();
-		PDOMCPPFriend predecessor= null;
-		long nameRec= pdomName.getRecord();
+		PDOMCPPFriend predecessor = null;
+		long nameRec = pdomName.getRecord();
 		while (friend != null) {
 			PDOMName name = friend.getSpecifierName();
 			if (name != null && name.getRecord() == nameRec) {
 				break;
 			}
-			predecessor= friend;
-			friend= friend.getNextFriend();
+			predecessor = friend;
+			friend = friend.getNextFriend();
 		}
 		if (friend != null) {
 			if (predecessor != null) {
@@ -245,7 +244,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	@Override
 	public ICPPClassScope getCompositeScope() {
 		if (fScope == null) {
-			fScope= new PDOMCPPClassScope(this);
+			fScope = new PDOMCPPClassScope(this);
 		}
 		return fScope;
 	}
@@ -279,7 +278,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean isVisibleToAdlOnly() {
 		try {
@@ -297,19 +296,19 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 
 		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
+			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
 		}
 
 		if (type instanceof ICPPClassType && !(type instanceof ProblemBinding)) {
-			ICPPClassType ctype= (ICPPClassType) type;
+			ICPPClassType ctype = (ICPPClassType) type;
 			if (getEquivalentKind(ctype) != getEquivalentKind(this))
 				return false;
 			char[] nchars = ctype.getNameCharArray();
 			if (nchars.length == 0) {
-				nchars= ASTTypeUtil.createNameForAnonymous(ctype);
+				nchars = ASTTypeUtil.createNameForAnonymous(ctype);
 			}
 			if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
 				return false;
@@ -326,8 +325,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	@Override
 	public ICPPBase[] getBases() {
-		Long key= record + PDOMCPPLinkage.CACHE_BASES;
-		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
+		Long key = record + PDOMCPPLinkage.CACHE_BASES;
+		ICPPBase[] bases = (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null)
 			return bases;
 
@@ -348,11 +347,11 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
+		PDOMClassUtil.ConstructorCollector visitor = new PDOMClassUtil.ConstructorCollector();
 		try {
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
 			ICPPConstructor[] constructors = visitor.getConstructors();
-	    	return ClassTypeHelper.getAllConstructors(this, constructors);
+			return ClassTypeHelper.getAllConstructors(this, constructors);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
@@ -394,7 +393,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 			return ICPPClassType.EMPTY_CLASS_ARRAY;
 		}
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		try {
@@ -411,8 +410,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public IBinding[] getFriends() {
 		try {
 			final List<IBinding> list = new ArrayList<>();
-			for (PDOMCPPFriend friend = getFirstFriend();
-					friend != null; friend = friend.getNextFriend()) {
+			for (PDOMCPPFriend friend = getFirstFriend(); friend != null; friend = friend.getNextFriend()) {
 				list.add(0, friend.getFriendSpecifier());
 			}
 			return list.toArray(new IBinding[list.size()]);

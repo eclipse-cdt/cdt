@@ -23,17 +23,16 @@ public class ModulesMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.views.modules.ModulesMessages";//$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private ModulesMessages() {
 	}
 
-	public static String getString( String key ) {
+	public static String getString(String key) {
 		// TODO Auto-generated method stub
 		try {
-			return RESOURCE_BUNDLE.getString( key );
-		}
-		catch( MissingResourceException e ) {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
 	}

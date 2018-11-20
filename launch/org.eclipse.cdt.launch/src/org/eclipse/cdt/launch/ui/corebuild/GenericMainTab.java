@@ -233,7 +233,8 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 		buttonComposite.setLayoutData(gridData);
 		buttonComposite.setFont(parent.getFont());
 
-		workspaceWorkingDirectoryButton = createPushButton(buttonComposite, Messages.GenericMainTab_BrowseWorkspace, null);
+		workspaceWorkingDirectoryButton = createPushButton(buttonComposite, Messages.GenericMainTab_BrowseWorkspace,
+				null);
 		workspaceWorkingDirectoryButton.addSelectionListener(fListener);
 		addControlAccessibleListener(workspaceWorkingDirectoryButton,
 				group.getText() + " " + workspaceWorkingDirectoryButton.getText()); //$NON-NLS-1$

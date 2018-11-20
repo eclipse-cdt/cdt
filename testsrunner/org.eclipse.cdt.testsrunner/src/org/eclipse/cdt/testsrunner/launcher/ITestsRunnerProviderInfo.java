@@ -21,7 +21,7 @@ package org.eclipse.cdt.testsrunner.launcher;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITestsRunnerProviderInfo {
-	
+
 	/**
 	 * Returns the user readable name of the Tests Runner provider plug-in.
 	 *
@@ -51,7 +51,7 @@ public interface ITestsRunnerProviderInfo {
 	 * @return whether multiple filter is supported
 	 */
 	public boolean isAllowedMultipleTestFilter();
-	
+
 	/**
 	 * Returns whether Tests Runner provider plug-in requires to handle standard
 	 * output stream of the testing process.
@@ -59,7 +59,7 @@ public interface ITestsRunnerProviderInfo {
 	 * @return whether output stream is required
 	 */
 	public boolean isOutputStreamRequired();
-	
+
 	/**
 	 * Returns whether Tests Runner provider plug-in requires to handle standard
 	 * error stream of the testing process.
@@ -67,5 +67,5 @@ public interface ITestsRunnerProviderInfo {
 	 * @return whether error stream is required
 	 */
 	public boolean isErrorStreamRequired();
-	
+
 }

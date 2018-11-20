@@ -89,7 +89,7 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 
 		// connect attached actions list to global list
 		globalActionsList.setClientList(actionsList);
-		
+
 		globalActionsList.getAttachButton().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -150,7 +150,8 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		try {
 			TracepointActionManager.getInstance().saveActionData();
-			tracepointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE, actionsList.getActionNames());
+			tracepointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE,
+					actionsList.getActionNames());
 		} catch (CoreException e) {
 		}
 		return super.performOk();

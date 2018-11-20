@@ -38,13 +38,13 @@ public class DisassemblyTextHover implements ITextHover {
 	 * Create a new disassembly text hover.
 	 */
 	public DisassemblyTextHover(DisassemblyPart part) {
-		fDisassemblyPart= part;
+		fDisassemblyPart = part;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
-    @Override
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		IDocument doc = textViewer.getDocument();
 		return CWordFinder.findWord(doc, offset);
@@ -55,14 +55,14 @@ public class DisassemblyTextHover implements ITextHover {
 	 */
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-		DisassemblyDocument doc = (DisassemblyDocument)textViewer.getDocument();
+		DisassemblyDocument doc = (DisassemblyDocument) textViewer.getDocument();
 		int offset = hoverRegion.getOffset();
 		AddressRangePosition pos;
 		try {
 			String ident = doc.get(offset, hoverRegion.getLength());
 			String value = null;
 			pos = doc.getModelPosition(offset);
-			
+
 			value = fDisassemblyPart.getHoverInfoData(pos, ident);
 
 			// If returns null (or empty string), not implemented or something went wrong.		
@@ -82,12 +82,12 @@ public class DisassemblyTextHover implements ITextHover {
 				if (value != null) {
 					return ident + " = " + value; //$NON-NLS-1$
 				}
-			}
-			else
+			} else
 				return value;
 		} catch (BadLocationException e) {
 			if (DsfUIPlugin.getDefault().isDebugging()) {
-				DsfUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Internal Error", e)); //$NON-NLS-1$
+				DsfUIPlugin.getDefault().getLog()
+						.log(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Internal Error", e)); //$NON-NLS-1$
 			}
 		}
 		return null;
@@ -99,7 +99,7 @@ public class DisassemblyTextHover implements ITextHover {
 	 * @return register value or <code>null</code>
 	 */
 	private String evaluateRegister(String register) {
-        return fDisassemblyPart.evaluateRegister(register);
+		return fDisassemblyPart.evaluateRegister(register);
 	}
 
 	/**

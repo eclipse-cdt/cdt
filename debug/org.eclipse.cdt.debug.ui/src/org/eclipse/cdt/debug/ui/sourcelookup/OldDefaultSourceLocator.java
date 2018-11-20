@@ -51,7 +51,8 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	/**
 	 * Identifier for the 'Default C/C++ Source Locator' extension (value <code>"org.eclipse.cdt.debug.ui.DefaultSourceLocator"</code>).
 	 */
-	public static final String ID_DEFAULT_SOURCE_LOCATOR = CDebugUIPlugin.getUniqueIdentifier() + ".DefaultSourceLocator"; //$NON-NLS-1$
+	public static final String ID_DEFAULT_SOURCE_LOCATOR = CDebugUIPlugin.getUniqueIdentifier()
+			+ ".DefaultSourceLocator"; //$NON-NLS-1$
 
 	// to support old configurations
 	public static final String ID_OLD_DEFAULT_SOURCE_LOCATOR = "org.eclipse.cdt.launch" + ".DefaultSourceLocator"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -76,30 +77,27 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	 */
 	@Override
 	public String getMemento() throws CoreException {
-		if ( getCSourceLocator() != null ) {
+		if (getCSourceLocator() != null) {
 			Document document = null;
 			Throwable ex = null;
 			try {
 				document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-				Element element = document.createElement( ELEMENT_NAME );
-				document.appendChild( element );
-				element.setAttribute( ATTR_PROJECT, getCSourceLocator().getProject().getName() );
+				Element element = document.createElement(ELEMENT_NAME);
+				document.appendChild(element);
+				element.setAttribute(ATTR_PROJECT, getCSourceLocator().getProject().getName());
 				IPersistableSourceLocator psl = getPersistableSourceLocator();
-				if ( psl != null ) {
-					element.setAttribute( ATTR_MEMENTO, psl.getMemento() );
+				if (psl != null) {
+					element.setAttribute(ATTR_MEMENTO, psl.getMemento());
 				}
-				return CDebugUtils.serializeDocument( document );
-			}
-			catch( ParserConfigurationException e ) {
+				return CDebugUtils.serializeDocument(document);
+			} catch (ParserConfigurationException e) {
+				ex = e;
+			} catch (IOException e) {
+				ex = e;
+			} catch (TransformerException e) {
 				ex = e;
 			}
-			catch( IOException e ) {
-				ex = e;
-			}
-			catch( TransformerException e ) {
-				ex = e;
-			}
-			abort( SourceLookupMessages.getString( "OldDefaultSourceLocator.1" ), ex ); //$NON-NLS-1$
+			abort(SourceLookupMessages.getString("OldDefaultSourceLocator.1"), ex); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -108,67 +106,65 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
 	@Override
-	public void initializeFromMemento( String memento ) throws CoreException {
+	public void initializeFromMemento(String memento) throws CoreException {
 		Exception ex = null;
 		try {
 			Element root = null;
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			StringReader reader = new StringReader( memento );
-			InputSource source = new InputSource( reader );
-			root = parser.parse( source ).getDocumentElement();
-			if ( !root.getNodeName().equalsIgnoreCase( ELEMENT_NAME ) ) {
-				abort( SourceLookupMessages.getString( "OldDefaultSourceLocator.2" ), null ); //$NON-NLS-1$
+			StringReader reader = new StringReader(memento);
+			InputSource source = new InputSource(reader);
+			root = parser.parse(source).getDocumentElement();
+			if (!root.getNodeName().equalsIgnoreCase(ELEMENT_NAME)) {
+				abort(SourceLookupMessages.getString("OldDefaultSourceLocator.2"), null); //$NON-NLS-1$
 			}
-			String projectName = root.getAttribute( ATTR_PROJECT );
-			String data = root.getAttribute( ATTR_MEMENTO );
-			if ( isEmpty( projectName ) ) {
-				abort( SourceLookupMessages.getString( "OldDefaultSourceLocator.3" ), null ); //$NON-NLS-1$
+			String projectName = root.getAttribute(ATTR_PROJECT);
+			String data = root.getAttribute(ATTR_MEMENTO);
+			if (isEmpty(projectName)) {
+				abort(SourceLookupMessages.getString("OldDefaultSourceLocator.3"), null); //$NON-NLS-1$
 			}
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
-			if ( getCSourceLocator() == null )
-				setCSourceLocator( SourceLookupFactory.createSourceLocator( project ) );
-			if ( getCSourceLocator().getProject() != null && !getCSourceLocator().getProject().equals( project ) )
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			if (getCSourceLocator() == null)
+				setCSourceLocator(SourceLookupFactory.createSourceLocator(project));
+			if (getCSourceLocator().getProject() != null && !getCSourceLocator().getProject().equals(project))
 				return;
-			if ( project == null || !project.exists() || !project.isOpen() )
-				abort( MessageFormat.format( SourceLookupMessages.getString( "OldDefaultSourceLocator.4" ), new Object[]{ projectName } ), null ); //$NON-NLS-1$
+			if (project == null || !project.exists() || !project.isOpen())
+				abort(MessageFormat.format(SourceLookupMessages.getString("OldDefaultSourceLocator.4"), //$NON-NLS-1$
+						new Object[] { projectName }), null);
 			IPersistableSourceLocator psl = getPersistableSourceLocator();
-			if ( psl != null )
-				psl.initializeFromMemento( data );
+			if (psl != null)
+				psl.initializeFromMemento(data);
 			else
-				abort( SourceLookupMessages.getString( "OldDefaultSourceLocator.5" ), null );  //$NON-NLS-1$
+				abort(SourceLookupMessages.getString("OldDefaultSourceLocator.5"), null); //$NON-NLS-1$
 			return;
-		}
-		catch( ParserConfigurationException e ) {
+		} catch (ParserConfigurationException e) {
+			ex = e;
+		} catch (SAXException e) {
+			ex = e;
+		} catch (IOException e) {
 			ex = e;
 		}
-		catch( SAXException e ) {
-			ex = e;
-		}
-		catch( IOException e ) {
-			ex = e;
-		}
-		abort( SourceLookupMessages.getString( "OldDefaultSourceLocator.6" ), ex ); //$NON-NLS-1$
+		abort(SourceLookupMessages.getString("OldDefaultSourceLocator.6"), ex); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
-	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException {
-		setCSourceLocator( SourceLookupFactory.createSourceLocator( getProject( configuration ) ) );
-		String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" ); //$NON-NLS-1$
-		if ( !isEmpty( memento ) )
-			initializeFromMemento( memento );
+	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
+		setCSourceLocator(SourceLookupFactory.createSourceLocator(getProject(configuration)));
+		String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, ""); //$NON-NLS-1$
+		if (!isEmpty(memento))
+			initializeFromMemento(memento);
 	}
 
 	@Override
-	public <T> T getAdapter( Class<T> adapter ) {
-		if ( getCSourceLocator() instanceof IAdaptable ) {
-			if ( adapter.equals( ICSourceLocator.class ) ) {
-				return ((IAdaptable)getCSourceLocator()).getAdapter( adapter );
+	public <T> T getAdapter(Class<T> adapter) {
+		if (getCSourceLocator() instanceof IAdaptable) {
+			if (adapter.equals(ICSourceLocator.class)) {
+				return ((IAdaptable) getCSourceLocator()).getAdapter(adapter);
 			}
-			if ( adapter.equals( IResourceChangeListener.class ) ) {
-				return ((IAdaptable)getCSourceLocator()).getAdapter( adapter );
+			if (adapter.equals(IResourceChangeListener.class)) {
+				return ((IAdaptable) getCSourceLocator()).getAdapter(adapter);
 			}
 		}
 		return null;
@@ -178,7 +174,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(org.eclipse.debug.core.model.IStackFrame)
 	 */
 	@Override
-	public Object getSourceElement( IStackFrame stackFrame ) {
+	public Object getSourceElement(IStackFrame stackFrame) {
 		return null;
 	}
 
@@ -186,36 +182,38 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 		return fSourceLocator;
 	}
 
-	private void setCSourceLocator( ICSourceLocator locator ) {
+	private void setCSourceLocator(ICSourceLocator locator) {
 		fSourceLocator = locator;
 	}
 
 	private IPersistableSourceLocator getPersistableSourceLocator() {
 		ICSourceLocator sl = getCSourceLocator();
-		return (sl instanceof IPersistableSourceLocator) ? (IPersistableSourceLocator)sl : null;
+		return (sl instanceof IPersistableSourceLocator) ? (IPersistableSourceLocator) sl : null;
 	}
 
 	/**
 	 * Throws an internal error exception
 	 */
-	private void abort( String message, Throwable e ) throws CoreException {
-		IStatus s = new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), 0, message, e );
-		throw new CoreException( s );
+	private void abort(String message, Throwable e) throws CoreException {
+		IStatus s = new Status(IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), 0, message, e);
+		throw new CoreException(s);
 	}
 
-	private boolean isEmpty( String string ) {
+	private boolean isEmpty(String string) {
 		return string == null || string.trim().length() == 0;
 	}
 
-	private IProject getProject( ILaunchConfiguration configuration ) throws CoreException {
-		String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null );
-		if ( !isEmpty( projectName ) ) {
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
-			if ( project.exists() ) {
+	private IProject getProject(ILaunchConfiguration configuration) throws CoreException {
+		String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+				(String) null);
+		if (!isEmpty(projectName)) {
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			if (project.exists()) {
 				return project;
 			}
 		}
-		abort( MessageFormat.format( SourceLookupMessages.getString( "OldDefaultSourceLocator.9" ), new Object[]{ projectName } ), null ); //$NON-NLS-1$
+		abort(MessageFormat.format(SourceLookupMessages.getString("OldDefaultSourceLocator.9"), //$NON-NLS-1$
+				new Object[] { projectName }), null);
 		return null;
 	}
 }

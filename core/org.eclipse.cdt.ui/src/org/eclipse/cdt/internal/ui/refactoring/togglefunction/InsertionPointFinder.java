@@ -37,26 +37,26 @@ public class InsertionPointFinder {
 	private static ArrayList<ICPPASTFunctionDeclarator> allafterdeclarations;
 	private static ArrayList<ICPPASTFunctionDefinition> alldefinitionsoutside;
 	private static IASTDeclaration position;
-	
-	public static IASTDeclaration findInsertionPoint(IASTTranslationUnit classunit,
-			IASTTranslationUnit functiondefunit, IASTFunctionDeclarator funcDecl) {
+
+	public static IASTDeclaration findInsertionPoint(IASTTranslationUnit classunit, IASTTranslationUnit functiondefunit,
+			IASTFunctionDeclarator funcDecl) {
 		position = null;
 		findAllDeclarationsAfterInClass(classunit, funcDecl);
 		findAllDefinitionsoutSideClass(functiondefunit);
 		findRightPlace();
 		return position;
 	}
-	
+
 	private static void findRightPlace() {
 		if (allafterdeclarations == null || alldefinitionsoutside == null)
 			return;
-		for(ICPPASTFunctionDeclarator decl: allafterdeclarations) {
+		for (ICPPASTFunctionDeclarator decl : allafterdeclarations) {
 			if (decl.getName() == null) {
 				// Could be a lambda expression
 				continue;
 			}
 			String decl_name = decl.getName().toString();
-			for(ICPPASTFunctionDefinition def: alldefinitionsoutside) {
+			for (ICPPASTFunctionDefinition def : alldefinitionsoutside) {
 				String def_name = null;
 				IASTName name = def.getDeclarator().getName();
 				if (name != null)
@@ -80,7 +80,7 @@ public class InsertionPointFinder {
 		if (klass != null)
 			allafterdeclarations = getDeclarationsInClass(klass, funcDecl);
 	}
-	
+
 	/**
 	 * @param ast the translation unit where to find the definitions
 	 */
@@ -90,72 +90,71 @@ public class InsertionPointFinder {
 			alldefinitionsoutside = definitions;
 			return;
 		}
-		ast.accept(
-			new ASTVisitor() {
-				{
-					shouldVisitDeclarations = true;
-				}
-	
-				@Override
-				public int visit(IASTDeclaration declaration) {
-					if (declaration instanceof ICPPASTFunctionDefinition) {
-							if (declaration.getParent() != null &&
-									ASTQueries.findAncestorWithType(declaration, CPPASTCompositeTypeSpecifier.class) != null) {
-								return PROCESS_CONTINUE;
-							}
-						definitions.add((ICPPASTFunctionDefinition) declaration);
+		ast.accept(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				if (declaration instanceof ICPPASTFunctionDefinition) {
+					if (declaration.getParent() != null && ASTQueries.findAncestorWithType(declaration,
+							CPPASTCompositeTypeSpecifier.class) != null) {
+						return PROCESS_CONTINUE;
 					}
-					return super.visit(declaration);
+					definitions.add((ICPPASTFunctionDefinition) declaration);
 				}
-			});
+				return super.visit(declaration);
+			}
+		});
 		alldefinitionsoutside = definitions;
 	}
 
-	private static ArrayList<ICPPASTFunctionDeclarator> getDeclarationsInClass(ICPPASTCompositeTypeSpecifier klass, final IASTFunctionDeclarator selected) {
+	private static ArrayList<ICPPASTFunctionDeclarator> getDeclarationsInClass(ICPPASTCompositeTypeSpecifier klass,
+			final IASTFunctionDeclarator selected) {
 		final ArrayList<ICPPASTFunctionDeclarator> declarations = new ArrayList<ICPPASTFunctionDeclarator>();
-		
-		klass.accept(
-			new ASTVisitor() {
-				{
-					shouldVisitDeclarators = true;
-				}
-	
-				boolean got = false;
-				@Override
-				public int visit(IASTDeclarator declarator) {
-					if (declarator instanceof ICPPASTFunctionDeclarator) {
-						if (((ICPPASTFunctionDeclarator) declarator) == selected) {
-							got = true;
-						}
-						if (got) {
-							declarations.add((ICPPASTFunctionDeclarator) declarator);
-						}
+
+		klass.accept(new ASTVisitor() {
+			{
+				shouldVisitDeclarators = true;
+			}
+
+			boolean got = false;
+
+			@Override
+			public int visit(IASTDeclarator declarator) {
+				if (declarator instanceof ICPPASTFunctionDeclarator) {
+					if (((ICPPASTFunctionDeclarator) declarator) == selected) {
+						got = true;
 					}
-					return super.visit(declarator);
+					if (got) {
+						declarations.add((ICPPASTFunctionDeclarator) declarator);
+					}
 				}
-			});
-		
+				return super.visit(declarator);
+			}
+		});
+
 		return declarations;
 	}
 
 	private static ICPPASTCompositeTypeSpecifier getklass(IASTTranslationUnit unit) {
 		final Container<ICPPASTCompositeTypeSpecifier> result = new Container<ICPPASTCompositeTypeSpecifier>();
 
-		unit.accept(
-			new ASTVisitor() {
-				{
-					shouldVisitDeclSpecifiers = true;
+		unit.accept(new ASTVisitor() {
+			{
+				shouldVisitDeclSpecifiers = true;
+			}
+
+			@Override
+			public int visit(IASTDeclSpecifier declSpec) {
+				if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
+					result.setObject((ICPPASTCompositeTypeSpecifier) declSpec);
+					return PROCESS_ABORT;
 				}
-	
-				@Override
-				public int visit(IASTDeclSpecifier declSpec) {
-					if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-						result.setObject((ICPPASTCompositeTypeSpecifier) declSpec);
-						return PROCESS_ABORT;
-					}
-					return super.visit(declSpec);
-				}
-			});
+				return super.visit(declSpec);
+			}
+		});
 		return result.getObject();
 	}
 }

@@ -21,10 +21,9 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
  * @deprecated Replaced by {@link CPPASTSimpleDeclSpecifier}
  */
 @Deprecated
-public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
-		implements IGPPASTSimpleDeclSpecifier {
+public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier implements IGPPASTSimpleDeclSpecifier {
 
-    public GPPASTSimpleDeclSpecifier() {
+	public GPPASTSimpleDeclSpecifier() {
 	}
 
 	public GPPASTSimpleDeclSpecifier(IASTExpression typeofExpression) {
@@ -42,13 +41,13 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
 		return copy(new GPPASTSimpleDeclSpecifier(), style);
 	}
 
-    @Override
+	@Override
 	public void setTypeofExpression(IASTExpression typeofExpression) {
-    	setDeclTypeExpression(typeofExpression);
-    }
+		setDeclTypeExpression(typeofExpression);
+	}
 
-    @Override
+	@Override
 	public IASTExpression getTypeofExpression() {
-        return getDeclTypeExpression();
-    }
+		return getDeclTypeExpression();
+	}
 }

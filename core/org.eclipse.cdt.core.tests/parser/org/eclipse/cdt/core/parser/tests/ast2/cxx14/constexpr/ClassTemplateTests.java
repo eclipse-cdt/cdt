@@ -15,15 +15,25 @@ import junit.framework.TestSuite;
 
 public class ClassTemplateTests extends TestBase {
 	public static class NonIndexing extends ClassTemplateTests {
-		public NonIndexing() {setStrategy(new NonIndexingTestStrategy());}
-		public static TestSuite suite() {return suite(NonIndexing.class);}
+		public NonIndexing() {
+			setStrategy(new NonIndexingTestStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(NonIndexing.class);
+		}
 	}
-	
+
 	public static class SingleProject extends ClassTemplateTests {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true, false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(true, false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
-	
+
 	//	template<typename T>
 	//	struct Point {
 	//		T x;
@@ -36,12 +46,12 @@ public class ClassTemplateTests extends TestBase {
 	//		Point<int> a{3,4}	;
 	//		return a.len();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testInstantiationOfClassTemplate() throws Exception {
 		assertEvaluationEquals(25);
 	}
-	
+
 	//	template<int X>
 	//	struct Multiplier {
 	//		int y;
@@ -53,12 +63,12 @@ public class ClassTemplateTests extends TestBase {
 	//		Multiplier<5> m{7};
 	//		return m.product();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testInstantiationOfClassTemplateWithNontypeTemplateParameter1() throws Exception {
 		assertEvaluationEquals(35);
 	}
-	
+
 	//	template<int X, int Y>
 	//	struct Multiplier {
 	//		int x = X;
@@ -71,12 +81,12 @@ public class ClassTemplateTests extends TestBase {
 	//		Multiplier<5, 7> m{};
 	//		return m.product();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testInstantiationOfClassTemplateWithNontypeTemplateParameter2() throws Exception {
 		assertEvaluationEquals(35);
 	}
-	
+
 	//	template<int X, int Y>
 	//	struct Adder {
 	//		constexpr int sum() {
@@ -96,7 +106,7 @@ public class ClassTemplateTests extends TestBase {
 	public void testAliasTemplate1() throws Exception {
 		assertEvaluationEquals(17);
 	}
-	
+
 	//	template<int T>
 	//	struct X {
 	//		constexpr int get() const {
@@ -110,12 +120,12 @@ public class ClassTemplateTests extends TestBase {
 	//		S<5> s{};
 	//		return s.get();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testInstantiationOfBaseClassTemplate1() throws Exception {
 		assertEvaluationEquals(10);
 	}
-	
+
 	//	template<int T>
 	//	struct X {
 	//		int x = 2*T;
@@ -134,7 +144,7 @@ public class ClassTemplateTests extends TestBase {
 	public void testInstantiationOfBaseClassTemplate2() throws Exception {
 		assertEvaluationEquals(30);
 	}
-	
+
 	//	template<int I>
 	//	struct S {
 	//		constexpr S():x{I*2} {}	
@@ -145,7 +155,7 @@ public class ClassTemplateTests extends TestBase {
 	//		S<5> s{};
 	//		return s.x;
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testTemplateArgumentInMemberInitializerList() throws Exception {
 		assertEvaluationEquals(10);

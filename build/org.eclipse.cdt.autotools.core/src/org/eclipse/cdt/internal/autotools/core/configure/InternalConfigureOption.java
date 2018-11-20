@@ -16,28 +16,27 @@ package org.eclipse.cdt.internal.autotools.core.configure;
 public class InternalConfigureOption extends AbstractConfigurationOption {
 
 	private String value;
-	
+
 	public InternalConfigureOption(String name, AutotoolsConfiguration cfg) {
 		super(name, cfg);
 		this.value = ""; //$NON-NLS-1$
 	}
-	
+
 	public InternalConfigureOption(String name, String msgName, AutotoolsConfiguration cfg) {
 		super(name, msgName, cfg);
 		this.value = ""; //$NON-NLS-1$
 	}
-	
-	private InternalConfigureOption(String name, AutotoolsConfiguration cfg,
-			String value) {
+
+	private InternalConfigureOption(String name, AutotoolsConfiguration cfg, String value) {
 		super(name, cfg);
 		this.value = value;
 	}
-	
+
 	@Override
 	public String getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setValue(String newValue) {
 		if (!newValue.equals(value)) {
@@ -50,12 +49,12 @@ public class InternalConfigureOption extends AbstractConfigurationOption {
 	public boolean isParmSet() {
 		return false;
 	}
-	
+
 	@Override
 	public String getParameter() {
 		return "";
 	}
-	
+
 	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
 		return new InternalConfigureOption(name, config, value);

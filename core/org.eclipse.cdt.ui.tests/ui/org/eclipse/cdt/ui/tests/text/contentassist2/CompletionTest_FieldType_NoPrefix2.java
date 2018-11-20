@@ -13,6 +13,7 @@
  * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -23,37 +24,27 @@ import junit.framework.TestSuite;
  * Bug#50344 :Wrong completion in Class scope if before the first declaration
  *
  */
-public class CompletionTest_FieldType_NoPrefix2  extends CompletionProposalsBaseTest{
-	
+public class CompletionTest_FieldType_NoPrefix2 extends CompletionProposalsBaseTest {
+
 	private final String fileName = "CompletionTestStart13.h";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
-	private final String[] expectedResults = {
-			"AStruct",
-			"XStruct",
-			"aClass",
-			"aNamespace",
-			"aThirdClass",
-			"anEnumeration",
-			"anotherClass",
-			"xEnumeration",
-			"xNamespace",
-			"xOtherClass"
-	};
-	
+	private final String[] expectedResults = { "AStruct", "XStruct", "aClass", "aNamespace", "aThirdClass",
+			"anEnumeration", "anotherClass", "xEnumeration", "xNamespace", "xOtherClass" };
+
 	public CompletionTest_FieldType_NoPrefix2(String name) {
 		super(name);
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_FieldType_NoPrefix2.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_FieldType_NoPrefix2.class.getName());
 		suite.addTest(new CompletionTest_FieldType_NoPrefix2("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -93,6 +84,7 @@ public class CompletionTest_FieldType_NoPrefix2  extends CompletionProposalsBase
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

@@ -27,16 +27,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 /**
  * Node for template specialization syntax.
  */
-public class CPPASTTemplateSpecialization extends ASTNode implements
-        ICPPASTTemplateSpecialization, ICPPASTInternalTemplateDeclaration, IASTAmbiguityParent {
+public class CPPASTTemplateSpecialization extends ASTNode
+		implements ICPPASTTemplateSpecialization, ICPPASTInternalTemplateDeclaration, IASTAmbiguityParent {
 
-    private IASTDeclaration declaration;
-    private ICPPTemplateScope templateScope;
-	private short nestingLevel= -1;
-	private byte isAssociatedWithLastName= -1;
+	private IASTDeclaration declaration;
+	private ICPPTemplateScope templateScope;
+	private short nestingLevel = -1;
+	private byte isAssociatedWithLastName = -1;
 
-
-    public CPPASTTemplateSpecialization() {
+	public CPPASTTemplateSpecialization() {
 	}
 
 	public CPPASTTemplateSpecialization(IASTDeclaration declaration) {
@@ -57,40 +56,47 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 
 	@Override
 	public IASTDeclaration getDeclaration() {
-        return declaration;
-    }
+		return declaration;
+	}
 
-    @Override
+	@Override
 	public void setDeclaration(IASTDeclaration declaration) {
-        assertNotFrozen();
-        this.declaration = declaration;
-        if (declaration != null) {
+		assertNotFrozen();
+		this.declaration = declaration;
+		if (declaration != null) {
 			declaration.setParent(this);
 			declaration.setPropertyInParent(ICPPASTTemplateSpecialization.OWNED_DECLARATION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclarations) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (declaration != null && !declaration.accept(action)) return false;
+		if (declaration != null && !declaration.accept(action))
+			return false;
 
-        if (action.shouldVisitDeclarations) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public boolean isExported() {
@@ -99,7 +105,7 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 
 	@Override
 	public void setExported(boolean value) {
-        assertNotFrozen();
+		assertNotFrozen();
 	}
 
 	@Override
@@ -109,7 +115,7 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 
 	@Override
 	public void addTemplateParameter(ICPPASTTemplateParameter param) {
-        assertNotFrozen();
+		assertNotFrozen();
 	}
 
 	@Override
@@ -125,14 +131,14 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 		return templateScope;
 	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (declaration == child) {
-            other.setParent(child.getParent());
-            other.setPropertyInParent(child.getPropertyInParent());
-            declaration = (IASTDeclaration) other;
-        }
-    }
+		if (declaration == child) {
+			other.setParent(child.getParent());
+			other.setPropertyInParent(child.getPropertyInParent());
+			declaration = (IASTDeclaration) other;
+		}
+	}
 
 	@Override
 	public short getNestingLevel() {
@@ -154,12 +160,12 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 
 	@Override
 	public void setAssociatedWithLastName(boolean value) {
-		isAssociatedWithLastName= value ? (byte) 1 : (byte) 0;
+		isAssociatedWithLastName = value ? (byte) 1 : (byte) 0;
 	}
 
 	@Override
 	public void setNestingLevel(short level) {
 		assert level >= 0;
-		nestingLevel= level;
+		nestingLevel = level;
 	}
 }

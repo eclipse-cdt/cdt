@@ -27,5 +27,5 @@ package org.eclipse.cdt.tests.dsf;
  * </pre> 
  */
 public class ValueHolder<V> {
-    public V fValue;
+	public V fValue;
 }

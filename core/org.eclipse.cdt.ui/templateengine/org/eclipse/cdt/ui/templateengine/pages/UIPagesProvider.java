@@ -24,7 +24,6 @@ import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.SimpleUIElementGroup;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
-
 /**
  * The UIPagesProvider creates a Map of UIPages. The Map will have ID as key,
  * UIPage as value. The sequence of call to get Map of UIPages. 1.
@@ -38,11 +37,10 @@ public class UIPagesProvider {
 	 */
 	private List<String> orderVector;
 
-
 	public UIPagesProvider() {
 		orderVector = new ArrayList<String>();
 	}
-	
+
 	/**
 	 * after getting this clear the Vector.
 	 * 
@@ -93,8 +91,7 @@ public class UIPagesProvider {
 					TemplateEngineUtil.log(e);
 				}
 			}
-		}
-		else {
+		} else {
 			if ((hasChildUIElement(uiElement))) {
 				String label = uiElement.getAttributes().get(UIElement.TITLE);
 				String description = (uiElement.getAttributes()).get(UIElement.DESCRIPTION);
@@ -162,7 +159,7 @@ public class UIPagesProvider {
 	 * @param pageId
 	 */
 	private void addToOrderVector(String pageId) {
-		for(String id : orderVector) {
+		for (String id : orderVector) {
 			if (id.equalsIgnoreCase(pageId))
 				return;
 		}

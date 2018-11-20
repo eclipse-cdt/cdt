@@ -29,37 +29,39 @@ import org.eclipse.cdt.internal.core.dom.lrparser.gpp.GPPSizeofExpressionParser;
 
 public class GPPSecondaryParserFactory implements ICPPSecondaryParserFactory {
 
-	
 	private static final GPPSecondaryParserFactory DEFAULT_INSTANCE = new GPPSecondaryParserFactory();
-	
+
 	public static GPPSecondaryParserFactory getDefault() {
 		return DEFAULT_INSTANCE;
 	}
-	
-	
+
 	@Override
-	public ISecondaryParser<ICPPASTTemplateParameter> getTemplateTypeParameterParser(ITokenStream stream, Map<String,String> properties) {
+	public ISecondaryParser<ICPPASTTemplateParameter> getTemplateTypeParameterParser(ITokenStream stream,
+			Map<String, String> properties) {
 		return new CPPTemplateTypeParameterParser(stream, properties);
-	}
-	
-	@Override
-	public ISecondaryParser<IASTDeclarator> getNoFunctionDeclaratorParser(ITokenStream stream, Map<String,String> properties) {
-		return new CPPNoFunctionDeclaratorParser(stream, properties); 
 	}
 
 	@Override
-	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Map<String,String> properties) {
+	public ISecondaryParser<IASTDeclarator> getNoFunctionDeclaratorParser(ITokenStream stream,
+			Map<String, String> properties) {
+		return new CPPNoFunctionDeclaratorParser(stream, properties);
+	}
+
+	@Override
+	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Map<String, String> properties) {
 		return new CPPExpressionParser(stream, properties);
 	}
 
 	@Override
-	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Map<String,String> properties) {
+	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream,
+			Map<String, String> properties) {
 		return new CPPNoCastExpressionParser(stream, properties);
 	}
 
 	@Override
-	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Map<String,String> properties) {
+	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream,
+			Map<String, String> properties) {
 		return new GPPSizeofExpressionParser(stream, properties);
 	}
-	
+
 }

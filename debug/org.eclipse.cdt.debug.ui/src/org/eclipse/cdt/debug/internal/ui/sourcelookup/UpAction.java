@@ -11,8 +11,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
- 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
+
 import java.util.List;
 
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * The action used to move source containers up in the list 
  */
 public class UpAction extends SourceContainerAction {
-	
+
 	public UpAction() {
 		super(SourceLookupUIMessages.UpAction_0);
 	}
@@ -50,16 +50,17 @@ public class UpAction extends SourceContainerAction {
 				list.set(index, temp);
 			}
 			top = index;
-		} 
+		}
 		setEntries(list);
 	}
-	
+
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		//check that something is selected, it's not first in the list, and it is a root tree node.
-		return !selection.isEmpty() && !isIndexSelected(selection, 0) && getViewer().getTree().getSelection()[0].getParentItem()==null;
+		return !selection.isEmpty() && !isIndexSelected(selection, 0)
+				&& getViewer().getTree().getSelection()[0].getParentItem() == null;
 	}
 }

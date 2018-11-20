@@ -31,33 +31,34 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 public class CCProjectWizard extends CDTCommonProjectWizard {
 
 	public CCProjectWizard() {
-		super(Messages.NewModelProjectWizard_2, Messages.NewModelProjectWizard_3); 
+		super(Messages.NewModelProjectWizard_2, Messages.NewModelProjectWizard_3);
 	}
-	
+
 	@Override
 	public String[] getNatures() {
 		return new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID };
 	}
-	
+
 	@Override
 	protected IProject continueCreation(IProject prj) {
 		if (continueCreationMonitor == null) {
 			continueCreationMonitor = new NullProgressMonitor();
 		}
-		
+
 		try {
-			continueCreationMonitor.beginTask(Messages.CCProjectWizard_0, 2); 
+			continueCreationMonitor.beginTask(Messages.CCProjectWizard_0, 2);
 			CProjectNature.addCNature(prj, new SubProgressMonitor(continueCreationMonitor, 1));
 			CCProjectNature.addCCNature(prj, new SubProgressMonitor(continueCreationMonitor, 1));
-		} catch (CoreException e) {}
-		finally {continueCreationMonitor.done();}
+		} catch (CoreException e) {
+		} finally {
+			continueCreationMonitor.done();
+		}
 		return prj;
 	}
-	
+
 	@Override
 	public String[] getContentTypeIDs() {
 		return new String[] { CCorePlugin.CONTENT_TYPE_CXXSOURCE, CCorePlugin.CONTENT_TYPE_CXXHEADER };
 	}
-	
 
 }

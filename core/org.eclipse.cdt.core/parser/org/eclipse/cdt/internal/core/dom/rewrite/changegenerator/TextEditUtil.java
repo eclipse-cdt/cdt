@@ -28,7 +28,7 @@ public class TextEditUtil {
 	// Do not instantiate. All methods are static.
 	private TextEditUtil() {
 	}
-	
+
 	/**
 	 * Degenerates the given edit tree into a list.<br>
 	 * All nodes of the result are leafs.<br>
@@ -38,16 +38,16 @@ public class TextEditUtil {
 	 * @return a MultiTextEdit containing the list of edits
 	 */
 	public static MultiTextEdit flatten(TextEdit edit) {
-		MultiTextEdit result= new MultiTextEdit();
+		MultiTextEdit result = new MultiTextEdit();
 		flatten(edit, result);
 		return result;
 	}
 
 	private static void flatten(TextEdit edit, MultiTextEdit result) {
 		if (edit.hasChildren()) {
-			TextEdit[] children= edit.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				TextEdit child= children[i];
+			TextEdit[] children = edit.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				TextEdit child = children[i];
 				child.getParent().removeChild(0);
 				flatten(child, result);
 			}
@@ -74,30 +74,30 @@ public class TextEditUtil {
 			return edit1;
 		}
 
-		MultiTextEdit result= new MultiTextEdit();
+		MultiTextEdit result = new MultiTextEdit();
 		merge(edit1, edit2, result);
 		return result;
 	}
 
 	private static void merge(TextEdit edit1, TextEdit edit2, MultiTextEdit result) {
 		if (edit1 instanceof MultiTextEdit && edit2 instanceof MultiTextEdit) {
-			MultiTextEdit multiTextEdit1= (MultiTextEdit) edit1;
+			MultiTextEdit multiTextEdit1 = (MultiTextEdit) edit1;
 			if (!multiTextEdit1.hasChildren()) {
 				result.addChild(edit2);
 				return;
 			}
 
-			MultiTextEdit multiTextEdit2= (MultiTextEdit) edit2;
+			MultiTextEdit multiTextEdit2 = (MultiTextEdit) edit2;
 			if (!multiTextEdit2.hasChildren()) {
 				result.addChild(edit1);
 				return;
 			}
 
-			TextEdit[] children1= multiTextEdit1.getChildren();
-			TextEdit[] children2= multiTextEdit2.getChildren();
+			TextEdit[] children1 = multiTextEdit1.getChildren();
+			TextEdit[] children2 = multiTextEdit2.getChildren();
 
-			int i1= 0;
-			int i2= 0;
+			int i1 = 0;
+			int i2 = 0;
 			while (i1 < children1.length && i2 < children2.length) {
 				while (i1 < children1.length && children1[i1].getExclusiveEnd() < children2[i2].getOffset()) {
 					edit1.removeChild(0);
@@ -138,9 +138,9 @@ public class TextEditUtil {
 				i2++;
 			}
 		} else if (edit1 instanceof MultiTextEdit) {
-			TextEdit[] children= edit1.getChildren();
+			TextEdit[] children = edit1.getChildren();
 
-			int i= 0;
+			int i = 0;
 			while (children[i].getExclusiveEnd() < edit2.getOffset()) {
 				edit1.removeChild(0);
 				result.addChild(children[i]);
@@ -159,9 +159,9 @@ public class TextEditUtil {
 				i++;
 			}
 		} else if (edit2 instanceof MultiTextEdit) {
-			TextEdit[] children= edit2.getChildren();
+			TextEdit[] children = edit2.getChildren();
 
-			int i= 0;
+			int i = 0;
 			while (children[i].getExclusiveEnd() < edit1.getOffset()) {
 				edit2.removeChild(0);
 				result.addChild(children[i]);

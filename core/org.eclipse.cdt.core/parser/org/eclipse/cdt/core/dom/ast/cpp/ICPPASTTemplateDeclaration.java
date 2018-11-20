@@ -81,7 +81,7 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 	 * Returns the template scope representing this declaration in the logical tree.
 	 */
 	public ICPPTemplateScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

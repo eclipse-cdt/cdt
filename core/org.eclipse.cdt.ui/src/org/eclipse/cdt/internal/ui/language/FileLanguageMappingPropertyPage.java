@@ -63,48 +63,48 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 	private static final int MINIMUM_COLUMN_WIDTH = 150;
 	private static final int LANGUAGE_COLUMN = 1;
 	private static final int CONFIGURATION_COLUMN = 0;
-	
+
 	private static final int LANGUAGE_ID = 0;
 	private static final int LANGUAGE_NAME = 1;
-	
+
 	private static final String ALL_CONFIGURATIONS = ""; //$NON-NLS-1$
-	
+
 	private IContentType fContentType;
 	private Composite fContents;
 	private Table fTable;
 	private ILanguage[] fLanguages;
 	private Map<String, ILanguage> fLanguageIds;
 	private boolean fHasChanges;
-	
+
 	public FileLanguageMappingPropertyPage() {
 		super();
 		fLanguages = LanguageManager.getInstance().getRegisteredLanguages();
 		fLanguageIds = LanguageVerifier.computeAvailableLanguages();
 	}
-	
+
 	@Override
 	protected Control createContents(Composite parent) {
 		IFile file = getFile();
 		IProject project = file.getProject();
 		fContentType = CContentTypes.getContentType(project, file.getName());
-		
+
 		fContents = new Composite(parent, SWT.NONE);
 		fContents.setLayout(new GridLayout(2, false));
 
 		Label contentTypeLabel = new Label(fContents, SWT.NONE);
 		contentTypeLabel.setText(PreferencesMessages.FileLanguagesPropertyPage_contentTypeLabel);
 		contentTypeLabel.setLayoutData(new GridData(SWT.TRAIL, SWT.CENTER, false, false));
-		
+
 		Label contentTypeDescriptionLabel = new Label(fContents, SWT.NONE);
 		contentTypeDescriptionLabel.setText(fContentType.getName());
 		contentTypeDescriptionLabel.setLayoutData(new GridData(SWT.LEAD, SWT.CENTER, false, false));
-		
+
 		try {
 			createMappingTable(fContents, file);
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		}
-		
+
 		Link link = new Link(fContents, SWT.NONE);
 		link.setText(PreferencesMessages.FileLanguagesPropertyPage_description);
 		link.addListener(SWT.Selection, new LanguageMappingLinkListener(parent.getShell(), project) {
@@ -117,9 +117,9 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 				}
 			}
 		});
-		
+
 		link.setLayoutData(new GridData(SWT.LEAD, SWT.CENTER, false, false, 2, 1));
-		
+
 		fContents.pack();
 		return fContents;
 	}
@@ -149,12 +149,12 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		layout.setColumnData(contentTypeColumn, new ColumnWeightData(1, MINIMUM_COLUMN_WIDTH, true));
 		layout.setColumnData(languageColumn, new ColumnWeightData(1, MINIMUM_COLUMN_WIDTH, true));
 		tableParent.setLayout(layout);
-		
+
 		final TableEditor editor = new TableEditor(fTable);
 		editor.grabHorizontal = true;
 		editor.grabVertical = true;
 		editor.setColumn(LANGUAGE_COLUMN);
-		
+
 		final IProject project = file.getProject();
 
 		fTable.addListener(SWT.Selection, new Listener() {
@@ -164,7 +164,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 				if (oldEditor != null) {
 					oldEditor.dispose();
 				}
-				
+
 				TableItem item = (TableItem) event.item;
 				if (item == null) {
 					return;
@@ -173,7 +173,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 				LanguageTableData data = (LanguageTableData) item.getData();
 				CCombo newEditor = new CCombo(fTable, SWT.READ_ONLY);
 				populateLanguages(project, file, data.configuration, data.languageId, newEditor);
-				
+
 				newEditor.addListener(SWT.Selection, new Listener() {
 					@Override
 					public void handleEvent(Event event) {
@@ -182,12 +182,12 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 						if (index != -1) {
 							TableItem item = editor.getItem();
 							item.setText(LANGUAGE_COLUMN, combo.getText());
-							
+
 							String selectedLanguage = ((String[]) combo.getData())[index];
 							LanguageTableData data = (LanguageTableData) item.getData();
 							data.languageId = selectedLanguage;
 							fHasChanges = true;
-							
+
 							try {
 								refreshMappings();
 							} catch (CoreException e) {
@@ -196,12 +196,12 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 						}
 					}
 				});
-				
+
 				newEditor.setFocus();
 				editor.setEditor(newEditor, item, LANGUAGE_COLUMN);
 			}
 		});
-		
+
 		populateLanguageTable(fTable);
 		refreshMappings();
 	}
@@ -211,58 +211,60 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		IProject project = file.getProject();
 		ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project);
 		ICConfigurationDescription[] configurations = description.getConfigurations();
-		
+
 		TableItem defaultItem = new TableItem(table, SWT.NONE);
 		defaultItem.setText(CONFIGURATION_COLUMN, PreferencesMessages.FileLanguagesPropertyPage_defaultMapping);
-		
+
 		ProjectLanguageConfiguration config = LanguageManager.getInstance().getLanguageConfiguration(project);
-		
+
 		Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(config, description, fLanguageIds);
 		if (missingLanguages.size() > 0) {
 			MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
 			messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
 			String affectedLanguages = LanguageVerifier.computeAffectedLanguages(missingLanguages);
-			messageBox.setMessage(Messages.format(PreferencesMessages.FileLanguagesPropertyPage_missingLanguage, affectedLanguages));
+			messageBox.setMessage(
+					Messages.format(PreferencesMessages.FileLanguagesPropertyPage_missingLanguage, affectedLanguages));
 			messageBox.open();
 		}
-		
+
 		String defaultLanguageId = config.getLanguageForFile(null, file);
-		LanguageTableData defaultData = new LanguageTableData(null, defaultLanguageId );
+		LanguageTableData defaultData = new LanguageTableData(null, defaultLanguageId);
 		defaultItem.setData(defaultData);
-		
+
 		for (int i = 0; i < configurations.length; i++) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(CONFIGURATION_COLUMN, configurations[i].getName());
 			String languageId = config.getLanguageForFile(configurations[i], file);
-			
+
 			if (languageId != null) {
 				ILanguage language = fLanguageIds.get(languageId);
-				String languageName =  language.getName();
+				String languageName = language.getName();
 				item.setText(LANGUAGE_COLUMN, languageName);
 			}
-			
+
 			LanguageTableData data = new LanguageTableData(configurations[i], languageId);
 			item.setData(data);
 		}
 	}
 
-	private void populateLanguages(IProject project, IFile file, ICConfigurationDescription configuration, String selectedLanguage, CCombo combo) {
+	private void populateLanguages(IProject project, IFile file, ICConfigurationDescription configuration,
+			String selectedLanguage, CCombo combo) {
 		try {
 			String[][] languageInfo = getLanguages(project, file, configuration);
 			combo.setItems(languageInfo[LANGUAGE_NAME]);
 			combo.setData(languageInfo[LANGUAGE_ID]);
-			
+
 			findSelection(configuration, selectedLanguage, combo);
 			fContents.layout();
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		}
 	}
-	
+
 	private void refreshMappings() throws CoreException {
 		IFile file = getFile();
 		IProject project = file.getProject();
-		
+
 		LanguageManager manager = LanguageManager.getInstance();
 		TableItem[] items = fTable.getItems();
 		for (int i = 0; i < items.length; i++) {
@@ -278,38 +280,39 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		}
 	}
 
-	private void findSelection(ICConfigurationDescription configuration, String languageId, CCombo combo) throws CoreException {
-//		if (languageId == null) {
-//			TableItem[] items = fTable.getItems();
-//			for (int i = 0; i < items.length; i++) {
-//				LanguageTableData data = (LanguageTableData) items[i].getData();
-//				if (configuration == null && data.configuration == null) {
-//					languageId = data.languageId;
-//					break;
-//				} else if (configuration != null && data.configuration != null) {
-//					languageId = data.languageId;
-//					break;
-//				}
-//			}
-//		}
-		
+	private void findSelection(ICConfigurationDescription configuration, String languageId, CCombo combo)
+			throws CoreException {
+		//		if (languageId == null) {
+		//			TableItem[] items = fTable.getItems();
+		//			for (int i = 0; i < items.length; i++) {
+		//				LanguageTableData data = (LanguageTableData) items[i].getData();
+		//				if (configuration == null && data.configuration == null) {
+		//					languageId = data.languageId;
+		//					break;
+		//				} else if (configuration != null && data.configuration != null) {
+		//					languageId = data.languageId;
+		//					break;
+		//				}
+		//			}
+		//		}
+
 		if (languageId == null) {
 			// No mapping was defined so we'll choose the default.
 			combo.select(0);
 			return;
 		}
-		
+
 		LanguageManager manager = LanguageManager.getInstance();
 		ILanguage language = manager.getLanguage(languageId);
 		String name = language.getName();
-		
+
 		for (int i = 1; i < combo.getItemCount(); i++) {
 			if (name.equals(combo.getItem(i))) {
 				combo.select(i);
 				return;
 			}
 		}
-		
+
 		// Couldn't find the mapping so we'll choose the default.
 		combo.select(0);
 	}
@@ -320,12 +323,12 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 			if (!fHasChanges) {
 				return true;
 			}
-			
+
 			IFile file = getFile();
 			IProject project = file.getProject();
 			LanguageManager manager = LanguageManager.getInstance();
 			ProjectLanguageConfiguration config = manager.getLanguageConfiguration(project);
-			
+
 			Map<String, String> mappings = new TreeMap<String, String>();
 			TableItem[] items = fTable.getItems();
 			for (int i = 0; i < items.length; i++) {
@@ -351,7 +354,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 			return false;
 		}
 	}
-	
+
 	private IFile getFile() {
 		return getElement().getAdapter(IFile.class);
 	}
@@ -360,11 +363,12 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 	protected void performDefaults() {
 		super.performDefaults();
 	}
-	
-	private String computeInheritedFrom(ICConfigurationDescription configuration, LanguageMapping mapping) throws CoreException {
+
+	private String computeInheritedFrom(ICConfigurationDescription configuration, LanguageMapping mapping)
+			throws CoreException {
 		String inheritedFrom;
 		ILanguage language;
-		
+
 		LanguageTableData data = (LanguageTableData) fTable.getItem(0).getData();
 		if (configuration != null && data.languageId != null) {
 			inheritedFrom = PreferencesMessages.FileLanguagesPropertyPage_inheritedFromFile;
@@ -387,10 +391,12 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		}
 		return Messages.format(inheritedFrom, language.getName());
 	}
-	
-	private LanguageMapping computeInheritedMapping(IProject project, IFile file, ICConfigurationDescription configuration) throws CoreException {
-		LanguageMapping mappings[] = LanguageMappingResolver.computeLanguage(project, file.getProjectRelativePath().toPortableString(), configuration, fContentType.getId(), true);
-		
+
+	private LanguageMapping computeInheritedMapping(IProject project, IFile file,
+			ICConfigurationDescription configuration) throws CoreException {
+		LanguageMapping mappings[] = LanguageMappingResolver.computeLanguage(project,
+				file.getProjectRelativePath().toPortableString(), configuration, fContentType.getId(), true);
+
 		// Skip over the file mapping because we want to know what mapping the file
 		// mapping overrides.
 		for (int i = 0; i < mappings.length; i++) {
@@ -398,15 +404,16 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 				return mappings[i];
 			}
 		}
-		
+
 		return null;
 	}
-	
-	private String[][] getLanguages(IProject project, IFile file, ICConfigurationDescription configuration) throws CoreException {
+
+	private String[][] getLanguages(IProject project, IFile file, ICConfigurationDescription configuration)
+			throws CoreException {
 		String[][] descriptions = new String[2][fLanguages.length + 1];
-		
+
 		LanguageMapping inheritedMapping = computeInheritedMapping(project, file, configuration);
-		
+
 		int index = 0;
 		descriptions[LANGUAGE_ID][index] = null;
 		descriptions[LANGUAGE_NAME][index] = computeInheritedFrom(configuration, inheritedMapping);
@@ -419,15 +426,14 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		}
 		return descriptions;
 	}
-	
+
 	private static class LanguageTableData {
 		ICConfigurationDescription configuration;
 		String languageId;
-		
+
 		LanguageTableData(ICConfigurationDescription configuration, String languageId) {
 			this.configuration = configuration;
 			this.languageId = languageId;
 		}
 	}
 }
-

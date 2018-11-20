@@ -38,8 +38,8 @@ import junit.framework.TestSuite;
 public class LRCompletionParseTest extends TestCase {
 
 	public static TestSuite suite() {
-        return new TestSuite(LRCompletionParseTest.class);
-    }
+		return new TestSuite(LRCompletionParseTest.class);
+	}
 
 	public LRCompletionParseTest() {
 	}
@@ -82,16 +82,8 @@ public class LRCompletionParseTest extends TestCase {
 	// First steal tests from CompletionParseTest
 
 	public void testCompletionStructField() throws Exception {
-		String code =
-				"int aVar; " +
-				"struct D{ " +
-				"   int aField1; " +
-				"   int aField2; " +
-				"}; " +
-				"void foo() {" +
-				"   struct D d; " +
-				"   d.a " +
-				"}\n";
+		String code = "int aVar; " + "struct D{ " + "   int aField1; " + "   int aField2; " + "}; " + "void foo() {"
+				+ "   struct D d; " + "   d.a " + "}\n";
 
 		int index = code.indexOf("d.a");
 
@@ -108,19 +100,15 @@ public class LRCompletionParseTest extends TestCase {
 		IBinding[] bindings = getBindings(names);
 
 		assertEquals(2, bindings.length);
-		assertEquals("aField1", ((IField)bindings[0]).getName());
-		assertEquals("aField2", ((IField)bindings[1]).getName());
+		assertEquals("aField1", ((IField) bindings[0]).getName());
+		assertEquals("aField2", ((IField) bindings[1]).getName());
 	}
 
 	public void testCompletionStructFieldPointer() throws Exception {
-		String code =
-				"struct Cube {                       " +
-				"   int nLen;                        " +
-				"   int nWidth;                      " +
-				"   int nHeight;                     " +
-				"};                                  " +
-				"int volume(struct Cube * pCube) { " +
-				"   pCube->SP                        ";
+		String code = "struct Cube {                       " + "   int nLen;                        "
+				+ "   int nWidth;                      " + "   int nHeight;                     "
+				+ "};                                  " + "int volume(struct Cube * pCube) { "
+				+ "   pCube->SP                        ";
 
 		IASTCompletionNode node = parse(code, code.indexOf("SP"));
 
@@ -130,18 +118,14 @@ public class LRCompletionParseTest extends TestCase {
 		IBinding[] bindings = getBindings(names);
 
 		assertEquals(3, bindings.length);
-		assertEquals("nHeight", ((IField)bindings[0]).getName());
-		assertEquals("nLen", ((IField)bindings[1]).getName());
-		assertEquals("nWidth", ((IField)bindings[2]).getName());
+		assertEquals("nHeight", ((IField) bindings[0]).getName());
+		assertEquals("nLen", ((IField) bindings[1]).getName());
+		assertEquals("nWidth", ((IField) bindings[2]).getName());
 	}
 
-	public void testCompletionParametersAsLocalVariables() throws Exception{
-		String code =
-				"int foo(int aParameter) {" +
-				"   int aLocal;" +
-				"   if (aLocal != 0) {" +
-				"      int aBlockLocal;" +
-				"      a \n";
+	public void testCompletionParametersAsLocalVariables() throws Exception {
+		String code = "int foo(int aParameter) {" + "   int aLocal;" + "   if (aLocal != 0) {"
+				+ "      int aBlockLocal;" + "      a \n";
 
 		int index = code.indexOf(" a ");
 
@@ -157,14 +141,12 @@ public class LRCompletionParseTest extends TestCase {
 
 		assertEquals(3, bindings.length);
 		assertEquals("aBlockLocal", ((IVariable) bindings[0]).getName());
-		assertEquals("aLocal",      ((IVariable) bindings[1]).getName());
-		assertEquals("aParameter",  ((IVariable) bindings[2]).getName());
+		assertEquals("aLocal", ((IVariable) bindings[1]).getName());
+		assertEquals("aParameter", ((IVariable) bindings[2]).getName());
 	}
 
 	public void testCompletionTypedef() throws Exception {
-		String code =
-				"typedef int Int; " +
-				"InSP";
+		String code = "typedef int Int; " + "InSP";
 
 		int index = code.indexOf("SP");
 
@@ -183,11 +165,8 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void testCompletion() throws Exception {
-		String code =
-				"#define GL_T 0x2001\n" +
-				"#define GL_TRUE 0x1\n" +
-				"typedef unsigned char   GLboolean;\n" +
-				"static GLboolean should_rotate = GL_T";
+		String code = "#define GL_T 0x2001\n" + "#define GL_TRUE 0x1\n" + "typedef unsigned char   GLboolean;\n"
+				+ "static GLboolean should_rotate = GL_T";
 
 		int index = code.indexOf("= GL_T");
 
@@ -201,19 +180,14 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void testCompletionInTypeDef() throws Exception {
-		String code =
-				"struct A {  int name;  };  \n" +
-				"typedef struct A * PA;     \n" +
-				"int main() {               \n" +
-				"   PA a;                   \n" +
-				"   a->SP                   \n" +
-				"}                          \n";
+		String code = "struct A {  int name;  };  \n" + "typedef struct A * PA;     \n"
+				+ "int main() {               \n" + "   PA a;                   \n" + "   a->SP                   \n"
+				+ "}                          \n";
 
 		int index = code.indexOf("SP"); //$NON-NLS-1$
 
 		IASTCompletionNode node = parse(code, index);
 		assertNotNull(node);
-
 
 		IASTName[] names = node.getNames();
 		assertEquals(1, names.length);
@@ -225,15 +199,9 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void _testCompletionFunctionCall() throws Exception {
-		String code =
-				"struct A {  	      \n" +
-				"   int f2;  		  \n" +
-				"   int f4;           \n" +
-				"};                   \n" +
-				"const A * foo() {}   \n" +
-				"void main()          \n" +
-				"{                    \n" +
-				"   foo()->SP         \n";
+		String code = "struct A {  	      \n" + "   int f2;  		  \n" + "   int f4;           \n"
+				+ "};                   \n" + "const A * foo() {}   \n" + "void main()          \n"
+				+ "{                    \n" + "   foo()->SP         \n";
 
 		int index = code.indexOf("SP");
 
@@ -251,10 +219,7 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void _testCompletionSizeof() throws Exception {
-		String code =
-				"int f() {\n" +
-				"short blah;\n" +
-				"int x = sizeof(bl";
+		String code = "int f() {\n" + "short blah;\n" + "int x = sizeof(bl";
 
 		int index = code.indexOf("of(bl");
 
@@ -271,10 +236,7 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void testCompletionForLoop() throws Exception {
-		String code =
-				"int f() {\n" +
-				" int biSizeImage = 5;\n" +
-				"for (int i = 0; i < bi ";
+		String code = "int f() {\n" + " int biSizeImage = 5;\n" + "for (int i = 0; i < bi ";
 
 		int index = code.indexOf("< bi");
 
@@ -291,10 +253,7 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void testCompletionStructPointer() throws Exception {
-		String code =
-				" struct Temp { char * total; };" +
-				" int f(struct Temp * t) {"  +
-				" t->t[5] = t->";
+		String code = " struct Temp { char * total; };" + " int f(struct Temp * t) {" + " t->t[5] = t->";
 
 		int index = code.indexOf("= t->");
 
@@ -311,18 +270,11 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void testCompletionEnum() throws Exception {
-		String code =
-				"typedef int DWORD;\n" +
-				"typedef char BYTE;\n" +
-				"#define MAKEFOURCC(ch0, ch1, ch2, ch3)                  \\\n" +
-				"((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\\n" +
-				"((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24))\n" +
-				"enum e {\n" +
-				"blah1 = 5,\n" +
-				"blah2 = MAKEFOURCC('a', 'b', 'c', 'd'),\n" +
-				"blah3\n" +
-				"};\n" +
-				"e mye = bl\n";
+		String code = "typedef int DWORD;\n" + "typedef char BYTE;\n"
+				+ "#define MAKEFOURCC(ch0, ch1, ch2, ch3)                  \\\n"
+				+ "((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\\n"
+				+ "((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24))\n" + "enum e {\n" + "blah1 = 5,\n"
+				+ "blah2 = MAKEFOURCC('a', 'b', 'c', 'd'),\n" + "blah3\n" + "};\n" + "e mye = bl\n";
 
 		int index = code.indexOf("= bl");
 
@@ -341,11 +293,8 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void testCompletionStructArray() throws Exception {
-		String code =
-				"struct packet { int a; int b; };\n" +
-				"struct packet buffer[5];\n" +
-				"int main(int argc, char **argv) {\n" +
-				" buffer[2].";
+		String code = "struct packet { int a; int b; };\n" + "struct packet buffer[5];\n"
+				+ "int main(int argc, char **argv) {\n" + " buffer[2].";
 
 		int index = code.indexOf("[2].");
 
@@ -373,11 +322,7 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void testCompletionPreprocessorMacro() throws Exception {
-		String code =
-				"#define AMACRO 99 \n" +
-				"int main() { \n" +
-				"	int AVAR; \n" +
-				"	int x = A \n";
+		String code = "#define AMACRO 99 \n" + "int main() { \n" + "	int AVAR; \n" + "	int x = A \n";
 
 		int index = code.indexOf("= A");
 
@@ -390,10 +335,7 @@ public class LRCompletionParseTest extends TestCase {
 	}
 
 	public void testCompletionInsidePreprocessorDirective() throws Exception {
-		String code =
-				"#define MAC1 99 \n" +
-				"#define MAC2 99 \n" +
-				"#ifdef MA";
+		String code = "#define MAC1 99 \n" + "#define MAC2 99 \n" + "#ifdef MA";
 
 		int index = code.length();
 

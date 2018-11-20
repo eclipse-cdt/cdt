@@ -20,7 +20,7 @@ public class ParserLogServiceWrapper extends AbstractParserLogService {
 	private IParserLogService fDelegate;
 
 	public ParserLogServiceWrapper(IParserLogService log) {
-		fDelegate= log;
+		fDelegate = log;
 	}
 
 	@Override

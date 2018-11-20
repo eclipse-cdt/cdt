@@ -44,7 +44,7 @@ public class MIGDBVersionInfo extends MIInfo {
 
 	private String fVersion;
 	private String fFullOutput;
-	
+
 	public MIGDBVersionInfo(MIOutput record) {
 		super(record);
 		parse();
@@ -55,11 +55,11 @@ public class MIGDBVersionInfo extends MIInfo {
 			MIOutput out = getMIOutput();
 			MIOOBRecord[] records = out.getMIOOBRecords();
 			StringBuilder builder = new StringBuilder();
-			for(MIOOBRecord rec : records) {
-                if (rec instanceof MIConsoleStreamOutput) {
-                    MIStreamRecord o = (MIStreamRecord)rec;
-                    builder.append(o.getString());
-                }
+			for (MIOOBRecord rec : records) {
+				if (rec instanceof MIConsoleStreamOutput) {
+					MIStreamRecord o = (MIStreamRecord) rec;
+					builder.append(o.getString());
+				}
 			}
 			fFullOutput = builder.toString();
 			fVersion = parseVersion(fFullOutput);
@@ -69,7 +69,7 @@ public class MIGDBVersionInfo extends MIInfo {
 	protected String parseVersion(String output) {
 		return LaunchUtils.getGDBVersionFromText(output);
 	}
-	
+
 	public String getFullOutput() {
 		return fFullOutput;
 	}

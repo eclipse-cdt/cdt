@@ -46,6 +46,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
+
 /**
  * Creates a project in a loop and checks that it is created with appropriate number
  * of build configurations
@@ -76,7 +77,7 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 		String pluginProjectTypeId = "cdt.managedbuild.target.gnu.cygwin.exe";
 
 		CoreModel coreModel = CoreModel.getDefault();
-		
+
 		{
 			// Create model project and accompanied descriptions
 			IProject project = BuildSystemTestHelper.createProject(projectName);
@@ -93,14 +94,16 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 
 				IConfiguration cfgs[] = type.getConfigurations();
 				Assert.assertNotNull("configurations not found", cfgs);
-				Assert.assertTrue("no configurations found in the project type",cfgs.length>0);
+				Assert.assertTrue("no configurations found in the project type", cfgs.length > 0);
 
 				for (IConfiguration configuration : cfgs) {
 					String id = ManagedBuildManager.calculateChildId(configuration.getId(), null);
-					Configuration config = new Configuration(mProj, (Configuration)configuration, id, false, true, false);
+					Configuration config = new Configuration(mProj, (Configuration) configuration, id, false, true,
+							false);
 					CConfigurationData data = config.getConfigurationData();
 					Assert.assertNotNull("data is null for created configuration", data);
-					ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+					ICConfigurationDescription cfgDes = des
+							.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 				}
 				Assert.assertEquals(2, des.getConfigurations().length);
 			}
@@ -111,7 +114,6 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 			project.close(null);
 		}
 
-
 		{
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRoot root = workspace.getRoot();
@@ -121,8 +123,7 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 			workspace.setDescription(workspaceDesc);
 
 			// Trying to induce an anomaly
-			for (int i=0;i<144;i++)
-			{
+			for (int i = 0; i < 144; i++) {
 				// Open project
 				IProject project = root.getProject(projectName);
 				project.open(null);
@@ -145,7 +146,7 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 				if (configurations.length != 2) {
 					String message = i + "-th round: Invalid number (not 2) of configurations loaded. ";
 					for (IConfiguration configuration : configurations) {
-						message = message + "["+configuration.getName()+"], ";
+						message = message + "[" + configuration.getName() + "], ";
 					}
 					Assert.assertEquals(message, 2, configurations.length);
 				}
@@ -155,7 +156,7 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 			}
 		}
 	}
-	
+
 	/**
 	 * This test is intended to check persistentProperties after a project is created.
 	 * @throws Exception
@@ -163,56 +164,60 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 	public void testPersistentProperties() throws Exception {
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
-		
+
 		String pluginProjectTypeId = "cdt.managedbuild.target.gnu.cygwin.exe";
 		final String projectName = "testPersistentProperties";
-		
+
 		{
 			// Create model project and accompanied descriptions
 			IProject project = BuildSystemTestHelper.createProject(projectName);
 			ICProjectDescription des = coreModel.createProjectDescription(project, false);
 			Assert.assertNotNull("createDescription returned null!", des);
-			
+
 			{
 				ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 				IProjectType type = ManagedBuildManager.getProjectType(pluginProjectTypeId);
 				Assert.assertNotNull("project type not found", type);
-				
+
 				ManagedProject mProj = new ManagedProject(project, type);
 				info.setManagedProject(mProj);
-				
+
 				IConfiguration cfgs[] = type.getConfigurations();
 				Assert.assertNotNull("configurations not found", cfgs);
-				Assert.assertTrue("no configurations found in the project type",cfgs.length>0);
-				
+				Assert.assertTrue("no configurations found in the project type", cfgs.length > 0);
+
 				for (IConfiguration configuration : cfgs) {
 					String id = ManagedBuildManager.calculateChildId(configuration.getId(), null);
-					Configuration config = new Configuration(mProj, (Configuration)configuration, id, false, true, false);
+					Configuration config = new Configuration(mProj, (Configuration) configuration, id, false, true,
+							false);
 					CConfigurationData data = config.getConfigurationData();
 					Assert.assertNotNull("data is null for created configuration", data);
-					ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+					ICConfigurationDescription cfgDes = des
+							.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 				}
 				Assert.assertEquals(2, des.getConfigurations().length);
 			}
-			
+
 			coreModel.setProjectDescription(project, des);
 			Assert.assertEquals(project, des.getProject());
-			
-			Thread.sleep(1000);  // let scanner discovery participate
+
+			Thread.sleep(1000); // let scanner discovery participate
 			try {
 				QualifiedName pdomName = new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName");
 				QualifiedName activeCfg = new QualifiedName(CCorePlugin.PLUGIN_ID, "activeConfiguration");
 				QualifiedName settingCfg = new QualifiedName(CCorePlugin.PLUGIN_ID, "settingConfiguration");
-				QualifiedName discoveredScannerConfigFileName = new QualifiedName(MakeCorePlugin.PLUGIN_ID, "discoveredScannerConfigFileName");
-				
+				QualifiedName discoveredScannerConfigFileName = new QualifiedName(MakeCorePlugin.PLUGIN_ID,
+						"discoveredScannerConfigFileName");
+
 				assertTrue("pdomName", project.getPersistentProperties().containsKey(pdomName));
 				assertTrue("activeCfg", project.getPersistentProperties().containsKey(activeCfg));
-				assertTrue("discoveredScannerConfigFileName", project.getPersistentProperties().containsKey(discoveredScannerConfigFileName));
+				assertTrue("discoveredScannerConfigFileName",
+						project.getPersistentProperties().containsKey(discoveredScannerConfigFileName));
 				assertTrue("settingCfg", project.getPersistentProperties().containsKey(settingCfg));
 			} catch (CoreException e) {
 				Assert.fail(e.getMessage());
 			}
-				
+
 			ResourceHelper.joinIndexerBeforeCleanup(getName());
 			project.close(null);
 		}
@@ -223,20 +228,20 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
-		
+
 		String projectName = getName();
 		String folderName = "Folder";
-		
+
 		// Create a managed project and a folder
 		IProject project = ManagedBuildTestHelper.createProject(projectName, pluginProjectTypeId);
 		IFolder folder = ManagedBuildTestHelper.createFolder(project, folderName);
 		IPath folderPath = folder.getProjectRelativePath();
-		
+
 		// Initial project description after creating the project
 		ICProjectDescription initialProjectDescription = mngr.getProjectDescription(project);
 		assertNotNull("createDescription returned null!", initialProjectDescription);
 		assertEquals(2, initialProjectDescription.getConfigurations().length);
-		
+
 		{
 			// No folder description initially as it does not have any custom settings
 			ICConfigurationDescription cfgDescription = initialProjectDescription.getConfigurations()[0];
@@ -253,15 +258,17 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 			assertNull(rcDescription);
 
 			// getResDesc() creates default folder description
-			ICFolderDescription parentDescription = (ICFolderDescription)cfgDescription.getResourceDescription(folderPath, false);
+			ICFolderDescription parentDescription = (ICFolderDescription) cfgDescription
+					.getResourceDescription(folderPath, false);
 			assertEquals("/", parentDescription.toString());
-			ICFolderDescription folderDescription = cfgDescription.createFolderDescription(folderPath, parentDescription);
-			assertEquals(folderPath,folderDescription.getPath());
+			ICFolderDescription folderDescription = cfgDescription.createFolderDescription(folderPath,
+					parentDescription);
+			assertEquals(folderPath, folderDescription.getPath());
 		}
-		
+
 		// OK button, persist the property project description prjd.
 		coreModel.setProjectDescription(project, propertyProjectDescription);
-		
+
 		{
 			// Folder description should be null as no custom settings were defined
 			ICProjectDescription prjDescription = mngr.getProjectDescription(project);

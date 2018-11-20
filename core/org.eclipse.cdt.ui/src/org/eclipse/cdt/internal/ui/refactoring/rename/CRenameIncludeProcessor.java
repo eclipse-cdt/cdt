@@ -11,7 +11,7 @@
  * Contributors: 
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
@@ -20,21 +20,19 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
  * Rename processor setting up input page for renaming include directives.
  */
 public class CRenameIncludeProcessor extends CRenameProcessorDelegate {
-    
-    public CRenameIncludeProcessor(CRenameProcessor input, String kind) {
-        super(input, kind);
-        setAvailableOptions( 
-                CRefactory.OPTION_IN_COMMENT | 
-                CRefactory.OPTION_IN_MACRO_DEFINITION |
-        		CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
-        setOptionsForcingPreview(-1);
-        setOptionsEnablingExhaustiveSearch(-1);
-    }
 
-    @Override
+	public CRenameIncludeProcessor(CRenameProcessor input, String kind) {
+		super(input, kind);
+		setAvailableOptions(CRefactory.OPTION_IN_COMMENT | CRefactory.OPTION_IN_MACRO_DEFINITION
+				| CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
+		setOptionsForcingPreview(-1);
+		setOptionsEnablingExhaustiveSearch(-1);
+	}
+
+	@Override
 	protected int getAcceptedLocations(int selectedOptions) {
-        return selectedOptions | CRefactory.OPTION_IN_INCLUDE_DIRECTIVE;
-    }
+		return selectedOptions | CRefactory.OPTION_IN_INCLUDE_DIRECTIVE;
+	}
 
 	@Override
 	public int getSaveMode() {

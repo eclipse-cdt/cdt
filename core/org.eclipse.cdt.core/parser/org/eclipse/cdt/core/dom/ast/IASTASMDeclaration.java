@@ -33,8 +33,7 @@ public interface IASTASMDeclaration extends IASTDeclaration {
 	 * @param assembly
 	 */
 	public void setAssembly(String assembly);
-	
-	
+
 	/**
 	 * @since 5.1
 	 */

@@ -29,10 +29,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CASTCompoundStatement extends ASTAttributeOwner implements IASTCompoundStatement, IASTAmbiguityParent {
-    private IASTStatement[] statements;
-    private IScope scope;
+	private IASTStatement[] statements;
+	private IScope scope;
 
-    @Override
+	@Override
 	public CASTCompoundStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -45,65 +45,75 @@ public class CASTCompoundStatement extends ASTAttributeOwner implements IASTComp
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public IASTStatement[] getStatements() {
-        if (statements == null) return IASTStatement.EMPTY_STATEMENT_ARRAY;
-        return ArrayUtil.trim(IASTStatement.class, statements);
-    }
+		if (statements == null)
+			return IASTStatement.EMPTY_STATEMENT_ARRAY;
+		return ArrayUtil.trim(IASTStatement.class, statements);
+	}
 
-    @Override
+	@Override
 	public void addStatement(IASTStatement statement) {
-        assertNotFrozen();
-        statements = ArrayUtil.append(IASTStatement.class, statements, statement);
-        if (statement != null) {
-        	statement.setParent(this);
-        	statement.setPropertyInParent(NESTED_STATEMENT);
-        }
-    }
+		assertNotFrozen();
+		statements = ArrayUtil.append(IASTStatement.class, statements, statement);
+		if (statement != null) {
+			statement.setParent(this);
+			statement.setPropertyInParent(NESTED_STATEMENT);
+		}
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        if (scope == null)
-            scope = new CScope(this, EScopeKind.eLocal);
-        return scope;
-    }
+		if (scope == null)
+			scope = new CScope(this, EScopeKind.eLocal);
+		return scope;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        IASTStatement[] s = getStatements();
-        for (int i = 0; i < s.length; i++) {
-            if (!s[i].accept(action)) return false;
-        }
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		IASTStatement[] s = getStatements();
+		for (int i = 0; i < s.length; i++) {
+			if (!s[i].accept(action))
+				return false;
+		}
 
-        if (action.shouldVisitStatements) {
-        	switch (action.leave(this)) {
-        		case ASTVisitor.PROCESS_ABORT: return false;
-        		case ASTVisitor.PROCESS_SKIP: return true;
-        		default: break;
-        	}
-        }
-        return true;
-    }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (statements == null) return;
-        for (int i = 0; i < statements.length; ++i) {
-            if (statements[i] == child) {
-                other.setParent(statements[i].getParent());
-                other.setPropertyInParent(statements[i].getPropertyInParent());
-                statements[i] = (IASTStatement) other;
-                break;
-            }
-        }
-    }
+		if (statements == null)
+			return;
+		for (int i = 0; i < statements.length; ++i) {
+			if (statements[i] == child) {
+				other.setParent(statements[i].getParent());
+				other.setPropertyInParent(statements[i].getPropertyInParent());
+				statements[i] = (IASTStatement) other;
+				break;
+			}
+		}
+	}
 }

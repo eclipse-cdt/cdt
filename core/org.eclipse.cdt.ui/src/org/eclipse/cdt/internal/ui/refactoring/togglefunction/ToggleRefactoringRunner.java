@@ -33,8 +33,8 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
  */
 public class ToggleRefactoringRunner extends RefactoringRunner {
 
-	public ToggleRefactoringRunner(ICElement element, ITextSelection selection,
-			IShellProvider shellProvider, ICProject project) {
+	public ToggleRefactoringRunner(ICElement element, ITextSelection selection, IShellProvider shellProvider,
+			ICProject project) {
 		super(element, selection, shellProvider, project);
 	}
 
@@ -42,15 +42,14 @@ public class ToggleRefactoringRunner extends RefactoringRunner {
 	public void run() {
 		Job[] jobs = Job.getJobManager().find(RefactoringJob.FAMILY_TOGGLE_DEFINITION);
 		if (jobs.length > 0) {
-			CUIPlugin.log("No concurrent toggling allowed", new NotSupportedException(""));  //$NON-NLS-1$//$NON-NLS-2$
+			CUIPlugin.log("No concurrent toggling allowed", new NotSupportedException("")); //$NON-NLS-1$//$NON-NLS-2$
 			return;
 		}
-		RefactoringSaveHelper saveHelper= new RefactoringSaveHelper(RefactoringSaveHelper.SAVE_REFACTORING);
+		RefactoringSaveHelper saveHelper = new RefactoringSaveHelper(RefactoringSaveHelper.SAVE_REFACTORING);
 		if (!saveHelper.saveEditors(shellProvider.getShell()))
 			return;
 
-		ToggleRefactoring refactoring =
-				new ToggleRefactoring(element, (ITextSelection) selection, project);
+		ToggleRefactoring refactoring = new ToggleRefactoring(element, (ITextSelection) selection, project);
 		new RefactoringJob(refactoring).schedule();
 	}
 }

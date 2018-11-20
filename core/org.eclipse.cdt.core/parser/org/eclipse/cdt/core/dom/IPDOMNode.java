@@ -29,7 +29,7 @@ public interface IPDOMNode {
 	 * Visits the children of this node.
 	 */
 	public void accept(IPDOMVisitor visitor) throws CoreException;
-	
+
 	/**
 	 * Frees memory allocated by this node, the node may no longer be used.
 	 * @param linkage the linkage the node belongs to.

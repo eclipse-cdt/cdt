@@ -28,8 +28,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
 
-public class CFolderDescriptionCache extends CDefaultFolderData implements
-		ICFolderDescription, ICachedData {
+public class CFolderDescriptionCache extends CDefaultFolderData implements ICFolderDescription, ICachedData {
 	private CConfigurationDescriptionCache fCfg;
 	private ResourceDescriptionHolder fRcDesHolder;
 
@@ -44,7 +43,8 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 	@Override
 	public ICLanguageSetting getLanguageSettingForFile(String fileName) {
 		IProject project = getConfiguration().getProjectDescription().getProject();
-		return CProjectDescriptionManager.getInstance().findLanguagSettingForFile(fileName, project, getLanguageSettings());
+		return CProjectDescriptionManager.getInstance().findLanguagSettingForFile(fileName, project,
+				getLanguageSettings());
 	}
 
 	@Override
@@ -106,8 +106,8 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		return getNestedResourceDescriptions(ICSettingBase.SETTING_FILE | ICSettingBase.SETTING_FOLDER);
 	}
 
-	private ResourceDescriptionHolder getRcDesHolder(){
-		if(fRcDesHolder == null)
+	private ResourceDescriptionHolder getRcDesHolder() {
+		if (fRcDesHolder == null)
 			fRcDesHolder = fCfg.createHolderForRc(getPath());
 		return fRcDesHolder;
 	}
@@ -127,26 +127,22 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 	}
 
 	@Override
-	public ICLanguageSetting createLanguageSettingForContentTypes(
-			String languageId, String[] typeIds) {
+	public ICLanguageSetting createLanguageSettingForContentTypes(String languageId, String[] typeIds) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
 	@Override
-	public ICLanguageSetting createLanguageSettingForExtensions(
-			String languageId, String[] extensions) {
+	public ICLanguageSetting createLanguageSettingForExtensions(String languageId, String[] extensions) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
 	@Override
-	public CLanguageData createLanguageDataForContentTypes(String languageId,
-			String[] typesIds) {
+	public CLanguageData createLanguageDataForContentTypes(String languageId, String[] typesIds) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
 	@Override
-	public CLanguageData createLanguageDataForExtensions(String languageId,
-			String[] extensions) {
+	public CLanguageData createLanguageDataForExtensions(String languageId, String[] extensions) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 

@@ -43,8 +43,8 @@ import org.eclipse.core.runtime.Status;
  * Tests for the {@link ASTCache}.
  */
 public class ASTCacheTests extends BaseTestCase {
-	private final static boolean DEBUG= false;
-	
+	private final static boolean DEBUG = false;
+
 	private static int fgReconcilerCount;
 
 	public class MockReconciler extends Thread {
@@ -54,31 +54,34 @@ public class ASTCacheTests extends BaseTestCase {
 		public IASTTranslationUnit fAST;
 
 		public MockReconciler(ITranslationUnit tu, ASTCache cache) {
-			super("MockReconciler-"+fgReconcilerCount++);
-			fTU= tu;
-			fCache= cache;
+			super("MockReconciler-" + fgReconcilerCount++);
+			fTU = tu;
+			fCache = cache;
 			setDaemon(true);
 		}
+
 		@Override
 		public void run() {
 			while (!fStopped) {
 				try {
 					synchronized (this) {
 						fCache.aboutToBeReconciled(fTU);
-						if (DEBUG) System.out.println("about ot reconcile "+fTU.getElementName());
-						fAST= null;
+						if (DEBUG)
+							System.out.println("about ot reconcile " + fTU.getElementName());
+						fAST = null;
 						notify();
 					}
 					Thread.sleep(50);
-					IASTTranslationUnit ast= fCache.createAST(fTU, fIndex, null);
+					IASTTranslationUnit ast = fCache.createAST(fTU, fIndex, null);
 					synchronized (this) {
-						fAST= ast;
-						if (DEBUG) System.out.println("reconciled "+fTU.getElementName());
+						fAST = ast;
+						if (DEBUG)
+							System.out.println("reconciled " + fTU.getElementName());
 						fCache.reconciled(fAST, fTU);
 					}
 					Thread.sleep(50);
 				} catch (InterruptedException exc) {
-					fStopped= true;
+					fStopped = true;
 					break;
 				}
 			}
@@ -95,29 +98,29 @@ public class ASTCacheTests extends BaseTestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(ASTCacheTests.class);
+		TestSuite suite = new TestSuite(ASTCacheTests.class);
 		return suite;
 	}
 
-	private final String SOURCE1= "void foo1() {}"; //$NON-NLS-1$
-	private final String SOURCE2= "void foo2() {}"; //$NON-NLS-1$
+	private final String SOURCE1 = "void foo1() {}"; //$NON-NLS-1$
+	private final String SOURCE2 = "void foo2() {}"; //$NON-NLS-1$
 
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		IProgressMonitor npm= new NullProgressMonitor();
-		fProject= createProject("ASTCacheTest");
+		IProgressMonitor npm = new NullProgressMonitor();
+		fProject = createProject("ASTCacheTest");
 		assertNotNull(fProject);
-		IFile file1= createFile(fProject.getProject(), "source1.cpp", SOURCE1);
+		IFile file1 = createFile(fProject.getProject(), "source1.cpp", SOURCE1);
 		assertNotNull(file1);
-		IFile file2= createFile(fProject.getProject(), "source2.cpp", SOURCE2);
+		IFile file2 = createFile(fProject.getProject(), "source2.cpp", SOURCE2);
 		assertNotNull(file2);
-		fTU1= (ITranslationUnit) CoreModel.getDefault().create(file1);
+		fTU1 = (ITranslationUnit) CoreModel.getDefault().create(file1);
 		assertNotNull(fTU1);
-		fTU2= (ITranslationUnit) CoreModel.getDefault().create(file2);
+		fTU2 = (ITranslationUnit) CoreModel.getDefault().create(file2);
 		assertNotNull(fTU2);
 		waitForIndexer(fProject);
-		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
+		fIndex = CCorePlugin.getIndexManager().getIndex(fProject);
 		fIndex.acquireReadLock();
 	}
 
@@ -146,9 +149,9 @@ public class ASTCacheTests extends BaseTestCase {
 		checkAccessWithSequentialReconciler();
 		checkAccessWithConcurrentReconciler();
 	}
-	
+
 	private void checkActiveElement() throws Exception {
-		ASTCache cache= new ASTCache();
+		ASTCache cache = new ASTCache();
 		assertFalse(cache.isActiveElement(fTU1));
 		assertFalse(cache.isActiveElement(fTU2));
 		cache.setActiveElement(fTU1);
@@ -158,12 +161,12 @@ public class ASTCacheTests extends BaseTestCase {
 		assertFalse(cache.isActiveElement(fTU1));
 		assertTrue(cache.isActiveElement(fTU2));
 	}
-	
+
 	private void checkSingleThreadAccess() throws Exception {
-		final ASTCache cache= new ASTCache();
-		final int[] counter= {0};
+		final ASTCache cache = new ASTCache();
+		final int[] counter = { 0 };
 		cache.setActiveElement(fTU1);
-		IStatus status= cache.runOnAST(fTU1, false, null, new ASTRunnable() {
+		IStatus status = cache.runOnAST(fTU1, false, null, new ASTRunnable() {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				assertNull(ast);
@@ -173,9 +176,9 @@ public class ASTCacheTests extends BaseTestCase {
 		});
 		assertEquals(1, counter[0]);
 
-		IProgressMonitor npm= new NullProgressMonitor();
+		IProgressMonitor npm = new NullProgressMonitor();
 		npm.setCanceled(true);
-		status= cache.runOnAST(fTU1, true, npm, new ASTRunnable() {
+		status = cache.runOnAST(fTU1, true, npm, new ASTRunnable() {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				assertNull(ast);
@@ -186,7 +189,7 @@ public class ASTCacheTests extends BaseTestCase {
 		assertEquals(2, counter[0]);
 
 		npm.setCanceled(false);
-		status= cache.runOnAST(fTU1, true, npm, new ASTRunnable() {
+		status = cache.runOnAST(fTU1, true, npm, new ASTRunnable() {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				assertNotNull(ast);
@@ -198,9 +201,9 @@ public class ASTCacheTests extends BaseTestCase {
 	}
 
 	private void checkAccessWithSequentialReconciler() throws Exception {
-		final ASTCache cache= new ASTCache();
-		final MockReconciler reconciler1= new MockReconciler(fTU1, cache);
-		final MockReconciler reconciler2= new MockReconciler(fTU2, cache);
+		final ASTCache cache = new ASTCache();
+		final MockReconciler reconciler1 = new MockReconciler(fTU1, cache);
+		final MockReconciler reconciler2 = new MockReconciler(fTU2, cache);
 		try {
 			cache.setActiveElement(fTU1);
 			assertFalse(cache.isReconciling(fTU1));
@@ -211,8 +214,8 @@ public class ASTCacheTests extends BaseTestCase {
 				assertTrue(cache.isActiveElement(fTU1));
 				assertTrue(cache.isReconciling(fTU1));
 			}
-			reconciler1.fStopped= true;
-			IStatus status= cache.runOnAST(fTU1, true, null, new ASTRunnable() {
+			reconciler1.fStopped = true;
+			IStatus status = cache.runOnAST(fTU1, true, null, new ASTRunnable() {
 				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					assertNotNull(ast);
@@ -222,7 +225,7 @@ public class ASTCacheTests extends BaseTestCase {
 					return Status.OK_STATUS;
 				}
 			});
-			
+
 			// change active element
 			cache.setActiveElement(fTU2);
 			assertFalse(cache.isReconciling(fTU2));
@@ -233,9 +236,9 @@ public class ASTCacheTests extends BaseTestCase {
 				assertTrue(cache.isActiveElement(fTU2));
 				assertTrue(cache.isReconciling(fTU2));
 			}
-			reconciler2.fStopped= true;
-			
-			status= cache.runOnAST(fTU2, true, null, new ASTRunnable() {
+			reconciler2.fStopped = true;
+
+			status = cache.runOnAST(fTU2, true, null, new ASTRunnable() {
 				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					assertNotNull(ast);
@@ -246,25 +249,26 @@ public class ASTCacheTests extends BaseTestCase {
 				}
 			});
 		} finally {
-			reconciler1.fStopped= true;
+			reconciler1.fStopped = true;
 			reconciler1.join(1000);
-			reconciler2.fStopped= true;
+			reconciler2.fStopped = true;
 			reconciler2.join(1000);
 		}
 	}
 
 	private void checkAccessWithConcurrentReconciler() throws Exception {
-		ASTCache cache= new ASTCache();
-		MockReconciler reconciler1= new MockReconciler(fTU1, cache);
-		MockReconciler reconciler2= new MockReconciler(fTU2, cache);
+		ASTCache cache = new ASTCache();
+		MockReconciler reconciler1 = new MockReconciler(fTU1, cache);
+		MockReconciler reconciler2 = new MockReconciler(fTU2, cache);
 		reconciler1.start();
 		Thread.sleep(50);
 		reconciler2.start();
 		try {
-			int iterations= 0;
+			int iterations = 0;
 			while (iterations < 10) {
 				++iterations;
-				if (DEBUG) System.out.println("iteration="+iterations);
+				if (DEBUG)
+					System.out.println("iteration=" + iterations);
 				cache.setActiveElement(fTU1);
 				Thread.sleep(50);
 				waitForAST(cache, fTU1, new ASTRunnable() {
@@ -305,23 +309,24 @@ public class ASTCacheTests extends BaseTestCase {
 						return Status.OK_STATUS;
 					}
 				});
-}
+			}
 		} finally {
-			reconciler1.fStopped= true;
+			reconciler1.fStopped = true;
 			reconciler1.join(1000);
-			reconciler2.fStopped= true;
+			reconciler2.fStopped = true;
 			reconciler2.join(1000);
 		}
 	}
 
 	private void waitForAST(ASTCache cache, ITranslationUnit tUnit, ASTRunnable runnable) {
-		if (DEBUG) System.out.println("waiting for "+tUnit.getElementName());
-		long start= System.currentTimeMillis();
+		if (DEBUG)
+			System.out.println("waiting for " + tUnit.getElementName());
+		long start = System.currentTimeMillis();
 		try {
 			cache.runOnAST(tUnit, true, null, runnable);
-		}
-		finally {
-			if (DEBUG) System.out.println("wait time= " + (System.currentTimeMillis() - start));
+		} finally {
+			if (DEBUG)
+				System.out.println("wait time= " + (System.currentTimeMillis() - start));
 		}
 	}
 }

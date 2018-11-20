@@ -14,12 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-
 
 /**
  * CElementLabelProvider that respects settings from the Appearance preference page.
@@ -43,11 +41,11 @@ public class StandardCElementLabelProvider extends AppearanceAwareLabelProvider 
 	/**
 	 * Creates a StandardCElementLabelProvider with DEFAULT_TEXTFLAGS, DEFAULT_IMAGEFLAGS
 	 * and the ErrorTickAdornmentProvider.
-	 */	
+	 */
 	public StandardCElementLabelProvider() {
 		super();
 	}
-	
+
 	private void initMasks() {
 		// turn on or off the flags depending on property/preference changes.
 	}
@@ -64,7 +62,7 @@ public class StandardCElementLabelProvider extends AppearanceAwareLabelProvider 
 			initMasks();
 			LabelProviderChangedEvent lpEvent= new LabelProviderChangedEvent(this, null); // refresh all
 			fireLabelProviderChanged(lpEvent);
-		}	*/	
+		}	*/
 	}
 
 	/*

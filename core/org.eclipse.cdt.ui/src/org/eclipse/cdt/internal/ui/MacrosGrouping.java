@@ -61,7 +61,7 @@ public class MacrosGrouping extends CElementGrouping {
 			return true;
 		}
 		if (obj instanceof MacrosGrouping) {
-			return tu.equals(((MacrosGrouping)obj).tu) ;
+			return tu.equals(((MacrosGrouping) obj).tu);
 		}
 		return false;
 	}

@@ -36,7 +36,9 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 	private static final String DEFAULT_PARTNER_FILE_SUFFIXES = "test,unittest"; //$NON-NLS-1$
 	private static final String DEFAULT_EXTENSIONS_OF_AUTO_EXPORTED_FILES = "inc"; //$NON-NLS-1$
 
-	public static enum UnusedStatementDisposition { REMOVE, COMMENT_OUT, KEEP }
+	public static enum UnusedStatementDisposition {
+		REMOVE, COMMENT_OUT, KEEP
+	}
 
 	public final Map<IncludeKind, IncludeGroupStyle> includeStyles;
 	public final boolean allowReordering;
@@ -62,7 +64,8 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 		loadStyle(IncludeKind.IN_SUBFOLDER, PreferenceConstants.INCLUDE_STYLE_SUBFOLDER, project);
 		loadStyle(IncludeKind.SYSTEM, PreferenceConstants.INCLUDE_STYLE_SYSTEM, project);
 		loadStyle(IncludeKind.SYSTEM_WITH_EXTENSION, PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITH_EXTENSION, project);
-		loadStyle(IncludeKind.SYSTEM_WITHOUT_EXTENSION, PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION, project);
+		loadStyle(IncludeKind.SYSTEM_WITHOUT_EXTENSION, PreferenceConstants.INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION,
+				project);
 		loadStyle(IncludeKind.OTHER, PreferenceConstants.INCLUDE_STYLE_OTHER, project);
 		loadStyle(IncludeKind.IN_SAME_PROJECT, PreferenceConstants.INCLUDE_STYLE_SAME_PROJECT, project);
 		loadStyle(IncludeKind.IN_OTHER_PROJECT, PreferenceConstants.INCLUDE_STYLE_OTHER_PROJECT, project);
@@ -77,48 +80,47 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 		}
 		// TODO(sprigogin): Load styles for headers matching patterns.
 
-		forwardDeclareCompositeTypes = PreferenceConstants.getPreference(
-				PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES, project, true);
-		forwardDeclareEnums = PreferenceConstants.getPreference(
-				PreferenceConstants.FORWARD_DECLARE_ENUMS, project, false);
-		forwardDeclareFunctions = PreferenceConstants.getPreference(
-				PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, project, false);
-		forwardDeclareExternalVariables = PreferenceConstants.getPreference(
-				PreferenceConstants.FORWARD_DECLARE_EXTERNAL_VARIABLES, project, false);
-		forwardDeclareTemplates = PreferenceConstants.getPreference(
-				PreferenceConstants.FORWARD_DECLARE_TEMPLATES, project, false);
-		forwardDeclareNamespaceElements = PreferenceConstants.getPreference(
-				PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS, project, true);
+		forwardDeclareCompositeTypes = PreferenceConstants
+				.getPreference(PreferenceConstants.FORWARD_DECLARE_COMPOSITE_TYPES, project, true);
+		forwardDeclareEnums = PreferenceConstants.getPreference(PreferenceConstants.FORWARD_DECLARE_ENUMS, project,
+				false);
+		forwardDeclareFunctions = PreferenceConstants.getPreference(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS,
+				project, false);
+		forwardDeclareExternalVariables = PreferenceConstants
+				.getPreference(PreferenceConstants.FORWARD_DECLARE_EXTERNAL_VARIABLES, project, false);
+		forwardDeclareTemplates = PreferenceConstants.getPreference(PreferenceConstants.FORWARD_DECLARE_TEMPLATES,
+				project, false);
+		forwardDeclareNamespaceElements = PreferenceConstants
+				.getPreference(PreferenceConstants.FORWARD_DECLARE_NAMESPACE_ELEMENTS, project, true);
 
 		// Although templates may be forward declared, it is done so rarely that we assume that it
 		// never happens.
 		// TODO(sprigogin): Create a preference for this.
 		assumeTemplatesMayBeForwardDeclared = false;
 
-		String value = PreferenceConstants.getPreference(
-				PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, project, DEFAULT_PARTNER_FILE_SUFFIXES);
+		String value = PreferenceConstants.getPreference(PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, project,
+				DEFAULT_PARTNER_FILE_SUFFIXES);
 		partnerFileSuffixes = value.split(","); //$NON-NLS-1$
-		
-		value = PreferenceConstants.getPreference(
-				PreferenceConstants.INCLUDES_EXTENSIONS_OF_AUTO_EXPORTED_FILES, project,
-				DEFAULT_EXTENSIONS_OF_AUTO_EXPORTED_FILES);
+
+		value = PreferenceConstants.getPreference(PreferenceConstants.INCLUDES_EXTENSIONS_OF_AUTO_EXPORTED_FILES,
+				project, DEFAULT_EXTENSIONS_OF_AUTO_EXPORTED_FILES);
 		extensionsOfAutoExportedFiles = value.split(","); //$NON-NLS-1$
 
-		heuristicHeaderSubstitution = PreferenceConstants.getPreference(
-				PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION, project, true);
+		heuristicHeaderSubstitution = PreferenceConstants
+				.getPreference(PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION, project, true);
 
-		allowReordering = PreferenceConstants.getPreference(
-				PreferenceConstants.INCLUDES_ALLOW_REORDERING, project, true);
+		allowReordering = PreferenceConstants.getPreference(PreferenceConstants.INCLUDES_ALLOW_REORDERING, project,
+				true);
 
 		// TODO(sprigogin): Create a preference for this.
 		allowIndirectInclusion = false;
 
-		allowPartnerIndirectInclusion = PreferenceConstants.getPreference(
-				PreferenceConstants.INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, project, true);
+		allowPartnerIndirectInclusion = PreferenceConstants
+				.getPreference(PreferenceConstants.INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, project, true);
 
 		// Unused include handling preferences
-		value = PreferenceConstants.getPreference(
-				PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION, project, null);
+		value = PreferenceConstants.getPreference(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION, project,
+				null);
 		UnusedStatementDisposition disposition = null;
 		if (value != null)
 			disposition = UnusedStatementDisposition.valueOf(value);
@@ -198,14 +200,14 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 
 		store.setDefault(PreferenceConstants.INCLUDES_HEADER_SUBSTITUTION,
 				HeaderSubstitutionMap.serializeMaps(GCCHeaderSubstitutionMaps.getDefaultMaps()));
-		store.setDefault(PreferenceConstants.INCLUDES_SYMBOL_EXPORTING_HEADERS,
-				SymbolExportMap.serializeMaps(Collections.singletonList(GCCHeaderSubstitutionMaps.getSymbolExportMap())));
+		store.setDefault(PreferenceConstants.INCLUDES_SYMBOL_EXPORTING_HEADERS, SymbolExportMap
+				.serializeMaps(Collections.singletonList(GCCHeaderSubstitutionMaps.getSymbolExportMap())));
 	}
 
 	@Override
 	public int compare(StyledInclude include1, StyledInclude include2) {
-		int c = include1.getStyle().getGroupingStyle(includeStyles).getOrder() -
-				include2.getStyle().getGroupingStyle(includeStyles).getOrder();
+		int c = include1.getStyle().getGroupingStyle(includeStyles).getOrder()
+				- include2.getStyle().getGroupingStyle(includeStyles).getOrder();
 		if (c != 0)
 			return c;
 		return include1.getIncludeInfo().compareTo(include2.getIncludeInfo());

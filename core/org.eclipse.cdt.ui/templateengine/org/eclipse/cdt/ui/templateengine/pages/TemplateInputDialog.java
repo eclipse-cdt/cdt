@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
 
-
 /**
  * Creates a JFace Dialog for the user to get name-value pair to perform
  * SharedDefaults settings. The class takes care of user input validation.
@@ -277,15 +276,15 @@ public class TemplateInputDialog extends Dialog {
 
 	public int popDuplicate() {
 
-		final int[] result = new int[]{ 0 };
+		final int[] result = new int[] { 0 };
 		Display.getDefault().syncExec(new Runnable() {
-		    @Override
-		    public void run() {
+			@Override
+			public void run() {
 				MessageBox mBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_INFORMATION);
 				mBox.setText(TemplatePreferencePage.Message);
 				mBox.setMessage(TemplatePreferencePage.DuplicateEntry);
 				result[0] = mBox.open();
-		    }
+			}
 		});
 		return result[0];
 	}

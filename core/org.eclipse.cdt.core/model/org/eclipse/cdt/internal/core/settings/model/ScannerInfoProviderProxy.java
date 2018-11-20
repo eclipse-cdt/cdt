@@ -26,10 +26,10 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
-public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements IScannerInfoProvider, IScannerInfoChangeListener{
+public class ScannerInfoProviderProxy extends AbstractCExtensionProxy
+		implements IScannerInfoProvider, IScannerInfoChangeListener {
 	private Map<IProject, List<IScannerInfoChangeListener>> listeners;
 	private IScannerInfoProvider fProvider;
-
 
 	public ScannerInfoProviderProxy(IProject project) {
 		super(project, CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
@@ -40,7 +40,6 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 		providerRequested();
 		return fProvider.getScannerInformation(resource);
 	}
-
 
 	protected void notifyInfoListeners(IResource rc, IScannerInfo info) {
 		// Call in the cavalry
@@ -54,7 +53,6 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 			observers[i].changeNotification(rc, info);
 		}
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -120,32 +118,31 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 
 	@SuppressWarnings("deprecation")
 	@Override
-	protected Object createDefaultProvider(ICConfigurationDescription des, boolean newStile){
-		if(newStile)
+	protected Object createDefaultProvider(ICConfigurationDescription des, boolean newStile) {
+		if (newStile)
 			return new DescriptionScannerInfoProvider(getProject());
 		return org.eclipse.cdt.core.resources.ScannerProvider.getInstance();
 	}
 
 	@Override
 	protected void deinitializeProvider(Object o) {
-		IScannerInfoProvider provider = (IScannerInfoProvider)o;
+		IScannerInfoProvider provider = (IScannerInfoProvider) o;
 		provider.unsubscribe(getProject(), this);
-		if(provider instanceof DescriptionScannerInfoProvider){
-			((DescriptionScannerInfoProvider)provider).close();
+		if (provider instanceof DescriptionScannerInfoProvider) {
+			((DescriptionScannerInfoProvider) provider).close();
 		}
 	}
 
 	@Override
 	protected void initializeProvider(Object o) {
-		IScannerInfoProvider provider = (IScannerInfoProvider)o;
+		IScannerInfoProvider provider = (IScannerInfoProvider) o;
 		fProvider = provider;
 		provider.subscribe(getProject(), this);
 	}
 
 	@Override
-	protected void postProcessProviderChange(Object newProvider,
-			Object oldProvider) {
-		if(oldProvider != null)
+	protected void postProcessProviderChange(Object newProvider, Object oldProvider) {
+		if (oldProvider != null)
 			notifyInfoListeners(getProject(), getScannerInformation(getProject()));
 	}
 

@@ -23,18 +23,17 @@ import org.eclipse.core.runtime.CoreException;
 public class Console implements IConsole {
 	IProject project;
 	IBuildConsoleManager fConsoleManager;
-	
+
 	public Console(String consoleName, String contextId) {
-		fConsoleManager = CUIPlugin.getDefault().getConsoleManager(consoleName, 
-				contextId);
+		fConsoleManager = CUIPlugin.getDefault().getConsoleManager(consoleName, contextId);
 	}
-	
+
 	@Override
-	public void start(IProject project ) {
+	public void start(IProject project) {
 		this.project = project;
 		fConsoleManager.getConsole(project).start(project);
 	}
-	
+
 	/**
 	 * @throws CoreException
 	 * @see org.eclipse.cdt.core.resources.IConsole#getOutputStream()

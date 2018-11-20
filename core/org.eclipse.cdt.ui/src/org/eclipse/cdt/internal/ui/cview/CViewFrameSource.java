@@ -18,25 +18,26 @@ import org.eclipse.ui.views.framelist.TreeFrame;
 import org.eclipse.ui.views.framelist.TreeViewerFrameSource;
 
 public class CViewFrameSource extends TreeViewerFrameSource {
-        private CView cview;
+	private CView cview;
 
-        @Override
-		protected TreeFrame createFrame(Object input) {
-                TreeFrame frame = super.createFrame(input);
-                frame.setToolTipText(cview.getToolTipText(input));
-                return frame;
-        }
-        /**
-         * Also updates the title of the packages explorer
-         */
-        @Override
-		protected void frameChanged(TreeFrame frame) {
-                super.frameChanged(frame);
-                cview.updateTitle();
-        }
-        public CViewFrameSource(CView cview) {
-                super(cview.getViewer());
-                this.cview = cview;
-        }
+	@Override
+	protected TreeFrame createFrame(Object input) {
+		TreeFrame frame = super.createFrame(input);
+		frame.setToolTipText(cview.getToolTipText(input));
+		return frame;
+	}
+
+	/**
+	 * Also updates the title of the packages explorer
+	 */
+	@Override
+	protected void frameChanged(TreeFrame frame) {
+		super.frameChanged(frame);
+		cview.updateTitle();
+	}
+
+	public CViewFrameSource(CView cview) {
+		super(cview.getViewer());
+		this.cview = cview;
+	}
 }
-

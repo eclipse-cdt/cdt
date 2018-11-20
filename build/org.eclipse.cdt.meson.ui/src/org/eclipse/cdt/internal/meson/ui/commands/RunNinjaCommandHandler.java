@@ -45,18 +45,18 @@ public class RunNinjaCommandHandler extends AbstractMesonCommandHandler {
 	public Object execute(ExecutionEvent event) {
 		return execute1(event);
 	}
-	
+
 	@Override
-	public void run (Shell shell) {
+	public void run(Shell shell) {
 		// Set up console
 		IConsole console = CCorePlugin.getDefault().getConsole();
 		IProject project = getSelectedContainer().getAdapter(IProject.class);
 		console.start(project);
 		try {
 			ICBuildConfiguration buildConfig = project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class);
-			
+
 			if (buildConfig instanceof MesonBuildConfiguration) {
-				MesonBuildConfiguration config = (MesonBuildConfiguration)buildConfig;
+				MesonBuildConfiguration config = (MesonBuildConfiguration) buildConfig;
 				RunNinja wizard = new RunNinja(buildConfig);
 				final WizardDialog dialog = new WizardDialog(shell, wizard);
 				Display.getDefault().syncExec(() -> {
@@ -86,7 +86,8 @@ public class RunNinjaCommandHandler extends AbstractMesonCommandHandler {
 								ninjaArgs = ninjaArgList.toArray(new String[0]);
 							}
 							try {
-								config.build(IncrementalProjectBuilder.FULL_BUILD, null, ninjaEnv, ninjaArgs, console, monitor);
+								config.build(IncrementalProjectBuilder.FULL_BUILD, null, ninjaEnv, ninjaArgs, console,
+										monitor);
 								if (monitor.isCanceled()) {
 									return Status.CANCEL_STATUS;
 								}
@@ -103,5 +104,5 @@ public class RunNinjaCommandHandler extends AbstractMesonCommandHandler {
 			Activator.log(e);
 		}
 	}
-	
+
 }

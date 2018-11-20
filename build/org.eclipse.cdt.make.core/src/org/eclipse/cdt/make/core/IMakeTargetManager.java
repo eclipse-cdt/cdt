@@ -27,19 +27,22 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IMakeTargetManager {
 	IMakeTarget createTarget(IProject project, String targetName, String targetBuilderID) throws CoreException;
+
 	/**
 	 * Adds target to manager.
 	 */
 	void addTarget(IMakeTarget target) throws CoreException;
-	
+
 	/**
 	 * Adds target to manager on a specific projects folder. It is assumed
 	 * that the target and container belong to the same project.
 	 */
 	void addTarget(IContainer container, IMakeTarget target) throws CoreException;
+
 	void removeTarget(IMakeTarget target) throws CoreException;
+
 	void renameTarget(IMakeTarget target, String name) throws CoreException;
-	
+
 	/**
 	 * Set targets on a specific projects folder.  It is assumed
 	 * all targets and container belong to the same project which
@@ -55,19 +58,22 @@ public interface IMakeTargetManager {
 	 * @since 7.0
 	 */
 	public void setTargets(IContainer container, IMakeTarget[] targets) throws CoreException;
-	
+
 	boolean targetExists(IMakeTarget target);
-	
+
 	IMakeTarget[] getTargets(IContainer container) throws CoreException;
+
 	IMakeTarget findTarget(IContainer container, String name) throws CoreException;
 
-	IProject[]    getTargetBuilderProjects() throws CoreException;
-	
+	IProject[] getTargetBuilderProjects() throws CoreException;
+
 	String getBuilderID(String targetBuilderID);
-	
+
 	boolean hasTargetBuilder(IProject project);
+
 	String[] getTargetBuilders(IProject project);
-				
+
 	void addListener(IMakeTargetListener listener);
+
 	void removeListener(IMakeTargetListener listener);
 }

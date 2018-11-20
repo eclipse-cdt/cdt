@@ -62,7 +62,8 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	protected StringBuilder[] getContents(int sections) {
 		try {
 			CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
-			return TestSourceReader.getContentsForTest(plugin == null ? null : plugin.getBundle(), "src", getClass(), getName(), sections);
+			return TestSourceReader.getContentsForTest(plugin == null ? null : plugin.getBundle(), "src", getClass(),
+					getName(), sections);
 		} catch (IOException e) {
 			fail(e.getMessage());
 			return null;
@@ -145,6 +146,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 			this.args = args;
 		}
 	}
+
 	private ArrayList<ProblemInstance> codanproblems = new ArrayList<CodanFastCxxAstTestCase.ProblemInstance>();
 
 	void runCodan(String code) {
@@ -159,7 +161,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 				codanproblems.add(new ProblemInstance(problemId, loc, args));
 			}
 		});
-		ICheckerInvocationContext context =	new CheckerInvocationContext(null);
+		ICheckerInvocationContext context = new CheckerInvocationContext(null);
 		try {
 			IChecker checker = getChecker();
 			((IRunnableInEditorChecker) checker).processModel(tu, context);

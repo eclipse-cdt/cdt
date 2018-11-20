@@ -18,11 +18,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-    BasicSearchTest.class,
-    LinkedNamesFinderTest.class,
-    SearchReferencesAcrossLanguagesTest.class,
-    FindReferencesTest.class,
+@Suite.SuiteClasses({ BasicSearchTest.class, LinkedNamesFinderTest.class, SearchReferencesAcrossLanguagesTest.class,
+		FindReferencesTest.class,
 
 })
 public class SearchTestSuite {

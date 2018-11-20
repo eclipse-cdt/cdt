@@ -40,7 +40,7 @@ public interface IASTIdExpression extends IASTExpression, IASTNameOwner {
 	 * @param name
 	 */
 	public void setName(IASTName name);
-	
+
 	/**
 	 * @since 5.1
 	 */

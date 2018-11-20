@@ -64,7 +64,7 @@ public class ResourceModifications {
 		protected IResource fResource;
 
 		public DeltaDescription(IResource resource) {
-			fResource= resource;
+			fResource = resource;
 		}
 
 		public abstract void buildDelta(IResourceChangeDescriptionFactory builder);
@@ -95,7 +95,7 @@ public class ResourceModifications {
 
 		@Override
 		public void buildDelta(IResourceChangeDescriptionFactory builder) {
-			builder.change((IFile)fResource);
+			builder.change((IFile) fResource);
 		}
 
 		@Override
@@ -125,12 +125,12 @@ public class ResourceModifications {
 
 		public MoveDescription(IResource resource, IPath destination) {
 			super(resource);
-			fDestination= destination;
+			fDestination = destination;
 		}
 
 		@Override
 		public void buildDelta(IResourceChangeDescriptionFactory builder) {
-			IResource existing= ResourcesPlugin.getWorkspace().getRoot().findMember(fDestination);
+			IResource existing = ResourcesPlugin.getWorkspace().getRoot().findMember(fDestination);
 			if (existing != null && !existing.equals(fResource)) {
 				builder.delete(existing);
 			}
@@ -148,12 +148,12 @@ public class ResourceModifications {
 
 		public CopyDescription(IResource resource, IPath destination) {
 			super(resource);
-			fDestination= destination;
+			fDestination = destination;
 		}
 
 		@Override
 		public void buildDelta(IResourceChangeDescriptionFactory builder) {
-			IResource existing= ResourcesPlugin.getWorkspace().getRoot().findMember(fDestination);
+			IResource existing = ResourcesPlugin.getWorkspace().getRoot().findMember(fDestination);
 			if (existing != null && !existing.equals(fResource)) {
 				builder.delete(existing);
 			}
@@ -184,7 +184,7 @@ public class ResourceModifications {
 	 */
 	public void addCreate(IResource create) {
 		if (fCreate == null)
-			fCreate= new ArrayList<>(2);
+			fCreate = new ArrayList<>(2);
 		fCreate.add(create);
 		if (fIgnoreCount == 0) {
 			internalAdd(new CreateDescription(create));
@@ -198,7 +198,7 @@ public class ResourceModifications {
 	 */
 	public void addDelete(IResource delete) {
 		if (fDelete == null)
-			fDelete= new ArrayList<>(2);
+			fDelete = new ArrayList<>(2);
 		fDelete.add(delete);
 		if (fIgnoreCount == 0) {
 			internalAdd(new DeleteDescription(delete));
@@ -213,13 +213,13 @@ public class ResourceModifications {
 	 */
 	public void addMove(IResource move, MoveArguments arguments) {
 		if (fMove == null) {
-			fMove= new ArrayList<>(2);
-			fMoveArguments= new ArrayList<>(2);
+			fMove = new ArrayList<>(2);
+			fMoveArguments = new ArrayList<>(2);
 		}
 		fMove.add(move);
 		fMoveArguments.add(arguments);
 		if (fIgnoreCount == 0) {
-			IPath destination= ((IResource)arguments.getDestination()).getFullPath().append(move.getName());
+			IPath destination = ((IResource) arguments.getDestination()).getFullPath().append(move.getName());
 			internalAdd(new MoveDescription(move, destination));
 		}
 	}
@@ -232,8 +232,8 @@ public class ResourceModifications {
 	 */
 	public void addCopy(IResource copy, CopyArguments arguments) {
 		if (fCopy == null) {
-			fCopy= new ArrayList<>(2);
-			fCopyArguments= new ArrayList<>(2);
+			fCopy = new ArrayList<>(2);
+			fCopyArguments = new ArrayList<>(2);
 		}
 		fCopy.add(copy);
 		fCopyArguments.add(arguments);
@@ -250,66 +250,61 @@ public class ResourceModifications {
 		Assert.isNotNull(rename);
 		Assert.isNotNull(arguments);
 		if (fRename == null) {
-			fRename= new ArrayList<>(2);
-			fRenameArguments= new ArrayList<>(2);
+			fRename = new ArrayList<>(2);
+			fRenameArguments = new ArrayList<>(2);
 		}
 		fRename.add(rename);
 		fRenameArguments.add(arguments);
 		if (fIgnoreCount == 0) {
-			IPath newPath= rename.getFullPath().removeLastSegments(1).append(arguments.getNewName());
+			IPath newPath = rename.getFullPath().removeLastSegments(1).append(arguments.getNewName());
 			internalAdd(new MoveDescription(rename, newPath));
 		}
 	}
 
-	public RefactoringParticipant[] getParticipants(RefactoringStatus status,
-			RefactoringProcessor processor, String[] natures, SharableParticipants shared) {
-		List<RefactoringParticipant> result= new ArrayList<>(5);
+	public RefactoringParticipant[] getParticipants(RefactoringStatus status, RefactoringProcessor processor,
+			String[] natures, SharableParticipants shared) {
+		List<RefactoringParticipant> result = new ArrayList<>(5);
 		if (fDelete != null) {
-			DeleteArguments arguments= new DeleteArguments();
-			for (Iterator<IResource> iter= fDelete.iterator(); iter.hasNext();) {
-				DeleteParticipant[] deletes= ParticipantManager.loadDeleteParticipants(status,
-					processor, iter.next(),
-					arguments, natures, shared);
+			DeleteArguments arguments = new DeleteArguments();
+			for (Iterator<IResource> iter = fDelete.iterator(); iter.hasNext();) {
+				DeleteParticipant[] deletes = ParticipantManager.loadDeleteParticipants(status, processor, iter.next(),
+						arguments, natures, shared);
 				result.addAll(Arrays.asList(deletes));
 			}
 		}
 		if (fCreate != null) {
-			CreateArguments arguments= new CreateArguments();
-			for (Iterator<IResource> iter= fCreate.iterator(); iter.hasNext();) {
-				CreateParticipant[] creates= ParticipantManager.loadCreateParticipants(status,
-					processor, iter.next(),
-					arguments, natures, shared);
+			CreateArguments arguments = new CreateArguments();
+			for (Iterator<IResource> iter = fCreate.iterator(); iter.hasNext();) {
+				CreateParticipant[] creates = ParticipantManager.loadCreateParticipants(status, processor, iter.next(),
+						arguments, natures, shared);
 				result.addAll(Arrays.asList(creates));
 			}
 		}
 		if (fMove != null) {
-			for (int i= 0; i < fMove.size(); i++) {
-				Object element= fMove.get(i);
-				MoveArguments arguments= fMoveArguments.get(i);
-				MoveParticipant[] moves= ParticipantManager.loadMoveParticipants(status,
-					processor, element,
-					arguments, natures, shared);
+			for (int i = 0; i < fMove.size(); i++) {
+				Object element = fMove.get(i);
+				MoveArguments arguments = fMoveArguments.get(i);
+				MoveParticipant[] moves = ParticipantManager.loadMoveParticipants(status, processor, element, arguments,
+						natures, shared);
 				result.addAll(Arrays.asList(moves));
 
 			}
 		}
 		if (fCopy != null) {
-			for (int i= 0; i < fCopy.size(); i++) {
-				Object element= fCopy.get(i);
-				CopyArguments arguments= fCopyArguments.get(i);
-				CopyParticipant[] copies= ParticipantManager.loadCopyParticipants(status,
-					processor, element,
-					arguments, natures, shared);
+			for (int i = 0; i < fCopy.size(); i++) {
+				Object element = fCopy.get(i);
+				CopyArguments arguments = fCopyArguments.get(i);
+				CopyParticipant[] copies = ParticipantManager.loadCopyParticipants(status, processor, element,
+						arguments, natures, shared);
 				result.addAll(Arrays.asList(copies));
 			}
 		}
 		if (fRename != null) {
-			for (int i= 0; i < fRename.size(); i++) {
-				Object resource= fRename.get(i);
-				RenameArguments arguments= fRenameArguments.get(i);
-				RenameParticipant[] renames= ParticipantManager.loadRenameParticipants(status,
-					processor, resource,
-					arguments, natures, shared);
+			for (int i = 0; i < fRename.size(); i++) {
+				Object resource = fRename.get(i);
+				RenameArguments arguments = fRenameArguments.get(i);
+				RenameParticipant[] renames = ParticipantManager.loadRenameParticipants(status, processor, resource,
+						arguments, natures, shared);
 				result.addAll(Arrays.asList(renames));
 			}
 		}
@@ -332,7 +327,7 @@ public class ResourceModifications {
 
 	public void addCopyDelta(IResource copy, CopyArguments arguments) {
 		if (fIgnoreCount == 0) {
-			IPath destination= ((IResource) arguments.getDestination()).getFullPath().append(copy.getName());
+			IPath destination = ((IResource) arguments.getDestination()).getFullPath().append(copy.getName());
 			internalAdd(new CopyDescription(copy, destination));
 		}
 	}
@@ -347,9 +342,9 @@ public class ResourceModifications {
 	public boolean willExist(IResource resource) {
 		if (fDeltaDescriptions == null)
 			return false;
-		IPath fullPath= resource.getFullPath();
-		for (Iterator<DeltaDescription> iter= fDeltaDescriptions.iterator(); iter.hasNext();) {
-			DeltaDescription delta= iter.next();
+		IPath fullPath = resource.getFullPath();
+		for (Iterator<DeltaDescription> iter = fDeltaDescriptions.iterator(); iter.hasNext();) {
+			DeltaDescription delta = iter.next();
 			if (fullPath.equals(delta.getDestinationPath()))
 				return true;
 		}
@@ -359,29 +354,32 @@ public class ResourceModifications {
 	public void buildDelta(IResourceChangeDescriptionFactory builder) {
 		if (fDeltaDescriptions == null)
 			return;
-		for (Iterator<DeltaDescription> iter= fDeltaDescriptions.iterator(); iter.hasNext();) {
+		for (Iterator<DeltaDescription> iter = fDeltaDescriptions.iterator(); iter.hasNext();) {
 			iter.next().buildDelta(builder);
 		}
 	}
 
-	public static void buildMoveDelta(IResourceChangeDescriptionFactory builder, IResource resource, RenameArguments args) {
-		IPath newPath= resource.getFullPath().removeLastSegments(1).append(args.getNewName());
+	public static void buildMoveDelta(IResourceChangeDescriptionFactory builder, IResource resource,
+			RenameArguments args) {
+		IPath newPath = resource.getFullPath().removeLastSegments(1).append(args.getNewName());
 		new MoveDescription(resource, newPath).buildDelta(builder);
 	}
 
-	public static void buildMoveDelta(IResourceChangeDescriptionFactory builder, IResource resource, MoveArguments args) {
-		IPath destination= ((IResource)args.getDestination()).getFullPath().append(resource.getName());
+	public static void buildMoveDelta(IResourceChangeDescriptionFactory builder, IResource resource,
+			MoveArguments args) {
+		IPath destination = ((IResource) args.getDestination()).getFullPath().append(resource.getName());
 		new MoveDescription(resource, destination).buildDelta(builder);
 	}
 
-	public static void buildCopyDelta(IResourceChangeDescriptionFactory builder, IResource resource, CopyArguments args) {
-		IPath destination= ((IResource)args.getDestination()).getFullPath().append(resource.getName());
+	public static void buildCopyDelta(IResourceChangeDescriptionFactory builder, IResource resource,
+			CopyArguments args) {
+		IPath destination = ((IResource) args.getDestination()).getFullPath().append(resource.getName());
 		new CopyDescription(resource, destination).buildDelta(builder);
 	}
 
 	private void internalAdd(DeltaDescription description) {
 		if (fDeltaDescriptions == null)
-			fDeltaDescriptions= new ArrayList<>();
+			fDeltaDescriptions = new ArrayList<>();
 		fDeltaDescriptions.add(description);
 	}
 }

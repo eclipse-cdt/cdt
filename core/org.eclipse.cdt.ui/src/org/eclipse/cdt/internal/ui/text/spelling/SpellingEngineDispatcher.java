@@ -43,13 +43,17 @@ public class SpellingEngineDispatcher implements ISpellingEngine {
 	private static final String C_SPELLING_ENGINE_ID = "org.eclipse.cdt.internal.ui.text.spelling.CSpellingEngine"; //$NON-NLS-1$
 
 	/** C/C++ source content type */
-	private static final IContentType CHEADER_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CHEADER);
-	private static final IContentType CSOURCE_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
-	private static final IContentType CXXHEADER_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER);
-	private static final IContentType CXXSOURCE_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
+	private static final IContentType CHEADER_CONTENT_TYPE = Platform.getContentTypeManager()
+			.getContentType(CCorePlugin.CONTENT_TYPE_CHEADER);
+	private static final IContentType CSOURCE_CONTENT_TYPE = Platform.getContentTypeManager()
+			.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
+	private static final IContentType CXXHEADER_CONTENT_TYPE = Platform.getContentTypeManager()
+			.getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER);
+	private static final IContentType CXXSOURCE_CONTENT_TYPE = Platform.getContentTypeManager()
+			.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 	/** Available spelling engines by content type */
-	private Map<IContentType, SpellingEngine> fEngines= new HashMap<IContentType, SpellingEngine>();
+	private Map<IContentType, SpellingEngine> fEngines = new HashMap<IContentType, SpellingEngine>();
 	private ISpellingEngine defaultEngine;
 
 	/**
@@ -66,10 +70,9 @@ public class SpellingEngineDispatcher implements ISpellingEngine {
 		if (CXXSOURCE_CONTENT_TYPE != null)
 			fEngines.put(CXXSOURCE_CONTENT_TYPE, engine);
 		try {
-			SpellingEngineDescriptor descriptor =
-					EditorsUI.getSpellingService().getDefaultSpellingEngineDescriptor();
-			if (!C_SPELLING_ENGINE_ID.equals(descriptor.getId())) {  // Do not delegate to itself.
-				defaultEngine =	descriptor.createEngine();
+			SpellingEngineDescriptor descriptor = EditorsUI.getSpellingService().getDefaultSpellingEngineDescriptor();
+			if (!C_SPELLING_ENGINE_ID.equals(descriptor.getId())) { // Do not delegate to itself.
+				defaultEngine = descriptor.createEngine();
 			}
 		} catch (CoreException e) {
 		}
@@ -79,10 +82,11 @@ public class SpellingEngineDispatcher implements ISpellingEngine {
 	 * @see org.eclipse.ui.texteditor.spelling.ISpellingEngine#check(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion[], org.eclipse.ui.texteditor.spelling.SpellingContext, org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void check(IDocument document, IRegion[] regions, SpellingContext context, ISpellingProblemCollector collector, IProgressMonitor monitor) {
-		ISpellingEngine engine= getEngine(context.getContentType());
+	public void check(IDocument document, IRegion[] regions, SpellingContext context,
+			ISpellingProblemCollector collector, IProgressMonitor monitor) {
+		ISpellingEngine engine = getEngine(context.getContentType());
 		if (engine == null)
-			engine= defaultEngine;
+			engine = defaultEngine;
 		if (engine != null)
 			engine.check(document, regions, context, collector, monitor);
 	}

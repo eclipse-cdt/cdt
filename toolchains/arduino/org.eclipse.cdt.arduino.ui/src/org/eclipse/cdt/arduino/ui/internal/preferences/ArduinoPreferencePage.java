@@ -49,15 +49,15 @@ public class ArduinoPreferencePage extends PreferencePage implements IWorkbenchP
 		Composite homeComp = new Composite(control, SWT.NONE);
 		homeComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		homeComp.setLayout(new GridLayout(3, false));
-		
+
 		Label label = new Label(homeComp, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		label.setText("Arduino home:");
-		
+
 		homeText = new Text(homeComp, SWT.BORDER);
 		homeText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		homeText.setText(ArduinoPreferences.getArduinoHome().toString());
-		
+
 		Button browse = new Button(homeComp, SWT.NONE);
 		browse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 		browse.setText("Browse...");

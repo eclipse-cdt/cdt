@@ -41,8 +41,8 @@ import org.eclipse.core.runtime.Status;
  */
 public class CygwinPathResolver implements IBuildPathResolver {
 	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
-	private static final String DELIMITER_UNIX = ":";    //$NON-NLS-1$
-	private static final String DELIMITER_WIN  = ";";    //$NON-NLS-1$
+	private static final String DELIMITER_UNIX = ":"; //$NON-NLS-1$
+	private static final String DELIMITER_WIN = ";"; //$NON-NLS-1$
 
 	private static final String PROPERTY_OS_NAME = "os.name"; //$NON-NLS-1$
 	private static final String OS_WINDOWS = "windows";//$NON-NLS-1$
@@ -53,20 +53,21 @@ public class CygwinPathResolver implements IBuildPathResolver {
 
 	// note that in Cygwin 1.7 the mount point storage has been moved out of the registry
 	private static final String REGISTRY_KEY_MOUNTS = "SOFTWARE\\Cygnus Solutions\\Cygwin\\mounts v2\\"; //$NON-NLS-1$
-	private static final String PATH_NAME = "native";   //$NON-NLS-1$
+	private static final String PATH_NAME = "native"; //$NON-NLS-1$
 	private static final String BINPATTERN = "/usr/bin"; //$NON-NLS-1$
 	private static final String BINPATTERN_ALTERNATE = "/bin"; //$NON-NLS-1$
-	private static final String ETCPATTERN = "/etc";     //$NON-NLS-1$
+	private static final String ETCPATTERN = "/etc"; //$NON-NLS-1$
 
-	private static final String GCC_VERSION_CMD  = "gcc --version";    //$NON-NLS-1$
-	private static final String MINGW_SPECIAL = "mingw ";    //$NON-NLS-1$
-	private static final String CYGWIN_SPECIAL = "cygwin ";    //$NON-NLS-1$
+	private static final String GCC_VERSION_CMD = "gcc --version"; //$NON-NLS-1$
+	private static final String MINGW_SPECIAL = "mingw "; //$NON-NLS-1$
+	private static final String CYGWIN_SPECIAL = "cygwin "; //$NON-NLS-1$
 
 	@Override
-	public String[] resolveBuildPaths(int pathType, String variableName, String variableValue, IConfiguration configuration) {
-		if(!isWindows()) {
+	public String[] resolveBuildPaths(int pathType, String variableName, String variableValue,
+			IConfiguration configuration) {
+		if (!isWindows()) {
 			return variableValue.split(DELIMITER_UNIX);
-		} else if(isMinGW(configuration)) {
+		} else if (isMinGW(configuration)) {
 			return variableValue.split(DELIMITER_WIN);
 		}
 
@@ -90,7 +91,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	public static String getEtcPath() {
 		String etcCygwin = getPathFromRoot(ETCPATTERN);
 		// Try to find the paths in SOFTWARE\\Cygnus Solutions
-		if(etcCygwin == null) {
+		if (etcCygwin == null) {
 			etcCygwin = readValueFromRegistry(REGISTRY_KEY_MOUNTS + ETCPATTERN, PATH_NAME);
 		}
 		return etcCygwin;
@@ -106,11 +107,11 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	@Deprecated
 	public static String getBinPath() {
 		String binCygwin = getPathFromRoot(BINPATTERN);
-		if(binCygwin == null) {
+		if (binCygwin == null) {
 			binCygwin = getPathFromRoot(BINPATTERN_ALTERNATE);
 		}
 		// Try to find the paths in SOFTWARE\\Cygnus Solutions
-		if(binCygwin == null) {
+		if (binCygwin == null) {
 			binCygwin = readValueFromRegistry(REGISTRY_KEY_MOUNTS + BINPATTERN, PATH_NAME);
 		}
 		return binCygwin;
@@ -182,7 +183,8 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	private static String resolveProgram(String program, IConfiguration cfg) {
 		String envPathValue = null;
 		try {
-			IEnvironmentVariable envPathVar = ManagedBuildManager.getEnvironmentVariableProvider().getVariable(ENV_PATH, cfg, true);
+			IEnvironmentVariable envPathVar = ManagedBuildManager.getEnvironmentVariableProvider().getVariable(ENV_PATH,
+					cfg, true);
 			if (envPathVar != null) {
 				envPathValue = envPathVar.getValue();
 				IPath progPath = PathUtil.findProgramLocation(program, envPathValue);
@@ -193,7 +195,8 @@ public class CygwinPathResolver implements IBuildPathResolver {
 				program = Cygwin.cygwinToWindowsPath(program, envPathValue);
 			}
 		} catch (Exception e) {
-			GnuUIPlugin.getDefault().log(new Status(IStatus.WARNING, GnuUIPlugin.PLUGIN_ID, "Problem trying to find program [" + program + "] in $PATH=[" + envPathValue + "]", e));
+			GnuUIPlugin.getDefault().log(new Status(IStatus.WARNING, GnuUIPlugin.PLUGIN_ID,
+					"Problem trying to find program [" + program + "] in $PATH=[" + envPathValue + "]", e));
 		}
 		return program;
 	}
@@ -205,12 +208,12 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	 * @return environment as array of strings in format name=value.
 	 */
 	private static String[] getEnvp(IConfiguration cfg) {
-		IEnvironmentVariable vars[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true);
+		IEnvironmentVariable vars[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg, true);
 		String envp[] = new String[vars.length];
-		for(int i = 0; i < envp.length; i++) {
-			envp[i] = vars[i].getName() +'=';
+		for (int i = 0; i < envp.length; i++) {
+			envp[i] = vars[i].getName() + '=';
 			String value = vars[i].getValue();
-			if(value != null)
+			if (value != null)
 				envp[i] += value;
 		}
 		return envp;
@@ -237,7 +240,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 					BufferedReader d1 = new BufferedReader(new InputStreamReader(ein));
 					ArrayList<String> ls = new ArrayList<String>(10);
 					String s;
-					while ((s = d1.readLine()) != null ) {
+					while ((s = d1.readLine()) != null) {
 						ls.add(s);
 					}
 					result = ls.toArray(new String[0]);
@@ -246,18 +249,19 @@ public class CygwinPathResolver implements IBuildPathResolver {
 				}
 			}
 		} catch (IOException e) {
-			GnuUIPlugin.getDefault().log(new Status(IStatus.ERROR, GnuUIPlugin.PLUGIN_ID, "Error executing program [" +cmd + "]", e));
+			GnuUIPlugin.getDefault()
+					.log(new Status(IStatus.ERROR, GnuUIPlugin.PLUGIN_ID, "Error executing program [" + cmd + "]", e));
 		}
 		return result;
 	}
 
 	public static boolean isMinGW(IConfiguration cfg) {
 		String versionInfo[] = executeInConfigurationContext(GCC_VERSION_CMD, cfg);
-		if(versionInfo != null) {
-			for(int i = 0; i < versionInfo.length; i++) {
-				if(versionInfo[i].indexOf(MINGW_SPECIAL) != -1)
+		if (versionInfo != null) {
+			for (int i = 0; i < versionInfo.length; i++) {
+				if (versionInfo[i].indexOf(MINGW_SPECIAL) != -1)
 					return true;
-				else if(versionInfo[i].indexOf(CYGWIN_SPECIAL) != -1)
+				else if (versionInfo[i].indexOf(CYGWIN_SPECIAL) != -1)
 					return false;
 			}
 		}

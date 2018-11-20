@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IIndexFileSet {
 	IIndexFileSet EMPTY = new IndexFileSet();
-	
+
 	/**
 	 * Returns whether the given file is part of this file set.
 	 * @since 5.1
@@ -45,7 +45,7 @@ public interface IIndexFileSet {
 	 * Returns an array of bindings where all local bindings that are not part of this file-set
 	 * have been removed.
 	 */
-	IBinding[] filterFileLocalBindings(IBinding[] bindings);	
+	IBinding[] filterFileLocalBindings(IBinding[] bindings);
 
 	/**
 	 * Returns an index file set with the inverse meaning.

@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
  * @since 2.2
  */
 public interface IFormattedValuesListener {
-    
-    public void formattedValueUpdated(FormattedValueDMContext formattedValueDmc);
-    
+
+	public void formattedValueUpdated(FormattedValueDMContext formattedValueDmc);
+
 }

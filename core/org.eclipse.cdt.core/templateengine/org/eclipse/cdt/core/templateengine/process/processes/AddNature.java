@@ -32,7 +32,8 @@ import org.eclipse.core.runtime.IStatus;
 public class AddNature extends ProcessRunner {
 
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		IProject project = null;
 		String natureId = null;
 
@@ -43,13 +44,15 @@ public class AddNature extends ProcessRunner {
 			else if (argName.equals("natureId")) //$NON-NLS-1$
 				natureId = arg.getSimpleValue();
 		}
-		
+
 		if (project == null)
-			throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddNature.noProject"))); //$NON-NLS-1$
+			throw new ProcessFailureException(
+					getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddNature.noProject"))); //$NON-NLS-1$
 
 		if (natureId == null)
-			throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddNature.noNature"))); //$NON-NLS-1$
-		
+			throw new ProcessFailureException(
+					getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddNature.noNature"))); //$NON-NLS-1$
+
 		try {
 			CProjectNature.addNature(project, natureId, monitor);
 		} catch (CoreException e) {

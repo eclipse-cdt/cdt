@@ -41,13 +41,16 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 
 	private class ConsoleOutputStreamAdapter extends ConsoleOutputStream {
 		private MessageConsoleStream fConsoleStream;
+
 		public ConsoleOutputStreamAdapter(MessageConsoleStream stream) {
 			fConsoleStream = stream;
 		}
+
 		@Override
 		public void write(int arg0) throws IOException {
 			fConsoleStream.write(arg0);
 		}
+
 		@Override
 		public synchronized void write(byte[] b, int off, int len) throws IOException {
 			fConsoleStream.write(b, off, len);
@@ -98,7 +101,7 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 			}
 		}
 
-		if (console==null) {
+		if (console == null) {
 			URL iconUrl = LanguageSettingsProvidersImages.getImageUrl(consoleId);
 			if (iconUrl == null) {
 				iconUrl = defaultIconUrl;
@@ -113,7 +116,7 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 
 			console = new MessageConsole(name, imageDescriptor);
 			console.activate();
-			consoleManager.addConsoles(new IConsole[]{ console });
+			consoleManager.addConsoles(new IConsole[] { console });
 		}
 	}
 

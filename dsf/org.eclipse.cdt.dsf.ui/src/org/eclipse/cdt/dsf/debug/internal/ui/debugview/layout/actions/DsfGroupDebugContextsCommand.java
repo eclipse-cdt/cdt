@@ -24,18 +24,19 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
  * @since 2.2
  */
 public class DsfGroupDebugContextsCommand extends DsfDebugViewLayoutCommand implements IDebugCommandHandler {
-	
+
 	public DsfGroupDebugContextsCommand(DsfSession session) {
 		super(session);
-	}    
+	}
 
 	@Override
 	void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, RequestMonitor rm) {
 		translator.group(contexts, rm);
 	}
-	
+
 	@Override
-	void canExecuteOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+	void canExecuteOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts,
+			DataRequestMonitor<Boolean> rm) {
 		translator.canGroup(contexts, rm);
 	}
 }

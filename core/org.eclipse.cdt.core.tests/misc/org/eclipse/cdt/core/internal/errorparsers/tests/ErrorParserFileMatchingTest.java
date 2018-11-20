@@ -61,7 +61,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	private final IMarkerGenerator markerGenerator = new IMarkerGenerator() {
 		// deprecated
 		@Override
-		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {}
+		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
+		}
 
 		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
@@ -78,11 +79,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		 */
 		public MockErrorParser() {
 			super(new ErrorPattern[] {
-				new ErrorPattern("(.*):(.*):(.*)", 1, 2, 3, 0, IMarkerGenerator.SEVERITY_ERROR_RESOURCE)
-			});
+					new ErrorPattern("(.*):(.*):(.*)", 1, 2, 3, 0, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) });
 		}
 	}
-
 
 	/**
 	 * Constructor.
@@ -95,7 +94,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		if (fProject==null) {
+		if (fProject == null) {
 			fProject = ResourceHelper.createCDTProject(testName);
 			Assert.assertNotNull(fProject);
 			mockErrorParserId = addErrorParserExtension("MockErrorParser", MockErrorParser.class);
@@ -172,7 +171,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Convenience method to parse one line of output.
 	 */
 	private void parseOutput(IProject project, String buildDir, String line) throws Exception {
-		parseOutput(project, new Path(buildDir), new String[] {mockErrorParserId}, line);
+		parseOutput(project, new Path(buildDir), new String[] { mockErrorParserId }, line);
 	}
 
 	/**
@@ -180,7 +179,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *  Search is done in project location.
 	 */
 	private void parseOutput(IProject project, String line) throws Exception {
-		parseOutput(project, project.getLocation(), new String[] {mockErrorParserId}, line);
+		parseOutput(project, project.getLocation(), new String[] { mockErrorParserId }, line);
 	}
 
 	/**
@@ -188,7 +187,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Search is done for current project in default location.
 	 */
 	private void parseOutput(String line) throws Exception {
-		parseOutput(fProject, fProject.getLocation(), new String[] {mockErrorParserId}, line);
+		parseOutput(fProject, fProject.getLocation(), new String[] { mockErrorParserId }, line);
 	}
 
 	/**
@@ -202,9 +201,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/testSingle.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/testSingle.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -218,10 +217,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("testMissing.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("testMissing.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -240,9 +239,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// Ambiguous match
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("testDuplicate.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicate.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -257,8 +256,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/testInFolder.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/testInFolder.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -276,9 +275,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("L/FindMatchingFilesTest/testDuplicateInRoot.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("L/FindMatchingFilesTest/testDuplicateInRoot.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -295,8 +294,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/testLinkedFile.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/testLinkedFile.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -313,8 +312,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/testLinkedFileWithDifferentName.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/testLinkedFileWithDifferentName.c",
+				problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -337,9 +337,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// Ambiguous match
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("testDuplicateLinkedFile.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicateLinkedFile.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -361,9 +361,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("testDuplicateLinkedFileDifferentName.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicateLinkedFileDifferentName.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -379,8 +379,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/LinkedFolder/testInLinkedFolder.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/LinkedFolder/testInLinkedFolder.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -401,9 +401,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("testDuplicateInLinkedFolder.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicateInLinkedFolder.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -411,19 +411,20 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testLinkedFolderInAnotherProject() throws Exception {
-		ResourceHelper.createFolder(fProject,"Folder");
-		ResourceHelper.createFile(fProject,"Folder/testLinkedFolderInAnotherProject.c");
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, "Folder/testLinkedFolderInAnotherProject.c");
 
 		IProject anotherProject = ResourceHelper.createCDTProject("AnotherProjectWithLinkedFolder");
-		ResourceHelper.createLinkedFolder(anotherProject, "LinkedFolder", fProject.getLocation()+"/Folder");
+		ResourceHelper.createLinkedFolder(anotherProject, "LinkedFolder", fProject.getLocation() + "/Folder");
 
 		{
 			parseOutput(fProject, "testLinkedFolderInAnotherProject.c:1:error");
 			assertEquals(1, errorList.size());
 
 			ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-			assertEquals("L/FindMatchingFilesTest/Folder/testLinkedFolderInAnotherProject.c",problemMarkerInfo.file.toString());
-			assertEquals("error",problemMarkerInfo.description);
+			assertEquals("L/FindMatchingFilesTest/Folder/testLinkedFolderInAnotherProject.c",
+					problemMarkerInfo.file.toString());
+			assertEquals("error", problemMarkerInfo.description);
 		}
 
 		{
@@ -431,8 +432,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			assertEquals(2, errorList.size());
 
 			ProblemMarkerInfo problemMarkerInfo = errorList.get(1);
-			assertEquals("L/AnotherProjectWithLinkedFolder/LinkedFolder/testLinkedFolderInAnotherProject.c",problemMarkerInfo.file.toString());
-			assertEquals("error",problemMarkerInfo.description);
+			assertEquals("L/AnotherProjectWithLinkedFolder/LinkedFolder/testLinkedFolderInAnotherProject.c",
+					problemMarkerInfo.file.toString());
+			assertEquals("error", problemMarkerInfo.description);
 		}
 	}
 
@@ -448,15 +450,15 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createWorkspaceFolder("OutsideFolder");
 		IPath realFile = ResourceHelper.createWorkspaceFile("OutsideFolder/RealFile.c");
 
-		ResourceHelper.createFolder(fProject,"Folder");
+		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createSymbolicLink(fProject, "Folder/testSymbolicLink.c", realFile);
 
 		parseOutput("testSymbolicLink.c:1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/testSymbolicLink.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/testSymbolicLink.c", problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -471,10 +473,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createWorkspaceFolder("OutsideFolder");
 		IPath realFile = ResourceHelper.createWorkspaceFile("OutsideFolder/RealFile.c");
 
-		ResourceHelper.createFolder(fProject,"FolderA");
+		ResourceHelper.createFolder(fProject, "FolderA");
 		ResourceHelper.createSymbolicLink(fProject, "FolderA/testDuplicateSymbolicLink.c", realFile);
 
-		ResourceHelper.createFolder(fProject,"FolderB");
+		ResourceHelper.createFolder(fProject, "FolderB");
 		ResourceHelper.createSymbolicLink(fProject, "FolderB/testDuplicateSymbolicLink.c", realFile);
 
 		parseOutput("testDuplicateSymbolicLink.c:1:error");
@@ -482,9 +484,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals(new Path("testDuplicateSymbolicLink.c"),problemMarkerInfo.externalPath);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals(new Path("testDuplicateSymbolicLink.c"), problemMarkerInfo.externalPath);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -505,8 +507,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/FolderSymbolicLink/testFolderSymbolicLink.c",problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/FolderSymbolicLink/testFolderSymbolicLink.c",
+				problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -529,9 +532,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals(new Path("testDuplicateFolderSymbolicLink.c"),problemMarkerInfo.externalPath);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals(new Path("testDuplicateFolderSymbolicLink.c"), problemMarkerInfo.externalPath);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -542,13 +545,13 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFile(fProject, "testAbsolutePathSingle.c");
 		String fullName = fProject.getLocation().append("testAbsolutePathSingle.c").toOSString();
 
-		parseOutput(fullName+":1:error");
+		parseOutput(fullName + ":1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/testAbsolutePathSingle.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/testAbsolutePathSingle.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -560,13 +563,14 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFile(anotherProject, "testAbsolutePathInOtherProject.c");
 		String fullName = anotherProject.getLocation().append("testAbsolutePathInOtherProject.c").toOSString();
 
-		parseOutput(fullName+":1:error");
+		parseOutput(fullName + ":1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/ProjectAbsolutePathInOtherProject/testAbsolutePathInOtherProject.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/ProjectAbsolutePathInOtherProject/testAbsolutePathInOtherProject.c",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -579,15 +583,15 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		IPath outsideFile = ResourceHelper.createWorkspaceFile("OutsideFolder/testAbsolutePathOutsideWorkspace.c");
 
 		String fullName = ResourcesPlugin.getWorkspace().getRoot().getLocation()
-			.append("OutsideFolder/testAbsolutePathOutsideWorkspace.c").toOSString();
+				.append("OutsideFolder/testAbsolutePathOutsideWorkspace.c").toOSString();
 
-		parseOutput(fullName+":1:error");
+		parseOutput(fullName + ":1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// Can't assign marker to non-IResource
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 		assertEquals(outsideFile, problemMarkerInfo.externalPath);
 	}
 
@@ -603,9 +607,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/testRelativePathFromProjectRoot.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/testRelativePathFromProjectRoot.c",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -621,9 +626,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/SubFolder/testRelativePathFromSubfolder.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/SubFolder/testRelativePathFromSubfolder.c",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -639,10 +645,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("NotMatchingFolder/testRelativePathNotMatchingFolder.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("NotMatchingFolder/testRelativePathNotMatchingFolder.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -662,10 +668,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("Folder/testRelativePathDuplicate.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("Folder/testRelativePathDuplicate.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -679,9 +685,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/testRelativePathUp.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/testRelativePathUp.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -696,9 +702,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/testRelativePathUpSubfolder.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/testRelativePathUpSubfolder.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -713,9 +719,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/AnotherProject/testRelativePathUpOtherProject.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/AnotherProject/testRelativePathUpOtherProject.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -733,10 +739,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("../SubFolder/testRelativePathUpDuplicate.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("../SubFolder/testRelativePathUpDuplicate.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -751,9 +757,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/testRelativePathDotFromProjectRoot.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/testRelativePathDotFromProjectRoot.c",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -769,9 +776,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Subfolder/Folder/testRelativePathDotFromSubfolder.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Subfolder/Folder/testRelativePathDotFromSubfolder.c",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -787,10 +795,11 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("./NotMatchingFolder/testRelativePathDotNotMatchingFolder.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("./NotMatchingFolder/testRelativePathDotNotMatchingFolder.c"),
+				problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -811,12 +820,11 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("./Folder/testRelativePathDotDuplicate.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("./Folder/testRelativePathDotDuplicate.c"), problemMarkerInfo.externalPath);
 	}
-
 
 	/**
 	 * Checks if a file from error output can be found.
@@ -834,9 +842,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/upcase1.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/upcase1.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -852,9 +860,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/UPCASE2.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/UPCASE2.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -872,9 +880,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/FolderB/UpCase3.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/FolderB/UpCase3.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -893,10 +901,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
-		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
-		assertEquals(new Path("UpCase4.c"),problemMarkerInfo.externalPath);
+		assertEquals("P/FindMatchingFilesTest", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
+		assertEquals(new Path("UpCase4.c"), problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -913,17 +921,17 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
-		assertTrue("cygwinFileName=["+cygwinFileName+"]", cygwinFileName.startsWith("/cygdrive/"));
+		assertTrue("cygwinFileName=[" + cygwinFileName + "]", cygwinFileName.startsWith("/cygdrive/"));
 
 		ResourceHelper.createFile(fProject, fileName);
 
-		parseOutput(cygwinFileName+":1:error");
+		parseOutput(cygwinFileName + ":1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -942,21 +950,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			return;
 		}
 
-		assertTrue("usrIncludeWindowsPath=["+usrIncludeWindowsPath+"]",
-			usrIncludeWindowsPath.charAt(1)==IPath.DEVICE_SEPARATOR);
+		assertTrue("usrIncludeWindowsPath=[" + usrIncludeWindowsPath + "]",
+				usrIncludeWindowsPath.charAt(1) == IPath.DEVICE_SEPARATOR);
 
 		java.io.File file = new java.io.File(usrIncludeWindowsPath + "\\" + fileName);
 		assertTrue("File " + file + " does not exist, check your cygwin installation", file.exists());
 
 		ResourceHelper.createLinkedFolder(fProject, "include", usrIncludeWindowsPath);
 
-		parseOutput(cygwinFolder+fileName+":1:error");
+		parseOutput(cygwinFolder + fileName + ":1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/include/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/include/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -975,17 +983,17 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
-		assertTrue("cygwinFileName=["+cygwinFileName+"]", cygwinFileName.startsWith("/cygdrive/"));
+		assertTrue("cygwinFileName=[" + cygwinFileName + "]", cygwinFileName.startsWith("/cygdrive/"));
 
 		ResourceHelper.createFile(anotherProject, fileName);
 
-		parseOutput(cygwinFileName+":1:error");
+		parseOutput(cygwinFileName + ":1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/AnotherProject/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/AnotherProject/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -995,7 +1003,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	public void testCustomProjectLocation() throws Exception {
 		ResourceHelper.createWorkspaceFolder("Custom");
 		ResourceHelper.createWorkspaceFolder("Custom/ProjectLocation");
- 		IProject anotherProject = ResourceHelper.createCDTProject("AnotherProject", "Custom/ProjectLocation");
+		IProject anotherProject = ResourceHelper.createCDTProject("AnotherProject", "Custom/ProjectLocation");
 
 		ResourceHelper.createFolder(anotherProject, "Folder");
 		ResourceHelper.createFile(anotherProject, "Folder/testCustomProjectLocation.c");
@@ -1004,9 +1012,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/AnotherProject/Folder/testCustomProjectLocation.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/AnotherProject/Folder/testCustomProjectLocation.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1024,21 +1032,20 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
-		assertTrue("cygwinFileName=["+cygwinFileName+"]", cygwinFileName.startsWith("/cygdrive/"));
+		assertTrue("cygwinFileName=[" + cygwinFileName + "]", cygwinFileName.startsWith("/cygdrive/"));
 
 		ResourceHelper.createFile(fProject, fileName);
 
-		String lines = "make[0]: Entering directory `dir'\n"
-			+ cygwinFileName+":1:error\n";
+		String lines = "make[0]: Entering directory `dir'\n" + cygwinFileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1047,7 +1054,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 */
 	public void testInNestedProject() throws Exception {
 		ResourceHelper.createFolder(fProject, "NestedProjectFolder");
-		IProject nestedProject = ResourceHelper.createCDTProject("NestedProject", "FindMatchingFilesTest/NestedProject");
+		IProject nestedProject = ResourceHelper.createCDTProject("NestedProject",
+				"FindMatchingFilesTest/NestedProject");
 
 		ResourceHelper.createFolder(nestedProject, "Folder");
 		ResourceHelper.createFile(nestedProject, "Folder/testInNestedProject.c");
@@ -1057,9 +1065,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			assertEquals(1, errorList.size());
 
 			ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-			assertEquals("L/FindMatchingFilesTest/NestedProject/Folder/testInNestedProject.c",problemMarkerInfo.file.toString());
-			assertEquals(1,problemMarkerInfo.lineNumber);
-			assertEquals("error",problemMarkerInfo.description);
+			assertEquals("L/FindMatchingFilesTest/NestedProject/Folder/testInNestedProject.c",
+					problemMarkerInfo.file.toString());
+			assertEquals(1, problemMarkerInfo.lineNumber);
+			assertEquals("error", problemMarkerInfo.description);
 		}
 
 		{
@@ -1067,9 +1076,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			assertEquals(2, errorList.size());
 
 			ProblemMarkerInfo problemMarkerInfo = errorList.get(1);
-			assertEquals("L/NestedProject/Folder/testInNestedProject.c",problemMarkerInfo.file.toString());
-			assertEquals(1,problemMarkerInfo.lineNumber);
-			assertEquals("error",problemMarkerInfo.description);
+			assertEquals("L/NestedProject/Folder/testInNestedProject.c", problemMarkerInfo.file.toString());
+			assertEquals(1, problemMarkerInfo.lineNumber);
+			assertEquals("error", problemMarkerInfo.description);
 		}
 	}
 
@@ -1088,9 +1097,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/BuildDir/testBuildDir.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/BuildDir/testBuildDir.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1107,9 +1116,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/BuildDir/testBuildDirVsProjectRoot.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/BuildDir/testBuildDirVsProjectRoot.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1123,13 +1132,13 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String fullName = file.getLocation().toOSString();
 		ResourceHelper.createLinkedFile(fProject, "testAbsoluteFileVsLink.c", file.getLocation());
 
-		parseOutput(fullName+":1:error");
+		parseOutput(fullName + ":1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/testAbsoluteFileVsLink.c",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/testAbsoluteFileVsLink.c", problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1141,19 +1150,18 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String fileName = "testPushDirectory.c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "make[0]: Entering directory `Folder'\n"
-			+ fileName+":1:error\n";
+		String lines = "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1166,19 +1174,18 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String fileName = "testPushDirectory.c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "make[0]: Entering directory 'Folder'\n"
-			+ fileName+":1:error\n";
+		String lines = "make[0]: Entering directory 'Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1190,22 +1197,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String fileName = "testPushAbsoluteDirectory.c";
 		IFolder folder = ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
 		IPath absoluteDir = folder.getLocation();
 		Assert.assertTrue(absoluteDir.isAbsolute());
 
-		String lines = "make[0]: Entering directory `" + absoluteDir + "'\n"
-			+ fileName+":1:error\n";
+		String lines = "make[0]: Entering directory `" + absoluteDir + "'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1220,22 +1226,20 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder/SubFolder");
 
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
-		ResourceHelper.createFile(fProject, "Folder/SubFolder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
+		ResourceHelper.createFile(fProject, "Folder/SubFolder/" + fileName);
 
-		String lines = "make[1]: Entering directory `Folder'\n"
-			+ "make[2]: Entering directory `SubFolder'\n"
-			+ "make[2]: Leaving directory `SubFolder'\n"
-			+ fileName+":1:error\n";
+		String lines = "make[1]: Entering directory `Folder'\n" + "make[2]: Entering directory `SubFolder'\n"
+				+ "make[2]: Leaving directory `SubFolder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1250,22 +1254,20 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder/SubFolder");
 
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
-		ResourceHelper.createFile(fProject, "Folder/SubFolder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
+		ResourceHelper.createFile(fProject, "Folder/SubFolder/" + fileName);
 
-		String lines = "make: Entering directory `Folder'\n"
-				+ "make: Entering directory `SubFolder'\n"
-				+ "make: Leaving directory `SubFolder'\n"
-				+ fileName+":1:error\n";
+		String lines = "make: Entering directory `Folder'\n" + "make: Entering directory `SubFolder'\n"
+				+ "make: Leaving directory `SubFolder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1277,28 +1279,26 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String fileName = "testPushDirectoryCacheProblem.c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = fileName+":1:error\n"
-			+ "make[0]: Entering directory `Folder'\n"
-			+ fileName+":1:error\n";
+		String lines = fileName + ":1:error\n" + "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(2, errorList.size());
 
 		{
 			ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-			assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
-			assertEquals(1,problemMarkerInfo.lineNumber);
-			assertEquals("error",problemMarkerInfo.description);
+			assertEquals("L/FindMatchingFilesTest/" + fileName, problemMarkerInfo.file.toString());
+			assertEquals(1, problemMarkerInfo.lineNumber);
+			assertEquals("error", problemMarkerInfo.description);
 		}
 
 		{
 			ProblemMarkerInfo problemMarkerInfo = errorList.get(1);
-			assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
-			assertEquals(1,problemMarkerInfo.lineNumber);
-			assertEquals("error",problemMarkerInfo.description);
+			assertEquals("L/FindMatchingFilesTest/Folder/" + fileName, problemMarkerInfo.file.toString());
+			assertEquals(1, problemMarkerInfo.lineNumber);
+			assertEquals("error", problemMarkerInfo.description);
 		}
 	}
 
@@ -1308,23 +1308,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDisablePushDirectoryOnParallelBuild_J() throws Exception {
-		String fileName = getName()+".c";
+		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "make -j\n"
-			+ "make[0]: Entering directory `Folder'\n"
-			+ fileName+":1:error\n";
+		String lines = "make -j\n" + "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1333,23 +1331,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDisablePushDirectoryOnParallelBuild_J2() throws Exception {
-		String fileName = getName()+".c";
+		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "make -j2\n"
-				+ "make[0]: Entering directory `Folder'\n"
-				+ fileName+":1:error\n";
+		String lines = "make -j2\n" + "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1358,23 +1354,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDisablePushDirectoryOnParallelBuild_J_2() throws Exception {
-		String fileName = getName()+".c";
+		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "make -j  2\n"
-				+ "make[0]: Entering directory `Folder'\n"
-				+ fileName+":1:error\n";
+		String lines = "make -j  2\n" + "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1383,23 +1377,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDisablePushDirectoryOnParallelBuild_J1() throws Exception {
-		String fileName = getName()+".c";
+		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "make -j1\n"
-				+ "make[0]: Entering directory `Folder'\n"
-				+ fileName+":1:error\n";
+		String lines = "make -j1\n" + "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1408,23 +1400,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDisablePushDirectoryOnParallelBuild_J_1() throws Exception {
-		String fileName = getName()+".c";
+		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "make -j  1\n"
-				+ "make[0]: Entering directory `Folder'\n"
-				+ fileName+":1:error\n";
+		String lines = "make -j  1\n" + "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1433,23 +1423,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDisablePushDirectoryOnParallelBuild_Jobs() throws Exception {
-		String fileName = getName()+".c";
+		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "make --jobs=2\n"
-				+ "make[0]: Entering directory `Folder'\n"
-				+ fileName+":1:error\n";
+		String lines = "make --jobs=2\n" + "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1458,23 +1446,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDisablePushDirectoryOnParallelBuild_Jobs1() throws Exception {
-		String fileName = getName()+".c";
+		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "make --jobs=1\n"
-				+ "make[0]: Entering directory `Folder'\n"
-				+ fileName+":1:error\n";
+		String lines = "make --jobs=1\n" + "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1483,23 +1469,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDisablePushDirectoryOnParallelBuild_gmake() throws Exception {
-		String fileName = getName()+".c";
+		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
-		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
-		String lines = "gmake384 -k -j all\n"
-				+ "make[0]: Entering directory `Folder'\n"
-				+ fileName+":1:error\n";
+		String lines = "gmake384 -k -j all\n" + "make[0]: Entering directory `Folder'\n" + fileName + ":1:error\n";
 
-		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		String[] errorParsers = { CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1516,9 +1500,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePath.h",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePath.h",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1532,15 +1517,18 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ResourceHelper.createFolder(anotherProject, "Folder");
 		ResourceHelper.createFolder(anotherProject, "Folder/AbsoluteRemoteFolder");
-		IFile file = ResourceHelper.createFile(anotherProject, "Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePathAnotherProject.h");
+		IFile file = ResourceHelper.createFile(anotherProject,
+				"Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePathAnotherProject.h");
 
 		parseOutput("/AbsoluteRemoteFolder/testMappedRemoteAbsolutePathAnotherProject.h:1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/ProjectMappedRemoteAbsolutePathAnotherProject/Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePathAnotherProject.h",problemMarkerInfo.file.toString());
-		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(
+				"L/ProjectMappedRemoteAbsolutePathAnotherProject/Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePathAnotherProject.h",
+				problemMarkerInfo.file.toString());
+		assertEquals(1, problemMarkerInfo.lineNumber);
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 	/**
@@ -1550,12 +1538,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 */
 	public void testWindowsPathOnLinux_Bug263977() throws Exception {
 		// This test is valid on Unix platforms only
-		boolean isUnix = Platform.getOS().equals(Platform.OS_LINUX)
-			|| Platform.getOS().equals(Platform.OS_AIX)
-			|| Platform.getOS().equals(Platform.OS_SOLARIS)
-			|| Platform.getOS().equals(Platform.OS_HPUX)
-			|| Platform.getOS().equals(Platform.OS_QNX)
-			|| Platform.getOS().equals(Platform.OS_MACOSX);
+		boolean isUnix = Platform.getOS().equals(Platform.OS_LINUX) || Platform.getOS().equals(Platform.OS_AIX)
+				|| Platform.getOS().equals(Platform.OS_SOLARIS) || Platform.getOS().equals(Platform.OS_HPUX)
+				|| Platform.getOS().equals(Platform.OS_QNX) || Platform.getOS().equals(Platform.OS_MACOSX);
 		if (!isUnix) {
 			return;
 		}
@@ -1563,15 +1548,15 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String fileName = "testWindowsPathOnLinux_Bug263977.c";
 
 		ResourceHelper.createFolder(fProject, "w:/Folder/Subfolder");
-		ResourceHelper.createFile(fProject, "w:/Folder/Subfolder/"+fileName);
+		ResourceHelper.createFile(fProject, "w:/Folder/Subfolder/" + fileName);
 
 		// Note that main intention of this test is to run on *Linux*, see bug 263977
-		parseOutput("W:\\Folder\\Subfolder\\"+fileName+":1:error");
+		parseOutput("W:\\Folder\\Subfolder\\" + fileName + ":1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/w:/Folder/Subfolder/"+fileName,problemMarkerInfo.file.toString());
-		assertEquals("error",problemMarkerInfo.description);
+		assertEquals("L/FindMatchingFilesTest/w:/Folder/Subfolder/" + fileName, problemMarkerInfo.file.toString());
+		assertEquals("error", problemMarkerInfo.description);
 	}
 
 }

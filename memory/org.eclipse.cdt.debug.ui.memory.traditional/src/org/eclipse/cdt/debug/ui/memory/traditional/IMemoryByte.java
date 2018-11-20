@@ -17,6 +17,6 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 public interface IMemoryByte {
 
 	public boolean isEdited();
-	
+
 	public void setEdited(boolean edited);
 }

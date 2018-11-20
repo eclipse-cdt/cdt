@@ -36,17 +36,17 @@ public abstract class CodeFormatter {
 	 * Kind used to format an expression.
 	 */
 	public static final int K_EXPRESSION = 0x01;
-	
+
 	/**
 	 * Kind used to format a set of statements.
 	 */
 	public static final int K_STATEMENTS = 0x02;
-	
+
 	/**
 	 * Kind used to format a set of class body declarations.
 	 */
 	public static final int K_CLASS_BODY_DECLARATIONS = 0x04;
-	
+
 	/**
 	 * Kind used to format a compilation unit.
 	 * @deprecated Use #K_TRANSLATION_UNIT
@@ -89,8 +89,8 @@ public abstract class CodeFormatter {
 	 * @throws IllegalArgumentException if offset is lower than 0, length is lower than 0 or
 	 * length is greater than source length.
 	 */
-	public abstract TextEdit format(int kind, String source, int offset, int length,
-			int indentationLevel, String lineSeparator);
+	public abstract TextEdit format(int kind, String source, int offset, int length, int indentationLevel,
+			String lineSeparator);
 
 	/**
 	 * Formats one or more regions of <code>source</code>, and returns an array of edits, one edit
@@ -125,7 +125,7 @@ public abstract class CodeFormatter {
 	 * @param options - general formatter options
 	 */
 	public abstract void setOptions(Map<String, ?> options);
-  
+
 	/**
 	 * Answers the string that corresponds to the indentation to the given indentation level,
 	 * or an empty string if the indentation cannot be computed.

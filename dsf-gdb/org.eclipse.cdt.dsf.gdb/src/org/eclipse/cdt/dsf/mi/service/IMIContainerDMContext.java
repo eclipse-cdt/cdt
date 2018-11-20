@@ -21,10 +21,9 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
  * identifier.  These thread groups are the basis for this context.
  * @since 1.1
  */
-public interface IMIContainerDMContext extends IContainerDMContext 
-{
-    /**
-     * Returns the GDB/MI thread group identifier of this context.
-     */
-    public String getGroupId();
+public interface IMIContainerDMContext extends IContainerDMContext {
+	/**
+	 * Returns the GDB/MI thread group identifier of this context.
+	 */
+	public String getGroupId();
 }

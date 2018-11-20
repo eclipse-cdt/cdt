@@ -21,27 +21,26 @@ import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
-
 public class AutoconfReconcilingStrategy implements IReconcilingStrategy {
 
 	AutoconfContentOutlinePage outline;
-//	int lastRegionOffset;
+	//	int lastRegionOffset;
 	AutoconfEditor editor;
 	IDocumentProvider documentProvider;
-	
+
 	public AutoconfReconcilingStrategy(AutoconfEditor editor) {
-		outline= editor.getOutlinePage();
-//		lastRegionOffset = Integer.MAX_VALUE;
+		outline = editor.getOutlinePage();
+		//		lastRegionOffset = Integer.MAX_VALUE;
 		this.editor = editor;
 		documentProvider = editor.getDocumentProvider();
 	}
-	
+
 	@Override
 	public void reconcile(IRegion partition) {
 		try {
 			AutoconfParser parser = editor.getAutoconfParser();
-			((AutoconfErrorHandler)parser.getErrorHandler()).removeAllExistingMarkers();
-			
+			((AutoconfErrorHandler) parser.getErrorHandler()).removeAllExistingMarkers();
+
 			editor.setRootElement(parser.parse(documentProvider.getDocument(editor.getEditorInput())));
 			outline.update();
 		} catch (Exception e) {

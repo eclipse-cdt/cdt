@@ -51,7 +51,8 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 		return getConstructorChainExecution();
 	}
 
-	private static ICPPEvaluation getMemberEvaluation(ICPPField member, ICPPASTConstructorChainInitializer chainInitializer, IASTNode point) {
+	private static ICPPEvaluation getMemberEvaluation(ICPPField member,
+			ICPPASTConstructorChainInitializer chainInitializer, IASTNode point) {
 		final IASTInitializer initializer = chainInitializer.getInitializer();
 		if (initializer instanceof ICPPASTInitializerClause) {
 			return ((ICPPASTInitializerClause) initializer).getEvaluation();
@@ -64,7 +65,7 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 			} else if (constructor instanceof IProblemBinding) {
 				return EvalFixed.INCOMPLETE;
 			}
-			return new EvalConstructor(member.getType(), (ICPPConstructor) constructor, 
+			return new EvalConstructor(member.getType(), (ICPPConstructor) constructor,
 					EvalConstructor.extractArguments(initializer), point);
 		}
 		return null;
@@ -84,8 +85,8 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 				} else if (member instanceof ICPPConstructor) {
 					final ICPPConstructor ctorMember = (ICPPConstructor) member;
 					final IASTInitializer initializer = ccInitializer.getInitializer();
-					if (initializer instanceof ICPPASTConstructorInitializer ||
-					    initializer instanceof ICPPASTInitializerList) {
+					if (initializer instanceof ICPPASTConstructorInitializer
+							|| initializer instanceof ICPPASTInitializerList) {
 						final ICPPClassType baseClassType = (ICPPClassType) ctorMember.getOwner();
 						EvalConstructor memberEval = new EvalConstructor(baseClassType, ctorMember,
 								EvalConstructor.extractArguments(initializer, ctorMember), fnDef);

@@ -71,58 +71,57 @@ public class MIDataDisassemble extends MICommand<MIDataDisassembleInfo> {
 	public static final int DATA_DISASSEMBLE_MODE_MIXED_OPCODES = 3;
 
 	private static final int MAX_MODE = 3;
-	
-	
+
 	private static final String MODE_OUT_OF_RANGE = "Mode out of range: "; //$NON-NLS-1$
-	
+
 	public MIDataDisassemble(IDisassemblyDMContext ctx, String start, String end, boolean mode) {
 		this(ctx, start, end, mode ? DATA_DISASSEMBLE_MODE_MIXED : DATA_DISASSEMBLE_MODE_DISASSEMBLY);
 	}
-	
+
 	/** @since 4.1 */
 	public MIDataDisassemble(IDisassemblyDMContext ctx, String start, String end, int mode) {
 		super(ctx, "-data-disassemble"); //$NON-NLS-1$
-        setOptions(new String[]{"-s", start, "-e", end}); //$NON-NLS-1$ //$NON-NLS-2$
-        
-        if (mode >= MIN_MODE && mode <= MAX_MODE) {
-        	setParameters(new String[] { Integer.toString(mode) });
-        } else {
-        	throw new IllegalArgumentException(MODE_OUT_OF_RANGE + mode);
-        }
+		setOptions(new String[] { "-s", start, "-e", end }); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (mode >= MIN_MODE && mode <= MAX_MODE) {
+			setParameters(new String[] { Integer.toString(mode) });
+		} else {
+			throw new IllegalArgumentException(MODE_OUT_OF_RANGE + mode);
+		}
 	}
 
-    public MIDataDisassemble(IDisassemblyDMContext ctx, String file, int linenum, int lines, boolean mode) {
-    	this(ctx, file, linenum, lines, mode ? DATA_DISASSEMBLE_MODE_MIXED : DATA_DISASSEMBLE_MODE_DISASSEMBLY);
-    }
+	public MIDataDisassemble(IDisassemblyDMContext ctx, String file, int linenum, int lines, boolean mode) {
+		this(ctx, file, linenum, lines, mode ? DATA_DISASSEMBLE_MODE_MIXED : DATA_DISASSEMBLE_MODE_DISASSEMBLY);
+	}
 
 	/** @since 4.1 */
-    public MIDataDisassemble(IDisassemblyDMContext ctx, String file, int linenum, int lines, int mode) {
-        super(ctx, "-data-disassemble"); //$NON-NLS-1$
-        setOptions(new String[]{"-f", file, "-l", //$NON-NLS-1$ //$NON-NLS-2$
-             Integer.toString(linenum), "-n", Integer.toString(lines)}); //$NON-NLS-1$
+	public MIDataDisassemble(IDisassemblyDMContext ctx, String file, int linenum, int lines, int mode) {
+		super(ctx, "-data-disassemble"); //$NON-NLS-1$
+		setOptions(new String[] { "-f", file, "-l", //$NON-NLS-1$ //$NON-NLS-2$
+				Integer.toString(linenum), "-n", Integer.toString(lines) }); //$NON-NLS-1$
 
-        if (mode >= MIN_MODE && mode <= MAX_MODE) {
-        	setParameters(new String[] { Integer.toString(mode) });
-        } else {
-        	throw new IllegalArgumentException(MODE_OUT_OF_RANGE + mode);
-        }
-    }
+		if (mode >= MIN_MODE && mode <= MAX_MODE) {
+			setParameters(new String[] { Integer.toString(mode) });
+		} else {
+			throw new IllegalArgumentException(MODE_OUT_OF_RANGE + mode);
+		}
+	}
 
-    /*
-     * -data-disassemble uses "--" as a separator with only the MODE
-     * So override the MICommand
-     */
-    @Override
-    protected String parametersToString() {
-        String[] parameters = getParameters();
-        if (parameters != null && parameters.length > 0) {
-            return "-- " + parameters[0]; //$NON-NLS-1$
-        }
-        return ""; //$NON-NLS-1$
-    }
+	/*
+	 * -data-disassemble uses "--" as a separator with only the MODE
+	 * So override the MICommand
+	 */
+	@Override
+	protected String parametersToString() {
+		String[] parameters = getParameters();
+		if (parameters != null && parameters.length > 0) {
+			return "-- " + parameters[0]; //$NON-NLS-1$
+		}
+		return ""; //$NON-NLS-1$
+	}
 
-    @Override
-    public MIDataDisassembleInfo getResult(MIOutput output) {
-        return new MIDataDisassembleInfo(output);
-    }
+	@Override
+	public MIDataDisassembleInfo getResult(MIOutput output) {
+		return new MIDataDisassembleInfo(output);
+	}
 }

@@ -93,7 +93,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		return new ITokenStoreFactory() {
 			@Override
 			public ITokenStore createTokenStore(String[] propertyColorNames) {
-				return new TokenStore(CUIPlugin.getDefault().getTextTools().getColorManager(), CUIPlugin.getDefault().getCombinedPreferenceStore(), propertyColorNames);
+				return new TokenStore(CUIPlugin.getDefault().getTextTools().getColorManager(),
+						CUIPlugin.getDefault().getCombinedPreferenceStore(), propertyColorNames);
 			}
 		};
 	}
@@ -107,7 +108,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		if (fCodeScanner != null) {
 			return fCodeScanner;
 		}
-		RuleBasedScanner scanner= null;
+		RuleBasedScanner scanner = null;
 
 		if (language != null) {
 			ICLanguageKeywords keywords = language.getAdapter(ICLanguageKeywords.class);
@@ -125,57 +126,57 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 			scanner = new CCodeScanner(getTokenStoreFactory(), GPPLanguage.getDefault());
 		}
 		if (scanner instanceof AbstractCScanner) {
-			fCodeScanner= (AbstractCScanner)scanner;
+			fCodeScanner = (AbstractCScanner) scanner;
 		}
 		return scanner;
 	}
 
 	public PresentationReconcilerCPP() {
-		fStringScanner= new SingleTokenCScanner(getTokenStoreFactory(), ICColorConstants.C_STRING);
-		fMultilineCommentScanner= new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_MULTI_LINE_COMMENT);
-		fSinglelineCommentScanner= new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_SINGLE_LINE_COMMENT);
+		fStringScanner = new SingleTokenCScanner(getTokenStoreFactory(), ICColorConstants.C_STRING);
+		fMultilineCommentScanner = new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_MULTI_LINE_COMMENT);
+		fSinglelineCommentScanner = new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_SINGLE_LINE_COMMENT);
 
 		setDocumentPartitioning(CUIPlugin.getDefault().getTextTools().getDocumentPartitioning());
 
-		ILanguage language= getLanguage();
+		ILanguage language = getLanguage();
 		RuleBasedScanner scanner = getCodeScanner(language);
 
-		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(scanner);
+		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(scanner);
 
 		setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-		dr= new DefaultDamagerRepairer(fSinglelineCommentScanner);
+		dr = new DefaultDamagerRepairer(fSinglelineCommentScanner);
 		setDamager(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 		setRepairer(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 
-		dr= new DefaultDamagerRepairer(fMultilineCommentScanner);
+		dr = new DefaultDamagerRepairer(fMultilineCommentScanner);
 		setDamager(dr, ICPartitions.C_MULTI_LINE_COMMENT);
 		setRepairer(dr, ICPartitions.C_MULTI_LINE_COMMENT);
 
-		ICTokenScanner docCommentSingleScanner= getSinglelineDocCommentScanner(null);
-		if (docCommentSingleScanner!=null) {
-			dr= new DefaultDamagerRepairer(docCommentSingleScanner);
+		ICTokenScanner docCommentSingleScanner = getSinglelineDocCommentScanner(null);
+		if (docCommentSingleScanner != null) {
+			dr = new DefaultDamagerRepairer(docCommentSingleScanner);
 			setDamager(dr, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
 			setRepairer(dr, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
 		}
 
-		ICTokenScanner docCommentMultiScanner= getMultilineDocCommentScanner(null);
-		if (docCommentMultiScanner!=null) {
-			dr= new DefaultDamagerRepairer(docCommentMultiScanner);
+		ICTokenScanner docCommentMultiScanner = getMultilineDocCommentScanner(null);
+		if (docCommentMultiScanner != null) {
+			dr = new DefaultDamagerRepairer(docCommentMultiScanner);
 			setDamager(dr, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
 			setRepairer(dr, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
 		}
 
-		dr= new DefaultDamagerRepairer(fStringScanner);
+		dr = new DefaultDamagerRepairer(fStringScanner);
 		setDamager(dr, ICPartitions.C_STRING);
 		setRepairer(dr, ICPartitions.C_STRING);
 
-		dr= new DefaultDamagerRepairer(fStringScanner);
+		dr = new DefaultDamagerRepairer(fStringScanner);
 		setDamager(dr, ICPartitions.C_CHARACTER);
 		setRepairer(dr, ICPartitions.C_CHARACTER);
 
-		dr= new DefaultDamagerRepairer(getPreprocessorScanner(language));
+		dr = new DefaultDamagerRepairer(getPreprocessorScanner(language));
 		setDamager(new PartitionDamager(), ICPartitions.C_PREPROCESSOR);
 		setRepairer(dr, ICPartitions.C_PREPROCESSOR);
 	}
@@ -212,16 +213,16 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 			return presentation;
 		}
 
-		highlightedPositions  = Arrays.copyOf(returnedPositions, returnedPositions.length, HighlightedPosition[].class);
+		highlightedPositions = Arrays.copyOf(returnedPositions, returnedPositions.length, HighlightedPosition[].class);
 		int damageStartOffset = damage.getOffset();
 		int damageEndOffset = damageStartOffset + damage.getLength();
 
 		for (HighlightedPosition eachPosition : highlightedPositions) {
 			// Find each position that resides in or overlaps the damage region and create StyleRange for it.
 			if ((eachPosition.getOffset() + eachPosition.getLength()) >= damageStartOffset
-				&& eachPosition.getOffset() < damageEndOffset) {
-					StyleRange range = eachPosition.createStyleRange();
-					styleRanges.add(range);
+					&& eachPosition.getOffset() < damageEndOffset) {
+				StyleRange range = eachPosition.createStyleRange();
+				styleRanges.add(range);
 			}
 		}
 
@@ -239,13 +240,13 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	protected ICTokenScanner getMultilineDocCommentScanner(IResource resource) {
 		if (fMultilineDocCommentScanner == null) {
 			if (resource == null) {
-				resource= ResourcesPlugin.getWorkspace().getRoot();
+				resource = ResourcesPlugin.getWorkspace().getRoot();
 			}
 			// IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getMultilineConfiguration();
 			// fMultilineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
 			if (fMultilineDocCommentScanner == null) {
 				// fallback: normal comment highlighting
-				fMultilineDocCommentScanner= fMultilineCommentScanner;
+				fMultilineDocCommentScanner = fMultilineCommentScanner;
 			}
 		}
 		return fMultilineDocCommentScanner;
@@ -260,13 +261,13 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	protected ICTokenScanner getSinglelineDocCommentScanner(IResource resource) {
 		if (fSinglelineDocCommentScanner == null) {
 			if (resource == null) {
-				resource= ResourcesPlugin.getWorkspace().getRoot();
+				resource = ResourcesPlugin.getWorkspace().getRoot();
 			}
 			// IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getSinglelineConfiguration();
 			// fSinglelineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
 			if (fSinglelineDocCommentScanner == null) {
 				// fallback: normal comment highlighting
-				fSinglelineDocCommentScanner= fSinglelineCommentScanner;
+				fSinglelineDocCommentScanner = fSinglelineCommentScanner;
 			}
 		}
 		return fSinglelineDocCommentScanner;
@@ -278,16 +279,17 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		if (fPreprocessorScanner != null) {
 			return fPreprocessorScanner;
 		}
-		AbstractCScanner scanner= null;
-		ICLanguageKeywords keywords = language == null ? null : (ICLanguageKeywords) language.getAdapter(ICLanguageKeywords.class);
+		AbstractCScanner scanner = null;
+		ICLanguageKeywords keywords = language == null ? null
+				: (ICLanguageKeywords) language.getAdapter(ICLanguageKeywords.class);
 		if (keywords != null) {
 			scanner = new CPreprocessorScanner(getTokenStoreFactory(), keywords);
 		}
 		if (scanner == null) {
 			keywords = GPPLanguage.getDefault().getAdapter(ICLanguageKeywords.class);
-			scanner= new CPreprocessorScanner(getTokenStoreFactory(), keywords);
+			scanner = new CPreprocessorScanner(getTokenStoreFactory(), keywords);
 		}
-		fPreprocessorScanner= scanner;
+		fPreprocessorScanner = scanner;
 		return fPreprocessorScanner;
 	}
 
@@ -314,7 +316,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private void addInactiveCodeHighlightingCategory(IDocument document) {
 		if (!document.containsPositionCategory(INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY)) {
 			document.addPositionCategory(INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
-			DefaultPositionUpdater inactiveCodeHighlightingPositionUpdater = new DefaultPositionUpdater(INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
+			DefaultPositionUpdater inactiveCodeHighlightingPositionUpdater = new DefaultPositionUpdater(
+					INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
 			document.addPositionUpdater(inactiveCodeHighlightingPositionUpdater);
 		}
 	}
@@ -345,9 +348,9 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		this.textViewer = viewer;
 		textInputListener = new TextInputListenerCPP();
 		viewer.addTextInputListener(textInputListener);
-		IDocument document= viewer.getDocument();
+		IDocument document = viewer.getDocument();
 		if (document != null) {
-		    textInputListener.inputDocumentChanged(null, document);
+			textInputListener.inputDocumentChanged(null, document);
 		}
 		StyledText textWidget = textViewer.getTextWidget();
 		textWidget.addLineBackgroundListener(fLineBackgroundListener);
@@ -359,11 +362,13 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 			@Override
 			public void run() {
 				// To provide bracket auto-completion support of CEditor in Generic Editor of LSP4E-CPP.
-				TextEditor editor = (TextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+				TextEditor editor = (TextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+						.getActiveEditor();
 				fBracketInserter = new BracketInserter(editor, true);
 				fBracketInserter.setSourceViewer((SourceViewer) textViewer);
 				((TextViewer) textViewer).prependVerifyKeyListener(fBracketInserter);
-			}});
+			}
+		});
 	}
 
 	@Override

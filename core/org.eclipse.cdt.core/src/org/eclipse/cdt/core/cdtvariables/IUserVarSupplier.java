@@ -24,20 +24,24 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IUserVarSupplier {
 	ICdtVariable createMacro(ICdtVariable copy, ICConfigurationDescription contextData);
-	ICdtVariable createMacro(String macroName, 
-			int type, 
-			String value, 
-			ICConfigurationDescription contextData);
-	ICdtVariable createMacro(String macroName, 
-			int type, 
-			String value[], 
-			ICConfigurationDescription contextData);
+
+	ICdtVariable createMacro(String macroName, int type, String value, ICConfigurationDescription contextData);
+
+	ICdtVariable createMacro(String macroName, int type, String value[], ICConfigurationDescription contextData);
+
 	void deleteAll(ICConfigurationDescription contextData);
+
 	ICdtVariable deleteMacro(String name, ICConfigurationDescription contextData);
+
 	ICdtVariable[] getMacros(ICConfigurationDescription contextData);
+
 	IStorableCdtVariables getWorkspaceVariablesCopy();
+
 	boolean isDynamic(ICdtVariable v);
+
 	void setMacros(ICdtVariable m[], ICConfigurationDescription contextData);
+
 	boolean setWorkspaceVariables(IStorableCdtVariables vars) throws CoreException;
+
 	void storeWorkspaceVariables(boolean force);
 }

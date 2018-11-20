@@ -26,36 +26,37 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
-public abstract class AbstractWizardDropDownAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
+public abstract class AbstractWizardDropDownAction extends Action
+		implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
 
 	protected final static IAction[] NO_ACTIONS = new IAction[0];
 	private Menu fMenu;
 	private IAction[] fActions;
 	private IRegistryChangeListener fListener;
 	private Object fLock = new Object();
-	
+
 	public AbstractWizardDropDownAction() {
-		fMenu= null;
-		fActions= null;
+		fMenu = null;
+		fActions = null;
 		setMenuCreator(this);
-		
+
 		// listen for changes to wizard extensions
 		fListener = new IRegistryChangeListener() {
-		    @Override
+			@Override
 			public void registryChanged(IRegistryChangeEvent event) {
-		        refreshActions();
-		    }
+				refreshActions();
+			}
 		};
 		Platform.getExtensionRegistry().addRegistryChangeListener(fListener);
 	}
-	
+
 	public void refreshActions() {
-        // force menu and actions to be created again
+		// force menu and actions to be created again
 		Menu oldMenu = null;
-		synchronized(fLock) {
+		synchronized (fLock) {
 			oldMenu = fMenu;
-	        fActions = null;
-	        fMenu = null;
+			fActions = null;
+			fMenu = null;
 		}
 		if (oldMenu != null)
 			oldMenu.dispose();
@@ -65,7 +66,7 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	public void dispose() {
 		if (fListener != null) {
 			Platform.getExtensionRegistry().removeRegistryChangeListener(fListener);
-			fListener= null;
+			fListener = null;
 		}
 		refreshActions();
 	}
@@ -77,63 +78,63 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 
 	@Override
 	public Menu getMenu(Control parent) {
-		synchronized(fLock) {
-			fMenu= new Menu(parent);
-			IAction[] actions= getActions();
-			for (int i= 0; i < actions.length; i++) {
-				ActionContributionItem item= new ActionContributionItem(actions[i]);
+		synchronized (fLock) {
+			fMenu = new Menu(parent);
+			IAction[] actions = getActions();
+			for (int i = 0; i < actions.length; i++) {
+				ActionContributionItem item = new ActionContributionItem(actions[i]);
 				item.fill(fMenu, -1);
 			}
 			return fMenu;
 		}
 	}
-	
+
 	@Override
 	public void run() {
-	    // for now, run the default action
-	    // we might want the last run action at some point
-	    IAction action = getDefaultAction();
-	    if (action != null) {
-	        action.run();
-	    }
+		// for now, run the default action
+		// we might want the last run action at some point
+		IAction action = getDefaultAction();
+		if (action != null) {
+			action.run();
+		}
 	}
-	
+
 	public IAction getDefaultAction() {
-	    IAction[] actions = getActions();
+		IAction[] actions = getActions();
 		if (actions.length > 0) {
-		    actions[0].getId();
-		    return actions[0];
-//		    for (int i = 0; i < actions.length; ++i) {
-//		        IAction action = actions[i];
-//			    if (action.isEnabled()) {
-//			        return action;
-//			    }
-//		    }
+			actions[0].getId();
+			return actions[0];
+			//		    for (int i = 0; i < actions.length; ++i) {
+			//		        IAction action = actions[i];
+			//			    if (action.isEnabled()) {
+			//			        return action;
+			//			    }
+			//		    }
 		}
 		return null;
 	}
-	
+
 	private IAction[] getActions() {
-		synchronized(fLock) {
-	        fActions = getWizardActions();
-		    if (fActions == null)
-		        fActions = NO_ACTIONS;
+		synchronized (fLock) {
+			fActions = getWizardActions();
+			if (fActions == null)
+				fActions = NO_ACTIONS;
 
-		    //TODO provide a way to sort the actions
+			//TODO provide a way to sort the actions
 
-		    return fActions;
+			return fActions;
 		}
 	}
-	
+
 	protected abstract IAction[] getWizardActions();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	@Override
 	public void init(IWorkbenchWindow window) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -141,7 +142,7 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	public void run(IAction action) {
 		run();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

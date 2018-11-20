@@ -31,21 +31,22 @@ public class ResumeWithoutSignalCommand extends AbstractDebugCommand implements 
 
 	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
-    	if (targets.length != 1) {
-    		return;
-    	}
+		if (targets.length != 1) {
+			return;
+		}
 
-		IResumeWithoutSignal target = (IResumeWithoutSignal)targets[0];
+		IResumeWithoutSignal target = (IResumeWithoutSignal) targets[0];
 		target.resumeWithoutSignal();
 	}
 
 	@Override
-	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException {
-    	if (targets.length != 1) {
-    		return false;
-    	}
+	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
+			throws CoreException {
+		if (targets.length != 1) {
+			return false;
+		}
 
-		IResumeWithoutSignal target = (IResumeWithoutSignal)targets[0];
+		IResumeWithoutSignal target = (IResumeWithoutSignal) targets[0];
 		return target.canResumeWithoutSignal();
 	}
 

@@ -65,7 +65,7 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 		addEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD, CodanUIMessages.LaunchModesPropertyPage_RunOnFullBuild);
 		addEditor(CheckerLaunchMode.RUN_ON_DEMAND, CodanUIMessages.LaunchModesPropertyPage_RunOnDemand);
 	}
-	
+
 	private void addEditor(CheckerLaunchMode launchMode, String label) {
 		addField(new BooleanFieldEditor(launchMode.name(), label, getFieldEditorParent()));
 	}

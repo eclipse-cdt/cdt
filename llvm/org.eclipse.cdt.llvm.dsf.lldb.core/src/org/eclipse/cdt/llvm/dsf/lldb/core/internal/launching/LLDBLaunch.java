@@ -52,8 +52,10 @@ public class LLDBLaunch extends GdbLaunch {
 	private static final String XCODE_HINT = "(Xcode 7.3.1)"; //$NON-NLS-1$
 	private static final IntegerTuple LLDB_MINIMUM_REVISION = new IntegerTuple(350, 0, 21, 9);
 	private static final IntegerTuple LLDB_MINIMUM_VERSION = new IntegerTuple(3, 8, 0);
-	private static final Pattern LLDB_VERSION_PATTERN = Pattern.compile("lldb\\s*version\\s*(\\d+)\\.(\\d+)\\.(\\d+).*", Pattern.DOTALL); //$NON-NLS-1$ ;
-	private static final Pattern LLDB_REVISION_PATTERN = Pattern.compile("lldb-(\\d+)\\.(\\d+)\\.(\\d+)(\\.(\\d)+)?.*", Pattern.DOTALL); //$NON-NLS-1$
+	private static final Pattern LLDB_VERSION_PATTERN = Pattern.compile("lldb\\s*version\\s*(\\d+)\\.(\\d+)\\.(\\d+).*", //$NON-NLS-1$
+			Pattern.DOTALL); //;
+	private static final Pattern LLDB_REVISION_PATTERN = Pattern.compile("lldb-(\\d+)\\.(\\d+)\\.(\\d+)(\\.(\\d)+)?.*", //$NON-NLS-1$
+			Pattern.DOTALL);
 
 	private IntegerTuple fLldbVersion;
 	private IntegerTuple fLldbRevision;
@@ -101,8 +103,10 @@ public class LLDBLaunch extends GdbLaunch {
 
 		IPath retVal = new Path(defaultLLdbCommand);
 		try {
-			String lldbPath = configuration.getAttribute(ILLDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultLLdbCommand);
-			lldbPath = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(lldbPath, false);
+			String lldbPath = configuration.getAttribute(ILLDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
+					defaultLLdbCommand);
+			lldbPath = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(lldbPath,
+					false);
 			retVal = new Path(lldbPath);
 		} catch (CoreException e) {
 			LLDBCorePlugin.getDefault().getLog().log(e.getStatus());
@@ -144,7 +148,8 @@ public class LLDBLaunch extends GdbLaunch {
 		IPath lldbMiPath = getGDBPath();
 		String lastSegment = lldbMiPath.lastSegment();
 		if (lastSegment.contains(ILLDBConstants.LLDB_MI_EXECUTABLE_NAME)) {
-			lastSegment = lastSegment.replace(ILLDBConstants.LLDB_MI_EXECUTABLE_NAME, ILLDBConstants.LLDB_EXECUTABLE_NAME);
+			lastSegment = lastSegment.replace(ILLDBConstants.LLDB_MI_EXECUTABLE_NAME,
+					ILLDBConstants.LLDB_EXECUTABLE_NAME);
 		}
 		lldbMiPath = lldbMiPath.removeLastSegments(1).append(lastSegment);
 
@@ -186,7 +191,8 @@ public class LLDBLaunch extends GdbLaunch {
 					// We got some output but couldn't parse it. Make that
 					// output visible to the user in the error dialog.
 					Exception detailedException = new Exception("Unexpected output format: \n\n" + streamOutput); //$NON-NLS-1$
-					throw new DebugException(LLDBCorePlugin.createStatus("Could not determine LLDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$
+					throw new DebugException(LLDBCorePlugin.createStatus(
+							"Could not determine LLDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$
 							detailedException));
 				}
 			}
@@ -197,8 +203,8 @@ public class LLDBLaunch extends GdbLaunch {
 			// and that shouldn't prevent users to start debugging with lldb-mi.
 			// So here we log instead of throwing an exception and stopping the
 			// launch.
-			LLDBCorePlugin.log(new DebugException(new Status(IStatus.ERROR, LLDBCorePlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
-					"Error with command: " + StringUtil.join(args, " "), e))); //$NON-NLS-1$ //$NON-NLS-2$
+			LLDBCorePlugin.log(new DebugException(new Status(IStatus.ERROR, LLDBCorePlugin.PLUGIN_ID,
+					DebugException.REQUEST_FAILED, "Error with command: " + StringUtil.join(args, " "), e))); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			// If we get here we are obviously not stuck reading the stream so
 			// we can cancel the timeout job.
@@ -232,11 +238,13 @@ public class LLDBLaunch extends GdbLaunch {
 			// inconvenient! But this will only affect people building it from
 			// source, not LLDB included in Xcode.
 
-			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(4, 0, 0)) < 0 || fLldbRevision != null && fLldbRevision.compareTo(new IntegerTuple(370, 0, 37)) < 0) {
+			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(4, 0, 0)) < 0
+					|| fLldbRevision != null && fLldbRevision.compareTo(new IntegerTuple(370, 0, 37)) < 0) {
 				fTraits.add(LLDBTrait.BROKEN_BREAKPOINT_INSERT_FULL_PATH_LLVM_BUG_28709);
 			}
 
-			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(8, 0, 0)) < 0 || fLldbRevision != null) {
+			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(8, 0, 0)) < 0
+					|| fLldbRevision != null) {
 				fTraits.add(LLDBTrait.MISSING_GDB_SET_BREAKPOINT_PENDING);
 			}
 		}
@@ -379,7 +387,7 @@ public class LLDBLaunch extends GdbLaunch {
 			Integer micro = Integer.valueOf(matcher.group(3));
 			IntegerTuple version = new IntegerTuple(major, minor, micro);
 			return version;
-		} catch (NumberFormatException  e) {
+		} catch (NumberFormatException e) {
 			LLDBCorePlugin.log(e);
 		}
 		return null;
@@ -405,7 +413,7 @@ public class LLDBLaunch extends GdbLaunch {
 	 *            the trait to check
 	 * @return if the launch has this trait for the LLDB, false otherwise
 	 */
-	public boolean hasTrait (LLDBTrait trait) {
+	public boolean hasTrait(LLDBTrait trait) {
 		return fTraits.contains(trait);
 	}
 }

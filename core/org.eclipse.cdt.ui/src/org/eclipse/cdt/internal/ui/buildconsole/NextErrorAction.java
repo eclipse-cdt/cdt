@@ -26,10 +26,10 @@ public class NextErrorAction extends Action {
 	private BuildConsolePage fConsolePage;
 
 	public NextErrorAction(BuildConsolePage page) {
-		super(ConsoleMessages.NextErrorAction_Tooltip); 
+		super(ConsoleMessages.NextErrorAction_Tooltip);
 		fConsolePage = page;
 		setEnabled(true);
-		setToolTipText(ConsoleMessages.NextErrorAction_Tooltip); 
+		setToolTipText(ConsoleMessages.NextErrorAction_Tooltip);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_NEXT);
 	}
 

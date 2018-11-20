@@ -25,7 +25,7 @@ public class InitializerListType implements IType, ISerializableType {
 	private final EvalInitList fInitializerList;
 
 	public InitializerListType(EvalInitList exprEvalInitList) {
-		fInitializerList= exprEvalInitList;
+		fInitializerList = exprEvalInitList;
 	}
 
 	public EvalInitList getEvaluation() {
@@ -49,7 +49,7 @@ public class InitializerListType implements IType, ISerializableType {
 
 	@Override
 	public String toString() {
-		return "InitializerListType";		//$NON-NLS-1$
+		return "InitializerListType"; //$NON-NLS-1$
 	}
 
 	@Override

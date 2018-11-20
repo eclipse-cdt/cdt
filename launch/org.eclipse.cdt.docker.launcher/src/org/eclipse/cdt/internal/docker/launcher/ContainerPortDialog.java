@@ -49,13 +49,10 @@ public class ContainerPortDialog extends Dialog {
 		this.model = new ContainerPortDialogModel();
 	}
 
-	public ContainerPortDialog(final Shell parentShell,
-			final ExposedPortModel selectedContainerPort) {
+	public ContainerPortDialog(final Shell parentShell, final ExposedPortModel selectedContainerPort) {
 		super(parentShell);
-		this.model = new ContainerPortDialogModel(
-				selectedContainerPort.getContainerPort(),
-				selectedContainerPort.getHostAddress(),
-				selectedContainerPort.getHostPort());
+		this.model = new ContainerPortDialogModel(selectedContainerPort.getContainerPort(),
+				selectedContainerPort.getHostAddress(), selectedContainerPort.getHostPort());
 	}
 
 	@Override
@@ -69,10 +66,8 @@ public class ContainerPortDialog extends Dialog {
 	 * Disable the 'OK' button by default
 	 */
 	@Override
-	protected Button createButton(Composite parent, int id, String label,
-			boolean defaultButton) {
-		final Button button = super.createButton(parent, id, label,
-				defaultButton);
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
+		final Button button = super.createButton(parent, id, label, defaultButton);
 		if (id == IDialogConstants.OK_ID) {
 			button.setEnabled(false);
 		}
@@ -89,70 +84,47 @@ public class ContainerPortDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		final int COLUMNS = 2;
 		final Composite container = new Composite(parent, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL)
-				.span(COLUMNS, 1).grab(true, true).applyTo(container);
-		GridLayoutFactory.fillDefaults().numColumns(COLUMNS).margins(10, 10)
-				.applyTo(container);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(COLUMNS, 1).grab(true, true).applyTo(container);
+		GridLayoutFactory.fillDefaults().numColumns(COLUMNS).margins(10, 10).applyTo(container);
 		final Label explanationLabel = new Label(container, SWT.NONE);
 		explanationLabel.setText(Messages.ContainerPortDialog_explanationLabel);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.span(COLUMNS, 1).grab(false, false).applyTo(explanationLabel);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).span(COLUMNS, 1).grab(false, false)
+				.applyTo(explanationLabel);
 		final Label containerLabel = new Label(container, SWT.NONE);
 		containerLabel.setText(Messages.ContainerPortDialog_containerLabel);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(false, false).applyTo(containerLabel);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(false, false).applyTo(containerLabel);
 		final Text containerPortText = new Text(container, SWT.BORDER);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(true, false).applyTo(containerPortText);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(containerPortText);
 		final Label hostAddressLabel = new Label(container, SWT.NONE);
 		hostAddressLabel.setText(Messages.ContainerPortDialog_hostAddressLabel);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(false, false).applyTo(hostAddressLabel);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(false, false).applyTo(hostAddressLabel);
 		final Text hostAddressText = new Text(container, SWT.BORDER);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(true, false).applyTo(hostAddressText);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(hostAddressText);
 		final Label hostPortLabel = new Label(container, SWT.NONE);
-		hostPortLabel.setText(
-				Messages.ContainerPortDialog_hostPortLabel);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(false, false).applyTo(hostPortLabel);
+		hostPortLabel.setText(Messages.ContainerPortDialog_hostPortLabel);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(false, false).applyTo(hostPortLabel);
 		final Text hostPortText = new Text(container, SWT.BORDER);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(true, false).applyTo(hostPortText);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(hostPortText);
 		// error message
 		final Label errorMessageLabel = new Label(container, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.span(COLUMNS, 1).grab(true, false).applyTo(errorMessageLabel);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).span(COLUMNS, 1).grab(true, false)
+				.applyTo(errorMessageLabel);
 
 		// listening to changes
-		final ISWTObservableValue containerPortObservable = WidgetProperties
-				.text(SWT.Modify).observe(containerPortText);
-		dbc.bindValue(containerPortObservable,
-				BeanProperties
-						.value(ContainerPortDialogModel.class,
-								ContainerPortDialogModel.CONTAINER_PORT)
-						.observe(model));
-		final ISWTObservableValue hostAddressObservable = WidgetProperties
-				.text(SWT.Modify).observe(hostAddressText);
-		dbc.bindValue(hostAddressObservable,
-				BeanProperties
-						.value(ContainerPortDialogModel.class,
-								ContainerPortDialogModel.HOST_ADDRESS)
-						.observe(model));
-		final ISWTObservableValue hostPortObservable = WidgetProperties
-				.text(SWT.Modify).observe(hostPortText);
-		dbc.bindValue(hostPortObservable,
-				BeanProperties
-						.value(ContainerPortDialogModel.class,
-								ContainerPortDialogModel.HOST_PORT)
-						.observe(model));
+		final ISWTObservableValue containerPortObservable = WidgetProperties.text(SWT.Modify)
+				.observe(containerPortText);
+		dbc.bindValue(containerPortObservable, BeanProperties
+				.value(ContainerPortDialogModel.class, ContainerPortDialogModel.CONTAINER_PORT).observe(model));
+		final ISWTObservableValue hostAddressObservable = WidgetProperties.text(SWT.Modify).observe(hostAddressText);
+		dbc.bindValue(hostAddressObservable, BeanProperties
+				.value(ContainerPortDialogModel.class, ContainerPortDialogModel.HOST_ADDRESS).observe(model));
+		final ISWTObservableValue hostPortObservable = WidgetProperties.text(SWT.Modify).observe(hostPortText);
+		dbc.bindValue(hostPortObservable, BeanProperties
+				.value(ContainerPortDialogModel.class, ContainerPortDialogModel.HOST_PORT).observe(model));
 
-		containerPortObservable.addValueChangeListener(
-				onContainerPortSettingsChanged());
-		hostPortObservable.addValueChangeListener(
-				onContainerPortSettingsChanged());
-		hostAddressObservable.addValueChangeListener(
-				onContainerPortSettingsChanged());
+		containerPortObservable.addValueChangeListener(onContainerPortSettingsChanged());
+		hostPortObservable.addValueChangeListener(onContainerPortSettingsChanged());
+		hostAddressObservable.addValueChangeListener(onContainerPortSettingsChanged());
 		return container;
 	}
 
@@ -174,8 +146,7 @@ public class ContainerPortDialog extends Dialog {
 	}
 
 	public ExposedPortModel getPort() {
-		return new ExposedPortModel(model.getContainerPort(), PORT_TYPE,
-				model.getHostAddress(), model.getHostPort());
+		return new ExposedPortModel(model.getContainerPort(), PORT_TYPE, model.getHostAddress(), model.getHostPort());
 	}
 
 	class ContainerPortDialogModel extends BaseDatabindingModel {
@@ -195,8 +166,7 @@ public class ContainerPortDialog extends Dialog {
 		public ContainerPortDialogModel() {
 		}
 
-		public ContainerPortDialogModel(final String containerPort,
-				final String hostAddress, final String hostPort) {
+		public ContainerPortDialogModel(final String containerPort, final String hostAddress, final String hostPort) {
 			this.containerPort = containerPort;
 			this.hostAddress = hostAddress;
 			this.hostPort = hostPort;
@@ -207,8 +177,7 @@ public class ContainerPortDialog extends Dialog {
 		}
 
 		public void setContainerPort(final String containerPort) {
-			firePropertyChange(CONTAINER_PORT, this.containerPort,
-					this.containerPort = containerPort);
+			firePropertyChange(CONTAINER_PORT, this.containerPort, this.containerPort = containerPort);
 		}
 
 		public String getHostAddress() {
@@ -216,8 +185,7 @@ public class ContainerPortDialog extends Dialog {
 		}
 
 		public void setHostAddress(final String hostName) {
-			firePropertyChange(HOST_ADDRESS, this.hostAddress,
-					this.hostAddress = hostName);
+			firePropertyChange(HOST_ADDRESS, this.hostAddress, this.hostAddress = hostName);
 		}
 
 		public String getHostPort() {
@@ -225,8 +193,7 @@ public class ContainerPortDialog extends Dialog {
 		}
 
 		public void setHostPort(final String hostPort) {
-			firePropertyChange(HOST_PORT, this.hostPort,
-					this.hostPort = hostPort);
+			firePropertyChange(HOST_PORT, this.hostPort, this.hostPort = hostPort);
 		}
 	}
 

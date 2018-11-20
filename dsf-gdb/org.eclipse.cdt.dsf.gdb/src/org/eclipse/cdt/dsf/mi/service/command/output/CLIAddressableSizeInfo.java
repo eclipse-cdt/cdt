@@ -25,9 +25,9 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * @since 4.4
  */
 public class CLIAddressableSizeInfo extends MIInfo {
-	
+
 	private int fAddressableSize = 1;
-	
+
 	public CLIAddressableSizeInfo(MIOutput record) {
 		super(record);
 		parse();
@@ -38,7 +38,7 @@ public class CLIAddressableSizeInfo extends MIInfo {
 			MIOutput out = getMIOutput();
 			for (MIOOBRecord oob : out.getMIOOBRecords()) {
 				if (oob instanceof MIConsoleStreamOutput) {
-					String line = ((MIConsoleStreamOutput)oob).getString().trim();
+					String line = ((MIConsoleStreamOutput) oob).getString().trim();
 					fAddressableSize = hexToOctetCount(line);
 				}
 			}
@@ -48,16 +48,16 @@ public class CLIAddressableSizeInfo extends MIInfo {
 	public int getAddressableSize() {
 		return fAddressableSize;
 	}
-	
-	private int hexToOctetCount(String hexString)  {
+
+	private int hexToOctetCount(String hexString) {
 		//Receiving format is expected in hex form e.g. "$n = 0xffff" or "$n = 0xff"
 		//which shall result in 2 and 1 octets respectively
 		int starts = hexString.indexOf("x"); //$NON-NLS-1$
-		assert(starts > 0);
-		String hexDigits = hexString.substring(starts+1);
+		assert (starts > 0);
+		String hexDigits = hexString.substring(starts + 1);
 		assert hexDigits.length() > 1;
-		int octets = hexDigits.length()/2;
-		
+		int octets = hexDigits.length() / 2;
+
 		return octets;
 	}
 }

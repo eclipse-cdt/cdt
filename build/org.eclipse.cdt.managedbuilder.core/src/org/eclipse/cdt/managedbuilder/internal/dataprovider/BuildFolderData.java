@@ -21,11 +21,12 @@ import org.eclipse.core.runtime.IPath;
 
 public class BuildFolderData extends CFolderData {
 	private FolderInfo fFolderInfo;
-	public BuildFolderData(IFolderInfo folderInfo){
-		fFolderInfo = (FolderInfo)folderInfo;
+
+	public BuildFolderData(IFolderInfo folderInfo) {
+		fFolderInfo = (FolderInfo) folderInfo;
 	}
-	
-	public IFolderInfo getFolderInfo(){
+
+	public IFolderInfo getFolderInfo() {
 		return fFolderInfo;
 	}
 
@@ -39,13 +40,13 @@ public class BuildFolderData extends CFolderData {
 		return fFolderInfo.getPath();
 	}
 
-//	public boolean isExcluded() {
-//		return fFolderInfo.isExcluded();
-//	}
-//
-//	public void setExcluded(boolean excluded) {
-//		fFolderInfo.setExclude(excluded);
-//	}
+	//	public boolean isExcluded() {
+	//		return fFolderInfo.isExcluded();
+	//	}
+	//
+	//	public void setExcluded(boolean excluded) {
+	//		fFolderInfo.setExclude(excluded);
+	//	}
 
 	@Override
 	public void setPath(IPath path) {
@@ -72,15 +73,13 @@ public class BuildFolderData extends CFolderData {
 	}
 
 	@Override
-	public CLanguageData createLanguageDataForContentTypes(String languageId,
-			String[] typesIds) {
+	public CLanguageData createLanguageDataForContentTypes(String languageId, String[] typesIds) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public CLanguageData createLanguageDataForExtensions(String languageId,
-			String[] extensions) {
+	public CLanguageData createLanguageDataForExtensions(String languageId, String[] extensions) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -89,18 +88,18 @@ public class BuildFolderData extends CFolderData {
 	public boolean hasCustomSettings() {
 		return fFolderInfo.hasCustomSettings();
 	}
-	
-	void clearCachedData(){
+
+	void clearCachedData() {
 		CLanguageData[] lDatas = getLanguageDatas();
-		for(int i = 0; i < lDatas.length; i++){
-			((BuildLanguageData)lDatas[i]).clearCachedData();
+		for (int i = 0; i < lDatas.length; i++) {
+			((BuildLanguageData) lDatas[i]).clearCachedData();
 		}
 	}
 
 	public boolean containsScannerInfo() {
 		return fFolderInfo.containsDiscoveredScannerInfo();
 	}
-	
+
 	public void setContainsDiscoveredScannerInfo(boolean contains) {
 		fFolderInfo.setContainsDiscoveredScannerInfo(contains);
 	}

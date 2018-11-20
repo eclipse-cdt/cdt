@@ -33,11 +33,9 @@ class ReturnFlowInfo extends FlowInfo {
 	}
 
 	private static int getReturnFlag(IASTReturnStatement node) {
-		IASTExpression expression= node.getReturnValue();
+		IASTExpression expression = node.getReturnValue();
 		if (expression == null || SemanticUtil.isVoidType(expression.getExpressionType()))
 			return VOID_RETURN;
 		return VALUE_RETURN;
 	}
 }
-
-

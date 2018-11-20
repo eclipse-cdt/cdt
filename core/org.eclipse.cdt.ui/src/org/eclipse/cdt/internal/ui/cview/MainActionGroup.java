@@ -73,21 +73,20 @@ public class MainActionGroup extends CViewActionGroup {
 	CollapseAllAction collapseAllAction;
 	ToggleLinkingAction toggleLinkingAction;
 
-
 	BuildGroup buildGroup;
 	OpenFileGroup openFileGroup;
 	GotoActionGroup gotoGroup;
 	RefactorActionGroup refactorGroup;
 	OpenProjectGroup openProjectGroup;
 	WorkingSetFilterActionGroup workingSetGroup;
-	CustomFiltersActionGroup fCustomFiltersActionGroup;	
+	CustomFiltersActionGroup fCustomFiltersActionGroup;
 
 	SelectionSearchGroup selectionSearchGroup;
 
-	OpenViewActionGroup openViewActionGroup;	
+	OpenViewActionGroup openViewActionGroup;
 	CRefactoringActionGroup crefactoringActionGroup;
-	
-    private NewWizardMenu newWizardMenu;
+
+	private NewWizardMenu newWizardMenu;
 
 	public MainActionGroup(CView cview) {
 		super(cview);
@@ -129,7 +128,7 @@ public class MainActionGroup extends CViewActionGroup {
 		buildGroup = new BuildGroup(getCView());
 		refactorGroup = new RefactorActionGroup(getCView());
 
-        newWizardMenu = new NewWizardMenu(getCView().getSite().getWorkbenchWindow());
+		newWizardMenu = new NewWizardMenu(getCView().getSite().getWorkbenchWindow());
 
 		openIncludeAction = new OpenIncludeAction(viewer);
 
@@ -140,10 +139,10 @@ public class MainActionGroup extends CViewActionGroup {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				String property = event.getProperty();
-                                 
+
 				if (WorkingSetFilterActionGroup.CHANGE_WORKING_SET.equals(property)) {
 					Object newValue = event.getNewValue();
-                                         
+
 					if (newValue instanceof IWorkingSet) {
 						getCView().setWorkingSet((IWorkingSet) newValue);
 					} else if (newValue == null) {
@@ -154,7 +153,7 @@ public class MainActionGroup extends CViewActionGroup {
 		};
 		workingSetGroup = new WorkingSetFilterActionGroup(shell, workingSetUpdater);
 		workingSetGroup.setWorkingSet(getCView().getWorkingSet());
-		fCustomFiltersActionGroup= new CustomFiltersActionGroup(getCView(), getCView().getViewer());
+		fCustomFiltersActionGroup = new CustomFiltersActionGroup(getCView(), getCView().getViewer());
 
 		addBookmarkAction = new AddBookmarkAction(shellProvider, true);
 		addTaskAction = new AddTaskAction(shellProvider);
@@ -165,13 +164,13 @@ public class MainActionGroup extends CViewActionGroup {
 
 		collapseAllAction = new CollapseAllAction(getCView().getViewer());
 
-		toggleLinkingAction = new ToggleLinkingAction(getCView()); 
+		toggleLinkingAction = new ToggleLinkingAction(getCView());
 		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
-//		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
+		//		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 
 		selectionSearchGroup = new SelectionSearchGroup(getCView().getSite());
-		openViewActionGroup= new OpenViewActionGroup(getCView());
-		crefactoringActionGroup= new CRefactoringActionGroup(getCView());
+		openViewActionGroup = new OpenViewActionGroup(getCView());
+		crefactoringActionGroup = new CRefactoringActionGroup(getCView());
 	}
 
 	/**
@@ -234,10 +233,11 @@ public class MainActionGroup extends CViewActionGroup {
 		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
 		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS + "-end")); //$NON-NLS-1$
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
-		
+
 		openViewActionGroup.fillContextMenu(menu);
 		crefactoringActionGroup.fillContextMenu(menu);
 	}
+
 	/**
 	 * Extends the superclass implementation to set the context in the
 	 * subgroups.
@@ -257,9 +257,9 @@ public class MainActionGroup extends CViewActionGroup {
 	}
 
 	void addNewMenu(IMenuManager menu, IStructuredSelection selection) {
-		MenuManager newMenu = new MenuManager(CViewMessages.NewWizardsActionGroup_new); 
-        menu.add(newMenu);
-        newMenu.add(newWizardMenu);
+		MenuManager newMenu = new MenuManager(CViewMessages.NewWizardsActionGroup_new);
+		menu.add(newMenu);
+		newMenu.add(newWizardMenu);
 	}
 
 	void addBookMarkMenu(IMenuManager menu, IStructuredSelection selection) {
@@ -281,11 +281,11 @@ public class MainActionGroup extends CViewActionGroup {
 			return;
 		}
 
-		if (SelectionSearchGroup.canActionBeAdded(selection)){
+		if (SelectionSearchGroup.canActionBeAdded(selection)) {
 			selectionSearchGroup.fillContextMenu(menu);
 		}
 	}
-	
+
 	@Override
 	public void runDefaultAction(IStructuredSelection selection) {
 		openFileGroup.runDefaultAction(selection);
@@ -338,7 +338,7 @@ public class MainActionGroup extends CViewActionGroup {
 
 		openViewActionGroup.fillActionBars(actionBars);
 		crefactoringActionGroup.fillActionBars(actionBars);
-		
+
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		toolBar.add(new Separator());
 		toolBar.add(collapseAllAction);
@@ -357,7 +357,7 @@ public class MainActionGroup extends CViewActionGroup {
 		//fWorkingSetFilterActionGroup.restoreState(memento);
 		fCustomFiltersActionGroup.restoreState(memento);
 	}
-	
+
 	@Override
 	public void saveFilterAndSorterState(IMemento memento) {
 		//fWorkingSetFilterActionGroup.saveState(memento);
@@ -365,7 +365,7 @@ public class MainActionGroup extends CViewActionGroup {
 	}
 
 	public CustomFiltersActionGroup getCustomFilterActionGroup() {
-	    return fCustomFiltersActionGroup;
+		return fCustomFiltersActionGroup;
 	}
 
 	@Override

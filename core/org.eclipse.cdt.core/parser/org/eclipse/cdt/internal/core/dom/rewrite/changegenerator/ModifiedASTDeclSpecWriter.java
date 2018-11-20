@@ -23,9 +23,9 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 public class ModifiedASTDeclSpecWriter extends DeclSpecWriter {
 	private final ASTModificationHelper modificationHelper;
-	
-	public ModifiedASTDeclSpecWriter(Scribe scribe, ASTWriterVisitor visitor,
-			ModificationScopeStack stack, NodeCommentMap commentMap, boolean placeConstRight) {
+
+	public ModifiedASTDeclSpecWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack,
+			NodeCommentMap commentMap, boolean placeConstRight) {
 		super(scribe, visitor, commentMap);
 		setPlaceConstRight(placeConstRight);
 		this.modificationHelper = new ASTModificationHelper(stack);

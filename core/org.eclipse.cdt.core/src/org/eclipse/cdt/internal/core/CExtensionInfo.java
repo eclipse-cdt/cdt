@@ -19,11 +19,11 @@ public class CExtensionInfo {
 
 	protected HashMap<String, String> attribMap = new HashMap<String, String>(4);
 
-	public CExtensionInfo(){
-		
+	public CExtensionInfo() {
+
 	}
 
-	public CExtensionInfo(CExtensionInfo base){
+	public CExtensionInfo(CExtensionInfo base) {
 		attribMap.putAll(base.attribMap);
 	}
 

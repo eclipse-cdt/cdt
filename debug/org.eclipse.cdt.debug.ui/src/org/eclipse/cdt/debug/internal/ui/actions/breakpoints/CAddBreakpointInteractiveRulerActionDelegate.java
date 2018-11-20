@@ -54,8 +54,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * @noextend This class is not intended to be sub-classed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class CAddBreakpointInteractiveRulerActionDelegate extends AbstractRulerActionDelegate implements IActionDelegate2 {
-	
+public class CAddBreakpointInteractiveRulerActionDelegate extends AbstractRulerActionDelegate
+		implements IActionDelegate2 {
+
 	private IEditorPart fEditor = null;
 	private CAddBreakpointInteractiveRulerAction fDelegate = null;
 

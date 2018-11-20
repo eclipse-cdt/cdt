@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  */
 public class CreateNamespaceOperation extends CreateElementInTUOperation {
 
-
 	/**
 	 * The name of the include to be created.
 	 */
@@ -53,7 +52,7 @@ public class CreateNamespaceOperation extends CreateElementInTUOperation {
 	 * @see CreateElementInTUOperation#getMainTaskName
 	 */
 	@Override
-	public String getMainTaskName(){
+	public String getMainTaskName() {
 		return "operation.createNamespaceProgress"; //$NON-NLS-1$
 	}
 

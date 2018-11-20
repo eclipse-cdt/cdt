@@ -22,16 +22,16 @@ public class SettingsChangeEvent {
 	private IHoldsOptions fHolder;
 	private IOption fOption;
 	private Object fOldValue;
-	
+
 	private int fChangeType;
 	private int fSettingType;
 	public static final int CHANGED = 1;
 	public static final int ADDED = 1 << 1;
 	public static final int REMOVED = 1 << 2;
-	
+
 	public static final int OPTION = 1;
-	
-	SettingsChangeEvent(int changeType, IResourceInfo rcInfo, IHoldsOptions holder, IOption option, Object oldValue){
+
+	SettingsChangeEvent(int changeType, IResourceInfo rcInfo, IHoldsOptions holder, IOption option, Object oldValue) {
 		fSettingType = OPTION;
 		fChangeType = changeType;
 		fRcInfo = rcInfo;

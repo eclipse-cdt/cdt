@@ -27,8 +27,7 @@ public class TestConfigElement implements IManagedConfigElement {
 	private Map<String, String> attributeMap;
 	private IManagedConfigElement[] children;
 
-	public TestConfigElement(String name, String[][] attributes,
-			IManagedConfigElement[] children) {
+	public TestConfigElement(String name, String[][] attributes, IManagedConfigElement[] children) {
 		this.name = name;
 		this.children = children;
 		this.attributeMap = new TreeMap<String, String>();

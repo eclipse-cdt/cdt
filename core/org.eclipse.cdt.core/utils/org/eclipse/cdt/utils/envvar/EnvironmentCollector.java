@@ -20,42 +20,42 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 
 public class EnvironmentCollector {
 	private Map<String, IEnvironmentVariable> fEnfironmentMap = new HashMap<String, IEnvironmentVariable>();
-	
-	public IEnvironmentVariable addVariable(IEnvironmentVariable var){
-		if(var == null)
+
+	public IEnvironmentVariable addVariable(IEnvironmentVariable var) {
+		if (var == null)
 			return null;
-		
+
 		String name = var.getName();
-		
+
 		name = EnvVarOperationProcessor.normalizeName(name);
-		
-		if(name != null){
+
+		if (name != null) {
 			IEnvironmentVariable old = fEnfironmentMap.get(name);
-			if(old != null){
+			if (old != null) {
 				var = EnvVarOperationProcessor.performOperation(old, var);
 			}
 			fEnfironmentMap.put(name, var);
 		}
-		
+
 		return var;
 	}
-	
-	public void addVariables(IEnvironmentVariable[] vars){
-		if(vars == null)
+
+	public void addVariables(IEnvironmentVariable[] vars) {
+		if (vars == null)
 			return;
-		for(int i = 0; i < vars.length; i++){
+		for (int i = 0; i < vars.length; i++) {
 			addVariable(vars[i]);
 		}
 	}
-	
-	public IEnvironmentVariable getVariable(String name){
+
+	public IEnvironmentVariable getVariable(String name) {
 		name = EnvVarOperationProcessor.normalizeName(name);
-		if(name != null)
+		if (name != null)
 			return fEnfironmentMap.get(name);
 		return null;
 	}
-	
-	public IEnvironmentVariable[] getVariables(){
+
+	public IEnvironmentVariable[] getVariables() {
 		return fEnfironmentMap.values().toArray(new IEnvironmentVariable[fEnfironmentMap.size()]);
 	}
 }

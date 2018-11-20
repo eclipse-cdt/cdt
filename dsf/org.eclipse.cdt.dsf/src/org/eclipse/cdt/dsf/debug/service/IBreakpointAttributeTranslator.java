@@ -37,41 +37,42 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 @ThreadSafeAndProhibitedFromDsfExecutor("")
 public interface IBreakpointAttributeTranslator {
-    
-    /**
-     * Initializes the translator.  This method is called by the breakpoint 
-     * mediator service, when the mediator service is initialized. 
-     */
-    @ConfinedToDsfExecutor("")
-   public void initialize(BreakpointsMediator mediator);
 
-    /**
-     * Disposes the translator.  Also called by the mediator upon service 
-     * shutdown.
-     */
-    @ConfinedToDsfExecutor("")
-    public void dispose();
+	/**
+	 * Initializes the translator.  This method is called by the breakpoint 
+	 * mediator service, when the mediator service is initialized. 
+	 */
+	@ConfinedToDsfExecutor("")
+	public void initialize(BreakpointsMediator mediator);
 
-    /**
-     * Returns whether the given IDE breakpoint is supported by this debugger.
-     */
-    public boolean supportsBreakpoint(IBreakpoint bp);
+	/**
+	 * Disposes the translator.  Also called by the mediator upon service 
+	 * shutdown.
+	 */
+	@ConfinedToDsfExecutor("")
+	public void dispose();
 
-    /**
-     * Returns the target breakpoint attributes for the given IDE breakpoint. 
-     */
-    public List<Map<String, Object>> getBreakpointAttributes(IBreakpoint breakpoint, boolean bpManagerEnabled)  throws CoreException;
-    
-    /**
-     * Based on the given change in IDE breakpoint attributes, this method returns 
-     * whether the given target breakpoint can be modified using 
-     * {@link IBreakpoints#updateBreakpoint(IBreakpointDMContext, Map, org.eclipse.cdt.dsf.concurrent.RequestMonitor)} 
-     * method.
-     */
-    public boolean canUpdateAttributes(IBreakpointDMContext bp, Map<String, Object> delta);
+	/**
+	 * Returns whether the given IDE breakpoint is supported by this debugger.
+	 */
+	public boolean supportsBreakpoint(IBreakpoint bp);
 
-    /**
-     * Notifies the translator to update the given IDE breakpoint's status.
-     */
-    public void updateBreakpointStatus(IBreakpoint bp);
+	/**
+	 * Returns the target breakpoint attributes for the given IDE breakpoint. 
+	 */
+	public List<Map<String, Object>> getBreakpointAttributes(IBreakpoint breakpoint, boolean bpManagerEnabled)
+			throws CoreException;
+
+	/**
+	 * Based on the given change in IDE breakpoint attributes, this method returns 
+	 * whether the given target breakpoint can be modified using 
+	 * {@link IBreakpoints#updateBreakpoint(IBreakpointDMContext, Map, org.eclipse.cdt.dsf.concurrent.RequestMonitor)} 
+	 * method.
+	 */
+	public boolean canUpdateAttributes(IBreakpointDMContext bp, Map<String, Object> delta);
+
+	/**
+	 * Notifies the translator to update the given IDE breakpoint's status.
+	 */
+	public void updateBreakpointStatus(IBreakpoint bp);
 }

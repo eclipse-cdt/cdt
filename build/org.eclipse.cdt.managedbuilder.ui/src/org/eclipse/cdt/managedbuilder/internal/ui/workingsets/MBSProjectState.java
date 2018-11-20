@@ -44,8 +44,7 @@ class MBSProjectState extends ProjectState {
 
 	@Override
 	protected IStatus build(String configID, IProgressMonitor monitor) {
-		IStatus result = MBSProjectConfiguration.build(getProject(),
-				getConfiguration(configID), monitor);
+		IStatus result = MBSProjectConfiguration.build(getProject(), getConfiguration(configID), monitor);
 
 		if (result.isOK()) {
 			built(configID);

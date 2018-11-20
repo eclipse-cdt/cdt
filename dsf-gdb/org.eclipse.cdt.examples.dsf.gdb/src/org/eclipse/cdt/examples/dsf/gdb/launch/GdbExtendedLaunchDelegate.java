@@ -11,7 +11,7 @@
  * Contributors:
  * Marc Khouzam (Ericsson)   - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.examples.dsf.gdb.launch; 
+package org.eclipse.cdt.examples.dsf.gdb.launch;
 
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
@@ -25,23 +25,24 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ISourceLocator;
- 
+
 public class GdbExtendedLaunchDelegate extends GdbLaunchDelegate {
 	public GdbExtendedLaunchDelegate() {
 		super();
 	}
 
-    @Override
-	protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator) throws CoreException {
-    	return new GdbExtendedLaunch(configuration, mode, locator);
-    }
+	@Override
+	protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator)
+			throws CoreException {
+		return new GdbExtendedLaunch(configuration, mode, locator);
+	}
 
-    @Override
-    protected Sequence getServicesSequence(DsfSession session, ILaunch launch, IProgressMonitor rm) {
-   		return new GdbExtendedServicesLaunchSequence(session, (GdbLaunch)launch, rm);
-    }
+	@Override
+	protected Sequence getServicesSequence(DsfSession session, ILaunch launch, IProgressMonitor rm) {
+		return new GdbExtendedServicesLaunchSequence(session, (GdbLaunch) launch, rm);
+	}
 
-    @Override
+	@Override
 	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
 		return new GdbExtendedDebugServicesFactory(version, config);
 	}

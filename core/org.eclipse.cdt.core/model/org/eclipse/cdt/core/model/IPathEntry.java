@@ -40,7 +40,7 @@ public interface IPathEntry {
 	 * include path.
 	 */
 	int CDT_INCLUDE = 1 << 4;
-	
+
 	/**
 	 * Entry kind constant describing a path entry representing
 	 * a container id.

@@ -24,28 +24,24 @@ import junit.framework.TestSuite;
  * https://bugs.eclipse.org/bugs/show_bug.cgi?id=50621
  * https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
  */
-public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBaseTest{
+public class CompletionTest_ClassReference_Prefix extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart20.h";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "a";
-	private final String[] expectedResults = {
-			"aClass",
-			"anotherClass",
-			"AStruct"
-	};
-	
+	private final String[] expectedResults = { "aClass", "anotherClass", "AStruct" };
+
 	public CompletionTest_ClassReference_Prefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_ClassReference_Prefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_ClassReference_Prefix.class.getName());
 		suite.addTest(new CompletionTest_ClassReference_Prefix("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	@Override
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf(" a ") + 2;

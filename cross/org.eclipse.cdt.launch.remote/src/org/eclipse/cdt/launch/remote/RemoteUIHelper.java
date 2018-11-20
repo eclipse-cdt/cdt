@@ -50,7 +50,8 @@ public class RemoteUIHelper {
 		if (connection == null) {
 			return;
 		}
-		IRemoteUIConnectionService uiConnServices = connection.getConnectionType().getService(IRemoteUIConnectionService.class);
+		IRemoteUIConnectionService uiConnServices = connection.getConnectionType()
+				.getService(IRemoteUIConnectionService.class);
 		IRemoteUIConnectionWizard wizard = uiConnServices.getConnectionWizard(shell);
 		wizard.setConnection(connection.getWorkingCopy());
 		IRemoteConnectionWorkingCopy connCopy = wizard.open();
@@ -83,30 +84,29 @@ public class RemoteUIHelper {
 				title = windowTitle;
 				manager = Activator.getService(IRemoteServicesManager.class);
 			}
+
 			@Override
 			protected void configureShell(Shell newShell) {
 				super.configureShell(newShell);
 				newShell.setText(title);
 			}
+
 			@Override
 			protected Control createDialogArea(Composite parent) {
 				Composite composite = (Composite) super.createDialogArea(parent);
 
 				Label label = new Label(composite, SWT.WRAP);
 				label.setText(Messages.RemoteCMainTab_New_conntype_combo_label);
-				GridData data = new GridData(GridData.GRAB_HORIZONTAL
-						| GridData.GRAB_VERTICAL
-						| GridData.HORIZONTAL_ALIGN_FILL
-						| GridData.VERTICAL_ALIGN_CENTER);
+				GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL
+						| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 				data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 				label.setLayoutData(data);
 				label.setFont(parent.getFont());
-				fConnSelection = new Combo (composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+				fConnSelection = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
 				ArrayList<String> suitableConnections = new ArrayList<>();
-				for (IRemoteConnectionType type: manager.getAllConnectionTypes()) {
-					if (type.canAdd() &&
-							type.getConnectionServices().contains(
-									IRemoteCommandShellService.class.getName())) {
+				for (IRemoteConnectionType type : manager.getAllConnectionTypes()) {
+					if (type.canAdd()
+							&& type.getConnectionServices().contains(IRemoteCommandShellService.class.getName())) {
 						fConnSelection.setData(type.getName(), type.getId());
 						suitableConnections.add(type.getName());
 					}
@@ -121,26 +121,26 @@ public class RemoteUIHelper {
 			@Override
 			protected void buttonPressed(int buttonId) {
 				if (buttonId == IDialogConstants.OK_ID) {
-				String connTypeId = (String) fConnSelection.getData(fConnSelection.getText());
-				IRemoteConnectionType connType = manager.getConnectionType(connTypeId);
-				IRemoteUIConnectionService fUIConnectionManager = connType.getService(IRemoteUIConnectionService.class);
-				IRemoteUIConnectionWizard wizard = fUIConnectionManager.getConnectionWizard(this.getShell());
+					String connTypeId = (String) fConnSelection.getData(fConnSelection.getText());
+					IRemoteConnectionType connType = manager.getConnectionType(connTypeId);
+					IRemoteUIConnectionService fUIConnectionManager = connType
+							.getService(IRemoteUIConnectionService.class);
+					IRemoteUIConnectionWizard wizard = fUIConnectionManager.getConnectionWizard(this.getShell());
 
-				IRemoteConnectionWorkingCopy wc = wizard.open();
-				if (wc != null) {
-					try {
-						wc.save();
-					} catch (RemoteConnectionException e) {
-						logError(e);
+					IRemoteConnectionWorkingCopy wc = wizard.open();
+					if (wc != null) {
+						try {
+							wc.save();
+						} catch (RemoteConnectionException e) {
+							logError(e);
+						}
 					}
-				}
 				}
 				super.buttonPressed(buttonId);
 			}
 		}
 
-		NewRemoteConnectionDialog dlg = new NewRemoteConnectionDialog(shell,
-				Messages.RemoteCMainTab_New_title);
+		NewRemoteConnectionDialog dlg = new NewRemoteConnectionDialog(shell, Messages.RemoteCMainTab_New_title);
 		dlg.setBlockOnOpen(true);
 		dlg.open();
 	}
@@ -180,7 +180,6 @@ public class RemoteUIHelper {
 	private static void logError(Exception e) {
 		Plugin plugin = Activator.getDefault();
 		ILog logger = plugin.getLog();
-		logger.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-				e.getMessage(), e));
+		logger.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
 	}
 }

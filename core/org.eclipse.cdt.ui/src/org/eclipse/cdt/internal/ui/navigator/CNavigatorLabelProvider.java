@@ -45,8 +45,7 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 	 */
 	public CNavigatorLabelProvider() {
 		super(AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS,
-				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS
-						| CElementImageProvider.SMALL_ICONS);
+				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS);
 		addLabelDecorator(new CNavigatorProblemsLabelDecorator());
 	}
 
@@ -90,12 +89,12 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 				if (celement instanceof IBinaryContainer) {
 					ICProject cproj = celement.getCProject();
 					if (cproj != null) {
-						return cproj.getPath() + CViewMessages.CView_binaries; 
+						return cproj.getPath() + CViewMessages.CView_binaries;
 					}
 				} else if (celement instanceof IArchiveContainer) {
 					ICProject cproj = celement.getCProject();
 					if (cproj != null) {
-						return cproj.getPath() + CViewMessages.CView_archives; 
+						return cproj.getPath() + CViewMessages.CView_archives;
 					}
 				} else if (celement instanceof IBinaryModule) {
 					IBinary bin = ((IBinaryModule) celement).getBinary();
@@ -106,7 +105,7 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 			}
 			return celement.getElementName();
 		} else if (element instanceof IWorkbenchAdapter) {
-			IWorkbenchAdapter wAdapter = (IWorkbenchAdapter)element;
+			IWorkbenchAdapter wAdapter = (IWorkbenchAdapter) element;
 			return wAdapter.getLabel(element);
 		}
 		return null;

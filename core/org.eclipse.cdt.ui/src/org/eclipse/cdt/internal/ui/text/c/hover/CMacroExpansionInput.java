@@ -65,10 +65,12 @@ public class CMacroExpansionInput {
 
 	private static class SingletonRule implements ISchedulingRule {
 		public static final ISchedulingRule INSTANCE = new SingletonRule();
+
 		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
@@ -82,13 +84,13 @@ public class CMacroExpansionInput {
 		private final Position fTextRegion;
 		private final boolean fAllowSelection;
 		private IASTNode fEnclosingNode;
-		private List<IASTNode> fExpansionNodes= new ArrayList<IASTNode>();
+		private List<IASTNode> fExpansionNodes = new ArrayList<IASTNode>();
 		private MacroExpansionExplorer fExplorer;
 		private IRegion fExpansionRegion;
 
 		private ExpansionRegionComputer(ITranslationUnit tUnit, IRegion textRegion, boolean allowSelection) {
-			fTextRegion= new Position(textRegion.getOffset(), textRegion.getLength());
-			fAllowSelection= allowSelection;
+			fTextRegion = new Position(textRegion.getOffset(), textRegion.getLength());
+			fAllowSelection = allowSelection;
 		}
 
 		/*
@@ -99,13 +101,13 @@ public class CMacroExpansionInput {
 			if (ast != null) {
 				final IASTNodeSelector nodeSelector = ast.getNodeSelector(ast.getFilePath());
 				// try exact macro name match first
-				IASTNode node= nodeSelector.findName(fTextRegion.getOffset(), fTextRegion.getLength());
+				IASTNode node = nodeSelector.findName(fTextRegion.getOffset(), fTextRegion.getLength());
 				if (node instanceof IASTName) {
-					IASTName macroName= (IASTName) node;
-					IBinding binding= macroName.getBinding();
+					IASTName macroName = (IASTName) node;
+					IBinding binding = macroName.getBinding();
 					// skip macro references that belong to a macro definition or an undef directive
-					if (binding instanceof IMacroBinding && !macroName.isDefinition() &&
-							macroName.getParent() instanceof IASTPreprocessorMacroExpansion) {
+					if (binding instanceof IMacroBinding && !macroName.isDefinition()
+							&& macroName.getParent() instanceof IASTPreprocessorMacroExpansion) {
 						addExpansionNode(node);
 						createMacroExpansionExplorer(ast);
 						return Status.OK_STATUS;
@@ -113,32 +115,32 @@ public class CMacroExpansionInput {
 				}
 				if (fAllowSelection) {
 					// selection
-					boolean macroOccurrence= false;
-					fEnclosingNode= nodeSelector.findEnclosingNode(fTextRegion.getOffset(), fTextRegion.getLength());
+					boolean macroOccurrence = false;
+					fEnclosingNode = nodeSelector.findEnclosingNode(fTextRegion.getOffset(), fTextRegion.getLength());
 					if (fEnclosingNode == null) {
 						// selection beyond last declaration
-						fEnclosingNode= ast;
-					}
-					else if (fEnclosingNode.getParent() instanceof IASTPreprocessorMacroExpansion) {
+						fEnclosingNode = ast;
+					} else if (fEnclosingNode.getParent() instanceof IASTPreprocessorMacroExpansion) {
 						// selection enclosed by the name of a macro expansion
-						fEnclosingNode= fEnclosingNode.getParent();
+						fEnclosingNode = fEnclosingNode.getParent();
 					}
-					
+
 					if (fEnclosingNode instanceof IASTPreprocessorMacroExpansion) {
 						// selection enclosed by a macro expansion
 						addExpansionNode(fEnclosingNode);
-						macroOccurrence= true;
-					}
-					else {
-						IASTNodeLocation[] locations= fEnclosingNode.getNodeLocations();
+						macroOccurrence = true;
+					} else {
+						IASTNodeLocation[] locations = fEnclosingNode.getNodeLocations();
 						for (int i = 0; i < locations.length; i++) {
-							IASTNodeLocation location= locations[i];
+							IASTNodeLocation location = locations[i];
 							if (location instanceof IASTMacroExpansionLocation) {
-								IASTFileLocation fileLocation= location.asFileLocation();
+								IASTFileLocation fileLocation = location.asFileLocation();
 								if (fileLocation != null && ast.getFilePath().equals(fileLocation.getFileName())) {
-									if (fTextRegion.overlapsWith(fileLocation.getNodeOffset(), fileLocation.getNodeLength())) {
-										addExpansionNode(nodeSelector.findEnclosingNode(fileLocation.getNodeOffset(), fileLocation.getNodeLength()));
-										macroOccurrence= true;
+									if (fTextRegion.overlapsWith(fileLocation.getNodeOffset(),
+											fileLocation.getNodeLength())) {
+										addExpansionNode(nodeSelector.findEnclosingNode(fileLocation.getNodeOffset(),
+												fileLocation.getNodeLength()));
+										macroOccurrence = true;
 									}
 								}
 							}
@@ -154,16 +156,16 @@ public class CMacroExpansionInput {
 		}
 
 		private void createMacroExpansionExplorer(IASTTranslationUnit ast) {
-			IRegion region= getExpansionRegion();
+			IRegion region = getExpansionRegion();
 			if (region != null) {
-				fExplorer= MacroExpansionExplorer.create(ast, region);
-				fExpansionRegion= region;
+				fExplorer = MacroExpansionExplorer.create(ast, region);
+				fExpansionRegion = region;
 			}
 		}
 
 		private void addExpansionNode(IASTNode node) {
 			if (node != null) {
-				fEnclosingNode= computeCommonAncestor(node, fEnclosingNode);
+				fEnclosingNode = computeCommonAncestor(node, fEnclosingNode);
 				fExpansionNodes.add(node);
 			}
 		}
@@ -178,16 +180,16 @@ public class CMacroExpansionInput {
 			if (node == other) {
 				return other;
 			}
-			List<IASTNode> ancestors= new ArrayList<IASTNode>();
+			List<IASTNode> ancestors = new ArrayList<IASTNode>();
 			while (node != null) {
-				node= node.getParent();
+				node = node.getParent();
 				ancestors.add(node);
 			}
 			while (other != null) {
 				if (ancestors.contains(other)) {
 					return other;
 				}
-				other= other.getParent();
+				other = other.getParent();
 			}
 			return null;
 		}
@@ -196,49 +198,49 @@ public class CMacroExpansionInput {
 			if (fExpansionRegion != null)
 				return fExpansionRegion;
 			if (fEnclosingNode != null) {
-				int startOffset= Integer.MAX_VALUE;
-				int endOffset= fTextRegion.getOffset() + fTextRegion.getLength();
-				for (Iterator<IASTNode> it= fExpansionNodes.iterator(); it.hasNext(); ) {
-					IASTNode node= it.next();
+				int startOffset = Integer.MAX_VALUE;
+				int endOffset = fTextRegion.getOffset() + fTextRegion.getLength();
+				for (Iterator<IASTNode> it = fExpansionNodes.iterator(); it.hasNext();) {
+					IASTNode node = it.next();
 					if (node != fEnclosingNode) {
 						while (node != null && node.getParent() != fEnclosingNode) {
-							node= node.getParent();
+							node = node.getParent();
 						}
 					}
 					if (node != null) {
-						IASTFileLocation location= node.getFileLocation();
+						IASTFileLocation location = node.getFileLocation();
 						if (location != null) {
-							startOffset= Math.min(startOffset, location.getNodeOffset());
-							endOffset= Math.max(endOffset, location.getNodeOffset() + location.getNodeLength());
+							startOffset = Math.min(startOffset, location.getNodeOffset());
+							endOffset = Math.max(endOffset, location.getNodeOffset() + location.getNodeLength());
 						}
 					}
 				}
 				if (endOffset > startOffset) {
-					startOffset= Math.min(startOffset, fTextRegion.getOffset());
+					startOffset = Math.min(startOffset, fTextRegion.getOffset());
 					return new Region(startOffset, endOffset - startOffset);
 				}
 			}
 			return null;
 		}
-		
+
 		MacroExpansionExplorer getMacroExpansionExplorer() {
 			return fExplorer;
 		}
 	}
 
 	final MacroExpansionExplorer fExplorer;
-	boolean fStartWithFullExpansion= true;
+	boolean fStartWithFullExpansion = true;
 
 	private CMacroExpansionInput(MacroExpansionExplorer explorer) {
 		Assert.isNotNull(explorer);
-		fExplorer= explorer;
+		fExplorer = explorer;
 	}
 
 	@Override
 	public String toString() {
 		return fExplorer.getFullExpansion().getCodeAfterStep();
 	}
-	
+
 	/**
 	 * Creates an input object for the macro expansion exploration control {@link CMacroExpansionExplorationControl}.
 	 * 
@@ -251,8 +253,8 @@ public class CMacroExpansionInput {
 		if (editor == null || !(editor instanceof ITextEditor)) {
 			return null;
 		}
-		IEditorInput editorInput= editor.getEditorInput();
-		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();
+		IEditorInput editorInput = editor.getEditorInput();
+		IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
 		IWorkingCopy tu = manager.getWorkingCopy(editorInput);
 		try {
 			if (tu == null || !tu.isConsistent()) {
@@ -261,26 +263,27 @@ public class CMacroExpansionInput {
 		} catch (CModelException exc) {
 			return null;
 		}
-		
-		ExpansionRegionComputer computer= new ExpansionRegionComputer(tu, textRegion, force);
+
+		ExpansionRegionComputer computer = new ExpansionRegionComputer(tu, textRegion, force);
 		doRunOnAST(computer, tu, force);
 
-		MacroExpansionExplorer explorer= computer.getMacroExpansionExplorer();
+		MacroExpansionExplorer explorer = computer.getMacroExpansionExplorer();
 		if (explorer == null) {
 			return null;
 		}
 
-		CMacroExpansionInput input= new CMacroExpansionInput(explorer);
+		CMacroExpansionInput input = new CMacroExpansionInput(explorer);
 
 		return input;
 	}
 
 	private static void doRunOnAST(final ASTRunnable runnable, final ITranslationUnit tu, boolean force) {
-		Job job= new Job(CHoverMessages.CMacroExpansionInput_jobTitle) {
+		Job job = new Job(CHoverMessages.CMacroExpansionInput_jobTitle) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_ACTIVE_ONLY, monitor, runnable);
-			}};
+			}
+		};
 
 		// If the hover thread is interrupted this might have negative
 		// effects on the index - see http://bugs.eclipse.org/219834
@@ -307,23 +310,23 @@ public class CMacroExpansionInput {
 	 */
 	public static final IRegion expandRegion(IRegion region, IDocument document, int contextLines) {
 		try {
-			int start= document.getLineOfOffset(region.getOffset());
-			start= Math.max(start - contextLines, 0);
-			int offset= document.getLineOffset(start);
-			CHeuristicScanner scanner= new CHeuristicScanner(document);
-			offset= scanner.findNonWhitespaceForward(offset, region.getOffset() + 1);
-			
-			int end= document.getLineOfOffset(region.getOffset() + region.getLength());
-			end= Math.min(end + contextLines, document.getNumberOfLines() - 1);
+			int start = document.getLineOfOffset(region.getOffset());
+			start = Math.max(start - contextLines, 0);
+			int offset = document.getLineOffset(start);
+			CHeuristicScanner scanner = new CHeuristicScanner(document);
+			offset = scanner.findNonWhitespaceForward(offset, region.getOffset() + 1);
+
+			int end = document.getLineOfOffset(region.getOffset() + region.getLength());
+			end = Math.min(end + contextLines, document.getNumberOfLines() - 1);
 
 			final int endOffset;
 			if (document.getNumberOfLines() > end + 1) {
-				endOffset= document.getLineOffset(end + 1);
+				endOffset = document.getLineOffset(end + 1);
 			} else {
-				endOffset= document.getLineOffset(end) + document.getLineLength(end);
+				endOffset = document.getLineOffset(end) + document.getLineLength(end);
 			}
 			return new Region(offset, endOffset - offset);
-			
+
 		} catch (BadLocationException x) {
 			return region;
 		}

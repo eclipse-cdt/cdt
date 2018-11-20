@@ -49,8 +49,7 @@ public class ToolChainManager implements IToolChainManager {
 
 			// Load the types
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint typesPoint = registry
-					.getExtensionPoint(CCorePlugin.PLUGIN_ID + ".toolChainProvider"); //$NON-NLS-1$
+			IExtensionPoint typesPoint = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID + ".toolChainProvider"); //$NON-NLS-1$
 			for (IConfigurationElement element : typesPoint.getConfigurationElements()) {
 				String id = element.getAttribute("id"); //$NON-NLS-1$
 				providerElements.put(id, element);
@@ -63,8 +62,7 @@ public class ToolChainManager implements IToolChainManager {
 				case "provider": //$NON-NLS-1$
 					// TODO check for enablement
 					SafeRunner.run(() -> {
-						IToolChainProvider provider = (IToolChainProvider) element
-								.createExecutableExtension("class"); //$NON-NLS-1$
+						IToolChainProvider provider = (IToolChainProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
 						providers.put(element.getAttribute("id"), provider); //$NON-NLS-1$
 						provider.init(ToolChainManager.this);
 					});
@@ -76,8 +74,8 @@ public class ToolChainManager implements IToolChainManager {
 			}
 
 			orderedToolChains = new ArrayList<>();
-			Preferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
-					.node(getClass().getSimpleName()).node("order"); //$NON-NLS-1$
+			Preferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).node(getClass().getSimpleName())
+					.node("order"); //$NON-NLS-1$
 			String nString = prefs.get("n", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			if (!nString.isEmpty()) {
 				try {
@@ -115,8 +113,8 @@ public class ToolChainManager implements IToolChainManager {
 	}
 
 	private void saveToolChainOrder() {
-		Preferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
-				.node(getClass().getSimpleName()).node("order"); //$NON-NLS-1$
+		Preferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).node(getClass().getSimpleName())
+				.node("order"); //$NON-NLS-1$
 		prefs.put("n", Integer.toString(orderedToolChains.size())); //$NON-NLS-1$
 		int i = 0;
 		for (IToolChain toolChain : orderedToolChains) {
@@ -170,7 +168,7 @@ public class ToolChainManager implements IToolChainManager {
 		if (provider == null) {
 			IConfigurationElement element = providerElements.get(providerId);
 			if (element != null) {
-				SafeRunner.run(() ->{
+				SafeRunner.run(() -> {
 					IToolChainProvider provider2 = (IToolChainProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
 					providers.put(providerId, provider2);
 					provider2.init(ToolChainManager.this);

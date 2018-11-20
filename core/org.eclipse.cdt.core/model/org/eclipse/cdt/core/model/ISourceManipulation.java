@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
- 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -51,7 +50,8 @@ public interface ISourceManipulation {
 	 *
 	 * @exception IllegalArgumentException if container is <code>null</code>
 	 */
-	void copy(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor) throws CModelException;
+	void copy(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor)
+			throws CModelException;
 
 	/**
 	 * Deletes this element, forcing if specified and necessary.
@@ -97,7 +97,8 @@ public interface ISourceManipulation {
 	 * @exception IllegalArgumentException if container is <code>null</code>
 	 */
 
-	void move(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor) throws CModelException;
+	void move(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor)
+			throws CModelException;
 
 	/**
 	 * Renames this element to the given name.

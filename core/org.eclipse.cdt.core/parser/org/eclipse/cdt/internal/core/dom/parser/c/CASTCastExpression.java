@@ -27,12 +27,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * Cast expressions for c
  */
 public class CASTCastExpression extends ASTNode implements IASTCastExpression, IASTAmbiguityParent {
-    private int operator;
-    private IASTExpression operand;
-    private IASTTypeId typeId;
+	private int operator;
+	private IASTExpression operand;
+	private IASTTypeId typeId;
 
-    public CASTCastExpression() {
-    	this.operator = op_cast;
+	public CASTCastExpression() {
+		this.operator = op_cast;
 	}
 
 	public CASTCastExpression(IASTTypeId typeId, IASTExpression operand) {
@@ -57,70 +57,79 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 
 	@Override
 	public int getOperator() {
-        return operator;
-    }
+		return operator;
+	}
 
-    @Override
+	@Override
 	public void setOperator(int value) {
-        assertNotFrozen();
-        this.operator = value;
-    }
+		assertNotFrozen();
+		this.operator = value;
+	}
 
-    @Override
+	@Override
 	public IASTExpression getOperand() {
-        return operand;
-    }
+		return operand;
+	}
 
-    @Override
+	@Override
 	public void setOperand(IASTExpression expression) {
-        assertNotFrozen();
-        operand = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		operand = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(OPERAND);
 		}
-    }
+	}
 
 	@Override
 	public void setTypeId(IASTTypeId typeId) {
-        assertNotFrozen();
-        this.typeId = typeId;
-        if (typeId != null) {
+		assertNotFrozen();
+		this.typeId = typeId;
+		if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(TYPE_ID);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTTypeId getTypeId() {
-        return typeId;
-    }
+		return typeId;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (typeId != null) if (!typeId.accept(action)) return false;
-        IASTExpression operand = getOperand();
-        if (operand != null) if (!operand.accept(action)) return false;
+		if (typeId != null)
+			if (!typeId.accept(action))
+				return false;
+		IASTExpression operand = getOperand();
+		if (operand != null)
+			if (!operand.accept(action))
+				return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
@@ -133,9 +142,9 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 
 	@Override
 	public IType getExpressionType() {
-        IASTTypeId id= getTypeId();
-        return CVisitor.createType(id.getAbstractDeclarator());
-    }
+		IASTTypeId id = getTypeId();
+		return CVisitor.createType(id.getAbstractDeclarator());
+	}
 
 	@Override
 	public boolean isLValue() {

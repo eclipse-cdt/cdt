@@ -15,7 +15,6 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.ui.newui.AbstractPage;
 
-
 /**
  * The class have the same functionality as superclass.
  * The only need to create it is distinguishing tabs.

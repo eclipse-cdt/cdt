@@ -50,28 +50,27 @@ public class IndexFactory {
 	private static final int ALL_FRAGMENT_OPTIONS = ADD_EXTENSION_FRAGMENTS_ADD_IMPORT
 			| ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY | ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST
 			| ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER | ADD_EXTENSION_FRAGMENTS_NAVIGATION
-			| ADD_EXTENSION_FRAGMENTS_SEARCH | ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY 
-			| ADD_EXTENSION_FRAGMENTS_EDITOR;
-	
+			| ADD_EXTENSION_FRAGMENTS_SEARCH | ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY | ADD_EXTENSION_FRAGMENTS_EDITOR;
+
 	private PDOMManager fPDOMManager;
 
 	public IndexFactory(PDOMManager manager) {
-		fPDOMManager= manager;
+		fPDOMManager = manager;
 	}
 
 	public IIndex getIndex(ICProject[] projects, int options) throws CoreException {
 		projects = ArrayUtil.removeNulls(ICProject.class, projects);
 
-		boolean addDependencies= (options & ADD_DEPENDENCIES) != 0;
-		boolean addDependent= (options & ADD_DEPENDENT) != 0;
-		int fragmentUsage= options & ALL_FRAGMENT_OPTIONS;
+		boolean addDependencies = (options & ADD_DEPENDENCIES) != 0;
+		boolean addDependent = (options & ADD_DEPENDENT) != 0;
+		int fragmentUsage = options & ALL_FRAGMENT_OPTIONS;
 
-		Collection<ICProject> indexProjects= 
-				getProjects(projects, addDependencies, addDependent, new HashSet<IProject>());
+		Collection<ICProject> indexProjects = getProjects(projects, addDependencies, addDependent,
+				new HashSet<IProject>());
 
-		HashMap<String, IIndexFragment> fragments= new LinkedHashMap<String, IIndexFragment>();
+		HashMap<String, IIndexFragment> fragments = new LinkedHashMap<String, IIndexFragment>();
 		for (ICProject cproject : indexProjects) {
-			IIndexFragment pdom= fPDOMManager.getPDOM(cproject);
+			IIndexFragment pdom = fPDOMManager.getPDOM(cproject);
 			if (pdom != null) {
 				safeAddFragment(fragments, pdom);
 				if (fragmentUsage != 0) {
@@ -83,32 +82,32 @@ public class IndexFactory {
 			return EmptyCIndex.INSTANCE;
 		}
 
-		Collection<IIndexFragment> pdoms= fragments.values();
+		Collection<IIndexFragment> pdoms = fragments.values();
 		return new CIndex(pdoms.toArray(new IIndexFragment[pdoms.size()]));
 	}
 
 	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
-		IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(project);
+		IWritableIndexFragment pdom = (IWritableIndexFragment) fPDOMManager.getPDOM(project);
 		if (pdom == null) {
-			throw new CoreException(CCorePlugin.createStatus(
-					NLS.bind(Messages.IndexFactory_errorNoSuchPDOM0, project.getElementName())));
+			throw new CoreException(CCorePlugin
+					.createStatus(NLS.bind(Messages.IndexFactory_errorNoSuchPDOM0, project.getElementName())));
 		}
 		return new WritableCIndex(pdom);
 	}
 
-	private Collection<ICProject> getProjects(ICProject[] projects, boolean addDependencies,
-			boolean addDependent, Set<IProject> handled) {
-		List<ICProject> result= new ArrayList<ICProject>();
+	private Collection<ICProject> getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent,
+			Set<IProject> handled) {
+		List<ICProject> result = new ArrayList<ICProject>();
 
 		for (ICProject cproject : projects) {
 			checkAddProject(cproject, handled, result);
 		}
 
 		if (addDependencies || addDependent) {
-			final CoreModel cm= CoreModel.getDefault();
-			for (int i= 0; i < result.size(); i++) {
-				ICProject cproject= result.get(i);
-				IProject project= cproject.getProject();
+			final CoreModel cm = CoreModel.getDefault();
+			for (int i = 0; i < result.size(); i++) {
+				ICProject cproject = result.get(i);
+				IProject project = cproject.getProject();
 				try {
 					if (addDependencies) {
 						for (IProject rp : project.getReferencedProjects()) {
@@ -131,10 +130,10 @@ public class IndexFactory {
 
 	private void checkAddProject(ICProject cproject, Set<IProject> handled, List<ICProject> target) {
 		if (cproject != null) {
-			IProject project= cproject.getProject();
-			if (handled.add(project) && project.isOpen()) 
+			IProject project = cproject.getProject();
+			if (handled.add(project) && project.isOpen())
 				target.add(cproject);
-		} 
+		}
 	}
 
 	/**
@@ -148,7 +147,7 @@ public class IndexFactory {
 			try {
 				fragment.acquireReadLock();
 				try {
-					String id= fragment.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+					String id = fragment.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 					id2fragment.put(id, fragment);
 				} finally {
 					fragment.releaseReadLock();
@@ -168,15 +167,14 @@ public class IndexFactory {
 	 * @param fragments
 	 * @param usage the usage of the fragments in terms of {@link IIndexManager#ADD_EXTENSION_FRAGMENTS_ADD_IMPORT}, ...
 	 */
-	private void safeAddProvidedFragments(ICProject cproject, Map<String, IIndexFragment> fragments,
-			int usage) {
-		ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
+	private void safeAddProvidedFragments(ICProject cproject, Map<String, IIndexFragment> fragments, int usage) {
+		ICProjectDescription pd = CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
 		if (pd != null) {
 			IndexProviderManager ipm = CCoreInternals.getPDOMManager().getIndexProviderManager();
-			ICConfigurationDescription cfg= pd.getDefaultSettingConfiguration();
+			ICConfigurationDescription cfg = pd.getDefaultSettingConfiguration();
 			if (cfg != null) {
 				try {
-					IIndexFragment[] pFragments= ipm.getProvidedIndexFragments(cfg, usage);
+					IIndexFragment[] pFragments = ipm.getProvidedIndexFragments(cfg, usage);
 					for (IIndexFragment fragment : pFragments) {
 						safeAddFragment(fragments, fragment);
 					}

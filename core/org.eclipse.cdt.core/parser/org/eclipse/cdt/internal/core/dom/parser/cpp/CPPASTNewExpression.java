@@ -54,18 +54,18 @@ import org.eclipse.core.runtime.Assert;
  * Represents a new expression [expr.new].
  */
 public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression, IASTAmbiguityParent {
-    private IASTInitializerClause[] fPlacement;
-    private IASTTypeId fTypeId;
-    private IASTInitializer fInitializer;
-    private boolean fIsGlobal;
-    private boolean fIsNewTypeId;
+	private IASTInitializerClause[] fPlacement;
+	private IASTTypeId fTypeId;
+	private IASTInitializer fInitializer;
+	private boolean fIsGlobal;
+	private boolean fIsNewTypeId;
 
-    private IASTExpression[] fCachedArraySizes;
+	private IASTExpression[] fCachedArraySizes;
 	private ICPPEvaluation fEvaluation;
-    private IASTImplicitName[] fImplicitNames;
+	private IASTImplicitName[] fImplicitNames;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTNewExpression() {
+	public CPPASTNewExpression() {
 	}
 
 	public CPPASTNewExpression(IASTInitializerClause[] placement, IASTInitializer initializer, IASTTypeId typeId) {
@@ -98,80 +98,80 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 
 	@Override
 	public boolean isGlobal() {
-        return fIsGlobal;
-    }
+		return fIsGlobal;
+	}
 
-    @Override
+	@Override
 	public void setIsGlobal(boolean value) {
-        assertNotFrozen();
-        fIsGlobal = value;
-    }
+		assertNotFrozen();
+		fIsGlobal = value;
+	}
 
-    @Override
+	@Override
 	public IASTInitializerClause[] getPlacementArguments() {
-    	return fPlacement;
-    }
+		return fPlacement;
+	}
 
-    @Override
+	@Override
 	public void setPlacementArguments(IASTInitializerClause[] args) {
-        assertNotFrozen();
-        fPlacement = args;
-        if (args != null) {
-        	for (IASTInitializerClause arg : args) {
+		assertNotFrozen();
+		fPlacement = args;
+		if (args != null) {
+			for (IASTInitializerClause arg : args) {
 				arg.setParent(this);
 				arg.setPropertyInParent(NEW_PLACEMENT);
 			}
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTInitializer getInitializer() {
-        return fInitializer;
-    }
+		return fInitializer;
+	}
 
-    @Override
+	@Override
 	public void setInitializer(IASTInitializer expression) {
-        assertNotFrozen();
-        fInitializer = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		fInitializer = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(NEW_INITIALIZER);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTTypeId getTypeId() {
-        return fTypeId;
-    }
+		return fTypeId;
+	}
 
-    @Override
+	@Override
 	public void setTypeId(IASTTypeId typeId) {
-        assertNotFrozen();
-        fTypeId = typeId;
-        if (typeId != null) {
+		assertNotFrozen();
+		fTypeId = typeId;
+		if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(TYPE_ID);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean isNewTypeId() {
-        return fIsNewTypeId;
-    }
+		return fIsNewTypeId;
+	}
 
-    @Override
+	@Override
 	public void setIsNewTypeId(boolean value) {
-        assertNotFrozen();
-        fIsNewTypeId = value;
-    }
+		assertNotFrozen();
+		fIsNewTypeId = value;
+	}
 
-    /**
-     * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
-     */
-    @Override
+	/**
+	 * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
+	 */
+	@Override
 	public IASTImplicitName[] getImplicitNames() {
-    	if (fImplicitNames == null) {
-    		CPPASTImplicitName operatorName = null;
+		if (fImplicitNames == null) {
+			CPPASTImplicitName operatorName = null;
 			ICPPFunction operatorFunction = CPPSemantics.findOverloadedOperator(this);
 			if (operatorFunction != null && !(operatorFunction instanceof CPPImplicitFunction)) {
 				operatorName = new CPPASTImplicitName(operatorFunction.getNameCharArray(), this);
@@ -201,10 +201,10 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 					fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 				}
 			}
-    	}
+		}
 
-    	return fImplicitNames;
-    }
+		return fImplicitNames;
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -215,38 +215,42 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		return fImplicitDestructorNames;
 	}
 
-    /**
+	/**
 	 * Returns true if this expression is allocating an array.
 	 * @since 5.1
 	 */
 	@Override
 	public boolean isArrayAllocation() {
-		IASTTypeId typeId= getTypeId();
+		IASTTypeId typeId = getTypeId();
 		if (typeId != null) {
-			IASTDeclarator dtor= typeId.getAbstractDeclarator();
+			IASTDeclarator dtor = typeId.getAbstractDeclarator();
 			if (dtor != null) {
-				dtor= ASTQueries.findTypeRelevantDeclarator(dtor);
+				dtor = ASTQueries.findTypeRelevantDeclarator(dtor);
 				return dtor instanceof IASTArrayDeclarator;
 			}
 		}
 		return false;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (action.shouldVisitImplicitNames) {
-        	for (IASTImplicitName name : getImplicitNames()) {
-        		if (!name.accept(action)) return false;
-        	}
-        }
+		if (action.shouldVisitImplicitNames) {
+			for (IASTImplicitName name : getImplicitNames()) {
+				if (!name.accept(action))
+					return false;
+			}
+		}
 
 		if (fPlacement != null) {
 			for (IASTInitializerClause arg : fPlacement) {
@@ -260,18 +264,21 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		if (fInitializer != null && !fInitializer.accept(action))
 			return false;
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
@@ -296,7 +303,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 			ICPPEvaluation[] arguments = ICPPEvaluation.EMPTY_ARRAY;
 			if (fInitializer instanceof ICPPASTConstructorInitializer) {
 				IASTInitializerClause[] args = ((ICPPASTConstructorInitializer) fInitializer).getArguments();
-				arguments= new ICPPEvaluation[args.length];
+				arguments = new ICPPEvaluation[args.length];
 				for (int i = 0; i < arguments.length; i++) {
 					arguments[i] = ((ICPPASTInitializerClause) args[i]).getEvaluation();
 				}
@@ -306,10 +313,10 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		return fEvaluation;
 	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
-    }
+		return CPPEvaluation.getType(this);
+	}
 
 	@Override
 	public boolean isLValue() {
@@ -343,96 +350,96 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		return fCachedArraySizes;
 	}
 
-    @Override
+	@Override
 	@Deprecated
-    public void addNewTypeIdArrayExpression(IASTExpression expression) {
-        assertNotFrozen();
-    	Assert.isNotNull(fTypeId);
-    	IASTDeclarator dtor= ASTQueries.findInnermostDeclarator(fTypeId.getAbstractDeclarator());
-    	if (dtor instanceof IASTArrayDeclarator == false) {
-    		Assert.isNotNull(dtor);
-    		Assert.isTrue(dtor.getParent() == fTypeId);
-    		IASTArrayDeclarator adtor= new CPPASTArrayDeclarator(dtor.getName());
-    		IASTPointerOperator[] ptrOps= dtor.getPointerOperators();
-    		for (IASTPointerOperator ptr : ptrOps) {
-        		adtor.addPointerOperator(ptr);
+	public void addNewTypeIdArrayExpression(IASTExpression expression) {
+		assertNotFrozen();
+		Assert.isNotNull(fTypeId);
+		IASTDeclarator dtor = ASTQueries.findInnermostDeclarator(fTypeId.getAbstractDeclarator());
+		if (dtor instanceof IASTArrayDeclarator == false) {
+			Assert.isNotNull(dtor);
+			Assert.isTrue(dtor.getParent() == fTypeId);
+			IASTArrayDeclarator adtor = new CPPASTArrayDeclarator(dtor.getName());
+			IASTPointerOperator[] ptrOps = dtor.getPointerOperators();
+			for (IASTPointerOperator ptr : ptrOps) {
+				adtor.addPointerOperator(ptr);
 			}
-    		fTypeId.setAbstractDeclarator(adtor);
-    		dtor= adtor;
-    	}
-    	IASTArrayModifier mod= new CPPASTArrayModifier(expression);
-    	((ASTNode) mod).setOffsetAndLength((ASTNode) expression);
-    	((IASTArrayDeclarator) dtor).addArrayModifier(mod);
-    }
+			fTypeId.setAbstractDeclarator(adtor);
+			dtor = adtor;
+		}
+		IASTArrayModifier mod = new CPPASTArrayModifier(expression);
+		((ASTNode) mod).setOffsetAndLength((ASTNode) expression);
+		((IASTArrayDeclarator) dtor).addArrayModifier(mod);
+	}
 
 	@Override
 	@Deprecated
-    public IASTExpression getNewPlacement() {
-    	if (fPlacement == null || fPlacement.length == 0)
-    		return null;
-    	if (fPlacement.length == 1) {
-    		if (fPlacement[0] instanceof IASTExpression)
-    			return (IASTExpression) fPlacement[0];
-    		return null;
-    	}
+	public IASTExpression getNewPlacement() {
+		if (fPlacement == null || fPlacement.length == 0)
+			return null;
+		if (fPlacement.length == 1) {
+			if (fPlacement[0] instanceof IASTExpression)
+				return (IASTExpression) fPlacement[0];
+			return null;
+		}
 
-    	CASTExpressionList result= new CASTExpressionList();
-    	for (IASTInitializerClause arg : fPlacement) {
-    		if (arg instanceof IASTExpression) {
-    			result.addExpression(((IASTExpression) arg).copy());
-    		}
-    	}
-    	result.setParent(this);
-    	result.setPropertyInParent(NEW_PLACEMENT);
-        return result;
-    }
-
-	@Override
-	@Deprecated
-    public void setNewPlacement(IASTExpression expression) {
-        assertNotFrozen();
-        if (expression == null) {
-        	setPlacementArguments(null);
-        } else if (expression instanceof IASTExpressionList) {
-        	setPlacementArguments(((IASTExpressionList) expression).getExpressions());
-        } else {
-        	setPlacementArguments(new IASTExpression[] {expression});
-        }
-    }
+		CASTExpressionList result = new CASTExpressionList();
+		for (IASTInitializerClause arg : fPlacement) {
+			if (arg instanceof IASTExpression) {
+				result.addExpression(((IASTExpression) arg).copy());
+			}
+		}
+		result.setParent(this);
+		result.setPropertyInParent(NEW_PLACEMENT);
+		return result;
+	}
 
 	@Override
 	@Deprecated
-    public IASTExpression getNewInitializer() {
-        if (fInitializer == null || fInitializer instanceof IASTExpression) {
-        	return (IASTExpression) fInitializer;
-        }
-        if (fInitializer instanceof ICPPASTConstructorInitializer) {
-       		IASTExpression expr= ((ICPPASTConstructorInitializer) fInitializer).getExpression();
-       		if (expr == null) {
-       			expr= new CPPASTExpressionList();
-       		} else {
-       			expr= expr.copy();
-       		}
-       		expr.setParent(this);
-       		expr.setPropertyInParent(NEW_INITIALIZER);
-       		return expr;
-        }
-        return null;
-    }
+	public void setNewPlacement(IASTExpression expression) {
+		assertNotFrozen();
+		if (expression == null) {
+			setPlacementArguments(null);
+		} else if (expression instanceof IASTExpressionList) {
+			setPlacementArguments(((IASTExpressionList) expression).getExpressions());
+		} else {
+			setPlacementArguments(new IASTExpression[] { expression });
+		}
+	}
 
 	@Override
 	@Deprecated
-    public void setNewInitializer(IASTExpression expression) {
-        assertNotFrozen();
-        if (expression == null) {
-        	setInitializer(null);
-        } else if (expression instanceof IASTInitializer) {
-        	setInitializer((IASTInitializer) expression);
-        } else {
-        	CPPASTConstructorInitializer ctorInit= new CPPASTConstructorInitializer();
-        	ctorInit.setExpression(expression);
-        	ctorInit.setOffsetAndLength((ASTNode) expression);
-        	setInitializer(ctorInit);
-        }
-    }
+	public IASTExpression getNewInitializer() {
+		if (fInitializer == null || fInitializer instanceof IASTExpression) {
+			return (IASTExpression) fInitializer;
+		}
+		if (fInitializer instanceof ICPPASTConstructorInitializer) {
+			IASTExpression expr = ((ICPPASTConstructorInitializer) fInitializer).getExpression();
+			if (expr == null) {
+				expr = new CPPASTExpressionList();
+			} else {
+				expr = expr.copy();
+			}
+			expr.setParent(this);
+			expr.setPropertyInParent(NEW_INITIALIZER);
+			return expr;
+		}
+		return null;
+	}
+
+	@Override
+	@Deprecated
+	public void setNewInitializer(IASTExpression expression) {
+		assertNotFrozen();
+		if (expression == null) {
+			setInitializer(null);
+		} else if (expression instanceof IASTInitializer) {
+			setInitializer((IASTInitializer) expression);
+		} else {
+			CPPASTConstructorInitializer ctorInit = new CPPASTConstructorInitializer();
+			ctorInit.setExpression(expression);
+			ctorInit.setOffsetAndLength((ASTNode) expression);
+			setInitializer(ctorInit);
+		}
+	}
 }

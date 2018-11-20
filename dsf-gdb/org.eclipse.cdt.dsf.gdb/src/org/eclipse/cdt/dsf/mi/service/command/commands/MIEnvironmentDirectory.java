@@ -26,12 +26,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * 
  */
 public class MIEnvironmentDirectory extends MICommand<MIInfo> {
-	
+
 	public MIEnvironmentDirectory(IDMContext ctx, String[] paths, boolean reset) {
 		super(ctx, "-environment-directory", paths); //$NON-NLS-1$
 
 		if (reset) {
-			setOptions(new String[] {"-r"}); //$NON-NLS-1$
+			setOptions(new String[] { "-r" }); //$NON-NLS-1$
 		}
 	}
 }

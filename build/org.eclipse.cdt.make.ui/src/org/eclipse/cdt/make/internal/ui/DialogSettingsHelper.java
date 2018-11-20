@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.make.internal.ui;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 @Deprecated
 public class DialogSettingsHelper {
-	
+
 	/**
 	 * Persists the location and dimensions of the shell in the
 	 * Debug UI Plugin dialog settings under the provided dialog settings section name
@@ -43,16 +43,16 @@ public class DialogSettingsHelper {
 		settings.put(IMakeUIPreferenceConstants.DIALOG_WIDTH, shellSize.x);
 		settings.put(IMakeUIPreferenceConstants.DIALOG_HEIGHT, shellSize.y);
 	}
-	
+
 	private static IDialogSettings getDialogSettings(String dialogSettingsSectionName) {
 		IDialogSettings settings = MakeUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(dialogSettingsSectionName);
 		if (section == null) {
 			section = settings.addNewSection(dialogSettingsSectionName);
-		} 
+		}
 		return section;
 	}
-	
+
 	/**
 	 * Returns the initial size which is the larger of the <code>initialSize</code> or
 	 * the size persisted in the Debug UI Plugin dialog settings under the provided dialog setttings section name.
@@ -73,7 +73,7 @@ public class DialogSettingsHelper {
 		}
 		return initialSize;
 	}
-	
+
 	/**
 	 * Returns the initial location which is persisted in the Debug UI Plugin dialog settings
 	 * under the provided dialog setttings section name.
@@ -85,9 +85,9 @@ public class DialogSettingsHelper {
 	public static Point getInitialLocation(String dialogSettingsSectionName) {
 		IDialogSettings settings = getDialogSettings(dialogSettingsSectionName);
 		try {
-			int x= settings.getInt(IMakeUIPreferenceConstants.DIALOG_ORIGIN_X);
-			int y= settings.getInt(IMakeUIPreferenceConstants.DIALOG_ORIGIN_Y);
-			return new Point(x,y);
+			int x = settings.getInt(IMakeUIPreferenceConstants.DIALOG_ORIGIN_X);
+			int y = settings.getInt(IMakeUIPreferenceConstants.DIALOG_ORIGIN_Y);
+			return new Point(x, y);
 		} catch (NumberFormatException e) {
 		}
 		return null;

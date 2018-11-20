@@ -13,20 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBuildPropertiesRestriction {
 	String[] getSupportedTypeIds();
-	
+
 	boolean supportsType(String id);
-	
+
 	String[] getSupportedValueIds(String typeId);
-	
+
 	boolean supportsValue(String typeId, String valueId);
-	
+
 	boolean requiresType(String typeId);
 
 	String[] getRequiredTypeIds();

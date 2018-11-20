@@ -43,10 +43,7 @@ public class StandardBuildTestHelper {
 	 * @return
 	 * @throws CoreException
 	 */
-	static public IProject createProject(
-			final String name,
-			final IPath location,
-			final String projectId)
+	static public IProject createProject(final String name, final IPath location, final String projectId)
 			throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject newProjectHandle = root.getProject(name);
@@ -59,7 +56,8 @@ public class StandardBuildTestHelper {
 			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			//description.setLocation(root.getLocation());
-			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), projectId);
+			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(),
+					projectId);
 		} else {
 			project = newProjectHandle;
 		}
@@ -114,7 +112,7 @@ public class StandardBuildTestHelper {
 		} catch (Exception e) {
 			Assert.fail("File " + files[0].lastSegment() + " - project refresh failed.");
 		}
-		for (int i=0; i<files.length; i++) {
+		for (int i = 0; i < files.length; i++) {
 			IPath testFile = testDir.append(files[i]);
 			IPath benchmarkFile = Path.fromOSString("Benchmarks/" + files[i]);
 			StringBuffer testBuffer = readContentsStripLineEnds(project, testFile);
@@ -140,7 +138,7 @@ public class StandardBuildTestHelper {
 		} catch (Exception e) {
 			Assert.fail("File " + files[0].lastSegment() + " - project refresh failed.");
 		}
-		for (int i=0; i<files.length; i++) {
+		for (int i = 0; i < files.length; i++) {
 			IPath testFile = testDir.append(files[i]);
 			IPath fullPath = project.getLocation().append(testFile);
 			try {
@@ -169,9 +167,10 @@ public class StandardBuildTestHelper {
 			int c;
 			do {
 				c = input.read();
-				if (c == -1) break;
+				if (c == -1)
+					break;
 				if (c != '\r' && c != '\n') {
-					buff.append((char)c);
+					buff.append((char) c);
 				}
 			} while (c != -1);
 			input.close();

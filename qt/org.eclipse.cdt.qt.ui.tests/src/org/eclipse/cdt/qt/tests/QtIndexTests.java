@@ -39,13 +39,13 @@ public class QtIndexTests extends BaseQtTestCase {
 		assertNotNull(qtIndex);
 
 		// make sure the instance can be found
-		IQObject qobj1 = qtIndex.findQObject(new String[]{ "B" });
+		IQObject qobj1 = qtIndex.findQObject(new String[] { "B" });
 		assertNotNull(qobj1);
 		assertEquals("B", qobj1.getName());
 
 		// make sure the instance is still found after the content changes
 		changeBDecl();
-		IQObject qobj2 = qtIndex.findQObject(new String[]{ "B" });
+		IQObject qobj2 = qtIndex.findQObject(new String[] { "B" });
 		assertNotNull(qobj2);
 		assertEquals("B", qobj2.getName());
 	}

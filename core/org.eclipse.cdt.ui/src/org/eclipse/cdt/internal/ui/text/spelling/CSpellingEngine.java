@@ -59,17 +59,21 @@ public class CSpellingEngine extends SpellingEngine {
 		@Override
 		public void ensureTokensInitialised() {
 		}
+
 		@Override
 		public IPreferenceStore getPreferenceStore() {
 			return null;
 		}
+
 		@Override
 		public IToken getToken(String property) {
 			return new Token(property);
 		}
+
 		@Override
 		public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		}
+
 		@Override
 		public boolean affectsBehavior(PropertyChangeEvent event) {
 			return false;
@@ -80,59 +84,62 @@ public class CSpellingEngine extends SpellingEngine {
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.SpellingEngine#check(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion[], org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker, org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected void check(IDocument document, IRegion[] regions, ISpellChecker checker, ISpellingProblemCollector collector, IProgressMonitor monitor) {
-		ISpellEventListener listener= new SpellEventListener(collector, document);
-		boolean isIgnoringStringLiterals= SpellingPreferences.isIgnoreStringLiterals();
-		
-		ISpellDictionary toRemove= null;
+	protected void check(IDocument document, IRegion[] regions, ISpellChecker checker,
+			ISpellingProblemCollector collector, IProgressMonitor monitor) {
+		ISpellEventListener listener = new SpellEventListener(collector, document);
+		boolean isIgnoringStringLiterals = SpellingPreferences.isIgnoreStringLiterals();
+
+		ISpellDictionary toRemove = null;
 		try {
 			checker.addListener(listener);
-			
-			IDocCommentOwner owner= null;
+
+			IDocCommentOwner owner = null;
 			if (document instanceof IDocumentExtension3) {
-				IDocumentPartitioner partitioner= ((IDocumentExtension3)document).getDocumentPartitioner(ICPartitions.C_PARTITIONING);
+				IDocumentPartitioner partitioner = ((IDocumentExtension3) document)
+						.getDocumentPartitioner(ICPartitions.C_PARTITIONING);
 				if (partitioner instanceof FastCPartitioner) {
-					owner= ((FastCPartitioner)partitioner).getDocCommentOwner();
+					owner = ((FastCPartitioner) partitioner).getDocCommentOwner();
 				}
 			}
-			
+
 			try {
-				for (int i= 0; i < regions.length; i++) {
-					IRegion region= regions[i];
-					ITypedRegion[] partitions= TextUtilities.computePartitioning(document,
-							ICPartitions.C_PARTITIONING, region.getOffset(), region.getLength(), false);
-					for (int index= 0; index < partitions.length; index++) {
+				for (int i = 0; i < regions.length; i++) {
+					IRegion region = regions[i];
+					ITypedRegion[] partitions = TextUtilities.computePartitioning(document, ICPartitions.C_PARTITIONING,
+							region.getOffset(), region.getLength(), false);
+					for (int index = 0; index < partitions.length; index++) {
 						if (monitor != null && monitor.isCanceled())
 							return;
 
-						ITypedRegion partition= partitions[index];
-						final String type= partition.getType();
-						
+						ITypedRegion partition = partitions[index];
+						final String type = partition.getType();
+
 						if (isIgnoringStringLiterals && type.equals(ICPartitions.C_STRING))
 							continue;
 
-						if (owner!=null) {
-							IDocCommentDictionary dict= null;
-							
+						if (owner != null) {
+							IDocCommentDictionary dict = null;
+
 							if (type.equals(ICPartitions.C_MULTI_LINE_DOC_COMMENT)) {
-								dict= owner.getMultilineConfiguration().getSpellingDictionary();
+								dict = owner.getMultilineConfiguration().getSpellingDictionary();
 							} else if (type.equals(ICPartitions.C_SINGLE_LINE_DOC_COMMENT)) {
-								dict= owner.getSinglelineConfiguration().getSpellingDictionary();
+								dict = owner.getSinglelineConfiguration().getSpellingDictionary();
 							}
-							
+
 							if (dict instanceof IDocCommentSimpleDictionary) {
-								ISpellDictionary sd= new DocCommentSpellDictionary((IDocCommentSimpleDictionary)dict);
+								ISpellDictionary sd = new DocCommentSpellDictionary((IDocCommentSimpleDictionary) dict);
 								checker.addDictionary(sd);
-								toRemove= sd;
+								toRemove = sd;
 							}
 						}
-						
+
 						if (type.equals(ICPartitions.C_PREPROCESSOR)) {
 							RuleBasedScanner scanner = new CPreprocessorScanner(new ITokenStoreFactory() {
 								@Override
 								public ITokenStore createTokenStore(String[] propertyColorNames) {
 									return new SimpleTokenStore();
-								}}, GPPLanguage.getDefault());
+								}
+							}, GPPLanguage.getDefault());
 							scanner.setRange(document, partition.getOffset(), partition.getLength());
 							int firstTokenOffset = -1;
 							int firstTokenLength = -1;
@@ -151,8 +158,8 @@ public class CSpellingEngine extends SpellingEngine {
 									String subregionType = null;
 									char c = document.getChar(offset);
 									if (c == '"') {
-										if (!isIgnoringStringLiterals &&
-												!isIncludeDirective(document, firstTokenOffset, firstTokenLength)) {
+										if (!isIgnoringStringLiterals
+												&& !isIncludeDirective(document, firstTokenOffset, firstTokenLength)) {
 											subregionType = ICPartitions.C_STRING;
 										}
 									} else if (c == '/' && length >= 2) {
@@ -165,26 +172,26 @@ public class CSpellingEngine extends SpellingEngine {
 									}
 									if (subregionType != null) {
 										TypedRegion subregion = new TypedRegion(offset, length, subregionType);
-										checker.execute(new SpellCheckIterator(document, subregion,
-												checker.getLocale()));
+										checker.execute(
+												new SpellCheckIterator(document, subregion, checker.getLocale()));
 									}
 								}
 							}
-						} else if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE) &&
-								!type.equals(ICPartitions.C_CHARACTER)) {
+						} else if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE)
+								&& !type.equals(ICPartitions.C_CHARACTER)) {
 							checker.execute(new SpellCheckIterator(document, partition, checker.getLocale()));
 						}
-						
+
 						if (toRemove != null) {
 							checker.removeDictionary(toRemove);
-							toRemove= null;
+							toRemove = null;
 						}
 					}
 				}
 			} catch (BadLocationException x) {
 				// Ignore BadLocationException since although it does happen from time to time,
 				// there seems to be not much harm from it.
-//				CUIPlugin.log(x);
+				//				CUIPlugin.log(x);
 			}
 		} finally {
 			if (toRemove != null)

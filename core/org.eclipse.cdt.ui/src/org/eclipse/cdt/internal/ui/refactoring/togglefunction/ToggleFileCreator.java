@@ -48,8 +48,7 @@ public class ToggleFileCreator {
 			change.perform(new NullProgressMonitor());
 			return (IFile) change.getModifiedElement();
 		} catch (CoreException e) {
-			throw new NotSupportedException(NLS.bind(Messages.ToggleFileCreator_CanNotCreateNewFile,
-					path.toString()));
+			throw new NotSupportedException(NLS.bind(Messages.ToggleFileCreator_CanNotCreateNewFile, path.toString()));
 		}
 	}
 
@@ -68,7 +67,7 @@ public class ToggleFileCreator {
 				} else {
 					functionName = context.getDefinition().getDeclarator().getRawSignature();
 				}
-				answer[0] = MessageDialog.openQuestion(shell, Messages.ToggleFileCreator_NewImplFile, 
+				answer[0] = MessageDialog.openQuestion(shell, Messages.ToggleFileCreator_NewImplFile,
 						NLS.bind(Messages.ToggleFileCreator_CreateNewFilePrompt, getNewFileName(), functionName));
 			}
 		};
@@ -77,13 +76,14 @@ public class ToggleFileCreator {
 	}
 
 	public String getIncludeStatement() {
-		return "#include \"" + ToggleNodeHelper.getFilenameWithoutExtension(getNewFileName()) + ".h\"\n";  //$NON-NLS-1$//$NON-NLS-2$
+		return "#include \"" + ToggleNodeHelper.getFilenameWithoutExtension(getNewFileName()) + ".h\"\n"; //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+
 	private String getNewFileName() {
-		return ToggleNodeHelper.getFilenameWithoutExtension(context.getSelectionFile().getFullPath().toString()) + ending;
+		return ToggleNodeHelper.getFilenameWithoutExtension(context.getSelectionFile().getFullPath().toString())
+				+ ending;
 	}
-	
+
 	private String getPath() {
 		String result = context.getSelectionFile().getFullPath().toOSString();
 		return result.replaceAll("(\\w)*\\.(\\w)*", EMPTY_STRING); //$NON-NLS-1$

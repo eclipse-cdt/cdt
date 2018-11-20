@@ -40,7 +40,7 @@ public interface IASTDeclSpecifier extends IASTAttributeOwner {
 	 */
 	@Deprecated
 	public static final ASTNodeProperty ALIGNMENT_SPECIFIER = new ASTNodeProperty(
-			"IASTDeclSpecifier.ALIGNMENT_SPECIFIER - Alignment specifier");  //$NON-NLS-1$
+			"IASTDeclSpecifier.ALIGNMENT_SPECIFIER - Alignment specifier"); //$NON-NLS-1$
 
 	/**
 	 * Returns the storage class, which is one of the constants sc_...
@@ -49,6 +49,7 @@ public interface IASTDeclSpecifier extends IASTAttributeOwner {
 
 	// Type qualifier
 	public boolean isConst();
+
 	public boolean isVolatile();
 
 	/**

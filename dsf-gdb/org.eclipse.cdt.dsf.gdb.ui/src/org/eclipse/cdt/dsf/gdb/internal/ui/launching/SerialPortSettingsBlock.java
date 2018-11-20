@@ -46,11 +46,10 @@ public class SerialPortSettingsBlock extends Observable {
 
 	private ComboDialogField fSpeedField;
 
-	private String fSpeedChoices[] = { 
-		"9600", "19200", "38400", "57600", "115200", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		"230400", "460800", "921600", "1000000", "1152000", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		"1500000", "2000000", "2500000", "3000000", "3500000", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		"4000000" //$NON-NLS-1$
+	private String fSpeedChoices[] = { "9600", "19200", "38400", "57600", "115200", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"230400", "460800", "921600", "1000000", "1152000", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"1500000", "2000000", "2500000", "3000000", "3500000", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"4000000" //$NON-NLS-1$
 	};
 	private Control fControl;
 
@@ -65,15 +64,15 @@ public class SerialPortSettingsBlock extends Observable {
 	public void createBlock(Composite parent) {
 		fShell = parent.getShell();
 		Composite comp = ControlFactory.createCompositeEx(parent, 2, GridData.FILL_BOTH);
-		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
-		((GridLayout)comp.getLayout()).marginHeight = 0;
-		((GridLayout)comp.getLayout()).marginWidth = 0;
+		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout) comp.getLayout()).marginHeight = 0;
+		((GridLayout) comp.getLayout()).marginWidth = 0;
 		comp.setFont(parent.getFont());
 		PixelConverter converter = new PixelConverter(comp);
 		fDeviceField.doFillIntoGrid(comp, 2);
 		LayoutUtil.setWidthHint(fDeviceField.getTextControl(null), converter.convertWidthInCharsToPixels(20));
 		fSpeedField.doFillIntoGrid(comp, 2);
-		((GridData)fSpeedField.getComboControl(null).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
+		((GridData) fSpeedField.getComboControl(null).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
 		setControl(comp);
 	}
 
@@ -146,9 +145,9 @@ public class SerialPortSettingsBlock extends Observable {
 	private void initializeDevice(ILaunchConfiguration configuration) {
 		if (fDeviceField != null) {
 			try {
-				fDeviceField.setText(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, DEFAULT_ASYNC_DEVICE));
-			}
-			catch(CoreException e) {
+				fDeviceField.setText(
+						configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, DEFAULT_ASYNC_DEVICE));
+			} catch (CoreException e) {
 			}
 		}
 	}
@@ -157,9 +156,9 @@ public class SerialPortSettingsBlock extends Observable {
 		if (fSpeedField != null) {
 			int index = 0;
 			try {
-				index = getSpeedItemIndex(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, DEFAULT_ASYNC_DEVICE_SPEED));
-			}
-			catch(CoreException e) {
+				index = getSpeedItemIndex(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED,
+						DEFAULT_ASYNC_DEVICE_SPEED));
+			} catch (CoreException e) {
 			}
 			fSpeedField.selectItem(index);
 		}
@@ -170,7 +169,7 @@ public class SerialPortSettingsBlock extends Observable {
 	}
 
 	private int getSpeedItemIndex(String item) {
-		for(int i = 0; i < fSpeedChoices.length; ++i)
+		for (int i = 0; i < fSpeedChoices.length; ++i)
 			if (fSpeedChoices[i].equals(item))
 				return i;
 		return 0;

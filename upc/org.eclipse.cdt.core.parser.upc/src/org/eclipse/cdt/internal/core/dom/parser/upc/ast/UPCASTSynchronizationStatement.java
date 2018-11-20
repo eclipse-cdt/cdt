@@ -73,18 +73,24 @@ public class UPCASTSynchronizationStatement extends ASTAttributeOwner implements
 	public boolean accept(ASTVisitor visitor) {
 		if (visitor.shouldVisitStatements) {
 			switch (visitor.visit(this)) {
-				case ASTVisitor.PROCESS_ABORT: return false;
-				case ASTVisitor.PROCESS_SKIP: return true;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
 			}
 		}
 
-        if (!acceptByAttributeSpecifiers(visitor)) return false;
-		if (barrierExpression != null && !barrierExpression.accept(visitor)) return false;
+		if (!acceptByAttributeSpecifiers(visitor))
+			return false;
+		if (barrierExpression != null && !barrierExpression.accept(visitor))
+			return false;
 
 		if (visitor.shouldVisitStatements) {
 			switch (visitor.leave(this)) {
-				case ASTVisitor.PROCESS_ABORT: return false;
-				case ASTVisitor.PROCESS_SKIP: return true;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
 			}
 		}
 		return true;

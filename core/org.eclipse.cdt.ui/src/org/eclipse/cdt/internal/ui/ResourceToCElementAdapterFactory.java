@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
-
 /**
  * An adapter factory that adapts resources to CElements. This was introduced in
  * the context of non-extensible content providers (Package Explorer) which

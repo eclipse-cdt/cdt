@@ -45,7 +45,7 @@ import org.eclipse.core.resources.IFile;
  */
 public class AST2SelectionParseTestBase extends FileBasePluginTestCase {
 
-    public AST2SelectionParseTestBase() {
+	public AST2SelectionParseTestBase() {
 	}
 
 	public AST2SelectionParseTestBase(String name) {
@@ -53,7 +53,7 @@ public class AST2SelectionParseTestBase extends FileBasePluginTestCase {
 	}
 
 	private static final IParserLogService NULL_LOG = new NullLogService();
-        
+
 	public AST2SelectionParseTestBase(String name, Class className) {
 		super(name, className);
 	}
@@ -61,81 +61,85 @@ public class AST2SelectionParseTestBase extends FileBasePluginTestCase {
 	protected IASTNode parse(String code, ParserLanguage lang, int offset, int length) throws ParserException {
 		return parse(code, lang, false, false, offset, length);
 	}
-	
+
 	protected IASTNode parse(IFile file, ParserLanguage lang, int offset, int length) throws ParserException {
 		IASTTranslationUnit tu = parse(file, lang, false, false);
 		return tu.getNodeSelector(null).findNode(offset, length);
 	}
-	
-	protected IASTNode parse(String code, ParserLanguage lang, int offset, int length, boolean expectedToPass) throws ParserException {
+
+	protected IASTNode parse(String code, ParserLanguage lang, int offset, int length, boolean expectedToPass)
+			throws ParserException {
 		return parse(code, lang, false, expectedToPass, offset, length);
 	}
-	
-	protected IASTNode parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, int offset, int length) throws ParserException {
+
+	protected IASTNode parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems,
+			int offset, int length) throws ParserException {
 		IASTTranslationUnit tu = parse(code, lang, useGNUExtensions, expectNoProblems);
 		return tu.getNodeSelector(null).findNode(offset, length);
-	}	
+	}
 
-    protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems) throws ParserException {
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems) throws ParserException {
 		FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
-        ScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2TestBase.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
-        
-        ISourceCodeParser parser2 = null;
-        if (lang == ParserLanguage.CPP) {
-            ICPPParserExtensionConfiguration config = null;
-            if (useGNUExtensions)
-            	config = new GPPParserExtensionConfiguration();
-            else
-            	config = new ANSICPPParserExtensionConfiguration();
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
-        } else {
-            ICParserExtensionConfiguration config = null;
+		ScannerInfo scannerInfo = new ScannerInfo();
+		IScanner scanner = AST2TestBase.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
 
-            if (useGNUExtensions)
-            	config = new GCCParserExtensionConfiguration();
-            else
-            	config = new ANSICParserExtensionConfiguration();
-            
-            parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
-        }
-        
-        IASTTranslationUnit tu = parser2.parse();
+		ISourceCodeParser parser2 = null;
+		if (lang == ParserLanguage.CPP) {
+			ICPPParserExtensionConfiguration config = null;
+			if (useGNUExtensions)
+				config = new GPPParserExtensionConfiguration();
+			else
+				config = new ANSICPPParserExtensionConfiguration();
+			parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+		} else {
+			ICParserExtensionConfiguration config = null;
 
-        if (parser2.encounteredError() && expectNoProblems)
-            throw new ParserException("FAILURE"); //$NON-NLS-1$
-         
-        if (lang == ParserLanguage.C && expectNoProblems) {
-        	assertEquals(CVisitor.getProblems(tu).length, 0);
-        	assertEquals(tu.getPreprocessorProblems().length, 0);
-        } else if (lang == ParserLanguage.CPP && expectNoProblems) {
-        	assertEquals(CPPVisitor.getProblems(tu).length, 0);
-        	assertEquals(tu.getPreprocessorProblems().length, 0);
-        }
-        if (expectNoProblems)
-            assertEquals(0, tu.getPreprocessorProblems().length);
-        
-        return tu;
-    }
-    
-    protected IASTTranslationUnit parse(IFile file, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems) throws ParserException {
-    	IASTTranslationUnit tu= null;
+			if (useGNUExtensions)
+				config = new GCCParserExtensionConfiguration();
+			else
+				config = new ANSICParserExtensionConfiguration();
+
+			parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+		}
+
+		IASTTranslationUnit tu = parser2.parse();
+
+		if (parser2.encounteredError() && expectNoProblems)
+			throw new ParserException("FAILURE"); //$NON-NLS-1$
+
+		if (lang == ParserLanguage.C && expectNoProblems) {
+			assertEquals(CVisitor.getProblems(tu).length, 0);
+			assertEquals(tu.getPreprocessorProblems().length, 0);
+		} else if (lang == ParserLanguage.CPP && expectNoProblems) {
+			assertEquals(CPPVisitor.getProblems(tu).length, 0);
+			assertEquals(tu.getPreprocessorProblems().length, 0);
+		}
+		if (expectNoProblems)
+			assertEquals(0, tu.getPreprocessorProblems().length);
+
+		return tu;
+	}
+
+	protected IASTTranslationUnit parse(IFile file, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems) throws ParserException {
+		IASTTranslationUnit tu = null;
 		try {
 			tu = CDOM.getInstance().getASTService().getTranslationUnit(file);
 		} catch (UnsupportedDialectException e) {
 			assertFalse(true); // shouldn't happen
 		}
 
-        if (lang == ParserLanguage.C && expectNoProblems) {
-        	assertEquals(CVisitor.getProblems(tu).length, 0);
-        	assertEquals(tu.getPreprocessorProblems().length, 0);
-        } else if (lang == ParserLanguage.CPP && expectNoProblems) {
-        	assertEquals(CPPVisitor.getProblems(tu).length, 0);
-        	assertEquals(tu.getPreprocessorProblems().length, 0);
-        }
-        if (expectNoProblems)
-            assertEquals(0, tu.getPreprocessorProblems().length);
-        
-        return tu;
-    }
+		if (lang == ParserLanguage.C && expectNoProblems) {
+			assertEquals(CVisitor.getProblems(tu).length, 0);
+			assertEquals(tu.getPreprocessorProblems().length, 0);
+		} else if (lang == ParserLanguage.CPP && expectNoProblems) {
+			assertEquals(CPPVisitor.getProblems(tu).length, 0);
+			assertEquals(tu.getPreprocessorProblems().length, 0);
+		}
+		if (expectNoProblems)
+			assertEquals(0, tu.getPreprocessorProblems().length);
+
+		return tu;
+	}
 }

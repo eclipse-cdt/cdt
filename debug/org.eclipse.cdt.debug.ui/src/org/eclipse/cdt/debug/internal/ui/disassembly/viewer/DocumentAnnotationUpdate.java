@@ -26,50 +26,51 @@ import org.eclipse.jface.text.source.Annotation;
  * //TODO Add description.
  */
 public class DocumentAnnotationUpdate extends DocumentUpdate implements IDocumentElementAnnotationUpdate {
-    private DocumentAnnotationProvider fAnnotationProvider;
-    private int fIndex = 0;
-    private List<Annotation> fAnnotations;
+	private DocumentAnnotationProvider fAnnotationProvider;
+	private int fIndex = 0;
+	private List<Annotation> fAnnotations;
 
-    public DocumentAnnotationUpdate( DocumentAnnotationProvider annotationProvider, IDocumentPresentation presentationContext, Object root, Object base, Object element, int index ) {
-        super( presentationContext, root, base, element );
-        fAnnotationProvider = annotationProvider;
-        fIndex = index;
-        fAnnotations = new ArrayList<Annotation>();
-    }
+	public DocumentAnnotationUpdate(DocumentAnnotationProvider annotationProvider,
+			IDocumentPresentation presentationContext, Object root, Object base, Object element, int index) {
+		super(presentationContext, root, base, element);
+		fAnnotationProvider = annotationProvider;
+		fIndex = index;
+		fAnnotations = new ArrayList<Annotation>();
+	}
 
-    /* (non-Javadoc)
-     * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementAnnotationUpdate#addAnnotation(org.eclipse.jface.text.source.Annotation)
-     */
-    @Override
-	public void addAnnotation( Annotation annotation ) {
-        fAnnotations.add( annotation );
-    }
+	/* (non-Javadoc)
+	 * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementAnnotationUpdate#addAnnotation(org.eclipse.jface.text.source.Annotation)
+	 */
+	@Override
+	public void addAnnotation(Annotation annotation) {
+		fAnnotations.add(annotation);
+	}
 
-    public int getIndex() {
-        return fIndex;
-    }
+	public int getIndex() {
+		return fIndex;
+	}
 
-    public Annotation[] getAnnotations() {
-        return fAnnotations.toArray( new Annotation[fAnnotations.size()] );
-    }
+	public Annotation[] getAnnotations() {
+		return fAnnotations.toArray(new Annotation[fAnnotations.size()]);
+	}
 
-    protected DocumentAnnotationProvider getAnnotationProvider() {
-        return fAnnotationProvider;
-    }
+	protected DocumentAnnotationProvider getAnnotationProvider() {
+		return fAnnotationProvider;
+	}
 
-    /* (non-Javadoc)
-     * @see com.arm.eclipse.rvd.internal.ui.disassembly.DocumentUpdate#done()
-     */
-    @Override
-    public void done() {
-        super.done();
-        getAnnotationProvider().completed( this );
-    }
+	/* (non-Javadoc)
+	 * @see com.arm.eclipse.rvd.internal.ui.disassembly.DocumentUpdate#done()
+	 */
+	@Override
+	public void done() {
+		super.done();
+		getAnnotationProvider().completed(this);
+	}
 
-    /* (non-Javadoc)
-     * @see com.arm.eclipse.rvd.internal.ui.disassembly.DocumentUpdate#startRequest()
-     */
-    @Override
-    void startRequest() {
-    }
+	/* (non-Javadoc)
+	 * @see com.arm.eclipse.rvd.internal.ui.disassembly.DocumentUpdate#startRequest()
+	 */
+	@Override
+	void startRequest() {
+	}
 }

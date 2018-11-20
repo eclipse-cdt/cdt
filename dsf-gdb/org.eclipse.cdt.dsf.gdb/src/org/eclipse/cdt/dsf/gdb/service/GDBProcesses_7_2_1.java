@@ -22,14 +22,13 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  * @since 4.1
  */
 public class GDBProcesses_7_2_1 extends GDBProcesses_7_2 {
-    
+
 	public GDBProcesses_7_2_1(DsfSession session) {
 		super(session);
 	}
 
 	@Override
-    protected boolean needFixForGDB72Bug352998() {
-    	return false;
-    }
+	protected boolean needFixForGDB72Bug352998() {
+		return false;
+	}
 }
-

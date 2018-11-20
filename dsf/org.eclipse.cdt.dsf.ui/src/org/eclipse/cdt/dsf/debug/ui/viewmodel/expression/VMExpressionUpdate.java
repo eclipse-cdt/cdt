@@ -33,63 +33,61 @@ import org.eclipse.jface.viewers.TreePath;
  */
 class VMExpressionUpdate extends VMViewerUpdate implements IExpressionUpdate {
 
-    private final IExpression fExpression;
-    private Object fExpressionElement;
-    
-    public VMExpressionUpdate(IViewerUpdate clientUpdate, IExpression expression, DataRequestMonitor<Object> rm) 
-    {
-        super(clientUpdate, rm);
-        fExpression = expression;
-    }
+	private final IExpression fExpression;
+	private Object fExpressionElement;
 
-    public VMExpressionUpdate(IModelDelta delta, IPresentationContext presentationContext, IExpression expression, DataRequestMonitor<Object> rm) 
-    {
-        super(delta, presentationContext, rm);
-        fExpression = expression;
-    }
-    
-    public VMExpressionUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext, IExpression expression, DataRequestMonitor<Object> rm) 
-    {
-        super(elementPath, viewerInput, presentationContext, rm);
-        fExpression = expression;
-    }
+	public VMExpressionUpdate(IViewerUpdate clientUpdate, IExpression expression, DataRequestMonitor<Object> rm) {
+		super(clientUpdate, rm);
+		fExpression = expression;
+	}
 
+	public VMExpressionUpdate(IModelDelta delta, IPresentationContext presentationContext, IExpression expression,
+			DataRequestMonitor<Object> rm) {
+		super(delta, presentationContext, rm);
+		fExpression = expression;
+	}
 
-    @Override
+	public VMExpressionUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext,
+			IExpression expression, DataRequestMonitor<Object> rm) {
+		super(elementPath, viewerInput, presentationContext, rm);
+		fExpression = expression;
+	}
+
+	@Override
 	public IExpression getExpression() {
-        return fExpression;
-    }
+		return fExpression;
+	}
 
-
-    @Override
+	@Override
 	public void setExpressionElement(Object element) {
-        fExpressionElement = element;
-    }
+		fExpressionElement = element;
+	}
 
-    @Override
-    public String toString() {
-        return "VMExpressionUpdate for elements under parent = " + getElement() + ", in for expression " + getExpression().getExpressionText();  //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	@Override
+	public String toString() {
+		return "VMExpressionUpdate for elements under parent = " + getElement() + ", in for expression " //$NON-NLS-1$//$NON-NLS-2$
+				+ getExpression().getExpressionText();
+	}
 
-    @Override
-    public void done() {
-        @SuppressWarnings("unchecked")
-        
-        DataRequestMonitor<Object> rm = (DataRequestMonitor<Object>)getRequestMonitor();
-        if (fExpressionElement != null) {
-            rm.setData(fExpressionElement);
-        } else if (rm.isSuccess()) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$
-        }
-        
-        // trace our result
-        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
-			DsfUIPlugin.debug(DsfPlugin.getDebugTime()
-				+ " " + LoggingUtils.toString(this) + " marked done; element = " + LoggingUtils.toString(getElement()) + //$NON-NLS-1$ //$NON-NLS-2$
-				"\n   expression = " //$NON-NLS-1$
-				+ (fExpressionElement != null ? LoggingUtils.toString(fExpressionElement) : "<unset>"));  //$NON-NLS-1$
-        }
-        
-        super.done();
-    }
+	@Override
+	public void done() {
+		@SuppressWarnings("unchecked")
+
+		DataRequestMonitor<Object> rm = (DataRequestMonitor<Object>) getRequestMonitor();
+		if (fExpressionElement != null) {
+			rm.setData(fExpressionElement);
+		} else if (rm.isSuccess()) {
+			rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED,
+					"Incomplete elements of updates", null)); //$NON-NLS-1$
+		}
+
+		// trace our result
+		if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled()
+				&& VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
+			DsfUIPlugin.debug(DsfPlugin.getDebugTime() + " " + LoggingUtils.toString(this) + " marked done; element = " //$NON-NLS-1$//$NON-NLS-2$
+					+ LoggingUtils.toString(getElement()) + "\n   expression = " + (fExpressionElement != null ? LoggingUtils.toString(fExpressionElement) : "<unset>")); //$NON-NLS-2$
+		}
+
+		super.done();
+	}
 }

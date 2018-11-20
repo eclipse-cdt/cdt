@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.build;
  * @since 6.5
  */
 public interface ICBuildConfigurationManager2 {
-	
+
 	/**
 	 * Re-evaluate disabled configs to see if they should be re-enabled.
 	 */

@@ -26,7 +26,6 @@ import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.eclipse.cdt.testsrunner.test.TestsRunnerTestActivator;
 import org.eclipse.core.runtime.Plugin;
 
-
 /**
  * Base test case for Tests Runner provider plug-ins testing.
  */
@@ -38,8 +37,7 @@ public abstract class BaseTestCase extends TestCase {
 	protected MockTestModelUpdater mockModelUpdater = new MockTestModelUpdater();
 	protected ITestsRunnerProvider testsRunner = createTestsRunner();
 	protected boolean expectTestingException = false;
-	
-	
+
 	protected abstract ITestsRunnerProvider createTestsRunner();
 
 	protected String getAboveComment() {
@@ -48,7 +46,8 @@ public abstract class BaseTestCase extends TestCase {
 
 	private StringBuilder[] getContents(int sections) {
 		try {
-			return TestSourceReader.getContentsForTest(getPlugin().getBundle(), getSourcePrefix(), getClass(), getName(), sections);
+			return TestSourceReader.getContentsForTest(getPlugin().getBundle(), getSourcePrefix(), getClass(),
+					getName(), sections);
 		} catch (IOException e) {
 			fail(e.getMessage());
 			return null;
@@ -62,7 +61,7 @@ public abstract class BaseTestCase extends TestCase {
 	protected String getSourcePrefix() {
 		return "src";
 	}
-	
+
 	protected void runTestsRunner() throws TestingException {
 		try {
 			mockModelUpdater.replay();
@@ -72,24 +71,24 @@ public abstract class BaseTestCase extends TestCase {
 			String exceptionMessage = null;
 			try {
 				testsRunner.run(mockModelUpdater, inStream);
-				
+
 			} catch (TestingException e) {
 				testingExceptionHappen = true;
 				exceptionMessage = e.getMessage();
 			}
 			if (expectTestingException != testingExceptionHappen) {
 				if (testingExceptionHappen) {
-					fail("Unexpected exception: "+exceptionMessage);
+					fail("Unexpected exception: " + exceptionMessage);
 				} else {
 					fail("TestingException is expected, but did not happen!");
 				}
 			}
-		
+
 		} catch (UnsupportedEncodingException e) {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	protected void expectTestingException() {
 		expectTestingException = true;
 	}
@@ -98,5 +97,5 @@ public abstract class BaseTestCase extends TestCase {
 	protected void tearDown() throws Exception {
 		runTestsRunner();
 	}
-	
+
 }

@@ -55,7 +55,7 @@ public class ToggleFunctionAction extends RefactoringAction {
 		new ToggleRefactoringRunner(wc, selection, shellProvider, wc.getCProject()).run();
 	}
 
-    @Override
+	@Override
 	public void updateSelection(ICElement elem) {
 		super.updateSelection(elem);
 		setEnabled(false);

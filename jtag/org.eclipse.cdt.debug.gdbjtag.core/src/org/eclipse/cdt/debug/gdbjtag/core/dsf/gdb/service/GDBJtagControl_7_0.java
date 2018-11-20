@@ -23,7 +23,6 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
-
 /**
  * Jtag control service which selects the Jtag CompleteInitializationSequence.
  * Use for GDB >= 7.0
@@ -36,7 +35,8 @@ public class GDBJtagControl_7_0 extends GDBControl_7_0 {
 	}
 
 	@Override
-	protected Sequence getCompleteInitializationSequence(Map<String,Object> attributes, RequestMonitorWithProgress rm) {
+	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes,
+			RequestMonitorWithProgress rm) {
 		return new GDBJtagDSFFinalLaunchSequence(getSession(), attributes, rm);
 	}
 }

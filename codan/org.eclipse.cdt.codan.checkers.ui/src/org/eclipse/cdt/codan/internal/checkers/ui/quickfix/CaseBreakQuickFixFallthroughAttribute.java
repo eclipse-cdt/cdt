@@ -39,7 +39,8 @@ public class CaseBreakQuickFixFallthroughAttribute extends AbstractCaseBreakQuic
 		boolean enabled = (boolean) map.getChildValue(CaseBreakChecker.PARAM_ENABLE_FALLTHROUGH_QUICKFIX);
 		boolean last_case_enabled = (boolean) map.getChildValue(CaseBreakChecker.PARAM_LAST_CASE);
 		ITranslationUnit tu = getTranslationUnitViaWorkspace(marker);
-		return enabled && tu != null && tu.isCXXLanguage() && (!last_case_enabled || validPositionForFallthrough(tu, marker));
+		return enabled && tu != null && tu.isCXXLanguage()
+				&& (!last_case_enabled || validPositionForFallthrough(tu, marker));
 	}
 
 	@Override
@@ -50,7 +51,8 @@ public class CaseBreakQuickFixFallthroughAttribute extends AbstractCaseBreakQuic
 	@Override
 	public void modifyAST(IIndex index, IMarker marker) {
 		try {
-			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index,
+					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			ICPPNodeFactory factory = (ICPPNodeFactory) ast.getASTNodeFactory();
 			IASTNullStatement nullStatement = factory.newNullStatement();
 			nullStatement.addAttributeSpecifier(getFallthroughAttributeList(factory));
@@ -62,7 +64,8 @@ public class CaseBreakQuickFixFallthroughAttribute extends AbstractCaseBreakQuic
 
 	private boolean validPositionForFallthrough(ITranslationUnit tu, IMarker marker) {
 		try {
-			IASTTranslationUnit ast = CModelUtil.toWorkingCopy(tu).getAST(null, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit ast = CModelUtil.toWorkingCopy(tu).getAST(null,
+					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTStatement beforeCaseEnd = getStmtBeforeCaseEnd(marker, ast);
 			if (beforeCaseEnd == null)
 				return false;

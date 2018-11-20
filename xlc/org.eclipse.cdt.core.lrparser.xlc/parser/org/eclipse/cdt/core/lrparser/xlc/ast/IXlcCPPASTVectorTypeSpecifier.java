@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 public interface IXlcCPPASTVectorTypeSpecifier extends ICPPASTDeclSpecifier {
 
 	public boolean isPixel();
-	
+
 	public void setPixel(boolean isPixel);
-	
+
 }

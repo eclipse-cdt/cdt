@@ -41,12 +41,14 @@ public class AutotoolsEnvironmentVariableSupplier implements IConfigurationEnvir
 
 		private static boolean isVar(String name) {
 			// Windows has case insensitive env var names
-			return Platform.getOS().equals(Platform.OS_WIN32) ? name.equalsIgnoreCase(VerboseEnvironmentVariable.VERBOSE_VAR_NAME)
+			return Platform.getOS().equals(Platform.OS_WIN32)
+					? name.equalsIgnoreCase(VerboseEnvironmentVariable.VERBOSE_VAR_NAME)
 					: name.equals(VerboseEnvironmentVariable.VERBOSE_VAR_NAME);
 		}
 
 		private static IBuildEnvironmentVariable create() {
-			return new VerboseEnvironmentVariable(VERBOSE_VAR_NAME, VERBOSE_VAR_VALUE, IEnvironmentVariable.ENVVAR_PREPEND, null);
+			return new VerboseEnvironmentVariable(VERBOSE_VAR_NAME, VERBOSE_VAR_VALUE,
+					IEnvironmentVariable.ENVVAR_PREPEND, null);
 		}
 	}
 

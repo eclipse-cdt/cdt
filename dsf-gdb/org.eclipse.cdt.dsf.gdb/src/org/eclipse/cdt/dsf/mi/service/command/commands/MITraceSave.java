@@ -28,12 +28,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * @since 3.0
  */
 public class MITraceSave extends MICommand<MIInfo> {
-	
+
 	public MITraceSave(ITraceTargetDMContext ctx, String file, boolean remoteSave) {
 		super(ctx, "-trace-save", null, new String[] { file }); //$NON-NLS-1$
 		if (remoteSave) {
 			setOptions(new String[] { "-r" }); //$NON-NLS-1$
 		}
 	}
-	
+
 }

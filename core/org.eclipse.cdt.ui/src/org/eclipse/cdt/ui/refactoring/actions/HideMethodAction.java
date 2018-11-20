@@ -32,11 +32,11 @@ import org.eclipse.cdt.internal.ui.refactoring.hidemethod.HideMethodRefactoringR
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class HideMethodAction extends RefactoringAction {
-    
-    public HideMethodAction() {
-        super(Messages.HideMethodAction_label); 
-    }
-    
+
+	public HideMethodAction() {
+		super(Messages.HideMethodAction_label);
+	}
+
 	@Override
 	public void run(IShellProvider shellProvider, ICElement elem) {
 		if (elem instanceof ISourceReference) {
@@ -51,12 +51,12 @@ public class HideMethodAction extends RefactoringAction {
 		}
 	}
 
-    @Override
+	@Override
 	public void updateSelection(ICElement elem) {
-    	super.updateSelection(elem);
-    	if (!(elem instanceof IMethodDeclaration) || !(elem instanceof ISourceReference) ||
-    			((ISourceReference) elem).getTranslationUnit().getResource() == null) {
-    		setEnabled(false);
-    	}
-    }
+		super.updateSelection(elem);
+		if (!(elem instanceof IMethodDeclaration) || !(elem instanceof ISourceReference)
+				|| ((ISourceReference) elem).getTranslationUnit().getResource() == null) {
+			setEnabled(false);
+		}
+	}
 }

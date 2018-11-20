@@ -32,16 +32,16 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  */
 public class ContainerNode extends ASTNode {
 	private final ArrayList<IASTNode> nodes = new ArrayList<IASTNode>();
-	
+
 	public ContainerNode(IASTNode... nodes) {
 		Collections.addAll(this.nodes, nodes);
 	}
-	
+
 	@Override
 	public ContainerNode copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public ContainerNode copy(CopyStyle style) {
 		ContainerNode copy = new ContainerNode();
@@ -63,11 +63,11 @@ public class ContainerNode extends ASTNode {
 		}
 		return ret;
 	}
-	
+
 	public IASTTranslationUnit getTu() {
 		return null;
 	}
-	
+
 	public List<IASTNode> getNodes() {
 		return Collections.unmodifiableList(nodes);
 	}

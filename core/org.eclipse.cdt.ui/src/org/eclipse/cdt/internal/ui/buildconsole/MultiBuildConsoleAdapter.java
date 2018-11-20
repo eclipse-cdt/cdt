@@ -33,7 +33,7 @@ class MultiBuildConsoleAdapter implements IConsole {
 	private final IConsole fProjectConsole;
 	private final IConsole fGlobalConsole;
 
-	private static class BuildOutputStreamAdapter extends ConsoleOutputStream implements IErrorMarkeredOutputStream	{
+	private static class BuildOutputStreamAdapter extends ConsoleOutputStream implements IErrorMarkeredOutputStream {
 		private final BuildOutputStream one;
 		private final BuildOutputStream two;
 
@@ -53,18 +53,18 @@ class MultiBuildConsoleAdapter implements IConsole {
 			two.write(c);
 		}
 
-	    @Override
+		@Override
 		public synchronized void write(byte[] b, int off, int len) throws IOException {
 			one.write(b, off, len);
 			two.write(b, off, len);
-	    }
+		}
 
-	    @Override
-	    public synchronized void write(String msg) throws IOException {
-	    	one.write(msg);
-	    	two.write(msg);
-	    }
-	    
+		@Override
+		public synchronized void write(String msg) throws IOException {
+			one.write(msg);
+			two.write(msg);
+		}
+
 		@Override
 		public void write(String s, ProblemMarkerInfo marker) throws IOException {
 			one.write(s, marker);
@@ -76,7 +76,7 @@ class MultiBuildConsoleAdapter implements IConsole {
 			one.flush();
 			two.flush();
 		}
-		
+
 		@Override
 		public void close() throws IOException {
 			one.flush();
@@ -99,17 +99,20 @@ class MultiBuildConsoleAdapter implements IConsole {
 
 	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
-		return new BuildOutputStreamAdapter((BuildOutputStream)fProjectConsole.getOutputStream(), (BuildOutputStream)fGlobalConsole.getOutputStream());
+		return new BuildOutputStreamAdapter((BuildOutputStream) fProjectConsole.getOutputStream(),
+				(BuildOutputStream) fGlobalConsole.getOutputStream());
 	}
 
 	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
-		return new BuildOutputStreamAdapter((BuildOutputStream)fProjectConsole.getInfoStream(), (BuildOutputStream)fGlobalConsole.getInfoStream());
+		return new BuildOutputStreamAdapter((BuildOutputStream) fProjectConsole.getInfoStream(),
+				(BuildOutputStream) fGlobalConsole.getInfoStream());
 	}
 
 	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
-		return new BuildOutputStreamAdapter((BuildOutputStream)fProjectConsole.getErrorStream(), (BuildOutputStream)fGlobalConsole.getErrorStream());
+		return new BuildOutputStreamAdapter((BuildOutputStream) fProjectConsole.getErrorStream(),
+				(BuildOutputStream) fGlobalConsole.getErrorStream());
 	}
 
 }

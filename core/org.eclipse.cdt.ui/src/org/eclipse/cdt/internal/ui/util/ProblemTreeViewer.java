@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 
-
 /**
  * Extends a  TreeViewer to allow more performance when showing error ticks.
  * A <code>ProblemItemMapper</code> is contained that maps all items in
@@ -60,15 +59,15 @@ public class ProblemTreeViewer extends TreeViewer {
 		super(tree);
 		initMapper();
 	}
-	
+
 	private void initMapper() {
-		fResourceToItemsMapper= new ResourceToItemsMapper(this);
+		fResourceToItemsMapper = new ResourceToItemsMapper(this);
 	}
-	
-	
+
 	protected void doUpdateItem(Item item) {
 		doUpdateItem(item, item.getData(), true);
 	}
+
 	/*
 	 * @see StructuredViewer#mapElement(Object, Widget)
 	 */
@@ -79,7 +78,7 @@ public class ProblemTreeViewer extends TreeViewer {
 			fResourceToItemsMapper.addToMap(element, (Item) item);
 		}
 	}
-	
+
 	/*
 	 * @see StructuredViewer#unmapElement(Object, Widget)
 	 */
@@ -87,7 +86,7 @@ public class ProblemTreeViewer extends TreeViewer {
 	protected void unmapElement(Object element, Widget item) {
 		if (item instanceof Item) {
 			fResourceToItemsMapper.removeFromMap(element, (Item) item);
-		}		
+		}
 		super.unmapElement(element);
 	}
 
@@ -105,16 +104,16 @@ public class ProblemTreeViewer extends TreeViewer {
 	 */
 	@Override
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
-		Object source= event.getElement();
+		Object source = event.getElement();
 		if (source == null) {
 			super.handleLabelProviderChanged(event);
 			return;
 		}
-		Object[] changed= event.getElements();
+		Object[] changed = event.getElements();
 		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
-			ArrayList<Object> others= new ArrayList<Object>(changed.length);
-			for (int i= 0; i < changed.length; i++) {
-				Object curr= changed[i];
+			ArrayList<Object> others = new ArrayList<Object>(changed.length);
+			for (int i = 0; i < changed.length; i++) {
+				Object curr = changed[i];
 				if (curr instanceof IResource) {
 					fResourceToItemsMapper.resourceChanged((IResource) curr);
 				} else {
@@ -124,25 +123,25 @@ public class ProblemTreeViewer extends TreeViewer {
 			if (others.isEmpty()) {
 				return;
 			}
-			event= new LabelProviderChangedEvent((IBaseLabelProvider) event.getSource(), others.toArray());
-		}		
+			event = new LabelProviderChangedEvent((IBaseLabelProvider) event.getSource(), others.toArray());
+		}
 		super.handleLabelProviderChanged(event);
 		return;
 	}
-	
-//    /**
-//     * @see org.eclipse.jface.viewers.StructuredViewer#update(java.lang.Object, java.lang.String[])
-//     */
-//    public void update(Object element, String[] properties)
-//    {
-        /* Calling StructuredViewer.update() causes
-         * RunnableLock deadlock with StructuredViewer.doInternalUpdate()
-         * when long h file (with lots of declarations) is edited.
-         * This is only workaround, it only protects against
-         * deadlock but may cause other problems. */
-//    }
-// Yeah, and the problem tree no longer updates after a schecdule decoration job!!!!
-	
+
+	//    /**
+	//     * @see org.eclipse.jface.viewers.StructuredViewer#update(java.lang.Object, java.lang.String[])
+	//     */
+	//    public void update(Object element, String[] properties)
+	//    {
+	/* Calling StructuredViewer.update() causes
+	 * RunnableLock deadlock with StructuredViewer.doInternalUpdate()
+	 * when long h file (with lots of declarations) is edited.
+	 * This is only workaround, it only protects against
+	 * deadlock but may cause other problems. */
+	//    }
+	// Yeah, and the problem tree no longer updates after a schecdule decoration job!!!!
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#isExpandable(java.lang.Object)
 	 */
@@ -156,6 +155,5 @@ public class ProblemTreeViewer extends TreeViewer {
 		// or lots of TUs exist in one folder so lets skip it....
 		return cp.hasChildren(element);
 	}
-	
-}
 
+}

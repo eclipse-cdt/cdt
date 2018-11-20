@@ -47,7 +47,7 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 	public ICPPMethod[] getImplicitMethods() {
 		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType) rbinding).getCompositeScope();
 		ICPPMethod[] result = rscope.getImplicitMethods();
-		for (int i= 0; i < result.length; i++) {
+		for (int i = 0; i < result.length; i++) {
 			result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
@@ -57,7 +57,7 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 	public ICPPConstructor[] getConstructors() {
 		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType) rbinding).getCompositeScope();
 		ICPPConstructor[] result = rscope.getConstructors();
-		for (int i= 0; i < result.length; i++) {
+		for (int i = 0; i < result.length; i++) {
 			result[i] = (ICPPConstructor) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
@@ -69,7 +69,8 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 		return processUncertainBinding(binding);
 	}
 
-	@Override @Deprecated
+	@Override
+	@Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
@@ -79,19 +80,20 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 		IBinding[] bindings = ((ICPPClassType) rbinding).getCompositeScope().getBindings(lookup);
 		return processUncertainBindings(bindings);
 	}
-	
+
 	@Override
 	public IBinding[] find(String name, IASTTranslationUnit tu) {
 		IBinding[] preresult = ((ICPPClassType) rbinding).getCompositeScope().find(name, tu);
-		return processUncertainBindings(preresult);	
+		return processUncertainBindings(preresult);
 	}
-	
-	@Override @Deprecated
+
+	@Override
+	@Deprecated
 	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICPPClassType) rbinding).getCompositeScope().find(name);
-		return processUncertainBindings(preresult);	
+		return processUncertainBindings(preresult);
 	}
-	
+
 	@Override
 	public IIndexBinding getScopeBinding() {
 		return (IIndexBinding) getClassType();

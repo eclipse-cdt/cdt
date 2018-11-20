@@ -43,24 +43,23 @@ public class AutotoolsConfigurationBuilder extends ACBuilder {
 	public static final String BUILDER_ID = AutotoolsPlugin.getPluginId() + "." + BUILDER_NAME; //$NON-NLS-1$
 	public static final String OLD_BUILDER_ID = "org.eclipse.linuxtools.cdt.autotools.core.genmakebuilderV2"; //$NON-NLS-1$
 
-	private static final String BUILD_STOPPED="AutotoolsMakefileBuilder.message.stopped"; //$NON-NLS-1$
+	private static final String BUILD_STOPPED = "AutotoolsMakefileBuilder.message.stopped"; //$NON-NLS-1$
 	private AutotoolsNewMakeGenerator generator;
 
 	public AutotoolsConfigurationBuilder() {
 		super();
 		generator = new AutotoolsNewMakeGenerator();
 	}
-	
-	protected boolean isCdtProjectCreated(IProject project){
+
+	protected boolean isCdtProjectCreated(IProject project) {
 		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project, false);
 		return des != null && !des.isCdtProjectCreating();
 	}
 
 	@Override
-	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor)
-	throws CoreException {
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
-		if(!isCdtProjectCreated(project))
+		if (!isCdtProjectCreated(project))
 			return project.getReferencedProjects();
 
 		boolean bPerformBuild = true;
@@ -110,7 +109,7 @@ public class AutotoolsConfigurationBuilder extends ACBuilder {
 		checkCancel(monitor);
 		return getProject().getReferencedProjects();
 	}
-	
+
 	@Override
 	protected void clean(IProgressMonitor monitor) {
 		IProject project = getProject();
@@ -118,15 +117,17 @@ public class AutotoolsConfigurationBuilder extends ACBuilder {
 		if (shouldBuild(CLEAN_BUILD, info)) {
 			IConfiguration icfg = info.getDefaultConfiguration();
 			if (icfg instanceof IMultiConfiguration) {
-				IMultiConfiguration mcfg = (IMultiConfiguration)icfg;
-				IConfiguration[] cfgs = (IConfiguration[])mcfg.getItems();
+				IMultiConfiguration mcfg = (IMultiConfiguration) icfg;
+				IConfiguration[] cfgs = (IConfiguration[]) mcfg.getItems();
 				for (int i = 0; i < cfgs.length; ++i) {
-					IAConfiguration cfg = AutotoolsConfigurationManager.getInstance().getConfiguration(project, icfg.getName());
+					IAConfiguration cfg = AutotoolsConfigurationManager.getInstance().getConfiguration(project,
+							icfg.getName());
 					cfg.setDirty(true);
 				}
 			} else {
-				IAConfiguration cfg = AutotoolsConfigurationManager.getInstance().getConfiguration(project, icfg.getName());
-				cfg.setDirty(true);  // Mark Configuration dirty so next build will do full reconfigure
+				IAConfiguration cfg = AutotoolsConfigurationManager.getInstance().getConfiguration(project,
+						icfg.getName());
+				cfg.setDirty(true); // Mark Configuration dirty so next build will do full reconfigure
 			}
 		}
 	}
@@ -134,16 +135,15 @@ public class AutotoolsConfigurationBuilder extends ACBuilder {
 	protected MultiStatus performMakefileGeneration(IProject project, IManagedBuildInfo info,
 			IProgressMonitor monitor) {
 		MultiStatus result;
-		
+
 		try {
 			generator.initialize(project, info, monitor);
 			result = generator.regenerateMakefiles(false);
 		} catch (CoreException e) {
 			String errMsg = AutotoolsPlugin.getResourceString("MakeGenerator.didnt.generate"); //$NON-NLS-1$
-			result = new MultiStatus(AutotoolsPlugin.getUniqueIdentifier(), IStatus.ERROR,
-					errMsg, e);
+			result = new MultiStatus(AutotoolsPlugin.getUniqueIdentifier(), IStatus.ERROR, errMsg, e);
 		}
-		
+
 		return result;
 	}
 
@@ -160,18 +160,17 @@ public class AutotoolsConfigurationBuilder extends ACBuilder {
 		IBuilder builder = null;
 		if (cfg != null) {
 			builder = cfg.getEditableBuilder();
-		switch (kind) {
-		case IncrementalProjectBuilder.AUTO_BUILD :
-			return builder.isAutoBuildEnable();
-		case IncrementalProjectBuilder.INCREMENTAL_BUILD : // now treated as the same!
-		case IncrementalProjectBuilder.FULL_BUILD :
-			return builder.isFullBuildEnabled() | builder.isIncrementalBuildEnabled() ;
-		case IncrementalProjectBuilder.CLEAN_BUILD :
-			return builder.isCleanBuildEnabled();
-		}
+			switch (kind) {
+			case IncrementalProjectBuilder.AUTO_BUILD:
+				return builder.isAutoBuildEnable();
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD: // now treated as the same!
+			case IncrementalProjectBuilder.FULL_BUILD:
+				return builder.isFullBuildEnabled() | builder.isIncrementalBuildEnabled();
+			case IncrementalProjectBuilder.CLEAN_BUILD:
+				return builder.isCleanBuildEnabled();
+			}
 		}
 		return true;
 	}
 
 }
-		

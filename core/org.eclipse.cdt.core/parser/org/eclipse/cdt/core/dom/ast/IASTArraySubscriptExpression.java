@@ -72,7 +72,7 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 	 */
 	@Override
 	IASTArraySubscriptExpression copy();
-	
+
 	/**
 	 * @since 5.3
 	 */

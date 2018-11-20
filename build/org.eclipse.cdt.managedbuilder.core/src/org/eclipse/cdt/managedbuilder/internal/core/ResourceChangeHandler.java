@@ -54,17 +54,17 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 
 	private Map<IProject, IManagedBuildInfo> fRmProjectToBuildInfoMap = new HashMap<IProject, IManagedBuildInfo>();
 
-	private class ResourceConfigurationChecker implements IResourceDeltaVisitor{
+	private class ResourceConfigurationChecker implements IResourceDeltaVisitor {
 		private IResourceDelta fRootDelta;
 		private HashMap<IProject, IManagedBuilderMakefileGenerator> fBuildFileGeneratorMap = new HashMap<IProject, IManagedBuilderMakefileGenerator>();
 		private HashSet<IPath> fValidatedFilesSet = new HashSet<IPath>();
 		private HashSet<IProject> fModifiedProjects = new HashSet<IProject>();
 
-		public ResourceConfigurationChecker(IResourceDelta rootDelta){
+		public ResourceConfigurationChecker(IResourceDelta rootDelta) {
 			fRootDelta = rootDelta;
 		}
 
-		public IProject[] getModifiedProjects(){
+		public IProject[] getModifiedProjects() {
 			return fModifiedProjects.toArray(new IProject[fModifiedProjects.size()]);
 		}
 
@@ -73,44 +73,45 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			IResource dResource = delta.getResource();
 			int rcType = dResource.getType();
 
-			if(rcType == IResource.PROJECT || rcType == IResource.FOLDER){
+			if (rcType == IResource.PROJECT || rcType == IResource.FOLDER) {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				IProject project = null;
 				IResource rcToCheck = null;
 				switch (delta.getKind()) {
-				case IResourceDelta.REMOVED :
-					if (rcType == IResource.PROJECT){
+				case IResourceDelta.REMOVED:
+					if (rcType == IResource.PROJECT) {
 						IManagedBuildInfo info = fRmProjectToBuildInfoMap.remove(dResource);
 
-						if((delta.getFlags() & IResourceDelta.MOVED_TO) == 0) {
-							if(info != null){
+						if ((delta.getFlags() & IResourceDelta.MOVED_TO) == 0) {
+							if (info != null) {
 								sendClose(info);
 								PropertyManager.getInstance().clearProperties(info.getManagedProject());
 							}
 							break;
 						}
 					}
-				case IResourceDelta.CHANGED :
+				case IResourceDelta.CHANGED:
 					if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
 						IPath path = delta.getMovedToPath();
-						if(path != null){
+						if (path != null) {
 							project = root.findMember(path.segment(0)).getProject();
-							if(project != null && rcType == IResource.FOLDER)
-								rcToCheck = root.getFolder(substituteProject(dResource.getFullPath(),project.getName()));
+							if (project != null && rcType == IResource.FOLDER)
+								rcToCheck = root
+										.getFolder(substituteProject(dResource.getFullPath(), project.getName()));
 						}
 						break;
 					}
 				default:
 					project = dResource.getProject();
-					if(rcType == IResource.FOLDER)
+					if (rcType == IResource.FOLDER)
 						rcToCheck = dResource;
 					break;
 				}
 
-				if(project != null) {
+				if (project != null) {
 					IManagedBuilderMakefileGenerator makeGen = getInitializedGenerator(project);
-					if(makeGen != null){
-						if(rcToCheck == null || !makeGen.isGeneratedResource(rcToCheck))
+					if (makeGen != null) {
+						if (rcToCheck == null || !makeGen.isGeneratedResource(rcToCheck))
 							return true;
 					}
 				}
@@ -118,28 +119,24 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			} else if (rcType == IResource.FILE && !dResource.isDerived()) {
 				int flags = delta.getFlags();
 				switch (delta.getKind()) {
-				case IResourceDelta.REMOVED :
+				case IResourceDelta.REMOVED:
 					if ((flags & IResourceDelta.MOVED_TO) == 0) {
 						handleDeleteFile(dResource.getFullPath());
 						break;
 					}
-				case IResourceDelta.ADDED :
-				case IResourceDelta.CHANGED :
-				    if ((flags & IResourceDelta.MOVED_TO) != 0) {
-				    	IPath path = delta.getMovedToPath();
-				    	if (path != null) {
-				    		handleRenamedFile(
-				    				  dResource.getFullPath(),
-				    				  path);
-				    	}
-				    } else if ((flags & IResourceDelta.MOVED_FROM) != 0) {
+				case IResourceDelta.ADDED:
+				case IResourceDelta.CHANGED:
+					if ((flags & IResourceDelta.MOVED_TO) != 0) {
+						IPath path = delta.getMovedToPath();
+						if (path != null) {
+							handleRenamedFile(dResource.getFullPath(), path);
+						}
+					} else if ((flags & IResourceDelta.MOVED_FROM) != 0) {
 						IPath path = delta.getMovedFromPath();
-				    	if (path != null) {
-				    		handleRenamedFile(
-				    				  path,
-				    				  dResource.getFullPath());
-				    	}
-				    }
+						if (path != null) {
+							handleRenamedFile(path, dResource.getFullPath());
+						}
+					}
 					break;
 
 				default:
@@ -147,59 +144,55 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 				}
 				return false;
 			}
-			return true;	//  visit the children
+			return true; //  visit the children
 		}
 
-		private IPath substituteProject(IPath path, String projectName){
+		private IPath substituteProject(IPath path, String projectName) {
 			return new Path(projectName).makeAbsolute().append(path.removeFirstSegments(1));
 		}
 
-		private void handleRenamedFile(IPath fromPath, IPath toPath){
-			if(!fValidatedFilesSet.add(fromPath))
+		private void handleRenamedFile(IPath fromPath, IPath toPath) {
+			if (!fValidatedFilesSet.add(fromPath))
 				return;
 
 			IProject fromProject = findModifiedProject(fromPath.segment(0));
-			if(fromProject == null)
+			if (fromProject == null)
 				return;
 			IManagedBuilderMakefileGenerator fromMakeGen = getInitializedGenerator(fromProject);
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			if(fromMakeGen == null || fromMakeGen.isGeneratedResource(root.getFile(substituteProject(fromPath,fromProject.getName()))))
+			if (fromMakeGen == null || fromMakeGen
+					.isGeneratedResource(root.getFile(substituteProject(fromPath, fromProject.getName()))))
 				return;
 
 			IManagedBuildInfo fromInfo = ManagedBuildManager.getBuildInfo(fromProject);
 
 			IProject toProject = root.findMember(toPath.uptoSegment(1)).getProject();
-			IManagedBuildInfo toInfo = toProject != null ?
-					ManagedBuildManager.getBuildInfo(toProject) :
-						null;
-			IManagedBuilderMakefileGenerator toMakeGen = toProject != null ?
-					getInitializedGenerator(toProject) :
-						null;
-			if(toMakeGen != null && toMakeGen.isGeneratedResource(root.getFile(toPath)))
+			IManagedBuildInfo toInfo = toProject != null ? ManagedBuildManager.getBuildInfo(toProject) : null;
+			IManagedBuilderMakefileGenerator toMakeGen = toProject != null ? getInitializedGenerator(toProject) : null;
+			if (toMakeGen != null && toMakeGen.isGeneratedResource(root.getFile(toPath)))
 				toInfo = null;
 
-			if(fromInfo == toInfo){
+			if (fromInfo == toInfo) {
 				//the resource was moved within the project scope
-				if(updateResourceConfigurations(fromInfo,fromPath,toPath) && toProject != null)
+				if (updateResourceConfigurations(fromInfo, fromPath, toPath) && toProject != null)
 					fModifiedProjects.add(toProject);
 			} else {
-				if(fromInfo != null && toInfo != null){
+				if (fromInfo != null && toInfo != null) {
 					//TODO: this is the case when the resource
 					//is moved from one managed project to another
 					//should we handle this?
 					//e.g. add resource configurations to the destination project?
 				}
-				if(fromInfo != null && removeResourceConfigurations(fromInfo,fromPath))
+				if (fromInfo != null && removeResourceConfigurations(fromInfo, fromPath))
 					fModifiedProjects.add(fromProject);
 			}
 		}
 
-		private void handleDeleteFile(IPath path){
+		private void handleDeleteFile(IPath path) {
 			IProject project = findModifiedProject(path.segment(0));
-			if(project != null){
+			if (project != null) {
 				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-				if(info != null
-						&& removeResourceConfigurations(info,path))
+				if (info != null && removeResourceConfigurations(info, path))
 					fModifiedProjects.add(project);
 			}
 		}
@@ -211,22 +204,22 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		// if the project of a given name was neither renamed or removed
 		//   returns the project of that name or null if the project does not exist
 		//
-		private IProject findModifiedProject(final String oldProjectName){
+		private IProject findModifiedProject(final String oldProjectName) {
 			IResourceDelta projectDelta = fRootDelta.findMember(new Path(oldProjectName));
 			boolean replaced = false;
-			if(projectDelta != null) {
-				switch(projectDelta.getKind()){
-					case IResourceDelta.REMOVED :
-					    if ((projectDelta.getFlags() & IResourceDelta.MOVED_TO) == 0) {
-					    	return null;
-					    }
-					case IResourceDelta.CHANGED :
-					    if ((projectDelta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
-					    	IPath path = projectDelta.getMovedToPath();
-					    	if(path != null)
-					    		return ResourcesPlugin.getWorkspace().getRoot().findMember(path).getProject();
-					    }
-					    break;
+			if (projectDelta != null) {
+				switch (projectDelta.getKind()) {
+				case IResourceDelta.REMOVED:
+					if ((projectDelta.getFlags() & IResourceDelta.MOVED_TO) == 0) {
+						return null;
+					}
+				case IResourceDelta.CHANGED:
+					if ((projectDelta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
+						IPath path = projectDelta.getMovedToPath();
+						if (path != null)
+							return ResourcesPlugin.getWorkspace().getRoot().findMember(path).getProject();
+					}
+					break;
 				}
 			}
 
@@ -237,19 +230,19 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 					public boolean visit(IResourceDelta delta) throws CoreException {
 						IResource dResource = delta.getResource();
 						int rcType = dResource.getType();
-						if(rcType == IResource.ROOT) {
+						if (rcType == IResource.ROOT) {
 							return true;
-						} else if(rcType == IResource.PROJECT){
-							switch(delta.getKind()){
-							case IResourceDelta.ADDED :
-							case IResourceDelta.CHANGED :
-						      if ((delta.getFlags() & IResourceDelta.MOVED_FROM) != 0) {
-						    	  IPath path = delta.getMovedFromPath();
-						    	  if (path != null && path.segment(0).equals(oldProjectName)) {
-						    		  project[0] = dResource.getProject();
-						    	  }
-						      }
-							break;
+						} else if (rcType == IResource.PROJECT) {
+							switch (delta.getKind()) {
+							case IResourceDelta.ADDED:
+							case IResourceDelta.CHANGED:
+								if ((delta.getFlags() & IResourceDelta.MOVED_FROM) != 0) {
+									IPath path = delta.getMovedFromPath();
+									if (path != null && path.segment(0).equals(oldProjectName)) {
+										project[0] = dResource.getProject();
+									}
+								}
+								break;
 							default:
 								break;
 							}
@@ -260,31 +253,32 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			} catch (CoreException e) {
 			}
 
-			if(project[0] == null && !replaced)
+			if (project[0] == null && !replaced)
 				project[0] = ResourcesPlugin.getWorkspace().getRoot().findMember(oldProjectName).getProject();
 			return project[0];
 		}
 
-		private IManagedBuilderMakefileGenerator getInitializedGenerator(IProject project){
+		private IManagedBuilderMakefileGenerator getInitializedGenerator(IProject project) {
 			IManagedBuilderMakefileGenerator makeGen = fBuildFileGeneratorMap.get(project);
 			if (makeGen == null) {
 				try {
 					if (project.hasNature(ManagedCProjectNature.MNG_NATURE_ID)) {
 						// Determine if we can access the build info before actually trying
 						// If not, don't try, to avoid putting up a dialog box warning the user
-						if (!ManagedBuildManager.canGetBuildInfo(project)) return null;
+						if (!ManagedBuildManager.canGetBuildInfo(project))
+							return null;
 
 						IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
-						if (buildInfo != null){
+						if (buildInfo != null) {
 							IConfiguration defaultCfg = buildInfo.getDefaultConfiguration();
 							if (defaultCfg != null) {
 								makeGen = ManagedBuildManager.getBuildfileGenerator(defaultCfg);
-								makeGen.initialize(project,buildInfo,new NullProgressMonitor());
-								fBuildFileGeneratorMap.put(project,makeGen);
+								makeGen.initialize(project, buildInfo, new NullProgressMonitor());
+								fBuildFileGeneratorMap.put(project, makeGen);
 							}
 						}
 					}
-				} catch (CoreException e){
+				} catch (CoreException e) {
 					return null;
 				}
 			}
@@ -292,17 +286,17 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		}
 	}
 
-	public void sendClose(IProject project){
-		sendClose(ManagedBuildManager.getBuildInfo(project,false));
+	public void sendClose(IProject project) {
+		sendClose(ManagedBuildManager.getBuildInfo(project, false));
 	}
 
-	private void sendClose(IManagedBuildInfo info){
-		if(info != null){
+	private void sendClose(IManagedBuildInfo info) {
+		if (info != null) {
 			IManagedProject managedProj = info.getManagedProject();
 			if (managedProj != null) {
 				IConfiguration cfgs[] = managedProj.getConfigurations();
 
-				for(int i = 0; i < cfgs.length; i++)
+				for (int i = 0; i < cfgs.length; i++)
 					ManagedBuildManager.performValueHandlerEvent(cfgs[i], IManagedOptionValueHandler.EVENT_CLOSE, true);
 			}
 		}
@@ -324,73 +318,70 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		if (event.getSource() instanceof IWorkspace) {
 
 			switch (event.getType()) {
-				case IResourceChangeEvent.PRE_CLOSE:
-					IResource proj = event.getResource();
-					if(proj instanceof IProject)
-						sendClose((IProject)proj);
-					break;
-				case IResourceChangeEvent.PRE_DELETE :
-					IResource rc = event.getResource();
-					if(rc instanceof IProject){
-						IProject project = (IProject)rc;
-						try {
-							if (project.hasNature(ManagedCProjectNature.MNG_NATURE_ID)) {
-								IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-								if(info != null)
-									fRmProjectToBuildInfoMap.put(project, info);
-							}
-						} catch (CoreException e) {
-						}
-					}
-				case IResourceChangeEvent.POST_CHANGE :
-				case IResourceChangeEvent.POST_BUILD :
-					IResourceDelta resDelta = event.getDelta();
-					if (resDelta == null) {
-						break;
-					}
+			case IResourceChangeEvent.PRE_CLOSE:
+				IResource proj = event.getResource();
+				if (proj instanceof IProject)
+					sendClose((IProject) proj);
+				break;
+			case IResourceChangeEvent.PRE_DELETE:
+				IResource rc = event.getResource();
+				if (rc instanceof IProject) {
+					IProject project = (IProject) rc;
 					try {
-						ResourceConfigurationChecker rcChecker = new ResourceConfigurationChecker(resDelta);
-						resDelta.accept(rcChecker);
-
-						//saving info for the modified projects
-						initInfoSerialization(rcChecker.getModifiedProjects());
-
+						if (project.hasNature(ManagedCProjectNature.MNG_NATURE_ID)) {
+							IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+							if (info != null)
+								fRmProjectToBuildInfoMap.put(project, info);
+						}
 					} catch (CoreException e) {
-						ManagedBuilderCorePlugin.log(e);
 					}
+				}
+			case IResourceChangeEvent.POST_CHANGE:
+			case IResourceChangeEvent.POST_BUILD:
+				IResourceDelta resDelta = event.getDelta();
+				if (resDelta == null) {
 					break;
-				default :
-					break;
+				}
+				try {
+					ResourceConfigurationChecker rcChecker = new ResourceConfigurationChecker(resDelta);
+					resDelta.accept(rcChecker);
+
+					//saving info for the modified projects
+					initInfoSerialization(rcChecker.getModifiedProjects());
+
+				} catch (CoreException e) {
+					ManagedBuilderCorePlugin.log(e);
+				}
+				break;
+			default:
+				break;
 			}
 		}
 	}
 
-	private void initInfoSerialization(final IProject projects[]){
-		if(projects.length == 0)
+	private void initInfoSerialization(final IProject projects[]) {
+		if (projects.length == 0)
 			return;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IResourceRuleFactory ruleFactory = workspace.getRuleFactory();
 		ISchedulingRule buildInfoSaveRule;
-		if(projects.length == 1){
+		if (projects.length == 1) {
 			buildInfoSaveRule = ruleFactory.modifyRule(projects[0]);
 		} else {
 			ISchedulingRule rules[] = new ISchedulingRule[projects.length];
-			for(int i = 0; i < rules.length; i++)
+			for (int i = 0; i < rules.length; i++)
 				rules[i] = ruleFactory.modifyRule(projects[i]);
 			buildInfoSaveRule = MultiRule.combine(rules);
 		}
 
-		Job savingJob = new Job(ManagedMakeMessages.getResourceString("ResourceChangeHandler.buildInfoSerializationJob")){ 	//$NON-NLS-1$
+		Job savingJob = new Job(
+				ManagedMakeMessages.getResourceString("ResourceChangeHandler.buildInfoSerializationJob")) { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for(int i = 0; i < projects.length; i++){
-					ManagedBuildManager.saveBuildInfo(projects[i],true);
+				for (int i = 0; i < projects.length; i++) {
+					ManagedBuildManager.saveBuildInfo(projects[i], true);
 				}
-				return new Status(
-						IStatus.OK,
-						ManagedBuilderCorePlugin.getUniqueIdentifier(),
-						IStatus.OK,
-						"", //$NON-NLS-1$
+				return new Status(IStatus.OK, ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.OK, "", //$NON-NLS-1$
 						null);
 			}
 		};
@@ -399,15 +390,15 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		savingJob.schedule();
 	}
 
-	private boolean updateResourceConfigurations(IManagedBuildInfo info, IPath oldPath, IPath newPath){
+	private boolean updateResourceConfigurations(IManagedBuildInfo info, IPath oldPath, IPath newPath) {
 		boolean changed = false;
-		if(!oldPath.equals(newPath)){
+		if (!oldPath.equals(newPath)) {
 			IManagedProject mngProj = info.getManagedProject();
-			if(mngProj != null){
+			if (mngProj != null) {
 				IConfiguration configs[] = mngProj.getConfigurations();
-				if(configs != null && configs.length > 0){
-					for(int i = 0; i < configs.length; i++){
-						if(updateResourceConfiguration(configs[i],oldPath,newPath))
+				if (configs != null && configs.length > 0) {
+					for (int i = 0; i < configs.length; i++) {
+						if (updateResourceConfiguration(configs[i], oldPath, newPath))
 							changed = true;
 					}
 				}
@@ -416,14 +407,14 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		return changed;
 	}
 
-	private boolean removeResourceConfigurations(IManagedBuildInfo info, IPath path){
+	private boolean removeResourceConfigurations(IManagedBuildInfo info, IPath path) {
 		boolean changed = false;
 		IManagedProject mngProj = info.getManagedProject();
-		if(mngProj != null){
+		if (mngProj != null) {
 			IConfiguration configs[] = mngProj.getConfigurations();
-			if(configs != null && configs.length > 0){
-				for(int i = 0; i < configs.length; i++){
-					if(removeResourceConfiguration(configs[i],path))
+			if (configs != null && configs.length > 0) {
+				for (int i = 0; i < configs.length; i++) {
+					if (removeResourceConfiguration(configs[i], path))
 						changed = true;
 				}
 			}
@@ -431,24 +422,24 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		return changed;
 	}
 
-	private boolean updateResourceConfiguration(IConfiguration config, IPath oldPath, IPath newPath){
+	private boolean updateResourceConfiguration(IConfiguration config, IPath oldPath, IPath newPath) {
 		IResourceConfiguration rcCfg = config.getResourceConfiguration(oldPath.toString());
-		if(rcCfg != null && !oldPath.equals(newPath)){
-//			config.removeResourceConfiguration(rcCfg);
+		if (rcCfg != null && !oldPath.equals(newPath)) {
+			//			config.removeResourceConfiguration(rcCfg);
 			rcCfg.setResourcePath(newPath.toString());
-//			rcCfg.setRebuildState(true);
-//			((Configuration)config).addResourceConfiguration((ResourceConfiguration)rcCfg);
-//			config.setRebuildState(true);
+			//			rcCfg.setRebuildState(true);
+			//			((Configuration)config).addResourceConfiguration((ResourceConfiguration)rcCfg);
+			//			config.setRebuildState(true);
 			return true;
 		}
 		return false;
 	}
 
-	private boolean removeResourceConfiguration(IConfiguration config, IPath path){
+	private boolean removeResourceConfiguration(IConfiguration config, IPath path) {
 		IResourceConfiguration rcCfg = config.getResourceConfiguration(path.toString());
-		if(rcCfg != null){
+		if (rcCfg != null) {
 			config.removeResourceConfiguration(rcCfg);
-//			config.setRebuildState(true);
+			//			config.setRebuildState(true);
 			return true;
 		}
 		return false;
@@ -466,7 +457,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		PropertyManager.getInstance().serialize();
 
 		//Request a resource delta to be used on next activation.
-	    context.needDelta();
+		context.needDelta();
 	}
 
 	/* (non-Javadoc)

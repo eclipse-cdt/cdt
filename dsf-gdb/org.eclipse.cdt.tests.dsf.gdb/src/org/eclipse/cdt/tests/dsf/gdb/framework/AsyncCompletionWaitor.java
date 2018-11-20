@@ -19,26 +19,26 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
 public class AsyncCompletionWaitor {
-	
+
 	/*
 	 *  Indicates we will wait forever. Otherwise the time specified
 	 *  is in milliseconds.
 	 */
 	public final static int WAIT_FOREVER = 0;
-	
+
 	/*
 	 *  Private control space.
 	 */
-	private IStatus  fStatus;
-	private Object   fReturnInfo;
-	private boolean  fWaitFinished;
-	private int      fNumWaiting;
-	
+	private IStatus fStatus;
+	private Object fReturnInfo;
+	private boolean fWaitFinished;
+	private int fNumWaiting;
+
 	/*
 	 *  Main constructor.
 	 */
 	public AsyncCompletionWaitor() {
-	    waitReset();
+		waitReset();
 	}
 
 	/**
@@ -51,11 +51,11 @@ public class AsyncCompletionWaitor {
 	 * @throws InterruptedException
 	 */
 	public synchronized void waitUntilDone(int timeout) throws InterruptedException {
-		if (fWaitFinished) return;
+		if (fWaitFinished)
+			return;
 
 		wait(timeout);
 	}
-		
 
 	/**
 	 *  Indicates that we are done with the operation and the code
@@ -68,19 +68,18 @@ public class AsyncCompletionWaitor {
 	public synchronized void waitFinished(IStatus status) {
 
 		if (fWaitFinished) {
-			((MultiStatus)fStatus).merge(
-					new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-					"waitFinished called too many times!", null));			
+			((MultiStatus) fStatus).merge(
+					new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, "waitFinished called too many times!", null));
 		}
-		
-		((MultiStatus)fStatus).merge(status);
+
+		((MultiStatus) fStatus).merge(status);
 
 		if (fNumWaiting == 0 || --fNumWaiting == 0) {
 			fWaitFinished = true;
 			notifyAll();
 		}
 	}
-	
+
 	/**
 	 *  Resets the state so we allow ourselves to be reused instead
 	 *  of having to create a new wait object each time.
@@ -91,46 +90,45 @@ public class AsyncCompletionWaitor {
 		fReturnInfo = null;
 		fNumWaiting = 0;
 	}
-	
+
 	public synchronized boolean isOK() {
-		if ( fStatus == null ) {
+		if (fStatus == null) {
 			// We timed out
 			return false;
 		}
-		
+
 		return fStatus.isOK();
 	}
-	
+
 	public synchronized String getMessage() {
-		if ( fStatus == null ) {
-			return "Timed out";  //$NON-NLS-1$
+		if (fStatus == null) {
+			return "Timed out"; //$NON-NLS-1$
 		}
-		
+
 		// Build a concatenation of all messages
 		String fullMessage = "";
 		IStatus[] children = fStatus.getChildren();
-		for (int i=0; i<children.length; i++) {
+		for (int i = 0; i < children.length; i++) {
 			if (children[i].getMessage().length() > 0) {
-    			fullMessage += "\"" + children[i].getMessage() + "\", ";//$NON-NLS-1$//$NON-NLS-2$
+				fullMessage += "\"" + children[i].getMessage() + "\", ";//$NON-NLS-1$//$NON-NLS-2$
 			}
 		}
 		// Remove the trailing comma and space before returning (as long as they are there)
 		return fullMessage.length() <= 2 ? fullMessage : fullMessage.substring(0, fullMessage.length() - 2);
 	}
-	
+
 	public synchronized void setReturnInfo(Object info) {
-		fReturnInfo = info ;
+		fReturnInfo = info;
 	}
-	
+
 	public synchronized Object getReturnInfo() {
 		return fReturnInfo;
 	}
-	
+
 	public synchronized void increment() {
 		if (fWaitFinished) {
-			((MultiStatus)fStatus).merge(
-					new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-					"Can't increment an already finished waitor object. Waitor must be reset first.", null));			
+			((MultiStatus) fStatus).merge(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+					"Can't increment an already finished waitor object. Waitor must be reset first.", null));
 		}
 		fNumWaiting++;
 	}

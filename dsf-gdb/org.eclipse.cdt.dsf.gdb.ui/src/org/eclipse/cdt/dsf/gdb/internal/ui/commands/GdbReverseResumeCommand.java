@@ -40,98 +40,99 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
  * @since 2.1
  */
 public class GdbReverseResumeCommand extends AbstractDebugCommand implements IReverseResumeHandler {
-    private final DsfExecutor fExecutor;
-    private final DsfServicesTracker fTracker;
-    
-    public GdbReverseResumeCommand(DsfSession session) {
-        fExecutor = session.getExecutor();
-        fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
-    }    
+	private final DsfExecutor fExecutor;
+	private final DsfServicesTracker fTracker;
 
-    public void dispose() {
-        fTracker.dispose();
-    }
+	public GdbReverseResumeCommand(DsfSession session) {
+		fExecutor = session.getExecutor();
+		fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+	}
 
-    @Override
+	public void dispose() {
+		fTracker.dispose();
+	}
+
+	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
-    	if (targets.length != 1) {
-    		return;
-    	}
+		if (targets.length != 1) {
+			return;
+		}
 
-        final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), IExecutionDMContext.class);
-        if (dmc == null) {
-        	return;
-        }
+		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				IExecutionDMContext.class);
+		if (dmc == null) {
+			return;
+		}
 
-        Query<Object> reverseResume = new Query<Object>() {
-            @Override
-            public void execute(DataRequestMonitor<Object> rm) {
-       			IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
+		Query<Object> reverseResume = new Query<Object>() {
+			@Override
+			public void execute(DataRequestMonitor<Object> rm) {
+				IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
 
-       			if (runControl != null) {
-       				runControl.reverseResume(dmc, rm);
-       			} else {
-       				rm.done();
-       			}
-       		}
-       	};
-    	try {
-    		fExecutor.execute(reverseResume);
-    		reverseResume.get();
+				if (runControl != null) {
+					runControl.reverseResume(dmc, rm);
+				} else {
+					rm.done();
+				}
+			}
+		};
+		try {
+			fExecutor.execute(reverseResume);
+			reverseResume.get();
 		} catch (InterruptedException e) {
 		} catch (ExecutionException e) {
-        } catch (RejectedExecutionException e) {
-        	// Can be thrown if the session is shutdown
-        }
-    }
+		} catch (RejectedExecutionException e) {
+			// Can be thrown if the session is shutdown
+		}
+	}
 
-    @Override
+	@Override
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
-        throws CoreException 
-    {
-    	if (targets.length != 1) {
-    		return false;
-    	}
+			throws CoreException {
+		if (targets.length != 1) {
+			return false;
+		}
 
-    	final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), IExecutionDMContext.class);
-    	if (dmc == null) {
-    		return false;
-    	}
+		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				IExecutionDMContext.class);
+		if (dmc == null) {
+			return false;
+		}
 
-        Query<Boolean> canReverseResume = new Query<Boolean>() {
-            @Override
-            public void execute(DataRequestMonitor<Boolean> rm) {
-       			IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
+		Query<Boolean> canReverseResume = new Query<Boolean>() {
+			@Override
+			public void execute(DataRequestMonitor<Boolean> rm) {
+				IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
 
-       			if (runControl != null) {
-       				runControl.canReverseResume(dmc, rm);
-       			} else {
-       				rm.setData(false);
-       				rm.done();
-       			}
-       		}
-       	};
-    	try {
-    		fExecutor.execute(canReverseResume);
+				if (runControl != null) {
+					runControl.canReverseResume(dmc, rm);
+				} else {
+					rm.setData(false);
+					rm.done();
+				}
+			}
+		};
+		try {
+			fExecutor.execute(canReverseResume);
 			return canReverseResume.get();
 		} catch (InterruptedException e) {
 		} catch (ExecutionException e) {
-        } catch (RejectedExecutionException e) {
-        	// Can be thrown if the session is shutdown
-        }
+		} catch (RejectedExecutionException e) {
+			// Can be thrown if the session is shutdown
+		}
 
 		return false;
-    }
-    
-    @Override
-	protected Object getTarget(Object element) {
-    	if (element instanceof IDMVMContext) {
-    		return element;
-    	}
-        return null;
-    }
+	}
 
-    @Override
+	@Override
+	protected Object getTarget(Object element) {
+		if (element instanceof IDMVMContext) {
+			return element;
+		}
+		return null;
+	}
+
+	@Override
 	protected boolean isRemainEnabled(IDebugCommandRequest request) {
 		return false;
 	}

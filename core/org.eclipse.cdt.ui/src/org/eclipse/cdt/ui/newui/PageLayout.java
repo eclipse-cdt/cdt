@@ -20,13 +20,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
-
 /**
  * Layout for the page container.
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class PageLayout extends Layout {
-	
+
 	/**
 	 * The minimum page size; 200 by 200 by default.
 	 *
@@ -42,8 +41,9 @@ public class PageLayout extends Layout {
 			children[i].setSize(rect.width, rect.height);
 		}
 	}
+
 	@Override
-	public Point computeSize(Composite composite, int wHint, int hHint,	boolean force) {
+	public Point computeSize(Composite composite, int wHint, int hHint, boolean force) {
 		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 			return new Point(wHint, hHint);
 		}
@@ -65,4 +65,3 @@ public class PageLayout extends Layout {
 		return new Point(x, y);
 	}
 }
-

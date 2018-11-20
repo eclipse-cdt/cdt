@@ -30,8 +30,8 @@ public class IncludeGuardDetection {
 
 	public static char[] detectIncludeGuard(AbstractCharArray content, Lexer.LexerOptions lexOptions,
 			CharArrayIntMap ppKeywords) {
-		Lexer l= new Lexer(content, lexOptions, ILexerLog.NULL, null);
-		char[] guard= findIncludeGuard(l, ppKeywords);
+		Lexer l = new Lexer(content, lexOptions, ILexerLog.NULL, null);
+		char[] guard = findIncludeGuard(l, ppKeywords);
 		if (guard != null && currentIfSpansFile(l, ppKeywords)) {
 			return guard;
 		}
@@ -55,8 +55,7 @@ public class IncludeGuardDetection {
 	 * #endif
 	 * </pre>
 	 */
-	private static Token skipPragmaOnce(Lexer l, CharArrayIntMap ppKeywords)
-			throws OffsetLimitReachedException {
+	private static Token skipPragmaOnce(Lexer l, CharArrayIntMap ppKeywords) throws OffsetLimitReachedException {
 		boolean foundPragma = false;
 		boolean quit = false;
 		boolean foundIf = false;
@@ -136,8 +135,7 @@ public class IncludeGuardDetection {
 						// #define GUARD
 						l.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 						if (skipAll(l, Lexer.tNEWLINE).getType() == IToken.tPOUND
-								&& checkToken(l.nextToken(), Keywords.cDEFINE)
-								&& checkToken(l.nextToken(), guard)) {
+								&& checkToken(l.nextToken(), Keywords.cDEFINE) && checkToken(l.nextToken(), guard)) {
 							l.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 							return guard;
 						}
@@ -153,11 +151,11 @@ public class IncludeGuardDetection {
 		Token t;
 		if (skipAll(l, IToken.tLPAREN).getType() == IToken.tNOT
 				&& checkToken(skipAll(l, IToken.tLPAREN), Keywords.cDEFINED)) {
-			t= l.nextToken(); // Only a single parenthesis is allowed.
+			t = l.nextToken(); // Only a single parenthesis is allowed.
 			if (t.getType() == IToken.tLPAREN)
-				t= l.nextToken();
+				t = l.nextToken();
 			if (t.getType() == IToken.tIDENTIFIER) {
-				char[] guard= t.getCharImage();
+				char[] guard = t.getCharImage();
 				if (skipAll(l, IToken.tRPAREN).getType() == Lexer.tNEWLINE)
 					return guard;
 			}
@@ -172,9 +170,9 @@ public class IncludeGuardDetection {
 	private static boolean currentIfSpansFile(Lexer l, CharArrayIntMap ppKeywords) {
 		// Check if the #ifndef spans the entire file.
 		try {
-			int nesting= 1;
+			int nesting = 1;
 			while (nesting > 0) {
-				Token t= l.nextDirective();
+				Token t = l.nextDirective();
 				if (t.getType() == IToken.tEND_OF_INPUT)
 					return true;
 				switch (ppKeywords.get(l.nextToken().getCharImage())) {
@@ -197,9 +195,9 @@ public class IncludeGuardDetection {
 
 	private static Token skipAll(Lexer l, int kind) throws OffsetLimitReachedException {
 		// Skip empty lines.
-		Token t= l.nextToken();
+		Token t = l.nextToken();
 		while (t.getType() == kind)
-			t= l.nextToken();
+			t = l.nextToken();
 		return t;
 	}
 
@@ -231,7 +229,7 @@ public class IncludeGuardDetection {
 	public static char[] detectIfNotDefinedIncludeEndif(Lexer l) {
 		l.saveState();
 		try {
-			char[] guard= findNotDefined(l);
+			char[] guard = findNotDefined(l);
 			if (guard != null && findIncludeEndif(l))
 				return guard;
 		} catch (OffsetLimitReachedException e) {

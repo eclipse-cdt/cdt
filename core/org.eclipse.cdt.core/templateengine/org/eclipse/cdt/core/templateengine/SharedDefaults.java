@@ -33,7 +33,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
 /**
  * Processes the shared default values. Updates and Persists new key - value (default) pair
  */
@@ -127,7 +126,8 @@ public class SharedDefaults extends HashMap<String, String> {
 			if (length == 0) {
 				parsedXML = createDefaultXMLFormat(parsedXML);
 			}
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURI().toURL().openStream());
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(parsedXML.toURI().toURL().openStream());
 		} catch (Exception exp) {
 			TemplateEngineUtil.log(exp);
 		}
@@ -198,7 +198,8 @@ public class SharedDefaults extends HashMap<String, String> {
 	 */
 	public void updateToBackEndStorage(String updateName, String updateValue) {
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURI().toURL().openStream());
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(parsedXML.toURI().toURL().openStream());
 		} catch (Exception exp) {
 			TemplateEngineUtil.log(exp);
 		}
@@ -226,7 +227,8 @@ public class SharedDefaults extends HashMap<String, String> {
 	 */
 	public void deleteBackEndStorage(String[] deleteName) {
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURI().toURL().openStream());
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(parsedXML.toURI().toURL().openStream());
 		} catch (Exception exp) {
 			TemplateEngineUtil.log(exp);
 		}
@@ -271,23 +273,23 @@ public class SharedDefaults extends HashMap<String, String> {
 
 		DOMSource domSource = new DOMSource(d);
 		TransformerFactory transFactory = TransformerFactory.newInstance();
-		
+
 		try {
-			FileOutputStream fos= null;
+			FileOutputStream fos = null;
 			try {
-				fos= new FileOutputStream(xmlFile);
+				fos = new FileOutputStream(xmlFile);
 				Result fileResult = new StreamResult(fos);
 				transFactory.newTransformer().transform(domSource, fileResult);
 			} finally {
-				if(fos!=null) {
+				if (fos != null) {
 					fos.close();
 				}
 			}
-		} catch(IOException ioe) {
+		} catch (IOException ioe) {
 			TemplateEngineUtil.log(ioe);
-		} catch(TransformerConfigurationException tce) {
+		} catch (TransformerConfigurationException tce) {
 			TemplateEngineUtil.log(tce);
-		} catch(TransformerException te) {
+		} catch (TransformerException te) {
 			TemplateEngineUtil.log(te);
 		}
 		return xmlFile;
@@ -306,10 +308,10 @@ public class SharedDefaults extends HashMap<String, String> {
 			TemplateEngineUtil.log(e);
 			return;
 		}
-		Node rootElement = d.appendChild(d.createElement("SharedRoot"));  //$NON-NLS-1$
-		
-		for(String key : sharedDefaultsMap.keySet()) {		
-			Element element = (Element) rootElement.appendChild(d.createElement("SharedProperty"));  //$NON-NLS-1$
+		Node rootElement = d.appendChild(d.createElement("SharedRoot")); //$NON-NLS-1$
+
+		for (String key : sharedDefaultsMap.keySet()) {
+			Element element = (Element) rootElement.appendChild(d.createElement("SharedProperty")); //$NON-NLS-1$
 			element.setAttribute(TemplateEngineHelper.ID, key);
 			element.setAttribute(TemplateEngineHelper.VALUE, sharedDefaultsMap.get(key));
 		}

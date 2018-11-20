@@ -69,7 +69,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
  * </p>
  */
 public class DisassemblyRulerColumn extends AbstractContributedRulerColumn implements IPropertyChangeListener {
-	protected final static String DOTS =   "......................................................................"; //$NON-NLS-1$
+	protected final static String DOTS = "......................................................................"; //$NON-NLS-1$
 	protected final static String SPACES = "                                                                      "; //$NON-NLS-1$
 
 	/**
@@ -242,8 +242,8 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 				IRegion lineInfo = document.getLineInformation(lineNumber);
 
 				int start = Math.min(fStartLine.getOffset(), lineInfo.getOffset());
-				int end = Math.max(fStartLine.getOffset() + fStartLine.getLength(), lineInfo.getOffset()
-					+ lineInfo.getLength());
+				int end = Math.max(fStartLine.getOffset() + fStartLine.getLength(),
+						lineInfo.getOffset() + lineInfo.getLength());
 
 				if (lineNumber < fStartLineNumber)
 					fCachedTextViewer.setSelectedRange(end, start - end);
@@ -532,9 +532,9 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 */
 	protected int computeNumberOfCharacters() {
 		IDocument document = fCachedTextViewer.getDocument();
-		int lines= document == null ? 0 : document.getNumberOfLines();
+		int lines = document == null ? 0 : document.getNumberOfLines();
 
-		int digits= 2;
+		int digits = 2;
 		while (lines > Math.pow(10, digits) - 1) {
 			++digits;
 		}
@@ -550,16 +550,16 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 */
 	protected void layout(boolean redraw) {
 		if (!redraw) {
-			fRelayoutRequired= true;
+			fRelayoutRequired = true;
 			return;
 		}
 
-		fRelayoutRequired= false;
+		fRelayoutRequired = false;
 		if (fCachedTextViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension extension= (ITextViewerExtension) fCachedTextViewer;
-			Control control= extension.getControl();
+			ITextViewerExtension extension = (ITextViewerExtension) fCachedTextViewer;
+			Control control = extension.getControl();
 			if (control instanceof Composite && !control.isDisposed()) {
-				Composite composite= (Composite) control;
+				Composite composite = (Composite) control;
 				composite.layout(true);
 			}
 		}
@@ -573,20 +573,20 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		if (fCanvas == null)
 			return;
 
-		GC gc= new GC(fCanvas);
+		GC gc = new GC(fCanvas);
 		try {
 
 			gc.setFont(fCanvas.getFont());
 
-			fIndentation= new int[fCachedNumberOfDigits + 1];
-			char[] digitStr= new char[fCachedNumberOfDigits + 1];
+			fIndentation = new int[fCachedNumberOfDigits + 1];
+			char[] digitStr = new char[fCachedNumberOfDigits + 1];
 			Arrays.fill(digitStr, '9');
-			Point p= gc.stringExtent(new String(digitStr, 0, fCachedNumberOfDigits + 1));
-			fIndentation[0]= p.x;
+			Point p = gc.stringExtent(new String(digitStr, 0, fCachedNumberOfDigits + 1));
+			fIndentation[0] = p.x;
 
-			for (int i= 1; i <= fCachedNumberOfDigits; i++) {
-				p= gc.stringExtent(new String(digitStr, 0, i));
-				fIndentation[i]= fIndentation[0] - p.x;
+			for (int i = 1; i <= fCachedNumberOfDigits; i++) {
+				p = gc.stringExtent(new String(digitStr, 0, i));
+				fIndentation[i] = fIndentation[0] - p.x;
 			}
 
 		} finally {
@@ -600,11 +600,11 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	@Override
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 
-		fParentRuler= parentRuler;
-		fCachedTextViewer= parentRuler.getTextViewer();
-		fCachedTextWidget= fCachedTextViewer.getTextWidget();
+		fParentRuler = parentRuler;
+		fCachedTextViewer = parentRuler.getTextViewer();
+		fCachedTextWidget = fCachedTextViewer.getTextWidget();
 
-		fCanvas= new Canvas(parentControl, SWT.NONE);
+		fCanvas = new Canvas(parentControl, SWT.NONE);
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 		fCanvas.setForeground(fForeground);
 
@@ -620,8 +620,8 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
-				fCachedTextViewer= null;
-				fCachedTextWidget= null;
+				fCachedTextViewer = null;
+				fCachedTextWidget = null;
 			}
 		});
 
@@ -635,7 +635,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 			if (fFont == null) {
 				if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed())
-					fFont= fCachedTextWidget.getFont();
+					fFont = fCachedTextWidget.getFont();
 			}
 		}
 
@@ -660,7 +660,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 		if (fBuffer != null) {
 			fBuffer.dispose();
-			fBuffer= null;
+			fBuffer = null;
 		}
 	}
 
@@ -680,22 +680,22 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 */
 	private void doubleBufferPaint(GC dest) {
 
-		Point size= fCanvas.getSize();
+		Point size = fCanvas.getSize();
 
 		if (size.x <= 0 || size.y <= 0)
 			return;
 
 		if (fBuffer != null) {
-			Rectangle r= fBuffer.getBounds();
+			Rectangle r = fBuffer.getBounds();
 			if (r.width != size.x || r.height != size.y) {
 				fBuffer.dispose();
-				fBuffer= null;
+				fBuffer = null;
 			}
 		}
 		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+			fBuffer = new Image(fCanvas.getDisplay(), size.x, size.y);
 
-		GC gc= new GC(fBuffer);
+		GC gc = new GC(fBuffer);
 		gc.setFont(fCanvas.getFont());
 		if (fForeground != null)
 			gc.setForeground(fForeground);
@@ -722,7 +722,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 * @return the viewport height in lines
 	 */
 	protected int getVisibleLinesInViewport() {
-		Rectangle clArea= fCachedTextWidget.getClientArea();
+		Rectangle clArea = fCachedTextWidget.getClientArea();
 		return clArea.height / fCachedTextWidget.getLineHeight();
 	}
 
@@ -740,12 +740,12 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		if (fCachedTextWidget == null)
 			return;
 
-		int firstLine= 0;
+		int firstLine = 0;
 
-		int topLine= fCachedTextWidget.getTopIndex();
-		fScrollPos= fCachedTextWidget.getTopPixel();
-		int lineheight= fCachedTextWidget.getLineHeight();
-		int partialLineHidden= fScrollPos % lineheight;
+		int topLine = fCachedTextWidget.getTopIndex();
+		fScrollPos = fCachedTextWidget.getTopPixel();
+		int lineheight = fCachedTextWidget.getLineHeight();
+		int partialLineHidden = fScrollPos % lineheight;
 
 		if (partialLineHidden > 0 && topLine > 0) // widgetTopLine shows the
 			// first fully visible line
@@ -755,51 +755,51 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 		try {
 
-			IRegion region= fCachedTextViewer.getVisibleRegion();
-			IDocument doc= fCachedTextViewer.getDocument();
+			IRegion region = fCachedTextViewer.getVisibleRegion();
+			IDocument doc = fCachedTextViewer.getDocument();
 
 			if (doc == null)
 				return;
 
-			firstLine= doc.getLineOfOffset(region.getOffset());
+			firstLine = doc.getLineOfOffset(region.getOffset());
 			if (firstLine > topLine)
-				topLine= firstLine;
+				topLine = firstLine;
 
-			bottomLine= doc.getLineOfOffset(region.getOffset() + region.getLength());
+			bottomLine = doc.getLineOfOffset(region.getOffset() + region.getLength());
 
 		} catch (BadLocationException x) {
 			return;
 		}
 
-		fSensitiveToTextChanges= bottomLine - topLine < getVisibleLinesInViewport();
+		fSensitiveToTextChanges = bottomLine - topLine < getVisibleLinesInViewport();
 
-		int baselineBias= getBaselineBias(gc);
+		int baselineBias = getBaselineBias(gc);
 
-		int topInset= fCachedTextViewer.getTopInset();
-		int y= topInset - partialLineHidden;
-		Point canvasSize= fCanvas.getSize();
-		Point selection= fCachedTextWidget.getSelection();
-		boolean selectedLine= false;
-		Color defaultForeground= gc.getForeground();
-		Color defaultBackground= gc.getBackground();
+		int topInset = fCachedTextViewer.getTopInset();
+		int y = topInset - partialLineHidden;
+		Point canvasSize = fCanvas.getSize();
+		Point selection = fCachedTextWidget.getSelection();
+		boolean selectedLine = false;
+		Color defaultForeground = gc.getForeground();
+		Color defaultBackground = gc.getBackground();
 
-		for (int line= topLine; y < canvasSize.y && line <= bottomLine; line++, y += lineheight) {
-			int widgetOffset= fCachedTextWidget.getOffsetAtLine(line);
+		for (int line = topLine; y < canvasSize.y && line <= bottomLine; line++, y += lineheight) {
+			int widgetOffset = fCachedTextWidget.getOffsetAtLine(line);
 			if (fPaintSelectionBackground && widgetOffset >= selection.x && widgetOffset < selection.y) {
 				if (!selectedLine) {
-					selectedLine= true;
+					selectedLine = true;
 					gc.setForeground(fCachedTextWidget.getSelectionForeground());
 					gc.setBackground(fCachedTextWidget.getSelectionBackground());
 				}
 			} else if (selectedLine) {
-				selectedLine= false;
+				selectedLine = false;
 				gc.setForeground(defaultForeground);
 				gc.setBackground(defaultBackground);
 			}
 			if (selectedLine) {
 				gc.fillRectangle(0, y, canvasSize.x, lineheight);
 			} else if (fPaintStyleBackground && widgetOffset >= 0 && widgetOffset < fCachedTextWidget.getCharCount()) {
-				StyleRange style= fCachedTextWidget.getStyleRangeAtOffset(widgetOffset);
+				StyleRange style = fCachedTextWidget.getStyleRangeAtOffset(widgetOffset);
 				if (style != null && style.background != null) {
 					gc.setBackground(style.background);
 					gc.fillRectangle(0, y + baselineBias, canvasSize.x, lineheight - baselineBias);
@@ -807,8 +807,8 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 				}
 			}
 			paintLine(line, y, lineheight, gc, fCachedTextWidget.getDisplay());
-			String s= createDisplayString(line);
-			int indentation= fAlignRight ? fIndentation[s.length()] : 0;
+			String s = createDisplayString(line);
+			int indentation = fAlignRight ? fIndentation[s.length()] : 0;
 			gc.drawString(s, indentation, y + baselineBias, true);
 		}
 	}
@@ -837,77 +837,77 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		if (fCachedTextViewer == null)
 			return;
 
-		ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
+		ITextViewerExtension5 extension = (ITextViewerExtension5) fCachedTextViewer;
 
-		int widgetTopLine= fCachedTextWidget.getTopIndex();
-		fScrollPos= fCachedTextWidget.getTopPixel();
-		int lineheight= fCachedTextWidget.getLineHeight();
-		int partialLineHidden= fScrollPos % lineheight;
+		int widgetTopLine = fCachedTextWidget.getTopIndex();
+		fScrollPos = fCachedTextWidget.getTopPixel();
+		int lineheight = fCachedTextWidget.getLineHeight();
+		int partialLineHidden = fScrollPos % lineheight;
 
 		if (partialLineHidden > 0 && widgetTopLine > 0) // widgetTopLine shows
 			// the first fully
 			// visible line
 			--widgetTopLine;
 
-		int modelTopLine= extension.widgetLine2ModelLine(widgetTopLine);
-		int modelBottomLine= fCachedTextViewer.getBottomIndex();
+		int modelTopLine = extension.widgetLine2ModelLine(widgetTopLine);
+		int modelBottomLine = fCachedTextViewer.getBottomIndex();
 		if (modelBottomLine >= 0)
 			++modelBottomLine;
 
 		try {
 
-			IRegion region= extension.getModelCoverage();
-			IDocument doc= fCachedTextViewer.getDocument();
+			IRegion region = extension.getModelCoverage();
+			IDocument doc = fCachedTextViewer.getDocument();
 
 			if (doc == null)
 				return;
 
-			int coverageTopLine= doc.getLineOfOffset(region.getOffset());
+			int coverageTopLine = doc.getLineOfOffset(region.getOffset());
 			if (coverageTopLine > modelTopLine || modelTopLine == -1)
-				modelTopLine= coverageTopLine;
+				modelTopLine = coverageTopLine;
 
-			int coverageBottomLine= doc.getLineOfOffset(region.getOffset() + region.getLength());
+			int coverageBottomLine = doc.getLineOfOffset(region.getOffset() + region.getLength());
 			if (coverageBottomLine < modelBottomLine || modelBottomLine == -1)
-				modelBottomLine= coverageBottomLine;
+				modelBottomLine = coverageBottomLine;
 
 		} catch (BadLocationException x) {
 			return;
 		}
 
-		fSensitiveToTextChanges= modelBottomLine - modelTopLine < getVisibleLinesInViewport();
+		fSensitiveToTextChanges = modelBottomLine - modelTopLine < getVisibleLinesInViewport();
 
-		int baselineBias= getBaselineBias(gc);
+		int baselineBias = getBaselineBias(gc);
 
-		int topInset= fCachedTextViewer.getTopInset();
-		int y= topInset - partialLineHidden;
-		Point canvasSize= fCanvas.getSize();
-		Point selection= fCachedTextWidget.getSelection();
-		boolean selectedLine= false;
-		Color defaultForeground= gc.getForeground();
-		Color defaultBackground= gc.getBackground();
+		int topInset = fCachedTextViewer.getTopInset();
+		int y = topInset - partialLineHidden;
+		Point canvasSize = fCanvas.getSize();
+		Point selection = fCachedTextWidget.getSelection();
+		boolean selectedLine = false;
+		Color defaultForeground = gc.getForeground();
+		Color defaultBackground = gc.getBackground();
 
-		for (int modelLine= modelTopLine; y < canvasSize.y && modelLine <= modelBottomLine; modelLine++) {
+		for (int modelLine = modelTopLine; y < canvasSize.y && modelLine <= modelBottomLine; modelLine++) {
 
 			// don't draw hidden (e.g. folded) lines
-			int widgetLine= extension.modelLine2WidgetLine(modelLine);
+			int widgetLine = extension.modelLine2WidgetLine(modelLine);
 			if (widgetLine == -1)
 				continue;
-			int widgetOffset= fCachedTextWidget.getOffsetAtLine(widgetLine);
+			int widgetOffset = fCachedTextWidget.getOffsetAtLine(widgetLine);
 			if (fPaintSelectionBackground && widgetOffset >= selection.x && widgetOffset < selection.y) {
 				if (!selectedLine) {
-					selectedLine= true;
+					selectedLine = true;
 					gc.setForeground(fCachedTextWidget.getSelectionForeground());
 					gc.setBackground(fCachedTextWidget.getSelectionBackground());
 				}
 			} else if (selectedLine) {
-				selectedLine= false;
+				selectedLine = false;
 				gc.setForeground(defaultForeground);
 				gc.setBackground(defaultBackground);
 			}
 			if (selectedLine) {
 				gc.fillRectangle(0, y, canvasSize.x, lineheight);
 			} else if (fPaintStyleBackground && widgetOffset >= 0 && widgetOffset < fCachedTextWidget.getCharCount()) {
-				StyleRange style= fCachedTextWidget.getStyleRangeAtOffset(widgetOffset);
+				StyleRange style = fCachedTextWidget.getStyleRangeAtOffset(widgetOffset);
 				if (style != null && style.background != null) {
 					gc.setBackground(style.background);
 					gc.fillRectangle(0, y + baselineBias, canvasSize.x, lineheight - baselineBias);
@@ -917,8 +917,8 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 			paintLine(modelLine, y, lineheight, gc, fCachedTextWidget.getDisplay());
 
-			String s= createDisplayString(modelLine);
-			int indentation= fAlignRight ? fIndentation[s.length()] : 0;
+			String s = createDisplayString(modelLine);
+			int indentation = fAlignRight ? fIndentation[s.length()] : 0;
 			gc.drawString(s, indentation, y + baselineBias, true);
 			y += lineheight;
 		}
@@ -942,11 +942,11 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		 * since font styles (bold, italics...) can have larger font metrics
 		 * than the simple font used for the numbers.
 		 */
-		int widgetBaseline= fCachedTextWidget.getBaseline();
-		FontMetrics fm= gc.getFontMetrics();
-		int fontBaseline= fm.getAscent() + fm.getLeading();
+		int widgetBaseline = fCachedTextWidget.getBaseline();
+		FontMetrics fm = gc.getFontMetrics();
+		int fontBaseline = fm.getAscent() + fm.getLeading();
 		Assert.isTrue(widgetBaseline >= fontBaseline);
-		int baselineBias= widgetBaseline - fontBaseline;
+		int baselineBias = widgetBaseline - fontBaseline;
 		return baselineBias;
 	}
 
@@ -978,12 +978,12 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 */
 	protected final void postRedraw() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			Display d= fCanvas.getDisplay();
+			Display d = fCanvas.getDisplay();
 			if (d != null) {
 				synchronized (fRunnableLock) {
 					if (fIsRunnablePosted)
 						return;
-					fIsRunnablePosted= true;
+					fIsRunnablePosted = true;
 				}
 				d.asyncExec(fRunnable);
 			}
@@ -1002,7 +1002,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		}
 
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			GC gc= new GC(fCanvas);
+			GC gc = new GC(fCanvas);
 			doubleBufferPaint(gc);
 			gc.dispose();
 		}
@@ -1020,7 +1020,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 */
 	@Override
 	public void setFont(Font font) {
-		fFont= font;
+		fFont = font;
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			fCanvas.setFont(fFont);
 			updateNumberOfDigits();

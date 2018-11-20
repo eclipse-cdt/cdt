@@ -32,6 +32,7 @@ public class CNewOptionsPage extends NewCProjectWizardOptionPage {
 	public CNewOptionsPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
+
 	public CNewOptionsPage(String pageName) {
 		this(pageName, null, null);
 	}

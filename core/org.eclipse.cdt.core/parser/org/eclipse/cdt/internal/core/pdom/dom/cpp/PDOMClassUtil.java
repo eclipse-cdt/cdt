@@ -39,7 +39,7 @@ class PDOMClassUtil {
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPField) {
-				ICPPField field= (ICPPField) node;
+				ICPPField field = (ICPPField) node;
 				if (IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(field)) {
 					fields.add(field);
 				}
@@ -55,18 +55,19 @@ class PDOMClassUtil {
 			return fields.toArray(new ICPPField[fields.size()]);
 		}
 	}
-	
+
 	static class ConstructorCollector implements IPDOMVisitor {
 		private final List<ICPPConstructor> fConstructors = new ArrayList<>();
 
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPConstructor) {
-				ICPPConstructor cons= (ICPPConstructor) node;
+				ICPPConstructor cons = (ICPPConstructor) node;
 				if (IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(cons)) {
 					if (cons instanceof ICPPTemplateInstance) {
 						ICPPClassType owner = cons.getClassOwner();
-						if (owner == null || owner.equals(((ICPPTemplateInstance) cons).getSpecializedBinding().getOwner())) {
+						if (owner == null
+								|| owner.equals(((ICPPTemplateInstance) cons).getSpecializedBinding().getOwner())) {
 							return false;
 						}
 					}
@@ -96,14 +97,14 @@ class PDOMClassUtil {
 
 		public MethodCollector(boolean acceptImplicit, boolean acceptNonImplicit) {
 			this.methods = new ArrayList<>();
-			this.acceptNonImplicit= acceptNonImplicit;
-			this.filter= acceptImplicit ? IndexFilter.ALL_DECLARED_OR_IMPLICIT : IndexFilter.ALL_DECLARED;
+			this.acceptNonImplicit = acceptNonImplicit;
+			this.filter = acceptImplicit ? IndexFilter.ALL_DECLARED_OR_IMPLICIT : IndexFilter.ALL_DECLARED;
 		}
 
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPMethod) {
-				ICPPMethod method= (ICPPMethod) node;
+				ICPPMethod method = (ICPPMethod) node;
 				if (filter.acceptBinding(method)) {
 					if (acceptNonImplicit || method.isImplicit()) {
 						methods.add(method);
@@ -118,10 +119,10 @@ class PDOMClassUtil {
 		}
 
 		public ICPPMethod[] getMethods() {
-			return methods.toArray(new ICPPMethod[methods.size()]); 
+			return methods.toArray(new ICPPMethod[methods.size()]);
 		}
 	}
-	
+
 	static class NestedClassCollector implements IPDOMVisitor {
 		private final List<IPDOMNode> nestedClasses = new ArrayList<>();
 
@@ -140,10 +141,10 @@ class PDOMClassUtil {
 			return nestedClasses.toArray(new ICPPClassType[nestedClasses.size()]);
 		}
 	}
-	
+
 	static class UsingDeclarationCollector implements IPDOMVisitor {
 		private final List<ICPPUsingDeclaration> usingDeclarations = new ArrayList<>();
-		
+
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPUsingDeclaration) {
@@ -155,7 +156,7 @@ class PDOMClassUtil {
 		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
-		
+
 		public ICPPUsingDeclaration[] getUsingDeclarations() {
 			return usingDeclarations.toArray(new ICPPUsingDeclaration[usingDeclarations.size()]);
 		}

@@ -36,24 +36,19 @@ public class TemplateCNewWizard extends CNewWizard {
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
 		Template[] templates = TemplateEngineUI.getDefault().getTemplates();
 		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
-		
-		for (int k=0; k < templates.length; k++) {
+
+		for (int k = 0; k < templates.length; k++) {
 			TemplateInfo templateInfo = templates[k].getTemplateInfo();
 
-			items.add(new EntryDescriptor(templates[k].getTemplateId(),
-						templateInfo.getProjectType(),
-						templates[k].getLabel(),
-						templateInfo.isCategory(),
-						null,
-						null));
+			items.add(new EntryDescriptor(templates[k].getTemplateId(), templateInfo.getProjectType(),
+					templates[k].getLabel(), templateInfo.isCategory(), null, null));
 		}
 		return items.toArray(new EntryDescriptor[items.size()]);
 	}
 
 	@Override
-	public void setDependentControl(Composite parent,
-			IWizardItemsListListener page) {
+	public void setDependentControl(Composite parent, IWizardItemsListListener page) {
 		//nothing to do?
 	}
-	
+
 }

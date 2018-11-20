@@ -17,8 +17,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 class Messages {
-	private static final ResourceBundle RESOURCE_BUNDLE =
-			ResourceBundle.getBundle(Messages.class.getName());
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Messages.class.getName());
 
 	private Messages() {
 	}

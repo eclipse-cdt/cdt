@@ -29,23 +29,23 @@ public class DsfAddRegisterGroupCommand extends AbstractDsfRegisterGroupActions 
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		boolean state = false;
-	    if (evaluationContext instanceof IEvaluationContext) {
-	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
-	        Object p = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_PART_NAME);
-	        if (s instanceof IStructuredSelection && p instanceof IWorkbenchPart) {
-	        	state = canAddRegisterGroup((IWorkbenchPart)p, (IStructuredSelection)s);
-	        }
-	    }
+		if (evaluationContext instanceof IEvaluationContext) {
+			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+			Object p = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_PART_NAME);
+			if (s instanceof IStructuredSelection && p instanceof IWorkbenchPart) {
+				state = canAddRegisterGroup((IWorkbenchPart) p, (IStructuredSelection) s);
+			}
+		}
 		setBaseEnabled(state);
 	}
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (selection instanceof IStructuredSelection) {
-			addRegisterGroup(part, (IStructuredSelection)selection);
+			addRegisterGroup(part, (IStructuredSelection) selection);
 		}
-    	return null;
-    }
+		return null;
+	}
 }

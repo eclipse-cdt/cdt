@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -26,7 +26,7 @@ public interface IASTDeclarationListOwner extends IASTNode {
 	 * Adds a declaration to the owner. May only be called as long as the ast is not frozen.
 	 */
 	void addDeclaration(IASTDeclaration declaration);
-	
+
 	/**
 	 * Returns the array of declarations.
 	 * @param includeInactive whether to include declarations from inactive code branches.

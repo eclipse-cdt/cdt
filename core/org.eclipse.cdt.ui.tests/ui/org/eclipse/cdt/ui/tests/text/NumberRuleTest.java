@@ -48,10 +48,9 @@ public class NumberRuleTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fScanner = new RuleBasedScanner() {};
-		fScanner.setRules(new IRule[] {
-				new NumberRule(new Token(NUMBER))
-		});
+		fScanner = new RuleBasedScanner() {
+		};
+		fScanner.setRules(new IRule[] { new NumberRule(new Token(NUMBER)) });
 		fDocument = new Document();
 	}
 
@@ -78,7 +77,7 @@ public class NumberRuleTest extends TestCase {
 		assertNumber("0xabcdefABCDEF");
 		assertNumber("0x0123456789");
 	}
-	
+
 	public void testFloats() {
 		assertNumber("0.");
 		assertNumber(".0");
@@ -112,11 +111,11 @@ public class NumberRuleTest extends TestCase {
 		assertNoNumber(".e");
 		assertNoNumber("-e");
 		assertNoNumber("+e");
-		
+
 		// false positives:
-//		assertNoNumber("0x");
-//		assertNoNumber("1e");
-//		assertNoNumber("1e+");
+		//		assertNoNumber("0x");
+		//		assertNoNumber("1e");
+		//		assertNoNumber("1e+");
 	}
 
 	public void testBug163691() {
@@ -137,7 +136,7 @@ public class NumberRuleTest extends TestCase {
 		assertSame(NUMBER, token.getData());
 		assertEquals(string.length(), fScanner.getTokenLength());
 	}
-	
+
 	/**
 	 * Validate that given string is not recognized as a number.
 	 * @param string
@@ -148,5 +147,5 @@ public class NumberRuleTest extends TestCase {
 		IToken token = fScanner.nextToken();
 		assertNotSame(NUMBER, token.getData());
 	}
-	
+
 }

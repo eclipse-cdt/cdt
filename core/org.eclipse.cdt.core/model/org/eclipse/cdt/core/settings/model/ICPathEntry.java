@@ -23,6 +23,6 @@ public interface ICPathEntry extends ICSettingEntry {
 	IPath getFullPath();
 
 	IPath getLocation();
-	
+
 	boolean isValueWorkspacePath();
 }

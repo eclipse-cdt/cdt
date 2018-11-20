@@ -131,7 +131,7 @@ public class NewMesonProjectTest {
 		// Make sure the project indexer completes. At that point we're stable.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		ICProject cproject = CoreModel.getDefault().create(project);
-		
+
 		IPath projectPath = project.getLocation();
 
 		// open C++ perspective
@@ -160,7 +160,7 @@ public class NewMesonProjectTest {
 			bot.sleep(1000);
 		}
 		assertTrue(foundExecutable);
-		
+
 		// check the build console output
 		SWTBotView console = bot.viewByPartName("Console");
 		console.show();
@@ -185,19 +185,19 @@ public class NewMesonProjectTest {
 		assertEquals("Project name: MesonTestProj", lines[7]);
 		assertTrue(lines[8].startsWith("Native C compiler: cc"));
 		assertEquals("Build targets in project: 1", lines[11]);
-		assertTrue(lines[lines.length-3].startsWith("[1/2] cc  -IMesonTestProj@exe"));
-		assertTrue(lines[lines.length-2].startsWith("[2/2] cc  -o MesonTestProj"));
-		
-	    int i = 0;
-	    while (i < 10 && !lines[lines.length-1].startsWith("Build complete")) {
-	    	output = console.bot().styledText().getText();
-	    	lines = output.split("\\r?\\n"); //$NON-NLS-1$
-	    	bot.sleep(1000);
-	    	++i;
-	    }
-		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
+		assertTrue(lines[lines.length - 3].startsWith("[1/2] cc  -IMesonTestProj@exe"));
+		assertTrue(lines[lines.length - 2].startsWith("[2/2] cc  -o MesonTestProj"));
+
+		int i = 0;
+		while (i < 10 && !lines[lines.length - 1].startsWith("Build complete")) {
+			output = console.bot().styledText().getText();
+			lines = output.split("\\r?\\n"); //$NON-NLS-1$
+			bot.sleep(1000);
+			++i;
+		}
+		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length - 1]);
 	}
-	
+
 	@Test
 	public void runMesonProject() throws Exception {
 		String projectName = "MesonTestProj";
@@ -218,16 +218,16 @@ public class NewMesonProjectTest {
 
 		proj.expand();
 		proj.expandNode("Binaries");
-		
+
 		SWTBotTreeItem binaries = proj.getNode("Binaries").select();
 		binaries.getNode(0).contextMenu("Run As").menu(withRegex(".*Local C.*"), false, 0).click();
 		bot.sleep(4000);
-		
+
 		SWTBotView console = bot.viewByPartName("Console");
 		console.show();
 		console.setFocus();
 		String output = "";
-		
+
 		boolean done = false;
 		while (!done) {
 			// check the build console output
@@ -240,53 +240,52 @@ public class NewMesonProjectTest {
 		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
 		assertEquals("Hello World", lines[0]);
 	}
-	
+
 	@Test
 	public void tryCleaningMesonProject() throws Exception {
 		String projectName = "MesonTestProj";
 		// Make sure the project indexer completes. At that point we're stable.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		CoreModel.getDefault().create(project);
-		
+
 		// open C++ perspective
 		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
 			bot.perspectiveByLabel("C/C++").activate();
 		}
-		
+
 		bot.sleep(1000);
-		
+
 		IPath projectPath = project.getLocation();
-		
-		
+
 		SWTBotShell mainShell = bot.activeShell();
 
 		// use mainShell to get Project menu because it will be found somewhere else
 		bot.menu(mainShell).menu("Project").menu("Clean...").click();
 		bot.waitUntil(Conditions.shellIsActive("Clean"));
 		bot.shell("Clean").activate();
-		
+
 		SWTBotShell shell = bot.shell("Clean");
 		shell.bot().checkBox("Clean all projects").deselect();
-		
+
 		shell.bot().button("Clean").click();
-		
+
 		bot.waitUntil(Conditions.shellCloses(shell));
-		
+
 		// check the build console output
 		SWTBotView console = bot.viewByPartName("Console");
 		console.show();
 		console.setFocus();
 		String output = console.bot().styledText().getText();
-		
+
 		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
-		
+
 		int counter = 0;
 		while (lines.length < 5 && counter++ < 100) {
 			output = console.bot().styledText().getText();
 			lines = output.split("\\r?\\n"); //$NON-NLS-1$
 			bot.sleep(2000);
 		}
-	
+
 		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
 		assertEquals("ninja clean -v", lines[1]);
 		assertEquals("[1/1] ninja -t clean", lines[2]);
@@ -295,5 +294,4 @@ public class NewMesonProjectTest {
 
 	}
 
-	
 }

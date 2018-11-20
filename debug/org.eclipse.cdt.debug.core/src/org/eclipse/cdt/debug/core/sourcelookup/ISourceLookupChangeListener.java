@@ -11,17 +11,17 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.sourcelookup; 
+package org.eclipse.cdt.debug.core.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 
- /**
- * A source lookup change listener is notified of changes in the source lookup path.
- */
+/**
+* A source lookup change listener is notified of changes in the source lookup path.
+*/
 public interface ISourceLookupChangeListener {
 
 	/**
 	 * Notification that the source lookup containers have changed.
 	 */
-	public void sourceContainersChanged( ISourceLookupDirector director );
+	public void sourceContainersChanged(ISourceLookupDirector director);
 }

@@ -21,11 +21,10 @@ import org.eclipse.core.resources.IResource;
  * marker changes. Used to update error ticks.
  */
 public interface IProblemChangedListener {
-	
+
 	/**
 	 * @param changedElements  A set of type <code>IPath</code> that
 	 * describe the resources that had an error marker change.
 	 */
 	void problemsChanged(IResource[] changedResources, boolean markerChanged);
 }
-

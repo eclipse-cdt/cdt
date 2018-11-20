@@ -26,7 +26,6 @@ public interface IErrorParser2 extends IErrorParser {
 	/** Parser can process lines with unlimited length (default length is 1000) */
 	public static final int KEEP_LONGLINES = 0x04;
 
-
 	/**
 	 * Defines how much output would be processed before calling {@link #processLine(String, ErrorParserManager)}
 	 * 

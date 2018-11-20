@@ -26,25 +26,25 @@ public interface IMacroBinding extends IBinding {
 	 * @since 5.0
 	 */
 	boolean isFunctionStyle();
-	
+
 	/**
 	 * Returns <code>true</code> if this is a dynamic macro. 
 	 * @since 5.0
 	 */
 	boolean isDynamic();
-	
+
 	/**
 	 * Returns the parameter names or <code>null</code> if this is not a function style macro.
 	 */
 	char[][] getParameterList();
-	
+
 	/**
 	 * Returns the expansion of this macro definition, or <code>null</code> if the definition is not
 	 * available. For dynamic macros an exemplary image is returned.
 	 * @since 5.0
 	 */
 	char[] getExpansion();
-	
+
 	/**
 	 * Returns the parameter list where the name of the last parameter is changed if this is a variadic macro,
 	 * or <code>null</code> if this is not a function style macro.

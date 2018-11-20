@@ -26,17 +26,16 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarAssignInfo;
  * NAME.  The object must be `editable'.
  * 
  */
-public class MIVarAssign extends MICommand<MIVarAssignInfo> 
-{
+public class MIVarAssign extends MICommand<MIVarAssignInfo> {
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIVarAssign(ICommandControlDMContext ctx, String name, String expression) {
-		super(ctx, "-var-assign", new String[]{name, expression}); //$NON-NLS-1$
+		super(ctx, "-var-assign", new String[] { name, expression }); //$NON-NLS-1$
 	}
-    
-    @Override
-    public MIVarAssignInfo getResult(MIOutput out) {
-        return new MIVarAssignInfo(out);
-    }
+
+	@Override
+	public MIVarAssignInfo getResult(MIOutput out) {
+		return new MIVarAssignInfo(out);
+	}
 }

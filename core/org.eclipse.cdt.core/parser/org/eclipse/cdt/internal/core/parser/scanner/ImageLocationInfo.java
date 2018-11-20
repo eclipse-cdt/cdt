@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -25,11 +25,12 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
  * @since 5.0
  */
 public abstract class ImageLocationInfo {
-	public static final ImageLocationInfo[] NO_LOCATION_INFOS= {};
+	public static final ImageLocationInfo[] NO_LOCATION_INFOS = {};
 
-	int fTokenOffsetInExpansion= -1;
+	int fTokenOffsetInExpansion = -1;
 
 	public abstract IASTImageLocation createLocation(LocationMap lm, ImageLocationInfo upto);
+
 	public abstract boolean canConcatenate(ImageLocationInfo info);
 
 	public static class MacroImageLocationInfo extends ImageLocationInfo {
@@ -38,19 +39,19 @@ public abstract class ImageLocationInfo {
 		private final int fEndOffset;
 
 		public MacroImageLocationInfo(ObjectStyleMacro macro, int offset, int endOffset) {
-			fMacro= macro;
-			fOffset= offset;
-			fEndOffset= endOffset;
+			fMacro = macro;
+			fOffset = offset;
+			fEndOffset = endOffset;
 		}
-		
+
 		@Override
 		public IASTImageLocation createLocation(LocationMap lm, ImageLocationInfo upto) {
-			IASTPreprocessorMacroDefinition md= lm.getMacroDefinition(fMacro);
-			IASTFileLocation expansionLoc= md.getExpansionLocation();
+			IASTPreprocessorMacroDefinition md = lm.getMacroDefinition(fMacro);
+			IASTFileLocation expansionLoc = md.getExpansionLocation();
 			if (expansionLoc != null) {
-				final int length= ((MacroImageLocationInfo) upto).fEndOffset - fOffset;
-				return new ASTImageLocation(IASTImageLocation.MACRO_DEFINITION,
-						expansionLoc.getFileName(), expansionLoc.getNodeOffset() + fOffset, length);
+				final int length = ((MacroImageLocationInfo) upto).fEndOffset - fOffset;
+				return new ASTImageLocation(IASTImageLocation.MACRO_DEFINITION, expansionLoc.getFileName(),
+						expansionLoc.getNodeOffset() + fOffset, length);
 			}
 			return null;
 		}
@@ -58,39 +59,39 @@ public abstract class ImageLocationInfo {
 		@Override
 		public boolean canConcatenate(ImageLocationInfo info) {
 			if (info instanceof MacroImageLocationInfo) {
-				MacroImageLocationInfo mli= (MacroImageLocationInfo) info;
-				if (mli.fMacro == fMacro &&	fEndOffset <= mli.fOffset) {
+				MacroImageLocationInfo mli = (MacroImageLocationInfo) info;
+				if (mli.fMacro == fMacro && fEndOffset <= mli.fOffset) {
 					return true;
 				}
 			}
 			return false;
 		}
 	}
-	
+
 	public static class ParameterImageLocationInfo extends ImageLocationInfo {
 		public int fSequenceNumber;
 		public int fSequenceEndNumber;
 
 		public ParameterImageLocationInfo(int sequenceNumber, int sequenceEndNumber) {
-			fSequenceNumber= sequenceNumber;
-			fSequenceEndNumber= sequenceEndNumber;
+			fSequenceNumber = sequenceNumber;
+			fSequenceEndNumber = sequenceEndNumber;
 		}
 
 		@Override
 		public IASTImageLocation createLocation(LocationMap lm, ImageLocationInfo upto) {
-			int sequenceEnd= ((ParameterImageLocationInfo) upto).fSequenceEndNumber;
-			IASTFileLocation loc= lm.getMappedFileLocation(fSequenceNumber, sequenceEnd - fSequenceNumber);
+			int sequenceEnd = ((ParameterImageLocationInfo) upto).fSequenceEndNumber;
+			IASTFileLocation loc = lm.getMappedFileLocation(fSequenceNumber, sequenceEnd - fSequenceNumber);
 			if (loc != null) {
-				return new ASTImageLocation(IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION,
-						loc.getFileName(), loc.getNodeOffset(), loc.getNodeLength());
+				return new ASTImageLocation(IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION, loc.getFileName(),
+						loc.getNodeOffset(), loc.getNodeLength());
 			}
 			return null;
 		}
-		
+
 		@Override
 		public boolean canConcatenate(ImageLocationInfo info) {
 			if (info instanceof ParameterImageLocationInfo) {
-				ParameterImageLocationInfo pli= (ParameterImageLocationInfo) info;
+				ParameterImageLocationInfo pli = (ParameterImageLocationInfo) info;
 				if (fSequenceEndNumber <= pli.fSequenceNumber) {
 					return true;
 				}

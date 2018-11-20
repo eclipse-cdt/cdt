@@ -54,7 +54,6 @@ import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CIndenter;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
-
 /**
  * Indents a line or range of lines in a C document to its correct position. No complete
  * AST must be present, the indentation is computed using heuristics. The algorithm used is fast for
@@ -84,7 +83,7 @@ public class IndentAction extends TextEditorAction {
 	 */
 	public IndentAction(ResourceBundle bundle, String prefix, ITextEditor editor, boolean isTabAction) {
 		super(bundle, prefix, editor);
-		fIsTabAction= isTabAction;
+		fIsTabAction = isTabAction;
 	}
 
 	@Override
@@ -93,21 +92,21 @@ public class IndentAction extends TextEditorAction {
 		if (!isEnabled() || !validateEditorInputState())
 			return;
 
-		ITextSelection selection= getSelection();
-		final IDocument document= getDocument();
+		ITextSelection selection = getSelection();
+		final IDocument document = getDocument();
 
 		if (document != null) {
-			final int offset= selection.getOffset();
-			final int length= selection.getLength();
-			final Position end= new Position(offset + length);
+			final int offset = selection.getOffset();
+			final int length = selection.getLength();
+			final Position end = new Position(offset + length);
 			final int firstLine, nLines;
-			fCaretOffset= -1;
+			fCaretOffset = -1;
 
 			try {
-				firstLine= document.getLineOfOffset(offset);
+				firstLine = document.getLineOfOffset(offset);
 				// check for marginal (zero-length) lines
-				int minusOne= length == 0 ? 0 : 1;
-				nLines= document.getLineOfOffset(offset + length - minusOne) - firstLine + 1;
+				int minusOne = length == 0 ? 0 : 1;
+				nLines = document.getLineOfOffset(offset + length - minusOne) - firstLine + 1;
 				document.addPosition(end);
 			} catch (BadLocationException e) {
 				// will only happen on concurrent modification
@@ -115,19 +114,19 @@ public class IndentAction extends TextEditorAction {
 				return;
 			}
 
-			Runnable runnable= new Runnable() {
+			Runnable runnable = new Runnable() {
 				@Override
 				public void run() {
-					IRewriteTarget target= getTextEditor().getAdapter(IRewriteTarget.class);
+					IRewriteTarget target = getTextEditor().getAdapter(IRewriteTarget.class);
 					if (target != null)
 						target.beginCompoundChange();
 
 					try {
-						CHeuristicScanner scanner= new CHeuristicScanner(document);
-						CIndenter indenter= new CIndenter(document, scanner, getCProject());
-						final boolean multiLine= nLines > 1;
-						boolean hasChanged= false;
-						for (int i= 0; i < nLines; i++) {
+						CHeuristicScanner scanner = new CHeuristicScanner(document);
+						CIndenter indenter = new CIndenter(document, scanner, getCProject());
+						final boolean multiLine = nLines > 1;
+						boolean hasChanged = false;
+						for (int i = 0; i < nLines; i++) {
 							hasChanged |= indentLine(document, firstLine + i, offset, indenter, scanner, multiLine);
 						}
 
@@ -135,11 +134,11 @@ public class IndentAction extends TextEditorAction {
 						// keep selection when indenting multiple
 						int newOffset, newLength;
 						if (!fIsTabAction && multiLine) {
-							newOffset= offset;
-							newLength= end.getOffset() - offset;
+							newOffset = offset;
+							newLength = end.getOffset() - offset;
 						} else {
-							newOffset= fCaretOffset;
-							newLength= 0;
+							newOffset = fCaretOffset;
+							newLength = 0;
 						}
 
 						// always reset the selection if anything was replaced
@@ -149,7 +148,8 @@ public class IndentAction extends TextEditorAction {
 
 					} catch (BadLocationException e) {
 						// will only happen on concurrent modification
-						CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, "ConcurrentModification in IndentAction", e)); //$NON-NLS-1$
+						CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK,
+								"ConcurrentModification in IndentAction", e)); //$NON-NLS-1$
 					} finally {
 						document.removePosition(end);
 						if (target != null)
@@ -159,7 +159,7 @@ public class IndentAction extends TextEditorAction {
 			};
 
 			if (nLines > 50) {
-				Display display= getTextEditor().getEditorSite().getWorkbenchWindow().getShell().getDisplay();
+				Display display = getTextEditor().getEditorSite().getWorkbenchWindow().getShell().getDisplay();
 				BusyIndicator.showWhile(display, runnable);
 			} else {
 				runnable.run();
@@ -176,9 +176,9 @@ public class IndentAction extends TextEditorAction {
 	private void selectAndReveal(int newOffset, int newLength) {
 		Assert.isTrue(newOffset >= 0);
 		Assert.isTrue(newLength >= 0);
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		if (editor instanceof CEditor) {
-			ISourceViewer viewer= ((CEditor)editor).getViewer();
+			ISourceViewer viewer = ((CEditor) editor).getViewer();
 			if (viewer != null)
 				viewer.setSelectedRange(newOffset, newLength);
 		} else {
@@ -200,21 +200,24 @@ public class IndentAction extends TextEditorAction {
 	 * @return <code>true</code> if <code>document</code> was modified, <code>false</code> otherwise
 	 * @throws BadLocationException if the document got changed concurrently
 	 */
-	private boolean indentLine(IDocument document, int line, int caret, CIndenter indenter, CHeuristicScanner scanner, boolean multiLine) throws BadLocationException {
-		IRegion currentLine= document.getLineInformation(line);
-		int offset= currentLine.getOffset();
-		int wsStart= offset; // where we start searching for non-WS; after the "//" in single line comments
+	private boolean indentLine(IDocument document, int line, int caret, CIndenter indenter, CHeuristicScanner scanner,
+			boolean multiLine) throws BadLocationException {
+		IRegion currentLine = document.getLineInformation(line);
+		int offset = currentLine.getOffset();
+		int wsStart = offset; // where we start searching for non-WS; after the "//" in single line comments
 
-		String indent= null;
+		String indent = null;
 		if (offset < document.getLength()) {
-			ITypedRegion partition= TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, true);
-			ITypedRegion startingPartition= TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, false);
-			String type= partition.getType();
+			ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, true);
+			ITypedRegion startingPartition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset,
+					false);
+			String type = partition.getType();
 			if (type.equals(ICPartitions.C_MULTI_LINE_COMMENT) || type.equals(ICPartitions.C_MULTI_LINE_DOC_COMMENT)) {
-				indent= computeCommentIndent(document, line, scanner, startingPartition);
+				indent = computeCommentIndent(document, line, scanner, startingPartition);
 			} else if (startingPartition.getType().equals(ICPartitions.C_PREPROCESSOR)) {
-				indent= computePreprocessorIndent(document, line, startingPartition);
-			} else if (startingPartition.getType().equals(ICPartitions.C_STRING) && offset > startingPartition.getOffset()) {
+				indent = computePreprocessorIndent(document, line, startingPartition);
+			} else if (startingPartition.getType().equals(ICPartitions.C_STRING)
+					&& offset > startingPartition.getOffset()) {
 				// Don't indent inside (raw-)string, but if the indent action was triggered by a Tab key,
 				// insert a '\t' character or spaces at the caret position.
 				if (!fIsTabAction)
@@ -234,27 +237,28 @@ public class IndentAction extends TextEditorAction {
 					text = buf.toString();
 				}
 				document.replace(caret, 0, text);
-				fCaretOffset= caret + text.length();
+				fCaretOffset = caret + text.length();
 				return true;
-			} else if (!fIsTabAction && startingPartition.getOffset() == offset && startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
+			} else if (!fIsTabAction && startingPartition.getOffset() == offset
+					&& startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
 				// line comment starting at position 0 -> indent inside
 				if (indentInsideLineComments()) {
-					int max= document.getLength() - offset;
-					int slashes= 2;
+					int max = document.getLength() - offset;
+					int slashes = 2;
 					while (slashes < max - 1 && document.get(offset + slashes, 2).equals("//")) //$NON-NLS-1$
-						slashes+= 2;
+						slashes += 2;
 
-					wsStart= offset + slashes;
+					wsStart = offset + slashes;
 
-					StringBuilder computed= indenter.computeIndentation(offset);
+					StringBuilder computed = indenter.computeIndentation(offset);
 					if (computed == null)
-						computed= new StringBuilder(0);
-					int tabSize= getTabSize();
+						computed = new StringBuilder(0);
+					int tabSize = getTabSize();
 					while (slashes > 0 && computed.length() > 0) {
-						char c= computed.charAt(0);
+						char c = computed.charAt(0);
 						if (c == '\t') {
 							if (slashes > tabSize)
-								slashes-= tabSize;
+								slashes -= tabSize;
 							else
 								break;
 						} else if (c == ' ') {
@@ -266,51 +270,51 @@ public class IndentAction extends TextEditorAction {
 						computed.deleteCharAt(0);
 					}
 
-					indent= document.get(offset, wsStart - offset) + computed;
+					indent = document.get(offset, wsStart - offset) + computed;
 				}
 			}
 		}
 
 		// standard C code indentation
 		if (indent == null) {
-			StringBuilder computed= indenter.computeIndentation(offset);
+			StringBuilder computed = indenter.computeIndentation(offset);
 			if (computed != null)
-				indent= computed.toString();
+				indent = computed.toString();
 			else
-				indent= ""; //$NON-NLS-1$
+				indent = ""; //$NON-NLS-1$
 		}
 
 		// change document:
 		// get current white space
-		int lineLength= currentLine.getLength();
-		int end= scanner.findNonWhitespaceForwardInAnyPartition(wsStart, offset + lineLength);
+		int lineLength = currentLine.getLength();
+		int end = scanner.findNonWhitespaceForwardInAnyPartition(wsStart, offset + lineLength);
 		if (end == CHeuristicScanner.NOT_FOUND) {
 			// an empty line
-			end= offset + lineLength;
+			end = offset + lineLength;
 			if (multiLine && !indentEmptyLines())
-				indent= ""; //$NON-NLS-1$
+				indent = ""; //$NON-NLS-1$
 		}
-		int length= end - offset;
-		String currentIndent= document.get(offset, length);
+		int length = end - offset;
+		String currentIndent = document.get(offset, length);
 
 		// if we are right before the text start / line end, and already after the insertion point
 		// then just shift to the right
 		if (fIsTabAction && caret == end && whiteSpaceLength(currentIndent) >= whiteSpaceLength(indent)) {
-			int indentWidth= whiteSpaceLength(currentIndent) + getIndentSize();
+			int indentWidth = whiteSpaceLength(currentIndent) + getIndentSize();
 			if (useTabsAndSpaces()) {
 				currentIndent = trimSpacesRight(currentIndent);
 			}
-			String replacement= IndentUtil.changePrefix(currentIndent, indentWidth, getTabSize(), useSpaces());
+			String replacement = IndentUtil.changePrefix(currentIndent, indentWidth, getTabSize(), useSpaces());
 			document.replace(offset, length, replacement);
-			fCaretOffset= offset + replacement.length();
+			fCaretOffset = offset + replacement.length();
 			return true;
 		}
 
 		// set the caret offset so it can be used when setting the selection
 		if (caret >= offset && caret <= end)
-			fCaretOffset= offset + indent.length();
+			fCaretOffset = offset + indent.length();
 		else
-			fCaretOffset= -1;
+			fCaretOffset = -1;
 
 		// only change the document if it is a real change
 		if (!indent.equals(currentIndent)) {
@@ -331,7 +335,7 @@ public class IndentAction extends TextEditorAction {
 		while (i >= 0 && indent.charAt(i) == ' ') {
 			--i;
 		}
-		return indent.substring(0, i+1);
+		return indent.substring(0, i + 1);
 	}
 
 	/**
@@ -344,7 +348,8 @@ public class IndentAction extends TextEditorAction {
 	 * @return the indent, or <code>null</code> if not computable
 	 * @throws BadLocationException
 	 */
-	private String computeCommentIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition) throws BadLocationException {
+	private String computeCommentIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition)
+			throws BadLocationException {
 		return IndentUtil.computeCommentIndent(document, line, scanner, partition);
 	}
 
@@ -357,7 +362,8 @@ public class IndentAction extends TextEditorAction {
 	 * @return the indent, or <code>null</code> if not computable
 	 * @throws BadLocationException
 	 */
-	private String computePreprocessorIndent(IDocument document, int line, ITypedRegion partition) throws BadLocationException {
+	private String computePreprocessorIndent(IDocument document, int line, ITypedRegion partition)
+			throws BadLocationException {
 		return IndentUtil.computePreprocessorIndent(document, line, partition);
 	}
 
@@ -391,7 +397,8 @@ public class IndentAction extends TextEditorAction {
 	 * @return <code>true</code> if tabs and spaces should be used
 	 */
 	private boolean useTabsAndSpaces() {
-		return DefaultCodeFormatterConstants.MIXED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR));
+		return DefaultCodeFormatterConstants.MIXED
+				.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR));
 	}
 
 	/**
@@ -420,7 +427,8 @@ public class IndentAction extends TextEditorAction {
 	 * @return <code>true</code> if empty lines should be indented, <code>false</code> otherwise
 	 */
 	private boolean indentEmptyLines() {
-		return DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES));
+		return DefaultCodeFormatterConstants.TRUE
+				.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES));
 	}
 
 	/**
@@ -429,7 +437,8 @@ public class IndentAction extends TextEditorAction {
 	 * @return <code>true</code> if line comments at column 0 should be indented inside, <code>false</code> otherwise.
 	 */
 	private boolean indentInsideLineComments() {
-		return DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_INSIDE_LINE_COMMENTS));
+		return DefaultCodeFormatterConstants.TRUE
+				.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_INSIDE_LINE_COMMENTS));
 	}
 
 	/**
@@ -439,7 +448,7 @@ public class IndentAction extends TextEditorAction {
 	 * @return the value of the preference
 	 */
 	private String getCoreFormatterOption(String key) {
-		ICProject project= getCProject();
+		ICProject project = getCProject();
 		if (project == null)
 			return CCorePlugin.getOption(key);
 		return project.getOption(key, true);
@@ -469,7 +478,7 @@ public class IndentAction extends TextEditorAction {
 	 *         <code>null</code> if it cannot be found
 	 */
 	private ICProject getCProject() {
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		if (editor == null)
 			return null;
 
@@ -482,7 +491,7 @@ public class IndentAction extends TextEditorAction {
 	 * @return the editor's selection provider or <code>null</code>
 	 */
 	private ISelectionProvider getSelectionProvider() {
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		if (editor != null) {
 			return editor.getSelectionProvider();
 		}
@@ -511,27 +520,27 @@ public class IndentAction extends TextEditorAction {
 	 * @return <code>true</code> if the selection is valid for an indent operation
 	 */
 	private boolean isValidSelection() {
-		ITextSelection selection= getSelection();
+		ITextSelection selection = getSelection();
 		if (selection.isEmpty())
 			return false;
 
-		int offset= selection.getOffset();
-		int length= selection.getLength();
+		int offset = selection.getOffset();
+		int length = selection.getLength();
 
-		IDocument document= getDocument();
+		IDocument document = getDocument();
 		if (document == null)
 			return false;
 
 		try {
-			IRegion firstLine= document.getLineInformationOfOffset(offset);
-			int lineOffset= firstLine.getOffset();
+			IRegion firstLine = document.getLineInformationOfOffset(offset);
+			int lineOffset = firstLine.getOffset();
 
 			// either the selection has to be empty and the caret in the WS at the line start
 			// or the selection has to extend over multiple lines
 			if (length == 0) {
 				return document.get(lineOffset, offset - lineOffset).trim().length() == 0;
 			}
-//			return lineOffset + firstLine.getLength() < offset + length;
+			//			return lineOffset + firstLine.getLength() < offset + length;
 			return false; // only enable for empty selections for now
 		} catch (BadLocationException e) {
 		}
@@ -545,7 +554,7 @@ public class IndentAction extends TextEditorAction {
 	 * @return <code>true</code> if smart mode is on, <code>false</code> otherwise
 	 */
 	private boolean isSmartMode() {
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 
 		if (editor instanceof ITextEditorExtension3)
 			return ((ITextEditorExtension3) editor).getInsertMode() == ITextEditorExtension3.SMART_INSERT;
@@ -560,10 +569,10 @@ public class IndentAction extends TextEditorAction {
 	 * @return the current document or <code>null</code>
 	 */
 	private IDocument getDocument() {
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		if (editor != null) {
-			IDocumentProvider provider= editor.getDocumentProvider();
-			IEditorInput input= editor.getEditorInput();
+			IDocumentProvider provider = editor.getDocumentProvider();
+			IEditorInput input = editor.getEditorInput();
 			if (provider != null && input != null)
 				return provider.getDocument(input);
 
@@ -578,9 +587,9 @@ public class IndentAction extends TextEditorAction {
 	 * @return the current selection, never <code>null</code>
 	 */
 	private ITextSelection getSelection() {
-		ISelectionProvider provider= getSelectionProvider();
+		ISelectionProvider provider = getSelectionProvider();
 		if (provider != null) {
-			ISelection selection= provider.getSelection();
+			ISelection selection = provider.getSelection();
 			if (selection instanceof ITextSelection)
 				return (ITextSelection) selection;
 		}

@@ -40,12 +40,11 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 	private static final int VALUE_OFFSET = TYPE_OFFSET + Database.TYPE_SIZE;
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = VALUE_OFFSET + Database.VALUE_SIZE;
-	
-	public PDOMCPPFieldSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
-			ICPPField field, PDOMBinding specialized)
+
+	public PDOMCPPFieldSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPField field, PDOMBinding specialized)
 			throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) field, specialized);
-		
+
 		linkage.storeType(record + TYPE_OFFSET, field.getType());
 		linkage.storeValue(record + VALUE_OFFSET, field.getInitialValue());
 	}
@@ -53,7 +52,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -67,7 +66,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 	private ICPPField getField() {
 		return (ICPPField) getSpecializedBinding();
 	}
-	
+
 	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
@@ -92,7 +91,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 			return IntegralValue.UNKNOWN;
 		}
 	}
-	
+
 	@Override
 	public boolean isAuto() {
 		return getField().isAuto();

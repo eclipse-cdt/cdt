@@ -98,8 +98,7 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil;
  */
 public class HeaderFileReferenceAdjuster {
 	private static final int PARSE_MODE = ITranslationUnit.AST_SKIP_ALL_HEADERS
-			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
-			| ITranslationUnit.AST_SKIP_FUNCTION_BODIES
+			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_FUNCTION_BODIES
 			| ITranslationUnit.AST_PARSE_INACTIVE_CODE;
 
 	private final Map<IFile, IFile> movedFiles;
@@ -116,14 +115,13 @@ public class HeaderFileReferenceAdjuster {
 	 *     not yet existing folders and projects. 
 	 * @param processor the refactoring processor
 	 */
-	public HeaderFileReferenceAdjuster(Map<IFile, IFile> movedFiles,
-			Map<IContainer, IContainer> renamedContainers, RefactoringProcessor processor) {
+	public HeaderFileReferenceAdjuster(Map<IFile, IFile> movedFiles, Map<IContainer, IContainer> renamedContainers,
+			RefactoringProcessor processor) {
 		this.movedFiles = movedFiles;
 		this.movedFilesByLocation = new HashMap<>();
 		for (Entry<IFile, IFile> entry : movedFiles.entrySet()) {
 			//Construct map using normalised file paths
-			this.movedFilesByLocation.put(entry.getKey().getLocation().toString(),
-					entry.getValue().getLocation());
+			this.movedFilesByLocation.put(entry.getKey().getLocation().toString(), entry.getValue().getLocation());
 		}
 		this.renamedContainers = renamedContainers;
 		this.astManager = getASTManager(processor);
@@ -173,7 +171,7 @@ public class HeaderFileReferenceAdjuster {
 			progress = SubMonitor.convert(progress.newChild(9), workingCopies.length + affectedFiles.size());
 
 			List<Change> changes = new ArrayList<>();
-			ValidateEditChecker checker= context.getChecker(ValidateEditChecker.class);
+			ValidateEditChecker checker = context.getChecker(ValidateEditChecker.class);
 			for (ITranslationUnit tu : workingCopies) {
 				addFileChange(tu, changes, checker, progress.newChild(1));
 			}
@@ -183,7 +181,7 @@ public class HeaderFileReferenceAdjuster {
 				ITranslationUnit tu = (ITranslationUnit) coreModel.create(file);
 				if (tu != null) {
 					if (workingCopyManager.findSharedWorkingCopy(tu) != null)
-						continue;  // Shared working copies have already been processed.
+						continue; // Shared working copies have already been processed.
 					addFileChange(tu, changes, checker, progress.newChild(1));
 				}
 			}
@@ -217,7 +215,7 @@ public class HeaderFileReferenceAdjuster {
 					fileChange.addEdit(edit);
 				}
 			}
-            fileChange.addTextEditGroup(editGroup);
+			fileChange.addTextEditGroup(editGroup);
 			changes.add(fileChange);
 			checker.addFile(fileChange.getFile());
 		}
@@ -233,7 +231,7 @@ public class HeaderFileReferenceAdjuster {
 		if (ast == null)
 			return null;
 		return createEdit(ast, tu, progress.newChild(1));
-    }
+	}
 
 	private TextEditGroup createEdit(IASTTranslationUnit ast, ITranslationUnit tu, IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
@@ -256,7 +254,7 @@ public class HeaderFileReferenceAdjuster {
 				if (include.isActive()) {
 					location = include.getPath();
 					if (location.isEmpty())
-						continue;	// Unresolved include.
+						continue; // Unresolved include.
 					if (File.separatorChar == '\\') {
 						// Normalize path separators on Windows.
 						location = new Path(location).toString();
@@ -277,16 +275,15 @@ public class HeaderFileReferenceAdjuster {
 		}
 		if (!affectedIncludes.isEmpty()) {
 			NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
-			IRegion includeRegion =
-					IncludeUtil.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
-	
+			IRegion includeRegion = IncludeUtil.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
+
 			IncludePreferences preferences = context.getPreferences();
-	
+
 			if (rootEdit == null)
 				rootEdit = new MultiTextEdit();
-	
+
 			context.addHeadersIncludedPreviously(existingIncludes);
-	
+
 			if (preferences.allowReordering) {
 				List<StyledInclude> modifiedIncludes = new ArrayList<>();
 				// Put the changed includes into modifiedIncludes.
@@ -300,12 +297,12 @@ public class HeaderFileReferenceAdjuster {
 						modifiedIncludes.add(include);
 					}
 				}
-	
+
 				Collections.sort(modifiedIncludes, preferences);
-	
+
 				// Populate a list of the existing unchanged includes in the include insertion region.
-				List<StyledInclude> mergedIncludes =
-						IncludeUtil.getIncludesInRegion(existingIncludes, includeRegion, context);
+				List<StyledInclude> mergedIncludes = IncludeUtil.getIncludesInRegion(existingIncludes, includeRegion,
+						context);
 				Deque<DeleteEdit> deletes = new ArrayDeque<>();
 				// Create text deletes for old locations of the includes that will be changed.
 				int deleteOffset = -1;
@@ -343,19 +340,21 @@ public class HeaderFileReferenceAdjuster {
 					mergedIncludes.remove(mergedIncludes.size() - 1);
 				}
 				if (deleteOffset >= 0)
-					deletes.add(new DeleteEdit(deleteOffset, includeRegion.getOffset() + includeRegion.getLength() - deleteOffset));
-	
+					deletes.add(new DeleteEdit(deleteOffset,
+							includeRegion.getOffset() + includeRegion.getLength() - deleteOffset));
+
 				// Since the order of existing include statements may not match the include order
 				// preferences, we find positions for the new include statements by pushing them up
 				// from the bottom of the include insertion region.
 				for (StyledInclude include : modifiedIncludes) {
 					if (IncludeUtil.isContainedInRegion(include.getExistingInclude(), includeRegion)) {
 						int i = mergedIncludes.size();
-						while (--i >= 0 && preferences.compare(include, mergedIncludes.get(i)) < 0) {}
+						while (--i >= 0 && preferences.compare(include, mergedIncludes.get(i)) < 0) {
+						}
 						mergedIncludes.add(i + 1, include);
 					}
 				}
-	
+
 				int offset = includeRegion.getOffset();
 				StringBuilder text = new StringBuilder();
 				StyledInclude previousInclude = null;
@@ -389,9 +388,11 @@ public class HeaderFileReferenceAdjuster {
 						}
 						text.append(context.getLineDelimiter());
 					} else {
-						if (previousInclude != null && affectedIncludes.containsKey(previousInclude.getExistingInclude()) &&
-								isBlankLineNeededBetween(previousInclude, include, preferences) &&
-								TextUtil.findBlankLine(contents, skipDeletedRegion(offset, deletes), ASTNodes.offset(existingInclude)) < 0) {
+						if (previousInclude != null
+								&& affectedIncludes.containsKey(previousInclude.getExistingInclude())
+								&& isBlankLineNeededBetween(previousInclude, include, preferences)
+								&& TextUtil.findBlankLine(contents, skipDeletedRegion(offset, deletes),
+										ASTNodes.offset(existingInclude)) < 0) {
 							text.append(context.getLineDelimiter());
 						}
 						flushEditBuffer(offset, text, deletes, rootEdit);
@@ -404,11 +405,11 @@ public class HeaderFileReferenceAdjuster {
 				offset = includeRegion.getOffset() + includeRegion.getLength();
 				flushEditBuffer(offset, text, deletes, rootEdit);
 			}
-	
+
 			for (IASTPreprocessorIncludeStatement existingInclude : existingIncludes) {
 				IPath header = affectedIncludes.get(existingInclude);
-				if (header != null &&
-						(!preferences.allowReordering || !IncludeUtil.isContainedInRegion(existingInclude, includeRegion))) {
+				if (header != null && (!preferences.allowReordering
+						|| !IncludeUtil.isContainedInRegion(existingInclude, includeRegion))) {
 					IncludeGroupStyle style = context.getIncludeStyle(header);
 					IncludeInfo includeInfo = context.createIncludeInfo(header, style);
 					IASTName name = existingInclude.getName();
@@ -423,13 +424,10 @@ public class HeaderFileReferenceAdjuster {
 			return null;
 
 		int numEdits = rootEdit.getChildrenSize();
-		String message =
-				numEdits == numIncludeGuardEdits ?
-						RenameMessages.HeaderReferenceAdjuster_update_include_guards :
-				numIncludeGuardEdits == 0 ?
-						RenameMessages.HeaderReferenceAdjuster_update_includes :
-						RenameMessages.HeaderReferenceAdjuster_update_include_guards_and_includes;
-        TextEditGroup editGroup= new TextEditGroup(message, rootEdit);
+		String message = numEdits == numIncludeGuardEdits ? RenameMessages.HeaderReferenceAdjuster_update_include_guards
+				: numIncludeGuardEdits == 0 ? RenameMessages.HeaderReferenceAdjuster_update_includes
+						: RenameMessages.HeaderReferenceAdjuster_update_include_guards_and_includes;
+		TextEditGroup editGroup = new TextEditGroup(message, rootEdit);
 
 		return editGroup;
 	}
@@ -561,9 +559,8 @@ public class HeaderFileReferenceAdjuster {
 	private void lockIndex() throws CoreException, OperationCanceledException {
 		if (indexLockCount == 0) {
 			if (index == null) {
-				ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
-				index = CCorePlugin.getIndexManager().getIndex(projects,
-						IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
+				ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
+				index = CCorePlugin.getIndexManager().getIndex(projects, IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
 			}
 			try {
 				index.acquireReadLock();
@@ -615,8 +612,7 @@ public class HeaderFileReferenceAdjuster {
 	private static int getIncludeGuardScheme(IProject project) {
 		IPreferencesService preferences = Platform.getPreferencesService();
 		IScopeContext[] scopes = PreferenceConstants.getPreferenceScopes(project);
-		int scheme = preferences.getInt(CUIPlugin.PLUGIN_ID,
-				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
+		int scheme = preferences.getInt(CUIPlugin.PLUGIN_ID, PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
 				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME, scopes);
 		return scheme;
 	}

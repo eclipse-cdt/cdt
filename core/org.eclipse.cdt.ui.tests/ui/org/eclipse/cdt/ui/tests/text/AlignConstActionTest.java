@@ -45,7 +45,7 @@ public class AlignConstActionTest extends TestCase {
 			return new Object[0][];
 		}
 	}
-	
+
 	protected static class AlignConstTestSetup extends TestSetup {
 		private ICProject fCProject;
 
@@ -110,7 +110,7 @@ public class AlignConstActionTest extends TestCase {
 	private void selectAll() {
 		fSourceViewer.setSelectedRange(0, fDocument.getLength());
 	}
-	
+
 	public void testRightUnchanged() throws Exception {
 		selectAll();
 		assertAlignConstResult();
@@ -120,7 +120,7 @@ public class AlignConstActionTest extends TestCase {
 		selectAll();
 		assertAlignConstResult();
 	}
-	
+
 	public void testLeftUnchanged() throws Exception {
 		selectAll();
 		assertAlignConstResult();

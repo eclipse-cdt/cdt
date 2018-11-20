@@ -43,53 +43,53 @@ import org.eclipse.swt.widgets.Widget;
  */
 public abstract class LlvmListEditor extends ListEditor {
 
-    /**
-     * The list widget; <code>null</code> if none
-     * (before creation or after disposal).
-     */
-    List list;
+	/**
+	 * The list widget; <code>null</code> if none
+	 * (before creation or after disposal).
+	 */
+	List list;
 
-    /**
-     * The button box containing the Add, Remove, Up, and Down buttons;
-     * <code>null</code> if none (before creation or after disposal).
-     */
-    Composite buttonBox;
+	/**
+	 * The button box containing the Add, Remove, Up, and Down buttons;
+	 * <code>null</code> if none (before creation or after disposal).
+	 */
+	Composite buttonBox;
 
-    /**
-     * The Add button.
-     */
-    Button addButton;
+	/**
+	 * The Add button.
+	 */
+	Button addButton;
 
-    /**
-     * The Remove button.
-     */
-    Button removeButton;
+	/**
+	 * The Remove button.
+	 */
+	Button removeButton;
 
-    /**
-     * The Up button.
-     */
-    Button upButton;
+	/**
+	 * The Up button.
+	 */
+	Button upButton;
 
-    /**
-     * The Down button.
-     */
-    Button downButton;
+	/**
+	 * The Down button.
+	 */
+	Button downButton;
 
-    /**
+	/**
 	 * The selection listener.
 	 */
-    private SelectionListener selectionListener;
+	private SelectionListener selectionListener;
 
-    /**
-     * Creates a list field editor.
-     *
-     * @param name the name of the preference this field editor works on
-     * @param labelText the label text of the field editor
-     * @param parent the parent of the field editor's control
-     */
-    protected LlvmListEditor(String name, String labelText, Composite parent) {
-    	super(name, labelText, parent);
-    }
+	/**
+	 * Creates a list field editor.
+	 *
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
+	 * @param parent the parent of the field editor's control
+	 */
+	protected LlvmListEditor(String name, String labelText, Composite parent) {
+		super(name, labelText, parent);
+	}
 
 	@Override
 	/**
@@ -118,132 +118,129 @@ public abstract class LlvmListEditor extends ListEditor {
 		return new String[0];
 	}
 
-    /**
-     * Creates the Add, Remove, Up, and Down button in the given button box.
-     *
-     * @param box the box for the buttons
-     */
-    private void createButtons(Composite box) {
-        this.addButton = createPushButton(box, "ListEditor.add");//$NON-NLS-1$
-        this.removeButton = createPushButton(box, "ListEditor.remove");//$NON-NLS-1$
-        this.upButton = createPushButton(box, "ListEditor.up");//$NON-NLS-1$
-        this.downButton = createPushButton(box, "ListEditor.down");//$NON-NLS-1$
-    }
+	/**
+	 * Creates the Add, Remove, Up, and Down button in the given button box.
+	 *
+	 * @param box the box for the buttons
+	 */
+	private void createButtons(Composite box) {
+		this.addButton = createPushButton(box, "ListEditor.add");//$NON-NLS-1$
+		this.removeButton = createPushButton(box, "ListEditor.remove");//$NON-NLS-1$
+		this.upButton = createPushButton(box, "ListEditor.up");//$NON-NLS-1$
+		this.downButton = createPushButton(box, "ListEditor.down");//$NON-NLS-1$
+	}
 
-    /**
-     * Helper method to create a push button.
-     *
-     * @param parent the parent control
-     * @param key the resource name used to supply the button's label text
-     * @return Button
-     */
-    private Button createPushButton(Composite parent, String key) {
-        Button button = new Button(parent, SWT.PUSH);
-        button.setText(JFaceResources.getString(key));
-        button.setFont(parent.getFont());
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        int widthHint = convertHorizontalDLUsToPixels(button,
-                IDialogConstants.BUTTON_WIDTH);
-        data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
-                SWT.DEFAULT, true).x);
-        button.setLayoutData(data);
-        button.addSelectionListener(getSelectionListener());
-        return button;
-    }
+	/**
+	 * Helper method to create a push button.
+	 *
+	 * @param parent the parent control
+	 * @param key the resource name used to supply the button's label text
+	 * @return Button
+	 */
+	private Button createPushButton(Composite parent, String key) {
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText(JFaceResources.getString(key));
+		button.setFont(parent.getFont());
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		int widthHint = convertHorizontalDLUsToPixels(button, IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		button.setLayoutData(data);
+		button.addSelectionListener(getSelectionListener());
+		return button;
+	}
 
-    /**
-     * Creates a selection listener.
-     */
-    @Override
+	/**
+	 * Creates a selection listener.
+	 */
+	@Override
 	public void createSelectionListener() {
-        this.selectionListener = new SelectionAdapter() {
-            @Override
+		this.selectionListener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
-                Widget widget = event.widget;
-                if (widget == LlvmListEditor.this.addButton) {
-                    addPressed();
-                } else if (widget == LlvmListEditor.this.removeButton) {
-                    removePressed();
-                } else if (widget == LlvmListEditor.this.upButton) {
-                    upPressed();
-                } else if (widget == LlvmListEditor.this.downButton) {
-                    downPressed();
-                } else if (widget == LlvmListEditor.this.list) {
-                    selectionChanged();
-                }
-            }
-        };
-    }
+				Widget widget = event.widget;
+				if (widget == LlvmListEditor.this.addButton) {
+					addPressed();
+				} else if (widget == LlvmListEditor.this.removeButton) {
+					removePressed();
+				} else if (widget == LlvmListEditor.this.upButton) {
+					upPressed();
+				} else if (widget == LlvmListEditor.this.downButton) {
+					downPressed();
+				} else if (widget == LlvmListEditor.this.list) {
+					selectionChanged();
+				}
+			}
+		};
+	}
 
-    /**
-     * Returns this field editor's button box containing the Add, Remove,
-     * Up, and Down button.
-     *
-     * @param parent the parent control
-     * @return the button box
-     */
-    @Override
+	/**
+	 * Returns this field editor's button box containing the Add, Remove,
+	 * Up, and Down button.
+	 *
+	 * @param parent the parent control
+	 * @return the button box
+	 */
+	@Override
 	public Composite getButtonBoxControl(Composite parent) {
-        if (this.buttonBox == null) {
-            this.buttonBox = new Composite(parent, SWT.NULL);
-            GridLayout layout = new GridLayout();
-            layout.marginWidth = 0;
-            this.buttonBox.setLayout(layout);
-            createButtons(this.buttonBox);
-            this.buttonBox.addDisposeListener(new DisposeListener() {
-                @Override
-		public void widgetDisposed(DisposeEvent event) {
-                    LlvmListEditor.this.addButton = null;
-                    LlvmListEditor.this.removeButton = null;
-                    LlvmListEditor.this.upButton = null;
-                    LlvmListEditor.this.downButton = null;
-                    LlvmListEditor.this.buttonBox = null;
-                }
-            });
+		if (this.buttonBox == null) {
+			this.buttonBox = new Composite(parent, SWT.NULL);
+			GridLayout layout = new GridLayout();
+			layout.marginWidth = 0;
+			this.buttonBox.setLayout(layout);
+			createButtons(this.buttonBox);
+			this.buttonBox.addDisposeListener(new DisposeListener() {
+				@Override
+				public void widgetDisposed(DisposeEvent event) {
+					LlvmListEditor.this.addButton = null;
+					LlvmListEditor.this.removeButton = null;
+					LlvmListEditor.this.upButton = null;
+					LlvmListEditor.this.downButton = null;
+					LlvmListEditor.this.buttonBox = null;
+				}
+			});
 
-        } else {
-            checkParent(this.buttonBox, parent);
-        }
+		} else {
+			checkParent(this.buttonBox, parent);
+		}
 
-        selectionChanged();
-        return this.buttonBox;
-    }
+		selectionChanged();
+		return this.buttonBox;
+	}
 
-    /**
-     * Returns this field editor's list control.
-     *
-     * @param parent the parent control
-     * @return the list control
-     */
-    @Override
+	/**
+	 * Returns this field editor's list control.
+	 *
+	 * @param parent the parent control
+	 * @return the list control
+	 */
+	@Override
 	public List getListControl(Composite parent) {
-        if (this.list == null) {
-            this.list = new List(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
-                    | SWT.H_SCROLL);
-            this.list.setFont(parent.getFont());
-            this.list.addSelectionListener(getSelectionListener());
-            this.list.addDisposeListener(new DisposeListener() {
-                @Override
-		public void widgetDisposed(DisposeEvent event) {
-                    LlvmListEditor.this.list = null;
-                }
-            });
-        } else {
-            checkParent(this.list, parent);
-        }
-        return this.list;
-    }
+		if (this.list == null) {
+			this.list = new List(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+			this.list.setFont(parent.getFont());
+			this.list.addSelectionListener(getSelectionListener());
+			this.list.addDisposeListener(new DisposeListener() {
+				@Override
+				public void widgetDisposed(DisposeEvent event) {
+					LlvmListEditor.this.list = null;
+				}
+			});
+		} else {
+			checkParent(this.list, parent);
+		}
+		return this.list;
+	}
 
-    /**
+	/**
 	 * Returns this field editor's selection listener. The listener is created if nessessary.
 	 * @return  the selection listener
 	 */
-    private SelectionListener getSelectionListener() {
-        if (this.selectionListener == null) {
+	private SelectionListener getSelectionListener() {
+		if (this.selectionListener == null) {
 			createSelectionListener();
 		}
-        return this.selectionListener;
-    }
+		return this.selectionListener;
+	}
 
 	/**
 	 * Invoked when the selection in the list has changed.
@@ -255,89 +252,89 @@ public abstract class LlvmListEditor extends ListEditor {
 	 * </p>
 	 *
 	 */
-    @Override
+	@Override
 	protected void selectionChanged() {
-        int index = this.list.getSelectionIndex();
-        int size = this.list.getItemCount();
+		int index = this.list.getSelectionIndex();
+		int size = this.list.getItemCount();
 
-        this.removeButton.setEnabled(index >= 0);
-        this.upButton.setEnabled(size > 1 && index > 0);
-        this.downButton.setEnabled(size > 1 && index >= 0 && index < size - 1);
-    }
+		this.removeButton.setEnabled(index >= 0);
+		this.upButton.setEnabled(size > 1 && index > 0);
+		this.downButton.setEnabled(size > 1 && index >= 0 && index < size - 1);
+	}
 
-    /**
-     * Moves the currently selected item up or down.
-     *
-     * @param up <code>true</code> if the item should move up,
-     *  and <code>false</code> if it should move down
-     */
-    private void swap(boolean up) {
-        setPresentsDefaultValue(false);
-        int index = this.list.getSelectionIndex();
-        int target = up ? index - 1 : index + 1;
+	/**
+	 * Moves the currently selected item up or down.
+	 *
+	 * @param up <code>true</code> if the item should move up,
+	 *  and <code>false</code> if it should move down
+	 */
+	private void swap(boolean up) {
+		setPresentsDefaultValue(false);
+		int index = this.list.getSelectionIndex();
+		int target = up ? index - 1 : index + 1;
 
-        if (index >= 0) {
-            String[] selection = this.list.getSelection();
-            Assert.isTrue(selection.length == 1);
-            this.list.remove(index);
-            this.list.add(selection[0], target);
-            this.list.setSelection(target);
-        }
-        selectionChanged();
-    }
+		if (index >= 0) {
+			String[] selection = this.list.getSelection();
+			Assert.isTrue(selection.length == 1);
+			this.list.remove(index);
+			this.list.add(selection[0], target);
+			this.list.setSelection(target);
+		}
+		selectionChanged();
+	}
 
-    /**
-     * Returns this field editor's shell.
-     * <p>
-     * This method is internal to the framework; subclasses should not call
-     * this method.
-     * </p>
-     *
-     * @return the shell
-     */
-    @Override
+	/**
+	 * Returns this field editor's shell.
+	 * <p>
+	 * This method is internal to the framework; subclasses should not call
+	 * this method.
+	 * </p>
+	 *
+	 * @return the shell
+	 */
+	@Override
 	protected Shell getShell() {
-        if (this.addButton == null) {
+		if (this.addButton == null) {
 			return null;
 		}
-        return this.addButton.getShell();
-    }
+		return this.addButton.getShell();
+	}
 
-    /**
-     * Notifies that the Add button has been pressed.
-     */
-    void addPressed() {
-        setPresentsDefaultValue(false);
-        String input = getNewInputObject();
+	/**
+	 * Notifies that the Add button has been pressed.
+	 */
+	void addPressed() {
+		setPresentsDefaultValue(false);
+		String input = getNewInputObject();
 
-        if (input != null) {
-            int index = this.list.getSelectionIndex();
-            if (index >= 0) {
+		if (input != null) {
+			int index = this.list.getSelectionIndex();
+			if (index >= 0) {
 				this.list.add(input, index + 1);
 			} else {
 				this.list.add(input, 0);
 			}
-            selectionChanged();
-        }
-    }
+			selectionChanged();
+		}
+	}
 
-    /**
-     * Notifies that the Remove button has been pressed.
-     */
-    protected abstract void removePressed();
+	/**
+	 * Notifies that the Remove button has been pressed.
+	 */
+	protected abstract void removePressed();
 
-    /**
-     * Notifies that the Up button has been pressed.
-     */
-    void upPressed() {
-        swap(true);
-    }
+	/**
+	 * Notifies that the Up button has been pressed.
+	 */
+	void upPressed() {
+		swap(true);
+	}
 
-    /**
-     * Notifies that the Down button has been pressed.
-     */
-    void downPressed() {
-        swap(false);
-    }
+	/**
+	 * Notifies that the Down button has been pressed.
+	 */
+	void downPressed() {
+		swap(false);
+	}
 
 }

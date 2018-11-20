@@ -23,7 +23,6 @@ import org.eclipse.cdt.visualizer.ui.VisualizerAction;
  */
 public class SetLoadMeterPeriodAction extends VisualizerAction {
 
-
 	/** Visualizer instance we're associated with. */
 	MulticoreVisualizer m_visualizer = null;
 
@@ -32,15 +31,14 @@ public class SetLoadMeterPeriodAction extends VisualizerAction {
 	public SetLoadMeterPeriodAction(String label, int period) {
 		super(label, AS_RADIO_BUTTON);
 		m_period = period;
-		
-		setDescription(MulticoreVisualizerUIPlugin.getString(
-				"MulticoreVisualizer.actions.SetLoadMeterPeriod.description")); //$NON-NLS-1$
+
+		setDescription(
+				MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.SetLoadMeterPeriod.description")); //$NON-NLS-1$
 	}
 
 	/** Dispose method. */
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		m_visualizer = null;
 		super.dispose();
 	}
@@ -48,16 +46,16 @@ public class SetLoadMeterPeriodAction extends VisualizerAction {
 	// --- init methods ---
 
 	/** Initializes this action for the specified view. */
-	public void init(MulticoreVisualizer visualizer)
-	{
+	public void init(MulticoreVisualizer visualizer) {
 		m_visualizer = visualizer;
 	}
 
 	/** Invoked when action is triggered. */
 	@Override
 	public void run() {
-		if (!isChecked()) return;
-		
+		if (!isChecked())
+			return;
+
 		if (m_visualizer != null) {
 			m_visualizer.setLoadMeterTimerPeriod(m_period);
 		}

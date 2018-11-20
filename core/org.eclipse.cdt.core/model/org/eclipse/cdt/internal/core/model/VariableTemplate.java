@@ -12,18 +12,19 @@
  * Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITemplate;
 
 public class VariableTemplate extends Variable implements ITemplate {
 
-	protected static final String[] fgEmptyList= new String[] {};
+	protected static final String[] fgEmptyList = new String[] {};
 	protected String[] templateParameterTypes;
 
 	public VariableTemplate(ICElement parent, String name) {
 		super(parent, name, ICElement.C_TEMPLATE_VARIABLE);
-		templateParameterTypes= fgEmptyList;
+		templateParameterTypes = fgEmptyList;
 	}
 
 	/* (non-Javadoc)
@@ -60,18 +61,17 @@ public class VariableTemplate extends Variable implements ITemplate {
 	@Override
 	public String getTemplateSignature() throws CModelException {
 		StringBuilder sig = new StringBuilder(getElementName());
-		if(getNumberOfTemplateParameters() > 0){
+		if (getNumberOfTemplateParameters() > 0) {
 			sig.append("<"); //$NON-NLS-1$
 			String[] paramTypes = getTemplateParameterTypes();
 			int i = 0;
 			sig.append(paramTypes[i++]);
-			while (i < paramTypes.length){
+			while (i < paramTypes.length) {
 				sig.append(", "); //$NON-NLS-1$
 				sig.append(paramTypes[i++]);
 			}
 			sig.append(">"); //$NON-NLS-1$
-		}
-		else{
+		} else {
 			sig.append("<>"); //$NON-NLS-1$
 		}
 

@@ -25,12 +25,12 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public class RawBreakpointVMNode extends AbstractBreakpointVMNode {
 
-    public RawBreakpointVMNode(BreakpointVMProvider provider) {
-        super(provider);
-    }
+	public RawBreakpointVMNode(BreakpointVMProvider provider) {
+		super(provider);
+	}
 
-    @Override
-    protected Object createBreakpiontElement(IBreakpoint bp) {
-        return bp;
-    }
+	@Override
+	protected Object createBreakpiontElement(IBreakpoint bp) {
+		return bp;
+	}
 }

@@ -39,97 +39,95 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
  * @since 5.0
  */
 public class NewFileFromTemplateWizard extends BasicNewResourceWizard {
-    private WizardNewFileCreationPage mainPage;
+	private WizardNewFileCreationPage mainPage;
 
-    /**
-     * Creates a wizard for creating a new file resource in the workspace.
-     */
-    public NewFileFromTemplateWizard() {
-        super();
-    }
+	/**
+	 * Creates a wizard for creating a new file resource in the workspace.
+	 */
+	public NewFileFromTemplateWizard() {
+		super();
+	}
 
-    /*
-     * Method declared on IWizard.
-     */
-    @Override
+	/*
+	 * Method declared on IWizard.
+	 */
+	@Override
 	public void addPages() {
-        super.addPages();
-        mainPage = new WizardNewFileFromTemplateCreationPage("newFilePage1", getSelection());//$NON-NLS-1$
-        mainPage.setTitle(NewFileWizardMessages.NewFileFromTemplateWizard_pageTitle);
-        mainPage.setDescription(NewFileWizardMessages.NewFileFromTemplateWizard_description); 
-        addPage(mainPage);
-    }
+		super.addPages();
+		mainPage = new WizardNewFileFromTemplateCreationPage("newFilePage1", getSelection());//$NON-NLS-1$
+		mainPage.setTitle(NewFileWizardMessages.NewFileFromTemplateWizard_pageTitle);
+		mainPage.setDescription(NewFileWizardMessages.NewFileFromTemplateWizard_description);
+		addPage(mainPage);
+	}
 
-    /*
-     * Method declared on IWorkbenchWizard.
-     */
-    @Override
+	/*
+	 * Method declared on IWorkbenchWizard.
+	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        super.init(workbench, currentSelection);
-        setWindowTitle(NewFileWizardMessages.NewFileFromTemplateWizard_shellTitle);
-        setNeedsProgressMonitor(true);
-    }
+		super.init(workbench, currentSelection);
+		setWindowTitle(NewFileWizardMessages.NewFileFromTemplateWizard_shellTitle);
+		setNeedsProgressMonitor(true);
+	}
 
-    /*
-     * Method declared on BasicNewResourceWizard.
-     */
-    @Override
+	/*
+	 * Method declared on BasicNewResourceWizard.
+	 */
+	@Override
 	protected void initializeDefaultPageImageDescriptor() {
-       ImageDescriptor desc = CPluginImages.DESC_WIZBAN_NEW_FILE;
-	   setDefaultPageImageDescriptor(desc);
-    }
+		ImageDescriptor desc = CPluginImages.DESC_WIZBAN_NEW_FILE;
+		setDefaultPageImageDescriptor(desc);
+	}
 
-    /*
-     * Method declared on IWizard.
-     */
-    @Override
+	/*
+	 * Method declared on IWizard.
+	 */
+	@Override
 	public boolean performFinish() {
-        IFile file = mainPage.createNewFile();
-        if (file == null) {
+		IFile file = mainPage.createNewFile();
+		if (file == null) {
 			return false;
 		}
 
-        selectAndReveal(file);
+		selectAndReveal(file);
 
-        // Open editor on new file.
-        IWorkbenchWindow dw = getWorkbench().getActiveWorkbenchWindow();
-        try {
-            if (dw != null) {
-                IWorkbenchPage page = dw.getActivePage();
-                if (page != null) {
-                    IDE.openEditor(page, file, true);
-                }
-            }
-        } catch (PartInitException e) {
-            openError(getShell(), NewFileWizardMessages.NewFileFromTemplateWizard_errorMessage, e.getMessage(), e);
-        }
+		// Open editor on new file.
+		IWorkbenchWindow dw = getWorkbench().getActiveWorkbenchWindow();
+		try {
+			if (dw != null) {
+				IWorkbenchPage page = dw.getActivePage();
+				if (page != null) {
+					IDE.openEditor(page, file, true);
+				}
+			}
+		} catch (PartInitException e) {
+			openError(getShell(), NewFileWizardMessages.NewFileFromTemplateWizard_errorMessage, e.getMessage(), e);
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Open an error style dialog for PartInitException by
-     * including any extra information from the nested
-     * CoreException if present.
-     */
-    public static void openError(Shell parent, String title, String message,
-            PartInitException exception) {
-        // Check for a nested CoreException
-        CoreException nestedException = null;
-        IStatus status = exception.getStatus();
-        if (status != null && status.getException() instanceof CoreException) {
+	/**
+	 * Open an error style dialog for PartInitException by
+	 * including any extra information from the nested
+	 * CoreException if present.
+	 */
+	public static void openError(Shell parent, String title, String message, PartInitException exception) {
+		// Check for a nested CoreException
+		CoreException nestedException = null;
+		IStatus status = exception.getStatus();
+		if (status != null && status.getException() instanceof CoreException) {
 			nestedException = (CoreException) status.getException();
 		}
 
-        if (nestedException != null) {
-            // Open an error dialog and include the extra
-            // status information from the nested CoreException
-            ErrorDialog.openError(parent, title, message, nestedException
-                    .getStatus());
-        } else {
-            // Open a regular error dialog since there is no
-            // extra information to display
-            MessageDialog.openError(parent, title, message);
-        }
-    }
+		if (nestedException != null) {
+			// Open an error dialog and include the extra
+			// status information from the nested CoreException
+			ErrorDialog.openError(parent, title, message, nestedException.getStatus());
+		} else {
+			// Open a regular error dialog since there is no
+			// extra information to display
+			MessageDialog.openError(parent, title, message);
+		}
+	}
 }

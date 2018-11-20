@@ -34,9 +34,9 @@ import org.eclipse.ui.IViewPart;
 public class RefreshAction implements IViewActionDelegate {
 
 	private IMemoryBlock fMemoryBlock = null;
-	
+
 	private IMemoryRenderingSite fsite;
-	
+
 	@Override
 	public void init(IViewPart view) {
 		fsite = (IMemoryRenderingSite) view;
@@ -44,20 +44,16 @@ public class RefreshAction implements IViewActionDelegate {
 
 	@Override
 	public void run(IAction action) {
-		
-		if(fMemoryBlock instanceof IMemoryBlockUpdatePolicyProvider)
-		{
+
+		if (fMemoryBlock instanceof IMemoryBlockUpdatePolicyProvider) {
 			((IMemoryBlockUpdatePolicyProvider) fMemoryBlock).clearCache();
 			IMemoryRenderingContainer containers[] = fsite.getMemoryRenderingContainers();
-			for(int i = 0; i < containers.length; i++)
-			{
+			for (int i = 0; i < containers.length; i++) {
 				IMemoryRendering renderings[] = containers[i].getRenderings();
-				for(int j = 0; j < renderings.length; j++)
-				{
-					if (renderings[j].getControl() instanceof IDebugEventSetListener)
-					{
+				for (int j = 0; j < renderings.length; j++) {
+					if (renderings[j].getControl() instanceof IDebugEventSetListener) {
 						((IDebugEventSetListener) renderings[j].getControl()).handleDebugEvents(
-							new DebugEvent[] { new DebugEvent(fMemoryBlock, DebugEvent.CHANGE) } );
+								new DebugEvent[] { new DebugEvent(fMemoryBlock, DebugEvent.CHANGE) });
 					}
 				}
 			}
@@ -67,20 +63,17 @@ public class RefreshAction implements IViewActionDelegate {
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fMemoryBlock = null;
-    	action.setEnabled(false);
-    	if(selection instanceof IStructuredSelection)
-    	{
-    		if(((IStructuredSelection) selection).getFirstElement() instanceof IMemoryBlock)
-    		{
-    			fMemoryBlock = (IMemoryBlock) ((IStructuredSelection) selection).getFirstElement();
-    			action.setEnabled(true);
-    		}
-    		else if(((IStructuredSelection) selection).getFirstElement() instanceof IMemoryRendering)
-    		{
-    			fMemoryBlock = ((IMemoryRendering) ((IStructuredSelection) selection).getFirstElement()).getMemoryBlock();
-    			action.setEnabled(true);
-    		}
-    	}
+		action.setEnabled(false);
+		if (selection instanceof IStructuredSelection) {
+			if (((IStructuredSelection) selection).getFirstElement() instanceof IMemoryBlock) {
+				fMemoryBlock = (IMemoryBlock) ((IStructuredSelection) selection).getFirstElement();
+				action.setEnabled(true);
+			} else if (((IStructuredSelection) selection).getFirstElement() instanceof IMemoryRendering) {
+				fMemoryBlock = ((IMemoryRendering) ((IStructuredSelection) selection).getFirstElement())
+						.getMemoryBlock();
+				action.setEnabled(true);
+			}
+		}
 	}
 
 }

@@ -47,7 +47,8 @@ public class MakePreferencePage extends FieldEditorPreferencePage implements IWo
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.MAKE_TARGETS_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				IMakeHelpContextIds.MAKE_TARGETS_PREFERENCE_PAGE);
 	}
 
 	/**
@@ -62,15 +63,12 @@ public class MakePreferencePage extends FieldEditorPreferencePage implements IWo
 		addField(tagetBackgroundEditor);
 
 		// make last target for selected resource or project
-		RadioGroupFieldEditor edit = new RadioGroupFieldEditor(
-				PREF_BUILD_LAST_TARGET,
+		RadioGroupFieldEditor edit = new RadioGroupFieldEditor(PREF_BUILD_LAST_TARGET,
 				MakeUIPlugin.getResourceString(BUILD_LAST_TARGET), 1,
-				new String[][] {
-						{MakeUIPlugin.getResourceString(BUILD_LAST_PROJECT), PREF_BUILD_LAST_PROJECT},
-						{MakeUIPlugin.getResourceString(BUILD_LAST_RESOURCE), PREF_BUILD_LAST_RESOURCE},
-						{MakeUIPlugin.getResourceString(BUILD_LAST_PROJECTROOT), PREF_BUILD_LAST_PROJECTROOT} },
-				parent,
-				true);
+				new String[][] { { MakeUIPlugin.getResourceString(BUILD_LAST_PROJECT), PREF_BUILD_LAST_PROJECT },
+						{ MakeUIPlugin.getResourceString(BUILD_LAST_RESOURCE), PREF_BUILD_LAST_RESOURCE },
+						{ MakeUIPlugin.getResourceString(BUILD_LAST_PROJECTROOT), PREF_BUILD_LAST_PROJECTROOT } },
+				parent, true);
 		addField(edit);
 	}
 
@@ -88,7 +86,8 @@ public class MakePreferencePage extends FieldEditorPreferencePage implements IWo
 	 * @return {@code true} if from root folder of selected project
 	 */
 	public static boolean useProjectRootForLastMakeTarget() {
-		return MakeUIPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LAST_TARGET).equals(PREF_BUILD_LAST_PROJECTROOT);
+		return MakeUIPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LAST_TARGET)
+				.equals(PREF_BUILD_LAST_PROJECTROOT);
 	}
 
 	/**
@@ -97,8 +96,10 @@ public class MakePreferencePage extends FieldEditorPreferencePage implements IWo
 	 * @return {@code true} if from selected project irrespective in which container
 	 */
 	public static boolean useProjectLastMakeTarget() {
-		return MakeUIPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LAST_TARGET).equals(PREF_BUILD_LAST_PROJECT);
+		return MakeUIPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LAST_TARGET)
+				.equals(PREF_BUILD_LAST_PROJECT);
 	}
+
 	/**
 	 * Initializes the default values of this page in the preference bundle.
 	 */

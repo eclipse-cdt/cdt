@@ -41,8 +41,8 @@ public class OpenFiles extends ProcessRunner {
 	 * This method opens a list of files in the editor
 	 */
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId,
-			IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		ProcessArgument[][] files = args[1].getComplexArrayValue();
 		for (ProcessArgument[] file : files) {
 			String fileTargetPath = file[0].getSimpleValue();
@@ -53,35 +53,34 @@ public class OpenFiles extends ProcessRunner {
 				// Only open files if they are not open to avoid refresh problem if files have been modified multiple times
 				if (!isOpen(iFile)) {
 					try {
-						IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-								iFile);
+						IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), iFile);
 					} catch (PartInitException e) {
-						throw new ProcessFailureException(Messages.OpenFiles_CannotOpen_error
-								+ fileTargetPath);
+						throw new ProcessFailureException(Messages.OpenFiles_CannotOpen_error + fileTargetPath);
 					}
 				}
-			}
-			else {
+			} else {
 				throw new ProcessFailureException(Messages.OpenFiles_FileNotExist_error + fileTargetPath);
 			}
 		}
 	}
-	
+
 	private boolean isOpen(IFile file) {
-		IEditorReference[] editorReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditorReferences();
+		IEditorReference[] editorReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.getEditorReferences();
 		if (editorReferences != null) {
 			IEditorInput editorInput;
 			for (IEditorReference editorReference : editorReferences) {
 				try {
 					editorInput = editorReference.getEditorInput();
-					if (editorInput instanceof IFileEditorInput 
-							&& file.equals(((IFileEditorInput)editorInput).getFile())) {
+					if (editorInput instanceof IFileEditorInput
+							&& file.equals(((IFileEditorInput) editorInput).getFile())) {
 						return true;
 					}
-				} catch (PartInitException e) {}
+				} catch (PartInitException e) {
+				}
 			}
 		}
-		
+
 		return false;
 	}
 

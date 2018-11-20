@@ -61,15 +61,15 @@ import org.xml.sax.SAXException;
  * @author vhirsl
  */
 public final class DiscoveredScannerInfoStore {
-	private static final QualifiedName dscFileNameProperty = new
-            QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "discoveredScannerConfigFileName"); //$NON-NLS-1$
+	private static final QualifiedName dscFileNameProperty = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(),
+			"discoveredScannerConfigFileName"); //$NON-NLS-1$
 	private static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".discoveredScannerInfo"; //$NON-NLS-1$
-    public static final String SCD_STORE_VERSION = "scdStore"; //$NON-NLS-1$
+	public static final String SCD_STORE_VERSION = "scdStore"; //$NON-NLS-1$
 	public static final String SI_ELEM = "scannerInfo"; //$NON-NLS-1$
 	public static final String COLLECTOR_ELEM = "collector"; //$NON-NLS-1$
 	public static final String ID_ATTR = "id"; //$NON-NLS-1$
 
-	private static final String INSTANCE_ELEM = "instance";  //$NON-NLS-1$
+	private static final String INSTANCE_ELEM = "instance"; //$NON-NLS-1$
 
 	private static DiscoveredScannerInfoStore instance;
 
@@ -84,6 +84,7 @@ public final class DiscoveredScannerInfoStore {
 		}
 		return instance;
 	}
+
 	/**
 	 *
 	 */
@@ -95,31 +96,31 @@ public final class DiscoveredScannerInfoStore {
 		loadDiscoveredScannerInfoFromState(project, new InfoContext(project), serializable);
 	}
 
-	public void loadDiscoveredScannerInfoFromState(IProject project, InfoContext context, IDiscoveredScannerInfoSerializable serializable)
-			throws CoreException {
+	public void loadDiscoveredScannerInfoFromState(IProject project, InfoContext context,
+			IDiscoveredScannerInfoSerializable serializable) throws CoreException {
 		// Get the document
 		Element rootElem = getRootElement(project, context, serializable);
 
-		if(rootElem != null){
-	        // get the collector element
-	        NodeList collectorList = rootElem.getElementsByTagName(COLLECTOR_ELEM);
-	        if (collectorList.getLength() > 0) {
-	        	// find the collector element
-	        	for (int i = 0; i < collectorList.getLength(); ++i) {
-	        		Element collectorElem = (Element) collectorList.item(i);
-	        		String collectorId = collectorElem.getAttribute(ID_ATTR);
-	        		if (serializable.getCollectorId().equals(collectorId)) {
-	    		        serializable.deserialize(collectorElem);
-	        			break;
-	        		}
-	        	}
-	        }
+		if (rootElem != null) {
+			// get the collector element
+			NodeList collectorList = rootElem.getElementsByTagName(COLLECTOR_ELEM);
+			if (collectorList.getLength() > 0) {
+				// find the collector element
+				for (int i = 0; i < collectorList.getLength(); ++i) {
+					Element collectorElem = (Element) collectorList.item(i);
+					String collectorId = collectorElem.getAttribute(ID_ATTR);
+					if (serializable.getCollectorId().equals(collectorId)) {
+						serializable.deserialize(collectorElem);
+						break;
+					}
+				}
+			}
 		}
 	}
 
-	public boolean hasInfo(IProject project, InfoContext context, IDiscoveredScannerInfoSerializable serializable){
+	public boolean hasInfo(IProject project, InfoContext context, IDiscoveredScannerInfoSerializable serializable) {
 		try {
-			if(getRootElement(project, context, serializable) != null)
+			if (getRootElement(project, context, serializable) != null)
 				return true;
 		} catch (CoreException e) {
 			MakeCorePlugin.log(e);
@@ -127,8 +128,9 @@ public final class DiscoveredScannerInfoStore {
 		return false;
 	}
 
-	private Element getRootElement(IProject project, InfoContext context, IDiscoveredScannerInfoSerializable serializable) throws CoreException{
-		if(serializable == null)
+	private Element getRootElement(IProject project, InfoContext context,
+			IDiscoveredScannerInfoSerializable serializable) throws CoreException {
+		if (serializable == null)
 			return null;
 
 		Document document = getDocument(project);
@@ -138,12 +140,12 @@ public final class DiscoveredScannerInfoStore {
 			if (rootList.getLength() > 0) {
 				rootElem = (Element) rootList.item(0);
 
-				if(!context.isDefaultContext()){
+				if (!context.isDefaultContext()) {
 					String instanceId = context.getInstanceId();
 
-		        	Element instanceElem = findChild(rootElem, INSTANCE_ELEM, ID_ATTR, instanceId);
+					Element instanceElem = findChild(rootElem, INSTANCE_ELEM, ID_ATTR, instanceId);
 
-		        	rootElem = instanceElem;
+					rootElem = instanceElem;
 				}
 			}
 		}
@@ -153,48 +155,44 @@ public final class DiscoveredScannerInfoStore {
 
 	private Document getDocument(IProject project) throws CoreException {
 		// Get the document
-		Reference<Document> ref= fDocumentCache.get(project);
+		Reference<Document> ref = fDocumentCache.get(project);
 		Document document = ref != null ? ref.get() : null;
 		if (document == null) {
-		    try {
-		        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		        IPath path = getDiscoveredScannerConfigStore(project);
-		        if (path.toFile().exists()) {
-		            // read form file
-		            FileInputStream file = new FileInputStream(path.toFile());
-		            document = builder.parse(file);
-		            Node rootElem = document.getFirstChild();
-		            if (rootElem.getNodeType() != Node.PROCESSING_INSTRUCTION_NODE) {
-		                // no version info; upgrade
-		                upgradeDocument(document, project);
-		            }
-		        }
-		        else {
-		            // create new document
-		            document = builder.newDocument();
-		            ProcessingInstruction pi = document.createProcessingInstruction(SCD_STORE_VERSION, "version=\"2\""); //$NON-NLS-1$
-		            document.appendChild(pi);
-		            Element rootElement = document.createElement(SI_ELEM);
-		            rootElement.setAttribute(ID_ATTR, CDESCRIPTOR_ID);
-		            document.appendChild(rootElement);
-		        }
-		        fDocumentCache.put(project, new SoftReference<Document>(document));
-		    }
-		    catch (IOException e) {
-		        MakeCorePlugin.log(e);
-		        throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-		                MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
-		    }
-		    catch (ParserConfigurationException e) {
-		        MakeCorePlugin.log(e);
-		        throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-		                MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
-		    }
-		    catch (SAXException e) {
-		        MakeCorePlugin.log(e);
-		        throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-		                MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
-		    }
+			try {
+				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				IPath path = getDiscoveredScannerConfigStore(project);
+				if (path.toFile().exists()) {
+					// read form file
+					FileInputStream file = new FileInputStream(path.toFile());
+					document = builder.parse(file);
+					Node rootElem = document.getFirstChild();
+					if (rootElem.getNodeType() != Node.PROCESSING_INSTRUCTION_NODE) {
+						// no version info; upgrade
+						upgradeDocument(document, project);
+					}
+				} else {
+					// create new document
+					document = builder.newDocument();
+					ProcessingInstruction pi = document.createProcessingInstruction(SCD_STORE_VERSION, "version=\"2\""); //$NON-NLS-1$
+					document.appendChild(pi);
+					Element rootElement = document.createElement(SI_ELEM);
+					rootElement.setAttribute(ID_ATTR, CDESCRIPTOR_ID);
+					document.appendChild(rootElement);
+				}
+				fDocumentCache.put(project, new SoftReference<Document>(document));
+			} catch (IOException e) {
+				MakeCorePlugin.log(e);
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+						MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
+			} catch (ParserConfigurationException e) {
+				MakeCorePlugin.log(e);
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+						MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
+			} catch (SAXException e) {
+				MakeCorePlugin.log(e);
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+						MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
+			}
 		}
 		return document;
 	}
@@ -212,78 +210,81 @@ public final class DiscoveredScannerInfoStore {
 		rootElem.appendChild(collectorElem);
 	}
 
-	private Element findChild(Element parentElem, String name, String attr, String attrValue){
-        Element cfgElem = null;
-        NodeList cfgList = parentElem.getElementsByTagName(name);
-        if (cfgList.getLength() > 0) {
-        	// find per file collector element and remove children
-        	for (int i = 0; i < cfgList.getLength(); ++i) {
-        		Element cElem = (Element) cfgList.item(i);
-        		String value = cElem.getAttribute(attr);
-        		if (value.equals(attrValue)) {
-        			cfgElem = cElem;
-        			break;
-        		}
-        	}
-        }
+	private Element findChild(Element parentElem, String name, String attr, String attrValue) {
+		Element cfgElem = null;
+		NodeList cfgList = parentElem.getElementsByTagName(name);
+		if (cfgList.getLength() > 0) {
+			// find per file collector element and remove children
+			for (int i = 0; i < cfgList.getLength(); ++i) {
+				Element cElem = (Element) cfgList.item(i);
+				String value = cElem.getAttribute(attr);
+				if (value.equals(attrValue)) {
+					cfgElem = cElem;
+					break;
+				}
+			}
+		}
 
-        return cfgElem;
+		return cfgElem;
 	}
 
-	private void saveDiscoveredScannerInfo(InfoContext context, IDiscoveredScannerInfoSerializable serializable, Document doc) {
+	private void saveDiscoveredScannerInfo(InfoContext context, IDiscoveredScannerInfoSerializable serializable,
+			Document doc) {
 		NodeList rootList = doc.getElementsByTagName(SI_ELEM);
 		if (rootList.getLength() > 0) {
 			Element rootElem = (Element) rootList.item(0);
 
 			// get the collector element
-			if(!context.isDefaultContext()){
+			if (!context.isDefaultContext()) {
 				String instanceId = context.getInstanceId();
 
 				Element instanceElem = findChild(rootElem, INSTANCE_ELEM, ID_ATTR, instanceId);
 
-				if(instanceElem == null){
-		        	instanceElem = doc.createElement(INSTANCE_ELEM);
-		        	instanceElem.setAttribute(ID_ATTR, instanceId);
-		        	rootElem.appendChild(instanceElem);
-		        }
+				if (instanceElem == null) {
+					instanceElem = doc.createElement(INSTANCE_ELEM);
+					instanceElem.setAttribute(ID_ATTR, instanceId);
+					rootElem.appendChild(instanceElem);
+				}
 
-	        	rootElem = instanceElem;
+				rootElem = instanceElem;
 			}
 
 			// get the collector element
-	        Element collectorElem = null;
-	        NodeList collectorList = rootElem.getElementsByTagName(COLLECTOR_ELEM);
-	        if (collectorList.getLength() > 0) {
-	        	// find per file collector element and remove children
-	        	for (int i = 0; i < collectorList.getLength(); ++i) {
-	        		Element cElem = (Element) collectorList.item(i);
-	        		String collectorId = cElem.getAttribute(ID_ATTR);
-	        		if (serializable.getCollectorId().equals(collectorId)) {
-	        			for (Node child = cElem.getFirstChild(); child != null;
-	        					child = cElem.getFirstChild()) {
-	        				cElem.removeChild(child);
-	        			}
-	        			collectorElem = cElem;
-	        			break;
-	        		}
-	        	}
-	        }
-	        if (collectorElem == null) {
-	        	// create per profile element
-	        	collectorElem = doc.createElement(COLLECTOR_ELEM);
-	        	collectorElem.setAttribute(ID_ATTR, serializable.getCollectorId());
-	        	rootElem.appendChild(collectorElem);
-	        }
+			Element collectorElem = null;
+			NodeList collectorList = rootElem.getElementsByTagName(COLLECTOR_ELEM);
+			if (collectorList.getLength() > 0) {
+				// find per file collector element and remove children
+				for (int i = 0; i < collectorList.getLength(); ++i) {
+					Element cElem = (Element) collectorList.item(i);
+					String collectorId = cElem.getAttribute(ID_ATTR);
+					if (serializable.getCollectorId().equals(collectorId)) {
+						for (Node child = cElem.getFirstChild(); child != null; child = cElem.getFirstChild()) {
+							cElem.removeChild(child);
+						}
+						collectorElem = cElem;
+						break;
+					}
+				}
+			}
+			if (collectorElem == null) {
+				// create per profile element
+				collectorElem = doc.createElement(COLLECTOR_ELEM);
+				collectorElem.setAttribute(ID_ATTR, serializable.getCollectorId());
+				rootElem.appendChild(collectorElem);
+			}
 
 			// Save the discovered scanner info
 			serializable.serialize(collectorElem);
 		}
 	}
-	public void saveDiscoveredScannerInfoToState(IProject project, IDiscoveredScannerInfoSerializable serializable) throws CoreException {
+
+	public void saveDiscoveredScannerInfoToState(IProject project, IDiscoveredScannerInfoSerializable serializable)
+			throws CoreException {
 		saveDiscoveredScannerInfoToState(project, new InfoContext(project), serializable);
 	}
 
-	public void saveDiscoveredScannerInfoToState(IProject project, InfoContext context, IDiscoveredScannerInfoSerializable serializable) throws CoreException {
+	public void saveDiscoveredScannerInfoToState(IProject project, InfoContext context,
+			IDiscoveredScannerInfoSerializable serializable) throws CoreException {
 		Document document = getDocument(project);
 		// Create document
 		try {
@@ -323,98 +324,95 @@ public final class DiscoveredScannerInfoStore {
 		}
 	}
 
-    public IPath getDiscoveredScannerConfigStore(IProject project) {
-        String fileName = project.getName() + ".sc"; //$NON-NLS-1$
-        String storedFileName = null;
-        try {
-            storedFileName = project.getPersistentProperty(dscFileNameProperty);
-        } catch (CoreException e) {
-            MakeCorePlugin.log(e.getStatus());
-        }
-        if (storedFileName != null && !storedFileName.equals(fileName)) {
-            // try to move 2.x file name format to 3.x file name format
-            movePluginStateFile(storedFileName, fileName);
-        }
-        try {
-            project.setPersistentProperty(dscFileNameProperty, fileName);
-        } catch (CoreException e) {
-            MakeCorePlugin.log(e.getStatus());
-        }
+	public IPath getDiscoveredScannerConfigStore(IProject project) {
+		String fileName = project.getName() + ".sc"; //$NON-NLS-1$
+		String storedFileName = null;
+		try {
+			storedFileName = project.getPersistentProperty(dscFileNameProperty);
+		} catch (CoreException e) {
+			MakeCorePlugin.log(e.getStatus());
+		}
+		if (storedFileName != null && !storedFileName.equals(fileName)) {
+			// try to move 2.x file name format to 3.x file name format
+			movePluginStateFile(storedFileName, fileName);
+		}
+		try {
+			project.setPersistentProperty(dscFileNameProperty, fileName);
+		} catch (CoreException e) {
+			MakeCorePlugin.log(e.getStatus());
+		}
 
-        return MakeCorePlugin.getWorkingDirectory().append(fileName);
-    }
+		return MakeCorePlugin.getWorkingDirectory().append(fileName);
+	}
 
-    public void updateScannerConfigStore(IResourceDelta delta) {
-        try {
-            delta.accept(new IResourceDeltaVisitor() {
+	public void updateScannerConfigStore(IResourceDelta delta) {
+		try {
+			delta.accept(new IResourceDeltaVisitor() {
 
-                @Override
+				@Override
 				public boolean visit(IResourceDelta delta) throws CoreException {
-                    IResource resource = delta.getResource();
-                    if (resource instanceof IProject) {
-                        IProject project = (IProject) resource;
-                        int kind = delta.getKind();
-                        switch (kind) {
-                        case IResourceDelta.REMOVED:
-                            if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
-                                // project renamed
-                                IPath newPath = delta.getMovedToPath();
-                                IProject newProject = delta.getResource().getWorkspace().
-                                        getRoot().getProject(newPath.toString());
-                                scProjectRenamed(project, newProject);
-                            }
-                            else {
-                                // project deleted
-                                scProjectDeleted(project);
-                            }
-                            // remove from cache
-                            fDocumentCache.remove(project);
-                        }
-                        return false;
-                    }
-                    return true;
-                }
+					IResource resource = delta.getResource();
+					if (resource instanceof IProject) {
+						IProject project = (IProject) resource;
+						int kind = delta.getKind();
+						switch (kind) {
+						case IResourceDelta.REMOVED:
+							if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
+								// project renamed
+								IPath newPath = delta.getMovedToPath();
+								IProject newProject = delta.getResource().getWorkspace().getRoot()
+										.getProject(newPath.toString());
+								scProjectRenamed(project, newProject);
+							} else {
+								// project deleted
+								scProjectDeleted(project);
+							}
+							// remove from cache
+							fDocumentCache.remove(project);
+						}
+						return false;
+					}
+					return true;
+				}
 
-            });
-        }
-        catch (CoreException e) {
-            MakeCorePlugin.log(e);
-        }
-    }
+			});
+		} catch (CoreException e) {
+			MakeCorePlugin.log(e);
+		}
+	}
 
-    private void scProjectDeleted(IProject project) {
-        String scFileName = project.getName() + ".sc"; //$NON-NLS-1$
-        deletePluginStateFile(scFileName);
-    }
+	private void scProjectDeleted(IProject project) {
+		String scFileName = project.getName() + ".sc"; //$NON-NLS-1$
+		deletePluginStateFile(scFileName);
+	}
 
-    private void deletePluginStateFile(String scFileName) {
-        IPath path = MakeCorePlugin.getWorkingDirectory().append(scFileName);
-        File file = path.toFile();
-        if (file.exists()) {
-            file.delete();
-        }
-    }
+	private void deletePluginStateFile(String scFileName) {
+		IPath path = MakeCorePlugin.getWorkingDirectory().append(scFileName);
+		File file = path.toFile();
+		if (file.exists()) {
+			file.delete();
+		}
+	}
 
-    private void scProjectRenamed(IProject project, IProject newProject) {
-        String scOldFileName = project.getName() + ".sc"; //$NON-NLS-1$
-        String scNewFileName = newProject.getName() + ".sc"; //$NON-NLS-1$
-        movePluginStateFile(scOldFileName, scNewFileName);
-        try {
-            newProject.setPersistentProperty(dscFileNameProperty, scNewFileName);
-        }
-        catch (CoreException e) {
-            MakeCorePlugin.log(e);
-        }
-    }
+	private void scProjectRenamed(IProject project, IProject newProject) {
+		String scOldFileName = project.getName() + ".sc"; //$NON-NLS-1$
+		String scNewFileName = newProject.getName() + ".sc"; //$NON-NLS-1$
+		movePluginStateFile(scOldFileName, scNewFileName);
+		try {
+			newProject.setPersistentProperty(dscFileNameProperty, scNewFileName);
+		} catch (CoreException e) {
+			MakeCorePlugin.log(e);
+		}
+	}
 
-    private void movePluginStateFile(String oldFileName, String newFileName) {
-        IPath oldPath = MakeCorePlugin.getWorkingDirectory().append(oldFileName);
-        IPath newPath = MakeCorePlugin.getWorkingDirectory().append(newFileName);
-        File oldFile = oldPath.toFile();
-        File newFile = newPath.toFile();
-        if (oldFile.exists()) {
-            oldFile.renameTo(newFile);
-        }
-    }
+	private void movePluginStateFile(String oldFileName, String newFileName) {
+		IPath oldPath = MakeCorePlugin.getWorkingDirectory().append(oldFileName);
+		IPath newPath = MakeCorePlugin.getWorkingDirectory().append(newFileName);
+		File oldFile = oldPath.toFile();
+		File newFile = newPath.toFile();
+		if (oldFile.exists()) {
+			oldFile.renameTo(newFile);
+		}
+	}
 
 }

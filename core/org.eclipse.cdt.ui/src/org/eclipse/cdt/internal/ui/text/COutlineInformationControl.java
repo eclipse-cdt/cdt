@@ -45,50 +45,51 @@ import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
  */
 public class COutlineInformationControl extends AbstractInformationControl {
 
-	private static final long TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
+	private static final long TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS
+			| CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
 	private static final int IMAGE_FLAGS = AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS;
 
 	private ICElement fInput = null;
-	
-    private IContentProvider fOutlineContentProvider;
 
-    /** The action to toggle sorting */
+	private IContentProvider fOutlineContentProvider;
+
+	/** The action to toggle sorting */
 	private LexicalSortingAction fSortingAction;
 
-    /**
-     * Creates new outline control.
-     * 
-     * @param parent
-     *            Shell parent.
-     * @param shellStyle
-     *            Style of new shell.
-     * @param treeStyle
-     *            Style of the tree viewer.
-     */
-    public COutlineInformationControl(Shell parent, int shellStyle, int treeStyle) {
-        super(parent, shellStyle, treeStyle, null, false);
-    }
+	/**
+	 * Creates new outline control.
+	 * 
+	 * @param parent
+	 *            Shell parent.
+	 * @param shellStyle
+	 *            Style of new shell.
+	 * @param treeStyle
+	 *            Style of the tree viewer.
+	 */
+	public COutlineInformationControl(Shell parent, int shellStyle, int treeStyle) {
+		super(parent, shellStyle, treeStyle, null, false);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-    @Override
+	@Override
 	protected TreeViewer createTreeViewer(Composite parent, int treeStyle) {
-        TreeViewer treeViewer = new ProblemTreeViewer(parent, treeStyle);
-        final Tree tree = treeViewer.getTree();
-        tree.setLayoutData(new GridData(GridData.FILL_BOTH));
-        fOutlineContentProvider = new CContentOutlinerProvider(treeViewer);
-        treeViewer.setContentProvider(fOutlineContentProvider);
-        fSortingAction= new LexicalSortingAction(treeViewer, ".isChecked"); //$NON-NLS-1$
+		TreeViewer treeViewer = new ProblemTreeViewer(parent, treeStyle);
+		final Tree tree = treeViewer.getTree();
+		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fOutlineContentProvider = new CContentOutlinerProvider(treeViewer);
+		treeViewer.setContentProvider(fOutlineContentProvider);
+		fSortingAction = new LexicalSortingAction(treeViewer, ".isChecked"); //$NON-NLS-1$
 		treeViewer.addFilter(new NamePatternFilter());
 		long textFlags = TEXT_FLAGS;
 		if (PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS))
 			textFlags = textFlags | CElementLabels.M_SIMPLE_NAME | CElementLabels.F_SIMPLE_NAME;
-		treeViewer.setLabelProvider(new DecoratingCLabelProvider(new AppearanceAwareLabelProvider(textFlags,
-				IMAGE_FLAGS), true));
-        treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-        return treeViewer;
-    }
+		treeViewer.setLabelProvider(
+				new DecoratingCLabelProvider(new AppearanceAwareLabelProvider(textFlags, IMAGE_FLAGS), true));
+		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		return treeViewer;
+	}
 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractInformationControl#getId()
@@ -107,8 +108,8 @@ public class COutlineInformationControl extends AbstractInformationControl {
 			inputChanged(null, null);
 			return;
 		}
-		ICElement ce = (ICElement)information;
-		ITranslationUnit tu = (ITranslationUnit)ce.getAncestor(ICElement.C_UNIT);
+		ICElement ce = (ICElement) information;
+		ITranslationUnit tu = (ITranslationUnit) ce.getAncestor(ICElement.C_UNIT);
 		if (tu != null)
 			fInput = tu;
 

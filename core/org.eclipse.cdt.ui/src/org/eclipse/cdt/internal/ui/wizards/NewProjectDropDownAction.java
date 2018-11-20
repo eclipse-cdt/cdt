@@ -20,10 +20,10 @@ import org.eclipse.ui.PlatformUI;
 public class NewProjectDropDownAction extends AbstractWizardDropDownAction {
 
 	public NewProjectDropDownAction() {
-	    super();
+		super();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.OPEN_PROJECT_WIZARD_ACTION);
 	}
-	
+
 	@Override
 	protected IAction[] getWizardActions() {
 		return CWizardRegistry.getProjectWizardActions();

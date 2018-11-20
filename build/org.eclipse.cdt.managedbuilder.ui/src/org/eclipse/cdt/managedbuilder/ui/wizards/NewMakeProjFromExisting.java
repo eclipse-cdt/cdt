@@ -75,8 +75,8 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 
 		IRunnableWithProgress op = new WorkspaceModifyOperation() {
 			@Override
-			protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException,
-					InterruptedException {
+			protected void execute(IProgressMonitor monitor)
+					throws CoreException, InvocationTargetException, InterruptedException {
 				monitor.beginTask(Messages.NewMakeProjFromExisting_1, 10);
 
 				// Create Project
@@ -108,8 +108,9 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 					monitor.worked(1);
 
 					CfgHolder cfgHolder = new CfgHolder(toolChain, null);
-					String s = toolChain == null ? "0" : ((ToolChain)toolChain).getId(); //$NON-NLS-1$
-					Configuration config = new Configuration(mProj, (ToolChain)toolChain, ManagedBuildManager.calculateChildId(s, null), cfgHolder.getName());
+					String s = toolChain == null ? "0" : ((ToolChain) toolChain).getId(); //$NON-NLS-1$
+					Configuration config = new Configuration(mProj, (ToolChain) toolChain,
+							ManagedBuildManager.calculateChildId(s, null), cfgHolder.getName());
 					IBuilder builder = config.getEditableBuilder();
 					builder.setManagedBuildOn(false);
 					CConfigurationData data = config.getConfigurationData();

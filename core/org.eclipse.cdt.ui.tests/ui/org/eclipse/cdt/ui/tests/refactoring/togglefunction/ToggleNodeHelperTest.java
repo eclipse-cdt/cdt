@@ -31,7 +31,7 @@ public class ToggleNodeHelperTest extends TestCase {
 	public void testGetFilenameWithoutExtension1() {
 		assertEquals("MyClass", ToggleNodeHelper.getFilenameWithoutExtension("MyClass.h"));
 	}
-	
+
 	/**
 	 * Test method for {@link org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleNodeHelper#getFilenameWithoutExtension(java.lang.String)}.
 	 */

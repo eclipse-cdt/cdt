@@ -34,40 +34,34 @@ import org.eclipse.swt.widgets.TreeItem;
  * to call walk() to walk the tree and get an appropriate delta.
  */
 @SuppressWarnings("restriction") // allow access to internal classes
-public class DebugViewTreeWalker
-{
+public class DebugViewTreeWalker {
 	// --- members ---
 
 	/** Debug View tree viewer */
 	TreeModelViewer m_viewer = null;
 
-
 	// --- constructors/destructors ---
 
 	/** Constructor */
-	public DebugViewTreeWalker()
-	{
+	public DebugViewTreeWalker() {
 		m_viewer = DebugViewUtils.getDebugViewer();
 	}
-	
+
 	/** Dispose method */
-	public void dispose()
-	{
+	public void dispose() {
 		m_viewer = null;
 	}
 
-
 	// --- methods ---
-	
+
 	/** Walks the Debug View's tree,
 	 *  calling processElement for each element.
 	 */
-	public void walk()
-	{
+	public void walk() {
 		TreePath roots[] = getRootPaths();
-        for(TreePath path : roots) {
-            walk(path);
-        }
+		for (TreePath path : roots) {
+			walk(path);
+		}
 	}
 
 	/**
@@ -75,25 +69,25 @@ public class DebugViewTreeWalker
 	 * This method should invoke processElement on the element
 	 * itself, and walkChildren() to process the children of the element.
 	 */
-	public void walk(TreePath path)
-	{
-		if (path == null) return;
+	public void walk(TreePath path) {
+		if (path == null)
+			return;
 		boolean processChildren = processElement(path);
 		if (processChildren) {
 			walkChildren(path);
 		}
 	}
-	
+
 	/** Walks children of the specified element.
 	 *  This method should invoke walk() to process
 	 *  each child element.
 	 */
-	public void walkChildren(TreePath path)
-	{
-		if (path == null) return;
+	public void walkChildren(TreePath path) {
+		if (path == null)
+			return;
 		int children = m_viewer.getChildCount(path);
 		if (children > 0) {
-			for (int i=0; i<children; ++i) {
+			for (int i = 0; i < children; ++i) {
 				Object child = m_viewer.getChildElement(path, i);
 				if (child != null) {
 					TreePath childPath = path.createChildPath(child);
@@ -102,16 +96,14 @@ public class DebugViewTreeWalker
 			}
 		}
 	}
-	
+
 	/** Processes an element of the tree view.
 	 *  Returns true if children of this element should be processed,
 	 *  and false if they can be skipped.
 	 */
-	public boolean processElement(TreePath path)
-	{
+	public boolean processElement(TreePath path) {
 		return true;
 	}
-	
 
 	// --- tree path utilities ---
 
@@ -119,18 +111,17 @@ public class DebugViewTreeWalker
 	 * Gets tree path of root element(s). 
 	 * Note: each returned path is the root of a distinct debug session 
 	 */
-	public TreePath[] getRootPaths()
-	{		
+	public TreePath[] getRootPaths() {
 		List<TreePath> paths = new ArrayList<TreePath>();
-		
+
 		if (m_viewer != null) {
 			Tree tree = (Tree) m_viewer.getControl();
 			TreeItem[] items = tree.getItems();
-			
+
 			for (TreeItem item : items) {
 				Object root = (item == null) ? null : item.getData();
 				if (root != null) {
-					paths.add(new TreePath(new Object[] {root}));
+					paths.add(new TreePath(new Object[] { root }));
 				}
 			}
 		}
@@ -138,14 +129,12 @@ public class DebugViewTreeWalker
 	}
 
 	/** Gets tree path for child element. */
-	public static TreePath getChildPath(TreePath path, Object childElement)
-	{
+	public static TreePath getChildPath(TreePath path, Object childElement) {
 		return path.createChildPath(childElement);
 	}
-	
+
 	/** Gets element from path. */
-	public static Object getElement(TreePath path)
-	{
+	public static Object getElement(TreePath path) {
 		return (path == null) ? null : path.getLastSegment();
 	}
 }

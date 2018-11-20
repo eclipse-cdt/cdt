@@ -19,6 +19,7 @@ import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 public class GdbExtendedInfoThreadsAction extends Action {
 
 	private final ITerminalViewControl fTerminalCtrl;
+
 	public GdbExtendedInfoThreadsAction(ITerminalViewControl terminalControl) {
 		fTerminalCtrl = terminalControl;
 		if (fTerminalCtrl == null || fTerminalCtrl.isDisposed()) {

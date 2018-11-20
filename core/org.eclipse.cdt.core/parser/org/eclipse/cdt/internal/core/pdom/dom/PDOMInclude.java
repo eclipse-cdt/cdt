@@ -30,27 +30,27 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 public class PDOMInclude implements IIndexFragmentInclude {
-	private static final int INCLUDED_FILE		 	=  0;
-	private static final int INCLUDED_BY 			=  4;
-	private static final int INCLUDES_NEXT 			=  8;
-	private static final int INCLUDED_BY_NEXT 		= 12;
-	private static final int INCLUDED_BY_PREV 		= 16;
+	private static final int INCLUDED_FILE = 0;
+	private static final int INCLUDED_BY = 4;
+	private static final int INCLUDES_NEXT = 8;
+	private static final int INCLUDED_BY_NEXT = 12;
+	private static final int INCLUDED_BY_PREV = 16;
 	// If the include name is the same as the end part of the path of the included file,
 	// we store the length of the name instead of the name itself, and indicate that
 	// by turning on FLAG_DEDUCIBLE_NAME flag. Notice that the length of include name
 	// can be different from the node length, if the name is defined by a macro. 
 	private static final int INCLUDE_NAME_OR_LENGTH = 20; // TODO: assumes that int and stored pointers are the same size
-	private static final int NODE_OFFSET  			= 24; // 3-byte unsigned int (sufficient for files <= 16mb)
-	private static final int NODE_LENGTH  			= 27; // short (sufficient for names <= 32k)
-	private static final int FLAGS		 			= 29;
-	private static final int RECORD_SIZE 			= 30;
+	private static final int NODE_OFFSET = 24; // 3-byte unsigned int (sufficient for files <= 16mb)
+	private static final int NODE_LENGTH = 27; // short (sufficient for names <= 32k)
+	private static final int FLAGS = 29;
+	private static final int RECORD_SIZE = 30;
 
-	private static final int FLAG_SYSTEM_INCLUDE 		= 0x01;
-	private static final int FLAG_INACTIVE_INCLUDE 		= 0x02;
-	private static final int FLAG_RESOLVED_BY_HEURISTICS= 0x04;
-	private static final int FLAG_DEDUCIBLE_NAME		= 0x08;
-	private static final int FLAG_EXPORTED_FILE			= 0x10;
-	
+	private static final int FLAG_SYSTEM_INCLUDE = 0x01;
+	private static final int FLAG_INACTIVE_INCLUDE = 0x02;
+	private static final int FLAG_RESOLVED_BY_HEURISTICS = 0x04;
+	private static final int FLAG_DEDUCIBLE_NAME = 0x08;
+	private static final int FLAG_EXPORTED_FILE = 0x10;
+
 	private final PDOMLinkage linkage;
 	private final long record;
 
@@ -62,8 +62,8 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		this.record = record;
 	}
 
-	public PDOMInclude(PDOMLinkage linkage, IASTPreprocessorIncludeStatement include,
-			PDOMFile containerFile, PDOMFile targetFile) throws CoreException {
+	public PDOMInclude(PDOMLinkage linkage, IASTPreprocessorIncludeStatement include, PDOMFile containerFile,
+			PDOMFile targetFile) throws CoreException {
 		this.linkage = linkage;
 		this.record = linkage.getDB().malloc(RECORD_SIZE);
 		IASTName name = include.getName();
@@ -92,7 +92,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	}
 
 	private byte encodeFlags(IASTPreprocessorIncludeStatement include, boolean deducible_name) {
-		byte flags= 0;
+		byte flags = 0;
 		if (include.isSystemInclude()) {
 			flags |= FLAG_SYSTEM_INCLUDE;
 		}
@@ -265,7 +265,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	public boolean isIncludedFileExported() throws CoreException {
 		return (getFlag() & FLAG_EXPORTED_FILE) != 0;
 	}
-	
+
 	@Override
 	public int getNameOffset() throws CoreException {
 		return linkage.getDB().get3ByteUnsignedInt(record + NODE_OFFSET);
@@ -274,7 +274,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	@Override
 	public int getNameLength() throws CoreException {
 		return linkage.getDB().getShort(record + NODE_LENGTH) & 0xffff;
-	}	
+	}
 
 	@Override
 	public String getFullName() throws CoreException {
@@ -296,8 +296,8 @@ public class PDOMInclude implements IIndexFragmentInclude {
 
 	@Override
 	public String getName() throws CoreException {
-		final String fullName= getFullName();
-		final int idx= Math.max(fullName.lastIndexOf('/'), fullName.lastIndexOf('\\'));
+		final String fullName = getFullName();
+		final int idx = Math.max(fullName.lastIndexOf('/'), fullName.lastIndexOf('\\'));
 		return fullName.substring(idx + 1);
 	}
 
@@ -307,7 +307,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 			int flag = getFlag();
 			// Since included file is going away, the name is no longer deducible.
 			if ((flag & FLAG_DEDUCIBLE_NAME) != 0) {
-				long rec= db.newString(getFullName()).getRecord();
+				long rec = db.newString(getFullName()).getRecord();
 				db.putRecPtr(record + INCLUDE_NAME_OR_LENGTH, rec);
 				setFlag((byte) (flag & ~FLAG_DEDUCIBLE_NAME));
 			}

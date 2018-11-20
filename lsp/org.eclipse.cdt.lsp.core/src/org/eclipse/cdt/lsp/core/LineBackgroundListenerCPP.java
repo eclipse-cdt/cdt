@@ -33,14 +33,16 @@ public class LineBackgroundListenerCPP implements LineBackgroundListener {
 
 	@Override
 	public void lineGetBackground(LineBackgroundEvent event) {
-		lineBackgroundColor = new Color(Display.getCurrent(),PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), CEditor.INACTIVE_CODE_COLOR));
+		lineBackgroundColor = new Color(Display.getCurrent(),
+				PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), CEditor.INACTIVE_CODE_COLOR));
 		if (currentDocument == null) {
 			return;
 		}
 
 		Position[] inactivePositions = null;
 		try {
-			inactivePositions = currentDocument.getPositions(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
+			inactivePositions = currentDocument
+					.getPositions(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
 		} catch (BadPositionCategoryException e) {
 			Activator.log(e);
 		}
@@ -52,11 +54,12 @@ public class LineBackgroundListenerCPP implements LineBackgroundListener {
 		try {
 			for (Position eachInactivePosition : inactivePositions) {
 				int regionStartLine = currentDocument.getLineOfOffset(eachInactivePosition.getOffset());
-				int regionEndLine = currentDocument.getLineOfOffset(eachInactivePosition.getOffset() + eachInactivePosition.getLength());
+				int regionEndLine = currentDocument
+						.getLineOfOffset(eachInactivePosition.getOffset() + eachInactivePosition.getLength());
 				if (event.lineOffset >= currentDocument.getLineOffset(regionStartLine)
-					&& event.lineOffset <= currentDocument.getLineOffset(regionEndLine)) {
-						event.lineBackground = lineBackgroundColor;
-						break;
+						&& event.lineOffset <= currentDocument.getLineOffset(regionEndLine)) {
+					event.lineBackground = lineBackgroundColor;
+					break;
 				}
 			}
 		} catch (BadLocationException e) {

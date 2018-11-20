@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.Collections;
@@ -29,30 +29,40 @@ import org.eclipse.core.runtime.jobs.Job;
  * Postpones indexer setup until there are no running refresh jobs.
  */
 public class WaitForRefreshJobs extends IndexerSetupParticipant {
-	private Set<ICProject> fProjects= new HashSet<ICProject>();
-	private Set<Job> fRefreshJobs= Collections.synchronizedSet(new HashSet<Job>());
-	
-	private IJobChangeListener fJobListener= new IJobChangeListener() {
+	private Set<ICProject> fProjects = new HashSet<ICProject>();
+	private Set<Job> fRefreshJobs = Collections.synchronizedSet(new HashSet<Job>());
+
+	private IJobChangeListener fJobListener = new IJobChangeListener() {
 		@Override
-		public void sleeping(IJobChangeEvent event) {}
+		public void sleeping(IJobChangeEvent event) {
+		}
+
 		@Override
-		public void scheduled(IJobChangeEvent event) {}
+		public void scheduled(IJobChangeEvent event) {
+		}
+
 		@Override
-		public void running(IJobChangeEvent event) {}
+		public void running(IJobChangeEvent event) {
+		}
+
 		@Override
 		public void done(IJobChangeEvent event) {
 			onJobDone(event.getJob());
 		}
+
 		@Override
-		public void awake(IJobChangeEvent event) {}
+		public void awake(IJobChangeEvent event) {
+		}
+
 		@Override
-		public void aboutToRun(IJobChangeEvent event) {}
+		public void aboutToRun(IJobChangeEvent event) {
+		}
 	};
 
 	@Override
 	public boolean postponeIndexerSetup(ICProject project) {
 		// Protect set of projects
-		synchronized(this) {
+		synchronized (this) {
 			if (isRefreshing()) {
 				fProjects.add(project);
 				return true;
@@ -71,13 +81,13 @@ public class WaitForRefreshJobs extends IndexerSetupParticipant {
 	private void checkNotifyIndexer() {
 		Set<ICProject> projects;
 		// Protect set of projects
-		synchronized(this) {
-			if (isRefreshing()) 
+		synchronized (this) {
+			if (isRefreshing())
 				return;
-			projects= fProjects;
-			fProjects= new HashSet<ICProject>();
+			projects = fProjects;
+			fProjects = new HashSet<ICProject>();
 		}
-		
+
 		for (ICProject project : projects) {
 			notifyIndexerSetup(project);
 		}
@@ -96,7 +106,7 @@ public class WaitForRefreshJobs extends IndexerSetupParticipant {
 
 		return false;
 	}
-	
+
 	private void updateRefreshJobs(Object jobFamily) {
 		IJobManager jobManager = Job.getJobManager();
 

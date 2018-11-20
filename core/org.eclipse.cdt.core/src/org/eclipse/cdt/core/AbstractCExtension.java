@@ -70,7 +70,7 @@ public abstract class AbstractCExtension extends PlatformObject implements ICExt
 		return fCfgExtensionRef;
 	}
 
-    // internal stuff
+	// internal stuff
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

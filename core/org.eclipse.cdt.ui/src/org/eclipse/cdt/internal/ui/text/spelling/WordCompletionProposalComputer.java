@@ -44,44 +44,47 @@ import org.eclipse.cdt.internal.ui.text.spelling.engine.RankedWordProposal;
  */
 public final class WordCompletionProposalComputer implements ICompletionProposalComputer {
 	/** The prefix rank shift */
-	private static final int PREFIX_RANK_SHIFT= 500;
+	private static final int PREFIX_RANK_SHIFT = 500;
 
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		if (contributes()) {
 			try {
-				IDocument document= context.getDocument();
-				final int offset= context.getInvocationOffset();
-			
-				final IRegion region= document.getLineInformationOfOffset(offset);
-				final String content= document.get(region.getOffset(), region.getLength());
-			
-				int index= offset - region.getOffset() - 1;
+				IDocument document = context.getDocument();
+				final int offset = context.getInvocationOffset();
+
+				final IRegion region = document.getLineInformationOfOffset(offset);
+				final String content = document.get(region.getOffset(), region.getLength());
+
+				int index = offset - region.getOffset() - 1;
 				while (index >= 0 && Character.isLetter(content.charAt(index)))
 					index--;
-			
-				final int start= region.getOffset() + index + 1;
-				final String candidate= content.substring(index + 1, offset - region.getOffset());
-			
+
+				final int start = region.getOffset() + index + 1;
+				final String candidate = content.substring(index + 1, offset - region.getOffset());
+
 				if (candidate.length() > 0) {
-					final ISpellCheckEngine engine= SpellCheckEngine.getInstance();
-					final ISpellChecker checker= engine.getSpellChecker();
-			
+					final ISpellCheckEngine engine = SpellCheckEngine.getInstance();
+					final ISpellChecker checker = engine.getSpellChecker();
+
 					if (checker != null) {
-						final List<RankedWordProposal> proposals= new ArrayList<RankedWordProposal>(checker.getProposals(candidate, Character.isUpperCase(candidate.charAt(0))));
-						final List<ICompletionProposal> result= new ArrayList<ICompletionProposal>(proposals.size());
-			
+						final List<RankedWordProposal> proposals = new ArrayList<RankedWordProposal>(
+								checker.getProposals(candidate, Character.isUpperCase(candidate.charAt(0))));
+						final List<ICompletionProposal> result = new ArrayList<ICompletionProposal>(proposals.size());
+
 						for (Object element : proposals) {
-							RankedWordProposal word= (RankedWordProposal) element;
-							String text= word.getText();
+							RankedWordProposal word = (RankedWordProposal) element;
+							String text = word.getText();
 							if (text.startsWith(candidate))
 								word.setRank(word.getRank() + PREFIX_RANK_SHIFT);
-							
+
 							result.add(new CCompletionProposal(text, start, candidate.length(),
-									CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_RENAME), text, word.getRank()) {
+									CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_RENAME), text,
+									word.getRank()) {
 								/*
 								 * @see org.eclipse.cdt.internal.ui.text.java.JavaCompletionProposal#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
 								 */
@@ -91,7 +94,7 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 								}
 							});
 						}
-						
+
 						return result;
 					}
 				}
@@ -111,7 +114,8 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		return Collections.emptyList();
 	}
 

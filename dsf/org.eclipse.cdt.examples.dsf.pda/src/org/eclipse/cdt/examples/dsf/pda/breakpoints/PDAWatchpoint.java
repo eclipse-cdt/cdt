@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IWatchpoint;
 
-
 /**
  * A watchpoint.
  * <p>
@@ -32,15 +31,15 @@ import org.eclipse.debug.core.model.IWatchpoint;
  * </p>
  */
 public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
-    
-    // 'read' or 'write' depending on what caused the last suspend for this watchpoint
-    private String fLastSuspendType;
-    
-    // marker attributes
-    public static final String ACCESS = "ACCESS";
-    public static final String MODIFICATION = "MODIFICATION";
-    public static final String FUNCTION_NAME = "FUNCTION_NAME";
-    public static final String VAR_NAME = "VAR_NAME";
+
+	// 'read' or 'write' depending on what caused the last suspend for this watchpoint
+	private String fLastSuspendType;
+
+	// marker attributes
+	public static final String ACCESS = "ACCESS";
+	public static final String MODIFICATION = "MODIFICATION";
+	public static final String FUNCTION_NAME = "FUNCTION_NAME";
+	public static final String VAR_NAME = "VAR_NAME";
 
 	/**
 	 * Default constructor is required for the breakpoint manager
@@ -48,8 +47,9 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	 * the <code>setMarker(...)</code> method is called to restore
 	 * this breakpoint's attributes.
 	 */
-    public PDAWatchpoint() {
+	public PDAWatchpoint() {
 	}
+
 	/**
 	 * Constructs a line breakpoint on the given resource at the given
 	 * line number. The line number is 1-based (i.e. the first line of a
@@ -64,7 +64,8 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	 * @param modification whether this in a modification watchpoint
 	 * @throws CoreException if unable to create the watchpoint
 	 */
-	public PDAWatchpoint(final IResource resource, final int lineNumber, final String functionName, final String varName, final boolean access, final boolean modification) throws CoreException {
+	public PDAWatchpoint(final IResource resource, final int lineNumber, final String functionName,
+			final String varName, final boolean access, final boolean modification) throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -76,108 +77,109 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 				setAccess(access);
 				setModification(modification);
 				setVariable(functionName, varName);
-				marker.setAttribute(IMarker.MESSAGE, "Watchpoint: " + resource.getName() + " [line: " + lineNumber + "]");
+				marker.setAttribute(IMarker.MESSAGE,
+						"Watchpoint: " + resource.getName() + " [line: " + lineNumber + "]");
 			}
 		};
 		run(getMarkerRule(resource), runnable);
-	}    
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#isAccess()
-     */
-    @Override
-    public boolean isAccess() throws CoreException {
-        return getMarker().getAttribute(ACCESS, true);
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IWatchpoint#isAccess()
+	 */
+	@Override
+	public boolean isAccess() throws CoreException {
+		return getMarker().getAttribute(ACCESS, true);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#setAccess(boolean)
-     */
-    @Override
-    public void setAccess(boolean access) throws CoreException {
-        setAttribute(ACCESS, access);
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IWatchpoint#setAccess(boolean)
+	 */
+	@Override
+	public void setAccess(boolean access) throws CoreException {
+		setAttribute(ACCESS, access);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#isModification()
-     */
-    @Override
-    public boolean isModification() throws CoreException {
-        return getMarker().getAttribute(MODIFICATION, true);
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IWatchpoint#isModification()
+	 */
+	@Override
+	public boolean isModification() throws CoreException {
+		return getMarker().getAttribute(MODIFICATION, true);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#setModification(boolean)
-     */
-    @Override
-    public void setModification(boolean modification) throws CoreException {
-        setAttribute(MODIFICATION, modification); 
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IWatchpoint#setModification(boolean)
+	 */
+	@Override
+	public void setModification(boolean modification) throws CoreException {
+		setAttribute(MODIFICATION, modification);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#supportsAccess()
-     */
-    @Override
-    public boolean supportsAccess() {
-        return true;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IWatchpoint#supportsAccess()
+	 */
+	@Override
+	public boolean supportsAccess() {
+		return true;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#supportsModification()
-     */
-    @Override
-    public boolean supportsModification() {
-        return true;
-    }
-    
-    /**
-     * Sets the variable and function names the watchpoint is set on.
-     * 
-     * @param functionName function name
-     * @param variableName variable name
-     * @throws CoreException if an exception occurrs setting marker attribtues
-     */
-    protected void setVariable(String functionName, String variableName) throws CoreException {
-        setAttribute(VAR_NAME, variableName);
-        setAttribute(FUNCTION_NAME, functionName);
-    }
-    
-    /**
-     * Returns the name of the variable this watchpoint is set on.
-     * 
-     * @return the name of the variable this watchpoint is set on
-     * @throws CoreException if unable to access the attribute
-     */
-    public String getVariableName() throws CoreException {
-        return getMarker().getAttribute(VAR_NAME, (String)null);
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IWatchpoint#supportsModification()
+	 */
+	@Override
+	public boolean supportsModification() {
+		return true;
+	}
 
-    /**
-     * Returns the name of the function the variable associted with this watchpoint is defined in.
-     * 
-     * @return the name of the function the variable associted with this watchpoint is defined in
-     * @throws CoreException if unable to access the attribute
-     */
-    public String getFunctionName() throws CoreException {
-        return getMarker().getAttribute(FUNCTION_NAME, (String)null);
-    }    
-    
-    /**
-     * Sets the type of event that causes the last suspend event.
-     * 
-     * @param description one of 'read' or 'write'
-     */
-    public void setSuspendType(String description) {
-        fLastSuspendType = description;
-    }
-    
-    /**
-     * Returns the type of event that caused the last suspend.
-     * 
-     * @return 'read', 'write', or <code>null</code> if undefined
-     */
-    public String getSuspendType() {
-        return fLastSuspendType;
-    }
-	
+	/**
+	 * Sets the variable and function names the watchpoint is set on.
+	 * 
+	 * @param functionName function name
+	 * @param variableName variable name
+	 * @throws CoreException if an exception occurrs setting marker attribtues
+	 */
+	protected void setVariable(String functionName, String variableName) throws CoreException {
+		setAttribute(VAR_NAME, variableName);
+		setAttribute(FUNCTION_NAME, functionName);
+	}
+
+	/**
+	 * Returns the name of the variable this watchpoint is set on.
+	 * 
+	 * @return the name of the variable this watchpoint is set on
+	 * @throws CoreException if unable to access the attribute
+	 */
+	public String getVariableName() throws CoreException {
+		return getMarker().getAttribute(VAR_NAME, (String) null);
+	}
+
+	/**
+	 * Returns the name of the function the variable associted with this watchpoint is defined in.
+	 * 
+	 * @return the name of the function the variable associted with this watchpoint is defined in
+	 * @throws CoreException if unable to access the attribute
+	 */
+	public String getFunctionName() throws CoreException {
+		return getMarker().getAttribute(FUNCTION_NAME, (String) null);
+	}
+
+	/**
+	 * Sets the type of event that causes the last suspend event.
+	 * 
+	 * @param description one of 'read' or 'write'
+	 */
+	public void setSuspendType(String description) {
+		fLastSuspendType = description;
+	}
+
+	/**
+	 * Returns the type of event that caused the last suspend.
+	 * 
+	 * @return 'read', 'write', or <code>null</code> if undefined
+	 */
+	public String getSuspendType() {
+		return fLastSuspendType;
+	}
+
 }

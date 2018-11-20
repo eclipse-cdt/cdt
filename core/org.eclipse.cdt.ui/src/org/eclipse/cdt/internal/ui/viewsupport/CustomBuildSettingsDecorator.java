@@ -44,8 +44,10 @@ public class CustomBuildSettingsDecorator implements ILightweightLabelDecorator 
 	public void decorate(Object element, IDecoration decoration) {
 		if (element instanceof IFile || element instanceof IFolder) {
 			IResource rc = (IResource) element;
-			ICProjectDescriptionManager projectDescriptionManager = CoreModel.getDefault().getProjectDescriptionManager();
-			ICProjectDescription prjDescription = projectDescriptionManager.getProjectDescription(rc.getProject(), ICProjectDescriptionManager.GET_IF_LOADDED);
+			ICProjectDescriptionManager projectDescriptionManager = CoreModel.getDefault()
+					.getProjectDescriptionManager();
+			ICProjectDescription prjDescription = projectDescriptionManager.getProjectDescription(rc.getProject(),
+					ICProjectDescriptionManager.GET_IF_LOADDED);
 			if (prjDescription != null) {
 				ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 				if (cfgDescription != null) {
@@ -57,20 +59,23 @@ public class CustomBuildSettingsDecorator implements ILightweightLabelDecorator 
 	}
 
 	private static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
-		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(rc.getProject()) && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-				IContainer parent = rc.getParent();
-				List<String> languages = LanguageSettingsManager.getLanguages(rc, cfgDescription);
-				for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
-					for (String languageId : languages) {
-						List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
-						if (list != null) {
-							List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, parent, languageId);
-							// != is OK here due as the equal lists will have the same reference in WeakHashSet
-							if (list != listDefault)
-								return true;
-						}
+		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(rc.getProject())
+				&& cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			IContainer parent = rc.getParent();
+			List<String> languages = LanguageSettingsManager.getLanguages(rc, cfgDescription);
+			for (ILanguageSettingsProvider provider : ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders()) {
+				for (String languageId : languages) {
+					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
+					if (list != null) {
+						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, parent,
+								languageId);
+						// != is OK here due as the equal lists will have the same reference in WeakHashSet
+						if (list != listDefault)
+							return true;
 					}
 				}
+			}
 		}
 
 		ICResourceDescription rcDescription = cfgDescription.getResourceDescription(rc.getProjectRelativePath(), true);

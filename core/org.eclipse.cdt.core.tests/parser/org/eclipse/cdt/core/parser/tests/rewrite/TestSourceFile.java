@@ -30,12 +30,12 @@ public class TestSourceFile {
 	private String separator = System.getProperty("line.separator"); //$NON-NLS-1$
 	private int selectionStart = -1;
 	private int selectionEnd = -1;
-	
+
 	protected static final String selectionStartRegex = "//\\$"; //$NON-NLS-1$
 	protected static final String selectionEndRegex = "\\$//"; //$NON-NLS-1$
 	protected static final String selectionStartLineRegex = "(.*)(" + selectionStartRegex + ")(.*)"; //$NON-NLS-1$ //$NON-NLS-2$
-	protected static final String selectionEndLineRegex = "(.*)("+ selectionEndRegex + ")(.*)"; //$NON-NLS-1$ //$NON-NLS-2$
-	
+	protected static final String selectionEndLineRegex = "(.*)(" + selectionEndRegex + ")(.*)"; //$NON-NLS-1$ //$NON-NLS-2$
+
 	public TestSourceFile(String name) {
 		super();
 		this.name = name;
@@ -57,7 +57,7 @@ public class TestSourceFile {
 	public String getSource() {
 		return source.toString();
 	}
-	
+
 	public void addLineToSource(String code) {
 		Matcher start = createMatcherFromString(selectionStartLineRegex, code);
 		if (start.matches()) {
@@ -72,16 +72,16 @@ public class TestSourceFile {
 		source.append(code);
 		source.append(separator);
 	}
-	
+
 	public void addLineToExpectedSource(String code) {
 		expectedSource.append(code);
 		expectedSource.append(separator);
 	}
-	
+
 	public TextSelection getSelection() {
-		if (selectionStart < 0 || selectionEnd <0 )
+		if (selectionStart < 0 || selectionEnd < 0)
 			return null;
-		return new TextSelection(selectionStart, selectionEnd -selectionStart);
+		return new TextSelection(selectionStart, selectionEnd - selectionStart);
 	}
 
 	protected static Matcher createMatcherFromString(String pattern, String line) {

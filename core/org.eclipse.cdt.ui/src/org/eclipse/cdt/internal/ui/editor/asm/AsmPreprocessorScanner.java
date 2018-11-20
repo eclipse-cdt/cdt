@@ -39,13 +39,9 @@ import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 public class AsmPreprocessorScanner extends AbstractCScanner {
 
 	/** Properties for tokens. */
-	private static final String[] fgTokenProperties= {
-		ICColorConstants.C_SINGLE_LINE_COMMENT,
-		ICColorConstants.PP_DIRECTIVE,
-		ICColorConstants.C_STRING,
-		ICColorConstants.PP_HEADER,
-		ICColorConstants.PP_DEFAULT,
-	};
+	private static final String[] fgTokenProperties = { ICColorConstants.C_SINGLE_LINE_COMMENT,
+			ICColorConstants.PP_DIRECTIVE, ICColorConstants.C_STRING, ICColorConstants.PP_HEADER,
+			ICColorConstants.PP_DEFAULT, };
 
 	private IAsmLanguage fAsmLanguage;
 
@@ -57,7 +53,7 @@ public class AsmPreprocessorScanner extends AbstractCScanner {
 	public AsmPreprocessorScanner(ITokenStoreFactory factory, IAsmLanguage asmLanguage) {
 		super(factory.createTokenStore(fgTokenProperties));
 		Assert.isNotNull(asmLanguage);
-		fAsmLanguage= asmLanguage;
+		fAsmLanguage = asmLanguage;
 		setRules(createRules());
 	}
 
@@ -65,18 +61,19 @@ public class AsmPreprocessorScanner extends AbstractCScanner {
 	 * Creates rules used in this RulesBasedScanner
 	 */
 	protected List<IRule> createRules() {
-		List<IRule> rules= new ArrayList<IRule>();
-		IToken defaultToken= getToken(ICColorConstants.PP_DEFAULT);
+		List<IRule> rules = new ArrayList<IRule>();
+		IToken defaultToken = getToken(ICColorConstants.PP_DEFAULT);
 		IToken token;
 
 		// Add generic white space rule.
 		rules.add(new CWhitespaceRule(defaultToken));
 
-		token= getToken(ICColorConstants.PP_DIRECTIVE);
-		PreprocessorRule preprocessorRule= new PreprocessorRule(new CWordDetector(), defaultToken, getToken(ICColorConstants.C_SINGLE_LINE_COMMENT));
-		String[] ppKeywords= fAsmLanguage.getPreprocessorKeywords();
-		for (int i= 0; i < ppKeywords.length; i++) {
-			String ppKeyword= ppKeywords[i];
+		token = getToken(ICColorConstants.PP_DIRECTIVE);
+		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), defaultToken,
+				getToken(ICColorConstants.C_SINGLE_LINE_COMMENT));
+		String[] ppKeywords = fAsmLanguage.getPreprocessorKeywords();
+		for (int i = 0; i < ppKeywords.length; i++) {
+			String ppKeyword = ppKeywords[i];
 			if (ppKeyword.length() > 1) {
 				preprocessorRule.addWord(ppKeyword, token);
 			}
@@ -90,7 +87,7 @@ public class AsmPreprocessorScanner extends AbstractCScanner {
 		rules.add(headerRule);
 
 		token = getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);
-		IRule lineCommentRule= new EndOfLineRule("#", token); //$NON-NLS-1$
+		IRule lineCommentRule = new EndOfLineRule("#", token); //$NON-NLS-1$
 		rules.add(lineCommentRule);
 
 		//        token = getToken(ICColorConstants.C_MULTI_LINE_COMMENT);

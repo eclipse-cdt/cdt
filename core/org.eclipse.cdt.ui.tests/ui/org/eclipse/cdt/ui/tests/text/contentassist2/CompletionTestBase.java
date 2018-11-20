@@ -24,10 +24,10 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "CompletionTest.h";
 	private static final String SOURCE_FILE_NAME = "CompletionTest.cpp";
 	private static final String CURSOR_LOCATION_TAG = "/*cursor*/";
-	
+
 	protected int fCursorOffset;
 	protected IProject fProject;
-	
+
 	public CompletionTestBase(String name) {
 		super(name, true);
 	}
@@ -37,28 +37,30 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 	 */
 	@Override
 	protected IFile setUpProjectContent(IProject project) throws Exception {
-		fProject= project;
-		String headerContent= readTaggedComment(CompletionTestBase.class, HEADER_FILE_NAME);
-		StringBuilder sourceContent= getContentsForTest(1)[0];
+		fProject = project;
+		String headerContent = readTaggedComment(CompletionTestBase.class, HEADER_FILE_NAME);
+		StringBuilder sourceContent = getContentsForTest(1)[0];
 		sourceContent.insert(0, "#include \"" + HEADER_FILE_NAME + "\"\n");
-		fCursorOffset= sourceContent.indexOf(CURSOR_LOCATION_TAG);
+		fCursorOffset = sourceContent.indexOf(CURSOR_LOCATION_TAG);
 		assertTrue("No cursor location specified", fCursorOffset >= 0);
 		sourceContent.delete(fCursorOffset, fCursorOffset + CURSOR_LOCATION_TAG.length());
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}
-	
+
 	protected static final int DEFAULT_FLAGS = AbstractContentAssistTest.DEFAULT_FLAGS | IS_COMPLETION;
 
 	protected void assertCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, expected, DEFAULT_FLAGS, compareType);
 	}
 
-	protected void assertMinimumCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
+	protected void assertMinimumCompletionResults(int offset, String[] expected, CompareType compareType)
+			throws Exception {
 		assertContentAssistResults(offset, expected, DEFAULT_FLAGS | ALLOW_EXTRA_RESULTS, compareType);
 	}
-	
-	protected void assertOrderedCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
+
+	protected void assertOrderedCompletionResults(int offset, String[] expected, CompareType compareType)
+			throws Exception {
 		assertContentAssistResults(offset, expected, DEFAULT_FLAGS | CHECK_ORDER, compareType);
 	}
 
@@ -73,7 +75,7 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 	protected void assertParameterHint(String[] expected) throws Exception {
 		assertContentAssistResults(fCursorOffset, expected, AbstractContentAssistTest.DEFAULT_FLAGS, CONTEXT);
 	}
-	
+
 	protected void assertCursorPositionsAfterReplacement(int[] expected) throws Exception {
 		Object[] results = invokeContentAssist(fCursorOffset, 0, true, false, true).results;
 		assertEquals(expected.length, results.length);
@@ -82,7 +84,7 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 			assertEquals(expected[i], ((ICompletionProposal) results[i]).getSelection(getDocument()).x);
 		}
 	}
-	
+
 	protected void assertDotReplacedWithArrow() throws Exception {
 		assertEquals("->", getDocument().get(fCursorOffset - 1, 2));
 	}
@@ -95,19 +97,20 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 	protected void setReplaceDotWithArrow(boolean value) {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setValue(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW, value);
-		fProcessorNeedsConfiguring = true;  // to pick up the modified auto-activation preference
+		fProcessorNeedsConfiguring = true; // to pick up the modified auto-activation preference
 	}
-	
+
 	protected static void setDisplayDefaultedParameters(boolean value) {
 		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT, value);
+		preferenceStore.setValue(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT,
+				value);
 	}
-	
+
 	protected static void enableParameterGuessing(boolean value) {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setValue(ContentAssistPreference.GUESS_ARGUMENTS, value);
 	}
-	
+
 	//	{CompletionTest.h}
 	//	class C1;
 	//	class C2;
@@ -248,7 +251,7 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 	//        };
 	//      };
 	//    };
-    //
+	//
 	//    struct B {
 	//      using Test = A<0>::AA<0>;
 	//    };

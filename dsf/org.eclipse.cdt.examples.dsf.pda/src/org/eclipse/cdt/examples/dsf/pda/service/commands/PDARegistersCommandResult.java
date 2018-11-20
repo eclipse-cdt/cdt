@@ -19,26 +19,25 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 
-
 /**
  * @see PDARegistersCommand
  */
 @Immutable
 public class PDARegistersCommandResult extends PDACommandResult {
-    
-    /**
-     * Array of registers returned by the registers commands.  
-     */
-    final public PDARegister[] fRegisters;
-    
-    PDARegistersCommandResult(String response) {
-        super(response);
-        StringTokenizer st = new StringTokenizer(response, "#");
-        List<PDARegister> regList = new ArrayList<PDARegister>();
-        
-        while (st.hasMoreTokens()) {
-            regList.add(new PDARegister(st.nextToken()));
-        }
-        fRegisters = regList.toArray(new PDARegister[regList.size()]);
-    }
+
+	/**
+	 * Array of registers returned by the registers commands.  
+	 */
+	final public PDARegister[] fRegisters;
+
+	PDARegistersCommandResult(String response) {
+		super(response);
+		StringTokenizer st = new StringTokenizer(response, "#");
+		List<PDARegister> regList = new ArrayList<PDARegister>();
+
+		while (st.hasMoreTokens()) {
+			regList.add(new PDARegister(st.nextToken()));
+		}
+		fRegisters = regList.toArray(new PDARegister[regList.size()]);
+	}
 }

@@ -23,49 +23,48 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 
 public class SupplierBasedCdtVariableManager {
 
-	static public ICdtVariable getVariable(String macroName, IVariableContextInfo contextInfo, boolean includeParentContexts) {
- 		if(contextInfo == null || macroName == null)
+	static public ICdtVariable getVariable(String macroName, IVariableContextInfo contextInfo,
+			boolean includeParentContexts) {
+		if (contextInfo == null || macroName == null)
 			return null;
-		
-		do{
+
+		do {
 			ICdtVariableSupplier suppliers[] = contextInfo.getSuppliers();
-			if(suppliers != null){
+			if (suppliers != null) {
 				for (ICdtVariableSupplier supplier : suppliers) {
 					ICdtVariable macro = supplier.getVariable(macroName, contextInfo);
-					if(macro != null)
+					if (macro != null)
 						return macro;
 				}
 			}
-		}while(includeParentContexts && (contextInfo = contextInfo.getNext()) != null);
-		
+		} while (includeParentContexts && (contextInfo = contextInfo.getNext()) != null);
+
 		return null;
 	}
 
-	static public ICdtVariable[] getVariables(IVariableContextInfo contextInfo,
-			boolean includeParentContexts) {
-		if(contextInfo == null)
+	static public ICdtVariable[] getVariables(IVariableContextInfo contextInfo, boolean includeParentContexts) {
+		if (contextInfo == null)
 			return new ICdtVariable[0];
-		
+
 		Map<String, ICdtVariable> map = new HashMap<String, ICdtVariable>();
-		IVariableContextInfo infos[] = includeParentContexts ? 
-				getAllVariableContextInfos(contextInfo) :
-					new IVariableContextInfo[]{contextInfo};
-		
-		for(int k = infos.length - 1; k >= 0; k--){
+		IVariableContextInfo infos[] = includeParentContexts ? getAllVariableContextInfos(contextInfo)
+				: new IVariableContextInfo[] { contextInfo };
+
+		for (int k = infos.length - 1; k >= 0; k--) {
 			contextInfo = infos[k];
 			ICdtVariableSupplier suppliers[] = contextInfo.getSuppliers();
-			if(suppliers != null){
-				for(int i = suppliers.length - 1; i >= 0; i--){
+			if (suppliers != null) {
+				for (int i = suppliers.length - 1; i >= 0; i--) {
 					ICdtVariable macros[] = suppliers[i].getVariables(contextInfo);
-					if(macros != null){
+					if (macros != null) {
 						for (ICdtVariable macro : macros) {
-							map.put(macro.getName(),macro);
+							map.put(macro.getName(), macro);
 						}
 					}
 				}
 			}
 		}
-		
+
 		Collection<ICdtVariable> values = map.values();
 		return values.toArray(new ICdtVariable[values.size()]);
 	}
@@ -74,32 +73,32 @@ public class SupplierBasedCdtVariableManager {
 	 * returns an array of the IMacroContextInfo that holds the context informations
 	 * starting from the one passed to this method and including all subsequent parents
 	 */
-	private static IVariableContextInfo[] getAllVariableContextInfos(IVariableContextInfo contextInfo){
-		if(contextInfo == null)
+	private static IVariableContextInfo[] getAllVariableContextInfos(IVariableContextInfo contextInfo) {
+		if (contextInfo == null)
 			return null;
-			
+
 		List<IVariableContextInfo> list = new ArrayList<IVariableContextInfo>();
-	
+
 		list.add(contextInfo);
-			
-		while((contextInfo = contextInfo.getNext()) != null)
+
+		while ((contextInfo = contextInfo.getNext()) != null)
 			list.add(contextInfo);
-		
+
 		return list.toArray(new IVariableContextInfo[list.size()]);
 	}
-	
+
 	/*
 	 * returns true if the first passed contextInfo is the child of the second one
 	 */
-	public static boolean checkParentContextRelation(IVariableContextInfo child, IVariableContextInfo parent){
-		if(child == null || parent == null)
+	public static boolean checkParentContextRelation(IVariableContextInfo child, IVariableContextInfo parent) {
+		if (child == null || parent == null)
 			return false;
 
 		IVariableContextInfo enumInfo = child;
-		do{
-			if(parent.equals(enumInfo))
+		do {
+			if (parent.equals(enumInfo))
 				return true;
-		}while((enumInfo = enumInfo.getNext()) != null);
+		} while ((enumInfo = enumInfo.getNext()) != null);
 		return false;
 	}
 

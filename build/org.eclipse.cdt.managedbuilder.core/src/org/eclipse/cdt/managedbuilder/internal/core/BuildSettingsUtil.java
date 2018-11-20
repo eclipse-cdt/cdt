@@ -35,134 +35,128 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 public class BuildSettingsUtil {
-	private static final int[] COMMON_SETTINGS_IDS = new int[]{
-		IOption.INCLUDE_PATH,
-		IOption.PREPROCESSOR_SYMBOLS,
-		IOption.LIBRARIES,
-		IOption.OBJECTS,
-		IOption.INCLUDE_FILES,
-		IOption.LIBRARY_PATHS,
-		IOption.LIBRARY_FILES,
-		IOption.MACRO_FILES,
-	};
+	private static final int[] COMMON_SETTINGS_IDS = new int[] { IOption.INCLUDE_PATH, IOption.PREPROCESSOR_SYMBOLS,
+			IOption.LIBRARIES, IOption.OBJECTS, IOption.INCLUDE_FILES, IOption.LIBRARY_PATHS, IOption.LIBRARY_FILES,
+			IOption.MACRO_FILES, };
 
-	public static void disconnectDepentents(IConfiguration cfg, ITool[] tools){
-		for(int i = 0; i < tools.length; i++){
+	public static void disconnectDepentents(IConfiguration cfg, ITool[] tools) {
+		for (int i = 0; i < tools.length; i++) {
 			disconnectDepentents(cfg, tools[i]);
 		}
 	}
 
-	public static void disconnectDepentents(IConfiguration cfg, ITool tool){
+	public static void disconnectDepentents(IConfiguration cfg, ITool tool) {
 		ITool deps[] = getDependentTools(cfg, tool);
-		for(int i = 0; i < deps.length; i++){
+		for (int i = 0; i < deps.length; i++) {
 			disconnect(deps[i], tool);
 		}
 	}
-	
-	private static void disconnect(ITool child, ITool superClass){
+
+	private static void disconnect(ITool child, ITool superClass) {
 		ITool directChild = child;
-		for(;directChild != null; directChild = directChild.getSuperClass()){
-			if(superClass.equals(directChild.getSuperClass()))
+		for (; directChild != null; directChild = directChild.getSuperClass()) {
+			if (superClass.equals(directChild.getSuperClass()))
 				break;
 		}
-		
-		if(directChild == null)
+
+		if (directChild == null)
 			return;
-		
-		((Tool)directChild).copyNonoverriddenSettings((Tool)superClass);
-		((Tool)directChild).setSuperClass(superClass.getSuperClass());
+
+		((Tool) directChild).copyNonoverriddenSettings((Tool) superClass);
+		((Tool) directChild).setSuperClass(superClass.getSuperClass());
 	}
-	
-	public static ITool[] getDependentTools(IConfiguration cfg, ITool tool){
+
+	public static ITool[] getDependentTools(IConfiguration cfg, ITool tool) {
 		IResourceInfo rcInfos[] = cfg.getResourceInfos();
 		List<ITool> list = new ArrayList<ITool>();
-		for(int i = 0; i < rcInfos.length; i++){
+		for (int i = 0; i < rcInfos.length; i++) {
 			calcDependentTools(rcInfos[i], tool, list);
 		}
 		return list.toArray(new Tool[list.size()]);
 	}
-	
-	private static List<ITool> calcDependentTools(IResourceInfo info, ITool tool, List<ITool> list){
+
+	private static List<ITool> calcDependentTools(IResourceInfo info, ITool tool, List<ITool> list) {
 		return calcDependentTools(info.getTools(), tool, list);
 	}
-	
-	public static List<ITool> calcDependentTools(ITool tools[], ITool tool, List<ITool> list){
-		if(list == null)
+
+	public static List<ITool> calcDependentTools(ITool tools[], ITool tool, List<ITool> list) {
+		if (list == null)
 			list = new ArrayList<ITool>();
-		
-		for(int i = 0; i < tools.length; i++){
+
+		for (int i = 0; i < tools.length; i++) {
 			ITool superTool = tools[i];
-			for(;superTool != null; superTool = superTool.getSuperClass()){
-				if(superTool.equals(tool)){
+			for (; superTool != null; superTool = superTool.getSuperClass()) {
+				if (superTool.equals(tool)) {
 					list.add(tools[i]);
 				}
 			}
 		}
-		
+
 		return list;
 	}
 
-	public static void copyCommonSettings(ITool fromTool, ITool toTool){
-		Tool fromT = (Tool)fromTool;
-		Tool toT = (Tool)toTool;
+	public static void copyCommonSettings(ITool fromTool, ITool toTool) {
+		Tool fromT = (Tool) fromTool;
+		Tool toT = (Tool) toTool;
 		List<OptionStringValue> values = new ArrayList<OptionStringValue>();
-		for(int i = 0; i < COMMON_SETTINGS_IDS.length; i++){
+		for (int i = 0; i < COMMON_SETTINGS_IDS.length; i++) {
 			int type = COMMON_SETTINGS_IDS[i];
 			IOption[] toOptions = toT.getOptionsOfType(type);
-			if(toOptions.length == 0)
+			if (toOptions.length == 0)
 				continue;
 
 			IOption[] fromOptions = fromT.getOptionsOfType(type);
 			values.clear();
-			for(int k = 0; k < fromOptions.length; k++){
-				Option fromOption = (Option)fromOptions[k];
-				if(fromOption.getParent() != fromTool)
+			for (int k = 0; k < fromOptions.length; k++) {
+				Option fromOption = (Option) fromOptions[k];
+				if (fromOption.getParent() != fromTool)
 					continue;
-				
+
 				@SuppressWarnings("unchecked")
-				List<OptionStringValue> v = (List<OptionStringValue>)fromOption.getExactValue();
+				List<OptionStringValue> v = (List<OptionStringValue>) fromOption.getExactValue();
 				values.addAll(v);
 			}
-			
-			if(values.size() == 0)
+
+			if (values.size() == 0)
 				continue;
 
 			IOption toOption = toOptions[0];
-			
+
 			try {
 				OptionStringValue[] v = toOption.getBasicStringListValueElements();
-				if(v.length != 0)
+				if (v.length != 0)
 					values.addAll(Arrays.asList(v));
 			} catch (BuildException e) {
 				ManagedBuilderCorePlugin.log(e);
 			}
-			
+
 			OptionStringValue[] v = values.toArray(new OptionStringValue[values.size()]);
 			IResourceInfo rcInfo = toTool.getParentResourceInfo();
-			
+
 			ManagedBuildManager.setOption(rcInfo, toTool, toOption, v);
 
 			values.clear();
 		}
 	}
 
-	public static boolean applyConfiguration(IConfiguration cfg, ICProjectDescription des, boolean force) throws CoreException{
+	public static boolean applyConfiguration(IConfiguration cfg, ICProjectDescription des, boolean force)
+			throws CoreException {
 		boolean updated = false;
 		ICConfigurationDescription cfgDes = des.getConfigurationById(cfg.getId());
-		if(cfgDes == null){
+		if (cfgDes == null) {
 			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
 			updated = true;
-		} else if(force || cfg.isDirty()){
+		} else if (force || cfg.isDirty()) {
 			cfgDes.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
 			updated = true;
 		}
-		
+
 		return updated;
 	}
 
 	public static ICProjectDescription checkSynchBuildInfo(IProject project) throws CoreException {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project, false);
-		if(info == null)
+		if (info == null)
 			return null;
 
 		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
@@ -171,49 +165,51 @@ public class BuildSettingsUtil {
 		return projDes.isModified() ? projDes : null;
 	}
 
-	public static ICProjectDescription synchBuildInfo(IManagedBuildInfo info, ICProjectDescription projDes, boolean force) throws CoreException {
+	public static ICProjectDescription synchBuildInfo(IManagedBuildInfo info, ICProjectDescription projDes,
+			boolean force) throws CoreException {
 		IManagedProject mProj = info.getManagedProject();
-		
+
 		IConfiguration cfgs[] = mProj.getConfigurations();
 		ICConfigurationDescription cfgDess[] = projDes.getConfigurations();
-		
-		for(int i = 0; i < cfgs.length; i++){
+
+		for (int i = 0; i < cfgs.length; i++) {
 			IConfiguration cfg = cfgs[i];
-//			try {
-				applyConfiguration(cfg, projDes, force);
-//			} catch (CoreException e) {
-//			}
+			//			try {
+			applyConfiguration(cfg, projDes, force);
+			//			} catch (CoreException e) {
+			//			}
 		}
-		
-		for(int i = 0; i < cfgDess.length; i++){
+
+		for (int i = 0; i < cfgDess.length; i++) {
 			ICConfigurationDescription cfgDes = cfgDess[i];
 			IConfiguration cfg = mProj.getConfiguration(cfgDes.getId());
-			if(cfg == null){
+			if (cfg == null) {
 				projDes.removeConfiguration(cfgDes);
-//				mProj.removeConfiguration(cfgDes.getId());
+				//				mProj.removeConfiguration(cfgDes.getId());
 			}
 		}
 
 		return projDes;
 	}
 
-	public static void checkApplyDescription(IProject project, ICProjectDescription des) throws CoreException{
+	public static void checkApplyDescription(IProject project, ICProjectDescription des) throws CoreException {
 		checkApplyDescription(project, des, false);
 	}
 
-	public static void checkApplyDescription(IProject project, ICProjectDescription des, boolean avoidSerialization) throws CoreException{
+	public static void checkApplyDescription(IProject project, ICProjectDescription des, boolean avoidSerialization)
+			throws CoreException {
 		ICConfigurationDescription[] cfgs = des.getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			if(!ManagedBuildManager.CFG_DATA_PROVIDER_ID.equals(cfgs[i].getBuildSystemId()))
+		for (int i = 0; i < cfgs.length; i++) {
+			if (!ManagedBuildManager.CFG_DATA_PROVIDER_ID.equals(cfgs[i].getBuildSystemId()))
 				des.removeConfiguration(cfgs[i]);
 		}
-		
+
 		int flags = 0;
-		if(avoidSerialization)
-			flags |= ICProjectDescriptionManager.SET_NO_SERIALIZE; 
+		if (avoidSerialization)
+			flags |= ICProjectDescriptionManager.SET_NO_SERIALIZE;
 		CoreModel.getDefault().getProjectDescriptionManager().setProjectDescription(project, des, flags, null);
 	}
-	
+
 	public static ITool[] getToolsBySuperClassId(ITool[] tools, String id) {
 		List<ITool> retTools = new ArrayList<ITool>();
 		if (id != null) {
@@ -224,11 +220,11 @@ public class BuildSettingsUtil {
 					if (id.equals(tool.getId())) {
 						retTools.add(targetTool);
 						break;
-					}		
+					}
 					tool = tool.getSuperClass();
 				} while (tool != null);
 			}
 		}
-		return retTools.toArray( new ITool[retTools.size()]);
+		return retTools.toArray(new ITool[retTools.size()]);
 	}
 }

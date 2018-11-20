@@ -89,7 +89,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		loadFromManifest(element);
 
 		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
-		if(enablements.length > 0)
+		if (enablements.length > 0)
 			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
 
 		// Hook me up to the Managed Build Manager
@@ -197,7 +197,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		nameProviderElement = outputType.nameProviderElement;
 		nameProvider = outputType.nameProvider;
 
-		if(copyIds) {
+		if (copyIds) {
 			isDirty = outputType.isDirty;
 			rebuildState = outputType.rebuildState;
 		} else {
@@ -238,19 +238,19 @@ public class OutputType extends BuildObject implements IOutputType {
 		optionId = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OPTION));
 
 		// multipleOfType
-        String isMOT = element.getAttribute(IOutputType.MULTIPLE_OF_TYPE);
-        if (isMOT != null){
-    		multipleOfType = Boolean.parseBoolean(isMOT);
-        }
+		String isMOT = element.getAttribute(IOutputType.MULTIPLE_OF_TYPE);
+		if (isMOT != null) {
+			multipleOfType = Boolean.parseBoolean(isMOT);
+		}
 
 		// primaryInputType
 		primaryInputTypeId = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.PRIMARY_INPUT_TYPE));
 
 		// primaryOutput
-        String isPO = element.getAttribute(IOutputType.PRIMARY_OUTPUT);
-        if (isPO != null){
-    		primaryOutput = Boolean.parseBoolean(isPO);
-        }
+		String isPO = element.getAttribute(IOutputType.PRIMARY_OUTPUT);
+		if (isPO != null) {
+			primaryOutput = Boolean.parseBoolean(isPO);
+		}
 
 		// outputPrefix
 		outputPrefix = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OUTPUT_PREFIX));
@@ -267,7 +267,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		// Store the configuration element IFF there is a name provider defined
 		String nameProvider = element.getAttribute(IOutputType.NAME_PROVIDER);
 		if (nameProvider != null && element instanceof DefaultManagedConfigElement) {
-			nameProviderElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+			nameProviderElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
 	}
 
@@ -314,7 +314,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		// multipleOfType
 		if (element.getAttribute(IOutputType.MULTIPLE_OF_TYPE) != null) {
 			String isMOT = element.getAttribute(IOutputType.MULTIPLE_OF_TYPE);
-			if (isMOT != null){
+			if (isMOT != null) {
 				multipleOfType = Boolean.parseBoolean(isMOT);
 			}
 		}
@@ -326,12 +326,12 @@ public class OutputType extends BuildObject implements IOutputType {
 		}
 
 		// primaryOutput
-        if (element.getAttribute(IOutputType.PRIMARY_OUTPUT) != null) {
+		if (element.getAttribute(IOutputType.PRIMARY_OUTPUT) != null) {
 			String isPO = element.getAttribute(IOutputType.PRIMARY_OUTPUT);
-			if (isPO != null){
+			if (isPO != null) {
 				primaryOutput = Boolean.parseBoolean(isPO);
 			}
-        }
+		}
 
 		// outputPrefix
 		if (element.getAttribute(IOutputType.OUTPUT_PREFIX) != null) {
@@ -471,8 +471,8 @@ public class OutputType extends BuildObject implements IOutputType {
 					name = getId();
 				}
 				String defaultName = name.toUpperCase();
-				defaultName = defaultName.replaceAll("\\W", "_");  //$NON-NLS-1$  //$NON-NLS-2$
-				defaultName += "_OUTPUTS";	//$NON-NLS-1$
+				defaultName = defaultName.replaceAll("\\W", "_"); //$NON-NLS-1$  //$NON-NLS-2$
+				defaultName += "_OUTPUTS"; //$NON-NLS-1$
 				return defaultName;
 			}
 		}
@@ -484,7 +484,8 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	@Override
 	public void setBuildVariable(String variableName) {
-		if (variableName == null && buildVariable == null) return;
+		if (variableName == null && buildVariable == null)
+			return;
 		if (buildVariable == null || variableName == null || !(variableName.equals(buildVariable))) {
 			buildVariable = variableName;
 			setDirty(true);
@@ -501,7 +502,7 @@ public class OutputType extends BuildObject implements IOutputType {
 			if (superClass != null) {
 				return superClass.getMultipleOfType();
 			} else {
-				return false;	// default is false
+				return false; // default is false
 			}
 		}
 		return multipleOfType.booleanValue();
@@ -540,7 +541,8 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	@Override
 	public void setNamePattern(String pattern) {
-		if (pattern == null && namePattern == null) return;
+		if (pattern == null && namePattern == null)
+			return;
 		if (namePattern == null || pattern == null || !(pattern.equals(namePattern))) {
 			namePattern = pattern;
 			setDirty(true);
@@ -554,7 +556,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	public IConfigurationElement getNameProviderElement() {
 		if (nameProviderElement == null) {
 			if (superClass != null) {
-				return ((OutputType)superClass).getNameProviderElement();
+				return ((OutputType) superClass).getNameProviderElement();
 			}
 		}
 		return nameProviderElement;
@@ -584,7 +586,8 @@ public class OutputType extends BuildObject implements IOutputType {
 					nameProvider = (IManagedOutputNameProvider) element.createExecutableExtension(NAME_PROVIDER);
 					return nameProvider;
 				}
-			} catch (CoreException e) {}
+			} catch (CoreException e) {
+			}
 		}
 		return null;
 	}
@@ -609,7 +612,8 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	@Override
 	public void setOptionId(String id) {
-		if (id == null && optionId == null) return;
+		if (id == null && optionId == null)
+			return;
 		if (id == null || optionId == null || !(optionId.equals(id))) {
 			optionId = id;
 			setDirty(true);
@@ -669,7 +673,8 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	@Override
 	public void setOutputExtensionsAttribute(String exts) {
-		if (exts == null && outputs == null) return;
+		if (exts == null && outputs == null)
+			return;
 		if (outputs == null || exts == null || !(exts.equals(outputs))) {
 			outputs = exts;
 			setDirty(true);
@@ -681,7 +686,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		//  Use content type if specified and registered with Eclipse
 		IContentType type = getOutputContentType();
 		if (type != null) {
-			return ((Tool)tool).getContentTypeFileSpecs(type, project);
+			return ((Tool) tool).getContentTypeFileSpecs(type, project);
 		}
 		return getOutputExtensionsAttribute();
 	}
@@ -691,7 +696,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	@Override
 	public String[] getOutputExtensions(ITool tool) {
-		return getOutputExtensions(tool, ((Tool)tool).getProject());
+		return getOutputExtensions(tool, ((Tool) tool).getProject());
 	}
 
 	/* (non-Javadoc)
@@ -701,8 +706,9 @@ public class OutputType extends BuildObject implements IOutputType {
 	public boolean isOutputExtension(ITool tool, String ext) {
 		String[] exts = getOutputExtensions(tool);
 		if (exts != null) {
-			for (int i=0; i<exts.length; i++) {
-				if (ext.equals(exts[i])) return true;
+			for (int i = 0; i < exts.length; i++) {
+				if (ext.equals(exts[i]))
+					return true;
 			}
 		}
 		return false;
@@ -729,7 +735,8 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	@Override
 	public void setOutputPrefix(String prefix) {
-		if (prefix == null && outputPrefix == null) return;
+		if (prefix == null && outputPrefix == null)
+			return;
 		if (outputPrefix == null || prefix == null || !(prefix.equals(outputPrefix))) {
 			outputPrefix = prefix;
 			setDirty(true);
@@ -754,13 +761,13 @@ public class OutputType extends BuildObject implements IOutputType {
 		return nameTokens;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOuputType#setOutputNames()
 	 */
 	@Override
 	public void setOutputNames(String names) {
-		if (names == null && outputNames == null) return;
+		if (names == null && outputNames == null)
+			return;
 		if (outputNames == null || names == null || !(names.equals(outputNames))) {
 			outputNames = names;
 			setDirty(true);
@@ -811,7 +818,7 @@ public class OutputType extends BuildObject implements IOutputType {
 			if (superClass != null) {
 				return superClass.getPrimaryOutput();
 			} else {
-				return false;	// default is false
+				return false; // default is false
 			}
 		}
 		return primaryOutput.booleanValue();
@@ -847,7 +854,8 @@ public class OutputType extends BuildObject implements IOutputType {
 	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension OutputType
- 		if (isExtensionOutputType) return false;
+		if (isExtensionOutputType)
+			return false;
 		return isDirty;
 	}
 
@@ -870,10 +878,8 @@ public class OutputType extends BuildObject implements IOutputType {
 				superClass = ManagedBuildManager.getExtensionOutputType(superClassId);
 				if (superClass == null) {
 					// Report error
-					ManagedBuildManager.outputResolveError(
-							"superClass",	//$NON-NLS-1$
-							superClassId,
-							"outputType",	//$NON-NLS-1$
+					ManagedBuildManager.outputResolveError("superClass", //$NON-NLS-1$
+							superClassId, "outputType", //$NON-NLS-1$
 							getId());
 				}
 			}
@@ -896,8 +902,8 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	@Override
 	public String getManagedBuildRevision() {
-		if ( managedBuildRevision == null) {
-			if ( getParent() != null) {
+		if (managedBuildRevision == null) {
+			if (getParent() != null) {
 				return getParent().getManagedBuildRevision();
 			}
 		}
@@ -909,8 +915,8 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	@Override
 	public Version getVersion() {
-		if ( version == null) {
-			if ( getParent() != null) {
+		if (version == null) {
+			if (getParent() != null) {
 				return getParent().getVersion();
 			}
 		}
@@ -922,38 +928,38 @@ public class OutputType extends BuildObject implements IOutputType {
 		// Do nothing
 	}
 
-	public boolean needsRebuild(){
+	public boolean needsRebuild() {
 		return rebuildState;
 	}
 
-	public void setRebuildState(boolean rebuild){
-		if(isExtensionElement() && rebuild)
+	public void setRebuildState(boolean rebuild) {
+		if (isExtensionElement() && rebuild)
 			return;
 
 		rebuildState = rebuild;
 	}
 
-	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(){
-		if(booleanExpressionCalculator == null){
-			if(superClass != null){
-				return ((OutputType)superClass).getBooleanExpressionCalculator();
+	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator() {
+		if (booleanExpressionCalculator == null) {
+			if (superClass != null) {
+				return ((OutputType) superClass).getBooleanExpressionCalculator();
 			}
 		}
 		return booleanExpressionCalculator;
 	}
 
 	public boolean isEnabled(ITool tool) {
-		if(tool.isExtensionElement())
+		if (tool.isExtensionElement())
 			return true;
 
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
-		if(calc == null)
+		if (calc == null)
 			return true;
 
 		return calc.isOutputTypeEnabled(tool, this);
 	}
 
-	public boolean hasCustomSettings(){
+	public boolean hasCustomSettings() {
 		//TODO:
 		return false;
 	}

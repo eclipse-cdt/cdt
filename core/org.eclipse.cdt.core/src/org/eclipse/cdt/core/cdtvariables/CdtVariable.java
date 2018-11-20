@@ -28,27 +28,27 @@ public class CdtVariable implements ICdtVariable {
 	protected String fStringValue;
 	protected String fStringListValue[];
 
-	protected CdtVariable(){
+	protected CdtVariable() {
 
 	}
 
-	public CdtVariable(String name, int type, String value){
+	public CdtVariable(String name, int type, String value) {
 		fName = SafeStringInterner.safeIntern(name);
 		fType = type;
 		fStringValue = SafeStringInterner.safeIntern(value);
 	}
 
-	public CdtVariable(String name, int type, String value[]){
+	public CdtVariable(String name, int type, String value[]) {
 		fName = SafeStringInterner.safeIntern(name);
 		fType = type;
 		fStringListValue = value;
 	}
 
-	public CdtVariable(ICdtVariable var){
+	public CdtVariable(ICdtVariable var) {
 		fName = var.getName();
 		fType = var.getValueType();
 		try {
-			if(CdtVariableResolver.isStringListVariable(fType))
+			if (CdtVariableResolver.isStringListVariable(fType))
 				fStringListValue = var.getStringListValue();
 			else
 				fStringValue = var.getStringValue();
@@ -77,8 +77,8 @@ public class CdtVariable implements ICdtVariable {
 	 */
 	@Override
 	public String getStringValue() throws CdtVariableException {
-		if(CdtVariableResolver.isStringListVariable(fType))
-			throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_NOT_STRING,fName,null,fName);
+		if (CdtVariableResolver.isStringListVariable(fType))
+			throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_NOT_STRING, fName, null, fName);
 
 		return fStringValue;
 	}
@@ -88,8 +88,8 @@ public class CdtVariable implements ICdtVariable {
 	 */
 	@Override
 	public String[] getStringListValue() throws CdtVariableException {
-		if(!CdtVariableResolver.isStringListVariable(fType))
-			throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_NOT_STRINGLIST,fName,null,fName);
+		if (!CdtVariableResolver.isStringListVariable(fType))
+			throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_NOT_STRINGLIST, fName, null, fName);
 
 		return fStringListValue;
 	}

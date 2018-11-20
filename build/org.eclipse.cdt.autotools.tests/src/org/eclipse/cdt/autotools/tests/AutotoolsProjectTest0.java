@@ -28,25 +28,26 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class AutotoolsProjectTest0 {
-    
+
 	private IProject testProject;
+
 	@Before
-    public void setUp() throws Exception {
-        if (!ProjectTools.setup())
-        	fail("could not perform basic project workspace setup");
+	public void setUp() throws Exception {
+		if (!ProjectTools.setup())
+			fail("could not perform basic project workspace setup");
 		testProject = ProjectTools.createProject("testProject0");
 		if (testProject == null) {
-            fail("Unable to create test project");
-        }
+			fail("Unable to create test project");
+		}
 		testProject.open(new NullProgressMonitor());
-    }
-	
-    /**
-     * Test sample project which has a hello world program. The top-level 
-     * configure is found in the top-level directory.  The hello world source
-     * is found in sample/hello.c.
-     * @throws Exception
-     */
+	}
+
+	/**
+	 * Test sample project which has a hello world program. The top-level 
+	 * configure is found in the top-level directory.  The hello world source
+	 * is found in sample/hello.c.
+	 * @throws Exception
+	 */
 	@Test
 	public void testAutotoolsProject0() throws Exception {
 		Path p = new Path("zip/project1.zip");
@@ -72,6 +73,7 @@ public class AutotoolsProjectTest0 {
 		x = new org.eclipse.core.runtime.Path("sample/Makefile");
 		assertTrue(testProject.exists(x));
 	}
+
 	@After
 	public void tearDown() throws Exception {
 		testProject.refreshLocal(IResource.DEPTH_INFINITE, null);

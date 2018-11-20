@@ -66,9 +66,9 @@ public class ProblemTableViewer extends TableViewer {
 	}
 
 	private void initMapper() {
-		fResourceToItemsMapper= new ResourceToItemsMapper(this);
+		fResourceToItemsMapper = new ResourceToItemsMapper(this);
 	}
-	
+
 	/*
 	 * @see StructuredViewer#mapElement(Object, Widget)
 	 */
@@ -87,7 +87,7 @@ public class ProblemTableViewer extends TableViewer {
 	protected void unmapElement(Object element, Widget item) {
 		if (item instanceof Item) {
 			fResourceToItemsMapper.removeFromMap(element, (Item) item);
-		}		
+		}
 		super.unmapElement(element, item);
 	}
 
@@ -99,24 +99,24 @@ public class ProblemTableViewer extends TableViewer {
 		fResourceToItemsMapper.clearMap();
 		super.unmapAllElements();
 	}
-	
+
 	/*
 	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
 	 */
 	@Override
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 		if (event instanceof ProblemsLabelChangedEvent) {
-			ProblemsLabelChangedEvent e= (ProblemsLabelChangedEvent) event;
+			ProblemsLabelChangedEvent e = (ProblemsLabelChangedEvent) event;
 			if (!e.isMarkerChange() && canIgnoreChangesFromAnnotionModel()) {
 				return;
 			}
 		}
-		
-		Object[] changed= event.getElements();
+
+		Object[] changed = event.getElements();
 		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
-			ArrayList<Object> others= new ArrayList<Object>(changed.length);
-			for (int i= 0; i < changed.length; i++) {
-				Object curr= changed[i];
+			ArrayList<Object> others = new ArrayList<Object>(changed.length);
+			for (int i = 0; i < changed.length; i++) {
+				Object curr = changed[i];
 				if (curr instanceof IResource) {
 					fResourceToItemsMapper.resourceChanged((IResource) curr);
 				} else {
@@ -126,18 +126,18 @@ public class ProblemTableViewer extends TableViewer {
 			if (others.isEmpty()) {
 				return;
 			}
-			event= new LabelProviderChangedEvent((IBaseLabelProvider) event.getSource(), others.toArray());
+			event = new LabelProviderChangedEvent((IBaseLabelProvider) event.getSource(), others.toArray());
 		}
 		super.handleLabelProviderChanged(event);
 	}
-	
+
 	/**
 	 * Answers whether this viewer can ignore label provider changes resulting from
 	 * marker changes in annotation models
 	 */
 	private boolean canIgnoreChangesFromAnnotionModel() {
-//		Object contentProvider= getContentProvider();
-//		return contentProvider instanceof IWorkingCopyProvider && !((IWorkingCopyProvider)contentProvider).providesWorkingCopies();
+		//		Object contentProvider= getContentProvider();
+		//		return contentProvider instanceof IWorkingCopyProvider && !((IWorkingCopyProvider)contentProvider).providesWorkingCopies();
 		return true;
 	}
 }

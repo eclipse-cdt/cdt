@@ -21,7 +21,6 @@ import java.io.Reader;
  */
 public class MakefileReader extends LineNumberReader {
 
-
 	public MakefileReader(Reader reader) {
 		super(reader);
 	}
@@ -29,7 +28,6 @@ public class MakefileReader extends LineNumberReader {
 	public MakefileReader(Reader reader, int sz) {
 		super(reader, sz);
 	}
-
 
 	@Override
 	public String readLine() throws IOException {
@@ -47,7 +45,7 @@ public class MakefileReader extends LineNumberReader {
 				// Eat the spaces at the beginning.
 				int i = 0;
 				while (i < line.length() && (Util.isSpace(line.charAt(i)))) {
-					i++ ;
+					i++;
 				}
 				line = line.substring(i);
 			} else if (escapedCommand && line.length() > 0) {

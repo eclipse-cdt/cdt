@@ -64,7 +64,7 @@ public class GdbCatchpoints {
 				return eventId;
 			}
 		}
-	
+
 		// Don't assert. Caller may be using us to determine if a token is a
 		// catchpoint keyword. He may have parsed the keyword out from gdb/mi
 		// output.

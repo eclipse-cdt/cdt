@@ -87,14 +87,14 @@ public class ValueFactory {
 	public static IValue create(IASTExpression expr) {
 		try {
 			CPPSemantics.pushLookupPoint(expr);
-			IValue val= evaluate(expr);
+			IValue val = evaluate(expr);
 			if (val != null) {
 				return val;
 			}
-	
+
 			if (expr instanceof ICPPASTInitializerClause) {
 				ICPPEvaluation evaluation = ((ICPPASTInitializerClause) expr).getEvaluation();
-					return evaluation.getValue();
+				return evaluation.getValue();
 			}
 			return IntegralValue.UNKNOWN;
 		} finally {
@@ -245,12 +245,12 @@ public class ValueFactory {
 		case IASTBinaryExpression.op_notequals:
 			value = v1 != v2 ? 1l : 0l;
 			break;
-        case IASTBinaryExpression.op_max:
-        	value = Math.max(v1, v2);
-        	break;
-        case IASTBinaryExpression.op_min:
-        	value = Math.min(v1, v2);
-        	break;
+		case IASTBinaryExpression.op_max:
+			value = Math.max(v1, v2);
+			break;
+		case IASTBinaryExpression.op_min:
+			value = Math.min(v1, v2);
+			break;
 		}
 
 		if (value != null) {
@@ -267,16 +267,15 @@ public class ValueFactory {
 		return val;
 	}
 
-	public static IValue evaluateBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator operator,
-			IType type1, IType type2) {
+	public static IValue evaluateBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator operator, IType type1,
+			IType type2) {
 		IValue val = applyBinaryTypeIdOperator(operator, type1, type2);
 		if (isInvalidValue(val))
 			return IntegralValue.UNKNOWN;
 		return val;
 	}
-	
-	public static IValue evaluateNaryTypeIdExpression(Operator operator, IType[] operands, 
-			IBinding pointOfDefinition) {
+
+	public static IValue evaluateNaryTypeIdExpression(Operator operator, IType[] operands, IBinding pointOfDefinition) {
 		IValue val = applyNaryTypeIdOperator(operator, operands, pointOfDefinition);
 		if (isInvalidValue(val))
 			return IntegralValue.UNKNOWN;
@@ -289,13 +288,11 @@ public class ValueFactory {
 	private static IValue evaluate(IASTExpression exp) {
 		// Some C++ expression types can involve evaluating functions.
 		// For these, the value will be computed based on the evaluation.
-		if (exp instanceof ICPPASTFunctionCallExpression ||
-			exp instanceof ICPPASTSimpleTypeConstructorExpression ||
-			exp instanceof ICPPASTUnaryExpression || 
-			exp instanceof ICPPASTBinaryExpression) {
+		if (exp instanceof ICPPASTFunctionCallExpression || exp instanceof ICPPASTSimpleTypeConstructorExpression
+				|| exp instanceof ICPPASTUnaryExpression || exp instanceof ICPPASTBinaryExpression) {
 			return null;
 		}
-		
+
 		if (exp == null)
 			return IntegralValue.UNKNOWN;
 
@@ -312,12 +309,12 @@ public class ValueFactory {
 			return evaluateUnaryExpression((IASTUnaryExpression) exp);
 		}
 		if (exp instanceof IASTConditionalExpression) {
-			IASTConditionalExpression cexpr= (IASTConditionalExpression) exp;
-			IValue v= evaluate(cexpr.getLogicalConditionExpression());
+			IASTConditionalExpression cexpr = (IASTConditionalExpression) exp;
+			IValue v = evaluate(cexpr.getLogicalConditionExpression());
 			if (isInvalidValue(v))
 				return v;
 			if (isDeferredValue(v))
-				return null;  // The value will be computed using the evaluation.
+				return null; // The value will be computed using the evaluation.
 			Number numericValue = v.numberValue();
 			if (numericValue == null)
 				return IntegralValue.UNKNOWN;
@@ -329,11 +326,11 @@ public class ValueFactory {
 			return evaluate(pe);
 		}
 		if (exp instanceof IASTIdExpression) {
-			IBinding b= ((IASTIdExpression) exp).getName().resolvePreBinding();
+			IBinding b = ((IASTIdExpression) exp).getName().resolvePreBinding();
 			return evaluateBinding(b);
 		}
 		if (exp instanceof IASTLiteralExpression) {
-			IASTLiteralExpression litEx= (IASTLiteralExpression) exp;
+			IASTLiteralExpression litEx = (IASTLiteralExpression) exp;
 			switch (litEx.getKind()) {
 			case IASTLiteralExpression.lk_false:
 			case IASTLiteralExpression.lk_nullptr:
@@ -348,7 +345,7 @@ public class ValueFactory {
 				}
 			case IASTLiteralExpression.lk_char_constant:
 				try {
-					final char[] image= litEx.getValue();
+					final char[] image = litEx.getValue();
 					if (image.length > 1 && image[0] == 'L')
 						return IntegralValue.create(ExpressionEvaluator.getChar(image, 2));
 					return IntegralValue.create(ExpressionEvaluator.getChar(image, 1));
@@ -373,8 +370,8 @@ public class ValueFactory {
 		if (exp instanceof IASTBinaryTypeIdExpression) {
 			IASTBinaryTypeIdExpression typeIdExp = (IASTBinaryTypeIdExpression) exp;
 			ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
-			IType t1= ast.createType(typeIdExp.getOperand1());
-			IType t2= ast.createType(typeIdExp.getOperand2());
+			IType t1 = ast.createType(typeIdExp.getOperand1());
+			IType t2 = ast.createType(typeIdExp.getOperand2());
 			if (CPPTemplates.isDependentType(t1) || CPPTemplates.isDependentType(t2))
 				return null;
 			return applyBinaryTypeIdOperator(typeIdExp.getOperator(), t1, t2);
@@ -397,11 +394,11 @@ public class ValueFactory {
 			return null;
 		}
 
-		IValue value= null;
+		IValue value = null;
 		if (b instanceof IVariable) {
-			value= ((IVariable) b).getInitialValue();
+			value = ((IVariable) b).getInitialValue();
 		} else if (b instanceof IEnumerator) {
-			value= ((IEnumerator) b).getValue();
+			value = ((IEnumerator) b).getValue();
 		}
 		if (isInvalidValue(value)) {
 			return IntegralValue.UNKNOWN;
@@ -413,58 +410,60 @@ public class ValueFactory {
 		type = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
 
 		switch (operator) {
-			case op_sizeof:
-				return getSize(type);
-			case op_alignof:
-				return getAlignment(type);
-			case op_typeid:
-				break;
-			case op_has_nothrow_copy:
-				break;  // TODO(sprigogin): Implement
-			case op_has_nothrow_constructor:
-				break;  // TODO(sprigogin): Implement
-			case op_has_trivial_assign:
-				break;  // TODO(sprigogin): Implement
-			case op_has_trivial_constructor:
-				break;  // TODO(sprigogin): Implement
-			case op_has_trivial_copy:
-				return IntegralValue.create(!(type instanceof ICPPClassType) ||
-						TypeTraits.hasTrivialCopyCtor((ICPPClassType) type) ? 1 : 0);
-			case op_has_trivial_destructor:
-				break;  // TODO(sprigogin): Implement
-			case op_has_virtual_destructor:
-				break;  // TODO(sprigogin): Implement
-			case op_is_abstract:
-				return IntegralValue.create(type instanceof ICPPClassType &&
-						TypeTraits.isAbstract((ICPPClassType) type) ? 1 : 0);
-			case op_is_class:
-				return IntegralValue.create(type instanceof ICompositeType &&
-						((ICompositeType) type).getKey() != ICompositeType.k_union ? 1 : 0);
-			case op_is_empty:
-				return IntegralValue.create(TypeTraits.isEmpty(type) ? 1 : 0);
-			case op_is_enum:
-				return IntegralValue.create(type instanceof IEnumeration ? 1 : 0);
-			case op_is_final:
-				return IntegralValue.create(type instanceof ICPPClassType && ((ICPPClassType) type).isFinal() ? 1 : 0);
-			case op_is_literal_type:
-				break;  // TODO(sprigogin): Implement
-			case op_is_pod:
-				return IntegralValue.create(TypeTraits.isPOD(type) ? 1 : 0);
-			case op_is_polymorphic:
-				return IntegralValue.create(type instanceof ICPPClassType &&
-						TypeTraits.isPolymorphic((ICPPClassType) type) ? 1 : 0);
-			case op_is_standard_layout:
-				return IntegralValue.create(TypeTraits.isStandardLayout(type) ? 1 : 0);
-			case op_is_trivial:
-				return IntegralValue.create(type instanceof ICPPClassType &&
-						TypeTraits.isTrivial((ICPPClassType) type) ? 1 : 0);
-            case op_is_trivially_copyable:
-            	return IntegralValue.create(TypeTraits.isTriviallyCopyable(type) ? 1 : 0);
-			case op_is_union:
-				return IntegralValue.create(type instanceof ICompositeType &&
-						((ICompositeType) type).getKey() == ICompositeType.k_union ? 1 : 0);
-			case op_typeof:
-				break;
+		case op_sizeof:
+			return getSize(type);
+		case op_alignof:
+			return getAlignment(type);
+		case op_typeid:
+			break;
+		case op_has_nothrow_copy:
+			break; // TODO(sprigogin): Implement
+		case op_has_nothrow_constructor:
+			break; // TODO(sprigogin): Implement
+		case op_has_trivial_assign:
+			break; // TODO(sprigogin): Implement
+		case op_has_trivial_constructor:
+			break; // TODO(sprigogin): Implement
+		case op_has_trivial_copy:
+			return IntegralValue.create(
+					!(type instanceof ICPPClassType) || TypeTraits.hasTrivialCopyCtor((ICPPClassType) type) ? 1 : 0);
+		case op_has_trivial_destructor:
+			break; // TODO(sprigogin): Implement
+		case op_has_virtual_destructor:
+			break; // TODO(sprigogin): Implement
+		case op_is_abstract:
+			return IntegralValue
+					.create(type instanceof ICPPClassType && TypeTraits.isAbstract((ICPPClassType) type) ? 1 : 0);
+		case op_is_class:
+			return IntegralValue.create(
+					type instanceof ICompositeType && ((ICompositeType) type).getKey() != ICompositeType.k_union ? 1
+							: 0);
+		case op_is_empty:
+			return IntegralValue.create(TypeTraits.isEmpty(type) ? 1 : 0);
+		case op_is_enum:
+			return IntegralValue.create(type instanceof IEnumeration ? 1 : 0);
+		case op_is_final:
+			return IntegralValue.create(type instanceof ICPPClassType && ((ICPPClassType) type).isFinal() ? 1 : 0);
+		case op_is_literal_type:
+			break; // TODO(sprigogin): Implement
+		case op_is_pod:
+			return IntegralValue.create(TypeTraits.isPOD(type) ? 1 : 0);
+		case op_is_polymorphic:
+			return IntegralValue
+					.create(type instanceof ICPPClassType && TypeTraits.isPolymorphic((ICPPClassType) type) ? 1 : 0);
+		case op_is_standard_layout:
+			return IntegralValue.create(TypeTraits.isStandardLayout(type) ? 1 : 0);
+		case op_is_trivial:
+			return IntegralValue
+					.create(type instanceof ICPPClassType && TypeTraits.isTrivial((ICPPClassType) type) ? 1 : 0);
+		case op_is_trivially_copyable:
+			return IntegralValue.create(TypeTraits.isTriviallyCopyable(type) ? 1 : 0);
+		case op_is_union:
+			return IntegralValue.create(
+					type instanceof ICompositeType && ((ICompositeType) type).getKey() == ICompositeType.k_union ? 1
+							: 0);
+		case op_typeof:
+			break;
 		}
 		return IntegralValue.UNKNOWN;
 	}
@@ -472,19 +471,19 @@ public class ValueFactory {
 	private static IValue getAlignment(IType type) {
 		SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(type);
 		if (sizeAndAlignment == null)
-			 return IntegralValue.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 		return IntegralValue.create(sizeAndAlignment.alignment);
 	}
 
 	private static IValue getSize(IType type) {
 		SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(type);
 		if (sizeAndAlignment == null)
-			 return IntegralValue.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 		return IntegralValue.create(sizeAndAlignment.size);
 	}
 
 	private static IValue evaluateUnaryExpression(IASTUnaryExpression exp) {
-		final int unaryOp= exp.getOperator();
+		final int unaryOp = exp.getOperator();
 
 		if (unaryOp == IASTUnaryExpression.op_sizeof) {
 			final IASTExpression operand = exp.getOperand();
@@ -501,16 +500,16 @@ public class ValueFactory {
 			return IntegralValue.UNKNOWN;
 		}
 
-		if (unaryOp == IASTUnaryExpression.op_amper || unaryOp == IASTUnaryExpression.op_star ||
-				unaryOp == IASTUnaryExpression.op_sizeofParameterPack) {
+		if (unaryOp == IASTUnaryExpression.op_amper || unaryOp == IASTUnaryExpression.op_star
+				|| unaryOp == IASTUnaryExpression.op_sizeofParameterPack) {
 			return IntegralValue.UNKNOWN;
 		}
 
-		final IValue value= evaluate(exp.getOperand());
+		final IValue value = evaluate(exp.getOperand());
 		if (isInvalidValue(value))
 			return value;
 		if (isDeferredValue(value))
-			return null;  // the value will be computed using the evaluation
+			return null; // the value will be computed using the evaluation
 		return applyUnaryOperator(unaryOp, value);
 	}
 
@@ -570,7 +569,7 @@ public class ValueFactory {
 	}
 
 	private static IValue evaluateBinaryExpression(IASTBinaryExpression exp) {
-		final int op= exp.getOperator();
+		final int op = exp.getOperator();
 
 		// Optimization: if the operator is == or != and the AST nodes
 		// themselves are equal, we know the answer without having to
@@ -582,37 +581,36 @@ public class ValueFactory {
 			return IntegralValue.create(false);
 		}
 
-		final IValue o1= evaluate(exp.getOperand1());
+		final IValue o1 = evaluate(exp.getOperand1());
 		if (isInvalidValue(o1))
 			return o1;
-		final IValue o2= evaluate(exp.getOperand2());
+		final IValue o2 = evaluate(exp.getOperand2());
 		if (isInvalidValue(o2))
 			return o2;
 		if (isDeferredValue(o1) || isDeferredValue(o2))
-			return null;  // the value will be computed using the evaluation
+			return null; // the value will be computed using the evaluation
 		return evaluateBinaryExpression(op, o1, o2);
 	}
 
-	private static IValue applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator,
-			IType type1, IType type2) {
+	private static IValue applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator, IType type1,
+			IType type2) {
 		switch (operator) {
 		case __is_base_of:
 			type1 = SemanticUtil.getNestedType(type1, TDEF);
 			type2 = SemanticUtil.getNestedType(type2, TDEF);
-			if (type1 instanceof ICPPClassType && type2 instanceof ICPPClassType &&
-					(type1.isSameType(type2) ||
-							ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1))) {
+			if (type1 instanceof ICPPClassType && type2 instanceof ICPPClassType && (type1.isSameType(type2)
+					|| ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1))) {
 				return IntegralValue.create(1);
 			}
 			return IntegralValue.create(0);
 		case __is_trivially_assignable:
-			return IntegralValue.UNKNOWN;		// TODO: Implement.
+			return IntegralValue.UNKNOWN; // TODO: Implement.
 		}
 		return IntegralValue.UNKNOWN;
 	}
-	
-	private static IValue applyNaryTypeIdOperator(ICPPASTNaryTypeIdExpression.Operator operator, 
-			IType[] operands, IBinding pointOfDefinition) {
+
+	private static IValue applyNaryTypeIdOperator(ICPPASTNaryTypeIdExpression.Operator operator, IType[] operands,
+			IBinding pointOfDefinition) {
 		switch (operator) {
 		case __is_constructible:
 		case __is_trivially_constructible:
@@ -622,8 +620,9 @@ public class ValueFactory {
 			boolean checkTrivial = (operator == Operator.__is_trivially_constructible);
 			IType typeToConstruct = operands[0];
 			IType[] argumentTypes = Arrays.copyOfRange(operands, 1, operands.length);
-			return IntegralValue.create(TypeTraits.isConstructible(typeToConstruct, argumentTypes, 
-					pointOfDefinition, checkTrivial) ? 1 : 0);
+			return IntegralValue.create(
+					TypeTraits.isConstructible(typeToConstruct, argumentTypes, pointOfDefinition, checkTrivial) ? 1
+							: 0);
 		}
 		return IntegralValue.UNKNOWN;
 	}
@@ -633,8 +632,8 @@ public class ValueFactory {
 	}
 
 	private static boolean isDeferredValue(IValue value) {
-		return value instanceof DependentValue || 
-			(value instanceof IntegralValue && ((IntegralValue) value).numberValue() == null);
+		return value instanceof DependentValue
+				|| (value instanceof IntegralValue && ((IntegralValue) value).numberValue() == null);
 	}
 
 	/**
@@ -652,7 +651,7 @@ public class ValueFactory {
 			if (val != null) {
 				return val.numberValue();
 			}
-			
+
 			if (expr instanceof ICPPASTInitializerClause) {
 				ICPPEvaluation eval = ((ICPPASTInitializerClause) expr).getEvaluation();
 				if (eval.isConstantExpression() && !eval.isValueDependent())

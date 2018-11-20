@@ -50,7 +50,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		return suite(TeamSharedIndexTest.class);
 	}
 
-	private final Collection fProjects= new LinkedList();
+	private final Collection fProjects = new LinkedList();
 	private static final IIndexManager fPDOMManager = CCorePlugin.getIndexManager();
 
 	public TeamSharedIndexTest(String name) {
@@ -75,14 +75,15 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	private void registerProject(ICProject prj) {
 		fProjects.add(prj);
 	}
+
 	private void unregisterProject(ICProject prj) {
 		fProjects.remove(prj);
 	}
 
 	private ICProject createProject(String name) throws CoreException, InterruptedException {
-		ModelJoiner mj= new ModelJoiner();
+		ModelJoiner mj = new ModelJoiner();
 		try {
-			ICProject project= CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
+			ICProject project = CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
 			registerProject(project);
 			TestSourceReader.createFile(project.getProject(), "a.cpp", "int a;");
 			TestSourceReader.createFile(project.getProject(), "b.cpp", "int b;");
@@ -99,49 +100,48 @@ public class TeamSharedIndexTest extends IndexTestBase {
 
 	private ICProject recreateProject(final String prjName) throws Exception {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		ModelJoiner pj= new ModelJoiner();
+		ModelJoiner pj = new ModelJoiner();
 		try {
-			final IProject prjHandle= workspace.getRoot().getProject(prjName);
+			final IProject prjHandle = workspace.getRoot().getProject(prjName);
 			workspace.run(new IWorkspaceRunnable() {
 				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
-					IProjectDescription desc= IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(prjName);
+					IProjectDescription desc = IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(prjName);
 					prjHandle.create(desc, npm());
 					prjHandle.open(0, npm());
 				}
 			}, null);
-			pj.join();  // in order we are sure the indexer task has been scheduled before joining the indexer
+			pj.join(); // in order we are sure the indexer task has been scheduled before joining the indexer
 		} finally {
 			pj.dispose();
 		}
-		ICProject result= CoreModel.getDefault().create(workspace.getRoot().getProject(prjName));
+		ICProject result = CoreModel.getDefault().create(workspace.getRoot().getProject(prjName));
 		waitForIndexer(result);
 		return result;
 	}
 
 	private void checkVariable(ICProject prj, String var, int expectedCount)
 			throws CoreException, InterruptedException {
-		IIndex index= fPDOMManager.getIndex(prj);
+		IIndex index = fPDOMManager.getIndex(prj);
 		index.acquireReadLock();
 		try {
-			IBinding[] binding= index.findBindings(var.toCharArray(), IndexFilter.ALL, npm());
-			int count= 0;
+			IBinding[] binding = index.findBindings(var.toCharArray(), IndexFilter.ALL, npm());
+			int count = 0;
 			assertTrue(binding.length < 2);
 			if (binding.length == 1) {
 				assertTrue(binding[0] instanceof IVariable);
-				count= index.findNames(binding[0], IIndex.FIND_ALL_OCCURRENCES).length;
+				count = index.findNames(binding[0], IIndex.FIND_ALL_OCCURRENCES).length;
 			}
 			assertEquals(var, expectedCount, count);
-		}
-		finally {
+		} finally {
 			index.releaseReadLock();
 		}
 	}
 
 	public void testDefaultExport() throws Exception {
-		String prjName= "__testDefaultExport__";
-		ICProject prj= createProject(prjName);
-		String loc= IndexerPreferences.getIndexImportLocation(prj.getProject());
+		String prjName = "__testDefaultExport__";
+		ICProject prj = createProject(prjName);
+		String loc = IndexerPreferences.getIndexImportLocation(prj.getProject());
 		checkVariable(prj, "a", 1);
 		checkVariable(prj, "b", 1);
 		checkVariable(prj, "c", 1);
@@ -173,9 +173,9 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	}
 
 	public void testExportWithFileChange() throws Exception {
-		String prjName= "__testExportWithChange__";
-		ICProject prj= createProject(prjName);
-		String loc= IndexerPreferences.getIndexImportLocation(prj.getProject());
+		String prjName = "__testExportWithChange__";
+		ICProject prj = createProject(prjName);
+		String loc = IndexerPreferences.getIndexImportLocation(prj.getProject());
 		checkVariable(prj, "a", 1);
 		checkVariable(prj, "b", 1);
 		checkVariable(prj, "c", 1);
@@ -203,15 +203,15 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	private void changeFile(ICProject prj) throws CoreException {
 		final IFile file = prj.getProject().getFile("a.cpp");
 		final File location = file.getLocation().toFile();
-		final long lm= location.lastModified();
+		final long lm = location.lastModified();
 		file.setContents(new ByteArrayInputStream("int d;".getBytes()), true, false, npm());
 		if (location.lastModified() == lm) {
-			location.setLastModified(lm+1000);
+			location.setLastModified(lm + 1000);
 		}
 	}
 
 	private void deleteAndWait(ICProject prj) throws CoreException {
-		ModelJoiner dj= new ModelJoiner();
+		ModelJoiner dj = new ModelJoiner();
 		try {
 			prj.getProject().delete(false, true, npm());
 			dj.join();
@@ -221,9 +221,9 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	}
 
 	public void testExportWithFileChangeFake() throws Exception {
-		String prjName= "__testExportWithChangeFake__";
-		ICProject prj= createProject(prjName);
-		String loc= IndexerPreferences.getIndexImportLocation(prj.getProject());
+		String prjName = "__testExportWithChangeFake__";
+		ICProject prj = createProject(prjName);
+		String loc = IndexerPreferences.getIndexImportLocation(prj.getProject());
 		checkVariable(prj, "a", 1);
 		checkVariable(prj, "b", 1);
 		checkVariable(prj, "c", 1);
@@ -255,9 +255,9 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	}
 
 	public void testExportWithAddition() throws Exception {
-		String prjName= "__testExportWithAddition__";
-		ICProject prj= createProject(prjName);
-		String loc= IndexerPreferences.getIndexImportLocation(prj.getProject());
+		String prjName = "__testExportWithAddition__";
+		ICProject prj = createProject(prjName);
+		String loc = IndexerPreferences.getIndexImportLocation(prj.getProject());
 		checkVariable(prj, "a", 1);
 		checkVariable(prj, "b", 1);
 		checkVariable(prj, "c", 1);
@@ -283,9 +283,9 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	}
 
 	public void testExportWithAdditionFake() throws Exception {
-		String prjName= "__testExportWithAdditionFake__";
-		ICProject prj= createProject(prjName);
-		String loc= IndexerPreferences.getIndexImportLocation(prj.getProject());
+		String prjName = "__testExportWithAdditionFake__";
+		ICProject prj = createProject(prjName);
+		String loc = IndexerPreferences.getIndexImportLocation(prj.getProject());
 		checkVariable(prj, "a", 1);
 		checkVariable(prj, "b", 1);
 		checkVariable(prj, "c", 1);
@@ -318,9 +318,9 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	}
 
 	public void testExportWithRemoval() throws Exception {
-		String prjName= "__testExportWithRemoval__";
-		ICProject prj= createProject(prjName);
-		String loc= IndexerPreferences.getIndexImportLocation(prj.getProject());
+		String prjName = "__testExportWithRemoval__";
+		ICProject prj = createProject(prjName);
+		String loc = IndexerPreferences.getIndexImportLocation(prj.getProject());
 		checkVariable(prj, "a", 1);
 		checkVariable(prj, "b", 1);
 		checkVariable(prj, "c", 1);
@@ -345,9 +345,9 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	}
 
 	public void testExportWithRemovalFake() throws Exception {
-		String prjName= "__testExportWithRemovalFake__";
-		ICProject prj= createProject(prjName);
-		String loc= IndexerPreferences.getIndexImportLocation(prj.getProject());
+		String prjName = "__testExportWithRemovalFake__";
+		ICProject prj = createProject(prjName);
+		String loc = IndexerPreferences.getIndexImportLocation(prj.getProject());
 		checkVariable(prj, "a", 1);
 		checkVariable(prj, "b", 1);
 		checkVariable(prj, "c", 1);

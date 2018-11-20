@@ -18,13 +18,12 @@ import org.eclipse.cdt.testsrunner.internal.model.TestModelManager;
 import org.eclipse.cdt.testsrunner.internal.model.TestSuite;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 
-
 /**
  * Tests on the test cases reordering in TestModelManager.
  */
 @SuppressWarnings("nls")
 public class TestModelManagerCasesReorderingTestCase extends TestModelManagerBaseReorderingTestCase {
-	
+
 	@Override
 	protected ITestSuite createTestsHierarchy() {
 		TestSuite rootTestSuite = new TestSuite(TestModelManager.ROOT_TEST_SUITE_NAME, null);
@@ -39,5 +38,5 @@ public class TestModelManagerCasesReorderingTestCase extends TestModelManagerBas
 		modelManager.enterTestCase(name);
 		modelManager.exitTestCase();
 	}
-	
+
 }

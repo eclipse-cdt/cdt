@@ -61,7 +61,7 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
  */
 public class OpenAction extends SelectionDispatchAction {
 	private CEditor fEditor;
-	
+
 	/**
 	 * Creates a new <code>OpenAction</code>. The action requires
 	 * that the selection provided by the site's selection provider is of type <code>
@@ -73,10 +73,10 @@ public class OpenAction extends SelectionDispatchAction {
 		super(site);
 		setText(ActionMessages.OpenAction_label);
 		setToolTipText(ActionMessages.OpenAction_tooltip);
-		setDescription(ActionMessages.OpenAction_description);		
+		setDescription(ActionMessages.OpenAction_description);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.OPEN_ACTION);
 	}
-	
+
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 * 
@@ -84,11 +84,11 @@ public class OpenAction extends SelectionDispatchAction {
 	 */
 	public OpenAction(CEditor editor) {
 		this(editor.getEditorSite());
-		fEditor= editor;
+		fEditor = editor;
 		setText(ActionMessages.OpenAction_declaration_label);
 		setEnabled(SelectionConverter.canOperateOn(fEditor));
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on SelectionDispatchAction.
 	 */
@@ -103,12 +103,12 @@ public class OpenAction extends SelectionDispatchAction {
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(checkEnabled(selection));
 	}
-	
+
 	private boolean checkEnabled(IStructuredSelection selection) {
 		if (selection.isEmpty())
 			return false;
-		for (Iterator<?> iter= selection.iterator(); iter.hasNext();) {
-			Object element= iter.next();
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
+			Object element = iter.next();
 			if (element instanceof ISourceReference)
 				continue;
 			if (element instanceof IFile)
@@ -119,7 +119,7 @@ public class OpenAction extends SelectionDispatchAction {
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on SelectionDispatchAction.
 	 */
@@ -128,25 +128,25 @@ public class OpenAction extends SelectionDispatchAction {
 		if (!ActionUtil.isProcessable(fEditor))
 			return;
 		try {
-			ICElement element= SelectionConverter.codeResolve(fEditor, getShell(), getDialogTitle(), 
-				ActionMessages.OpenAction_select_element);
+			ICElement element = SelectionConverter.codeResolve(fEditor, getShell(), getDialogTitle(),
+					ActionMessages.OpenAction_select_element);
 			if (element == null) {
-				IEditorStatusLine statusLine= fEditor.getAdapter(IEditorStatusLine.class);
+				IEditorStatusLine statusLine = fEditor.getAdapter(IEditorStatusLine.class);
 				if (statusLine != null)
 					statusLine.setMessage(true, ActionMessages.OpenAction_error_messageBadSelection, null);
 				getShell().getDisplay().beep();
 				return;
 			}
-			ICElement input= SelectionConverter.getInput(fEditor);
-			int type= element.getElementType();
+			ICElement input = SelectionConverter.getInput(fEditor);
+			int type = element.getElementType();
 			if (type == ICElement.C_PROJECT || type == ICElement.C_CCONTAINER)
-				element= input;
-			run(new Object[] {element} );
+				element = input;
+			run(new Object[] { element });
 		} catch (CModelException e) {
 			showError(e);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on SelectionDispatchAction.
 	 */
@@ -156,7 +156,7 @@ public class OpenAction extends SelectionDispatchAction {
 			return;
 		run(selection.toArray());
 	}
-	
+
 	/**
 	 * Note: this method is for internal use only. Clients should not call this method.
 	 */
@@ -165,45 +165,44 @@ public class OpenAction extends SelectionDispatchAction {
 			return;
 		for (Object element : elements) {
 			try {
-				element= getElementToOpen(element);
-				boolean activateOnOpen= fEditor != null ? true : OpenStrategy.activateOnOpen();
+				element = getElementToOpen(element);
+				boolean activateOnOpen = fEditor != null ? true : OpenStrategy.activateOnOpen();
 				OpenActionUtil.open(element, activateOnOpen);
 			} catch (CModelException e) {
-				CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(),
-						ICStatusConstants.INTERNAL_ERROR, ActionMessages.OpenAction_error_message, e));
-				ErrorDialog.openError(getShell(), getDialogTitle(),
-						ActionMessages.OpenAction_error_messageProblems, e.getStatus());
+				CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), ICStatusConstants.INTERNAL_ERROR,
+						ActionMessages.OpenAction_error_message, e));
+				ErrorDialog.openError(getShell(), getDialogTitle(), ActionMessages.OpenAction_error_messageProblems,
+						e.getStatus());
 			} catch (PartInitException x) {
-				String name= null;
-				
+				String name = null;
+
 				if (element instanceof ICElement) {
-					name= ((ICElement) element).getElementName();
+					name = ((ICElement) element).getElementName();
 				} else if (element instanceof IStorage) {
-					name= ((IStorage) element).getName();
+					name = ((IStorage) element).getName();
 				} else if (element instanceof IResource) {
-					name= ((IResource) element).getName();
+					name = ((IResource) element).getName();
 				}
-				
+
 				if (name != null) {
-					MessageDialog.openError(getShell(),
-						ActionMessages.OpenAction_error_messageProblems,
-						NLS.bind(ActionMessages.OpenAction_error_messageArgs, name, x.getMessage()));			
+					MessageDialog.openError(getShell(), ActionMessages.OpenAction_error_messageProblems,
+							NLS.bind(ActionMessages.OpenAction_error_messageArgs, name, x.getMessage()));
 				}
-			}		
+			}
 		}
 	}
-	
+
 	/**
 	 * Note: this method is for internal use only. Clients should not call this method.
 	 */
 	public Object getElementToOpen(Object object) throws CModelException {
 		return object;
-	}	
-	
+	}
+
 	private String getDialogTitle() {
 		return ActionMessages.OpenAction_error_title;
 	}
-	
+
 	private void showError(CoreException e) {
 		ExceptionHandler.handle(e, getShell(), getDialogTitle(), ActionMessages.OpenAction_error_message);
 	}

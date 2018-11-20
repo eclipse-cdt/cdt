@@ -33,10 +33,10 @@ import org.eclipse.core.runtime.CoreException;
  * Represents a reference to a (member) function (instance), which cannot be resolved because
  * an argument depends on a template parameter. A compiler would resolve it during instantiation.
  */
-public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferredFunction,
-		ICPPComputableFunction, ISerializableType {
-	private static final ICPPFunctionType FUNCTION_TYPE=
-			new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
+public class CPPDeferredFunction extends CPPUnknownBinding
+		implements ICPPDeferredFunction, ICPPComputableFunction, ISerializableType {
+	private static final ICPPFunctionType FUNCTION_TYPE = new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION,
+			IType.EMPTY_TYPE_ARRAY);
 
 	/**
 	 * Creates a CPPDeferredFunction given a set of overloaded functions
@@ -70,7 +70,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 
 	public CPPDeferredFunction(IBinding owner, char[] name, ICPPFunction[] candidates) {
 		super(name);
-		fOwner= owner;
+		fOwner = owner;
 		fCandidates = candidates;
 	}
 
@@ -123,7 +123,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	public ICPPFunctionType getDeclaredType() {
 		return FUNCTION_TYPE;
 	}
-	
+
 	@Override
 	public ICPPFunctionType getType() {
 		return FUNCTION_TYPE;

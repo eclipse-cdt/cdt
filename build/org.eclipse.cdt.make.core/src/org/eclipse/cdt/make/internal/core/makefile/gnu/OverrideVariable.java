@@ -15,7 +15,6 @@ package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-
 public class OverrideVariable extends VariableDefinition {
 
 	public OverrideVariable(Directive parent, String name, StringBuffer value, int type) {

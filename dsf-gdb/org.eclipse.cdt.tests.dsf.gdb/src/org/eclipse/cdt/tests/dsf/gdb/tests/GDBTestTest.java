@@ -46,24 +46,24 @@ public class GDBTestTest extends BaseParametrizedTestCase {
 	public void testLaunch() {
 		assertFalse("Launch should be running", getGDBLaunch().isTerminated());
 	}
-	
+
 	/**
 	 * Test that test infrastructure allows multiple launches on same launch config. 
 	 */
 	@Test
 	public void testMultipleLaunch() throws Exception {
 		Assume.assumeFalse("Test framework only supports multiple launches for non-remote", remote);
-		
+
 		// get the launch that was created automatically
 		GdbLaunch autoLaunched = getGDBLaunch();
-		
+
 		autoLaunched.terminate();
 		waitUntil("Launch did not terminate", () -> autoLaunched.isTerminated());
-		
+
 		// launch an additional launch
 		GdbLaunch secondLaunch = doLaunchInner();
 		assertFalse("Second launch should be running", secondLaunch.isTerminated());
-		
+
 		secondLaunch.terminate();
 		waitUntil("Second launch did not terminate", () -> secondLaunch.isTerminated());
 	}

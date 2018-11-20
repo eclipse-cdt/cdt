@@ -27,28 +27,28 @@ import org.eclipse.core.runtime.Plugin;
 public class CTestPlugin extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.tests";
 	private static CTestPlugin fgDefault;
-	
+
 	public CTestPlugin() {
 		super();
-		fgDefault= this;
+		fgDefault = this;
 	}
-	
+
 	public static CTestPlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-	
+
 	public static void enableAutobuild(boolean enable) throws CoreException {
 		// disable auto build
-		IWorkspace workspace= CTestPlugin.getWorkspace();
-		IWorkspaceDescription desc= workspace.getDescription();
+		IWorkspace workspace = CTestPlugin.getWorkspace();
+		IWorkspaceDescription desc = workspace.getDescription();
 		desc.setAutoBuilding(enable);
 		workspace.setDescription(desc);
 	}
-	
+
 	public File getFileInPlugin(IPath path) {
 		try {
 			return new File(Platform.asLocalURL(find(path)).getFile());

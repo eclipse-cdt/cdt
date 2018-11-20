@@ -35,15 +35,15 @@ import org.eclipse.cdt.internal.core.dom.lrparser.gcc.GCCParser;
  */
 public class GCCLanguage extends BaseExtensibleLanguage {
 	public static final String ID = "org.eclipse.cdt.core.lrparser.gcc"; //$NON-NLS-1$ 
-	
+
 	private static GCCLanguage DEFAULT = new GCCLanguage();
-	
+
 	public static GCCLanguage getDefault() {
 		return DEFAULT;
 	}
-	
+
 	@Override
-	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String, String> properties) {
 		return new GCCParser(scanner, DOMToGCCTokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, properties);
 	}
 

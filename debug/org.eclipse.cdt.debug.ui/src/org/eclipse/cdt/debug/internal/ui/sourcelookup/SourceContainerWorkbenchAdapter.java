@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.io.File;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
- 
+
 /**
  * Workbench adapter for CDT source containers.
  */
@@ -81,10 +81,10 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	@Override
 	public String getLabel(Object o) {
 		if (o instanceof MappingSourceContainer) {
-			return SourceLookupUIMessages.SourceContainerWorkbenchAdapter_0 + ((MappingSourceContainer)o).getName();
+			return SourceLookupUIMessages.SourceContainerWorkbenchAdapter_0 + ((MappingSourceContainer) o).getName();
 		}
 		if (o instanceof MapEntrySourceContainer) {
-			return ((MapEntrySourceContainer)o).getName();
+			return ((MapEntrySourceContainer) o).getName();
 		}
 		return null;
 	}
@@ -107,7 +107,7 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 				if (path.getDevice() != null) {
 					buffer.append(path.getDevice());
 				}
-				for(int i = 0; i < segments.length - 1; i++) {
+				for (int i = 0; i < segments.length - 1; i++) {
 					buffer.append(File.separatorChar);
 					buffer.append(segments[i]);
 				}

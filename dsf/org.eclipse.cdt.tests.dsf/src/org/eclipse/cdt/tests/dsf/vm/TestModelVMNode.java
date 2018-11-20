@@ -39,137 +39,133 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 /**
  * @since 2.2
  */
-public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IElementLabelProvider, IElementPropertiesProvider {
+public class TestModelVMNode extends AbstractVMNode
+		implements IRootVMNode, IElementLabelProvider, IElementPropertiesProvider {
 
-    final private static String PROP_TEST_ELEMENT_LABEL = "PROP_TEST_ELEMENT_LABEL";
-    
-    final private static PropertiesBasedLabelProvider fLabelProvider = new PropertiesBasedLabelProvider();
-    {
-        LabelColumnInfo idLabelInfo = new LabelColumnInfo(new LabelAttribute[] { 
-            new LabelText("{0}", new String[] { PROP_TEST_ELEMENT_LABEL })
-        });  
-        
-        fLabelProvider.setColumnInfo(PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, idLabelInfo); 
-        fLabelProvider.setColumnInfo(TestModelCachingVMProvider.COLUMN_ID, idLabelInfo);
-        fLabelProvider.setColumnInfo(
-            TestModelCachingVMProvider.COLUMN_FORMATTED_VALUE, 
-            new LabelColumnInfo(new LabelAttribute[] {
-                new FormattedValueLabelText()
-            }));
-    }
-    
-    @Override
-    public void update(final ILabelUpdate[] updates) {
-        fLabelProvider.update(updates);
-    }
-    
-    public TestModelVMNode(TestModelVMProvider provider) {
-        super(provider);
-    }
+	final private static String PROP_TEST_ELEMENT_LABEL = "PROP_TEST_ELEMENT_LABEL";
 
-    private TestModelVMProvider getTestProvider() {
-        return (TestModelVMProvider)getVMProvider();
-           
-    }
-    
-    @Override
-    public void update(final IHasChildrenUpdate[] updates) {
-        getTestProvider().getDsfExecutor().execute(new Runnable() {
-            @Override
-	    public void run() {
-                for (IHasChildrenUpdate update : updates) {
-                    if (update.getElement() instanceof TestElementVMContext) {
-                        TestElement element = ((TestElementVMContext)update.getElement()).getElement();
-                        update.setHasChilren(element.getChildren().length != 0);
-                    }
-                    update.done();
-                }
-            }
-        });
-    }
-    
-    @Override
-    public void update(final IChildrenCountUpdate[] updates) {
-        getTestProvider().getDsfExecutor().execute(new Runnable() {
-            @Override
-	    public void run() {
-                for (IChildrenCountUpdate update : updates) {
-                    if (update.getElement() instanceof TestElementVMContext) {
-                        TestElement element = ((TestElementVMContext)update.getElement()).getElement();
-                        update.setChildCount(element.getChildren().length);
-                    }
-                    update.done();
-                }
-            }
-        });
-    }
+	final private static PropertiesBasedLabelProvider fLabelProvider = new PropertiesBasedLabelProvider();
+	{
+		LabelColumnInfo idLabelInfo = new LabelColumnInfo(
+				new LabelAttribute[] { new LabelText("{0}", new String[] { PROP_TEST_ELEMENT_LABEL }) });
 
-    @Override
-    public void update(final IChildrenUpdate[] updates) {
-        getTestProvider().getDsfExecutor().execute(new Runnable() {
-            @Override
-	    public void run() {        
-                for (IChildrenUpdate update : updates) {
-                    if (update.getElement() instanceof TestElementVMContext) {
-                        TestElement element = ((TestElementVMContext)update.getElement()).getElement();
-                        fillUpdateWithTestElements(update, element.getChildren());
-                    }
-                    update.done();
-                }        
-            }
-        });
-    }
-    
-    @Override
-    public void update(final IPropertiesUpdate[] updates) {
-        getTestProvider().getDsfExecutor().execute(new Runnable() {
-            @Override
-	    public void run() {
-                for (IPropertiesUpdate update : updates) {
-                    if (update.getElement() instanceof TestElementVMContext) {
-                        TestElement element = ((TestElementVMContext)update.getElement()).getElement();
-                        update.setProperty(PROP_TEST_ELEMENT_LABEL, element.getLabel());
-                    }
-                    update.done();
-                }
-            }
-        });
-    }
+		fLabelProvider.setColumnInfo(PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, idLabelInfo);
+		fLabelProvider.setColumnInfo(TestModelCachingVMProvider.COLUMN_ID, idLabelInfo);
+		fLabelProvider.setColumnInfo(TestModelCachingVMProvider.COLUMN_FORMATTED_VALUE,
+				new LabelColumnInfo(new LabelAttribute[] { new FormattedValueLabelText() }));
+	}
 
-    private void fillUpdateWithTestElements(IChildrenUpdate update, TestElement[] elements) {
-        int updateIdx = update.getOffset() != -1 ? update.getOffset() : 0;
-        int endIdx = updateIdx + (update.getLength() != -1 ? update.getLength() : elements.length);
-        while (updateIdx < endIdx && updateIdx < elements.length) {
-            update.setChild(createVMContext(elements[updateIdx]), updateIdx);
-            updateIdx++;
-        }
-    }
-    
-    public TestElementVMContext createVMContext(TestElement element) {
-        return new TestElementVMContext(this, element);
-    }
+	@Override
+	public void update(final ILabelUpdate[] updates) {
+		fLabelProvider.update(updates);
+	}
 
-    @Override
-    public int getDeltaFlags(Object event) {
-        return 0;
-    }
+	public TestModelVMNode(TestModelVMProvider provider) {
+		super(provider);
+	}
 
-    @Override
-    public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor rm) {
-        rm.done();
-    }
+	private TestModelVMProvider getTestProvider() {
+		return (TestModelVMProvider) getVMProvider();
 
+	}
 
-    @Override
-    public boolean isDeltaEvent(Object rootObject, Object event) {
-        return false;
-    }
+	@Override
+	public void update(final IHasChildrenUpdate[] updates) {
+		getTestProvider().getDsfExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				for (IHasChildrenUpdate update : updates) {
+					if (update.getElement() instanceof TestElementVMContext) {
+						TestElement element = ((TestElementVMContext) update.getElement()).getElement();
+						update.setHasChilren(element.getChildren().length != 0);
+					}
+					update.done();
+				}
+			}
+		});
+	}
 
-    @Override
-    public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<VMDelta> rm) {
-        rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED,  "Not implemented", null));
-        rm.done();
-    }
+	@Override
+	public void update(final IChildrenCountUpdate[] updates) {
+		getTestProvider().getDsfExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				for (IChildrenCountUpdate update : updates) {
+					if (update.getElement() instanceof TestElementVMContext) {
+						TestElement element = ((TestElementVMContext) update.getElement()).getElement();
+						update.setChildCount(element.getChildren().length);
+					}
+					update.done();
+				}
+			}
+		});
+	}
 
+	@Override
+	public void update(final IChildrenUpdate[] updates) {
+		getTestProvider().getDsfExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				for (IChildrenUpdate update : updates) {
+					if (update.getElement() instanceof TestElementVMContext) {
+						TestElement element = ((TestElementVMContext) update.getElement()).getElement();
+						fillUpdateWithTestElements(update, element.getChildren());
+					}
+					update.done();
+				}
+			}
+		});
+	}
+
+	@Override
+	public void update(final IPropertiesUpdate[] updates) {
+		getTestProvider().getDsfExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				for (IPropertiesUpdate update : updates) {
+					if (update.getElement() instanceof TestElementVMContext) {
+						TestElement element = ((TestElementVMContext) update.getElement()).getElement();
+						update.setProperty(PROP_TEST_ELEMENT_LABEL, element.getLabel());
+					}
+					update.done();
+				}
+			}
+		});
+	}
+
+	private void fillUpdateWithTestElements(IChildrenUpdate update, TestElement[] elements) {
+		int updateIdx = update.getOffset() != -1 ? update.getOffset() : 0;
+		int endIdx = updateIdx + (update.getLength() != -1 ? update.getLength() : elements.length);
+		while (updateIdx < endIdx && updateIdx < elements.length) {
+			update.setChild(createVMContext(elements[updateIdx]), updateIdx);
+			updateIdx++;
+		}
+	}
+
+	public TestElementVMContext createVMContext(TestElement element) {
+		return new TestElementVMContext(this, element);
+	}
+
+	@Override
+	public int getDeltaFlags(Object event) {
+		return 0;
+	}
+
+	@Override
+	public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor rm) {
+		rm.done();
+	}
+
+	@Override
+	public boolean isDeltaEvent(Object rootObject, Object event) {
+		return false;
+	}
+
+	@Override
+	public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<VMDelta> rm) {
+		rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED,
+				"Not implemented", null));
+		rm.done();
+	}
 
 }

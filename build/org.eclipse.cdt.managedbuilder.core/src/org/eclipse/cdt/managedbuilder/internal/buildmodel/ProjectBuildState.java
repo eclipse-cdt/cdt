@@ -39,11 +39,11 @@ public class ProjectBuildState implements IProjectBuildState {
 	private IProject fProject;
 	private boolean fIsMapInfoDirty;
 
-	public ProjectBuildState(IProject project){
+	public ProjectBuildState(IProject project) {
 		fProject = project;
 	}
 
-	void setProject(IProject project){
+	void setProject(IProject project) {
 		fProject = project;
 		Collection<ConfigurationBuildState> cbStates = fCfgIdToStateMap.values();
 		for (ConfigurationBuildState cbs : cbStates) {
@@ -54,9 +54,9 @@ public class ProjectBuildState implements IProjectBuildState {
 	@Override
 	public IConfigurationBuildState getConfigurationBuildState(String id, boolean create) {
 		ConfigurationBuildState state = fCfgIdToStateMap.get(id);
-		if(state == null){
+		if (state == null) {
 			state = loadState(id, create);
-			if(state.exists() || create)
+			if (state.exists() || create)
 				fCfgIdToStateMap.put(id, state);
 			else
 				state = null;
@@ -64,10 +64,10 @@ public class ProjectBuildState implements IProjectBuildState {
 		return state;
 	}
 
-	private ConfigurationBuildState loadState(String id, boolean create){
+	private ConfigurationBuildState loadState(String id, boolean create) {
 		File file = getFileForCfg(id, create);
 		ConfigurationBuildState bs = new ConfigurationBuildState(fProject, id);
-		if(file != null && file.exists()){
+		if (file != null && file.exists()) {
 			try {
 				InputStream iStream = new FileInputStream(file);
 				bs.load(iStream);
@@ -87,9 +87,9 @@ public class ProjectBuildState implements IProjectBuildState {
 		List<IConfigurationBuildState> list = new ArrayList<IConfigurationBuildState>(props.size());
 		Set<Object> keySet = props.keySet();
 		for (Object key : keySet) {
-			String id = (String)key;
+			String id = (String) key;
 			IConfigurationBuildState state = getConfigurationBuildState(id, false);
-			if(state != null)
+			if (state != null)
 				list.add(state);
 		}
 		return list.toArray(new ConfigurationBuildState[list.size()]);
@@ -97,8 +97,8 @@ public class ProjectBuildState implements IProjectBuildState {
 
 	@Override
 	public void removeConfigurationBuildState(String id) {
-		ConfigurationBuildState cbs = (ConfigurationBuildState)getConfigurationBuildState(id, false);
-		if(cbs != null){
+		ConfigurationBuildState cbs = (ConfigurationBuildState) getConfigurationBuildState(id, false);
+		if (cbs != null) {
 			cbs.setState(IRebuildState.NEED_REBUILD);
 		}
 	}
@@ -113,29 +113,30 @@ public class ProjectBuildState implements IProjectBuildState {
 	public void setState(int state) {
 		// TODO Auto-generated method stub
 	}
+
 	private static final int OP_CREATE = 1;
 	private static final int OP_REMOVE = 2;
 
-	private String getFileName(String id, int op){
+	private String getFileName(String id, int op) {
 		Properties props = getIdToNameProperties();
 		String name = props.getProperty(id);
-		if(name == null){
-			if(op == OP_CREATE){
+		if (name == null) {
+			if (op == OP_CREATE) {
 				name = Integer.toString(CDataUtil.genRandomNumber());
 				props.setProperty(id, name);
 				fIsMapInfoDirty = true;
-	//			saveMapFile();
+				//			saveMapFile();
 			}
-		} else if (op == OP_REMOVE){
+		} else if (op == OP_REMOVE) {
 			props.remove(id);
 			fIsMapInfoDirty = true;
 		}
 		return name;
 	}
 
-	private File getFileForCfg(String id, boolean create){
+	private File getFileForCfg(String id, boolean create) {
 		String name = getFileName(id, create ? OP_CREATE : 0);
-		if(name == null)
+		if (name == null)
 			return null;
 
 		IPath path = BuildStateManager.getInstance().getPrefsDirPath(fProject);
@@ -143,13 +144,13 @@ public class ProjectBuildState implements IProjectBuildState {
 		return path.toFile();
 	}
 
-	private void saveMapFile(){
-		if(fCfgIdToFileNameProps == null)
+	private void saveMapFile() {
+		if (fCfgIdToFileNameProps == null)
 			return;
 
 		File file = getMapFile();
 		File parent = file.getParentFile();
-		if(!parent.exists())
+		if (!parent.exists())
 			parent.mkdirs();
 
 		try {
@@ -163,18 +164,18 @@ public class ProjectBuildState implements IProjectBuildState {
 		}
 	}
 
-	private File getMapFile(){
+	private File getMapFile() {
 		IPath path = BuildStateManager.getInstance().getPrefsDirPath(fProject);
 		path = path.append(getProjFileName());
 		File file = path.toFile();
 		return file;
 	}
 
-	private Properties getIdToNameProperties(){
-		if(fCfgIdToFileNameProps == null){
+	private Properties getIdToNameProperties() {
+		if (fCfgIdToFileNameProps == null) {
 			fCfgIdToFileNameProps = new Properties();
 			File file = getMapFile();
-			if(file.exists()){
+			if (file.exists()) {
 				try {
 					InputStream iStream = new FileInputStream(file);
 					fCfgIdToFileNameProps.load(iStream);
@@ -189,7 +190,7 @@ public class ProjectBuildState implements IProjectBuildState {
 		return fCfgIdToFileNameProps;
 	}
 
-	private String getProjFileName(){
+	private String getProjFileName() {
 		return fProject.getName();
 	}
 
@@ -198,21 +199,21 @@ public class ProjectBuildState implements IProjectBuildState {
 		return fProject;
 	}
 
-	void serialize(){
+	void serialize() {
 
 		Collection<ConfigurationBuildState> cbStates = fCfgIdToStateMap.values();
 		for (ConfigurationBuildState s : cbStates) {
 			String id = s.getConfigurationId();
-			if(!s.exists()){
+			if (!s.exists()) {
 				File file = getFileForCfg(id, false);
-				if(file != null && file.exists()){
+				if (file != null && file.exists()) {
 					file.delete();
 					getFileName(id, OP_REMOVE);
 				}
 			} else {
 				File file = getFileForCfg(id, true);
 				File parent = file.getParentFile();
-				if(!parent.exists())
+				if (!parent.exists())
 					parent.mkdirs();
 
 				try {
@@ -227,7 +228,7 @@ public class ProjectBuildState implements IProjectBuildState {
 			}
 		}
 
-		if(fIsMapInfoDirty)
+		if (fIsMapInfoDirty)
 			saveMapFile();
 	}
 }

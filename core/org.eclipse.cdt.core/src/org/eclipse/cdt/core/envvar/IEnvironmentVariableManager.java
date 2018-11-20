@@ -18,8 +18,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IBuildConfiguration;
 
-
-
 /**
  * 
  * this interface represent the environment variable provider - the main entry-point
@@ -29,7 +27,7 @@ import org.eclipse.core.resources.IBuildConfiguration;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IEnvironmentVariableManager{
+public interface IEnvironmentVariableManager {
 
 	/**
 	 * 
@@ -93,7 +91,7 @@ public interface IEnvironmentVariableManager{
 	 * @since 6.0
 	 */
 	public void setEnvironment(Map<String, String> env, IBuildConfiguration config, boolean resolveMacros);
-	
+
 	/**
 	 *
 	 * @return the String representing default system delimiter. That is the ":" for Unix-like
@@ -108,7 +106,6 @@ public interface IEnvironmentVariableManager{
 	 * if it does not (Win32 systems)
 	 */
 	public boolean isVariableCaseSensitive();
-	
+
 	public IContributedEnvironment getContributedEnvironment();
 }
-

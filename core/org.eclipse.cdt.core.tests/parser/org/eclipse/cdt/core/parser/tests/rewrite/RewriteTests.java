@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTe
 public class RewriteTests extends TestSuite {
 
 	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite(RewriteTests.class.getName()); 
+		TestSuite suite = new TestSuite(RewriteTests.class.getName());
 		suite.addTest(AstWriterTestSuite.suite());
 		suite.addTest(CommentHandlingTestSuite.suite());
 		suite.addTest(ChangeGeneratorTestSuite.suite());

@@ -32,13 +32,13 @@ public class ConvertToMakeWizard extends ConversionWizard {
 	public String getProjectID() {
 		return MakeCorePlugin.MAKE_PROJECT_ID;
 	}
-	
+
 	@Override
 	public String getBuildSystemId() {
-		if (!((ConvertToMakeWizardPage)mainPage).isSetProjectType()) {
+		if (!((ConvertToMakeWizardPage) mainPage).isSetProjectType()) {
 			return ManagedBuildManager.CFG_DATA_PROVIDER_ID;
 		}
-		
+
 		return null;
 	}
 }

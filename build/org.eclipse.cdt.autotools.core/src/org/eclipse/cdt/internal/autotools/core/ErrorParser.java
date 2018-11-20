@@ -36,43 +36,39 @@ import org.eclipse.core.runtime.Path;
 // which is similar to the CDT one.
 public class ErrorParser extends MarkerGenerator implements IErrorParser {
 	public static final String ID = AutotoolsPlugin.PLUGIN_ID + ".errorParser"; //$NON-NLS-1$
-	private Pattern pkgconfigError = 
-			Pattern.compile(".*?(configure:\\s+error:\\s+Package requirements\\s+\\((.*?)\\)\\s+were not met).*"); //$NON-NLS-1$
-	private Pattern genconfigError = 
-			Pattern.compile(".*?configure:\\s+error:\\s+(.*)"); //$NON-NLS-1$
-	private Pattern checkingFail = 
-			Pattern.compile("checking for (.*)\\.\\.\\. no"); //$NON-NLS-1$
+	private Pattern pkgconfigError = Pattern
+			.compile(".*?(configure:\\s+error:\\s+Package requirements\\s+\\((.*?)\\)\\s+were not met).*"); //$NON-NLS-1$
+	private Pattern genconfigError = Pattern.compile(".*?configure:\\s+error:\\s+(.*)"); //$NON-NLS-1$
+	private Pattern checkingFail = Pattern.compile("checking for (.*)\\.\\.\\. no"); //$NON-NLS-1$
 
-	private Pattern changingConfigDirectory = 
-			Pattern.compile("Configuring in (.*)"); //$NON-NLS-1$
+	private Pattern changingConfigDirectory = Pattern.compile("Configuring in (.*)"); //$NON-NLS-1$
 
 	private IPath buildDir;
 	private IPath sourcePath;
 	private IProject project;
 
-	public ErrorParser(){
+	public ErrorParser() {
 	}
-	
+
 	public ErrorParser(IPath sourcePath, IPath buildPath) {
 		this.buildDir = buildPath;
 		this.sourcePath = sourcePath;
 	}
 
 	@Override
-	public boolean processLine(String line,
-			org.eclipse.cdt.core.ErrorParserManager eoParser) {
+	public boolean processLine(String line, org.eclipse.cdt.core.ErrorParserManager eoParser) {
 
 		if (this.project == null)
 			this.project = eoParser.getProject();
 
 		if (this.buildDir == null)
 			this.buildDir = new Path(eoParser.getWorkingDirectoryURI().getPath());
-		
+
 		if (this.sourcePath == null)
 			this.sourcePath = eoParser.getProject().getLocation();
 
 		AutotoolsProblemMarkerInfo marker = processLine(line);
-		if ( marker != null){
+		if (marker != null) {
 			// Check to see if addProblemMarker exists.
 			try {
 				Method method = eoParser.getClass().getMethod("addProblemMarker", ProblemMarkerInfo.class);
@@ -92,9 +88,9 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 	public boolean processLine(String line, ErrorParserManager eoParser) {
 		if (this.project == null)
 			this.project = eoParser.getProject();
-		
+
 		AutotoolsProblemMarkerInfo marker = processLine(line);
-		if ( marker != null){
+		if (marker != null) {
 			eoParser.addProblemMarker(marker);
 			return true;
 		}
@@ -103,9 +99,9 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 
 	public AutotoolsProblemMarkerInfo processLine(String line) {
 		Matcher m;
-		
+
 		m = changingConfigDirectory.matcher(line);
-		if(m.matches()){
+		if (m.matches()) {
 			// set configuration directory.
 			this.buildDir = this.buildDir.append(m.group(1));
 			this.sourcePath = this.sourcePath.append(m.group(1));
@@ -114,22 +110,24 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 
 		m = pkgconfigError.matcher(line);
 		if (m.matches()) {
-			return new AutotoolsProblemMarkerInfo(getProject(), -1, m.group(1), SEVERITY_ERROR_BUILD, null, null, m.group(2), AutotoolsProblemMarkerInfo.Type.PACKAGE);
+			return new AutotoolsProblemMarkerInfo(getProject(), -1, m.group(1), SEVERITY_ERROR_BUILD, null, null,
+					m.group(2), AutotoolsProblemMarkerInfo.Type.PACKAGE);
 		}
-		
+
 		m = genconfigError.matcher(line);
 		if (m.matches()) {
 			return new AutotoolsProblemMarkerInfo(getProject(), -1, m.group(1), SEVERITY_ERROR_BUILD, null,
 					AutotoolsProblemMarkerInfo.Type.GENERIC);
 		}
-		
+
 		m = checkingFail.matcher(line);
 		if (m.matches()) {
 			// We know that there is a 'checking for ...' fail.
 			// Find the log file containing this check
 			AutotoolsProblemMarkerInfo.Type type = getCheckType(m.group(1));
 			if (type != null)
-				return new AutotoolsProblemMarkerInfo(getProject(), "Missing " + type + " " + m.group(1), SEVERITY_INFO, m.group(1), type);
+				return new AutotoolsProblemMarkerInfo(getProject(), "Missing " + type + " " + m.group(1), SEVERITY_INFO,
+						m.group(1), type);
 		}
 
 		return null;
@@ -201,8 +199,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 		if (!file.exists())
 			return -1;
 		try (LineNumberReader reader = new LineNumberReader(new FileReader(file))) {
-			Pattern errorPattern =
-					Pattern.compile("configure:(\\d+): checking for " + name); //$NON-NLS-1$
+			Pattern errorPattern = Pattern.compile("configure:(\\d+): checking for " + name); //$NON-NLS-1$
 			String line;
 			while ((line = reader.readLine()) != null) {
 				Matcher m = errorPattern.matcher(line);
@@ -215,7 +212,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 		}
 		return -1;
 	}
-	
+
 	@Override
 	public IProject getProject() {
 		return this.project;

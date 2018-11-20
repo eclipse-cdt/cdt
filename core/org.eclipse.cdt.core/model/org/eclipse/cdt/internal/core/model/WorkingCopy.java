@@ -77,7 +77,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	public void commit(boolean force, IProgressMonitor monitor) throws CModelException {
 		ITranslationUnit original = this.getOriginalElement();
 		if (original.exists()) {
-			CommitWorkingCopyOperation op= new CommitWorkingCopyOperation(this, force);
+			CommitWorkingCopyOperation op = new CommitWorkingCopyOperation(this, force);
 			op.runOperation(monitor);
 		} else {
 			IBuffer buffer = getBuffer();
@@ -101,7 +101,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 				} else {
 					originalRes.create(stream, force, monitor);
 				}
-			}  catch (IOException e) {
+			} catch (IOException e) {
 				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
 			} catch (CoreException e) {
 				throw new CModelException(e);
@@ -115,7 +115,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			return;
 		}
 		try {
-			problemRequestor= null;
+			problemRequestor = null;
 			DestroyWorkingCopyOperation op = new DestroyWorkingCopyOperation(this);
 			op.runOperation(null);
 		} catch (CModelException e) {
@@ -186,8 +186,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 					ICElement[] celems = ((IParent) current).getChildren();
 					current = null;
 					for (int j = 0; j < celems.length; ++j) {
-						if (celems[j].getElementName().equals(child.getElementName()) &&
-								celems[j].getElementType() == child.getElementType()) {
+						if (celems[j].getElementName().equals(child.getElementName())
+								&& celems[j].getElementType() == child.getElementType()) {
 							current = celems[j];
 							break;
 						}
@@ -204,7 +204,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 
 	@Override
 	public ITranslationUnit getOriginalElement() {
-		IFile file= getFile();
+		IFile file = getFile();
 		if (file != null) {
 			return new TranslationUnit(getParent(), getFile(), getContentTypeId());
 		}
@@ -282,7 +282,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 
 		// Set the buffer source if needed.
 		if (buffer.getContents() == null) {
-			ITranslationUnit original= this.getOriginalElement();
+			ITranslationUnit original = this.getOriginalElement();
 			IBuffer originalBuffer = null;
 			try {
 				originalBuffer = original.getBuffer();
@@ -324,13 +324,14 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 
 	@Override
-	public void restore() throws CModelException{
+	public void restore() throws CModelException {
 		if (this.useCount == 0)
 			throw newNotPresentException(); // Was destroyed.
 
 		TranslationUnit original = (TranslationUnit) getOriginalElement();
 		IBuffer buffer = this.getBuffer();
-		if (buffer == null) return;
+		if (buffer == null)
+			return;
 		buffer.setContents(original.getContents());
 		updateTimeStamp(original);
 		makeConsistent(null);
@@ -355,14 +356,13 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 
 	@Override
-	public IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection,
-			IProgressMonitor monitor) throws CModelException {
+	public IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor)
+			throws CModelException {
 		if (this.useCount == 0)
 			throw newNotPresentException(); // Was destroyed.
 
-        ReconcileWorkingCopyOperation op =
-        		new ReconcileWorkingCopyOperation(this, computeAST, forceProblemDetection);
-        op.runOperation(monitor);
+		ReconcileWorkingCopyOperation op = new ReconcileWorkingCopyOperation(this, computeAST, forceProblemDetection);
+		op.runOperation(monitor);
 		return op.fAST;
 	}
 }

@@ -39,12 +39,12 @@ public interface IScannerInfoCollector {
 	 */
 	public void contributeToScannerConfig(Object resource, Map scannerInfo);
 
-    /**
-     * @return specific piece of discovered scanner info for a resource
-     * discovered during the last collection cycle, can be:
+	/**
+	 * @return specific piece of discovered scanner info for a resource
+	 * discovered during the last collection cycle, can be:
 	 *    <li>{@code List<String>}</li>
 	 *    <li>{@code List<CCommandDSC>}</li>
-     */
-    public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type);
+	 */
+	public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type);
 
 }

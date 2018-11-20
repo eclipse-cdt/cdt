@@ -35,15 +35,15 @@ import org.eclipse.cdt.internal.ui.text.CWordFinder;
  */
 public class FindWordAction extends TextEditorAction {
 
-    public static final String FIND_WORD = "FindWord"; //$NON-NLS-1$
+	public static final String FIND_WORD = "FindWord"; //$NON-NLS-1$
 
-    private ITextViewer fViewer;
-    private FindNextAction fFindNext;
+	private ITextViewer fViewer;
+	private FindNextAction fFindNext;
 
 	/**
 	 * Creates new action.
 	 */
-    public FindWordAction(ResourceBundle bundle, String prefix, ITextEditor editor, ITextViewer viewer) {
+	public FindWordAction(ResourceBundle bundle, String prefix, ITextEditor editor, ITextViewer viewer) {
 		super(bundle, prefix, editor);
 		fViewer = viewer;
 		fFindNext = new FindNextAction(bundle, prefix, editor, true);
@@ -56,7 +56,7 @@ public class FindWordAction extends TextEditorAction {
 	@Override
 	public void run() {
 		ITextEditor editor = getTextEditor();
-		if (editor == null )
+		if (editor == null)
 			return;
 
 		ISelectionProvider selectionProvider = editor.getSelectionProvider();
@@ -75,7 +75,7 @@ public class FindWordAction extends TextEditorAction {
 		IDocument document = docProvider.getDocument(input);
 		if (document == null)
 			return;
-			
+
 		IResource resource = (input).getAdapter(IResource.class);
 		if (resource == null || !(resource instanceof IFile))
 			return;

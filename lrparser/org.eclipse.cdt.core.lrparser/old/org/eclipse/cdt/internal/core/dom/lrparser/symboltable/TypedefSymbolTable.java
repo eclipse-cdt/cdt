@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
 
-
-
 /**
  * A facade for a FunctionalMap that is used just to track typedef
  * declarations.
@@ -26,17 +24,15 @@ package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
  * @author Mike Kucera
  */
 public class TypedefSymbolTable {
-	
+
 	/**
 	 * Start with EMPTY_TABLE and build up a symbol table using add().
 	 */
 	public static final TypedefSymbolTable EMPTY_TABLE = new TypedefSymbolTable();
-	
-	
+
 	// the map we are providing a facade for
-	private final FunctionalMap<String,Object> map;
-	
-	
+	private final FunctionalMap<String, Object> map;
+
 	/**
 	 * Constructors are private, start with EMPTY_TABLE 
 	 * and build it up using insert().
@@ -44,32 +40,30 @@ public class TypedefSymbolTable {
 	private TypedefSymbolTable() {
 		map = FunctionalMap.emptyMap();
 	}
-	
-	private TypedefSymbolTable(FunctionalMap<String,Object> newRoot) {
+
+	private TypedefSymbolTable(FunctionalMap<String, Object> newRoot) {
 		map = newRoot;
 	}
-	
 
 	public TypedefSymbolTable add(String typedefIdent) {
 		return new TypedefSymbolTable(map.insert(typedefIdent, null));
 	}
 
-
 	public boolean contains(String typedef) {
 		return map.containsKey(typedef);
 	}
-	
+
 	public int size() {
 		return map.size();
 	}
-	
+
 	public boolean isEmpty() {
 		return map.size() == 0;
 	}
-	
-	@Override public String toString() {
+
+	@Override
+	public String toString() {
 		return map.toString();
 	}
-	
-	
+
 }

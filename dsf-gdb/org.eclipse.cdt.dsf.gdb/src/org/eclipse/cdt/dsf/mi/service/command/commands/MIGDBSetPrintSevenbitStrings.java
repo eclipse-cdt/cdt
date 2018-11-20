@@ -27,6 +27,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  */
 public class MIGDBSetPrintSevenbitStrings extends MIGDBSet {
 	public MIGDBSetPrintSevenbitStrings(ICommandControlDMContext ctx, boolean enable) {
-		super(ctx, new String[] {"print", "sevenbit-strings", enable ? "on" : "off"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		super(ctx, new String[] { "print", "sevenbit-strings", enable ? "on" : "off" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 }

@@ -54,13 +54,12 @@ public class BoostTestsRunnerProvider implements ITestsRunnerProvider {
 
 	@Override
 	public String[] getAdditionalLaunchParameters(String[][] testPaths) throws TestingException {
-		final String[] boostParameters = {
-			"--output_format=XML", //$NON-NLS-1$
-			"--log_level=all", //$NON-NLS-1$
-			"--report_level=no" //$NON-NLS-1$
+		final String[] boostParameters = { "--output_format=XML", //$NON-NLS-1$
+				"--log_level=all", //$NON-NLS-1$
+				"--report_level=no" //$NON-NLS-1$
 		};
 		String[] result = boostParameters;
-		
+
 		// Build tests filter
 		if (testPaths != null && testPaths.length >= 1) {
 			if (testPaths.length != 1) {
@@ -80,18 +79,18 @@ public class BoostTestsRunnerProvider implements ITestsRunnerProvider {
 		}
 		return result;
 	}
-	
-    /**
-     * Construct the error message from prefix and detailed description.
-     *
-     * @param prefix prefix
-     * @param description detailed description
-     * @return the full message
-     */
+
+	/**
+	 * Construct the error message from prefix and detailed description.
+	 *
+	 * @param prefix prefix
+	 * @param description detailed description
+	 * @return the full message
+	 */
 	private String getErrorText(String prefix, String description) {
 		return MessageFormat.format(BoostTestsRunnerMessages.BoostTestsRunner_error_format, prefix, description);
 	}
-	
+
 	@Override
 	public void run(ITestModelUpdater modelUpdater, InputStream inputStream) throws TestingException {
 		try {
@@ -100,16 +99,20 @@ public class BoostTestsRunnerProvider implements ITestsRunnerProvider {
 			sp.parse(inputStream, new BoostXmlLogHandler(modelUpdater));
 
 		} catch (IOException e) {
-			throw new TestingException(getErrorText(BoostTestsRunnerMessages.BoostTestsRunner_io_error_prefix, e.getLocalizedMessage()));
-			
+			throw new TestingException(
+					getErrorText(BoostTestsRunnerMessages.BoostTestsRunner_io_error_prefix, e.getLocalizedMessage()));
+
 		} catch (NumberFormatException e) {
-			throw new TestingException(getErrorText(BoostTestsRunnerMessages.BoostTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
+			throw new TestingException(
+					getErrorText(BoostTestsRunnerMessages.BoostTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
 
 		} catch (ParserConfigurationException e) {
-			throw new TestingException(getErrorText(BoostTestsRunnerMessages.BoostTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
+			throw new TestingException(
+					getErrorText(BoostTestsRunnerMessages.BoostTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
 
 		} catch (SAXException e) {
-			throw new TestingException(getErrorText(BoostTestsRunnerMessages.BoostTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
+			throw new TestingException(
+					getErrorText(BoostTestsRunnerMessages.BoostTestsRunner_xml_error_prefix, e.getLocalizedMessage()));
 		}
 	}
 

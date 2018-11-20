@@ -27,32 +27,27 @@ import org.osgi.service.prefs.Preferences;
  * 
  * @author Mike Kucera
  */
-public class XlcLanguagePreferences  {
+public class XlcLanguagePreferences {
 
 	private static final String QUALIFIER = XlcParserPlugin.PLUGIN_ID;
 	private static final String XLC_PREFERENCES_NODE = "xlc.preferences";
 
-
 	static void initializeDefaultPreferences() {
 		Preferences defaultNode = getDefaultPreferences();
-		
-		for(XlcPref p : XlcPref.values()) {
+
+		for (XlcPref p : XlcPref.values()) {
 			defaultNode.put(p.toString(), p.getDefaultValue());
 		}
 	}
-	
-	
-	
+
 	public static void setProjectPreference(XlcPref key, String value, IProject project) {
 		getProjectPreferences(project).put(key.toString(), value);
 	}
-	
+
 	public static void setWorkspacePreference(XlcPref key, String value) {
 		getWorkspacePreferences().put(key.toString(), value);
 	}
-	
-	
-	
+
 	public static String getProjectPreference(XlcPref key, IProject project) {
 		return getProjectPreferences(project).get(key.toString(), null);
 	}
@@ -60,11 +55,10 @@ public class XlcLanguagePreferences  {
 	public static String getWorkspacePreference(XlcPref key) {
 		return getWorkspacePreferences().get(key.toString(), null);
 	}
-	
+
 	public static String getDefaultPreference(XlcPref key) {
 		return getDefaultPreferences().get(key.toString(), null);
 	}
-	
 
 	/**
 	 * Returns the preference for the given key.
@@ -76,31 +70,22 @@ public class XlcLanguagePreferences  {
 	}
 
 	private static Preferences[] getPreferences(IProject project) {
-		if(project == null) {
-			return new Preferences[] {
-				getWorkspacePreferences(),
-				getDefaultPreferences()
-			};
-		}
-		else {
-			return new Preferences[] {
-				getProjectPreferences(project),
-				getWorkspacePreferences(),
-				getDefaultPreferences()
-			};
+		if (project == null) {
+			return new Preferences[] { getWorkspacePreferences(), getDefaultPreferences() };
+		} else {
+			return new Preferences[] { getProjectPreferences(project), getWorkspacePreferences(),
+					getDefaultPreferences() };
 		}
 	}
-	
-	
-	
+
 	private static Preferences getDefaultPreferences() {
 		return getPreferences(DefaultScope.INSTANCE);
 	}
-	
+
 	private static Preferences getWorkspacePreferences() {
 		return getPreferences(InstanceScope.INSTANCE);
 	}
-	
+
 	private static Preferences getProjectPreferences(IProject project) {
 		return getPreferences(new ProjectScope(project));
 	}
@@ -109,6 +94,4 @@ public class XlcLanguagePreferences  {
 		return scope.getNode(QUALIFIER).node(XLC_PREFERENCES_NODE);
 	}
 
-
-	
 }

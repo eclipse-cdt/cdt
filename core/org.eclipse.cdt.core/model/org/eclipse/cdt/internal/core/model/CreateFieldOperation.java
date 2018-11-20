@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+
 /**
  * <p>This operation creates a field declaration in a type.
  *
@@ -41,7 +42,8 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	 * declaration, or as the first member in the type if there are no
 	 * field declarations.
 	 */
-	public CreateFieldOperation(IStructure parentElement, String name, String returnType, String initializer, boolean force) {
+	public CreateFieldOperation(IStructure parentElement, String name, String returnType, String initializer,
+			boolean force) {
 		super(parentElement, name, returnType, force);
 		fInitializer = initializer;
 	}
@@ -50,7 +52,7 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	 * @see CreateElementInTUOperation#getMainTaskName
 	 */
 	@Override
-	public String getMainTaskName(){
+	public String getMainTaskName() {
 		return CoreModelMessages.getString("operation.createFieldProgress"); //$NON-NLS-1$
 	}
 

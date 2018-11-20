@@ -27,13 +27,13 @@ import java.util.*;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class GnuUIPlugin extends Plugin {
-	
+
 	public static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.gnu.ui"; //$NON-NLS-1$
 	//The shared instance.
 	private static GnuUIPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	/**
 	 * The constructor.
 	 */

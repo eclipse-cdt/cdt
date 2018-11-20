@@ -99,19 +99,19 @@ public interface IGDBBackend extends IMIBackend {
 	 *  @since 3.0 
 	 */
 	public Properties getEnvironmentVariables() throws CoreException;
-	
+
 	/** 
 	 * Returns whether the native environment should be cleared before
 	 * setting the user-specified environment variables.
 	 * 
 	 * @since 3.0 */
 	public boolean getClearEnvironment() throws CoreException;
-	
+
 	/**
 	 * Sends an interrupt signal to the GDB process.
 	 */
 	public void interrupt();
-	
+
 	/**
 	 * Interrupts the backend and wait to confirm the interrupt 
 	 * succeeded.  The request monitor indicates to the caller if 
@@ -123,7 +123,7 @@ public interface IGDBBackend extends IMIBackend {
 	 *                implementation-specific default value.
 	 *                Using a value of 0 or a negative value has unspecified
 	 *                behavior. 
- 	 *
+	 *
 	 * @since 3.0
 	 */
 	public void interruptAndWait(int timeout, RequestMonitor rm);
@@ -144,7 +144,7 @@ public interface IGDBBackend extends IMIBackend {
 
 	/**
 	 * @return true if the ongoing session is attaching to a program locally or remotely.
-	 */	
+	 */
 	public boolean getIsAttachSession();
 
 	/**
@@ -160,7 +160,7 @@ public interface IGDBBackend extends IMIBackend {
 	 * @since 3.0
 	 */
 	public boolean getUpdateThreadListOnSuspend() throws CoreException;
-	
+
 	/**
 	 * @return True if the full GDB console should be used.  False otherwise.
 	 * 
@@ -169,7 +169,7 @@ public interface IGDBBackend extends IMIBackend {
 	default boolean isFullGdbConsoleSupported() {
 		return false;
 	}
-	
+
 	/**
 	 * @return The real GDB process that was started for the debug session
 	 * @since 5.2
@@ -177,7 +177,7 @@ public interface IGDBBackend extends IMIBackend {
 	default Process getProcess() {
 		throw new RuntimeException();
 	}
-	
+
 	/**
 	 * Returns the PTY used when starting the GDB process.
 	 * Can be null if no PTY was used.

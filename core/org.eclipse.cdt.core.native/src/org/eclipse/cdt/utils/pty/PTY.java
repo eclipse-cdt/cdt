@@ -79,10 +79,9 @@ public class PTY {
 	 * @return whether PTY support for given mode is available on this platform
 	 * @since 5.6
 	 */
-	public static boolean isSupported(Mode mode ) {
+	public static boolean isSupported(Mode mode) {
 		return hasPTY && (isConsoleModeSupported || mode == Mode.TERMINAL);
 	}
-	
 
 	/**
 	 * Create PTY for use with Eclipse console.
@@ -146,7 +145,7 @@ public class PTY {
 		if (console && !isConsoleModeSupported) {
 			throw new IOException(Messages.Util_exception_cannotCreatePty);
 		}
-		slave= hasPTY ? openMaster(console) : null;
+		slave = hasPTY ? openMaster(console) : null;
 
 		if (slave == null) {
 			throw new IOException(Messages.Util_exception_cannotCreatePty);
@@ -185,11 +184,11 @@ public class PTY {
 	public final boolean isConsole() {
 		return console;
 	}
-	
+
 	public PTYOutputStream getOutputStream() {
 		return out;
 	}
-	
+
 	public PTYInputStream getInputStream() {
 		return in;
 	}
@@ -251,7 +250,8 @@ public class PTY {
 	/**
 	 * Native method when executing with a terminal emulation (winpty only).
 	 */
-	native int exec2(String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD, boolean console) throws IOException;
+	native int exec2(String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD,
+			boolean console) throws IOException;
 
 	/**
 	 * Native method to wait for process to terminate (winpty only).
@@ -274,5 +274,5 @@ public class PTY {
 			//CCorePlugin.log(e);
 		}
 	}
-	
+
 }

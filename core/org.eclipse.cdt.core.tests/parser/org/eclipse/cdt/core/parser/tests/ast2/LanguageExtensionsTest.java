@@ -48,25 +48,25 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
  * Testcases for non-gnu language extensions.
  */
 public class LanguageExtensionsTest extends AST2TestBase {
-	
-	protected static final int SIZEOF_EXTENSION   = 0x1;
+
+	protected static final int SIZEOF_EXTENSION = 0x1;
 	protected static final int FUNCTION_STYLE_ASM = 0x2;
 	protected static final int SLASH_PERCENT_COMMENT = 0x4;
 
 	public static TestSuite suite() {
 		return suite(LanguageExtensionsTest.class);
 	}
-	
+
 	public LanguageExtensionsTest() {
 		super();
 	}
-	
+
 	public LanguageExtensionsTest(String name) {
 		super(name);
 	}
-	
+
 	private IASTTranslationUnit parse(ISourceCodeParser parser) {
-		IASTTranslationUnit tu= parser.parse();
+		IASTTranslationUnit tu = parser.parse();
 		assertFalse(parser.encounteredError());
 		assertEquals(0, tu.getPreprocessorProblemsCount());
 		assertEquals(0, CPPVisitor.getProblems(tu).length);
@@ -76,8 +76,8 @@ public class LanguageExtensionsTest extends AST2TestBase {
 	protected IASTTranslationUnit parse(String code, IScannerExtensionConfiguration sext,
 			ICPPParserExtensionConfiguration pext) throws Exception {
 		FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
-		IScanner scanner = new CPreprocessor(codeReader, new ScannerInfo(), ParserLanguage.CPP, NULL_LOG,
-				sext, IncludeFileContentProvider.getSavedFilesProvider());
+		IScanner scanner = new CPreprocessor(codeReader, new ScannerInfo(), ParserLanguage.CPP, NULL_LOG, sext,
+				IncludeFileContentProvider.getSavedFilesProvider());
 		GNUCPPSourceParser parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, pext);
 		return parse(parser);
 	}
@@ -90,157 +90,143 @@ public class LanguageExtensionsTest extends AST2TestBase {
 		GNUCSourceParser parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, pext);
 		return parse(parser);
 	}
-	
+
 	protected IASTTranslationUnit parseCPPWithExtension(String code, final int extensions) throws Exception {
-		return parse(code,
-			new GPPScannerExtensionConfiguration() {
-				@Override
-				public boolean supportSlashPercentComments() {
-					return (extensions & SLASH_PERCENT_COMMENT) != 0;
-				}
-			},
-			new GPPParserExtensionConfiguration() {
-				@Override
-				public boolean supportExtendedSizeofOperator() {
-					return (extensions & SIZEOF_EXTENSION) != 0;
-				}
-				@Override
-				public boolean supportFunctionStyleAssembler() {
-					return (extensions & FUNCTION_STYLE_ASM) != 0;
-				}
+		return parse(code, new GPPScannerExtensionConfiguration() {
+			@Override
+			public boolean supportSlashPercentComments() {
+				return (extensions & SLASH_PERCENT_COMMENT) != 0;
 			}
-		);
+		}, new GPPParserExtensionConfiguration() {
+			@Override
+			public boolean supportExtendedSizeofOperator() {
+				return (extensions & SIZEOF_EXTENSION) != 0;
+			}
+
+			@Override
+			public boolean supportFunctionStyleAssembler() {
+				return (extensions & FUNCTION_STYLE_ASM) != 0;
+			}
+		});
 	}
 
 	protected IASTTranslationUnit parseCWithExtension(String code, final int extensions) throws Exception {
-		return parse(code, 
-			new GCCScannerExtensionConfiguration() {
-				@Override
-				public boolean supportSlashPercentComments() {
-					return (extensions & SLASH_PERCENT_COMMENT) != 0;
-				}
-			},
-			new GCCParserExtensionConfiguration() {
-				@Override
-				public boolean supportExtendedSizeofOperator() {
-					return (extensions & SIZEOF_EXTENSION) != 0;
-				}
-				@Override
-				public boolean supportFunctionStyleAssembler() {
-					return (extensions & FUNCTION_STYLE_ASM) != 0;
-				}
+		return parse(code, new GCCScannerExtensionConfiguration() {
+			@Override
+			public boolean supportSlashPercentComments() {
+				return (extensions & SLASH_PERCENT_COMMENT) != 0;
 			}
-		);
+		}, new GCCParserExtensionConfiguration() {
+			@Override
+			public boolean supportExtendedSizeofOperator() {
+				return (extensions & SIZEOF_EXTENSION) != 0;
+			}
+
+			@Override
+			public boolean supportFunctionStyleAssembler() {
+				return (extensions & FUNCTION_STYLE_ASM) != 0;
+			}
+		});
 	}
 
 	// parclass ExampleClass {
-    // };
-    public void testPOP_parclass() throws Exception {
-    	IASTTranslationUnit tu= parse(getAboveComment(), 
-				POPCPPScannerExtensionConfiguration.getInstance(), 
-				POPCPPParserExtensionConfiguration.getInstance()
-		);
-    	ICPPASTCompositeTypeSpecifier comp= getCompositeType(tu, 0);
-    }
-    
+	// };
+	public void testPOP_parclass() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), POPCPPScannerExtensionConfiguration.getInstance(),
+				POPCPPParserExtensionConfiguration.getInstance());
+		ICPPASTCompositeTypeSpecifier comp = getCompositeType(tu, 0);
+	}
+
 	// parclass Table {
-    //    void sort([in, out, size=n] int *data, int n);
-    // };
-    public void testPOP_marshallingData() throws Exception {
-    	IASTTranslationUnit tu= parse(getAboveComment(), 
-				POPCPPScannerExtensionConfiguration.getInstance(), 
-				POPCPPParserExtensionConfiguration.getInstance()
-		);
-    	ICPPASTCompositeTypeSpecifier comp= getCompositeType(tu, 0);
-    	IASTSimpleDeclaration sd= getDeclaration(comp, 0);
-    	assertInstance(sd.getDeclarators()[0], IASTFunctionDeclarator.class);
-    }
-    
-    //    parclass Bird {
-    //    	public:
-    //    		Bird(float P) @{ od.power(P);
-    //    		od.memory(100,60);
-    //    		od.protocol("socket http"); };
-    //    };
-    public void testPOP_objectDescriptor() throws Exception {
-    	IASTTranslationUnit tu= parse(getAboveComment(), 
-				POPCPPScannerExtensionConfiguration.getInstance(), 
-				POPCPPParserExtensionConfiguration.getInstance()
-		);
-    	ICPPASTCompositeTypeSpecifier comp= getCompositeType(tu, 0);
-    	IASTSimpleDeclaration sd= getDeclaration(comp, 1);
-    	assertInstance(sd.getDeclarators()[0], IASTFunctionDeclarator.class);
-    }
-    
-    // @pack(Stack, Queue, List)
-    // int a();
-    public void testPOP_packDirective() throws Exception {
-    	IASTTranslationUnit tu= parse(getAboveComment(), 
-				POPCPPScannerExtensionConfiguration.getInstance(), 
-				POPCPPParserExtensionConfiguration.getInstance()
-		);
-    	IASTSimpleDeclaration sd= getDeclaration(tu, 0);
-    	assertInstance(sd.getDeclarators()[0], IASTFunctionDeclarator.class);
-    }
-    
+	//    void sort([in, out, size=n] int *data, int n);
+	// };
+	public void testPOP_marshallingData() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), POPCPPScannerExtensionConfiguration.getInstance(),
+				POPCPPParserExtensionConfiguration.getInstance());
+		ICPPASTCompositeTypeSpecifier comp = getCompositeType(tu, 0);
+		IASTSimpleDeclaration sd = getDeclaration(comp, 0);
+		assertInstance(sd.getDeclarators()[0], IASTFunctionDeclarator.class);
+	}
 
-    
-    // void test() {
-    // sizeof(int, 1);
-    // sizeof(int, 2, 2);
-    // }
-    public void testSizeofExtension() throws Exception {
-    	IASTTranslationUnit tu= parseCWithExtension(getAboveComment(), SIZEOF_EXTENSION);
-    	IASTFunctionDefinition fdef= getDeclaration(tu, 0);
-    	IASTUnaryExpression expr= getExpressionOfStatement(fdef, 0);
-    	assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
-    	assertInstance(expr.getOperand(), IASTExpressionList.class);
-    	expr= getExpressionOfStatement(fdef, 1);
-    	assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
-    	assertInstance(expr.getOperand(), IASTExpressionList.class);
+	//    parclass Bird {
+	//    	public:
+	//    		Bird(float P) @{ od.power(P);
+	//    		od.memory(100,60);
+	//    		od.protocol("socket http"); };
+	//    };
+	public void testPOP_objectDescriptor() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), POPCPPScannerExtensionConfiguration.getInstance(),
+				POPCPPParserExtensionConfiguration.getInstance());
+		ICPPASTCompositeTypeSpecifier comp = getCompositeType(tu, 0);
+		IASTSimpleDeclaration sd = getDeclaration(comp, 1);
+		assertInstance(sd.getDeclarators()[0], IASTFunctionDeclarator.class);
+	}
 
-    	tu= parseCPPWithExtension(getAboveComment(), SIZEOF_EXTENSION);
-    	fdef= getDeclaration(tu, 0);
-    	expr= getExpressionOfStatement(fdef, 0);
-    	assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
-    	assertInstance(expr.getOperand(), IASTExpressionList.class);
-    	expr= getExpressionOfStatement(fdef, 1);
-    	assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
-    	assertInstance(expr.getOperand(), IASTExpressionList.class);
-    }
-    
-    //  asm volatile int a1() {
-    //     assembler code here
-    //  }
-    //  asm int a2() {
-    //     assembler code here
-    //  }
-    //  asm volatile a3(int) {
-    //     assembler code here
-    //  }
-    //  asm a4() {
-    //     assembler code here
-    //  }
-    public void testFunctionStyleAssembler() throws Exception {
-    	IASTTranslationUnit tu= parseCWithExtension(getAboveComment(), FUNCTION_STYLE_ASM);
-    	IASTFunctionDefinition fdef= getDeclaration(tu, 0);
-    	fdef= getDeclaration(tu, 1);
-    	fdef= getDeclaration(tu, 2);
-    	fdef= getDeclaration(tu, 3);
+	// @pack(Stack, Queue, List)
+	// int a();
+	public void testPOP_packDirective() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), POPCPPScannerExtensionConfiguration.getInstance(),
+				POPCPPParserExtensionConfiguration.getInstance());
+		IASTSimpleDeclaration sd = getDeclaration(tu, 0);
+		assertInstance(sd.getDeclarators()[0], IASTFunctionDeclarator.class);
+	}
 
-    	tu= parseCPPWithExtension(getAboveComment(), FUNCTION_STYLE_ASM);
-    	fdef= getDeclaration(tu, 0);
-    	fdef= getDeclaration(tu, 1);
-    	fdef= getDeclaration(tu, 2);
-    	fdef= getDeclaration(tu, 3);
-    }
-    	
+	// void test() {
+	// sizeof(int, 1);
+	// sizeof(int, 2, 2);
+	// }
+	public void testSizeofExtension() throws Exception {
+		IASTTranslationUnit tu = parseCWithExtension(getAboveComment(), SIZEOF_EXTENSION);
+		IASTFunctionDefinition fdef = getDeclaration(tu, 0);
+		IASTUnaryExpression expr = getExpressionOfStatement(fdef, 0);
+		assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
+		assertInstance(expr.getOperand(), IASTExpressionList.class);
+		expr = getExpressionOfStatement(fdef, 1);
+		assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
+		assertInstance(expr.getOperand(), IASTExpressionList.class);
+
+		tu = parseCPPWithExtension(getAboveComment(), SIZEOF_EXTENSION);
+		fdef = getDeclaration(tu, 0);
+		expr = getExpressionOfStatement(fdef, 0);
+		assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
+		assertInstance(expr.getOperand(), IASTExpressionList.class);
+		expr = getExpressionOfStatement(fdef, 1);
+		assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
+		assertInstance(expr.getOperand(), IASTExpressionList.class);
+	}
+
+	//  asm volatile int a1() {
+	//     assembler code here
+	//  }
+	//  asm int a2() {
+	//     assembler code here
+	//  }
+	//  asm volatile a3(int) {
+	//     assembler code here
+	//  }
+	//  asm a4() {
+	//     assembler code here
+	//  }
+	public void testFunctionStyleAssembler() throws Exception {
+		IASTTranslationUnit tu = parseCWithExtension(getAboveComment(), FUNCTION_STYLE_ASM);
+		IASTFunctionDefinition fdef = getDeclaration(tu, 0);
+		fdef = getDeclaration(tu, 1);
+		fdef = getDeclaration(tu, 2);
+		fdef = getDeclaration(tu, 3);
+
+		tu = parseCPPWithExtension(getAboveComment(), FUNCTION_STYLE_ASM);
+		fdef = getDeclaration(tu, 0);
+		fdef = getDeclaration(tu, 1);
+		fdef = getDeclaration(tu, 2);
+		fdef = getDeclaration(tu, 3);
+	}
+
 	// /% a comment %/
 	// int a;
 	public void testSlashPercentComment() throws Exception {
-    	IASTTranslationUnit tu= parseCWithExtension(getAboveComment(), SLASH_PERCENT_COMMENT);
+		IASTTranslationUnit tu = parseCWithExtension(getAboveComment(), SLASH_PERCENT_COMMENT);
 
-		IASTDeclaration d= getDeclaration(tu, 0);
+		IASTDeclaration d = getDeclaration(tu, 0);
 		assertEquals("int a;", d.getRawSignature());
 	}
 }

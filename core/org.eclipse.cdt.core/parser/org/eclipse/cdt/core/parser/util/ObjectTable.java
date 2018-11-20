@@ -30,35 +30,35 @@ public abstract class ObjectTable<T> extends HashTable implements Iterable<T> {
 	@SuppressWarnings("unchecked")
 	public ObjectTable(int initialSize) {
 		super(initialSize);
-		keyTable= (T[]) new Object[capacity()];
+		keyTable = (T[]) new Object[capacity()];
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object clone() {
-	    ObjectTable<T> newTable = (ObjectTable<T>) super.clone();
+		ObjectTable<T> newTable = (ObjectTable<T>) super.clone();
 
-        int size = capacity();
-        newTable.keyTable = (T[]) new Object[size];
-        System.arraycopy(keyTable, 0, newTable.keyTable, 0, keyTable.length);
+		int size = capacity();
+		newTable.keyTable = (T[]) new Object[size];
+		System.arraycopy(keyTable, 0, newTable.keyTable, 0, keyTable.length);
 
-	    return newTable;
+		return newTable;
 	}
 
 	public List<T> toList() {
-	    int size = size();
-	    List<T> list = new ArrayList<T>(size);
-	    for (int i = 0; i < size; i++) {
-	        list.add(keyAt(i));
-	    }
-	    return list;
+		int size = size();
+		List<T> list = new ArrayList<T>(size);
+		for (int i = 0; i < size; i++) {
+			list.add(keyAt(i));
+		}
+		return list;
 	}
 
 	public T keyAt(int i) {
-	    if (i < 0 || i > currEntry)
-	        return null;
+		if (i < 0 || i > currEntry)
+			return null;
 
-	    return keyTable[i];
+		return keyTable[i];
 	}
 
 	@Override
@@ -69,11 +69,11 @@ public abstract class ObjectTable<T> extends HashTable implements Iterable<T> {
 
 	@Override
 	protected final int hash(int pos) {
-	    return hash(keyTable[pos]);
+		return hash(keyTable[pos]);
 	}
 
 	private int hash(Object obj) {
-	    return hashTable == null ? 0 : hashToOffset(obj.hashCode());
+		return hashTable == null ? 0 : hashToOffset(obj.hashCode());
 	}
 
 	@Override
@@ -138,20 +138,20 @@ public abstract class ObjectTable<T> extends HashTable implements Iterable<T> {
 	}
 
 	public boolean containsKey(T key) {
-	    return lookup(key) != -1;
+		return lookup(key) != -1;
 	}
 
 	public Object[] keyArray() {
-	    Object[] keys = new Object[size()];
-	    System.arraycopy(keyTable, 0, keys, 0, keys.length);
-	    return keys;
+		Object[] keys = new Object[size()];
+		System.arraycopy(keyTable, 0, keys, 0, keys.length);
+		return keys;
 	}
 
 	@SuppressWarnings("unchecked")
 	public <X> X[] keyArray(Class<X> c) {
 		X[] keys = (X[]) Array.newInstance(c, size());
-        System.arraycopy(keyTable, 0, keys, 0, keys.length);
-        return keys;
+		System.arraycopy(keyTable, 0, keys, 0, keys.length);
+		return keys;
 	}
 
 	public boolean isEquivalent(ObjectTable<T> other, IObjectMatcher matcher) {

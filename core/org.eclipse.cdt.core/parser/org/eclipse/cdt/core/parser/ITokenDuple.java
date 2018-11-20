@@ -26,26 +26,33 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 @Deprecated
 public interface ITokenDuple {
 	public abstract IToken getFirstToken();
+
 	public abstract IToken getLastToken();
-	
+
 	public List<IASTNode>[] getTemplateIdArgLists();
-	
+
 	public ITokenDuple getLastSegment();
+
 	public ITokenDuple getLeadingSegments();
+
 	public int getSegmentCount();
-	
+
 	public abstract Iterator<IToken> iterator();
+
 	@Override
 	public abstract String toString();
+
 	public char[] toCharArray();
-			
-	public abstract int length(); 
-	
+
+	public abstract int length();
+
 	public IToken getToken(int index);
+
 	public ITokenDuple[] getSegments();
-	
+
 	public int getStartOffset();
+
 	public int getEndOffset();
-	
+
 	public char[] extractNameFromTemplateId();
 }

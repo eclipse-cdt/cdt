@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.disassembly.rulers;
 
-
 /**
  * Provides support to modify and query the visibility of
  * ruler columns and test whether a ruler column is supported.

@@ -23,13 +23,13 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * The page for setting various code style preferences.
  */
 public class CodeStylePreferencePage extends ConfigurationBlockPropertyAndPreferencePage {
-	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"; //$NON-NLS-1$
-	public static final String PROP_ID= "org.eclipse.cdt.ui.propertyPages.CodeStylePreferencePage"; //$NON-NLS-1$
+	public static final String PREF_ID = "org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"; //$NON-NLS-1$
+	public static final String PROP_ID = "org.eclipse.cdt.ui.propertyPages.CodeStylePreferencePage"; //$NON-NLS-1$
 
 	public CodeStylePreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		// Only used when the page is shown programmatically.
-		setTitle(PreferencesMessages.CodeStylePreferencePage_title);		 
+		setTitle(PreferencesMessages.CodeStylePreferencePage_title);
 	}
 
 	@Override
@@ -51,6 +51,6 @@ public class CodeStylePreferencePage extends ConfigurationBlockPropertyAndPrefer
 	protected String getPropertyPageId() {
 		return null;
 		// TODO(sprigogin): Project specific settings
-//		return PROP_ID;
+		//		return PROP_ID;
 	}
 }

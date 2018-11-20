@@ -45,7 +45,6 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 		return getBinary(null, path);
 	}
 
-
 	@Override
 	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
 		if (path == null) {
@@ -61,24 +60,25 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
 				if (attribute != null) {
 					switch (attribute.getType()) {
-						case Attribute.ELF_TYPE_EXE :
-							binary = createBinaryExecutable(path);
-							break;
+					case Attribute.ELF_TYPE_EXE:
+						binary = createBinaryExecutable(path);
+						break;
 
-						case Attribute.ELF_TYPE_SHLIB :
-							binary = hasInterpProgramHeader(hints, path) ? createBinaryExecutable(path) : createBinaryShared(path);
-							break;
+					case Attribute.ELF_TYPE_SHLIB:
+						binary = hasInterpProgramHeader(hints, path) ? createBinaryExecutable(path)
+								: createBinaryShared(path);
+						break;
 
-						case Attribute.ELF_TYPE_OBJ :
-							binary = createBinaryObject(path);
-							break;
+					case Attribute.ELF_TYPE_OBJ:
+						binary = createBinaryObject(path);
+						break;
 
-						case Attribute.ELF_TYPE_CORE :
-							binary = createBinaryCore(path);
-							break;
+					case Attribute.ELF_TYPE_CORE:
+						binary = createBinaryCore(path);
+						break;
 					}
 					if (binary instanceof ElfBinaryObject) {
-						((ElfBinaryObject)binary).setElfAttributes(attribute);
+						((ElfBinaryObject) binary).setElfAttributes(attribute);
 					}
 				}
 			} catch (IOException e) {
@@ -190,7 +190,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
 		try {
 			/* No PHdr.PT_INTERP found in the hints meaning we need to read the file itself */
-			return Arrays.stream(new Elf(path.toOSString()).getPHdrs()).anyMatch(phdr -> phdr.p_type == PHdr.PT_INTERP); 
+			return Arrays.stream(new Elf(path.toOSString()).getPHdrs()).anyMatch(phdr -> phdr.p_type == PHdr.PT_INTERP);
 		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}

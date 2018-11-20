@@ -20,11 +20,9 @@ import org.eclipse.core.runtime.CoreException;
 public class QtPDOMQMethod extends QtPDOMBinding {
 
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
+
 	protected static enum Field {
-		Signature(Database.PTR_SIZE),
-		Revision(8),
-		Flags(1),
-		Last(0);
+		Signature(Database.PTR_SIZE), Revision(8), Flags(1), Last(0);
 
 		public final int offset;
 
@@ -48,11 +46,12 @@ public class QtPDOMQMethod extends QtPDOMBinding {
 		super(linkage, record);
 	}
 
-	public QtPDOMQMethod(QtPDOMLinkage linkage, PDOMBinding parent, IASTName qtName, IASTName cppName, IQMethod.Kind kind, String qtEncSignatures, Long revision) throws CoreException {
+	public QtPDOMQMethod(QtPDOMLinkage linkage, PDOMBinding parent, IASTName qtName, IASTName cppName,
+			IQMethod.Kind kind, String qtEncSignatures, Long revision) throws CoreException {
 		super(linkage, parent, qtName);
 
 		byte flag = 0;
-		switch(kind) {
+		switch (kind) {
 		case Invokable:
 			flag |= KIND_IS_INVOKABLE;
 			break;
@@ -86,7 +85,7 @@ public class QtPDOMQMethod extends QtPDOMBinding {
 	}
 
 	public IQMethod.Kind getKind() throws CoreException {
-		switch(getDB().getByte(Field.Flags.getRecord(record)) & KIND_MASK) {
+		switch (getDB().getByte(Field.Flags.getRecord(record)) & KIND_MASK) {
 		case KIND_IS_INVOKABLE:
 			return IQMethod.Kind.Invokable;
 		case KIND_IS_SIGNAL:

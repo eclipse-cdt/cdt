@@ -47,13 +47,13 @@ public class CharTable extends HashTable {
 
 	@Override
 	public Object clone() {
-	    CharTable newTable = (CharTable) super.clone();
+		CharTable newTable = (CharTable) super.clone();
 
-        int size = capacity();
-        newTable.keyTable = new char[size][];
-        System.arraycopy(keyTable, 0, newTable.keyTable, 0, keyTable.length);
+		int size = capacity();
+		newTable.keyTable = new char[size][];
+		System.arraycopy(keyTable, 0, newTable.keyTable, 0, keyTable.length);
 
-	    return newTable;
+		return newTable;
 	}
 
 	protected final int hash(char[] source, int start, int length) {
@@ -62,11 +62,11 @@ public class CharTable extends HashTable {
 
 	@Override
 	protected final int hash(int pos) {
-	    return hash(keyTable[pos], 0, keyTable[pos].length);
+		return hash(keyTable[pos], 0, keyTable[pos].length);
 	}
 
 	protected final int hash(char[] obj) {
-	    return hash(obj, 0, obj.length);
+		return hash(obj, 0, obj.length);
 	}
 
 	protected final int addIndex(char[] buffer) {
@@ -83,7 +83,7 @@ public class CharTable extends HashTable {
 				resize();
 				if (hashTable != null) {
 					// If we grew from list to hash, then recurse and add as a hashtable.
-				    return addIndex(buffer, start, len);
+					return addIndex(buffer, start, len);
 				}
 			}
 			currEntry++;
@@ -119,19 +119,19 @@ public class CharTable extends HashTable {
 	}
 
 	public List<char[]> toList() {
-	    List<char[]> list = new ArrayList<char[]>(size());
-	    int size = size();
-	    for (int i = 0; i < size; i++) {
-	        list.add(keyAt(i));
-	    }
-	    return list;
+		List<char[]> list = new ArrayList<char[]>(size());
+		int size = size();
+		for (int i = 0; i < size; i++) {
+			list.add(keyAt(i));
+		}
+		return list;
 	}
 
 	public final char[] keyAt(int i) {
-	    if (i < 0 || i > currEntry)
-	        return null;
+		if (i < 0 || i > currEntry)
+			return null;
 
-	    return keyTable[i];
+		return keyTable[i];
 	}
 
 	public final boolean containsKey(char[] key, int start, int len) {
@@ -139,15 +139,15 @@ public class CharTable extends HashTable {
 	}
 
 	public final boolean containsKey(char[] key) {
-	    return lookup(key) != -1;
+		return lookup(key) != -1;
 	}
 
 	public final char[] findKey(char[] buffer, int start, int len) {
-	    int idx = lookup(buffer, start, len);
-	    if (idx == -1)
-	        return null;
+		int idx = lookup(buffer, start, len);
+		if (idx == -1)
+			return null;
 
-	    return keyTable[idx];
+		return keyTable[idx];
 	}
 
 	public int lookup(char[] buffer) {
@@ -186,9 +186,9 @@ public class CharTable extends HashTable {
 	 * @since 5.7
 	 */
 	public char[][] keys() {
-	    char[][] keys = new char[size()][];
-	    System.arraycopy(keyTable, 0, keys, 0, keys.length);
-	    return keys;
+		char[][] keys = new char[size()][];
+		System.arraycopy(keyTable, 0, keys, 0, keys.length);
+		return keys;
 	}
 
 	/**

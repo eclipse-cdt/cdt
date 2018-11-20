@@ -45,15 +45,13 @@ public class TestEnvironmentVars extends AbstractTest {
 		SWTBotShell shell = openProperties("Autotools", "Configure Settings");
 		// Set the configure parameters to be --enable-jeff via user-defined
 		// options
-		bot.treeWithLabel("Configure Settings").expandNode("configure")
-				.select("Advanced");
+		bot.treeWithLabel("Configure Settings").expandNode("configure").select("Advanced");
 		SWTBotText text = bot.textWithLabel("Additional command-line options");
 		text.typeText("${some_var}");
 		bot.button("OK").click();
 		bot.waitUntil(Conditions.shellCloses(shell), 120000);
 
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Reconfigure Project");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Reconfigure Project");
 		IPath path = checkProject().getLocation();
 		File f = null;
 		// We need to wait until the config.status file is created so
@@ -96,8 +94,7 @@ public class TestEnvironmentVars extends AbstractTest {
 		shell.activate();
 		bot.button("OK").click();
 		bot.waitUntil(Conditions.shellCloses(shell));
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Reconfigure Project");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Reconfigure Project");
 
 		IPath path = checkProject().getLocation();
 		File f = null;
@@ -148,20 +145,16 @@ public class TestEnvironmentVars extends AbstractTest {
 		bot.textWithLabel("Command").setText("");
 		// Choose three different forms, some using quotes to allow blanks in
 		// them
-		bot.textWithLabel("Command")
-				.typeText(
-						"some_var1=\"a boat\" some_var2='a train' some_var3=car fake_configure some_var4=\"a wagon\" some_var5='a plane' some_var6=skates");
+		bot.textWithLabel("Command").typeText(
+				"some_var1=\"a boat\" some_var2='a train' some_var3=car fake_configure some_var4=\"a wagon\" some_var5='a plane' some_var6=skates");
 		bot.button("OK").click();
 		// Reconfigure the project and make sure the env variables are seen in
 		// the script
-		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Reconfigure Project");
+		clickContextMenu(projectExplorer.bot().tree().select(projectName), "Reconfigure Project");
 		focusMainShell();
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		Pattern p = Pattern.compile(
-				".*a boat.*a train.*car.*a wagon.*a plane.*skates.*",
-				Pattern.DOTALL);
+		Pattern p = Pattern.compile(".*a boat.*a train.*car.*a wagon.*a plane.*skates.*", Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 

@@ -20,22 +20,22 @@ import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileCreationWizar
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class NewSourceFileCreationWizard extends AbstractFileCreationWizard {
-    
-    public NewSourceFileCreationWizard() {
-        super();
-        setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEW_SOURCEFILE);
-        setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
-        setWindowTitle(NewFileWizardMessages.NewSourceFileCreationWizard_title); 
-    }
-    
-    /*
-     * @see Wizard#createPages
-     */
-    @Override
+
+	public NewSourceFileCreationWizard() {
+		super();
+		setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEW_SOURCEFILE);
+		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
+		setWindowTitle(NewFileWizardMessages.NewSourceFileCreationWizard_title);
+	}
+
+	/*
+	 * @see Wizard#createPages
+	 */
+	@Override
 	public void addPages() {
-        super.addPages();
-        fPage = new NewSourceFileCreationWizardPage();
-        addPage(fPage);
-        fPage.init(getSelection());
-    }
+		super.addPages();
+		fPage = new NewSourceFileCreationWizardPage();
+		addPage(fPage);
+		fPage.init(getSelection());
+	}
 }

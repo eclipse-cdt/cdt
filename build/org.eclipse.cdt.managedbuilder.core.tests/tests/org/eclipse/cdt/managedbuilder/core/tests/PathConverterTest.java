@@ -39,20 +39,17 @@ import org.eclipse.core.runtime.IPath;
  *
  */
 public class PathConverterTest extends TestCase {
-	
 
 	public PathConverterTest(String name) {
 		super(name);
 	}
 
-
 	public static Test suite() {
-		TestSuite suite = new TestSuite(PathConverterTest.class.getName());		
+		TestSuite suite = new TestSuite(PathConverterTest.class.getName());
 		suite.addTest(new PathConverterTest("testPathConversionInProject"));
 		suite.addTest(new PathConverterTest("testPathConverterConfigurations"));
 		return suite;
 	}
-
 
 	/**
 	 * The expected converter can be determined from the configuration's id string.
@@ -73,82 +70,89 @@ public class PathConverterTest extends TestCase {
 	 * - An inherited converter overrides any toolchain converters <br>
 	 * - A converter set directly on the toolchain overrides an inherited toolchain converter <br>
 	 */
-	protected Class<? extends IOptionPathConverter> getExpectedToolConverterClass(String configId)  {
+	protected Class<? extends IOptionPathConverter> getExpectedToolConverterClass(String configId) {
 		// Conservative defaults
-		boolean hasToolConverter = false ;
-		boolean hasToolInheritedConverter = false ;
+		boolean hasToolConverter = false;
+		boolean hasToolInheritedConverter = false;
 		// Analyze tool information
 		int toolInfoAt = configId.indexOf("to");
-		String toolinfo = configId.substring(toolInfoAt+2, toolInfoAt+4);
-		hasToolConverter = (toolinfo.charAt(0)=='y');
-		hasToolInheritedConverter = (toolinfo.charAt(1)=='y');
+		String toolinfo = configId.substring(toolInfoAt + 2, toolInfoAt + 4);
+		hasToolConverter = (toolinfo.charAt(0) == 'y');
+		hasToolInheritedConverter = (toolinfo.charAt(1) == 'y');
 		// Assume no converter
-		Class<? extends IOptionPathConverter> toolConverterClass = getExpectedToolchainConverterClass(configId) ;
+		Class<? extends IOptionPathConverter> toolConverterClass = getExpectedToolchainConverterClass(configId);
 		// Modify converter as appropriate
-		if (hasToolInheritedConverter)  toolConverterClass = TestPathConverter2.class ;
-		if (hasToolConverter)  toolConverterClass = TestPathConverter4.class ;
-		
-		return toolConverterClass ;
+		if (hasToolInheritedConverter)
+			toolConverterClass = TestPathConverter2.class;
+		if (hasToolConverter)
+			toolConverterClass = TestPathConverter4.class;
+
+		return toolConverterClass;
 	}
-	
+
 	/**
 	 * @see #getExpectedToolConverterClass(String)
 	 */
-	protected Class<? extends IOptionPathConverter> getExpectedToolchainConverterClass(String configId)  {
+	protected Class<? extends IOptionPathConverter> getExpectedToolchainConverterClass(String configId) {
 		// Conservative defaults
-		boolean hasToolchainConverter = false ;
-		boolean hasToolchainInheritedConverter = false ;
+		boolean hasToolchainConverter = false;
+		boolean hasToolchainInheritedConverter = false;
 		// Analyze toolchain information
 		int toolchainInfoAt = configId.indexOf("tc");
-		String toolchaininfo = configId.substring(toolchainInfoAt+2, toolchainInfoAt+4);
-		hasToolchainConverter = (toolchaininfo.charAt(0)=='y');
-		hasToolchainInheritedConverter = (toolchaininfo.charAt(1)=='y');
+		String toolchaininfo = configId.substring(toolchainInfoAt + 2, toolchainInfoAt + 4);
+		hasToolchainConverter = (toolchaininfo.charAt(0) == 'y');
+		hasToolchainInheritedConverter = (toolchaininfo.charAt(1) == 'y');
 		// Assume no converter
-		Class<? extends IOptionPathConverter> toolConverterClass = null ;
+		Class<? extends IOptionPathConverter> toolConverterClass = null;
 		// Modify converter as appropriate
-		if (hasToolchainInheritedConverter)  toolConverterClass = TestPathConverter1.class ;
-		if (hasToolchainConverter)  toolConverterClass = TestPathConverter3.class ;
-		
-		return toolConverterClass ;
+		if (hasToolchainInheritedConverter)
+			toolConverterClass = TestPathConverter1.class;
+		if (hasToolchainConverter)
+			toolConverterClass = TestPathConverter3.class;
+
+		return toolConverterClass;
 	}
-	
+
 	/**
 	 * Check the converter settings for some key configurations
 	 */
-	public void testPathConverterConfigurations()  {
+	public void testPathConverterConfigurations() {
 		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
 		assertNotNull("Project types were not loaded!", projTypes);
 		IProjectType projType = ManagedBuildManager.getProjectType("pathconvertertest.projecttype");
 		assertNotNull("Projecttype should have been loaded!", projType);
-		
+
 		IConfiguration[] configurations = projType.getConfigurations();
-		assertTrue("There should be some configurations!", configurations.length>0);
-		
+		assertTrue("There should be some configurations!", configurations.length > 0);
+
 		// Check all configurations
 		for (int i = 0; i < configurations.length; i++) {
 			IConfiguration configuration = configurations[i];
 			IToolChain toolchain = configuration.getToolChain();
 
-			Class<? extends IOptionPathConverter> expectedToolchainConverterClass = getExpectedToolchainConverterClass(configuration.getId());
+			Class<? extends IOptionPathConverter> expectedToolchainConverterClass = getExpectedToolchainConverterClass(
+					configuration.getId());
 			IOptionPathConverter toolchainPathConverter = toolchain.getOptionPathConverter();
-			if (null==expectedToolchainConverterClass)  {
+			if (null == expectedToolchainConverterClass) {
 				assertNull("null pathConverter expected for toolchain!", toolchainPathConverter);
-			}  else  {
-				assertEquals("Unexpected pathConverter type for toolchain", expectedToolchainConverterClass, toolchainPathConverter.getClass());
+			} else {
+				assertEquals("Unexpected pathConverter type for toolchain", expectedToolchainConverterClass,
+						toolchainPathConverter.getClass());
 			}
-			
-			
+
 			ITool tool = toolchain.getTools()[0]; // We have only one tool in the test setup
-			Class<? extends IOptionPathConverter> expectedToolConverterClass = getExpectedToolConverterClass(configuration.getId());
+			Class<? extends IOptionPathConverter> expectedToolConverterClass = getExpectedToolConverterClass(
+					configuration.getId());
 			IOptionPathConverter toolPathConverter = tool.getOptionPathConverter();
-			if (null==expectedToolConverterClass)  {
+			if (null == expectedToolConverterClass) {
 				assertNull("null pathConverter expected for tool!", toolPathConverter);
-			}  else  {
-				assertEquals("Unexpected pathConverter type for tool", expectedToolConverterClass, toolPathConverter.getClass());
+			} else {
+				assertEquals("Unexpected pathConverter type for tool", expectedToolConverterClass,
+						toolPathConverter.getClass());
 			}
 		}
 	}
-	
+
 	/**
 	 * Check the path conversion in live project for a specific tool.
 	 */
@@ -157,15 +161,15 @@ public class PathConverterTest extends TestCase {
 		IProject project = ManagedBuildTestHelper.createProject("pathconverter01", type.getId());
 		IManagedBuildInfo iinfo = ManagedBuildManager.getBuildInfo(project);
 		assertNotNull("build info could not be obtained", iinfo);
-		ManagedBuildInfo info = (ManagedBuildInfo) iinfo ;
+		ManagedBuildInfo info = (ManagedBuildInfo) iinfo;
 		boolean isConfigurationSet = info.setDefaultConfiguration("config toolchain-yy, tool-yy");
 		assertTrue("Configuration could not be set", isConfigurationSet);
-		
+
 		IPathEntry[] pathEntries = info.getManagedBuildValues();
 		assertEquals("Unexpected number of path entries", 1, pathEntries.length);
 		IncludeEntry entry = (IncludeEntry) pathEntries[0];
 		IPath path = entry.getIncludePath();
-		String pathText = path.toString() ;
+		String pathText = path.toString();
 		assertEquals("Unexpected value for include path", "/usr/local/include", pathText);
 		ManagedBuildTestHelper.removeProject("pathconverter01");
 	}

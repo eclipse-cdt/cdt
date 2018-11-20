@@ -19,38 +19,38 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * GDB/MI result sematic (Variable=Value)
  */
 public class MIResult {
-    String variable = ""; //$NON-NLS-1$
-    MIValue value = null;
-        
-    public String getVariable() {
-        return variable;
-    }
-    
-    public void setVariable(String var) {
-        variable = var;
-    }
+	String variable = ""; //$NON-NLS-1$
+	MIValue value = null;
 
-    public MIValue getMIValue() {
-        return value;
-    }
-    
-    public void setMIValue(MIValue val) {
-        value = val;
-    }
+	public String getVariable() {
+		return variable;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(variable);
-        if (value != null) {
-            String v = value.toString();
-            buffer.append('=');
-            if (!v.isEmpty() && (v.charAt(0) == '[' || v.charAt(0) =='{')) {
-                buffer.append(v); 
-            } else {
-                buffer.append('"').append(v).append('"');
-            }
-        }
-        return buffer.toString();
-    }
+	public void setVariable(String var) {
+		variable = var;
+	}
+
+	public MIValue getMIValue() {
+		return value;
+	}
+
+	public void setMIValue(MIValue val) {
+		value = val;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(variable);
+		if (value != null) {
+			String v = value.toString();
+			buffer.append('=');
+			if (!v.isEmpty() && (v.charAt(0) == '[' || v.charAt(0) == '{')) {
+				buffer.append(v);
+			} else {
+				buffer.append('"').append(v).append('"');
+			}
+		}
+		return buffer.toString();
+	}
 }

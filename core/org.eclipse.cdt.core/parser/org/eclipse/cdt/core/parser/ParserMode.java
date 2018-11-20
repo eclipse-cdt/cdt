@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.parser;
 /**
  * @author jcamelon
  */
-public enum ParserMode  {
+public enum ParserMode {
 	/**
 	 * Do not follow inclusions, do not parse function/method bodies.
 	 */

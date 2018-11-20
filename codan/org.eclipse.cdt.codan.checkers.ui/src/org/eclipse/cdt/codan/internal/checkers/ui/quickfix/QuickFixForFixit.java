@@ -23,7 +23,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 public class QuickFixForFixit extends AbstractCodanCMarkerResolution {
-	
+
 	@Override
 	public String getLabel() {
 		return QuickFixMessages.QuickFixForFixit_apply_fixit;

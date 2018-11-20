@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @since 5.7
  */
 public interface ICPPASTVirtSpecifier extends IASTNode {
-	
+
 	public enum SpecifierKind {
 		/**
 		 * 'final' specifier
@@ -35,13 +35,13 @@ public interface ICPPASTVirtSpecifier extends IASTNode {
 		 */
 		Override
 	}
-	
+
 	/**
 	 * Return the kind of this virt-specifier.
 	 * The kind is either 'final' or 'override'. 
 	 */
 	SpecifierKind getKind();
-	
+
 	@Override
 	public ICPPASTVirtSpecifier copy();
 

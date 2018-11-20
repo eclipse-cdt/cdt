@@ -46,15 +46,16 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 
 	WorkspaceLanguageConfiguration fMappings;
 	WorkspaceLanguageMappingWidget fMappingWidget;
-	
+
 	public WorkspaceLanguageMappingPreferencePage() {
 		fMappingWidget = new WorkspaceLanguageMappingWidget();
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.LANGUAGE_MAPPING_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				ICHelpContextIds.LANGUAGE_MAPPING_PREFERENCE_PAGE);
 	}
 
 	@Override
@@ -66,34 +67,35 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 		}
 		return fMappingWidget.createContents(parent, PreferencesMessages.WorkspaceLanguagesPreferencePage_description);
 	}
-	
+
 	private void fetchMappings() throws CoreException {
 		fMappings = LanguageManager.getInstance().getWorkspaceLanguageConfiguration();
-		
+
 		Map<String, ILanguage> availableLanguages = LanguageVerifier.computeAvailableLanguages();
 		Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(fMappings, availableLanguages);
 		if (missingLanguages.size() > 0) {
 			MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
 			messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
 			String affectedLanguages = LanguageVerifier.computeAffectedLanguages(missingLanguages);
-			messageBox.setMessage(Messages.format(PreferencesMessages.WorkspaceLanguagesPreferencePage_missingLanguage, affectedLanguages));
+			messageBox.setMessage(Messages.format(PreferencesMessages.WorkspaceLanguagesPreferencePage_missingLanguage,
+					affectedLanguages));
 			messageBox.open();
 		}
-		
+
 		fMappingWidget.setMappings(fMappings.getWorkspaceMappings());
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	@Override
 	public boolean performOk() {
 		try {
 			if (!fMappingWidget.isChanged()) {
 				return true;
 			}
-			
+
 			IContentType[] affectedContentTypes = fMappingWidget.getAffectedContentTypes();
 			LanguageManager manager = LanguageManager.getInstance();
 			WorkspaceLanguageConfiguration config = manager.getWorkspaceLanguageConfiguration();
@@ -106,7 +108,7 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 			return false;
 		}
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();
@@ -115,7 +117,7 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 		node.remove(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS);
 		try {
 			// remove workspace mappings
-			Map<String,String> currentMappings= fMappings.getWorkspaceMappings();
+			Map<String, String> currentMappings = fMappings.getWorkspaceMappings();
 			Set<String> keys = currentMappings.keySet();
 			String[] contentTypeIds = keys.toArray(new String[keys.size()]);
 			for (String contentTypeId : contentTypeIds) {
@@ -124,9 +126,9 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 			// add default mappings
 			LanguageMappingStore store = new LanguageMappingStore();
 			WorkspaceLanguageConfiguration defaultConfig = store.decodeWorkspaceMappings();
-			Map<String,String> defaultMappings= defaultConfig.getWorkspaceMappings();
+			Map<String, String> defaultMappings = defaultConfig.getWorkspaceMappings();
 			for (String contentTypeId : defaultMappings.keySet()) {
-				String language= defaultMappings.get(contentTypeId);
+				String language = defaultMappings.get(contentTypeId);
 				fMappings.addWorkspaceMapping(contentTypeId, language);
 			}
 			fetchMappings();

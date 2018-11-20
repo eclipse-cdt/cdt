@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.utils.debug;
 
-
 /**
  * DebugFunctionType
  *  

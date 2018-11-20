@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.wizards;
 
-
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 
 /**
@@ -46,11 +45,8 @@ public class NewMakeCProjectWizard extends NewMakeProjectWizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		addPage(
-			fOptionPage =
-				new MakeProjectWizardOptionPage(
-					MakeUIPlugin.getResourceString(WZ_SETTINGS_TITLE),
-					MakeUIPlugin.getResourceString(WZ_SETTINGS_DESC)));
+		addPage(fOptionPage = new MakeProjectWizardOptionPage(MakeUIPlugin.getResourceString(WZ_SETTINGS_TITLE),
+				MakeUIPlugin.getResourceString(WZ_SETTINGS_DESC)));
 	}
 
 }

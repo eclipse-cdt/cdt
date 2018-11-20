@@ -89,8 +89,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 		public ImageDescriptor getImageDescriptor() {
 			IFile file = (IFile) fBinary.getResource();
 			IContentType contentType = IDE.getContentType(file);
-			return PlatformUI.getWorkbench().getEditorRegistry()
-					.getImageDescriptor(file.getName(), contentType);
+			return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(file.getName(), contentType);
 		}
 
 		/*
@@ -123,11 +122,9 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 		@Override
 		public IStorage getStorage() throws CoreException {
 			if (fStorage == null) {
-				IBinaryParser.IBinaryObject object = fBinary
-						.getAdapter(IBinaryParser.IBinaryObject.class);
+				IBinaryParser.IBinaryObject object = fBinary.getAdapter(IBinaryParser.IBinaryObject.class);
 				if (object != null) {
-					IGnuToolFactory factory = object.getBinaryParser().getAdapter(
-							IGnuToolFactory.class);
+					IGnuToolFactory factory = object.getBinaryParser().getAdapter(IGnuToolFactory.class);
 					if (factory != null) {
 						Objdump objdump = factory.getObjdump(object.getPath());
 						if (objdump != null) {
@@ -141,8 +138,8 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 									// add a message for user
 									String text = CEditorMessages.DefaultBinaryFileEditor_TruncateMessage;
 									String message = "\n\n--- " + text + " ---\n" + objdump.toString(); //$NON-NLS-1$ //$NON-NLS-2$
-									System.arraycopy(message.getBytes(), 0, output,
-											limitBytes - message.length(), message.length());
+									System.arraycopy(message.getBytes(), 0, output, limitBytes - message.length(),
+											message.length());
 								}
 								fStorage = new FileStorage(new ByteArrayInputStream(output), object.getPath());
 							} catch (IOException exc) {

@@ -251,8 +251,8 @@ public class WorkspaceSnapshot {
 			return state.build(configID, monitor);
 		}
 
-		return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, NLS.bind(
-				WorkingSetMessages.WorkspaceSnapshot_buildNoProj, project.getName()));
+		return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+				NLS.bind(WorkingSetMessages.WorkspaceSnapshot_buildNoProj, project.getName()));
 	}
 
 	/**
@@ -454,14 +454,14 @@ public class WorkspaceSnapshot {
 			ICConfigurationDescription config = getConfiguration(configID);
 
 			if (config == null) {
-				result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, NLS.bind(
-						WorkingSetMessages.WSProjConfig_noConfig, getProject().getName()));
+				result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+						NLS.bind(WorkingSetMessages.WSProjConfig_noConfig, getProject().getName()));
 			} else {
 				if (!isActive(configID)) {
 					activate(configID);
-					result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, NLS.bind(
-							WorkingSetMessages.WSProjConfig_activatedWarning, config.getName(), getProject()
-									.getName()));
+					result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+							NLS.bind(WorkingSetMessages.WSProjConfig_activatedWarning, config.getName(),
+									getProject().getName()));
 				}
 
 				monitor = SubMonitor.convert(monitor);
@@ -475,9 +475,8 @@ public class WorkspaceSnapshot {
 					if (result.isOK()) {
 						result = e.getStatus();
 					} else {
-						result = new MultiStatus(CUIPlugin.PLUGIN_ID, 0, new IStatus[] { result,
-								e.getStatus() }, NLS.bind(WorkingSetMessages.WSProjConfig_buildProblem,
-								getProject().getName()), null);
+						result = new MultiStatus(CUIPlugin.PLUGIN_ID, 0, new IStatus[] { result, e.getStatus() },
+								NLS.bind(WorkingSetMessages.WSProjConfig_buildProblem, getProject().getName()), null);
 					}
 				}
 			}

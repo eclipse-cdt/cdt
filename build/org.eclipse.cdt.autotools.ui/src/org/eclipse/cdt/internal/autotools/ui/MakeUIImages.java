@@ -22,8 +22,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
-
-
 public class MakeUIImages {
 
 	/**
@@ -45,7 +43,7 @@ public class MakeUIImages {
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
 
 	public static final String OBJ = "obj16/"; //$NON-NLS-1$
-	public static final String T_TOOL= "tool16/"; //$NON-NLS-1$
+	public static final String T_TOOL = "tool16/"; //$NON-NLS-1$
 	public static final String T_LCL = "lcl16/"; //$NON-NLS-1$
 
 	// For the build image
@@ -73,7 +71,8 @@ public class MakeUIImages {
 	public static final ImageDescriptor DESC_MAKEFILE_TARGET_RULE = createManaged(OBJ, IMG_OBJS_MAKEFILE_TARGET_RULE);
 
 	public static final String IMG_OBJS_MAKEFILE_INFERENCE_RULE = NAME_PREFIX + "irule_obj.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_MAKEFILE_INFERENCE_RULE = createManaged(OBJ, IMG_OBJS_MAKEFILE_INFERENCE_RULE);
+	public static final ImageDescriptor DESC_MAKEFILE_INFERENCE_RULE = createManaged(OBJ,
+			IMG_OBJS_MAKEFILE_INFERENCE_RULE);
 
 	public static final String IMG_OBJS_MAKEFILE_RELATION = NAME_PREFIX + "relation_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_RELATION = createManaged(OBJ, IMG_OBJS_MAKEFILE_RELATION);
@@ -90,17 +89,18 @@ public class MakeUIImages {
 	public static final String IMG_OBJS_ENV_VAR = NAME_PREFIX + "envvar_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ENV_VAR = createManaged(OBJ, IMG_OBJS_ENV_VAR);
 
-	public static final String IMG_TOOLS_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif"; //$NON-NLS-1$
-	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
+	public static final String IMG_TOOLS_ALPHA_SORTING = NAME_PREFIX + "alphab_sort_co.gif"; //$NON-NLS-1$
+	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT = NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
 
-	public static final String IMG_MENU_OPEN_INCLUDE= NAME_PREFIX + "open_include.gif"; //$NON-NLS-1$
+	public static final String IMG_MENU_OPEN_INCLUDE = NAME_PREFIX + "open_include.gif"; //$NON-NLS-1$
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}
 
 	private static ImageDescriptor createManaged(ImageRegistry registry, String prefix, String name) {
-		ImageDescriptor result = ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
+		ImageDescriptor result = ImageDescriptor
+				.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
 		registry.put(name, result);
 		return result;
 	}
@@ -130,7 +130,7 @@ public class MakeUIImages {
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath = relPath.substring(NAME_PREFIX_LENGTH);
 		action.setDisabledImageDescriptor(create("d" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
-//		action.setHoverImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
+		//		action.setHoverImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
 		action.setImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
- 
+
 /**
  * Test overloaded symbols are correctly resolved when within a single translation
  * unit. This covers the case of adapting non-PDOM bindings to PDOM bindings by
@@ -38,12 +38,12 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 	public static TestSuite suite() {
 		return suite(OverloadsWithinSingleTUTests.class);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("overloadsWithinSingleTU");
-			pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
+			pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		}
 		pdom.acquireReadLock();
 	}
@@ -52,7 +52,7 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}
-	
+
 	public void testDistinctBindingsPresent() throws Exception {
 		IBinding[] fooBs = pdom.findBindings(Pattern.compile("foo"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(3, fooBs.length);
@@ -60,14 +60,15 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 		IBinding[] barBs = pdom.findBindings(Pattern.compile("bar"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(8, barBs.length);
 
-		IBinding[] FooBs = pdom.findBindings(Pattern.compile("Foo"), false, IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+		IBinding[] FooBs = pdom.findBindings(Pattern.compile("Foo"), false, IndexFilter.ALL_DECLARED,
+				new NullProgressMonitor());
 		assertEquals(4, FooBs.length);
 
-		Pattern[] XBarAbsPath = makePatternArray(new String[] {"X","bar"});
+		Pattern[] XBarAbsPath = makePatternArray(new String[] { "X", "bar" });
 		IBinding[] XBarBs = pdom.findBindings(XBarAbsPath, true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(4, XBarBs.length);
 
-		Pattern[] XFooPath = makePatternArray(new String[] {"X","Foo"});
+		Pattern[] XFooPath = makePatternArray(new String[] { "X", "Foo" });
 		IBinding[] XFooPathBs = pdom.findBindings(XFooPath, true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, XFooPathBs.length);
 	}
@@ -78,34 +79,34 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 
 		// bar()
 		assertFunctionRefCount(new Class[] {}, BarBs, 4);
-		
+
 		// bar(int)
-		assertFunctionRefCount(new Class[] {IBasicType.class}, BarBs, 3);
+		assertFunctionRefCount(new Class[] { IBasicType.class }, BarBs, 3);
 
 		// bar(int,int)
-		assertFunctionRefCount(new Class[] {IBasicType.class, IBasicType.class}, BarBs, 2);
+		assertFunctionRefCount(new Class[] { IBasicType.class, IBasicType.class }, BarBs, 2);
 
 		// bar(Foo,int)
-		assertFunctionRefCount(new Class[] {ICPPClassType.class, IBasicType.class}, BarBs, 1);
+		assertFunctionRefCount(new Class[] { ICPPClassType.class, IBasicType.class }, BarBs, 1);
 	}
 
 	public void testReferencesToNamespacedBindings() throws Exception {
-		Pattern[] XBarAbsPath = makePatternArray(new String[] {"X","bar"});
+		Pattern[] XBarAbsPath = makePatternArray(new String[] { "X", "bar" });
 		IBinding[] XBarBs = pdom.findBindings(XBarAbsPath, false, IndexFilter.ALL, new NullProgressMonitor());
 
 		// X::bar()
 		assertFunctionRefCount(new Class[] {}, XBarBs, 2);
 
 		// X::bar(int)
-		assertFunctionRefCount(new Class[] {IBasicType.class}, XBarBs, 3);
+		assertFunctionRefCount(new Class[] { IBasicType.class }, XBarBs, 3);
 
 		// X::bar(int,int)
-		assertFunctionRefCount(new Class[] {IBasicType.class,IBasicType.class}, XBarBs, 4);
+		assertFunctionRefCount(new Class[] { IBasicType.class, IBasicType.class }, XBarBs, 4);
 
 		// X::bar(X::Foo,int)
-		assertFunctionRefCount(new Class[] {ICPPClassType.class,IBasicType.class}, XBarBs, 5);
+		assertFunctionRefCount(new Class[] { ICPPClassType.class, IBasicType.class }, XBarBs, 5);
 	}
-	
+
 	public void assertFunctionRefCount(Class[] args, IBinding[] bindingPool, int refCount) throws CoreException {
 		assertFunctionRefCount(pdom, args, bindingPool, refCount);
 	}

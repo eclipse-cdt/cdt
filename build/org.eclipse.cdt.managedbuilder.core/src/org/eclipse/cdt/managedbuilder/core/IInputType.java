@@ -27,25 +27,25 @@ import org.eclipse.core.runtime.content.IContentType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IInputType extends IBuildObject {
-	public static final String INPUT_TYPE_ELEMENT_NAME = "inputType";	//$NON-NLS-1$
-	public static final String SOURCE_CONTENT_TYPE = "sourceContentType";	//$NON-NLS-1$
-	public static final String HEADER_CONTENT_TYPE = "headerContentType";	//$NON-NLS-1$
-	public static final String SOURCES = "sources";	//$NON-NLS-1$
-	public static final String HEADERS = "headers";	//$NON-NLS-1$
-	public static final String DEPENDENCY_CONTENT_TYPE = "dependencyContentType";	//$NON-NLS-1$
-	public static final String DEPENDENCY_EXTENSIONS = "dependencyExtensions";	//$NON-NLS-1$
-	public static final String OPTION = "option";	//$NON-NLS-1$
-	public static final String ASSIGN_TO_OPTION = "assignToOption";	//$NON-NLS-1$
-	public static final String MULTIPLE_OF_TYPE = "multipleOfType";	//$NON-NLS-1$
-	public static final String PRIMARY_INPUT = "primaryInput";	//$NON-NLS-1$
-	public static final String BUILD_VARIABLE = "buildVariable";	//$NON-NLS-1$
-	public static final String LANGUAGE_ID = "languageId";	//$NON-NLS-1$
-	public static final String LANGUAGE_NAME = "languageName";	//$NON-NLS-1$
-	public static final String LANGUAGE_INFO_CALCULATOR = "languageInfoCalculator";	//$NON-NLS-1$
+	public static final String INPUT_TYPE_ELEMENT_NAME = "inputType"; //$NON-NLS-1$
+	public static final String SOURCE_CONTENT_TYPE = "sourceContentType"; //$NON-NLS-1$
+	public static final String HEADER_CONTENT_TYPE = "headerContentType"; //$NON-NLS-1$
+	public static final String SOURCES = "sources"; //$NON-NLS-1$
+	public static final String HEADERS = "headers"; //$NON-NLS-1$
+	public static final String DEPENDENCY_CONTENT_TYPE = "dependencyContentType"; //$NON-NLS-1$
+	public static final String DEPENDENCY_EXTENSIONS = "dependencyExtensions"; //$NON-NLS-1$
+	public static final String OPTION = "option"; //$NON-NLS-1$
+	public static final String ASSIGN_TO_OPTION = "assignToOption"; //$NON-NLS-1$
+	public static final String MULTIPLE_OF_TYPE = "multipleOfType"; //$NON-NLS-1$
+	public static final String PRIMARY_INPUT = "primaryInput"; //$NON-NLS-1$
+	public static final String BUILD_VARIABLE = "buildVariable"; //$NON-NLS-1$
+	public static final String LANGUAGE_ID = "languageId"; //$NON-NLS-1$
+	public static final String LANGUAGE_NAME = "languageName"; //$NON-NLS-1$
+	public static final String LANGUAGE_INFO_CALCULATOR = "languageInfoCalculator"; //$NON-NLS-1$
 
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
-	
+
 	/**
 	 * Creates an inputOrder child for this InputType.
 	 * 
@@ -82,7 +82,7 @@ public interface IInputType extends IBuildObject {
 	 * @return IInputOrder
 	 */
 	public IInputOrder getInputOrder(String path);
-	
+
 	/**
 	 * Creates an additionalInput child for this InputType.
 	 * 
@@ -150,7 +150,7 @@ public interface IInputType extends IBuildObject {
 	 * @return IInputType
 	 */
 	public IInputType getSuperClass();
-	
+
 	/**
 	 * Returns the Eclipse <code>IContentType</code> that describes this
 	 * input type.  If both the sources attribute and the sourceContentType 
@@ -162,13 +162,13 @@ public interface IInputType extends IBuildObject {
 	public IContentType getSourceContentType();
 
 	public IContentType[] getSourceContentTypes();
-	
+
 	public IContentType[] getHeaderContentTypes();
-	
+
 	public String[] getSourceContentTypeIds();
-	
+
 	public String[] getHeaderContentTypeIds();
-	
+
 	public String[] getHeaderExtensions(ITool tool);
 
 	public String[] getHeaderExtensionsAttribute();
@@ -176,11 +176,10 @@ public interface IInputType extends IBuildObject {
 	public void setSourceContentTypeIds(String[] ids);
 
 	public void setHeaderContentTypeIds(String[] ids);
-	
+
 	public void setSourceExtensionsAttribute(String[] extensions);
 
 	public void setHeaderExtensionsAttribute(String[] extensions);
-
 
 	/**
 	 * Sets the Eclipse <code>IContentType</code> that describes this
@@ -189,7 +188,7 @@ public interface IInputType extends IBuildObject {
 	 * @param contentType  The Eclipse content type
 	 */
 	public void setSourceContentType(IContentType contentType);
-	
+
 	/**
 	 * Returns the list of valid source extensions from the
 	 * sourceExtensions attribute. Note that this value is not used
@@ -200,7 +199,7 @@ public interface IInputType extends IBuildObject {
 	 * @return String[]
 	 */
 	public String[] getSourceExtensionsAttribute();
-	
+
 	/**
 	 * Sets the list of valid source extensions for this input type.
 	 * NOTE: The value of this attribute will NOT be used if a 
@@ -211,23 +210,23 @@ public interface IInputType extends IBuildObject {
 	 *                    - not including the separator period.
 	 */
 	public void setSourceExtensionsAttribute(String extensions);
-	
+
 	/**
 	 * Returns the list of valid source extensions for this input type.
 	 * Note that the list will come from the sourceContentType if it 
 	 * is specified and registered with Eclipse.  Otherwise the  
 	 * sourceExtensions attribute will be used.
 	 * 
-     * @param tool  the tool that contains the input-type
+	 * @param tool  the tool that contains the input-type
 	 * @return String[]
 	 */
 	public String[] getSourceExtensions(ITool tool);
-	
+
 	/**
 	 * Answers <code>true</code> if the input type considers the file extension to be 
 	 * one associated with a source file.
 	 * 
-     * @param tool  the tool that contains the input-type
+	 * @param tool  the tool that contains the input-type
 	 * @param ext  file extension of the source
 	 * @return boolean
 	 */
@@ -248,7 +247,7 @@ public interface IInputType extends IBuildObject {
 	 * dependency files of this input type. 
 	 */
 	public void setDependencyContentType(IContentType type);
-	
+
 	/**
 	 * Returns the list of valid dependency extensions from the
 	 * dependencyExtensions attribute. Note that this value is not used
@@ -259,7 +258,7 @@ public interface IInputType extends IBuildObject {
 	 * @return String[]
 	 */
 	public String[] getDependencyExtensionsAttribute();
-	
+
 	/**
 	 * Sets the list of valid dependency extensions for this input type.
 	 * NOTE: The value of this attribute will NOT be used if a 
@@ -270,23 +269,23 @@ public interface IInputType extends IBuildObject {
 	 *                    - not including the separator period.
 	 */
 	public void setDependencyExtensionsAttribute(String extensions);
-	
+
 	/**
 	 * Returns the list of valid dependency extensions for this input type.
 	 * Note that the list will come from the dependencyContentType if it 
 	 * is specified and registered with Eclipse.  Otherwise the  
 	 * dependencyExtensions attribute will be used.
 	 * 
-     * @param tool  the tool that contains the input-type
+	 * @param tool  the tool that contains the input-type
 	 * @return String[]
 	 */
 	public String[] getDependencyExtensions(ITool tool);
-	
+
 	/**
 	 * Answers <code>true</code> if the input type considers the file extension to be 
 	 * one associated with a dependency file.
 	 * 
-     * @param tool  the tool that contains the input-type
+	 * @param tool  the tool that contains the input-type
 	 * @param ext  file extension of the source
 	 * @return boolean
 	 */
@@ -332,7 +331,7 @@ public interface IInputType extends IBuildObject {
 	 * occurs.
 	 */
 	public void setAssignToOptionId(String optionId);
-		
+
 	/**
 	 * Returns <code>true</code> if this inputType can contain multiple input
 	 * resources, else <code>false</code>.  The inputs can be project resources, 
@@ -341,12 +340,12 @@ public interface IInputType extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean getMultipleOfType();
-	
+
 	/**
 	 * Sets whether this inputType can contain multiple input resources
 	 */
 	public void setMultipleOfType(boolean multiple);
-	
+
 	/**
 	 * Returns <code>true</code> if this inputType is considered the primary input
 	 * of the tool, else <code>false</code>.
@@ -354,7 +353,7 @@ public interface IInputType extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean getPrimaryInput();
-	
+
 	/**
 	 * Sets whether this inputType is considered the primary input of the tool
 	 */
@@ -394,7 +393,7 @@ public interface IInputType extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Returns <code>true</code> if this InputType was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
@@ -402,20 +401,20 @@ public interface IInputType extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isExtensionElement();
-	
+
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
 	 */
 	public void setDirty(boolean isDirty);
-	
+
 	String getLanguageId(ITool tool);
-	
+
 	String getLanguageName(ITool tool);
-	
+
 	String getDiscoveryProfileId(ITool tool);
 
 	void setLanguageIdAttribute(String id);
-	
+
 	void setLanguageNameAttribute(String name);
 
 }

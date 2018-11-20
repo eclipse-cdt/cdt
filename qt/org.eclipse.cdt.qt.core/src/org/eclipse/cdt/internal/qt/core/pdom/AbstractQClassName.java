@@ -41,6 +41,7 @@ public abstract class AbstractQClassName extends ASTDelegatedName implements IQt
 	}
 
 	protected abstract QtPDOMBinding createPDOMBinding(QtPDOMLinkage linkage, IASTName name) throws CoreException;
+
 	protected abstract IASTName copy(CopyStyle style, ICPPASTCompositeTypeSpecifier spec);
 
 	@Override

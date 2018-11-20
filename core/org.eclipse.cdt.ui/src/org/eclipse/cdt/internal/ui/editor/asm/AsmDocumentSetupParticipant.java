@@ -33,15 +33,15 @@ public class AsmDocumentSetupParticipant implements IDocumentSetupParticipant, I
 	 */
 	public AsmDocumentSetupParticipant() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
 	 */
 	@Override
 	public void setup(IDocument document) {
-		IDocumentPartitioner partitioner= CDTUITools.createAsmDocumentPartitioner();
+		IDocumentPartitioner partitioner = CDTUITools.createAsmDocumentPartitioner();
 		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			IDocumentExtension3 extension3 = (IDocumentExtension3) document;
 			extension3.setDocumentPartitioner(ICPartitions.C_PARTITIONING, partitioner);
 		} else {
 			document.setDocumentPartitioner(partitioner);
@@ -53,7 +53,8 @@ public class AsmDocumentSetupParticipant implements IDocumentSetupParticipant, I
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
 		// prepared for partitioner configuration
 	}
 

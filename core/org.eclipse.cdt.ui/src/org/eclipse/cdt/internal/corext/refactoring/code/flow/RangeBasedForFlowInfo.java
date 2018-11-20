@@ -36,4 +36,3 @@ class RangeBasedForFlowInfo extends FlowInfo {
 		mergeSequential(info, context);
 	}
 }
-

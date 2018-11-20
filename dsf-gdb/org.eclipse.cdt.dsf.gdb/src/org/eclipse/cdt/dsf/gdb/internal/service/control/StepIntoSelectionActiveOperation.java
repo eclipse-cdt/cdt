@@ -25,12 +25,12 @@ public class StepIntoSelectionActiveOperation {
 	private final IMIExecutionDMContext fThreadContext;
 	private String fBaseFileLocation = null;
 	private int fBaseLine = 0;
-	private int fOriginalStackDepth=0;
+	private int fOriginalStackDepth = 0;
 	private String fFunctionSignature = null;
 	private MIFrame fRunToLineFrame = null;
 
-	public StepIntoSelectionActiveOperation(IMIExecutionDMContext threadContext, int line, IFunctionDeclaration targetFunction,
-			int stackDepth, MIFrame runToLineFrame) {
+	public StepIntoSelectionActiveOperation(IMIExecutionDMContext threadContext, int line,
+			IFunctionDeclaration targetFunction, int stackDepth, MIFrame runToLineFrame) {
 		fThreadContext = threadContext;
 		fBaseLine = line;
 		fTargetFunction = targetFunction;

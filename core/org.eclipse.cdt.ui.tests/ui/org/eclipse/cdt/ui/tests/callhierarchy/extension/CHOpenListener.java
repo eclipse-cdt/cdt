@@ -38,28 +38,29 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
-
 public class CHOpenListener implements IOpenListener {
 
 	/** On Node click open corresponding file */
 	@Override
 	public void open(OpenEvent event) {
-		if (event !=null ) {
+		if (event != null) {
 			ISelection selection = event.getSelection();
-			if (selection instanceof TreeSelection ) {
-				TreeSelection treeSelection = (TreeSelection)selection;
+			if (selection instanceof TreeSelection) {
+				TreeSelection treeSelection = (TreeSelection) selection;
 				Object element = treeSelection.getFirstElement();
-				if  (element instanceof DslNode) {
-					DslNode node = (DslNode)element;
+				if (element instanceof DslNode) {
+					DslNode node = (DslNode) element;
 					ICProject project = node.getProject();
 					/**
 					 * Based on a custom algorithm the corresponding file and line should be found and open. Suppose that the file
 					 * 'CallHierarchy_test.java' has been found, and the line number '3' where the function 'function_dsl' is defined.
 					 */
-					IFile file  = project.getProject().getFile("CallHierarchy_test.java");
-					IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart().getSite().getPage();
+					IFile file = project.getProject().getFile("CallHierarchy_test.java");
+					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.getActivePart().getSite().getPage();
 					IEditorInput input = new FileEditorInput(file);
-					IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(input.getName());
+					IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry()
+							.getDefaultEditor(input.getName());
 
 					UIJob ui = new UIJob("Open File") {
 
@@ -77,7 +78,7 @@ public class CHOpenListener implements IOpenListener {
 								HashMap<String, Object> map = new HashMap<String, Object>();
 								map.put(IMarker.LINE_NUMBER, 3);
 								fMarker.setAttributes(map);
-								IDE.gotoMarker(editor,fMarker);
+								IDE.gotoMarker(editor, fMarker);
 
 							} catch (PartInitException e) {
 								e.printStackTrace();

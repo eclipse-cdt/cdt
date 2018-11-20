@@ -194,7 +194,7 @@ public class DwarfConstants {
 	public final static int DW_FORM_ref8 = 0x14;
 	public final static int DW_FORM_ref_udata = 0x15;
 	public final static int DW_FORM_indirect = 0x16;
-	
+
 	/**
 	 * @since 5.7
 	 */
@@ -221,7 +221,7 @@ public class DwarfConstants {
 	 */
 	public final static int DW_FORM_GNU_str_index = 0x1f02;
 	/* Extensions for DWZ multifile.
-	   See http://www.dwarfstd.org/ShowIssue.php?issue=120604.1&type=open . */	
+	   See http://www.dwarfstd.org/ShowIssue.php?issue=120604.1&type=open . */
 	/**
 	 * @since 5.7
 	 */

@@ -32,12 +32,11 @@ public class TwoInputDialog extends InputDialog {
 	private String secondValue;
 
 	private String secondMessage;
-	
+
 	private String firstMessage;
 
-	public TwoInputDialog(Shell parentShell, String firstMessage, String dialogTitle,
-			String dialogMessage, String secondMessage, String initialValue,
-			IInputValidator validator) {
+	public TwoInputDialog(Shell parentShell, String firstMessage, String dialogTitle, String dialogMessage,
+			String secondMessage, String initialValue, IInputValidator validator) {
 		super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
 
 		this.firstMessage = firstMessage;
@@ -64,19 +63,16 @@ public class TwoInputDialog extends InputDialog {
 		label0.setText(firstMessage);
 		Label label = new Label(composite, SWT.WRAP);
 		label.setText(secondMessage);
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		label0.setLayoutData(data);
 		label0.setFont(parent.getFont());
 		label.setLayoutData(data);
 		label.setFont(parent.getFont());
-		
 
 		secondText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		secondText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL));
+		secondText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		secondText.addModifyListener(e -> validateInput());
 
 		// remove error message dialog from focusing.

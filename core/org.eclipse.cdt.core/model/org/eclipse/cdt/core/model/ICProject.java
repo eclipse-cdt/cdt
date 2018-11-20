@@ -84,7 +84,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	ISourceRoot getSourceRoot(ISourceEntry entry) throws CModelException;
 
 	ISourceRoot findSourceRoot(IResource resource);
-	
+
 	ISourceRoot findSourceRoot(IPath path);
 
 	/**

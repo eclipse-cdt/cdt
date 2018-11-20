@@ -67,37 +67,34 @@ public final class CLibraryFileEntry extends ACPathEntry implements ICLibraryFil
 		this(rc, flags, null, null, null);
 	}
 
-	public CLibraryFileEntry(String name, int flags,
-			IPath sourceAttachmentPath,
-			IPath sourceAttachmentRootPath,
+	public CLibraryFileEntry(String name, int flags, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
 			IPath sourceAttachmentPrefixMapping) {
 		super(name, flags);
 
 		fSourceAttachmentPath = sourceAttachmentPath;
 		fSourceAttachmentRootPath = sourceAttachmentRootPath != null ? sourceAttachmentRootPath : Path.EMPTY;
-		fSourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping != null ? sourceAttachmentPrefixMapping : Path.EMPTY;
+		fSourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping != null ? sourceAttachmentPrefixMapping
+				: Path.EMPTY;
 	}
 
-	public CLibraryFileEntry(IPath location, int flags,
-			IPath sourceAttachmentPath,
-			IPath sourceAttachmentRootPath,
+	public CLibraryFileEntry(IPath location, int flags, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
 			IPath sourceAttachmentPrefixMapping) {
 		super(location, flags);
 
 		fSourceAttachmentPath = sourceAttachmentPath;
 		fSourceAttachmentRootPath = sourceAttachmentRootPath != null ? sourceAttachmentRootPath : Path.EMPTY;
-		fSourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping != null ? sourceAttachmentPrefixMapping : Path.EMPTY;
+		fSourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping != null ? sourceAttachmentPrefixMapping
+				: Path.EMPTY;
 	}
 
-	public CLibraryFileEntry(IFile rc, int flags,
-			IPath sourceAttachmentPath,
-			IPath sourceAttachmentRootPath,
+	public CLibraryFileEntry(IFile rc, int flags, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
 			IPath sourceAttachmentPrefixMapping) {
 		super(rc, flags);
 
 		fSourceAttachmentPath = sourceAttachmentPath;
 		fSourceAttachmentRootPath = sourceAttachmentRootPath != null ? sourceAttachmentRootPath : Path.EMPTY;
-		fSourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping != null ? sourceAttachmentPrefixMapping : Path.EMPTY;
+		fSourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping != null ? sourceAttachmentPrefixMapping
+				: Path.EMPTY;
 	}
 
 	@Override
@@ -130,39 +127,40 @@ public final class CLibraryFileEntry extends ACPathEntry implements ICLibraryFil
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((fSourceAttachmentPath == null) ? 0 : fSourceAttachmentPath.hashCode());
-		result = prime * result + ((fSourceAttachmentPrefixMapping == null) ? 0 : fSourceAttachmentPrefixMapping.hashCode());
+		result = prime * result
+				+ ((fSourceAttachmentPrefixMapping == null) ? 0 : fSourceAttachmentPrefixMapping.hashCode());
 		result = prime * result + ((fSourceAttachmentRootPath == null) ? 0 : fSourceAttachmentRootPath.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object other) {
-		if(other == this)
+		if (other == this)
 			return true;
 
-		if(!super.equals(other))
+		if (!super.equals(other))
 			return false;
 
-		return sourceAttachmentSettingsEqual((CLibraryFileEntry)other);
+		return sourceAttachmentSettingsEqual((CLibraryFileEntry) other);
 	}
 
 	@Override
 	public boolean equalsByContents(ICSettingEntry entry) {
-		if(entry == this)
+		if (entry == this)
 			return true;
 
-		if(!super.equalsByContents(entry))
+		if (!super.equalsByContents(entry))
 			return false;
 
-		return sourceAttachmentSettingsEqual((CLibraryFileEntry)entry);
+		return sourceAttachmentSettingsEqual((CLibraryFileEntry) entry);
 	}
 
-	private boolean sourceAttachmentSettingsEqual(CLibraryFileEntry otherEntry){
-		if(!CDataUtil.objectsEqual(fSourceAttachmentPath, otherEntry.fSourceAttachmentPath))
+	private boolean sourceAttachmentSettingsEqual(CLibraryFileEntry otherEntry) {
+		if (!CDataUtil.objectsEqual(fSourceAttachmentPath, otherEntry.fSourceAttachmentPath))
 			return false;
-		if(!CDataUtil.objectsEqual(fSourceAttachmentRootPath, otherEntry.fSourceAttachmentRootPath))
+		if (!CDataUtil.objectsEqual(fSourceAttachmentRootPath, otherEntry.fSourceAttachmentRootPath))
 			return false;
-		if(!CDataUtil.objectsEqual(fSourceAttachmentPrefixMapping, otherEntry.fSourceAttachmentPrefixMapping))
+		if (!CDataUtil.objectsEqual(fSourceAttachmentPrefixMapping, otherEntry.fSourceAttachmentPrefixMapping))
 			return false;
 		return true;
 	}
@@ -171,7 +169,7 @@ public final class CLibraryFileEntry extends ACPathEntry implements ICLibraryFil
 	protected String contentsToString() {
 		String result = super.contentsToString();
 
-		if(fSourceAttachmentPath != null){
+		if (fSourceAttachmentPath != null) {
 			StringBuilder buf = new StringBuilder();
 			buf.append(result);
 			buf.append(" ; srcPath=").append(fSourceAttachmentPath); //$NON-NLS-1$

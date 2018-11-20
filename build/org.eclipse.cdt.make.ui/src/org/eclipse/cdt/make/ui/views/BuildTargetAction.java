@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
-
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -51,18 +50,19 @@ public class BuildTargetAction extends SelectionListenerAction {
 			IMakeTarget[] targets = getSelectedElements().toArray(new IMakeTarget[0]);
 			TargetBuild.buildTargets(shell, targets);
 			// set last target property for last element
-			IContainer container = targets[targets.length-1].getContainer();
+			IContainer container = targets[targets.length - 1].getContainer();
 			try {
-				container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-						TargetBuild.LAST_TARGET), targets[targets.length - 1].getName());
+				container.setSessionProperty(
+						new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET),
+						targets[targets.length - 1].getName());
 			} catch (CoreException e) {
 			}
 			// store container of last target, too
 			try {
 				IPath path = container.getProjectRelativePath();
 				container.getProject().setSessionProperty(
-						new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-								TargetBuild.LAST_TARGET_CONTAINER), path.toString());
+						new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET_CONTAINER),
+						path.toString());
 			} catch (CoreException e) {
 			}
 		}
@@ -76,11 +76,11 @@ public class BuildTargetAction extends SelectionListenerAction {
 	private boolean canBuild() {
 		List<?> elements = getSelectedElements();
 		for (Object element : elements) {
-			if (! (element instanceof IMakeTarget)) {
+			if (!(element instanceof IMakeTarget)) {
 				return false;
 			}
 		}
-		return elements.size()>0;
+		return elements.size() > 0;
 	}
 
 	private List<?> getSelectedElements() {

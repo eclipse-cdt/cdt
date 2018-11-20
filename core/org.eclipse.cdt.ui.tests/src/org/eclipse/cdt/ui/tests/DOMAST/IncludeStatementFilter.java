@@ -29,12 +29,12 @@ public class IncludeStatementFilter extends ViewerFilter {
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof DOMASTNodeLeaf) {
-			int flag = ((DOMASTNodeLeaf)element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_INCLUDE_STATEMENTS;
+			int flag = ((DOMASTNodeLeaf) element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_INCLUDE_STATEMENTS;
 			if (flag > 0) {
-				IASTNode node = ((DOMASTNodeLeaf)element).getNode();
+				IASTNode node = ((DOMASTNodeLeaf) element).getNode();
 				if (node instanceof IASTPreprocessorIncludeStatement)
 					return false;
-				
+
 				return true;
 			}
 		}

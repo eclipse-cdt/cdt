@@ -84,59 +84,60 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 		setBaseEnabled(viewableMemoryITems.length > 0);
 		setMemoryViewables(viewableMemoryITems);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-   		if (getMemoryViewables() == null || getMemoryViewables().length == 0) {
-   			return null;
-   		}
-   		
-   		showInMemoryView(getMemoryViewables());
-		
-   		return null;
+		if (getMemoryViewables() == null || getMemoryViewables().length == 0) {
+			return null;
+		}
+
+		showInMemoryView(getMemoryViewables());
+
+		return null;
 	}
 
 	private VariableExpressionVMC[] getMemoryViewables(Object evaluationContext) {
-        List<VariableExpressionVMC> viewableMemoryItems = new ArrayList<VariableExpressionVMC>();
-	    if (evaluationContext instanceof IEvaluationContext) {
-	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
-	        if (s instanceof IStructuredSelection) {
-	        	Iterator<?> iter = ((IStructuredSelection)s).iterator();
-	        	while(iter.hasNext()) {
-	        		Object obj = iter.next();
-	        		if (obj instanceof VariableExpressionVMC) {
-	        			Object element = DebugPlugin.getAdapter(obj, IViewInMemory.class);
-	        			if (element != null) {
-	        				if (((IViewInMemory)element).canViewInMemory()) {
-	        					viewableMemoryItems.add((VariableExpressionVMC)obj);
-	        				}
-	        			}
-	        		}
-                }
-            }
-	    }
-	    return viewableMemoryItems.toArray(new VariableExpressionVMC[viewableMemoryItems.size()]);
+		List<VariableExpressionVMC> viewableMemoryItems = new ArrayList<VariableExpressionVMC>();
+		if (evaluationContext instanceof IEvaluationContext) {
+			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+			if (s instanceof IStructuredSelection) {
+				Iterator<?> iter = ((IStructuredSelection) s).iterator();
+				while (iter.hasNext()) {
+					Object obj = iter.next();
+					if (obj instanceof VariableExpressionVMC) {
+						Object element = DebugPlugin.getAdapter(obj, IViewInMemory.class);
+						if (element != null) {
+							if (((IViewInMemory) element).canViewInMemory()) {
+								viewableMemoryItems.add((VariableExpressionVMC) obj);
+							}
+						}
+					}
+				}
+			}
+		}
+		return viewableMemoryItems.toArray(new VariableExpressionVMC[viewableMemoryItems.size()]);
 	}
 
 	private void addDefaultRenderings(IMemoryBlock memoryBlock, IMemoryRenderingSite memRendSite) {
 
 		// This method was mostly lifted from the platform's AddMemoryBlockAction
 
-		IMemoryRenderingType primaryType = DebugUITools.getMemoryRenderingManager().getPrimaryRenderingType(memoryBlock);
-		IMemoryRenderingType renderingTypes[] = DebugUITools.getMemoryRenderingManager().getDefaultRenderingTypes(memoryBlock);
+		IMemoryRenderingType primaryType = DebugUITools.getMemoryRenderingManager()
+				.getPrimaryRenderingType(memoryBlock);
+		IMemoryRenderingType renderingTypes[] = DebugUITools.getMemoryRenderingManager()
+				.getDefaultRenderingTypes(memoryBlock);
 
 		try {
 			if (primaryType != null) {
-				createRenderingInContainer(memoryBlock, memRendSite,
-						primaryType, IDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
+				createRenderingInContainer(memoryBlock, memRendSite, primaryType,
+						IDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
 			} else if (renderingTypes.length > 0) {
 				primaryType = renderingTypes[0];
-				createRenderingInContainer(memoryBlock, memRendSite,
-						renderingTypes[0],
+				createRenderingInContainer(memoryBlock, memRendSite, renderingTypes[0],
 						IDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
 			}
 		} catch (CoreException e) {
@@ -151,8 +152,7 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 						create = false;
 				}
 				if (create)
-					createRenderingInContainer(memoryBlock, memRendSite,
-							renderingTypes[i],
+					createRenderingInContainer(memoryBlock, memRendSite, renderingTypes[i],
 							IDebugUIConstants.ID_RENDERING_VIEW_PANE_2);
 			} catch (CoreException e) {
 				DsfUIPlugin.logErrorMessage(e.getMessage());
@@ -160,9 +160,8 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 		}
 	}
 
-	private void createRenderingInContainer(IMemoryBlock memoryBlock,
-			IMemoryRenderingSite memRendSite, IMemoryRenderingType primaryType,
-			String paneId) throws CoreException {
+	private void createRenderingInContainer(IMemoryBlock memoryBlock, IMemoryRenderingSite memRendSite,
+			IMemoryRenderingType primaryType, String paneId) throws CoreException {
 
 		// This method was mostly lifted from the platform's AddMemoryBlockAction
 
@@ -178,21 +177,20 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 		addDefaultRenderings(memBlock, memRendSite);
 	}
 
-	private IStatus showExpressionInMemoryView(VariableExpressionVMC context, IExpressionDMData exprData, 
+	private IStatus showExpressionInMemoryView(VariableExpressionVMC context, IExpressionDMData exprData,
 			IMemoryRenderingSite memRendSite) {
-			BasicType type = exprData.getBasicType();
-			String exprString;
-			if (type == BasicType.array || type == BasicType.pointer) {
-				exprString = context.getExpression();
-			}
-			else {
-				exprString = "&(" + context.getExpression() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			try {
+		BasicType type = exprData.getBasicType();
+		String exprString;
+		if (type == BasicType.array || type == BasicType.pointer) {
+			exprString = context.getExpression();
+		} else {
+			exprString = "&(" + context.getExpression() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		try {
 			IDMContext dmc = context.getDMContext();
 			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval) context.getAdapter(IMemoryBlockRetrieval.class);
 			if (retrieval == null && context instanceof IDebugElement)
-				retrieval = ((IDebugElement)context).getDebugTarget();
+				retrieval = ((IDebugElement) context).getDebugTarget();
 			if (retrieval == null || !(retrieval instanceof IMemoryBlockRetrievalExtension))
 				return Status.OK_STATUS;
 			IMemoryBlockRetrievalExtension dsfRetrieval = (IMemoryBlockRetrievalExtension) retrieval;
@@ -210,7 +208,8 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 			IViewPart memoryView = page.showView(IDebugUIConstants.ID_MEMORY_VIEW, null, IWorkbenchPage.VIEW_ACTIVATE);
 			final IMemoryRenderingSite memRendSite = (IMemoryRenderingSite) memoryView;
 			for (final VariableExpressionVMC context : contexts) {
-				final IExpressionDMContext dmc = DMContexts.getAncestorOfType(context.getDMContext(), IExpressionDMContext.class);
+				final IExpressionDMContext dmc = DMContexts.getAncestorOfType(context.getDMContext(),
+						IExpressionDMContext.class);
 				if (dmc == null) {
 					continue;
 				}
@@ -225,7 +224,8 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 				executor.execute(new DsfRunnable() {
 					@Override
 					public void run() {
-						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
+						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+								session.getId());
 						IExpressions service = tracker.getService(IExpressions.class);
 						tracker.dispose();
 						if (service != null) {

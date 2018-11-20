@@ -28,18 +28,18 @@ import org.eclipse.cdt.core.IProcessList;
 public class ProcessList implements IProcessList {
 
 	ProcessInfo[] empty = new ProcessInfo[0];
-	
+
 	public ProcessList() {
 	}
-	
+
 	/**
 	 * Insert the method's description here.
 	 * @see IProcessList#getProcessList
 	 */
-	public IProcessInfo [] getProcessList()  {
+	public IProcessInfo[] getProcessList() {
 		File proc = new File("/proc"); //$NON-NLS-1$
 		File[] pidFiles = null;
-		
+
 		// We are only interrested in the pid so filter the rest out.
 		try {
 			FilenameFilter filter = new FilenameFilter() {
@@ -56,7 +56,7 @@ public class ProcessList implements IProcessList {
 			pidFiles = proc.listFiles(filter);
 		} catch (SecurityException e) {
 		}
-		
+
 		ProcessInfo[] processInfo = empty;
 		if (pidFiles != null) {
 			processInfo = new ProcessInfo[pidFiles.length];
@@ -68,14 +68,15 @@ public class ProcessList implements IProcessList {
 					reader = new FileReader(cmdLine);
 					int c;
 					while ((c = reader.read()) > 0) {
-						line.append((char)c);
+						line.append((char) c);
 					}
 				} catch (IOException e) {
 				} finally {
 					try {
 						if (reader != null)
 							reader.close();
-					} catch (IOException e) {/* Don't care */}
+					} catch (IOException e) {
+						/* Don't care */}
 					reader = null;
 				}
 				String name = line.toString();
@@ -87,6 +88,6 @@ public class ProcessList implements IProcessList {
 		} else {
 			pidFiles = new File[0];
 		}
-		return processInfo;		
+		return processInfo;
 	}
 }

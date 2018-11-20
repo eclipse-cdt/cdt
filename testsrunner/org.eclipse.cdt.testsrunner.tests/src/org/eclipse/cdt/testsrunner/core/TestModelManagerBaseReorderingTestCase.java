@@ -22,7 +22,6 @@ import org.eclipse.cdt.testsrunner.internal.model.TestModelManager;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 
-
 /**
  * Base test case for test suites & test cases reordering in TestModelManager. 
  */
@@ -32,12 +31,10 @@ public abstract class TestModelManagerBaseReorderingTestCase extends TestCase {
 	protected TestModelManager modelManager;
 	protected List<String> expectedSuitesOrder = new ArrayList<String>();
 
-	
 	protected abstract ITestSuite createTestsHierarchy();
 
 	protected abstract void visitTestItem(String name);
-	
-		
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -54,25 +51,25 @@ public abstract class TestModelManagerBaseReorderingTestCase extends TestCase {
 			assertEquals("Unexpected child name", expectedSuitesOrder.get(i), rootTestSuiteChildren[i].getName());
 		}
 	}
-	
+
 	private void visitTestItemWithExpectation(String name) {
 		visitTestItem(name);
 		expectedSuitesOrder.add(name);
 	}
-	
+
 	public void testNoReordering() {
 		visitTestItemWithExpectation("item1");
 		visitTestItemWithExpectation("item2");
 		visitTestItemWithExpectation("item3");
 	}
-	
+
 	public void testItemAdd() {
 		visitTestItemWithExpectation("item1");
 		visitTestItemWithExpectation("itemNew");
 		visitTestItemWithExpectation("item2");
 		visitTestItemWithExpectation("item3");
 	}
-	
+
 	public void testItemAddToBeginAndEnd() {
 		visitTestItemWithExpectation("itemNew");
 		visitTestItemWithExpectation("item1");
@@ -80,34 +77,34 @@ public abstract class TestModelManagerBaseReorderingTestCase extends TestCase {
 		visitTestItemWithExpectation("item3");
 		visitTestItemWithExpectation("itemNew2");
 	}
-	
+
 	public void testItemRemove() {
 		visitTestItemWithExpectation("item1");
 		visitTestItemWithExpectation("item3");
 	}
-	
+
 	public void testItemRemoveFromBeginAndEnd() {
 		visitTestItemWithExpectation("item2");
 	}
-	
+
 	public void testItemRemoveAndAdd() {
 		visitTestItemWithExpectation("item1");
 		visitTestItemWithExpectation("itemNew");
 		visitTestItemWithExpectation("item3");
 	}
-	
+
 	public void testItemOrderChange() {
 		visitTestItemWithExpectation("item1");
 		visitTestItemWithExpectation("item3");
 		visitTestItemWithExpectation("item2");
 	}
-	
+
 	public void testItemReverse() {
 		visitTestItemWithExpectation("item3");
 		visitTestItemWithExpectation("item2");
 		visitTestItemWithExpectation("item1");
 	}
-	
+
 	public void testItemVisitTwice() {
 		visitTestItem("item1");
 		visitTestItemWithExpectation("item2");
@@ -115,7 +112,7 @@ public abstract class TestModelManagerBaseReorderingTestCase extends TestCase {
 		visitTestItem("item3");
 		visitTestItemWithExpectation("item3");
 	}
-	
+
 	public void testItemVisitTwiceAndReorder() {
 		visitTestItem("item3");
 		visitTestItemWithExpectation("item1");

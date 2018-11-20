@@ -33,7 +33,7 @@ import junit.framework.TestSuite;
  */
 public class DOMParserTestSuite extends TestCase {
 	public static Test suite() {
-		TestSuite suite= new TestSuite(DOMParserTestSuite.class.getName());
+		TestSuite suite = new TestSuite(DOMParserTestSuite.class.getName());
 		suite.addTest(AST2Tests.suite());
 		suite.addTestSuite(GCCTests.class);
 		suite.addTest(AST2CPPTests.suite());

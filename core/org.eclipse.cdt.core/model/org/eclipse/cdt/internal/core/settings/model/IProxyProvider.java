@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.settings.model;
 
 import org.eclipse.cdt.core.settings.model.extension.CDataObject;
 
-
 public interface IProxyProvider {
 	CDataProxy getProxy(String id);
 
@@ -30,18 +29,18 @@ public interface IProxyProvider {
 	CDataProxy[] getProxiesOfKind(int kind);
 
 	CDataProxy[] getCachedProxies();
-	
+
 	void cacheValues();
-	
+
 	void invalidateCache();
-/*
-	CDataProxy[] getProxies(Class arrayElClass);
-
-	CDataProxy[] getProxiesOfKind(int kind, Class arrayElClass);
-
-	CDataProxy[] getCachedProxies(Class arrayElClass);
-*/	
-//	IDataProvider getDataProvider();
+	/*
+		CDataProxy[] getProxies(Class arrayElClass);
 	
-//	IProxyCache getProxyCache();
+		CDataProxy[] getProxiesOfKind(int kind, Class arrayElClass);
+	
+		CDataProxy[] getCachedProxies(Class arrayElClass);
+	*/
+	//	IDataProvider getDataProvider();
+
+	//	IProxyCache getProxyCache();
 }

@@ -59,7 +59,6 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 	protected boolean is64 = false;
 	private static final String[] NO_NEEDED = new String[0];
 
-	
 	/**
 	 * @param parser
 	 * @param path
@@ -88,7 +87,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 		// overload to do nothing
 		return new BinaryObjectInfo();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
@@ -99,7 +98,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 		}
 		return super.getContents();
 	}
-	
+
 	protected MachOHelper64 getMachOHelper() throws IOException {
 		IPath path = getPath();
 		if (path != null) {
@@ -111,7 +110,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getName()
 	 */
@@ -133,14 +132,13 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 				loadBinaryInfo();
 			if (is64) {
 				addressFactory = new Addr64Factory();
-			}
-			else {
+			} else {
 				addressFactory = new Addr32Factory();
 			}
 		}
 		return addressFactory;
 	}
-	
+
 	protected void clearCachedValues() {
 		attributes = null;
 		sizes = null;
@@ -148,7 +146,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 		soname = null;
 		needed = null;
 	}
-	
+
 	protected MachO64.Attribute internalGetAttributes() {
 		if (hasChanged()) {
 			clearCachedValues();
@@ -170,7 +168,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 		}
 		return attributes;
 	}
-	
+
 	protected MachOHelper64.Sizes internalGetSizes() {
 		if (hasChanged()) {
 			clearCachedValues();
@@ -207,7 +205,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 		}
 		return symbols;
 	}
-	
+
 	protected String internalGetSoName() {
 		if (hasChanged()) {
 			clearCachedValues();
@@ -250,7 +248,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 				if (attributes == null) {
 					attributes = helper.getMachO().getAttributes();
 				}
-			} 
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			symbols = NO_SYMBOLS;
@@ -262,7 +260,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 	}
 
 	protected ISymbol[] loadSymbols(MachOHelper64 helper) throws IOException {
-		CPPFilt cppfilt =  null;
+		CPPFilt cppfilt = null;
 		try {
 			ArrayList<Symbol> list = new ArrayList<Symbol>();
 			// Hack should be remove when Elf is clean
@@ -305,10 +303,11 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 				symbolAddr = new Addr32(element.n_value);
 			else
 				symbolAddr = new Addr64(BigInteger.valueOf(element.n_value));
-			list.add(new Symbol(this, name, type, symbolAddr, size, filePath, element.getLineNumber(addr), element.getLineNumber(addr + size - 1)));
+			list.add(new Symbol(this, name, type, symbolAddr, size, filePath, element.getLineNumber(addr),
+					element.getLineNumber(addr + size - 1)));
 		}
 	}
-	
+
 	@Override
 	public String getCPU() {
 		MachO64.Attribute attribute = internalGetAttributes();
@@ -378,7 +377,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 		// fall back to super implementation for now
 		return super.getSymbol(addr);
 	}
-	
+
 	@Override
 	public String[] getNeededSharedLibs() {
 		String[] libs = internalGetNeeded();
@@ -412,7 +411,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 		}
 		return false;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {

@@ -87,8 +87,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @see DropTargetListener#drop(DropTargetEvent)
 	 */
-	protected abstract void dropToContainer(Object dropObject, IContainer dropContainer,
-		int operation);
+	protected abstract void dropToContainer(Object dropObject, IContainer dropContainer, int operation);
 
 	/**
 	 * Defines if a transfer data is supported by the implementer.
@@ -150,8 +149,8 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		originallyRequestedOperation = event.detail;
-		event.detail = dragOverOperationCached(originallyRequestedOperation,
-			determineDropContainer(event), determineDropTarget(event));
+		event.detail = dragOverOperationCached(originallyRequestedOperation, determineDropContainer(event),
+				determineDropTarget(event));
 	}
 
 	/**
@@ -164,8 +163,8 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 */
 	@Override
 	public void dragOver(DropTargetEvent event) {
-		event.detail = dragOverOperationCached(originallyRequestedOperation,
-			determineDropContainer(event), determineDropTarget(event));
+		event.detail = dragOverOperationCached(originallyRequestedOperation, determineDropContainer(event),
+				determineDropTarget(event));
 
 		if (originallyRequestedOperation != DND.DROP_NONE) {
 			// let user discover items even if event.detail is DND.DROP_NONE

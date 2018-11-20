@@ -34,7 +34,12 @@ public class ExpIncludeTab extends AbstractExportTab {
 	}
 
 	@Override
-	public int getKind() { return ICSettingEntry.INCLUDE_PATH; }
+	public int getKind() {
+		return ICSettingEntry.INCLUDE_PATH;
+	}
+
 	@Override
-	public boolean hasValues() { return false; }
+	public boolean hasValues() {
+		return false;
+	}
 }

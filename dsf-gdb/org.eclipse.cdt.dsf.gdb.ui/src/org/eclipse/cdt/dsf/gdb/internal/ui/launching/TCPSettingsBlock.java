@@ -57,15 +57,15 @@ public class TCPSettingsBlock extends Observable {
 	public void createBlock(Composite parent) {
 		fShell = parent.getShell();
 		Composite comp = ControlFactory.createCompositeEx(parent, 2, GridData.FILL_BOTH);
-		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
-		((GridLayout)comp.getLayout()).marginHeight = 0;
-		((GridLayout)comp.getLayout()).marginWidth = 0;
+		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout) comp.getLayout()).marginHeight = 0;
+		((GridLayout) comp.getLayout()).marginWidth = 0;
 		comp.setFont(parent.getFont());
 		PixelConverter converter = new PixelConverter(comp);
 		fHostNameField.doFillIntoGrid(comp, 2);
 		LayoutUtil.setWidthHint(fHostNameField.getTextControl(null), converter.convertWidthInCharsToPixels(20));
 		fPortNumberField.doFillIntoGrid(comp, 2);
-		((GridData)fPortNumberField.getTextControl(null).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
+		((GridData) fPortNumberField.getTextControl(null).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
 		LayoutUtil.setWidthHint(fPortNumberField.getTextControl(null), converter.convertWidthInCharsToPixels(10));
 		setControl(comp);
 	}
@@ -136,9 +136,9 @@ public class TCPSettingsBlock extends Observable {
 	private void initializeHostName(ILaunchConfiguration configuration) {
 		if (fHostNameField != null) {
 			try {
-				fHostNameField.setText(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, DEFAULT_HOST_NAME));
-			}
-			catch(CoreException e) {
+				fHostNameField.setText(
+						configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, DEFAULT_HOST_NAME));
+			} catch (CoreException e) {
 			}
 		}
 	}
@@ -146,9 +146,9 @@ public class TCPSettingsBlock extends Observable {
 	private void initializePortNumber(ILaunchConfiguration configuration) {
 		if (fPortNumberField != null) {
 			try {
-				fPortNumberField.setText(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, DEFAULT_PORT_NUMBER));
-			}
-			catch(CoreException e) {
+				fPortNumberField.setText(
+						configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, DEFAULT_PORT_NUMBER));
+			} catch (CoreException e) {
 			}
 		}
 	}
@@ -196,8 +196,7 @@ public class TCPSettingsBlock extends Observable {
 		try {
 			int port = Integer.parseInt(portNumber);
 			return (port > 0 && port <= 0xFFFF);
-		}
-		catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			return false;
 		}
 	}

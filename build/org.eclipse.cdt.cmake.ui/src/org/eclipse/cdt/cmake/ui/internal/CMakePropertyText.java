@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class CMakePropertyText implements ICMakePropertyPageControl {
-	
+
 	private String name;
 	private String initialValue;
 	protected Text text;
-	
+
 	public CMakePropertyText(Composite composite, String name, String initialValue, String tooltip) {
 		this.name = name;
 		if (initialValue == null) {
@@ -51,12 +51,12 @@ public class CMakePropertyText implements ICMakePropertyPageControl {
 	public String getFieldName() {
 		return name;
 	}
-	
+
 	@Override
 	public boolean isValueChanged() {
 		return !text.getText().equals(initialValue);
 	}
-	
+
 	@Override
 	public boolean isValid() {
 		return true;

@@ -63,9 +63,9 @@ import org.eclipse.cdt.internal.ui.CUIMessages;
  */
 class CStructureCreatorVisitor extends ASTVisitor {
 
-	private static final String TRANSLATION_UNIT_NAME = CUIMessages.CStructureCreatorVisitor_translationUnitName; 
-	private static final String ANONYMOUS_NAME= CoreModelMessages.getString("CElementLabels.anonymous"); //$NON-NLS-1$
-	
+	private static final String TRANSLATION_UNIT_NAME = CUIMessages.CStructureCreatorVisitor_translationUnitName;
+	private static final String ANONYMOUS_NAME = CoreModelMessages.getString("CElementLabels.anonymous"); //$NON-NLS-1$
+
 	private Stack<DocumentRangeNode> fStack = new Stack<DocumentRangeNode>();
 	private IDocument fDocument;
 	private String fTranslationUnitFileName;
@@ -80,10 +80,10 @@ class CStructureCreatorVisitor extends ASTVisitor {
 		fStack.clear();
 		fStack.push(root);
 		// visitor options
-		shouldVisitTranslationUnit= true;
-		shouldVisitDeclarations= true;
-		shouldVisitEnumerators=true;
-		shouldVisitNamespaces=true;
+		shouldVisitTranslationUnit = true;
+		shouldVisitDeclarations = true;
+		shouldVisitEnumerators = true;
+		shouldVisitNamespaces = true;
 	}
 
 	/*
@@ -91,30 +91,32 @@ class CStructureCreatorVisitor extends ASTVisitor {
 	 */
 	@Override
 	public int visit(IASTTranslationUnit tu) {
-		fTranslationUnitFileName= tu.getFilePath();
+		fTranslationUnitFileName = tu.getFilePath();
 
 		push(ICElement.C_UNIT, TRANSLATION_UNIT_NAME, 0);
 
 		// TODO fix ordering of includes and macros 
 		// includes
-		final IASTPreprocessorIncludeStatement[] includeDirectives= tu.getIncludeDirectives();
-		for (int i= 0; i < includeDirectives.length; i++) {
-			IASTPreprocessorIncludeStatement includeDirective= includeDirectives[i];
+		final IASTPreprocessorIncludeStatement[] includeDirectives = tu.getIncludeDirectives();
+		for (int i = 0; i < includeDirectives.length; i++) {
+			IASTPreprocessorIncludeStatement includeDirective = includeDirectives[i];
 			if (isLocalToFile(includeDirective)) {
-				push(ICElement.C_INCLUDE, new String(includeDirective.getName().toCharArray()), getStartOffset(includeDirective));
+				push(ICElement.C_INCLUDE, new String(includeDirective.getName().toCharArray()),
+						getStartOffset(includeDirective));
 				pop(getEndOffset(includeDirective));
 			}
 		}
 		// macros
-		final IASTPreprocessorMacroDefinition[] macroDefinitions= tu.getMacroDefinitions();
-		for (int i= 0; i < macroDefinitions.length; i++) {
-			IASTPreprocessorMacroDefinition macroDefinition= macroDefinitions[i];
+		final IASTPreprocessorMacroDefinition[] macroDefinitions = tu.getMacroDefinitions();
+		for (int i = 0; i < macroDefinitions.length; i++) {
+			IASTPreprocessorMacroDefinition macroDefinition = macroDefinitions[i];
 			if (isLocalToFile(macroDefinition)) {
-				push(ICElement.C_MACRO, new String(macroDefinition.getName().toCharArray()), getStartOffset(macroDefinition));
+				push(ICElement.C_MACRO, new String(macroDefinition.getName().toCharArray()),
+						getStartOffset(macroDefinition));
 				pop(getEndOffset(macroDefinition));
 			}
 		}
-		
+
 		return super.visit(tu);
 	}
 
@@ -136,18 +138,18 @@ class CStructureCreatorVisitor extends ASTVisitor {
 	 * @return
 	 */
 	private int getStartOffset(IASTNode node) {
-		IASTFileLocation fileLocation= getMinFileLocation(node.getNodeLocations());
+		IASTFileLocation fileLocation = getMinFileLocation(node.getNodeLocations());
 		if (fileLocation != null) {
 			return fileLocation.getNodeOffset();
 		}
-		DocumentRangeNode container= getCurrentContainer();
-		Object[] children= container.getChildren();
+		DocumentRangeNode container = getCurrentContainer();
+		Object[] children = container.getChildren();
 		if (children != null && children.length > 0) {
-			Position prevRange= ((DocumentRangeNode)children[children.length - 1]).getRange();
+			Position prevRange = ((DocumentRangeNode) children[children.length - 1]).getRange();
 			return prevRange.getOffset() + prevRange.getLength();
 		}
 		// fallback: use container range start
-		Position containerRange= container.getRange();
+		Position containerRange = container.getRange();
 		return containerRange.getOffset();
 	}
 
@@ -158,19 +160,19 @@ class CStructureCreatorVisitor extends ASTVisitor {
 	 * @return
 	 */
 	private int getEndOffset(IASTNode node) {
-		IASTFileLocation fileLocation= getMaxFileLocation(node.getNodeLocations());
+		IASTFileLocation fileLocation = getMaxFileLocation(node.getNodeLocations());
 		if (fileLocation != null) {
 			return fileLocation.getNodeOffset() + fileLocation.getNodeLength();
 		}
 		// fallback: use container range end
-		DocumentRangeNode container= getCurrentContainer();
-		Position containerRange= container.getRange();
+		DocumentRangeNode container = getCurrentContainer();
+		Position containerRange = container.getRange();
 		return containerRange.getOffset() + containerRange.getLength();
 	}
 
-/*
-	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#leave(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
-	 */
+	/*
+		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#leave(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
+		 */
 	@Override
 	public int leave(IASTTranslationUnit tu) {
 		super.leave(tu);
@@ -178,42 +180,42 @@ class CStructureCreatorVisitor extends ASTVisitor {
 		pop(fDocument.getLength());
 		return PROCESS_SKIP;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
 	@Override
 	public int visit(IASTDeclaration node) {
-		boolean isTemplateDecl= isTemplateDecl(node);
-		final int startOffset= isTemplateDecl ? getStartOffset(node.getParent()) : getStartOffset(node);
-		final int endOffset= getEndOffset(node);
+		boolean isTemplateDecl = isTemplateDecl(node);
+		final int startOffset = isTemplateDecl ? getStartOffset(node.getParent()) : getStartOffset(node);
+		final int endOffset = getEndOffset(node);
 		if (node instanceof IASTFunctionDefinition) {
-			IASTFunctionDefinition functionDef= (IASTFunctionDefinition)node;
+			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) node;
 			final int nodeType;
 			if (inClassBody()) {
-				nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_METHOD : ICElement.C_METHOD;
+				nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_METHOD : ICElement.C_METHOD;
 			} else {
-				nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_FUNCTION : ICElement.C_FUNCTION;
+				nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_FUNCTION : ICElement.C_FUNCTION;
 			}
 			push(nodeType, getDeclaratorName(functionDef.getDeclarator()), startOffset);
 			pop(endOffset);
 			return PROCESS_SKIP;
 		} else if (node instanceof IASTSimpleDeclaration) {
-			IASTSimpleDeclaration simpleDecl= (IASTSimpleDeclaration)node;
-			IASTDeclSpecifier declSpec= simpleDecl.getDeclSpecifier();
+			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) node;
+			IASTDeclSpecifier declSpec = simpleDecl.getDeclSpecifier();
 			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-				ICPPASTCompositeTypeSpecifier compositeTypeSpec= (ICPPASTCompositeTypeSpecifier)declSpec;
-				final String nodeName= getTypeName(compositeTypeSpec);
+				ICPPASTCompositeTypeSpecifier compositeTypeSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
+				final String nodeName = getTypeName(compositeTypeSpec);
 				final int nodeType;
 				switch (compositeTypeSpec.getKey()) {
 				case IASTCompositeTypeSpecifier.k_struct:
-					nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_STRUCT : ICElement.C_STRUCT;
+					nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_STRUCT : ICElement.C_STRUCT;
 					break;
 				case IASTCompositeTypeSpecifier.k_union:
-					nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_UNION : ICElement.C_UNION;
+					nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_UNION : ICElement.C_UNION;
 					break;
 				case ICPPASTCompositeTypeSpecifier.k_class:
-					nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_CLASS : ICElement.C_CLASS;
+					nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_CLASS : ICElement.C_CLASS;
 					break;
 				default:
 					assert false : "Unexpected composite type specifier"; //$NON-NLS-1$
@@ -221,14 +223,14 @@ class CStructureCreatorVisitor extends ASTVisitor {
 				}
 				push(nodeType, nodeName, startOffset);
 			} else if (declSpec instanceof IASTEnumerationSpecifier) {
-				IASTEnumerationSpecifier enumSpecifier= (IASTEnumerationSpecifier)declSpec;
+				IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) declSpec;
 				push(ICElement.C_ENUMERATION, getEnumerationName(enumSpecifier), startOffset);
 			} else {
-				IASTDeclarator[] declarators= simpleDecl.getDeclarators();
+				IASTDeclarator[] declarators = simpleDecl.getDeclarators();
 				for (int i = 0; i < declarators.length; i++) {
-					IASTDeclarator declarator= declarators[i];
-					int declStartOffset= declarators.length == 1 ? startOffset : getStartOffset(declarator);
-					int declEndOffset= declarators.length == 1 ? endOffset : getEndOffset(declarator);
+					IASTDeclarator declarator = declarators[i];
+					int declStartOffset = declarators.length == 1 ? startOffset : getStartOffset(declarator);
+					int declEndOffset = declarators.length == 1 ? endOffset : getEndOffset(declarator);
 					final String nodeName = getDeclaratorName(declarator);
 					if (declSpec.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 						push(ICElement.C_TYPEDEF, nodeName, declStartOffset);
@@ -236,21 +238,23 @@ class CStructureCreatorVisitor extends ASTVisitor {
 					} else if (declarator instanceof IASTFunctionDeclarator && !hasNestedPointerOperators(declarator)) {
 						final int nodeType;
 						if (inClassBody()) {
-							nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_METHOD_DECLARATION : ICElement.C_METHOD_DECLARATION;
+							nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_METHOD_DECLARATION
+									: ICElement.C_METHOD_DECLARATION;
 						} else {
-							nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_FUNCTION_DECLARATION : ICElement.C_FUNCTION_DECLARATION;
+							nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_FUNCTION_DECLARATION
+									: ICElement.C_FUNCTION_DECLARATION;
 						}
 						push(nodeType, nodeName, declStartOffset);
 						pop(declEndOffset);
 					} else if (declarator != null) {
 						final int nodeType;
 						if (inClassBody()) {
-							nodeType= ICElement.C_FIELD;
+							nodeType = ICElement.C_FIELD;
 						} else {
 							if (declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern) {
-								nodeType= ICElement.C_VARIABLE_DECLARATION;
+								nodeType = ICElement.C_VARIABLE_DECLARATION;
 							} else {
-								nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_VARIABLE : ICElement.C_VARIABLE;
+								nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_VARIABLE : ICElement.C_VARIABLE;
 							}
 						}
 						push(nodeType, nodeName, declStartOffset);
@@ -267,11 +271,11 @@ class CStructureCreatorVisitor extends ASTVisitor {
 		} else if (node instanceof ICPPASTNamespaceAlias) {
 			// ignored
 		} else if (node instanceof ICPPASTUsingDeclaration) {
-			ICPPASTUsingDeclaration usingDecl= (ICPPASTUsingDeclaration)node;
+			ICPPASTUsingDeclaration usingDecl = (ICPPASTUsingDeclaration) node;
 			push(ICElement.C_USING, ASTStringUtil.getQualifiedName(usingDecl.getName()), startOffset);
 			pop(endOffset);
 		} else if (node instanceof ICPPASTUsingDirective) {
-			ICPPASTUsingDirective usingDirective= (ICPPASTUsingDirective)node;
+			ICPPASTUsingDirective usingDirective = (ICPPASTUsingDirective) node;
 			push(ICElement.C_USING, ASTStringUtil.getQualifiedName(usingDirective.getQualifiedName()), startOffset);
 			pop(endOffset);
 		} else if (node instanceof ICPPASTLinkageSpecification) {
@@ -306,41 +310,41 @@ class CStructureCreatorVisitor extends ASTVisitor {
 		pop(getEndOffset(enumerator));
 		return super.visit(enumerator);
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#leave(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
 	@Override
 	public int leave(IASTDeclaration node) {
 		super.leave(node);
-		boolean isTemplateDecl= isTemplateDecl(node);
-		final int endOffset= isTemplateDecl ? getEndOffset(node.getParent()) : getEndOffset(node);
+		boolean isTemplateDecl = isTemplateDecl(node);
+		final int endOffset = isTemplateDecl ? getEndOffset(node.getParent()) : getEndOffset(node);
 		if (node instanceof IASTFunctionDefinition) {
 			final int nodeType;
 			if (inClassBody()) {
-				nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_METHOD : ICElement.C_METHOD;
+				nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_METHOD : ICElement.C_METHOD;
 			} else {
-				nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_FUNCTION : ICElement.C_FUNCTION;
+				nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_FUNCTION : ICElement.C_FUNCTION;
 			}
 			assert getCurrentContainer().getTypeCode() == nodeType;
 			pop(endOffset);
 		} else if (node instanceof IASTSimpleDeclaration) {
-			IASTSimpleDeclaration simpleDecl= (IASTSimpleDeclaration)node;
-			IASTDeclSpecifier declSpec= simpleDecl.getDeclSpecifier();
-			boolean isCompositeType= false;
+			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) node;
+			IASTDeclSpecifier declSpec = simpleDecl.getDeclSpecifier();
+			boolean isCompositeType = false;
 			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-				isCompositeType= true;
-				ICPPASTCompositeTypeSpecifier compositeTypeSpec= (ICPPASTCompositeTypeSpecifier)declSpec;
+				isCompositeType = true;
+				ICPPASTCompositeTypeSpecifier compositeTypeSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
 				final int nodeType;
 				switch (compositeTypeSpec.getKey()) {
 				case IASTCompositeTypeSpecifier.k_struct:
-					nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_STRUCT : ICElement.C_STRUCT;
+					nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_STRUCT : ICElement.C_STRUCT;
 					break;
 				case IASTCompositeTypeSpecifier.k_union:
-					nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_UNION : ICElement.C_UNION;
+					nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_UNION : ICElement.C_UNION;
 					break;
 				case ICPPASTCompositeTypeSpecifier.k_class:
-					nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_CLASS : ICElement.C_CLASS;
+					nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_CLASS : ICElement.C_CLASS;
 					break;
 				default:
 					assert false : "Unexpected composite type specifier"; //$NON-NLS-1$
@@ -349,38 +353,40 @@ class CStructureCreatorVisitor extends ASTVisitor {
 				assert getCurrentContainer().getTypeCode() == nodeType;
 				pop(isTemplateDecl ? endOffset : getEndOffset(declSpec));
 			} else if (declSpec instanceof IASTEnumerationSpecifier) {
-				isCompositeType= true;
+				isCompositeType = true;
 				assert getCurrentContainer().getTypeCode() == ICElement.C_ENUMERATION;
 				pop(getEndOffset(declSpec));
 			}
 			if (isCompositeType) {
-				IASTDeclarator[] declarators= simpleDecl.getDeclarators();
-				for (int i= 0; i < declarators.length; i++) {
-					IASTDeclarator declarator= declarators[i];
-					final String nodeName= getDeclaratorName(declarator);
-					final int declStartOffset= getStartOffset(declarator);
-					final int declEndOffset= getEndOffset(declarator);
+				IASTDeclarator[] declarators = simpleDecl.getDeclarators();
+				for (int i = 0; i < declarators.length; i++) {
+					IASTDeclarator declarator = declarators[i];
+					final String nodeName = getDeclaratorName(declarator);
+					final int declStartOffset = getStartOffset(declarator);
+					final int declEndOffset = getEndOffset(declarator);
 					if (declSpec.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 						push(ICElement.C_TYPEDEF, nodeName, declStartOffset);
 						pop(declEndOffset);
 					} else if (declarator instanceof IASTFunctionDeclarator && !hasNestedPointerOperators(declarator)) {
 						final int nodeType;
 						if (inClassBody()) {
-							nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_METHOD_DECLARATION : ICElement.C_METHOD_DECLARATION;
+							nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_METHOD_DECLARATION
+									: ICElement.C_METHOD_DECLARATION;
 						} else {
-							nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_FUNCTION_DECLARATION : ICElement.C_FUNCTION_DECLARATION;
+							nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_FUNCTION_DECLARATION
+									: ICElement.C_FUNCTION_DECLARATION;
 						}
 						push(nodeType, nodeName, declStartOffset);
 						pop(declEndOffset);
 					} else if (declarator != null) {
 						final int nodeType;
 						if (inClassBody()) {
-							nodeType= ICElement.C_FIELD;
+							nodeType = ICElement.C_FIELD;
 						} else {
 							if (declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern) {
-								nodeType= ICElement.C_VARIABLE_DECLARATION;
+								nodeType = ICElement.C_VARIABLE_DECLARATION;
 							} else {
-								nodeType= isTemplateDecl ? ICElement.C_TEMPLATE_VARIABLE : ICElement.C_VARIABLE;
+								nodeType = isTemplateDecl ? ICElement.C_TEMPLATE_VARIABLE : ICElement.C_VARIABLE;
 							}
 						}
 						push(nodeType, nodeName, declStartOffset);
@@ -413,7 +419,7 @@ class CStructureCreatorVisitor extends ASTVisitor {
 		}
 		return PROCESS_CONTINUE;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#leave(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 	 */
@@ -433,7 +439,7 @@ class CStructureCreatorVisitor extends ASTVisitor {
 	 */
 	private void push(int type, String name, int declarationStart) {
 		if (name.length() == 0) {
-			name= ANONYMOUS_NAME;
+			name = ANONYMOUS_NAME;
 		}
 		fStack.push(new CNode(getCurrentContainer(), type, name, declarationStart, 0));
 	}
@@ -443,23 +449,19 @@ class CStructureCreatorVisitor extends ASTVisitor {
 	 * and pops it off the stack.
 	 */
 	private void pop(int declarationEnd) {
-		DocumentRangeNode current= getCurrentContainer();
+		DocumentRangeNode current = getCurrentContainer();
 		current.setAppendPosition(declarationEnd);
 		current.setLength(declarationEnd - current.getRange().getOffset());
 		fStack.pop();
 	}
 
-	
 	/**
 	 * @return <code>true</code> if the current container is class-like.
 	 */
 	private boolean inClassBody() {
-		int typeCode= getCurrentContainer().getTypeCode();
-		return typeCode == ICElement.C_CLASS
-				|| typeCode == ICElement.C_TEMPLATE_CLASS
-				|| typeCode == ICElement.C_STRUCT
-				|| typeCode == ICElement.C_TEMPLATE_STRUCT
-				|| typeCode == ICElement.C_UNION
+		int typeCode = getCurrentContainer().getTypeCode();
+		return typeCode == ICElement.C_CLASS || typeCode == ICElement.C_TEMPLATE_CLASS || typeCode == ICElement.C_STRUCT
+				|| typeCode == ICElement.C_TEMPLATE_STRUCT || typeCode == ICElement.C_UNION
 				|| typeCode == ICElement.C_TEMPLATE_UNION;
 	}
 
@@ -474,47 +476,47 @@ class CStructureCreatorVisitor extends ASTVisitor {
 	}
 
 	private boolean hasNestedPointerOperators(IASTDeclarator declarator) {
-		declarator= declarator.getNestedDeclarator();
+		declarator = declarator.getNestedDeclarator();
 		while (declarator != null) {
 			if (declarator.getPointerOperators().length > 0) {
 				return true;
 			}
-			declarator= declarator.getNestedDeclarator();
+			declarator = declarator.getNestedDeclarator();
 		}
 		return false;
 	}
 
 	private String getEnumerationName(IASTEnumerationSpecifier enumSpecifier) {
-		String nodeName= ASTStringUtil.getQualifiedName(enumSpecifier.getName());
+		String nodeName = ASTStringUtil.getQualifiedName(enumSpecifier.getName());
 		if (nodeName.length() == 0) {
-			nodeName= ANONYMOUS_NAME;
+			nodeName = ANONYMOUS_NAME;
 		}
 		return nodeName;
 	}
 
 	private String getTypeName(IASTCompositeTypeSpecifier compositeTypeSpec) {
-		String nodeName= ASTStringUtil.getQualifiedName(compositeTypeSpec.getName());
+		String nodeName = ASTStringUtil.getQualifiedName(compositeTypeSpec.getName());
 		if (nodeName.length() == 0) {
-			nodeName= ANONYMOUS_NAME;
+			nodeName = ANONYMOUS_NAME;
 		}
 		return nodeName;
 	}
 
 	private String getDeclaratorName(IASTDeclarator node) {
-		node= getInnermostDeclarator(node);
-		IASTName name= node.getName();
-		String nodeName= ASTStringUtil.getQualifiedName(name);
+		node = getInnermostDeclarator(node);
+		IASTName name = node.getName();
+		String nodeName = ASTStringUtil.getQualifiedName(name);
 		if (nodeName.length() == 0) {
-			nodeName= ANONYMOUS_NAME;
+			nodeName = ANONYMOUS_NAME;
 		}
 		return nodeName;
 	}
 
 	private IASTDeclarator getInnermostDeclarator(IASTDeclarator node) {
-		IASTDeclarator nested= node.getNestedDeclarator();
+		IASTDeclarator nested = node.getNestedDeclarator();
 		while (nested != null) {
-			node= nested;
-			nested= node.getNestedDeclarator();
+			node = nested;
+			nested = node.getNestedDeclarator();
 		}
 		return node;
 	}
@@ -523,7 +525,7 @@ class CStructureCreatorVisitor extends ASTVisitor {
 		if (locations == null || locations.length == 0) {
 			return null;
 		}
-		final IASTNodeLocation nodeLocation= locations[locations.length-1];
+		final IASTNodeLocation nodeLocation = locations[locations.length - 1];
 		return nodeLocation.asFileLocation();
 	}
 
@@ -531,7 +533,7 @@ class CStructureCreatorVisitor extends ASTVisitor {
 		if (locations == null || locations.length == 0) {
 			return null;
 		}
-		final IASTNodeLocation nodeLocation= locations[0];
+		final IASTNodeLocation nodeLocation = locations[0];
 		return nodeLocation.asFileLocation();
 	}
 }

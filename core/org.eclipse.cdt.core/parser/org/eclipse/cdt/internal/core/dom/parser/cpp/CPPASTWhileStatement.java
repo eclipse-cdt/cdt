@@ -31,25 +31,25 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecWhile;
  * While statement in C++.
  */
 public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPASTWhileStatement, ICPPExecutionOwner {
-    private IASTExpression condition;
-    private IASTDeclaration condition2;
-    private IASTStatement body;
-    private IScope scope;
+	private IASTExpression condition;
+	private IASTDeclaration condition2;
+	private IASTStatement body;
+	private IScope scope;
 
-    public CPPASTWhileStatement() {
+	public CPPASTWhileStatement() {
 	}
 
 	public CPPASTWhileStatement(IASTDeclaration condition, IASTStatement body) {
-    	setConditionDeclaration(condition);
+		setConditionDeclaration(condition);
 		setBody(body);
 	}
 
-    public CPPASTWhileStatement(IASTExpression condition, IASTStatement body) {
+	public CPPASTWhileStatement(IASTExpression condition, IASTStatement body) {
 		setCondition(condition);
 		setBody(body);
 	}
 
-    @Override
+	@Override
 	public CPPASTWhileStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -65,34 +65,34 @@ public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPAS
 
 	@Override
 	public IASTExpression getCondition() {
-        return condition;
-    }
+		return condition;
+	}
 
-    @Override
+	@Override
 	public void setCondition(IASTExpression condition) {
-        assertNotFrozen();
-        this.condition = condition;
-        if (condition != null) {
+		assertNotFrozen();
+		this.condition = condition;
+		if (condition != null) {
 			condition.setParent(this);
 			condition.setPropertyInParent(CONDITIONEXPRESSION);
-			condition2= null;
+			condition2 = null;
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTStatement getBody() {
-        return body;
-    }
+		return body;
+	}
 
-    @Override
+	@Override
 	public void setBody(IASTStatement body) {
-        assertNotFrozen();
-        this.body = body;
-        if (body != null) {
+		assertNotFrozen();
+		this.body = body;
+		if (body != null) {
 			body.setParent(this);
 			body.setPropertyInParent(BODY);
 		}
-    }
+	}
 
 	@Override
 	public IASTDeclaration getConditionDeclaration() {
@@ -101,38 +101,42 @@ public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPAS
 
 	@Override
 	public void setConditionDeclaration(IASTDeclaration declaration) {
-        assertNotFrozen();
+		assertNotFrozen();
 		condition2 = declaration;
 		if (declaration != null) {
 			declaration.setParent(this);
 			declaration.setPropertyInParent(CONDITIONDECLARATION);
-			condition= null;
+			condition = null;
 		}
 	}
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (condition != null && !condition.accept(action))
-        	return false;
-        if (condition2 != null && !condition2.accept(action))
-        	return false;
-        if (body != null && !body.accept(action))
-        	return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (condition != null && !condition.accept(action))
+			return false;
+		if (condition2 != null && !condition2.accept(action))
+			return false;
+		if (body != null && !body.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements && action.leave(this) == ASTVisitor.PROCESS_ABORT)
-        	return false;
+		if (action.shouldVisitStatements && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
@@ -156,16 +160,18 @@ public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPAS
 	@Override
 	public IScope getScope() {
 		if (scope == null)
-            scope = new CPPBlockScope(this);
-        return scope;
-    }
+			scope = new CPPBlockScope(this);
+		return scope;
+	}
 
 	@Override
 	public ICPPExecution getExecution() {
 		ICPPASTExpression conditionExpr = (ICPPASTExpression) getCondition();
 		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner) getConditionDeclaration();
 		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null;
-		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration) conditionDecl.getExecution() : null;
+		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null
+				? (ExecSimpleDeclaration) conditionDecl.getExecution()
+				: null;
 		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
 		return new ExecWhile(conditionExprEval, conditionDeclExec, bodyExec);
 	}

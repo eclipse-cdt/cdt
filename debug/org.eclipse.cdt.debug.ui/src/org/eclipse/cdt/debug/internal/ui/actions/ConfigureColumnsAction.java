@@ -41,109 +41,109 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class ConfigureColumnsAction extends Action implements IUpdate {
 
-    private TreeModelViewer fViewer;
+	private TreeModelViewer fViewer;
 
-    class ColumnContentProvider implements IStructuredContentProvider {
+	class ColumnContentProvider implements IStructuredContentProvider {
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-         */
-        @Override
-		public Object[] getElements( Object inputElement ) {
-            return ((IColumnPresentation)inputElement).getAvailableColumns();
-        }
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
+		@Override
+		public Object[] getElements(Object inputElement) {
+			return ((IColumnPresentation) inputElement).getAvailableColumns();
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
+		@Override
 		public void dispose() {
-        }
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-         */
-        @Override
-		public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
-        }
-    }
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+	}
 
-    class ColumnLabelProvider extends LabelProvider {
+	class ColumnLabelProvider extends LabelProvider {
 
-        private Map<ImageDescriptor, Image> fImages = new HashMap<>();
+		private Map<ImageDescriptor, Image> fImages = new HashMap<>();
 
-        @Override
-		public Image getImage( Object element ) {
-            ImageDescriptor imageDescriptor = fViewer.getColumnPresentation().getImageDescriptor( (String)element );
-            if ( imageDescriptor != null ) {
-                Image image = fImages.get( imageDescriptor );
-                if ( image == null ) {
-                    image = imageDescriptor.createImage();
-                    fImages.put( imageDescriptor, image );
-                }
-                return image;
-            }
-            return null;
-        }
+		@Override
+		public Image getImage(Object element) {
+			ImageDescriptor imageDescriptor = fViewer.getColumnPresentation().getImageDescriptor((String) element);
+			if (imageDescriptor != null) {
+				Image image = fImages.get(imageDescriptor);
+				if (image == null) {
+					image = imageDescriptor.createImage();
+					fImages.put(imageDescriptor, image);
+				}
+				return image;
+			}
+			return null;
+		}
 
-        @Override
-		public String getText( Object element ) {
-            return fViewer.getColumnPresentation().getHeader( (String)element );
-        }
+		@Override
+		public String getText(Object element) {
+			return fViewer.getColumnPresentation().getHeader((String) element);
+		}
 
-        @Override
+		@Override
 		public void dispose() {
-            super.dispose();
-            Iterator<Image> iterator = fImages.values().iterator();
-            while( iterator.hasNext() ) {
-                Image image = iterator.next();
-                image.dispose();
-            }
-            fImages.clear();
-        }
-    }
+			super.dispose();
+			Iterator<Image> iterator = fImages.values().iterator();
+			while (iterator.hasNext()) {
+				Image image = iterator.next();
+				image.dispose();
+			}
+			fImages.clear();
+		}
+	}
 
-    public ConfigureColumnsAction( TreeModelViewer viewer ) {
-        setText( "Select &Columns..." );
-        setId( CDebugUIPlugin.getUniqueIdentifier() + ".ConfigureColumnsAction" ); //$NON-NLS-1$
-        PlatformUI.getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.CONFIGURE_COLUMNS_ACTION );
-        fViewer = viewer;
-    }
+	public ConfigureColumnsAction(TreeModelViewer viewer) {
+		setText("Select &Columns...");
+		setId(CDebugUIPlugin.getUniqueIdentifier() + ".ConfigureColumnsAction"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICDebugHelpContextIds.CONFIGURE_COLUMNS_ACTION);
+		fViewer = viewer;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.texteditor.IUpdate#update()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 */
+	@Override
 	public void update() {
-        setEnabled( fViewer.isShowColumns() );
-    }
+		setEnabled(fViewer.isShowColumns());
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	@Override
 	public void run() {
-        ListSelectionDialog dialog = new ListSelectionDialog( fViewer.getControl().getShell(), fViewer.getColumnPresentation(), new ColumnContentProvider(),
-                new ColumnLabelProvider(), "Select the &columns to display:" );
-        PlatformUI.getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.CONFIGURE_COLUMNS_DIALOG );
-        String[] visibleColumns = fViewer.getVisibleColumns();
-        List<String> initialSelection = new ArrayList<>( visibleColumns.length );
-        for( int i = 0; i < visibleColumns.length; i++ ) {
-            initialSelection.add( visibleColumns[i] );
-        }
-        dialog.setTitle( "Select Columns" );
-        dialog.setInitialElementSelections( initialSelection );
-        if ( dialog.open() == Window.OK ) {
-            Object[] result = dialog.getResult();
-            if ( result.length == 0 ) {
-                fViewer.setShowColumns( false );
-            }
-            else {
-                String[] ids = new String[result.length];
-                System.arraycopy( result, 0, ids, 0, result.length );
-                fViewer.resetColumnSizes( ids );
-                fViewer.setVisibleColumns( ids );
-            }
-        }
-    }
+		ListSelectionDialog dialog = new ListSelectionDialog(fViewer.getControl().getShell(),
+				fViewer.getColumnPresentation(), new ColumnContentProvider(), new ColumnLabelProvider(),
+				"Select the &columns to display:");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICDebugHelpContextIds.CONFIGURE_COLUMNS_DIALOG);
+		String[] visibleColumns = fViewer.getVisibleColumns();
+		List<String> initialSelection = new ArrayList<>(visibleColumns.length);
+		for (int i = 0; i < visibleColumns.length; i++) {
+			initialSelection.add(visibleColumns[i]);
+		}
+		dialog.setTitle("Select Columns");
+		dialog.setInitialElementSelections(initialSelection);
+		if (dialog.open() == Window.OK) {
+			Object[] result = dialog.getResult();
+			if (result.length == 0) {
+				fViewer.setShowColumns(false);
+			} else {
+				String[] ids = new String[result.length];
+				System.arraycopy(result, 0, ids, 0, result.length);
+				fViewer.resetColumnSizes(ids);
+				fViewer.setVisibleColumns(ids);
+			}
+		}
+	}
 }

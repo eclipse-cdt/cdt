@@ -25,11 +25,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *  COUNT times.  The count becomes part of the `-break-list' output
  *  (see the description of the DsfMIBreakList).
  */
- 
-public class MIBreakAfter extends MICommand<MIInfo>
-{
-    /** @since 5.0 */
-    public MIBreakAfter(IBreakpointsTargetDMContext ctx, String breakpoint, int ignoreCount) {
-        super(ctx, "-break-after", new String[] { breakpoint, Integer.toString(ignoreCount) }); //$NON-NLS-1$
-    }
+
+public class MIBreakAfter extends MICommand<MIInfo> {
+	/** @since 5.0 */
+	public MIBreakAfter(IBreakpointsTargetDMContext ctx, String breakpoint, int ignoreCount) {
+		super(ctx, "-break-after", new String[] { breakpoint, Integer.toString(ignoreCount) }); //$NON-NLS-1$
+	}
 }

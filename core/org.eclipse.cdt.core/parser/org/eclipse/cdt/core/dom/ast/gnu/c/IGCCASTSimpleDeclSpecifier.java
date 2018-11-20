@@ -32,7 +32,7 @@ public interface IGCCASTSimpleDeclSpecifier extends ICASTSimpleDeclSpecifier {
 	@Deprecated
 	public static final ASTNodeProperty TYPEOF_EXPRESSION = new ASTNodeProperty(
 			"IGCCASTSimpleDeclSpecifier.TYPEOF_EXPRESSION - typeof() Expression"); //$NON-NLS-1$
-	
+
 	/**
 	 * @deprecated Replaced by {@link IASTSimpleDeclSpecifier#setDeclTypeExpression(IASTExpression)}.
 	 */
@@ -44,7 +44,7 @@ public interface IGCCASTSimpleDeclSpecifier extends ICASTSimpleDeclSpecifier {
 	 */
 	@Deprecated
 	public IASTExpression getTypeofExpression();
-	
+
 	/**
 	 * @since 5.1
 	 */

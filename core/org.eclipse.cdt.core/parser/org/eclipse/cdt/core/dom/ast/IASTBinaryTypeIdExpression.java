@@ -19,8 +19,10 @@ package org.eclipse.cdt.core.dom.ast;
  * @since 5.3
  */
 public interface IASTBinaryTypeIdExpression extends IASTExpression {
-	public static final ASTNodeProperty OPERAND1 = new ASTNodeProperty("IASTBinaryTypeIdExpression.OPERAND1 [IASTTypeId]"); //$NON-NLS-1$
-	public static final ASTNodeProperty OPERAND2 = new ASTNodeProperty("IASTBinaryTypeIdExpression.OPERAND2 [IASTTypeId]"); //$NON-NLS-1$
+	public static final ASTNodeProperty OPERAND1 = new ASTNodeProperty(
+			"IASTBinaryTypeIdExpression.OPERAND1 [IASTTypeId]"); //$NON-NLS-1$
+	public static final ASTNodeProperty OPERAND2 = new ASTNodeProperty(
+			"IASTBinaryTypeIdExpression.OPERAND2 [IASTTypeId]"); //$NON-NLS-1$
 
 	/**
 	 * Built-in type traits of g++.
@@ -29,8 +31,8 @@ public interface IASTBinaryTypeIdExpression extends IASTExpression {
 		__is_base_of,
 		/** @since 6.0 */
 		__is_trivially_assignable
-		}
-	
+	}
+
 	/**
 	 * Returns the operator for the expression.
 	 */
@@ -40,12 +42,12 @@ public interface IASTBinaryTypeIdExpression extends IASTExpression {
 	 * Returns the first operand.
 	 */
 	public IASTTypeId getOperand1();
-	
+
 	/**
 	 * Returns the second operand, or <code>null</code> if it was not provided (content assist).
 	 */
 	public IASTTypeId getOperand2();
-	
+
 	/**
 	 * Sets the operator for the expression.
 	 */

@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.ui.util.SelectionUtil;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CreateParserLogHandler extends AbstractHandler {
-	
+
 	private final CreateParserLogAction createParserLogAction = new CreateParserLogAction();
 
 	@Override
@@ -41,13 +41,13 @@ public class CreateParserLogHandler extends AbstractHandler {
 		createParserLogAction.run(null);
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
 	 */
 	@Override
 	public void setEnabled(Object evaluationContext) {
-    	ISelection selection = SelectionUtil.getActiveSelection();
-    	setBaseEnabled(createParserLogAction.isEnabledFor(selection));
+		ISelection selection = SelectionUtil.getActiveSelection();
+		setBaseEnabled(createParserLogAction.isEnabledFor(selection));
 	}
 }

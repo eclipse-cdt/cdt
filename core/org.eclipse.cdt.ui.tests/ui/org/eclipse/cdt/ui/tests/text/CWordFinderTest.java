@@ -46,7 +46,7 @@ public class CWordFinderTest extends BaseUITestCase {
 	}
 
 	public void testBasic() {
-		IDocument doc= new Document(" func(int a, int b);");
+		IDocument doc = new Document(" func(int a, int b);");
 		IRegion region = CWordFinder.findWord(doc, 1);
 		assertEquals(1, region.getOffset());
 		assertEquals(4, region.getLength());
@@ -62,7 +62,7 @@ public class CWordFinderTest extends BaseUITestCase {
 		region = CWordFinder.findWord(doc, 12);
 		assertEquals(12, region.getOffset());
 		assertEquals(0, region.getLength());
-		doc= new Document("func();");
+		doc = new Document("func();");
 		region = CWordFinder.findWord(doc, 0);
 		assertEquals(0, region.getOffset());
 		assertEquals(4, region.getLength());
@@ -72,15 +72,15 @@ public class CWordFinderTest extends BaseUITestCase {
 	}
 
 	public void testFindWord() throws BadLocationException {
-		IDocument doc= new Document();
-		StringBuilder buf= new StringBuilder();
-		String word= "word_0815";
-		for (int i= 0; i < 10; i++) {
+		IDocument doc = new Document();
+		StringBuilder buf = new StringBuilder();
+		String word = "word_0815";
+		for (int i = 0; i < 10; i++) {
 			buf.append(' ').append(word);
 		}
 		doc.set(buf.toString());
-		for (int i= 0; i < doc.getLength(); i++) {
-			IRegion wordRegion= CWordFinder.findWord(doc, i);
+		for (int i = 0; i < doc.getLength(); i++) {
+			IRegion wordRegion = CWordFinder.findWord(doc, i);
 			assertNotNull(wordRegion);
 			if (wordRegion.getLength() != 0) {
 				assertEquals(word.length(), wordRegion.getLength());
@@ -90,10 +90,10 @@ public class CWordFinderTest extends BaseUITestCase {
 	}
 
 	public void testFindWordOnDocumentStart_Bug193461() {
-		IDocument doc= new Document();
+		IDocument doc = new Document();
 		doc.set("word");
-		for (int i= 0; i < doc.getLength(); i++) {
-			IRegion wordRegion= CWordFinder.findWord(doc, i);
+		for (int i = 0; i < doc.getLength(); i++) {
+			IRegion wordRegion = CWordFinder.findWord(doc, i);
 			assertNotNull(wordRegion);
 			assertEquals(doc.getLength(), wordRegion.getLength());
 			assertEquals(0, wordRegion.getOffset());

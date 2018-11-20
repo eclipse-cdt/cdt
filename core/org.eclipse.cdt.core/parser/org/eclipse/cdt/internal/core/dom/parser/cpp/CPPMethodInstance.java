@@ -42,14 +42,14 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 		return (ICPPClassType) getOwner();
 	}
 
-    @Override
+	@Override
 	public boolean isVirtual() {
-        return ((ICPPMethod) getTemplateDefinition()).isVirtual();
-    }
+		return ((ICPPMethod) getTemplateDefinition()).isVirtual();
+	}
 
 	@Override
 	public boolean isPureVirtual() {
-        return ((ICPPMethod) getTemplateDefinition()).isPureVirtual();
+		return ((ICPPMethod) getTemplateDefinition()).isPureVirtual();
 	}
 
 	@Override
@@ -73,11 +73,11 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 
 	@Override
 	public boolean isOverride() {
-        return ((ICPPMethod) getTemplateDefinition()).isOverride();
+		return ((ICPPMethod) getTemplateDefinition()).isOverride();
 	}
 
 	@Override
 	public boolean isFinal() {
-        return ((ICPPMethod) getTemplateDefinition()).isFinal();
+		return ((ICPPMethod) getTemplateDefinition()).isFinal();
 	}
 }

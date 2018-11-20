@@ -41,8 +41,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected CRefactoring createRefactoring() {
-		return new ImplementMethodRefactoring(getSelectedTranslationUnit(), getSelection(),
-				getCProject());
+		return new ImplementMethodRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 	}
 
 	//A.h
@@ -794,7 +793,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	public void testExplicitConstructor_Bug363111() throws Exception {
 		assertRefactoringSuccess();
 	}
-	
+
 	//A.h
 	//
 	//class TestClass {
@@ -810,7 +809,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	public void testEmptyThowsClause_Bug393833() throws Exception {
 		assertRefactoringSuccess();
 	}
-	
+
 	//A.h
 	//
 	//class TestClass {

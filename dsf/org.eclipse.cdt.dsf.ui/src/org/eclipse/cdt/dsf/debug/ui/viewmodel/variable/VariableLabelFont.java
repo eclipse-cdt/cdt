@@ -22,10 +22,10 @@ import org.eclipse.swt.graphics.FontData;
  * @since 2.0
  */
 public class VariableLabelFont extends LabelFont {
-    
-    public VariableLabelFont() {
-        super(JFaceResources.getFontRegistry().getFontData(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT)[0]);
-    }
+
+	public VariableLabelFont() {
+		super(JFaceResources.getFontRegistry().getFontData(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT)[0]);
+	}
 
 	@Override
 	public FontData getFontData() {

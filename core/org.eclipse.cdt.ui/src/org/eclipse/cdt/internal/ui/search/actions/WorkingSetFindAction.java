@@ -26,17 +26,17 @@ import org.eclipse.ui.IWorkbenchSite;
 public class WorkingSetFindAction extends FindAction {
 
 	private FindAction findAction;
-	
+
 	public WorkingSetFindAction(CEditor editor, FindAction action, String string) {
-		super ( editor );
+		super(editor);
 		this.findAction = action;
-		setText(string); 
+		setText(string);
 	}
 
-	public WorkingSetFindAction(IWorkbenchSite site,FindAction action, String string) {
+	public WorkingSetFindAction(IWorkbenchSite site, FindAction action, String string) {
 		super(site);
 		this.findAction = action;
-		setText(string); 
+		setText(string);
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class WorkingSetFindAction extends FindAction {
 	protected int getLimitTo() {
 		return findAction.getLimitTo();
 	}
-	
+
 	@Override
 	public void run() {
 		findAction.run();

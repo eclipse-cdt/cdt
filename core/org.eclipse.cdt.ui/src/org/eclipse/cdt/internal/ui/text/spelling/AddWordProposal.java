@@ -40,8 +40,8 @@ import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
  * Proposal to add the unknown word to the dictionaries.
  */
 public class AddWordProposal implements ICCompletionProposal {
-	private static final String PREF_KEY_DO_NOT_ASK= "do_not_ask_to_install_user_dictionary"; //$NON-NLS-1$
-	
+	private static final String PREF_KEY_DO_NOT_ASK = "do_not_ask_to_install_user_dictionary"; //$NON-NLS-1$
+
 	/** The invocation context */
 	private final IInvocationContext fContext;
 
@@ -57,8 +57,8 @@ public class AddWordProposal implements ICCompletionProposal {
 	 *                   The invocation context
 	 */
 	public AddWordProposal(final String word, final IInvocationContext context) {
-		fContext= context;
-		fWord= word;
+		fContext = context;
+		fWord = word;
 	}
 
 	/*
@@ -66,30 +66,30 @@ public class AddWordProposal implements ICCompletionProposal {
 	 */
 	@Override
 	public final void apply(final IDocument document) {
-		final ISpellCheckEngine engine= SpellCheckEngine.getInstance();
-		final ISpellChecker checker= engine.getSpellChecker();
+		final ISpellCheckEngine engine = SpellCheckEngine.getInstance();
+		final ISpellChecker checker = engine.getSpellChecker();
 
 		if (checker == null)
 			return;
-		
-		IQuickAssistInvocationContext quickAssistContext= null;
+
+		IQuickAssistInvocationContext quickAssistContext = null;
 		if (fContext instanceof IQuickAssistInvocationContext)
-			quickAssistContext= (IQuickAssistInvocationContext)fContext;
-		
+			quickAssistContext = (IQuickAssistInvocationContext) fContext;
+
 		if (!checker.acceptsWords()) {
 			final Shell shell;
 			if (quickAssistContext != null && quickAssistContext.getSourceViewer() != null)
-				shell= quickAssistContext.getSourceViewer().getTextWidget().getShell();
+				shell = quickAssistContext.getSourceViewer().getTextWidget().getShell();
 			else
-				shell= CUIPlugin.getActiveWorkbenchShell();
-			
+				shell = CUIPlugin.getActiveWorkbenchShell();
+
 			if (!canAskToConfigure() || !askUserToConfigureUserDictionary(shell))
 				return;
-			
-			String[] preferencePageIds= new String[] { "org.eclipse.ui.editors.preferencePages.Spelling" }; //$NON-NLS-1$
+
+			String[] preferencePageIds = new String[] { "org.eclipse.ui.editors.preferencePages.Spelling" }; //$NON-NLS-1$
 			PreferencesUtil.createPreferenceDialogOn(shell, preferencePageIds[0], preferencePageIds, null).open();
 		}
-		
+
 		if (checker.acceptsWords()) {
 			checker.addWord(fWord);
 			if (quickAssistContext != null && quickAssistContext.getSourceViewer() != null) {
@@ -106,17 +106,12 @@ public class AddWordProposal implements ICCompletionProposal {
 	 * @return <code>true</code> if the user wants to configure the user dictionary
 	 */
 	private boolean askUserToConfigureUserDictionary(Shell shell) {
-		MessageDialogWithToggle toggleDialog= MessageDialogWithToggle.openYesNoQuestion(
-				shell,
-				Messages.Spelling_add_askToConfigure_title,
-				Messages.Spelling_add_askToConfigure_question,
-				Messages.Spelling_add_askToConfigure_ignoreMessage,
-				false,
-				null,
-				null);
-		
+		MessageDialogWithToggle toggleDialog = MessageDialogWithToggle.openYesNoQuestion(shell,
+				Messages.Spelling_add_askToConfigure_title, Messages.Spelling_add_askToConfigure_question,
+				Messages.Spelling_add_askToConfigure_ignoreMessage, false, null, null);
+
 		PreferenceConstants.getPreferenceStore().setValue(PREF_KEY_DO_NOT_ASK, toggleDialog.getToggleState());
-		
+
 		return toggleDialog.getReturnCode() == IDialogConstants.YES_ID;
 	}
 

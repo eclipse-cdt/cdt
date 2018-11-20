@@ -25,13 +25,8 @@ import org.junit.runners.Suite;
  * @since 4.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	TestTemplateEngine.class,
-	TestTemplateCore.class,
-	TestValueStore.class,
-	TestSharedDefaults.class,
-	TestProcesses.class,
-	TestTemplateEngineBugs.class,
+@Suite.SuiteClasses({ TestTemplateEngine.class, TestTemplateCore.class, TestValueStore.class, TestSharedDefaults.class,
+		TestProcesses.class, TestTemplateEngineBugs.class,
 
 })
 public class AllTemplateEngineTests {

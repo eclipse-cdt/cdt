@@ -22,6 +22,7 @@ import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 public class GdbConsoleClearAction extends Action {
 
 	private final ITerminalViewControl fTerminalCtrl;
+
 	public GdbConsoleClearAction(ITerminalViewControl terminalControl) {
 		fTerminalCtrl = terminalControl;
 		if (fTerminalCtrl == null || fTerminalCtrl.isDisposed()) {
@@ -31,7 +32,8 @@ public class GdbConsoleClearAction extends Action {
 		setText(ConsoleMessages.ConsoleClearAction_name);
 		setToolTipText(ConsoleMessages.ConsoleClearAction_description);
 		setImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_CLEAR_ACTIVE_COLOR));
-		setDisabledImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_CLEAR_DISABLED_COLOR));
+		setDisabledImageDescriptor(
+				GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_CLEAR_DISABLED_COLOR));
 	}
 
 	@Override

@@ -60,7 +60,7 @@ public class CDebugCorePlugin extends Plugin {
 	/**
 	 * The plug-in identifier (value <code>"org.eclipse.cdt.debug.core"</code>).
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.core" ; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.core"; //$NON-NLS-1$
 
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -76,24 +76,23 @@ public class CDebugCorePlugin extends Plugin {
 	 * Breakpoint listener list.
 	 */
 	private ListenerList fBreakpointListeners;
-	
+
 	/**
 	 * Breakpoint action manager.
 	 */
 	private BreakpointActionManager breakpointActionManager;
 
-    private DisassemblyContextService fDisassemblyContextService;
+	private DisassemblyContextService fDisassemblyContextService;
 
 	public static final String CDEBUGGER_EXTENSION_POINT_ID = "CDebugger"; //$NON-NLS-1$
 	public static final String DEBUGGER_ELEMENT = "debugger"; //$NON-NLS-1$
-	
+
 	public static final String BREAKPOINT_ACTION_EXTENSION_POINT_ID = "BreakpointActionType"; //$NON-NLS-1$
 	public static final String ACTION_TYPE_ELEMENT = "actionType"; //$NON-NLS-1$	
-	
-    public static final String BREAKPOINT_EXTENSION_EXTENSION_POINT_ID = "BreakpointExtension"; //$NON-NLS-1$
-    public static final String BREAKPOINT_EXTENSION_ELEMENT = "breakpointExtension"; //$NON-NLS-1$    
-	
-	
+
+	public static final String BREAKPOINT_EXTENSION_EXTENSION_POINT_ID = "BreakpointExtension"; //$NON-NLS-1$
+	public static final String BREAKPOINT_EXTENSION_ELEMENT = "breakpointExtension"; //$NON-NLS-1$    
+
 	/**
 	 * Dummy source lookup director needed to manage common source containers.
 	 */
@@ -144,7 +143,7 @@ public class CDebugCorePlugin extends Plugin {
 	public static void log(Throwable t) {
 		Throwable top = t;
 		if (t instanceof DebugException) {
-			DebugException de = (DebugException)t;
+			DebugException de = (DebugException) t;
 			IStatus status = de.getStatus();
 			if (status.getException() != null) {
 				top = status.getException();
@@ -152,7 +151,8 @@ public class CDebugCorePlugin extends Plugin {
 		}
 		// this message is intentionally not internationalized, as an exception may
 		// be due to the resource bundle itself
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from CDI Debug: ", top)); //$NON-NLS-1$		
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from CDI Debug: ", //$NON-NLS-1$
+				top));
 	}
 
 	/**
@@ -170,15 +170,18 @@ public class CDebugCorePlugin extends Plugin {
 	 * @param status status to log
 	 */
 	public static void log(String message) {
-		getDefault().getLog().log(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), INTERNAL_ERROR, message, null));
+		getDefault().getLog()
+				.log(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), INTERNAL_ERROR, message, null));
 	}
 
 	public void saveCommonSourceLocations(ICSourceLocation[] locations) {
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_SOURCE_LOCATIONS, SourceUtils.getCommonSourceLocationsMemento(locations));
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_SOURCE_LOCATIONS,
+				SourceUtils.getCommonSourceLocationsMemento(locations));
 	}
 
 	public ICSourceLocation[] getCommonSourceLocations() {
-		return SourceUtils.getCommonSourceLocationsFromMemento(CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_SOURCE_LOCATIONS));
+		return SourceUtils.getCommonSourceLocationsFromMemento(
+				CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_SOURCE_LOCATIONS));
 	}
 
 	/**
@@ -223,7 +226,7 @@ public class CDebugCorePlugin extends Plugin {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
 		Trace.init();
@@ -232,7 +235,7 @@ public class CDebugCorePlugin extends Plugin {
 		createBreakpointListenersList();
 		createDisassemblyContextService();
 		setDefaultLaunchDelegates();
-		
+
 		Platform.getAdapterManager().registerAdapters(new DebugModelProvider(), ICDebugElement.class);
 
 		// Add core build launch bar listener
@@ -245,7 +248,7 @@ public class CDebugCorePlugin extends Plugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 		ILaunchBarManager launchBarManager = getService(ILaunchBarManager.class);
 		launchBarManager.removeListener(coreBuildLaunchBarTracker);
 		coreBuildLaunchBarTracker = null;
@@ -266,18 +269,20 @@ public class CDebugCorePlugin extends Plugin {
 	}
 
 	private void createCommandAdapterFactory() {
-        IAdapterManager manager= Platform.getAdapterManager();
-        CCommandAdapterFactory actionFactory = new CCommandAdapterFactory();
-        manager.registerAdapters(actionFactory, IRestart.class);
+		IAdapterManager manager = Platform.getAdapterManager();
+		CCommandAdapterFactory actionFactory = new CCommandAdapterFactory();
+		manager.registerAdapters(actionFactory, IRestart.class);
 	}
-	
+
 	private void initializeCommonSourceLookupDirector() {
 		if (fCommonSourceLookupDirector == null) {
 			fCommonSourceLookupDirector = new CommonSourceLookupDirector();
 			boolean convertingFromLegacyFormat = false;
-			String newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugInternalConstants.PREF_DEFAULT_SOURCE_CONTAINERS);
+			String newMemento = CDebugCorePlugin.getDefault().getPluginPreferences()
+					.getString(ICDebugInternalConstants.PREF_DEFAULT_SOURCE_CONTAINERS);
 			if (newMemento.isEmpty()) {
-				newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS);
+				newMemento = CDebugCorePlugin.getDefault().getPluginPreferences()
+						.getString(ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS);
 				convertingFromLegacyFormat = true;
 			}
 			if (newMemento.isEmpty()) {
@@ -285,7 +290,7 @@ public class CDebugCorePlugin extends Plugin {
 				// initializeFromMemento(), but since we're not calling it, we
 				// need to do this explicitly. See 299583.
 				fCommonSourceLookupDirector.initializeParticipants();
-				
+
 				// Convert source locations to source containers
 				convertSourceLocations(fCommonSourceLookupDirector);
 			} else {
@@ -321,26 +326,26 @@ public class CDebugCorePlugin extends Plugin {
 	private void convertSourceLocations(CommonSourceLookupDirector director) {
 		director.setSourceContainers(SourceUtils.convertSourceLocations(getCommonSourceLocations()));
 	}
-	
+
 	public BreakpointActionManager getBreakpointActionManager() {
 		if (breakpointActionManager == null)
 			breakpointActionManager = new BreakpointActionManager();
 		return breakpointActionManager;
 	}
 
-    private void createDisassemblyContextService() {
-        fDisassemblyContextService = new DisassemblyContextService();
-    }
+	private void createDisassemblyContextService() {
+		fDisassemblyContextService = new DisassemblyContextService();
+	}
 
-    public IDisassemblyContextService getDisassemblyContextService() {
-        return fDisassemblyContextService;
-    }
+	public IDisassemblyContextService getDisassemblyContextService() {
+		return fDisassemblyContextService;
+	}
 
-    private void disposeDisassemblyContextService() {
-        if (fDisassemblyContextService != null)
-            fDisassemblyContextService.dispose();
-    }
-    
+	private void disposeDisassemblyContextService() {
+		if (fDisassemblyContextService != null)
+			fDisassemblyContextService.dispose();
+	}
+
 	private void setDefaultLaunchDelegates() {
 		// Set the default launch delegates as early as possible, and do it only once (Bug 312997) 
 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
@@ -348,12 +353,14 @@ public class CDebugCorePlugin extends Plugin {
 		HashSet<String> debugSet = new HashSet<>();
 		debugSet.add(ILaunchManager.DEBUG_MODE);
 
-		ILaunchConfigurationType localCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
+		ILaunchConfigurationType localCfg = launchMgr
+				.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
 		try {
 			if (localCfg.getPreferredDelegate(debugSet) == null) {
 				ILaunchDelegate[] delegates = localCfg.getDelegates(debugSet);
 				for (ILaunchDelegate delegate : delegates) {
-					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE.equals(delegate.getId())) {
+					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE
+							.equals(delegate.getId())) {
 						localCfg.setPreferredDelegate(debugSet, delegate);
 						break;
 					}
@@ -362,12 +369,14 @@ public class CDebugCorePlugin extends Plugin {
 		} catch (CoreException e) {
 		}
 
-		ILaunchConfigurationType remoteCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_REMOTE_APP);
+		ILaunchConfigurationType remoteCfg = launchMgr
+				.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_REMOTE_APP);
 		try {
 			if (remoteCfg.getPreferredDelegate(debugSet) == null) {
 				ILaunchDelegate[] delegates = remoteCfg.getDelegates(debugSet);
 				for (ILaunchDelegate delegate : delegates) {
-					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_REMOTE_LAUNCH_DELEGATE.equals(delegate.getId())) {
+					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_REMOTE_LAUNCH_DELEGATE
+							.equals(delegate.getId())) {
 						remoteCfg.setPreferredDelegate(debugSet, delegate);
 						break;
 					}
@@ -375,13 +384,15 @@ public class CDebugCorePlugin extends Plugin {
 			}
 		} catch (CoreException e) {
 		}
-		
-		ILaunchConfigurationType attachCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH);
+
+		ILaunchConfigurationType attachCfg = launchMgr
+				.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH);
 		try {
 			if (attachCfg.getPreferredDelegate(debugSet) == null) {
 				ILaunchDelegate[] delegates = attachCfg.getDelegates(debugSet);
 				for (ILaunchDelegate delegate : delegates) {
-					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE.equals(delegate.getId())) {
+					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE
+							.equals(delegate.getId())) {
 						attachCfg.setPreferredDelegate(debugSet, delegate);
 						break;
 					}
@@ -390,12 +401,14 @@ public class CDebugCorePlugin extends Plugin {
 		} catch (CoreException e) {
 		}
 
-		ILaunchConfigurationType postMortemCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_POST_MORTEM);
+		ILaunchConfigurationType postMortemCfg = launchMgr
+				.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_POST_MORTEM);
 		try {
 			if (postMortemCfg.getPreferredDelegate(debugSet) == null) {
 				ILaunchDelegate[] delegates = postMortemCfg.getDelegates(debugSet);
 				for (ILaunchDelegate delegate : delegates) {
-					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_POSTMORTEM_LAUNCH_DELEGATE.equals(delegate.getId())) {
+					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_POSTMORTEM_LAUNCH_DELEGATE
+							.equals(delegate.getId())) {
 						postMortemCfg.setPreferredDelegate(debugSet, delegate);
 						break;
 					}

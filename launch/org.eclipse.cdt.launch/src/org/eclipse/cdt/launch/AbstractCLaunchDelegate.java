@@ -90,62 +90,64 @@ import com.ibm.icu.text.MessageFormat;
  */
 abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegate {
 
-    /**
+	/**
 	 * @since 6.0
 	 */
-    public class CLaunch extends Launch {
+	public class CLaunch extends Launch {
 
-        private final AtomicBoolean fRefreshDone;
-        
-        public CLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
-            super(launchConfiguration, mode, locator);
-            fRefreshDone = new AtomicBoolean(false);
-        }
+		private final AtomicBoolean fRefreshDone;
 
-        public void refresh() {
-            if (fRefreshDone.compareAndSet(false, true)) {
-                final ILaunchConfiguration config = getLaunchConfiguration();
-                try {
-                    if (RefreshTab.getRefreshScope(config) != null) {
-                        Job refreshJob = new Job(LaunchMessages.AbstractCLaunchDelegate_Refresh) {
+		public CLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
+			super(launchConfiguration, mode, locator);
+			fRefreshDone = new AtomicBoolean(false);
+		}
 
-                            /* (non-Javadoc)
-                             * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-                             */
-                            @Override
-                            protected IStatus run(IProgressMonitor monitor) {
-                                try {
-                                    RefreshTab.refreshResources(config, monitor);
-                                } catch (CoreException e) {
-                                    return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, e.getLocalizedMessage(), e);
-                                }
-                                return Status.OK_STATUS;
-                            }};
-                        refreshJob.setSystem(true);
-                        refreshJob.schedule();
-                    }
-                } catch(CoreException e) {
-                    LaunchUIPlugin.log(e.getStatus());
-                }
-            }
-        }
-    }
+		public void refresh() {
+			if (fRefreshDone.compareAndSet(false, true)) {
+				final ILaunchConfiguration config = getLaunchConfiguration();
+				try {
+					if (RefreshTab.getRefreshScope(config) != null) {
+						Job refreshJob = new Job(LaunchMessages.AbstractCLaunchDelegate_Refresh) {
+
+							/* (non-Javadoc)
+							 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+							 */
+							@Override
+							protected IStatus run(IProgressMonitor monitor) {
+								try {
+									RefreshTab.refreshResources(config, monitor);
+								} catch (CoreException e) {
+									return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1,
+											e.getLocalizedMessage(), e);
+								}
+								return Status.OK_STATUS;
+							}
+						};
+						refreshJob.setSystem(true);
+						refreshJob.schedule();
+					}
+				} catch (CoreException e) {
+					LaunchUIPlugin.log(e.getStatus());
+				}
+			}
+		}
+	}
 
 	private static final String EMPTY_STR = ""; //$NON-NLS-1$
-    
-    public AbstractCLaunchDelegate() {
+
+	public AbstractCLaunchDelegate() {
 		super();
 	}
 
 	/* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
-     */
-    @Override
-    public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
-        return new CLaunch(configuration, mode, null);
-    }
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	 */
+	@Override
+	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
+		return new CLaunch(configuration, mode, null);
+	}
 
-    /**
+	/**
 	 * The project containing the programs file being launched
 	 */
 	private IProject project;
@@ -161,10 +163,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	private boolean workspaceBuildBeforeLaunch;
 	/** Flag set to true if build before launch failed, or was cancelled. */
 	private boolean buildFailed;
-	
+
 	@Override
-	abstract public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
-			throws CoreException;
+	abstract public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the working directory specified by the given launch
@@ -213,7 +215,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * file system
 	 */
 	protected IPath getWorkingDirectoryPath(ILaunchConfiguration config) throws CoreException {
-		String location = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+		String location = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 		if (location != null) {
 			String expandedLocation = LaunchUtils.getStringVariableManager().performStringSubstitution(location);
 			if (expandedLocation.length() > 0) {
@@ -240,9 +242,9 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		if (exception != null) {
 			MultiStatus multiStatus = new MultiStatus(getPluginID(), code, message, exception);
 			multiStatus.add(new Status(IStatus.ERROR, getPluginID(), code, exception.getLocalizedMessage(), exception));
-			status= multiStatus;
+			status = multiStatus;
 		} else {
-			status= new Status(IStatus.ERROR, getPluginID(), code, message, null);
+			status = new Status(IStatus.ERROR, getPluginID(), code, message, null);
 		}
 		throw new CoreException(status);
 	}
@@ -257,38 +259,38 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 */
 	abstract protected String getPluginID();
 
-    /**
-     * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
-     */
+	/**
+	 * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
+	 */
 	@Deprecated
 	public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
-	    return CDebugUtils.getCProject(configuration);
+		return CDebugUtils.getCProject(configuration);
 	}
 
-    /**
-     * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
-     */
+	/**
+	 * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
+	 */
 	@Deprecated
 	public static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
-        return CDebugUtils.getProjectName(configuration);
+		return CDebugUtils.getProjectName(configuration);
 	}
 
-    /**
-     * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
-     */
+	/**
+	 * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
+	 */
 	@Deprecated
 	public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
-        return CDebugUtils.getProgramName(configuration);
+		return CDebugUtils.getProgramName(configuration);
 	}
 
-    /**
-     * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
-     */
+	/**
+	 * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
+	 */
 	@Deprecated
 	public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
-        return CDebugUtils.getProgramPath(configuration);
+		return CDebugUtils.getProgramPath(configuration);
 	}
-	
+
 	/**
 	 * @param launch
 	 * @param config
@@ -316,18 +318,19 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		//  set default source locator if none specified
 		if (launch.getSourceLocator() == null) {
 			IPersistableSourceLocator sourceLocator;
-			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
+			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
 			if (id == null) {
 				ICProject cProject = CDebugUtils.getCProject(configuration);
 				if (cProject == null) {
-					abort(LaunchMessages.Launch_common_Project_does_not_exist, null, 
+					abort(LaunchMessages.Launch_common_Project_does_not_exist, null,
 							ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 				}
 				sourceLocator = CDebugUIPlugin.createDefaultSourceLocator();
 				sourceLocator.initializeDefaults(configuration);
 			} else {
 				sourceLocator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(id);
-				String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
+				String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO,
+						(String) null);
 				if (memento == null) {
 					sourceLocator.initializeDefaults(configuration);
 				} else {
@@ -359,7 +362,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	protected String renderProcessLabel(String commandLine) {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		return MessageFormat.format(format, new Object[]{commandLine, timestamp});
+		return MessageFormat.format(format, new Object[] { commandLine, timestamp });
 	}
 
 	// temporary fix for #66015
@@ -370,11 +373,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	protected String renderDebuggerProcessLabel() {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		return MessageFormat.format(format, new Object[]{
-				LaunchMessages.AbstractCLaunchDelegate_Debugger_Process, timestamp}); 
+		return MessageFormat.format(format,
+				new Object[] { LaunchMessages.AbstractCLaunchDelegate_Debugger_Process, timestamp });
 	}
 
-	
 	/**
 	 * @param config
 	 * @return
@@ -386,15 +388,14 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		ICProject cproject = CDebugUtils.verifyCProject(config);
 		String fileName = CDebugUtils.getProgramName(config);
 		if (fileName == null) {
-			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_not_specified, null, 
+			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_not_specified, null,
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 
-		IFile programPath = ((IProject)cproject.getResource()).getFile(fileName);
+		IFile programPath = ((IProject) cproject.getResource()).getFile(fileName);
 		if (programPath == null || !programPath.exists() || !programPath.getLocation().toFile().exists()) {
 			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist,
-					new FileNotFoundException(
-							NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found,
+					new FileNotFoundException(NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found,
 							programPath.getLocation().toOSString())),
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
@@ -460,8 +461,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				}
 				abort(LaunchMessages.AbstractCLaunchDelegate_Working_directory_does_not_exist,
 						new FileNotFoundException(
-								NLS.bind(
-										LaunchMessages.AbstractCLaunchDelegate_WORKINGDIRECTORY_PATH_not_found,
+								NLS.bind(LaunchMessages.AbstractCLaunchDelegate_WORKINGDIRECTORY_PATH_not_found,
 										path.toOSString())),
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			}
@@ -512,7 +512,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			for (int i = 0; i < orderedNames.length; i++) {
 				String projectName = orderedNames[i];
 				for (int j = 0; j < resourceCollection.size(); j++) {
-					IProject proj = (IProject)resourceCollection.get(j);
+					IProject proj = (IProject) resourceCollection.get(j);
 					if (proj.getName().equals(projectName)) {
 						orderedProjs.add(proj);
 						unorderedProjects.remove(proj);
@@ -527,7 +527,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 		// Try the project prerequisite order then
 		IProject[] projects = new IProject[resourceCollection.size()];
-		projects = (IProject[])resourceCollection.toArray(projects);
+		projects = (IProject[]) resourceCollection.toArray(projects);
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
 		ArrayList orderedProjs = new ArrayList();
 		orderedProjs.addAll(Arrays.asList(po.projects));
@@ -550,13 +550,15 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *             if an exception occurs while building
 	 */
 	@Override
-	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
+			throws CoreException {
 
 		buildFailed = false;
 		workspaceBuildBeforeLaunch = true;
-		
+
 		// check the build before launch setting and honor it
-		int buildBeforeLaunchValue = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
+		int buildBeforeLaunchValue = configuration.getAttribute(
+				ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
 				ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
 
 		// we shouldn't be getting called if the workspace setting is disabled, so assume we need to
@@ -564,33 +566,35 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		if (buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED) {
 			return false;
 		}
-		
+
 		//This matches the old code, but I don't know that it is the right behavior.
 		//We should be building the local project as well, not just the ordered projects
-		if(orderedProjects == null) {		
+		if (orderedProjects == null) {
 			return false;
 		}
-		
-		if(monitor == null) {
+
+		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		int scale = 1000;
 		int totalWork = (orderedProjects.size() + 1) * scale;
-		
+
 		try {
-			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_building_projects, totalWork); 
+			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_building_projects, totalWork);
 
 			try {
 				for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
-					IProject proj = (IProject)i.next();
-					monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_building + proj.getName()); 
-					proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new LaunchUtils.BuildProgressMonitor(monitor, scale));
+					IProject proj = (IProject) i.next();
+					monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_building + proj.getName());
+					proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
+							new LaunchUtils.BuildProgressMonitor(monitor, scale));
 				}
 
-				monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_building + project.getName()); 
+				monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_building + project.getName());
 				setBuildConfiguration(configuration, project);
-				project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new LaunchUtils.BuildProgressMonitor(monitor, scale));
+				project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
+						new LaunchUtils.BuildProgressMonitor(monitor, scale));
 			} catch (Exception e) {
 				// Catch CoreException or OperationCancelledException possibly thrown by the build contract.
 				// Still allow the user to continue to the launch
@@ -600,7 +604,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			monitor.done();
 		}
 
-		return false; 
+		return false;
 	}
 
 	/**
@@ -619,13 +623,17 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			String buildConfigID = null;
 
 			if (configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, false)) {
-				String programPath = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EMPTY_STR);
-				programPath = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programPath);
-				ICConfigurationDescription buildConfig = LaunchUtils.getBuildConfigByProgramPath(buildProject, programPath);
+				String programPath = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+						EMPTY_STR);
+				programPath = VariablesPlugin.getDefault().getStringVariableManager()
+						.performStringSubstitution(programPath);
+				ICConfigurationDescription buildConfig = LaunchUtils.getBuildConfigByProgramPath(buildProject,
+						programPath);
 				if (buildConfig != null)
 					buildConfigID = buildConfig.getId();
 			} else {
-				buildConfigID = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STR);
+				buildConfigID = configuration
+						.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STR);
 			}
 			if (buildConfigID != null && buildConfigID.length() > 0 && projDes != null) {
 				ICConfigurationDescription buildConfiguration = projDes.getConfigurationById(buildConfigID);
@@ -635,8 +643,9 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 					CDTPropertyManager.performOk(null);
 				}
 			}
-			
-		} catch (CoreException e) {}
+
+		} catch (CoreException e) {
+		}
 	}
 
 	/**
@@ -652,20 +661,24 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *             if an exception occurs while checking for compile errors.
 	 */
 	@Override
-	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
+			throws CoreException {
 		if (!workspaceBuildBeforeLaunch) {
 			// buildForLaunch was not called which means that the workspace pref is disabled.  see if the user enabled the
 			// launch specific setting in the main tab.  if so, we do call buildBeforeLaunch here.
-			if (ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED == configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
+			if (ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED == configuration.getAttribute(
+					ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
 					ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING)) {
-				
+
 				try {
-					IProgressMonitor buildMonitor = new LaunchUtils.BuildProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-					buildMonitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10); 	
-					buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingBuild); 
+					IProgressMonitor buildMonitor = new LaunchUtils.BuildProgressMonitor(monitor, 10,
+							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+					buildMonitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10);
+					buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingBuild);
 					if (buildForLaunch(configuration, mode, new SubProgressMonitor(buildMonitor, 7))) {
-						buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingIncrementalBuild); 
-						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(buildMonitor, 3));				
+						buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingIncrementalBuild);
+						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
+								new SubProgressMonitor(buildMonitor, 3));
 					} else {
 						buildMonitor.worked(3); /* No incremental build required */
 					}
@@ -678,25 +691,25 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		}
 
 		boolean continueLaunch = true;
-		if(orderedProjects == null) {
+		if (orderedProjects == null) {
 			return continueLaunch;
 		}
 
-		if(monitor == null) {
+		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		int scale = 1000;
 		int totalWork = (orderedProjects.size() + 1) * scale;
 		try {
-			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors, totalWork); 
+			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors, totalWork);
 			boolean compileErrorsInProjs = buildFailed;
 
 			//check prerequisite projects for compile errors.
 			if (!compileErrorsInProjs) {
 				for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
-					IProject proj = (IProject)i.next();
-					monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors_in + proj.getName()); 
+					IProject proj = (IProject) i.next();
+					monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors_in + proj.getName());
 					monitor.worked(scale);
 					compileErrorsInProjs = existsErrors(proj);
 					if (compileErrorsInProjs) {
@@ -707,7 +720,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 			//check current project, if prerequite projects were ok
 			if (!compileErrorsInProjs) {
-				monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors_in + project.getName()); 
+				monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors_in + project.getName());
 				monitor.worked(scale);
 				compileErrorsInProjs = existsErrors(project);
 			}
@@ -716,16 +729,16 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			if (compileErrorsInProjs) {
 				IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 				if (prompter != null) {
-					continueLaunch = ((Boolean)prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
+					continueLaunch = ((Boolean) prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
 				}
 			}
 		} finally {
 			monitor.done();
 		}
-		
+
 		if (continueLaunch) // If no problems then restore the previous build configuration. Otherwise leave it so the user can fix the build issues.
 			resetBuildConfiguration(project);
-		
+
 		return continueLaunch;
 	}
 
@@ -733,10 +746,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		// Restore the active configuration if it was changed for the launch
 		if (preLaunchBuildConfiguration != null) {
 			ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(buildProject);
-			
-			if (preLaunchBuildConfiguration.length() > 0 && projDes != null)
-			{
-				ICConfigurationDescription buildConfiguration = projDes.getConfigurationById(preLaunchBuildConfiguration);
+
+			if (preLaunchBuildConfiguration.length() > 0 && projDes != null) {
+				ICConfigurationDescription buildConfiguration = projDes
+						.getConfigurationById(preLaunchBuildConfiguration);
 				if (buildConfiguration != null) {
 					buildConfiguration.setActive();
 					CDTPropertyManager.performOk(null);
@@ -777,23 +790,23 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		if(monitor == null) {
+	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
+			throws CoreException {
+		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
-		if(!mode.equals(ILaunchManager.RUN_MODE))
-			org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.cdigdbActivity", true); //$NON-NLS-1$
 
+		if (!mode.equals(ILaunchManager.RUN_MODE))
+			org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.cdigdbActivity", true); //$NON-NLS-1$
 
 		workspaceBuildBeforeLaunch = false;
 
 		int scale = 1000;
 		int totalWork = 2 * scale;
-		
+
 		try {
-			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_20, totalWork); 
-			
+			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_20, totalWork);
+
 			// build project list
 			orderedProjects = null;
 			ICProject cProject = CDebugUtils.getCProject(configuration);
@@ -804,7 +817,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				orderedProjects = getBuildOrder(new ArrayList(projectSet));
 			}
 			monitor.worked(scale);
-			
+
 			// do generic launch checks
 			return super.preLaunchCheck(configuration, mode, new SubProgressMonitor(monitor, scale));
 		} finally {
@@ -825,10 +838,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		} catch (ClassCastException e) {
 			exception = e;
 		}
-		Status status = new Status(IStatus.ERROR,getPluginID(), 
-				ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY, 
-				LaunchMessages.AbstractCLaunchDelegate_Program_is_not_a_recognized_executable + " " + exePath.toOSString(),   //$NON-NLS-1$
-				exception); 
+		Status status = new Status(IStatus.ERROR, getPluginID(),
+				ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY,
+				LaunchMessages.AbstractCLaunchDelegate_Program_is_not_a_recognized_executable + " " //$NON-NLS-1$
+						+ exePath.toOSString(), exception);
 		throw new CoreException(status);
 	}
 
@@ -839,8 +852,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 */
 	protected Properties getEnvironmentAsProperty(ILaunchConfiguration config) throws CoreException {
 		String[] envp = getEnvironment(config);
-		Properties p = new Properties( );
-		for( int i = 0; i < envp.length; i++ ) {
+		Properties p = new Properties();
+		for (int i = 0; i < envp.length; i++) {
 			int idx = envp[i].indexOf('=');
 			if (idx != -1) {
 				String key = envp[i].substring(0, idx);
@@ -862,24 +875,25 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	protected String[] getEnvironment(ILaunchConfiguration config) throws CoreException {
 		try {
 			// Migrate old env settings to new.
-			Map map = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+			Map map = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
 			ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 			if (map != null) {
 				wc.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
-				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
 				config = wc.doSave();
 			}
-			boolean append = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT, true);
+			boolean append = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT,
+					true);
 			wc.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, append);
 		} catch (CoreException e) {
-		}		
+		}
 		String[] array = DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
 		if (array == null) {
 			return new String[0];
 		}
 		return array;
 	}
-	
+
 	/**
 	 * Return the save environment variables in the configuration. The array
 	 * does not include the default environment of the target. array[n] :
@@ -890,7 +904,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	protected String[] getEnvironmentArray(ILaunchConfiguration config) {
 		Map env = null;
 		try {
-			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
 		} catch (CoreException e) {
 		}
 		if (env == null) {
@@ -900,8 +914,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		Iterator entries = env.entrySet().iterator();
 		Entry entry;
 		for (int i = 0; entries.hasNext() && i < array.length; i++) {
-			entry = (Entry)entries.next();
-			array[i] = ((String)entry.getKey()) + "=" + ((String)entry.getValue()); //$NON-NLS-1$
+			entry = (Entry) entries.next();
+			array[i] = ((String) entry.getKey()) + "=" + ((String) entry.getValue()); //$NON-NLS-1$
 		}
 		return array;
 	}
@@ -916,7 +930,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		Properties prop = new Properties();
 		Map env = null;
 		try {
-			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
 		} catch (CoreException e) {
 		}
 		if (env == null)
@@ -924,8 +938,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		Iterator entries = env.entrySet().iterator();
 		Entry entry;
 		while (entries.hasNext()) {
-			entry = (Entry)entries.next();
-			prop.setProperty((String)entry.getKey(), (String)entry.getValue());
+			entry = (Entry) entries.next();
+			prop.setProperty((String) entry.getKey(), (String) entry.getValue());
 		}
 		return prop;
 	}

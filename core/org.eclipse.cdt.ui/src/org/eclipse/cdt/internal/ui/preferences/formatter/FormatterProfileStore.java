@@ -26,30 +26,29 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
 
-
 public class FormatterProfileStore extends ProfileStore {
 
 	/**
 	 * Preference key where all profiles are stored
 	 */
-	private static final String PREF_FORMATTER_PROFILES= "org.eclipse.cdt.ui.formatterprofiles"; //$NON-NLS-1$
-	private static final String PREF_FORMATTER_PROFILES_OLD= "org.eclipse.jdt.ui.formatterprofiles"; //$NON-NLS-1$
-	
+	private static final String PREF_FORMATTER_PROFILES = "org.eclipse.cdt.ui.formatterprofiles"; //$NON-NLS-1$
+	private static final String PREF_FORMATTER_PROFILES_OLD = "org.eclipse.jdt.ui.formatterprofiles"; //$NON-NLS-1$
+
 	public FormatterProfileStore(IProfileVersioner profileVersioner) {
 		super(PREF_FORMATTER_PROFILES, profileVersioner);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public List<Profile> readProfiles(IScopeContext scope) throws CoreException {
-		final IEclipsePreferences node= scope.getNode(CUIPlugin.PLUGIN_ID);
-		final String profilesValue= node.get(PREF_FORMATTER_PROFILES_OLD, null);
+		final IEclipsePreferences node = scope.getNode(CUIPlugin.PLUGIN_ID);
+		final String profilesValue = node.get(PREF_FORMATTER_PROFILES_OLD, null);
 		if (profilesValue != null) {
 			// migrate to new preference key
 			final String versionKeyOld = PREF_FORMATTER_PROFILES_OLD + VERSION_KEY_SUFFIX;
-			String version= node.get(versionKeyOld, null);
+			String version = node.get(versionKeyOld, null);
 			node.put(PREF_FORMATTER_PROFILES, profilesValue);
 			node.put(PREF_FORMATTER_PROFILES + VERSION_KEY_SUFFIX, version);
 			node.remove(PREF_FORMATTER_PROFILES_OLD);
@@ -60,7 +59,7 @@ public class FormatterProfileStore extends ProfileStore {
 				return readProfilesFromString(profilesValue);
 			}
 		}
-	    return super.readProfiles(scope);
+		return super.readProfiles(scope);
 	}
 
 }

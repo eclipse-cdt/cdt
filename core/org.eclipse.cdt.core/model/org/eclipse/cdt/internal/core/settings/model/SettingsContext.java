@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public final class SettingsContext implements IModificationContext{
+public final class SettingsContext implements IModificationContext {
 	private static final int USER_FLAGS_MASK = 0x0000ffff;
 	public static final int CFG_DATA_CACHED = 1 << 15;
 
@@ -30,27 +30,26 @@ public final class SettingsContext implements IModificationContext{
 	private CompositeWorkspaceRunnable fRunnable;
 	private int fFlags;
 
-
-	public SettingsContext(IProject project){
+	public SettingsContext(IProject project) {
 		fProject = project;
 	}
 
 	@Override
-	public IProject getProject(){
+	public IProject getProject() {
 		return fProject;
 	}
 
-	void init(CConfigurationDescriptionCache cfg){
+	void init(CConfigurationDescriptionCache cfg) {
 		int flags = 0;
-		if(cfg.getBaseCache() != null)
+		if (cfg.getBaseCache() != null)
 			flags |= CFG_DATA_CACHED;
 		fFlags = flags;
 	}
 
-	IProjectDescription getEclipseProjectDescription(boolean create) throws CoreException{
+	IProjectDescription getEclipseProjectDescription(boolean create) throws CoreException {
 		IProjectDescription eDes = fEDes;
-		if(eDes == null && create){
-			if(fProject == null)
+		if (eDes == null && create) {
+			if (fProject == null)
 				throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("SettingsContext.0")); //$NON-NLS-1$
 
 			eDes = fProject.getDescription();
@@ -59,27 +58,26 @@ public final class SettingsContext implements IModificationContext{
 	}
 
 	@Override
-	public IProjectDescription getEclipseProjectDescription() throws CoreException{
+	public IProjectDescription getEclipseProjectDescription() throws CoreException {
 		return getEclipseProjectDescription(true);
 	}
 
 	@Override
-	public void setEclipseProjectDescription(IProjectDescription des)
-			throws CoreException {
-		if(fEDes == null)
+	public void setEclipseProjectDescription(IProjectDescription des) throws CoreException {
+		if (fEDes == null)
 			fEDes = des;
-		else if(fEDes != des)
+		else if (fEDes != des)
 			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("SettingsContext.1")); //$NON-NLS-1$
 	}
 
-	CompositeWorkspaceRunnable getCompositeWorkspaceRunnable(boolean create){
-		if(fRunnable == null && create)
+	CompositeWorkspaceRunnable getCompositeWorkspaceRunnable(boolean create) {
+		if (fRunnable == null && create)
 			fRunnable = new CompositeWorkspaceRunnable(null);
 		return fRunnable;
 	}
 
 	@Override
-	public void addWorkspaceRunnable(IWorkspaceRunnable runnable){
+	public void addWorkspaceRunnable(IWorkspaceRunnable runnable) {
 		getCompositeWorkspaceRunnable(true).add(runnable);
 	}
 
@@ -87,22 +85,21 @@ public final class SettingsContext implements IModificationContext{
 		CompositeWorkspaceRunnable result = new CompositeWorkspaceRunnable(null);
 
 		IWorkspaceRunnable r = getSetEclipseProjectDescriptionRunnable();
-		if(r != null)
+		if (r != null)
 			result.add(r);
 		r = getCompositeWorkspaceRunnable(false);
-		if(r != null)
+		if (r != null)
 			result.add(r);
 
 		return result.isEmpty() ? null : result;
 	}
 
-	private IWorkspaceRunnable getSetEclipseProjectDescriptionRunnable(){
-		if(fEDes != null){
-			return new IWorkspaceRunnable(){
+	private IWorkspaceRunnable getSetEclipseProjectDescriptionRunnable() {
+		if (fEDes != null) {
+			return new IWorkspaceRunnable() {
 
 				@Override
-				public void run(IProgressMonitor monitor)
-						throws CoreException {
+				public void run(IProgressMonitor monitor) throws CoreException {
 					fProject.setDescription(fEDes, monitor);
 				}
 			};

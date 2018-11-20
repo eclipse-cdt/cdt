@@ -14,7 +14,7 @@
 package org.eclipse.cdt.debug.internal.ui.views;
 
 import org.eclipse.debug.core.DebugException;
- 
+
 /**
  * A plugable  exception handler.
  */
@@ -24,5 +24,5 @@ public interface IDebugExceptionHandler {
 	 * 
 	 * @param e debug exception
 	 */
-	public abstract void handleException( DebugException e );
+	public abstract void handleException(DebugException e);
 }

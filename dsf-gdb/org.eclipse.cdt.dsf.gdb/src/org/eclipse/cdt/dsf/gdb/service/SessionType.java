@@ -13,4 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
-public enum SessionType { LOCAL, REMOTE, CORE }
+public enum SessionType {
+	LOCAL, REMOTE, CORE
+}

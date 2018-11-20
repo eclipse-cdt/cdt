@@ -37,7 +37,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 public class CUILabelProvider extends LabelProvider implements IColorProvider, IStyledLabelProvider {
 	protected CElementImageProvider fImageLabelProvider;
 	protected StorageLabelProvider fStorageLabelProvider;
-	
+
 	private ArrayList<ILabelDecorator> fLabelDecorators;
 
 	private int fImageFlags;
@@ -56,31 +56,31 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 	 * @param imageFlags Flags defined in <code>CElementImageProvider</code>.
 	 */
 	public CUILabelProvider(long textFlags, int imageFlags) {
-		fImageLabelProvider= new CElementImageProvider();
-		fLabelDecorators= null;
+		fImageLabelProvider = new CElementImageProvider();
+		fLabelDecorators = null;
 
-		fStorageLabelProvider= new StorageLabelProvider();
-		fImageFlags= imageFlags;
-		fTextFlags= textFlags;
+		fStorageLabelProvider = new StorageLabelProvider();
+		fImageFlags = imageFlags;
+		fTextFlags = textFlags;
 	}
-	
+
 	/**
 	 * Adds a decorator to the label provider
 	 * @param decorator the decorator to add
 	 */
 	public void addLabelDecorator(ILabelDecorator decorator) {
 		if (fLabelDecorators == null) {
-			fLabelDecorators= new ArrayList<ILabelDecorator>(2);
+			fLabelDecorators = new ArrayList<ILabelDecorator>(2);
 		}
 		fLabelDecorators.add(decorator);
 	}
-	
+
 	/**
 	 * Sets the textFlags.
 	 * @param textFlags The textFlags to set
 	 */
 	public final void setTextFlags(long textFlags) {
-		fTextFlags= textFlags;
+		fTextFlags = textFlags;
 	}
 
 	/**
@@ -88,9 +88,9 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 	 * @param imageFlags The imageFlags to set
 	 */
 	public final void setImageFlags(int imageFlags) {
-		fImageFlags= imageFlags;
+		fImageFlags = imageFlags;
 	}
-	
+
 	/**
 	 * Gets the image flags.
 	 * Can be overwritten by super classes.
@@ -107,7 +107,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 	public final long getTextFlags() {
 		return fTextFlags;
 	}
-	
+
 	/**
 	 * Evaluates the image flags for a element.
 	 * Can be overwritten by super classes.
@@ -129,9 +129,9 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 
 	protected Image decorateImage(Image image, Object element) {
 		if (fLabelDecorators != null && image != null) {
-			for (int i= 0; i < fLabelDecorators.size(); i++) {
-				ILabelDecorator decorator= fLabelDecorators.get(i);
-				image= decorator.decorateImage(image, element);
+			for (int i = 0; i < fLabelDecorators.size(); i++) {
+				ILabelDecorator decorator = fLabelDecorators.get(i);
+				image = decorator.decorateImage(image, element);
 			}
 		}
 		return image;
@@ -139,87 +139,88 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 
 	@Override
 	public Image getImage(Object element) {
-		Image result= fImageLabelProvider.getImageLabel(element, evaluateImageFlags(element));
+		Image result = fImageLabelProvider.getImageLabel(element, evaluateImageFlags(element));
 		if (result == null && (element instanceof IStorage)) {
-			result= fStorageLabelProvider.getImage(element);
+			result = fStorageLabelProvider.getImage(element);
 		}
-		
+
 		return decorateImage(result, element);
 	}
 
 	protected String decorateText(String text, Object element) {
 		if (fLabelDecorators != null && text.length() > 0) {
-			for (int i= 0; i < fLabelDecorators.size(); i++) {
-				ILabelDecorator decorator= fLabelDecorators.get(i);
-				text= decorator.decorateText(text, element);
+			for (int i = 0; i < fLabelDecorators.size(); i++) {
+				ILabelDecorator decorator = fLabelDecorators.get(i);
+				text = decorator.decorateText(text, element);
 			}
-		}	
+		}
 		return text;
 	}
 
 	@Override
 	public String getText(Object element) {
-		String result= CElementLabels.getTextLabel(element, evaluateTextFlags(element));
+		String result = CElementLabels.getTextLabel(element, evaluateTextFlags(element));
 		if (result.length() == 0 && (element instanceof IStorage)) {
-			result= fStorageLabelProvider.getText(element);
+			result = fStorageLabelProvider.getText(element);
 		}
-		
+
 		return decorateText(result, element);
 	}
 
 	@Override
 	public StyledString getStyledText(Object element) {
-		StyledString string= CElementLabels.getStyledTextLabel(element, (evaluateTextFlags(element) | CElementLabels.COLORIZE));
+		StyledString string = CElementLabels.getStyledTextLabel(element,
+				(evaluateTextFlags(element) | CElementLabels.COLORIZE));
 		if (string.length() == 0 && (element instanceof IStorage)) {
-			string= new StyledString(fStorageLabelProvider.getText(element));
+			string = new StyledString(fStorageLabelProvider.getText(element));
 		}
-		String decorated= decorateText(string.getString(), element);
+		String decorated = decorateText(string.getString(), element);
 		if (decorated != null) {
 			return StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.DECORATIONS_STYLER, string);
 		}
 		return string;
 	}
-	
+
 	@Override
 	public void dispose() {
 		if (fLabelDecorators != null) {
-			for (int i= 0; i < fLabelDecorators.size(); i++) {
-				ILabelDecorator decorator= fLabelDecorators.get(i);
+			for (int i = 0; i < fLabelDecorators.size(); i++) {
+				ILabelDecorator decorator = fLabelDecorators.get(i);
 				decorator.dispose();
 			}
-			fLabelDecorators= null;
+			fLabelDecorators = null;
 		}
 		fStorageLabelProvider.dispose();
 		fImageLabelProvider.dispose();
 	}
-	
+
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 		if (fLabelDecorators != null) {
-			for (int i= 0; i < fLabelDecorators.size(); i++) {
-				ILabelDecorator decorator= fLabelDecorators.get(i);
+			for (int i = 0; i < fLabelDecorators.size(); i++) {
+				ILabelDecorator decorator = fLabelDecorators.get(i);
 				decorator.addListener(listener);
 			}
 		}
-		super.addListener(listener);	
+		super.addListener(listener);
 	}
 
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
-		return true;	
+		return true;
 	}
 
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		if (fLabelDecorators != null) {
-			for (int i= 0; i < fLabelDecorators.size(); i++) {
-				ILabelDecorator decorator= fLabelDecorators.get(i);
+			for (int i = 0; i < fLabelDecorators.size(); i++) {
+				ILabelDecorator decorator = fLabelDecorators.get(i);
 				decorator.removeListener(listener);
 			}
 		}
-		super.removeListener(listener);	
+		super.removeListener(listener);
 	}
-	
+
 	public static ILabelDecorator[] getDecorators(boolean errortick, ILabelDecorator extra) {
 		if (errortick) {
 			if (extra == null) {
@@ -236,10 +237,10 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof ISourceReference) {
-			ISourceReference sref= (ISourceReference)element;
+			ISourceReference sref = (ISourceReference) element;
 			if (!sref.isActive()) {
 				if (fInactiveColor == null && Display.getCurrent() != null) {
-					fInactiveColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
+					fInactiveColor = CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
 				}
 				return fInactiveColor;
 			}
@@ -250,5 +251,5 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 	@Override
 	public Color getBackground(Object element) {
 		return null;
-	}	
+	}
 }

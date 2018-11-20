@@ -31,12 +31,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbiguousStatement {
-    private IASTStatement[] stmts = new IASTStatement[2];
-    private int stmtsPos= -1;
+	private IASTStatement[] stmts = new IASTStatement[2];
+	private int stmtsPos = -1;
 	private IScope fScope;
 	private IASTDeclaration fDeclaration;
 
-    public CPPASTAmbiguousStatement(IASTStatement... statements) {
+	public CPPASTAmbiguousStatement(IASTStatement... statements) {
 		for (IASTStatement s : statements) {
 			addStatement(s);
 		}
@@ -46,7 +46,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
 	protected void beforeResolution() {
 		// Populate containing scope, so that it will not be affected by the alternative
 		// branches.
-		fScope= CPPVisitor.getContainingScope(this);
+		fScope = CPPVisitor.getContainingScope(this);
 		if (fScope instanceof ICPPASTInternalScope) {
 			((ICPPASTInternalScope) fScope).populateCache();
 		}
@@ -72,14 +72,14 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
 	@Override
 	protected void afterResolution(ASTVisitor resolver, IASTNode best) {
 		beforeAlternative(best);
-		fDeclaration= null;
-		fScope= null;
+		fDeclaration = null;
+		fScope = null;
 	}
 
-    @Override
+	@Override
 	public IASTStatement copy() {
-    	throw new UnsupportedOperationException();
-    }
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public IASTStatement copy(CopyStyle style) {
@@ -88,24 +88,24 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
 
 	@Override
 	public void addStatement(IASTStatement s) {
-        assertNotFrozen();
-    	if (s != null) {
-    		stmts = ArrayUtil.appendAt(IASTStatement.class, stmts, ++stmtsPos, s);
-    		s.setParent(this);
+		assertNotFrozen();
+		if (s != null) {
+			stmts = ArrayUtil.appendAt(IASTStatement.class, stmts, ++stmtsPos, s);
+			s.setParent(this);
 			s.setPropertyInParent(STATEMENT);
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public IASTStatement[] getStatements() {
-        stmts = ArrayUtil.trimAt(IASTStatement.class, stmts, stmtsPos);
-    	return stmts;
-    }
+		stmts = ArrayUtil.trimAt(IASTStatement.class, stmts, stmtsPos);
+		return stmts;
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getNodes() {
-        return getStatements();
-    }
+		return getStatements();
+	}
 
 	@Override
 	public IASTAttribute[] getAttributes() {
@@ -114,7 +114,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
 
 	@Override
 	public void addAttribute(IASTAttribute attribute) {
-    	throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

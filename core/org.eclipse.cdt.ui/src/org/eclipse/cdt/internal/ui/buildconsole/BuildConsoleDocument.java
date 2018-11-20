@@ -19,7 +19,7 @@ import org.eclipse.jface.text.Document;
 public class BuildConsoleDocument extends Document {
 
 	public BuildConsoleDocument() {
-		setTextStore(new ConsoleOutputTextStore(2500));	
+		setTextStore(new ConsoleOutputTextStore(2500));
 		setLineTracker(new DefaultLineTracker());
 		completeInitialization();
 	}

@@ -57,34 +57,34 @@ public class DocCommentOwnerManager {
 	private static final String ATTRKEY_OWNER_SINGLELINE = "singleline"; //$NON-NLS-1$
 	private static final String ATTRKEY_OWNER_MULTILINE = "multiline"; //$NON-NLS-1$
 
-	private static final String QUALIFIER= CCorePlugin.PLUGIN_ID;
-	private static final String WORKSPACE_DOC_TOOL_NODE= "doctool"; //$NON-NLS-1$
-	private static final String PREFKEY_WORKSPACE_DEFAULT= "workspace.default"; //$NON-NLS-1$
-	
+	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
+	private static final String WORKSPACE_DOC_TOOL_NODE = "doctool"; //$NON-NLS-1$
+	private static final String PREFKEY_WORKSPACE_DEFAULT = "workspace.default"; //$NON-NLS-1$
+
 	private static DocCommentOwnerManager singleton;
 
 	public static DocCommentOwnerManager getInstance() {
-		return singleton == null ? singleton= new DocCommentOwnerManager() : singleton;
+		return singleton == null ? singleton = new DocCommentOwnerManager() : singleton;
 	}
 
 	private Map<String, IDocCommentOwner> fOwners;
 	private IDocCommentOwner fWorkspaceOwner;
-	private Map<IProject, ProjectMap> prj2map= new HashMap<IProject, ProjectMap>();
+	private Map<IProject, ProjectMap> prj2map = new HashMap<IProject, ProjectMap>();
 	private static List<IDocCommentOwnershipListener> fListeners;
 
 	private DocCommentOwnerManager() {
-		fOwners= getCommentOwnerExtensions();
-		fListeners= new ArrayList<IDocCommentOwnershipListener>();
+		fOwners = getCommentOwnerExtensions();
+		fListeners = new ArrayList<IDocCommentOwnershipListener>();
 
-	    Preferences defaultPrefs = DefaultScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
-		Preferences prefs= InstanceScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
-	    String id= prefs.get(PREFKEY_WORKSPACE_DEFAULT, defaultPrefs.get(PREFKEY_WORKSPACE_DEFAULT,
-	    		NullDocCommentOwner.INSTANCE.getID()));
-	        
-		fWorkspaceOwner= getOwner(id);
+		Preferences defaultPrefs = DefaultScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
+		Preferences prefs = InstanceScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
+		String id = prefs.get(PREFKEY_WORKSPACE_DEFAULT,
+				defaultPrefs.get(PREFKEY_WORKSPACE_DEFAULT, NullDocCommentOwner.INSTANCE.getID()));
+
+		fWorkspaceOwner = getOwner(id);
 		if (fWorkspaceOwner == null) {
 			// this could occur if a plug-in is no longer available
-			fWorkspaceOwner= NullDocCommentOwner.INSTANCE;
+			fWorkspaceOwner = NullDocCommentOwner.INSTANCE;
 		}
 	}
 
@@ -102,14 +102,14 @@ public class DocCommentOwnerManager {
 	public void setWorkspaceCommentOwner(IDocCommentOwner newOwner) {
 		if (newOwner == null)
 			throw new IllegalArgumentException();
-		
-		if (!fWorkspaceOwner.getID().equals(newOwner.getID())) {
-			IDocCommentOwner oldOwner= fWorkspaceOwner;
-			fWorkspaceOwner= newOwner;
 
-			Preferences prefs= InstanceScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
+		if (!fWorkspaceOwner.getID().equals(newOwner.getID())) {
+			IDocCommentOwner oldOwner = fWorkspaceOwner;
+			fWorkspaceOwner = newOwner;
+
+			Preferences prefs = InstanceScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
 			prefs.put(PREFKEY_WORKSPACE_DEFAULT, newOwner.getID());
-			
+
 			fireWorkspaceOwnershipChanged(oldOwner, fWorkspaceOwner);
 		}
 	}
@@ -128,15 +128,15 @@ public class DocCommentOwnerManager {
 	 * @return a non-null IDocCommentOwner. If the resource was null, the {@link NullDocCommentOwner} is returned.
 	 */
 	public IDocCommentOwner getCommentOwner(IResource resource) {
-		if (resource==null)
+		if (resource == null)
 			return NullDocCommentOwner.INSTANCE;
 
 		if (ResourcesPlugin.getWorkspace().getRoot().equals(resource))
 			return getWorkspaceCommentOwner();
 
-		ProjectMap pm= getProjectMap(resource);
-		String ownerID= pm.getOwnerID(resource);
-		IDocCommentOwner result= getOwner(ownerID);
+		ProjectMap pm = getProjectMap(resource);
+		String ownerID = pm.getOwnerID(resource);
+		IDocCommentOwner result = getOwner(ownerID);
 		return result == null ? fWorkspaceOwner : result;
 	}
 
@@ -168,12 +168,12 @@ public class DocCommentOwnerManager {
 			return;
 		}
 
-		ProjectMap pm= getProjectMap(resource);
-		IDocCommentOwner oldOwner= getCommentOwner(resource);
+		ProjectMap pm = getProjectMap(resource);
+		IDocCommentOwner oldOwner = getCommentOwner(resource);
 		pm.setCommentOwner(resource, newOwner);
-		
-		IDocCommentOwner newLogicalOwner= getCommentOwner(resource);
-		if (!newLogicalOwner.getID().equals(oldOwner.getID())) { 
+
+		IDocCommentOwner newLogicalOwner = getCommentOwner(resource);
+		if (!newLogicalOwner.getID().equals(oldOwner.getID())) {
 			fireOwnershipChanged(resource, removeSubMappings, oldOwner, newLogicalOwner);
 		}
 	}
@@ -185,7 +185,6 @@ public class DocCommentOwnerManager {
 	public IDocCommentOwner[] getRegisteredOwners() {
 		return fOwners.values().toArray(new IDocCommentOwner[fOwners.values().size()]);
 	}
-
 
 	/**
 	 * @param listener registers a listener for doc-comment ownership events
@@ -214,7 +213,7 @@ public class DocCommentOwnerManager {
 	 */
 	private ProjectMap getProjectMap(IResource resource) {
 		Assert.isNotNull(resource);
-		IProject project= resource.getProject();
+		IProject project = resource.getProject();
 
 		if (!prj2map.containsKey(project)) {
 			prj2map.put(project, new ProjectMap(project));
@@ -228,7 +227,7 @@ public class DocCommentOwnerManager {
 	 * via the DocCommentOwner extension point
 	 */
 	private static Map<String, IDocCommentOwner> getCommentOwnerExtensions() {
-		Map<String, IDocCommentOwner> result= new HashMap<String, IDocCommentOwner>();
+		Map<String, IDocCommentOwner> result = new HashMap<String, IDocCommentOwner>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint indexProviders = registry.getExtensionPoint(CUIPlugin.ID_COMMENT_OWNER);
@@ -237,18 +236,21 @@ public class DocCommentOwnerManager {
 			try {
 				IConfigurationElement[] ce = extension.getConfigurationElements();
 				for (IConfigurationElement element : ce) {
-					if (element.getName().equals(ELEMENT_OWNER)) { 
-						IDocCommentViewerConfiguration multi = (IDocCommentViewerConfiguration) element.createExecutableExtension(ATTRKEY_OWNER_MULTILINE);
-						IDocCommentViewerConfiguration single = (IDocCommentViewerConfiguration) element.createExecutableExtension(ATTRKEY_OWNER_SINGLELINE);
-						String id= element.getAttribute(ATTRKEY_OWNER_ID);
-						String name= element.getAttribute(ATTRKEY_OWNER_NAME);
-						if (result.put(id, new DocCommentOwner(id, name, multi, single))!=null) {
-							String msg= MessageFormat.format(Messages.DocCommentOwnerManager_DuplicateMapping0, new Object[] {id});
+					if (element.getName().equals(ELEMENT_OWNER)) {
+						IDocCommentViewerConfiguration multi = (IDocCommentViewerConfiguration) element
+								.createExecutableExtension(ATTRKEY_OWNER_MULTILINE);
+						IDocCommentViewerConfiguration single = (IDocCommentViewerConfiguration) element
+								.createExecutableExtension(ATTRKEY_OWNER_SINGLELINE);
+						String id = element.getAttribute(ATTRKEY_OWNER_ID);
+						String name = element.getAttribute(ATTRKEY_OWNER_NAME);
+						if (result.put(id, new DocCommentOwner(id, name, multi, single)) != null) {
+							String msg = MessageFormat.format(Messages.DocCommentOwnerManager_DuplicateMapping0,
+									new Object[] { id });
 							CUIPlugin.log(new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, msg));
 						}
 					}
 				}
-			} catch(CoreException ce) {
+			} catch (CoreException ce) {
 				CUIPlugin.log(ce);
 			}
 		}
@@ -256,7 +258,8 @@ public class DocCommentOwnerManager {
 		return result;
 	}
 
-	private void fireOwnershipChanged(IResource resource, boolean submappingsRemoved, IDocCommentOwner oldOwner, IDocCommentOwner newOwner) {
+	private void fireOwnershipChanged(IResource resource, boolean submappingsRemoved, IDocCommentOwner oldOwner,
+			IDocCommentOwner newOwner) {
 		for (IDocCommentOwnershipListener docCommentOwnershipListener : fListeners) {
 			docCommentOwnershipListener.ownershipChanged(resource, submappingsRemoved, oldOwner, newOwner);
 		}

@@ -11,7 +11,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.index;
 
@@ -33,13 +33,13 @@ public class DeclaredBindingsFilter extends IndexFilter {
 	public DeclaredBindingsFilter() {
 		this(-1, false, true);
 	}
-	
+
 	public DeclaredBindingsFilter(int linkageID, boolean acceptImplicit, boolean allowInstances) {
-		fLinkageID= linkageID;
-		fAcceptImplicit= acceptImplicit;
-		fAllowInstances= allowInstances;
+		fLinkageID = linkageID;
+		fAcceptImplicit = acceptImplicit;
+		fAllowInstances = allowInstances;
 	}
-	
+
 	@Override
 	public boolean acceptLinkage(ILinkage linkage) {
 		return fLinkageID == -1 || fLinkageID == linkage.getLinkageID();
@@ -49,27 +49,26 @@ public class DeclaredBindingsFilter extends IndexFilter {
 	public boolean acceptBinding(IBinding binding) throws CoreException {
 		if (!fAllowInstances && binding instanceof ICPPTemplateInstance)
 			return false;
-		
+
 		if (binding instanceof IIndexFragmentBinding) {
-			return  ((IIndexFragmentBinding) binding).hasDeclaration()
-					|| (fAcceptImplicit && isImplicit(binding));
+			return ((IIndexFragmentBinding) binding).hasDeclaration() || (fAcceptImplicit && isImplicit(binding));
 		}
 		// composite bindings don't support that kind of check.
 		if (binding instanceof CompositeIndexBinding) {
-			IIndexBinding raw= ((CompositeIndexBinding) binding).getRawBinding();
+			IIndexBinding raw = ((CompositeIndexBinding) binding).getRawBinding();
 			if (raw instanceof IIndexFragmentBinding) {
 				if (((IIndexFragmentBinding) raw).hasDeclaration()) {
 					return true;
 				}
 			}
 		}
-		return fAcceptImplicit || !isImplicit(binding);	
+		return fAcceptImplicit || !isImplicit(binding);
 	}
 
 	private boolean isImplicit(IBinding binding) {
 		if (binding instanceof ICPPSpecialization)
 			return true;
-		if (binding instanceof ICPPMethod) { 
+		if (binding instanceof ICPPMethod) {
 			return ((ICPPMethod) binding).isImplicit();
 		}
 		return false;

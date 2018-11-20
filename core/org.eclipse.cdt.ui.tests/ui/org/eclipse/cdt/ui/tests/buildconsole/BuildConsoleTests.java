@@ -63,15 +63,15 @@ public class BuildConsoleTests extends BaseUITestCase {
 
 	public void testSecondaryBuildConsole() throws IOException, CoreException {
 		IProject project = ResourceHelper.createCDTProject(getName());
-		IBuildConsoleManager mgr= CUIPlugin.getDefault().getConsoleManager("My Other Console", "cdt.ui.testConsole");
-		IConsole console= mgr.getConsole(project);
+		IBuildConsoleManager mgr = CUIPlugin.getDefault().getConsoleManager("My Other Console", "cdt.ui.testConsole");
+		IConsole console = mgr.getConsole(project);
 		String stdoutText = "This is stdout\n";
 		console.getOutputStream().write(stdoutText.getBytes());
 		String stderrText = "This is stderr\n";
 		console.getErrorStream().write(stderrText.getBytes());
 		DisplayHelper.sleep(CUIPlugin.getStandardDisplay(), 200);
-		IDocument doc= mgr.getConsoleDocument(project);
-		assertEquals(stdoutText+stderrText, doc.get());
+		IDocument doc = mgr.getConsoleDocument(project);
+		assertEquals(stdoutText + stderrText, doc.get());
 	}
 
 	public void testShowConsoleForNonCDTProject_bug306945() throws IOException, CoreException {
@@ -91,7 +91,7 @@ public class BuildConsoleTests extends BaseUITestCase {
 			}
 		}
 		assertNotNull("Couldn't find the build console", buildConsole);
-		
+
 		ConsolePlugin.getDefault().getConsoleManager().showConsoleView(buildConsole);
 		buildConsole.activate(); // force activation
 
@@ -101,17 +101,17 @@ public class BuildConsoleTests extends BaseUITestCase {
 		String stderrText = "This is stderr\n";
 		console.getErrorStream().write(stderrText.getBytes());
 		DisplayHelper.sleep(CUIPlugin.getStandardDisplay(), 200);
-		
+
 		IDocument doc = mgr.getConsoleDocument(simpleProject);
-		assertEquals("Text not written to console", stdoutText+stderrText, doc.get());
-		
+		assertEquals("Text not written to console", stdoutText + stderrText, doc.get());
+
 		// verify that the Console view can show the console to the user
 		BuildConsolePage page = (BuildConsolePage) new Accessor(BuildConsole.class).invoke("getCurrentPage");
 		assertNotNull("Couldn't get the build console page", page);
-		
+
 		page.selectionChanged(null, new StructuredSelection(simpleProject));
 		DisplayHelper.sleep(CUIPlugin.getStandardDisplay(), 200);
-		
+
 		buildConsole = (BuildConsole) new Accessor(page).invoke("getConsole");
 		assertTrue("Project console not selected", buildConsole.getName().contains(simpleProject.getName()));
 	}
@@ -119,7 +119,7 @@ public class BuildConsoleTests extends BaseUITestCase {
 	public void testGlobalCdtConsole() throws IOException, CoreException {
 		IConsole globalConsole = GlobalBuildConsoleManager.getGlobalConsole();
 		assertNotNull(globalConsole);
-		
+
 		// the console view
 		org.eclipse.ui.console.IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
 		boolean isConsoleFound = false;
@@ -130,16 +130,16 @@ public class BuildConsoleTests extends BaseUITestCase {
 		}
 		assertTrue("Global CDT Console is not found", isConsoleFound);
 	}
-	
+
 	public void testDynamicBuildConsole() throws IOException, CoreException {
 		String id = this.getName();
 		String consoleName = "Test " + this.getName();
 		IConsole testConsole = CCorePlugin.getDefault().getBuildConsole(id, consoleName, null);
 		assertNotNull(testConsole);
-		
+
 		// the console view
 		org.eclipse.ui.console.IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
-		org.eclipse.ui.console.IConsole uiConsole=null;
+		org.eclipse.ui.console.IConsole uiConsole = null;
 		for (org.eclipse.ui.console.IConsole console : consoles) {
 			boolean isConsoleFound = console.getName().equals(consoleName);
 			if (isConsoleFound) {

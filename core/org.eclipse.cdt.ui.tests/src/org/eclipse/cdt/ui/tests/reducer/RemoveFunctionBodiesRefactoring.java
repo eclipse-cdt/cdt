@@ -91,8 +91,8 @@ public class RemoveFunctionBodiesRefactoring extends CRefactoring {
 		ast = getAST(tu, progress.newChild(1));
 		index = getIndex();
 		nodeFactory = ast.getASTNodeFactory();
-		region = selectedRegion.getLength() == 0 ?
-				new Region(0, ast.getFileLocation().getNodeLength()) : selectedRegion;
+		region = selectedRegion.getLength() == 0 ? new Region(0, ast.getFileLocation().getNodeLength())
+				: selectedRegion;
 
 		if (isProgressMonitorCanceled(progress, initStatus))
 			return initStatus;
@@ -150,12 +150,12 @@ public class RemoveFunctionBodiesRefactoring extends CRefactoring {
 					continue;
 				}
 			}
-			
+
 			int offset = ASTNodes.offset(body);
 			int endOffset = ASTNodes.endOffset(body);
 			if (definition instanceof ICPPASTFunctionDefinition) {
-				ICPPASTConstructorChainInitializer[] initializers =
-						((ICPPASTFunctionDefinition) definition).getMemberInitializers();
+				ICPPASTConstructorChainInitializer[] initializers = ((ICPPASTFunctionDefinition) definition)
+						.getMemberInitializers();
 				if (initializers.length != 0) {
 					offset = ASTNodes.offset(initializers[0]);
 					offset = skipWhitespaceBefore(offset, code);

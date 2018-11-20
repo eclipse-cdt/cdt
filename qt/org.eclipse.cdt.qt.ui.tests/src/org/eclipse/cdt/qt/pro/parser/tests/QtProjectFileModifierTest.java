@@ -46,16 +46,14 @@ public class QtProjectFileModifierTest extends TestCase {
 
 	@Test
 	public void test_ReplaceValue_HasCommentOnSubsequentLine() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp \\ # This is a comment\n" //$NON-NLS-1$
-						+ "          main2.cpp   # This is a comment"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp \\ # This is a comment\n" //$NON-NLS-1$
+				+ "          main2.cpp   # This is a comment"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 
 		assertTrue(modifier.replaceVariableValue("SOURCES", "main2.cpp", "main3.cpp")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertEquals(
-				"SOURCES += main.cpp \\ # This is a comment\n" //$NON-NLS-1$
-						+ "          main3.cpp   # This is a comment", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp \\ # This is a comment\n" //$NON-NLS-1$
+				+ "          main3.cpp   # This is a comment", //$NON-NLS-1$
 				document.get());
 	}
 
@@ -66,8 +64,7 @@ public class QtProjectFileModifierTest extends TestCase {
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 
 		assertTrue(modifier.replaceVariableValue("CONFIG", "debug", "console", false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertEquals(
-				"CONFIG = qt console", //$NON-NLS-1$
+		assertEquals("CONFIG = qt console", //$NON-NLS-1$
 				document.get());
 	}
 
@@ -78,53 +75,46 @@ public class QtProjectFileModifierTest extends TestCase {
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 
 		assertFalse(modifier.replaceVariableValue("CONFIG", "console", "debug", false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertEquals(
-				"CONFIG = qt debug", //$NON-NLS-1$
+		assertEquals("CONFIG = qt debug", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_ReplaceMultilineValue_MatchWholeLineFalse() {
-		IDocument document = new Document(
-				"CONFIG = qt \\\n" //$NON-NLS-1$
-						+ "      debug"); //$NON-NLS-1$
+		IDocument document = new Document("CONFIG = qt \\\n" //$NON-NLS-1$
+				+ "      debug"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 
 		assertTrue(modifier.replaceVariableValue("CONFIG", "debug", "console", false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertEquals(
-				"CONFIG = qt \\\n" //$NON-NLS-1$
-						+ "      console", //$NON-NLS-1$
+		assertEquals("CONFIG = qt \\\n" //$NON-NLS-1$
+				+ "      console", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_ReplaceMultilineValue() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp \\\n" //$NON-NLS-1$
-						+ "    main2.cpp"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp \\\n" //$NON-NLS-1$
+				+ "    main2.cpp"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 
 		assertTrue(modifier.replaceVariableValue("SOURCES", "main2.cpp", "main3.cpp")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertEquals(
-				"SOURCES += main.cpp \\\n" //$NON-NLS-1$
-						+ "    main3.cpp", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp \\\n" //$NON-NLS-1$
+				+ "    main3.cpp", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_ReplaceMultilineValue_HasComment() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp \\\n" //$NON-NLS-1$
-						+ "    main2.cpp  # This is a comment"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp \\\n" //$NON-NLS-1$
+				+ "    main2.cpp  # This is a comment"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 
 		assertTrue(modifier.replaceVariableValue("SOURCES", "main2.cpp", "main3.cpp")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertEquals(
-				"SOURCES += main.cpp \\\n" //$NON-NLS-1$
-						+ "    main3.cpp  # This is a comment", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp \\\n" //$NON-NLS-1$
+				+ "    main3.cpp  # This is a comment", //$NON-NLS-1$
 				document.get());
 	}
 
@@ -135,25 +125,22 @@ public class QtProjectFileModifierTest extends TestCase {
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main2.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main.cpp \\\n" //$NON-NLS-1$
-						+ "           main2.cpp", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp \\\n" //$NON-NLS-1$
+				+ "           main2.cpp", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_AddValue_NoIndentation() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp \\\n" //$NON-NLS-1$
-						+ "noindent.cpp"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp \\\n" //$NON-NLS-1$
+				+ "noindent.cpp"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main2.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main.cpp \\\n" //$NON-NLS-1$
-						+ "noindent.cpp \\\n" //$NON-NLS-1$
-						+ "main2.cpp", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp \\\n" //$NON-NLS-1$
+				+ "noindent.cpp \\\n" //$NON-NLS-1$
+				+ "main2.cpp", //$NON-NLS-1$
 				document.get());
 	}
 
@@ -174,61 +161,54 @@ public class QtProjectFileModifierTest extends TestCase {
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main2.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main.cpp \\ # This is a comment\n" //$NON-NLS-1$
-						+ "           main2.cpp", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp \\ # This is a comment\n" //$NON-NLS-1$
+				+ "           main2.cpp", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_AddValue_HasCommentOnSubsequentLine() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp   \\ # This is a comment \n" //$NON-NLS-1$
-						+ "  main2.cpp          # this is a comment\n\n"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp   \\ # This is a comment \n" //$NON-NLS-1$
+				+ "  main2.cpp          # this is a comment\n\n"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main3.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main.cpp   \\ # This is a comment \n" //$NON-NLS-1$
-						+ "  main2.cpp \\          # this is a comment\n" //$NON-NLS-1$
-						+ "  main3.cpp\n\n", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp   \\ # This is a comment \n" //$NON-NLS-1$
+				+ "  main2.cpp \\          # this is a comment\n" //$NON-NLS-1$
+				+ "  main3.cpp\n\n", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_AddValue_CommentIndentation() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp      \\ # Test comment\n" //$NON-NLS-1$
-						+ "           main2.cpp     \\ # Test comment2\n" //$NON-NLS-1$
-						+ "           main3.cpp       # Test comment3"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp      \\ # Test comment\n" //$NON-NLS-1$
+				+ "           main2.cpp     \\ # Test comment2\n" //$NON-NLS-1$
+				+ "           main3.cpp       # Test comment3"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main4.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main.cpp      \\ # Test comment\n" //$NON-NLS-1$
-						+ "           main2.cpp     \\ # Test comment2\n" //$NON-NLS-1$
-						+ "           main3.cpp \\       # Test comment3\n" //$NON-NLS-1$
-						+ "           main4.cpp", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp      \\ # Test comment\n" //$NON-NLS-1$
+				+ "           main2.cpp     \\ # Test comment2\n" //$NON-NLS-1$
+				+ "           main3.cpp \\       # Test comment3\n" //$NON-NLS-1$
+				+ "           main4.cpp", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_AddValue_MultipleVariables() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp\n" //$NON-NLS-1$
-						+ "\n" //$NON-NLS-1$
-						+ "QT = app"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp\n" //$NON-NLS-1$
+				+ "\n" //$NON-NLS-1$
+				+ "QT = app"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main2.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main.cpp \\\n" + //$NON-NLS-1$
-						"           main2.cpp\n" + //$NON-NLS-1$
-						"\n" + //$NON-NLS-1$
-						"QT = app", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp \\\n" + //$NON-NLS-1$
+				"           main2.cpp\n" + //$NON-NLS-1$
+				"\n" + //$NON-NLS-1$
+				"QT = app", //$NON-NLS-1$
 				document.get());
 	}
 
@@ -239,8 +219,7 @@ public class QtProjectFileModifierTest extends TestCase {
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main.cpp\n", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp\n", //$NON-NLS-1$
 				document.get());
 	}
 
@@ -251,10 +230,9 @@ public class QtProjectFileModifierTest extends TestCase {
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"CONFIG += qt debug\n" //$NON-NLS-1$
-						+ "\n" //$NON-NLS-1$
-						+ "SOURCES += main.cpp\n", //$NON-NLS-1$
+		assertEquals("CONFIG += qt debug\n" //$NON-NLS-1$
+				+ "\n" //$NON-NLS-1$
+				+ "SOURCES += main.cpp\n", //$NON-NLS-1$
 				document.get());
 	}
 
@@ -265,10 +243,9 @@ public class QtProjectFileModifierTest extends TestCase {
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"CONFIG += qt debug\n" //$NON-NLS-1$
-						+ "\n" //$NON-NLS-1$
-						+ "SOURCES += main.cpp\n", //$NON-NLS-1$
+		assertEquals("CONFIG += qt debug\n" //$NON-NLS-1$
+				+ "\n" //$NON-NLS-1$
+				+ "SOURCES += main.cpp\n", //$NON-NLS-1$
 				document.get());
 	}
 
@@ -279,65 +256,58 @@ public class QtProjectFileModifierTest extends TestCase {
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.addVariableValue("SOURCES", "main.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"CONFIG += qt debug\n" //$NON-NLS-1$
-						+ "\n" //$NON-NLS-1$
-						+ "\n" //$NON-NLS-1$
-						+ "SOURCES += main.cpp\n", //$NON-NLS-1$
+		assertEquals("CONFIG += qt debug\n" //$NON-NLS-1$
+				+ "\n" //$NON-NLS-1$
+				+ "\n" //$NON-NLS-1$
+				+ "SOURCES += main.cpp\n", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_RemoveThenAddValue() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp \\\n" //$NON-NLS-1$
-						+ " main2.cpp \\\n" //$NON-NLS-1$
-						+ " main3.cpp\n"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp \\\n" //$NON-NLS-1$
+				+ " main2.cpp \\\n" //$NON-NLS-1$
+				+ " main3.cpp\n"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.removeVariableValue("SOURCES", "main3.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 		modifier.addVariableValue("SOURCES", "main4.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main.cpp \\\n" //$NON-NLS-1$
-						+ " main2.cpp \\\n" //$NON-NLS-1$
-						+ " main4.cpp\n", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp \\\n" //$NON-NLS-1$
+				+ " main2.cpp \\\n" //$NON-NLS-1$
+				+ " main4.cpp\n", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_RemoveValue_FirstLine() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp  \\   # Test comment\n" //$NON-NLS-1$
-						+ "           main2.cpp \\   # Test comment2\n" //$NON-NLS-1$
-						+ "           main3.cpp \\   # Test comment3\n" //$NON-NLS-1$
-						+ "           main4.cpp     # Test comment4"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp  \\   # Test comment\n" //$NON-NLS-1$
+				+ "           main2.cpp \\   # Test comment2\n" //$NON-NLS-1$
+				+ "           main3.cpp \\   # Test comment3\n" //$NON-NLS-1$
+				+ "           main4.cpp     # Test comment4"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.removeVariableValue("SOURCES", "main.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main2.cpp \\   # Test comment2\n" //$NON-NLS-1$
-						+ "           main3.cpp \\   # Test comment3\n" //$NON-NLS-1$
-						+ "           main4.cpp     # Test comment4", //$NON-NLS-1$
+		assertEquals("SOURCES += main2.cpp \\   # Test comment2\n" //$NON-NLS-1$
+				+ "           main3.cpp \\   # Test comment3\n" //$NON-NLS-1$
+				+ "           main4.cpp     # Test comment4", //$NON-NLS-1$
 				document.get());
 	}
 
 	@Test
 	public void test_RemoveValue_MiddleLine() {
-		IDocument document = new Document(
-				"SOURCES += main.cpp  \\   # Test comment\n" //$NON-NLS-1$
-						+ "           main2.cpp \\   # Test comment2\n" //$NON-NLS-1$
-						+ "           main3.cpp \\   # Test comment3\n" //$NON-NLS-1$
-						+ "           main4.cpp     # Test comment4"); //$NON-NLS-1$
+		IDocument document = new Document("SOURCES += main.cpp  \\   # Test comment\n" //$NON-NLS-1$
+				+ "           main2.cpp \\   # Test comment2\n" //$NON-NLS-1$
+				+ "           main3.cpp \\   # Test comment3\n" //$NON-NLS-1$
+				+ "           main4.cpp     # Test comment4"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 		modifier.removeVariableValue("SOURCES", "main2.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals(
-				"SOURCES += main.cpp  \\   # Test comment\n" //$NON-NLS-1$
-						+ "           main3.cpp \\   # Test comment3\n" //$NON-NLS-1$
-						+ "           main4.cpp     # Test comment4", //$NON-NLS-1$
+		assertEquals("SOURCES += main.cpp  \\   # Test comment\n" //$NON-NLS-1$
+				+ "           main3.cpp \\   # Test comment3\n" //$NON-NLS-1$
+				+ "           main4.cpp     # Test comment4", //$NON-NLS-1$
 				document.get());
 	}
 }

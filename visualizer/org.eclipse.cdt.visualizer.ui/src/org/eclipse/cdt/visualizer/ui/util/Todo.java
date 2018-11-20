@@ -16,42 +16,40 @@ package org.eclipse.cdt.visualizer.ui.util;
 
 /** Counter for objects that need to track asynchronous progress. */
 public class Todo {
-	
+
 	// --- members ---
-	
+
 	/** Count of things left to do. */
 	int m_count = 0;
-	
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor. */
 	public Todo() {
 	}
-	
+
 	/** Constructor. */
 	public Todo(int count) {
 		m_count = count;
 	}
-	
+
 	/** Dispose method. */
 	public void dispose() {
 		m_count = 0;
 	}
-	
-	
+
 	// --- accessors ---
-	
+
 	/** Gets count. */
 	public int get() {
 		return m_count;
 	}
-	
+
 	/** Sets count. */
 	public void set(int count) {
 		m_count = count;
 	}
-	
+
 	/** Returns true if count has reached zero. */
 	public boolean isDone() {
 		return m_count <= 0;
@@ -76,10 +74,9 @@ public class Todo {
 	public int decrement() {
 		return (m_count -= 1);
 	}
-	
-	
+
 	// --- methods ---
-	
+
 	/** Adds completion steps to count. */
 	public void add(int n) {
 		increment(n);

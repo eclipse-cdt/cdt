@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 import org.eclipse.ui.IWorkbenchPart;
 
-
 /**
  * Helper class for contributions to the
  * <code>org.eclipse.cdt.debug.ui.disassemblyRulerColumns</code> extension point.
@@ -44,14 +43,14 @@ public abstract class AbstractContributedRulerColumn implements IContributedRule
 	public final void setDescriptor(RulerColumnDescriptor descriptor) {
 		Assert.isLegal(descriptor != null);
 		Assert.isTrue(fDescriptor == null);
-		fDescriptor= descriptor;
+		fDescriptor = descriptor;
 	}
 
 	@Override
 	public final void setDisassemblyPart(IWorkbenchPart disassembly) {
 		Assert.isLegal(disassembly != null);
 		Assert.isTrue(fDisassembly == null);
-		fDisassembly= disassembly;
+		fDisassembly = disassembly;
 	}
 
 	@Override

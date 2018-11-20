@@ -20,12 +20,11 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-public interface IMemoryExporter 
-{
+public interface IMemoryExporter {
 	public static final String TRANSFER_FILE = "File"; //$NON-NLS-1$
 	public static final String TRANSFER_START = "Start"; //$NON-NLS-1$
 	public static final String TRANSFER_END = "End"; //$NON-NLS-1$
-	
+
 	/**
 	 * @param parent
 	 * @param memBlock
@@ -33,11 +32,12 @@ public interface IMemoryExporter
 	 * @param parentDialog
 	 * @return
 	 */
-	public Control createControl(Composite parent, IMemoryBlock memBlock, IDialogSettings properties, ExportMemoryDialog parentDialog);
-		
+	public Control createControl(Composite parent, IMemoryBlock memBlock, IDialogSettings properties,
+			ExportMemoryDialog parentDialog);
+
 	public void exportMemory();
-	
+
 	public String getId();
-	
+
 	public String getName();
 }

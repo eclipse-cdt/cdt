@@ -37,50 +37,47 @@ public class GdbStackFramesVMNode extends StackFramesVMNode {
 	@Override
 	public int getDeltaFlags(Object e) {
 		if (e instanceof IGDBFocusChangedEvent) {
-        	return IModelDelta.SELECT;
+			return IModelDelta.SELECT;
 		}
-		
+
 		return super.getDeltaFlags(e);
 	}
-	
+
 	@Override
 	public void buildDelta(final Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
 		if (e instanceof IGDBFocusChangedEvent) {
-			buildDeltaForFocusChangedEvent((IGDBFocusChangedEvent)e, parentDelta, rm);
-		}
-		else {
+			buildDeltaForFocusChangedEvent((IGDBFocusChangedEvent) e, parentDelta, rm);
+		} else {
 			super.buildDelta(e, parentDelta, nodeOffset, rm);
 		}
 	}
-	
+
 	private void buildDeltaForFocusChangedEvent(IGDBFocusChangedEvent event, VMDelta parentDelta, RequestMonitor rm) {
 		getSession().getExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
 				IDMContext ctx = event.getDMContext();
-				
+
 				// Is IGDBFocusChangedEvent pertinent for this VMNode? 
 				if (ctx instanceof IFrameDMContext) {
-					IFrameDMContext newFrameFocus = (IFrameDMContext)ctx;
-					IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(newFrameFocus, IMIExecutionDMContext.class);
+					IFrameDMContext newFrameFocus = (IFrameDMContext) ctx;
+					IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(newFrameFocus,
+							IMIExecutionDMContext.class);
 					if (execDmc == null) {
 						rm.done();
 						return;
 					}
 
-    	            IRunControl runControl = getServicesTracker().getService(IRunControl.class); 
-    	            if (runControl == null) {
-    	                // Required services have not initialized yet.  Ignore the event.
-    	                rm.done();
-    	                return;
-    	            }         
+					IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+					if (runControl == null) {
+						// Required services have not initialized yet.  Ignore the event.
+						rm.done();
+						return;
+					}
 
 					if (runControl.isSuspended(execDmc) || runControl.isStepping(execDmc)) {
 						// find the VMC index for the frame that switched, so we can select it correctly.
-						getVMCIndexForDmc(
-								GdbStackFramesVMNode.this,
-								newFrameFocus,
-								parentDelta,
+						getVMCIndexForDmc(GdbStackFramesVMNode.this, newFrameFocus, parentDelta,
 								new DataRequestMonitor<Integer>(getExecutor(), rm) {
 									@Override
 									protected void handleSuccess() {
@@ -90,24 +87,21 @@ public class GdbStackFramesVMNode extends StackFramesVMNode {
 										// Retrieve the list of stack frames
 										getVMProvider().updateNode(GdbStackFramesVMNode.this,
 												new VMChildrenUpdate(parentDelta,
-														getVMProvider().getPresentationContext(), -1,
-														-1, new DataRequestMonitor<List<Object>>(
-																getExecutor(), rm) {
-													@Override
-													public void handleSuccess() {
-														final List<Object> data = getData();
-														if (data != null && data.size() != 0) {
-															// create the delta to select the
-															// current stack frame
-															parentDelta.addNode(
-																	data.get(frameOffset),
-																	frameOffset,
-																	IModelDelta.SELECT | IModelDelta.FORCE
-																	);
-														}
-														rm.done();
-													}
-												}));
+														getVMProvider().getPresentationContext(), -1, -1,
+														new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
+															@Override
+															public void handleSuccess() {
+																final List<Object> data = getData();
+																if (data != null && data.size() != 0) {
+																	// create the delta to select the
+																	// current stack frame
+																	parentDelta.addNode(data.get(frameOffset),
+																			frameOffset,
+																			IModelDelta.SELECT | IModelDelta.FORCE);
+																}
+																rm.done();
+															}
+														}));
 									}
 								});
 					} else {
@@ -119,6 +113,6 @@ public class GdbStackFramesVMNode extends StackFramesVMNode {
 					rm.done();
 				}
 			}
-    	});
+		});
 	}
 }

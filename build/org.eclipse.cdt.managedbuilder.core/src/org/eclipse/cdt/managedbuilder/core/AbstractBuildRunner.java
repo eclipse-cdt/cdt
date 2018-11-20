@@ -41,8 +41,8 @@ public abstract class AbstractBuildRunner {
 	 *    has not been called yet.
 	 * @throws CoreException standard core exception if something goes wrong
 	 */
-	public abstract boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
-			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
-			IncrementalProjectBuilder projectBuilder, IProgressMonitor monitor) throws CoreException;
+	public abstract boolean invokeBuild(int kind, IProject project, IConfiguration configuration, IBuilder builder,
+			IConsole console, IMarkerGenerator markerGenerator, IncrementalProjectBuilder projectBuilder,
+			IProgressMonitor monitor) throws CoreException;
 
 }

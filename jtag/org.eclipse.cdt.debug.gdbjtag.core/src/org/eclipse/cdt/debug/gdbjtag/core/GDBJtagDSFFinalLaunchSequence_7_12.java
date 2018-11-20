@@ -39,8 +39,7 @@ public class GDBJtagDSFFinalLaunchSequence_7_12 extends GDBJtagDSFFinalLaunchSeq
 	protected String[] getExecutionOrder(String group) {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the steps from the base class
-			List<String> orderList = new ArrayList<String>(
-					Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Add the new step after we source the gdbinit file to make sure the user
 			// cannot change this behavior
@@ -55,29 +54,30 @@ public class GDBJtagDSFFinalLaunchSequence_7_12 extends GDBJtagDSFFinalLaunchSeq
 
 	@Execute
 	public void stepSetTargetAsync(RequestMonitor rm) {
-        // Processing this request after sourcing the gdbinit file to make sure the user
-        // cannot change this behavior
-        DsfServicesTracker tracker = new DsfServicesTracker(Activator.getBundleContext(),
-                getSession().getId());
-        IMICommandControl commandControl = tracker.getService(IMICommandControl.class);
-        IGDBBackend gdbBackEnd = tracker.getService(IGDBBackend.class);
-        tracker.dispose();
+		// Processing this request after sourcing the gdbinit file to make sure the user
+		// cannot change this behavior
+		DsfServicesTracker tracker = new DsfServicesTracker(Activator.getBundleContext(), getSession().getId());
+		IMICommandControl commandControl = tracker.getService(IMICommandControl.class);
+		IGDBBackend gdbBackEnd = tracker.getService(IGDBBackend.class);
+		tracker.dispose();
 
-        if (commandControl != null && gdbBackEnd != null) {
-            // Use target async when interfacing with the full GDB console (i.e. minimum GDB version 7.12)
-            // otherwise explicitly set it to off.
-            commandControl.queueCommand(
-                    commandControl.getCommandFactory().createMIGDBSetTargetAsync(commandControl.getContext(), gdbBackEnd.isFullGdbConsoleSupported()),
-                    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-                        @Override
-                        protected void handleError() {
-                            // Accept errors for older GDBs
-                            rm.done();
-                        }
-                    });
-        } else {
-            // Should not happen
-            rm.done();
-        }
+		if (commandControl != null && gdbBackEnd != null) {
+			// Use target async when interfacing with the full GDB console (i.e. minimum GDB version 7.12)
+			// otherwise explicitly set it to off.
+			commandControl
+					.queueCommand(
+							commandControl.getCommandFactory().createMIGDBSetTargetAsync(commandControl.getContext(),
+									gdbBackEnd.isFullGdbConsoleSupported()),
+							new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+								@Override
+								protected void handleError() {
+									// Accept errors for older GDBs
+									rm.done();
+								}
+							});
+		} else {
+			// Should not happen
+			rm.done();
+		}
 	}
 }

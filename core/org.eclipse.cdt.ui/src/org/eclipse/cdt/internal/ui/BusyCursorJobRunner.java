@@ -144,5 +144,6 @@ public final class BusyCursorJobRunner {
 		}
 	}
 
-	private BusyCursorJobRunner() {}
+	private BusyCursorJobRunner() {
+	}
 }

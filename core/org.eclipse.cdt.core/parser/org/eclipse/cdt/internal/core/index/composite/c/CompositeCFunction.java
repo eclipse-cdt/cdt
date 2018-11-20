@@ -32,17 +32,17 @@ class CompositeCFunction extends CompositeCBinding implements IFunction {
 	public IScope getFunctionScope() {
 		return null;
 	}
-	
+
 	@Override
 	public IParameter[] getParameters() {
 		IParameter[] preResult = ((IFunction) rbinding).getParameters();
 		IParameter[] result = new IParameter[preResult.length];
-		for (int i= 0; i < preResult.length; i++) {
+		for (int i = 0; i < preResult.length; i++) {
 			result[i] = (IParameter) cf.getCompositeBinding((IIndexFragmentBinding) preResult[i]);
 		}
 		return result;
 	}
-	
+
 	@Override
 	public IFunctionType getType() {
 		IType rtype = ((IFunction) rbinding).getType();

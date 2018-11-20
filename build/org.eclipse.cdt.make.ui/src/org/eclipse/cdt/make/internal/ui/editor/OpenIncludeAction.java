@@ -50,12 +50,12 @@ public class OpenIncludeAction extends Action {
 		super(MakeUIPlugin.getResourceString("OpenIncludeAction.title")); //$NON-NLS-1$
 		setDescription(MakeUIPlugin.getResourceString("OpenIncludeAction.description")); //$NON-NLS-1$
 		setToolTipText(MakeUIPlugin.getResourceString("OpenIncludeAction.tooltip")); //$NON-NLS-1$
-		fSelectionProvider= provider;
+		fSelectionProvider = provider;
 	}
 
 	@Override
 	public void run() {
-		IInclude[] includes= getIncludeDirective(fSelectionProvider.getSelection());
+		IInclude[] includes = getIncludeDirective(fSelectionProvider.getSelection());
 		if (includes != null) {
 			for (IInclude include : includes) {
 				for (IDirective directive : include.getDirectives()) {
@@ -104,7 +104,7 @@ public class OpenIncludeAction extends Action {
 	IInclude[] getIncludeDirective(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			@SuppressWarnings("unchecked")
-			List<Object> list= ((IStructuredSelection)sel).toList();
+			List<Object> list = ((IStructuredSelection) sel).toList();
 			if (list.size() > 0) {
 				List<IInclude> includes = new ArrayList<IInclude>(list.size());
 				for (Object element : list) {
@@ -119,7 +119,7 @@ public class OpenIncludeAction extends Action {
 	}
 
 	public boolean canActionBeAdded(ISelection selection) {
-		IInclude[] includes =  getIncludeDirective(selection);
+		IInclude[] includes = getIncludeDirective(selection);
 		return includes != null && includes.length != 0;
 	}
 }

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-
 /**
  * @deprecated not used anywhere.
  * @noextend This class is not intended to be subclassed by clients.
@@ -21,6 +20,7 @@ package org.eclipse.cdt.core.browser;
  */
 @Deprecated
 public class UnknownTypeInfo extends TypeInfo {
-	
-	private UnknownTypeInfo() {}
+
+	private UnknownTypeInfo() {
+	}
 }

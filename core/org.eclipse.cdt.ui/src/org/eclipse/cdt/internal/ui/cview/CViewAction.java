@@ -24,7 +24,7 @@ import org.eclipse.ui.actions.SelectionProviderAction;
  * Superclass of all actions provided by the cview.
  */
 public abstract class CViewAction extends SelectionProviderAction {
-	
+
 	private CView cview;
 
 	/**

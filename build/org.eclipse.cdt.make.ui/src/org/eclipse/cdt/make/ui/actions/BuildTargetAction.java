@@ -40,7 +40,7 @@ public class BuildTargetAction extends AbstractTargetAction {
 	private IBindingService bindingService;
 	private IAction InitAction;
 
-	public BuildTargetAction(){
+	public BuildTargetAction() {
 		bindingService = null;
 		InitAction = null;
 	}
@@ -52,10 +52,10 @@ public class BuildTargetAction extends AbstractTargetAction {
 			bindingService.addBindingManagerListener(bindingManagerListener);
 			String keyBinding = bindingService.getBestActiveBindingFormattedFor(TARGET_BUILD_COMMAND);
 			if (keyBinding != null)
-				action.setText(MakeUIPlugin.getResourceString("ActionMakeBuildTarget.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				action.setText(MakeUIPlugin.getResourceString("ActionMakeBuildTarget.label") + "\t" + keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		InitAction = action;
-    }
+	}
 
 	@Override
 	public void run(IAction action) {
@@ -64,8 +64,8 @@ public class BuildTargetAction extends AbstractTargetAction {
 			BuildTargetDialog dialog = new BuildTargetDialog(getShell(), container, true);
 			String name = null;
 			try {
-				name = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-						TargetBuild.LAST_TARGET));
+				name = (String) container.getSessionProperty(
+						new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET));
 			} catch (CoreException e) {
 			}
 			try {
@@ -77,12 +77,12 @@ public class BuildTargetAction extends AbstractTargetAction {
 				if (dialog.open() == Window.OK) {
 					IMakeTarget target = dialog.getTarget();
 					if (target != null) {
-						container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-								TargetBuild.LAST_TARGET), target.getName());
+						container.setSessionProperty(
+								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET),
+								target.getName());
 						IPath path = target.getContainer().getProjectRelativePath();
-						container.getProject().setSessionProperty(
-								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-										TargetBuild.LAST_TARGET_CONTAINER), path.toString());
+						container.getProject().setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+								TargetBuild.LAST_TARGET_CONTAINER), path.toString());
 					}
 				}
 			} catch (CoreException e) {
@@ -107,8 +107,9 @@ public class BuildTargetAction extends AbstractTargetAction {
 
 			if (event.isActiveBindingsChanged()) {
 				String keyBinding = bindingService.getBestActiveBindingFormattedFor(TARGET_BUILD_COMMAND);
-				if (keyBinding != null) InitAction.setText(
-						MakeUIPlugin.getResourceString("ActionMakeBuildTarget.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				if (keyBinding != null)
+					InitAction
+							.setText(MakeUIPlugin.getResourceString("ActionMakeBuildTarget.label") + "\t" + keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 
 			}
 		}

@@ -24,29 +24,29 @@ import org.eclipse.core.runtime.IStatus;
  * access to the cache state and data.   
  * </p>
  * @since 2.2
- */ 
+ */
 @ConfinedToDsfExecutor("getExecutor()")
 public interface ICache<V> {
-    
-    /**
-     * The executor that must be used to access this cache.
-     */
-    public DsfExecutor getExecutor();
+
+	/**
+	 * The executor that must be used to access this cache.
+	 */
+	public DsfExecutor getExecutor();
 
 	/**
 	 * Returns the current data value held by this cache. Clients should first
 	 * call isValid() to determine if the data is up to date. Calling this when
 	 * in the invalid state will throw an IllegalStateException
 	 */
-    public V getData();
+	public V getData();
 
 	/**
 	 * Returns the status of the source request held by this cache. Clients
 	 * should first call isValid() to determine if the data is up to date.
 	 * Calling this when in the invalid state will throw an
 	 * IllegalStateException
-	 */    
-    public IStatus getStatus();
+	 */
+	public IStatus getStatus();
 
 	/**
 	 * Asks the cache to update its value from the source. If the cache is
@@ -57,12 +57,12 @@ public interface ICache<V> {
 	 * @param rm
 	 *            RequestMonitor that is called when cache becomes valid.
 	 */
-    public void update(RequestMonitor rm);
+	public void update(RequestMonitor rm);
 
-    /**
-     * Returns <code>true</code> if the cache is currently valid.  I.e. 
-     * whether the cache can return a value immediately without first 
-     * retrieving it from the data source. 
-     */
-    public boolean isValid();
+	/**
+	 * Returns <code>true</code> if the cache is currently valid.  I.e. 
+	 * whether the cache can return a value immediately without first 
+	 * retrieving it from the data source. 
+	 */
+	public boolean isValid();
 }

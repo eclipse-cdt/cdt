@@ -44,12 +44,12 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	private IAddressFactory addressFactory;
 	private volatile Elf.Attribute fElfAttributes;
 
-	public ElfBinaryObject(IBinaryParser parser, IPath p, AR.ARHeader h){
+	public ElfBinaryObject(IBinaryParser parser, IPath p, AR.ARHeader h) {
 		super(parser, p, IBinaryFile.OBJECT);
 		header = h;
 	}
 
-	public ElfBinaryObject(IBinaryParser parser, IPath p, int type){
+	public ElfBinaryObject(IBinaryParser parser, IPath p, int type) {
 		super(parser, p, type);
 		header = null;
 	}
@@ -58,7 +58,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	 * @param elfAttributes the elfAttributes to set
 	 */
 	void setElfAttributes(Elf.Attribute elfAttributes) {
-		fElfAttributes= elfAttributes;
+		fElfAttributes = elfAttributes;
 	}
 
 	/* (non-Javadoc)
@@ -71,7 +71,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getName();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
@@ -146,7 +146,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 			}
 		}
 	}
-	
+
 	protected void loadInfo(ElfHelper helper) throws IOException {
 		info = new BinaryObjectInfo();
 		Elf.Dynamic[] sharedlibs = helper.getNeeded();
@@ -158,23 +158,23 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		info.bss = sizes.bss;
 		info.data = sizes.data;
 		info.text = sizes.text;
-	
+
 		info.soname = helper.getSoname();
-		
+
 		Elf.Attribute attribute = helper.getElf().getAttributes();
 		info.isLittleEndian = attribute.isLittleEndian();
 		info.hasDebug = attribute.hasDebug();
 		info.cpu = attribute.getCPU();
 		addressFactory = attribute.getAddressFactory();
-		fElfAttributes= null;
+		fElfAttributes = null;
 	}
 
 	protected void loadSymbols(ElfHelper helper) throws IOException {
 		ArrayList<Symbol> list = new ArrayList<Symbol>();
 
-//		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, list);
+		//		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, list);
 		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, list);
-//		addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, list);
+		//		addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, list);
 		addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, list);
 		list.trimToSize();
 
@@ -188,15 +188,15 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 			// Multiple function symbol entries for the same address are generated
 			// do not add duplicate symbols with 0 size to the list
 			boolean duplicateAddressFound = false;
-			if (type == ISymbol.FUNCTION && element.st_size == 0){
+			if (type == ISymbol.FUNCTION && element.st_size == 0) {
 				for (Symbol s : list) {
-					if (s.getAddress().equals(element.st_value)){
+					if (s.getAddress().equals(element.st_value)) {
 						duplicateAddressFound = true;
 						break;
 					}
 				}
 			}
-			if (!duplicateAddressFound)	
+			if (!duplicateAddressFound)
 				list.add(new Symbol(this, element.toString(), type, element.st_value, element.st_size));
 		}
 	}
@@ -219,7 +219,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		return super.getAdapter(adapter);
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
 	 */
@@ -227,7 +226,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {
 			if (fElfAttributes != null) {
-				addressFactory= fElfAttributes.getAddressFactory();
+				addressFactory = fElfAttributes.getAddressFactory();
 			}
 			if (addressFactory == null) {
 				try {
@@ -239,7 +238,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		}
 		return addressFactory;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#isLittleEndian()
 	 */
@@ -250,7 +249,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.isLittleEndian();
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getCPU()
 	 */

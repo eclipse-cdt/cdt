@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.cdt.ui.templateengine.SimpleElementException;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
-
 /**
  * UIElement describes the abstract behavior expected from GenericUIElementGroup and 
  * InputUIElement. Some of the methods are meaningful to group Element. They will throw
@@ -40,7 +39,7 @@ public abstract class UIElement {
 	 * Attributes of this UIElement
 	 */
 	protected UIAttributes uiAttributes;
-	
+
 	public UIElement(UIAttributes uiAttributes) {
 		this.uiAttributes = uiAttributes;
 	}

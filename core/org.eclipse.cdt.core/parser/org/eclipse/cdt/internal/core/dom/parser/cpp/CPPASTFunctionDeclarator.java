@@ -36,22 +36,22 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
  * Represents a function declarator.
  */
 public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator {
-    private ICPPASTParameterDeclaration[] parameters;
-    private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
-    private ICPPASTExpression noexceptExpression;
-    private IASTTypeId trailingReturnType;
-    private ICPPASTVirtSpecifier[] virtSpecifiers = NO_VIRT_SPECIFIERS;
+	private ICPPASTParameterDeclaration[] parameters;
+	private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
+	private ICPPASTExpression noexceptExpression;
+	private IASTTypeId trailingReturnType;
+	private ICPPASTVirtSpecifier[] virtSpecifiers = NO_VIRT_SPECIFIERS;
 
-    private boolean varArgs;
-    private boolean pureVirtual;
-    private boolean isVolatile;
-    private boolean isConst;
-    private boolean isMutable;
-    private RefQualifier refQualifier;
+	private boolean varArgs;
+	private boolean pureVirtual;
+	private boolean isVolatile;
+	private boolean isConst;
+	private boolean isMutable;
+	private RefQualifier refQualifier;
 
-    private ICPPFunctionScope scope;
+	private ICPPFunctionScope scope;
 
-    public CPPASTFunctionDeclarator() {
+	public CPPASTFunctionDeclarator() {
 	}
 
 	public CPPASTFunctionDeclarator(IASTName name) {
@@ -80,8 +80,8 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 			copy.addExceptionSpecificationTypeId(typeId == null ? null : typeId.copy(style));
 		}
 		if (noexceptExpression != null) {
-			copy.setNoexceptExpression(noexceptExpression == NOEXCEPT_DEFAULT ?
-					noexceptExpression : (ICPPASTExpression) noexceptExpression.copy(style));
+			copy.setNoexceptExpression(noexceptExpression == NOEXCEPT_DEFAULT ? noexceptExpression
+					: (ICPPASTExpression) noexceptExpression.copy(style));
 		}
 		if (trailingReturnType != null) {
 			copy.setTrailingReturnType(trailingReturnType.copy(style));
@@ -94,87 +94,88 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 
 	@Override
 	public ICPPASTParameterDeclaration[] getParameters() {
-        if (parameters == null)
-        	return ICPPASTParameterDeclaration.EMPTY_CPPPARAMETERDECLARATION_ARRAY;
+		if (parameters == null)
+			return ICPPASTParameterDeclaration.EMPTY_CPPPARAMETERDECLARATION_ARRAY;
 
-        return parameters= ArrayUtil.trim(parameters);
-    }
+		return parameters = ArrayUtil.trim(parameters);
+	}
 
-    @Override
+	@Override
 	public void addParameterDeclaration(IASTParameterDeclaration parameter) {
-        assertNotFrozen();
-    	if (parameter != null) {
-    		parameter.setParent(this);
+		assertNotFrozen();
+		if (parameter != null) {
+			parameter.setParent(this);
 			parameter.setPropertyInParent(FUNCTION_PARAMETER);
-    		parameters = ArrayUtil.append(ICPPASTParameterDeclaration.class, parameters, (ICPPASTParameterDeclaration) parameter);
-    	}
-    }
+			parameters = ArrayUtil.append(ICPPASTParameterDeclaration.class, parameters,
+					(ICPPASTParameterDeclaration) parameter);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean takesVarArgs() {
-        return varArgs;
-    }
+		return varArgs;
+	}
 
-    @Override
+	@Override
 	public void setVarArgs(boolean value) {
-        assertNotFrozen();
-        varArgs = value;
-    }
+		assertNotFrozen();
+		varArgs = value;
+	}
 
-    @Override
+	@Override
 	public boolean isConst() {
-        return isConst;
-    }
+		return isConst;
+	}
 
-    @Override
+	@Override
 	public void setConst(boolean value) {
-        assertNotFrozen();
-        this.isConst = value;
-    }
+		assertNotFrozen();
+		this.isConst = value;
+	}
 
-    @Override
+	@Override
 	public boolean isVolatile() {
-        return isVolatile;
-    }
+		return isVolatile;
+	}
 
-    @Override
+	@Override
 	public void setVolatile(boolean value) {
-        assertNotFrozen();
-        this.isVolatile = value;
-    }
+		assertNotFrozen();
+		this.isVolatile = value;
+	}
 
-    @Override
+	@Override
 	public boolean isMutable() {
-        return isMutable;
-    }
+		return isMutable;
+	}
 
-    @Override
+	@Override
 	public void setMutable(boolean value) {
-        assertNotFrozen();
-        this.isMutable = value;
-    }
+		assertNotFrozen();
+		this.isMutable = value;
+	}
 
-    @Override
+	@Override
 	public IASTTypeId[] getExceptionSpecification() {
-        return typeIds= ArrayUtil.trim(typeIds);
-    }
+		return typeIds = ArrayUtil.trim(typeIds);
+	}
 
-    @Override
+	@Override
 	public void setEmptyExceptionSpecification() {
-        assertNotFrozen();
-    	typeIds= IASTTypeId.EMPTY_TYPEID_ARRAY;
-    }
+		assertNotFrozen();
+		typeIds = IASTTypeId.EMPTY_TYPEID_ARRAY;
+	}
 
-    @Override
+	@Override
 	public void addExceptionSpecificationTypeId(IASTTypeId typeId) {
-        assertNotFrozen();
-    	if (typeId != null) {
-    		assert typeIds != null;
-    		typeIds = ArrayUtil.append(typeIds, typeId);
-    		typeId.setParent(this);
+		assertNotFrozen();
+		if (typeId != null) {
+			assert typeIds != null;
+			typeIds = ArrayUtil.append(typeIds, typeId);
+			typeId.setParent(this);
 			typeId.setPropertyInParent(EXCEPTION_TYPEID);
-    	}
-    }
+		}
+	}
 
 	@Override
 	public ICPPASTExpression getNoexceptExpression() {
@@ -199,7 +200,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	@Override
 	public void setTrailingReturnType(IASTTypeId typeId) {
 		assertNotFrozen();
-		trailingReturnType= typeId;
+		trailingReturnType = typeId;
 		if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(TRAILING_RETURN_TYPE);
@@ -208,71 +209,71 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 
 	@Override
 	public boolean isPureVirtual() {
-        return pureVirtual;
-    }
+		return pureVirtual;
+	}
 
-    @Override
+	@Override
 	public void setPureVirtual(boolean isPureVirtual) {
-        assertNotFrozen();
-        this.pureVirtual = isPureVirtual;
-    }
+		assertNotFrozen();
+		this.pureVirtual = isPureVirtual;
+	}
 
-    @Override
+	@Override
 	public RefQualifier getRefQualifier() {
 		return refQualifier;
 	}
 
-    @Override
+	@Override
 	public void setRefQualifier(RefQualifier value) {
-        assertNotFrozen();
+		assertNotFrozen();
 		refQualifier = value;
 	}
 
 	@Override
 	@Deprecated
-    public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer[] getConstructorChain() {
-    	if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
-    		IASTNode parent= getParent();
-    		while (!(parent instanceof IASTDeclaration)) {
-    			if (parent == null)
-    				break;
-    			parent= parent.getParent();
-    		}
-    		if (parent instanceof ICPPASTFunctionDefinition) {
-    			return ((ICPPASTFunctionDefinition) parent).getMemberInitializers();
-    		}
-    	}
-    	return org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
-    }
+	public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer[] getConstructorChain() {
+		if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
+			IASTNode parent = getParent();
+			while (!(parent instanceof IASTDeclaration)) {
+				if (parent == null)
+					break;
+				parent = parent.getParent();
+			}
+			if (parent instanceof ICPPASTFunctionDefinition) {
+				return ((ICPPASTFunctionDefinition) parent).getMemberInitializers();
+			}
+		}
+		return org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
+	}
 
-    @Override
+	@Override
 	@Deprecated
-    public void addConstructorToChain(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer initializer) {
-        assertNotFrozen();
-    }
+	public void addConstructorToChain(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer initializer) {
+		assertNotFrozen();
+	}
 
-    @Override
+	@Override
 	public ICPPFunctionScope getFunctionScope() {
-        if (scope != null)
-            return scope;
+		if (scope != null)
+			return scope;
 
-        // introduce a scope for function declarations and definitions, only.
-        IASTNode node= getParent();
-        while (!(node instanceof IASTDeclaration)) {
-        	if (node==null)
-        		return null;
-        	node= node.getParent();
-        }
-        if (node instanceof IASTParameterDeclaration)
-        	return null;
+		// introduce a scope for function declarations and definitions, only.
+		IASTNode node = getParent();
+		while (!(node instanceof IASTDeclaration)) {
+			if (node == null)
+				return null;
+			node = node.getParent();
+		}
+		if (node instanceof IASTParameterDeclaration)
+			return null;
 
-        if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
-            scope = new CPPFunctionScope(this);
-        }
-        return scope;
-    }
+		if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
+			scope = new CPPFunctionScope(this);
+		}
+		return scope;
+	}
 
-    @Override
+	@Override
 	protected boolean postAccept(ASTVisitor action) {
 		IASTParameterDeclaration[] params = getParameters();
 		for (int i = 0; i < params.length; i++) {
@@ -360,7 +361,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 
 	@Override
 	public ICPPASTVirtSpecifier[] getVirtSpecifiers() {
-        return virtSpecifiers = ArrayUtil.trim(virtSpecifiers);
+		return virtSpecifiers = ArrayUtil.trim(virtSpecifiers);
 	}
 
 	@Override

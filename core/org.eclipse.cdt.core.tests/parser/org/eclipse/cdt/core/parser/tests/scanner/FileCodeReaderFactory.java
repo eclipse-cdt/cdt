@@ -20,16 +20,17 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 
 public class FileCodeReaderFactory extends InternalFileContentProvider {
-    private static FileCodeReaderFactory instance;
+	private static FileCodeReaderFactory instance;
 
-    private FileCodeReaderFactory() {}
-    
-    @Override
+	private FileCodeReaderFactory() {
+	}
+
+	@Override
 	public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
 		return (InternalFileContent) FileContent.createForExternalFileLocation(path);
 	}
 
-    public static FileCodeReaderFactory getInstance() {
+	public static FileCodeReaderFactory getInstance() {
 		if (instance == null)
 			instance = new FileCodeReaderFactory();
 		return instance;

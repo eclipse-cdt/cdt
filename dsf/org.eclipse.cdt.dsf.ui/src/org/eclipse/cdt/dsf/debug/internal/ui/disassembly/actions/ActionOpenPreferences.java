@@ -21,10 +21,12 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 public final class ActionOpenPreferences extends Action {
 	private final static String PREF_PAGE_ID = "org.eclipse.cdt.dsf.debug.ui.disassembly.preferencePage"; //$NON-NLS-1$
 	private final Shell fShell;
+
 	public ActionOpenPreferences(Shell shell) {
-		fShell= shell;
+		fShell = shell;
 		setText(DisassemblyMessages.Disassembly_action_OpenPreferences_label);
 	}
+
 	@Override
 	public void run() {
 		PreferencesUtil.createPreferenceDialogOn(fShell, PREF_PAGE_ID, new String[] { PREF_PAGE_ID }, null).open();

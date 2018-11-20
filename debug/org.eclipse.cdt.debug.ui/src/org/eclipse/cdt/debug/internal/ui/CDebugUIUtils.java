@@ -90,38 +90,37 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class CDebugUIUtils {
 
-	static public IRegion findWord( IDocument document, int offset ) {
+	static public IRegion findWord(IDocument document, int offset) {
 		int start = -1;
 		int end = -1;
 		try {
 			int pos = offset;
 			char c;
-			while( pos >= 0 ) {
-				c = document.getChar( pos );
-				if ( !Character.isJavaIdentifierPart( c ) )
+			while (pos >= 0) {
+				c = document.getChar(pos);
+				if (!Character.isJavaIdentifierPart(c))
 					break;
 				--pos;
 			}
 			start = pos;
 			pos = offset;
 			int length = document.getLength();
-			while( pos < length ) {
-				c = document.getChar( pos );
-				if ( !Character.isJavaIdentifierPart( c ) )
+			while (pos < length) {
+				c = document.getChar(pos);
+				if (!Character.isJavaIdentifierPart(c))
 					break;
 				++pos;
 			}
 			end = pos;
+		} catch (BadLocationException x) {
 		}
-		catch( BadLocationException x ) {
-		}
-		if ( start > -1 && end > -1 ) {
-			if ( start == offset && end == offset )
-				return new Region( offset, 0 );
-			else if ( start == offset )
-				return new Region( start, end - start );
+		if (start > -1 && end > -1) {
+			if (start == offset && end == offset)
+				return new Region(offset, 0);
+			else if (start == offset)
+				return new Region(start, end - start);
 			else
-				return new Region( start + 1, end - start - 1 );
+				return new Region(start + 1, end - start - 1);
 		}
 		return null;
 	}
@@ -137,66 +136,63 @@ public class CDebugUIUtils {
 	 */
 	static public ICStackFrame getCurrentStackFrame() {
 		IAdaptable context = DebugUITools.getDebugContext();
-		return ( context != null ) ? (ICStackFrame)context.getAdapter( ICStackFrame.class ) : null;
+		return (context != null) ? (ICStackFrame) context.getAdapter(ICStackFrame.class) : null;
 	}
 
 	/**
 	 * Moved from CDebugModelPresentation because it is also used by CVariableLabelProvider.
 	 */
-	static public String getValueText( IValue value ) {
+	static public String getValueText(IValue value) {
 		StringBuilder label = new StringBuilder();
-		if ( value instanceof ICDebugElementStatus && !((ICDebugElementStatus)value).isOK() ) {
-			label.append(  MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.4" ), (Object[]) new String[] { ((ICDebugElementStatus)value).getMessage() } ) ); //$NON-NLS-1$
-		}
-		else if ( value instanceof ICValue ) {
+		if (value instanceof ICDebugElementStatus && !((ICDebugElementStatus) value).isOK()) {
+			label.append(MessageFormat.format(CDebugUIMessages.getString("CDTDebugModelPresentation.4"), //$NON-NLS-1$
+					(Object[]) new String[] { ((ICDebugElementStatus) value).getMessage() }));
+		} else if (value instanceof ICValue) {
 			ICType type = null;
 			try {
-				type = ((ICValue)value).getType();
-			}
-			catch( DebugException e ) {
+				type = ((ICValue) value).getType();
+			} catch (DebugException e) {
 			}
 			try {
 				String valueString = value.getValueString();
-				if ( valueString != null ) {
+				if (valueString != null) {
 					valueString = valueString.trim();
-					if ( type != null && type.isCharacter() ) {
-						if ( valueString.length() == 0 )
+					if (type != null && type.isCharacter()) {
+						if (valueString.length() == 0)
 							valueString = "."; //$NON-NLS-1$
-						label.append( valueString );
-					}
-					else if ( valueString.length() > 0 ) {
-							label.append( valueString );
+						label.append(valueString);
+					} else if (valueString.length() > 0) {
+						label.append(valueString);
 					}
 				}
+			} catch (DebugException e1) {
 			}
-			catch( DebugException e1 ) {
-			}
-		}	
+		}
 		return label.toString();
 	}
 
 	/**
 	 * Moved from CDebugModelPresentation because it is also used by CVariableLabelProvider.
 	 */
-	public static String getVariableTypeName( ICType type ) {
+	public static String getVariableTypeName(ICType type) {
 		StringBuilder result = new StringBuilder();
-		if ( type != null ) {
+		if (type != null) {
 			String typeName = type.getName();
-			if ( typeName != null )
+			if (typeName != null)
 				typeName = typeName.trim();
-			if ( type.isArray() && typeName != null ) {
-				int index = typeName.indexOf( '[' );
-				if ( index != -1 )
-					typeName = typeName.substring( 0, index ).trim();
+			if (type.isArray() && typeName != null) {
+				int index = typeName.indexOf('[');
+				if (index != -1)
+					typeName = typeName.substring(0, index).trim();
 			}
-			if ( typeName != null && typeName.length() > 0 ) {
-				result.append( typeName );
-				if ( type.isArray() ) {
+			if (typeName != null && typeName.length() > 0) {
+				result.append(typeName);
+				if (type.isArray()) {
 					int[] dims = type.getArrayDimensions();
-					for( int i = 0; i < dims.length; ++i ) {
-						result.append( '[' );
-						result.append( dims[i] );
-						result.append( ']' );
+					for (int i = 0; i < dims.length; ++i) {
+						result.append('[');
+						result.append(dims[i]);
+						result.append(']');
 					}
 				}
 			}
@@ -204,17 +200,17 @@ public class CDebugUIUtils {
 		return result.toString();
 	}
 
-	public static String getVariableName( IVariable variable ) throws DebugException {
-		return decorateText( variable, variable.getName() );
+	public static String getVariableName(IVariable variable) throws DebugException {
+		return decorateText(variable, variable.getName());
 	}
 
-	public static String getEditorFilePath( IEditorInput input ) throws CoreException {
-		if ( input instanceof IFileEditorInput ) {
-			IPath location = ((IFileEditorInput)input).getFile().getLocation();
+	public static String getEditorFilePath(IEditorInput input) throws CoreException {
+		if (input instanceof IFileEditorInput) {
+			IPath location = ((IFileEditorInput) input).getFile().getLocation();
 			if (location != null) {
 				return location.toOSString();
 			}
-			URI locationURI = ((IFileEditorInput)input).getFile().getLocationURI();
+			URI locationURI = ((IFileEditorInput) input).getFile().getLocationURI();
 			if (locationURI != null) {
 				IPath uriPath = URIUtil.toPath(locationURI);
 				if (uriPath != null) {
@@ -223,34 +219,34 @@ public class CDebugUIUtils {
 			}
 			return ""; //$NON-NLS-1$
 		}
-		if ( input instanceof IStorageEditorInput ) {
-			return ((IStorageEditorInput)input).getStorage().getFullPath().toOSString();
+		if (input instanceof IStorageEditorInput) {
+			return ((IStorageEditorInput) input).getStorage().getFullPath().toOSString();
 		}
-		if ( input instanceof IPathEditorInput ) {
-			return ((IPathEditorInput)input).getPath().toOSString();
+		if (input instanceof IPathEditorInput) {
+			return ((IPathEditorInput) input).getPath().toOSString();
 		}
-		if ( input instanceof IURIEditorInput)
-		{
-			IPath uriPath = URIUtil.toPath(((IURIEditorInput)input).getURI());
+		if (input instanceof IURIEditorInput) {
+			IPath uriPath = URIUtil.toPath(((IURIEditorInput) input).getURI());
 			if (uriPath != null)
 				return uriPath.toOSString();
 		}
 		return ""; //$NON-NLS-1$
 	}
 
-	public static String decorateText( Object element, String text ) {
-		if ( text == null )
+	public static String decorateText(Object element, String text) {
+		if (text == null)
 			return null;
-		StringBuilder baseText = new StringBuilder( text );
-		if ( element instanceof ICDebugElementStatus && !((ICDebugElementStatus)element).isOK() ) {
-			baseText.append( MessageFormat.format( " <{0}>", new Object[] { ((ICDebugElementStatus)element).getMessage() } ) ); //$NON-NLS-1$
+		StringBuilder baseText = new StringBuilder(text);
+		if (element instanceof ICDebugElementStatus && !((ICDebugElementStatus) element).isOK()) {
+			baseText.append(
+					MessageFormat.format(" <{0}>", new Object[] { ((ICDebugElementStatus) element).getMessage() })); //$NON-NLS-1$
 		}
-		if ( element instanceof IAdaptable ) {
-			IEnableDisableTarget target = ((IAdaptable)element).getAdapter( IEnableDisableTarget.class );
-			if ( target != null ) {
-				if ( !target.isEnabled() ) {
-					baseText.append( ' ' );
-					baseText.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.25" ) ); //$NON-NLS-1$
+		if (element instanceof IAdaptable) {
+			IEnableDisableTarget target = ((IAdaptable) element).getAdapter(IEnableDisableTarget.class);
+			if (target != null) {
+				if (!target.isEnabled()) {
+					baseText.append(' ');
+					baseText.append(CDebugUIMessages.getString("CDTDebugModelPresentation.25")); //$NON-NLS-1$
 				}
 			}
 		}
@@ -263,9 +259,8 @@ public class CDebugUIUtils {
 	 * @param message
 	 * @param e
 	 */
-	static public void openError (final String title, final String message, final Exception e)
-	{
-		UIJob uiJob = new UIJob("open error"){ //$NON-NLS-1$
+	static public void openError(final String title, final String message, final Exception e) {
+		UIJob uiJob = new UIJob("open error") { //$NON-NLS-1$
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -276,96 +271,111 @@ public class CDebugUIUtils {
 
 				Shell shell = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
 
-				MessageDialog.openError(
-						shell,
-						title,
-						message + "\n" + detail); //$NON-NLS-1$
+				MessageDialog.openError(shell, title, message + "\n" + detail); //$NON-NLS-1$
 				return Status.OK_STATUS;
-			}};
-			uiJob.setSystem(true);
-			uiJob.schedule();
+			}
+		};
+		uiJob.setSystem(true);
+		uiJob.schedule();
 	}
-	
-    /**
-     * Resolves the {@link IBreakpoint} from the given editor and ruler information. Returns <code>null</code>
-     * if no breakpoint exists or the operation fails.
-     * 
-     * @param editor the editor
-     * @param info the current ruler information
-     * @return the {@link IBreakpoint} from the current editor position or <code>null</code>
-     */
-    public static IBreakpoint getBreakpointFromEditor(ITextEditor editor, IVerticalRulerInfo info) {
-        IAnnotationModel annotationModel = editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
-        IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-        if (annotationModel != null) {
-            Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
-            while (iterator.hasNext()) {
-                Object object = iterator.next();
-                if (object instanceof SimpleMarkerAnnotation) {
-                    SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
-                    IMarker marker = markerAnnotation.getMarker();
-                    try {
-                        if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
-                            Position position = annotationModel.getPosition(markerAnnotation);
-                            int line = document.getLineOfOffset(position.getOffset());
-                            if (line == info.getLineOfLastMouseButtonActivity()) {
-                                IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
-                                if (breakpoint != null) {
-                                    return breakpoint;
-                                }
-                            }
-                        }
-                    } catch (CoreException e) {
-                    } catch (BadLocationException e) {
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
-    public static void editBreakpointProperties(IWorkbenchPart part, final ICBreakpoint bp) {
-        final ISelection debugContext = DebugUITools.getDebugContextForPart(part);
-        CBreakpointPropertyDialogAction propertiesAction = new CBreakpointPropertyDialogAction(
-            part.getSite(), 
-            new ISelectionProvider() {
-                @Override
-                public ISelection getSelection() {
-                    return new StructuredSelection( bp );
-                }
-                @Override public void addSelectionChangedListener( ISelectionChangedListener listener ) {}
-                @Override public void removeSelectionChangedListener( ISelectionChangedListener listener ) {}
-                @Override public void setSelection( ISelection selection ) {}
-            }, 
-            new IDebugContextProvider() {
-                @Override
-                public ISelection getActiveContext() {
-                    return debugContext;
-                }
-                @Override public void addDebugContextListener(IDebugContextListener listener) {}
-                @Override public void removeDebugContextListener(IDebugContextListener listener) {}
-                @Override public IWorkbenchPart getPart() { return null; }
-                
-            }
-            );
-        propertiesAction.run();
-        propertiesAction.dispose();
-    }
-    
-    /**
-     * Formats the given key stroke or click name and the modifier keys 
-     * to a key binding string that can be used in action texts. 
-     * 
-     * @param modifierKeys the modifier keys
-     * @param keyOrClick a key stroke or click, e.g. "Double Click"
-     * @return the formatted keyboard shortcut string, e.g. "Shift+Double Click"
-     * 
-     * @since 8.1
-     */
-    public static final String formatKeyBindingString(int modifierKeys, String keyOrClick) {
-        // this should actually all be delegated to KeyStroke class
-        return KeyStroke.getInstance(modifierKeys, KeyStroke.NO_KEY).format() + keyOrClick; 
-    }
+	/**
+	 * Resolves the {@link IBreakpoint} from the given editor and ruler information. Returns <code>null</code>
+	 * if no breakpoint exists or the operation fails.
+	 * 
+	 * @param editor the editor
+	 * @param info the current ruler information
+	 * @return the {@link IBreakpoint} from the current editor position or <code>null</code>
+	 */
+	public static IBreakpoint getBreakpointFromEditor(ITextEditor editor, IVerticalRulerInfo info) {
+		IAnnotationModel annotationModel = editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
+		IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		if (annotationModel != null) {
+			Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
+			while (iterator.hasNext()) {
+				Object object = iterator.next();
+				if (object instanceof SimpleMarkerAnnotation) {
+					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
+					IMarker marker = markerAnnotation.getMarker();
+					try {
+						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
+							Position position = annotationModel.getPosition(markerAnnotation);
+							int line = document.getLineOfOffset(position.getOffset());
+							if (line == info.getLineOfLastMouseButtonActivity()) {
+								IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager()
+										.getBreakpoint(marker);
+								if (breakpoint != null) {
+									return breakpoint;
+								}
+							}
+						}
+					} catch (CoreException e) {
+					} catch (BadLocationException e) {
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	public static void editBreakpointProperties(IWorkbenchPart part, final ICBreakpoint bp) {
+		final ISelection debugContext = DebugUITools.getDebugContextForPart(part);
+		CBreakpointPropertyDialogAction propertiesAction = new CBreakpointPropertyDialogAction(part.getSite(),
+				new ISelectionProvider() {
+					@Override
+					public ISelection getSelection() {
+						return new StructuredSelection(bp);
+					}
+
+					@Override
+					public void addSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+
+					@Override
+					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+
+					@Override
+					public void setSelection(ISelection selection) {
+					}
+				}, new IDebugContextProvider() {
+					@Override
+					public ISelection getActiveContext() {
+						return debugContext;
+					}
+
+					@Override
+					public void addDebugContextListener(IDebugContextListener listener) {
+					}
+
+					@Override
+					public void removeDebugContextListener(IDebugContextListener listener) {
+					}
+
+					@Override
+					public IWorkbenchPart getPart() {
+						return null;
+					}
+
+				});
+		propertiesAction.run();
+		propertiesAction.dispose();
+	}
+
+	/**
+	 * Formats the given key stroke or click name and the modifier keys 
+	 * to a key binding string that can be used in action texts. 
+	 * 
+	 * @param modifierKeys the modifier keys
+	 * @param keyOrClick a key stroke or click, e.g. "Double Click"
+	 * @return the formatted keyboard shortcut string, e.g. "Shift+Double Click"
+	 * 
+	 * @since 8.1
+	 */
+	public static final String formatKeyBindingString(int modifierKeys, String keyOrClick) {
+		// this should actually all be delegated to KeyStroke class
+		return KeyStroke.getInstance(modifierKeys, KeyStroke.NO_KEY).format() + keyOrClick;
+	}
 
 	/**
 	 * Returns an editor id appropriate for opening the given file
@@ -425,7 +435,8 @@ public class CDebugUIUtils {
 		IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
 
 		IEditorDescriptor defaultEditor = editorReg.getDefaultEditor(name, contentType);
-		defaultEditor = IDE.overrideDefaultEditorAssociation(new FileStoreEditorInput(fileStore), contentType, defaultEditor);
+		defaultEditor = IDE.overrideDefaultEditorAssociation(new FileStoreEditorInput(fileStore), contentType,
+				defaultEditor);
 		return getEditorDescriptor(name, editorReg, defaultEditor, allowInteractive).getId();
 	}
 
@@ -448,9 +459,8 @@ public class CDebugUIUtils {
 	 * @deprecated Deprecated on creation as this is waiting for Bug 516470 to be resolved
 	 */
 	@Deprecated
-	private static IEditorDescriptor getEditorDescriptor(String name,
-			IEditorRegistry editorReg, IEditorDescriptor defaultDescriptor, boolean allowInteractive)
-			throws PartInitException {
+	private static IEditorDescriptor getEditorDescriptor(String name, IEditorRegistry editorReg,
+			IEditorDescriptor defaultDescriptor, boolean allowInteractive) throws PartInitException {
 
 		if (defaultDescriptor != null) {
 			return defaultDescriptor;
@@ -466,8 +476,7 @@ public class CDebugUIUtils {
 
 		// if no valid editor found, bail out
 		if (editorDesc == null) {
-			throw new PartInitException(
-					IDEWorkbenchMessages.IDE_noFileEditorFound);
+			throw new PartInitException(IDEWorkbenchMessages.IDE_noFileEditorFound);
 		}
 
 		return editorDesc;
@@ -499,5 +508,4 @@ public class CDebugUIUtils {
 		return res;
 	}
 
-    
 }

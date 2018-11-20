@@ -30,34 +30,39 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CLocationSourceTab extends CLocationTab {
-	
+
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		label.setText(Messages.CLocationSourceTab_0);  
+		label.setText(Messages.CLocationSourceTab_0);
 	}
-	
+
 	@Override
 	public ICExclusionPatternPathEntry newEntry(IPath p, IPath[] ex, boolean isWorkspacePath) {
 		return new CSourceEntry(p, ex, isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0);
 	}
+
 	@Override
 	public ICExclusionPatternPathEntry newEntry(IFolder f, IPath[] ex, boolean isWorkspacePath) {
 		return new CSourceEntry(f, ex, isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0);
 	}
+
 	@Override
 	public ICExclusionPatternPathEntry[] getEntries(ICResourceDescription cfgd) {
 		return cfgd.getConfiguration().getSourceEntries();
 	}
+
 	@Override
 	public void setEntries(ICResourceDescription cfgd, ICExclusionPatternPathEntry[] data) {
 		ICSourceEntry[] out = null;
 		if (data != null) {
 			out = new ICSourceEntry[data.length];
-			for (int i=0; i<out.length; i++) out[i] = (ICSourceEntry)data[i];
+			for (int i = 0; i < out.length; i++)
+				out[i] = (ICSourceEntry) data[i];
 		}
 		try {
 			cfgd.getConfiguration().setSourceEntries(out);
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 	}
 }

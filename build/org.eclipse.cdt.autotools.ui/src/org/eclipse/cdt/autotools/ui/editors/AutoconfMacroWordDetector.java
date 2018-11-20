@@ -19,8 +19,7 @@ public class AutoconfMacroWordDetector implements IWordDetector {
 
 	@Override
 	public boolean isWordPart(char c) {
-		return ((Character.isLetter(c) && Character.isUpperCase(c)) || 
-				Character.isDigit(c) ||	c == '_');
+		return ((Character.isLetter(c) && Character.isUpperCase(c)) || Character.isDigit(c) || c == '_');
 	}
 
 	@Override

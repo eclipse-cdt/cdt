@@ -22,6 +22,7 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCPPNamespace extends CompositeCPPBinding implements ICPPNamespace {
 	ICPPNamespace[] namespaces;
+
 	public CompositeCPPNamespace(ICompositesFactory cf, ICPPNamespace[] namespaces) {
 		super(cf, namespaces[0]);
 		this.namespaces = namespaces;
@@ -30,7 +31,7 @@ class CompositeCPPNamespace extends CompositeCPPBinding implements ICPPNamespace
 	@Override
 	public IBinding[] getMemberBindings() {
 		IIndexFragmentBinding[][] memberBindings = new IIndexFragmentBinding[namespaces.length][];
-		for(int i=0; i<namespaces.length; i++) {
+		for (int i = 0; i < namespaces.length; i++) {
 			IBinding[] bindings = namespaces[i].getMemberBindings();
 			memberBindings[i] = new IIndexFragmentBinding[bindings.length];
 			System.arraycopy(bindings, 0, memberBindings[i], 0, bindings.length);

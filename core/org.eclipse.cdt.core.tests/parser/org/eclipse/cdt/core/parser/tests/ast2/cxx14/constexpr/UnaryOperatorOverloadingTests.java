@@ -15,15 +15,25 @@ import junit.framework.TestSuite;
 
 public class UnaryOperatorOverloadingTests extends TestBase {
 	public static class NonIndexing extends UnaryOperatorOverloadingTests {
-		public NonIndexing() {setStrategy(new NonIndexingTestStrategy());}
-		public static TestSuite suite() {return suite(NonIndexing.class);}
+		public NonIndexing() {
+			setStrategy(new NonIndexingTestStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(NonIndexing.class);
+		}
 	}
-	
+
 	public static class SingleProject extends UnaryOperatorOverloadingTests {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true, false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(true, false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
-	
+
 	//	class Point {
 	//		int x, y;
 	//	public:
@@ -41,12 +51,12 @@ public class UnaryOperatorOverloadingTests extends TestBase {
 	//	  ++p;
 	//	  return p.getY();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testPrefixIncrementAsMemberFunction() throws Exception {
-	  assertEvaluationEquals(6);
+		assertEvaluationEquals(6);
 	}
-	
+
 	//	class Point {
 	//	  int x, y;
 	//	  friend constexpr Point& operator++(Point&);
@@ -68,9 +78,9 @@ public class UnaryOperatorOverloadingTests extends TestBase {
 	//	  ++p;
 	//	  return p.getY();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testPrefixIncrementAsNonMemberFunction() throws Exception {
-	  assertEvaluationEquals(6);
+		assertEvaluationEquals(6);
 	}
 }

@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 
-
 /**
  * This interface represents a tool-integrator-defined, ordered set of tools
  * that transform the project's input into the project's outputs.  A
@@ -37,21 +36,21 @@ import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IToolChain extends IHoldsOptions {
-	public static final String TOOL_CHAIN_ELEMENT_NAME = "toolChain";	//$NON-NLS-1$
-	public static final String OS_LIST = "osList";						//$NON-NLS-1$
-	public static final String ARCH_LIST = "archList";					//$NON-NLS-1$
-	public static final String ERROR_PARSERS = "errorParsers";			//$NON-NLS-1$
-	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
-	public static final String CONVERT_TO_ID = "convertToId";			//$NON-NLS-1$
-	public static final String TARGET_TOOL = "targetTool";				//$NON-NLS-1$
-	public static final String SECONDARY_OUTPUTS = "secondaryOutputs";	//$NON-NLS-1$
-	public static final String IS_TOOL_CHAIN_SUPPORTED = "isToolChainSupported";			//$NON-NLS-1$
-	public static final String CONFIGURATION_ENVIRONMENT_SUPPLIER = "configurationEnvironmentSupplier";			//$NON-NLS-1$
-	public static final String CONFIGURATION_MACRO_SUPPLIER = "configurationMacroSupplier";			//$NON-NLS-1$
+	public static final String TOOL_CHAIN_ELEMENT_NAME = "toolChain"; //$NON-NLS-1$
+	public static final String OS_LIST = "osList"; //$NON-NLS-1$
+	public static final String ARCH_LIST = "archList"; //$NON-NLS-1$
+	public static final String ERROR_PARSERS = "errorParsers"; //$NON-NLS-1$
+	public static final String VERSIONS_SUPPORTED = "versionsSupported"; //$NON-NLS-1$
+	public static final String CONVERT_TO_ID = "convertToId"; //$NON-NLS-1$
+	public static final String TARGET_TOOL = "targetTool"; //$NON-NLS-1$
+	public static final String SECONDARY_OUTPUTS = "secondaryOutputs"; //$NON-NLS-1$
+	public static final String IS_TOOL_CHAIN_SUPPORTED = "isToolChainSupported"; //$NON-NLS-1$
+	public static final String CONFIGURATION_ENVIRONMENT_SUPPLIER = "configurationEnvironmentSupplier"; //$NON-NLS-1$
+	public static final String CONFIGURATION_MACRO_SUPPLIER = "configurationMacroSupplier"; //$NON-NLS-1$
 	public static final String SUPPORTS_MANAGED_BUILD = "supportsManagedBuild"; //$NON-NLS-1$
-	public static final String IS_SYSTEM= "isSystem";							//$NON-NLS-1$
-	public static final String NON_INTERNAL_BUILDER_ID = "nonInternalBuilderId";	//$NON-NLS-1$
-	public static final String RESOURCE_TYPE_BASED_DISCOVERY = "resourceTypeBasedDiscovery";	//$NON-NLS-1$
+	public static final String IS_SYSTEM = "isSystem"; //$NON-NLS-1$
+	public static final String NON_INTERNAL_BUILDER_ID = "nonInternalBuilderId"; //$NON-NLS-1$
+	public static final String RESOURCE_TYPE_BASED_DISCOVERY = "resourceTypeBasedDiscovery"; //$NON-NLS-1$
 
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
@@ -76,7 +75,8 @@ public interface IToolChain extends IHoldsOptions {
 	 *
 	 * @return ITargetPlatform
 	 */
-	public ITargetPlatform createTargetPlatform(ITargetPlatform superClass, String Id, String name, boolean isExtensionElement);
+	public ITargetPlatform createTargetPlatform(ITargetPlatform superClass, String Id, String name,
+			boolean isExtensionElement);
 
 	/**
 	 * Returns the target-platform child of this tool-chain
@@ -98,6 +98,7 @@ public interface IToolChain extends IHoldsOptions {
 	 */
 
 	public String getVersionsSupported();
+
 	/**
 	 * Returns the 'convertToId' of this tool-chain
 	 *
@@ -384,7 +385,7 @@ public interface IToolChain extends IHoldsOptions {
 	 * Returns an IOptionPathConverter implementation for this toolchain
 	 * or null, if no conversion is required
 	 */
-	public IOptionPathConverter getOptionPathConverter() ;
+	public IOptionPathConverter getOptionPathConverter();
 
 	IFolderInfo getParentFolderInfo();
 

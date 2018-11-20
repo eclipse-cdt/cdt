@@ -127,22 +127,18 @@ public class QMLDirectoryInfo {
 				}
 			} else if (c instanceof IQDirResourceCommand) {
 				IQDirResourceCommand rc = (IQDirResourceCommand) c;
-				resources.add(new ResourceFile(rc.getFile().getText(),
-						rc.getInitialVersion().getVersionString(),
-						false, false));
+				resources.add(new ResourceFile(rc.getFile().getText(), rc.getInitialVersion().getVersionString(), false,
+						false));
 			} else if (c instanceof IQDirInternalCommand) {
 				IQDirInternalCommand rc = (IQDirInternalCommand) c;
-				resources.add(new ResourceFile(rc.getFile().getText(),
-						null, true, false));
+				resources.add(new ResourceFile(rc.getFile().getText(), null, true, false));
 			} else if (c instanceof IQDirSingletonCommand) {
 				IQDirSingletonCommand rc = (IQDirSingletonCommand) c;
-				resources.add(new ResourceFile(rc.getFile().getText(),
-						rc.getInitialVersion().getVersionString(),
-						false, true));
+				resources.add(new ResourceFile(rc.getFile().getText(), rc.getInitialVersion().getVersionString(), false,
+						true));
 			} else if (c instanceof IQDirDependsCommand) {
 				IQDirDependsCommand dc = (IQDirDependsCommand) c;
-				depends.add(new Module(dc.getModuleIdentifier().getText(),
-						dc.getInitialVersion().getVersionString()));
+				depends.add(new Module(dc.getModuleIdentifier().getText(), dc.getInitialVersion().getVersionString()));
 			} else if (c instanceof IQDirClassnameCommand) {
 				if (classname == null) {
 					classname = ((IQDirClassnameCommand) c).getIdentifier().getText();

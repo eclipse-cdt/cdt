@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -63,27 +62,28 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 
 	private static final String label1 = Messages.BuildStepsTab_0;
 	private static final String label2 = Messages.BuildStepsTab_1;
-	private static final String PATH_SEPERATOR = ";";	//$NON-NLS-1$
-	private static final String rcbsToolId = "org.eclipse.cdt.managedbuilder.ui.rcbs";	//$NON-NLS-1$
-	private static final String rcbsToolName = "Resource Custom Build Step";	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype";	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeName = "Resource Custom Build Step Input Type";	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype";	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeName = "Resource Custom Build Step Output Type";	//$NON-NLS-1$
+	private static final String PATH_SEPERATOR = ";"; //$NON-NLS-1$
+	private static final String rcbsToolId = "org.eclipse.cdt.managedbuilder.ui.rcbs"; //$NON-NLS-1$
+	private static final String rcbsToolName = "Resource Custom Build Step"; //$NON-NLS-1$
+	private static final String rcbsToolInputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype"; //$NON-NLS-1$
+	private static final String rcbsToolInputTypeName = "Resource Custom Build Step Input Type"; //$NON-NLS-1$
+	private static final String rcbsToolOutputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype"; //$NON-NLS-1$
+	private static final String rcbsToolOutputTypeName = "Resource Custom Build Step Output Type"; //$NON-NLS-1$
 
-	private enum FIELD {PRECMD, PREANN, PSTCMD, PSTANN}
+	private enum FIELD {
+		PRECMD, PREANN, PSTCMD, PSTANN
+	}
+
 	private Set<String> set1 = new TreeSet<String>();
 	private Set<String> set2 = new TreeSet<String>();
 	private Set<String> set3 = new TreeSet<String>();
 	private Set<String> set4 = new TreeSet<String>();
 
 	private static final String[] rcbsApplicabilityRules = {
-		Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override,
-//		ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_before"),
-//		ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_after"),
-		Messages.ResourceCustomBuildStepBlock_label_applicability_rule_disable,
-	};
-
+			Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override,
+			//		ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_before"),
+			//		ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_after"),
+			Messages.ResourceCustomBuildStepBlock_label_applicability_rule_disable, };
 
 	@Override
 	public void createControls(Composite parent) {
@@ -100,54 +100,54 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	 *
 	 */
 	private void createForProject() {
-		Group g1 = setupGroup (usercomp, Messages.BuildStepsTab_2, 1, GridData.FILL_HORIZONTAL);
+		Group g1 = setupGroup(usercomp, Messages.BuildStepsTab_2, 1, GridData.FILL_HORIZONTAL);
 		setupLabel(g1, label1, 1, GridData.BEGINNING);
 		preCmd = setCombo(g1, FIELD.PRECMD, set1);
 		preCmd.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify &&
-					!preCmd.getText().equals(getCfg().getPrebuildStep()))
+				if (canModify && !preCmd.getText().equals(getCfg().getPrebuildStep()))
 					getCfg().setPrebuildStep(preCmd.getText());
-			}});
+			}
+		});
 
 		setupLabel(g1, label2, 1, GridData.BEGINNING);
 		preDes = setCombo(g1, FIELD.PREANN, set2);
 		preDes.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify &&
-					!preDes.getText().equals(getCfg().getPreannouncebuildStep()))
+				if (canModify && !preDes.getText().equals(getCfg().getPreannouncebuildStep()))
 					getCfg().setPreannouncebuildStep(preDes.getText());
-			}});
+			}
+		});
 
-		Group g2 = setupGroup (usercomp, Messages.BuildStepsTab_3, 1, GridData.FILL_HORIZONTAL);
+		Group g2 = setupGroup(usercomp, Messages.BuildStepsTab_3, 1, GridData.FILL_HORIZONTAL);
 		setupLabel(g2, label1, 1, GridData.BEGINNING);
 		postCmd = setCombo(g2, FIELD.PSTCMD, set3);
 		postCmd.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify &&
-					!postCmd.getText().equals(getCfg().getPostbuildStep()))
-				    getCfg().setPostbuildStep(postCmd.getText());
-			}});
+				if (canModify && !postCmd.getText().equals(getCfg().getPostbuildStep()))
+					getCfg().setPostbuildStep(postCmd.getText());
+			}
+		});
 
 		setupLabel(g2, label2, 1, GridData.BEGINNING);
 		postDes = setCombo(g2, FIELD.PSTANN, set4);
 		postDes.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify &&
-				   !postDes.getText().equals(getCfg().getPostannouncebuildStep()))
-				   getCfg().setPostannouncebuildStep(postDes.getText());
-			}});
+				if (canModify && !postDes.getText().equals(getCfg().getPostannouncebuildStep()))
+					getCfg().setPostannouncebuildStep(postDes.getText());
+			}
+		});
 	}
 
 	/**
 	 *
 	 */
 	private void createForFile() {
-		Group g1 = setupGroup (usercomp, Messages.BuildStepsTab_4, 1, GridData.FILL_HORIZONTAL);
+		Group g1 = setupGroup(usercomp, Messages.BuildStepsTab_4, 1, GridData.FILL_HORIZONTAL);
 		setupLabel(g1, Messages.ResourceCustomBuildStepBlock_label_applicability, 1, GridData.BEGINNING);
 
 		combo = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
@@ -156,7 +156,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				rcfg.setRcbsApplicability(sel2app(combo.getSelectionIndex()));
-			}});
+			}
+		});
 
 		setupLabel(g1, Messages.BuildStepsTab_5, 1, GridData.BEGINNING);
 		preCmd = setCombo(g1, FIELD.PRECMD, set1);
@@ -170,9 +171,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 						if (add != null && add.length > 0) {
 							add[0].setPaths(preCmd.getText());
 						}
-	    			}
+					}
 				}
-			}});
+			}
+		});
 
 		setupLabel(g1, Messages.BuildStepsTab_6, 1, GridData.BEGINNING);
 		preDes = setCombo(g1, FIELD.PREANN, set2);
@@ -184,7 +186,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 					if (valid(out))
 						out[0].setOutputNames(preDes.getText());
 				}
-			}});
+			}
+		});
 
 		setupLabel(g1, label1, 1, GridData.BEGINNING);
 		postCmd = setCombo(g1, FIELD.PSTCMD, set3);
@@ -193,7 +196,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			public void modifyText(ModifyEvent e) {
 				if (canModify && tool != null)
 					tool.setToolCommand(postCmd.getText());
-			}});
+			}
+		});
 
 		setupLabel(g1, label2, 1, GridData.BEGINNING);
 		postDes = setCombo(g1, FIELD.PSTANN, set4);
@@ -202,12 +206,14 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			public void modifyText(ModifyEvent e) {
 				if (canModify && tool != null)
 					tool.setAnnouncement(postDes.getText());
-			}});
+			}
+		});
 	}
 
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
-		if (cfgd == null) return;
+		if (cfgd == null)
+			return;
 		config = getCfg(cfgd.getConfiguration());
 		cfgdescr = cfgd;
 		update();
@@ -227,11 +233,11 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			postCmd.setText(config.getPostbuildStep());
 			postDes.setText(config.getPostannouncebuildStep());
 		} else {
-			rcfg = (IFileInfo)getResCfg(cfgdescr);
+			rcfg = (IFileInfo) getResCfg(cfgdescr);
 			combo.select(app2sel(rcfg.getRcbsApplicability()));
 			tool = getRcbsTool(rcfg);
 
-			if(tool != null){
+			if (tool != null) {
 				preCmd.setText(getInputTypes(tool));
 				preDes.setText(getOutputNames(tool));
 				postCmd.setText(tool.getToolCommand());
@@ -265,25 +271,27 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		return s;
 	}
 
-
-	private ITool getRcbsTool(IFileInfo rcConfig){
+	private ITool getRcbsTool(IFileInfo rcConfig) {
 		ITool rcbsTools[] = getRcbsTools(rcConfig);
 		ITool rcbsTool = null;
 
-		if(rcbsTools != null)
+		if (rcbsTools != null)
 			rcbsTool = rcbsTools[0];
 		else {
-			rcbsTool = rcConfig.createTool(null,rcbsToolId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolName,false);	//$NON-NLS-1$
+			rcbsTool = rcConfig.createTool(null, rcbsToolId + "." + ManagedBuildManager.getRandomNumber(), rcbsToolName, //$NON-NLS-1$
+					false);
 			rcbsTool.setCustomBuildStep(true);
-			IInputType rcbsToolInputType = rcbsTool.createInputType(null,rcbsToolInputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolInputTypeName,false);	//$NON-NLS-1$
+			IInputType rcbsToolInputType = rcbsTool.createInputType(null,
+					rcbsToolInputTypeId + "." + ManagedBuildManager.getRandomNumber(), rcbsToolInputTypeName, false); //$NON-NLS-1$
 			IAdditionalInput rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput(""); //$NON-NLS-1$
 			rcbsToolInputTypeAdditionalInput.setKind(IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY);
-			rcbsTool.createOutputType(null,rcbsToolOutputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolOutputTypeName,false);	//$NON-NLS-1$
+			rcbsTool.createOutputType(null, rcbsToolOutputTypeId + "." + ManagedBuildManager.getRandomNumber(), //$NON-NLS-1$
+					rcbsToolOutputTypeName, false);
 		}
 		return rcbsTool;
 	}
 
-	private ITool[] getRcbsTools(IResourceInfo rcConfig){
+	private ITool[] getRcbsTools(IResourceInfo rcConfig) {
 		List<ITool> list = new ArrayList<ITool>();
 		ITool tools[] = rcConfig.getTools();
 
@@ -293,14 +301,14 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 				list.add(tool);
 			}
 		}
-		if(list.size() != 0) {
+		if (list.size() != 0) {
 			return list.toArray(new ITool[list.size()]);
 		}
 		return null;
 	}
 
 	private String createList(String[] items) {
-		if(items == null)
+		if (items == null)
 			return ""; //$NON-NLS-1$
 
 		StringBuilder path = new StringBuilder(EMPTY_STR);
@@ -325,9 +333,9 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			cfg2.setPostannouncebuildStep(cfg1.getPostannouncebuildStep());
 		} else {
 			if (page.isMultiCfg()) {
-				ICResourceDescription[] ris1 = (ICResourceDescription[])((ICMultiResourceDescription)src).getItems();
-				ICResourceDescription[] ris2 = (ICResourceDescription[])((ICMultiResourceDescription)dst).getItems();
-				for (int i=0; i<ris1.length; i++)
+				ICResourceDescription[] ris1 = (ICResourceDescription[]) ((ICMultiResourceDescription) src).getItems();
+				ICResourceDescription[] ris2 = (ICResourceDescription[]) ((ICMultiResourceDescription) dst).getItems();
+				for (int i = 0; i < ris1.length; i++)
 					applyToFile(ris1[i], ris2[i]);
 			} else
 				applyToFile(src, dst);
@@ -335,8 +343,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	}
 
 	private void applyToFile(ICResourceDescription src, ICResourceDescription dst) {
-		IFileInfo rcfg1 = (IFileInfo)getResCfg(src);
-		IFileInfo rcfg2 = (IFileInfo)getResCfg(dst);
+		IFileInfo rcfg1 = (IFileInfo) getResCfg(src);
+		IFileInfo rcfg2 = (IFileInfo) getResCfg(dst);
 		rcfg2.setRcbsApplicability(rcfg1.getRcbsApplicability());
 		ITool tool1 = getRcbsTool(rcfg1);
 		ITool tool2 = getRcbsTool(rcfg2);
@@ -346,13 +354,13 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			IAdditionalInput[] add1 = ein1[0].getAdditionalInputs();
 			IAdditionalInput[] add2 = ein2[0].getAdditionalInputs();
 			if (valid(add1) && valid(add2)) {
-//			if (add1 != null && add2 != null && add1.length > 0 && add2.length > 0) {
+				//			if (add1 != null && add2 != null && add1.length > 0 && add2.length > 0) {
 				add2[0].setPaths(createList(add1[0].getPaths()));
 			}
 		}
 		IOutputType[] tmp1 = tool1.getOutputTypes();
 		IOutputType[] tmp2 = tool2.getOutputTypes();
-//		if (tmp1 != null && tmp2 != null && tmp1.length > 0 && tmp2.length > 0) {
+		//		if (tmp1 != null && tmp2 != null && tmp1.length > 0 && tmp2.length > 0) {
 		if (valid(tmp1) && valid(tmp2)) {
 			tmp2[0].setOutputNames(createList(tmp1[0].getOutputNames()));
 		}
@@ -360,22 +368,24 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		tool2.setAnnouncement(tool1.getAnnouncement());
 	}
 
-	private int sel2app(int index){
+	private int sel2app(int index) {
 		String sel = combo.getItem(index);
-		if(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override.equals(sel)){
+		if (Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override.equals(sel)) {
 			return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE;
-		} else if(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_after.equals(sel)){
+		} else if (Messages.ResourceCustomBuildStepBlock_label_applicability_rule_after.equals(sel)) {
 			return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER;
-		} else if(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_before.equals(sel)){
+		} else if (Messages.ResourceCustomBuildStepBlock_label_applicability_rule_before.equals(sel)) {
 			return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE;
 		}
 		return IResourceConfiguration.KIND_DISABLE_RCBS_TOOL;
 	}
 
-	private boolean valid(Object[] arr) { return (arr != null && arr.length > 0); }
+	private boolean valid(Object[] arr) {
+		return (arr != null && arr.length > 0);
+	}
 
-	private int app2sel(int val){
-		switch(val){
+	private int app2sel(int val) {
+		switch (val) {
 		case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER:
 			return combo.indexOf(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_after);
 		case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE:
@@ -388,23 +398,21 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		}
 	}
 
-
 	// This page can be displayed for managed project only
 	@Override
 	public boolean canBeVisible() {
 		if (page.isForProject() || page.isForFile()) {
 			if (page.isMultiCfg()) {
-				ICMultiItemsHolder mih = (ICMultiItemsHolder)getCfg();
-				IConfiguration[] cfs = (IConfiguration[])mih.getItems();
-				for (int i=0; i<cfs.length; i++) {
+				ICMultiItemsHolder mih = (ICMultiItemsHolder) getCfg();
+				IConfiguration[] cfs = (IConfiguration[]) mih.getItems();
+				for (int i = 0; i < cfs.length; i++) {
 					if (cfs[i].getBuilder().isManagedBuildOn())
 						return true;
 				}
 				return false;
 			} else
 				return getCfg().getBuilder().isManagedBuildOn();
-		}
-		else
+		} else
 			return false;
 	}
 
@@ -421,17 +429,21 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			IInputType[] ein = tool.getInputTypes();
 			if (valid(ein)) {
 				IAdditionalInput[] add = ein[0].getAdditionalInputs();
-				if (valid(add)) add[0].setPaths(null);
+				if (valid(add))
+					add[0].setPaths(null);
 			}
 			IOutputType[] tmp = tool.getOutputTypes();
-			if (valid(tmp)) tmp[0].setOutputNames(null);
+			if (valid(tmp))
+				tmp[0].setOutputNames(null);
 			tool.setToolCommand(null);
 			tool.setAnnouncement(null);
 		}
 		update();
 	}
+
 	@Override
-	protected void updateButtons() {} // Do nothing. No buttons to update.
+	protected void updateButtons() {
+	} // Do nothing. No buttons to update.
 
 	private Combo setCombo(Composite c, FIELD field, Set<String> set) {
 		Combo combo = new Combo(c, SWT.BORDER);
@@ -446,8 +458,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 
 	@SuppressWarnings("unchecked")
 	private void updateCombo(Combo combo) {
-		FIELD field = (FIELD)combo.getData(ENUM);
-		Set<String> set   = (Set<String>)combo.getData(SSET);
+		FIELD field = (FIELD) combo.getData(ENUM);
+		Set<String> set = (Set<String>) combo.getData(SSET);
 		if (field == null || set == null)
 			return;
 		combo.removeAll();
@@ -461,14 +473,14 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 				} else {
 					ICResourceDescription r = cf.getResourceDescription(cfgdescr.getPath(), true);
 					if (r != null && r instanceof ICFileDescription)
-						t = getRcbsTool((IFileInfo)getResCfg(r));
+						t = getRcbsTool((IFileInfo) getResCfg(r));
 					if (t == null)
 						continue; // there's no specific resconfig for this configuration
 				}
 				String s = null;
 				switch (field) {
 				case PRECMD:
-					s =  prj ? c.getPrebuildStep() : getInputTypes(t);
+					s = prj ? c.getPrebuildStep() : getInputTypes(t);
 					break;
 				case PREANN:
 					s = prj ? c.getPreannouncebuildStep() : getOutputNames(t);

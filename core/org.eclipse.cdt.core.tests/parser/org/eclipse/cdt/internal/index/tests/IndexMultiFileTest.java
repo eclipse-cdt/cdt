@@ -205,7 +205,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 
 	// test.h
 	//	friend int operator*(double, C) { return 0; }
-	
+
 	// test.cpp *
 	//	namespace N {
 	//
@@ -232,10 +232,10 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//
 	//	template <typename T>
 	//	struct atomic<T*>;
-	
+
 	// test1.cpp
 	//	#include "test.h"
-	
+
 	// test2.cpp *
 	//	#include "test.h"
 	//
@@ -249,7 +249,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testClassTemplatePartialSpecialization_470726() throws Exception {
 		checkBindings();
 	}
-	
+
 	// test.h
 	//	template <bool = false>
 	//	struct base {};
@@ -258,10 +258,10 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	struct derived : private base<B> {
 	//	    constexpr derived() : base<B>() {}
 	//	};
-	
+
 	// test1.cpp
 	//	#include "test.h"
-	
+
 	// test2.cpp *
 	//	template <typename = void>
 	//	struct base {};
@@ -346,7 +346,6 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testStackOverflow_514459() throws Exception {
 		checkBindings();
 	}
-	
 
 	//test.hpp *
 	//	template <typename> class A {};
@@ -365,7 +364,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testAliasTemplateReferencingSameName_518937() throws Exception {
 		checkBindings();
 	}
-	
+
 	//h1.h
 	//	class A {
 	//	    friend class B1;

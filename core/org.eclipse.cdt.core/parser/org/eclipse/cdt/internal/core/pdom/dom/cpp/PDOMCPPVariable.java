@@ -54,7 +54,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 			linkage.new ConfigureVariable(variable, this);
 		}
 	}
-	
+
 	public void initData(IValue initialValue) {
 		try {
 			setValue(initialValue);
@@ -71,8 +71,8 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IVariable) {
 			final Database db = getDB();
-			ICPPVariable var= (ICPPVariable) newBinding;
-			IType newType= var.getType();
+			ICPPVariable var = (ICPPVariable) newBinding;
+			IType newType = var.getType();
 			setType(linkage, newType);
 			setValue(var.getInitialValue());
 			db.putByte(record + ANNOTATIONS, PDOMCPPAnnotations.encodeVariableAnnotations(var));
@@ -142,7 +142,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	@Override
 	public boolean isRegister() {
-		return false;  // We don't care whether the parameter has register storage class specifier or not.
+		return false; // We don't care whether the parameter has register storage class specifier or not.
 	}
 
 	@Override

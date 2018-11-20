@@ -52,10 +52,7 @@ public class MakefileReaderProviderTests extends TestCase {
 		File baseDir = getPluginRelativeFile(new Path("data"));
 		if (baseDir != null)
 			basePath = baseDir.getAbsolutePath() + File.separator;
-		inclDirs = new String[] {
-			basePath + "bogus",
-			basePath + "incl"
-		};
+		inclDirs = new String[] { basePath + "bogus", basePath + "incl" };
 	}
 
 	public void testNoReaderProvider() throws Exception {
@@ -63,9 +60,7 @@ public class MakefileReaderProviderTests extends TestCase {
 		File file = getPluginRelativeFile(path);
 		// doesn't work in packaged plugin, which is fine
 		if (file != null) {
-			IMakefile makefile = MakeCorePlugin.createMakefile(
-					URIUtil.toURI(file.getAbsolutePath()),
-					true, inclDirs);
+			IMakefile makefile = MakeCorePlugin.createMakefile(URIUtil.toURI(file.getAbsolutePath()), true, inclDirs);
 			assertMakefileContents(makefile);
 		}
 	}
@@ -75,8 +70,8 @@ public class MakefileReaderProviderTests extends TestCase {
 		File file = getPluginRelativeFile(path);
 		// doesn't work in packaged plugin, which is fine
 		if (file != null) {
-			IMakefile makefile = MakeCorePlugin.createMakefile(
-					URIUtil.toURI(file.getAbsolutePath()), true, inclDirs, null);
+			IMakefile makefile = MakeCorePlugin.createMakefile(URIUtil.toURI(file.getAbsolutePath()), true, inclDirs,
+					null);
 			assertMakefileContents(makefile);
 		}
 	}
@@ -86,8 +81,7 @@ public class MakefileReaderProviderTests extends TestCase {
 
 		// get base directory for searches
 		final URL url = getPluginRelativeURL(new Path("data").addTrailingSeparator());
-		IMakefile makefile = MakeCorePlugin.createMakefile(
-				URIUtil.toURI(path), true, inclDirs,
+		IMakefile makefile = MakeCorePlugin.createMakefile(URIUtil.toURI(path), true, inclDirs,
 				new IMakefileReaderProvider() {
 
 					@Override
@@ -108,27 +102,17 @@ public class MakefileReaderProviderTests extends TestCase {
 	}
 
 	public void testInMemoryReaderProvider() throws Exception {
-		IMakefile makefile = MakeCorePlugin.createMakefile(
-				URIUtil.toURI("/memory/Makefile.main"), true, inclDirs,
+		IMakefile makefile = MakeCorePlugin.createMakefile(URIUtil.toURI("/memory/Makefile.main"), true, inclDirs,
 				new IMakefileReaderProvider() {
 
 					@Override
 					public Reader getReader(URI fileURI) throws IOException {
 						String name = new File(fileURI).getName();
 						if (name.equals("Makefile.main"))
-							return new StringReader(
-									"VAR = foo\r\n" +
-									"\r\n" +
-									"include Makefile.incl\r\n" +
-									"\r\n" +
-									"main: $(VAR)\r\n" +
-									"	nothing\r\n");
+							return new StringReader("VAR = foo\r\n" + "\r\n" + "include Makefile.incl\r\n" + "\r\n"
+									+ "main: $(VAR)\r\n" + "	nothing\r\n");
 						if (name.equals("Makefile.incl"))
-							return new StringReader(
-									"INCLVAR = bar\r\n" +
-									"\r\n" +
-									"foo.o: .PHONY\r\n"
-									);
+							return new StringReader("INCLVAR = bar\r\n" + "\r\n" + "foo.o: .PHONY\r\n");
 
 						throw new FileNotFoundException(fileURI.getPath());
 					}
@@ -140,21 +124,19 @@ public class MakefileReaderProviderTests extends TestCase {
 
 	public void testReaderIsClosed_Bug338936() throws Exception {
 		final boolean[] streamIsClosed = { false };
-		MakeCorePlugin.createMakefile(
-				URIUtil.toURI("Makefile.main"), true, inclDirs,
-				new IMakefileReaderProvider() {
+		MakeCorePlugin.createMakefile(URIUtil.toURI("Makefile.main"), true, inclDirs, new IMakefileReaderProvider() {
+			@Override
+			public Reader getReader(URI fileURI) throws IOException {
+				return new StringReader("") {
 					@Override
-					public Reader getReader(URI fileURI) throws IOException {
-						return new StringReader("") {
-							@Override
-							public void close() {
-								super.close();
-								streamIsClosed[0] = true;
-							}
-						};
+					public void close() {
+						super.close();
+						streamIsClosed[0] = true;
 					}
+				};
+			}
 
-				});
+		});
 		assertTrue("Stream is not closed", streamIsClosed[0]);
 	}
 
@@ -192,12 +174,9 @@ public class MakefileReaderProviderTests extends TestCase {
 
 	private URL getPluginRelativeURL(IPath path) throws Exception {
 		if (MakeTestsPlugin.getDefault() != null) {
-			URL url = FileLocator.find(
-					MakeTestsPlugin.getDefault().getBundle(),
-					path, null);
+			URL url = FileLocator.find(MakeTestsPlugin.getDefault().getBundle(), path, null);
 			return url != null ? FileLocator.toFileURL(url) : null;
-		}
-		else {
+		} else {
 			return new URL("file", null, path.toFile().getAbsolutePath());
 		}
 	}

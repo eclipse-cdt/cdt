@@ -52,16 +52,16 @@ public class LibraryPathListEditor extends LlvmListEditor {
 		dlg.setText(Messages.LibraryPathListEditor_0);
 		dlg.setMessage(Messages.LibraryPathListEditor_1);
 		String dir = dlg.open();
-		if(dir == null) {
+		if (dir == null) {
 			return null;
 		}
 		//remove white spaces
 		dir = dir.trim();
-		if (dir.length()!=0) {
+		if (dir.length() != 0) {
 			//get all existing items in the list
 			String[] existingItems = getList().getItems();
 			//check that the list doesn't already contain the added item
-			if (existingItems.length>0) {
+			if (existingItems.length > 0) {
 				//return null if duplicate item found
 				for (String item : existingItems) {
 					if (item.equalsIgnoreCase(dir)) {
@@ -86,18 +86,18 @@ public class LibraryPathListEditor extends LlvmListEditor {
 	 */
 	protected void removePressed() {
 		List libPathList = getList();
-        setPresentsDefaultValue(false);
-        String[] selected = libPathList.getSelection();
-        for (String s : selected) {
-            //remove a library path from the LLVM preference store
-            LlvmPreferenceStore.removeLibraryPath(s);
-            //remove a library path from LLVM linker's option
-            LlvmToolOptionPathUtil.removeLlvmLibraryPath(s);
-    		//inform LLVM environment variable supplier that there has been a change
-    		LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
-    		libPathList.remove(s);
-    		selectionChanged();
-        }
+		setPresentsDefaultValue(false);
+		String[] selected = libPathList.getSelection();
+		for (String s : selected) {
+			//remove a library path from the LLVM preference store
+			LlvmPreferenceStore.removeLibraryPath(s);
+			//remove a library path from LLVM linker's option
+			LlvmToolOptionPathUtil.removeLlvmLibraryPath(s);
+			//inform LLVM environment variable supplier that there has been a change
+			LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
+			libPathList.remove(s);
+			selectionChanged();
+		}
 	}
 
 }

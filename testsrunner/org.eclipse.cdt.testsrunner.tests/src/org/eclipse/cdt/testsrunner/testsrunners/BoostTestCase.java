@@ -19,7 +19,6 @@ import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestMessage;
 
-
 /**
  * Tests for {@see BoostTestsRunner} class
  */
@@ -29,12 +28,11 @@ public class BoostTestCase extends BaseTestCase {
 	private static final String DEFAULT_LOCATION_FILE = null;
 	private static final int DEFAULT_LOCATION_LINE = -1;
 	private static final String EXCEPTION_CHECKPOINT_SUFFIX = "\nLast check point was here.";
-	
+
 	@Override
 	public ITestsRunnerProvider createTestsRunner() {
 		return new BoostTestsRunnerProvider();
 	}
-	
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -43,13 +41,12 @@ public class BoostTestCase extends BaseTestCase {
 	//</TestLog>
 	public void testTheOnlyTestCase() {
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test");
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-	
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -60,7 +57,7 @@ public class BoostTestCase extends BaseTestCase {
 	//</TestLog>
 	public void testAFewTestCases() {
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test1");
 		mockModelUpdater.exitTestCase();
@@ -70,7 +67,6 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-	
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -84,7 +80,6 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 		mockModelUpdater.exitTestSuite();
 	}
-	
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -98,7 +93,7 @@ public class BoostTestCase extends BaseTestCase {
 	public void testAFewTestCasesInTestSuite() {
 		// NOTE: This is impossible input data (at least, for current version of Boost), but we check it anyway
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestSuite("InnerTS");
 		mockModelUpdater.enterTestCase("test1");
@@ -110,7 +105,6 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -128,7 +122,6 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestSuite();
 		mockModelUpdater.exitTestSuite();
 	}
-	
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -146,7 +139,7 @@ public class BoostTestCase extends BaseTestCase {
 	public void testSimpleTestsHierarchy() {
 		// NOTE: This is impossible input data (at least, for current version of Boost), but we check it anyway
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestSuite("InnerTS");
 		mockModelUpdater.enterTestSuite("InnerInnerTS");
@@ -162,7 +155,6 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.enterTestCase("test4");
 		mockModelUpdater.exitTestCase();
 	}
-	
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -194,7 +186,7 @@ public class BoostTestCase extends BaseTestCase {
 	//</TestLog>
 	public void testDifferentTestStatuses() {
 		mockModelUpdater.skipCalls("addTestMessage");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("testPass");
 		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
@@ -219,7 +211,6 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-	
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -231,7 +222,7 @@ public class BoostTestCase extends BaseTestCase {
 	//</TestLog>
 	public void testEmptyMessage() {
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test");
 		mockModelUpdater.addTestMessage("file.cpp", 22, ITestMessage.Level.Info, "");
@@ -239,7 +230,6 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -252,15 +242,15 @@ public class BoostTestCase extends BaseTestCase {
 	public void testSpacesInBeginAndEndOfMessage() {
 		// NOTE: Last checkpoint tag cannot be in the middle of exception (at least, for current version of Boost), but we check it anyway
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test");
 		mockModelUpdater.addTestMessage("file", 42, ITestMessage.Level.Warning, "  Custom warning   ");
-		mockModelUpdater.addTestMessage("file2", 47, ITestMessage.Level.Exception, "  Exception message  end   "+EXCEPTION_CHECKPOINT_SUFFIX);
+		mockModelUpdater.addTestMessage("file2", 47, ITestMessage.Level.Exception,
+				"  Exception message  end   " + EXCEPTION_CHECKPOINT_SUFFIX);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -272,15 +262,16 @@ public class BoostTestCase extends BaseTestCase {
 	//</TestLog>
 	public void testMessageWithoutLocation() {
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Warning, "Custom warning");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception, "Exceptions should be located by pass point");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Warning,
+				"Custom warning");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception,
+				"Exceptions should be located by pass point");
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -297,20 +288,22 @@ public class BoostTestCase extends BaseTestCase {
 	public void testMessageWithLocation() {
 		// NOTE: This is impossible input data (at least, for current version of Boost), but we check it anyway
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test");
-		mockModelUpdater.addTestMessage("file.cpp", DEFAULT_LOCATION_LINE, ITestMessage.Level.Warning, "No line number");
+		mockModelUpdater.addTestMessage("file.cpp", DEFAULT_LOCATION_LINE, ITestMessage.Level.Warning,
+				"No line number");
 		mockModelUpdater.addTestMessage("", 1, ITestMessage.Level.Warning, "Empty file name");
 		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 2, ITestMessage.Level.Warning, "No file name");
 		// NOTE: Last check point is not available, so EXCEPTION_CHECKPOINT_SUFFIX should not be added 
-		mockModelUpdater.addTestMessage("file2.cpp", DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception, "Exception without line number");
+		mockModelUpdater.addTestMessage("file2.cpp", DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception,
+				"Exception without line number");
 		mockModelUpdater.addTestMessage("", 3, ITestMessage.Level.Exception, "Exception with empty file name");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 4, ITestMessage.Level.Exception, "Exception without file name");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 4, ITestMessage.Level.Exception,
+				"Exception without file name");
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -335,27 +328,32 @@ public class BoostTestCase extends BaseTestCase {
 	public void testMessagesWithAndWithoutLocation() {
 		// NOTE: This is impossible input data (at least, for current version of Boost), but we check it anyway
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test1");
 		mockModelUpdater.addTestMessage("file1.cpp", 1, ITestMessage.Level.Error, "Message with location");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Error, "Message without location");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Error,
+				"Message without location");
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("test2");
-		mockModelUpdater.addTestMessage("file2.cpp", 2, ITestMessage.Level.Exception, "Exception with location"+EXCEPTION_CHECKPOINT_SUFFIX);
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception, "Exception without location");
+		mockModelUpdater.addTestMessage("file2.cpp", 2, ITestMessage.Level.Exception,
+				"Exception with location" + EXCEPTION_CHECKPOINT_SUFFIX);
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception,
+				"Exception without location");
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("test3");
 		mockModelUpdater.addTestMessage("file3.cpp", 3, ITestMessage.Level.Error, "Another message with location");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception, "Another exception without location");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception,
+				"Another exception without location");
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("test4");
-		mockModelUpdater.addTestMessage("file4.cpp", 4, ITestMessage.Level.Exception, "Another exception with location"+EXCEPTION_CHECKPOINT_SUFFIX);
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Error, "Another message without location");
+		mockModelUpdater.addTestMessage("file4.cpp", 4, ITestMessage.Level.Exception,
+				"Another exception with location" + EXCEPTION_CHECKPOINT_SUFFIX);
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Error,
+				"Another message without location");
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -384,7 +382,7 @@ public class BoostTestCase extends BaseTestCase {
 	//</TestLog>
 	public void testExecutionTimePresence() {
 		mockModelUpdater.skipCalls("setTestStatus");
-		
+
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("testPass");
 		mockModelUpdater.addTestMessage("file.cpp", 22, ITestMessage.Level.Info, "check 1 passed");
@@ -395,21 +393,23 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.setTestingTime(2);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testAbortedOnException");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception, "exception message");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception,
+				"exception message");
 		mockModelUpdater.setTestingTime(3);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testAbortedOnNullDereference");
-		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception, "another exception message");
+		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception,
+				"another exception message");
 		mockModelUpdater.addTestMessage("file3.h", 164, ITestMessage.Level.Message, "Test is aborted");
 		mockModelUpdater.setTestingTime(4);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("testAbortedOnExceptionWithLocation");
-		mockModelUpdater.addTestMessage("file4.cpp", 47, ITestMessage.Level.Exception, "yet another exception message"+EXCEPTION_CHECKPOINT_SUFFIX);
+		mockModelUpdater.addTestMessage("file4.cpp", 47, ITestMessage.Level.Exception,
+				"yet another exception message" + EXCEPTION_CHECKPOINT_SUFFIX);
 		mockModelUpdater.setTestingTime(5);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
-
 
 	//
 	public void testNoInput() {
@@ -417,7 +417,6 @@ public class BoostTestCase extends BaseTestCase {
 		expectTestingException();
 	}
 
-	
 	//<TestLog>
 	//    <TestSuite name="MainTS">
 	//        <TestCase name="testPass">
@@ -430,7 +429,6 @@ public class BoostTestCase extends BaseTestCase {
 		expectTestingException();
 	}
 
-	
 	//<TestLog>
 	//    <TestSuite name="MainTS">
 	//        <TestCase name="testPass">
@@ -439,7 +437,6 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.skipCalls("enterTestCase");
 		expectTestingException();
 	}
-
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">
@@ -454,7 +451,6 @@ public class BoostTestCase extends BaseTestCase {
 		expectTestingException();
 	}
 
-
 	//<TestLog>
 	//    <TestSuite name="MainTS">
 	//        <TestCase name="testPass">
@@ -467,7 +463,6 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.skipCalls("enterTestCase");
 		expectTestingException();
 	}
-
 
 	//<TestLog>
 	//    <TestSuite name="MainTS">

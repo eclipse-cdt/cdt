@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
-
 /**
  * A listener, which gets notified when the contents of a specific buffer
  * have changed, or when the buffer is closed.

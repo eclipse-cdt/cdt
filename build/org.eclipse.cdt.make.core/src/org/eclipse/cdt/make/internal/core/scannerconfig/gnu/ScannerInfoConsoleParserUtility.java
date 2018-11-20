@@ -49,10 +49,10 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	private Map<String, IFile> fFilesInProject;
 	private List<IResource> fCollectedFiles;
 	private List<String> fNameConflicts;
-    
+
 	public ScannerInfoConsoleParserUtility(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
-	    super(project, workingDirectory, markerGenerator);
-        
+		super(project, workingDirectory, markerGenerator);
+
 		fFilesInProject = new HashMap<String, IFile>();
 		fCollectedFiles = new ArrayList<IResource>();
 		fNameConflicts = new ArrayList<String>();
@@ -67,7 +67,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 			}
 		}
 	}
-	
+
 	/**
 	 * Called by the console line parsers to find a file with a given name.
 	 * @return IFile or null
@@ -81,21 +81,21 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 				// If there is a conflict then try all files in the project.
 				if (isConflictingName(fileName)) {
 					file = null;
-					
+
 					// Create a problem marker
 					final String error = MakeMessages.getString("ConsoleParser.Ambiguous_Filepath_Error_Message"); //$NON-NLS-1$
 					TraceUtil.outputError(error, fileName);
-					generateMarker(getProject(), -1, error+fileName, IMarkerGenerator.SEVERITY_WARNING, null);
+					generateMarker(getProject(), -1, error + fileName, IMarkerGenerator.SEVERITY_WARNING, null);
 				}
 			}
 		}
-		
-		if (file!=null) {
+
+		if (file != null) {
 			IPath filePath = new Path(fileName);
-			if(filePath.segment(0).compareTo("..") == 0) {  //$NON-NLS-1$
+			if (filePath.segment(0).compareTo("..") == 0) { //$NON-NLS-1$
 				filePath = filePath.removeFirstSegments(1);
 			}
-			
+
 			String foundLocation = file.getLocationURI().toString();
 			if (!foundLocation.endsWith(filePath.toString())) {
 				file = null;
@@ -103,7 +103,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 		}
 		return file;
 	}
-	
+
 	/**
 	 * @return file in workspace as {@link IFile} or {@code null} if not found
 	 */
@@ -155,10 +155,10 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 		IFile file = null;
 		if (path.isAbsolute()) {
 			IWorkspaceRoot root = getProject().getWorkspace().getRoot();
-			file =  root.getFileForLocation(path);
+			file = root.getFileForLocation(path);
 			// It may be a link resource so we must check it also.
 			if (file == null) {
-				file= ResourceLookup.selectFileForLocation(path, getProject());
+				file = ResourceLookup.selectFileForLocation(path, getProject());
 			}
 		} else {
 			file = getProject().getFile(path);
@@ -194,16 +194,17 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 			if (includePath.isUNC()) {
 				// do not translate UNC paths
 			} else if (includePath.isAbsolute()) {
-				if (includePath.getDevice()==null) {
+				if (includePath.getDevice() == null) {
 					String device = getWorkingDirectory().getDevice();
 					IPath candidatePath = includePath.setDevice(device);
 					File dir = candidatePath.toFile();
 					if (dir.exists()) {
 						include = candidatePath.toString();
 					} else {
-						final String error = MakeMessages.getString("ConsoleParser.Nonexistent_Include_Path_Error_Message"); //$NON-NLS-1$
+						final String error = MakeMessages
+								.getString("ConsoleParser.Nonexistent_Include_Path_Error_Message"); //$NON-NLS-1$
 						TraceUtil.outputError(error, include);
-//						generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);				
+						//						generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);				
 					}
 				}
 			} else {
@@ -212,10 +213,10 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 				if (!cwd.isAbsolute()) {
 					cwd = getBaseDirectory().append(cwd);
 				}
-				
+
 				IPath filePath = new Path(fileName);
 				if (filePath.isAbsolute()) {
-					if (filePath.getDevice()==null) {
+					if (filePath.getDevice() == null) {
 						String device = getWorkingDirectory().getDevice();
 						filePath = filePath.setDevice(device);
 					}
@@ -228,35 +229,35 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 				if (!filePath.toString().equalsIgnoreCase(fileLocation.toString())) {
 					// must be the cwd is wrong
 					// check if file name starts with ".."
-					if (fileName.startsWith("..")) {	//$NON-NLS-1$
+					if (fileName.startsWith("..")) { //$NON-NLS-1$
 						// probably multiple choices for cwd, hopeless
 						final String error = MakeMessages.getString("ConsoleParser.Working_Directory_Error_Message"); //$NON-NLS-1$
 						TraceUtil.outputError(error, fileName);
-						generateMarker(file, -1, error,	 IMarkerGenerator.SEVERITY_WARNING, fileName);				
+						generateMarker(file, -1, error, IMarkerGenerator.SEVERITY_WARNING, fileName);
 						break;
-					}
-					else {
+					} else {
 						// remove common segments at the end 
 						IPath tPath = new Path(fileName);
-						if (fileName.startsWith(".")) {	//$NON-NLS-1$
+						if (fileName.startsWith(".")) { //$NON-NLS-1$
 							tPath = tPath.removeFirstSegments(1);
 						}
 						// get the file path from the file
 						filePath = fileLocation;
-						IPath lastFileSegment = filePath.removeFirstSegments(filePath.segmentCount() - tPath.segmentCount());
+						IPath lastFileSegment = filePath
+								.removeFirstSegments(filePath.segmentCount() - tPath.segmentCount());
 						if (lastFileSegment.matchingFirstSegments(tPath) == tPath.segmentCount()) {
 							cwd = filePath.removeLastSegments(tPath.segmentCount());
 						}
 					}
 				}
-				
+
 				IPath candidatePath = cwd.append(includePath);
 				File dir = candidatePath.toFile();
 				include = candidatePath.toString();
 				if (!dir.exists()) {
 					final String error = MakeMessages.getString("ConsoleParser.Nonexistent_Include_Path_Error_Message"); //$NON-NLS-1$
 					TraceUtil.outputError(error, include);
-//					generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);				
+					//					generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);				
 				}
 			}
 			// TODO VMIR for now add unresolved paths as well
@@ -272,25 +273,25 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 			if (Character.isLowerCase(driveLetter)) {
 				StringBuilder sb = new StringBuilder();
 				if (column - 1 > 0) {
-					sb.append(path.substring(0, column-1));
+					sb.append(path.substring(0, column - 1));
 				}
 				sb.append(Character.toUpperCase(driveLetter));
 				sb.append(path.substring(column));
 				path = sb.toString();
 			}
 		}
-		if (path.indexOf('.') == -1 || path.equals(".")) {	//$NON-NLS-1$
-			return (new Path(path)).toString();	// convert separators to '/'
+		if (path.indexOf('.') == -1 || path.equals(".")) { //$NON-NLS-1$
+			return (new Path(path)).toString(); // convert separators to '/'
 		}
 		// lose "./" segments since they confuse the Path normalization
 		StringBuilder buf = new StringBuilder(path);
 		int len = buf.length();
 		StringBuilder newBuf = new StringBuilder(buf.length());
 		int scp = 0; // starting copy point
-		int ssp = 0;	// starting search point
+		int ssp = 0; // starting search point
 		int sdot;
 		boolean validPrefix;
-		while (ssp < len && (sdot = buf.indexOf(".", ssp)) != -1) {	//$NON-NLS-1$
+		while (ssp < len && (sdot = buf.indexOf(".", ssp)) != -1) { //$NON-NLS-1$
 			validPrefix = false;
 			int ddot = buf.indexOf("..", ssp);//$NON-NLS-1$
 			if (sdot < ddot || ddot == -1) {
@@ -305,26 +306,23 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 					if (validPrefix && nextChar == '/') {
 						++ssp;
 						scp = ssp;
-					}
-					else if (validPrefix && nextChar == '\\') {
+					} else if (validPrefix && nextChar == '\\') {
 						++ssp;
 						if (ssp < len - 1 && buf.charAt(ssp) == '\\') {
 							++ssp;
 						}
 						scp = ssp;
-					}
-					else {
+					} else {
 						// no path delimiter, must be '.' inside the path
 						scp = ssp - 1;
 					}
 				}
-			}
-			else if (sdot == ddot) {
+			} else if (sdot == ddot) {
 				ssp = sdot + 2;
 			}
 		}
 		newBuf.append(buf.substring(scp, len));
-					 
+
 		IPath orgPath = new Path(newBuf.toString());
 		return orgPath.toString();
 	}

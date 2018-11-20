@@ -43,207 +43,209 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	IASTName[] matchingNames;
 	boolean wasForward;
 	int index;
-	
-    static protected class NameCollector extends ASTVisitor {
-        private static final int REGULAR_NAME_ADD = -1;
+
+	static protected class NameCollector extends ASTVisitor {
+		private static final int REGULAR_NAME_ADD = -1;
 		private static final String BLANK_STRING = ""; //$NON-NLS-1$
 		{
-            shouldVisitNames = true;
-        }
-        public List<IASTName> nameList = new ArrayList<IASTName>();
-        
-        String findString = null;
+			shouldVisitNames = true;
+		}
+		public List<IASTName> nameList = new ArrayList<IASTName>();
+
+		String findString = null;
 		boolean caseSensitive = true;
 		boolean wholeWord = true;
 		boolean regExSearch = false;
 		Pattern p = null;
 		Matcher m = null;
-		
+
 		public NameCollector(String findString, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 			this.findString = findString;
 			this.caseSensitive = caseSensitive;
 			this.wholeWord = wholeWord;
 			this.regExSearch = regExSearch;
 		}
-        
+
 		public int processName(IASTName name, int index) {
-        	if (name.toString() == null || name.toString() == BLANK_STRING) return PROCESS_CONTINUE;
-        	String searchString = null;
-        	String match = null;
-        	boolean addName = false;
-        	
-        	if (caseSensitive) {
-        		searchString = findString;
-        		match = name.toString();
-        	} else {
-        		searchString = findString.toUpperCase();
-        		match = name.toString().toUpperCase();
-        	}	
-        	
-           	if (regExSearch) {
-           		if (match.matches(searchString))
-           			addName = true;
-           	} else if (!wholeWord) {
-           		if (match.indexOf(searchString) >= 0)
-           			addName = true;
-           	} else {
-           		if (match.equals(searchString))
-           			addName = true;
-           	}
-           	
-           	if (addName) {
-           		if (index >= 0) {
-           			nameList.add(index, name);
-           		} else {
-           			nameList.add(name);
-           		}
-           	}
-        	
-            return PROCESS_CONTINUE;
+			if (name.toString() == null || name.toString() == BLANK_STRING)
+				return PROCESS_CONTINUE;
+			String searchString = null;
+			String match = null;
+			boolean addName = false;
+
+			if (caseSensitive) {
+				searchString = findString;
+				match = name.toString();
+			} else {
+				searchString = findString.toUpperCase();
+				match = name.toString().toUpperCase();
+			}
+
+			if (regExSearch) {
+				if (match.matches(searchString))
+					addName = true;
+			} else if (!wholeWord) {
+				if (match.indexOf(searchString) >= 0)
+					addName = true;
+			} else {
+				if (match.equals(searchString))
+					addName = true;
+			}
+
+			if (addName) {
+				if (index >= 0) {
+					nameList.add(index, name);
+				} else {
+					nameList.add(name);
+				}
+			}
+
+			return PROCESS_CONTINUE;
 		}
-		
-        @Override
-		public int visit( IASTName name ){
-        	return processName(name, REGULAR_NAME_ADD);
-        }
 
-        public IASTName getName( int idx ){
-            if( idx < 0 || idx >= nameList.size() )
-                return null;
-            return nameList.get( idx );
-        }
+		@Override
+		public int visit(IASTName name) {
+			return processName(name, REGULAR_NAME_ADD);
+		}
 
-        public int size() {
-        	return nameList.size();
-        } 
-        
-        private void mergeName(IASTName name) {
-        	if (name instanceof ASTNode) {
-        		int offset = ((ASTNode)name).getOffset();
-        		for( int i=0; i<nameList.size(); i++) {
-        			if (nameList.get(i) instanceof ASTNode && 
-        					((ASTNode)nameList.get(i)).getOffset() > offset) {
-        				processName(name, i);
-        				return;
-        			}
-        		}
-        		// if couldn't find the proper place to put the name, then add default
-        		visit(name);
-        	}
-        }
-        
-        public IASTName[] getNameArray(IASTPreprocessorStatement[] statements) {
-        	// first merge all of the preprocessor names into the array list
-        	for (IASTPreprocessorStatement statement : statements) {
-        		if (statement instanceof IASTPreprocessorMacroDefinition) {
-        			IASTName name = ((IASTPreprocessorMacroDefinition)statement).getName();
-        			if (name != null) {
-        				mergeName(name);
-        			}
-        		}
-        	}
-        	
-        	// convert the array list into an array of IASTNames
-        	IASTName[] namedArray = new IASTName[nameList.size()];
-        	
-        	for(int i=0; i<nameList.size(); i++) {
-        		if (nameList.get(i) instanceof IASTName)
-        			namedArray[i] = nameList.get(i);
-        	}
-        	
-        	return namedArray;
-        }
-    }
-	
+		public IASTName getName(int idx) {
+			if (idx < 0 || idx >= nameList.size())
+				return null;
+			return nameList.get(idx);
+		}
+
+		public int size() {
+			return nameList.size();
+		}
+
+		private void mergeName(IASTName name) {
+			if (name instanceof ASTNode) {
+				int offset = ((ASTNode) name).getOffset();
+				for (int i = 0; i < nameList.size(); i++) {
+					if (nameList.get(i) instanceof ASTNode && ((ASTNode) nameList.get(i)).getOffset() > offset) {
+						processName(name, i);
+						return;
+					}
+				}
+				// if couldn't find the proper place to put the name, then add default
+				visit(name);
+			}
+		}
+
+		public IASTName[] getNameArray(IASTPreprocessorStatement[] statements) {
+			// first merge all of the preprocessor names into the array list
+			for (IASTPreprocessorStatement statement : statements) {
+				if (statement instanceof IASTPreprocessorMacroDefinition) {
+					IASTName name = ((IASTPreprocessorMacroDefinition) statement).getName();
+					if (name != null) {
+						mergeName(name);
+					}
+				}
+			}
+
+			// convert the array list into an array of IASTNames
+			IASTName[] namedArray = new IASTName[nameList.size()];
+
+			for (int i = 0; i < nameList.size(); i++) {
+				if (nameList.get(i) instanceof IASTName)
+					namedArray[i] = nameList.get(i);
+			}
+
+			return namedArray;
+		}
+	}
+
 	public FindIASTNameTarget(TreeViewer viewer) {
 		if (viewer.getContentProvider() instanceof DOMAST.ViewContentProvider) {
-			tu = ((DOMAST.ViewContentProvider)viewer.getContentProvider()).getTU();
-			tuTreeParent = ((DOMAST.ViewContentProvider)viewer.getContentProvider()).getTUTreeParent();
+			tu = ((DOMAST.ViewContentProvider) viewer.getContentProvider()).getTU();
+			tuTreeParent = ((DOMAST.ViewContentProvider) viewer.getContentProvider()).getTUTreeParent();
 		}
-		
+
 		this.viewer = viewer;
 	}
-	
+
 	@Override
 	public boolean canPerformFind() {
 		return true;
 	}
 
 	// recursively search for the next node
-	public IASTName findNextMatchingName(String findString,
-			boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
+	public IASTName findNextMatchingName(String findString, boolean searchForward, boolean caseSensitive,
+			boolean wholeWord, boolean regExSearch) {
 		if (matchingNames == null && tu != null) {
 			NameCollector col = new NameCollector(findString, caseSensitive, wholeWord, regExSearch);
 			tu.accept(col);
 			matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());
 		}
-	
+
 		if (searchForward) {
 			if (!wasForward) {
 				wasForward = true;
 				index += 2;
 			}
-			
-			if (index >=0 && index < matchingNames.length && matchingNames[index] != null)
+
+			if (index >= 0 && index < matchingNames.length && matchingNames[index] != null)
 				return matchingNames[index++];
 		} else {
 			if (wasForward) {
 				wasForward = false;
 				index -= 2;
 			}
-			
+
 			if (index >= 0 && index < matchingNames.length && matchingNames[index] != null)
 				return matchingNames[index--];
 		}
-		
+
 		return null;
 	}
-		
+
 	private TreeItem expandTreeToTreeObject(TreeItem[] treeItems, DOMASTNodeLeaf treeObj) {
 		for (TreeItem treeItem : treeItems) {
 			if (treeItem.getData() == treeObj) {
- 				return treeItem;
- 			}
- 			
- 			DOMASTNodeParent parent = treeObj.getParent();
- 			
- 			if (parent == null) return null; 
+				return treeItem;
+			}
 
- 			while (parent != treeItem.getData()) {
- 				parent = parent.getParent();
- 				if (parent == null) break;
- 			}
- 			
- 			if (parent == treeItem.getData()) {
- 				treeItem.setExpanded(true);
- 				viewer.refresh();
+			DOMASTNodeParent parent = treeObj.getParent();
 
- 				return expandTreeToTreeObject(treeItem.getItems(), treeObj);
- 			}
- 		}
- 		
- 		return null; // nothing found
+			if (parent == null)
+				return null;
+
+			while (parent != treeItem.getData()) {
+				parent = parent.getParent();
+				if (parent == null)
+					break;
+			}
+
+			if (parent == treeItem.getData()) {
+				treeItem.setExpanded(true);
+				viewer.refresh();
+
+				return expandTreeToTreeObject(treeItem.getItems(), treeObj);
+			}
+		}
+
+		return null; // nothing found
 	}
-	
- 	private TreeItem expandTreeToTreeObject(DOMASTNodeLeaf treeObj) {
- 		return expandTreeToTreeObject(viewer.getTree().getItems(), treeObj);
- 	}
-	
+
+	private TreeItem expandTreeToTreeObject(DOMASTNodeLeaf treeObj) {
+		return expandTreeToTreeObject(viewer.getTree().getItems(), treeObj);
+	}
+
 	@Override
-	public int findAndSelect(int widgetOffset, String findString,
-			boolean searchForward, boolean caseSensitive, boolean wholeWord) {
+	public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive,
+			boolean wholeWord) {
 		return findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord, false);
 	}
 
 	@Override
 	public Point getSelection() {
-		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
-		
+		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+
 		if (selection.isEmpty()) {
 			return new Point(0, 0);
 		}
-		
-		return new Point(((ASTNode)((DOMASTNodeLeaf)selection.getFirstElement()).getNode()).getOffset(), 0);
+
+		return new Point(((ASTNode) ((DOMASTNodeLeaf) selection.getFirstElement()).getNode()).getOffset(), 0);
 	}
 
 	@Override
@@ -259,7 +261,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	@Override
 	public void replaceSelection(String text) {
 	}
-	
+
 	public void clearMatchingNames() {
 		matchingNames = null;
 		index = 0;
@@ -269,40 +271,40 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension3#findAndSelect(int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
 	@Override
-	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
+	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive,
+			boolean wholeWord, boolean regExSearch) {
 		// find the next name in the list of names
 		IASTName foundName = null;
-		foundName = findNextMatchingName( findString, searchForward, caseSensitive, wholeWord, regExSearch );
-		
+		foundName = findNextMatchingName(findString, searchForward, caseSensitive, wholeWord, regExSearch);
+
 		// get the DOMASTNodeLeaf from the AST View's model corresponding to that name
 		DOMASTNodeLeaf treeNode = null;
 		TreeItem treeItem = null;
-		treeNode =  tuTreeParent.findTreeObject(foundName, true);
+		treeNode = tuTreeParent.findTreeObject(foundName, true);
 
 		if (treeNode != null && treeNode.getParent() != null) {
 			// found a matching DOMASTNodeLeaf, so expand the tree to that object
 			treeItem = expandTreeToTreeObject(treeNode);
 		}
-		
+
 		// loop until the next name within the matchingNames list is found in the tree
-		while ((treeNode == null || treeItem == null) &&  matchingNames.length > 0 &&
-				((searchForward && index < matchingNames.length) ||
-				(!searchForward && index >= 0))) {
-			foundName = findNextMatchingName( findString, searchForward, caseSensitive, wholeWord, regExSearch );
-			treeNode =  tuTreeParent.findTreeObject(foundName, true);
-			
+		while ((treeNode == null || treeItem == null) && matchingNames.length > 0
+				&& ((searchForward && index < matchingNames.length) || (!searchForward && index >= 0))) {
+			foundName = findNextMatchingName(findString, searchForward, caseSensitive, wholeWord, regExSearch);
+			treeNode = tuTreeParent.findTreeObject(foundName, true);
+
 			if (treeNode != null && treeNode.getParent() != null) {
 				// found a matching DOMASTNodeLeaf, so expand the tree to that object
 				treeItem = expandTreeToTreeObject(treeNode);
 			}
 		}
-		
+
 		// select the node that was found (and is now displayed)
 		if (treeItem != null) {
 			TreeItem[] items = new TreeItem[1];
 			items[0] = treeItem;
 			treeItem.getParent().setSelection(items);
-				
+
 			return 0;
 		}
 

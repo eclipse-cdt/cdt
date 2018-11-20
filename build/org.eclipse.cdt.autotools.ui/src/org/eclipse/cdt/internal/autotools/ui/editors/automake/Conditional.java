@@ -18,7 +18,7 @@ import org.eclipse.cdt.make.core.makefile.gnu.IConditional;
 
 public abstract class Conditional extends Parent implements IConditional {
 
-    private static final String EMPTY = ""; //$NON-NLS-1$
+	private static final String EMPTY = ""; //$NON-NLS-1$
 	String cond;
 	String arg1;
 	String arg2;
@@ -40,7 +40,6 @@ public abstract class Conditional extends Parent implements IConditional {
 		cond = conditional;
 	}
 
-
 	@Override
 	public String getConditional() {
 		return cond;
@@ -55,7 +54,7 @@ public abstract class Conditional extends Parent implements IConditional {
 	public String getArg2() {
 		return arg2;
 	}
-	
+
 	public boolean isIf() {
 		return false;
 	}
@@ -101,12 +100,12 @@ public abstract class Conditional extends Parent implements IConditional {
 		String line = getConditional().trim();
 
 		char terminal = line.charAt(0) == '(' ? ',' : line.charAt(0);
- 
+
 		if (line.length() < 5 && terminal != ',' && terminal != '"' && terminal != '\'') {
 			arg1 = arg2 = EMPTY;
 			return;
 		}
- 
+
 		// Find the end of the first string.
 		int count = 0;
 		// For the (ARG1, ARG2) format.
@@ -135,20 +134,20 @@ public abstract class Conditional extends Parent implements IConditional {
 
 		if (count >= line.length()) {
 			arg1 = arg2 = EMPTY;
-			return;			
+			return;
 		}
 
 		arg1 = line.substring(1, count);
- 
+
 		/* Find the start of the second string.  */
 		line = line.substring(count + 1).trim();
- 
+
 		terminal = terminal == ',' ? ')' : line.charAt(0);
 		if (terminal != ')' && terminal != '"' && terminal != '\'') {
 			arg2 = EMPTY;
 			return;
 		}
- 
+
 		count = 0;
 		/* Find the end of the second string.  */
 		if (terminal == ')') {

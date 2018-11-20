@@ -60,7 +60,8 @@ public class CopyReplaceVisitor extends ASTVisitor {
 
 	private int copyReplace(IASTNode node) {
 		if (predicate.test(node)) {
-			changeGenereatorTest.addModification(null, ModificationKind.REPLACE, node, node.copy(CopyStyle.withLocations));
+			changeGenereatorTest.addModification(null, ModificationKind.REPLACE, node,
+					node.copy(CopyStyle.withLocations));
 			return PROCESS_ABORT;
 		}
 		return PROCESS_CONTINUE;

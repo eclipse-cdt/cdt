@@ -39,21 +39,33 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER, true);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING, true);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_USE_RTTI, true);
-		node.putBoolean(IGdbDebugPreferenceConstants.PREF_EXTERNAL_CONSOLE, IGDBLaunchConfigurationConstants.DEBUGGER_EXTERNAL_CONSOLE_DEFAULT);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_EXTERNAL_CONSOLE,
+				IGDBLaunchConfigurationConstants.DEBUGGER_EXTERNAL_CONSOLE_DEFAULT);
 		node.putInt(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS, 100);
-		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND, IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
-		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT, IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
-		node.putBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT);
-		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
-		node.putBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP, IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
+				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT,
+				IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN,
+				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT);
+		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL,
+				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP,
+				IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, false);
-		node.putInt(IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, IGdbDebugPreferenceConstants.COMMAND_TIMEOUT_VALUE_DEFAULT);
+		node.putInt(IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE,
+				IGdbDebugPreferenceConstants.COMMAND_TIMEOUT_VALUE_DEFAULT);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS, false);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER, true);
-		node.put(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE, IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE);
-		node.putBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS, IGdbDebugPreferenceConstants.CONSOLE_INVERTED_COLORS_DEFAULT);
-		node.putInt(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES, IGdbDebugPreferenceConstants.CONSOLE_BUFFERLINES_DEFAULT);		
-		node.putBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED, IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_ENABLED_DEFAULT);
-		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_VALUE, IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_VALUE_DEFAULT);
+		node.put(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
+				IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS,
+				IGdbDebugPreferenceConstants.CONSOLE_INVERTED_COLORS_DEFAULT);
+		node.putInt(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES,
+				IGdbDebugPreferenceConstants.CONSOLE_BUFFERLINES_DEFAULT);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED,
+				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_ENABLED_DEFAULT);
+		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_VALUE,
+				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_VALUE_DEFAULT);
 	}
 }

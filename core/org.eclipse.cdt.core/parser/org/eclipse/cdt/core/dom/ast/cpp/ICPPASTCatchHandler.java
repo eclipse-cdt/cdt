@@ -77,7 +77,7 @@ public interface ICPPASTCatchHandler extends IASTStatement, IASTImplicitDestruct
 	 * @since 5.1
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

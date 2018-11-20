@@ -17,14 +17,13 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.settings.model.extension.CDataObject;
 
-
 public class ProxyProvider implements IProxyProvider {
 	private IProxyCache fCache;
 	private ICDataScope fScope;
 	private IProxyFactory fFactory;
 	private boolean fProxiesCached;
 
-	public ProxyProvider(ICDataScope scope, IProxyCache cache, IProxyFactory factory){
+	public ProxyProvider(ICDataScope scope, IProxyCache cache, IProxyFactory factory) {
 		fScope = scope;
 		fCache = cache;
 		fFactory = factory;
@@ -32,40 +31,41 @@ public class ProxyProvider implements IProxyProvider {
 
 	@Override
 	public CDataProxy[] getProxies() {
-		if(!fProxiesCached || !fScope.isStatic()){
+		if (!fProxiesCached || !fScope.isStatic()) {
 			fillCache();
 			fProxiesCached = true;
 		}
 		return fCache.getCachedProxies();
 	}
-/*
-	private void clearInvalidCachedProxies(){
-		CDataProxy proxies[] = fCache.getCachedProxies();
-		for(int i = 0; i < proxies.length; i++){
-			if(!proxies[i].isValid()){
-				fCache.removeCachedProxy(proxies[i]);
+
+	/*
+		private void clearInvalidCachedProxies(){
+			CDataProxy proxies[] = fCache.getCachedProxies();
+			for(int i = 0; i < proxies.length; i++){
+				if(!proxies[i].isValid()){
+					fCache.removeCachedProxy(proxies[i]);
+				}
 			}
 		}
-	}
-*/
+	*/
 	@Override
 	public CDataProxy getProxy(String id) {
-		if(!fProxiesCached || !fScope.isStatic()){
+		if (!fProxiesCached || !fScope.isStatic()) {
 			fillCache();
 			fProxiesCached = true;
 		}
 		return fCache.getCachedProxy(id);
 	}
 
-	protected void fillCache(){
+	protected void fillCache() {
 		Map<String, CDataProxy> map = fCache.getCachedProxiesMap();
 
-		CDataObject datas[] =fScope.getChildren();
+		CDataObject datas[] = fScope.getChildren();
 		for (CDataObject data : datas) {
 			CDataProxy proxy = fCache.getCachedProxy(data.getId());
-			if(proxy == null || proxy.getType() != data.getType()){
+			if (proxy == null || proxy.getType() != data.getType()) {
 				proxy = fFactory.createProxy(data);
-				if(proxy != null){
+				if (proxy != null) {
 					fCache.addCachedProxy(proxy);
 				}
 			} else {
@@ -74,7 +74,7 @@ public class ProxyProvider implements IProxyProvider {
 			}
 		}
 
-		if(!map.isEmpty()){
+		if (!map.isEmpty()) {
 			for (CDataProxy proxy : map.values()) {
 				fCache.removeCachedProxy(proxy);
 			}
@@ -83,7 +83,7 @@ public class ProxyProvider implements IProxyProvider {
 
 	@Override
 	public CDataProxy getProxy(CDataObject data) {
-		if(!fProxiesCached || !fScope.isStatic()){
+		if (!fProxiesCached || !fScope.isStatic()) {
 			fillCache();
 			fProxiesCached = true;
 		}
@@ -110,15 +110,15 @@ public class ProxyProvider implements IProxyProvider {
 	@Override
 	public CDataProxy[] getProxiesOfKind(int kind) {
 		CDataProxy[] proxies = getProxies();
-		if(proxies.length > 0){
+		if (proxies.length > 0) {
 			CDataProxy[] tmp = new CDataProxy[proxies.length];
 			int num = 0;
 			for (CDataProxy proxy : proxies) {
-				if((proxy.getType() & kind) == proxy.getType())
+				if ((proxy.getType() & kind) == proxy.getType())
 					tmp[num++] = proxy;
 			}
 
-			if(num != proxies.length){
+			if (num != proxies.length) {
 				proxies = new CDataProxy[num];
 				System.arraycopy(tmp, 0, proxies, 0, num);
 			}
@@ -128,7 +128,7 @@ public class ProxyProvider implements IProxyProvider {
 
 	@Override
 	public void cacheValues() {
-		if(!fProxiesCached || !fScope.isStatic()){
+		if (!fProxiesCached || !fScope.isStatic()) {
 			fillCache();
 			fProxiesCached = true;
 		}
@@ -142,6 +142,5 @@ public class ProxyProvider implements IProxyProvider {
 			proxy.doClearData();
 		}
 	}
-
 
 }

@@ -21,27 +21,27 @@ package org.eclipse.cdt.dsf.ui.viewmodel.update;
 public abstract class UpdatePolicyDecorator implements IVMUpdatePolicy {
 
 	private final IVMUpdatePolicy fBasePolicy;
-    
-    protected UpdatePolicyDecorator(IVMUpdatePolicy base) {
-    	fBasePolicy= base;
-    }
-    
-    protected final IVMUpdatePolicy getBaseUpdatePolicy() {
-    	return fBasePolicy;
-    }
-   
-    @Override
+
+	protected UpdatePolicyDecorator(IVMUpdatePolicy base) {
+		fBasePolicy = base;
+	}
+
+	protected final IVMUpdatePolicy getBaseUpdatePolicy() {
+		return fBasePolicy;
+	}
+
+	@Override
 	public final String getID() {
-    	return fBasePolicy.getID();
-    }
+		return fBasePolicy.getID();
+	}
 
-    @Override
+	@Override
 	public String getName() {
-    	return fBasePolicy.getName();
-    }
+		return fBasePolicy.getName();
+	}
 
-    @Override
+	@Override
 	public IElementUpdateTester getElementUpdateTester(Object event) {
-        return fBasePolicy.getElementUpdateTester(event);
-    }
+		return fBasePolicy.getElementUpdateTester(event);
+	}
 }

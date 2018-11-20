@@ -28,15 +28,15 @@ public interface IDOMTokenMap {
 	 * @throws NullPointerException if token is null
 	 */
 	int mapKind(IToken token);
-	
+
 	/**
 	 * Returns the LPG token type for End Of File (TK_EOF_TOKEN) token.
 	 */
-	int getEOFTokenKind(); 
-	
+	int getEOFTokenKind();
+
 	/**
 	 * Returns the LPG token type for End Of Completion (TK_EndOfCompletion) token.
 	 */
 	int getEOCTokenKind();
-	
+
 }

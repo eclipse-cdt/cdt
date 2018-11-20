@@ -34,47 +34,47 @@ public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 	public static final ASTNodeProperty INIT_STATEMENT = new ASTNodeProperty(
 			"ICPPASTSwitchStatement.INIT_STATEMENT - IASTStatement init-statement for ICPPASTSwitchStatement"); //$NON-NLS-1$
 
-    /**
-     * <code>CONTROLLER_DECLARATION</code> represents the relationship between an
-     * <code>IASTSwitchStatement</code> and it's nested
-     * <code>IASTDeclaration</code>.
-     */
-    public static final ASTNodeProperty CONTROLLER_DECLARATION = new ASTNodeProperty(
-            "IASTSwitchStatement.CONTROLLER - IASTDeclaration (controller) for IASTSwitchExpression"); //$NON-NLS-1$
+	/**
+	 * <code>CONTROLLER_DECLARATION</code> represents the relationship between an
+	 * <code>IASTSwitchStatement</code> and it's nested
+	 * <code>IASTDeclaration</code>.
+	 */
+	public static final ASTNodeProperty CONTROLLER_DECLARATION = new ASTNodeProperty(
+			"IASTSwitchStatement.CONTROLLER - IASTDeclaration (controller) for IASTSwitchExpression"); //$NON-NLS-1$
 
-    /**
-     * In C++, a switch statement can be contorller by a declaration.
-     * 
-     * @return <code>IASTDeclaration</code>
-     */
-    public IASTDeclaration getControllerDeclaration();
+	/**
+	 * In C++, a switch statement can be contorller by a declaration.
+	 * 
+	 * @return <code>IASTDeclaration</code>
+	 */
+	public IASTDeclaration getControllerDeclaration();
 
-    /**
-     * In C++, a switch statement can be contorller by a declaration.
-     * 
-     * @param d <code>IASTDeclaration</code>
-     */
-    public void setControllerDeclaration( IASTDeclaration d );
+	/**
+	 * In C++, a switch statement can be contorller by a declaration.
+	 * 
+	 * @param d <code>IASTDeclaration</code>
+	 */
+	public void setControllerDeclaration(IASTDeclaration d);
 
-    /**
-     * Returns the init-statement for a switch.
-     * 
-     * @return the init-statement, or <code>null</code> if the 'switch' statement doesn't
-     *    have one.
-     *
-     * @since 6.5
-     */
-    public IASTStatement getInitializerStatement();
+	/**
+	 * Returns the init-statement for a switch.
+	 * 
+	 * @return the init-statement, or <code>null</code> if the 'switch' statement doesn't
+	 *    have one.
+	 *
+	 * @since 6.5
+	 */
+	public IASTStatement getInitializerStatement();
 
-    /**
-     * Sets the optional init-statement of an switch.
-     * 
-     * @param statement this statement should either be a <code>IASTSimpleDeclaration</code> or a
-     *    <code>IASTExpressionStatement</code>.
-     *
-     * @since 6.5
-     */
-    public void setInitializerStatement(IASTStatement statement);
+	/**
+	 * Sets the optional init-statement of an switch.
+	 * 
+	 * @param statement this statement should either be a <code>IASTSimpleDeclaration</code> or a
+	 *    <code>IASTExpressionStatement</code>.
+	 *
+	 * @since 6.5
+	 */
+	public void setInitializerStatement(IASTStatement statement);
 
 	/**
 	 * Get the <code>IScope</code> represented by this switch.
@@ -82,7 +82,7 @@ public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 	 * @return <code>IScope</code>
 	 */
 	public IScope getScope();
-    
+
 	/**
 	 * @since 5.1
 	 */

@@ -25,7 +25,6 @@ import org.eclipse.ui.texteditor.HippieProposalProcessor;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 
-
 /**
  * A computer wrapper for the hippie processor.
  * 
@@ -33,19 +32,20 @@ import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
  */
 public final class HippieProposalComputer implements ICompletionProposalComputer {
 	/** The wrapped processor. */
-	private final HippieProposalProcessor fProcessor= new HippieProposalProcessor();
+	private final HippieProposalProcessor fProcessor = new HippieProposalProcessor();
 
 	/**
 	 * Default ctor to make it instantiatable via the extension mechanism.
 	 */
 	public HippieProposalComputer() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		return Arrays.asList(fProcessor.computeCompletionProposals(context.getViewer(), context.getInvocationOffset()));
 	}
 
@@ -53,7 +53,8 @@ public final class HippieProposalComputer implements ICompletionProposalComputer
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		return Arrays.asList(fProcessor.computeContextInformation(context.getViewer(), context.getInvocationOffset()));
 	}
 

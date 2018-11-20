@@ -57,12 +57,8 @@ public class ErrorPattern {
 	 *        <br>{@link IMarkerGenerator#SEVERITY_ERROR_RESOURCE},
 	 *        <br>{@link IMarkerGenerator#SEVERITY_ERROR_BUILD}
 	 */
-	public ErrorPattern(String pattern,
-						int groupFileName,
-						int groupLineNum,
-						int groupDesc,
-						int groupVarName,
-						int severity) {
+	public ErrorPattern(String pattern, int groupFileName, int groupLineNum, int groupDesc, int groupVarName,
+			int severity) {
 		this.pattern = Pattern.compile(pattern);
 		this.groupFileName = groupFileName;
 		this.groupLineNum = groupLineNum;
@@ -118,9 +114,7 @@ public class ErrorPattern {
 	 */
 	public int getLineNum(Matcher matcher) {
 		try {
-			return groupLineNum != 0
-				? Integer.valueOf(matcher.group(groupLineNum)).intValue()
-				: 0;
+			return groupLineNum != 0 ? Integer.valueOf(matcher.group(groupLineNum)).intValue() : 0;
 		} catch (NumberFormatException e) {
 			return 0;
 		}
@@ -183,7 +177,7 @@ public class ErrorPattern {
 		int lineNum = getLineNum(matcher);
 		String desc = getDesc(matcher);
 		String varName = getVarName(matcher);
-		IPath externalPath = null ;
+		IPath externalPath = null;
 
 		IResource file = null;
 		if (fileName != null) {
@@ -208,14 +202,14 @@ public class ErrorPattern {
 	 * @param filename - file name
 	 * @return location (outside of the workspace).
 	 */
-	protected IPath getLocation(String filename)  {
+	protected IPath getLocation(String filename) {
 		IPath path = new Path(filename);
-		File file = path.toFile() ;
-		if (!file.exists() && isCygwin && path.isAbsolute())  {
+		File file = path.toFile();
+		if (!file.exists() && isCygwin && path.isAbsolute()) {
 			try {
 				String cygfilename = Cygwin.cygwinToWindowsPath(filename);
 				IPath convertedPath = new Path(cygfilename);
-				file = convertedPath.toFile() ;
+				file = convertedPath.toFile();
 				if (file.exists()) {
 					path = convertedPath;
 				}
@@ -224,7 +218,7 @@ public class ErrorPattern {
 			} catch (IOException e) {
 			}
 		}
-		return path ;
+		return path;
 	}
 
 }

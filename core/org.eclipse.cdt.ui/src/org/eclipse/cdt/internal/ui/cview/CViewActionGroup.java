@@ -44,7 +44,7 @@ public abstract class CViewActionGroup extends ActionGroup {
 	 * The resource navigator.
 	 */
 	protected CView cview;
-	
+
 	/**
 	 * Constructs a new navigator action group and creates its actions.
 	 * 
@@ -54,7 +54,7 @@ public abstract class CViewActionGroup extends ActionGroup {
 		this.cview = cview;
 		makeActions();
 	}
-	
+
 	/**
 	 * Returns the image descriptor with the given relative path.
 	 */
@@ -68,7 +68,7 @@ public abstract class CViewActionGroup extends ActionGroup {
 			// should not happen
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
-	}	
+	}
 
 	/**
 	 * Returns the resource navigator.
@@ -76,11 +76,11 @@ public abstract class CViewActionGroup extends ActionGroup {
 	public CView getCView() {
 		return cview;
 	}
-	
+
 	/**
- 	 * Handles a key pressed event by invoking the appropriate action.
+	 * Handles a key pressed event by invoking the appropriate action.
 	 * Does nothing by default.
- 	 */
+	 */
 	public void handleKeyPressed(KeyEvent event) {
 	}
 
@@ -95,7 +95,7 @@ public abstract class CViewActionGroup extends ActionGroup {
 	 * Makes the actions contained in this action group.
 	 */
 	protected abstract void makeActions();
-	
+
 	/**
 	 * Called when the context menu is about to open.
 	 * Override to add your own context dependent menu contributions.
@@ -123,7 +123,7 @@ public abstract class CViewActionGroup extends ActionGroup {
 
 	public void restoreFilterAndSorterState(IMemento memento) {
 	}
-	
+
 	public void saveFilterAndSorterState(IMemento memento) {
 	}
 

@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 class NonExtractableStatementFinder extends ASTVisitor {
 	private boolean containsContinueStmt;
 	private boolean containsBreakStmt;
-	
+
 	{
 		shouldVisitStatements = true;
 	}
@@ -44,11 +44,9 @@ class NonExtractableStatementFinder extends ASTVisitor {
 		} else if (statement instanceof IASTBreakStatement) {
 			containsBreakStmt = true;
 			return ASTVisitor.PROCESS_SKIP;
-		} else if (statement instanceof IASTForStatement ||
-				statement instanceof ICPPASTRangeBasedForStatement ||
-				statement instanceof IASTWhileStatement ||
-				statement instanceof IASTDoStatement ||
-				statement instanceof IASTSwitchStatement) {
+		} else if (statement instanceof IASTForStatement || statement instanceof ICPPASTRangeBasedForStatement
+				|| statement instanceof IASTWhileStatement || statement instanceof IASTDoStatement
+				|| statement instanceof IASTSwitchStatement) {
 			// Extracting a whole loop or switch statement is allowed.
 			return ASTVisitor.PROCESS_SKIP;
 		}
@@ -58,7 +56,7 @@ class NonExtractableStatementFinder extends ASTVisitor {
 	public boolean containsContinue() {
 		return containsContinueStmt;
 	}
-	
+
 	public boolean containsBreak() {
 		return containsBreakStmt;
 	}

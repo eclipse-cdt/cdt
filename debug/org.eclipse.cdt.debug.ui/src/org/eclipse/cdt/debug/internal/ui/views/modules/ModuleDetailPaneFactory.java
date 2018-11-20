@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 
 	public static final String MODULE_DETAIL_PANE_ID = ModuleDetailPane.ID;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#createDetailsArea(java.lang.String)
 	 */
@@ -42,7 +42,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 		possibleIDs.add(ModuleDetailPane.ID);
 		return possibleIDs;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(java.util.Set, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
@@ -57,19 +57,18 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 	 */
 	@Override
 	public String getDetailPaneName(String id) {
-		if (id.equals(ModuleDetailPane.ID)){
+		if (id.equals(ModuleDetailPane.ID)) {
 			return ModuleDetailPane.NAME;
 		}
 		return null;
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDescription(java.lang.String)
 	 */
 	@Override
 	public String getDetailPaneDescription(String id) {
-		if (id.equals(ModuleDetailPane.ID)){
+		if (id.equals(ModuleDetailPane.ID)) {
 			return ModuleDetailPane.DESCRIPTION;
 		}
 		return null;

@@ -22,19 +22,19 @@ import org.eclipse.jface.viewers.ISelection;
  */
 public class RefreshAllRetargetAction extends RetargetDebugContextAction {
 
-    @Override
-    protected boolean canPerformAction(Object target, ISelection selection) {
-        return true;
-    }
+	@Override
+	protected boolean canPerformAction(Object target, ISelection selection) {
+		return true;
+	}
 
-    @Override
-    protected Class<?> getAdapterClass() {
-        return IRefreshAllTarget.class;
-    }
+	@Override
+	protected Class<?> getAdapterClass() {
+		return IRefreshAllTarget.class;
+	}
 
-    @Override
-    protected void performAction(Object target, ISelection debugContext) throws CoreException {
-        ((IRefreshAllTarget)target).refresh(debugContext);
-    }
+	@Override
+	protected void performAction(Object target, ISelection debugContext) throws CoreException {
+		((IRefreshAllTarget) target).refresh(debugContext);
+	}
 
 }

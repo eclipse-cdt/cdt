@@ -34,95 +34,95 @@ import org.eclipse.debug.core.model.IProcess;
  * 
  * @since 4.7
  */
-public class MIInferiorProcess_7_3 extends MIInferiorProcess
-{
+public class MIInferiorProcess_7_3 extends MIInferiorProcess {
 
 	private DsfSession fSession;
-	
-    @ConfinedToDsfExecutor("fSession#getExecutor")
-    public MIInferiorProcess_7_3(IContainerDMContext container, OutputStream gdbOutputStream) {
-        this(container, gdbOutputStream, null);
-    }
-    
-    @ConfinedToDsfExecutor("fSession#getExecutor")
-    public MIInferiorProcess_7_3(IContainerDMContext container, PTY p) {
-        this(container, null, p);
-    }
-    
-    @ConfinedToDsfExecutor("fSession#getExecutor")
-    protected MIInferiorProcess_7_3(IContainerDMContext container, final OutputStream gdbOutputStream, PTY pty) {
-        super(container, gdbOutputStream, pty);
-        fSession = DsfSession.getSession(container.getSessionId());
-    }
 
-    @ThreadSafeAndProhibitedFromDsfExecutor("fSession#getExecutor")
-    @Override
-    public int exitValue() {
-    	assert !fSession.getExecutor().isInExecutorThread();
+	@ConfinedToDsfExecutor("fSession#getExecutor")
+	public MIInferiorProcess_7_3(IContainerDMContext container, OutputStream gdbOutputStream) {
+		this(container, gdbOutputStream, null);
+	}
 
-    	synchronized(this) {
-    		if (fExitCode != null) {
-    			return fExitCode;
-    		}
-    	}
+	@ConfinedToDsfExecutor("fSession#getExecutor")
+	public MIInferiorProcess_7_3(IContainerDMContext container, PTY p) {
+		this(container, null, p);
+	}
 
-    	if (!isTerminated()) {
-    		// Throw an exception because the process is still running.
-   			throw new IllegalThreadStateException();
-    	}
-    	
-    	return 0;
-    }
+	@ConfinedToDsfExecutor("fSession#getExecutor")
+	protected MIInferiorProcess_7_3(IContainerDMContext container, final OutputStream gdbOutputStream, PTY pty) {
+		super(container, gdbOutputStream, pty);
+		fSession = DsfSession.getSession(container.getSessionId());
+	}
 
-    /** @since 4.2 */
-    @Override
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession#getExecutor")
+	@Override
+	public int exitValue() {
+		assert !fSession.getExecutor().isInExecutorThread();
+
+		synchronized (this) {
+			if (fExitCode != null) {
+				return fExitCode;
+			}
+		}
+
+		if (!isTerminated()) {
+			// Throw an exception because the process is still running.
+			throw new IllegalThreadStateException();
+		}
+
+		return 0;
+	}
+
+	/** @since 4.2 */
+	@Override
 	@DsfServiceEventHandler
-    public void eventDispatched(MIThreadGroupExitedEvent e) {
+	public void eventDispatched(MIThreadGroupExitedEvent e) {
 		if (getContainer() instanceof IMIContainerDMContext) {
-			if (((IMIContainerDMContext)getContainer()).getGroupId().equals(e.getGroupId())) {
-    			// With recent changes, we notice a restart by the exited/started
-    			// events, and only then create the new inferior; this means the new
-    			// inferior will no longer receive the exited event for the old inferior.
-    			// But it does not hurt to leave the below if check just in case.
-    			assert isStarted() : "Exited event should only be received for a started inferior"; //$NON-NLS-1$
+			if (((IMIContainerDMContext) getContainer()).getGroupId().equals(e.getGroupId())) {
+				// With recent changes, we notice a restart by the exited/started
+				// events, and only then create the new inferior; this means the new
+				// inferior will no longer receive the exited event for the old inferior.
+				// But it does not hurt to leave the below if check just in case.
+				assert isStarted() : "Exited event should only be received for a started inferior"; //$NON-NLS-1$
 
-    			if (isStarted()) {
-    				// Only handle this event if this process was already
-    				// started.  This is to protect ourselves in the case of
-    				// a restart, where the new inferior is already created
-    				// and gets the exited event for the old inferior.
-    				String exitCode = e.getExitCode();
-    				if (exitCode != null) {
-    					setExitCodeAttribute();
-    					try {
-    						// Must use 'decode' since GDB returns an octal value
-    						Integer decodedExitCode = Integer.decode(exitCode);
-			        		synchronized(this) {
-    			            	fExitCode = decodedExitCode;
-    			            }
-    					} catch (NumberFormatException exception) {
-    					}    					
-    				}
-    			}
-    		}
-    	}
-    }
-    
+				if (isStarted()) {
+					// Only handle this event if this process was already
+					// started.  This is to protect ourselves in the case of
+					// a restart, where the new inferior is already created
+					// and gets the exited event for the old inferior.
+					String exitCode = e.getExitCode();
+					if (exitCode != null) {
+						setExitCodeAttribute();
+						try {
+							// Must use 'decode' since GDB returns an octal value
+							Integer decodedExitCode = Integer.decode(exitCode);
+							synchronized (this) {
+								fExitCode = decodedExitCode;
+							}
+						} catch (NumberFormatException exception) {
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Set an attribute in the inferior process of the launch to indicate
 	 * that the inferior has properly exited and its exit value can be used.
 	 */
-    @ConfinedToDsfExecutor("fSession#getExecutor")
+	@ConfinedToDsfExecutor("fSession#getExecutor")
 	private void setExitCodeAttribute() {
 		// Update the console label to contain the exit code
-		ILaunch launch = (ILaunch)fSession.getModelAdapter(ILaunch.class);
+		ILaunch launch = (ILaunch) fSession.getModelAdapter(ILaunch.class);
 		IProcess[] launchProcesses = launch.getProcesses();
 		for (IProcess proc : launchProcesses) {
 			if (proc instanceof InferiorRuntimeProcess) {
 				String groupAttribute = proc.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
 
 				if (getContainer() instanceof IMIContainerDMContext) {
-					if (groupAttribute != null && groupAttribute.equals(((IMIContainerDMContext)getContainer()).getGroupId())) {
+					if (groupAttribute != null
+							&& groupAttribute.equals(((IMIContainerDMContext) getContainer()).getGroupId())) {
 						// Simply set the attribute that indicates the inferior has properly exited and its
 						// exit code can be used.
 						proc.setAttribute(IGdbDebugConstants.INFERIOR_EXITED_ATTR, ""); //$NON-NLS-1$

@@ -35,13 +35,13 @@ import org.eclipse.cdt.ui.CUIPlugin;
 public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
 	private TextSelection selection;
-	
+
 	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 		assert (window != null);
 	}
-	
+
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean isTextSelection = selection != null && selection instanceof TextSelection;
@@ -49,7 +49,8 @@ public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {
 		if (!isTextSelection)
 			return;
 		// Get our own selection due to (a possible) bug?
-		this.selection = (TextSelection) CUIPlugin.getActivePage().getActiveEditor().getEditorSite().getSelectionProvider().getSelection();
+		this.selection = (TextSelection) CUIPlugin.getActivePage().getActiveEditor().getEditorSite()
+				.getSelectionProvider().getSelection();
 	}
 
 	@Override
@@ -60,8 +61,7 @@ public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {
 		IEditorPart editor = activePage.getActiveEditor();
 		if (editor == null || editor.getEditorInput() == null)
 			return;
-		ITranslationUnit tu =
-				CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+		ITranslationUnit tu = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
 		if (tu == null || tu.getResource() == null)
 			return;
 		new ToggleRefactoringRunner(tu, selection, window, tu.getCProject()).run();

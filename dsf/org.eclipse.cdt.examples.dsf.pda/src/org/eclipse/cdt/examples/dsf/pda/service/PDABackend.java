@@ -56,16 +56,16 @@ public class PDABackend extends AbstractDsfService {
 	private int fEventPort;
 
 	@ThreadSafe
-    private OutputStream fRequestOutputStream;
-    @ThreadSafe
-    private InputStream fRequestInputStream;
-    @ThreadSafe
-    private InputStream fEventInputStream;
-	
+	private OutputStream fRequestOutputStream;
+	@ThreadSafe
+	private InputStream fRequestInputStream;
+	@ThreadSafe
+	private InputStream fEventInputStream;
+
 	private String fProgram;
 	private Process fBackendProcess;
 	private String fBackendProcessName;
-	
+
 	/**
 	 * 
 	 * @param session
@@ -74,225 +74,225 @@ public class PDABackend extends AbstractDsfService {
 	 */
 	public PDABackend(DsfSession session, Launch launch, String program) {
 		super(session);
-		
+
 		fProgram = program;
 	}
 
 	@Override
 	protected BundleContext getBundleContext() {
-        return PDAPlugin.getBundleContext();
+		return PDAPlugin.getBundleContext();
 	}
-	
+
 	public Process getProcess() {
 		return fBackendProcess;
 	}
-	
+
 	public String getProcessName() {
-	    return fBackendProcessName;
+		return fBackendProcessName;
 	}
 
 	public String getPorgramName() {
-	    return fProgram;
-	}
-	
-    @Override
-    public void initialize(final RequestMonitor rm) {
-        super.initialize(new RequestMonitor(getExecutor(), rm) {
-            @Override
-            protected void handleSuccess() {
-                doInitialize(rm);
-            }
-        });
-    }
-
-    private void doInitialize(final RequestMonitor requestMonitor) {
-
-        final Sequence.Step[] initializeSteps = new Sequence.Step[] {
-            new Step() {
-            	// Launch the back end debugger process.
-
-				@Override
-				public void execute(final RequestMonitor rm) {
-					
-					new Job("Start PDA Virtual Machine") {
-
-						@Override
-						protected IStatus run(IProgressMonitor monitor) {
-							try {
-								fBackendProcess = launchPDABackendDebugger();
-							} catch (CoreException e) {
-								rm.setStatus(e.getStatus());
-							}
-							rm.done();
-
-							return Status.OK_STATUS;
-						}
-					}.schedule();
-				}
-
-				@Override
-				public void rollBack(RequestMonitor rm) {
-					if (fBackendProcess != null)
-						fBackendProcess.destroy();
-					
-					rm.done();
-				}
-            	
-            },
-            new Step() {
-				@Override
-				public void execute(final RequestMonitor rm) {
-		            
-			        // To avoid blocking the DSF dispatch thread use a job to initialize communication sockets.  
-			        new Job("PDA Socket Initialize") {
-			            @Override
-			            protected IStatus run(IProgressMonitor monitor) {
-			                try {
-			                    // give interpreter a chance to start
-			                    try {
-			                        Thread.sleep(1000);
-			                    } catch (InterruptedException e) {
-			                    }
-			                    Socket socket = new Socket("localhost", fRequestPort);
-			                    fRequestOutputStream = socket.getOutputStream();
-			                    fRequestInputStream = socket.getInputStream();
-			                    // give interpreter a chance to open next socket
-			                    try {
-			                        Thread.sleep(1000);
-			                    } catch (InterruptedException e) {
-			                    }
-
-			                    socket = new Socket("localhost", fEventPort);
-			                    fEventInputStream = socket.getInputStream();
-
-			                } catch (UnknownHostException e) {
-			                	rm.setStatus(new Status(
-			                        IStatus.ERROR, PDAPlugin.PLUGIN_ID, REQUEST_FAILED, "Unable to connect to PDA VM", e));
-			                } catch (IOException e) {
-			                	rm.setStatus(new Status(
-			                        IStatus.ERROR, PDAPlugin.PLUGIN_ID, REQUEST_FAILED, "Unable to connect to PDA VM", e));
-			                }
-		                	rm.done();
-
-		                	return Status.OK_STATUS;
-			            }
-			        }.schedule();
-				}
-            },
-
-            new Step() {	// register the service
-				@Override
-				public void execute(RequestMonitor rm) {
-			        // Register this service
-			        register(new String[] { PDABackend.class.getName() },
-			        		 new Hashtable<String, String>());
-
-			        rm.done();
-				}
-            },
-        };
-
-        Sequence startupSequence = new Sequence(getExecutor(), requestMonitor) {
-            @Override public Step[] getSteps() { return initializeSteps; }
-        };
-        getExecutor().execute(startupSequence);
-    }
-
-    /**
-     * Returns a free port number on localhost, or -1 if unable to find a free port.
-     */
-    public static int findFreePort() {
-        ServerSocket socket= null;
-        try {
-            socket= new ServerSocket(0);
-            return socket.getLocalPort();
-        } catch (IOException e) { 
-        } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-        return -1;		
-    }		
-
-    private void abort(String message, Throwable e) throws CoreException {
-        throw new CoreException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, 0, message, e));
-    }
-
-    private Process launchPDABackendDebugger() throws CoreException {
-        
-    	List<String> commandList = new ArrayList<String>();
-
-        // Get Java VM path
-        String javaVMHome = System.getProperty("java.home");
-        String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java";
-        if (File.separatorChar == '\\') {
-            javaVMExec += ".exe";
-        }   
-        File exe = new File(javaVMExec);
-        if (!exe.exists()) {
-            abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null);
-        }
-        
-        fBackendProcessName = javaVMExec;
-        
-        commandList.add(javaVMExec);
-        
-        commandList.add("-cp");
-        try {
-        commandList.add(
-            File.pathSeparator + PDAPlugin.getFileInPlugin(new Path("bin")) + 
-            File.pathSeparator + new File(Platform.asLocalURL(PDAPlugin.getDefault().getDescriptor().getInstallURL()).getFile()));
-        } catch (IOException e) {
-        }
-        
-        commandList.add("org.eclipse.cdt.examples.pdavm.PDAVirtualMachine");
-
-        String absolutePath = fProgram;
-        
-        // check if fProgram is already a full path of an existing file
-        // Note if "fProgram" is workspace resource path like /ProjectName/file.pda, we should not 
-        // change it to absolute path, otherwise the breakpoints in the PDA file won't work.
-        // See PDABreakpoints.doInsertBreakpoint() for more.
-        File f = new File(fProgram);
-        if (! f.exists()) {
-        	// Try to locate it in workspace
-        	IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fProgram));
-        	if (file.exists())
-        		absolutePath = file.getLocation().toPortableString();
-        	else
-        		abort(MessageFormat.format("PDA program {0} does not exist.", new Object[] {file.getFullPath().toPortableString()}), null);
-        }
-
-        commandList.add(absolutePath);
-        
-        fRequestPort = findFreePort();
-        fEventPort = findFreePort();
-      
-        if (fRequestPort == -1 || fEventPort == -1) {
-            abort("Unable to find free port", null);
-        }
-        
-        // Add debug arguments - i.e. '-debug fRequestPort fEventPort'
-        commandList.add("-debug");
-        commandList.add("" + fRequestPort);
-        commandList.add("" + fEventPort);
-
-        // Launch the perl process.
-        String[] commandLine = commandList.toArray(new String[commandList.size()]);
-        
-        PDAPlugin.debug("Start PDA Virtual Machine:\n" + commandList);
-        
-        Process process = DebugPlugin.exec(commandLine, null);
-
-        return process;
+		return fProgram;
 	}
 
 	@Override
-    public void shutdown(final RequestMonitor rm) {
+	public void initialize(final RequestMonitor rm) {
+		super.initialize(new RequestMonitor(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				doInitialize(rm);
+			}
+		});
+	}
+
+	private void doInitialize(final RequestMonitor requestMonitor) {
+
+		final Sequence.Step[] initializeSteps = new Sequence.Step[] { new Step() {
+			// Launch the back end debugger process.
+
+			@Override
+			public void execute(final RequestMonitor rm) {
+
+				new Job("Start PDA Virtual Machine") {
+
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							fBackendProcess = launchPDABackendDebugger();
+						} catch (CoreException e) {
+							rm.setStatus(e.getStatus());
+						}
+						rm.done();
+
+						return Status.OK_STATUS;
+					}
+				}.schedule();
+			}
+
+			@Override
+			public void rollBack(RequestMonitor rm) {
+				if (fBackendProcess != null)
+					fBackendProcess.destroy();
+
+				rm.done();
+			}
+
+		}, new Step() {
+			@Override
+			public void execute(final RequestMonitor rm) {
+
+				// To avoid blocking the DSF dispatch thread use a job to initialize communication sockets.  
+				new Job("PDA Socket Initialize") {
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							// give interpreter a chance to start
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+							}
+							Socket socket = new Socket("localhost", fRequestPort);
+							fRequestOutputStream = socket.getOutputStream();
+							fRequestInputStream = socket.getInputStream();
+							// give interpreter a chance to open next socket
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+							}
+
+							socket = new Socket("localhost", fEventPort);
+							fEventInputStream = socket.getInputStream();
+
+						} catch (UnknownHostException e) {
+							rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, REQUEST_FAILED,
+									"Unable to connect to PDA VM", e));
+						} catch (IOException e) {
+							rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, REQUEST_FAILED,
+									"Unable to connect to PDA VM", e));
+						}
+						rm.done();
+
+						return Status.OK_STATUS;
+					}
+				}.schedule();
+			}
+		},
+
+				new Step() { // register the service
+					@Override
+					public void execute(RequestMonitor rm) {
+						// Register this service
+						register(new String[] { PDABackend.class.getName() }, new Hashtable<String, String>());
+
+						rm.done();
+					}
+				}, };
+
+		Sequence startupSequence = new Sequence(getExecutor(), requestMonitor) {
+			@Override
+			public Step[] getSteps() {
+				return initializeSteps;
+			}
+		};
+		getExecutor().execute(startupSequence);
+	}
+
+	/**
+	 * Returns a free port number on localhost, or -1 if unable to find a free port.
+	 */
+	public static int findFreePort() {
+		ServerSocket socket = null;
+		try {
+			socket = new ServerSocket(0);
+			return socket.getLocalPort();
+		} catch (IOException e) {
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		return -1;
+	}
+
+	private void abort(String message, Throwable e) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, 0, message, e));
+	}
+
+	private Process launchPDABackendDebugger() throws CoreException {
+
+		List<String> commandList = new ArrayList<String>();
+
+		// Get Java VM path
+		String javaVMHome = System.getProperty("java.home");
+		String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java";
+		if (File.separatorChar == '\\') {
+			javaVMExec += ".exe";
+		}
+		File exe = new File(javaVMExec);
+		if (!exe.exists()) {
+			abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[] { javaVMExec }),
+					null);
+		}
+
+		fBackendProcessName = javaVMExec;
+
+		commandList.add(javaVMExec);
+
+		commandList.add("-cp");
+		try {
+			commandList.add(File.pathSeparator + PDAPlugin.getFileInPlugin(new Path("bin")) + File.pathSeparator
+					+ new File(Platform.asLocalURL(PDAPlugin.getDefault().getDescriptor().getInstallURL()).getFile()));
+		} catch (IOException e) {
+		}
+
+		commandList.add("org.eclipse.cdt.examples.pdavm.PDAVirtualMachine");
+
+		String absolutePath = fProgram;
+
+		// check if fProgram is already a full path of an existing file
+		// Note if "fProgram" is workspace resource path like /ProjectName/file.pda, we should not 
+		// change it to absolute path, otherwise the breakpoints in the PDA file won't work.
+		// See PDABreakpoints.doInsertBreakpoint() for more.
+		File f = new File(fProgram);
+		if (!f.exists()) {
+			// Try to locate it in workspace
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fProgram));
+			if (file.exists())
+				absolutePath = file.getLocation().toPortableString();
+			else
+				abort(MessageFormat.format("PDA program {0} does not exist.",
+						new Object[] { file.getFullPath().toPortableString() }), null);
+		}
+
+		commandList.add(absolutePath);
+
+		fRequestPort = findFreePort();
+		fEventPort = findFreePort();
+
+		if (fRequestPort == -1 || fEventPort == -1) {
+			abort("Unable to find free port", null);
+		}
+
+		// Add debug arguments - i.e. '-debug fRequestPort fEventPort'
+		commandList.add("-debug");
+		commandList.add("" + fRequestPort);
+		commandList.add("" + fEventPort);
+
+		// Launch the perl process.
+		String[] commandLine = commandList.toArray(new String[commandList.size()]);
+
+		PDAPlugin.debug("Start PDA Virtual Machine:\n" + commandList);
+
+		Process process = DebugPlugin.exec(commandLine, null);
+
+		return process;
+	}
+
+	@Override
+	public void shutdown(final RequestMonitor rm) {
 		fBackendProcess.destroy();
 
 		try {
@@ -305,10 +305,10 @@ public class PDABackend extends AbstractDsfService {
 		} catch (IOException e) {
 			// ignore
 		}
-		
-        unregister();
-        rm.done();
-    }
+
+		unregister();
+		rm.done();
+	}
 
 	/*
 	 * =========== Following are PDA debugger specific ====================

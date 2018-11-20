@@ -16,7 +16,6 @@ package org.eclipse.cdt.make.internal.core.makefile.gnu;
 import org.eclipse.cdt.make.core.makefile.IAutomaticVariable;
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-
 /**
  * Represents an automatic variable. Automatic variables are implicit and
  * computed for each rule that is applied.

@@ -25,19 +25,19 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
  * @since 1.1
  */
 public class FullStackRefreshEvent extends AbstractDMEvent<IExecutionDMContext> {
-    
-    private final IDMEvent<? extends IDMContext> fTriggeringEvent;
-    
-    public FullStackRefreshEvent(IExecutionDMContext execCtx) {
-        this(execCtx, null);
-    }
-    
-    public FullStackRefreshEvent(IExecutionDMContext execCtx, IDMEvent<? extends IDMContext> triggeringEvent) {
-        super(execCtx);
-        fTriggeringEvent = triggeringEvent;
-    }
 
-    public IDMEvent<? extends IDMContext> getTriggeringEvent() {
-        return fTriggeringEvent;
-    }
+	private final IDMEvent<? extends IDMContext> fTriggeringEvent;
+
+	public FullStackRefreshEvent(IExecutionDMContext execCtx) {
+		this(execCtx, null);
+	}
+
+	public FullStackRefreshEvent(IExecutionDMContext execCtx, IDMEvent<? extends IDMContext> triggeringEvent) {
+		super(execCtx);
+		fTriggeringEvent = triggeringEvent;
+	}
+
+	public IDMEvent<? extends IDMContext> getTriggeringEvent() {
+		return fTriggeringEvent;
+	}
 }

@@ -17,12 +17,10 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.core.runtime.IPath;
 
-
 public class ElfBinaryExecutable extends ElfBinaryObject implements IBinaryExecutable {
 
-	
 	public ElfBinaryExecutable(ElfParser parser, IPath p) {
 		super(parser, p, IBinaryFile.EXECUTABLE);
 	}
-	
+
 }

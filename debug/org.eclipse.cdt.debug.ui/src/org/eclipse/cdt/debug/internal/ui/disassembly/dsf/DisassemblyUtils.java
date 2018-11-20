@@ -28,8 +28,9 @@ public class DisassemblyUtils {
 	 * Trace option. The view started out and continues to be in DSF but
 	 * backends can be non-DSF.
 	 */
-	public final static boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/disassembly"));  //$NON-NLS-1$
-	
+	public final static boolean DEBUG = Boolean
+			.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/disassembly")); //$NON-NLS-1$
+
 	public static String getAddressText(BigInteger address) {
 		if (address == null) {
 			return "<null>"; //$NON-NLS-1$
@@ -47,6 +48,7 @@ public class DisassemblyUtils {
 			CDebugUIPlugin.log(e);
 		}
 	}
+
 	public static BigInteger decodeAddress(String string) {
 		if (string.startsWith("0x")) { //$NON-NLS-1$
 			return new BigInteger(string.substring(2), 16);

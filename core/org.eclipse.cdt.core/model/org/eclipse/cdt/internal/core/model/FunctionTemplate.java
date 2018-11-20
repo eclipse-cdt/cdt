@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionTemplate;
@@ -39,7 +38,7 @@ public class FunctionTemplate extends Function implements IFunctionTemplate {
 
 	@Override
 	public String[] getTemplateArguments() {
-		return  fTemplate.getTemplateArguments();
+		return fTemplate.getTemplateArguments();
 	}
 
 	/**

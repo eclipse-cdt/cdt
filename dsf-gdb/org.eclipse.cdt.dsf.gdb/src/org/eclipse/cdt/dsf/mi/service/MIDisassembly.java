@@ -36,229 +36,215 @@ import org.osgi.framework.BundleContext;
 
 public class MIDisassembly extends AbstractDsfService implements IDisassembly {
 
-    // Services
-    ICommandControl fConnection;
+	// Services
+	ICommandControl fConnection;
 	private CommandFactory fCommandFactory;
 
-    ///////////////////////////////////////////////////////////////////////////
-    // AbstractDsfService
-    ///////////////////////////////////////////////////////////////////////////
-    
-    /**
-     * The service constructor
-     * 
-     * @param session The debugging session
-     */
-    public MIDisassembly(DsfSession session) {
-        super(session);
-    }
+	///////////////////////////////////////////////////////////////////////////
+	// AbstractDsfService
+	///////////////////////////////////////////////////////////////////////////
 
-    /**
-     * @see org.eclipse.cdt.dsf.service.AbstractDsfService#initialize(org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-     */
-    @Override
-    public void initialize(final RequestMonitor rm) {
-        super.initialize(new ImmediateRequestMonitor(rm) {
-            @Override
-            protected void handleSuccess() {
-                doInitialize(rm);
-            }
-        });
-    }
+	/**
+	 * The service constructor
+	 * 
+	 * @param session The debugging session
+	 */
+	public MIDisassembly(DsfSession session) {
+		super(session);
+	}
 
-    private void doInitialize(final RequestMonitor rm) {
-        fConnection = getServicesTracker().getService(ICommandControl.class);
+	/**
+	 * @see org.eclipse.cdt.dsf.service.AbstractDsfService#initialize(org.eclipse.cdt.dsf.concurrent.RequestMonitor)
+	 */
+	@Override
+	public void initialize(final RequestMonitor rm) {
+		super.initialize(new ImmediateRequestMonitor(rm) {
+			@Override
+			protected void handleSuccess() {
+				doInitialize(rm);
+			}
+		});
+	}
+
+	private void doInitialize(final RequestMonitor rm) {
+		fConnection = getServicesTracker().getService(ICommandControl.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
-        register(new String[] { IDisassembly.class.getName(), MIDisassembly.class.getName() },
-                new Hashtable<String, String>());
-        rm.done();
-    }
+		register(new String[] { IDisassembly.class.getName(), MIDisassembly.class.getName() },
+				new Hashtable<String, String>());
+		rm.done();
+	}
 
-    /**
-     * @see org.eclipse.cdt.dsf.service.AbstractDsfService#shutdown(org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-     */
-    @Override
-    public void shutdown(RequestMonitor rm) {
-        unregister();
+	/**
+	 * @see org.eclipse.cdt.dsf.service.AbstractDsfService#shutdown(org.eclipse.cdt.dsf.concurrent.RequestMonitor)
+	 */
+	@Override
+	public void shutdown(RequestMonitor rm) {
+		unregister();
 		super.shutdown(rm);
-    }
+	}
 
-    /**
-     * @see org.eclipse.cdt.dsf.service.AbstractDsfService#getBundleContext()
-     */
-    @Override
-    protected BundleContext getBundleContext() {
-        return GdbPlugin.getBundleContext();
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // IDisassembly
-    ///////////////////////////////////////////////////////////////////////////
-    
-    /**
-     * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.math.BigInteger, java.math.BigInteger, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-     */
-    @Override
-    public void getInstructions(IDisassemblyDMContext context,
-            BigInteger startAddress, BigInteger endAddress,
-            DataRequestMonitor<IInstruction[]> drm)
-    {
-    	getInstructions(context, startAddress, endAddress, MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY, drm);
-    }
- 
-    /** 
-     * Helper method to allow getting disassembly instructions not in mixed mode.
-     * @since 4.4 
-     */
-    protected void getInstructions(IDisassemblyDMContext context,
-            BigInteger startAddress, BigInteger endAddress, int mode,
-            final DataRequestMonitor<IInstruction[]> drm)
-    {
-    	// Checking what we don't support instead of what we do support allows
-    	// others to extend the 'mode' field with new values.
-    	assert mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED || 
-    			mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED_OPCODES;
-
-        if (context == null) {
-            drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$
-            drm.done();            
-            return;
-        }
-
-        String start = (startAddress != null) ? startAddress.toString() : "$pc";       //$NON-NLS-1$
-        String end   = (endAddress   != null) ? endAddress.toString()   : start + " + 100"; //$NON-NLS-1$
-        fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, start, end, mode),
-            new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
-                @Override
-                protected void handleSuccess() {
-                    IInstruction[] result = getData().getMIAssemblyCode();
-                    drm.setData(result);
-                    drm.done();
-                }
-            });
-    }
-
-    /**
-     * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.lang.String, int, int, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-     */
+	/**
+	 * @see org.eclipse.cdt.dsf.service.AbstractDsfService#getBundleContext()
+	 */
 	@Override
-    public void getInstructions(IDisassemblyDMContext context, String filename,
-            int linenum, int lines, DataRequestMonitor<IInstruction[]> drm)
-    {
-    	getInstructions(context, filename, linenum, lines, MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY, drm);
-    }
-    
-    /** 
-     * Helper method to allow getting disassembly instructions not in mixed mode.
-     * @since 4.4 
-     */
-    protected void getInstructions(IDisassemblyDMContext context, String filename,
-            int linenum, int lines, int mode, final DataRequestMonitor<IInstruction[]> drm)
-    {
-    	// Checking what we don't support instead of what we do support allows
-    	// others to extend the 'mode' field with new values.
-    	assert mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED || 
-    			mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED_OPCODES;
+	protected BundleContext getBundleContext() {
+		return GdbPlugin.getBundleContext();
+	}
 
-        if (context == null) {
-            drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$
-            drm.done();            
-            return;
-        }
+	///////////////////////////////////////////////////////////////////////////
+	// IDisassembly
+	///////////////////////////////////////////////////////////////////////////
 
-        fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, filename, linenum, lines, mode),
-            new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
-                @Override
-                protected void handleSuccess() {
-                    IInstruction[] result = getData().getMIAssemblyCode();
-                    drm.setData(result);
-                    drm.done();
-                }
-            });
-    }
-
-    /**
-     * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getMixedInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.math.BigInteger, java.math.BigInteger, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-     */
+	/**
+	 * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.math.BigInteger, java.math.BigInteger, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+	 */
 	@Override
-    public void getMixedInstructions(IDisassemblyDMContext context,
-            BigInteger startAddress, BigInteger endAddress,
-            final DataRequestMonitor<IMixedInstruction[]> drm)
-    {
+	public void getInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			DataRequestMonitor<IInstruction[]> drm) {
+		getInstructions(context, startAddress, endAddress, MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY, drm);
+	}
+
+	/** 
+	 * Helper method to allow getting disassembly instructions not in mixed mode.
+	 * @since 4.4 
+	 */
+	protected void getInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			int mode, final DataRequestMonitor<IInstruction[]> drm) {
+		// Checking what we don't support instead of what we do support allows
+		// others to extend the 'mode' field with new values.
+		assert mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED
+				|| mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED_OPCODES;
+
+		if (context == null) {
+			drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$
+			drm.done();
+			return;
+		}
+
+		String start = (startAddress != null) ? startAddress.toString() : "$pc"; //$NON-NLS-1$
+		String end = (endAddress != null) ? endAddress.toString() : start + " + 100"; //$NON-NLS-1$
+		fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, start, end, mode),
+				new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
+					@Override
+					protected void handleSuccess() {
+						IInstruction[] result = getData().getMIAssemblyCode();
+						drm.setData(result);
+						drm.done();
+					}
+				});
+	}
+
+	/**
+	 * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.lang.String, int, int, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+	 */
+	@Override
+	public void getInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines,
+			DataRequestMonitor<IInstruction[]> drm) {
+		getInstructions(context, filename, linenum, lines, MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY, drm);
+	}
+
+	/** 
+	 * Helper method to allow getting disassembly instructions not in mixed mode.
+	 * @since 4.4 
+	 */
+	protected void getInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines, int mode,
+			final DataRequestMonitor<IInstruction[]> drm) {
+		// Checking what we don't support instead of what we do support allows
+		// others to extend the 'mode' field with new values.
+		assert mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED
+				|| mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED_OPCODES;
+
+		if (context == null) {
+			drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$
+			drm.done();
+			return;
+		}
+
+		fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, filename, linenum, lines, mode),
+				new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
+					@Override
+					protected void handleSuccess() {
+						IInstruction[] result = getData().getMIAssemblyCode();
+						drm.setData(result);
+						drm.done();
+					}
+				});
+	}
+
+	/**
+	 * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getMixedInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.math.BigInteger, java.math.BigInteger, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+	 */
+	@Override
+	public void getMixedInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			final DataRequestMonitor<IMixedInstruction[]> drm) {
 		getMixedInstructions(context, startAddress, endAddress, MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED, drm);
-    }
- 
-    /** 
-     * Helper method to allow getting disassembly instructions in mixed mode.
-     * @since 4.4 
-     */
-    protected void getMixedInstructions(IDisassemblyDMContext context,
-            BigInteger startAddress, BigInteger endAddress, int mode,
-            final DataRequestMonitor<IMixedInstruction[]> drm)
-    {
-    	// Checking what we don't support instead of what we do support allows
-    	// others to extend the 'mode' field with new values.
-       	assert mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY || 
-    			mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY_OPCODES;
+	}
 
-    	if (context == null) {
-            drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$
-            drm.done();            
-            return;
-        }
+	/** 
+	 * Helper method to allow getting disassembly instructions in mixed mode.
+	 * @since 4.4 
+	 */
+	protected void getMixedInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			int mode, final DataRequestMonitor<IMixedInstruction[]> drm) {
+		// Checking what we don't support instead of what we do support allows
+		// others to extend the 'mode' field with new values.
+		assert mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY
+				|| mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY_OPCODES;
 
-        String start = (startAddress != null) ? startAddress.toString() : "$pc";       //$NON-NLS-1$
-        String end   = (endAddress   != null) ? endAddress.toString()   : start + " + 100"; //$NON-NLS-1$
-        fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, start, end, mode),
-            new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
-                @Override
-                protected void handleSuccess() {
-                    IMixedInstruction[] result = getData().getMIMixedCode();
-                    drm.setData(result);
-                    drm.done();
-                }
-            });
-    }
+		if (context == null) {
+			drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$
+			drm.done();
+			return;
+		}
 
-    /**
-     * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getMixedInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.lang.String, int, int, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-     */
+		String start = (startAddress != null) ? startAddress.toString() : "$pc"; //$NON-NLS-1$
+		String end = (endAddress != null) ? endAddress.toString() : start + " + 100"; //$NON-NLS-1$
+		fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, start, end, mode),
+				new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
+					@Override
+					protected void handleSuccess() {
+						IMixedInstruction[] result = getData().getMIMixedCode();
+						drm.setData(result);
+						drm.done();
+					}
+				});
+	}
+
+	/**
+	 * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getMixedInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.lang.String, int, int, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+	 */
 	@Override
-    public void getMixedInstructions(IDisassemblyDMContext context,
-            String filename, int linenum, int lines,
-            final DataRequestMonitor<IMixedInstruction[]> drm)
-    {
+	public void getMixedInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines,
+			final DataRequestMonitor<IMixedInstruction[]> drm) {
 		getMixedInstructions(context, filename, linenum, lines, MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED, drm);
-    }
-    
-    /** 
-     * Helper method to allow getting disassembly instructions in mixed mode.
-     * @since 4.4 
-     */
-	protected void getMixedInstructions(IDisassemblyDMContext context,
-			String filename, int linenum, int lines, int mode,
-			final DataRequestMonitor<IMixedInstruction[]> drm)
-	{
-    	// Checking what we don't support instead of what we do support allows
-    	// others to extend the 'mode' field with new values.
-       	assert mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY || 
-    			mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY_OPCODES;
+	}
 
-        if (context == null) {
-            drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$
-            drm.done();            
-            return;
-        }
+	/** 
+	 * Helper method to allow getting disassembly instructions in mixed mode.
+	 * @since 4.4 
+	 */
+	protected void getMixedInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines,
+			int mode, final DataRequestMonitor<IMixedInstruction[]> drm) {
+		// Checking what we don't support instead of what we do support allows
+		// others to extend the 'mode' field with new values.
+		assert mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY
+				|| mode != MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY_OPCODES;
 
-        fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, filename, linenum, lines, mode),
-            new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
-                @Override
-                protected void handleSuccess() {
-                    IMixedInstruction[] result = getData().getMIMixedCode();
-                    drm.setData(result);
-                    drm.done();
-                }
-            });
-    }
+		if (context == null) {
+			drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$
+			drm.done();
+			return;
+		}
+
+		fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, filename, linenum, lines, mode),
+				new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
+					@Override
+					protected void handleSuccess() {
+						IMixedInstruction[] result = getData().getMIMixedCode();
+						drm.setData(result);
+						drm.done();
+					}
+				});
+	}
 }

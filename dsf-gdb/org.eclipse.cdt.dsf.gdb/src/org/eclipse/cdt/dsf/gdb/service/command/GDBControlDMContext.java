@@ -25,13 +25,11 @@ import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 /**
  * 
  */
-public class GDBControlDMContext extends MIControlDMContext
-    implements ISymbolDMContext, ISourceLookupDMContext, 
-        ISignalsDMContext, ITraceTargetDMContext, IHardwareTargetDMContext 
-{
+public class GDBControlDMContext extends MIControlDMContext implements ISymbolDMContext, ISourceLookupDMContext,
+		ISignalsDMContext, ITraceTargetDMContext, IHardwareTargetDMContext {
 
-    public GDBControlDMContext(String sessionId, String commandControlId) {
-        super(sessionId, commandControlId);
-    }
+	public GDBControlDMContext(String sessionId, String commandControlId) {
+		super(sessionId, commandControlId);
+	}
 
 }

@@ -123,7 +123,7 @@ public class Elf {
 		public final static int EM_ST100 = 60;
 
 		/** @since 5.2 */
-		public final static int EM_68HC08 = 71;	/* Freescale MC68HC08 Microcontroller */
+		public final static int EM_68HC08 = 71; /* Freescale MC68HC08 Microcontroller */
 
 		public final static int EM_AVR = 83;
 		public final static int EM_FR30 = 84; /* Fujitsu FR30 */
@@ -142,7 +142,7 @@ public class Elf {
 		public final static int EM_M16C = 117;
 
 		/** @since 5.2 */
-		public final static int EM_RS08 = 132;	 /* Freescale RS08 embedded processor */
+		public final static int EM_RS08 = 132; /* Freescale RS08 embedded processor */
 
 		public final static int EM_MMDSP = 160;
 
@@ -194,25 +194,25 @@ public class Elf {
 			e_machine = efile.readShortE();
 			e_version = efile.readIntE();
 			switch (e_ident[ELFhdr.EI_CLASS]) {
-				case ELFhdr.ELFCLASS32 : {
-					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
-					efile.readFullyE(addrArray);
-					e_entry = new Addr32(addrArray);
-					e_phoff = efile.readIntE();
-					e_shoff = efile.readIntE();
-				}
-					break;
-				case ELFhdr.ELFCLASS64 : {
-					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
-					efile.readFullyE(addrArray);
-					e_entry = new Addr64(addrArray);
-					e_phoff = readUnsignedLong(efile);
-					e_shoff = readUnsignedLong(efile);
-				}
-					break;
-				case ELFhdr.ELFCLASSNONE :
-				default :
-					throw new IOException("Unknown ELF class " + e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
+			case ELFhdr.ELFCLASS32: {
+				byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+				efile.readFullyE(addrArray);
+				e_entry = new Addr32(addrArray);
+				e_phoff = efile.readIntE();
+				e_shoff = efile.readIntE();
+			}
+				break;
+			case ELFhdr.ELFCLASS64: {
+				byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+				efile.readFullyE(addrArray);
+				e_entry = new Addr64(addrArray);
+				e_phoff = readUnsignedLong(efile);
+				e_shoff = readUnsignedLong(efile);
+			}
+				break;
+			case ELFhdr.ELFCLASSNONE:
+			default:
+				throw new IOException("Unknown ELF class " + e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 			}
 			e_flags = efile.readIntE();
 			e_ehsize = efile.readShortE();
@@ -240,31 +240,31 @@ public class Elf {
 			e_version = makeInt(bytes, offset, isle);
 			offset += 4;
 			switch (e_ident[ELFhdr.EI_CLASS]) {
-				case ELFhdr.ELFCLASS32 : {
-					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
-					System.arraycopy(bytes, offset, addrArray, 0, ELF32_ADDR_SIZE);
-					offset += ELF32_ADDR_SIZE;
-					e_entry = new Addr32(addrArray);
-					e_phoff = makeInt(bytes, offset, isle);
-					offset += ELF32_OFF_SIZE;
-					e_shoff = makeInt(bytes, offset, isle);
-					offset += ELF32_OFF_SIZE;
-				}
-					break;
-				case ELFhdr.ELFCLASS64 : {
-					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
-					System.arraycopy(bytes, offset, addrArray, 0, ELF64_ADDR_SIZE);
-					offset += ELF64_ADDR_SIZE;
-					e_entry = new Addr64(addrArray);
-					e_phoff = makeUnsignedLong(bytes, offset, isle);
-					offset += ELF64_OFF_SIZE;
-					e_shoff = makeUnsignedLong(bytes, offset, isle);
-					offset += ELF64_OFF_SIZE;
-				}
-					break;
-				case ELFhdr.ELFCLASSNONE :
-				default :
-					throw new IOException("Unknown ELF class " + e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
+			case ELFhdr.ELFCLASS32: {
+				byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+				System.arraycopy(bytes, offset, addrArray, 0, ELF32_ADDR_SIZE);
+				offset += ELF32_ADDR_SIZE;
+				e_entry = new Addr32(addrArray);
+				e_phoff = makeInt(bytes, offset, isle);
+				offset += ELF32_OFF_SIZE;
+				e_shoff = makeInt(bytes, offset, isle);
+				offset += ELF32_OFF_SIZE;
+			}
+				break;
+			case ELFhdr.ELFCLASS64: {
+				byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+				System.arraycopy(bytes, offset, addrArray, 0, ELF64_ADDR_SIZE);
+				offset += ELF64_ADDR_SIZE;
+				e_entry = new Addr64(addrArray);
+				e_phoff = makeUnsignedLong(bytes, offset, isle);
+				offset += ELF64_OFF_SIZE;
+				e_shoff = makeUnsignedLong(bytes, offset, isle);
+				offset += ELF64_OFF_SIZE;
+			}
+				break;
+			case ELFhdr.ELFCLASSNONE:
+			default:
+				throw new IOException("Unknown ELF class " + e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 			}
 			e_flags = makeInt(bytes, offset, isle);
 			offset += 4;
@@ -338,7 +338,7 @@ public class Elf {
 
 		public byte[] loadSectionData() throws IOException {
 			makeSureNotCompressed();
-			byte[] data = new byte[(int)sh_size];
+			byte[] data = new byte[(int) sh_size];
 			efile.seek(sh_offset);
 			efile.read(data);
 			return data;
@@ -355,11 +355,11 @@ public class Elf {
 		public String toString() {
 			try {
 				if (section_strtab == null) {
-					final int shstrndx= ehdr.e_shstrndx & 0xffff; // unsigned short
+					final int shstrndx = ehdr.e_shstrndx & 0xffff; // unsigned short
 					if (shstrndx > sections.length || shstrndx < 0)
 						return EMPTY_STRING;
 					sections[shstrndx].makeSureNotCompressed();
-					int size = (int)sections[shstrndx].sh_size;
+					int size = (int) sections[shstrndx].sh_size;
 					if (size <= 0 || size > efile.length())
 						return EMPTY_STRING;
 					section_strtab = new byte[size];
@@ -370,9 +370,9 @@ public class Elf {
 				if (sh_name > section_strtab.length) {
 					return EMPTY_STRING;
 				}
-				while (section_strtab[(int)sh_name + str_size] != 0)
+				while (section_strtab[(int) sh_name + str_size] != 0)
 					str_size++;
-				return new String(section_strtab, (int)sh_name, str_size);
+				return new String(section_strtab, (int) sh_name, str_size);
 			} catch (IOException e) {
 				return EMPTY_STRING;
 			}
@@ -387,18 +387,18 @@ public class Elf {
 		section.makeSureNotCompressed();
 		StringBuilder str = new StringBuilder();
 		//Most string symbols will be less than 50 bytes in size
-		byte [] tmp = new byte[50];
+		byte[] tmp = new byte[50];
 		efile.seek(section.sh_offset + index);
-		while(true) {
+		while (true) {
 			int len = efile.read(tmp);
-			for(int i = 0; i < len; i++) {
-				if(tmp[i] == 0) {
+			for (int i = 0; i < len; i++) {
+				if (tmp[i] == 0) {
 					len = 0;
 					break;
 				}
-				str.append((char)tmp[i]);
+				str.append((char) tmp[i]);
 			}
-			if(len <= 0) {
+			if (len <= 0) {
 				break;
 			}
 		}
@@ -464,7 +464,7 @@ public class Elf {
 			 * return (thisVal <anotherVal ? -1 : (thisVal==anotherVal ? 0 :
 			 * 1));
 			 */
-			return this.st_value.compareTo( ((Symbol)obj).st_value);
+			return this.st_value.compareTo(((Symbol) obj).st_value);
 		}
 
 		@Override
@@ -472,8 +472,8 @@ public class Elf {
 			if (name == null) {
 				try {
 					Section sections[] = getSections();
-					Section symstr = sections[(int)sym_section.sh_link];
-					name = string_from_elf_section(symstr, (int)st_name);
+					Section symstr = sections[(int) sym_section.sh_link];
+					name = string_from_elf_section(symstr, (int) st_name);
 				} catch (IOException e) {
 					return EMPTY_STRING;
 				}
@@ -493,21 +493,22 @@ public class Elf {
 	class SymbolComparator implements Comparator<Object> {
 
 		IAddress val1, val2;
+
 		@Override
 		public int compare(Object o1, Object o2) {
 
 			if (o1 instanceof IAddress) {
-				val1 = (IAddress)o1;
+				val1 = (IAddress) o1;
 			} else if (o1 instanceof Symbol) {
-				val1 = ((Symbol)o1).st_value;
+				val1 = ((Symbol) o1).st_value;
 			} else {
 				return -1;
 			}
 
 			if (o2 instanceof IAddress) {
-				val2 = (IAddress)o2;
+				val2 = (IAddress) o2;
 			} else if (o2 instanceof Symbol) {
-				val2 = ((Symbol)o2).st_value;
+				val2 = ((Symbol) o2).st_value;
 			} else {
 				return -1;
 			}
@@ -544,44 +545,44 @@ public class Elf {
 			return new PHdr[0];
 		}
 		efile.seek(ehdr.e_phoff);
-		final int length= ehdr.e_phnum & 0xffff; // interpret as unsigned short
+		final int length = ehdr.e_phnum & 0xffff; // interpret as unsigned short
 		PHdr phdrs[] = new PHdr[length];
 		for (int i = 0; i < length; i++) {
 			phdrs[i] = new PHdr();
 			switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
-				case ELFhdr.ELFCLASS32 : {
-					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+			case ELFhdr.ELFCLASS32: {
+				byte[] addrArray = new byte[ELF32_ADDR_SIZE];
 
-					phdrs[i].p_type = efile.readIntE();
-					phdrs[i].p_offset = efile.readIntE();
-					efile.readFullyE(addrArray);
-					phdrs[i].p_vaddr = new Addr32(addrArray);
-					efile.readFullyE(addrArray);
-					phdrs[i].p_paddr = new Addr32(addrArray);
-					phdrs[i].p_filesz = efile.readIntE();
-					phdrs[i].p_memsz = efile.readIntE();
-					phdrs[i].p_flags = efile.readIntE();
-					phdrs[i].p_align = efile.readIntE();
-				}
-					break;
-				case ELFhdr.ELFCLASS64 : {
-					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+				phdrs[i].p_type = efile.readIntE();
+				phdrs[i].p_offset = efile.readIntE();
+				efile.readFullyE(addrArray);
+				phdrs[i].p_vaddr = new Addr32(addrArray);
+				efile.readFullyE(addrArray);
+				phdrs[i].p_paddr = new Addr32(addrArray);
+				phdrs[i].p_filesz = efile.readIntE();
+				phdrs[i].p_memsz = efile.readIntE();
+				phdrs[i].p_flags = efile.readIntE();
+				phdrs[i].p_align = efile.readIntE();
+			}
+				break;
+			case ELFhdr.ELFCLASS64: {
+				byte[] addrArray = new byte[ELF64_ADDR_SIZE];
 
-					phdrs[i].p_type = efile.readIntE();
-					phdrs[i].p_flags = efile.readIntE();
-					phdrs[i].p_offset = readUnsignedLong(efile);
-					efile.readFullyE(addrArray);
-					phdrs[i].p_vaddr = new Addr64(addrArray);
-					efile.readFullyE(addrArray);
-					phdrs[i].p_paddr = new Addr64(addrArray);
-					phdrs[i].p_filesz = readUnsignedLong(efile);
-					phdrs[i].p_memsz = readUnsignedLong(efile);
-					phdrs[i].p_align = readUnsignedLong(efile);
-				}
-					break;
-				case ELFhdr.ELFCLASSNONE :
-				default :
-					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
+				phdrs[i].p_type = efile.readIntE();
+				phdrs[i].p_flags = efile.readIntE();
+				phdrs[i].p_offset = readUnsignedLong(efile);
+				efile.readFullyE(addrArray);
+				phdrs[i].p_vaddr = new Addr64(addrArray);
+				efile.readFullyE(addrArray);
+				phdrs[i].p_paddr = new Addr64(addrArray);
+				phdrs[i].p_filesz = readUnsignedLong(efile);
+				phdrs[i].p_memsz = readUnsignedLong(efile);
+				phdrs[i].p_align = readUnsignedLong(efile);
+			}
+				break;
+			case ELFhdr.ELFCLASSNONE:
+			default:
+				throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 			}
 
 		}
@@ -621,19 +622,19 @@ public class Elf {
 		@Override
 		public String toString() {
 			if (name == null) {
-				switch ((int)d_tag) {
-					case DT_NEEDED :
-					case DT_SONAME :
-					case DT_RPATH :
-						try {
-							Section symstr = sections[(int)section.sh_link];
-							name = string_from_elf_section(symstr, (int)d_val);
-						} catch (IOException e) {
-							name = EMPTY_STRING;
-						}
-						break;
-					default :
+				switch ((int) d_tag) {
+				case DT_NEEDED:
+				case DT_SONAME:
+				case DT_RPATH:
+					try {
+						Section symstr = sections[(int) section.sh_link];
+						name = string_from_elf_section(symstr, (int) d_val);
+					} catch (IOException e) {
 						name = EMPTY_STRING;
+					}
+					break;
+				default:
+					name = EMPTY_STRING;
 				}
 			}
 			return name;
@@ -654,21 +655,21 @@ public class Elf {
 		while (off < section.sh_size) {
 			Dynamic dynEnt = new Dynamic(section);
 			switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
-				case ELFhdr.ELFCLASS32 : {
-					dynEnt.d_tag = efile.readIntE();
-					dynEnt.d_val = efile.readIntE();
-					off += Dynamic.DYN_ENT_SIZE_32;
-				}
-					break;
-				case ELFhdr.ELFCLASS64 : {
-					dynEnt.d_tag = efile.readLongE();
-					dynEnt.d_val = efile.readLongE();
-					off += Dynamic.DYN_ENT_SIZE_64;
-				}
-					break;
-				case ELFhdr.ELFCLASSNONE :
-				default :
-					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
+			case ELFhdr.ELFCLASS32: {
+				dynEnt.d_tag = efile.readIntE();
+				dynEnt.d_val = efile.readIntE();
+				off += Dynamic.DYN_ENT_SIZE_32;
+			}
+				break;
+			case ELFhdr.ELFCLASS64: {
+				dynEnt.d_tag = efile.readLongE();
+				dynEnt.d_val = efile.readLongE();
+				off += Dynamic.DYN_ENT_SIZE_64;
+			}
+				break;
+			case ELFhdr.ELFCLASSNONE:
+			default:
+				throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 			}
 
 			if (dynEnt.d_tag != Dynamic.DT_NULL)
@@ -753,177 +754,177 @@ public class Elf {
 		Attribute attrib = new Attribute();
 
 		switch (ehdr.e_type) {
-			case Elf.ELFhdr.ET_CORE :
-				attrib.type = Attribute.ELF_TYPE_CORE;
-				break;
-			case Elf.ELFhdr.ET_EXEC :
-				attrib.type = Attribute.ELF_TYPE_EXE;
-				break;
-			case Elf.ELFhdr.ET_REL :
-				attrib.type = Attribute.ELF_TYPE_OBJ;
-				break;
-			case Elf.ELFhdr.ET_DYN :
-				attrib.type = Attribute.ELF_TYPE_SHLIB;
-				break;
+		case Elf.ELFhdr.ET_CORE:
+			attrib.type = Attribute.ELF_TYPE_CORE;
+			break;
+		case Elf.ELFhdr.ET_EXEC:
+			attrib.type = Attribute.ELF_TYPE_EXE;
+			break;
+		case Elf.ELFhdr.ET_REL:
+			attrib.type = Attribute.ELF_TYPE_OBJ;
+			break;
+		case Elf.ELFhdr.ET_DYN:
+			attrib.type = Attribute.ELF_TYPE_SHLIB;
+			break;
 		}
 
 		switch (ehdr.e_machine & 0xFFFF) {
-			case Elf.ELFhdr.EM_386 :
-			case Elf.ELFhdr.EM_486 :
-				attrib.cpu = "x86"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_68K :
-				attrib.cpu = "m68k"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_PPC :
-			case Elf.ELFhdr.EM_CYGNUS_POWERPC :
-			case Elf.ELFhdr.EM_RS6000 :
-				attrib.cpu = "ppc"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_PPC64 :
-				attrib.cpu = "ppc64"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_SH :
-				attrib.cpu = "sh"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_ARM :
-				attrib.cpu = "arm"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_AARCH64 :
-				attrib.cpu = "aarch64"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_MIPS_RS3_LE :
-			case Elf.ELFhdr.EM_MIPS :
-				attrib.cpu = "mips"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_SPARC32PLUS :
-			case Elf.ELFhdr.EM_SPARC :
-			case Elf.ELFhdr.EM_SPARCV9 :
-				attrib.cpu = "sparc"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_H8_300 :
-			case Elf.ELFhdr.EM_H8_300H :
-				attrib.cpu = "h8300"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_V850 :
-			case Elf.ELFhdr.EM_CYGNUS_V850 :
-				attrib.cpu = "v850"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_MN10300 :
-			case Elf.ELFhdr.EM_CYGNUS_MN10300 :
-				attrib.cpu = "mn10300"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_MN10200 :
-			case Elf.ELFhdr.EM_CYGNUS_MN10200 :
-				attrib.cpu = "mn10200"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_M32R :
-				attrib.cpu = "m32r"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_FR30 :
-			case Elf.ELFhdr.EM_CYGNUS_FR30 :
-				attrib.cpu = "fr30"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_XSTORMY16 :
-				attrib.cpu = "xstormy16"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_CYGNUS_FRV :
-				attrib.cpu = "frv"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_IQ2000 :
-				attrib.cpu = "iq2000"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_ESIRISC :
-				attrib.cpu = "esirisc"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_NIOSII :
-				attrib.cpu = "alteranios2"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_NIOS :
-				attrib.cpu = "alteranios"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_IA_64 :
-				attrib.cpu = "ia64"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_COLDFIRE:
-				attrib.cpu = "coldfire"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_AVR :
-				attrib.cpu = "avr"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_MSP430 :
-				attrib.cpu = "msp430"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_XTENSA:
-				attrib.cpu = "xtensa"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_ST100:
-				attrib.cpu = "st100"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_X86_64:
-				attrib.cpu = "x86_64"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_XILINX_MICROBLAZE:
-				attrib.cpu = "microblaze"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_C166:
-				attrib.cpu = "c166"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_TRICORE:
-				attrib.cpu = "TriCore"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_M16C:
-				attrib.cpu = "M16C"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_STARCORE:
-				attrib.cpu = "StarCore"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_BLACKFIN :
-				attrib.cpu = "bfin"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_SDMA:
-				attrib.cpu = "sdma"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_CRADLE:
-				attrib.cpu = "cradle"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_MMDSP:
-				attrib.cpu = "mmdsp"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_RX:
-				attrib.cpu = "rx"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_RL78:
-				attrib.cpu = "rl78"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_68HC08:
-				attrib.cpu = "hc08"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_RS08:
-				attrib.cpu = "rs08"; //$NON-NLS-1$
-				break;
-			case Elf.ELFhdr.EM_NONE :
-			default :
-				attrib.cpu = "none"; //$NON-NLS-1$
+		case Elf.ELFhdr.EM_386:
+		case Elf.ELFhdr.EM_486:
+			attrib.cpu = "x86"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_68K:
+			attrib.cpu = "m68k"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_PPC:
+		case Elf.ELFhdr.EM_CYGNUS_POWERPC:
+		case Elf.ELFhdr.EM_RS6000:
+			attrib.cpu = "ppc"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_PPC64:
+			attrib.cpu = "ppc64"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_SH:
+			attrib.cpu = "sh"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_ARM:
+			attrib.cpu = "arm"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_AARCH64:
+			attrib.cpu = "aarch64"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_MIPS_RS3_LE:
+		case Elf.ELFhdr.EM_MIPS:
+			attrib.cpu = "mips"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_SPARC32PLUS:
+		case Elf.ELFhdr.EM_SPARC:
+		case Elf.ELFhdr.EM_SPARCV9:
+			attrib.cpu = "sparc"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_H8_300:
+		case Elf.ELFhdr.EM_H8_300H:
+			attrib.cpu = "h8300"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_V850:
+		case Elf.ELFhdr.EM_CYGNUS_V850:
+			attrib.cpu = "v850"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_MN10300:
+		case Elf.ELFhdr.EM_CYGNUS_MN10300:
+			attrib.cpu = "mn10300"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_MN10200:
+		case Elf.ELFhdr.EM_CYGNUS_MN10200:
+			attrib.cpu = "mn10200"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_M32R:
+			attrib.cpu = "m32r"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_FR30:
+		case Elf.ELFhdr.EM_CYGNUS_FR30:
+			attrib.cpu = "fr30"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_XSTORMY16:
+			attrib.cpu = "xstormy16"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_CYGNUS_FRV:
+			attrib.cpu = "frv"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_IQ2000:
+			attrib.cpu = "iq2000"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_ESIRISC:
+			attrib.cpu = "esirisc"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_NIOSII:
+			attrib.cpu = "alteranios2"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_NIOS:
+			attrib.cpu = "alteranios"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_IA_64:
+			attrib.cpu = "ia64"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_COLDFIRE:
+			attrib.cpu = "coldfire"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_AVR:
+			attrib.cpu = "avr"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_MSP430:
+			attrib.cpu = "msp430"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_XTENSA:
+			attrib.cpu = "xtensa"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_ST100:
+			attrib.cpu = "st100"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_X86_64:
+			attrib.cpu = "x86_64"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_XILINX_MICROBLAZE:
+			attrib.cpu = "microblaze"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_C166:
+			attrib.cpu = "c166"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_TRICORE:
+			attrib.cpu = "TriCore"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_M16C:
+			attrib.cpu = "M16C"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_STARCORE:
+			attrib.cpu = "StarCore"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_BLACKFIN:
+			attrib.cpu = "bfin"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_SDMA:
+			attrib.cpu = "sdma"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_CRADLE:
+			attrib.cpu = "cradle"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_MMDSP:
+			attrib.cpu = "mmdsp"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_RX:
+			attrib.cpu = "rx"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_RL78:
+			attrib.cpu = "rl78"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_68HC08:
+			attrib.cpu = "hc08"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_RS08:
+			attrib.cpu = "rs08"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_NONE:
+		default:
+			attrib.cpu = "none"; //$NON-NLS-1$
 		}
 		switch (ehdr.e_ident[Elf.ELFhdr.EI_DATA]) {
-			case Elf.ELFhdr.ELFDATA2LSB :
-				attrib.isle = true;
-				break;
-			case Elf.ELFhdr.ELFDATA2MSB :
-				attrib.isle = false;
-				break;
+		case Elf.ELFhdr.ELFDATA2LSB:
+			attrib.isle = true;
+			break;
+		case Elf.ELFhdr.ELFDATA2MSB:
+			attrib.isle = false;
+			break;
 		}
 		switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
-			case ELFhdr.ELFCLASS32 :
-				attrib.addressFactory = new Addr32Factory();
-				break;
-			case ELFhdr.ELFCLASS64 :
-				attrib.addressFactory = new Addr64Factory();
-				break;
-			case ELFhdr.ELFCLASSNONE :
-			default :
-				attrib.addressFactory = null;
+		case ELFhdr.ELFCLASS32:
+			attrib.addressFactory = new Addr32Factory();
+			break;
+		case ELFhdr.ELFCLASS64:
+			attrib.addressFactory = new Addr64Factory();
+			break;
+		case ELFhdr.ELFCLASSNONE:
+		default:
+			attrib.addressFactory = null;
 		}
 		// getSections
 		// find .debug using toString
@@ -1020,53 +1021,53 @@ public class Elf {
 				sections = new Section[0];
 				return sections;
 			}
-			final int length= ehdr.e_shnum & 0xffff; // unsigned short
+			final int length = ehdr.e_shnum & 0xffff; // unsigned short
 			sections = new Section[length];
 			for (int i = 0; i < length; i++) {
-				efile.seek(ehdr.e_shoff + i * (ehdr.e_shentsize & 0xffff));	// unsigned short
+				efile.seek(ehdr.e_shoff + i * (ehdr.e_shentsize & 0xffff)); // unsigned short
 				sections[i] = new Section();
 				sections[i].sh_name = efile.readIntE();
 				sections[i].sh_type = efile.readIntE();
 				switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
-					case ELFhdr.ELFCLASS32 : {
-						byte[] addrArray = new byte[ELF32_ADDR_SIZE];
-						sections[i].sh_flags = efile.readIntE();
-						efile.readFullyE(addrArray);
-						sections[i].sh_addr = new Addr32(addrArray);
-						sections[i].sh_offset = efile.readIntE();
-						sections[i].sh_size = efile.readIntE();
-					}
-						break;
-					case ELFhdr.ELFCLASS64 : {
-						byte[] addrArray = new byte[ELF64_ADDR_SIZE];
-						sections[i].sh_flags = efile.readLongE();
-						efile.readFullyE(addrArray);
-						sections[i].sh_addr = new Addr64(addrArray);
-						sections[i].sh_offset = readUnsignedLong(efile);
-						sections[i].sh_size = readUnsignedLong(efile);
-					}
-						break;
-					case ELFhdr.ELFCLASSNONE :
-					default :
-						throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
+				case ELFhdr.ELFCLASS32: {
+					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+					sections[i].sh_flags = efile.readIntE();
+					efile.readFullyE(addrArray);
+					sections[i].sh_addr = new Addr32(addrArray);
+					sections[i].sh_offset = efile.readIntE();
+					sections[i].sh_size = efile.readIntE();
+				}
+					break;
+				case ELFhdr.ELFCLASS64: {
+					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+					sections[i].sh_flags = efile.readLongE();
+					efile.readFullyE(addrArray);
+					sections[i].sh_addr = new Addr64(addrArray);
+					sections[i].sh_offset = readUnsignedLong(efile);
+					sections[i].sh_size = readUnsignedLong(efile);
+				}
+					break;
+				case ELFhdr.ELFCLASSNONE:
+				default:
+					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 				}
 
 				sections[i].sh_link = efile.readIntE();
 				sections[i].sh_info = efile.readIntE();
 				switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
-					case ELFhdr.ELFCLASS32 : {
-						sections[i].sh_addralign = efile.readIntE();
-						sections[i].sh_entsize = efile.readIntE();
-					}
-						break;
-					case ELFhdr.ELFCLASS64 : {
-						sections[i].sh_addralign = efile.readLongE();
-						sections[i].sh_entsize = readUnsignedLong(efile);
-					}
-						break;
-					case ELFhdr.ELFCLASSNONE :
-					default :
-						throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
+				case ELFhdr.ELFCLASS32: {
+					sections[i].sh_addralign = efile.readIntE();
+					sections[i].sh_entsize = efile.readIntE();
+				}
+					break;
+				case ELFhdr.ELFCLASS64: {
+					sections[i].sh_addralign = efile.readLongE();
+					sections[i].sh_entsize = readUnsignedLong(efile);
+				}
+					break;
+				case ELFhdr.ELFCLASSNONE:
+				default:
+					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 				}
 				if (sections[i].sh_type == Section.SHT_SYMTAB)
 					syms = i;
@@ -1080,7 +1081,7 @@ public class Elf {
 	private Symbol[] loadSymbolsBySection(Section section) throws IOException {
 		int numSyms = 1;
 		if (section.sh_entsize != 0) {
-			numSyms = (int)section.sh_size / (int)section.sh_entsize;
+			numSyms = (int) section.sh_size / (int) section.sh_entsize;
 		}
 		section.makeSureNotCompressed();
 		ArrayList<Symbol> symList = new ArrayList<Symbol>(numSyms);
@@ -1089,33 +1090,33 @@ public class Elf {
 			efile.seek(offset);
 			Symbol symbol = new Symbol(section);
 			switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
-				case ELFhdr.ELFCLASS32 : {
-					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+			case ELFhdr.ELFCLASS32: {
+				byte[] addrArray = new byte[ELF32_ADDR_SIZE];
 
-					symbol.st_name = efile.readIntE();
-					efile.readFullyE(addrArray);
-					symbol.st_value = new Addr32(addrArray);
-					symbol.st_size = efile.readIntE();
-					symbol.st_info = efile.readByte();
-					symbol.st_other = efile.readByte();
-					symbol.st_shndx = efile.readShortE();
-				}
-					break;
-				case ELFhdr.ELFCLASS64 : {
-					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+				symbol.st_name = efile.readIntE();
+				efile.readFullyE(addrArray);
+				symbol.st_value = new Addr32(addrArray);
+				symbol.st_size = efile.readIntE();
+				symbol.st_info = efile.readByte();
+				symbol.st_other = efile.readByte();
+				symbol.st_shndx = efile.readShortE();
+			}
+				break;
+			case ELFhdr.ELFCLASS64: {
+				byte[] addrArray = new byte[ELF64_ADDR_SIZE];
 
-					symbol.st_name = efile.readIntE();
-					symbol.st_info = efile.readByte();
-					symbol.st_other = efile.readByte();
-					symbol.st_shndx = efile.readShortE();
-					efile.readFullyE(addrArray);
-					symbol.st_value = new Addr64(addrArray);
-					symbol.st_size = readUnsignedLong(efile);
-				}
-					break;
-				case ELFhdr.ELFCLASSNONE :
-				default :
-					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
+				symbol.st_name = efile.readIntE();
+				symbol.st_info = efile.readByte();
+				symbol.st_other = efile.readByte();
+				symbol.st_shndx = efile.readShortE();
+				efile.readFullyE(addrArray);
+				symbol.st_value = new Addr64(addrArray);
+				symbol.st_size = readUnsignedLong(efile);
+			}
+				break;
+			case ELFhdr.ELFCLASSNONE:
+			default:
+				throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 			}
 			if (symbol.st_info == 0)
 				continue;
@@ -1186,6 +1187,7 @@ public class Elf {
 		ndx = -ndx - 1;
 		return symbols[ndx - 1];
 	}
+
 	/*
 	 * public long swapInt( long val ) { if ( ehdr.e_ident[ELFhdr.EI_DATA] ==
 	 * ELFhdr.ELFDATA2LSB ) { short tmp[] = new short[4]; tmp[0] = (short)(val &

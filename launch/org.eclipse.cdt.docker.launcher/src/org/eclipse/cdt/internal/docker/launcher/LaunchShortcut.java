@@ -100,8 +100,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 	 * @return ILaunchConfigurationType
 	 */
 	protected ILaunchConfigurationType getLaunchConfigType() {
-		return getLaunchManager()
-				.getLaunchConfigurationType(ILaunchConstants.LAUNCH_ID);
+		return getLaunchManager().getLaunchConfigurationType(ILaunchConstants.LAUNCH_ID);
 	}
 
 	/**
@@ -119,31 +118,22 @@ public class LaunchShortcut implements ILaunchShortcut {
 				bin = (IBinary) elements[0];
 			} else {
 				final List<IBinary> results = new ArrayList<>();
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(
-						getActiveWorkbenchShell());
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getActiveWorkbenchShell());
 				IRunnableWithProgress runnable = new IRunnableWithProgress() {
 					@Override
-					public void run(IProgressMonitor pm)
-							throws InterruptedException {
+					public void run(IProgressMonitor pm) throws InterruptedException {
 						int nElements = elements.length;
-						pm.beginTask(
-								Messages.LaunchShortcut_Looking_for_executables,
-								nElements);
+						pm.beginTask(Messages.LaunchShortcut_Looking_for_executables, nElements);
 						try {
 							IProgressMonitor sub = new SubProgressMonitor(pm, 1);
 							for (int i = 0; i < nElements; i++) {
 								if (elements[i] instanceof IAdaptable) {
-									IResource r = (IResource) ((IAdaptable) elements[i])
-											.getAdapter(IResource.class);
+									IResource r = (IResource) ((IAdaptable) elements[i]).getAdapter(IResource.class);
 									if (r != null) {
-										ICProject cproject = CoreModel
-												.getDefault().create(
-														r.getProject());
+										ICProject cproject = CoreModel.getDefault().create(r.getProject());
 										if (cproject != null) {
 											try {
-												IBinary[] bins = cproject
-														.getBinaryContainer()
-														.getBinaries();
+												IBinary[] bins = cproject.getBinaryContainer().getBinaries();
 
 												for (IBinary bin : bins) {
 													if (bin.isExecutable()) {
@@ -219,8 +209,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary) element;
 					StringBuilder name = new StringBuilder();
-					name.append(bin.getCPU()
-							+ (bin.isLittleEndian() ? "le" : "be")); //$NON-NLS-1$ //$NON-NLS-2$
+					name.append(bin.getCPU() + (bin.isLittleEndian() ? "le" : "be")); //$NON-NLS-1$ //$NON-NLS-2$
 					name.append(" - "); //$NON-NLS-1$
 					name.append(bin.getPath().toString());
 					return name.toString();
@@ -229,8 +218,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 			}
 		};
 
-		TwoPaneElementSelector dialog = new TwoPaneElementSelector(
-				getActiveWorkbenchShell(), programLabelProvider,
+		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getActiveWorkbenchShell(), programLabelProvider,
 				qualifierLabelProvider);
 		dialog.setElements(binList.toArray());
 		dialog.setTitle(Messages.LaunchShortcut_Launcher);
@@ -246,8 +234,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 	}
 
 	protected void handleFail(String message) {
-		MessageDialog.openError(getActiveWorkbenchShell(),
-				Messages.LaunchShortcut_Launcher, message);
+		MessageDialog.openError(getActiveWorkbenchShell(), Messages.LaunchShortcut_Launcher, message);
 	}
 
 	/**
@@ -261,8 +248,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 	 *
 	 * @return A re-useable config or <code>null</code> if none.
 	 */
-	protected ILaunchConfiguration findLaunchConfiguration(IBinary bin,
-			String mode) {
+	protected ILaunchConfiguration findLaunchConfiguration(IBinary bin, String mode) {
 		ILaunchConfiguration configuration = null;
 		ILaunchConfigurationType configType = getLaunchConfigType();
 		List<ILaunchConfiguration> candidateConfigs = Collections.emptyList();
@@ -275,33 +261,25 @@ public class LaunchShortcut implements ILaunchShortcut {
 			cbcfg = buildConfig.getAdapter(ICBuildConfiguration.class);
 			if (cbcfg != null) {
 				IToolChain toolChain = cbcfg.getToolChain();
-				connectionUri = toolChain.getProperty(
-						IContainerLaunchTarget.ATTR_CONNECTION_URI);
-				imageName = toolChain
-						.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+				connectionUri = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
+				imageName = toolChain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
 			}
 		} catch (CoreException e1) {
 			// do nothing
 		}
 		if (cbcfg == null) {
-			ICConfigurationDescription cfgd = CoreModel.getDefault()
-					.getProjectDescription(project).getActiveConfiguration();
+			ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(project)
+					.getActiveConfiguration();
 			if (cfgd != null) {
-				IConfiguration cfg = ManagedBuildManager
-						.getConfigurationForDescription(cfgd);
+				IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
 				if (cfg != null) {
-					IOptionalBuildProperties props = cfg
-							.getOptionalBuildProperties();
-					String containerBuild = props.getProperty(
-							ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+					IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
+					String containerBuild = props.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 					if (containerBuild != null) {
-						boolean containerBuildEnabled = Boolean
-								.parseBoolean(containerBuild);
+						boolean containerBuildEnabled = Boolean.parseBoolean(containerBuild);
 						if (containerBuildEnabled) {
-							connectionUri = props.getProperty(
-									ContainerCommandLauncher.CONNECTION_ID);
-							imageName = props.getProperty(
-									ContainerCommandLauncher.IMAGE_ID);
+							connectionUri = props.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+							imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
 						}
 					}
 				}
@@ -309,12 +287,10 @@ public class LaunchShortcut implements ILaunchShortcut {
 		}
 
 		if (connectionUri == null) {
-			IDockerConnection[] connections = DockerConnectionManager
-					.getInstance().getConnections();
+			IDockerConnection[] connections = DockerConnectionManager.getInstance().getConnections();
 			if (connections != null && connections.length > 0) {
 				connectionUri = connections[0].getUri();
-				Preferences prefs = InstanceScope.INSTANCE
-						.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
+				Preferences prefs = InstanceScope.INSTANCE.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
 				imageName = prefs.get(PreferenceConstants.DEFAULT_IMAGE, null);
 				if (imageName == null) {
 					List<IDockerImage> images = connections[0].getImages();
@@ -325,38 +301,30 @@ public class LaunchShortcut implements ILaunchShortcut {
 		}
 
 		try {
-			ILaunchConfiguration[] configs = DebugPlugin.getDefault()
-					.getLaunchManager().getLaunchConfigurations(configType);
+			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager()
+					.getLaunchConfigurations(configType);
 			candidateConfigs = new ArrayList<>(configs.length);
 			for (ILaunchConfiguration config : configs) {
 				IPath programPath = CDebugUtils.getProgramPath(config);
 				String projectName = CDebugUtils.getProjectName(config);
 				IPath binPath = bin.getResource().getProjectRelativePath();
-				if (projectName != null && projectName
-						.equals(bin.getCProject().getProject().getName())) {
+				if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
 					if (programPath != null) {
 						if (programPath.equals(binPath)) {
 							// if we have an active configuration with container
 							// build properties, make sure they match, otherwise
 							// add the launch config as a candidate
-							if (connectionUri != null
-									&& connectionUri.equals(config.getAttribute(
-											ILaunchConstants.ATTR_CONNECTION_URI,
-											(String) null))) {
-								if (imageName != null
-										&& imageName.equals(config.getAttribute(
-												ILaunchConstants.ATTR_IMAGE,
-												(String) null))) {
+							if (connectionUri != null && connectionUri
+									.equals(config.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, (String) null))) {
+								if (imageName != null && imageName
+										.equals(config.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null))) {
 									candidateConfigs.add(config);
 								}
 							}
 						}
 					} else if (cbcfg != null && candidateConfigs.isEmpty()) {
-						ILaunchConfigurationWorkingCopy wc = config
-								.getWorkingCopy();
-						populateLaunchConfiguration(wc, mode, bin,
-								projectName,
-								connectionUri, imageName);
+						ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+						populateLaunchConfiguration(wc, mode, bin, projectName, connectionUri, imageName);
 						wc.doSave();
 						candidateConfigs.add(config);
 						break;
@@ -388,53 +356,39 @@ public class LaunchShortcut implements ILaunchShortcut {
 		return configuration;
 	}
 
-	private void populateLaunchConfiguration(ILaunchConfigurationWorkingCopy wc,
-			String mode, IBinary bin, String projectName, String connectionUri,
-			String imageName) {
+	private void populateLaunchConfiguration(ILaunchConfigurationWorkingCopy wc, String mode, IBinary bin,
+			String projectName, String connectionUri, String imageName) {
 		// DSF settings...use GdbUIPlugin preference store for defaults
-		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault()
-				.getPreferenceStore();
+		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
 		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
-				preferenceStore.getString(
-						IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND));
+				preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND));
 		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT,
-				preferenceStore.getString(
-						IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT));
+				preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT));
 		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-				preferenceStore.getBoolean(
-						IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP));
+				preferenceStore.getBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP));
 		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
-		wc.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
+		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
-		wc.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
+		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
-		wc.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
+		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
 
 		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
 				bin.getResource().getProjectRelativePath().toString());
-		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				projectName);
-		wc.setMappedResources(new IResource[] { bin.getResource(),
-				bin.getResource().getProject() });
-		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
-				(String) null); // default is the project directory
+		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
+		wc.setMappedResources(new IResource[] { bin.getResource(), bin.getResource().getProject() });
+		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null); // default is the project directory
 
-		Preferences prefs = InstanceScope.INSTANCE
-				.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
+		Preferences prefs = InstanceScope.INSTANCE.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
 
-		Boolean keepPref = prefs.getBoolean(
-				PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH, false);
+		Boolean keepPref = prefs.getBoolean(PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH, false);
 		wc.setAttribute(ILaunchConstants.ATTR_KEEP_AFTER_LAUNCH, keepPref);
 
 		// For Debug mode we need to set gdbserver info as well
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			wc.setAttribute(ILaunchConstants.ATTR_GDBSERVER_COMMAND,
-					"gdbserver"); //$NON-NLS-1$
+			wc.setAttribute(ILaunchConstants.ATTR_GDBSERVER_COMMAND, "gdbserver"); //$NON-NLS-1$
 			wc.setAttribute(ILaunchConstants.ATTR_GDBSERVER_PORT, "2345"); //$NON-NLS-1$
 		}
 		wc.setAttribute(ILaunchConstants.ATTR_CONNECTION_URI, connectionUri);
@@ -452,8 +406,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 	 *            resource, and false if it should not be saved.
 	 * @return a launch configuration generated for the binary.
 	 */
-	protected ILaunchConfiguration createConfiguration(IBinary bin,
-			String mode, boolean save) {
+	protected ILaunchConfiguration createConfiguration(IBinary bin, String mode, boolean save) {
 		ILaunchConfiguration config = null;
 		try {
 			IProject project = bin.getResource().getProject();
@@ -462,54 +415,39 @@ public class LaunchShortcut implements ILaunchShortcut {
 			String connectionId = null;
 			String imageName = null;
 			IBuildConfiguration buildConfig = project.getActiveBuildConfig();
-			ICBuildConfiguration cbuildcfg = buildConfig
-					.getAdapter(ICBuildConfiguration.class);
+			ICBuildConfiguration cbuildcfg = buildConfig.getAdapter(ICBuildConfiguration.class);
 			if (cbuildcfg != null) {
 				IToolChain toolChain = cbuildcfg.getToolChain();
-				connectionId = toolChain.getProperty(
-						IContainerLaunchTarget.ATTR_CONNECTION_URI);
-				imageName = toolChain
-						.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+				connectionId = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
+				imageName = toolChain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
 			} else {
 
-				ICConfigurationDescription cfgd = CoreModel.getDefault()
-						.getProjectDescription(project)
+				ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(project)
 						.getActiveConfiguration();
-				IConfiguration cfg = ManagedBuildManager
-						.getConfigurationForDescription(cfgd);
+				IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
 
-				IOptionalBuildProperties options = cfg
-						.getOptionalBuildProperties();
+				IOptionalBuildProperties options = cfg.getOptionalBuildProperties();
 
 				if (options != null) {
-					String containerBuildString = options.getProperty(
-							ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+					String containerBuildString = options.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 					if (containerBuildString != null) {
 						containerBuild = Boolean
-								.parseBoolean(options.getProperty(
-										ContainerCommandLauncher.CONTAINER_BUILD_ENABLED));
+								.parseBoolean(options.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED));
 					}
 					if (containerBuild) {
-						connectionId = options.getProperty(
-								ContainerCommandLauncher.CONNECTION_ID);
-						imageName = options
-								.getProperty(ContainerCommandLauncher.IMAGE_ID);
+						connectionId = options.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+						imageName = options.getProperty(ContainerCommandLauncher.IMAGE_ID);
 					}
 				}
 			}
 
 			ILaunchConfigurationType configType = getLaunchConfigType();
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(
-					null,
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null,
 					getLaunchManager().generateLaunchConfigurationName(
-							bin.getResource().getName() + (imageName != null
-									? ("[" + imageName + "]") //$NON-NLS-1$ //$NON-NLS-2$
+							bin.getResource().getName() + (imageName != null ? ("[" + imageName + "]") //$NON-NLS-1$ //$NON-NLS-2$
 									: ""))); //$NON-NLS-1$
 
-
-
-			Preferences prefs = InstanceScope.INSTANCE
-					.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
+			Preferences prefs = InstanceScope.INSTANCE.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
 
 			// get the connection using following order:
 			// 1. connection used in build of project
@@ -517,16 +455,13 @@ public class LaunchShortcut implements ILaunchShortcut {
 			// 3. first connection
 			IDockerConnection connection = null;
 			if (connectionId != null) {
-				connection = DockerConnectionManager.getInstance()
-						.getConnectionByUri(connectionId);
+				connection = DockerConnectionManager.getInstance().getConnectionByUri(connectionId);
 			}
 			if (connection == null) {
-				connection = ConnectionListener.getInstance()
-					.getCurrentConnection();
+				connection = ConnectionListener.getInstance().getCurrentConnection();
 			}
 			if (connection == null) {
-				IDockerConnection[] connections = DockerConnectionManager
-						.getInstance().getConnections();
+				IDockerConnection[] connections = DockerConnectionManager.getInstance().getConnections();
 				if (connections != null && connections.length > 0)
 					connection = connections[0];
 			}
@@ -536,16 +471,13 @@ public class LaunchShortcut implements ILaunchShortcut {
 
 					@Override
 					public void run() {
-						MessageDialog.openError(
-								Display.getCurrent().getActiveShell(),
-								Messages.LaunchShortcut_Error_Launching,
-								Messages.LaunchShortcut_No_Connections);
+						MessageDialog.openError(Display.getCurrent().getActiveShell(),
+								Messages.LaunchShortcut_Error_Launching, Messages.LaunchShortcut_No_Connections);
 					}
 
 				});
 				return null;
 			}
-
 
 			// use build image if one is specified, otherwise, see if a default
 			// image is set in preferences, otherwise find first image in image
@@ -567,18 +499,15 @@ public class LaunchShortcut implements ILaunchShortcut {
 
 					@Override
 					public void run() {
-						MessageDialog.openError(
-								Display.getCurrent().getActiveShell(),
-								Messages.LaunchShortcut_Error_Launching,
-								Messages.LaunchShortcut_No_Images);
+						MessageDialog.openError(Display.getCurrent().getActiveShell(),
+								Messages.LaunchShortcut_Error_Launching, Messages.LaunchShortcut_No_Images);
 					}
 
 				});
 				return null;
 			}
 
-			populateLaunchConfiguration(wc, mode, bin, project.getName(),
-					connection.getUri(), image);
+			populateLaunchConfiguration(wc, mode, bin, project.getName(), connection.getUri(), image);
 
 			if (save) {
 				config = wc.doSave();
@@ -606,12 +535,9 @@ public class LaunchShortcut implements ILaunchShortcut {
 	 * @return The chosen config, or <code>null</code> if the user cancelled the
 	 *         dialog.
 	 */
-	protected ILaunchConfiguration chooseConfiguration(
-			List<ILaunchConfiguration> configList, String mode) {
-		IDebugModelPresentation labelProvider = DebugUITools
-				.newDebugModelPresentation();
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-				getActiveWorkbenchShell(), labelProvider);
+	protected ILaunchConfiguration chooseConfiguration(List<ILaunchConfiguration> configList, String mode) {
+		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getActiveWorkbenchShell(), labelProvider);
 		dialog.setElements(configList.toArray());
 		dialog.setTitle(Messages.LaunchShortcut_Launch_Configuration_Selection);
 		dialog.setMessage(Messages.LaunchShortcut_Choose_a_launch_configuration);

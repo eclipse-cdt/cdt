@@ -60,6 +60,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		public void startupForLanguage(String languageId) throws CoreException {
 			super.startupForLanguage(languageId);
 		}
+
 		@Override
 		public void shutdownForLanguage() {
 			super.shutdownForLanguage();
@@ -74,6 +75,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		public void startupForLanguage(String languageId) throws CoreException {
 			super.startupForLanguage(languageId);
 		}
+
 		@Override
 		public void shutdownForLanguage() {
 			super.shutdownForLanguage();
@@ -90,6 +92,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	class MockLspToolchainBuiltinSpecsDetectorCommandResolver extends MockGCCBuiltinSpecsDetectorCommandResolver {
 		// ID must match the tool-chain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
 		private static final String MOCK_TOOLCHAIN_ID = "cdt.managedbuilder.lsp.tests.toolchain";
+
 		@Override
 		public String getToolchainId() {
 			return MOCK_TOOLCHAIN_ID;
@@ -128,7 +131,11 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			// check ${COMMAND} and ${INPUTS}
 			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
-			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
+			detector.setLanguageScope(new ArrayList<String>() {
+				{
+					add(LANGUAGE_ID_C);
+				}
+			});
 			detector.setCommand("${COMMAND} -E -P -v -dD ${INPUTS}");
 
 			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
@@ -138,7 +145,11 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			// check ${EXT}
 			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
-			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
+			detector.setLanguageScope(new ArrayList<String>() {
+				{
+					add(LANGUAGE_ID_C);
+				}
+			});
 			detector.setCommand("${COMMAND} -E -P -v -dD file.${EXT}");
 
 			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
@@ -148,7 +159,11 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			// check expansion of environment variables
 			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
-			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
+			detector.setLanguageScope(new ArrayList<String>() {
+				{
+					add(LANGUAGE_ID_C);
+				}
+			});
 			String command = "cmd --env1=${CWD} --env2=${OS}";
 			detector.setCommand(command);
 			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
@@ -162,7 +177,11 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			// check expansion of eclipse and MBS variables
 			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
-			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
+			detector.setLanguageScope(new ArrayList<String>() {
+				{
+					add(LANGUAGE_ID_C);
+				}
+			});
 			String command = "cmd --eclipse-var=${workspace_loc} --mbs-var=${WorkspaceDirPath}";
 			detector.setCommand(command);
 			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
@@ -181,11 +200,16 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	public void testGCCBuiltinSpecsDetector_ResolvedCommand_Flags() throws Exception {
 		// check ${FLAGS}
 		MockLspToolchainBuiltinSpecsDetectorCommandResolver detector = new MockLspToolchainBuiltinSpecsDetectorCommandResolver();
-		detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
+		detector.setLanguageScope(new ArrayList<String>() {
+			{
+				add(LANGUAGE_ID_C);
+			}
+		});
 		detector.setCommand("gcc ${FLAGS}");
 
 		String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
-		assertEquals("gcc -bool-option -str-option=str-value -enum-option -list-option1 -list-option2 -tree-option", resolvedCommand);
+		assertEquals("gcc -bool-option -str-option=str-value -enum-option -list-option1 -list-option2 -tree-option",
+				resolvedCommand);
 	}
 
 	/**
@@ -218,7 +242,8 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdown();
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
-		assertEquals(new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(0));
 		assertEquals(1, entries.size());
 	}
 
@@ -256,10 +281,14 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
-		assertEquals(new CMacroEntry("MACRO_1", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CMacroEntry("MACRO_2", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CMacroEntry("MACRO_3", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CMacroEntry("MACRO_4", "VALUE + 1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
+		assertEquals(new CMacroEntry("MACRO_1", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(new CMacroEntry("MACRO_2", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(new CMacroEntry("MACRO_3", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(new CMacroEntry("MACRO_4", "VALUE + 1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
 		assertEquals(index, entries.size());
 	}
 
@@ -276,7 +305,8 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdown();
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
-		assertEquals(new CMacroEntry("MACRO()", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(new CMacroEntry("MACRO()", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(0));
 		assertEquals(1, entries.size());
 	}
 
@@ -293,7 +323,8 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdown();
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
-		assertEquals(new CMacroEntry("MACRO(X)", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(new CMacroEntry("MACRO(X)", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(0));
 		assertEquals(1, entries.size());
 	}
 
@@ -310,7 +341,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdown();
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
-		assertEquals(new CMacroEntry("MACRO(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(
+				new CMacroEntry("MACRO(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(0));
 		assertEquals(1, entries.size());
 	}
 
@@ -327,7 +360,8 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdown();
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
-		assertEquals(new CMacroEntry("MACRO(P1, P2)", null, ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(new CMacroEntry("MACRO(P1, P2)", null, ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(0));
 		assertEquals(1, entries.size());
 	}
 
@@ -347,9 +381,15 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
-		assertEquals(new CMacroEntry("MACRO_1(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CMacroEntry("MACRO_2(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CMacroEntry("MACRO_3(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
+		assertEquals(
+				new CMacroEntry("MACRO_1(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(
+				new CMacroEntry("MACRO_2(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(
+				new CMacroEntry("MACRO_3(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
 		assertEquals(index, entries.size());
 	}
 
@@ -375,36 +415,46 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.startup(null, null);
 		detector.startupForLanguage(null);
 
-		detector.processLine(" "+loc+"/misplaced/include1");
+		detector.processLine(" " + loc + "/misplaced/include1");
 		detector.processLine("#undef BEFORE_INCLUDES");
 		detector.processLine("#include \"...\" search starts here:");
 		detector.processLine("#undef IN_THE_MIDDLE_OF_INCLUDES_0");
-		detector.processLine(" "+loc+"/local/include");
+		detector.processLine(" " + loc + "/local/include");
 		detector.processLine("#include <...> search starts here:");
-		detector.processLine(" "+loc+"/usr/include");
-		detector.processLine(" "+loc+"/usr/include/../include2");
+		detector.processLine(" " + loc + "/usr/include");
+		detector.processLine(" " + loc + "/usr/include/../include2");
 		detector.processLine("#undef IN_THE_MIDDLE_OF_INCLUDES_1");
-		detector.processLine(" "+loc+"/missing/folder");
+		detector.processLine(" " + loc + "/missing/folder");
 		detector.processLine("#undef IN_THE_MIDDLE_OF_INCLUDES_2");
-		detector.processLine(" "+loc+"/Library/Frameworks (framework directory)");
+		detector.processLine(" " + loc + "/Library/Frameworks (framework directory)");
 		detector.processLine("End of search list.");
-		detector.processLine(" "+loc+"/misplaced/include2");
+		detector.processLine(" " + loc + "/misplaced/include2");
 		detector.processLine("Framework search starts here:");
-		detector.processLine(" "+loc+"/System/Library/Frameworks");
+		detector.processLine(" " + loc + "/System/Library/Frameworks");
 		detector.processLine("End of framework search list.");
-		detector.processLine(" "+loc+"/misplaced/include3");
+		detector.processLine(" " + loc + "/misplaced/include3");
 		detector.processLine("#undef AFTER_INCLUDES");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
-		assertEquals(new CIncludePathEntry(loc+"/local/include", ICSettingEntry.LOCAL | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CIncludePathEntry(loc+"/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CIncludePathEntry(loc+"/usr/include2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CIncludePathEntry(loc+"/missing/folder", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CIncludePathEntry(loc+"/Library/Frameworks", ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CIncludePathEntry(loc+"/System/Library/Frameworks", ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
+		assertEquals(new CIncludePathEntry(loc + "/local/include",
+				ICSettingEntry.LOCAL | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
+		assertEquals(new CIncludePathEntry(loc + "/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(new CIncludePathEntry(loc + "/usr/include2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(new CIncludePathEntry(loc + "/missing/folder", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(
+				new CIncludePathEntry(loc + "/Library/Frameworks",
+						ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(
+				new CIncludePathEntry(loc + "/System/Library/Frameworks",
+						ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
 		assertEquals(index, entries.size());
 	}
 
@@ -419,23 +469,31 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.startupForLanguage(null);
 
 		detector.processLine("#include \"...\" search starts here:");
-		detector.processLine(" \t "+loc+"/local/include");
+		detector.processLine(" \t " + loc + "/local/include");
 		detector.processLine("#include <...> search starts here:");
-		detector.processLine(loc+"/usr/include");
-		detector.processLine(" "+loc+"/Library/Frameworks \t (framework directory)");
+		detector.processLine(loc + "/usr/include");
+		detector.processLine(" " + loc + "/Library/Frameworks \t (framework directory)");
 		detector.processLine("End of search list.");
 		detector.processLine("Framework search starts here:");
-		detector.processLine(" "+loc+"/System/Library/Frameworks \t ");
+		detector.processLine(" " + loc + "/System/Library/Frameworks \t ");
 		detector.processLine("End of framework search list.");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
-		assertEquals(new CIncludePathEntry(loc+"/local/include", ICSettingEntry.LOCAL | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CIncludePathEntry(loc+"/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CIncludePathEntry(loc+"/Library/Frameworks", ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
-		assertEquals(new CIncludePathEntry(loc+"/System/Library/Frameworks", ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
+		assertEquals(new CIncludePathEntry(loc + "/local/include",
+				ICSettingEntry.LOCAL | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
+		assertEquals(new CIncludePathEntry(loc + "/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(
+				new CIncludePathEntry(loc + "/Library/Frameworks",
+						ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
+		assertEquals(
+				new CIncludePathEntry(loc + "/System/Library/Frameworks",
+						ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
 		assertEquals(index, entries.size());
 	}
 
@@ -463,17 +521,18 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.startup(null, null);
 		detector.startupForLanguage(null);
 		detector.processLine("#include <...> search starts here:");
-		detector.processLine(" "+linkPath.toString()+"/..");
+		detector.processLine(" " + linkPath.toString() + "/..");
 		detector.processLine("End of search list.");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
-		assertEquals(new CIncludePathEntry(dir2.removeLastSegments(1), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(
+				new CIncludePathEntry(dir2.removeLastSegments(1), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(0));
 		assertEquals(1, entries.size());
 	}
-
 
 	/**
 	 * Test parsing of include directives included multiple times.
@@ -491,19 +550,21 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.startupForLanguage(null);
 
 		detector.processLine("#include <...> search starts here:");
-		detector.processLine(" "+loc+"/usr/include");
-		detector.processLine(" "+loc+"/usr/include");
-		detector.processLine(" "+loc+"/usr/include/");
-		detector.processLine(" "+loc+"/usr/include/../include");
+		detector.processLine(" " + loc + "/usr/include");
+		detector.processLine(" " + loc + "/usr/include");
+		detector.processLine(" " + loc + "/usr/include/");
+		detector.processLine(" " + loc + "/usr/include/../include");
 		detector.processLine("End of search list.");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
-		assertEquals(new CIncludePathEntry(loc+"/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
+		assertEquals(new CIncludePathEntry(loc + "/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(index++));
 		assertEquals(index, entries.size());
 	}
+
 	/**
 	 * Test parsing of include directives for Cygwin for global provider.
 	 */
@@ -515,7 +576,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 		String cygwinLocation = "/usr/include";
 		String windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
-		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
+		assertTrue("windowsLocation=[" + windowsLocation + "]", new Path(windowsLocation).getDevice() != null);
 
 		MockGCCBuiltinSpecsDetectorCygwin detector = new MockGCCBuiltinSpecsDetectorCygwin();
 
@@ -529,7 +590,8 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
-		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(0));
 		assertEquals(1, entries.size());
 	}
 
@@ -544,7 +606,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 		String cygwinLocation = "/usr/include";
 		String windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
-		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
+		assertTrue("windowsLocation=[" + windowsLocation + "]", new Path(windowsLocation).getDevice() != null);
 
 		// Create model project and folders to test
 		String projectName = getName();
@@ -564,7 +626,8 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
-		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+				entries.get(0));
 		assertEquals(1, entries.size());
 	}
 
@@ -579,7 +642,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			// create a mock specs detector
 			MockGCCBuiltinSpecsDetectorCommandResolver detector = new MockGCCBuiltinSpecsDetectorCommandResolver();
 			detector.setCommand("${COMMAND}");
-			String command = ((AbstractBuiltinSpecsDetector)detector).getCommand();
+			String command = ((AbstractBuiltinSpecsDetector) detector).getCommand();
 			assertEquals("${COMMAND}", command);
 			assertTrue(!command.equals(SAMPLE_COMMAND));
 			// assign the mock specs detector to the first configuration
@@ -618,11 +681,12 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 				assertEquals(SAMPLE_COMMAND, tool.getToolCommand());
 			}
 			// verify that the new command is picked by the provider
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
 			assertEquals(1, providers.size());
 			ILanguageSettingsProvider provider = providers.get(0);
 			assertTrue(provider instanceof MockGCCBuiltinSpecsDetectorCommandResolver);
-			String command = ((MockGCCBuiltinSpecsDetectorCommandResolver)provider).resolveCommand(LANGUAGE_ID_C);
+			String command = ((MockGCCBuiltinSpecsDetectorCommandResolver) provider).resolveCommand(LANGUAGE_ID_C);
 			assertEquals(SAMPLE_COMMAND, command);
 		}
 	}

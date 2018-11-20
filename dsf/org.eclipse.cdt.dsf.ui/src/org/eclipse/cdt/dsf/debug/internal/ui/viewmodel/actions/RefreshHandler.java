@@ -20,16 +20,16 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-public class RefreshHandler extends AbstractHandler  {
+public class RefreshHandler extends AbstractHandler {
 
-    @Override
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-        IVMProvider vmProvider = VMHandlerUtils.getActiveVMProvider(event);
-        
-        if (vmProvider instanceof ICachingVMProvider) {
-            ((ICachingVMProvider)vmProvider).refresh();
-        }
-        
-        return null;
-    }
+		IVMProvider vmProvider = VMHandlerUtils.getActiveVMProvider(event);
+
+		if (vmProvider instanceof ICachingVMProvider) {
+			((ICachingVMProvider) vmProvider).refresh();
+		}
+
+		return null;
+	}
 }

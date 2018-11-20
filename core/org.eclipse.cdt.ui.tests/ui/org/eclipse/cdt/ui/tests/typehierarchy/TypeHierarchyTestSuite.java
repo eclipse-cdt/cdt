@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.typehierarchy;
 
@@ -19,11 +19,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-    CTypeHierarchyTest.class,
-    CppTypeHierarchyTest.class,
-    QuickTypeHierarchyTest.class,
-    TypeHierarchyAcrossProjectsTest.class,
-})
+@Suite.SuiteClasses({ CTypeHierarchyTest.class, CppTypeHierarchyTest.class, QuickTypeHierarchyTest.class,
+		TypeHierarchyAcrossProjectsTest.class, })
 public class TypeHierarchyTestSuite {
 }

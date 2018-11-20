@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.HashSet;
@@ -25,22 +25,22 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
 
 public class IndexUpdatePolicy {
-	public static final int POST_CHANGE= IndexerPreferences.UPDATE_POLICY_IMMEDIATE;
-	public static final int POST_BUILD= IndexerPreferences.UPDATE_POLICY_LAZY;
-	public static final int MANUAL= IndexerPreferences.UPDATE_POLICY_MANUAL;
-	
+	public static final int POST_CHANGE = IndexerPreferences.UPDATE_POLICY_IMMEDIATE;
+	public static final int POST_BUILD = IndexerPreferences.UPDATE_POLICY_LAZY;
+	public static final int MANUAL = IndexerPreferences.UPDATE_POLICY_MANUAL;
+
 	private final ICProject fCProject;
 	private int fKind;
-	
-	private HashSet<ITranslationUnit> fForce= new HashSet<ITranslationUnit>();
-	private HashSet<ITranslationUnit> fTimestamp= new HashSet<ITranslationUnit>();
-	private HashSet<ITranslationUnit> fRemoved= new HashSet<ITranslationUnit>();
+
+	private HashSet<ITranslationUnit> fForce = new HashSet<ITranslationUnit>();
+	private HashSet<ITranslationUnit> fTimestamp = new HashSet<ITranslationUnit>();
+	private HashSet<ITranslationUnit> fRemoved = new HashSet<ITranslationUnit>();
 	private IPDOMIndexer fIndexer;
 	private boolean fReindexRequested;
 
 	public IndexUpdatePolicy(ICProject project, int kind) {
-		fCProject= project;
-		fKind= getLegalPolicy(kind);
+		fCProject = project;
+		fKind = getLegalPolicy(kind);
 	}
 
 	private int getLegalPolicy(int kind) {
@@ -68,7 +68,7 @@ public class IndexUpdatePolicy {
 	}
 
 	public void setIndexer(IPDOMIndexer indexer) {
-		fIndexer= indexer;
+		fIndexer = indexer;
 	}
 
 	public IPDOMIndexer getIndexer() {
@@ -78,8 +78,9 @@ public class IndexUpdatePolicy {
 	public boolean isAutomatic() {
 		return fKind != MANUAL;
 	}
-	
-	public IPDOMIndexerTask handleDelta(ITranslationUnit[] force, ITranslationUnit[] changed, ITranslationUnit[] removed) {
+
+	public IPDOMIndexerTask handleDelta(ITranslationUnit[] force, ITranslationUnit[] changed,
+			ITranslationUnit[] removed) {
 		if (isNullIndexer()) {
 			return null;
 		}
@@ -93,7 +94,7 @@ public class IndexUpdatePolicy {
 			}
 			break;
 		}
-		
+
 		for (ITranslationUnit tu : removed) {
 			fForce.remove(tu);
 			fTimestamp.remove(tu);
@@ -113,12 +114,12 @@ public class IndexUpdatePolicy {
 		}
 		return null;
 	}
-	
+
 	public IPDOMIndexerTask createTask() {
-		IPDOMIndexerTask task= null;
+		IPDOMIndexerTask task = null;
 		if (fIndexer != null && hasTUs()) {
 			if (fKind != IndexUpdatePolicy.MANUAL && !isNullIndexer()) {
-				task= fIndexer.createTask(toarray(fForce), toarray(fTimestamp), toarray(fRemoved));
+				task = fIndexer.createTask(toarray(fForce), toarray(fTimestamp), toarray(fRemoved));
 			}
 			clearTUs();
 		}
@@ -134,30 +135,30 @@ public class IndexUpdatePolicy {
 	}
 
 	public IPDOMIndexerTask changePolicy(int updatePolicy) {
-		int oldPolicy= fKind;
-		fKind= getLegalPolicy(updatePolicy);
-		
-		IPDOMIndexerTask task= null;
+		int oldPolicy = fKind;
+		fKind = getLegalPolicy(updatePolicy);
+
+		IPDOMIndexerTask task = null;
 		if (fKind == MANUAL || isNullIndexer()) {
 			clearTUs();
 		} else if (fIndexer != null) {
 			if (oldPolicy == MANUAL) {
-				task= new PDOMUpdateTask(fIndexer,
+				task = new PDOMUpdateTask(fIndexer,
 						IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
 				clearTUs();
 			} else if (fKind == POST_CHANGE) {
-				task= createTask();
+				task = createTask();
 			}
 		}
 		return task;
 	}
 
 	public void requestInitialReindex() {
-		fReindexRequested= true;
+		fReindexRequested = true;
 	}
 
 	public void clearInitialFlags() {
-		fReindexRequested= false;
+		fReindexRequested = false;
 	}
 
 	public boolean isInitialRebuildRequested() {

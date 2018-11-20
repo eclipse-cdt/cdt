@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.IPath;
  * @since 2.0
  */
 public class ManagedBuildPathEntryContainerInitializer extends PathEntryContainerInitializer {
-	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
-	private static final String TRACE_HEADER = "PathEntryContainerInitializer trace [";	//$NON-NLS-1$
+	private static final String TRACE_FOOTER = "]: "; //$NON-NLS-1$
+	private static final String TRACE_HEADER = "PathEntryContainerInitializer trace ["; //$NON-NLS-1$
 	public static boolean VERBOSE = false;
 
 	/**
@@ -42,12 +42,11 @@ public class ManagedBuildPathEntryContainerInitializer extends PathEntryContaine
 	@Override
 	public void initialize(IPath containerPath, ICProject project) throws CoreException {
 		if (VERBOSE) {
-			System.out.println(TRACE_HEADER + 
-					project.getProject().getName() + 
-					TRACE_FOOTER + 
-					"Initializing path entry container");	//$NON-NLS-1$
+			System.out.println(
+					TRACE_HEADER + project.getProject().getName() + TRACE_FOOTER + "Initializing path entry container"); //$NON-NLS-1$
 		}
-		CoreModel.setPathEntryContainer(new ICProject[]{project}, new ManagedBuildCPathEntryContainer(project.getProject()), null);
+		CoreModel.setPathEntryContainer(new ICProject[] { project },
+				new ManagedBuildCPathEntryContainer(project.getProject()), null);
 	}
 
 }

@@ -31,4 +31,3 @@ public class ExtractFunctionWizard extends RefactoringWizard {
 		addPage(new ExtractFunctionInputPage());
 	}
 }
-

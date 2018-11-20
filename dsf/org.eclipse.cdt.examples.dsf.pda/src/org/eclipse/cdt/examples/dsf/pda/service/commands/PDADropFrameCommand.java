@@ -39,12 +39,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDADropFrameCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDADropFrameCommand(PDAThreadDMContext thread) {
-        super(thread, "drop " + thread.getID());
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDADropFrameCommand(PDAThreadDMContext thread) {
+		super(thread, "drop " + thread.getID());
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

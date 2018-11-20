@@ -17,7 +17,6 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-
 /**
  * This interface can be implemented by clients to contribute custom build-option 
  * editors to the CDT Build Settings page in the project Properties dialog.
@@ -31,21 +30,20 @@ import org.eclipse.swt.widgets.Control;
  *  
  * @since 8.0
  */
-public interface ICustomBuildOptionEditor
-{
+public interface ICustomBuildOptionEditor {
 	/**
 	 * Initializes the custom field-editor.
 	 * 
-     * @param option the underlying build-option.
-     * @param extraArgument an optional {@link IOption#getFieldEditorExtraArgument() extra argument} 
-     * 			for the field-editor. May be {@code null}.
-     * @param preferenceName the name of the preference this field editor binds to.
-     * @param parent the parent of the field editor's control.
-     * @return {@code true} iff the custom field-editor can be successfully displayed. Returning {@code false}
-     * 			would cause the built-in field-editor to be displayed based on the option's {@link IOption#getValueType() valueType}.
+	 * @param option the underlying build-option.
+	 * @param extraArgument an optional {@link IOption#getFieldEditorExtraArgument() extra argument} 
+	 * 			for the field-editor. May be {@code null}.
+	 * @param preferenceName the name of the preference this field editor binds to.
+	 * @param parent the parent of the field editor's control.
+	 * @return {@code true} iff the custom field-editor can be successfully displayed. Returning {@code false}
+	 * 			would cause the built-in field-editor to be displayed based on the option's {@link IOption#getValueType() valueType}.
 	 */
 	boolean init(IOption option, String extraArgument, String preferenceName, Composite parent);
-	
+
 	/**
 	 * Returns the list of controls for which tool-tips should be displayed by the Build Settings dialog-page.
 	 * 
@@ -53,5 +51,5 @@ public interface ICustomBuildOptionEditor
 	 * 			May return {@code null} to signify that tool-tips are handled by the custom field-editor itself.
 	 */
 	Control[] getToolTipSources();
-	
+
 }

@@ -27,20 +27,22 @@ public class SourcePosition extends AddressRangePosition {
 	public int fLine;
 	public int fLast = -1;
 
-	public SourcePosition(int offset, int length, BigInteger addressOffset, SourceFileInfo fileInfo, int line, int last) {
+	public SourcePosition(int offset, int length, BigInteger addressOffset, SourceFileInfo fileInfo, int line,
+			int last) {
 		this(offset, length, addressOffset, fileInfo, line, last, true);
 	}
 
-	public SourcePosition(int offset, int length, BigInteger addressOffset, SourceFileInfo fileInfo, int line, int last, boolean valid) {
+	public SourcePosition(int offset, int length, BigInteger addressOffset, SourceFileInfo fileInfo, int line, int last,
+			boolean valid) {
 		super(offset, length, addressOffset, BigInteger.ZERO, valid);
 		fFileInfo = fileInfo;
 		fLine = line;
 		fLast = last;
 	}
-	
+
 	@Override
 	public String toString() {
-		return super.toString() + "->["+fFileInfo.fFileKey + ':' + fLine + ']';  //$NON-NLS-1$
+		return super.toString() + "->[" + fFileInfo.fFileKey + ':' + fLine + ']'; //$NON-NLS-1$
 	}
 
 }

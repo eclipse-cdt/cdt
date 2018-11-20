@@ -60,18 +60,18 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 
 	private IWorkspaceRoot fRoot = ResourcesPlugin.getWorkspace().getRoot();
 
-	private class DeltaVisitor implements IResourceDeltaVisitor{
-//		private IResourceDelta fRootDelta;
+	private class DeltaVisitor implements IResourceDeltaVisitor {
+		//		private IResourceDelta fRootDelta;
 		private Map<IResource, IResource> fMoveMap = new HashMap<IResource, IResource>();
 		private IResourceMoveHandler fHandler;
 
-		public DeltaVisitor(IResourceMoveHandler handler, IResourceDelta rootDelta){
+		public DeltaVisitor(IResourceMoveHandler handler, IResourceDelta rootDelta) {
 			fHandler = handler;
-//			fRootDelta = rootDelta;
+			//			fRootDelta = rootDelta;
 		}
 
-		private IResource getResource(IPath path, IResource baseResource){
-			switch(baseResource.getType()){
+		private IResource getResource(IPath path, IResource baseResource) {
+			switch (baseResource.getType()) {
 			case IResource.FILE:
 				return fRoot.getFile(path);
 			case IResource.FOLDER:
@@ -84,8 +84,8 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 			}
 		}
 
-		private boolean checkInitHandleResourceMove(IResource fromRc, IResource toRc){
-			if(fMoveMap.put(fromRc, toRc) == null){
+		private boolean checkInitHandleResourceMove(IResource fromRc, IResource toRc) {
+			if (fMoveMap.put(fromRc, toRc) == null) {
 				return fHandler.handleResourceMove(fromRc, toRc);
 			}
 
@@ -96,7 +96,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource dResource = delta.getResource();
 
-			if(dResource.getType() == IResource.PROJECT && !shouldVisit((IProject)dResource))
+			if (dResource.getType() == IResource.PROJECT && !shouldVisit((IProject) dResource))
 				return false;
 
 			boolean resume = true;
@@ -130,8 +130,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 				break;
 			}
 
-
-			return resume;	//  visit the children
+			return resume; //  visit the children
 		}
 	}
 
@@ -154,7 +153,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 		}
 	}
 
-	protected boolean shouldVisit(IProject project){
+	protected boolean shouldVisit(IProject project) {
 		try {
 			return project.isOpen() ? project.hasNature(CProjectNature.C_NATURE_ID) : true;
 		} catch (CoreException e) {
@@ -174,30 +173,30 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 	/**
 	 * @since 5.1
 	 */
-	protected void doHandleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler){
+	protected void doHandleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler) {
 		switch (event.getType()) {
-			case IResourceChangeEvent.PRE_CLOSE:
-				IProject project = (IProject)event.getResource();
-				if(shouldVisit(project))
-					handler.handleProjectClose(project);
+		case IResourceChangeEvent.PRE_CLOSE:
+			IProject project = (IProject) event.getResource();
+			if (shouldVisit(project))
+				handler.handleProjectClose(project);
+			break;
+		//				case IResourceChangeEvent.PRE_DELETE :
+		//					handler.handleResourceRemove(event.getResource());
+		//					break;
+		case IResourceChangeEvent.POST_CHANGE:
+			IResourceDelta resDelta = event.getDelta();
+			if (resDelta == null) {
 				break;
-//				case IResourceChangeEvent.PRE_DELETE :
-//					handler.handleResourceRemove(event.getResource());
-//					break;
-			case IResourceChangeEvent.POST_CHANGE :
-				IResourceDelta resDelta = event.getDelta();
-				if (resDelta == null) {
-					break;
-				}
-				try {
-					DeltaVisitor rcChecker = new DeltaVisitor(handler, resDelta);
-					resDelta.accept(rcChecker);
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
-				break;
-			default :
-				break;
+			}
+			try {
+				DeltaVisitor rcChecker = new DeltaVisitor(handler, resDelta);
+				resDelta.accept(rcChecker);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+			break;
+		default:
+			break;
 		}
 
 		handler.done();

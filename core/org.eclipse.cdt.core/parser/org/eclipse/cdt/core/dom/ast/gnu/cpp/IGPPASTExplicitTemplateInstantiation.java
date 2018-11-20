@@ -35,7 +35,7 @@ public interface IGPPASTExplicitTemplateInstantiation extends ICPPASTExplicitTem
 	 * <code>ti_extern</code> implies 'extern' keyword is used.
 	 */
 	public static final int ti_extern = ICPPASTExplicitTemplateInstantiation.EXTERN;
-	
+
 	/**
 	 * @since 5.1
 	 */

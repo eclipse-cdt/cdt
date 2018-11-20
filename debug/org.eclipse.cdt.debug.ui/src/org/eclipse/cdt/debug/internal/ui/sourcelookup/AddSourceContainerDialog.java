@@ -11,8 +11,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
- 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
+
 import java.util.ArrayList;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.debug.core.DebugPlugin;
@@ -53,34 +53,35 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	private SourceContainerViewer fSourceContainerViewer;
 	private boolean fDoubleClickSelects = true;
 	private ISourceLookupDirector fDirector;
-	
+
 	/**
 	 * Constructor
 	 */
-	public AddSourceContainerDialog(Shell shell, SourceContainerViewer viewer, ISourceLookupDirector director) {		
+	public AddSourceContainerDialog(Shell shell, SourceContainerViewer viewer, ISourceLookupDirector director) {
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fSourceContainerViewer=viewer;		
+		fSourceContainerViewer = viewer;
 		fDirector = director;
 	}
-	
+
 	/**
 	 * Creates the dialog area to display source container types that are "browseable"
 	 */
 	@Override
-	protected Control createDialogArea(Composite ancestor) {			
+	protected Control createDialogArea(Composite ancestor) {
 		getShell().setText(SourceLookupUIMessages.AddSourceContainerDialog_0);
 		setTitle(SourceLookupUIMessages.AddSourceContainerDialog_1);
-		
+
 		Composite parent = new Composite(ancestor, SWT.NULL);
-		GridData gd= new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
 		parent.setLayout(topLayout);
-		parent.setLayoutData(gd);	
-				
-		ISourceContainerType[] types = filterTypes(DebugPlugin.getDefault().getLaunchManager().getSourceContainerTypes());
-		
+		parent.setLayoutData(gd);
+
+		ISourceContainerType[] types = filterTypes(
+				DebugPlugin.getDefault().getLaunchManager().getSourceContainerTypes());
+
 		fViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE);
 		final Table table = fViewer.getTable();
 		gd = new GridData(GridData.FILL_BOTH);
@@ -95,7 +96,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 				}
 			});
 		}
-		
+
 		fViewer.setLabelProvider(new SourceContainerLabelProvider());
 		fViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fViewer.setSorter(new ViewerSorter());
@@ -105,20 +106,22 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 				ISelection selection = event.getSelection();
 				String desc = null;
 				if (!selection.isEmpty()) {
-					ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection)selection).getFirstElement();
+					ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection) selection)
+							.getFirstElement();
 					desc = type.getDescription();
 				}
 				setMessage(desc);
 			}
 		});
-		if (types.length != 0) {	
+		if (types.length != 0) {
 			fViewer.setInput(types);
 		}
 		Dialog.applyDialogFont(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp( getShell(), ICDebugHelpContextIds.ADD_SOURCE_CONTAINER_DIALOG );
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(),
+				ICDebugHelpContextIds.ADD_SOURCE_CONTAINER_DIALOG);
 		return parent;
-	}	
-	
+	}
+
 	/**
 	 * Removes types without browsers from the provided list of types.
 	 * @param types the complete list of source container types
@@ -134,10 +137,10 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 					validTypes.add(type);
 				}
 			}
-		}	
+		}
 		return validTypes.toArray(new ISourceContainerType[validTypes.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -145,7 +148,8 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		// Single selection dialog, so take first item in array
 		// there will always be a selected item since we set it with viewer.setSelection
-		ISourceContainerType type = (ISourceContainerType) ((StructuredSelection) fViewer.getSelection()).getFirstElement();
+		ISourceContainerType type = (ISourceContainerType) ((StructuredSelection) fViewer.getSelection())
+				.getFirstElement();
 		ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
 		if (browser != null) {
 			ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);

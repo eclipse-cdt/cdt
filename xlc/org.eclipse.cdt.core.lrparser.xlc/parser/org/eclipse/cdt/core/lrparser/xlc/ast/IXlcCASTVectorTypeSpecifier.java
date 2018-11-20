@@ -18,11 +18,11 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 public interface IXlcCASTVectorTypeSpecifier extends ICASTDeclSpecifier {
 
 	public boolean isPixel();
-	
+
 	public void setPixel(boolean isPixel);
-	
+
 	public boolean isBool();
-	
+
 	public void setBool(boolean isBool);
-	
+
 }

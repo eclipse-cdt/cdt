@@ -72,7 +72,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 		 * @return {@code IASTExpression} value
 		 */
 		public IASTExpression getValue();
-		
+
 		/**
 		 * @since 5.1
 		 */

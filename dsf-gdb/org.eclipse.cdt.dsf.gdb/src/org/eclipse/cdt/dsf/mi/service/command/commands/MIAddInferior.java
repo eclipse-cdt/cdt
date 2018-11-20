@@ -18,7 +18,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
-
 /**	
  *   -add-inferior
  *   ^done,inferior="i2"
@@ -30,14 +29,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *   
  *   @since 4.0
  */
-public class MIAddInferior extends MICommand<MIAddInferiorInfo>
-{
-    public MIAddInferior(ICommandControlDMContext dmc) {
-        super(dmc, "-add-inferior"); //$NON-NLS-1$
-    }
-    
-    @Override
-    public MIAddInferiorInfo getResult(MIOutput output) {
-        return new MIAddInferiorInfo(output);
-    }
+public class MIAddInferior extends MICommand<MIAddInferiorInfo> {
+	public MIAddInferior(ICommandControlDMContext dmc) {
+		super(dmc, "-add-inferior"); //$NON-NLS-1$
+	}
+
+	@Override
+	public MIAddInferiorInfo getResult(MIOutput output) {
+		return new MIAddInferiorInfo(output);
+	}
 }

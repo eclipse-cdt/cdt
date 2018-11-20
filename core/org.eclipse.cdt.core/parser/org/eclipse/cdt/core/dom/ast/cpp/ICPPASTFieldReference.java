@@ -37,7 +37,7 @@ public interface ICPPASTFieldReference extends IASTFieldReference, ICPPASTExpres
 	 * @param value
 	 */
 	public void setIsTemplate(boolean value);
-	
+
 	/**
 	 * @since 5.1
 	 */
@@ -55,7 +55,7 @@ public interface ICPPASTFieldReference extends IASTFieldReference, ICPPASTExpres
 	 * @since 5.4
 	 */
 	public IType getFieldOwnerType();
-	
+
 	/**
 	 * @since 5.5
 	 */

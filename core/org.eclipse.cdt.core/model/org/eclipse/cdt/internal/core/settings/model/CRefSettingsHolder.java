@@ -84,21 +84,21 @@ public class CRefSettingsHolder extends CExternalSettingsHolder {
 	public CRefSettingsHolder(ICStorageElement element) {
 		super(element);
 
-		String factoryId = element.getAttribute(ATTR_FACTORY_ID); 
+		String factoryId = element.getAttribute(ATTR_FACTORY_ID);
 		String containerId = element.getAttribute(ATTR_CONTAINER_ID);
-		
+
 		fContainerRef = new CContainerRef(factoryId, containerId);
 	}
 
-	public CContainerRef getContainerInfo(){
+	public CContainerRef getContainerInfo() {
 		return fContainerRef;
 	}
-	
-	public boolean isReconsiled(){
+
+	public boolean isReconsiled() {
 		return fIsReconsiled;
 	}
-	
-	public void setReconsiled(boolean s){
+
+	public void setReconsiled(boolean s) {
 		fIsReconsiled = s;
 	}
 

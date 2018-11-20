@@ -37,11 +37,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  */
 public class MIInterpreterExec<V extends MIInfo> extends MICommand<V> {
 
-    /**
-     * @param oper
-     */
-    public MIInterpreterExec(IDMContext ctx, String interpreter, String cmd) {
-        super(ctx, "-interpreter-exec", new String[] {interpreter, cmd}); //$NON-NLS-1$
-    }
+	/**
+	 * @param oper
+	 */
+	public MIInterpreterExec(IDMContext ctx, String interpreter, String cmd) {
+		super(ctx, "-interpreter-exec", new String[] { interpreter, cmd }); //$NON-NLS-1$
+	}
 
 }

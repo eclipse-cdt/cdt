@@ -27,9 +27,9 @@ import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
  */
 public interface ITargetPlatform extends IBuildObject {
 	public static final String TARGET_PLATFORM_ELEMENT_NAME = "targetPlatform"; //$NON-NLS-1$
-	public static final String BINARY_PARSER = "binaryParser";	//$NON-NLS-1$
-	public static final String OS_LIST = "osList";	//$NON-NLS-1$
-	public static final String ARCH_LIST = "archList";	//$NON-NLS-1$
+	public static final String BINARY_PARSER = "binaryParser"; //$NON-NLS-1$
+	public static final String OS_LIST = "osList"; //$NON-NLS-1$
+	public static final String ARCH_LIST = "archList"; //$NON-NLS-1$
 
 	/**
 	 * Returns the tool-chain that is the parent of this target platform.
@@ -45,7 +45,7 @@ public interface ITargetPlatform extends IBuildObject {
 	 * @return ITargetPlatform
 	 */
 	public ITargetPlatform getSuperClass();
-	
+
 	/**
 	 * Returns whether this element is abstract.  Returns <code>false</code>
 	 * if the attribute was not specified.
@@ -58,7 +58,7 @@ public interface ITargetPlatform extends IBuildObject {
 	 * Sets the isAbstract attribute of the target paltform. 
 	 */
 	public void setIsAbstract(boolean b);
-	
+
 	/**
 	 * Returns a semi-colon delimited list of child Ids of the superclass'
 	 * children that should not be automatically inherited by this element.
@@ -66,7 +66,7 @@ public interface ITargetPlatform extends IBuildObject {
 	 * @return String 
 	 */
 	public String getUnusedChildren();
-	
+
 	/**
 	 * Returns an array of operating systems this target platform represents.
 	 * 
@@ -80,14 +80,14 @@ public interface ITargetPlatform extends IBuildObject {
 	 * @param OSs The list of OS names
 	 */
 	public void setOSList(String[] OSs);
-		 
-	 /**
-	  * Returns an array of architectures this target platform represents.
-	  * 
-	  * @return String[]
-	  */
-	 public String[] getArchList();
-	
+
+	/**
+	 * Returns an array of architectures this target platform represents.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getArchList();
+
 	/**
 	 * Sets the architecture list.
 	 * 
@@ -131,12 +131,12 @@ public interface ITargetPlatform extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isDirty();
-	
+
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
 	 */
 	public void setDirty(boolean isDirty);
-	
+
 	/**
 	 * Returns <code>true</code> if this target platform was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
@@ -144,7 +144,7 @@ public interface ITargetPlatform extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isExtensionElement();
-	
+
 	public CTargetPlatformData getTargetPlatformData();
 
 }

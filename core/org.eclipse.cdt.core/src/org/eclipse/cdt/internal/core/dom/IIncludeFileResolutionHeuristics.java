@@ -10,9 +10,8 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom;
-
 
 /**
  * Abstract base class for heuristic include file resolution.

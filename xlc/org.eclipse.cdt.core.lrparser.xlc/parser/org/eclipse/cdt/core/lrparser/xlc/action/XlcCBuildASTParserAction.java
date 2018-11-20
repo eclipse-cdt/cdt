@@ -27,9 +27,7 @@ public class XlcCBuildASTParserAction extends GCCBuildASTParserAction {
 
 	private IXlcCNodeFactory nodeFactory;
 
-	
-	public XlcCBuildASTParserAction(ITokenStream parser,
-			ScopedStack<Object> astStack, IXlcCNodeFactory nodeFactory,
+	public XlcCBuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, IXlcCNodeFactory nodeFactory,
 			ISecondaryParserFactory parserFactory) {
 		super(parser, astStack, nodeFactory, parserFactory);
 		this.nodeFactory = nodeFactory;
@@ -37,30 +35,30 @@ public class XlcCBuildASTParserAction extends GCCBuildASTParserAction {
 
 	/*
 	 * vector_type
-     *     ::= <openscope-ast> sqlist_op 'vector' vector_type_specifier all_specifier_qualifier_list
+	 *     ::= <openscope-ast> sqlist_op 'vector' vector_type_specifier all_specifier_qualifier_list
 	 */
 	public void consumeVectorTypeSpecifier() {
 		IXlcCASTVectorTypeSpecifier declSpec = nodeFactory.newVectorTypeSpecifier();
-		
-		for(Object specifier : astStack.closeScope()) {
-			if(specifier instanceof IToken) {
-				switch(((IToken)specifier).getKind()) {
-				case XlcCParsersym.TK_pixel :
+
+		for (Object specifier : astStack.closeScope()) {
+			if (specifier instanceof IToken) {
+				switch (((IToken) specifier).getKind()) {
+				case XlcCParsersym.TK_pixel:
 					declSpec.setPixel(true);
 					continue;
-				case XlcCParsersym.TK_bool :
+				case XlcCParsersym.TK_bool:
 					declSpec.setBool(true);
 					continue;
-				case XlcCParsersym.TK_vector :
+				case XlcCParsersym.TK_vector:
 					continue;
 				}
 			}
-			
+
 			setSpecifier(declSpec, specifier);
 		}
-		
+
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
 	}
-	
+
 }

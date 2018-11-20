@@ -37,9 +37,9 @@ import org.junit.BeforeClass;
  * Helper base class for running DSF related tests
  */
 public class CommonDsfTest extends CommonTest {
-	
+
 	protected static DsfSession fSession = null;
-	
+
 	/**
 	 * Setup the test. 
 	 * The session is typically configured once per class load, but we allow subclasses to override this,
@@ -48,40 +48,40 @@ public class CommonDsfTest extends CommonTest {
 	 */
 	@Before
 	public void setup() {
-		if(fSession != null) {
+		if (fSession != null) {
 			return; // Already set-up
 		}
-		
+
 		doSetupSession();
 	}
-	
+
 	protected void doSetupSession() {
 		fSession = DsfSession.startSession(new DefaultDsfExecutor(GdbPlugin.PLUGIN_ID), GdbPlugin.PLUGIN_ID);
-		
+
 		registerLaunch();
 	}
 
 	@AfterClass
 	public static void tearDown() {
-		if(fSession != null) {
+		if (fSession != null) {
 			DsfSession.endSession(fSession);
 			fSession = null;
 		}
 	}
-	
+
 	protected ILaunchConfigurationType getCLaunchConfigType() {
 		return getLaunchManager().getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
 	}
-	
+
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
 	protected void registerLaunch() {
 		ILaunchConfigurationWorkingCopy lc;
 		try {
 			lc = getCLaunchConfigType().newInstance(null, "TestLaunch");
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			fail(e.getMessage());
 			return;
 		}
@@ -89,11 +89,11 @@ public class CommonDsfTest extends CommonTest {
 		DsfLaunch dsfLaunch = new DsfLaunch(lc, ILaunchManager.DEBUG_MODE, sourceLocator);
 		fSession.registerModelAdapter(ILaunch.class, dsfLaunch);
 	}
-	
+
 	protected RequestMonitor newRequestMonitor() {
 		return new RequestMonitor(fSession.getExecutor(), null);
 	}
-	
+
 	protected <T> DataRequestMonitor<T> newDataRequestMonitor() {
 		return new DataRequestMonitor<>(fSession.getExecutor(), null);
 	}
@@ -103,10 +103,10 @@ public class CommonDsfTest extends CommonTest {
  * Misc test utilities.
  */
 class CommonTest {
-    /* -----------------  ----------------- */
+	/* -----------------  ----------------- */
 
-    @SafeVarargs
-    public static <T> T[] array(T... elems) {
-        return elems;
-    }
+	@SafeVarargs
+	public static <T> T[] array(T... elems) {
+		return elems;
+	}
 }

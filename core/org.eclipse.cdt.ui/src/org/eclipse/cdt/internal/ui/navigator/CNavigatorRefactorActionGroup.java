@@ -57,9 +57,8 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
-		boolean anyResourceSelected = !selection.isEmpty()
-				&& ResourceSelectionUtil.allResourcesAreOfType(selection,
-						IResource.PROJECT | IResource.FOLDER | IResource.FILE);
+		boolean anyResourceSelected = !selection.isEmpty() && ResourceSelectionUtil.allResourcesAreOfType(selection,
+				IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 
 		if (anyResourceSelected) {
 			moveAction.selectionChanged(selection);
@@ -73,7 +72,7 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 		updateActionBars();
 
-//		textActionHandler.updateActionBars();
+		//		textActionHandler.updateActionBars();
 		actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(), moveAction);
 		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), renameAction);
 	}
@@ -81,7 +80,7 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 	protected void makeActions() {
 		moveAction = new MoveResourceAction(shellProvider);
 		moveAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_MOVE);
-		
+
 		renameAction = new CNavigatorRenameResourceAction(shellProvider, tree);
 		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 	}

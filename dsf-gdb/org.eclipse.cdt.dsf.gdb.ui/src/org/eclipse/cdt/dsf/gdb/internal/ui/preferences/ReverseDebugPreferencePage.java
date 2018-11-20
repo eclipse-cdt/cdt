@@ -25,30 +25,30 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class ReverseDebugPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public ReverseDebugPreferencePage() {
-		super( GRID );
+		super(GRID);
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
-		setPreferenceStore( store );
+		setPreferenceStore(store);
 	}
 
 	@Override
 	protected void createFieldEditors() {
-		FieldEditor edit = new RadioGroupFieldEditor(
-				IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
-				MessagesForPreferences.ReverseDebugPreferencePage_SelectHardwareTracingMethod,
-				1,
+		FieldEditor edit = new RadioGroupFieldEditor(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
+				MessagesForPreferences.ReverseDebugPreferencePage_SelectHardwareTracingMethod, 1,
 				new String[][] {
-					{MessagesForPreferences.ReverseDebugPreferencePage_GDBPreference, IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE},
-					{MessagesForPreferences.ReverseDebugPreferencePage_BranchTrace, IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE},
-					{MessagesForPreferences.ReverseDebugPreferencePage_ProcessorTrace, IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE}
-				},
-				getFieldEditorParent() );
-		edit.fillIntoGrid( getFieldEditorParent(), 1 );
-		getPreferenceStore().setDefault( IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE, 
-				                         IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE );
-		addField( edit );
+						{ MessagesForPreferences.ReverseDebugPreferencePage_GDBPreference,
+								IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE },
+						{ MessagesForPreferences.ReverseDebugPreferencePage_BranchTrace,
+								IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE },
+						{ MessagesForPreferences.ReverseDebugPreferencePage_ProcessorTrace,
+								IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE } },
+				getFieldEditorParent());
+		edit.fillIntoGrid(getFieldEditorParent(), 1);
+		getPreferenceStore().setDefault(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
+				IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE);
+		addField(edit);
 	}
 
 	@Override
-	public void init( IWorkbench workbench ) {
+	public void init(IWorkbench workbench) {
 	}
 }

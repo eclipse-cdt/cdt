@@ -39,8 +39,8 @@ public class ModifiedASTExpressionWriter extends ExpressionWriter {
 
 	@Override
 	protected void writeExpressions(IASTExpressionList expList, IASTExpression[] expressions) {
-		IASTExpression[] modifiedExpressions = modificationHelper.createModifiedChildArray(expList,
-				expressions, IASTExpression.class, commentMap);
+		IASTExpression[] modifiedExpressions = modificationHelper.createModifiedChildArray(expList, expressions,
+				IASTExpression.class, commentMap);
 		super.writeExpressions(expList, modifiedExpressions);
 	}
 

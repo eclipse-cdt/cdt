@@ -26,7 +26,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class CLIShowEndian extends MIInterpreterExecConsole<CLIShowEndianInfo> {
 
-	private static final String SHOW_ENDIAN = "show endian";  //$NON-NLS-1$
+	private static final String SHOW_ENDIAN = "show endian"; //$NON-NLS-1$
 
 	public CLIShowEndian(IMemoryDMContext ctx) {
 		super(ctx, SHOW_ENDIAN);

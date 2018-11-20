@@ -43,7 +43,7 @@ public class IndexSearchTest extends IndexTestBase {
 	private static final IndexFilter INDEX_FILTER = IndexFilter.ALL_DECLARED;
 
 	public static TestSuite suite() {
-		TestSuite suite= suite(IndexSearchTest.class, "_");
+		TestSuite suite = suite(IndexSearchTest.class, "_");
 		suite.addTest(new IndexSearchTest("deleteProject"));
 		return suite;
 	}
@@ -59,9 +59,9 @@ public class IndexSearchTest extends IndexTestBase {
 	public void setUp() throws Exception {
 		super.setUp();
 		if (fProject == null) {
-			fProject= createProject(true, "resources/indexTests/search");
+			fProject = createProject(true, "resources/indexTests/search");
 		}
-		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
+		fIndex = CCorePlugin.getIndexManager().getIndex(fProject);
 		fIndex.acquireReadLock();
 	}
 
@@ -105,136 +105,137 @@ public class IndexSearchTest extends IndexTestBase {
 
 	public void testFindClassInNamespace() throws CoreException {
 		String scl = "C160913";
-		Pattern pcl= Pattern.compile(scl);
+		Pattern pcl = Pattern.compile(scl);
 		String sns = "ns160913";
-		Pattern pns= Pattern.compile(sns);
+		Pattern pns = Pattern.compile(sns);
 
 		IIndexBinding[] bindings;
 
-		bindings= fIndex.findBindings(pcl, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pcl, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 
-		bindings= fIndex.findBindings(scl.toCharArray(), INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(scl.toCharArray(), INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 
-		bindings= fIndex.findBindings(pcl, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pcl, false, INDEX_FILTER, npm());
 		assertEquals(3, bindings.length);
 		checkIsClass(bindings[0]);
 		checkIsClass(bindings[1]);
 		checkIsClass(bindings[2]);
 
-		bindings= fIndex.findBindings(new Pattern[]{pns, pcl}, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new Pattern[] { pns, pcl }, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 
-		bindings= fIndex.findBindings(new char[][]{sns.toCharArray(), scl.toCharArray()}, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new char[][] { sns.toCharArray(), scl.toCharArray() }, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 
-		bindings= fIndex.findBindings(new Pattern[]{pns, pcl}, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new Pattern[] { pns, pcl }, false, INDEX_FILTER, npm());
 		assertEquals(2, bindings.length);
 		checkIsClass(bindings[0]);
 		checkIsClass(bindings[1]);
 
-		bindings= fIndex.findBindings(new Pattern[]{pns, pns, pcl}, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new Pattern[] { pns, pns, pcl }, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 
-		bindings= fIndex.findBindings(new char[][]{sns.toCharArray(), sns.toCharArray(), scl.toCharArray()}, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new char[][] { sns.toCharArray(), sns.toCharArray(), scl.toCharArray() },
+				INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 
-		bindings= fIndex.findBindings(new Pattern[]{pns, pns, pcl}, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new Pattern[] { pns, pns, pcl }, false, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 	}
 
 	public void testFindNamespaceInNamespace() throws CoreException {
-		Pattern pcl= Pattern.compile("C160913");
-		Pattern pns= Pattern.compile("ns160913");
-		char[] scl= pcl.pattern().toCharArray();
-		char[] sns= pns.pattern().toCharArray();
+		Pattern pcl = Pattern.compile("C160913");
+		Pattern pns = Pattern.compile("ns160913");
+		char[] scl = pcl.pattern().toCharArray();
+		char[] sns = pns.pattern().toCharArray();
 
 		IIndexBinding[] bindings;
 
-		bindings= fIndex.findBindings(pns, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pns, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsNamespace(bindings[0]);
 
-		bindings= fIndex.findBindings(sns, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(sns, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsNamespace(bindings[0]);
 
-		bindings= fIndex.findBindings(pns, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pns, false, INDEX_FILTER, npm());
 		assertEquals(2, bindings.length);
 		checkIsNamespace(bindings[0]);
 		checkIsNamespace(bindings[1]);
 
-		bindings= fIndex.findBindings(new Pattern[]{pns, pns}, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new Pattern[] { pns, pns }, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsNamespace(bindings[0]);
 
-		bindings= fIndex.findBindings(new char[][]{sns, sns}, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new char[][] { sns, sns }, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsNamespace(bindings[0]);
 
-		bindings= fIndex.findBindings(new Pattern[]{pns, pns}, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new Pattern[] { pns, pns }, false, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsNamespace(bindings[0]);
 	}
 
 	public void testClassInUnnamedNamespace() throws CoreException {
-		Pattern pcl= Pattern.compile("CInUnnamed160913");
+		Pattern pcl = Pattern.compile("CInUnnamed160913");
 
 		IIndexBinding[] bindings;
 
 		// The binding in the unnamed namespace is not visible in global scope.
-		bindings= fIndex.findBindings(pcl, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pcl, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		assertTrue(bindings[0].isFileLocal());
 
-		bindings= fIndex.findBindings(pcl.pattern().toCharArray(), INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pcl.pattern().toCharArray(), INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		assertTrue(bindings[0].isFileLocal());
 	}
 
 	public void testFindEnumerator() throws CoreException {
-		Pattern pEnumeration= Pattern.compile("E20061017");
-		Pattern pEnumerator= Pattern.compile("e20061017");
-		char[] sEnumeration= pEnumeration.pattern().toCharArray();
-		char[] sEnumerator= pEnumerator.pattern().toCharArray();
+		Pattern pEnumeration = Pattern.compile("E20061017");
+		Pattern pEnumerator = Pattern.compile("e20061017");
+		char[] sEnumeration = pEnumeration.pattern().toCharArray();
+		char[] sEnumerator = pEnumerator.pattern().toCharArray();
 
 		IIndexBinding[] bindings;
 
 		// Enumerators are found in global scope.
-		bindings= fIndex.findBindings(pEnumerator, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pEnumerator, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsEnumerator(bindings[0]);
 
-		bindings= fIndex.findBindings(pEnumerator, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pEnumerator, false, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsEnumerator(bindings[0]);
 
-		bindings= fIndex.findBindings(new Pattern[]{pEnumeration, pEnumerator}, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new Pattern[] { pEnumeration, pEnumerator }, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 
-		bindings= fIndex.findBindings(new char[][]{sEnumeration, sEnumerator}, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new char[][] { sEnumeration, sEnumerator }, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 
-		bindings= fIndex.findBindings(new Pattern[]{pEnumeration, pEnumerator}, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(new Pattern[] { pEnumeration, pEnumerator }, false, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 
-		bindings= fIndex.findBindings(pEnumeration, true, INDEX_FILTER, npm());
-		assertEquals(1, bindings.length);
-		checkIsEnumeration(bindings[0]);
-
-		bindings= fIndex.findBindings(sEnumeration, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pEnumeration, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsEnumeration(bindings[0]);
 
-		bindings= fIndex.findBindings(pEnumeration, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(sEnumeration, INDEX_FILTER, npm());
+		assertEquals(1, bindings.length);
+		checkIsEnumeration(bindings[0]);
+
+		bindings = fIndex.findBindings(pEnumeration, false, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsEnumeration(bindings[0]);
 	}
@@ -242,61 +243,61 @@ public class IndexSearchTest extends IndexTestBase {
 	public void testCaseInsensitivePatternSearch_239669() throws CoreException {
 		IIndexBinding[] bindings;
 
-		Pattern pEnumAndEnumeration= Pattern.compile("E20061017", Pattern.CASE_INSENSITIVE);
-		Pattern pEnumeration= Pattern.compile("E20061017");
-		bindings= fIndex.findBindings(pEnumAndEnumeration, true, INDEX_FILTER, npm());
+		Pattern pEnumAndEnumeration = Pattern.compile("E20061017", Pattern.CASE_INSENSITIVE);
+		Pattern pEnumeration = Pattern.compile("E20061017");
+		bindings = fIndex.findBindings(pEnumAndEnumeration, true, INDEX_FILTER, npm());
 		assertEquals(2, bindings.length);
-		bindings= fIndex.findBindings(pEnumeration, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pEnumeration, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 
-		pEnumAndEnumeration= Pattern.compile("E2006101.*", Pattern.CASE_INSENSITIVE);
-		pEnumeration= Pattern.compile("E2006101.*");
-		bindings= fIndex.findBindings(pEnumAndEnumeration, true, INDEX_FILTER, npm());
+		pEnumAndEnumeration = Pattern.compile("E2006101.*", Pattern.CASE_INSENSITIVE);
+		pEnumeration = Pattern.compile("E2006101.*");
+		bindings = fIndex.findBindings(pEnumAndEnumeration, true, INDEX_FILTER, npm());
 		assertEquals(2, bindings.length);
-		bindings= fIndex.findBindings(pEnumeration, true, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pEnumeration, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 
-		Pattern macro1= Pattern.compile("Foo", Pattern.CASE_INSENSITIVE);
-		Pattern macro2= Pattern.compile("Foo");
-		bindings= fIndex.findMacroContainers(macro1, INDEX_FILTER, npm());
+		Pattern macro1 = Pattern.compile("Foo", Pattern.CASE_INSENSITIVE);
+		Pattern macro2 = Pattern.compile("Foo");
+		bindings = fIndex.findMacroContainers(macro1, INDEX_FILTER, npm());
 		assertEquals(2, bindings.length);
-		bindings= fIndex.findMacroContainers(macro2, INDEX_FILTER, npm());
+		bindings = fIndex.findMacroContainers(macro2, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 
-		macro1= Pattern.compile("Foo.*", Pattern.CASE_INSENSITIVE);
-		macro2= Pattern.compile("Foo.*");
-		bindings= fIndex.findMacroContainers(macro1, INDEX_FILTER, npm());
+		macro1 = Pattern.compile("Foo.*", Pattern.CASE_INSENSITIVE);
+		macro2 = Pattern.compile("Foo.*");
+		bindings = fIndex.findMacroContainers(macro1, INDEX_FILTER, npm());
 		assertEquals(2, bindings.length);
-		bindings= fIndex.findMacroContainers(macro2, INDEX_FILTER, npm());
+		bindings = fIndex.findMacroContainers(macro2, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 	}
 
-
 	public void testFindStatic_161216() throws CoreException {
-		Pattern pFunc= Pattern.compile("staticFunc20061017");
-		Pattern pVar= Pattern.compile("staticVar20061017");
+		Pattern pFunc = Pattern.compile("staticFunc20061017");
+		Pattern pVar = Pattern.compile("staticVar20061017");
 
 		IIndexBinding[] bindings;
 
-		bindings= fIndex.findBindings(pFunc, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pFunc, false, INDEX_FILTER, npm());
 		assertEquals(2, bindings.length);
 		checkIsFunction(bindings[0]);
 		checkIsFunction(bindings[1]);
 
-		bindings= fIndex.findBindings(pVar, false, INDEX_FILTER, npm());
+		bindings = fIndex.findBindings(pVar, false, INDEX_FILTER, npm());
 		assertEquals(2, bindings.length);
 		checkIsVariable(bindings[0]);
 		checkIsVariable(bindings[1]);
 	}
 
 	public void testSanityOfMayHaveChildren() throws CoreException {
-		PDOM pdom= (PDOM) ((CIndex) fIndex).getFragments()[0];
+		PDOM pdom = (PDOM) ((CIndex) fIndex).getFragments()[0];
 		pdom.accept(new IPDOMVisitor() {
-			LinkedList stack= new LinkedList();
+			LinkedList stack = new LinkedList();
+
 			@Override
 			public boolean visit(IPDOMNode node) throws CoreException {
 				if (!stack.isEmpty()) {
-					Object last= stack.getLast();
+					Object last = stack.getLast();
 					if (last instanceof PDOMBinding) {
 						assertTrue(((PDOMBinding) last).mayHaveChildren());
 					}
@@ -304,6 +305,7 @@ public class IndexSearchTest extends IndexTestBase {
 				stack.add(node);
 				return true;
 			}
+
 			@Override
 			public void leave(IPDOMNode node) throws CoreException {
 				assertEquals(stack.removeLast(), node);

@@ -21,23 +21,19 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
 public class NotExpression extends AndExpression {
-	public static final String NAME = "not"; 	//$NON-NLS-1$
-	
+	public static final String NAME = "not"; //$NON-NLS-1$
+
 	public NotExpression(IManagedConfigElement element) {
 		super(element);
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, 
-            IHoldsOptions holder, 
-            IOption option) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOption option) {
 		return !super.evaluate(rcInfo, holder, option);
 	}
-	
+
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, 
-            IHoldsOptions holder, 
-            IOptionCategory category) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
 		return !super.evaluate(rcInfo, holder, category);
 	}
 

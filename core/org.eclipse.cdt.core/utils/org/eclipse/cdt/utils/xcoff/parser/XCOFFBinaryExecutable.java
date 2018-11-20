@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.core.runtime.IPath;
 
-
 public class XCOFFBinaryExecutable extends XCOFFBinaryObject {
 
 	public XCOFFBinaryExecutable(IBinaryParser parser, IPath path) {

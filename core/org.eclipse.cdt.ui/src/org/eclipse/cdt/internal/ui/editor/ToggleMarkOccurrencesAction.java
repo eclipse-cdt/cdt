@@ -42,7 +42,8 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 	 * Constructs and updates the action.
 	 */
 	public ToggleMarkOccurrencesAction() {
-		super(ConstructedCEditorMessages.getResourceBundle(), "ToggleMarkOccurrencesAction.", null, IAction.AS_CHECK_BOX); //$NON-NLS-1$
+		super(ConstructedCEditorMessages.getResourceBundle(), "ToggleMarkOccurrencesAction.", null, //$NON-NLS-1$
+				IAction.AS_CHECK_BOX);
 		CPluginImages.setToolImageDescriptors(this, "mark_occurrences.gif"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.TOGGLE_MARK_OCCURRENCES_ACTION);
 		update();
@@ -55,11 +56,11 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 
 	@Override
 	public void update() {
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 
-		boolean checked= false;
+		boolean checked = false;
 		if (editor instanceof CEditor)
-			checked= ((CEditor)editor).isMarkingOccurrences();
+			checked = ((CEditor) editor).isMarkingOccurrences();
 
 		setChecked(checked);
 		setEnabled(editor != null);
@@ -71,12 +72,12 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 
 		if (editor != null) {
 			if (fStore == null) {
-				fStore= CUIPlugin.getDefault().getPreferenceStore();
+				fStore = CUIPlugin.getDefault().getPreferenceStore();
 				fStore.addPropertyChangeListener(this);
 			}
 		} else if (fStore != null) {
 			fStore.removePropertyChangeListener(this);
-			fStore= null;
+			fStore = null;
 		}
 
 		update();

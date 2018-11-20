@@ -51,13 +51,15 @@ public class HtmlTagDictionary extends AbstractSpellDictionary {
 	protected synchronized boolean load(final URL url) {
 		unload();
 
-		for (int index= 0; index < IHtmlTagConstants.HTML_GENERAL_TAGS.length; index++) {
-			hashWord(IHtmlTagConstants.HTML_TAG_PREFIX + IHtmlTagConstants.HTML_GENERAL_TAGS[index] + IHtmlTagConstants.HTML_TAG_POSTFIX);
-			hashWord(IHtmlTagConstants.HTML_CLOSE_PREFIX + IHtmlTagConstants.HTML_GENERAL_TAGS[index] + IHtmlTagConstants.HTML_TAG_POSTFIX);
+		for (int index = 0; index < IHtmlTagConstants.HTML_GENERAL_TAGS.length; index++) {
+			hashWord(IHtmlTagConstants.HTML_TAG_PREFIX + IHtmlTagConstants.HTML_GENERAL_TAGS[index]
+					+ IHtmlTagConstants.HTML_TAG_POSTFIX);
+			hashWord(IHtmlTagConstants.HTML_CLOSE_PREFIX + IHtmlTagConstants.HTML_GENERAL_TAGS[index]
+					+ IHtmlTagConstants.HTML_TAG_POSTFIX);
 		}
 		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.AbstractSpellDictionary#stripNonLetters(java.lang.String)
 	 */

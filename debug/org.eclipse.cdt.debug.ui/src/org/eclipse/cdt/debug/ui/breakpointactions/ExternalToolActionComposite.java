@@ -151,7 +151,8 @@ public class ExternalToolActionComposite extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 
 				ILaunchConfiguration[] lcs = getLaunchConfigurations();
-				LaunchConfigurationSelectionDialog dlg = new LaunchConfigurationSelectionDialog(externalToolActionComposite, lcs);
+				LaunchConfigurationSelectionDialog dlg = new LaunchConfigurationSelectionDialog(
+						externalToolActionComposite, lcs);
 				dlg.setTitle(Messages.getString("ExternalToolActionComposite.DialogTitle")); //$NON-NLS-1$
 				dlg.setMessage(Messages.getString("ExternalToolActionComposite.DialogMessage")); //$NON-NLS-1$
 				if (lcs.length > 0) {
@@ -173,7 +174,8 @@ public class ExternalToolActionComposite extends Composite {
 				if (dlg.open() == Window.OK) {
 					Object[] selectedTool = dlg.getResult();
 					if (selectedTool.length > 0 && selectedTool[0] instanceof ILaunchConfiguration) {
-						externalToolActionComposite.setExternalToolName(((ILaunchConfiguration) selectedTool[0]).getName());
+						externalToolActionComposite
+								.setExternalToolName(((ILaunchConfiguration) selectedTool[0]).getName());
 					}
 				}
 
@@ -186,7 +188,8 @@ public class ExternalToolActionComposite extends Composite {
 		externalToolsButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DebugUITools.openLaunchConfigurationDialogOnGroup(externalToolActionComposite.getShell(), new StructuredSelection(), "org.eclipse.ui.externaltools.launchGroup"); //$NON-NLS-1$
+				DebugUITools.openLaunchConfigurationDialogOnGroup(externalToolActionComposite.getShell(),
+						new StructuredSelection(), "org.eclipse.ui.externaltools.launchGroup"); //$NON-NLS-1$
 				browseButton.setEnabled(getLaunchConfigurations().length > 0);
 			}
 		});
@@ -221,7 +224,8 @@ public class ExternalToolActionComposite extends Composite {
 				} catch (CoreException e) {
 				}
 				if (type != null) {
-					if (!priv && type.supportsMode(ILaunchManager.RUN_MODE) && equalCategories(type.getCategory(), "org.eclipse.ui.externaltools") //$NON-NLS-1$
+					if (!priv && type.supportsMode(ILaunchManager.RUN_MODE)
+							&& equalCategories(type.getCategory(), "org.eclipse.ui.externaltools") //$NON-NLS-1$
 							&& !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(type)))
 						onlyExternalTools.add(launchConfigurations[i]);
 				}

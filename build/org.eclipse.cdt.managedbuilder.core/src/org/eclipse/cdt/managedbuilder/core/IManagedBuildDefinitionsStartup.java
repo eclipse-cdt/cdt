@@ -25,18 +25,17 @@ package org.eclipse.cdt.managedbuilder.core;
  * all possible build configurations at eclipse startup.
  */
 public interface IManagedBuildDefinitionsStartup {
-	
+
 	String BUILD_DEFINITION_STARTUP = "buildDefinitionStartup"; //$NON-NLS-1$
-	String CLASS_ATTRIBUTE = "class";			//$NON-NLS-1$
-	
+	String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+
 	/**
 	 * Any work you want to do on build definitions after they have been loaded but before they have been resolved.
 	 */
 	void buildDefsLoaded();
-	
+
 	/**
 	 * Any work you want to do on build definitions after they have been resolved.
 	 */
 	void buildDefsResolved();
 }
-

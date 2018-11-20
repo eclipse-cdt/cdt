@@ -39,8 +39,7 @@ public class CPPUnaryTypeTransformation implements ICPPUnaryTypeTransformation, 
 		if (!(other instanceof ICPPUnaryTypeTransformation))
 			return false;
 		ICPPUnaryTypeTransformation otherType = (ICPPUnaryTypeTransformation) other;
-		return getOperator() == otherType.getOperator()
-				&& getOperand().isSameType(otherType.getOperand());
+		return getOperator() == otherType.getOperator() && getOperand().isSameType(otherType.getOperand());
 	}
 
 	@Override
@@ -53,10 +52,10 @@ public class CPPUnaryTypeTransformation implements ICPPUnaryTypeTransformation, 
 		return fOperand;
 	}
 
-    @Override
+	@Override
 	public CPPUnaryTypeTransformation clone() {
-    	return new CPPUnaryTypeTransformation(fOperator, (IType) fOperand.clone());
-    }
+		return new CPPUnaryTypeTransformation(fOperator, (IType) fOperand.clone());
+	}
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
@@ -69,7 +68,7 @@ public class CPPUnaryTypeTransformation implements ICPPUnaryTypeTransformation, 
 		int operator = buffer.getByte();
 		if (operator >= Operator.values().length) {
 			throw new CoreException(CCorePlugin.createStatus(
-					"Cannot unmarshal CPPUnaryTypeTransformation - unrecognized type transformation operator"));  //$NON-NLS-1$
+					"Cannot unmarshal CPPUnaryTypeTransformation - unrecognized type transformation operator")); //$NON-NLS-1$
 		}
 		return new CPPUnaryTypeTransformation(Operator.values()[operator], buffer.unmarshalType());
 	}

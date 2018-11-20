@@ -47,6 +47,7 @@ public class ElfHelper {
 		public long data;
 		public long bss;
 		public long total;
+
 		public Sizes(long t, long d, long b) {
 			text = t;
 			data = d;
@@ -123,7 +124,6 @@ public class ElfHelper {
 		elf = new Elf(filename, fileoffset);
 	}
 
-
 	/** Give back the Elf object that this helper is wrapping */
 	public Elf getElf() {
 		return elf;
@@ -196,7 +196,7 @@ public class ElfHelper {
 		loadSections();
 
 		for (int i = 0; i < symbols.length; i++) {
-			if ( symbols[i].st_type() == Elf.Symbol.STT_FUNC) {
+			if (symbols[i].st_type() == Elf.Symbol.STT_FUNC) {
 				int idx = symbols[i].st_shndx;
 				if (idx < Elf.Symbol.SHN_HIPROC && idx > Elf.Symbol.SHN_LOPROC) {
 					String name = symbols[i].toString();
@@ -219,7 +219,7 @@ public class ElfHelper {
 		loadSections();
 
 		for (int i = 0; i < symbols.length; i++) {
-			if ( symbols[i].st_type() == Elf.Symbol.STT_OBJECT) {
+			if (symbols[i].st_type() == Elf.Symbol.STT_OBJECT) {
 				int idx = symbols[i].st_shndx;
 				if (idx < Elf.Symbol.SHN_HIPROC && idx > Elf.Symbol.SHN_LOPROC) {
 					String name = symbols[i].toString();
@@ -352,7 +352,7 @@ public class ElfHelper {
 			if (sections[i].sh_type != Elf.Section.SHT_NOBITS) {
 				if (sections[i].sh_flags == (Elf.Section.SHF_WRITE | Elf.Section.SHF_ALLOC)) {
 					data += sections[i].sh_size;
-				} else if ( (sections[i].sh_flags & Elf.Section.SHF_ALLOC) != 0) {
+				} else if ((sections[i].sh_flags & Elf.Section.SHF_ALLOC) != 0) {
 					text += sections[i].sh_size;
 				}
 			} else {

@@ -215,7 +215,8 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		Tree table = (Tree) getTreeControl();
 		if (table == null) {
 			listParent = parent;
-			treeViewer = doCreateTreeViewer(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+			treeViewer = doCreateTreeViewer(parent,
+					SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 			table = treeViewer.getTree();
 			table.setFont(parent.getFont());
 			treeViewer.setComparator(new ViewerComparator());

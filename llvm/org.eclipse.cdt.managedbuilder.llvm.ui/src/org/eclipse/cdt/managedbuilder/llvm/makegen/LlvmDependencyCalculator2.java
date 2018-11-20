@@ -39,7 +39,8 @@ public class LlvmDependencyCalculator2 extends DefaultGCCDependencyCalculator2 {
 	 * org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)
 	 */
 	@Override
-	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
+	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IBuildObject buildContext, ITool tool,
+			IPath topBuildDirectory) {
 		return new LlvmDependencyCalculator2Commands(source, buildContext, tool, topBuildDirectory);
 	}
 

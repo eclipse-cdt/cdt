@@ -25,18 +25,18 @@ import java.util.Set;
  * @since 1.0
  */
 public class UserEditEvent {
-    private final Set<Object> fElements;
-    
-    public UserEditEvent(Object element) {
-        fElements = new HashSet<Object>();
-        fElements.add(element);
-    }
+	private final Set<Object> fElements;
 
-    public UserEditEvent(Set<Object> elements) {
-        fElements = elements;
-    }
-    
-    public Set<Object> getElements() {
-        return fElements;
-    }
+	public UserEditEvent(Object element) {
+		fElements = new HashSet<Object>();
+		fElements.add(element);
+	}
+
+	public UserEditEvent(Set<Object> elements) {
+		fElements = elements;
+	}
+
+	public Set<Object> getElements() {
+		return fElements;
+	}
 }

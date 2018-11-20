@@ -150,7 +150,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		addExpectedChange(resource, IResourceDelta.REMOVED, 0);
 		if (resource instanceof IContainer) {
 			try {
-				IResource[] children = ((IContainer) resource).members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
+				IResource[] children = ((IContainer) resource).members(IContainer.INCLUDE_PHANTOMS
+						| IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 				for (int i = 0; i < children.length; i++) {
 					addExpectedDeletion(children[i]);
 				}
@@ -181,7 +182,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * @param status the type of change (ADDED, REMOVED, CHANGED)
 	 * @param changeFlags the type of change (CONTENT, SYNC, etc)
 	 */
-	public void addExpectedChange(IResource resource, int status, int changeFlags, IPath movedFromPath, IPath movedToPath) {
+	public void addExpectedChange(IResource resource, int status, int changeFlags, IPath movedFromPath,
+			IPath movedToPath) {
 		addExpectedChange(resource, null, status, changeFlags, movedFromPath, movedToPath);
 	}
 
@@ -207,7 +209,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * @param status the type of change (ADDED, REMOVED, CHANGED)
 	 * @param changeFlags the type of change (CONTENT, SYNC, etc)
 	 */
-	public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags, IPath movedFromPath, IPath movedToPath) {
+	public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags,
+			IPath movedFromPath, IPath movedToPath) {
 		resetIfNecessary();
 
 		ExpectedChange expectedChange = new ExpectedChange(resource, status, changeFlags, movedFromPath, movedToPath);
@@ -220,7 +223,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			//change table is keyed by resource path
 			IPath key = parentResource.getFullPath();
 			if (fExpectedChanges.get(key) == null) {
-				ExpectedChange parentExpectedChange = new ExpectedChange(parentResource, IResourceDelta.CHANGED, 0, null, null);
+				ExpectedChange parentExpectedChange = new ExpectedChange(parentResource, IResourceDelta.CHANGED, 0,
+						null, null);
 				fExpectedChanges.put(key, parentExpectedChange);
 			}
 			parentResource = parentResource.getParent();
@@ -250,10 +254,14 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	}
 
 	private void checkChildren(IResourceDelta delta) {
-		IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.ALL_WITH_PHANTOMS, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
-		IResourceDelta[] addedChildren = delta.getAffectedChildren(IResourceDelta.ADDED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
-		IResourceDelta[] changedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
-		IResourceDelta[] removedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
+		IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.ALL_WITH_PHANTOMS,
+				IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
+		IResourceDelta[] addedChildren = delta.getAffectedChildren(IResourceDelta.ADDED,
+				IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
+		IResourceDelta[] changedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED,
+				IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
+		IResourceDelta[] removedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED,
+				IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 
 		Hashtable<IResource, IResourceDelta> h = new Hashtable<IResource, IResourceDelta>(affectedChildren.length + 1);
 
@@ -262,7 +270,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			IResource childResource = childDelta1.getResource();
 			IResourceDelta childDelta2 = h.get(childResource);
 			if (childDelta2 != null) {
-				recordDuplicateChild(childResource.getFullPath(), childDelta2.getKind(), childDelta1.getKind(), IResourceDelta.ADDED);
+				recordDuplicateChild(childResource.getFullPath(), childDelta2.getKind(), childDelta1.getKind(),
+						IResourceDelta.ADDED);
 			} else {
 				h.put(childResource, childDelta1);
 			}
@@ -276,7 +285,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			IResource childResource = childDelta1.getResource();
 			IResourceDelta childDelta2 = h.get(childResource);
 			if (childDelta2 != null) {
-				recordDuplicateChild(childResource.getFullPath(), childDelta2.getKind(), childDelta1.getKind(), IResourceDelta.CHANGED);
+				recordDuplicateChild(childResource.getFullPath(), childDelta2.getKind(), childDelta1.getKind(),
+						IResourceDelta.CHANGED);
 			} else {
 				h.put(childResource, childDelta1);
 			}
@@ -290,7 +300,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			IResource childResource = childDelta1.getResource();
 			IResourceDelta childDelta2 = h.get(childResource);
 			if (childDelta2 != null) {
-				recordDuplicateChild(childResource.getFullPath(), childDelta2.getKind(), childDelta1.getKind(), IResourceDelta.REMOVED);
+				recordDuplicateChild(childResource.getFullPath(), childDelta2.getKind(), childDelta1.getKind(),
+						IResourceDelta.REMOVED);
 			} else {
 				h.put(childResource, childDelta1);
 			}
@@ -436,18 +447,18 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 
 	String convertKind(int kind) {
 		switch (kind) {
-			case IResourceDelta.ADDED :
-				return "ADDED";
-			case IResourceDelta.CHANGED :
-				return "CHANGED";
-			case IResourceDelta.REMOVED :
-				return "REMOVED";
-			case IResourceDelta.ADDED_PHANTOM :
-				return "ADDED_PHANTOM";
-			case IResourceDelta.REMOVED_PHANTOM :
-				return "REMOVED_PHANTOM";
-			default :
-				return "Unknown(" + kind + ")";
+		case IResourceDelta.ADDED:
+			return "ADDED";
+		case IResourceDelta.CHANGED:
+			return "CHANGED";
+		case IResourceDelta.REMOVED:
+			return "REMOVED";
+		case IResourceDelta.ADDED_PHANTOM:
+			return "ADDED_PHANTOM";
+		case IResourceDelta.REMOVED_PHANTOM:
+			return "REMOVED_PHANTOM";
+		default:
+			return "Unknown(" + kind + ")";
 		}
 	}
 
@@ -677,7 +688,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		fMessage.append("\n");
 	}
 
-	private void recordConflictingProjectRelativePaths(IPath expectedProjectRelativePath, IPath actualProjectRelativePath) {
+	private void recordConflictingProjectRelativePaths(IPath expectedProjectRelativePath,
+			IPath actualProjectRelativePath) {
 		fIsDeltaValid = false;
 
 		fMessage.append("\tConflicting project relative paths\n");
@@ -701,15 +713,15 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		fMessage.append("\t\tProduced by IResourceDelta.get");
 
 		switch (expectedKind) {
-			case IResourceDelta.ADDED :
-				fMessage.append("Added");
-				break;
-			case IResourceDelta.CHANGED :
-				fMessage.append("Changed");
-				break;
-			case IResourceDelta.REMOVED :
-				fMessage.append("Removed");
-				break;
+		case IResourceDelta.ADDED:
+			fMessage.append("Added");
+			break;
+		case IResourceDelta.CHANGED:
+			fMessage.append("Changed");
+			break;
+		case IResourceDelta.REMOVED:
+			fMessage.append("Removed");
+			break;
 		}
 
 		fMessage.append("Children()\n");
@@ -733,15 +745,15 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		fMessage.append("\t\tProduced by IResourceDelta.get");
 
 		switch (expectedKind) {
-			case IResourceDelta.ADDED :
-				fMessage.append("Added");
-				break;
-			case IResourceDelta.CHANGED :
-				fMessage.append("Changed");
-				break;
-			case IResourceDelta.REMOVED :
-				fMessage.append("Removed");
-				break;
+		case IResourceDelta.ADDED:
+			fMessage.append("Added");
+			break;
+		case IResourceDelta.CHANGED:
+			fMessage.append("Changed");
+			break;
+		case IResourceDelta.REMOVED:
+			fMessage.append("Removed");
+			break;
 		}
 
 		fMessage.append("Children()\n");
@@ -774,17 +786,17 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 
 		if (!isMissingFromAffectedChildren) {
 			switch (kind) {
-				case IResourceDelta.ADDED :
-					fMessage.append("ADDED");
-					break;
-				case IResourceDelta.CHANGED :
-					fMessage.append("CHANGED");
-					break;
-				case IResourceDelta.REMOVED :
-					fMessage.append("REMOVED");
-					break;
-				default :
-					fMessage.append(kind);
+			case IResourceDelta.ADDED:
+				fMessage.append("ADDED");
+				break;
+			case IResourceDelta.CHANGED:
+				fMessage.append("CHANGED");
+				break;
+			case IResourceDelta.REMOVED:
+				fMessage.append("REMOVED");
+				break;
+			default:
+				fMessage.append(kind);
 			}
 		}
 

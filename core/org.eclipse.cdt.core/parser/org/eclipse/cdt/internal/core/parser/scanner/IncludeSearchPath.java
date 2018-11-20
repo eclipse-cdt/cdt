@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.List;
@@ -23,17 +23,17 @@ public final class IncludeSearchPath {
 	private final IncludeSearchPathElement[] fElements;
 
 	IncludeSearchPath(List<IncludeSearchPathElement> elements, boolean inhibitUseOfCurrentFileDirectory) {
-		fElements= elements.toArray(new IncludeSearchPathElement[elements.size()]);
-		fInhibitUseOfCurrentFileDirectory= inhibitUseOfCurrentFileDirectory;
+		fElements = elements.toArray(new IncludeSearchPathElement[elements.size()]);
+		fInhibitUseOfCurrentFileDirectory = inhibitUseOfCurrentFileDirectory;
 	}
-	
+
 	/**
 	 * @return the elements of the include search path.
 	 */
 	public IncludeSearchPathElement[] getElements() {
 		return fElements;
 	}
-	
+
 	/**
 	 * @return whether the use of the directory of the current file is inhibited.
 	 */

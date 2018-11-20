@@ -33,12 +33,12 @@ public class RestartCommand extends CForEachCommand implements IRestartHandler {
 
 	@Override
 	protected void execute(Object target) throws CoreException {
-		((IRestart)target).restart();
+		((IRestart) target).restart();
 	}
-	
+
 	@Override
 	protected boolean isExecutable(Object target) {
-		return ((IRestart)target).canRestart();
+		return ((IRestart) target).canRestart();
 	}
 
 	/* (non-Javadoc)

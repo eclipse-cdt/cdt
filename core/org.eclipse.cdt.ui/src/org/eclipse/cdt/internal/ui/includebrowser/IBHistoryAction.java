@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
-
 /**
  * Action used for the include browser forward / backward buttons
  */
@@ -30,24 +29,24 @@ public class IBHistoryAction extends Action {
 
 	private IBViewPart fViewPart;
 	private ITranslationUnit fElement;
-	
+
 	public IBHistoryAction(IBViewPart viewPart, ITranslationUnit element) {
-        super("", AS_RADIO_BUTTON); //$NON-NLS-1$
-		fViewPart= viewPart;
-		fElement= element;		
-		
-		String elementName= CElementLabels.getElementLabel(element, CElementLabels.ALL_POST_QUALIFIED);
+		super("", AS_RADIO_BUTTON); //$NON-NLS-1$
+		fViewPart = viewPart;
+		fElement = element;
+
+		String elementName = CElementLabels.getElementLabel(element, CElementLabels.ALL_POST_QUALIFIED);
 		setText(elementName);
 		setImageDescriptor(getImageDescriptor(element));
 	}
-	
+
 	private ImageDescriptor getImageDescriptor(ITranslationUnit elem) {
-		CElementImageProvider imageProvider= new CElementImageProvider();
-		ImageDescriptor desc= imageProvider.getBaseImageDescriptor(elem, 0);
+		CElementImageProvider imageProvider = new CElementImageProvider();
+		ImageDescriptor desc = imageProvider.getBaseImageDescriptor(elem, 0);
 		imageProvider.dispose();
 		return desc;
 	}
-	
+
 	/*
 	 * @see Action#run()
 	 */
@@ -55,5 +54,5 @@ public class IBHistoryAction extends Action {
 	public void run() {
 		fViewPart.setInput(fElement);
 	}
-	
+
 }

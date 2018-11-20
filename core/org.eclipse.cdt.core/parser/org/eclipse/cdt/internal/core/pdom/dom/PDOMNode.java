@@ -197,7 +197,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 		if (cachedParentRecord != 0) {
 			return cachedParentRecord;
 		}
-		return cachedParentRecord= getDB().getRecPtr(record + PARENT);
+		return cachedParentRecord = getDB().getRecPtr(record + PARENT);
 	}
 
 	public PDOMNode getParentNode() throws CoreException {

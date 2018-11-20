@@ -38,9 +38,9 @@ public class CEventBreakpoint extends CBreakpoint implements ICEventBreakpoint {
 
 	@Override
 	public String getMarkerType() {
-	    return C_EVENT_BREAKPOINT_MARKER;
+		return C_EVENT_BREAKPOINT_MARKER;
 	}
-	
+
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		// default message, overridden by label provider, which would take care of translation
@@ -59,7 +59,7 @@ public class CEventBreakpoint extends CBreakpoint implements ICEventBreakpoint {
 	 * @see ICEventBreakpoint#getEventArgument()
 	 */
 	@Override
-	public String  getEventArgument() throws CoreException {
+	public String getEventArgument() throws CoreException {
 		return ensureMarker().getAttribute(EVENT_ARG, ""); //$NON-NLS-1$
 	}
 

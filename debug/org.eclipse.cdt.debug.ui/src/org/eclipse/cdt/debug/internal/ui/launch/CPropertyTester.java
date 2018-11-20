@@ -46,7 +46,7 @@ public class CPropertyTester extends PropertyTester {
 		}
 		return celement != null && celement instanceof IBinary;
 	}
-	
+
 	private boolean isCProject(Object receiver) {
 		if (receiver instanceof IProject)
 			return CoreModel.hasCNature((IProject) receiver);

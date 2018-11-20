@@ -23,15 +23,15 @@ public interface IFolderInfo extends IResourceInfo {
 	public final static String FOLDER_INFO_ELEMENT_NAME = "folderInfo"; //$NON-NLS-1$
 
 	ITool[] getFilteredTools();
-	
+
 	IToolChain getToolChain();
-	
+
 	ITool getTool(String id);
-	
+
 	ITool[] getToolsBySuperClassId(String id);
-	
+
 	CFolderData getFolderData();
-	
+
 	/**
 	 * Returns a <code>ITool</code> for the tool associated with the 
 	 * output extension.
@@ -42,7 +42,7 @@ public interface IFolderInfo extends IResourceInfo {
 	 * @since 3.1
 	 */
 	ITool getToolFromOutputExtension(String extension);
-	
+
 	/**
 	 * Returns a <code>ITool</code> for the tool associated with the 
 	 * input extension.
@@ -53,18 +53,18 @@ public interface IFolderInfo extends IResourceInfo {
 	 * @since 3.1
 	 */
 	ITool getToolFromInputExtension(String sourceExtension);
-	
-	 boolean buildsFileType(String srcExt);
-	 
-	 IModificationStatus getToolChainModificationStatus(ITool[] removed, ITool[] added);
-	 
-	 void modifyToolChain(ITool[] removed, ITool[] added) throws BuildException;
-	 
-	 IToolChain changeToolChain(IToolChain newSuperClass, String Id, String name) throws BuildException;
-	 
-	 boolean isToolChainCompatible(IToolChain tCh);
-	 
-	 String getOutputExtension(String resourceExtension);
-	 
-	 boolean isHeaderFile(String ext);
+
+	boolean buildsFileType(String srcExt);
+
+	IModificationStatus getToolChainModificationStatus(ITool[] removed, ITool[] added);
+
+	void modifyToolChain(ITool[] removed, ITool[] added) throws BuildException;
+
+	IToolChain changeToolChain(IToolChain newSuperClass, String Id, String name) throws BuildException;
+
+	boolean isToolChainCompatible(IToolChain tCh);
+
+	String getOutputExtension(String resourceExtension);
+
+	boolean isHeaderFile(String ext);
 }

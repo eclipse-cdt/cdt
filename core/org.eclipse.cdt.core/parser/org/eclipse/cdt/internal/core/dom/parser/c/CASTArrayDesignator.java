@@ -26,9 +26,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * Implementation of array designator.
  */
 public class CASTArrayDesignator extends ASTNode implements ICASTArrayDesignator, IASTAmbiguityParent {
-    private IASTExpression expression;
+	private IASTExpression expression;
 
-    public CASTArrayDesignator() {
+	public CASTArrayDesignator() {
 	}
 
 	public CASTArrayDesignator(IASTExpression exp) {
@@ -42,34 +42,36 @@ public class CASTArrayDesignator extends ASTNode implements ICASTArrayDesignator
 
 	@Override
 	public CASTArrayDesignator copy(CopyStyle style) {
-		CASTArrayDesignator copy =
-				new CASTArrayDesignator(expression == null ? null : expression.copy(style));
+		CASTArrayDesignator copy = new CASTArrayDesignator(expression == null ? null : expression.copy(style));
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public IASTExpression getSubscriptExpression() {
-        return expression;
-    }
+		return expression;
+	}
 
-    @Override
+	@Override
 	public void setSubscriptExpression(IASTExpression value) {
-        assertNotFrozen();
-        expression = value;
-        if (value != null) {
-        	value.setParent(this);
-        	value.setPropertyInParent(SUBSCRIPT_EXPRESSION);
-        }
-    }
+		assertNotFrozen();
+		expression = value;
+		if (value != null) {
+			value.setParent(this);
+			value.setPropertyInParent(SUBSCRIPT_EXPRESSION);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDesignators) {
+		if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 		if (expression != null && !expression.accept(action))
 			return false;
@@ -78,14 +80,14 @@ public class CASTArrayDesignator extends ASTNode implements ICASTArrayDesignator
 			return false;
 
 		return true;
-    }
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == expression) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            expression = (IASTExpression) other;
-        }
-    }
+		if (child == expression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			expression = (IASTExpression) other;
+		}
+	}
 }

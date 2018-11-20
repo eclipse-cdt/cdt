@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.preferences; 
+package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	private SourceContainerViewer fPathViewer;
 	private List<SourceContainerAction> fActions = new ArrayList<SourceContainerAction>(6);
 	private IWorkbench fWorkbench;
-	private AddContainerAction fAddAction; 
+	private AddContainerAction fAddAction;
 	private EditContainerAction fEditAction;
 
 	/* (non-Javadoc)

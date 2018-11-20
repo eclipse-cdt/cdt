@@ -18,7 +18,6 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
-
 /**	
  *   -file-exec-file [FILE]
  *   
@@ -27,19 +26,18 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *   clears the information about the executable file. No output is produced, 
  *   except a completion notification.
  */
-public class MIFileExecFile extends MICommand<MIInfo>
-{
-    /**
-     * @since 1.1
-     */
-    public MIFileExecFile(ICommandControlDMContext dmc, String file) {
-        super(dmc, "-file-exec-file", null, new String[] {file}); //$NON-NLS-1$
-    }
+public class MIFileExecFile extends MICommand<MIInfo> {
+	/**
+	 * @since 1.1
+	 */
+	public MIFileExecFile(ICommandControlDMContext dmc, String file) {
+		super(dmc, "-file-exec-file", null, new String[] { file }); //$NON-NLS-1$
+	}
 
-    /**
-     * @since 1.1
-     */
-    public MIFileExecFile(ICommandControlDMContext dmc) {
-        super(dmc, "-file-exec-file"); //$NON-NLS-1$
-    }
+	/**
+	 * @since 1.1
+	 */
+	public MIFileExecFile(ICommandControlDMContext dmc) {
+		super(dmc, "-file-exec-file"); //$NON-NLS-1$
+	}
 }

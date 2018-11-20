@@ -91,9 +91,8 @@ public class WorkingSetConfigurationBlock {
 	 * @param initialSelection
 	 *            my initial selection
 	 */
-	public WorkingSetConfigurationBlock(WorkspaceSnapshot workspace,
-			IWorkingSetProxy.ISnapshot initialSelection) {
-		
+	public WorkingSetConfigurationBlock(WorkspaceSnapshot workspace, IWorkingSetProxy.ISnapshot initialSelection) {
+
 		this.workspace = workspace;
 		this.initialSelection = initialSelection;
 	}
@@ -291,9 +290,9 @@ public class WorkingSetConfigurationBlock {
 
 			int button = OptionalMessageDialog.open(BUILD_PROMPT_DIALOG_ID, contents.getShell(),
 					WorkingSetMessages.WSConfigDialog_buildPrompt_title, null,
-					WorkingSetMessages.WSConfigDialog_buildPrompt_message, MessageDialog.QUESTION,
-					new String[] { IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL,
-							IDialogConstants.YES_LABEL }, defaultButton);
+					WorkingSetMessages.WSConfigDialog_buildPrompt_message, MessageDialog.QUESTION, new String[] {
+							IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL, IDialogConstants.YES_LABEL },
+					defaultButton);
 
 			if (button == OptionalMessageDialog.NOT_SHOWN) {
 				// handle the case where the dialog was suppressed. Get the current default
@@ -362,8 +361,8 @@ public class WorkingSetConfigurationBlock {
 
 		@Override
 		public Object getParent(Object element) {
-			return (element instanceof IWorkingSetConfiguration) ? ((IWorkingSetConfiguration) element)
-					.getWorkingSet() : null;
+			return (element instanceof IWorkingSetConfiguration) ? ((IWorkingSetConfiguration) element).getWorkingSet()
+					: null;
 		}
 
 		@Override
@@ -413,8 +412,8 @@ public class WorkingSetConfigurationBlock {
 
 				if (config.isActive()) {
 					return WorkingSetConfiguration.isReadOnly(config)
-							? WorkingSetMessages.WSConfigDialog_implicit_config : NLS.bind(
-									WorkingSetMessages.WSConfigDialog_active_config, config.getName());
+							? WorkingSetMessages.WSConfigDialog_implicit_config
+							: NLS.bind(WorkingSetMessages.WSConfigDialog_active_config, config.getName());
 				}
 				return config.getName();
 			} else if (element instanceof IWorkingSetProxy) {

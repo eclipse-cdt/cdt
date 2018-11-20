@@ -35,7 +35,8 @@ public class DecltypeAutoChecker extends AbstractIndexAstChecker {
 			@Override
 			public int visit(IASTDeclSpecifier specifier) {
 				if (specifier instanceof ICPPASTSimpleDeclSpecifier) {
-					if (((ICPPASTSimpleDeclSpecifier) specifier).getType() == ICPPASTSimpleDeclSpecifier.t_decltype_auto) {
+					if (((ICPPASTSimpleDeclSpecifier) specifier)
+							.getType() == ICPPASTSimpleDeclSpecifier.t_decltype_auto) {
 						if (specifier.isConst() || specifier.isVolatile()) {
 							reportProblem(ERR_ID, specifier);
 						}

@@ -43,8 +43,7 @@ public class ConstPlacement {
 	}
 
 	public static boolean placeConstRight(IProject project) {
-		return CCorePreferenceConstants.getPreference(
-				CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE, project,
+		return CCorePreferenceConstants.getPreference(CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE, project,
 				CCorePreferenceConstants.DEFAULT_PLACE_CONST_RIGHT_OF_TYPE);
 	}
 }

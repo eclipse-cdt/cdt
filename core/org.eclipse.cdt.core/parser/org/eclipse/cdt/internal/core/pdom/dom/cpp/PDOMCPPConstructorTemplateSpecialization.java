@@ -33,7 +33,7 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 		implements ICPPConstructorSpecialization {
 	/** Offset of the constructor chain execution for constexpr constructors. */
 	private static final int CONSTRUCTOR_CHAIN = PDOMCPPMethodTemplateSpecialization.RECORD_SIZE + 0; // Database.EXECUTION_SIZE
-	
+
 	/** The size in bytes of a PDOMCPPConstructorTemplateSpecialization record in the database. */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
@@ -57,7 +57,7 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -73,7 +73,7 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution();
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr())

@@ -29,9 +29,9 @@ import org.eclipse.core.runtime.CoreException;
 public class QtPDOMQObject extends AbstractQtPDOMClass {
 
 	private static int offsetInitializer = AbstractQtPDOMClass.Field.Last.offset;
+
 	protected static enum Field {
-		ClassInfos(Database.PTR_SIZE),
-		Last(0);
+		ClassInfos(Database.PTR_SIZE), Last(0);
 
 		public final int offset;
 
@@ -69,14 +69,15 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 		// Create an array to be stored to the PDOM.
 		ClassInfo[] array = new ClassInfo[classInfos.size()];
 		Iterator<Map.Entry<String, String>> iterator = classInfos.entrySet().iterator();
-		for(int i = 0; i < array.length && iterator.hasNext(); ++i) {
+		for (int i = 0; i < array.length && iterator.hasNext(); ++i) {
 			Map.Entry<String, String> entry = iterator.next();
 			array[i] = new ClassInfo(entry.getKey(), entry.getValue());
 		}
 
 		// Store the array into the Database.
 		long arrayRec = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
-		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<QtPDOMQObject.ClassInfo>(getQtLinkage(), ClassInfo.Codec, arrayRec);
+		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<QtPDOMQObject.ClassInfo>(getQtLinkage(), ClassInfo.Codec,
+				arrayRec);
 		arrayRec = pdomArray.set(array);
 
 		// Update the record that is stored in the receiver's field.
@@ -88,13 +89,14 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 
 		// Read the array from the Database and insert the elements into the Map that is to be returned.
 		long arrayRec = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
-		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<QtPDOMQObject.ClassInfo>(getQtLinkage(), ClassInfo.Codec, arrayRec);
+		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<QtPDOMQObject.ClassInfo>(getQtLinkage(), ClassInfo.Codec,
+				arrayRec);
 
 		ClassInfo[] array = pdomArray.get();
 		if (array == null)
 			return classInfos;
 
-		for(ClassInfo classInfo : array)
+		for (ClassInfo classInfo : array)
 			classInfos.put(classInfo.key, classInfo.value);
 
 		return classInfos;
@@ -140,15 +142,16 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 		return bases;
 	}
 
-    private static class ClassInfo {
-    	public final String key;
-    	public final String value;
-    	public ClassInfo(String key, String value) {
-    		this.key = key;
-    		this.value = value;
-    	}
+	private static class ClassInfo {
+		public final String key;
+		public final String value;
 
-    	public static final IQtPDOMCodec<ClassInfo> Codec = new IQtPDOMCodec<ClassInfo>() {
+		public ClassInfo(String key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public static final IQtPDOMCodec<ClassInfo> Codec = new IQtPDOMCodec<ClassInfo>() {
 			@Override
 			public int getElementSize() {
 				return 2 * Database.PTR_SIZE;
@@ -163,7 +166,8 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 			public ClassInfo decode(QtPDOMLinkage linkage, long record) throws CoreException {
 				long keyRec = linkage.getDB().getRecPtr(record);
 				long valRec = linkage.getDB().getRecPtr(record + Database.PTR_SIZE);
-				return new ClassInfo(linkage.getDB().getString(keyRec).getString(), linkage.getDB().getString(valRec).getString());
+				return new ClassInfo(linkage.getDB().getString(keyRec).getString(),
+						linkage.getDB().getString(valRec).getString());
 			}
 
 			@Override
@@ -172,13 +176,15 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 				long rec = linkage.getDB().getRecPtr(record);
 				if (rec != 0)
 					linkage.getDB().getString(rec).delete();
-				linkage.getDB().putRecPtr(record, element == null ? 0 : linkage.getDB().newString(element.key).getRecord());
+				linkage.getDB().putRecPtr(record,
+						element == null ? 0 : linkage.getDB().newString(element.key).getRecord());
 
 				rec = linkage.getDB().getRecPtr(record + Database.PTR_SIZE);
 				if (rec != 0)
 					linkage.getDB().getString(rec).delete();
-				linkage.getDB().putRecPtr(record + Database.PTR_SIZE, element == null ? 0 : linkage.getDB().newString(element.value).getRecord());
+				linkage.getDB().putRecPtr(record + Database.PTR_SIZE,
+						element == null ? 0 : linkage.getDB().newString(element.value).getRecord());
 			}
-    	};
-    }
+		};
+	}
 }

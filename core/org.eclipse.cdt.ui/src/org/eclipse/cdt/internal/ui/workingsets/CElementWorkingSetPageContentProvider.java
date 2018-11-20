@@ -33,7 +33,7 @@ class CElementWorkingSetPageContentProvider extends BaseCElementContentProvider 
 	@Override
 	public Object[] getChildren(Object element) {
 		if (element instanceof IWorkspaceRoot) {
-			IWorkspaceRoot root = (IWorkspaceRoot)element;
+			IWorkspaceRoot root = (IWorkspaceRoot) element;
 			IProject[] projects = root.getProjects();
 			List<ICProject> list = new ArrayList<ICProject>(projects.length);
 			for (int i = 0; i < projects.length; i++) {
@@ -45,4 +45,4 @@ class CElementWorkingSetPageContentProvider extends BaseCElementContentProvider 
 		}
 		return super.getChildren(element);
 	}
-}	
+}

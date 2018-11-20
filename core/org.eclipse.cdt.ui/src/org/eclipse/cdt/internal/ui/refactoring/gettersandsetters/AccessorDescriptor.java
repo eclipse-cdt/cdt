@@ -22,8 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 
 public class AccessorDescriptor implements Comparable<AccessorDescriptor> {
 	public enum AccessorKind {
-		GETTER,
-		SETTER;
+		GETTER, SETTER;
 	}
 
 	private static final Collator collator = Collator.getInstance();
@@ -42,10 +41,10 @@ public class AccessorDescriptor implements Comparable<AccessorDescriptor> {
 		this.accessorName = accessorName;
 		this.fieldName = fieldDescriptor.getFieldName();
 		if (accessorName != null) {
-			this.accessorFactory = AccessorFactory.createFactory(kind, fieldName,
-						fieldDescriptor.getFieldDeclarator(), accessorName);
+			this.accessorFactory = AccessorFactory.createFactory(kind, fieldName, fieldDescriptor.getFieldDeclarator(),
+					accessorName);
 			this.accessorDeclaration = accessorFactory.createDeclaration();
-	
+
 			for (IASTFunctionDefinition currentDefinition : context.existingFunctionDefinitions) {
 				if (currentDefinition.getDeclarator().getName().toString().equals(accessorName)) {
 					existingAccessorDefinition = currentDefinition;

@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.Platform;
  * @since 5.2
  */
 public class EFSExtensionManager {
-	
+
 	private class DefaultProvider extends EFSExtensionProvider {
 
 	}
@@ -77,8 +77,7 @@ public class EFSExtensionManager {
 						try {
 							Object execExt = configElement.createExecutableExtension("class"); //$NON-NLS-1$
 							if (execExt instanceof EFSExtensionProvider) {
-								fSchemeToExtensionProviderMap.put(scheme,
-										(EFSExtensionProvider) execExt);
+								fSchemeToExtensionProviderMap.put(scheme, (EFSExtensionProvider) execExt);
 							}
 						} catch (CoreException e) {
 							CCorePlugin.log(e);
@@ -153,8 +152,7 @@ public class EFSExtensionManager {
 
 		if (provider == null) {
 			return fDefaultProvider.createNewURIFromPath(uri, path);
-		}
-		else {
+		} else {
 			return provider.createNewURIFromPath(uri, path);
 		}
 	}
@@ -190,16 +188,15 @@ public class EFSExtensionManager {
 	 * @return boolean
 	 */
 	public boolean isVirtual(URI locationURI) {
-		EFSExtensionProvider provider = fSchemeToExtensionProviderMap.get(locationURI
-				.getScheme());
+		EFSExtensionProvider provider = fSchemeToExtensionProviderMap.get(locationURI.getScheme());
 
 		if (provider == null) {
 			provider = fDefaultProvider;
 		}
-		
+
 		return provider.isVirtual(locationURI);
 	}
-	
+
 	/**
 	 * Creates a new URI with the same components as the baseURI, except that calling
 	 * getPathFromURI() on the new URI will return a path that has the extension appended to 
@@ -210,13 +207,12 @@ public class EFSExtensionManager {
 	 * @return the new URI, or <code>null</code> on error.
 	 */
 	public URI append(URI baseURI, String extension) {
-		EFSExtensionProvider provider = fSchemeToExtensionProviderMap.get(baseURI
-				.getScheme());
+		EFSExtensionProvider provider = fSchemeToExtensionProviderMap.get(baseURI.getScheme());
 
 		if (provider == null) {
 			provider = fDefaultProvider;
 		}
-		
+
 		return provider.append(baseURI, extension);
 	}
 

@@ -29,79 +29,79 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDeclaration, ICPPInternalBinding {
-    private IASTName name;
-    private IBinding[] delegates;
+	private IASTName name;
+	private IBinding[] delegates;
 
-    public CPPUsingDeclaration(IASTName name, IBinding[] bindings) {
-    	if (name instanceof ICPPASTQualifiedName) {
-    		name = name.getLastName();
-    	}
-        this.name = name;
-        this.delegates= bindings;
-    }
+	public CPPUsingDeclaration(IASTName name, IBinding[] bindings) {
+		if (name instanceof ICPPASTQualifiedName) {
+			name = name.getLastName();
+		}
+		this.name = name;
+		this.delegates = bindings;
+	}
 
-    @Override
+	@Override
 	public IBinding[] getDelegates() {
-        return delegates;
-    }
+		return delegates;
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-    	return CPPVisitor.getQualifiedName(this);
-    }
+		return CPPVisitor.getQualifiedName(this);
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-    	return CPPVisitor.getQualifiedNameCharArray(this);
-    }
+		return CPPVisitor.getQualifiedNameCharArray(this);
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
-        IScope scope = getScope();
-        while (scope != null) {
-            if (scope instanceof ICPPBlockScope)
-                return false;
-            scope = scope.getParent();
-        }
-        return true;
-    }
+		IScope scope = getScope();
+		while (scope != null) {
+			if (scope instanceof ICPPBlockScope)
+				return false;
+			scope = scope.getParent();
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-    	return new String(getNameCharArray());
-    }
+		return new String(getNameCharArray());
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-    	return name.getSimpleID();
-    }
+		return name.getSimpleID();
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return CPPVisitor.getContainingScope(name.getParent());
-    }
+		return CPPVisitor.getContainingScope(name.getParent());
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getDeclarations() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public IASTNode getDefinition() {
-        IASTNode n = name.getParent();
-        if (n instanceof ICPPASTTemplateId)
-            n = n.getParent();
+		IASTNode n = name.getParent();
+		if (n instanceof ICPPASTTemplateId)
+			n = n.getParent();
 
-        return n;
-    }
+		return n;
+	}
 
-    @Override
+	@Override
 	public void addDefinition(IASTNode node) {
-    }
+	}
 
-    @Override
+	@Override
 	public void addDeclaration(IASTNode node) {
-    }
+	}
 
 	@Override
 	public ILinkage getLinkage() {

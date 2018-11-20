@@ -33,46 +33,47 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * @since 1.0
  */
 public class ModulesVMProvider extends AbstractDMVMProvider {
-    /*
-     *  Current default for register formatting.
-     */
-    public ModulesVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
-        super(adapter, context, session);
-        
-        /*
-         *  Create the top level node to deal with the root selection.
-         */
-        IRootVMNode rootNode = new RootDMVMNode(this);
-        
-        /*
-         *  Create the Group nodes next. They represent the first level shown in the view.
-         */
-        IVMNode modulesNode = new ModulesVMNode(this, getSession());
-        addChildNodes(rootNode, new IVMNode[] { modulesNode });
-        
-        /*
-         *  Now set this schema set as the layout set.
-         */
-        setRootNode(rootNode);
-    }
-    
-    @Override
-    public void refresh() {
-        super.refresh();
-        try {
-            getSession().getExecutor().execute(new DsfRunnable() {
-                @Override
+	/*
+	 *  Current default for register formatting.
+	 */
+	public ModulesVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
+		super(adapter, context, session);
+
+		/*
+		 *  Create the top level node to deal with the root selection.
+		 */
+		IRootVMNode rootNode = new RootDMVMNode(this);
+
+		/*
+		 *  Create the Group nodes next. They represent the first level shown in the view.
+		 */
+		IVMNode modulesNode = new ModulesVMNode(this, getSession());
+		addChildNodes(rootNode, new IVMNode[] { modulesNode });
+
+		/*
+		 *  Now set this schema set as the layout set.
+		 */
+		setRootNode(rootNode);
+	}
+
+	@Override
+	public void refresh() {
+		super.refresh();
+		try {
+			getSession().getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
-                    IModules modulesService = tracker.getService(IModules.class);
-                    if (modulesService instanceof ICachingService) {
-                        ((ICachingService)modulesService).flushCache(null);
-                    }
-                    tracker.dispose();
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session disposed, ignore.
-        }
-    }
+					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+							getSession().getId());
+					IModules modulesService = tracker.getService(IModules.class);
+					if (modulesService instanceof ICachingService) {
+						((ICachingService) modulesService).flushCache(null);
+					}
+					tracker.dispose();
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session disposed, ignore.
+		}
+	}
 }

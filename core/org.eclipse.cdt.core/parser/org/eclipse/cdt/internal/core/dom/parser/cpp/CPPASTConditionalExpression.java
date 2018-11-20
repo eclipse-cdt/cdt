@@ -34,19 +34,19 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTConditionalExpression extends ASTNode
 		implements IASTConditionalExpression, ICPPASTExpression, IASTAmbiguityParent {
-    private ICPPASTExpression fCondition;
-    private ICPPASTExpression fPositive;
-    private ICPPASTExpression fNegative;
-    private ICPPEvaluation fEval;
+	private ICPPASTExpression fCondition;
+	private ICPPASTExpression fPositive;
+	private ICPPASTExpression fNegative;
+	private ICPPEvaluation fEval;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTConditionalExpression() {
+	public CPPASTConditionalExpression() {
 	}
 
 	public CPPASTConditionalExpression(IASTExpression condition, IASTExpression postive, IASTExpression negative) {
-    	setLogicalConditionExpression(condition);
-    	setPositiveResultExpression(postive);
-    	setNegativeResultExpression(negative);
+		setLogicalConditionExpression(condition);
+		setPositiveResultExpression(postive);
+		setNegativeResultExpression(negative);
 	}
 
 	@Override
@@ -65,48 +65,48 @@ public class CPPASTConditionalExpression extends ASTNode
 
 	@Override
 	public IASTExpression getLogicalConditionExpression() {
-        return fCondition;
-    }
+		return fCondition;
+	}
 
-    @Override
+	@Override
 	public void setLogicalConditionExpression(IASTExpression expression) {
-        assertNotFrozen();
-        fCondition = (ICPPASTExpression) expression;
-        if (expression != null) {
+		assertNotFrozen();
+		fCondition = (ICPPASTExpression) expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(LOGICAL_CONDITION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTExpression getPositiveResultExpression() {
-        return fPositive;
-    }
+		return fPositive;
+	}
 
-    @Override
+	@Override
 	public void setPositiveResultExpression(IASTExpression expression) {
-        assertNotFrozen();
-        this.fPositive = (ICPPASTExpression) expression;
-        if (expression != null) {
+		assertNotFrozen();
+		this.fPositive = (ICPPASTExpression) expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(POSITIVE_RESULT);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTExpression getNegativeResultExpression() {
-        return fNegative;
-    }
+		return fNegative;
+	}
 
-    @Override
+	@Override
 	public void setNegativeResultExpression(IASTExpression expression) {
-        assertNotFrozen();
-        this.fNegative = (ICPPASTExpression) expression;
-        if (expression != null) {
+		assertNotFrozen();
+		this.fNegative = (ICPPASTExpression) expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(NEGATIVE_RESULT);
 		}
-    }
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -117,14 +117,17 @@ public class CPPASTConditionalExpression extends ASTNode
 		return fImplicitDestructorNames;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (fCondition != null && !fCondition.accept(action))
@@ -135,13 +138,13 @@ public class CPPASTConditionalExpression extends ASTNode
 			return false;
 
 		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
+			return false;
 
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
@@ -169,7 +172,7 @@ public class CPPASTConditionalExpression extends ASTNode
 			if (op == IASTUnaryExpression.op_throw) {
 				return true;
 			} else if (op == IASTUnaryExpression.op_bracketedPrimary) {
-				expr= unaryExpr.getOperand();
+				expr = unaryExpr.getOperand();
 			} else {
 				return false;
 			}
@@ -181,27 +184,27 @@ public class CPPASTConditionalExpression extends ASTNode
 	public ICPPEvaluation getEvaluation() {
 		if (fEval == null) {
 			if (fCondition == null || fNegative == null) {
-				fEval= EvalFixed.INCOMPLETE;
+				fEval = EvalFixed.INCOMPLETE;
 			} else {
 				final ICPPEvaluation condEval = fCondition.getEvaluation();
 				final ICPPEvaluation posEval = fPositive == null ? null : fPositive.getEvaluation();
 				final ICPPEvaluation negEval = fNegative.getEvaluation();
-				fEval= new EvalConditional(condEval, posEval, negEval,
-						isThrowExpression(fPositive), isThrowExpression(fNegative), this);
+				fEval = new EvalConditional(condEval, posEval, negEval, isThrowExpression(fPositive),
+						isThrowExpression(fNegative), this);
 			}
 		}
 		return fEval;
 	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
-    }
+		return CPPEvaluation.getType(this);
+	}
 
 	@Override
 	public ValueCategory getValueCategory() {
-    	return CPPEvaluation.getValueCategory(this);
-    }
+		return CPPEvaluation.getValueCategory(this);
+	}
 
 	@Override
 	public boolean isLValue() {

@@ -43,7 +43,7 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IElementSelector;
  * Tests the AddIncludeOnSelectionAction.
  */
 public class AddIncludeTest extends BaseTestCase {
-	private static final String PROJECT= "AddIncludeTests";
+	private static final String PROJECT = "AddIncludeTests";
 
 	private static final class EmptyBundle extends ListResourceBundle {
 		@Override
@@ -54,7 +54,7 @@ public class AddIncludeTest extends BaseTestCase {
 
 	protected static class AddIncludeTestSetup extends TestSetup {
 		private ICProject fCProject;
-		
+
 		public AddIncludeTestSetup(Test test) {
 			super(test);
 		}
@@ -62,8 +62,8 @@ public class AddIncludeTest extends BaseTestCase {
 		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
-			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/addInclude");
-			CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);		
+			fCProject = EditorTestHelper.createCProject(PROJECT, "resources/addInclude");
+			CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
 			waitForIndexer(fCProject);
 		}
 
@@ -85,10 +85,10 @@ public class AddIncludeTest extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		String filename= createFileName("");
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
-		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
-		fDocument= fSourceViewer.getDocument();
+		String filename = createFileName("");
+		fEditor = (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
+		fSourceViewer = EditorTestHelper.getSourceViewer(fEditor);
+		fDocument = fSourceViewer.getDocument();
 		IWorkingCopy tu = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
 		tu.makeConsistent(new NullProgressMonitor(), true);
 	}
@@ -114,14 +114,14 @@ public class AddIncludeTest extends BaseTestCase {
 		});
 		action.run();
 
-		String file= createFileName(".expected");
-		String expected= ResourceTestHelper.read(file).toString();
+		String file = createFileName(".expected");
+		String expected = ResourceTestHelper.read(file).toString();
 		assertEquals(expected.replace("\r\n", "\n"), fDocument.get().replace("\r\n", "\n"));
 	}
 
 	private String createFileName(String suffix) {
-		String name= getName();
-		name= name.substring(4);  // Strip "test" prefix.
+		String name = getName();
+		name = name.substring(4); // Strip "test" prefix.
 		return "/" + PROJECT + "/src/" + name + ".cpp" + suffix;
 	}
 
@@ -155,7 +155,7 @@ public class AddIncludeTest extends BaseTestCase {
 		select("ONE");
 		assertAddIncludeResult();
 	}
-	
+
 	public void testInsertionPoint_301780() throws Exception {
 		select("XXX");
 		assertAddIncludeResult();
@@ -165,7 +165,7 @@ public class AddIncludeTest extends BaseTestCase {
 		select("A435340");
 		assertAddIncludeResult();
 	}
-	
+
 	public void testTemplate_306670() throws Exception {
 		select("func306670");
 		assertAddIncludeResult();

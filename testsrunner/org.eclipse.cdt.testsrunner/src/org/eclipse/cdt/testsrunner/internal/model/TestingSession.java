@@ -43,19 +43,19 @@ public class TestingSession implements ITestingSession {
 
 	/** Launch object the is connected to the tests running. */
 	private ILaunch launch;
-	
+
 	/** Information about used Tests Runner provider plug-in. */
 	private TestsRunnerProviderInfo testsRunnerProviderInfo;
 
 	/** Main interface to Tests Runner provider plug-in. */
 	private ITestsRunnerProvider testsRunnerProvider;
-	
+
 	/**
 	 * Test Model manager that is used to fill and update the model for the
 	 * session.
 	 */
 	private TestModelManager modelManager;
-	
+
 	/**
 	 * Total tests counter. It is -1 by default, that means that total tests
 	 * count is not available.
@@ -66,13 +66,14 @@ public class TestingSession implements ITestingSession {
 
 	/** Already finished tests counter. */
 	private int currentCounter = 0;
-	
+
 	/**
 	 * Test counters map by test status. They are used to quickly provide simple
 	 * statistics without model scanning.
 	 * 
 	 */
-	private Map<ITestItem.Status, Integer> statusCounters = new EnumMap<ITestItem.Status, Integer>(ITestItem.Status.class);
+	private Map<ITestItem.Status, Integer> statusCounters = new EnumMap<ITestItem.Status, Integer>(
+			ITestItem.Status.class);
 
 	/**
 	 * The flag stores whether the testing session contains errors at the
@@ -81,52 +82,59 @@ public class TestingSession implements ITestingSession {
 	 * @see hasErrors()
 	 */
 	private boolean hasErrors = false;
-	
+
 	/**
 	 * The flag stores whether the testing session was stopped by user.
 	 * 
 	 * @see wasStopped()
 	 */
 	private boolean wasStopped = false;
-	
+
 	/**
 	 * The flag stores whether the testing session has been finished (with or
 	 * without errors).
 	 */
 	private boolean finished = false;
-	
+
 	/** Stores current status of the testing session. */
 	private String statusMessage = ModelMessages.TestingSession_starting_status;
-	
+
 	/** Stores the time when the testing session was created. */
 	private long startTime;
-	
-	
+
 	/**
 	 * Counts the number of the test cases in tests hierarchy.
 	 */
 	private class TestCasesCounter implements IModelVisitor {
-		
+
 		public int result = 0;
-		
+
 		@Override
 		public void visit(ITestCase testCase) {
 			++result;
 		}
-		
+
 		@Override
-		public void visit(ITestSuite testSuite) {}
+		public void visit(ITestSuite testSuite) {
+		}
+
 		@Override
-		public void visit(ITestMessage testMessage) {}
+		public void visit(ITestMessage testMessage) {
+		}
+
 		@Override
-		public void leave(ITestSuite testSuite) {}
+		public void leave(ITestSuite testSuite) {
+		}
+
 		@Override
-		public void leave(ITestCase testCase) {}
+		public void leave(ITestCase testCase) {
+		}
+
 		@Override
-		public void leave(ITestMessage testMessage) {}
+		public void leave(ITestMessage testMessage) {
+		}
 	}
 
-	
 	/**
 	 * The constructor.
 	 * 
@@ -135,7 +143,8 @@ public class TestingSession implements ITestingSession {
 	 * @param previousSession is used to determine total tests count & for tests
 	 * hierarchy reusing if it is considered as similar
 	 */
-	public TestingSession(ILaunch launch, TestsRunnerProviderInfo testsRunnerProviderInfo, TestingSession previousSession) {
+	public TestingSession(ILaunch launch, TestsRunnerProviderInfo testsRunnerProviderInfo,
+			TestingSession previousSession) {
 		this.launch = launch;
 		this.testsRunnerProviderInfo = testsRunnerProviderInfo;
 		this.testsRunnerProvider = testsRunnerProviderInfo.instantiateTestsRunnerProvider();
@@ -147,40 +156,46 @@ public class TestingSession implements ITestingSession {
 			totalCounter = testCasesCounter.result;
 		}
 		ITestSuite rootTestSuite = previousSession != null ? previousSession.getModelAccessor().getRootSuite() : null;
-		this.modelManager = new TestModelManager(rootTestSuite, testsRunnerProviderInfo.isAllowedTestingTimeMeasurement());
+		this.modelManager = new TestModelManager(rootTestSuite,
+				testsRunnerProviderInfo.isAllowedTestingTimeMeasurement());
 		this.modelManager.addChangesListener(new ITestingSessionListener() {
-			
+
 			@Override
-			public void testingStarted() {}
-			
+			public void testingStarted() {
+			}
+
 			@Override
 			public void testingFinished() {
 				// This is necessary if totalCounter was -1 (tests count was unknown)
 				// or if tests count was estimated not accurately
 				totalCounter = currentCounter;
 			}
-			
+
 			@Override
-			public void exitTestSuite(ITestSuite testSuite) {}
-			
+			public void exitTestSuite(ITestSuite testSuite) {
+			}
+
 			@Override
 			public void exitTestCase(ITestCase testCase) {
 				// Update testing session info (counters, flags)
 				Status testStatus = testCase.getStatus();
-				statusCounters.put(testStatus, getCount(testStatus)+1);
+				statusCounters.put(testStatus, getCount(testStatus) + 1);
 				++currentCounter;
 				if (testStatus.isError())
 					hasErrors = true;
 			}
-			
+
 			@Override
-			public void enterTestSuite(ITestSuite testSuite) {}
-			
+			public void enterTestSuite(ITestSuite testSuite) {
+			}
+
 			@Override
-			public void enterTestCase(ITestCase testCase) {}
-			
+			public void enterTestCase(ITestCase testCase) {
+			}
+
 			@Override
-			public void childrenUpdate(ITestSuite parent) {}
+			public void childrenUpdate(ITestSuite parent) {
+			}
 		});
 	}
 
@@ -196,7 +211,8 @@ public class TestingSession implements ITestingSession {
 			// If testing session was stopped, the status is set in stop()
 			if (!wasStopped()) {
 				double testingTime = getModelAccessor().getRootSuite().getTestingTime();
-				statusMessage = MessageFormat.format(ModelMessages.TestingSession_finished_status, testingTime/1000.0);
+				statusMessage = MessageFormat.format(ModelMessages.TestingSession_finished_status,
+						testingTime / 1000.0);
 			}
 		} catch (TestingException e) {
 			// If testing session was stopped, the status is set in stop()
@@ -218,7 +234,7 @@ public class TestingSession implements ITestingSession {
 	public int getTotalCounter() {
 		return totalCounter;
 	}
-	
+
 	@Override
 	public int getCount(ITestItem.Status status) {
 		Integer counterValue = statusCounters.get(status);
@@ -244,17 +260,17 @@ public class TestingSession implements ITestingSession {
 	public ITestModelAccessor getModelAccessor() {
 		return modelManager;
 	}
-	
+
 	@Override
 	public ILaunch getLaunch() {
 		return launch;
 	}
-	
+
 	@Override
 	public TestsRunnerProviderInfo getTestsRunnerProviderInfo() {
 		return testsRunnerProviderInfo;
 	}
-	
+
 	@Override
 	public String getStatusMessage() {
 		return statusMessage;
@@ -279,5 +295,5 @@ public class TestingSession implements ITestingSession {
 			}
 		}
 	}
-	
+
 }

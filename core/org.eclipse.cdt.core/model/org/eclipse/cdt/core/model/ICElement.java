@@ -241,7 +241,7 @@ public interface ICElement extends IAdaptable {
 	 *
 	 * @since 5.0
 	 */
-	static final int ASM_LABEL= 94;
+	static final int ASM_LABEL = 94;
 
 	/**
 	 * @deprecated use {@link IMethodDeclaration#isConstructor()}

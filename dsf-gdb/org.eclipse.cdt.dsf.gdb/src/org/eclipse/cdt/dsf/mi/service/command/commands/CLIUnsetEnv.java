@@ -33,7 +33,7 @@ public class CLIUnsetEnv extends CLICommand<MIInfo> {
 	public CLIUnsetEnv(ICommandControlDMContext ctx) {
 		this(ctx, null);
 	}
-	
+
 	/**
 	 * Delete the environment variable specified by 'name'
 	 * If 'name' is null, all variables will be deleted.

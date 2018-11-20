@@ -71,7 +71,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		public ProblemsLabelChangedEvent(IBaseLabelProvider source, IResource[] changedResource,
 				boolean isMarkerChange) {
 			super(source, changedResource);
-			fMarkerChange= isMarkerChange;
+			fMarkerChange = isMarkerChange;
 		}
 
 		/**
@@ -94,7 +94,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 			this.res = res;
 			this.depth = depth;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return res.hashCode() + 31 * depth;
@@ -113,8 +113,8 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}
 	}
 
-	private static final int ERRORTICK_WARNING= CElementImageDescriptor.WARNING;
-	private static final int ERRORTICK_ERROR= CElementImageDescriptor.ERROR;
+	private static final int ERRORTICK_WARNING = CElementImageDescriptor.WARNING;
+	private static final int ERRORTICK_ERROR = CElementImageDescriptor.ERROR;
 	private static final IMarker[] EMPTY_MARKER_ARRAY = {};
 
 	private ImageDescriptorRegistry fRegistry;
@@ -129,7 +129,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	 */
 	public ProblemsLabelDecorator() {
 		this(null);
-		fUseNewRegistry= true;
+		fUseNewRegistry = true;
 	}
 
 	/**
@@ -140,13 +140,13 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	 * image registry.
 	 */
 	public ProblemsLabelDecorator(ImageDescriptorRegistry registry) {
-		fRegistry= registry;
-		fProblemChangedListener= null;
+		fRegistry = registry;
+		fProblemChangedListener = null;
 	}
 
 	private ImageDescriptorRegistry getRegistry() {
 		if (fRegistry == null) {
-			fRegistry= fUseNewRegistry ? new ImageDescriptorRegistry() : CUIPlugin.getImageDescriptorRegistry();
+			fRegistry = fUseNewRegistry ? new ImageDescriptorRegistry() : CUIPlugin.getImageDescriptorRegistry();
 		}
 		return fRegistry;
 	}
@@ -158,11 +158,12 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 
 	@Override
 	public Image decorateImage(Image image, Object obj) {
-		int adornmentFlags= computeAdornmentFlags(obj);
+		int adornmentFlags = computeAdornmentFlags(obj);
 		if (adornmentFlags != 0) {
-			ImageDescriptor baseImage= new ImageImageDescriptor(image);
-			Rectangle bounds= image.getBounds();
-			return getRegistry().get(new CElementImageDescriptor(baseImage, adornmentFlags, new Point(bounds.width, bounds.height)));
+			ImageDescriptor baseImage = new ImageImageDescriptor(image);
+			Rectangle bounds = image.getBounds();
+			return getRegistry().get(
+					new CElementImageDescriptor(baseImage, adornmentFlags, new Point(bounds.width, bounds.height)));
 		}
 		return image;
 	}
@@ -173,25 +174,26 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	protected int computeAdornmentFlags(Object obj) {
 		try {
 			if (obj instanceof ICElement) {
-				ICElement element= (ICElement) obj;
-				int type= element.getElementType();
+				ICElement element = (ICElement) obj;
+				int type = element.getElementType();
 				switch (type) {
-					case ICElement.C_PROJECT:
-					case ICElement.C_CCONTAINER:
-						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null);
-					case ICElement.C_UNIT:
-						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null);
-					case ICElement.C_FUNCTION:
-					case ICElement.C_CLASS:
-					case ICElement.C_UNION:
-					case ICElement.C_STRUCT:
-					case ICElement.C_VARIABLE:
-					case ICElement.C_METHOD:
-						ITranslationUnit tu= ((ISourceReference)element).getTranslationUnit();
-						if (tu != null && tu.exists()) {
-							return getErrorTicksFromMarkers(tu.getResource(), IResource.DEPTH_ONE, (ISourceReference)element);
-						}
-						break;
+				case ICElement.C_PROJECT:
+				case ICElement.C_CCONTAINER:
+					return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null);
+				case ICElement.C_UNIT:
+					return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null);
+				case ICElement.C_FUNCTION:
+				case ICElement.C_CLASS:
+				case ICElement.C_UNION:
+				case ICElement.C_STRUCT:
+				case ICElement.C_VARIABLE:
+				case ICElement.C_METHOD:
+					ITranslationUnit tu = ((ISourceReference) element).getTranslationUnit();
+					if (tu != null && tu.exists()) {
+						return getErrorTicksFromMarkers(tu.getResource(), IResource.DEPTH_ONE,
+								(ISourceReference) element);
+					}
+					break;
 				}
 			} else if (obj instanceof IResource) {
 				return getErrorTicksFromMarkers((IResource) obj, IResource.DEPTH_INFINITE, null);
@@ -211,24 +213,24 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		if (res == null || !res.isAccessible()) {
 			return 0;
 		}
-		int info= 0;
+		int info = 0;
 
 		MarkersCacheKey cacheKey = new MarkersCacheKey(res, depth);
-		IMarker[] markers = fMarkersCache .get(cacheKey);
+		IMarker[] markers = fMarkersCache.get(cacheKey);
 		if (markers == null) {
-			markers= res.findMarkers(IMarker.PROBLEM, true, depth);
+			markers = res.findMarkers(IMarker.PROBLEM, true, depth);
 			if (markers == null)
 				markers = EMPTY_MARKER_ARRAY;
 			fMarkersCache.put(cacheKey, markers);
 		}
-		for (int i= 0; i < markers.length && (info != ERRORTICK_ERROR); i++) {
-			IMarker curr= markers[i];
+		for (int i = 0; i < markers.length && (info != ERRORTICK_ERROR); i++) {
+			IMarker curr = markers[i];
 			if (sourceElement == null || isMarkerInRange(curr, sourceElement)) {
-				int priority= curr.getAttribute(IMarker.SEVERITY, -1);
+				int priority = curr.getAttribute(IMarker.SEVERITY, -1);
 				if (priority == IMarker.SEVERITY_WARNING) {
-					info= ERRORTICK_WARNING;
+					info = ERRORTICK_WARNING;
 				} else if (priority == IMarker.SEVERITY_ERROR) {
-					info= ERRORTICK_ERROR;
+					info = ERRORTICK_ERROR;
 				}
 			}
 		}
@@ -237,11 +239,11 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 
 	private boolean isMarkerInRange(IMarker marker, ISourceReference sourceElement) throws CoreException {
 		if (marker.isSubtypeOf(IMarker.TEXT)) {
-			int pos= marker.getAttribute(IMarker.CHAR_START, -1);
+			int pos = marker.getAttribute(IMarker.CHAR_START, -1);
 			if (pos == -1) {
-				int line= MarkerUtilities.getLineNumber(marker);
+				int line = MarkerUtilities.getLineNumber(marker);
 				if (line >= 0) {
-					return isInside( -1, line, sourceElement);
+					return isInside(-1, line, sourceElement);
 				}
 			}
 			return isInside(pos, -1, sourceElement);
@@ -263,12 +265,12 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	 * @since 2.1
 	 */
 	protected boolean isInside(int offSet, int line, ISourceReference sourceElement) throws CoreException {
-		ISourceRange range= sourceElement.getSourceRange();
+		ISourceRange range = sourceElement.getSourceRange();
 		if (range != null) {
 			if (offSet == -1) {
 				return (line >= range.getStartLine() && line <= range.getEndLine());
 			}
-			int rangeOffset= range.getStartPos();
+			int rangeOffset = range.getStartPos();
 			return (rangeOffset <= offSet && rangeOffset + range.getLength() > offSet);
 		}
 		return false;
@@ -278,7 +280,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	public void dispose() {
 		if (fProblemChangedListener != null) {
 			CUIPlugin.getDefault().getProblemMarkerManager().removeListener(fProblemChangedListener);
-			fProblemChangedListener= null;
+			fProblemChangedListener = null;
 		}
 		if (fRegistry != null && fUseNewRegistry) {
 			fRegistry.dispose();
@@ -293,11 +295,12 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 		if (fListeners == null) {
-			fListeners= new ListenerList<>();
+			fListeners = new ListenerList<>();
 		}
 		fListeners.add(listener);
 		if (fProblemChangedListener == null) {
-			fProblemChangedListener= (changedResources, isMarkerChange) -> fireProblemsChanged(changedResources, isMarkerChange);
+			fProblemChangedListener = (changedResources, isMarkerChange) -> fireProblemsChanged(changedResources,
+					isMarkerChange);
 			CUIPlugin.getDefault().getProblemMarkerManager().addListener(fProblemChangedListener);
 		}
 	}
@@ -308,7 +311,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 			fListeners.remove(listener);
 			if (fListeners.isEmpty() && fProblemChangedListener != null) {
 				CUIPlugin.getDefault().getProblemMarkerManager().removeListener(fProblemChangedListener);
-				fProblemChangedListener= null;
+				fProblemChangedListener = null;
 			}
 		}
 	}
@@ -316,7 +319,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	protected void fireProblemsChanged(IResource[] changedResources, boolean isMarkerChange) {
 		fMarkersCache.clear();
 		if (fListeners != null && !fListeners.isEmpty()) {
-			LabelProviderChangedEvent event= new ProblemsLabelChangedEvent(this, changedResources, isMarkerChange);
+			LabelProviderChangedEvent event = new ProblemsLabelChangedEvent(this, changedResources, isMarkerChange);
 			for (ILabelProviderListener listener : fListeners) {
 				listener.labelProviderChanged(event);
 			}
@@ -325,7 +328,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
-		int adornmentFlags= computeAdornmentFlags(element);
+		int adornmentFlags = computeAdornmentFlags(element);
 
 		if (adornmentFlags == ERRORTICK_ERROR) {
 			decoration.addOverlay(CPluginImages.DESC_OVR_ERROR);

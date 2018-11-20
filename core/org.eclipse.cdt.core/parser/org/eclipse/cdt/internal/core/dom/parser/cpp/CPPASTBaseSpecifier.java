@@ -37,15 +37,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  * Base class specifier
  */
 public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier, ICPPASTCompletionContext {
-    private boolean isVirtual;
-    private int visibility;
-    private ICPPASTNameSpecifier nameSpecifier;
+	private boolean isVirtual;
+	private int visibility;
+	private ICPPASTNameSpecifier nameSpecifier;
 	private boolean fIsPackExpansion;
 
-    public CPPASTBaseSpecifier() {
+	public CPPASTBaseSpecifier() {
 	}
 
-    public CPPASTBaseSpecifier(ICPPASTNameSpecifier nameSpecifier) {
+	public CPPASTBaseSpecifier(ICPPASTNameSpecifier nameSpecifier) {
 		setNameSpecifier(nameSpecifier);
 	}
 
@@ -65,47 +65,47 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		CPPASTBaseSpecifier copy = new CPPASTBaseSpecifier(nameSpecifier == null ? null : nameSpecifier.copy(style));
 		copy.isVirtual = isVirtual;
 		copy.visibility = visibility;
-		copy.fIsPackExpansion= fIsPackExpansion;
+		copy.fIsPackExpansion = fIsPackExpansion;
 		return copy(copy, style);
 	}
 
 	@Override
 	public boolean isVirtual() {
-        return isVirtual;
-    }
+		return isVirtual;
+	}
 
-    @Override
+	@Override
 	public void setVirtual(boolean value) {
-        assertNotFrozen();
-        isVirtual = value;
-    }
+		assertNotFrozen();
+		isVirtual = value;
+	}
 
-    @Override
+	@Override
 	public int getVisibility() {
-        return visibility;
-    }
+		return visibility;
+	}
 
-    @Override
+	@Override
 	public void setVisibility(int visibility) {
-        assertNotFrozen();
-        this.visibility = visibility;
-    }
+		assertNotFrozen();
+		this.visibility = visibility;
+	}
 
-    @Override
-    @Deprecated
+	@Override
+	@Deprecated
 	public IASTName getName() {
-    	if (nameSpecifier instanceof IASTName) {
-    		return (IASTName) nameSpecifier;
-    	}
-    	throw new UnsupportedOperationException("Cannot call getName() on base-specifier whose name-specifier "  //$NON-NLS-1$
-    			+ "is not a name. Use getNameSpecifier() instead.");                                             //$NON-NLS-1$
-    }
+		if (nameSpecifier instanceof IASTName) {
+			return (IASTName) nameSpecifier;
+		}
+		throw new UnsupportedOperationException("Cannot call getName() on base-specifier whose name-specifier " //$NON-NLS-1$
+				+ "is not a name. Use getNameSpecifier() instead."); //$NON-NLS-1$
+	}
 
-    @Override
-    @Deprecated
+	@Override
+	@Deprecated
 	public void setName(IASTName name) {
-    	setNameSpecifier((ICPPASTName) name);
-    }
+		setNameSpecifier((ICPPASTName) name);
+	}
 
 	@Override
 	public ICPPASTNameSpecifier getNameSpecifier() {
@@ -115,21 +115,24 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	@Override
 	public void setNameSpecifier(ICPPASTNameSpecifier nameSpecifier) {
 		assertNotFrozen();
-        this.nameSpecifier = nameSpecifier;
-        if (nameSpecifier != null) {
+		this.nameSpecifier = nameSpecifier;
+		if (nameSpecifier != null) {
 			nameSpecifier.setParent(this);
 			nameSpecifier.setPropertyInParent(NAME_SPECIFIER);
 		}
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitBaseSpecifiers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitBaseSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (nameSpecifier != null && !nameSpecifier.accept(action))
@@ -138,12 +141,13 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		if (action.shouldVisitBaseSpecifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if (nameSpecifier == n) return r_reference;
+		if (nameSpecifier == n)
+			return r_reference;
 		return r_unclear;
 	}
 
@@ -167,8 +171,8 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 				IType type = (IType) binding;
 
 				while (type instanceof ITypedef || type instanceof ICPPAliasTemplate) {
-					type = type instanceof ITypedef ?
-							((ITypedef) type).getType()	: ((ICPPAliasTemplate) type).getType();
+					type = type instanceof ITypedef ? ((ITypedef) type).getType()
+							: ((ICPPAliasTemplate) type).getType();
 				}
 
 				if (type instanceof ICPPClassType) {
@@ -206,6 +210,6 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	@Override
 	public void setIsPackExpansion(boolean val) {
 		assertNotFrozen();
-		fIsPackExpansion= val;
+		fIsPackExpansion = val;
 	}
 }

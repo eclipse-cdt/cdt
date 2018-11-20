@@ -18,36 +18,36 @@ import java.util.NoSuchElementException;
 
 public final class EmptyIterator<T> implements Iterator<T> {
 	public static final EmptyIterator<?> EMPTY_ITERATOR = new EmptyIterator<Object>();
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> EmptyIterator<T> empty() {
 		return (EmptyIterator<T>) EMPTY_ITERATOR;
 	}
-	
+
 	private EmptyIterator() {
 	}
-	
-    /* (non-Javadoc)
-     * @see java.util.Iterator#hasNext()
-     */
-    @Override
+
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#hasNext()
+	 */
+	@Override
 	public final boolean hasNext() {
-        return false;
-    }
+		return false;
+	}
 
-    /* (non-Javadoc)
-     * @see java.util.Iterator#next()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
+	@Override
 	public final T next() {
-        throw new NoSuchElementException();
-    }
+		throw new NoSuchElementException();
+	}
 
-    /* (non-Javadoc)
-     * @see java.util.Iterator#remove()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#remove()
+	 */
+	@Override
 	public final void remove() {
-		throw new UnsupportedOperationException();          
-    }
+		throw new UnsupportedOperationException();
+	}
 }

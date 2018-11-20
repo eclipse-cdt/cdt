@@ -74,22 +74,18 @@ public class NewBuildConfigurationDialog extends Dialog {
 	private String newDescription;
 	final private String title;
 
-
 	/**
 	 * @param parentShell
 	 * @param managedTarget
 	 * @param nameList A list of names (Strings) that have been added by the user but have not yet been added to the target
 	 * @param title The title of the dialog
 	 */
-	protected NewBuildConfigurationDialog(Shell parentShell,
-			ICProjectDescription prjd,
-			ICConfigurationDescription[] _cfgds,
-			IConfiguration[] _defs,
-			String title) {
+	protected NewBuildConfigurationDialog(Shell parentShell, ICProjectDescription prjd,
+			ICConfigurationDescription[] _cfgds, IConfiguration[] _defs, String title) {
 		super(parentShell);
 		this.title = title;
 		des = prjd;
-		setShellStyle(getShellStyle()|SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 
 		newName = ""; //$NON-NLS-1$
 		newDescription = ""; //$NON-NLS-1$
@@ -100,7 +96,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 
 		// Populate the list of default and defined configurations
 		definedCfgds = new IConfiguration[_cfgds.length];
-		for (int i=0; i<_cfgds.length; i++)
+		for (int i = 0; i < _cfgds.length; i++)
 			definedCfgds[i] = ManagedBuildManager.getConfigurationForDescription(_cfgds[i]);
 		defaultCfgds = _defs;
 	}
@@ -125,10 +121,10 @@ public class NewBuildConfigurationDialog extends Dialog {
 				for (int i = 0; i < definedCfgds.length; i++) {
 					description = definedCfgds[i].getDescription();
 
-					if( (description == null) || (description.isEmpty()) ){
+					if ((description == null) || (description.isEmpty())) {
 						nameAndDescription = definedCfgds[i].getName();
 					} else {
-						nameAndDescription = definedCfgds[i].getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
+						nameAndDescription = definedCfgds[i].getName() + "( " + description + " )"; //$NON-NLS-1$	//$NON-NLS-2$
 					}
 					if (nameAndDescription.equals(baseConfigNameAndDescription)) {
 						parentConfig = definedCfgds[i];
@@ -141,10 +137,10 @@ public class NewBuildConfigurationDialog extends Dialog {
 				for (int i = 0; i < defaultCfgds.length; i++) {
 					description = defaultCfgds[i].getDescription();
 
-					if( (description == null) || (description.isEmpty()) ) {
+					if ((description == null) || (description.isEmpty())) {
 						nameAndDescription = defaultCfgds[i].getName();
 					} else {
-						nameAndDescription = defaultCfgds[i].getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
+						nameAndDescription = defaultCfgds[i].getName() + "( " + description + " )"; //$NON-NLS-1$	//$NON-NLS-2$
 					}
 					if (nameAndDescription.equals(baseConfigNameAndDescription)) {
 						parentConfig = defaultCfgds[i];
@@ -226,24 +222,24 @@ public class NewBuildConfigurationDialog extends Dialog {
 			}
 		});
 
-//		 Add a label and a text widget for Configuration's description
-        final Label descriptionLabel = new Label(group1, SWT.LEFT);
-        descriptionLabel.setFont(parent.getFont());
-        descriptionLabel.setText(Messages.NewConfiguration_label_description);
+		//		 Add a label and a text widget for Configuration's description
+		final Label descriptionLabel = new Label(group1, SWT.LEFT);
+		descriptionLabel.setFont(parent.getFont());
+		descriptionLabel.setText(Messages.NewConfiguration_label_description);
 
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 1;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
 		gd.grabExcessHorizontalSpace = false;
-        descriptionLabel.setLayoutData(gd);
-        configDescription = new Text(group1, SWT.SINGLE | SWT.BORDER);
-        configDescription.setFont(group1.getFont());
+		descriptionLabel.setLayoutData(gd);
+		configDescription = new Text(group1, SWT.SINGLE | SWT.BORDER);
+		configDescription.setFont(group1.getFont());
 		configDescription.setText(getNewDescription());
 		configDescription.setFocus();
 
-        gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan = 2;
-        gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-        configDescription.setLayoutData(gd);
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		configDescription.setLayoutData(gd);
 
 		// Create a group for the radio buttons
 
@@ -256,7 +252,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		gd.horizontalSpan = 3;
 		group.setLayoutData(gd);
 
-		SelectionListener radioListener =  new SelectionAdapter() {
+		SelectionListener radioListener = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				clone = btnClone.getSelection();
@@ -323,35 +319,34 @@ public class NewBuildConfigurationDialog extends Dialog {
 		return composite;
 	}
 
-
 	/**
 	 * updates the list of default configurations
 	 */
 
-	private void updateDefaultConfigs(){
-//		IConfiguration cfgs[] = managedProject.getProjectType().getConfigurations();
-		if(defaultCfgds.length != 0){
+	private void updateDefaultConfigs() {
+		//		IConfiguration cfgs[] = managedProject.getProjectType().getConfigurations();
+		if (defaultCfgds.length != 0) {
 			String namesAndDescriptions[] = new String[defaultCfgds.length];
 			for (int i = 0; i < defaultCfgds.length; ++i) {
-				if ( (defaultCfgds[i].getDescription() == null) || defaultCfgds[i].getDescription().isEmpty())
+				if ((defaultCfgds[i].getDescription() == null) || defaultCfgds[i].getDescription().isEmpty())
 					namesAndDescriptions[i] = defaultCfgds[i].getName();
 				else
-					namesAndDescriptions[i] = defaultCfgds[i].getName() + "( " + defaultCfgds[i].getDescription() + " )";	//$NON-NLS-1$	//$NON-NLS-2$
+					namesAndDescriptions[i] = defaultCfgds[i].getName() + "( " + defaultCfgds[i].getDescription() //$NON-NLS-1$
+							+ " )"; //$NON-NLS-1$
 			}
 
 			int selectionIndex = copyConfigSelector.getSelectionIndex();
 			String oldSelection = null;
-			if(selectionIndex != -1)
+			if (selectionIndex != -1)
 				oldSelection = copyConfigSelector.getItem(selectionIndex);
 
 			copyConfigSelector.setItems(namesAndDescriptions);
-			if(oldSelection != null)
+			if (oldSelection != null)
 				selectionIndex = copyConfigSelector.indexOf(oldSelection);
-			if(selectionIndex == -1)
+			if (selectionIndex == -1)
 				selectionIndex = 0;
 			copyConfigSelector.select(selectionIndex);
-		}
-		else{
+		} else {
 			copyConfigSelector.removeAll();
 		}
 		validateState();
@@ -362,13 +357,13 @@ public class NewBuildConfigurationDialog extends Dialog {
 	 * This list will be used to populate the list of configurations to
 	 * clone.
 	 */
-	private String [] getDefinedConfigNamesAndDescriptions() {
-		String [] namesAndDescriptions = new String[definedCfgds.length];
+	private String[] getDefinedConfigNamesAndDescriptions() {
+		String[] namesAndDescriptions = new String[definedCfgds.length];
 		for (int i = 0; i < definedCfgds.length; ++i) {
-			if ( (definedCfgds[i].getDescription() == null) || definedCfgds[i].getDescription().isEmpty())
+			if ((definedCfgds[i].getDescription() == null) || definedCfgds[i].getDescription().isEmpty())
 				namesAndDescriptions[i] = definedCfgds[i].getName();
 			else
-				namesAndDescriptions[i] = definedCfgds[i].getName() + "( " + definedCfgds[i].getDescription() +" )";	//$NON-NLS-1$	//$NON-NLS-2$
+				namesAndDescriptions[i] = definedCfgds[i].getName() + "( " + definedCfgds[i].getDescription() + " )"; //$NON-NLS-1$	//$NON-NLS-2$
 		}
 		return namesAndDescriptions;
 	}
@@ -404,7 +399,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 	protected void updateComboState() {
 		cloneConfigSelector.setEnabled(clone);
 		copyConfigSelector.setEnabled(!clone);
-//		btnShowAll.setVisible(!clone);
+		//		btnShowAll.setVisible(!clone);
 		validateState();
 	}
 
@@ -444,6 +439,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		}
 		return true;
 	}
+
 	/* (non-Javadoc)
 	 * Update the status message and button state based on the input selected
 	 * by the user
@@ -453,15 +449,15 @@ public class NewBuildConfigurationDialog extends Dialog {
 		String s = null;
 		String currentName = configName.getText();
 		// Trim trailing whitespace
-		while (currentName.length() > 0 && Character.isWhitespace(currentName.charAt(currentName.length()-1))) {
-			currentName = currentName.substring(0, currentName.length()-1);
+		while (currentName.length() > 0 && Character.isWhitespace(currentName.charAt(currentName.length() - 1))) {
+			currentName = currentName.substring(0, currentName.length() - 1);
 		}
 		// Make sure that the name is at least one character in length
 		if (currentName.length() == 0) {
 			// No error message, but cannot select OK
-			s = "";	//$NON-NLS-1$
-		} else if(clone ? definedCfgds.length == 0 : defaultCfgds.length == 0) {
-			s = "";	//$NON-NLS-1$
+			s = ""; //$NON-NLS-1$
+		} else if (clone ? definedCfgds.length == 0 : defaultCfgds.length == 0) {
+			s = ""; //$NON-NLS-1$
 			// Make sure the name is not a duplicate
 		} else if (isDuplicateName(currentName)) {
 			s = NLS.bind(Messages.NewConfiguration_error_duplicateName, currentName);
@@ -471,21 +467,25 @@ public class NewBuildConfigurationDialog extends Dialog {
 			// TODO Create a decent I18N string to describe this problem
 			s = NLS.bind(Messages.NewConfiguration_error_invalidName, currentName);
 		}
-		if (statusLabel == null) return;
+		if (statusLabel == null)
+			return;
 		Button b = getButton(IDialogConstants.OK_ID);
 		if (s != null) {
 			statusLabel.setText(s);
 			statusLabel.setVisible(true);
-			if (b != null) b.setEnabled(false);
+			if (b != null)
+				b.setEnabled(false);
 		} else {
 			statusLabel.setVisible(false);
-			if (b != null) b.setEnabled(true);
+			if (b != null)
+				b.setEnabled(true);
 		}
 		return;
 	}
-	 public String getNewDescription() {
-        return newDescription;
-    }
+
+	public String getNewDescription() {
+		return newDescription;
+	}
 
 	/**
 	 * Create a new configuration, using the values currently set in
@@ -495,9 +495,9 @@ public class NewBuildConfigurationDialog extends Dialog {
 	 * is kept for compatibility only.
 	 */
 	public ICConfigurationDescription newConfiguration() {
-		Configuration cfg = (Configuration)parentConfig;
+		Configuration cfg = (Configuration) parentConfig;
 		String id = ManagedBuildManager.calculateChildId(cfg.getId(), null);
-		ManagedProject mp = (ManagedProject)ManagedBuildManager.getBuildInfo(des.getProject()).getManagedProject();
+		ManagedProject mp = (ManagedProject) ManagedBuildManager.getBuildInfo(des.getProject()).getManagedProject();
 		Configuration config = new Configuration(mp, cfg, id, true, false);
 		config.setName(getNewName());
 		config.setDescription(getNewDescription());

@@ -41,7 +41,7 @@ public interface ICastToType extends IAdaptable {
 	 * @param type a type to cast to.
 	 * @throws DebugException
 	 */
-	void cast( String type ) throws DebugException;
+	void cast(String type) throws DebugException;
 
 	/**
 	 * Restores the original type.

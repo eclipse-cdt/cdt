@@ -23,15 +23,17 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.core.runtime.CoreException;
 
-public class CompositeCPPClassTemplatePartialSpecialization extends CompositeCPPClassTemplate implements ICPPClassTemplatePartialSpecialization, IPDOMOverloader {
-	public CompositeCPPClassTemplatePartialSpecialization(ICompositesFactory cf, ICPPClassTemplatePartialSpecialization delegate) {
+public class CompositeCPPClassTemplatePartialSpecialization extends CompositeCPPClassTemplate
+		implements ICPPClassTemplatePartialSpecialization, IPDOMOverloader {
+	public CompositeCPPClassTemplatePartialSpecialization(ICompositesFactory cf,
+			ICPPClassTemplatePartialSpecialization delegate) {
 		super(cf, delegate);
 	}
 
 	@Override
 	public ICPPClassTemplate getPrimaryClassTemplate() {
-		ICPPClassTemplate preresult= ((ICPPClassTemplatePartialSpecialization)rbinding).getPrimaryClassTemplate();
-		return (ICPPClassTemplate) cf.getCompositeBinding((IIndexFragmentBinding)preresult);
+		ICPPClassTemplate preresult = ((ICPPClassTemplatePartialSpecialization) rbinding).getPrimaryClassTemplate();
+		return (ICPPClassTemplate) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}
 
 	@Override

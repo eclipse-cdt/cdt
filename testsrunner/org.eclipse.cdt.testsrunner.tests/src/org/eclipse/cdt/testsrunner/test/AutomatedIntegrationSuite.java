@@ -23,12 +23,11 @@ import org.eclipse.cdt.testsrunner.testsrunners.BoostTestCase;
 import org.eclipse.cdt.testsrunner.testsrunners.GoogleTestCase;
 import org.eclipse.cdt.testsrunner.testsrunners.QtTestCase;
 
-
 /**
  * Test suite with all the tests on Tests Runner.
  */
 public class AutomatedIntegrationSuite extends TestSuite {
-	
+
 	public AutomatedIntegrationSuite() {
 	}
 

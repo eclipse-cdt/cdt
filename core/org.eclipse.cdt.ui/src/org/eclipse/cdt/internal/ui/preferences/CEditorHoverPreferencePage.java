@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
@@ -26,7 +25,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * The page for setting the editor hover options.
  */
 public final class CEditorHoverPreferencePage extends AbstractConfigurationBlockPreferencePage {
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
@@ -40,10 +39,10 @@ public final class CEditorHoverPreferencePage extends AbstractConfigurationBlock
 	 */
 	@Override
 	protected void setDescription() {
-		String description= PreferencesMessages.CEditorPreferencePage_hover_title; 
+		String description = PreferencesMessages.CEditorPreferencePage_hover_title;
 		setDescription(description);
 	}
-	
+
 	/*
 	 * @see org.org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
 	 */
@@ -51,8 +50,7 @@ public final class CEditorHoverPreferencePage extends AbstractConfigurationBlock
 	protected void setPreferenceStore() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
-	
-	
+
 	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look.

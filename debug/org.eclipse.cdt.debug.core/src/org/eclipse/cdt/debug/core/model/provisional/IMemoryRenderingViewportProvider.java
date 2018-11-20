@@ -21,7 +21,7 @@ import java.math.BigInteger;
  * changes.
  */
 public interface IMemoryRenderingViewportProvider {
-	
+
 	/**
 	 * Return the first address being shown in the rendering. Subject to scrolling.
 	 */

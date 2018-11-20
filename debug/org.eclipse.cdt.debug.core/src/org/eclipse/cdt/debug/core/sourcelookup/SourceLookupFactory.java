@@ -26,25 +26,21 @@ import org.eclipse.core.runtime.IPath;
  * 
  * @since Jul 14, 2003
  */
-public class SourceLookupFactory
-{
-	public static IProjectSourceLocation createProjectSourceLocation( IProject project )
-	{
-		return new CProjectSourceLocation( project );
+public class SourceLookupFactory {
+	public static IProjectSourceLocation createProjectSourceLocation(IProject project) {
+		return new CProjectSourceLocation(project);
 	}
 
-	public static IProjectSourceLocation createProjectSourceLocation( IProject project, boolean generated )
-	{
-		return new CProjectSourceLocation( project, generated );
+	public static IProjectSourceLocation createProjectSourceLocation(IProject project, boolean generated) {
+		return new CProjectSourceLocation(project, generated);
 	}
 
-	public static IDirectorySourceLocation createDirectorySourceLocation( IPath directory, IPath association, boolean searchSubfolders )
-	{
-		return new CDirectorySourceLocation( directory, association, searchSubfolders );
+	public static IDirectorySourceLocation createDirectorySourceLocation(IPath directory, IPath association,
+			boolean searchSubfolders) {
+		return new CDirectorySourceLocation(directory, association, searchSubfolders);
 	}
 
-	public static ICSourceLocator createSourceLocator( IProject project )
-	{
-		return new CSourceManager( new CSourceLocator( project ) );
+	public static ICSourceLocator createSourceLocator(IProject project) {
+		return new CSourceManager(new CSourceLocator(project));
 	}
 }

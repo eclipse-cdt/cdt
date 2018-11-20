@@ -38,56 +38,91 @@ public class DiscoveryPageWrapper extends AbstractDiscoveryOptionsBlock {
 
 	ICPropertyProvider page = null;
 	IBuildInfoContainer container = null;
-	
+
 	public DiscoveryPageWrapper(ICPropertyProvider _page, IBuildInfoContainer c) {
 		super(AbstractCPropertyTab.EMPTY_STR);
 		page = _page;
 		container = c;
 	}
+
 	@Override
 	public IScannerConfigBuilderInfo2 getBuildInfo() {
 		return container.getBuildInfo();
 	}
-	@Override
-	public IProject getProject() { 
-		return page.getProject(); 
-	}
-    @Override
-	public String getErrorMessage() { 
-    	return AbstractCPropertyTab.EMPTY_STR; 
-    }
-    @Override
-	public Preferences getPrefs() {
-        return page.getPreferences();
-    }
-    @Override
-	public boolean isProfileDifferentThenPersisted() { return true; }
-    @Override
-	public boolean isInitialized() { return true; } 
-    @Override
-	public boolean isValid() { return true; }
-	@Override
-	public boolean checkDialogForChanges() { return true; }
 
 	@Override
-	public void callPerformApply() {}
-    @Override
-	public void setInitialized(boolean initialized) {}
-    @Override
-	public void setContainer(ICOptionContainer container) {}
+	public IProject getProject() {
+		return page.getProject();
+	}
+
 	@Override
-	public void updateContainer() {}
+	public String getErrorMessage() {
+		return AbstractCPropertyTab.EMPTY_STR;
+	}
+
 	@Override
-	public void updatePersistedProfile() {}
-    @Override
-	public void setVisible(boolean visible) {}
-	
+	public Preferences getPrefs() {
+		return page.getPreferences();
+	}
+
 	@Override
-	protected String getCurrentProfileId() { return null; }
+	public boolean isProfileDifferentThenPersisted() {
+		return true;
+	}
+
 	@Override
-	public void createControl(Composite parent) {}
+	public boolean isInitialized() {
+		return true;
+	}
+
 	@Override
-	public void performApply(IProgressMonitor monitor) throws CoreException {}
+	public boolean isValid() {
+		return true;
+	}
+
 	@Override
-	public void performDefaults() {}
+	public boolean checkDialogForChanges() {
+		return true;
+	}
+
+	@Override
+	public void callPerformApply() {
+	}
+
+	@Override
+	public void setInitialized(boolean initialized) {
+	}
+
+	@Override
+	public void setContainer(ICOptionContainer container) {
+	}
+
+	@Override
+	public void updateContainer() {
+	}
+
+	@Override
+	public void updatePersistedProfile() {
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+	}
+
+	@Override
+	protected String getCurrentProfileId() {
+		return null;
+	}
+
+	@Override
+	public void createControl(Composite parent) {
+	}
+
+	@Override
+	public void performApply(IProgressMonitor monitor) throws CoreException {
+	}
+
+	@Override
+	public void performDefaults() {
+	}
 }

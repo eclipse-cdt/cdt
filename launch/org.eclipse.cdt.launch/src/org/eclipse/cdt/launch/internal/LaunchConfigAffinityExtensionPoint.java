@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Platform;
  * provide a collection of strings (launch configuration type IDs).
  */
 public class LaunchConfigAffinityExtensionPoint {
-	
+
 	static private final String EXTENSION_POINT_NAME = "launchConfigAffinity"; //$NON-NLS-1$
 	static private final String EXTENSION_ELEMENT_NAME = "launchConfigTypeId"; //$NON-NLS-1$
 	static private final String EXTENSION_ELEMENT_ATTR = "id"; //$NON-NLS-1$
@@ -40,17 +40,18 @@ public class LaunchConfigAffinityExtensionPoint {
 	 *            clear it. Caller can provide any type of collection.
 	 */
 	static public <T extends Collection<String>> void getLaunchConfigTypeIds(T ids) {
-		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(LaunchUIPlugin.PLUGIN_ID, EXTENSION_POINT_NAME).getExtensions();
-	    for (IExtension extension : extensions) {
-	        IConfigurationElement[] elements = extension.getConfigurationElements();
-	        for (IConfigurationElement element : elements) {
-	        	if (element.getName().equals(EXTENSION_ELEMENT_NAME)) {
-	        		String id = element.getAttribute(EXTENSION_ELEMENT_ATTR);
-	        		if (id != null) {
-	        			ids.add(id);
-	        		}
-	        	}
-	        }
-	    }
+		IExtension[] extensions = Platform.getExtensionRegistry()
+				.getExtensionPoint(LaunchUIPlugin.PLUGIN_ID, EXTENSION_POINT_NAME).getExtensions();
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (IConfigurationElement element : elements) {
+				if (element.getName().equals(EXTENSION_ELEMENT_NAME)) {
+					String id = element.getAttribute(EXTENSION_ELEMENT_ATTR);
+					if (id != null) {
+						ids.add(id);
+					}
+				}
+			}
+		}
 	}
 }

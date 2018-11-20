@@ -32,7 +32,7 @@ public abstract class AbstractSWTBotAssertions<Assertion extends AbstractSWTBotA
 	@SuppressWarnings("unchecked")
 	public Assertion isEnabled() {
 		notNullValue();
-		if(!actual.isEnabled()) {
+		if (!actual.isEnabled()) {
 			failWithMessage("Expected widget with text '%s (%s)' to be enabled but it was not", actual.getText(),
 					actual.getToolTipText());
 		}
@@ -42,7 +42,7 @@ public abstract class AbstractSWTBotAssertions<Assertion extends AbstractSWTBotA
 	@SuppressWarnings("unchecked")
 	public Assertion isNotEnabled() {
 		notNullValue();
-		if(actual.isEnabled()) {
+		if (actual.isEnabled()) {
 			failWithMessage("Expected widget with text '%s (%s)' to be disabled but it was not", actual.getText(),
 					actual.getToolTipText());
 		}

@@ -60,24 +60,23 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 
 public abstract class ModifyDialog extends StatusDialog implements IModifyDialogTabPage.IModificationListener {
-    
-    /**
-     * The keys to retrieve the preferred area from the dialog settings.
-     */
-    private static final String DS_KEY_PREFERRED_WIDTH= "modify_dialog.preferred_width"; //$NON-NLS-1$
-    private static final String DS_KEY_PREFERRED_HEIGHT= "modify_dialog.preferred_height"; //$NON-NLS-1$
-    private static final String DS_KEY_PREFERRED_X= "modify_dialog.preferred_x"; //$NON-NLS-1$
-    private static final String DS_KEY_PREFERRED_Y= "modify_dialog.preferred_y"; //$NON-NLS-1$
-    
-    
-    /**
-     * The key to store the number (beginning at 0) of the tab page which had the 
-     * focus last time.
-     */
-    private static final String DS_KEY_LAST_FOCUS= "modify_dialog.last_focus"; //$NON-NLS-1$
-    
-    private static final int APPLAY_BUTTON_ID= IDialogConstants.CLIENT_ID;
-    private static final int SAVE_BUTTON_ID= IDialogConstants.CLIENT_ID + 1;
+
+	/**
+	 * The keys to retrieve the preferred area from the dialog settings.
+	 */
+	private static final String DS_KEY_PREFERRED_WIDTH = "modify_dialog.preferred_width"; //$NON-NLS-1$
+	private static final String DS_KEY_PREFERRED_HEIGHT = "modify_dialog.preferred_height"; //$NON-NLS-1$
+	private static final String DS_KEY_PREFERRED_X = "modify_dialog.preferred_x"; //$NON-NLS-1$
+	private static final String DS_KEY_PREFERRED_Y = "modify_dialog.preferred_y"; //$NON-NLS-1$
+
+	/**
+	 * The key to store the number (beginning at 0) of the tab page which had the 
+	 * focus last time.
+	 */
+	private static final String DS_KEY_LAST_FOCUS = "modify_dialog.last_focus"; //$NON-NLS-1$
+
+	private static final int APPLAY_BUTTON_ID = IDialogConstants.CLIENT_ID;
+	private static final int SAVE_BUTTON_ID = IDialogConstants.CLIENT_ID + 1;
 
 	private final String fKeyPreferredWidth;
 	private final String fKeyPreferredHight;
@@ -97,28 +96,29 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 	private Button fSaveButton;
 	private StringDialogField fProfileNameField;
 
-	protected ModifyDialog(Shell parentShell, Profile profile, ProfileManager profileManager, ProfileStore profileStore, boolean newProfile, String dialogPreferencesKey, String lastSavePathKey) {
+	protected ModifyDialog(Shell parentShell, Profile profile, ProfileManager profileManager, ProfileStore profileStore,
+			boolean newProfile, String dialogPreferencesKey, String lastSavePathKey) {
 		super(parentShell);
-		
-		fProfileStore= profileStore;
-		fLastSaveLoadPathKey= lastSavePathKey;
 
-		fKeyPreferredWidth= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_WIDTH;
-		fKeyPreferredHight= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_HEIGHT;
-		fKeyPreferredX= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_X;
-		fKeyPreferredY= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_Y;
-		fKeyLastFocus= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_LAST_FOCUS;
+		fProfileStore = profileStore;
+		fLastSaveLoadPathKey = lastSavePathKey;
 
-		fProfileManager= profileManager;
-		fNewProfile= newProfile;
-		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX );
-				
-		fProfile= profile;
+		fKeyPreferredWidth = CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_WIDTH;
+		fKeyPreferredHight = CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_HEIGHT;
+		fKeyPreferredX = CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_X;
+		fKeyPreferredY = CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_Y;
+		fKeyLastFocus = CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_LAST_FOCUS;
+
+		fProfileManager = profileManager;
+		fNewProfile = newProfile;
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
+
+		fProfile = profile;
 		setTitle(Messages.format(FormatterMessages.ModifyDialog_dialog_title, profile.getName()));
-		fWorkingValues= new HashMap<String, String>(fProfile.getSettings());
+		fWorkingValues = new HashMap<String, String>(fProfile.getSettings());
 		setStatusLineAboveButtons(false);
-		fTabPages= new ArrayList<IModifyDialogTabPage>();
-		fDialogSettings= CUIPlugin.getDefault().getDialogSettings();	
+		fTabPages = new ArrayList<IModifyDialogTabPage>();
+		fDialogSettings = CUIPlugin.getDefault().getDialogSettings();
 	}
 
 	protected abstract void addPages(Map<String, String> values);
@@ -126,76 +126,81 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 	@Override
 	public void create() {
 		super.create();
-		int lastFocusNr= 0;
+		int lastFocusNr = 0;
 		try {
-			lastFocusNr= fDialogSettings.getInt(fKeyLastFocus);
-			if (lastFocusNr < 0) lastFocusNr= 0;
-			if (lastFocusNr > fTabPages.size() - 1) lastFocusNr= fTabPages.size() - 1;
+			lastFocusNr = fDialogSettings.getInt(fKeyLastFocus);
+			if (lastFocusNr < 0)
+				lastFocusNr = 0;
+			if (lastFocusNr > fTabPages.size() - 1)
+				lastFocusNr = fTabPages.size() - 1;
 		} catch (NumberFormatException x) {
-			lastFocusNr= 0;
+			lastFocusNr = 0;
 		}
-		
+
 		if (!fNewProfile) {
 			fTabFolder.setSelection(lastFocusNr);
-			((IModifyDialogTabPage)fTabFolder.getSelection()[0].getData()).setInitialFocus();
+			((IModifyDialogTabPage) fTabFolder.getSelection()[0].getData()).setInitialFocus();
 		}
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		
-		final Composite composite= (Composite)super.createDialogArea(parent);
-		
-		Composite nameComposite= new Composite(composite, SWT.NONE);
+
+		final Composite composite = (Composite) super.createDialogArea(parent);
+
+		Composite nameComposite = new Composite(composite, SWT.NONE);
 		nameComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		nameComposite.setLayout(new GridLayout(3, false));
-		
-		fProfileNameField= new StringDialogField();
+
+		fProfileNameField = new StringDialogField();
 		fProfileNameField.setLabelText(FormatterMessages.ModifyDialog_ProfileName_Label);
 		fProfileNameField.setText(fProfile.getName());
-		fProfileNameField.getLabelControl(nameComposite).setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		fProfileNameField.getLabelControl(nameComposite)
+				.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fProfileNameField.getTextControl(nameComposite).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		fProfileNameField.setDialogFieldListener(new IDialogFieldListener() {
 			@Override
 			public void dialogFieldChanged(DialogField field) {
 				doValidate();
-            }
+			}
 		});
-		
-		fSaveButton= createButton(nameComposite, SAVE_BUTTON_ID, FormatterMessages.ModifyDialog_Export_Button, false);
-		
+
+		fSaveButton = createButton(nameComposite, SAVE_BUTTON_ID, FormatterMessages.ModifyDialog_Export_Button, false);
+
 		fTabFolder = new TabFolder(composite, SWT.NONE);
 		fTabFolder.setFont(composite.getFont());
 		fTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		addPages(fWorkingValues); 
+		addPages(fWorkingValues);
 
 		applyDialogFont(composite);
-		
+
 		fTabFolder.addSelectionListener(new SelectionListener() {
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				final TabItem tabItem= (TabItem)e.item;
-				final IModifyDialogTabPage page= (IModifyDialogTabPage)tabItem.getData();
+				final TabItem tabItem = (TabItem) e.item;
+				final IModifyDialogTabPage page = (IModifyDialogTabPage) tabItem.getData();
 				//				page.fSashForm.setWeights();
 				fDialogSettings.put(fKeyLastFocus, fTabPages.indexOf(page));
 				page.makeVisible();
 			}
 		});
-		
+
 		doValidate();
-		
+
 		return composite;
 	}
-	
+
 	@Override
 	public void updateStatus(IStatus status) {
 		if (status == null) {
 			doValidate();
 		} else {
-	    	super.updateStatus(status);
+			super.updateStatus(status);
 		}
 	}
 
@@ -204,20 +209,20 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 	 */
 	@Override
 	protected Point getInitialSize() {
-		Point initialSize= super.getInitialSize();
+		Point initialSize = super.getInitialSize();
 		try {
-			int lastWidth= fDialogSettings.getInt(fKeyPreferredWidth);
+			int lastWidth = fDialogSettings.getInt(fKeyPreferredWidth);
 			if (initialSize.x > lastWidth)
-				lastWidth= initialSize.x;
-			int lastHeight= fDialogSettings.getInt(fKeyPreferredHight);
+				lastWidth = initialSize.x;
+			int lastHeight = fDialogSettings.getInt(fKeyPreferredHight);
 			if (initialSize.y > lastHeight)
-				lastHeight= initialSize.y;
+				lastHeight = initialSize.y;
 			return new Point(lastWidth, lastHeight);
 		} catch (NumberFormatException ex) {
 		}
 		return initialSize;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
@@ -229,10 +234,10 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 			return super.getInitialLocation(initialSize);
 		}
 	}
-	    
+
 	@Override
 	public boolean close() {
-		final Rectangle shell= getShell().getBounds();
+		final Rectangle shell = getShell().getBounds();
 
 		fDialogSettings.put(fKeyPreferredWidth, shell.width);
 		fDialogSettings.put(fKeyPreferredHight, shell.height);
@@ -241,7 +246,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 
 		return super.close();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -250,8 +255,8 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		applyPressed();
 		super.okPressed();
 	}
-	
-    @Override
+
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == APPLAY_BUTTON_ID) {
 			applyPressed();
@@ -261,70 +266,73 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		} else {
 			super.buttonPressed(buttonId);
 		}
-    }
-	
+	}
+
 	private void applyPressed() {
 		if (!fProfile.getName().equals(fProfileNameField.getText())) {
-			fProfile= fProfile.rename(fProfileNameField.getText(), fProfileManager);
+			fProfile = fProfile.rename(fProfileNameField.getText(), fProfileManager);
 		}
 		fProfile.setSettings(new HashMap<String, String>(fWorkingValues));
 		fProfileManager.setSelected(fProfile);
 		doValidate();
 	}
-	
-	private void saveButtonPressed() {
-		Profile selected= new CustomProfile(fProfileNameField.getText(), new HashMap<String, String>(fWorkingValues), fProfile.getVersion(), fProfileManager.getProfileVersioner().getProfileKind());
-		
-		final FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
-		dialog.setText(FormatterMessages.CodingStyleConfigurationBlock_save_profile_dialog_title); 
-		dialog.setFilterExtensions(new String [] {"*.xml"}); //$NON-NLS-1$
 
-		final String lastPath= CUIPlugin.getDefault().getDialogSettings().get(fLastSaveLoadPathKey + ".savepath"); //$NON-NLS-1$
+	private void saveButtonPressed() {
+		Profile selected = new CustomProfile(fProfileNameField.getText(), new HashMap<String, String>(fWorkingValues),
+				fProfile.getVersion(), fProfileManager.getProfileVersioner().getProfileKind());
+
+		final FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+		dialog.setText(FormatterMessages.CodingStyleConfigurationBlock_save_profile_dialog_title);
+		dialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$
+
+		final String lastPath = CUIPlugin.getDefault().getDialogSettings().get(fLastSaveLoadPathKey + ".savepath"); //$NON-NLS-1$
 		if (lastPath != null) {
 			dialog.setFilterPath(lastPath);
 		}
-		final String path= dialog.open();
-		if (path == null) 
+		final String path = dialog.open();
+		if (path == null)
 			return;
 
 		CUIPlugin.getDefault().getDialogSettings().put(fLastSaveLoadPathKey + ".savepath", dialog.getFilterPath()); //$NON-NLS-1$
 
-		final File file= new File(path);
-		if (file.exists() && !MessageDialog.openQuestion(getShell(), FormatterMessages.CodingStyleConfigurationBlock_save_profile_overwrite_title, Messages.format(FormatterMessages.CodingStyleConfigurationBlock_save_profile_overwrite_message, path))) { 
+		final File file = new File(path);
+		if (file.exists() && !MessageDialog.openQuestion(getShell(),
+				FormatterMessages.CodingStyleConfigurationBlock_save_profile_overwrite_title, Messages.format(
+						FormatterMessages.CodingStyleConfigurationBlock_save_profile_overwrite_message, path))) {
 			return;
 		}
-		String encoding= ProfileStore.ENCODING;
-		final IContentType type= Platform.getContentTypeManager().getContentType("org.eclipse.core.runtime.xml"); //$NON-NLS-1$
+		String encoding = ProfileStore.ENCODING;
+		final IContentType type = Platform.getContentTypeManager().getContentType("org.eclipse.core.runtime.xml"); //$NON-NLS-1$
 		if (type != null)
-			encoding= type.getDefaultCharset();
-		final Collection<Profile> profiles= new ArrayList<Profile>();
+			encoding = type.getDefaultCharset();
+		final Collection<Profile> profiles = new ArrayList<Profile>();
 		profiles.add(selected);
 		try {
 			fProfileStore.writeProfilesToFile(profiles, file, encoding);
 		} catch (CoreException e) {
-			final String title= FormatterMessages.CodingStyleConfigurationBlock_save_profile_error_title;
-			final String message= FormatterMessages.CodingStyleConfigurationBlock_save_profile_error_message;
+			final String title = FormatterMessages.CodingStyleConfigurationBlock_save_profile_error_title;
+			final String message = FormatterMessages.CodingStyleConfigurationBlock_save_profile_error_message;
 			ExceptionHandler.handle(e, getShell(), title, message);
 		}
 	}
-    
-    @Override
+
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-	    fApplyButton= createButton(parent, APPLAY_BUTTON_ID, FormatterMessages.ModifyDialog_apply_button, false); 
+		fApplyButton = createButton(parent, APPLAY_BUTTON_ID, FormatterMessages.ModifyDialog_apply_button, false);
 		fApplyButton.setEnabled(false);
-		
-		GridLayout layout= (GridLayout) parent.getLayout();
+
+		GridLayout layout = (GridLayout) parent.getLayout();
 		layout.numColumns++;
-		layout.makeColumnsEqualWidth= false;
-		Label label= new Label(parent, SWT.NONE);
-		GridData data= new GridData();
-		data.widthHint= layout.horizontalSpacing;
+		layout.makeColumnsEqualWidth = false;
+		Label label = new Label(parent, SWT.NONE);
+		GridData data = new GridData();
+		data.widthHint = layout.horizontalSpacing;
 		label.setLayoutData(data);
 		super.createButtonsForButtonBar(parent);
 	}
 
 	protected final void addTabPage(String title, IModifyDialogTabPage tabPage) {
-		final TabItem tabItem= new TabItem(fTabFolder, SWT.NONE);
+		final TabItem tabItem = new TabItem(fTabFolder, SWT.NONE);
 		applyDialogFont(tabItem.getControl());
 		tabItem.setText(title);
 		tabItem.setData(tabPage);
@@ -339,75 +347,80 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 
 	@Override
 	protected void updateButtonsEnableState(IStatus status) {
-	    super.updateButtonsEnableState(status);
-	    if (fApplyButton != null && !fApplyButton.isDisposed()) {
-	    	fApplyButton.setEnabled(hasChanges() && !status.matches(IStatus.ERROR));
+		super.updateButtonsEnableState(status);
+		if (fApplyButton != null && !fApplyButton.isDisposed()) {
+			fApplyButton.setEnabled(hasChanges() && !status.matches(IStatus.ERROR));
 		}
-	    if (fSaveButton != null && !fSaveButton.isDisposed()) {
-	    	fSaveButton.setEnabled(!validateProfileName().matches(IStatus.ERROR));
-	    }
+		if (fSaveButton != null && !fSaveButton.isDisposed()) {
+			fSaveButton.setEnabled(!validateProfileName().matches(IStatus.ERROR));
+		}
 	}
-	
-    private void doValidate() {
-    	String name= fProfileNameField.getText().trim();
+
+	private void doValidate() {
+		String name = fProfileNameField.getText().trim();
 		if (name.equals(fProfile.getName()) && fProfile.hasEqualSettings(fWorkingValues, fWorkingValues.keySet())) {
 			updateStatus(StatusInfo.OK_STATUS);
 			return;
 		}
-    	
-    	IStatus status= validateProfileName();
-    	if (status.matches(IStatus.ERROR)) {
-    		updateStatus(status);
-    		return;
-    	}
-    	
+
+		IStatus status = validateProfileName();
+		if (status.matches(IStatus.ERROR)) {
+			updateStatus(status);
+			return;
+		}
+
 		if (!name.equals(fProfile.getName()) && fProfileManager.containsName(name)) {
-			updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_Duplicate_Status, null));
+			updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0,
+					FormatterMessages.ModifyDialog_Duplicate_Status, null));
 			return;
 		}
-		
+
 		if (fProfile.isBuiltInProfile() || fProfile.isSharedProfile()) {
-			updateStatus(new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_NewCreated_Status, null));
+			updateStatus(new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, 0,
+					FormatterMessages.ModifyDialog_NewCreated_Status, null));
 			return;
 		}
 
-	    updateStatus(StatusInfo.OK_STATUS);
-    }
+		updateStatus(StatusInfo.OK_STATUS);
+	}
 
-    private IStatus validateProfileName() {
-    	final String name= fProfileNameField.getText().trim();
-    	
-	    if (fProfile.isBuiltInProfile()) {
-			if (fProfile.getName().equals(name)) { 
-				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_BuiltIn_Status, null);
-			}	
-    	}
-    	
-    	if (fProfile.isSharedProfile()) {
-			if (fProfile.getName().equals(name)) { 
-				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_Shared_Status, null);
+	private IStatus validateProfileName() {
+		final String name = fProfileNameField.getText().trim();
+
+		if (fProfile.isBuiltInProfile()) {
+			if (fProfile.getName().equals(name)) {
+				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_BuiltIn_Status,
+						null);
 			}
-    	}
-		
-		if (name.length() == 0) {
-			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_EmptyName_Status, null);
 		}
-		
+
+		if (fProfile.isSharedProfile()) {
+			if (fProfile.getName().equals(name)) {
+				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_Shared_Status,
+						null);
+			}
+		}
+
+		if (name.length() == 0) {
+			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_EmptyName_Status,
+					null);
+		}
+
 		return StatusInfo.OK_STATUS;
-    }
+	}
 
 	private boolean hasChanges() {
 		if (!fProfileNameField.getText().trim().equals(fProfile.getName()))
 			return true;
-		
-		Iterator<Map.Entry<String, String>> iter= fProfile.getSettings().entrySet().iterator();
-		for (;iter.hasNext();) {
-			Map.Entry<String, String> curr= iter.next();
+
+		Iterator<Map.Entry<String, String>> iter = fProfile.getSettings().entrySet().iterator();
+		for (; iter.hasNext();) {
+			Map.Entry<String, String> curr = iter.next();
 			if (!fWorkingValues.get(curr.getKey()).equals(curr.getValue())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 }

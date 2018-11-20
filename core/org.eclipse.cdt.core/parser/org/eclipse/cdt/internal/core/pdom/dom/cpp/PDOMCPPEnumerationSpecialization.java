@@ -48,21 +48,21 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 		implements IPDOMCPPEnumType, IPDOMMemberOwner, ICPPEnumerationSpecialization {
 	private static final int OFFSET_ENUMERATOR_LIST = PDOMCPPSpecialization.RECORD_SIZE;
-	private static final int OFFSET_MIN_VALUE= OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
-	private static final int OFFSET_MAX_VALUE= OFFSET_MIN_VALUE + 8;
+	private static final int OFFSET_MIN_VALUE = OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
+	private static final int OFFSET_MAX_VALUE = OFFSET_MIN_VALUE + 8;
 	private static final int OFFSET_FIXED_TYPE = OFFSET_MAX_VALUE + 8;
 	private static final int OFFSET_FLAGS = OFFSET_FIXED_TYPE + Database.TYPE_SIZE;
-	
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = OFFSET_FLAGS + 1;
-	
-	private Long fMinValue;	// No need for volatile, all fields of Long are final.
+
+	private Long fMinValue; // No need for volatile, all fields of Long are final.
 	private Long fMaxValue; // No need for volatile, all fields of Long are final.
-	private volatile IType fFixedType= ProblemBinding.NOT_INITIALIZED;
+	private volatile IType fFixedType = ProblemBinding.NOT_INITIALIZED;
 	private PDOMCPPEnumScope fScope; // No need for volatile, all fields of PDOMCPPEnumScope are final.
 
-	public PDOMCPPEnumerationSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
-			ICPPEnumeration enumeration, PDOMBinding specialized) throws CoreException {
+	public PDOMCPPEnumerationSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPEnumeration enumeration,
+			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) enumeration, specialized);
 		storeProperties(enumeration);
 	}
@@ -82,19 +82,19 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 	}
 
 	private void storeProperties(ICPPEnumeration enumeration) throws CoreException {
-		final Database db= getDB();
+		final Database db = getDB();
 		db.putByte(record + OFFSET_FLAGS, enumeration.isScoped() ? (byte) 1 : (byte) 0);
 
 		getLinkage().storeType(record + OFFSET_FIXED_TYPE, enumeration.getFixedType());
-		
+
 		if (enumeration instanceof ICPPInternalBinding) {
 			if (((ICPPInternalBinding) enumeration).getDefinition() != null) {
 				final long minValue = enumeration.getMinValue();
 				final long maxValue = enumeration.getMaxValue();
 				db.putLong(record + OFFSET_MIN_VALUE, minValue);
 				db.putLong(record + OFFSET_MAX_VALUE, maxValue);
-				fMinValue= minValue;
-				fMaxValue= maxValue;
+				fMinValue = minValue;
+				fMaxValue = maxValue;
 			}
 		}
 	}
@@ -103,7 +103,7 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_ENUMERATION_SPECIALIZATION;
@@ -113,7 +113,7 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 	public IEnumerator[] getEnumerators() {
 		return PDOMCPPEnumScope.getEnumerators(this);
 	}
-	
+
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		PDOMCPPEnumScope.acceptViaCache(this, visitor);
@@ -138,19 +138,19 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
-		
+
 		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
+			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
 		}
-		
+
 		if (type instanceof IEnumeration) {
-			IEnumeration etype= (IEnumeration) type;
+			IEnumeration etype = (IEnumeration) type;
 			char[] nchars = etype.getNameCharArray();
 			if (nchars.length == 0) {
-				nchars= ASTTypeUtil.createNameForAnonymous(etype);
+				nchars = ASTTypeUtil.createNameForAnonymous(etype);
 			}
 			if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
 				return false;
@@ -165,12 +165,12 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 		if (fMinValue != null) {
 			return fMinValue.longValue();
 		}
-		long minValue= 0;
+		long minValue = 0;
 		try {
-			minValue= getDB().getLong(record + OFFSET_MIN_VALUE);
+			minValue = getDB().getLong(record + OFFSET_MIN_VALUE);
 		} catch (CoreException e) {
 		}
-		fMinValue= minValue;
+		fMinValue = minValue;
 		return minValue;
 	}
 
@@ -179,19 +179,19 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 		if (fMaxValue != null) {
 			return fMaxValue.longValue();
 		}
-		long maxValue= 0;
+		long maxValue = 0;
 		try {
-			maxValue= getDB().getLong(record + OFFSET_MAX_VALUE);
+			maxValue = getDB().getLong(record + OFFSET_MAX_VALUE);
 		} catch (CoreException e) {
 		}
-		fMaxValue= maxValue;
+		fMaxValue = maxValue;
 		return maxValue;
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-    	throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
-    }
+		throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
+	}
 
 	@Override
 	public boolean isScoped() {
@@ -205,7 +205,7 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 	@Override
 	public IType getFixedType() {
 		if (fFixedType == ProblemBinding.NOT_INITIALIZED) {
-			fFixedType= loadFixedType();
+			fFixedType = loadFixedType();
 		}
 		return fFixedType;
 	}
@@ -222,7 +222,7 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 	@Override
 	public ICPPScope asScope() {
 		if (fScope == null) {
-			fScope= new PDOMCPPEnumScope(this);
+			fScope = new PDOMCPPEnumScope(this);
 		}
 		return fScope;
 	}
@@ -239,8 +239,10 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 					}
 					return true;
 				}
+
 				@Override
-				public void leave(IPDOMNode node) {}
+				public void leave(IPDOMNode node) {
+				}
 			});
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

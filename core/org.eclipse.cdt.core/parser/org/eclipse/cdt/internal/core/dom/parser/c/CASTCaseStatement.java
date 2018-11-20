@@ -26,9 +26,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CASTCaseStatement extends ASTAttributeOwner implements IASTCaseStatement, IASTAmbiguityParent {
-    private IASTExpression expression;
+	private IASTExpression expression;
 
-    public CASTCaseStatement() {
+	public CASTCaseStatement() {
 	}
 
 	public CASTCaseStatement(IASTExpression expression) {
@@ -48,46 +48,54 @@ public class CASTCaseStatement extends ASTAttributeOwner implements IASTCaseStat
 
 	@Override
 	public IASTExpression getExpression() {
-        return expression;
-    }
+		return expression;
+	}
 
-    @Override
+	@Override
 	public void setExpression(IASTExpression expression) {
-        assertNotFrozen();
-        this.expression = expression;
-        if (expression != null) {
+		assertNotFrozen();
+		this.expression = expression;
+		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(EXPRESSION);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if (expression != null) if (!expression.accept(action)) return false;
-        if (action.shouldVisitStatements) {
-        	switch (action.leave(this)) {
-        		case ASTVisitor.PROCESS_ABORT: return false;
-        		case ASTVisitor.PROCESS_SKIP: return true;
-        		default: break;
-        	}
-        }
+		if (expression != null)
+			if (!expression.accept(action))
+				return false;
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == expression) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            expression = (IASTExpression) other;
-        }
-    }
+		if (child == expression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			expression = (IASTExpression) other;
+		}
+	}
 }

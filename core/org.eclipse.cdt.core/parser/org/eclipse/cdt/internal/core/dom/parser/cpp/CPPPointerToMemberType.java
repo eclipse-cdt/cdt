@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointerToMemberType {
 	private ICPPASTPointerToMember operator;
-	private IType classType;  // Can be either ICPPClassType or ICPPTemplateTypeParameter
+	private IType classType; // Can be either ICPPClassType or ICPPTemplateTypeParameter
 
 	/**
 	 * @param type
@@ -51,29 +51,29 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 
 	@Override
 	public boolean isSameType(IType o) {
-	    if (o == this)
-            return true;
-        if (o instanceof ITypedef)
-            return o.isSameType(this);
+		if (o == this)
+			return true;
+		if (o instanceof ITypedef)
+			return o.isSameType(this);
 
-	    if (!(o instanceof ICPPPointerToMemberType))
-	        return false;
+		if (!(o instanceof ICPPPointerToMemberType))
+			return false;
 
-	    if (!super.isSameType(o))
-	        return false;
+		if (!super.isSameType(o))
+			return false;
 
-	    ICPPPointerToMemberType pt = (ICPPPointerToMemberType) o;
-	    IType cls = pt.getMemberOfClass();
-	    if (cls != null)
-	        return cls.isSameType(getMemberOfClass());
-	    return false;
+		ICPPPointerToMemberType pt = (ICPPPointerToMemberType) o;
+		IType cls = pt.getMemberOfClass();
+		if (cls != null)
+			return cls.isSameType(getMemberOfClass());
+		return false;
 	}
 
 	@Override
 	public IType getMemberOfClass() {
 		if (classType == null) {
 			ICPPASTNameSpecifier nameSpec;
-			IBinding binding= null;
+			IBinding binding = null;
 			ICPPASTPointerToMember pm = operator;
 			if (pm == null) {
 				nameSpec = new CPPASTName();
@@ -102,20 +102,22 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= ITypeMarshalBuffer.POINTER_TO_MEMBER_TYPE;
-		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
-		if (isRestrict()) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		short firstBytes = ITypeMarshalBuffer.POINTER_TO_MEMBER_TYPE;
+		if (isConst())
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile())
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict())
+			firstBytes |= ITypeMarshalBuffer.FLAG3;
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 		buffer.marshalType(getMemberOfClass());
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		IType nested= buffer.unmarshalType();
-		IType memberOf= buffer.unmarshalType();
+		IType nested = buffer.unmarshalType();
+		IType memberOf = buffer.unmarshalType();
 		return new CPPPointerToMemberType(nested, memberOf, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
-				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0,
-				(firstBytes & ITypeMarshalBuffer.FLAG3) != 0);
+				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0, (firstBytes & ITypeMarshalBuffer.FLAG3) != 0);
 	}
 }

@@ -47,6 +47,7 @@ public class DisassemblyViewer extends SourceViewer {
 		public void controlResized(ControlEvent e) {
 			updateViewportListeners(RESIZE);
 		}
+
 		@Override
 		public void controlMoved(ControlEvent e) {
 		}
@@ -54,7 +55,7 @@ public class DisassemblyViewer extends SourceViewer {
 
 	private boolean fUserTriggeredScrolling;
 	private int fCachedLastTopPixel;
-	
+
 	/**
 	 * Create a new DisassemblyViewer.
 	 * @param parent
@@ -63,7 +64,8 @@ public class DisassemblyViewer extends SourceViewer {
 	 * @param showsAnnotationOverview
 	 * @param styles
 	 */
-	public DisassemblyViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles) {
+	public DisassemblyViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler,
+			boolean showsAnnotationOverview, int styles) {
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
 		// always readonly
 		setEditable(false);
@@ -100,7 +102,8 @@ public class DisassemblyViewer extends SourceViewer {
 				selectedText = getSelectedText();
 			} catch (BadLocationException e) {
 				// should not happend
-				DsfUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
+				DsfUIPlugin.getDefault().getLog()
+						.log(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
 				return;
 			}
 			Clipboard clipboard = new Clipboard(textWidget.getDisplay());
@@ -121,7 +124,7 @@ public class DisassemblyViewer extends SourceViewer {
 	public String getSelectedText() throws BadLocationException {
 		StringBuilder text = new StringBuilder(200);
 		String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
-		DisassemblyDocument doc = (DisassemblyDocument)getDocument();
+		DisassemblyDocument doc = (DisassemblyDocument) getDocument();
 		Point selection = getSelectedRange();
 		int startOffset = selection.x;
 		int length = selection.y;
@@ -176,15 +179,15 @@ public class DisassemblyViewer extends SourceViewer {
 		StringBuilder prefix = new StringBuilder(10);
 		IVerticalRuler ruler = getVerticalRuler();
 		if (ruler instanceof CompositeRuler) {
-			for (Iterator<?> iter = ((CompositeRuler)ruler).getDecoratorIterator(); iter.hasNext();) {
+			for (Iterator<?> iter = ((CompositeRuler) ruler).getDecoratorIterator(); iter.hasNext();) {
 				IVerticalRulerColumn column = (IVerticalRulerColumn) iter.next();
 				if (column instanceof DisassemblyRulerColumn) {
-					DisassemblyRulerColumn disassColumn = (DisassemblyRulerColumn)column;
+					DisassemblyRulerColumn disassColumn = (DisassemblyRulerColumn) column;
 					String columnText = disassColumn.createDisplayString(line);
 					prefix.append(columnText);
 					int columnWidth = disassColumn.computeNumberOfCharacters();
 					columnWidth -= columnText.length();
-					while(columnWidth-- > 0)
+					while (columnWidth-- > 0)
 						prefix.append(' ');
 					prefix.append(' ');
 				}
@@ -213,7 +216,7 @@ public class DisassemblyViewer extends SourceViewer {
 				int bottom = top + lines;
 
 				int bottomBuffer = Math.max(1, lines / 3);
-				
+
 				if (!onTop && focusLine >= top && focusLine <= bottom - bottomBuffer) {
 					// do not scroll at all as it is already visible
 				} else {
@@ -242,7 +245,7 @@ public class DisassemblyViewer extends SourceViewer {
 	private int getEstimatedVisibleLinesInViewport() {
 		StyledText textWidget = getTextWidget();
 		if (textWidget != null) {
-			Rectangle clArea= textWidget.getClientArea();
+			Rectangle clArea = textWidget.getClientArea();
 			if (!clArea.isEmpty())
 				return clArea.height / textWidget.getLineHeight();
 		}
@@ -252,7 +255,7 @@ public class DisassemblyViewer extends SourceViewer {
 	public int getLastTopPixel() {
 		return fCachedLastTopPixel;
 	}
-	
+
 	public boolean isUserTriggeredScrolling() {
 		return fUserTriggeredScrolling;
 	}
@@ -269,5 +272,5 @@ public class DisassemblyViewer extends SourceViewer {
 		}
 		super.updateViewportListeners(origin);
 	}
-	
+
 }

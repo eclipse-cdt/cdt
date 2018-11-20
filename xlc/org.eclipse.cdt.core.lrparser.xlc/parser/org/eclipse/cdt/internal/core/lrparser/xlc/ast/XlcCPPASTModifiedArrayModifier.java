@@ -21,10 +21,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayModifier;
 public class XlcCPPASTModifiedArrayModifier extends CPPASTArrayModifier implements IXlcCPPASTModifiedArrayModifier {
 
 	private boolean isVolatile;
-    private boolean isRestrict;
-    private boolean isStatic;
-    private boolean isConst;
-    private boolean varSized;
+	private boolean isRestrict;
+	private boolean isStatic;
+	private boolean isConst;
+	private boolean varSized;
 
 	public XlcCPPASTModifiedArrayModifier() {
 	}
@@ -49,50 +49,50 @@ public class XlcCPPASTModifiedArrayModifier extends CPPASTArrayModifier implemen
 		copy.varSized = varSized;
 		return copy(copy, style);
 	}
-	
+
 	public boolean isConst() {
-        return isConst;
-    }
+		return isConst;
+	}
 
-    public boolean isStatic() {
-        return isStatic;
-    }
+	public boolean isStatic() {
+		return isStatic;
+	}
 
-    public boolean isRestrict() {
-        return isRestrict;
-    }
+	public boolean isRestrict() {
+		return isRestrict;
+	}
 
-    public boolean isVolatile() {
-        return isVolatile;
-    }
+	public boolean isVolatile() {
+		return isVolatile;
+	}
 
-    public void setConst(boolean value) {
-        assertNotFrozen();
-        this.isConst = value;
-    }
+	public void setConst(boolean value) {
+		assertNotFrozen();
+		this.isConst = value;
+	}
 
-    public void setVolatile(boolean value) {
-        assertNotFrozen();
-        this.isVolatile = value;
-    }
+	public void setVolatile(boolean value) {
+		assertNotFrozen();
+		this.isVolatile = value;
+	}
 
-    public void setRestrict(boolean value) {
-        assertNotFrozen();
-        this.isRestrict = value;
-    }
+	public void setRestrict(boolean value) {
+		assertNotFrozen();
+		this.isRestrict = value;
+	}
 
-    public void setStatic(boolean value) {
-        assertNotFrozen();
-        this.isStatic = value;
-    }
+	public void setStatic(boolean value) {
+		assertNotFrozen();
+		this.isStatic = value;
+	}
 
-    public boolean isVariableSized() {
-        return varSized;
-    }
+	public boolean isVariableSized() {
+		return varSized;
+	}
 
-    public void setVariableSized(boolean value) {
-        assertNotFrozen();
-        varSized = value;
-    }
+	public void setVariableSized(boolean value) {
+		assertNotFrozen();
+		varSized = value;
+	}
 
 }

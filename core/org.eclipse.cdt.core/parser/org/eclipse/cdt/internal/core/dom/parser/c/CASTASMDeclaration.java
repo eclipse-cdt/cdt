@@ -23,9 +23,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  */
 public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
 
-    char [] assembly = null;
+	char[] assembly = null;
 
-    public CASTASMDeclaration() {
+	public CASTASMDeclaration() {
 	}
 
 	public CASTASMDeclaration(String assembly) {
@@ -46,33 +46,40 @@ public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
 
 	@Override
 	public String getAssembly() {
-        if (assembly == null) return ""; //$NON-NLS-1$
-        return new String(assembly);
-    }
+		if (assembly == null)
+			return ""; //$NON-NLS-1$
+		return new String(assembly);
+	}
 
-    @Override
+	@Override
 	public void setAssembly(String assembly) {
-        assertNotFrozen();
-        this.assembly = assembly == null ? null : assembly.toCharArray();
-    }
+		assertNotFrozen();
+		this.assembly = assembly == null ? null : assembly.toCharArray();
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclarations) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (action.shouldVisitDeclarations) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 }

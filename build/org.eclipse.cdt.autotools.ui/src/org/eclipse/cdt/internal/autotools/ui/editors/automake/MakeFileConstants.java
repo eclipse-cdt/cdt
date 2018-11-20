@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 public class MakeFileConstants {
 
-    public static final String RULE_DEFAULT = ".DEFAULT"; //$NON-NLS-1$
-    public static final String RULE_IGNORE =".IGNORE"; //$NON-NLS-1$
-    public static final String RULE_POSIX = ".POSIX"; //$NON-NLS-1$
-    public static final String RULE_PRECIOUS = ".PRECIOUS"; //$NON-NLS-1$
-    public static final String RULE_SCCS_GET = ".SCCS_GET"; //$NON-NLS-1$
-    public static final String RULE_SILENT = ".SILENT"; //$NON-NLS-1$
-    public static final String RULE_SUFFIXES = ".SUFFIXES"; //$NON-NLS-1$
+	public static final String RULE_DEFAULT = ".DEFAULT"; //$NON-NLS-1$
+	public static final String RULE_IGNORE = ".IGNORE"; //$NON-NLS-1$
+	public static final String RULE_POSIX = ".POSIX"; //$NON-NLS-1$
+	public static final String RULE_PRECIOUS = ".PRECIOUS"; //$NON-NLS-1$
+	public static final String RULE_SCCS_GET = ".SCCS_GET"; //$NON-NLS-1$
+	public static final String RULE_SILENT = ".SILENT"; //$NON-NLS-1$
+	public static final String RULE_SUFFIXES = ".SUFFIXES"; //$NON-NLS-1$
 
 }

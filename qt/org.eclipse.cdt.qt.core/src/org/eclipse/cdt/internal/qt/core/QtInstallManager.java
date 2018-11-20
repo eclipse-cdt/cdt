@@ -57,9 +57,10 @@ public class QtInstallManager implements IQtInstallManager {
 			} catch (BackingStoreException e) {
 				Activator.log(e);
 			}
-			
+
 			// Auto installs
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.ID, "qtInstallProvider"); //$NON-NLS-1$
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.ID,
+					"qtInstallProvider"); //$NON-NLS-1$
 			for (IConfigurationElement element : point.getConfigurationElements()) {
 				try {
 					IQtInstallProvider provider = (IQtInstallProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
@@ -140,7 +141,8 @@ public class QtInstallManager implements IQtInstallManager {
 	public boolean supports(IQtInstall install, IToolChain toolChain) {
 		if (toolChainMap == null) {
 			toolChainMap = new HashMap<>();
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.ID, "qtToolChainMapper"); //$NON-NLS-1$
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.ID,
+					"qtToolChainMapper"); //$NON-NLS-1$
 			for (IConfigurationElement element : point.getConfigurationElements()) {
 				if (element.getName().equals("mapping")) { //$NON-NLS-1$
 					String spec = element.getAttribute("spec"); //$NON-NLS-1$
@@ -148,7 +150,7 @@ public class QtInstallManager implements IQtInstallManager {
 				}
 			}
 		}
-		
+
 		IConfigurationElement element = toolChainMap.get(install.getSpec());
 		if (element != null) {
 			for (IConfigurationElement property : element.getChildren("property")) { //$NON-NLS-1$
@@ -158,7 +160,7 @@ public class QtInstallManager implements IQtInstallManager {
 					return false;
 				}
 			}
-			
+
 			for (Entry<String, String> property : install.getProperties().entrySet()) {
 				if (!property.getValue().equals(toolChain.getProperty(property.getKey()))) {
 					return false;

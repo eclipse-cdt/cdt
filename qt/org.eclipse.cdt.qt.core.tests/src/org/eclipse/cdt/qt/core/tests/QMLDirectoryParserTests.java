@@ -48,7 +48,8 @@ public class QMLDirectoryParserTests {
 
 		// Check SourceLocation start
 		assertEquals("Unexpected location start line", locStart.getLine(), node.getLocation().getStart().getLine());
-		assertEquals("Unexpected location start column", locStart.getColumn(), node.getLocation().getStart().getColumn());
+		assertEquals("Unexpected location start column", locStart.getColumn(),
+				node.getLocation().getStart().getColumn());
 	}
 
 	private InputStream createInputStream(String s) {
@@ -229,11 +230,8 @@ public class QMLDirectoryParserTests {
 	@Test
 	public void testExampleQMLDirFile() {
 		QMLDirectoryParser parser = new QMLDirectoryParser();
-		IQDirAST ast = parser.parse(createInputStream("module QtQuick\n" +
-				"plugin qtquick2plugin\n" +
-				"classname QtQuick2Plugin\n" +
-				"typeinfo plugins.qmltypes\n" +
-				"designersupported\n"));
+		IQDirAST ast = parser.parse(createInputStream("module QtQuick\n" + "plugin qtquick2plugin\n"
+				+ "classname QtQuick2Plugin\n" + "typeinfo plugins.qmltypes\n" + "designersupported\n"));
 
 		assertEquals("Unexpected command list size", 5, ast.getCommands().size());
 		// Module Command (index 0)
@@ -260,11 +258,8 @@ public class QMLDirectoryParserTests {
 	@Test
 	public void testExampleQMLDirFileWithError() {
 		QMLDirectoryParser parser = new QMLDirectoryParser();
-		IQDirAST ast = parser.parse(createInputStream("module QtQuick\n" +
-				"plugin qtquick2plugin\n" +
-				"classnames QtQuick2Plugin\n" +
-				"typeinfo plugins.qmltypes\n" +
-				"designersupported\n"));
+		IQDirAST ast = parser.parse(createInputStream("module QtQuick\n" + "plugin qtquick2plugin\n"
+				+ "classnames QtQuick2Plugin\n" + "typeinfo plugins.qmltypes\n" + "designersupported\n"));
 
 		assertEquals("Unexpected command list size", 5, ast.getCommands().size());
 		// Module Command (index 0)
@@ -279,7 +274,8 @@ public class QMLDirectoryParserTests {
 		// Syntax Error Command (index 2)
 		assertThat("Unexpected command", ast.getCommands().get(2), instanceOf(IQDirSyntaxError.class));
 		IQDirSyntaxError err = (IQDirSyntaxError) ast.getCommands().get(2);
-		assertEquals("Unexpected error message", "Unexpected token 'QtQuick2Plugin' (3:11)", err.getSyntaxError().getMessage());
+		assertEquals("Unexpected error message", "Unexpected token 'QtQuick2Plugin' (3:11)",
+				err.getSyntaxError().getMessage());
 		// Type Info Command (index 3)
 		assertThat("Unexpected command", ast.getCommands().get(3), instanceOf(IQDirTypeInfoCommand.class));
 		IQDirTypeInfoCommand typeinfo = (IQDirTypeInfoCommand) ast.getCommands().get(3);

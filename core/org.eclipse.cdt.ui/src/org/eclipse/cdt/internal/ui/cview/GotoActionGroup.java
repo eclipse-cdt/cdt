@@ -47,7 +47,7 @@ public class GotoActionGroup extends CViewActionGroup {
 
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
-                IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
+		IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
 		IStructuredSelection selection = SelectionConverter.convertSelectionToResources(celements);
 		if (selection.size() == 1) {
 			if (SelectionConverter.allResourcesAreOfType(selection, IResource.FOLDER)) {
@@ -98,11 +98,11 @@ public class GotoActionGroup extends CViewActionGroup {
 		// This should never happen because resource navigator sets
 		// context immediately after this group is created.
 		if (context != null) {
-                	IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+			IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 			if (selection.size() == 1) {
 				Object object = selection.getFirstElement();
 				if (object instanceof IAdaptable) {
-					IResource resource = ((IAdaptable)object).getAdapter(IResource.class);
+					IResource resource = ((IAdaptable) object).getAdapter(IResource.class);
 					if (resource instanceof IProject) {
 						enable = ((IProject) resource).isOpen();
 					} else if (resource instanceof IFolder) {

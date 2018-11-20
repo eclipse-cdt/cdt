@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 public interface IQtBuildConfiguration extends ICBuildConfiguration {
 
 	Path getBuildDirectory() throws CoreException;
-	
+
 	Path getQmakeCommand();
 
 	String[] getQmakeConfig();

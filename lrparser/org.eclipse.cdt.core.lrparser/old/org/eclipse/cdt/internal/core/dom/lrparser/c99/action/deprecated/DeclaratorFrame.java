@@ -37,109 +37,111 @@ public class DeclaratorFrame {
 	private IToken declaratorName;
 	private boolean isDeclaratorBracketed;
 	private boolean isFunctionDeclarator = false;
-	
+
 	// temporary storage for pointer modifiers
 	private LinkedList<LinkedList<C99PointerType>> pointerModifiers = new LinkedList<LinkedList<C99PointerType>>();
-	
+
 	// stores pointer and array modifiers that are applied to the declarator
 	private LinkedList<ITypeContainer> typeModifiers = new LinkedList<ITypeContainer>();
-	
+
 	private LinkedList<IBinding> nestedDeclarations = new LinkedList<IBinding>();
-	
-	
+
 	public DeclaratorFrame() {
 	}
 
 	public DeclaratorFrame(DeclSpec declSpec) {
 		this.declSpec = declSpec;
 	}
-	
-	
+
 	public DeclSpec getDeclSpec() {
-		if(declSpec == null)
+		if (declSpec == null)
 			declSpec = new DeclSpec();
-		
+
 		return declSpec;
 	}
-	
+
 	public IType getDeclaratorType() {
 		// the declSpec may be null, so use getDeclSpec()
 		IType baseType = getDeclSpec().getType();
-		
-		if(typeModifiers.isEmpty())
+
+		if (typeModifiers.isEmpty())
 			return baseType;
-		
+
 		IType type = typeModifiers.get(0);
-		
+
 		// link the types together
-		for(int i = 1; i < typeModifiers.size(); i++) {
-			ITypeContainer t1 = typeModifiers.get(i-1);
+		for (int i = 1; i < typeModifiers.size(); i++) {
+			ITypeContainer t1 = typeModifiers.get(i - 1);
 			ITypeContainer t2 = typeModifiers.get(i);
 			t1.setType(t2);
 		}
-		
-		ITypeContainer last = typeModifiers.get(typeModifiers.size()-1);
+
+		ITypeContainer last = typeModifiers.get(typeModifiers.size() - 1);
 		last.setType(baseType);
 		return type;
 	}
-	
+
 	public IToken getDeclaratorName() {
 		return declaratorName;
 	}
+
 	public void setDeclaratorName(IToken declaratorName) {
 		this.declaratorName = declaratorName;
 	}
+
 	public boolean isDeclaratorBracketed() {
 		return isDeclaratorBracketed;
 	}
+
 	public void setDeclaratorBracketed(boolean isDeclaratorBracketed) {
 		this.isDeclaratorBracketed = isDeclaratorBracketed;
 	}
+
 	public boolean isFunctionDeclarator() {
 		return isFunctionDeclarator;
 	}
+
 	public void setFunctionDeclarator(boolean isFunctionDeclarator) {
 		this.isFunctionDeclarator = isFunctionDeclarator;
 	}
-	
+
 	public List<IBinding> getNestedDeclarations() {
 		return nestedDeclarations;
 	}
-	
+
 	public void addNestedDeclaration(IBinding binding) {
 		nestedDeclarations.add(binding);
 	}
-	
+
 	public void removeLastNestedDeclaration() {
 		nestedDeclarations.removeLast();
 	}
-	
+
 	public void addTypeModifier(ITypeContainer x) {
 		typeModifiers.add(x);
 	}
-	
+
 	public void removeLastTypeModifier() {
 		typeModifiers.removeLast();
 	}
-	
+
 	public void addPointerModifier(C99PointerType x) {
 		pointerModifiers.getLast().add(x);
 	}
-	
+
 	public void removeLastPointerModifier() {
 		pointerModifiers.getLast().removeLast();
 	}
-	
+
 	public void openPointerModifierScope() {
 		pointerModifiers.add(new LinkedList<C99PointerType>());
 	}
-	
+
 	public void openPointerModifierScope(LinkedList<C99PointerType> scope) {
 		pointerModifiers.add(scope);
 	}
-	
+
 	public LinkedList<C99PointerType> closePointerModifierScope() {
 		return pointerModifiers.removeLast();
 	}
 }
-

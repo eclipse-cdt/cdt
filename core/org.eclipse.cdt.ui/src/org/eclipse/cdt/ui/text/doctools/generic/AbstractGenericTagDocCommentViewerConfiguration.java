@@ -29,13 +29,13 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 public abstract class AbstractGenericTagDocCommentViewerConfiguration implements IDocCommentViewerConfiguration {
 	protected GenericDocTag[] fTags;
 	protected char[] fTagMarkers;
-	
+
 	protected ITextDoubleClickStrategy fDCStrategy;
 	protected ICompletionProposalComputer fCPComputer;
 	protected String fDefaultToken;
 	protected String fTagToken;
 	protected IDocCommentSimpleDictionary fDictionary;
-	
+
 	/**
 	 * 
 	 * @param tags a non-null array of tags this configuration should recognize
@@ -43,14 +43,15 @@ public abstract class AbstractGenericTagDocCommentViewerConfiguration implements
 	 * @param defaultToken the default scanner token id
 	 * @param tagToken the scanner token to use to mark used by this configuration
 	 */
-	public AbstractGenericTagDocCommentViewerConfiguration(GenericDocTag[] tags, char[] tagMarkers, String defaultToken, String tagToken) {
-		fTags= tags;
-		fTagMarkers= tagMarkers;
-		fDCStrategy= new GenericTagDoubleClickStrategy(tagMarkers);
-		fCPComputer= new GenericTagCompletionProposalComputer(fTags, tagMarkers);
-		fDefaultToken= defaultToken;
-		fTagToken= tagToken;
-		fDictionary= new GenericTagSimpleDictionary(fTags, fTagMarkers);
+	public AbstractGenericTagDocCommentViewerConfiguration(GenericDocTag[] tags, char[] tagMarkers, String defaultToken,
+			String tagToken) {
+		fTags = tags;
+		fTagMarkers = tagMarkers;
+		fDCStrategy = new GenericTagDoubleClickStrategy(tagMarkers);
+		fCPComputer = new GenericTagCompletionProposalComputer(fTags, tagMarkers);
+		fDefaultToken = defaultToken;
+		fTagToken = tagToken;
+		fDictionary = new GenericTagSimpleDictionary(fTags, fTagMarkers);
 	}
 
 	/*
@@ -76,7 +77,7 @@ public abstract class AbstractGenericTagDocCommentViewerConfiguration implements
 	public ICompletionProposalComputer createProposalComputer() {
 		return fCPComputer;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration#getSpellingDictionary()
 	 */

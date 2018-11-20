@@ -29,20 +29,19 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 /**
  * c++ specific composite type specifier
  */
-public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
-        implements ICPPASTCompositeTypeSpecifier {
-    private int fKey;
-    private IASTName fName;
-    private CPPClassScope fScope;
+public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier implements ICPPASTCompositeTypeSpecifier {
+	private int fKey;
+	private IASTName fName;
+	private CPPClassScope fScope;
 	private IASTDeclaration[] fAllDeclarations;
 	private IASTDeclaration[] fActiveDeclarations;
-    private int fDeclarationsPos = -1;
+	private int fDeclarationsPos = -1;
 	private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[] baseSpecs;
 	private int baseSpecsPos = -1;
 	private boolean fAmbiguitiesResolved;
 	private ICPPASTClassVirtSpecifier virtSpecifier;
 
-    public CPPASTCompositeTypeSpecifier() {
+	public CPPASTCompositeTypeSpecifier() {
 	}
 
 	public CPPASTCompositeTypeSpecifier(int k, IASTName n) {
@@ -54,7 +53,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		if (!fAmbiguitiesResolved && fScope != null) {
 			fScope.createImplicitMembers();
 		}
-		fAmbiguitiesResolved= true;
+		fAmbiguitiesResolved = true;
 	}
 
 	@Override
@@ -64,8 +63,8 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 
 	@Override
 	public CPPASTCompositeTypeSpecifier copy(CopyStyle style) {
-		CPPASTCompositeTypeSpecifier copy =
-				new CPPASTCompositeTypeSpecifier(fKey, fName == null ? null : fName.copy(style));
+		CPPASTCompositeTypeSpecifier copy = new CPPASTCompositeTypeSpecifier(fKey,
+				fName == null ? null : fName.copy(style));
 		for (IASTDeclaration member : getMembers())
 			copy.addMemberDeclaration(member == null ? null : member.copy(style));
 		for (ICPPASTBaseSpecifier baseSpecifier : getBaseSpecifiers())
@@ -74,57 +73,56 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		return super.copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public ICPPASTBaseSpecifier[] getBaseSpecifiers() {
-        if (baseSpecs == null)
-        	return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
-        baseSpecs = ArrayUtil.trimAt(ICPPASTBaseSpecifier.class, baseSpecs, baseSpecsPos);
-        return baseSpecs;
-    }
+		if (baseSpecs == null)
+			return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
+		baseSpecs = ArrayUtil.trimAt(ICPPASTBaseSpecifier.class, baseSpecs, baseSpecsPos);
+		return baseSpecs;
+	}
 
-    @Override
+	@Override
 	public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec) {
-        assertNotFrozen();
-    	if (baseSpec != null) {
-    		baseSpec.setParent(this);
+		assertNotFrozen();
+		if (baseSpec != null) {
+			baseSpec.setParent(this);
 			baseSpec.setPropertyInParent(BASE_SPECIFIER);
-    		baseSpecs = ArrayUtil.appendAt(ICPPASTBaseSpecifier.class, baseSpecs, ++baseSpecsPos,
-    				baseSpec);
-    	}
-    }
+			baseSpecs = ArrayUtil.appendAt(ICPPASTBaseSpecifier.class, baseSpecs, ++baseSpecsPos, baseSpec);
+		}
+	}
 
-    @Override
+	@Override
 	public int getKey() {
-        return fKey;
-    }
+		return fKey;
+	}
 
-    @Override
+	@Override
 	public void setKey(int key) {
-        assertNotFrozen();
-        fKey = key;
-    }
+		assertNotFrozen();
+		fKey = key;
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return fName;
-    }
+		return fName;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.fName = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.fName = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(TYPE_NAME);
 		}
-    }
+	}
 
 	@Override
 	public IASTDeclaration[] getMembers() {
-		IASTDeclaration[] active= fActiveDeclarations;
+		IASTDeclaration[] active = fActiveDeclarations;
 		if (active == null) {
 			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fDeclarationsPos + 1);
-			fActiveDeclarations= active;
+			fActiveDeclarations = active;
 		}
 		return active;
 	}
@@ -132,8 +130,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 	@Override
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations,
-					fDeclarationsPos);
+			fAllDeclarations = ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations, fDeclarationsPos);
 			return fAllDeclarations;
 		}
 		return getMembers();
@@ -151,15 +148,14 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		assertNotFrozen();
 		decl.setParent(this);
 		decl.setPropertyInParent(decl instanceof ICPPASTVisibilityLabel ? VISIBILITY_LABEL : MEMBER_DECLARATION);
-		fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class, fAllDeclarations,
-				++fDeclarationsPos, decl);
-		fActiveDeclarations= null;
+		fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class, fAllDeclarations, ++fDeclarationsPos, decl);
+		fActiveDeclarations = null;
 	}
 
-    @Override
+	@Override
 	public final void addDeclaration(IASTDeclaration decl) {
-    	addMemberDeclaration(decl);
-    }
+		addMemberDeclaration(decl);
+	}
 
 	@Override
 	public ICPPClassScope getScope() {
@@ -172,13 +168,16 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		return fScope;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclSpecifiers) {
 			switch (action.visit(this)) {
-			case ASTVisitor.PROCESS_ABORT: return false;
-			case ASTVisitor.PROCESS_SKIP: return true;
-			default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 
@@ -224,7 +223,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 				other.setParent(child.getParent());
 				other.setPropertyInParent(child.getPropertyInParent());
 				fAllDeclarations[i] = (IASTDeclaration) other;
-				fActiveDeclarations= null;
+				fActiveDeclarations = null;
 				return;
 			}
 		}

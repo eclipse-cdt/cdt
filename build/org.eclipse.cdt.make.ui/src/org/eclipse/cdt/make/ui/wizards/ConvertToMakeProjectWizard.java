@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.wizards;
 
-
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.wizards.conversion.ConversionWizard;
@@ -49,6 +48,7 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 	public ConvertToMakeProjectWizard() {
 		this(getWindowTitleResource(), getWzDescriptionResource());
 	}
+
 	/**
 	 * ConvertToStdMakeConversionWizard Wizard constructor
 	 */
@@ -112,7 +112,8 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 
 	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 2); //$NON-NLS-1$
+		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), //$NON-NLS-1$
+				2);
 		try {
 			super.doRun(new SubProgressMonitor(monitor, 1));
 		} finally {

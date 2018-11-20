@@ -57,7 +57,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @see IASTExpression
  * @author Emanuel Graf IFS
  */
-public class ExpressionWriter extends NodeWriter{
+public class ExpressionWriter extends NodeWriter {
 	private static final String VECTORED_DELETE_OP = "[] "; //$NON-NLS-1$
 	private static final String DELETE = "delete "; //$NON-NLS-1$
 	private static final String STATIC_CAST_OP = "static_cast<"; //$NON-NLS-1$
@@ -121,12 +121,13 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String THIS = "this"; //$NON-NLS-1$
 	private static final String THROW = "throw "; //$NON-NLS-1$
 	private final MacroExpansionHandler macroHandler;
-	
-	public ExpressionWriter(Scribe scribe, ASTWriterVisitor visitor, MacroExpansionHandler macroHandler, NodeCommentMap commentMap) {
+
+	public ExpressionWriter(Scribe scribe, ASTWriterVisitor visitor, MacroExpansionHandler macroHandler,
+			NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.macroHandler = macroHandler;
 	}
-	
+
 	protected void writeExpression(IASTExpression expression) {
 		if (expression instanceof IASTBinaryExpression) {
 			writeBinaryExpression((IASTBinaryExpression) expression);
@@ -165,8 +166,8 @@ public class ExpressionWriter extends NodeWriter{
 		}
 	}
 
-	private String getBinaryExpressionOperator(int operator){
-		switch(operator){
+	private String getBinaryExpressionOperator(int operator) {
+		switch (operator) {
 		case IASTBinaryExpression.op_multiply:
 			return MULTIPLY_OP;
 		case IASTBinaryExpression.op_divide:
@@ -240,12 +241,12 @@ public class ExpressionWriter extends NodeWriter{
 			throw new IllegalArgumentException("Unknown unaryExpressionType: " + operator); //$NON-NLS-1$
 		}
 	}
-	
+
 	private boolean isPrefixExpression(IASTUnaryExpression unExp) {
 		int unaryExpressionType = unExp.getOperator();
 
 		switch (unaryExpressionType) {
-		case IASTUnaryExpression.op_prefixDecr:	
+		case IASTUnaryExpression.op_prefixDecr:
 		case IASTUnaryExpression.op_prefixIncr:
 		case IASTUnaryExpression.op_plus:
 		case IASTUnaryExpression.op_minus:
@@ -267,11 +268,11 @@ public class ExpressionWriter extends NodeWriter{
 			return false;
 		}
 	}
-	
+
 	private boolean isPostfixExpression(IASTUnaryExpression unExp) {
 		int unaryExpressionType = unExp.getOperator();
 		switch (unaryExpressionType) {
-		case IASTUnaryExpression.op_postFixDecr:	
+		case IASTUnaryExpression.op_postFixDecr:
 		case IASTUnaryExpression.op_postFixIncr:
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case ICPPASTUnaryExpression.op_typeid:
@@ -284,11 +285,11 @@ public class ExpressionWriter extends NodeWriter{
 			return false;
 		}
 	}
-	
+
 	private String getPrefixOperator(IASTUnaryExpression unExp) {
 		int unaryExpressionType = unExp.getOperator();
 		switch (unaryExpressionType) {
-		case IASTUnaryExpression.op_prefixDecr:	
+		case IASTUnaryExpression.op_prefixDecr:
 			return DECREMENT_OP;
 		case IASTUnaryExpression.op_prefixIncr:
 			return INCREMENT_OP;
@@ -322,10 +323,10 @@ public class ExpressionWriter extends NodeWriter{
 			return LABEL_REFERENCE_OP;
 		default:
 			System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-		throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
+			throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
 		}
 	}
-	
+
 	private String getPostfixOperator(IASTUnaryExpression unExp) {
 		int unaryExpressionType = unExp.getOperator();
 		switch (unaryExpressionType) {
@@ -351,7 +352,8 @@ public class ExpressionWriter extends NodeWriter{
 			operand1.accept(visitor);
 		}
 		IASTExpression operand2 = binExp.getOperand2();
-		if (macroHandler.checkisMacroExpansionNode(operand2, false)&& macroHandler.macroExpansionAlreadyPrinted(operand2)) {
+		if (macroHandler.checkisMacroExpansionNode(operand2, false)
+				&& macroHandler.macroExpansionAlreadyPrinted(operand2)) {
 			return;
 		}
 		scribe.print(getBinaryExpressionOperator(binExp.getOperator()));
@@ -367,11 +369,11 @@ public class ExpressionWriter extends NodeWriter{
 		if (placement != null) {
 			writeArgumentList(placement);
 		}
-				
+
 		IASTTypeId typeId = newExp.getTypeId();
 		visitNodeIfNotNull(typeId);
-		
-		IASTInitializer initExp= getNewInitializer(newExp);
+
+		IASTInitializer initExp = getNewInitializer(newExp);
 		if (initExp != null) {
 			initExp.accept(visitor);
 		}
@@ -383,13 +385,13 @@ public class ExpressionWriter extends NodeWriter{
 
 	private void writeArgumentList(IASTInitializerClause[] args) {
 		scribe.print(OPEN_BRACKET_OP);
-		boolean needComma= false;
+		boolean needComma = false;
 		for (IASTInitializerClause arg : args) {
 			if (needComma) {
 				scribe.print(COMMA_SPACE);
 			}
 			arg.accept(visitor);
-			needComma= true;
+			needComma = true;
 		}
 		scribe.print(CLOSING_BRACKET_OP);
 	}
@@ -415,13 +417,12 @@ public class ExpressionWriter extends NodeWriter{
 		// gcc extension allows to omit the positive expression.
 		if (positiveExpression == null) {
 			scribe.print(' ');
-		}
-		else {
+		} else {
 			positiveExpression.accept(visitor);
 		}
 		scribe.print(SPACE_COLON_SPACE);
 		condExp.getNegativeResultExpression().accept(visitor);
-		
+
 	}
 
 	private void writeArraySubscriptExpression(IASTArraySubscriptExpression arrSubExp) {
@@ -429,7 +430,7 @@ public class ExpressionWriter extends NodeWriter{
 		scribe.print('[');
 		arrSubExp.getArgument().accept(visitor);
 		scribe.print(']');
-		
+
 	}
 
 	private void writeFieldReference(IASTFieldReference fieldRef) {
@@ -458,11 +459,11 @@ public class ExpressionWriter extends NodeWriter{
 		castExp.getTypeId().accept(visitor);
 		scribe.print(getCastPostfix(castExp.getOperator()));
 		if (castExp instanceof ICPPASTCastExpression) {
-			scribe.print('(');			
+			scribe.print('(');
 		}
 		castExp.getOperand().accept(visitor);
 		if (castExp instanceof ICPPASTCastExpression) {
-			scribe.print(')');			
+			scribe.print(')');
 		}
 	}
 
@@ -509,12 +510,12 @@ public class ExpressionWriter extends NodeWriter{
 	private void writeTypeIdExpression(IASTTypeIdExpression typeIdExp) {
 		scribe.print(getTypeIdExp(typeIdExp));
 		typeIdExp.getTypeId().accept(visitor);
-		scribe.print(')');		
+		scribe.print(')');
 	}
 
 	private String getTypeIdExp(IASTTypeIdExpression typeIdExp) {
 		final int type = typeIdExp.getOperator();
-		switch(type) {
+		switch (type) {
 		case IASTTypeIdExpression.op_sizeof:
 			return SIZEOF_OP + "("; //$NON-NLS-1$
 		case ICPPASTTypeIdExpression.op_typeid:
@@ -544,7 +545,7 @@ public class ExpressionWriter extends NodeWriter{
 		simpTypeCtorExp.getDeclSpecifier().accept(visitor);
 		visitNodeIfNotNull(simpTypeCtorExp.getInitializer());
 	}
-	
+
 	private void writeLambdaExpression(ICPPASTLambdaExpression lambdaExpression) {
 		writeLambdaIntroducer(lambdaExpression);
 		if (lambdaExpression.getDeclarator() != null) {
@@ -596,4 +597,3 @@ public class ExpressionWriter extends NodeWriter{
 		scribe.print(VAR_ARGS);
 	}
 }
-

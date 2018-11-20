@@ -34,13 +34,13 @@ import org.eclipse.cdt.internal.ui.refactoring.rename.RenameLinkedMode;
  * Launches a rename refactoring.
  * 
  * @noextend This class is not intended to be subclassed by clients.
- */          
+ */
 public class CRenameAction extends RefactoringAction {
-    
-    public CRenameAction() {
-        super(Messages.CRenameAction_label);
-    }
-    
+
+	public CRenameAction() {
+		super(Messages.CRenameAction_label);
+	}
+
 	@Override
 	public void run(IShellProvider shellProvider, ICElement elem) {
 		if (!ActionUtil.isEditable(fEditor, shellProvider.getShell(), elem))
@@ -52,8 +52,8 @@ public class CRenameAction extends RefactoringAction {
 	public void run(IShellProvider shellProvider, IWorkingCopy workingCopy, ITextSelection selection) {
 		if (!ActionUtil.isEditable(fEditor))
 			return;
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
-		boolean lightweight= store.getBoolean(PreferenceConstants.REFACTOR_LIGHTWEIGHT);
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+		boolean lightweight = store.getBoolean(PreferenceConstants.REFACTOR_LIGHTWEIGHT);
 		if (lightweight) {
 			new RenameLinkedMode(fEditor).start();
 		} else {
@@ -61,13 +61,13 @@ public class CRenameAction extends RefactoringAction {
 		}
 	}
 
-    @Override
+	@Override
 	public void updateSelection(ICElement elem) {
-    	super.updateSelection(elem);
-    	if (elem == null || elem instanceof IInclude || elem instanceof ITranslationUnit) {
-    		setEnabled(false);
-    	} else {
-    		setEnabled(true);
-    	}
-    }
+		super.updateSelection(elem);
+		if (elem == null || elem instanceof IInclude || elem instanceof ITranslationUnit) {
+			setEnabled(false);
+		} else {
+			setEnabled(true);
+		}
+	}
 }

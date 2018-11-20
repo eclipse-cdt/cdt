@@ -33,9 +33,9 @@ public class FunctionDeclarationHandle extends CElementHandle implements IFuncti
 
 	protected FunctionDeclarationHandle(ICElement parent, int type, IFunction func) {
 		super(parent, type, func.getName());
-		fParameterTypes= extractParameterTypes(func);
-		fReturnType= ASTTypeUtil.getType(func.getType().getReturnType(), false);
-		fIsStatic= func.isStatic();
+		fParameterTypes = extractParameterTypes(func);
+		fReturnType = ASTTypeUtil.getType(func.getType().getReturnType(), false);
+		fIsStatic = func.isStatic();
 	}
 
 	@Override

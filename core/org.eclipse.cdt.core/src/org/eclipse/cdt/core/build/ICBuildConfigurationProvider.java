@@ -53,8 +53,8 @@ public interface ICBuildConfigurationProvider {
 	 * @throws CoreException
 	 * @since 6.1
 	 */
-	default ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain,
-			String launchMode, IProgressMonitor monitor) throws CoreException {
+	default ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+			IProgressMonitor monitor) throws CoreException {
 		return null;
 	}
 
@@ -64,8 +64,7 @@ public interface ICBuildConfigurationProvider {
 	 * 
 	 * @since 6.4
 	 */
-	default Collection<IToolChain> getSupportedToolchains(Collection<IToolChain> toolchains)
-			throws CoreException {
+	default Collection<IToolChain> getSupportedToolchains(Collection<IToolChain> toolchains) throws CoreException {
 		return toolchains;
 	}
 

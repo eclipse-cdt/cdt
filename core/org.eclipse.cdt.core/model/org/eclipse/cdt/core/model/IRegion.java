@@ -15,7 +15,6 @@
 
 package org.eclipse.cdt.core.model;
 
-
 /**
  * A C model region describes a hierarchical set of elements.
  * Regions are often used to describe a set of elements to be considered
@@ -41,6 +40,7 @@ public interface IRegion {
 	 * @param element the given element
 	 */
 	void add(ICElement element);
+
 	/**
 	 * Returns whether the given element is contained in this region.
 	 * 
@@ -48,6 +48,7 @@ public interface IRegion {
 	 * @return true if the given element is contained in this region, false otherwise
 	 */
 	boolean contains(ICElement element);
+
 	/**
 	 * Returns the top level elements in this region.
 	 * All descendents of these elements are also included in this region.
@@ -55,6 +56,7 @@ public interface IRegion {
 	 * @return the top level elements in this region
 	 */
 	ICElement[] getElements();
+
 	/**
 	 * Removes the specified element from the region and returns
 	 * <code>true</code> if successful, <code>false</code> if the remove

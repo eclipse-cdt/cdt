@@ -31,13 +31,13 @@ public interface ICPPASTClassVirtSpecifier extends IASTNode {
 		 */
 		Final
 	}
-	
+
 	/**
 	 * Return the kind of this class-virt-specifier.
 	 * Currently the only kind is 'final'.
 	 */
 	SpecifierKind getKind();
-	
+
 	@Override
 	public ICPPASTClassVirtSpecifier copy();
 

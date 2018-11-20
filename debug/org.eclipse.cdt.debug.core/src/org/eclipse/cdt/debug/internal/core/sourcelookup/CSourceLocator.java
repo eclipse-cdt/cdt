@@ -117,12 +117,12 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 */
 	@Override
 	public int getLineNumber(IStackFrame frame) {
-		return (frame instanceof ICStackFrame) ? ((ICStackFrame)frame).getFrameLineNumber() : 0;
+		return (frame instanceof ICStackFrame) ? ((ICStackFrame) frame).getFrameLineNumber() : 0;
 	}
 
 	protected Object getInput(IStackFrame f) {
 		if (f instanceof ICStackFrame) {
-			ICStackFrame frame = (ICStackFrame)f;
+			ICStackFrame frame = (ICStackFrame) f;
 			LinkedList<Object> list = new LinkedList<Object>();
 			Object result = null;
 			String fileName = frame.getFile();
@@ -159,7 +159,8 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		ICSourceLocation[] locations = getSourceLocations();
 		for (int i = 0; i < locations.length; ++i) {
 			if (resource instanceof IProject) {
-				if (locations[i] instanceof CProjectSourceLocation && ((CProjectSourceLocation)locations[i]).getProject().equals(resource)) {
+				if (locations[i] instanceof CProjectSourceLocation
+						&& ((CProjectSourceLocation) locations[i]).getProject().equals(resource)) {
 					return true;
 				}
 			}
@@ -233,7 +234,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	private static boolean containsProject(List<IProjectSourceLocation> list, IProject project) {
 		Iterator<IProjectSourceLocation> it = list.iterator();
 		while (it.hasNext()) {
-			CProjectSourceLocation location = (CProjectSourceLocation)it.next();
+			CProjectSourceLocation location = (CProjectSourceLocation) it.next();
 			if (project.equals(location.getProject()))
 				return true;
 		}
@@ -318,7 +319,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
 			if (!root.getNodeName().equalsIgnoreCase(SOURCE_LOCATOR_NAME)) {
-				abort(InternalSourceLookupMessages.CSourceLocator_1 , null);
+				abort(InternalSourceLookupMessages.CSourceLocator_1, null);
 			}
 			List<ICSourceLocation> sourceLocations = new ArrayList<ICSourceLocation>();
 			// Add locations based on referenced projects
@@ -350,7 +351,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			Node node = list.item(i);
 			short type = node.getNodeType();
 			if (type == Node.ELEMENT_NODE) {
-				Element entry = (Element)node;
+				Element entry = (Element) node;
 				if (entry.getNodeName().equalsIgnoreCase(DISABLED_GENERIC_PROJECT_NAME)) {
 					String projectName = entry.getAttribute(ATTR_PROJECT_NAME);
 					if (isEmpty(projectName)) {
@@ -363,22 +364,23 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		Iterator<ICSourceLocation> it = sourceLocations.iterator();
 		while (it.hasNext()) {
 			ICSourceLocation location = it.next();
-			if (location instanceof IProjectSourceLocation && disabledProjects.contains(((IProjectSourceLocation)location).getProject().getName()))
+			if (location instanceof IProjectSourceLocation
+					&& disabledProjects.contains(((IProjectSourceLocation) location).getProject().getName()))
 				it.remove();
 		}
 	}
 
 	private void addAdditionalLocations(Element root, List<ICSourceLocation> sourceLocations) throws CoreException {
 		Bundle bundle = CDebugCorePlugin.getDefault().getBundle();
-		MultiStatus status = new MultiStatus(CDebugCorePlugin.getUniqueIdentifier(),
-				CDebugCorePlugin.INTERNAL_ERROR, InternalSourceLookupMessages.CSourceLocator_3, null);
+		MultiStatus status = new MultiStatus(CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR,
+				InternalSourceLookupMessages.CSourceLocator_3, null);
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {
 			Node node = list.item(i);
 			short type = node.getNodeType();
 			if (type == Node.ELEMENT_NODE) {
-				Element entry = (Element)node;
+				Element entry = (Element) node;
 				if (entry.getNodeName().equalsIgnoreCase(ADDITIONAL_SOURCE_LOCATION_NAME)) {
 					String className = entry.getAttribute(ATTR_CLASS);
 					String data = entry.getAttribute(ATTR_MEMENTO);
@@ -390,12 +392,13 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					try {
 						clazz = bundle.loadClass(className);
 					} catch (ClassNotFoundException e) {
-						CDebugCorePlugin.log(MessageFormat.format("Unable to restore source location - class not found {0}", new Object[]{ className })); //$NON-NLS-1$
+						CDebugCorePlugin.log(MessageFormat.format(
+								"Unable to restore source location - class not found {0}", new Object[] { className })); //$NON-NLS-1$
 						continue;
 					}
 					ICSourceLocation location = null;
 					try {
-						location = (ICSourceLocation)clazz.newInstance();
+						location = (ICSourceLocation) clazz.newInstance();
 					} catch (IllegalAccessException e) {
 						CDebugCorePlugin.log("Unable to restore source location."); //$NON-NLS-1$
 						continue;
@@ -424,7 +427,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			Node node = list.item(i);
 			short type = node.getNodeType();
 			if (type == Node.ELEMENT_NODE) {
-				Element entry = (Element)node;
+				Element entry = (Element) node;
 				if (entry.getNodeName().equalsIgnoreCase(SOURCE_LOCATION_NAME)) {
 					String className = entry.getAttribute(ATTR_CLASS);
 					String data = entry.getAttribute(ATTR_MEMENTO);
@@ -436,12 +439,13 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					try {
 						clazz = bundle.loadClass(className);
 					} catch (ClassNotFoundException e) {
-						CDebugCorePlugin.log(MessageFormat.format("Unable to restore source location - class not found {0}", new Object[]{ className })); //$NON-NLS-1$
+						CDebugCorePlugin.log(MessageFormat.format(
+								"Unable to restore source location - class not found {0}", new Object[] { className })); //$NON-NLS-1$
 						continue;
 					}
 					ICSourceLocation location = null;
 					try {
-						location = (ICSourceLocation)clazz.newInstance();
+						location = (ICSourceLocation) clazz.newInstance();
 					} catch (IllegalAccessException e) {
 						CDebugCorePlugin.log("Unable to restore source location."); //$NON-NLS-1$
 						continue;
@@ -452,7 +456,8 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					location.initializeFrom(data);
 					if (!sourceLocations.contains(location)) {
 						if (location instanceof CProjectSourceLocation)
-							((CProjectSourceLocation)location).setGenerated(isReferencedProject(((CProjectSourceLocation)location).getProject()));
+							((CProjectSourceLocation) location).setGenerated(
+									isReferencedProject(((CProjectSourceLocation) location).getProject()));
 						sourceLocations.add(location);
 					}
 				}
@@ -464,7 +469,8 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e) throws CoreException {
-		IStatus s = new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR, message, e);
+		IStatus s = new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR,
+				message, e);
 		throw new CoreException(s);
 	}
 
@@ -496,7 +502,8 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 				names.add(proj.getName());
 			}
 			for (int i = 0; i < locations.length; ++i) {
-				if (locations[i] instanceof IProjectSourceLocation && ((IProjectSourceLocation) locations[i]).isGeneric())
+				if (locations[i] instanceof IProjectSourceLocation
+						&& ((IProjectSourceLocation) locations[i]).isGeneric())
 					names.remove(((IProjectSourceLocation) locations[i]).getProject().getName());
 			}
 			for (String name : names) {
@@ -509,7 +516,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 
 	private void saveAdditionalSourceLocations(ICSourceLocation[] locations, Document doc, Element node) {
 		for (int i = 0; i < locations.length; i++) {
-			if (locations[i] instanceof IProjectSourceLocation && ((IProjectSourceLocation)locations[i]).isGeneric())
+			if (locations[i] instanceof IProjectSourceLocation && ((IProjectSourceLocation) locations[i]).isGeneric())
 				continue;
 			Element child = doc.createElement(ADDITIONAL_SOURCE_LOCATION_NAME);
 			child.setAttribute(ATTR_CLASS, locations[i].getClass().getName());
@@ -578,7 +585,8 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		ICSourceLocation[] locations = getSourceLocations();
 		ArrayList<ICSourceLocation> newLocations = new ArrayList<ICSourceLocation>(locations.length);
 		for (int i = 0; i < locations.length; ++i) {
-			if (!(locations[i] instanceof IProjectSourceLocation) || !((IProjectSourceLocation)locations[i]).isGeneric())
+			if (!(locations[i] instanceof IProjectSourceLocation)
+					|| !((IProjectSourceLocation) locations[i]).isGeneric())
 				newLocations.add(locations[i]);
 		}
 		setSourceLocations(newLocations.toArray(new ICSourceLocation[newLocations.size()]));
@@ -589,10 +597,11 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		ICSourceLocation[] locations = getSourceLocations();
 		ArrayList<ICSourceLocation> newLocations = new ArrayList<ICSourceLocation>(locations.length);
 		for (int i = 0; i < locations.length; ++i) {
-			if (!(locations[i] instanceof IProjectSourceLocation) || !((IProjectSourceLocation)locations[i]).isGeneric()) {
+			if (!(locations[i] instanceof IProjectSourceLocation)
+					|| !((IProjectSourceLocation) locations[i]).isGeneric()) {
 				newLocations.add(locations[i]);
 			} else {
-				IProject project = ((IProjectSourceLocation)locations[i]).getProject();
+				IProject project = ((IProjectSourceLocation) locations[i]).getProject();
 				if (project.exists() && project.isOpen()) {
 					if (newRefs.contains(project) || project.equals(getProject())) {
 						newLocations.add(locations[i]);

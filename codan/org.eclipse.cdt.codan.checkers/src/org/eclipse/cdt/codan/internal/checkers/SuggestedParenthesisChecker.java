@@ -75,7 +75,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 		private boolean isUsedAsOperand(IASTExpression expression) {
 			ASTNodeProperty prop = expression.getPropertyInParent();
 			if (prop == IASTBinaryExpression.OPERAND_ONE
-			// || prop == IASTBinaryExpression.OPERAND_TWO
+					// || prop == IASTBinaryExpression.OPERAND_TWO
 					|| prop == IASTUnaryExpression.OPERAND)
 				return true;
 			return false;
@@ -137,6 +137,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_NOT, CheckersMessages.SuggestedParenthesisChecker_SuggestParanthesesAroundNot, Boolean.FALSE);
+		addPreference(problem, PARAM_NOT, CheckersMessages.SuggestedParenthesisChecker_SuggestParanthesesAroundNot,
+				Boolean.FALSE);
 	}
 }

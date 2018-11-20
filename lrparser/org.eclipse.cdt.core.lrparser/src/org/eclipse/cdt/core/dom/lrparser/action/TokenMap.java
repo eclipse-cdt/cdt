@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.dom.lrparser.action;
 
 import java.util.HashMap;
 
-
 /**
  * Maps token kinds from a sub-parser back to the corresponding
  * token kinds in a base parser.
@@ -27,10 +26,9 @@ public class TokenMap implements ITokenMap {
 	// LPG token kinds start at 0
 	// the kind is not part of the base language parser
 	public static final int INVALID_KIND = -1;
-	
-	private final int[] kindMap; 
-	
-	
+
+	private final int[] kindMap;
+
 	/**
 	 * @param toSymbols An array of symbols where the index is the token kind and the
 	 * element data is a string representing the token kind. It is expected
@@ -39,45 +37,43 @@ public class TokenMap implements ITokenMap {
 	 */
 	public TokenMap(String[] toSymbols, String[] fromSymbols) {
 		// If this map is not being used with an extension then it becomes an "identity map".
-		if(toSymbols == fromSymbols) {
+		if (toSymbols == fromSymbols) {
 			kindMap = null;
 			return;
 		}
-		
+
 		kindMap = new int[fromSymbols.length];
-		
-		HashMap<String,Integer> toMap = new HashMap<String,Integer>();
-		for(int i = 0, n = toSymbols.length; i < n; i++) {
+
+		HashMap<String, Integer> toMap = new HashMap<String, Integer>();
+		for (int i = 0, n = toSymbols.length; i < n; i++) {
 			toMap.put(toSymbols[i], i);
 		}
-		
-		for(int i = 0, n = fromSymbols.length; i < n; i++) {
+
+		for (int i = 0, n = fromSymbols.length; i < n; i++) {
 			Integer kind = toMap.get(fromSymbols[i]);
 			kindMap[i] = kind == null ? INVALID_KIND : kind;
 		}
 	}
-	
-	
+
 	/**
 	 * Maps a token kind back to the corresponding kind define in the base C99 parser.
 	 */
 	@Override
 	public int mapKind(int kind) {
-		if(kindMap == null)
+		if (kindMap == null)
 			return kind;
-		if(kind < 0 || kind >= kindMap.length)
+		if (kind < 0 || kind >= kindMap.length)
 			return INVALID_KIND;
-		
+
 		return kindMap[kind];
 	}
-	
 
-	@Override 
+	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder('(') ;
+		StringBuilder sb = new StringBuilder('(');
 		boolean first = true;
-		for(int i = 0, n = kindMap.length; i < n; i++) {
-			if(!first)
+		for (int i = 0, n = kindMap.length; i < n; i++) {
+			if (!first)
 				sb.append(", "); //$NON-NLS-1$
 			sb.append(i).append('=').append(kindMap[i]);
 			first = false;

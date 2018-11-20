@@ -36,9 +36,9 @@ public class TestScopeOfBuildConfigResourceChangesPreference extends TestCase {
 	private boolean oldInstanceScopeValue;
 	private boolean oldDefaultScopeValue;
 
-    public static Test suite() {
-        return new TestSuite(TestScopeOfBuildConfigResourceChangesPreference.class);
-    }
+	public static Test suite() {
+		return new TestSuite(TestScopeOfBuildConfigResourceChangesPreference.class);
+	}
 
 	@Override
 	protected void setUp() throws Exception {

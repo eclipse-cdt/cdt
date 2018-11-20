@@ -36,7 +36,7 @@ public class OptionContextData implements IOptionContextData {
 	private IOptionCategory fCategory;
 	private IBuildObject fParent;
 
-	public OptionContextData(IOption option, IBuildObject parent){
+	public OptionContextData(IOption option, IBuildObject parent) {
 		fOption = option;
 		fParent = parent;
 	}
@@ -44,10 +44,11 @@ public class OptionContextData implements IOptionContextData {
 	/*
 	 * @since 8.0
 	 */
-	public OptionContextData(IOptionCategory category, IBuildObject parent){
+	public OptionContextData(IOptionCategory category, IBuildObject parent) {
 		fCategory = category;
 		fParent = parent;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IOptionContextData#getOption()
 	 */
@@ -72,53 +73,52 @@ public class OptionContextData implements IOptionContextData {
 		return fParent;
 	}
 
-	public static IHoldsOptions getHolder(IOptionContextData data){
+	public static IHoldsOptions getHolder(IOptionContextData data) {
 		IBuildObject buildObj = data.getParent();
 		IToolChain tCh = null;
 		IHoldsOptions ho = null;
 		IResourceInfo rcInfo = null;
 		IFileInfo fileInfo = null;
 		IFolderInfo folderInfo = null;
-		if(buildObj instanceof ITool)
-			ho = (ITool)buildObj;
-		else if(buildObj instanceof IToolChain)
-			tCh = (IToolChain)buildObj;
-		else if(buildObj instanceof IFileInfo){
-			fileInfo = (IFileInfo)buildObj;
+		if (buildObj instanceof ITool)
+			ho = (ITool) buildObj;
+		else if (buildObj instanceof IToolChain)
+			tCh = (IToolChain) buildObj;
+		else if (buildObj instanceof IFileInfo) {
+			fileInfo = (IFileInfo) buildObj;
 			rcInfo = fileInfo;
-		}else if(buildObj instanceof IConfiguration)
-			tCh = ((IConfiguration)buildObj).getToolChain();
-		else if(buildObj instanceof IFolderInfo){
-			folderInfo = (IFolderInfo)buildObj;
+		} else if (buildObj instanceof IConfiguration)
+			tCh = ((IConfiguration) buildObj).getToolChain();
+		else if (buildObj instanceof IFolderInfo) {
+			folderInfo = (IFolderInfo) buildObj;
 			rcInfo = folderInfo;
 			tCh = folderInfo.getToolChain();
 		}
 
-		if(ho == null){
+		if (ho == null) {
 			IOption option = data.getOption();
-			if(option == null)
+			if (option == null)
 				return null;
 
 			IHoldsOptions tmp = option.getOptionHolder();
 
 			ITool tools[] = null;
-			if(tCh != null){
-				for(IToolChain cur = tCh; cur != null; cur = cur.getSuperClass()){
-					if(cur == tmp)
+			if (tCh != null) {
+				for (IToolChain cur = tCh; cur != null; cur = cur.getSuperClass()) {
+					if (cur == tmp)
 						return tCh;
 				}
 				tools = tCh.getTools();
-			} else if(rcInfo != null){
+			} else if (rcInfo != null) {
 				tools = rcInfo.getTools();
 			}
 
-			if(tools != null){
-				for(int i = 0; i < tools.length; i++){
-					for(ITool cur = tools[i]; cur != null; cur = cur.getSuperClass()){
-						if(cur == tmp){
+			if (tools != null) {
+				for (int i = 0; i < tools.length; i++) {
+					for (ITool cur = tools[i]; cur != null; cur = cur.getSuperClass()) {
+						if (cur == tmp) {
 							ITool tool = tools[i];
-							if(!tool.isExtensionElement()
-									&& tool.getParent() != null){
+							if (!tool.isExtensionElement() && tool.getParent() != null) {
 								ho = tools[i];
 								break;
 							}
@@ -127,17 +127,15 @@ public class OptionContextData implements IOptionContextData {
 				}
 			}
 
-			if(ho == null && tmp != null){
-				if(tmp instanceof ITool){
-					ITool tool = (ITool)tmp;
-					if(!tool.isExtensionElement()
-							&& tool.getParent() != null){
+			if (ho == null && tmp != null) {
+				if (tmp instanceof ITool) {
+					ITool tool = (ITool) tmp;
+					if (!tool.isExtensionElement() && tool.getParent() != null) {
 						ho = tmp;
 					}
-				} else if (tmp instanceof IToolChain){
-					IToolChain tChain = (IToolChain)tmp;
-					if(!tChain.isExtensionElement()
-							&& tChain.getParent() != null){
+				} else if (tmp instanceof IToolChain) {
+					IToolChain tChain = (IToolChain) tmp;
+					if (!tChain.isExtensionElement() && tChain.getParent() != null) {
 						ho = tmp;
 					}
 				}

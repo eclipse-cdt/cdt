@@ -40,12 +40,12 @@ public class CreateMethodOperation extends CreateMemberOperation {
 	 */
 	protected String fSource;
 
-
 	/**
 	 * When executed, this operation will create a method
 	 * in the given type with the specified source.
 	 */
-	public CreateMethodOperation(IStructure parentElement, String name, String returnType, String source, String[] parameters, boolean force) {
+	public CreateMethodOperation(IStructure parentElement, String name, String returnType, String source,
+			String[] parameters, boolean force) {
 		super(parentElement, name, returnType, force);
 		fParameterTypes = parameters;
 		fSource = source;
@@ -64,7 +64,7 @@ public class CreateMethodOperation extends CreateMemberOperation {
 	 * @see CreateElementInTUOperation#getMainTaskName
 	 */
 	@Override
-	public String getMainTaskName(){
+	public String getMainTaskName() {
 		return CoreModelMessages.getString("operation.createMethodProgress"); //$NON-NLS-1$
 	}
 

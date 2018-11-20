@@ -25,16 +25,16 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  */
 public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPASTSimpleTypeTemplateParameter {
 
-    private IASTName fName;
-    private IASTTypeId fTypeId;
-    private boolean fUsesKeywordClass;
-    private boolean fIsParameterPack;
+	private IASTName fName;
+	private IASTTypeId fTypeId;
+	private boolean fUsesKeywordClass;
+	private boolean fIsParameterPack;
 
-    public CPPASTSimpleTypeTemplateParameter() {
+	public CPPASTSimpleTypeTemplateParameter() {
 	}
 
 	public CPPASTSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId) {
-		fUsesKeywordClass= type == st_class;
+		fUsesKeywordClass = type == st_class;
 		setName(name);
 		setDefaultType(typeId);
 	}
@@ -62,58 +62,61 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 	@Override
 	public void setIsParameterPack(boolean val) {
 		assertNotFrozen();
-		fIsParameterPack= val;
+		fIsParameterPack = val;
 	}
 
 	@Override
 	public int getParameterType() {
-        return fUsesKeywordClass ? st_class : st_typename;
-    }
+		return fUsesKeywordClass ? st_class : st_typename;
+	}
 
-    @Override
+	@Override
 	public void setParameterType(int value) {
-        assertNotFrozen();
-        fUsesKeywordClass = value == st_class;
-    }
+		assertNotFrozen();
+		fUsesKeywordClass = value == st_class;
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return fName;
-    }
+		return fName;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.fName = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.fName = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(PARAMETER_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTTypeId getDefaultType() {
-        return fTypeId;
-    }
+		return fTypeId;
+	}
 
-    @Override
+	@Override
 	public void setDefaultType(IASTTypeId typeId) {
-        assertNotFrozen();
-        this.fTypeId = typeId;
-        if (typeId != null) {
+		assertNotFrozen();
+		this.fTypeId = typeId;
+		if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(DEFAULT_TYPE);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-    	if (action.shouldVisitTemplateParameters) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default : break;
-	        }
+		if (action.shouldVisitTemplateParameters) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (fName != null && !fName.accept(action))
@@ -124,8 +127,8 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 		if (action.shouldVisitTemplateParameters && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-    	return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {

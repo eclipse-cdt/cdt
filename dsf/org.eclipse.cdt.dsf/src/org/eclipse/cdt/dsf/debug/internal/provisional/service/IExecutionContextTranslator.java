@@ -33,36 +33,36 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * @experimental
  */
 public interface IExecutionContextTranslator extends IDsfService {
-	
+
 	/**
 	 * returns true if all DM contexts can be grouped into one container. 
 	 * 
 	 * @param context
 	 * @param rm
 	 */
-    void canGroup(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm);
-    
+	void canGroup(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm);
+
 	/**
 	 * returns true if all DM contexts can be ungrouped.
 	 * 
 	 * @param context
 	 * @param rm
 	 */
-    void canUngroup(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm);
-    
-    /**
-     * Groups the specified execution contexts. 
-     * 
-     * @param context
-     * @param requestMonitor
-     */
-    void group(IExecutionDMContext[] contexts, RequestMonitor requestMonitor);
-    
-    /**
-     * Ungroups the specified execution contexts.
-     *  
-     * @param context
-     * @param requestMonitor
-     */
-    void ungroup(IExecutionDMContext[] contexts, RequestMonitor requestMonitor);
+	void canUngroup(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm);
+
+	/**
+	 * Groups the specified execution contexts. 
+	 * 
+	 * @param context
+	 * @param requestMonitor
+	 */
+	void group(IExecutionDMContext[] contexts, RequestMonitor requestMonitor);
+
+	/**
+	 * Ungroups the specified execution contexts.
+	 *  
+	 * @param context
+	 * @param requestMonitor
+	 */
+	void ungroup(IExecutionDMContext[] contexts, RequestMonitor requestMonitor);
 }

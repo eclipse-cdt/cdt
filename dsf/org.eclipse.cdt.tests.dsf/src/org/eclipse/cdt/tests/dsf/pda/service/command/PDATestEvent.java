@@ -17,8 +17,9 @@ package org.eclipse.cdt.tests.dsf.pda.service.command;
  * 
  */
 public class PDATestEvent {
-    final public String fEventText;
-    PDATestEvent(String event) {
-        fEventText = event;
-    }
+	final public String fEventText;
+
+	PDATestEvent(String event) {
+		fEventText = event;
+	}
 }

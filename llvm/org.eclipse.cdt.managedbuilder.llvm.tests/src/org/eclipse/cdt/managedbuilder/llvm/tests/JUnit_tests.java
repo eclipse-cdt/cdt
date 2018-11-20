@@ -12,6 +12,7 @@
  *      Nokia Siemens Networks - initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.llvm.tests;
+
 import junit.framework.TestCase;
 
 /**
@@ -27,10 +28,12 @@ public class JUnit_tests extends TestCase {
 	}
 
 	@Override
-	protected void setUp() { }
+	protected void setUp() {
+	}
 
 	@Override
-	protected void tearDown() { }
+	protected void tearDown() {
+	}
 
 	public static void testBooleanTrue() {
 		assertTrue(true);

@@ -45,18 +45,15 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
  */
 public class IncludePragmasBlock extends OptionsConfigurationBlock {
 	private static final Key KEY_EXPORT_PATTERN = getCDTCoreKey(CCorePreferenceConstants.INCLUDE_EXPORT_PATTERN);
-	private static final Key KEY_BEGIN_EXPORTS_PATTERN = getCDTCoreKey(CCorePreferenceConstants.INCLUDE_BEGIN_EXPORTS_PATTERN);
-	private static final Key KEY_END_EXPORTS_PATTERN = getCDTCoreKey(CCorePreferenceConstants.INCLUDE_END_EXPORTS_PATTERN);
+	private static final Key KEY_BEGIN_EXPORTS_PATTERN = getCDTCoreKey(
+			CCorePreferenceConstants.INCLUDE_BEGIN_EXPORTS_PATTERN);
+	private static final Key KEY_END_EXPORTS_PATTERN = getCDTCoreKey(
+			CCorePreferenceConstants.INCLUDE_END_EXPORTS_PATTERN);
 	private static final Key KEY_PRIVATE_PATTERN = getCDTCoreKey(CCorePreferenceConstants.INCLUDE_PRIVATE_PATTERN);
 	private static final Key KEY_KEEP_PATTERN = getCDTCoreKey(CCorePreferenceConstants.INCLUDE_KEEP_PATTERN);
 
-	private static Key[] ALL_KEYS = {
-		KEY_EXPORT_PATTERN,
-		KEY_BEGIN_EXPORTS_PATTERN,
-		KEY_END_EXPORTS_PATTERN,
-		KEY_PRIVATE_PATTERN,
-		KEY_KEEP_PATTERN,
-	};
+	private static Key[] ALL_KEYS = { KEY_EXPORT_PATTERN, KEY_BEGIN_EXPORTS_PATTERN, KEY_END_EXPORTS_PATTERN,
+			KEY_PRIVATE_PATTERN, KEY_KEEP_PATTERN, };
 	private PixelConverter pixelConverter;
 
 	public IncludePragmasBlock(IStatusChangeListener context, IProject project,
@@ -69,7 +66,7 @@ public class IncludePragmasBlock extends OptionsConfigurationBlock {
 		setShell(parent.getShell());
 		pixelConverter = new PixelConverter(parent);
 
-		Composite composite =  new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
 		GridLayout layout = new GridLayout(3, false);
 		layout.marginHeight = 0;
@@ -79,8 +76,8 @@ public class IncludePragmasBlock extends OptionsConfigurationBlock {
 		Control control = createHeader(composite);
 		LayoutUtil.setHorizontalSpan(control, 3);
 
-		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_export_pattern,
-				KEY_EXPORT_PATTERN, 0, pixelConverter.convertWidthInCharsToPixels(40));
+		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_export_pattern, KEY_EXPORT_PATTERN, 0,
+				pixelConverter.convertWidthInCharsToPixels(40));
 		LayoutUtil.setHorizontalGrabbing(control, true);
 		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_begin_exports_pattern,
 				KEY_BEGIN_EXPORTS_PATTERN, 0, pixelConverter.convertWidthInCharsToPixels(40));
@@ -88,11 +85,11 @@ public class IncludePragmasBlock extends OptionsConfigurationBlock {
 		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_end_exports_pattern,
 				KEY_END_EXPORTS_PATTERN, 0, pixelConverter.convertWidthInCharsToPixels(40));
 		LayoutUtil.setHorizontalGrabbing(control, true);
-		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_private_pattern,
-				KEY_PRIVATE_PATTERN, 0, pixelConverter.convertWidthInCharsToPixels(40));
+		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_private_pattern, KEY_PRIVATE_PATTERN,
+				0, pixelConverter.convertWidthInCharsToPixels(40));
 		LayoutUtil.setHorizontalGrabbing(control, true);
-		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_keep_pattern,
-				KEY_KEEP_PATTERN, 0, pixelConverter.convertWidthInCharsToPixels(40));
+		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_keep_pattern, KEY_KEEP_PATTERN, 0,
+				pixelConverter.convertWidthInCharsToPixels(40));
 		LayoutUtil.setHorizontalGrabbing(control, true);
 
 		updateControls();
@@ -111,8 +108,8 @@ public class IncludePragmasBlock extends OptionsConfigurationBlock {
 					public void run() {
 						try {
 							URL url = new URL(event.text);
-							IWorkbenchBrowserSupport browserSupport= PlatformUI.getWorkbench().getBrowserSupport();
-							IWebBrowser browser= browserSupport.getExternalBrowser();
+							IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
+							IWebBrowser browser = browserSupport.getExternalBrowser();
 							browser.openURL(url);
 						} catch (PartInitException e) {
 							// TODO(sprigogin): Should we show an error dialog?
@@ -128,9 +125,9 @@ public class IncludePragmasBlock extends OptionsConfigurationBlock {
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 is fixed
 		link.setToolTipText(PreferencesMessages.IncludePragmasBlock_link_tooltip);
 
-		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+		GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		// Only expand further if anyone else requires it
-		gridData.widthHint= pixelConverter.convertWidthInCharsToPixels(40);
+		gridData.widthHint = pixelConverter.convertWidthInCharsToPixels(40);
 		link.setLayoutData(gridData);
 		return link;
 	}

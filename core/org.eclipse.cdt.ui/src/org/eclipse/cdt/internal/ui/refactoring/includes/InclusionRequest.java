@@ -44,8 +44,7 @@ class InclusionRequest {
 	 *     that can be used to include them 
 	 * @param reachable indicates whether the headers were previously included or not
 	 */
-	public InclusionRequest(IBinding binding, Map<IIndexFile, IPath> declaringHeaders,
-			boolean reachable) {
+	public InclusionRequest(IBinding binding, Map<IIndexFile, IPath> declaringHeaders, boolean reachable) {
 		fBinding = binding;
 		fDeclaringFiles = Collections.unmodifiableMap(declaringHeaders);
 		fReachable = reachable;

@@ -30,7 +30,7 @@ import junit.framework.Assert;
  * @since 4.0
  */
 public class Accessor extends Assert {
-	
+
 	/** The class to access. */
 	private Class<?> fClass;
 	/** The instance to access. */
@@ -45,8 +45,8 @@ public class Accessor extends Assert {
 	 */
 	public Accessor(Object instance) {
 		assertNotNull(instance);
-		fInstance= instance;
-		fClass= instance.getClass();
+		fInstance = instance;
+		fClass = instance.getClass();
 	}
 
 	/**
@@ -57,8 +57,8 @@ public class Accessor extends Assert {
 	 */
 	public Accessor(Class<?> clazz) {
 		assertNotNull(clazz);
-		fInstance= null;
-		fClass= clazz;
+		fInstance = null;
+		fClass = clazz;
 	}
 
 	/**
@@ -72,10 +72,10 @@ public class Accessor extends Assert {
 	public Accessor(Object instance, Class<?> clazz) {
 		assertNotNull(instance);
 		assertNotNull(clazz);
-		fInstance= instance;
-		fClass= clazz;
+		fInstance = instance;
+		fClass = clazz;
 	}
-	
+
 	/**
 	 * Creates an accessor for the given <code>instance</code> and
 	 * <code>class</code>. Only non-inherited members that particular
@@ -89,16 +89,16 @@ public class Accessor extends Assert {
 		assertNotNull(instance);
 		assertNotNull(className);
 		assertNotNull(classLoader);
-		fInstance= instance;
+		fInstance = instance;
 		try {
-			fClass= Class.forName(className, true, classLoader);
+			fClass = Class.forName(className, true, classLoader);
 		} catch (ClassNotFoundException e) {
 			fail();
 		} catch (ExceptionInInitializerError e) {
 			fail();
 		}
 	}
-	
+
 	/**
 	 * Creates an accessor for the given class.
 	 * <p>
@@ -114,7 +114,7 @@ public class Accessor extends Assert {
 	public Accessor(String className, ClassLoader classLoader, Object[] constructorArgs) {
 		this(className, classLoader, getTypes(constructorArgs), constructorArgs);
 	}
-	
+
 	/**
 	 * Creates an accessor for the given class.
 	 * 
@@ -125,15 +125,15 @@ public class Accessor extends Assert {
 	 */
 	public Accessor(String className, ClassLoader classLoader, Class<?>[] constructorTypes, Object[] constructorArgs) {
 		try {
-			fClass= Class.forName(className, true, classLoader);
+			fClass = Class.forName(className, true, classLoader);
 		} catch (ClassNotFoundException e) {
 			fail();
 		} catch (ExceptionInInitializerError e) {
 			fail();
 		}
-		Constructor<?> constructor= null;
+		Constructor<?> constructor = null;
 		try {
-			constructor= fClass.getDeclaredConstructor(constructorTypes);
+			constructor = fClass.getDeclaredConstructor(constructorTypes);
 		} catch (SecurityException e2) {
 			fail();
 		} catch (NoSuchMethodException e2) {
@@ -142,7 +142,7 @@ public class Accessor extends Assert {
 		assertNotNull(constructor);
 		constructor.setAccessible(true);
 		try {
-			fInstance= constructor.newInstance(constructorArgs);
+			fInstance = constructor.newInstance(constructorArgs);
 		} catch (IllegalArgumentException e) {
 			fail();
 		} catch (InvocationTargetException e) {
@@ -153,7 +153,7 @@ public class Accessor extends Assert {
 			fail();
 		}
 	}
-	
+
 	/**
 	 * Creates an accessor for the given class.
 	 * <p>
@@ -165,7 +165,7 @@ public class Accessor extends Assert {
 	 */
 	public Accessor(String className, ClassLoader classLoader) {
 		try {
-			fClass= Class.forName(className, true, classLoader);
+			fClass = Class.forName(className, true, classLoader);
 		} catch (ClassNotFoundException e) {
 			fail();
 		} catch (ExceptionInInitializerError e) {
@@ -183,7 +183,7 @@ public class Accessor extends Assert {
 	public Object invoke(String methodName) {
 		return invoke(methodName, null, new Object[0]);
 	}
-	
+
 	/**
 	 * Invokes the method with the given method name and arguments.
 	 * <p>
@@ -199,7 +199,7 @@ public class Accessor extends Assert {
 	public Object invoke(String methodName, Object[] arguments) {
 		return invoke(methodName, getTypes(arguments), arguments);
 	}
-	
+
 	/**
 	 * Invokes the method with the given method name and arguments.
 	 * 
@@ -209,9 +209,9 @@ public class Accessor extends Assert {
 	 * @return the method return value
 	 */
 	public Object invoke(String methodName, Class<?>[] types, Object[] arguments) {
-		Method method= null;
+		Method method = null;
 		try {
-			method= fClass.getDeclaredMethod(methodName, types);
+			method = fClass.getDeclaredMethod(methodName, types);
 		} catch (SecurityException e) {
 			fail();
 		} catch (NoSuchMethodException ex) {
@@ -230,7 +230,7 @@ public class Accessor extends Assert {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Assigns the given value to the field with the given name. 
 	 * 
@@ -238,7 +238,7 @@ public class Accessor extends Assert {
 	 * @param value the value to assign to the field
 	 */
 	public void set(String fieldName, Object value) {
-		Field field= getField(fieldName);
+		Field field = getField(fieldName);
 		try {
 			field.set(fInstance, value);
 		} catch (IllegalArgumentException e) {
@@ -247,7 +247,7 @@ public class Accessor extends Assert {
 			fail();
 		}
 	}
-	
+
 	/**
 	 * Assigns the given value to the field with the given name. 
 	 * 
@@ -255,7 +255,7 @@ public class Accessor extends Assert {
 	 * @param value the value to assign to the field
 	 */
 	public void set(String fieldName, boolean value) {
-		Field field= getField(fieldName);
+		Field field = getField(fieldName);
 		try {
 			field.setBoolean(fInstance, value);
 		} catch (IllegalArgumentException e) {
@@ -264,7 +264,7 @@ public class Accessor extends Assert {
 			fail();
 		}
 	}
-	
+
 	/**
 	 * Assigns the given value to the field with the given name. 
 	 * 
@@ -272,7 +272,7 @@ public class Accessor extends Assert {
 	 * @param value the value to assign to the field
 	 */
 	public void set(String fieldName, int value) {
-		Field field= getField(fieldName);
+		Field field = getField(fieldName);
 		try {
 			field.setInt(fInstance, value);
 		} catch (IllegalArgumentException e) {
@@ -281,7 +281,7 @@ public class Accessor extends Assert {
 			fail();
 		}
 	}
-	
+
 	/**
 	 * Returns the value of the field with the given name. 
 	 * 
@@ -289,7 +289,7 @@ public class Accessor extends Assert {
 	 * @return the value of the field
 	 */
 	public Object get(String fieldName) {
-		Field field= getField(fieldName);
+		Field field = getField(fieldName);
 		try {
 			return field.get(fInstance);
 		} catch (IllegalArgumentException e) {
@@ -300,7 +300,7 @@ public class Accessor extends Assert {
 		// Unreachable code
 		return null;
 	}
-	
+
 	/**
 	 * Returns the value of the field with the given name. 
 	 * 
@@ -308,7 +308,7 @@ public class Accessor extends Assert {
 	 * @return the value of the field
 	 */
 	public boolean getBoolean(String fieldName) {
-		Field field= getField(fieldName);
+		Field field = getField(fieldName);
 		try {
 			return field.getBoolean(fInstance);
 		} catch (IllegalArgumentException e) {
@@ -319,7 +319,7 @@ public class Accessor extends Assert {
 		// Unreachable code
 		return false;
 	}
-	
+
 	/**
 	 * Returns the value of the field with the given name. 
 	 * 
@@ -327,7 +327,7 @@ public class Accessor extends Assert {
 	 * @return the value of the field
 	 */
 	public int getInt(String fieldName) {
-		Field field= getField(fieldName);
+		Field field = getField(fieldName);
 		try {
 			return field.getInt(fInstance);
 		} catch (IllegalArgumentException e) {
@@ -338,11 +338,11 @@ public class Accessor extends Assert {
 		// Unreachable code
 		return 0;
 	}
-	
+
 	private Field getField(String fieldName) {
-		Field field= null;
+		Field field = null;
 		try {
-			field= fClass.getDeclaredField(fieldName);
+			field = fClass.getDeclaredField(fieldName);
 		} catch (SecurityException e) {
 			fail();
 		} catch (NoSuchFieldException e) {
@@ -351,16 +351,16 @@ public class Accessor extends Assert {
 		field.setAccessible(true);
 		return field;
 	}
-	
+
 	private static Class<?>[] getTypes(Object[] objects) {
 		if (objects == null)
 			return null;
-		
-		int length= objects.length;
-		Class<?>[] classes= new Class[length];
-		for (int i= 0; i < length; i++) {
+
+		int length = objects.length;
+		Class<?>[] classes = new Class[length];
+		for (int i = 0; i < length; i++) {
 			assertNotNull(objects[i]);
-			classes[i]= objects[i].getClass();
+			classes[i] = objects[i].getClass();
 		}
 		return classes;
 	}

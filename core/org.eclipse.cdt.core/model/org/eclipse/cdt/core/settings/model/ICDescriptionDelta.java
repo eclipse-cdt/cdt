@@ -52,15 +52,16 @@ public interface ICDescriptionDelta {
 	int ACTIVE_CFG = 1;
 	int NAME = 1 << 1;
 	int DESCRIPTION = 1 << 2;
-//	int PATH = 1 << 3;
+	//	int PATH = 1 << 3;
 	int LANGUAGE_ID = 1 << 4;
 	int SOURCE_CONTENT_TYPE = 1 << 5;
 	/** @since 5.4 */
 	int SOURCE_EXTENSIONS = 1 << 6;
 	/** @deprecated Use ICDescriptionDelta.SOURCE_EXTENSIONS @noreference This field is not intended to be referenced by clients. */
-	@Deprecated	int SOURCE_ENTENSIONS = SOURCE_EXTENSIONS;
-//	int HEADER_CONTENT_TYPE = 1 << 7;
-//	int HEADER_ENTENSIONS = 1 << 8;
+	@Deprecated
+	int SOURCE_ENTENSIONS = SOURCE_EXTENSIONS;
+	//	int HEADER_CONTENT_TYPE = 1 << 7;
+	//	int HEADER_ENTENSIONS = 1 << 8;
 	int SETTING_ENTRIES = 1 << 9;
 	int BINARY_PARSER_IDS = 1 << 10;
 	int ERROR_PARSER_IDS = 1 << 11;

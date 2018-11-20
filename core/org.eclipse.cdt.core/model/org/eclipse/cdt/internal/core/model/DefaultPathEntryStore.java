@@ -63,7 +63,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	static String ATTRIBUTE_PREFIXMAPPING = "prefixmapping"; //$NON-NLS-1$
 	static String ATTRIBUTE_EXCLUDING = "excluding"; //$NON-NLS-1$
 	static String ATTRIBUTE_INCLUDE = "include"; //$NON-NLS-1$
-	static String ATTRIBUTE_INCLUDE_FILE= "include-file"; //$NON-NLS-1$
+	static String ATTRIBUTE_INCLUDE_FILE = "include-file"; //$NON-NLS-1$
 	static String ATTRIBUTE_LIBRARY = "library"; //$NON-NLS-1$
 	static String ATTRIBUTE_SYSTEM = "system"; //$NON-NLS-1$
 	static String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
@@ -144,10 +144,12 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		}
 
 		// check fo the base path
-		IPath basePath = new Path(element.hasAttribute(ATTRIBUTE_BASE_PATH) ? element.getAttribute(ATTRIBUTE_BASE_PATH) : ""); //$NON-NLS-1$
+		IPath basePath = new Path(
+				element.hasAttribute(ATTRIBUTE_BASE_PATH) ? element.getAttribute(ATTRIBUTE_BASE_PATH) : ""); //$NON-NLS-1$
 
 		// get the base ref
-		IPath baseRef = new Path(element.hasAttribute(ATTRIBUTE_BASE_REF) ? element.getAttribute(ATTRIBUTE_BASE_REF) : ""); //$NON-NLS-1$
+		IPath baseRef = new Path(
+				element.hasAttribute(ATTRIBUTE_BASE_REF) ? element.getAttribute(ATTRIBUTE_BASE_REF) : ""); //$NON-NLS-1$
 
 		// exclusion patterns (optional)
 		String exclusion = element.getAttribute(ATTRIBUTE_EXCLUDING);
@@ -165,75 +167,80 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 
 		// recreate the entry
 		switch (kind) {
-			case IPathEntry.CDT_PROJECT :
-				return CoreModel.newProjectEntry(path, isExported);
-			case IPathEntry.CDT_LIBRARY : {
-				IPath libraryPath = new Path(element.getAttribute(ATTRIBUTE_LIBRARY));
-				// source attachment info (optional)
-				IPath sourceAttachmentPath = element.hasAttribute(ATTRIBUTE_SOURCEPATH) ? new Path(
-						element.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
-				IPath sourceAttachmentRootPath = element.hasAttribute(ATTRIBUTE_ROOTPATH) ? new Path(
-						element.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
-				IPath sourceAttachmentPrefixMapping = element.hasAttribute(ATTRIBUTE_PREFIXMAPPING) ? new Path(
-						element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
+		case IPathEntry.CDT_PROJECT:
+			return CoreModel.newProjectEntry(path, isExported);
+		case IPathEntry.CDT_LIBRARY: {
+			IPath libraryPath = new Path(element.getAttribute(ATTRIBUTE_LIBRARY));
+			// source attachment info (optional)
+			IPath sourceAttachmentPath = element.hasAttribute(ATTRIBUTE_SOURCEPATH)
+					? new Path(element.getAttribute(ATTRIBUTE_SOURCEPATH))
+					: null;
+			IPath sourceAttachmentRootPath = element.hasAttribute(ATTRIBUTE_ROOTPATH)
+					? new Path(element.getAttribute(ATTRIBUTE_ROOTPATH))
+					: null;
+			IPath sourceAttachmentPrefixMapping = element.hasAttribute(ATTRIBUTE_PREFIXMAPPING)
+					? new Path(element.getAttribute(ATTRIBUTE_PREFIXMAPPING))
+					: null;
 
-				if (!baseRef.isEmpty()) {
-					return CoreModel.newLibraryRefEntry(path, baseRef, libraryPath);
-				}
-				return CoreModel.newLibraryEntry(path, basePath, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath,
-					sourceAttachmentPrefixMapping, isExported);
+			if (!baseRef.isEmpty()) {
+				return CoreModel.newLibraryRefEntry(path, baseRef, libraryPath);
 			}
-			case IPathEntry.CDT_SOURCE : {
-				// must be an entry in this project or specify another
+			return CoreModel.newLibraryEntry(path, basePath, libraryPath, sourceAttachmentPath,
+					sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
+		}
+		case IPathEntry.CDT_SOURCE: {
+			// must be an entry in this project or specify another
+			// project
+			String projSegment = path.segment(0);
+			if (projSegment != null && projSegment.equals(project.getName())) { // this
 				// project
-				String projSegment = path.segment(0);
-				if (projSegment != null && projSegment.equals(project.getName())) { // this
-					// project
-					return CoreModel.newSourceEntry(path, exclusionPatterns);
-				}
-				// another project
-				return CoreModel.newProjectEntry(path, isExported);
+				return CoreModel.newSourceEntry(path, exclusionPatterns);
 			}
-			case IPathEntry.CDT_OUTPUT :
-				return CoreModel.newOutputEntry(path, exclusionPatterns);
-			case IPathEntry.CDT_INCLUDE : {
-				// include path info
-				IPath includePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE));
-				// isSysteminclude
-				boolean isSystemInclude = false;
-				if (element.hasAttribute(ATTRIBUTE_SYSTEM)) {
-					isSystemInclude = element.getAttribute(ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
-				}
-				if (!baseRef.isEmpty()) {
-					return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
-				}
-				return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
+			// another project
+			return CoreModel.newProjectEntry(path, isExported);
+		}
+		case IPathEntry.CDT_OUTPUT:
+			return CoreModel.newOutputEntry(path, exclusionPatterns);
+		case IPathEntry.CDT_INCLUDE: {
+			// include path info
+			IPath includePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE));
+			// isSysteminclude
+			boolean isSystemInclude = false;
+			if (element.hasAttribute(ATTRIBUTE_SYSTEM)) {
+				isSystemInclude = element.getAttribute(ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
 			}
-			case IPathEntry.CDT_INCLUDE_FILE: {
-				// include path info
-				IPath includeFilePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE_FILE));
-				return CoreModel.newIncludeFileEntry(path, basePath, baseRef, includeFilePath, exclusionPatterns, isExported);
+			if (!baseRef.isEmpty()) {
+				return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
 			}
-			case IPathEntry.CDT_MACRO : {
-				String macroName = element.getAttribute(ATTRIBUTE_NAME);
-				String macroValue = element.getAttribute(ATTRIBUTE_VALUE);
-				if (!baseRef.isEmpty()) {
-					return CoreModel.newMacroRefEntry(path, baseRef, macroName);
-				}
-				return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
+			return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns,
+					isExported);
+		}
+		case IPathEntry.CDT_INCLUDE_FILE: {
+			// include path info
+			IPath includeFilePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE_FILE));
+			return CoreModel.newIncludeFileEntry(path, basePath, baseRef, includeFilePath, exclusionPatterns,
+					isExported);
+		}
+		case IPathEntry.CDT_MACRO: {
+			String macroName = element.getAttribute(ATTRIBUTE_NAME);
+			String macroValue = element.getAttribute(ATTRIBUTE_VALUE);
+			if (!baseRef.isEmpty()) {
+				return CoreModel.newMacroRefEntry(path, baseRef, macroName);
 			}
-			case IPathEntry.CDT_MACRO_FILE : {
-				IPath macroFilePath = new Path(element.getAttribute(ATTRIBUTE_MACRO_FILE));
-				return CoreModel.newMacroFileEntry(path, basePath, baseRef, macroFilePath, exclusionPatterns, isExported);
-			}
-			case IPathEntry.CDT_CONTAINER : {
-				IPath id = new Path(element.getAttribute(ATTRIBUTE_PATH));
-				return CoreModel.newContainerEntry(id, isExported);
-			}
-			default : {
-				ICModelStatus status = new CModelStatus(IStatus.ERROR, "PathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-				throw new CModelException(status);
-			}
+			return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
+		}
+		case IPathEntry.CDT_MACRO_FILE: {
+			IPath macroFilePath = new Path(element.getAttribute(ATTRIBUTE_MACRO_FILE));
+			return CoreModel.newMacroFileEntry(path, basePath, baseRef, macroFilePath, exclusionPatterns, isExported);
+		}
+		case IPathEntry.CDT_CONTAINER: {
+			IPath id = new Path(element.getAttribute(ATTRIBUTE_PATH));
+			return CoreModel.newContainerEntry(id, isExported);
+		}
+		default: {
+			ICModelStatus status = new CModelStatus(IStatus.ERROR, "PathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new CModelException(status);
+		}
 		}
 	}
 
@@ -269,61 +276,61 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 			element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
 
 			// Specifics to the entries
-			switch(kind) {
-				case IPathEntry.CDT_SOURCE:
-				case IPathEntry.CDT_OUTPUT:
-				case IPathEntry.CDT_PROJECT:
-				case IPathEntry.CDT_CONTAINER:
-					break;
-				case IPathEntry.CDT_LIBRARY: {
-					ILibraryEntry lib = (ILibraryEntry) entrie;
-					IPath libraryPath = lib.getLibraryPath();
-					element.setAttribute(ATTRIBUTE_LIBRARY, libraryPath.toString());
-					IPath sourcePath = lib.getSourceAttachmentPath();
-					if (sourcePath != null) {
-						// translate to project relative from absolute
-						if (projectPath != null && projectPath.isPrefixOf(sourcePath)) {
-							if (sourcePath.segment(0).equals(projectPath.segment(0))) {
-								sourcePath = sourcePath.removeFirstSegments(1);
-								sourcePath = sourcePath.makeRelative();
-							}
+			switch (kind) {
+			case IPathEntry.CDT_SOURCE:
+			case IPathEntry.CDT_OUTPUT:
+			case IPathEntry.CDT_PROJECT:
+			case IPathEntry.CDT_CONTAINER:
+				break;
+			case IPathEntry.CDT_LIBRARY: {
+				ILibraryEntry lib = (ILibraryEntry) entrie;
+				IPath libraryPath = lib.getLibraryPath();
+				element.setAttribute(ATTRIBUTE_LIBRARY, libraryPath.toString());
+				IPath sourcePath = lib.getSourceAttachmentPath();
+				if (sourcePath != null) {
+					// translate to project relative from absolute
+					if (projectPath != null && projectPath.isPrefixOf(sourcePath)) {
+						if (sourcePath.segment(0).equals(projectPath.segment(0))) {
+							sourcePath = sourcePath.removeFirstSegments(1);
+							sourcePath = sourcePath.makeRelative();
 						}
-						element.setAttribute(ATTRIBUTE_SOURCEPATH, sourcePath.toString());
 					}
-					if (lib.getSourceAttachmentRootPath() != null) {
-						element.setAttribute(ATTRIBUTE_ROOTPATH, lib.getSourceAttachmentRootPath().toString());
-					}
-					if (lib.getSourceAttachmentPrefixMapping() != null) {
-						element.setAttribute(ATTRIBUTE_PREFIXMAPPING, lib.getSourceAttachmentPrefixMapping().toString());
-					}
-					break;
+					element.setAttribute(ATTRIBUTE_SOURCEPATH, sourcePath.toString());
 				}
-				case IPathEntry.CDT_INCLUDE: {
-					IIncludeEntry include = (IIncludeEntry) entrie;
-					IPath includePath = include.getIncludePath();
-					element.setAttribute(ATTRIBUTE_INCLUDE, includePath.toString());
-					if (include.isSystemInclude()) {
-						element.setAttribute(ATTRIBUTE_SYSTEM, VALUE_TRUE);
-					}
-					break;
+				if (lib.getSourceAttachmentRootPath() != null) {
+					element.setAttribute(ATTRIBUTE_ROOTPATH, lib.getSourceAttachmentRootPath().toString());
 				}
-				case IPathEntry.CDT_INCLUDE_FILE: {
-					IIncludeFileEntry include = (IIncludeFileEntry) entrie;
-					IPath includeFilePath = include.getIncludeFilePath();
-					element.setAttribute(ATTRIBUTE_INCLUDE_FILE, includeFilePath.toString());
-					break;
+				if (lib.getSourceAttachmentPrefixMapping() != null) {
+					element.setAttribute(ATTRIBUTE_PREFIXMAPPING, lib.getSourceAttachmentPrefixMapping().toString());
 				}
-				case IPathEntry.CDT_MACRO: {
-					IMacroEntry macro = (IMacroEntry) entrie;
-					element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
-					element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
-					break;
+				break;
+			}
+			case IPathEntry.CDT_INCLUDE: {
+				IIncludeEntry include = (IIncludeEntry) entrie;
+				IPath includePath = include.getIncludePath();
+				element.setAttribute(ATTRIBUTE_INCLUDE, includePath.toString());
+				if (include.isSystemInclude()) {
+					element.setAttribute(ATTRIBUTE_SYSTEM, VALUE_TRUE);
 				}
-				case IPathEntry.CDT_MACRO_FILE: {
-					IMacroFileEntry macro = (IMacroFileEntry) entrie;
-					element.setAttribute(ATTRIBUTE_MACRO_FILE, macro.getMacroFilePath().toString());
-					break;
-				}
+				break;
+			}
+			case IPathEntry.CDT_INCLUDE_FILE: {
+				IIncludeFileEntry include = (IIncludeFileEntry) entrie;
+				IPath includeFilePath = include.getIncludeFilePath();
+				element.setAttribute(ATTRIBUTE_INCLUDE_FILE, includeFilePath.toString());
+				break;
+			}
+			case IPathEntry.CDT_MACRO: {
+				IMacroEntry macro = (IMacroEntry) entrie;
+				element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
+				element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
+				break;
+			}
+			case IPathEntry.CDT_MACRO_FILE: {
+				IMacroFileEntry macro = (IMacroFileEntry) entrie;
+				element.setAttribute(ATTRIBUTE_MACRO_FILE, macro.getMacroFilePath().toString());
+				break;
+			}
 			}
 
 			if (entrie instanceof APathEntry) {
@@ -367,9 +374,9 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	@Override
 	public void descriptorChanged(CDescriptorEvent event) {
 		if (event.getType() == CDescriptorEvent.CDTPROJECT_CHANGED
-				/*|| event.getType() == CDescriptorEvent.CDTPROJECT_ADDED*/) {
+		/*|| event.getType() == CDescriptorEvent.CDTPROJECT_ADDED*/) {
 			ICDescriptor cdesc = event.getDescriptor();
-			if (cdesc != null && cdesc.getProject() == fProject){
+			if (cdesc != null && cdesc.getProject() == fProject) {
 				// Call the listeners.
 				fireContentChangedEvent(fProject);
 			}
@@ -393,7 +400,8 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	}
 
 	private void fireContentChangedEvent(IProject project) {
-		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project, PathEntryStoreChangedEvent.CONTENT_CHANGED);
+		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project,
+				PathEntryStoreChangedEvent.CONTENT_CHANGED);
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
 		listeners.toArray(observers);
 		for (IPathEntryStoreListener observer : observers) {
@@ -406,7 +414,8 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	 */
 	@Override
 	public void close() {
-		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, fProject, PathEntryStoreChangedEvent.STORE_CLOSED);
+		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, fProject,
+				PathEntryStoreChangedEvent.STORE_CLOSED);
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
 		listeners.toArray(observers);
 		for (IPathEntryStoreListener observer : observers) {

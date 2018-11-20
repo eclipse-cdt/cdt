@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-
 /**
  * A launch configuration tab that displays and edits program arguments,
  * and working directory launch configuration attributes.
@@ -98,14 +97,12 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 
 		group.setText(LaunchMessages.CArgumentsTab_C_Program_Arguments);
 		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		fPrgmArgumentsText.getAccessible().addAccessibleListener(
-			new AccessibleAdapter() {
-				@Override
-				public void getName(AccessibleEvent e) {
-					e.result = LaunchMessages.CArgumentsTab_C_Program_Arguments;
-				}
+		fPrgmArgumentsText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = LaunchMessages.CArgumentsTab_C_Program_Arguments;
 			}
-		);
+		});
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		gd.widthHint = 100;
@@ -117,7 +114,8 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fArgumentVariablesButton= createVariablesButton(group, LaunchMessages.CArgumentsTab_Variables, fPrgmArgumentsText); 
+		fArgumentVariablesButton = createVariablesButton(group, LaunchMessages.CArgumentsTab_Variables,
+				fPrgmArgumentsText);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fArgumentVariablesButton.setLayoutData(gd);
 		addControlAccessibleListener(fArgumentVariablesButton, fArgumentVariablesButton.getText()); // need to strip the mnemonic from buttons
@@ -135,9 +133,11 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 
 	private class ControlAccessibleListener extends AccessibleAdapter {
 		private String controlName;
+
 		ControlAccessibleListener(String name) {
 			controlName = name;
 		}
+
 		@Override
 		public void getName(AccessibleEvent e) {
 			e.result = controlName;
@@ -158,7 +158,8 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			fPrgmArgumentsText.setText(configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
+			fPrgmArgumentsText
+					.setText(configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
 			fWorkingDirectoryBlock.initializeFrom(configuration);
 		} catch (CoreException e) {
 			setErrorMessage(NLS.bind(LaunchMessages.Launch_common_Exception_occurred_reading_configuration_EXCEPTION,
@@ -169,8 +170,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(
-				ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+		configuration.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
 				getAttributeValueFrom(fPrgmArgumentsText));
 		fWorkingDirectoryBlock.performApply(configuration);
 	}
@@ -183,13 +183,12 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	protected String getAttributeValueFrom(Text text) {
 		String content = text.getText().trim();
 		// Bug #131513 - eliminate Windows \r line delimiter
-		content = content.replaceAll("\r\n", "\n");  //$NON-NLS-1$//$NON-NLS-2$
+		content = content.replaceAll("\r\n", "\n"); //$NON-NLS-1$//$NON-NLS-2$
 		if (!content.isEmpty()) {
 			return content;
 		}
 		return null;
 	}
-
 
 	@Override
 	public String getId() {
@@ -198,7 +197,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 
 	@Override
 	public String getName() {
-		return LaunchMessages.CArgumentsTab_Arguments; 
+		return LaunchMessages.CArgumentsTab_Arguments;
 	}
 
 	@Override

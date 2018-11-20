@@ -49,7 +49,7 @@ public class ToolFactory {
 		String extID = CCorePlugin.FORMATTER_EXTPOINT_ID;
 		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, extID);
 		if (extension != null) {
-			IExtension[] extensions =  extension.getExtensions();
+			IExtension[] extensions = extension.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 				for (int j = 0; j < configElements.length; j++) {
@@ -57,7 +57,7 @@ public class ToolFactory {
 					if (initializerID != null && initializerID.equals(formatterID)) {
 						try {
 							Object execExt = configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
-							if (execExt instanceof CodeFormatter){
+							if (execExt instanceof CodeFormatter) {
 								CodeFormatter formatter = (CodeFormatter) execExt;
 								formatter.setOptions(options);
 								return formatter;
@@ -90,5 +90,6 @@ public class ToolFactory {
 		return new CCodeFormatter(options);
 	}
 
-	private ToolFactory() {}
+	private ToolFactory() {
+	}
 }

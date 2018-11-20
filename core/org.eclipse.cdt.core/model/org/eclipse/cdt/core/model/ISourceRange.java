@@ -29,7 +29,7 @@ public interface ISourceRange {
 	 * Returns the number of characters of the source code for this element.
 	 */
 	public int getLength();
-        
+
 	/**
 	 * Returns the Id starting position of this element.
 	 */

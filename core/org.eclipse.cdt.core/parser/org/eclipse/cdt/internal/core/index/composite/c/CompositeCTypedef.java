@@ -27,18 +27,19 @@ class CompositeCTypedef extends CompositeCBinding implements ITypedef, IIndexTyp
 
 	@Override
 	public IType getType() {
-		IType type = ((ITypedef)rbinding).getType();
+		IType type = ((ITypedef) rbinding).getType();
 		return cf.getCompositeType(type);
 	}
 
 	@Override
 	public boolean isSameType(IType type) {
-		return ((ITypedef)rbinding).isSameType(type);
+		return ((ITypedef) rbinding).isSameType(type);
 	}
 
 	@Override
 	public Object clone() {
-		fail(); return null;
+		fail();
+		return null;
 	}
 
 	@Override

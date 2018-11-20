@@ -41,51 +41,48 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 public class KeywordCompletionProposalComputer extends ParsingBasedProposalComputer {
 
 	private static final int MIN_KEYWORD_LENGTH = 5;
-	
+
 	@Override
-	protected List<ICompletionProposal> computeCompletionProposals(
-			CContentAssistInvocationContext context,
-			IASTCompletionNode completionNode, String prefix)
-			throws CoreException {
+	protected List<ICompletionProposal> computeCompletionProposals(CContentAssistInvocationContext context,
+			IASTCompletionNode completionNode, String prefix) throws CoreException {
 
 		if (prefix.length() == 0) {
 			try {
-				prefix= context.computeIdentifierPrefix().toString();
+				prefix = context.computeIdentifierPrefix().toString();
 			} catch (BadLocationException exc) {
 				CUIPlugin.log(exc);
 			}
 		}
 		final int prefixLength = prefix.length();
 		// No prefix, no completions
-        if (prefixLength == 0 || context.isContextInformationStyle())
-            return Collections.emptyList();
+		if (prefixLength == 0 || context.isContextInformationStyle())
+			return Collections.emptyList();
 
-        // keywords are matched case-sensitive
+		// keywords are matched case-sensitive
 		final int relevance = RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.KEYWORD_TYPE_RELEVANCE;
 
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 
 		ICLanguageKeywords languageKeywords = null;
 		ITranslationUnit tu = context.getTranslationUnit();
-        if(tu != null) {
-        	ILanguage language = tu.getLanguage();
-        	if(language != null)
-        		languageKeywords = language.getAdapter(ICLanguageKeywords.class);
-        }
-        	
-        if(languageKeywords == null)
-    		return Collections.emptyList();
-        
-		
+		if (tu != null) {
+			ILanguage language = tu.getLanguage();
+			if (language != null)
+				languageKeywords = language.getAdapter(ICLanguageKeywords.class);
+		}
+
+		if (languageKeywords == null)
+			return Collections.emptyList();
+
 		if (inPreprocessorDirective(context)) {
 			// TODO split this into a separate proposal computer?
-			boolean needDirectiveKeyword= inPreprocessorKeyword(context);
+			boolean needDirectiveKeyword = inPreprocessorKeyword(context);
 
 			// add matching preprocessor keyword proposals
 			ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
 			Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
-			
-			for(String keyword : languageKeywords.getPreprocessorKeywords()) {
+
+			for (String keyword : languageKeywords.getPreprocessorKeywords()) {
 				if (keyword.startsWith(prefix) && keyword.length() > prefixLength) {
 					String repString = keyword + ' ';
 					int repLength = prefixLength;
@@ -94,33 +91,34 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 						// strip leading '#' from replacement
 						repLength--;
 						repOffset++;
-						repString= repString.substring(1);
+						repString = repString.substring(1);
 					} else if (needDirectiveKeyword) {
 						continue;
 					}
-					proposals.add(new CCompletionProposal(repString, repOffset,
-							repLength, image, keyword, relevance, context.getViewer()));
+					proposals.add(new CCompletionProposal(repString, repOffset, repLength, image, keyword, relevance,
+							context.getViewer()));
 				}
 			}
 		} else {
-	        if (!isValidContext(completionNode))
-	            return Collections.emptyList();
-	        
+			if (!isValidContext(completionNode))
+				return Collections.emptyList();
+
 			// add matching keyword proposals
-	        ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
-	        Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
-	        
-	        for(String keyword : languageKeywords.getKeywords()) {
-	            if (keyword.startsWith(prefix) && keyword.length() > prefixLength && keyword.length() >= MIN_KEYWORD_LENGTH) {
-	                int repLength = prefixLength;
-	                int repOffset = context.getInvocationOffset() - repLength;
-	                proposals.add(new CCompletionProposal(keyword, repOffset,
-							repLength, image, keyword, relevance, context.getViewer()));
-	            }
-	        }
+			ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
+			Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
+
+			for (String keyword : languageKeywords.getKeywords()) {
+				if (keyword.startsWith(prefix) && keyword.length() > prefixLength
+						&& keyword.length() >= MIN_KEYWORD_LENGTH) {
+					int repLength = prefixLength;
+					int repOffset = context.getInvocationOffset() - repLength;
+					proposals.add(new CCompletionProposal(keyword, repOffset, repLength, image, keyword, relevance,
+							context.getViewer()));
+				}
+			}
 		}
-        
-        return proposals;
+
+		return proposals;
 	}
 
 	/**
@@ -133,18 +131,18 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 		IASTName[] names = completionNode.getNames();
 		for (int i = 0; i < names.length; ++i) {
 			IASTName name = names[i];
-			
+
 			// ignore if not connected
 			if (name.getTranslationUnit() == null)
 				continue;
-		
+
 			// ignore if this is a member access
 			if (name.getParent() instanceof IASTFieldReference)
 				continue;
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -157,17 +155,17 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 	private boolean inPreprocessorKeyword(CContentAssistInvocationContext context) {
 		IDocument doc = context.getDocument();
 		int offset = context.getInvocationOffset();
-		
+
 		try {
-			final ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
+			final ITypedRegion partition = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
 			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
-				String ppPrefix= doc.get(partition.getOffset(), offset - partition.getOffset());
+				String ppPrefix = doc.get(partition.getOffset(), offset - partition.getOffset());
 				if (ppPrefix.matches("\\s*#\\s*\\w*")) { //$NON-NLS-1$
 					// we are inside the directive keyword
 					return true;
 				}
 			}
-			
+
 		} catch (BadLocationException exc) {
 		}
 		return false;
@@ -182,13 +180,13 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 	private boolean inPreprocessorDirective(CContentAssistInvocationContext context) {
 		IDocument doc = context.getDocument();
 		int offset = context.getInvocationOffset();
-		
+
 		try {
-			final ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
+			final ITypedRegion partition = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
 			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
 				return true;
 			}
-			
+
 		} catch (BadLocationException exc) {
 		}
 		return false;

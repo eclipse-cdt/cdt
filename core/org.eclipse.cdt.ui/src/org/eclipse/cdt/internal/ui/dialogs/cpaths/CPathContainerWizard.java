@@ -99,7 +99,7 @@ public class CPathContainerWizard extends Wizard {
 		if (fContainerPage != null) {
 			if (fContainerPage.finish()) {
 				if (fContainerPage instanceof ProjectContainerPage) {
-					fProjectEntry = ((ProjectContainerPage)fContainerPage).getProjectEntry();
+					fProjectEntry = ((ProjectContainerPage) fContainerPage).getProjectEntry();
 				} else {
 					fContainerEntries = fContainerPage.getNewContainers();
 				}
@@ -129,8 +129,7 @@ public class CPathContainerWizard extends Wizard {
 			if (fFilterType != null) {
 				allContainers.add(0, new ProjectContainerDescriptor(fFilterType));
 			}
-			fSelectionWizardPage = new CPathContainerSelectionPage(
-					allContainers.toArray(new IContainerDescriptor[0]));
+			fSelectionWizardPage = new CPathContainerSelectionPage(allContainers.toArray(new IContainerDescriptor[0]));
 			addPage(fSelectionWizardPage);
 
 			// add as dummy, will not be shown
@@ -186,7 +185,7 @@ public class CPathContainerWizard extends Wizard {
 					&& fContainerPage.getNewContainers()[0] != null) {
 				IPathEntry entry;
 				if (fContainerPage instanceof ProjectContainerPage) {
-					entry = ((ProjectContainerPage)fContainerPage).getProjectEntry();
+					entry = ((ProjectContainerPage) fContainerPage).getProjectEntry();
 				} else {
 					entry = fContainerPage.getNewContainers()[0];
 				}
@@ -198,8 +197,8 @@ public class CPathContainerWizard extends Wizard {
 	}
 
 	private void handlePageCreationFailed(CoreException e) {
-		String title = CPathEntryMessages.CPathContainerWizard_pagecreationerror_title; 
-		String message = CPathEntryMessages.CPathContainerWizard_pagecreationerror_message; 
+		String title = CPathEntryMessages.CPathContainerWizard_pagecreationerror_title;
+		String message = CPathEntryMessages.CPathContainerWizard_pagecreationerror_message;
 		ExceptionHandler.handle(e, getShell(), title, message);
 	}
 
@@ -237,7 +236,8 @@ public class CPathContainerWizard extends Wizard {
 	public static int openWizard(Shell shell, CPathContainerWizard wizard) {
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		PixelConverter converter = new PixelConverter(shell);
-		dialog.setMinimumPageSize(converter.convertWidthInCharsToPixels(70), converter.convertHeightInCharsToPixels(20));
+		dialog.setMinimumPageSize(converter.convertWidthInCharsToPixels(70),
+				converter.convertHeightInCharsToPixels(20));
 		dialog.create();
 		return dialog.open();
 	}

@@ -60,25 +60,23 @@ public class LanguageMappingChangeEvent implements ILanguageMappingChangeEvent {
 		// if the filename has been set, use it.  otherwise get the path from
 		// either the IFile or the IPath if we have one
 
-		if(fFileName != null)
+		if (fFileName != null)
 			return fFileName;
 		else {
-			if(fFile != null)
-			{
+			if (fFile != null) {
 				IPath location = fFile.getLocation();
-				if(location != null)
+				if (location != null)
 					return location.toString();
 				else {
 					// use the URI if there is one
 					URI uri = fFile.getLocationURI();
 
-					if(uri != null)
+					if (uri != null)
 						return uri.toString();
 				}
 
-			}
-			else {  // no file, use path
-				if(fPath != null)
+			} else { // no file, use path
+				if (fPath != null)
 					return fPath.toString();
 
 			}
@@ -93,12 +91,11 @@ public class LanguageMappingChangeEvent implements ILanguageMappingChangeEvent {
 	@Override
 	public IPath getPath() {
 
-		if(fPath != null)
+		if (fPath != null)
 			return fPath;
 
 		else { // try to get the path from the file if we have one
-			if(fFile != null)
-			{
+			if (fFile != null) {
 				IPath location = fFile.getLocation();
 				return location;
 			}
@@ -113,12 +110,12 @@ public class LanguageMappingChangeEvent implements ILanguageMappingChangeEvent {
 	@Override
 	public IProject getProject() {
 
-		if(fProject != null)
+		if (fProject != null)
 			return fProject;
 
 		else { // try to get the project from the file if we have one
 
-			if(fFile != null)
+			if (fFile != null)
 				return fFile.getProject();
 
 		}

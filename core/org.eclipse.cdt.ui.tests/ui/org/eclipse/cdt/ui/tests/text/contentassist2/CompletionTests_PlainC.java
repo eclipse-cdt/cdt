@@ -36,8 +36,8 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	private static final String SOURCE_FILE_NAME = "CompletionTest.c";
 	private static final String CURSOR_LOCATION_TAG = "/*cursor*/";
 	private static final String INCLUDE_LOCATION_TAG = "/*include*/";
-	private static final String DISTURB_FILE_NAME= "DisturbWith.c";
-	
+	private static final String DISTURB_FILE_NAME = "DisturbWith.c";
+
 	protected int fCursorOffset;
 	private IProject fProject;
 
@@ -148,7 +148,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	// typedef enum {__nix} _e204758;
 	// void _f204758(_e204758 x);
 	// #endif
-	
+
 	//{DisturbWith.c}
 	// int gTemp;
 	// void gFunc();
@@ -159,7 +159,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	public static Test suite() {
 		return BaseTestCase.suite(CompletionTests_PlainC.class, "_");
 	}
-	
+
 	/**
 	 * @param name
 	 */
@@ -172,16 +172,16 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	 */
 	@Override
 	protected IFile setUpProjectContent(IProject project) throws Exception {
-		fProject= project;
-		String headerContent= readTaggedComment(HEADER_FILE_NAME);
-		StringBuilder sourceContent= getContentsForTest(1)[0];
-		int includeOffset= Math.max(0, sourceContent.indexOf(INCLUDE_LOCATION_TAG));
-		sourceContent.insert(includeOffset, "#include \""+HEADER_FILE_NAME+"\"\n");
-		fCursorOffset= sourceContent.indexOf(CURSOR_LOCATION_TAG);
+		fProject = project;
+		String headerContent = readTaggedComment(HEADER_FILE_NAME);
+		StringBuilder sourceContent = getContentsForTest(1)[0];
+		int includeOffset = Math.max(0, sourceContent.indexOf(INCLUDE_LOCATION_TAG));
+		sourceContent.insert(includeOffset, "#include \"" + HEADER_FILE_NAME + "\"\n");
+		fCursorOffset = sourceContent.indexOf(CURSOR_LOCATION_TAG);
 		assertTrue("No cursor location specified", fCursorOffset >= 0);
-		sourceContent.delete(fCursorOffset, fCursorOffset+CURSOR_LOCATION_TAG.length());
+		sourceContent.delete(fCursorOffset, fCursorOffset + CURSOR_LOCATION_TAG.length());
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
-		IFile sourceFile= createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
+		IFile sourceFile = createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 		// re-indexing is necessary to parse the header in context of the source. 
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		waitForIndexer(fCProject);
@@ -189,38 +189,32 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	}
 
 	protected static final int DEFAULT_FLAGS = AbstractContentAssistTest.DEFAULT_FLAGS | IS_COMPLETION;
-	
+
 	protected void assertCompletionResults(String[] expected) throws Exception {
 		assertContentAssistResults(fCursorOffset, expected, DEFAULT_FLAGS, CompareType.ID);
 	}
-	
+
 	//void test() {
-    //  int myvar;
-    //  (my/*cursor*/
+	//  int myvar;
+	//  (my/*cursor*/
 	public void testLocalVariableAfterOpeningParen_Bug180885() throws Exception {
-		final String[] expected= {
-				"myvar"
-		};
+		final String[] expected = { "myvar" };
 		assertCompletionResults(expected);
 	}
 
 	//void test() {
-    //  int myvar;
-    //  int x = my/*cursor*/
+	//  int myvar;
+	//  int x = my/*cursor*/
 	public void testLocalVariableInAssignment() throws Exception {
-		final String[] expected= {
-				"myvar"
-		};
+		final String[] expected = { "myvar" };
 		assertCompletionResults(expected);
 	}
 
 	//void test() {
-    //  int myvar;
-    //  my/*cursor*/
+	//  int myvar;
+	//  my/*cursor*/
 	public void testLocalVariableOnLHS() throws Exception {
-		final String[] expected= {
-				"myvar"
-		};
+		final String[] expected = { "myvar" };
 		assertCompletionResults(expected);
 	}
 
@@ -228,34 +222,28 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//    g/*cursor*/
 	public void testBindingsWithoutDeclaration() throws Exception {
 		// gStruct: fix for 214146, type from a source file is not proposed.
-		final String[] expected= {
-			"gGlobalInt", "gTemp", "gFunc(void)", 
-		};
-		final String[] expected2= {
-				"gGlobalInt"
-			};
-		String disturbContent= readTaggedComment(DISTURB_FILE_NAME);
-		IFile dfile= createFile(fProject, DISTURB_FILE_NAME, disturbContent);
+		final String[] expected = { "gGlobalInt", "gTemp", "gFunc(void)", };
+		final String[] expected2 = { "gGlobalInt" };
+		String disturbContent = readTaggedComment(DISTURB_FILE_NAME);
+		IFile dfile = createFile(fProject, DISTURB_FILE_NAME, disturbContent);
 		waitForIndexer(fCProject);
 		assertCompletionResults(expected);
-		
+
 		dfile.delete(true, npm());
 		waitForIndexer(fCProject);
-		assertCompletionResults(expected2);		
+		assertCompletionResults(expected2);
 	}
-	
+
 	//// to_be_replaced_
 	//void gfunc(){aNew/*cursor*/
 	public void testGlobalVariableBeforeSave_Bug180883() throws Exception {
-		String replace=   "// to_be_replaced_";
-		String globalVar= "int aNewGlobalVar;";
-		IDocument doc= getDocument();
-		int idx= doc.get().indexOf(replace);
+		String replace = "// to_be_replaced_";
+		String globalVar = "int aNewGlobalVar;";
+		IDocument doc = getDocument();
+		int idx = doc.get().indexOf(replace);
 		doc.replace(idx, replace.length(), globalVar);
 
-		final String[] expected= {
-				"aNewGlobalVar"
-		};
+		final String[] expected = { "aNewGlobalVar" };
 		assertCompletionResults(expected);
 	}
 
@@ -263,42 +251,40 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	// void gFunc() {
 	//   stat/*cursor*/
 	public void testStaticVariables_Bug197990() throws Exception {
-		final String[] expected= {
-				"staticVar197990"
-		};
+		final String[] expected = { "staticVar197990" };
 		assertCompletionResults(expected);
 	}
-	
+
 	// struct Struct/*cursor*/
 	public void testElaboratedTypeSpecifierStruct_bug208710() throws Exception {
-		final String[] expected= { "Struct1", "Struct2" };
+		final String[] expected = { "Struct1", "Struct2" };
 		assertCompletionResults(expected);
 	}
-	
+
 	// struct Union/*cursor*/
 	public void testElaboratedTypeSpecifierNotStruct_bug208710() throws Exception {
-		final String[] expected= new String[0];
+		final String[] expected = new String[0];
 		assertCompletionResults(expected);
 	}
-	
+
 	// union Union/*cursor*/
 	public void testElaboratedTypeSpecifierUnion_bug208710() throws Exception {
-		final String[] expected= { "Union1", "Union2" };
+		final String[] expected = { "Union1", "Union2" };
 		assertCompletionResults(expected);
 	}
-	
+
 	// union Struct/*cursor*/
 	public void testElaboratedTypeSpecifierNotUnion_bug208710() throws Exception {
-		final String[] expected= new String[0];
+		final String[] expected = new String[0];
 		assertCompletionResults(expected);
 	}
-	
+
 	// void func() {float a; a= 1./*cursor*/}
 	public void testCompletionInFloatingPointLiteral_Bug193464() throws Exception {
-		final String[] expected= new String[0];
+		final String[] expected = new String[0];
 		assertCompletionResults(expected);
 	}
-	
+
 	// #ifdef __cplusplus__
 	// extern "C" {
 	// #endif
@@ -306,20 +292,18 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	// #ifdef __cplusplus__
 	// }
 	// #endif
-	
+
 	// #include "header191315.h"
-	
+
 	// #include "header191315.h"
 	// void xxx() { c_lin/*cursor*/
 	public void testExternC_bug191315() throws Exception {
-		CharSequence[] content= getContentsForTest(3);
+		CharSequence[] content = getContentsForTest(3);
 		createFile(fProject, "header191315.h", content[0].toString());
 		createFile(fProject, "source191315.c", content[1].toString());
 		createFile(fProject, "source191315.cpp", content[1].toString());
 		waitForIndexer(fCProject);
-		final String[] expected= {
-			"c_linkage(void)"
-		};
+		final String[] expected = { "c_linkage(void)" };
 		assertCompletionResults(expected);
 	}
 
@@ -330,7 +314,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		final String[] expected = { "AStructType", "XStructType", "anEnumerationType", "xEnumerationType" };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void foo ( a/*cursor*/
 	public void testArgumentTypes_Prefix() throws Exception {
 		final String[] expected = { "AMacro(x)", "AStructType", "anEnumerationType" };
@@ -354,34 +338,14 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		final String[] expected = { "AMacro(x)", "AStructType", "anEnumerationType" };
 		assertCompletionResults(expected);
 	}
-	
+
 	//#ifdef /*cursor*/
 	public void testMacroRef_NoPrefix() throws Exception {
-		final String[] expected = {
-				"AMacro(x)",
-				"DEBUG",
-				"XMacro(x, y)",
-				"__CDT_PARSER__",
-				"__COUNTER__",
-				"__DATE__",
-				"__FILE__",
-				"__LINE__",
-				"__STDC_HOSTED__",
-				"__STDC_VERSION__",
-				"__STDC__",
-				"__TIME__",
-				"__builtin_va_arg(ap, type)",
-				"__builtin_offsetof(T, m)",
-				"__builtin_types_compatible_p(x, y)",
-				"__complex__",
-				"__extension__",
-				"__imag__",
-				"__null",
-				"__offsetof__(x)",
-				"__real__",
-				"__stdcall",
-				"__thread",
-		};
+		final String[] expected = { "AMacro(x)", "DEBUG", "XMacro(x, y)", "__CDT_PARSER__", "__COUNTER__", "__DATE__",
+				"__FILE__", "__LINE__", "__STDC_HOSTED__", "__STDC_VERSION__", "__STDC__", "__TIME__",
+				"__builtin_va_arg(ap, type)", "__builtin_offsetof(T, m)", "__builtin_types_compatible_p(x, y)",
+				"__complex__", "__extension__", "__imag__", "__null", "__offsetof__(x)", "__real__", "__stdcall",
+				"__thread", };
 		assertCompletionResults(expected);
 	}
 
@@ -390,7 +354,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		final String[] expected = { "DEBUG" };
 		assertCompletionResults(expected);
 	}
-	
+
 	//	int waldo;
 	//	void foo() {
 	//	#ifdef SOME_UNDEFINED_MACRO
@@ -407,9 +371,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//    c->/*cursor*/
 	//}
 	public void testMemberReference_Arrow_NoPrefix() throws Exception {
-		final String[] expected = { 
-				"aStructField", "xaStructField",
-		};
+		final String[] expected = { "aStructField", "xaStructField", };
 		assertCompletionResults(expected);
 	}
 
@@ -418,9 +380,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//    ap->/*cursor*/
 	//}
 	public void testMemberReference_Arrow_NoPrefix2() throws Exception {
-		final String[] expected = { 
-				"aStructField", "xaStructField",
-		};
+		final String[] expected = { "aStructField", "xaStructField", };
 		assertCompletionResults(expected);
 	}
 
@@ -430,9 +390,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//    c->a/*cursor*/
 	//}
 	public void testMemberReference_Arrow_Prefix() throws Exception {
-		final String[] expected = { 
-				"aStructField",
-		};
+		final String[] expected = { "aStructField", };
 		assertCompletionResults(expected);
 	}
 
@@ -443,9 +401,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//    foo()->a/*cursor*/
 	//}
 	public void testMemberReference_Arrow_Prefix2() throws Exception {
-		final String[] expected = { 
-				"aStructField",
-		};
+		final String[] expected = { "aStructField", };
 		assertCompletionResults(expected);
 	}
 
@@ -455,9 +411,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//    c./*cursor*/
 	//}
 	public void testMemberReference_Dot_NoPrefix() throws Exception {
-		final String[] expected = { 
-				"aStructField", "xaStructField",
-		};
+		final String[] expected = { "aStructField", "xaStructField", };
 		assertCompletionResults(expected);
 	}
 
@@ -467,9 +421,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//    c.a/*cursor*/
 	//}
 	public void testMemberReference_Dot_Prefix() throws Exception {
-		final String[] expected = { 
-				"aStructField",
-		};
+		final String[] expected = { "aStructField", };
 		assertCompletionResults(expected);
 	}
 
@@ -477,9 +429,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//
 	//m/*cursor*/
 	public void testTypeDef_Prefix() throws Exception {
-		final String[] expected = { 
-				"myType",
-		};
+		final String[] expected = { "myType", };
 		assertCompletionResults(expected);
 	}
 
@@ -488,27 +438,10 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//    /*cursor*/
 	//}
 	public void testSingleName_Function_NoPrefix() throws Exception {
-		final String[] expected = { 
-				"x",
-				"aVariable",
-				"xVariable",
-				"aFunction(void)",
-				"anotherFunction(void)",
-				"fooFunction(int)",
-				"xFunction(void)",
-				"xOtherFunction(void)",
-				"anEnumerationType",
-				"xEnumerationType",
-				"AStructType",
-				"XStructType",
-				"aFirstEnum",
-				"aSecondEnum",
-				"aThirdEnum",
-				"xFirstEnum",
-				"xSecondEnum",
-				"xThirdEnum",
-				"gGlobalInt"
-		};
+		final String[] expected = { "x", "aVariable", "xVariable", "aFunction(void)", "anotherFunction(void)",
+				"fooFunction(int)", "xFunction(void)", "xOtherFunction(void)", "anEnumerationType", "xEnumerationType",
+				"AStructType", "XStructType", "aFirstEnum", "aSecondEnum", "aThirdEnum", "xFirstEnum", "xSecondEnum",
+				"xThirdEnum", "gGlobalInt" };
 		assertCompletionResults(expected);
 	}
 
@@ -517,58 +450,29 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//    a/*cursor*/
 	//}
 	public void testSingleName_Function_Prefix() throws Exception {
-		final String[] expected = { 
-				"AMacro(x)",
-				"AStructType",
-				"aVariable",
-				"aFunction(void)",
-				"anotherFunction(void)",
-				"anEnumerationType",
-				"aFirstEnum",
-				"aSecondEnum",
-				"aThirdEnum",
-		};
+		final String[] expected = { "AMacro(x)", "AStructType", "aVariable", "aFunction(void)", "anotherFunction(void)",
+				"anEnumerationType", "aFirstEnum", "aSecondEnum", "aThirdEnum", };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void fooFunction(int x)
 	//{
 	//    int y = /*cursor*/
 	//}
 	public void testSingleName_Assignment_NoPrefix() throws Exception {
-		final String[] expected = {
-				"x",
-				"y",
-				"aVariable",
-				"xVariable",
-				"aFunction(void)",
-				"anotherFunction(void)",
-				"fooFunction(int)",
-				"xFunction(void)",
-				"xOtherFunction(void)",
-				"anEnumerationType",
-				"xEnumerationType",
-				"AStructType",
-				"XStructType",
-				"aFirstEnum",
-				"aSecondEnum",
-				"aThirdEnum",
-				"xFirstEnum",
-				"xSecondEnum",
-				"xThirdEnum",
-				"gGlobalInt"
-		};
+		final String[] expected = { "x", "y", "aVariable", "xVariable", "aFunction(void)", "anotherFunction(void)",
+				"fooFunction(int)", "xFunction(void)", "xOtherFunction(void)", "anEnumerationType", "xEnumerationType",
+				"AStructType", "XStructType", "aFirstEnum", "aSecondEnum", "aThirdEnum", "xFirstEnum", "xSecondEnum",
+				"xThirdEnum", "gGlobalInt" };
 		assertCompletionResults(expected);
 	}
-	
+
 	//void foo(int x)
 	//{
 	//    int y = AM/*cursor*/
 	//}
 	public void testSingleName_Assignment_Prefix() throws Exception {
-		final String[] expected = {
-				"AMacro(x)"
-		};
+		final String[] expected = { "AMacro(x)" };
 		assertCompletionResults(expected);
 	}
 
@@ -576,9 +480,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void gfunc() {C1 v; v.m/*cursor*/
 	public void testLocalVariable() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -586,9 +488,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void gfunc() {C1 v; v.fMySelf->m/*cursor*/
 	public void testLocalVariable_MemberVariable() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -596,9 +496,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void gfunc() {gfC1()->m/*cursor*/
 	public void testGlobalFunction() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -606,9 +504,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {gC/*cursor*/
 	public void testGlobalVariables_GlobalScope() throws Exception {
-		final String[] expected= {
-				"gC1", "gC2", "gfC1(void)", "gfC2(void)"
-		};
+		final String[] expected = { "gC1", "gC2", "gfC1(void)", "gfC2(void)" };
 		assertCompletionResults(expected);
 	}
 
@@ -616,9 +512,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void foo() {gC/*cursor*/
 	public void testGlobalVariables_FunctionScope() throws Exception {
-		final String[] expected= {
-				"gC1", "gC2", "gfC1(void)", "gfC2(void)"
-		};
+		final String[] expected = { "gC1", "gC2", "gfC1(void)", "gfC2(void)" };
 		assertCompletionResults(expected);
 	}
 
@@ -635,9 +529,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//} C2;
 	//void f() {C2* cLocal1; while(true) {C1* cLocal2; cL/*cursor*/
 	public void testLocalVariables_FunctionScope() throws Exception {
-		final String[] expected= {
-				"cLocal1", "cLocal2"
-		};
+		final String[] expected = { "cLocal1", "cLocal2" };
 		assertCompletionResults(expected);
 	}
 
@@ -645,9 +537,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1* cLocal1; cLocal1->f/*cursor*/
 	public void testDataMembers_FunctionScope() throws Exception {
-		final String[] expected= {
-				"fMySelf"
-		};
+		final String[] expected = { "fMySelf" };
 		assertCompletionResults(expected);
 	}
 
@@ -655,9 +545,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {gf/*cursor*/
 	public void testGlobalFunctions_FunctionScope() throws Exception {
-		final String[] expected= {
-				"gfC1(void)", "gfC2(void)"
-		};
+		final String[] expected = { "gfC1(void)", "gfC2(void)" };
 		assertCompletionResults(expected);
 	}
 
@@ -667,9 +555,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//typedef union {} C3;
 	//void f() {C/*cursor*/
 	public void testTypes_FunctionScope() throws Exception {
-		final String[] expected= {
-				"C1", "C2", "C3"
-		};
+		final String[] expected = { "C1", "C2", "C3" };
 		assertCompletionResults(expected);
 	}
 
@@ -677,9 +563,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {e/*cursor*/
 	public void testEnums_FunctionScope() throws Exception {
-		final String[] expected= {
-				"e11", "e12", "e21", "e22"
-		};
+		final String[] expected = { "e11", "e12", "e21", "e22" };
 		assertCompletionResults(expected);
 	}
 
@@ -687,9 +571,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1 c; (&c)->m/*cursor*/
 	public void testAddressOf() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -697,9 +579,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1* c; (*c).m/*cursor*/
 	public void testDereferencingOperator1() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -707,9 +587,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1** c; (**c).m/*cursor*/
 	public void testDereferencingOperator2() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -717,9 +595,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1** c; (*c)->m/*cursor*/
 	public void testDereferencingOperator3() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -727,9 +603,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1* c; c[0].m/*cursor*/
 	public void testArrayAccessOperator1() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -737,9 +611,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1** c; c[0][1].m/*cursor*/
 	public void testArrayAccessOperator2() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -747,9 +619,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1** c; c[0]->m/*cursor*/
 	public void testArrayAccessOperator3() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -757,9 +627,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1* c; (&c[0])->m/*cursor*/
 	public void testArrayAccessOperator4() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -767,9 +635,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {void* c; ((C1*)c)->m/*cursor*/
 	public void testCasts1() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -777,9 +643,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void g(int a) {}; void f() {void* c; g(((C1*)c)->m/*cursor*/
 	public void testCasts2() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -787,9 +651,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1* c; c++->m/*cursor*/
 	public void testPointerArithmetic1() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -797,9 +659,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1* c; (*++c).m/*cursor*/
 	public void testPointerArithmetic2() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -807,9 +667,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1* c; c--->m/*cursor*/
 	public void testPointerArithmetic3() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -817,9 +675,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1 c; (&c+1)->m/*cursor*/
 	public void testPointerArithmetic4() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -827,9 +683,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {C1 c; (&c-1)->m/*cursor*/
 	public void testPointerArithmetic5() throws Exception {
-		final String[] expected= {
-				"m123", "m12", "m13"
-		};
+		final String[] expected = { "m123", "m12", "m13" };
 		assertCompletionResults(expected);
 	}
 
@@ -837,9 +691,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//void f() {int localVar=0; if (*cond && somefunc(&local/*cursor*/
 	public void testNestedCalls() throws Exception {
-		final String[] expected= {
-				"localVar"
-		};
+		final String[] expected = { "localVar" };
 		assertCompletionResults(expected);
 	}
 
@@ -847,9 +699,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//int a[] = {1,2}; void f(int _0306_b) {_0306_b/*cursor*/
 	public void testCuttingInput1() throws Exception {
-		final String[] expected= {
-				"_0306_b"
-		};
+		final String[] expected = { "_0306_b" };
 		assertCompletionResults(expected);
 	}
 
@@ -857,9 +707,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//int a[] = {1,2}; void f(int b) {int _0306_b[] = {2,3}; _0306_b/*cursor*/
 	public void testCuttingInput2() throws Exception {
-		final String[] expected= {
-				"_0306_b"
-		};
+		final String[] expected = { "_0306_b" };
 		assertCompletionResults(expected);
 	}
 
@@ -867,29 +715,23 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//enum EnumType function() {int _031209_v; _031209/*cursor*/
 	public void testDisturbingMacros() throws Exception {
-		final String[] expected= {
-				"_031209_v"
-		};
+		final String[] expected = { "_031209_v" };
 		assertCompletionResults(expected);
 	}
-	
+
 	// void test() {
 	// int local;
 	// switch(loc/*cursor*/
 	public void testSwitchStatement() throws Exception {
-		final String[] expected= {
-				"local"
-		};
+		final String[] expected = { "local" };
 		assertCompletionResults(expected);
 	}
-	
+
 	// void test() {
 	// int local;
 	// while(loc/*cursor*/
 	public void testWhileStatement() throws Exception {
-		final String[] expected= {
-				"local"
-		};
+		final String[] expected = { "local" };
 		assertCompletionResults(expected);
 	}
 
@@ -897,9 +739,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	// int local;
 	// for(loc/*cursor*/
 	public void testForStatement1() throws Exception {
-		final String[] expected= {
-				"local"
-		};
+		final String[] expected = { "local" };
 		assertCompletionResults(expected);
 	}
 
@@ -907,9 +747,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	// int local;
 	// for(int i=0;i<loc/*cursor*/
 	public void testForStatement2() throws Exception {
-		final String[] expected= {
-				"local"
-		};
+		final String[] expected = { "local" };
 		assertCompletionResults(expected);
 	}
 
@@ -917,9 +755,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	// int local;
 	// for(int i=0;i<local;loc/*cursor*/
 	public void testForStatement3() throws Exception {
-		final String[] expected= {
-				"local"
-		};
+		final String[] expected = { "local" };
 		assertCompletionResults(expected);
 	}
 
@@ -933,7 +769,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//	   INIT_PTR(pTh/*cursor*/);
 	//	}
 	public void testCompletionInMacroArguments1_Bug200208() throws Exception {
-		final String[] expected= {"pThis"};
+		final String[] expected = { "pThis" };
 		assertCompletionResults(expected);
 	}
 
@@ -951,10 +787,10 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//     COPY_PTR(pThis->pIShell, pThis->pI/*cursor*/)
 	//	}
 	public void testCompletionInMacroArguments2_Bug200208() throws Exception {
-		final String[] expected= {"pIShell"};
+		final String[] expected = { "pIShell" };
 		assertCompletionResults(expected);
 	}
-	
+
 	//	enum {enum0, enum1, enum2};
 	//	typedef struct {
 	//	   int byte1;
@@ -962,13 +798,13 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//	} MYSTRUCT_TYPE;
 	//	static const MYSTRUCT_TYPE myArrayOfStructs[] = {{enum/*cursor*/
 	public void testCompletionInInitializerList_Bug230389() throws Exception {
-		final String[] expected= {"enum0", "enum1", "enum2"};
+		final String[] expected = { "enum0", "enum1", "enum2" };
 		assertCompletionResults(expected);
 	}
-	
+
 	//  void test() {struct s206450 x; x./*cursor*/
 	public void testNestedAnonymousStructs_Bug206450() throws Exception {
-		final String[] expected= {"a1", "a2", "u1", "u2", "a4", "b"};
+		final String[] expected = { "a1", "a2", "u1", "u2", "a4", "b" };
 		assertCompletionResults(expected);
 	}
 
@@ -976,10 +812,10 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	//  void test() {_f204758/*cursor*/
 	public void testTypedefToAnonymous_Bug204758() throws Exception {
-		final String[] expected= {"_f204758(_e204758)"};
+		final String[] expected = { "_f204758(_e204758)" };
 		assertCompletionResults(expected);
 	}
-	
+
 	//	int main(void) {
 	//		struct {
 	//		    void (*bar)(p1, p2, p3...);
@@ -987,6 +823,6 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//		foo.bar(/*cursor*/
 	public void testClassCastException_Bug517954() throws Exception {
 		// Just check that no exception is thrown while invoking completion.
-		assertContentAssistResults(fCursorOffset, new String[]{}, DEFAULT_FLAGS | ALLOW_EXTRA_RESULTS, CompareType.ID);		
+		assertContentAssistResults(fCursorOffset, new String[] {}, DEFAULT_FLAGS | ALLOW_EXTRA_RESULTS, CompareType.ID);
 	}
 }

@@ -45,10 +45,10 @@ public class QObjectConnectCompletion {
 	// Secondly, these suggestions should appear above generic variable and method matches, since
 	// have based the calculation on the exact function that is being called.
 
-	private static final int MACRO_RELEVANCE
-		= RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.LOCAL_VARIABLE_TYPE_RELEVANCE + 2;
-	private static final int MACRO_PARAM_RELEVANCE
-		= RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.METHOD_TYPE_RELEVANCE + 1;
+	private static final int MACRO_RELEVANCE = RelevanceConstants.CASE_MATCH_RELEVANCE
+			+ RelevanceConstants.LOCAL_VARIABLE_TYPE_RELEVANCE + 2;
+	private static final int MACRO_PARAM_RELEVANCE = RelevanceConstants.CASE_MATCH_RELEVANCE
+			+ RelevanceConstants.METHOD_TYPE_RELEVANCE + 1;
 
 	/**
 	 * Different suggestions should be proposed for each parameter of the QObject::connect
@@ -56,9 +56,7 @@ public class QObjectConnectCompletion {
 	 * either SLOT or SIGNAL.
 	 */
 	public enum Param {
-		Signal,
-		Member,
-		Generic
+		Signal, Member, Generic
 	}
 
 	private final Param param;
@@ -78,8 +76,7 @@ public class QObjectConnectCompletion {
 	 * The data used to produce the completions varies depending on the role of the
 	 * parameter that is being completed.
 	 */
-	private static class Data
-	{
+	private static class Data {
 		public final String replacement;
 		public final String display;
 		public final int cursorOffset;
@@ -100,14 +97,15 @@ public class QObjectConnectCompletion {
 		public ICompletionProposal createProposal(ICEditorContentAssistInvocationContext context, int relevance) {
 			int repLength = replacement.length();
 			int repOffset = context.getInvocationOffset();
-			CCompletionProposal p
-				= new CCompletionProposal(replacement, repOffset, repLength, Activator.getQtLogo(), display, relevance, context.getViewer());
+			CCompletionProposal p = new CCompletionProposal(replacement, repOffset, repLength, Activator.getQtLogo(),
+					display, relevance, context.getViewer());
 			p.setCursorPosition(repLength + cursorOffset);
 			return p;
 		}
 	}
 
-	private static void addProposal(Collection<ICompletionProposal> proposals, ICEditorContentAssistInvocationContext context, Data data, int relevance) {
+	private static void addProposal(Collection<ICompletionProposal> proposals,
+			ICEditorContentAssistInvocationContext context, Data data, int relevance) {
 		if (data == null)
 			return;
 
@@ -116,17 +114,18 @@ public class QObjectConnectCompletion {
 			proposals.add(proposal);
 	}
 
-	private void addProposals(Collection<ICompletionProposal> proposals, ICEditorContentAssistInvocationContext context) {
+	private void addProposals(Collection<ICompletionProposal> proposals,
+			ICEditorContentAssistInvocationContext context) {
 
 		if (data != null)
 			addProposal(proposals, context, data, MACRO_PARAM_RELEVANCE);
 		else
-			switch(param) {
+			switch (param) {
 			case Signal:
 				addProposal(proposals, context, Data.SIGNAL, MACRO_RELEVANCE);
 				break;
 			case Member:
-				addProposal(proposals, context, Data.SLOT,   MACRO_RELEVANCE);
+				addProposal(proposals, context, Data.SLOT, MACRO_RELEVANCE);
 				addProposal(proposals, context, Data.SIGNAL, MACRO_RELEVANCE - 1);
 				break;
 			default:
@@ -200,7 +199,7 @@ public class QObjectConnectCompletion {
 		IQObject qobj = null;
 		try {
 			qobj = qtIndex.findQObject(cls.getQualifiedName());
-		} catch(DOMException e) {
+		} catch (DOMException e) {
 			CCorePlugin.log(e);
 		}
 
@@ -211,18 +210,19 @@ public class QObjectConnectCompletion {
 		Collection<QObjectConnectCompletion> completions = new ArrayList<QObjectConnectCompletion>();
 		String raw = arg.getRawSignature();
 		if (raw.startsWith(QtKeywords.SIGNAL))
-			for(IQMethod method : qobj.getSignals().withoutOverrides())
-				for(String signature : method.getSignatures())
+			for (IQMethod method : qobj.getSignals().withoutOverrides())
+				for (String signature : method.getSignatures())
 					completions.add(new QObjectConnectCompletion(signature));
 		if (raw.startsWith(QtKeywords.SLOT))
-			for(IQMethod method : qobj.getSlots().withoutOverrides())
-				for(String signature : method.getSignatures())
+			for (IQMethod method : qobj.getSlots().withoutOverrides())
+				for (String signature : method.getSignatures())
 					completions.add(new QObjectConnectCompletion(signature));
 		return completions;
 	}
 
 	public static Collection<QObjectConnectCompletion> getConnectProposals(
-			ICEditorContentAssistInvocationContext context, IASTName name, IASTCompletionContext astContext, IASTNode astNode) {
+			ICEditorContentAssistInvocationContext context, IASTName name, IASTCompletionContext astContext,
+			IASTNode astNode) {
 
 		if (QtFunctionCallUtil.isQObjectFunctionCall(astContext, !context.isContextInformationStyle(), name)) {
 			int parseOffset = context.getParseOffset();
@@ -280,8 +280,7 @@ public class QObjectConnectCompletion {
 			// In a content assist context the argument that is currently being entered is
 			// last in the function call.
 			IASTInitializerClause[] args = call.getArguments();
-			if (args == null
-			 || args.length < 0)
+			if (args == null || args.length < 0)
 				return null;
 			int argIndex = args.length - 1;
 
@@ -298,12 +297,11 @@ public class QObjectConnectCompletion {
 		return null;
 	}
 
-	public static Collection<ICompletionProposal> getProposals(
-			ICEditorContentAssistInvocationContext context, IASTName name, IASTCompletionContext astContext, IASTNode astNode) {
+	public static Collection<ICompletionProposal> getProposals(ICEditorContentAssistInvocationContext context,
+			IASTName name, IASTCompletionContext astContext, IASTNode astNode) {
 
 		Collection<QObjectConnectCompletion> qtProposals = getConnectProposals(context, name, astContext, astNode);
-		if (qtProposals == null
-		 || qtProposals.isEmpty())
+		if (qtProposals == null || qtProposals.isEmpty())
 			return null;
 
 		Collection<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();

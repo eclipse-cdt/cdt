@@ -20,13 +20,13 @@ public interface RelevanceConstants {
 	 * with a file type known to be a header file.
 	 */
 	final int FILE_TYPE_RELEVANCE = 2000;
-	
+
 	/** Relevance increment for same case matches */
 	final int CASE_MATCH_RELEVANCE = 1000;
 
 	/** Relevance increment for exact name matches (disregarding case) */
 	final int EXACT_NAME_MATCH_RELEVANCE = 40;
-	
+
 	/** Relevance constant for proposals contributed by help provider */
 	final int HELP_TYPE_RELEVANCE = 200;
 
@@ -48,8 +48,8 @@ public interface RelevanceConstants {
 
 	/** Relevance constant for (key-)word proposals */
 	final int KEYWORD_TYPE_RELEVANCE = 10;
-	
+
 	/** Relevance constant for editor template proposals */
 	final int TEMPLATE_TYPE_RELEVANCE = 5;
-	
+
 }

@@ -41,35 +41,35 @@ import org.eclipse.cdt.internal.core.model.FunctionDeclaration;
  */
 public class TypeInfoLabelProvider extends LabelProvider {
 
-	public static final int SHOW_NAME_ONLY= 0x01;
-	public static final int SHOW_ENCLOSING_TYPE_ONLY= 0x02;
-	public static final int SHOW_FULLY_QUALIFIED= 0x04;
-	public static final int SHOW_PATH= 0x08;
-	public static final int SHOW_PARAMETERS= 0x10;
-	public static final int SHOW_RETURN_TYPE= 0x20;
+	public static final int SHOW_NAME_ONLY = 0x01;
+	public static final int SHOW_ENCLOSING_TYPE_ONLY = 0x02;
+	public static final int SHOW_FULLY_QUALIFIED = 0x04;
+	public static final int SHOW_PATH = 0x08;
+	public static final int SHOW_PARAMETERS = 0x10;
+	public static final int SHOW_RETURN_TYPE = 0x20;
 
-	private static final Image HEADER_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
-	private static final Image SOURCE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TUNIT);
-	private static final Image NAMESPACE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_NAMESPACE);
-	private static final Image TEMPLATE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TEMPLATE);
-	private static final Image CLASS_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CLASS);
-	private static final Image STRUCT_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_STRUCT);
-	private static final Image TYPEDEF_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TYPEDEF);
-	private static final Image UNION_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_UNION);
-	private static final Image ENUM_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ENUMERATION);
-	private static final Image FUNCTION_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FUNCTION);
-	private static final Image VARIABLE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_VARIABLE);
-	private static final Image VARIABLE_LOCAL_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_LOCAL_VARIABLE);
-	private static final Image ENUMERATOR_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ENUMERATOR);
-	private static final Image MACRO_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_MACRO);
-	private static final Image UNKNOWN_TYPE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_UNKNOWN_TYPE);
+	private static final Image HEADER_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
+	private static final Image SOURCE_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TUNIT);
+	private static final Image NAMESPACE_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_NAMESPACE);
+	private static final Image TEMPLATE_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TEMPLATE);
+	private static final Image CLASS_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CLASS);
+	private static final Image STRUCT_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_STRUCT);
+	private static final Image TYPEDEF_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TYPEDEF);
+	private static final Image UNION_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_UNION);
+	private static final Image ENUM_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ENUMERATION);
+	private static final Image FUNCTION_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FUNCTION);
+	private static final Image VARIABLE_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_VARIABLE);
+	private static final Image VARIABLE_LOCAL_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_LOCAL_VARIABLE);
+	private static final Image ENUMERATOR_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ENUMERATOR);
+	private static final Image MACRO_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_MACRO);
+	private static final Image UNKNOWN_TYPE_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_UNKNOWN_TYPE);
 
 	private int fFlags;
-	
+
 	public TypeInfoLabelProvider(int flags) {
-		fFlags= flags;
-	}	
-	
+		fFlags = flags;
+	}
+
 	private boolean isSet(int flag) {
 		return (fFlags & flag) != 0;
 	}
@@ -79,29 +79,29 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	 */
 	@Override
 	public String getText(Object element) {
-		if (! (element instanceof ITypeInfo)) 
+		if (!(element instanceof ITypeInfo))
 			return super.getText(element);
-		
-		ITypeInfo typeInfo= (ITypeInfo) element;
+
+		ITypeInfo typeInfo = (ITypeInfo) element;
 		IQualifiedTypeName qualifiedName = typeInfo.getQualifiedTypeName();
-		
-		StringBuilder buf= new StringBuilder();
+
+		StringBuilder buf = new StringBuilder();
 		if (isSet(SHOW_NAME_ONLY)) {
-			String name= typeInfo.getName();
+			String name = typeInfo.getName();
 			if (name != null && name.length() > 0)
 				buf.append(name);
 		} else if (isSet(SHOW_ENCLOSING_TYPE_ONLY)) {
-			IQualifiedTypeName parentName= qualifiedName.getEnclosingTypeName();
+			IQualifiedTypeName parentName = qualifiedName.getEnclosingTypeName();
 			if (parentName != null) {
 				buf.append(parentName.getFullyQualifiedName());
 			} else {
-				buf.append(TypeInfoMessages.TypeInfoLabelProvider_globalScope); 
+				buf.append(TypeInfoMessages.TypeInfoLabelProvider_globalScope);
 			}
 		} else if (isSet(SHOW_FULLY_QUALIFIED)) {
 			final int elemType = typeInfo.getCElementType();
 			if (elemType != ICElement.C_VARIABLE_LOCAL && qualifiedName.isGlobal()) {
-				if ((elemType != ICElement.C_FUNCTION && elemType != ICElement.C_VARIABLE) ||
-						!(typeInfo instanceof IndexTypeInfo && ((IndexTypeInfo) typeInfo).isFileLocal())) {
+				if ((elemType != ICElement.C_FUNCTION && elemType != ICElement.C_VARIABLE)
+						|| !(typeInfo instanceof IndexTypeInfo && ((IndexTypeInfo) typeInfo).isFileLocal())) {
 					buf.append(TypeInfoMessages.TypeInfoLabelProvider_globalScope);
 					buf.append(' ');
 				}
@@ -112,8 +112,8 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			final int elementType = typeInfo.getCElementType();
 			if (elementType == ICElement.C_FUNCTION || elementType == ICElement.C_MACRO) {
 				if (typeInfo instanceof IFunctionInfo) {
-					IFunctionInfo functionInfo= (IFunctionInfo)typeInfo;
-					String[] params= functionInfo.getParameters();
+					IFunctionInfo functionInfo = (IFunctionInfo) typeInfo;
+					String[] params = functionInfo.getParameters();
 					if (params != null) {
 						buf.append(FunctionDeclaration.getParameterClause(params));
 					}
@@ -121,11 +121,11 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			}
 		}
 		if (isSet(SHOW_RETURN_TYPE)) {
-			switch(typeInfo.getCElementType()) {
+			switch (typeInfo.getCElementType()) {
 			case ICElement.C_FUNCTION:
 				if (typeInfo instanceof IFunctionInfo) {
-					IFunctionInfo functionInfo= (IFunctionInfo)typeInfo;
-					String returnType= functionInfo.getReturnType();
+					IFunctionInfo functionInfo = (IFunctionInfo) typeInfo;
+					String returnType = functionInfo.getReturnType();
 					if (returnType != null && returnType.length() > 0) {
 						buf.append(TypeInfoMessages.TypeInfoLabelProvider_colon);
 						buf.append(returnType);
@@ -133,14 +133,14 @@ public class TypeInfoLabelProvider extends LabelProvider {
 				}
 				break;
 			case ICElement.C_VARIABLE:
-				ITypeReference ref= typeInfo.getResolvedReference();
+				ITypeReference ref = typeInfo.getResolvedReference();
 				if (ref != null) {
-					ICElement[] cElements= ref.getCElements();
+					ICElement[] cElements = ref.getCElements();
 					if (cElements != null && cElements.length > 0) {
-						String returnType= null;
+						String returnType = null;
 						if (cElements[0] instanceof IVariableDeclaration) {
 							try {
-								returnType= ((IVariableDeclaration)cElements[0]).getTypeName();
+								returnType = ((IVariableDeclaration) cElements[0]).getTypeName();
 							} catch (CModelException exc) {
 							}
 						}
@@ -169,28 +169,28 @@ public class TypeInfoLabelProvider extends LabelProvider {
 				buf.append(path.toString());
 			}
 		}
-		return buf.toString();				
+		return buf.toString();
 	}
-	
+
 	/* non java-doc
 	 * @see ILabelProvider#getImage
-	 */	
+	 */
 	@Override
 	public Image getImage(Object element) {
-		if (!(element instanceof ITypeInfo)) 
-			return super.getImage(element);	
+		if (!(element instanceof ITypeInfo))
+			return super.getImage(element);
 
-		ITypeInfo typeRef= (ITypeInfo) element;
+		ITypeInfo typeRef = (ITypeInfo) element;
 		if (isSet(SHOW_ENCLOSING_TYPE_ONLY)) {
 			IPath path = null;
 			ITypeReference ref = typeRef.getResolvedReference();
 			if (ref != null) {
 				path = ref.getPath();
-				
+
 				// IndexTypeInfo may not have an enclosing project 
 				ICProject cproject = typeRef.getEnclosingProject();
-				IProject project = cproject==null ? null : cproject.getProject();
-				
+				IProject project = cproject == null ? null : cproject.getProject();
+
 				if (CoreModel.isValidHeaderUnitName(project, path.lastSegment())) {
 					return HEADER_ICON;
 				}
@@ -201,13 +201,11 @@ public class TypeInfoLabelProvider extends LabelProvider {
 		return getTypeIcon(typeRef.getCElementType());
 	}
 
-	public static Image getTypeIcon(int type)
-	{
-		switch (type)
-		{
+	public static Image getTypeIcon(int type) {
+		switch (type) {
 		case ICElement.C_NAMESPACE:
 			return NAMESPACE_ICON;
-			
+
 		case ICElement.C_TEMPLATE_CLASS:
 			return TEMPLATE_ICON;
 
@@ -231,13 +229,13 @@ public class TypeInfoLabelProvider extends LabelProvider {
 
 		case ICElement.C_VARIABLE:
 			return VARIABLE_ICON;
-		
+
 		case ICElement.C_ENUMERATOR:
 			return ENUMERATOR_ICON;
-			
+
 		case ICElement.C_MACRO:
 			return MACRO_ICON;
-			
+
 		case ICElement.C_VARIABLE_LOCAL:
 			return VARIABLE_LOCAL_ICON;
 

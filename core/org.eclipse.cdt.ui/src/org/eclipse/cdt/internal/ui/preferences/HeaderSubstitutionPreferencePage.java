@@ -23,13 +23,13 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * The preference page for configuring header file substitution rules.
  */
 public class HeaderSubstitutionPreferencePage extends ConfigurationBlockPropertyAndPreferencePage {
-	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.HeaderSubstitutionPreferencePage"; //$NON-NLS-1$
-	public static final String PROP_ID= "org.eclipse.cdt.ui.propertyPages.HeaderSubstitutionPreferencePage"; //$NON-NLS-1$
+	public static final String PREF_ID = "org.eclipse.cdt.ui.preferences.HeaderSubstitutionPreferencePage"; //$NON-NLS-1$
+	public static final String PROP_ID = "org.eclipse.cdt.ui.propertyPages.HeaderSubstitutionPreferencePage"; //$NON-NLS-1$
 
 	public HeaderSubstitutionPreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		// Only used when the page is shown programmatically.
-		setTitle(PreferencesMessages.HeaderSubstitutionPreferencePage_title);		 
+		setTitle(PreferencesMessages.HeaderSubstitutionPreferencePage_title);
 	}
 
 	@Override
@@ -51,6 +51,6 @@ public class HeaderSubstitutionPreferencePage extends ConfigurationBlockProperty
 	protected String getPropertyPageId() {
 		return null;
 		// TODO(sprigogin): Project specific settings
-//		return PROP_ID;
+		//		return PROP_ID;
 	}
 }

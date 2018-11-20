@@ -55,13 +55,13 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 	public MSVCToolChain(IToolChainProvider provider, Path path) {
 		this.provider = provider;
 		this.path = path;
-		
+
 		// path = <version>/bin/<hostArch>/<targetArch>
 		String targetArch = path.getFileName().toString();
 		this.arch = targetArch.equalsIgnoreCase("x86") ? Platform.ARCH_X86 : Platform.ARCH_X86_64; //$NON-NLS-1$
 		this.id = "msvc." + arch; //$NON-NLS-1$
 		this.version = path.getParent().getParent().getParent().getFileName().toString();
-		
+
 		Path kitRoot = Paths.get("C:", "Program Files (x86)", "Windows Kits", "10"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		List<String> versions = Arrays.asList(kitRoot.resolve("lib").toFile().list()); //$NON-NLS-1$
 		Collections.sort(versions, (v1, v2) -> {
@@ -71,25 +71,23 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 			} catch (IllegalArgumentException e) {
 				return 1;
 			}
-			
+
 			Version ver2;
 			try {
 				ver2 = new Version(v2);
 			} catch (IllegalArgumentException e) {
 				return -1;
 			}
-			
+
 			return ver2.compareTo(ver1);
 		});
 		String sdkVersion = versions.iterator().next();
-		
-		pathVar = new EnvironmentVariable("Path", String.join(File.pathSeparator, //$NON-NLS-1$
-				path.toString(),
-				kitRoot.resolve("bin").resolve(sdkVersion).resolve(targetArch).toString() //$NON-NLS-1$
-				), IEnvironmentVariable.ENVVAR_PREPEND, File.pathSeparator);
 
-		this.includeDirs = new String[] {
-				path.getParent().getParent().getParent().resolve("include").toString(), //$NON-NLS-1$
+		pathVar = new EnvironmentVariable("Path", String.join(File.pathSeparator, //$NON-NLS-1$
+				path.toString(), kitRoot.resolve("bin").resolve(sdkVersion).resolve(targetArch).toString() //$NON-NLS-1$
+		), IEnvironmentVariable.ENVVAR_PREPEND, File.pathSeparator);
+
+		this.includeDirs = new String[] { path.getParent().getParent().getParent().resolve("include").toString(), //$NON-NLS-1$
 				kitRoot.resolve("include").resolve(sdkVersion).resolve("ucrt").toString(), //$NON-NLS-1$ //$NON-NLS-2$
 				kitRoot.resolve("include").resolve(sdkVersion).resolve("shared").toString(), //$NON-NLS-1$ //$NON-NLS-2$
 				kitRoot.resolve("include").resolve(sdkVersion).resolve("um").toString(), //$NON-NLS-1$ //$NON-NLS-2$
@@ -98,13 +96,13 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 
 		includeVar = new EnvironmentVariable("INCLUDE", String.join(File.pathSeparator, this.includeDirs), //$NON-NLS-1$
 				IEnvironmentVariable.ENVVAR_REPLACE, File.pathSeparator);
-	
+
 		libVar = new EnvironmentVariable("LIB", String.join(File.pathSeparator, //$NON-NLS-1$
 				path.getParent().getParent().getParent().resolve("lib").resolve(targetArch).toString(), //$NON-NLS-1$
 				kitRoot.resolve("lib").resolve(sdkVersion).resolve("ucrt").resolve(targetArch).toString(), //$NON-NLS-1$ //$NON-NLS-2$
 				kitRoot.resolve("lib").resolve(sdkVersion).resolve("um").resolve(targetArch).toString() //$NON-NLS-1$ //$NON-NLS-2$
-				), IEnvironmentVariable.ENVVAR_REPLACE, File.pathSeparator);
-		
+		), IEnvironmentVariable.ENVVAR_REPLACE, File.pathSeparator);
+
 		symbols = new HashMap<>();
 		symbols.put("_WIN32", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (this.arch.equals(Platform.ARCH_X86)) {
@@ -115,7 +113,7 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 		}
 		// TODO make this more dynamic to actual version
 		symbols.put("_MSC_VER", "1900"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		// Microsoft specific modifiers that can be ignored
 		symbols.put("__cdecl", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		symbols.put("__fastcall", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -125,7 +123,7 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 		symbols.put("__unaligned", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		symbols.put("__uptr", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		symbols.put("__w64", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		// Redefine some things so that the CDT parser can handle them, until there is a VC specific parser
 		symbols.put("__forceinline", "__inline"); //$NON-NLS-1$ //$NON-NLS-2$
 		symbols.put("__int8", "char"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -230,7 +228,7 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI) {
 		Map<String, String> symbols = new HashMap<>(this.symbols);
 		List<String> includeDirs = new ArrayList<>(Arrays.asList(this.includeDirs));
-		
+
 		for (String arg : command) {
 			if (arg.startsWith("-") || arg.startsWith("/")) { //$NON-NLS-1$ //$NON-NLS-2$
 				if (arg.charAt(1) == 'I') {

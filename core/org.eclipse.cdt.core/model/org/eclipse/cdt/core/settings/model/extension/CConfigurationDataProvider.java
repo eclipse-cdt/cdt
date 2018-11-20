@@ -44,7 +44,8 @@ public abstract class CConfigurationDataProvider {
 	 * 
 	 * @throws CoreException
 	 */
-	public abstract CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription, IProgressMonitor monitor) throws CoreException;
+	public abstract CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Requests the Configuration Data to be created for the given ConfigurationDescription.
@@ -66,9 +67,9 @@ public abstract class CConfigurationDataProvider {
 	 * @throws CoreException
 	 */
 	public abstract CConfigurationData createConfiguration(ICConfigurationDescription cfgDescription,
-			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
-			boolean clone, IProgressMonitor monitor) throws CoreException;
-	
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData, boolean clone,
+			IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Called to notify the provider that the configuration is removed.
 	 * 
@@ -76,7 +77,8 @@ public abstract class CConfigurationDataProvider {
 	 * @param data - configuration data.
 	 * @param monitor - progress monitor.
 	 */
-	public abstract void removeConfiguration(ICConfigurationDescription cfgDescription, CConfigurationData data, IProgressMonitor monitor);
+	public abstract void removeConfiguration(ICConfigurationDescription cfgDescription, CConfigurationData data,
+			IProgressMonitor monitor);
 
 	/**
 	 * The method is called in case the implementer does NOT override method
@@ -88,9 +90,9 @@ public abstract class CConfigurationDataProvider {
 	 * 
 	 * @throws CoreException
 	 */
-	public CConfigurationData applyConfiguration(ICConfigurationDescription cfgDescription, 
-			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
-			IProgressMonitor monitor) throws CoreException {
+	public CConfigurationData applyConfiguration(ICConfigurationDescription cfgDescription,
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData, IProgressMonitor monitor)
+			throws CoreException {
 
 		return baseData;
 	}
@@ -114,16 +116,17 @@ public abstract class CConfigurationDataProvider {
 	 * 
 	 * @throws CoreException
 	 */
-	public CConfigurationData applyConfiguration(ICConfigurationDescription cfgDescription, 
-			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
-			IModificationContext context, IProgressMonitor monitor) throws CoreException {
+	public CConfigurationData applyConfiguration(ICConfigurationDescription cfgDescription,
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData, IModificationContext context,
+			IProgressMonitor monitor) throws CoreException {
 
 		CConfigurationData data = applyConfiguration(cfgDescription, baseCfgDescription, baseData, monitor);
 		if (baseCfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			String[] defaultIds = ((ILanguageSettingsProvidersKeeper)baseCfgDescription).getDefaultLanguageSettingsProvidersIds();
+			String[] defaultIds = ((ILanguageSettingsProvidersKeeper) baseCfgDescription)
+					.getDefaultLanguageSettingsProvidersIds();
 			List<ILanguageSettingsProvider> providers;
 			if (defaultIds != null) {
-				providers = ((ILanguageSettingsProvidersKeeper)baseCfgDescription).getLanguageSettingProviders();
+				providers = ((ILanguageSettingsProvidersKeeper) baseCfgDescription).getLanguageSettingProviders();
 			} else {
 				ICProjectDescription prjDescription = baseCfgDescription.getProjectDescription();
 				if (prjDescription != null) {
@@ -135,7 +138,7 @@ public abstract class CConfigurationDataProvider {
 				providers = LanguageSettingsManager.createLanguageSettingsProviders(defaultIds);
 			}
 			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-				((ILanguageSettingsProvidersKeeper)cfgDescription).setDefaultLanguageSettingsProvidersIds(defaultIds);
+				((ILanguageSettingsProvidersKeeper) cfgDescription).setDefaultLanguageSettingsProvidersIds(defaultIds);
 				((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 			}
 		}
@@ -150,6 +153,7 @@ public abstract class CConfigurationDataProvider {
 	 * @param data - configuration data.
 	 * @param monitor - progress monitor.
 	 */
-	public void dataCached(ICConfigurationDescription cfgDescription, CConfigurationData data, IProgressMonitor monitor) {
+	public void dataCached(ICConfigurationDescription cfgDescription, CConfigurationData data,
+			IProgressMonitor monitor) {
 	}
 }

@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayMap;
 public class CStructMapper {
 	private class Visitor extends ASTVisitor {
 		Visitor() {
-			shouldVisitDeclarations= true;
+			shouldVisitDeclarations = true;
 		}
 
 		@Override
@@ -38,7 +38,7 @@ public class CStructMapper {
 			if (declaration instanceof IASTSimpleDeclaration) {
 				IASTDeclSpecifier declspec = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
 				if (declspec instanceof IASTCompositeTypeSpecifier) {
-					IASTCompositeTypeSpecifier cts= (IASTCompositeTypeSpecifier) declspec;
+					IASTCompositeTypeSpecifier cts = (IASTCompositeTypeSpecifier) declspec;
 					final IASTName name = cts.getName();
 					final char[] nameChars = name.toCharArray();
 					if (nameChars.length > 0) {
@@ -55,17 +55,17 @@ public class CStructMapper {
 	protected CharArrayMap<IASTName> fStructs;
 
 	public CStructMapper(IASTTranslationUnit tu) {
-		fTranslationUnit= tu;
+		fTranslationUnit = tu;
 	}
 
 	public ICompositeType mapToAST(ICompositeType type) {
 		if (fStructs == null) {
-			fStructs= new CharArrayMap<IASTName>();
+			fStructs = new CharArrayMap<IASTName>();
 			fTranslationUnit.accept(new Visitor());
 		}
-		IASTName name= fStructs.get(type.getNameCharArray());
+		IASTName name = fStructs.get(type.getNameCharArray());
 		if (name != null) {
-			IBinding b= name.resolveBinding();
+			IBinding b = name.resolveBinding();
 			if (b instanceof ICompositeType) {
 				final ICompositeType mapped = (ICompositeType) b;
 				if (mapped.isSameType(type)) {

@@ -15,6 +15,6 @@ package org.eclipse.cdt.core.settings.model;
 
 public interface ICSettingContainer {
 	ICSettingObject[] getChildSettings();
-	
-//	ICSettingObject getChildSettingById(String id);
+
+	//	ICSettingObject getChildSettingById(String id);
 }

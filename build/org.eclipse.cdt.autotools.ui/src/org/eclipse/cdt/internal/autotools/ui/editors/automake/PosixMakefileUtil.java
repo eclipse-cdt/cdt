@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  */
 public class PosixMakefileUtil {

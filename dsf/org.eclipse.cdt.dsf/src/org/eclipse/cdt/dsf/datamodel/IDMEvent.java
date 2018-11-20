@@ -23,6 +23,6 @@ package org.eclipse.cdt.dsf.datamodel;
  * 
  * @since 1.0
  */
-public interface IDMEvent <V extends IDMContext> {
-    V getDMContext();
+public interface IDMEvent<V extends IDMContext> {
+	V getDMContext();
 }

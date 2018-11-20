@@ -91,13 +91,13 @@ import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 
 public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 
-	private class PopupVisibilityManager implements IPartListener2, ControlListener, MouseListener,
-			KeyListener, ITextListener, IViewportListener {
+	private class PopupVisibilityManager
+			implements IPartListener2, ControlListener, MouseListener, KeyListener, ITextListener, IViewportListener {
 
 		public void start() {
 			fEditor.getSite().getWorkbenchWindow().getPartService().addPartListener(this);
-			final ISourceViewer viewer= fEditor.getViewer();
-			final StyledText textWidget= viewer.getTextWidget();
+			final ISourceViewer viewer = fEditor.getViewer();
+			final StyledText textWidget = viewer.getTextWidget();
 			textWidget.addControlListener(this);
 			textWidget.addMouseListener(this);
 			textWidget.addKeyListener(this);
@@ -107,7 +107,8 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			fPopup.addDisposeListener(new DisposeListener() {
 				@Override
 				public void widgetDisposed(DisposeEvent e) {
-					fEditor.getSite().getWorkbenchWindow().getPartService().removePartListener(PopupVisibilityManager.this);
+					fEditor.getSite().getWorkbenchWindow().getPartService()
+							.removePartListener(PopupVisibilityManager.this);
 					if (!textWidget.isDisposed()) {
 						textWidget.removeControlListener(PopupVisibilityManager.this);
 						textWidget.removeMouseListener(PopupVisibilityManager.this);
@@ -118,11 +119,11 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 					viewer.removeViewportListener(PopupVisibilityManager.this);
 					if (fMenuImage != null) {
 						fMenuImage.dispose();
-						fMenuImage= null;
+						fMenuImage = null;
 					}
 					if (fMenuManager != null) {
 						fMenuManager.dispose();
-						fMenuManager= null;
+						fMenuManager = null;
 					}
 					fRenameLinkedMode.cancel();
 				}
@@ -131,7 +132,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 
 		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {
-			IWorkbenchPart fPart= fEditor.getEditorSite().getPart();
+			IWorkbenchPart fPart = fEditor.getEditorSite().getPart();
 			if (partRef.getPart(false) == fPart) {
 				updateVisibility();
 			}
@@ -147,7 +148,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 
 		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {
-			IWorkbenchPart fPart= fEditor.getEditorSite().getPart();
+			IWorkbenchPart fPart = fEditor.getEditorSite().getPart();
 			if (fPopup != null && !fPopup.isDisposed() && partRef.getPart(false) == fPart) {
 				fPopup.setVisible(false);
 			}
@@ -226,38 +227,38 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	 */
 	private static boolean MAC = Util.isMac();
 
-	private static final int WIDGET_PRIORITY= 1000;
+	private static final int WIDGET_PRIORITY = 1000;
 
-	private static final String DIALOG_SETTINGS_SECTION= "RenameInformationPopup"; //$NON-NLS-1$
-	private static final String SNAP_POSITION_KEY= "snap_position"; //$NON-NLS-1$
+	private static final String DIALOG_SETTINGS_SECTION = "RenameInformationPopup"; //$NON-NLS-1$
+	private static final String SNAP_POSITION_KEY = "snap_position"; //$NON-NLS-1$
 
-	private static final int SNAP_POSITION_UNDER_RIGHT_FIELD= 0;
-	private static final int SNAP_POSITION_OVER_RIGHT_FIELD= 1;
-	private static final int SNAP_POSITION_UNDER_LEFT_FIELD= 2;
-	private static final int SNAP_POSITION_OVER_LEFT_FIELD= 3;
-	private static final int SNAP_POSITION_LOWER_RIGHT= 4;
+	private static final int SNAP_POSITION_UNDER_RIGHT_FIELD = 0;
+	private static final int SNAP_POSITION_OVER_RIGHT_FIELD = 1;
+	private static final int SNAP_POSITION_UNDER_LEFT_FIELD = 2;
+	private static final int SNAP_POSITION_OVER_LEFT_FIELD = 3;
+	private static final int SNAP_POSITION_LOWER_RIGHT = 4;
 
-	private static final int POPUP_VISIBILITY_DELAY= 300;
+	private static final int POPUP_VISIBILITY_DELAY = 300;
 
 	/**
 	 * Offset of info hover arrow from the left or right side.
 	 */
-	private static final int HAO= 10;
+	private static final int HAO = 10;
 
 	/**
 	 * Width of info hover arrow.
 	 */
-	private static final int HAW= 8;
+	private static final int HAW = 8;
 
 	/**
 	 * Height of info hover arrow.
 	 */
-	private static final int HAH= 10;
+	private static final int HAH = 10;
 
 	/**
 	 * Gap between linked position and popup.
 	 */
-	private static final int GAP= 2;
+	private static final int GAP = 2;
 
 	private final CEditor fEditor;
 	private final RenameLinkedMode fRenameLinkedMode;
@@ -271,26 +272,26 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	private Image fMenuImage;
 	private MenuManager fMenuManager;
 	private ToolBar fToolBar;
-	private String fOpenDialogBinding= ""; //$NON-NLS-1$
-	private boolean fIsMenuUp= false;
+	private String fOpenDialogBinding = ""; //$NON-NLS-1$
+	private boolean fIsMenuUp = false;
 
-	private boolean fDelayJobFinished= false;
+	private boolean fDelayJobFinished = false;
 
 	public RenameInformationPopup(CEditor editor, RenameLinkedMode renameLinkedMode) {
-		fEditor= editor;
-		fRenameLinkedMode= renameLinkedMode;
+		fEditor = editor;
+		fRenameLinkedMode = renameLinkedMode;
 		restoreSnapPosition();
 	}
 
 	private void restoreSnapPosition() {
-		IDialogSettings settings= getDialogSettings();
+		IDialogSettings settings = getDialogSettings();
 		try {
-			fSnapPosition= settings.getInt(SNAP_POSITION_KEY);
+			fSnapPosition = settings.getInt(SNAP_POSITION_KEY);
 		} catch (NumberFormatException e) {
 			// default:
-			fSnapPosition= SNAP_POSITION_UNDER_LEFT_FIELD;
+			fSnapPosition = SNAP_POSITION_UNDER_LEFT_FIELD;
 		}
-		fSnapPositionChanged= true;
+		fSnapPositionChanged = true;
 	}
 
 	private IDialogSettings getDialogSettings() {
@@ -299,17 +300,17 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 
 	public void open() {
 		// Must cache here, since editor context is not available in menu from popup shell:
-		fOpenDialogBinding= getOpenDialogBinding();
+		fOpenDialogBinding = getOpenDialogBinding();
 
-		Shell workbenchShell= fEditor.getSite().getShell();
-		final Display display= workbenchShell.getDisplay();
+		Shell workbenchShell = fEditor.getSite().getShell();
+		final Display display = workbenchShell.getDisplay();
 
-		fPopup= new Shell(workbenchShell, SWT.ON_TOP | SWT.NO_TRIM | SWT.TOOL);
-		fPopupLayout= new GridLayout(2, false);
-		fPopupLayout.marginWidth= 1;
-		fPopupLayout.marginHeight= 1;
-		fPopupLayout.marginLeft= 4;
-		fPopupLayout.horizontalSpacing= 0;
+		fPopup = new Shell(workbenchShell, SWT.ON_TOP | SWT.NO_TRIM | SWT.TOOL);
+		fPopupLayout = new GridLayout(2, false);
+		fPopupLayout.marginWidth = 1;
+		fPopupLayout.marginHeight = 1;
+		fPopupLayout.marginLeft = 4;
+		fPopupLayout.horizontalSpacing = 0;
 		fPopup.setLayout(fPopupLayout);
 
 		createContent(fPopup);
@@ -324,12 +325,12 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 				if (fIsMenuUp)
 					return;
 
-				final Shell editorShell= fEditor.getSite().getShell();
+				final Shell editorShell = fEditor.getSite().getShell();
 				display.asyncExec(new Runnable() {
 					// Post to UI thread since editor shell only gets activated after popup has lost focus
 					@Override
 					public void run() {
-						Shell activeShell= display.getActiveShell();
+						Shell activeShell = display.getActiveShell();
 						if (activeShell != editorShell) {
 							fRenameLinkedMode.cancel();
 						}
@@ -347,10 +348,10 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			});
 		}
 
-		UIJob delayJob= new UIJob(display, RenameMessages.RenameInformationPopup_delayJobName) {
+		UIJob delayJob = new UIJob(display, RenameMessages.RenameInformationPopup_delayJobName) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				fDelayJobFinished= true;
+				fDelayJobFinished = true;
 				if (fPopup != null && !fPopup.isDisposed()) {
 					updateVisibility();
 				}
@@ -367,7 +368,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			if (!fPopup.isDisposed()) {
 				fPopup.close();
 			}
-			fPopup= null;
+			fPopup = null;
 		}
 		releaseWidgetToken();
 		if (fRegion != null) {
@@ -386,34 +387,34 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			return;
 
 		packPopup();
-		Point loc= computePopupLocation(fSnapPosition);
+		Point loc = computePopupLocation(fSnapPosition);
 		if (loc != null && !loc.equals(fPopup.getLocation())) {
 			fPopup.setLocation(loc);
 			// XXX workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=170774
-//			fPopup.moveBelow(fEditor.getSite().getShell().getShells()[0]);
+			//			fPopup.moveBelow(fEditor.getSite().getShell().getShells()[0]);
 		}
 	}
 
 	private void updateVisibility() {
 		if (fPopup != null && !fPopup.isDisposed() && fDelayJobFinished) {
-			boolean visible= false;
+			boolean visible = false;
 			//TODO: Check for visibility of linked position, not whether popup is outside of editor?
 			if (fRenameLinkedMode.isCaretInLinkedPosition()) {
-				StyledText textWidget= fEditor.getViewer().getTextWidget();
-				Rectangle eArea= Geometry.toDisplay(textWidget, textWidget.getClientArea());
-				Rectangle pBounds= fPopup.getBounds();
+				StyledText textWidget = fEditor.getViewer().getTextWidget();
+				Rectangle eArea = Geometry.toDisplay(textWidget, textWidget.getClientArea());
+				Rectangle pBounds = fPopup.getBounds();
 				pBounds.x -= GAP;
 				pBounds.y -= GAP;
 				pBounds.width += 2 * GAP;
 				pBounds.height += 2 * GAP;
 				if (eArea.intersects(pBounds)) {
-					visible= true;
+					visible = true;
 				}
 			}
 			if (visible && !fPopup.isVisible()) {
-				ISourceViewer viewer= fEditor.getViewer();
+				ISourceViewer viewer = fEditor.getViewer();
 				if (viewer instanceof IWidgetTokenOwnerExtension) {
-					IWidgetTokenOwnerExtension widgetTokenOwnerExtension= (IWidgetTokenOwnerExtension) viewer;
+					IWidgetTokenOwnerExtension widgetTokenOwnerExtension = (IWidgetTokenOwnerExtension) viewer;
 					widgetTokenOwnerExtension.requestWidgetToken(this, WIDGET_PRIORITY);
 				}
 			} else if (!visible && fPopup.isVisible()) {
@@ -424,9 +425,9 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	}
 
 	private void releaseWidgetToken() {
-		ISourceViewer viewer= fEditor.getViewer();
+		ISourceViewer viewer = fEditor.getViewer();
 		if (viewer instanceof IWidgetTokenOwner) {
-			IWidgetTokenOwner widgetTokenOwner= (IWidgetTokenOwner) viewer;
+			IWidgetTokenOwner widgetTokenOwner = (IWidgetTokenOwner) viewer;
 			widgetTokenOwner.releaseWidgetToken(this);
 		}
 	}
@@ -440,68 +441,66 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			return null;
 
 		switch (snapPosition) {
-			case SNAP_POSITION_LOWER_RIGHT:
-			{
-				StyledText eWidget= fEditor.getViewer().getTextWidget();
-				Rectangle eBounds= eWidget.getClientArea();
-				Point eLowerRight= eWidget.toDisplay(eBounds.x + eBounds.width, eBounds.y + eBounds.height);
-				Point pSize= getExtent();
-				return new Point(eLowerRight.x - pSize.x - 5, eLowerRight.y - pSize.y - 5);
+		case SNAP_POSITION_LOWER_RIGHT: {
+			StyledText eWidget = fEditor.getViewer().getTextWidget();
+			Rectangle eBounds = eWidget.getClientArea();
+			Point eLowerRight = eWidget.toDisplay(eBounds.x + eBounds.width, eBounds.y + eBounds.height);
+			Point pSize = getExtent();
+			return new Point(eLowerRight.x - pSize.x - 5, eLowerRight.y - pSize.y - 5);
+		}
+
+		case SNAP_POSITION_UNDER_RIGHT_FIELD:
+		case SNAP_POSITION_OVER_RIGHT_FIELD: {
+			LinkedPosition position = fRenameLinkedMode.getCurrentLinkedPosition();
+			if (position == null)
+				return null;
+			ISourceViewer viewer = fEditor.getViewer();
+			ITextViewerExtension5 viewer5 = (ITextViewerExtension5) viewer;
+			int widgetOffset = viewer5.modelOffset2WidgetOffset(position.offset + position.length);
+
+			StyledText textWidget = viewer.getTextWidget();
+			Point pos = textWidget.getLocationAtOffset(widgetOffset);
+			Point pSize = getExtent();
+			if (snapPosition == SNAP_POSITION_OVER_RIGHT_FIELD) {
+				pos.y -= pSize.y + GAP;
+			} else {
+				pos.y += textWidget.getLineHeight(widgetOffset) + GAP;
 			}
+			pos.x += GAP;
+			Point dPos = textWidget.toDisplay(pos);
+			Rectangle displayBounds = textWidget.getDisplay().getClientArea();
+			Rectangle dPopupRect = Geometry.createRectangle(dPos, pSize);
+			Geometry.moveInside(dPopupRect, displayBounds);
+			return new Point(dPopupRect.x, dPopupRect.y);
+		}
 
-			case SNAP_POSITION_UNDER_RIGHT_FIELD:
-			case SNAP_POSITION_OVER_RIGHT_FIELD:
-			{
-				LinkedPosition position= fRenameLinkedMode.getCurrentLinkedPosition();
-				if (position == null)
-					return null;
-				ISourceViewer viewer= fEditor.getViewer();
-				ITextViewerExtension5 viewer5= (ITextViewerExtension5) viewer;
-				int widgetOffset= viewer5.modelOffset2WidgetOffset(position.offset + position.length);
+		case SNAP_POSITION_UNDER_LEFT_FIELD:
+		case SNAP_POSITION_OVER_LEFT_FIELD:
+		default: // same as SNAP_POSITION_UNDER_LEFT_FIELD
+		{
+			LinkedPosition position = fRenameLinkedMode.getCurrentLinkedPosition();
+			if (position == null)
+				return null;
+			ISourceViewer viewer = fEditor.getViewer();
+			ITextViewerExtension5 viewer5 = (ITextViewerExtension5) viewer;
+			int widgetOffset = viewer5.modelOffset2WidgetOffset(position.offset/* + position.length*/);
 
-				StyledText textWidget= viewer.getTextWidget();
-				Point pos= textWidget.getLocationAtOffset(widgetOffset);
-				Point pSize= getExtent();
-				if (snapPosition == SNAP_POSITION_OVER_RIGHT_FIELD) {
-					pos.y-= pSize.y + GAP;
-				} else {
-					pos.y+= textWidget.getLineHeight(widgetOffset) + GAP;
-				}
-				pos.x+= GAP;
-				Point dPos= textWidget.toDisplay(pos);
-				Rectangle displayBounds= textWidget.getDisplay().getClientArea();
-				Rectangle dPopupRect= Geometry.createRectangle(dPos, pSize);
-				Geometry.moveInside(dPopupRect, displayBounds);
-				return new Point(dPopupRect.x, dPopupRect.y);
+			StyledText textWidget = viewer.getTextWidget();
+			Point pos = textWidget.getLocationAtOffset(widgetOffset);
+			Point pSize = getExtent();
+			pSize.y += HAH + 1;
+			pos.x -= HAO;
+			if (snapPosition == SNAP_POSITION_OVER_LEFT_FIELD) {
+				pos.y -= pSize.y;
+			} else {
+				pos.y += textWidget.getLineHeight(widgetOffset);
 			}
-
-			case SNAP_POSITION_UNDER_LEFT_FIELD:
-			case SNAP_POSITION_OVER_LEFT_FIELD:
-			default: // same as SNAP_POSITION_UNDER_LEFT_FIELD
-			{
-				LinkedPosition position= fRenameLinkedMode.getCurrentLinkedPosition();
-				if (position == null)
-					return null;
-				ISourceViewer viewer= fEditor.getViewer();
-				ITextViewerExtension5 viewer5= (ITextViewerExtension5) viewer;
-				int widgetOffset= viewer5.modelOffset2WidgetOffset(position.offset/* + position.length*/);
-
-				StyledText textWidget= viewer.getTextWidget();
-				Point pos= textWidget.getLocationAtOffset(widgetOffset);
-				Point pSize= getExtent();
-				pSize.y+= HAH + 1;
-				pos.x-= HAO;
-				if (snapPosition == SNAP_POSITION_OVER_LEFT_FIELD) {
-					pos.y-= pSize.y;
-				} else {
-					pos.y+= textWidget.getLineHeight(widgetOffset);
-				}
-				Point dPos= textWidget.toDisplay(pos);
-				Rectangle displayBounds= textWidget.getDisplay().getClientArea();
-				Rectangle dPopupRect= Geometry.createRectangle(dPos, pSize);
-				Geometry.moveInside(dPopupRect, displayBounds);
-				return new Point(dPopupRect.x, dPopupRect.y);
-			}
+			Point dPos = textWidget.toDisplay(pos);
+			Rectangle displayBounds = textWidget.getDisplay().getClientArea();
+			Rectangle dPopupRect = Geometry.createRectangle(dPos, pSize);
+			Geometry.moveInside(dPopupRect, displayBounds);
+			return new Point(dPopupRect.x, dPopupRect.y);
+		}
 		}
 	}
 
@@ -514,10 +513,10 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 					return;
 				}
 
-				final Point POPUP_SOURCE= popupShell.getLocation();
-				final StyledText textWidget= fEditor.getViewer().getTextWidget();
-				Point pSize= getExtent();
-				int originalSnapPosition= fSnapPosition;
+				final Point POPUP_SOURCE = popupShell.getLocation();
+				final StyledText textWidget = fEditor.getViewer().getTextWidget();
+				Point pSize = getExtent();
+				int originalSnapPosition = fSnapPosition;
 
 				/*
 				 * Feature in Tracker: it is not possible to directly control the feedback,
@@ -527,64 +526,58 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 				 * Workaround is to have an offscreen rectangle for tracking mouse movement
 				 * and a manually updated rectangle for the actual drop target.
 				 */
-				final Tracker tracker= new Tracker(textWidget, SWT.NONE);
+				final Tracker tracker = new Tracker(textWidget, SWT.NONE);
 
-				final Point[] LOCATIONS= {
-						textWidget.toControl(computePopupLocation(SNAP_POSITION_UNDER_RIGHT_FIELD)),
+				final Point[] LOCATIONS = { textWidget.toControl(computePopupLocation(SNAP_POSITION_UNDER_RIGHT_FIELD)),
 						textWidget.toControl(computePopupLocation(SNAP_POSITION_OVER_RIGHT_FIELD)),
 						textWidget.toControl(computePopupLocation(SNAP_POSITION_UNDER_LEFT_FIELD)),
 						textWidget.toControl(computePopupLocation(SNAP_POSITION_OVER_LEFT_FIELD)),
-						textWidget.toControl(computePopupLocation(SNAP_POSITION_LOWER_RIGHT))
-				};
+						textWidget.toControl(computePopupLocation(SNAP_POSITION_LOWER_RIGHT)) };
 
-				final Rectangle[] DROP_TARGETS= {
-					Geometry.createRectangle(LOCATIONS[0], pSize),
-					Geometry.createRectangle(LOCATIONS[1], pSize),
-					new Rectangle(LOCATIONS[2].x, LOCATIONS[2].y + HAH, pSize.x, pSize.y),
-					Geometry.createRectangle(LOCATIONS[3], pSize),
-					Geometry.createRectangle(LOCATIONS[4], pSize)
-				};
-				final Rectangle MOUSE_MOVE_SOURCE= new Rectangle(1000000, 0, 0, 0);
+				final Rectangle[] DROP_TARGETS = { Geometry.createRectangle(LOCATIONS[0], pSize),
+						Geometry.createRectangle(LOCATIONS[1], pSize),
+						new Rectangle(LOCATIONS[2].x, LOCATIONS[2].y + HAH, pSize.x, pSize.y),
+						Geometry.createRectangle(LOCATIONS[3], pSize), Geometry.createRectangle(LOCATIONS[4], pSize) };
+				final Rectangle MOUSE_MOVE_SOURCE = new Rectangle(1000000, 0, 0, 0);
 				tracker.setRectangles(new Rectangle[] { MOUSE_MOVE_SOURCE, DROP_TARGETS[fSnapPosition] });
 				tracker.setStippled(true);
 
-				ControlListener moveListener= new ControlAdapter() {
+				ControlListener moveListener = new ControlAdapter() {
 					/*
 					 * @see org.eclipse.swt.events.ControlAdapter#controlMoved(org.eclipse.swt.events.ControlEvent)
 					 */
 					@Override
 					public void controlMoved(ControlEvent moveEvent) {
-						Rectangle[] currentRects= tracker.getRectangles();
-						final Rectangle mouseMoveCurrent= currentRects[0];
-						Point popupLoc= new Point(
-								POPUP_SOURCE.x + mouseMoveCurrent.x - MOUSE_MOVE_SOURCE.x,
+						Rectangle[] currentRects = tracker.getRectangles();
+						final Rectangle mouseMoveCurrent = currentRects[0];
+						Point popupLoc = new Point(POPUP_SOURCE.x + mouseMoveCurrent.x - MOUSE_MOVE_SOURCE.x,
 								POPUP_SOURCE.y + mouseMoveCurrent.y - MOUSE_MOVE_SOURCE.y);
 
 						popupShell.setLocation(popupLoc);
 
-						Point ePopupLoc= textWidget.toControl(popupLoc);
-						int minDist= Integer.MAX_VALUE;
-						for (int snapPos= 0; snapPos < DROP_TARGETS.length; snapPos++) {
-							int dist= Geometry.distanceSquared(ePopupLoc, LOCATIONS[snapPos]);
+						Point ePopupLoc = textWidget.toControl(popupLoc);
+						int minDist = Integer.MAX_VALUE;
+						for (int snapPos = 0; snapPos < DROP_TARGETS.length; snapPos++) {
+							int dist = Geometry.distanceSquared(ePopupLoc, LOCATIONS[snapPos]);
 							if (dist < minDist) {
-								minDist= dist;
-								fSnapPosition= snapPos;
-								fSnapPositionChanged= true;
-								currentRects[1]= DROP_TARGETS[snapPos];
+								minDist = dist;
+								fSnapPosition = snapPos;
+								fSnapPositionChanged = true;
+								currentRects[1] = DROP_TARGETS[snapPos];
 							}
 						}
 						tracker.setRectangles(currentRects);
 					}
 				};
 				tracker.addControlListener(moveListener);
-				boolean committed= tracker.open();
+				boolean committed = tracker.open();
 				tracker.close();
 				tracker.dispose();
 				if (committed) {
 					getDialogSettings().put(SNAP_POSITION_KEY, fSnapPosition);
 				} else {
-					fSnapPosition= originalSnapPosition;
-					fSnapPositionChanged= true;
+					fSnapPosition = originalSnapPosition;
+					fSnapPositionChanged = true;
 				}
 				updatePopupLocation(true);
 				activateEditor();
@@ -596,23 +589,23 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 		if (!fSnapPositionChanged) {
 			return;
 		}
-		fSnapPositionChanged= false;
-		
-		boolean isUnderLeft= fSnapPosition == SNAP_POSITION_UNDER_LEFT_FIELD;
-		boolean isOverLeft= fSnapPosition == SNAP_POSITION_OVER_LEFT_FIELD;
-		fPopupLayout.marginTop= isUnderLeft ? HAH : 0;
-		fPopupLayout.marginBottom= isOverLeft ? HAH + 1 : 0;
+		fSnapPositionChanged = false;
+
+		boolean isUnderLeft = fSnapPosition == SNAP_POSITION_UNDER_LEFT_FIELD;
+		boolean isOverLeft = fSnapPosition == SNAP_POSITION_OVER_LEFT_FIELD;
+		fPopupLayout.marginTop = isUnderLeft ? HAH : 0;
+		fPopupLayout.marginBottom = isOverLeft ? HAH + 1 : 0;
 		fPopup.pack();
 
-		Region oldRegion= fRegion;
+		Region oldRegion = fRegion;
 		if (isUnderLeft || isOverLeft) {
-			fRegion= new Region();
+			fRegion = new Region();
 			fRegion.add(getPolygon(false));
 			fPopup.setRegion(fRegion);
-			Rectangle bounds= fRegion.getBounds();
+			Rectangle bounds = fRegion.getBounds();
 			fPopup.setSize(bounds.width, bounds.height + 1);
 		} else {
-			fRegion= null;
+			fRegion = null;
 			fPopup.setRegion(null);
 		}
 
@@ -624,12 +617,12 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	private Point getExtent() {
 		Point e = fPopup.getSize();
 		switch (fSnapPosition) {
-			case SNAP_POSITION_UNDER_LEFT_FIELD:
-				e.y -= HAH;
-				break;
-			case SNAP_POSITION_OVER_LEFT_FIELD:
-				e.y -= HAH + 1;
-				break;
+		case SNAP_POSITION_UNDER_LEFT_FIELD:
+			e.y -= HAH;
+			break;
+		case SNAP_POSITION_OVER_LEFT_FIELD:
+			e.y -= HAH + 1;
+			break;
 		}
 		return e;
 	}
@@ -637,57 +630,38 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	private int[] getPolygon(boolean border) {
 		Point e = getExtent();
 		int b = border ? 1 : 0;
-		boolean isRTL= (fPopup.getStyle() & SWT.RIGHT_TO_LEFT) != 0;
-		int ha1= isRTL ? e.x - HAO :           HAO + HAW;
-		int ha2= isRTL ? e.x - HAO - HAW / 2 : HAO + HAW / 2;
-		int ha3= isRTL ? e.x - HAO - HAW :     HAO;
-			int[] poly;
-			switch (fSnapPosition) {
-				case SNAP_POSITION_OVER_LEFT_FIELD:
-					poly= new int[] {
-							0, 0,
-							e.x - b, 0,
-							e.x - b, e.y - b,
-							ha1, e.y - b,
-							ha2, e.y + HAH - b,
-							ha3, e.y - b,
-							0, e.y - b,
-							0, 0 };
-					break;
+		boolean isRTL = (fPopup.getStyle() & SWT.RIGHT_TO_LEFT) != 0;
+		int ha1 = isRTL ? e.x - HAO : HAO + HAW;
+		int ha2 = isRTL ? e.x - HAO - HAW / 2 : HAO + HAW / 2;
+		int ha3 = isRTL ? e.x - HAO - HAW : HAO;
+		int[] poly;
+		switch (fSnapPosition) {
+		case SNAP_POSITION_OVER_LEFT_FIELD:
+			poly = new int[] { 0, 0, e.x - b, 0, e.x - b, e.y - b, ha1, e.y - b, ha2, e.y + HAH - b, ha3, e.y - b, 0,
+					e.y - b, 0, 0 };
+			break;
 
-				case SNAP_POSITION_UNDER_LEFT_FIELD:
-					poly= new int[] {
-							0, HAH,
-							ha3 + b, HAH,
-							ha2, b,
-							ha1 - b, HAH,
-							e.x - b, HAH,
-							e.x - b, e.y + HAH - b,
-							0, e.y + HAH - b,
-							0, HAH };
-					break;
+		case SNAP_POSITION_UNDER_LEFT_FIELD:
+			poly = new int[] { 0, HAH, ha3 + b, HAH, ha2, b, ha1 - b, HAH, e.x - b, HAH, e.x - b, e.y + HAH - b, 0,
+					e.y + HAH - b, 0, HAH };
+			break;
 
-				default:
-					poly= new int[] {
-							0, 0,
-							e.x - b, 0,
-							e.x - b, e.y - b,
-							0, e.y - b,
-							0, 0 };
-					break;
-			}
+		default:
+			poly = new int[] { 0, 0, e.x - b, 0, e.x - b, e.y - b, 0, e.y - b, 0, 0 };
+			break;
+		}
 		return poly;
 	}
 
 	private void createContent(Composite parent) {
-		Display display= parent.getDisplay();
-		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		Color background= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		Display display = parent.getDisplay();
+		Color foreground = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		Color background = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		addMoveSupport(fPopup, parent);
 
-		StyledText hint= new StyledText(fPopup, SWT.READ_ONLY | SWT.SINGLE);
-		String enterKeyName= getEnterBinding();
-		String hintTemplate= RenameMessages.RenameInformationPopup_EnterNewName;
+		StyledText hint = new StyledText(fPopup, SWT.READ_ONLY | SWT.SINGLE);
+		String enterKeyName = getEnterBinding();
+		String hintTemplate = RenameMessages.RenameInformationPopup_EnterNewName;
 		hint.setText(NLS.bind(hintTemplate, enterKeyName));
 		hint.setForeground(foreground);
 		hint.setStyleRange(new StyleRange(hintTemplate.indexOf("{0}"), enterKeyName.length(), null, null, SWT.BOLD)); //$NON-NLS-1$
@@ -700,9 +674,9 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	}
 
 	private ToolBar addViewMenu(final Composite parent) {
-		fToolBar= new ToolBar(parent, SWT.FLAT);
+		fToolBar = new ToolBar(parent, SWT.FLAT);
 		final ToolItem menuButton = new ToolItem(fToolBar, SWT.PUSH, 0);
-		fMenuImage= CPluginImages.DESC_ELCL_VIEW_MENU.createImage();
+		fMenuImage = CPluginImages.DESC_ELCL_VIEW_MENU.createImage();
 		menuButton.setImage(fMenuImage);
 		menuButton.setToolTipText(RenameMessages.RenameInformationPopup_menu);
 		fToolBar.addMouseListener(new MouseAdapter() {
@@ -722,9 +696,9 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	}
 
 	private void showMenu(ToolBar toolBar) {
-		Menu menu= getMenuManager().createContextMenu(toolBar);
+		Menu menu = getMenuManager().createContextMenu(toolBar);
 		menu.setLocation(toolBar.toDisplay(0, toolBar.getSize().y));
-		fIsMenuUp= true;
+		fIsMenuUp = true;
 		menu.setVisible(true);
 	}
 
@@ -733,20 +707,20 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			return fMenuManager;
 		}
 
-		fMenuManager= new MenuManager();
+		fMenuManager = new MenuManager();
 		fMenuManager.setRemoveAllWhenShown(true);
 
 		fMenuManager.addMenuListener(new IMenuListener2() {
 			@Override
 			public void menuAboutToHide(IMenuManager manager) {
-				fIsMenuUp= false;
+				fIsMenuUp = false;
 			}
 
 			@Override
 			public void menuAboutToShow(IMenuManager manager) {
-				boolean canRefactor= !fRenameLinkedMode.isOriginalName();
-				
-				IAction refactorAction= new Action(RenameMessages.RenameInformationPopup_RenameInWorkspace) {
+				boolean canRefactor = !fRenameLinkedMode.isOriginalName();
+
+				IAction refactorAction = new Action(RenameMessages.RenameInformationPopup_RenameInWorkspace) {
 					@Override
 					public void run() {
 						activateEditor();
@@ -757,7 +731,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 				refactorAction.setEnabled(canRefactor);
 				manager.add(refactorAction);
 
-				IAction previewAction= new Action(RenameMessages.RenameInformationPopup_Preview) {
+				IAction previewAction = new Action(RenameMessages.RenameInformationPopup_Preview) {
 					@Override
 					public void run() {
 						activateEditor();
@@ -768,7 +742,8 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 				previewAction.setEnabled(canRefactor);
 				manager.add(previewAction);
 
-				IAction openDialogAction= new Action(RenameMessages.RenameInformationPopup_OpenDialog + '\t' + fOpenDialogBinding) {
+				IAction openDialogAction = new Action(
+						RenameMessages.RenameInformationPopup_OpenDialog + '\t' + fOpenDialogBinding) {
 					@Override
 					public void run() {
 						activateEditor();
@@ -779,21 +754,27 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 
 				manager.add(new Separator());
 
-				MenuManager subMenuManager= new MenuManager(RenameMessages.RenameInformationPopup_SnapTo);
-				addMoveMenuItem(subMenuManager, SNAP_POSITION_UNDER_LEFT_FIELD, RenameMessages.RenameInformationPopup_snap_under_left);
-				addMoveMenuItem(subMenuManager, SNAP_POSITION_UNDER_RIGHT_FIELD, RenameMessages.RenameInformationPopup_snap_under_right);
-				addMoveMenuItem(subMenuManager, SNAP_POSITION_OVER_LEFT_FIELD, RenameMessages.RenameInformationPopup_snap_over_left);
-				addMoveMenuItem(subMenuManager, SNAP_POSITION_OVER_RIGHT_FIELD, RenameMessages.RenameInformationPopup_snap_over_right);
-				addMoveMenuItem(subMenuManager, SNAP_POSITION_LOWER_RIGHT, RenameMessages.RenameInformationPopup_snap_bottom_right);
+				MenuManager subMenuManager = new MenuManager(RenameMessages.RenameInformationPopup_SnapTo);
+				addMoveMenuItem(subMenuManager, SNAP_POSITION_UNDER_LEFT_FIELD,
+						RenameMessages.RenameInformationPopup_snap_under_left);
+				addMoveMenuItem(subMenuManager, SNAP_POSITION_UNDER_RIGHT_FIELD,
+						RenameMessages.RenameInformationPopup_snap_under_right);
+				addMoveMenuItem(subMenuManager, SNAP_POSITION_OVER_LEFT_FIELD,
+						RenameMessages.RenameInformationPopup_snap_over_left);
+				addMoveMenuItem(subMenuManager, SNAP_POSITION_OVER_RIGHT_FIELD,
+						RenameMessages.RenameInformationPopup_snap_over_right);
+				addMoveMenuItem(subMenuManager, SNAP_POSITION_LOWER_RIGHT,
+						RenameMessages.RenameInformationPopup_snap_bottom_right);
 				manager.add(subMenuManager);
 
-				IAction prefsAction= new Action(RenameMessages.RenameInformationPopup_preferences) {
+				IAction prefsAction = new Action(RenameMessages.RenameInformationPopup_preferences) {
 					@Override
 					public void run() {
 						fRenameLinkedMode.cancel();
-						String linkedModePrefPageID= "org.eclipse.ui.editors.preferencePages.LinkedModePreferencePage"; //$NON-NLS-1$
-						String refactoringPrefPageID= CPluginPreferencePage.C_BASE_PREF_PAGE_ID;
-						PreferencesUtil.createPreferenceDialogOn(fEditor.getSite().getShell(), refactoringPrefPageID, new String[] { linkedModePrefPageID, refactoringPrefPageID }, null).open();
+						String linkedModePrefPageID = "org.eclipse.ui.editors.preferencePages.LinkedModePreferencePage"; //$NON-NLS-1$
+						String refactoringPrefPageID = CPluginPreferencePage.C_BASE_PREF_PAGE_ID;
+						PreferencesUtil.createPreferenceDialogOn(fEditor.getSite().getShell(), refactoringPrefPageID,
+								new String[] { linkedModePrefPageID, refactoringPrefPageID }, null).open();
 					}
 				};
 				manager.add(prefsAction);
@@ -803,11 +784,11 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	}
 
 	private void addMoveMenuItem(IMenuManager manager, final int snapPosition, String text) {
-		IAction action= new Action(text, IAction.AS_RADIO_BUTTON) {
+		IAction action = new Action(text, IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
-				fSnapPosition= snapPosition;
-				fSnapPositionChanged= true;
+				fSnapPosition = snapPosition;
+				fSnapPositionChanged = true;
 				getDialogSettings().put(SNAP_POSITION_KEY, fSnapPosition);
 				updatePopupLocation(true);
 				activateEditor();
@@ -826,18 +807,18 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	 * @return the keybinding for Refactor &gt; Rename
 	 */
 	private static String getOpenDialogBinding() {
-		IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService == null)
 			return ""; //$NON-NLS-1$
-		String binding= bindingService.getBestActiveBindingFormattedFor(ICEditorActionDefinitionIds.RENAME_ELEMENT);
+		String binding = bindingService.getBestActiveBindingFormattedFor(ICEditorActionDefinitionIds.RENAME_ELEMENT);
 		return binding == null ? "" : binding; //$NON-NLS-1$
 	}
 
 	private static void recursiveSetBackgroundColor(Control control, Color color) {
 		control.setBackground(color);
 		if (control instanceof Composite) {
-			Control[] children= ((Composite) control).getChildren();
-			for (int i= 0; i < children.length; i++) {
+			Control[] children = ((Composite) control).getChildren();
+			for (int i = 0; i < children.length; i++) {
 				recursiveSetBackgroundColor(children[i], color);
 			}
 		}
@@ -848,7 +829,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			return true;
 		if (fPopup == null || fPopup.isDisposed())
 			return false;
-		Shell activeShell= fPopup.getDisplay().getActiveShell();
+		Shell activeShell = fPopup.getDisplay().getActiveShell();
 		if (fPopup == activeShell)
 			return true;
 		return false;

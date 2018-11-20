@@ -24,12 +24,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 public class SingleInputDialog extends InputDialog {
-	
+
 	private String firstMessage;
 
-	public SingleInputDialog(Shell parentShell, String firstMessage, String dialogTitle,
-			String dialogMessage, String initialValue,
-			IInputValidator validator) {
+	public SingleInputDialog(Shell parentShell, String firstMessage, String dialogTitle, String dialogMessage,
+			String initialValue, IInputValidator validator) {
 		super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
 
 		this.firstMessage = firstMessage;
@@ -43,8 +42,7 @@ public class SingleInputDialog extends InputDialog {
 
 		CLabel label0 = new CLabel(composite, SWT.WRAP);
 		label0.setText(firstMessage);
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		label0.setLayoutData(data);

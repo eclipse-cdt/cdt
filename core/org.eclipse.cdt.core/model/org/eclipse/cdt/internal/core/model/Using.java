@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IUsing;
 
@@ -27,7 +26,7 @@ public class Using extends SourceManipulation implements IUsing {
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new SourceManipulationInfo(this);
 	}
 

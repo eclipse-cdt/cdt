@@ -25,38 +25,32 @@ public class AutoconfPartitioner extends FastPartitioner {
 		// TODO Auto-generated constructor stub
 		super(scanner, legalContentTypes);
 	}
-			
+
 	public void connect(IDocument document, int blah) {
 		super.connect(document);
 	}
-	
+
 	// To optionally show partitions, we must do so by overriding the computePartitioning
 	// method.  We cannot do it at connect time because the document may be zero length
 	// at the time and we will end up getting default partitioning from then on.
 	@Override
-	public ITypedRegion[] computePartitioning(int offset, int length, 
-			boolean includeZeroLength) {
+	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLength) {
 		ITypedRegion[] regions = super.computePartitioning(offset, length, includeZeroLength);
 		// Uncomment the following line to see partitioning.
-//		printPartitions(regions);
+		//		printPartitions(regions);
 		return regions;
 	}
-	
-	public void printPartitions(ITypedRegion[] partitions)
-	{
-		for (int i = 0; i < partitions.length; i++)
-		{
-			try
-			{
+
+	public void printPartitions(ITypedRegion[] partitions) {
+		for (int i = 0; i < partitions.length; i++) {
+			try {
 				System.out.print("Partition type: " + partitions[i].getType() //$NON-NLS-1$
 						+ ", offset: " + partitions[i].getOffset() //$NON-NLS-1$
 						+ ", length: " + partitions[i].getLength() //$NON-NLS-1$
-						+"\nText:\n" //$NON-NLS-1$
+						+ "\nText:\n" //$NON-NLS-1$
 						+ super.fDocument.get(partitions[i].getOffset(), partitions[i].getLength())
 						+ "\n---------------------------\n\n\n"); //$NON-NLS-1$
-			}
-			catch (BadLocationException e)
-			{
+			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
 		}

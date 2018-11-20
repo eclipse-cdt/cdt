@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.ArrayList;
@@ -42,39 +42,39 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 class THGraph {
 	private static final ICElement[] NO_MEMBERS = {};
 	private THGraphNode fInputNode;
-	private HashSet<THGraphNode> fRootNodes= new HashSet<>();
-	private HashSet<THGraphNode> fLeafNodes= new HashSet<>();
-	private HashMap<ICElement, THGraphNode> fNodes= new HashMap<>();
+	private HashSet<THGraphNode> fRootNodes = new HashSet<>();
+	private HashSet<THGraphNode> fLeafNodes = new HashSet<>();
+	private HashMap<ICElement, THGraphNode> fNodes = new HashMap<>();
 	private boolean fFileIsIndexed;
-	
+
 	public THGraph() {
 	}
 
 	public THGraphNode getInputNode() {
 		return fInputNode;
 	}
-	
+
 	public THGraphNode getNode(ICElement elem) {
 		return fNodes.get(elem);
 	}
 
 	private THGraphNode addNode(ICElement input) {
-		THGraphNode node= fNodes.get(input); 
+		THGraphNode node = fNodes.get(input);
 
 		if (node == null) {
-			node= new THGraphNode(input);
+			node = new THGraphNode(input);
 			fNodes.put(input, node);
 			fRootNodes.add(node);
 			fLeafNodes.add(node);
 		}
 		return node;
 	}
-	
+
 	private THGraphEdge addEdge(THGraphNode from, THGraphNode to) {
 		if (createsLoopOrIsDuplicate(from, to)) {
 			return null;
 		}
-		THGraphEdge edge= new THGraphEdge(from, to);
+		THGraphEdge edge = new THGraphEdge(from, to);
 		from.startEdge(edge);
 		to.endEdge(edge);
 		fRootNodes.remove(to);
@@ -89,16 +89,16 @@ class THGraph {
 		if (to.getOutgoing().isEmpty() || from.getIncoming().isEmpty()) {
 			return false;
 		}
-		
-		HashSet<THGraphNode> checked= new HashSet<>();
-		ArrayList<THGraphNode> stack= new ArrayList<>();
+
+		HashSet<THGraphNode> checked = new HashSet<>();
+		ArrayList<THGraphNode> stack = new ArrayList<>();
 		stack.add(to);
-		
+
 		while (!stack.isEmpty()) {
-			THGraphNode node= stack.remove(stack.size() - 1);
-			List<THGraphEdge> out= node.getOutgoing();
+			THGraphNode node = stack.remove(stack.size() - 1);
+			List<THGraphEdge> out = node.getOutgoing();
 			for (THGraphEdge edge : out) {
-				node= edge.getEndNode();
+				node = edge.getEndNode();
 				if (node == from) {
 					return true;
 				}
@@ -108,7 +108,7 @@ class THGraph {
 			}
 		}
 		// Check if edge is already there.
-		List<THGraphEdge> out= from.getOutgoing();
+		List<THGraphEdge> out = from.getOutgoing();
 		for (THGraphEdge edge : out) {
 			if (edge.getEndNode() == to) {
 				return true;
@@ -129,9 +129,9 @@ class THGraph {
 		if (input != null) {
 			try {
 				if (IndexUI.isIndexed(index, input)) {
-					fFileIsIndexed= true;
-					input= IndexUI.attemptConvertionToHandle(index, input);
-					fInputNode= addNode(input);
+					fFileIsIndexed = true;
+					input = IndexUI.attemptConvertionToHandle(index, input);
+					fInputNode = addNode(input);
 				}
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
@@ -143,35 +143,35 @@ class THGraph {
 		if (fInputNode == null) {
 			return;
 		}
-		HashSet<ICElement> handled= new HashSet<>();
-		ArrayList<ICElement> stack= new ArrayList<>();
+		HashSet<ICElement> handled = new HashSet<>();
+		ArrayList<ICElement> stack = new ArrayList<>();
 		stack.add(fInputNode.getElement());
 		handled.add(fInputNode.getElement());
 		while (!stack.isEmpty()) {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			ICElement elem= stack.remove(stack.size() - 1);
-			THGraphNode graphNode= addNode(elem);
+			ICElement elem = stack.remove(stack.size() - 1);
+			THGraphNode graphNode = addNode(elem);
 			try {
 				IIndexBinding binding = IndexUI.elementToBinding(index, elem);
 				if (binding != null) {
 					addMembers(index, graphNode, binding);
 				}
 				if (binding instanceof ICPPClassType) {
-					ICPPClassType ct= (ICPPClassType) binding;
-					ICPPBase[] bases= ct.getBases();
+					ICPPClassType ct = (ICPPClassType) binding;
+					ICPPBase[] bases = ct.getBases();
 					for (ICPPBase base : bases) {
 						if (monitor.isCanceled()) {
 							return;
 						}
-						IType baseType= base.getBaseClassType();
+						IType baseType = base.getBaseClassType();
 						if (baseType instanceof IBinding) {
 							final IBinding baseBinding = (IBinding) baseType;
-							ICElementHandle[] baseElems= IndexUI.findRepresentative(index, baseBinding);
+							ICElementHandle[] baseElems = IndexUI.findRepresentative(index, baseBinding);
 							for (ICElementHandle baseElem : baseElems) {
-								THGraphNode baseGraphNode= addNode(baseElem);
-								addMembers(index, baseGraphNode, baseBinding);							
+								THGraphNode baseGraphNode = addNode(baseElem);
+								addMembers(index, baseGraphNode, baseBinding);
 								addEdge(graphNode, baseGraphNode);
 								if (handled.add(baseElem)) {
 									stack.add(baseElem);
@@ -180,15 +180,15 @@ class THGraph {
 						}
 					}
 				} else if (binding instanceof ITypedef) {
-					ITypedef ct= (ITypedef) binding;
-					IType type= ct.getType();
+					ITypedef ct = (ITypedef) binding;
+					IType type = ct.getType();
 					if (type instanceof IBinding) {
-						IBinding basecl= (IBinding) type;
-						ICElementHandle[] baseElems= IndexUI.findRepresentative(index, basecl);
+						IBinding basecl = (IBinding) type;
+						ICElementHandle[] baseElems = IndexUI.findRepresentative(index, basecl);
 						if (baseElems.length > 0) {
-							ICElementHandle baseElem= baseElems[0];
-							THGraphNode baseGraphNode= addNode(baseElem);
-							addMembers(index, baseGraphNode, basecl);							
+							ICElementHandle baseElem = baseElems[0];
+							THGraphNode baseGraphNode = addNode(baseElem);
+							addMembers(index, baseGraphNode, basecl);
 							addEdge(graphNode, baseGraphNode);
 							if (handled.add(baseElem)) {
 								stack.add(baseElem);
@@ -206,8 +206,8 @@ class THGraph {
 		if (fInputNode == null) {
 			return;
 		}
-		HashSet<ICElement> handled= new HashSet<>();
-		ArrayList<ICElement> stack= new ArrayList<>();
+		HashSet<ICElement> handled = new HashSet<>();
+		ArrayList<ICElement> stack = new ArrayList<>();
 		ICElement element = fInputNode.getElement();
 		stack.add(element);
 		handled.add(element);
@@ -215,26 +215,26 @@ class THGraph {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			ICElement elem= stack.remove(stack.size() - 1);
-			THGraphNode graphNode= addNode(elem);
+			ICElement elem = stack.remove(stack.size() - 1);
+			THGraphNode graphNode = addNode(elem);
 			try {
 				IBinding binding = IndexUI.elementToBinding(index, elem);
 				if (binding != null) {
 					// TODO(nathanridge): Also find subclasses referenced via decltype-specifiers rather than names.
-					IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
+					IIndexName[] names = index.findNames(binding, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
 					for (IIndexName indexName : names) {
 						if (monitor.isCanceled()) {
 							return;
 						}
 						if (indexName.isBaseSpecifier()) {
-							IIndexName subClassDef= indexName.getEnclosingDefinition();
+							IIndexName subClassDef = indexName.getEnclosingDefinition();
 							if (subClassDef != null) {
-								IBinding subClass= index.findBinding(subClassDef);
-								ICElementHandle[] subClassElems= IndexUI.findRepresentative(index, subClass);
+								IBinding subClass = index.findBinding(subClassDef);
+								ICElementHandle[] subClassElems = IndexUI.findRepresentative(index, subClass);
 								if (subClassElems.length > 0) {
-									ICElementHandle subClassElem= subClassElems[0];
-									THGraphNode subGraphNode= addNode(subClassElem);
-									addMembers(index, subGraphNode, subClass);							
+									ICElementHandle subClassElem = subClassElems[0];
+									THGraphNode subGraphNode = addNode(subClassElem);
+									addMembers(index, subGraphNode, subClass);
 									addEdge(subGraphNode, graphNode);
 									if (handled.add(subClassElem)) {
 										stack.add(subClassElem);
@@ -249,23 +249,23 @@ class THGraph {
 			}
 		}
 	}
-	
+
 	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws CoreException {
 		if (graphNode.getMembers(false) == null) {
-			ArrayList<ICElement> memberList= new ArrayList<>();
+			ArrayList<ICElement> memberList = new ArrayList<>();
 			if (binding instanceof ICPPClassType) {
-				ICPPClassType ct= (ICPPClassType) binding;
-				IBinding[] members= ct.getDeclaredFields();
+				ICPPClassType ct = (ICPPClassType) binding;
+				IBinding[] members = ct.getDeclaredFields();
 				addMemberElements(index, members, memberList);
-				members= ct.getDeclaredMethods();
+				members = ct.getDeclaredMethods();
 				addMemberElements(index, members, memberList);
 			} else if (binding instanceof ICompositeType) {
-				ICompositeType ct= (ICompositeType) binding;
-				IBinding[] members= ct.getFields();
+				ICompositeType ct = (ICompositeType) binding;
+				IBinding[] members = ct.getFields();
 				addMemberElements(index, members, memberList);
 			} else if (binding instanceof IEnumeration) {
-				IEnumeration ct= (IEnumeration) binding;
-				IBinding[] members= ct.getEnumerators();
+				IEnumeration ct = (IEnumeration) binding;
+				IBinding[] members = ct.getEnumerators();
 				addMemberElements(index, members, memberList);
 			}
 
@@ -276,11 +276,10 @@ class THGraph {
 			}
 		}
 	}
-	
-	private void addMemberElements(IIndex index, IBinding[] members, List<ICElement> memberList) 
-			throws CoreException {
+
+	private void addMemberElements(IIndex index, IBinding[] members, List<ICElement> memberList) throws CoreException {
 		for (IBinding binding : members) {
-			ICElement[] elems= IndexUI.findRepresentative(index, binding);
+			ICElement[] elems = IndexUI.findRepresentative(index, binding);
 			if (elems.length > 0) {
 				memberList.add(elems[0]);
 			}

@@ -35,38 +35,38 @@ public class CModelBuilderInactiveCodeTest extends BaseTestCase {
 	}
 
 	private ICProject fCProject;
-	private ITranslationUnit fTU;		
-		
+	private ITranslationUnit fTU;
+
 	public CModelBuilderInactiveCodeTest(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
+		fCProject = CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
 		assertNotNull(fCProject);
 		CProjectHelper.importSourcesFromPlugin(fCProject, CTestPlugin.getDefault().getBundle(), "/resources/cmodel");
-		fTU= (ITranslationUnit) CProjectHelper.findElement(fCProject, "CModelBuilderInactiveCodeTest.cpp");
+		fTU = (ITranslationUnit) CProjectHelper.findElement(fCProject, "CModelBuilderInactiveCodeTest.cpp");
 		assertNotNull(fTU);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		  CProjectHelper.delete(fCProject);
-		  super.tearDown();
-	}	
-	
+		CProjectHelper.delete(fCProject);
+		super.tearDown();
+	}
+
 	public void testPreprocessorNodes() throws Exception {
-		ISourceReference e= (ISourceReference) fTU.getElement("include");
+		ISourceReference e = (ISourceReference) fTU.getElement("include");
 		assertTrue(e instanceof IInclude);
 		assertFalse(e.isActive());
 
-		e= (ISourceReference) fTU.getElement("MACRO1");
+		e = (ISourceReference) fTU.getElement("MACRO1");
 		assertTrue(e instanceof IMacro);
 		assertFalse(e.isActive());
 
-		e= (ISourceReference) fTU.getElement("MACRO2");
+		e = (ISourceReference) fTU.getElement("MACRO2");
 		assertTrue(e instanceof IMacro);
 		assertFalse(e.isActive());
 	}

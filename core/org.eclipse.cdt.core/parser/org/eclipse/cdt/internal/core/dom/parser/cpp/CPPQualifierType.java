@@ -24,17 +24,17 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerializableType {
-    private final boolean isConst;
-    private final boolean isVolatile;
-    private IType type;
+	private final boolean isConst;
+	private final boolean isVolatile;
+	private IType type;
 
-    public CPPQualifierType(IType type, boolean isConst, boolean isVolatile) {
-        this.isConst = isConst;
-        this.isVolatile = isVolatile;
-        setType(type);
-    }
+	public CPPQualifierType(IType type, boolean isConst, boolean isVolatile) {
+		this.isConst = isConst;
+		this.isVolatile = isVolatile;
+		setType(type);
+	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType o) {
 		if (o instanceof ITypedef)
 			return o.isSameType(this);
@@ -47,37 +47,37 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
 		return false;
 	}
 
-    @Override
+	@Override
 	public boolean isConst() {
-        return isConst;
-    }
+		return isConst;
+	}
 
-    @Override
+	@Override
 	public boolean isVolatile() {
-        return isVolatile;
-    }
+		return isVolatile;
+	}
 
-    @Override
+	@Override
 	public IType getType() {
-        return type;
-    }
+		return type;
+	}
 
-    @Override
+	@Override
 	public void setType(IType t) {
-    	assert t != null;
-        type = t;
-    }
+		assert t != null;
+		type = t;
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            //not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			//not going to happen
+		}
+		return t;
+	}
 
 	@Override
 	public String toString() {
@@ -86,15 +86,17 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= ITypeMarshalBuffer.CVQUALIFIER_TYPE;
-		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
+		short firstBytes = ITypeMarshalBuffer.CVQUALIFIER_TYPE;
+		if (isConst())
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile())
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		IType nested= buffer.unmarshalType();
+		IType nested = buffer.unmarshalType();
 		return new CPPQualifierType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
 				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0);
 	}

@@ -28,7 +28,7 @@ public interface IASTPreprocessorIfStatement extends IASTPreprocessorStatement {
 	 * @return boolean
 	 */
 	public boolean taken();
-	
+
 	/**
 	 * The condition of the if.
 	 * 

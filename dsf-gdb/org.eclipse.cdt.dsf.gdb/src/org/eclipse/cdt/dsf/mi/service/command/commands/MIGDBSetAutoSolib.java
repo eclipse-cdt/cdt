@@ -20,12 +20,11 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  *     -gdb-set
  * 
  */
-public class MIGDBSetAutoSolib extends MIGDBSet 
-{
-    /**
-     * @since 1.1
-     */
-    public MIGDBSetAutoSolib(ICommandControlDMContext ctx, boolean isSet) {
-        super(ctx, new String[] {"auto-solib-add", isSet ? "on" : "off"});//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-    }
+public class MIGDBSetAutoSolib extends MIGDBSet {
+	/**
+	 * @since 1.1
+	 */
+	public MIGDBSetAutoSolib(ICommandControlDMContext ctx, boolean isSet) {
+		super(ctx, new String[] { "auto-solib-add", isSet ? "on" : "off" });//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	}
 }

@@ -31,20 +31,20 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
  * @author Emanuel Graf IFS
  */
 public class ExtractLocalVariableRefactoringDescriptor extends CRefactoringDescriptor {
-	static protected final String NAME = "name";  //$NON-NLS-1$
+	static protected final String NAME = "name"; //$NON-NLS-1$
 
-	public ExtractLocalVariableRefactoringDescriptor(String project, String description,
-			String comment, Map<String, String> arguments) {
-		super(ExtractLocalVariableRefactoring.ID, project, description, comment,
-				RefactoringDescriptor.MULTI_CHANGE, arguments);
+	public ExtractLocalVariableRefactoringDescriptor(String project, String description, String comment,
+			Map<String, String> arguments) {
+		super(ExtractLocalVariableRefactoring.ID, project, description, comment, RefactoringDescriptor.MULTI_CHANGE,
+				arguments);
 	}
 
 	@Override
 	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		ISelection selection = getSelection();
 		ICProject proj = getCProject();
-		ExtractLocalVariableRefactoring refactoring =
-				new ExtractLocalVariableRefactoring(getTranslationUnit(), selection, proj);
+		ExtractLocalVariableRefactoring refactoring = new ExtractLocalVariableRefactoring(getTranslationUnit(),
+				selection, proj);
 		refactoring.getRefactoringInfo().setName(arguments.get(NAME));
 		return refactoring;
 	}

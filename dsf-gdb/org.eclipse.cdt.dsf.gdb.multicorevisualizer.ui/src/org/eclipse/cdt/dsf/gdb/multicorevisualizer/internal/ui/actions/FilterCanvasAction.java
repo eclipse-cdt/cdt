@@ -23,7 +23,7 @@ public class FilterCanvasAction extends VisualizerAction {
 
 	/** Visualizer instance we're associated with. */
 	MulticoreVisualizer m_visualizer = null;
-	
+
 	/** Does this action enable or disable the filter mechanism? */
 	boolean m_createFilter = false;
 
@@ -31,20 +31,18 @@ public class FilterCanvasAction extends VisualizerAction {
 	 * Constructor
 	 * @param create : Controls whether this action will create or clear the filter
 	 */
-	public FilterCanvasAction(boolean create) {	
+	public FilterCanvasAction(boolean create) {
 		m_createFilter = create;
 		if (m_createFilter) {
 			setText(MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.SetFilter.text")); //$NON-NLS-1$
-		}
-		else {
+		} else {
 			setText(MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.ClearFilter.text")); //$NON-NLS-1$
 		}
 	}
 
 	/** Dispose method. */
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		m_visualizer = null;
 		super.dispose();
 	}
@@ -52,11 +50,9 @@ public class FilterCanvasAction extends VisualizerAction {
 	// --- init methods ---
 
 	/** Initializes this action for the specified view. */
-	public void init(MulticoreVisualizer visualizer)
-	{
+	public void init(MulticoreVisualizer visualizer) {
 		m_visualizer = visualizer;
 	}
-
 
 	// --- methods ---
 
@@ -66,8 +62,7 @@ public class FilterCanvasAction extends VisualizerAction {
 		if (m_visualizer != null) {
 			if (m_createFilter) {
 				m_visualizer.applyCanvasFilter();
-			}
-			else {
+			} else {
 				m_visualizer.clearCanvasFilter();
 			}
 		}

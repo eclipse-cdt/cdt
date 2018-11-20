@@ -23,20 +23,20 @@ import org.eclipse.jface.viewers.TreePath;
  */
 public class LaunchVMModelProxyStrategy extends DefaultVMModelProxyStrategy {
 
-    final private TreePath fRootPath;
-    
-    public LaunchVMModelProxyStrategy(AbstractVMProvider provider, Object rootElement) {
-        super(provider, rootElement);
-        fRootPath = new TreePath( new Object[] { rootElement });
-    }
-    
-    @Override
-    public Object getViewerInput() {
-        return DebugPlugin.getDefault().getLaunchManager();
-    }
-    
-    @Override
-    public TreePath getRootPath() {
-        return fRootPath;
-    }
+	final private TreePath fRootPath;
+
+	public LaunchVMModelProxyStrategy(AbstractVMProvider provider, Object rootElement) {
+		super(provider, rootElement);
+		fRootPath = new TreePath(new Object[] { rootElement });
+	}
+
+	@Override
+	public Object getViewerInput() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+
+	@Override
+	public TreePath getRootPath() {
+		return fRootPath;
+	}
 }

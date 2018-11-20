@@ -23,22 +23,22 @@ import org.eclipse.core.runtime.Status;
  * @since 3.0
  */
 public class CdtVariableStatus extends Status implements ICdtVariableStatus {
-//	private static final String PREFIX = "BuildMacroStatus";	//$NON-NLS-1$
-//	private static final String STATUS = PREFIX + ".status";	//$NON-NLS-1$
-//	private static final String STATUS_MACRO_UNDEFINED = STATUS + ".macro.undefined";	//$NON-NLS-1$
-//	private static final String STATUS_MACROS_REFERENCE_EACHOTHER = STATUS + ".reference.eachother";	//$NON-NLS-1$
-//	private static final String STATUS_MACRO_REFERENCE_INCORRECT = STATUS + ".reference.incorrect";	//$NON-NLS-1$
-//	private static final String STATUS_MACRO_NOT_STRING = STATUS + ".macro.not.string";	//$NON-NLS-1$
-//	private static final String STATUS_MACRO_NOT_STRINGLIST = STATUS + ".macro.not.stringlist";	//$NON-NLS-1$
-//	private static final String STATUS_ERROR = STATUS + ".error";	//$NON-NLS-1$
-//	private static final String VALUE_UNDEFINED = PREFIX + ".value.undefined";	//$NON-NLS-1$
+	//	private static final String PREFIX = "BuildMacroStatus";	//$NON-NLS-1$
+	//	private static final String STATUS = PREFIX + ".status";	//$NON-NLS-1$
+	//	private static final String STATUS_MACRO_UNDEFINED = STATUS + ".macro.undefined";	//$NON-NLS-1$
+	//	private static final String STATUS_MACROS_REFERENCE_EACHOTHER = STATUS + ".reference.eachother";	//$NON-NLS-1$
+	//	private static final String STATUS_MACRO_REFERENCE_INCORRECT = STATUS + ".reference.incorrect";	//$NON-NLS-1$
+	//	private static final String STATUS_MACRO_NOT_STRING = STATUS + ".macro.not.string";	//$NON-NLS-1$
+	//	private static final String STATUS_MACRO_NOT_STRINGLIST = STATUS + ".macro.not.stringlist";	//$NON-NLS-1$
+	//	private static final String STATUS_ERROR = STATUS + ".error";	//$NON-NLS-1$
+	//	private static final String VALUE_UNDEFINED = PREFIX + ".value.undefined";	//$NON-NLS-1$
 
 	private String fMacroName;
 	private String fExpression;
 	private String fReferencedName;
-//	private int fContextType;
-//	private Object fContextData;
-//	private Object fContext;
+	//	private int fContextType;
+	//	private Object fContextData;
+	//	private Object fContext;
 
 	/**
 	 *
@@ -52,25 +52,20 @@ public class CdtVariableStatus extends Status implements ICdtVariableStatus {
 	 * @param expression the string whose resolution caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
 	 */
-	public CdtVariableStatus(int severity,
-			int code,
-			String message,
-			Throwable exception,
-			String macroName,
-			String expression,
-			String referencedName//,
-//			int contextType,
-//			Object contextData
-//			Object context
-			) {
-		super(severity,CCorePlugin.PLUGIN_ID,code,message != null ? message : "",exception);	//$NON-NLS-1$
+	public CdtVariableStatus(int severity, int code, String message, Throwable exception, String macroName,
+			String expression, String referencedName//,
+	//			int contextType,
+	//			Object contextData
+	//			Object context
+	) {
+		super(severity, CCorePlugin.PLUGIN_ID, code, message != null ? message : "", exception); //$NON-NLS-1$
 		fExpression = expression;
 		fReferencedName = referencedName;
-//		fContextType = contextType;
-//		fContextData = contextData;
-//		fContext = context;
+		//		fContextType = contextType;
+		//		fContextData = contextData;
+		//		fContext = context;
 		fMacroName = macroName;
-		if(message == null)
+		if (message == null)
 			setMessage(generateMessage());
 	}
 
@@ -86,18 +81,14 @@ public class CdtVariableStatus extends Status implements ICdtVariableStatus {
 	 * @param expression the string whose resolutinon caused caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
 	 */
-	public CdtVariableStatus(
-			int code,
-			String message,
-			Throwable exception,
-			String macroName,
-			String expression,
+	public CdtVariableStatus(int code, String message, Throwable exception, String macroName, String expression,
 			String referencedName//,
-//			int contextType,
-//			Object contextData
-//			Object context
-			) {
-		this(IStatus.ERROR,code,message,exception,macroName,expression,referencedName/*,contextType,contextData*/);
+	//			int contextType,
+	//			Object contextData
+	//			Object context
+	) {
+		this(IStatus.ERROR, code, message, exception, macroName, expression,
+				referencedName/*,contextType,contextData*/);
 	}
 
 	/**
@@ -108,15 +99,11 @@ public class CdtVariableStatus extends Status implements ICdtVariableStatus {
 	 * @param expression the string whose resolutinon caused caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
 	 */
-	public CdtVariableStatus(
-			int code,
-			String macroName,
-			String expression,
-			String referencedName//,
-//			int contextType,
-//			Object contextData
-			) {
-		this(IStatus.ERROR,code,null,null,macroName,expression,referencedName/*,contextType,contextData*/);
+	public CdtVariableStatus(int code, String macroName, String expression, String referencedName//,
+	//			int contextType,
+	//			Object contextData
+	) {
+		this(IStatus.ERROR, code, null, null, macroName, expression, referencedName/*,contextType,contextData*/);
 	}
 
 	/**
@@ -124,51 +111,51 @@ public class CdtVariableStatus extends Status implements ICdtVariableStatus {
 	 *
 	 * @return String
 	 */
-	protected String generateMessage(){
+	protected String generateMessage() {
 		String message = null;
-/*		switch(getCode()){
-		case TYPE_MACRO_UNDEFINED:{
-			String refName = fReferencedName;
-			if(refName == null)
-				refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
-			message = ManagedMakeMessages.getFormattedString(STATUS_MACRO_UNDEFINED,refName);
-		}
-		break;
-		case TYPE_MACROS_REFERENCE_EACHOTHER:{
-			String name = fMacroName;
-			String refName = fReferencedName;
-			if(name == null)
-				name = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
-			if(refName == null)
-				refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
-			message = ManagedMakeMessages.getFormattedString(STATUS_MACROS_REFERENCE_EACHOTHER,new String[]{name,refName});
-		}
-		break;
-		case TYPE_MACRO_REFERENCE_INCORRECT:{
-			String refName = fReferencedName;
-			if(refName == null)
-				refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
-			message = ManagedMakeMessages.getFormattedString(STATUS_MACRO_REFERENCE_INCORRECT,refName);
-		}
-		break;
-		case TYPE_MACRO_NOT_STRING:{
-			String refName = fReferencedName;
-			if(refName == null)
-				refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
-			message = ManagedMakeMessages.getFormattedString(STATUS_MACRO_NOT_STRING,refName);
-		}
-		break;
-		case TYPE_MACRO_NOT_STRINGLIST:{
-			String refName = fReferencedName;
-			if(refName == null)
-				refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
-			message = ManagedMakeMessages.getFormattedString(STATUS_MACRO_NOT_STRINGLIST,refName);
-		}
-		break;
-		case TYPE_ERROR:
-		default:
-			message = ManagedMakeMessages.getResourceString(STATUS_ERROR);
-		}*/
+		/*		switch(getCode()){
+				case TYPE_MACRO_UNDEFINED:{
+					String refName = fReferencedName;
+					if(refName == null)
+						refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
+					message = ManagedMakeMessages.getFormattedString(STATUS_MACRO_UNDEFINED,refName);
+				}
+				break;
+				case TYPE_MACROS_REFERENCE_EACHOTHER:{
+					String name = fMacroName;
+					String refName = fReferencedName;
+					if(name == null)
+						name = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
+					if(refName == null)
+						refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
+					message = ManagedMakeMessages.getFormattedString(STATUS_MACROS_REFERENCE_EACHOTHER,new String[]{name,refName});
+				}
+				break;
+				case TYPE_MACRO_REFERENCE_INCORRECT:{
+					String refName = fReferencedName;
+					if(refName == null)
+						refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
+					message = ManagedMakeMessages.getFormattedString(STATUS_MACRO_REFERENCE_INCORRECT,refName);
+				}
+				break;
+				case TYPE_MACRO_NOT_STRING:{
+					String refName = fReferencedName;
+					if(refName == null)
+						refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
+					message = ManagedMakeMessages.getFormattedString(STATUS_MACRO_NOT_STRING,refName);
+				}
+				break;
+				case TYPE_MACRO_NOT_STRINGLIST:{
+					String refName = fReferencedName;
+					if(refName == null)
+						refName = ManagedMakeMessages.getResourceString(VALUE_UNDEFINED);
+					message = ManagedMakeMessages.getFormattedString(STATUS_MACRO_NOT_STRINGLIST,refName);
+				}
+				break;
+				case TYPE_ERROR:
+				default:
+					message = ManagedMakeMessages.getResourceString(STATUS_ERROR);
+				}*/
 		return message;
 	}
 
@@ -199,17 +186,15 @@ public class CdtVariableStatus extends Status implements ICdtVariableStatus {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus#getContextType()
 	 */
-//	public int getContextType() {
-//		return fContextType;
-//	}
+	//	public int getContextType() {
+	//		return fContextType;
+	//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus#getContextData()
 	 */
-//	public Object getContextData() {
-//		return fContextData;
-//	}
-
-
+	//	public Object getContextData() {
+	//		return fContextData;
+	//	}
 
 }

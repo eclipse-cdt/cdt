@@ -36,11 +36,11 @@ public final class RulerColumnPreferenceAdapter {
 	 * @param store the preference store
 	 * @param key the key
 	 */
-	public  RulerColumnPreferenceAdapter(IPreferenceStore store, String key) {
+	public RulerColumnPreferenceAdapter(IPreferenceStore store, String key) {
 		Assert.isLegal(store != null);
 		Assert.isLegal(key != null);
-		fStore= store;
-		fKey= key;
+		fStore = store;
+		fKey = key;
 	}
 
 	/**
@@ -51,8 +51,9 @@ public final class RulerColumnPreferenceAdapter {
 	 */
 	public boolean isEnabled(RulerColumnDescriptor descriptor) {
 		Assert.isLegal(descriptor != null);
-		String preference= fStore.getString(fKey);
-		return StringSetSerializer.deserialize(preference).contains(descriptor.getId()) ^ descriptor.getDefaultEnablement();
+		String preference = fStore.getString(fKey);
+		return StringSetSerializer.deserialize(preference).contains(descriptor.getId())
+				^ descriptor.getDefaultEnablement();
 	}
 
 	/**
@@ -64,11 +65,11 @@ public final class RulerColumnPreferenceAdapter {
 	 */
 	public void setEnabled(RulerColumnDescriptor descriptor, boolean enabled) {
 		Assert.isLegal(descriptor != null);
-		String id= descriptor.getId();
-		String preference= fStore.getString(fKey);
-		Set<String> marked= StringSetSerializer.deserialize(preference);
-		boolean shouldMark= enabled ^ descriptor.getDefaultEnablement();
-		boolean isMarked= marked.contains(id);
+		String id = descriptor.getId();
+		String preference = fStore.getString(fKey);
+		Set<String> marked = StringSetSerializer.deserialize(preference);
+		boolean shouldMark = enabled ^ descriptor.getDefaultEnablement();
+		boolean isMarked = marked.contains(id);
 		if (isMarked != shouldMark) {
 			if (shouldMark)
 				marked.add(id);

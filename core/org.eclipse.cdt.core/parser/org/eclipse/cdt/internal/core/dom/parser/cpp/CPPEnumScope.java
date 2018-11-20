@@ -39,7 +39,7 @@ public class CPPEnumScope extends CPPScope implements ICPPEnumScope {
 	public IName getScopeName() {
 		ICPPASTEnumerationSpecifier node = (ICPPASTEnumerationSpecifier) getPhysicalNode();
 		return node.getName();
-    }
+	}
 
 	@Override
 	public ICPPEnumeration getEnumerationType() {

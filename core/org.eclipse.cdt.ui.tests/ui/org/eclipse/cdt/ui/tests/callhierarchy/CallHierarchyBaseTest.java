@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import org.eclipse.core.resources.IFile;
@@ -40,7 +40,7 @@ import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class CallHierarchyBaseTest extends BaseUITestCase {
-	private static int sProjectCounter= 0;
+	private static int sProjectCounter = 0;
 
 	protected ICProject fCProject;
 	protected IIndex fIndex;
@@ -53,22 +53,22 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		CallHierarchyUI.setIsJUnitTest(true);
-		String prjName= "chTest" + sProjectCounter++;
-		fCProject= CProjectHelper.createCCProject(prjName, "bin", IPDOMManager.ID_FAST_INDEXER);
+		String prjName = "chTest" + sProjectCounter++;
+		fCProject = CProjectHelper.createCCProject(prjName, "bin", IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(fCProject);
-		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
-		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IViewReference[] refs= page.getViewReferences();
+		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IViewReference[] refs = page.getViewReferences();
 		for (IViewReference viewReference : refs) {
 			page.setPartState(viewReference, IWorkbenchPage.STATE_RESTORED);
 		}
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		// Set ShowReferencedBy back to its default value
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CHViewPart ch= (CHViewPart) page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+		CHViewPart ch = (CHViewPart) page.findView(CUIPlugin.ID_CALL_HIERARCHY);
 		if (ch != null) {
 			ch.onSetShowReferencedBy(true);
 		}
@@ -79,17 +79,17 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		}
 		super.tearDown();
 	}
-	
+
 	protected IProject getProject() {
 		return fCProject.getProject();
 	}
-	
+
 	protected CEditor openEditor(IFile file) throws PartInitException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = (CEditor) IDE.openEditor(page, file);
 		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
 		return editor;
-	}	
+	}
 
 	protected void openCallHierarchy(CEditor editor) throws InterruptedException {
 		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
@@ -102,7 +102,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected void openCallHierarchy(CEditor editor, boolean showReferencedBy) throws InterruptedException {
 		openCallHierarchy(editor);
 		IWorkbenchPage page = editor.getSite().getPage();
-		CHViewPart ch= (CHViewPart) page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+		CHViewPart ch = (CHViewPart) page.findView(CUIPlugin.ID_CALL_HIERARCHY);
 		assertNotNull(ch);
 		ch.onSetShowReferencedBy(showReferencedBy);
 		runEventQueue(0);
@@ -111,23 +111,23 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected TreeViewer getCHTreeViewer() {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
-		CHViewPart ch= null;
-		for (int i= 0; i < 50; i++) {
-			ch= (CHViewPart) page.findView(CUIPlugin.ID_CALL_HIERARCHY);
-			if (ch != null) 
+		CHViewPart ch = null;
+		for (int i = 0; i < 50; i++) {
+			ch = (CHViewPart) page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+			if (ch != null)
 				break;
 			runEventQueue(10);
 		}
- 		return ch.getTreeViewer();
+		return ch.getTreeViewer();
 	}
-	
+
 	protected TreeItem checkTreeNode(TreeItem root, int i1, String label) {
-		TreeItem item= null;
+		TreeItem item = null;
 		try {
-			for (int i= 0; i < 200; i++) {
-				item= root.getItem(i1);
+			for (int i = 0; i < 200; i++) {
+				item = root.getItem(i1);
 				try {
-					String text= item.getText();
+					String text = item.getText();
 					if (!"...".equals(text) && !"".equals(text)) {
 						break;
 					}

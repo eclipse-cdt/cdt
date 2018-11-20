@@ -15,12 +15,11 @@ package org.eclipse.cdt.internal.autotools.ui;
 
 import org.eclipse.cdt.managedbuilder.ui.properties.AbstractCBuildPropertyTab;
 
-public abstract class AbstractAutotoolsCPropertyTab extends
-		AbstractCBuildPropertyTab {
+public abstract class AbstractAutotoolsCPropertyTab extends AbstractCBuildPropertyTab {
 
 	@Override
 	public boolean isIndexerAffected() {
 		return false;
 	}
-	
+
 }

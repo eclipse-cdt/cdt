@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
@@ -32,54 +31,53 @@ import org.eclipse.osgi.util.NLS;
  * describing the selected elements.
  */
 public class StatusBarUpdater implements ISelectionChangedListener {
-	
-	private final long LABEL_FLAGS= CElementLabels.DEFAULT_QUALIFIED | CElementLabels.ROOT_POST_QUALIFIED | CElementLabels.APPEND_ROOT_PATH |
-			CElementLabels.M_PARAMETER_TYPES | CElementLabels.M_APP_RETURNTYPE | CElementLabels.M_EXCEPTIONS | 
-			CElementLabels.F_APP_TYPE_SIGNATURE;
+
+	private final long LABEL_FLAGS = CElementLabels.DEFAULT_QUALIFIED | CElementLabels.ROOT_POST_QUALIFIED
+			| CElementLabels.APPEND_ROOT_PATH | CElementLabels.M_PARAMETER_TYPES | CElementLabels.M_APP_RETURNTYPE
+			| CElementLabels.M_EXCEPTIONS | CElementLabels.F_APP_TYPE_SIGNATURE;
 
 	private IStatusLineManager fStatusLineManager;
-	
+
 	public StatusBarUpdater(IStatusLineManager statusLineManager) {
-		fStatusLineManager= statusLineManager;
+		fStatusLineManager = statusLineManager;
 	}
-		
+
 	/*
 	 * @see ISelectionChangedListener#selectionChanged
 	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
-		String statusBarMessage= formatMessage(event.getSelection());
+		String statusBarMessage = formatMessage(event.getSelection());
 		fStatusLineManager.setMessage(statusBarMessage);
 	}
-	
-	
+
 	protected String formatMessage(ISelection sel) {
 		if (sel instanceof IStructuredSelection && !sel.isEmpty()) {
-			IStructuredSelection selection= (IStructuredSelection) sel;
-			
-			int nElements= selection.size();
+			IStructuredSelection selection = (IStructuredSelection) sel;
+
+			int nElements = selection.size();
 			if (nElements > 1) {
-				return NLS.bind(CUIMessages.StatusBarUpdater_num_elements_selected, String.valueOf(nElements)); 
-			} 
-			Object elem= selection.getFirstElement();
+				return NLS.bind(CUIMessages.StatusBarUpdater_num_elements_selected, String.valueOf(nElements));
+			}
+			Object elem = selection.getFirstElement();
 			if (elem instanceof ICElement) {
 				return formatCElementMessage((ICElement) elem);
 			} else if (elem instanceof IResource) {
 				return formatResourceMessage((IResource) elem);
 			}
 		}
-		return "";  //$NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
-		
+
 	private String formatCElementMessage(ICElement element) {
 		return CElementLabels.getElementLabel(element, LABEL_FLAGS);
 	}
-		
+
 	private String formatResourceMessage(IResource element) {
-		IContainer parent= element.getParent();
+		IContainer parent = element.getParent();
 		if (parent != null && parent.getType() != IResource.ROOT)
 			return element.getName() + CElementLabels.CONCAT_STRING + parent.getFullPath().makeRelative().toString();
 		return element.getName();
-	}	
+	}
 
 }

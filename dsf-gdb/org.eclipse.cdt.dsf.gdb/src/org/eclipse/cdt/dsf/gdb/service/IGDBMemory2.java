@@ -13,17 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
-
 /**
  * Extension interface to provide access to the addressable size of a memory context
  * 
  * @since 4.4
  */
 public interface IGDBMemory2 extends IGDBMemory {
-	
+
 	/**
 	 * Returns the addressable size (in octets) of the memory specified by the given context
 	 */
 	public int getAddressableSize(IMemoryDMContext context);
-	
+
 }

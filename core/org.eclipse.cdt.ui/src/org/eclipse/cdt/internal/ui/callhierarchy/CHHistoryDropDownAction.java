@@ -27,15 +27,16 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class CHHistoryDropDownAction extends Action implements IMenuCreator {
-	
+
 	public static class ClearHistoryAction extends Action {
-		
+
 		private CHViewPart fView;
+
 		public ClearHistoryAction(CHViewPart view) {
 			super(CHMessages.CHHistoryDropDownAction_ClearHistory_label);
-			fView= view;
+			fView = view;
 		}
-			
+
 		@Override
 		public void run() {
 			CallHierarchyUI.clearHistory();
@@ -43,15 +44,15 @@ public class CHHistoryDropDownAction extends Action implements IMenuCreator {
 		}
 	}
 
-	public static final int RESULTS_IN_DROP_DOWN= 10;
+	public static final int RESULTS_IN_DROP_DOWN = 10;
 
 	private CHViewPart fHierarchyView;
 	private Menu fMenu;
-	
+
 	public CHHistoryDropDownAction(CHViewPart view) {
-		fHierarchyView= view;
-		fMenu= null;
-		setToolTipText(CHMessages.CHHistoryDropDownAction_ShowHistoryList_tooltip); 
+		fHierarchyView = view;
+		fMenu = null;
+		setToolTipText(CHMessages.CHHistoryDropDownAction_ShowHistoryList_tooltip);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "history_list.gif"); //$NON-NLS-1$
 		setMenuCreator(this);
 	}
@@ -61,7 +62,7 @@ public class CHHistoryDropDownAction extends Action implements IMenuCreator {
 		// action is reused, can be called several times.
 		if (fMenu != null) {
 			fMenu.dispose();
-			fMenu= null;
+			fMenu = null;
 		}
 	}
 
@@ -75,33 +76,31 @@ public class CHHistoryDropDownAction extends Action implements IMenuCreator {
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
-		fMenu= new Menu(parent);
-		ICElement[] elements= CallHierarchyUI.getHistoryEntries();
+		fMenu = new Menu(parent);
+		ICElement[] elements = CallHierarchyUI.getHistoryEntries();
 		addEntries(fMenu, elements);
 		new MenuItem(fMenu, SWT.SEPARATOR);
 		addActionToMenu(fMenu, new CHHistoryListAction(fHierarchyView));
 		addActionToMenu(fMenu, new ClearHistoryAction(fHierarchyView));
 		return fMenu;
 	}
-	
+
 	private boolean addEntries(Menu menu, ICElement[] elements) {
-		boolean checked= false;
-		
-		int min= Math.min(elements.length, RESULTS_IN_DROP_DOWN);
-		for (int i= 0; i < min; i++) {
-			CHHistoryAction action= new CHHistoryAction(fHierarchyView, elements[i]);
+		boolean checked = false;
+
+		int min = Math.min(elements.length, RESULTS_IN_DROP_DOWN);
+		for (int i = 0; i < min; i++) {
+			CHHistoryAction action = new CHHistoryAction(fHierarchyView, elements[i]);
 			action.setChecked(elements[i].equals(fHierarchyView.getInput()));
-			checked= checked || action.isChecked();
+			checked = checked || action.isChecked();
 			addActionToMenu(menu, action);
 		}
-		
-		
+
 		return checked;
 	}
-	
 
 	protected void addActionToMenu(Menu parent, Action action) {
-		ActionContributionItem item= new ActionContributionItem(action);
+		ActionContributionItem item = new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
 

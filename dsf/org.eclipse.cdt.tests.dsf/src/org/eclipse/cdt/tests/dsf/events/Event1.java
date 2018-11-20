@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.events;
 
-
 public class Event1 {
 
 }

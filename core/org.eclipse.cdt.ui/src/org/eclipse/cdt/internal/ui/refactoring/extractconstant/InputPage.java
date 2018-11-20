@@ -64,7 +64,7 @@ public class InputPage extends UserInputWizardPage {
 			buttons.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-					String text = ((Button)e.getSource()).getText();
+					String text = ((Button) e.getSource()).getText();
 					visibilityChange(text);
 				}
 			});
@@ -93,19 +93,19 @@ public class InputPage extends UserInputWizardPage {
 			setPageComplete(true);
 			verifyName(methodName);
 		} else {
-			setErrorMessage(result.getMessage()); 
+			setErrorMessage(result.getMessage());
 			setPageComplete(false);
 		}
 	}
 
 	private void verifyName(String name) {
 		if (info.isNameUsed(name)) {
-			setErrorMessage(NLS.bind(Messages.InputPage_NameAlreadyDefined, name)); 
+			setErrorMessage(NLS.bind(Messages.InputPage_NameAlreadyDefined, name));
 			setPageComplete(false);
 		}
 	}
 
 	private void visibilityChange(String visibilityText) {
 		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(visibilityText));
-	} 
+	}
 }

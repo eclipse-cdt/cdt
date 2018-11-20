@@ -85,7 +85,8 @@ public class MakeBuilder extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */
 	@Override
-	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map args0, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map args0, IProgressMonitor monitor)
+			throws CoreException {
 		@SuppressWarnings("unchecked")
 		Map<String, String> args = args0;
 		if (DEBUG_EVENTS)
@@ -117,7 +118,6 @@ public class MakeBuilder extends ACBuilder {
 		return getProject().getReferencedProjects();
 	}
 
-
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		if (DEBUG_EVENTS)
@@ -125,9 +125,9 @@ public class MakeBuilder extends ACBuilder {
 
 		final IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(getProject(), BUILDER_ID);
 		if (shouldBuild(CLEAN_BUILD, info)) {
-			IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
+			IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
 			final ISchedulingRule rule = ruleFactory.modifyRule(getProject());
-			Job backgroundJob = new Job("Standard Make Builder"){  //$NON-NLS-1$
+			Job backgroundJob = new Job("Standard Make Builder") { //$NON-NLS-1$
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
@@ -147,7 +147,6 @@ public class MakeBuilder extends ACBuilder {
 					IStatus returnStatus = Status.OK_STATUS;
 					return returnStatus;
 				}
-
 
 			};
 
@@ -208,18 +207,22 @@ public class MakeBuilder extends ACBuilder {
 						collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
 					}
 					if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(project)) {
-						IScannerInfoConsoleParser parserSD = ScannerInfoConsoleParserFactory.getScannerInfoConsoleParser(project, workingDirectoryURI, this);
+						IScannerInfoConsoleParser parserSD = ScannerInfoConsoleParserFactory
+								.getScannerInfoConsoleParser(project, workingDirectoryURI, this);
 						parsers.add(parserSD);
 					}
 				}
 
 				buildRunnerHelper.setLaunchParameters(launcher, buildCommand, args, workingDirectoryURI, envp);
-				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor,
+						TICKS_STREAM_PROGRESS_MONITOR, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS,
+						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 				buildRunnerHelper.greeting(kind);
-				int state = buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				int state = buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND,
+						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				buildRunnerHelper.close();
 				buildRunnerHelper.goodbye();
 
@@ -227,7 +230,8 @@ public class MakeBuilder extends ACBuilder {
 					refreshProject(project);
 				}
 			} else {
-				String msg = MakeMessages.getFormattedString("MakeBuilder.message.undefined.build.command", project.getName()); //$NON-NLS-1$
+				String msg = MakeMessages.getFormattedString("MakeBuilder.message.undefined.build.command", //$NON-NLS-1$
+						project.getName());
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, msg, new Exception()));
 			}
 		} catch (Exception e) {
@@ -247,8 +251,8 @@ public class MakeBuilder extends ACBuilder {
 			throws CoreException {
 		HashMap<String, String> envMap = new HashMap<String, String>();
 		if (info.appendEnvironment()) {
-			@SuppressWarnings({"unchecked", "rawtypes"})
-			Map<String, String> env = (Map)launcher.getEnvironment();
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			Map<String, String> env = (Map) launcher.getEnvironment();
 			if (env != null) {
 				envMap.putAll(env);
 			}
@@ -289,7 +293,6 @@ public class MakeBuilder extends ACBuilder {
 		}
 	}
 
-
 	/**
 	 * Check whether the build has been canceled.
 	 */
@@ -300,13 +303,13 @@ public class MakeBuilder extends ACBuilder {
 
 	protected boolean shouldBuild(int kind, IMakeBuilderInfo info) {
 		switch (kind) {
-			case IncrementalProjectBuilder.AUTO_BUILD :
-				return info.isAutoBuildEnable();
-			case IncrementalProjectBuilder.INCREMENTAL_BUILD : // now treated as the same!
-			case IncrementalProjectBuilder.FULL_BUILD :
-				return info.isFullBuildEnabled() | info.isIncrementalBuildEnabled() ;
-			case IncrementalProjectBuilder.CLEAN_BUILD :
-				return info.isCleanBuildEnabled();
+		case IncrementalProjectBuilder.AUTO_BUILD:
+			return info.isAutoBuildEnable();
+		case IncrementalProjectBuilder.INCREMENTAL_BUILD: // now treated as the same!
+		case IncrementalProjectBuilder.FULL_BUILD:
+			return info.isFullBuildEnabled() | info.isIncrementalBuildEnabled();
+		case IncrementalProjectBuilder.CLEAN_BUILD:
+			return info.isCleanBuildEnabled();
 		}
 		return true;
 	}
@@ -314,16 +317,16 @@ public class MakeBuilder extends ACBuilder {
 	protected String[] getTargets(int kind, IMakeBuilderInfo info) {
 		String targets = ""; //$NON-NLS-1$
 		switch (kind) {
-			case IncrementalProjectBuilder.AUTO_BUILD :
-				targets = info.getAutoBuildTarget();
-				break;
-			case IncrementalProjectBuilder.INCREMENTAL_BUILD : // now treated as the same!
-			case IncrementalProjectBuilder.FULL_BUILD :
-				targets = info.getIncrementalBuildTarget();
-				break;
-			case IncrementalProjectBuilder.CLEAN_BUILD :
-				targets = info.getCleanBuildTarget();
-				break;
+		case IncrementalProjectBuilder.AUTO_BUILD:
+			targets = info.getAutoBuildTarget();
+			break;
+		case IncrementalProjectBuilder.INCREMENTAL_BUILD: // now treated as the same!
+		case IncrementalProjectBuilder.FULL_BUILD:
+			targets = info.getIncrementalBuildTarget();
+			break;
+		case IncrementalProjectBuilder.CLEAN_BUILD:
+			targets = info.getCleanBuildTarget();
+			break;
 		}
 		return makeArray(targets);
 	}
@@ -332,10 +335,12 @@ public class MakeBuilder extends ACBuilder {
 	private String[] makeArray(String string) {
 		return CommandLineUtil.argumentsToArray(string);
 	}
-	
-	private static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker, List<IConsoleParser> parsers) {
+
+	private static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription,
+			IWorkingDirectoryTracker cwdTracker, List<IConsoleParser> parsers) {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
 			for (ILanguageSettingsProvider lsProvider : lsProviders) {
 				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
 				if (rawProvider instanceof ICBuildOutputParser) {
@@ -352,6 +357,5 @@ public class MakeBuilder extends ACBuilder {
 		}
 
 	}
-
 
 }

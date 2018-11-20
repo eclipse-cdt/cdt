@@ -53,7 +53,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public boolean select( Viewer viewer, Object parentElement, Object element ) {
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		return true;
 	}
 
@@ -61,67 +61,67 @@ public class ShowFullPathsAction extends ViewFilterAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
+	public void run(IAction action) {
 		final StructuredViewer viewer = getStructuredViewer();
-		IDebugView view = getView().getAdapter( IDebugView.class );
+		IDebugView view = getView().getAdapter(IDebugView.class);
 		if (view != null) {
-			IDebugModelPresentation pres = view.getPresentation( CDIDebugModel.getPluginIdentifier() );
-			if ( pres != null ) {
-				pres.setAttribute( CDebugModelPresentation.DISPLAY_FULL_PATHS, Boolean.valueOf( getValue() ) );
-				BusyIndicator.showWhile( viewer.getControl().getDisplay(), 
-										new Runnable() {
-											@Override
-											public void run() {
-												String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
-												getPreferenceStore().setValue( key, getValue() );
-												CDebugUIPlugin.getDefault().savePluginPreferences();						
+			IDebugModelPresentation pres = view.getPresentation(CDIDebugModel.getPluginIdentifier());
+			if (pres != null) {
+				pres.setAttribute(CDebugModelPresentation.DISPLAY_FULL_PATHS, Boolean.valueOf(getValue()));
+				BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+					@Override
+					public void run() {
+						String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
+						getPreferenceStore().setValue(key, getValue());
+						CDebugUIPlugin.getDefault().savePluginPreferences();
 
-												// Refresh the viewer after we've set the preference because
-												// DSF-based debuggers trigger off this preference.
-												viewer.refresh();
-											}
-										} );
+						// Refresh the viewer after we've set the preference because
+						// DSF-based debuggers trigger off this preference.
+						viewer.refresh();
+					}
+				});
 			}
-		}		
+		}
 	}
-	
+
 	/*
 	 * Some debugger integrations don`t use debugTargets (e.g., DSF), so we
 	 * verify if the launch has the proper attribute instead.
 	 * If we don`t find any launches that allow us to enable the action, we should
-     * call our parent class to keep any previous debugger integration properly
-     * working with this feature.
-     */
-	 /** @since 7.0 */
+	 * call our parent class to keep any previous debugger integration properly
+	 * working with this feature.
+	 */
+	/** @since 7.0 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		IDebugView view = getView().getAdapter(IDebugView.class);
-		
+
 		// Debug view
 		if (view instanceof LaunchView) {
 			ILaunchManager launchmgr = DebugPlugin.getDefault().getLaunchManager();
 			ILaunch[] launches = launchmgr.getLaunches();
 			for (ILaunch launch : launches) {
-				if (launch.getAttribute(getPreferenceKey()) != null &&
-						launch.isTerminated() == false) {
+				if (launch.getAttribute(getPreferenceKey()) != null && launch.isTerminated() == false) {
 					setEnabled(true);
 					return;
 				}
 			}
 		}
-		
+
 		// Breakpoints view
 		else if (view instanceof BreakpointsView) {
 			IBreakpointManager bkptmgr = DebugPlugin.getDefault().getBreakpointManager();
 			IBreakpoint[] bkpts = bkptmgr.getBreakpoints();
 			for (IBreakpoint bkpt : bkpts) {
 				try {
-					Object attr = bkpt.getMarker().getAttribute(ICDebugInternalConstants.ATTR_CAPABLE_OF_SHOW_FULL_PATHS);
+					Object attr = bkpt.getMarker()
+							.getAttribute(ICDebugInternalConstants.ATTR_CAPABLE_OF_SHOW_FULL_PATHS);
 					if (attr != null) {
 						setEnabled(true);
 						return;
 					}
-				} catch (Exception e) {/* ignore */}
+				} catch (Exception e) {
+					/* ignore */}
 			}
 		}
 		super.selectionChanged(action, selection);

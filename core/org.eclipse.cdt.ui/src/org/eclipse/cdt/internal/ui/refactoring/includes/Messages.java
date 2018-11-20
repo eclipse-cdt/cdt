@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
 public final class Messages extends NLS {
 	public static String GCCHeaderSubstitutionMaps_c_map;
 	public static String GCCHeaderSubstitutionMaps_cpp_map;
-	
+
 	private Messages() {
 		// Do not instantiate
 	}

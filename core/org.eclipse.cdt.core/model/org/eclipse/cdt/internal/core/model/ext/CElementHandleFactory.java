@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -46,10 +46,11 @@ import org.eclipse.jface.text.IRegion;
  * @since 4.0
  */
 public class CElementHandleFactory {
-	private CElementHandleFactory() {}
+	private CElementHandleFactory() {
+	}
 
-	public static ICElementHandle create(ITranslationUnit tu, IBinding binding, boolean isDefinition,
-			IRegion region, long timestamp) throws CoreException {
+	public static ICElementHandle create(ITranslationUnit tu, IBinding binding, boolean isDefinition, IRegion region,
+			long timestamp) throws CoreException {
 		try {
 			return internalCreate(tu, binding, isDefinition, region, timestamp);
 		} catch (DOMException e) {
@@ -57,9 +58,9 @@ public class CElementHandleFactory {
 		}
 	}
 
-	public static ICElementHandle create(ITranslationUnit tu, IIndexMacro macro, 
-			IRegion region, long timestamp) throws CoreException {
-		CElementHandle element= new MacroHandle(tu, macro);
+	public static ICElementHandle create(ITranslationUnit tu, IIndexMacro macro, IRegion region, long timestamp)
+			throws CoreException {
+		CElementHandle element = new MacroHandle(tu, macro);
 		if (region != null) {
 			element.setRangeOfID(region, timestamp);
 		}
@@ -67,48 +68,44 @@ public class CElementHandleFactory {
 	}
 
 	public static ICElementHandle internalCreate(ITranslationUnit tu, IBinding binding, boolean definition,
-			IRegion region, long timestamp) throws CoreException, DOMException {	
-		ICElement parentElement= createParent(tu, binding);
+			IRegion region, long timestamp) throws CoreException, DOMException {
+		ICElement parentElement = createParent(tu, binding);
 		if (parentElement == null) {
 			return null;
 		}
-		
-		CElementHandle element= null;
+
+		CElementHandle element = null;
 		if (binding instanceof ICPPMethod) {
-			element= definition 
-					? new MethodHandle(parentElement, (ICPPMethod) binding)
+			element = definition ? new MethodHandle(parentElement, (ICPPMethod) binding)
 					: new MethodDeclarationHandle(parentElement, (ICPPMethod) binding);
 		} else if (binding instanceof IFunction) {
 			if (binding instanceof ICPPTemplateInstance) {
-				element= definition 
-				? new FunctionTemplateHandle(parentElement, (ICPPTemplateInstance) binding)
-				: new FunctionTemplateDeclarationHandle(parentElement, (ICPPTemplateInstance) binding);
+				element = definition ? new FunctionTemplateHandle(parentElement, (ICPPTemplateInstance) binding)
+						: new FunctionTemplateDeclarationHandle(parentElement, (ICPPTemplateInstance) binding);
 			} else if (binding instanceof ICPPFunctionTemplate) {
-				element= definition 
-				? new FunctionTemplateHandle(parentElement, (ICPPFunctionTemplate) binding)
-				: new FunctionTemplateDeclarationHandle(parentElement, (ICPPFunctionTemplate) binding);
+				element = definition ? new FunctionTemplateHandle(parentElement, (ICPPFunctionTemplate) binding)
+						: new FunctionTemplateDeclarationHandle(parentElement, (ICPPFunctionTemplate) binding);
 			} else {
-				element= definition 
-				? new FunctionHandle(parentElement, (IFunction) binding)
-				: new FunctionDeclarationHandle(parentElement, (IFunction) binding);
+				element = definition ? new FunctionHandle(parentElement, (IFunction) binding)
+						: new FunctionDeclarationHandle(parentElement, (IFunction) binding);
 			}
 		} else if (binding instanceof IField) {
-			element= new FieldHandle(parentElement, (IField) binding);
+			element = new FieldHandle(parentElement, (IField) binding);
 		} else if (binding instanceof IVariable) {
 			if (binding instanceof IParameter) {
 				return null;
 			}
-			element= new VariableHandle(parentElement, (IVariable) binding);
+			element = new VariableHandle(parentElement, (IVariable) binding);
 		} else if (binding instanceof IEnumeration) {
-			element= new EnumerationHandle(parentElement, (IEnumeration) binding);
+			element = new EnumerationHandle(parentElement, (IEnumeration) binding);
 		} else if (binding instanceof IEnumerator) {
-			element= new EnumeratorHandle(parentElement, (IEnumerator) binding);
+			element = new EnumeratorHandle(parentElement, (IEnumerator) binding);
 		} else if (binding instanceof ICompositeType) {
-			element= createHandleForComposite(parentElement, (ICompositeType) binding);
+			element = createHandleForComposite(parentElement, (ICompositeType) binding);
 		} else if (binding instanceof ICPPNamespace) {
-			element= new NamespaceHandle(parentElement, (ICPPNamespace) binding);
+			element = new NamespaceHandle(parentElement, (ICPPNamespace) binding);
 		} else if (binding instanceof ITypedef) {
-			element= new TypedefHandle(parentElement, (ITypedef) binding);
+			element = new TypedefHandle(parentElement, (ITypedef) binding);
 		}
 		if (element != null && region != null) {
 			element.setRangeOfID(region, timestamp);
@@ -117,17 +114,17 @@ public class CElementHandleFactory {
 	}
 
 	private static ICElement createParent(ITranslationUnit tu, IBinding binding) throws DOMException {
-		IBinding parentBinding= binding.getOwner();
+		IBinding parentBinding = binding.getOwner();
 		if (parentBinding == null) {
-			IScope scope= binding.getScope();
+			IScope scope = binding.getScope();
 			if (scope != null && scope.getKind() == EScopeKind.eLocal) {
 				return null;
 			}
 			return tu;
 		}
-		
+
 		if (parentBinding instanceof IEnumeration) {
-			ICElement grandParent= createParent(tu, parentBinding);
+			ICElement grandParent = createParent(tu, parentBinding);
 			if (parentBinding instanceof ICPPEnumeration && parentBinding.getNameCharArray().length > 0) {
 				if (grandParent != null) {
 					return new EnumerationHandle(grandParent, (ICPPEnumeration) parentBinding);
@@ -138,19 +135,19 @@ public class CElementHandleFactory {
 		}
 
 		if (parentBinding instanceof ICPPNamespace) {
-			char[] scopeName= parentBinding.getNameCharArray();
+			char[] scopeName = parentBinding.getNameCharArray();
 			// Skip unnamed namespace.
 			if (scopeName.length == 0) {
 				return createParent(tu, parentBinding);
-			} 
-			ICElement grandParent= createParent(tu, parentBinding);
-			if (grandParent == null) 
+			}
+			ICElement grandParent = createParent(tu, parentBinding);
+			if (grandParent == null)
 				return null;
 			return new NamespaceHandle(grandParent, (ICPPNamespace) parentBinding);
-		} 
-		
+		}
+
 		if (parentBinding instanceof ICompositeType) {
-			ICElement grandParent= createParent(tu, parentBinding);
+			ICElement grandParent = createParent(tu, parentBinding);
 			if (grandParent != null) {
 				return createHandleForComposite(grandParent, (ICompositeType) parentBinding);
 			}
@@ -167,10 +164,11 @@ public class CElementHandleFactory {
 			return new StructureTemplateHandle(parent, (ICPPClassTemplate) classBinding);
 		}
 		if (classBinding instanceof ICPPClassSpecialization) {
-			ICPPClassSpecialization spec= (ICPPClassSpecialization) classBinding;
-			ICPPClassType orig= spec.getSpecializedBinding();
+			ICPPClassSpecialization spec = (ICPPClassSpecialization) classBinding;
+			ICPPClassType orig = spec.getSpecializedBinding();
 			if (orig instanceof ICPPClassTemplate) {
-				return new StructureTemplateHandle(parent, (ICPPClassSpecialization) classBinding, (ICPPClassTemplate) orig);
+				return new StructureTemplateHandle(parent, (ICPPClassSpecialization) classBinding,
+						(ICPPClassTemplate) orig);
 			}
 		}
 		return new StructureHandle(parent, classBinding);

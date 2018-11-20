@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.icu.text.MessageFormat;
- 
+
 /**
  * This dialog is used to add/edit user-defined register groups.
  */
@@ -50,20 +50,20 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 	public class RegisterLabelProvider extends LabelProvider {
 
 		@Override
-		public Image getImage( Object element ) {
-			if ( element instanceof IRegisterDescriptor ) {
-				return CDebugImages.get( CDebugImages.IMG_OBJS_REGISTER );
+		public Image getImage(Object element) {
+			if (element instanceof IRegisterDescriptor) {
+				return CDebugImages.get(CDebugImages.IMG_OBJS_REGISTER);
 			}
-			return super.getImage( element );
+			return super.getImage(element);
 		}
 
 		@Override
-		public String getText( Object element ) {
-			if ( element instanceof IRegisterDescriptor ) {
-				IRegisterDescriptor rd = (IRegisterDescriptor)element;
-				return MessageFormat.format( "{0} - {1}", new Object[] { rd.getName(), rd.getGroupName() } ); //$NON-NLS-1$
+		public String getText(Object element) {
+			if (element instanceof IRegisterDescriptor) {
+				IRegisterDescriptor rd = (IRegisterDescriptor) element;
+				return MessageFormat.format("{0} - {1}", new Object[] { rd.getName(), rd.getGroupName() }); //$NON-NLS-1$
 			}
-			return super.getText( element );
+			return super.getText(element);
 		}
 	}
 
@@ -72,82 +72,84 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 	private String fName;
 	private IRegisterDescriptor[] fDescriptors;
 
-	public RegisterGroupDialog( Shell parentShell, IRegisterDescriptor[] allRegisters ) {
-		this( parentShell, ActionMessages.getString( "RegisterGroupDialog.0" ), allRegisters, new IRegisterDescriptor[0] ); //$NON-NLS-1$
+	public RegisterGroupDialog(Shell parentShell, IRegisterDescriptor[] allRegisters) {
+		this(parentShell, ActionMessages.getString("RegisterGroupDialog.0"), allRegisters, new IRegisterDescriptor[0]); //$NON-NLS-1$
 	}
 
-	public RegisterGroupDialog( Shell parentShell, String groupName, IRegisterDescriptor[] allRegisters, IRegisterDescriptor[] groupRegisters ) {
-		super( parentShell );
+	public RegisterGroupDialog(Shell parentShell, String groupName, IRegisterDescriptor[] allRegisters,
+			IRegisterDescriptor[] groupRegisters) {
+		super(parentShell);
 		fName = groupName;
 		fDescriptors = groupRegisters;
-		String[] buttonLabels = new String[] { ActionMessages.getString( "RegisterGroupDialog.1" ), ActionMessages.getString( "RegisterGroupDialog.2" ) }; //$NON-NLS-1$ //$NON-NLS-2$
- 		fNameField = new StringDialogField();
-		fNameField.setLabelText( ActionMessages.getString( "RegisterGroupDialog.3" ) ); //$NON-NLS-1$
-		fNameField.setTextWithoutUpdate( groupName );
-		fNameField.setDialogFieldListener( new IDialogFieldListener() {
+		String[] buttonLabels = new String[] { ActionMessages.getString("RegisterGroupDialog.1"), //$NON-NLS-1$
+				ActionMessages.getString("RegisterGroupDialog.2") }; //$NON-NLS-1$
+		fNameField = new StringDialogField();
+		fNameField.setLabelText(ActionMessages.getString("RegisterGroupDialog.3")); //$NON-NLS-1$
+		fNameField.setTextWithoutUpdate(groupName);
+		fNameField.setDialogFieldListener(new IDialogFieldListener() {
 			@Override
-			public void dialogFieldChanged( DialogField field ) {
+			public void dialogFieldChanged(DialogField field) {
 				update();
 			}
-		} );
-		fListField = new CheckedListDialogField( new IListAdapter() {
-			
+		});
+		fListField = new CheckedListDialogField(new IListAdapter() {
+
 			@Override
-			public void customButtonPressed( DialogField field, int index ) {
+			public void customButtonPressed(DialogField field, int index) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
-			public void selectionChanged( DialogField field ) {
+			public void selectionChanged(DialogField field) {
 				// TODO Auto-generated method stub
-				
+
 			}
-		}, buttonLabels, new RegisterLabelProvider() );
-		fListField.setLabelText( ActionMessages.getString( "RegisterGroupDialog.4" ) ); //$NON-NLS-1$
-		fListField.setCheckAllButtonIndex( 0 );
-		fListField.setUncheckAllButtonIndex( 1 );
-		fListField.setElements( Arrays.asList( allRegisters ) );
-		fListField.setCheckedElements( Arrays.asList( groupRegisters ) );
+		}, buttonLabels, new RegisterLabelProvider());
+		fListField.setLabelText(ActionMessages.getString("RegisterGroupDialog.4")); //$NON-NLS-1$
+		fListField.setCheckAllButtonIndex(0);
+		fListField.setUncheckAllButtonIndex(1);
+		fListField.setElements(Arrays.asList(allRegisters));
+		fListField.setCheckedElements(Arrays.asList(groupRegisters));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	protected Control createDialogArea( Composite parent ) {
-		getShell().setText( ActionMessages.getString( "RegisterGroupDialog.5" ) ); //$NON-NLS-1$
-		setTitle( ActionMessages.getString( "RegisterGroupDialog.6" ) ); //$NON-NLS-1$
-	//	setTitleImage( CDebugImages.get( CDebugImages.IMG_WIZBAN_REGISTER_GROUP ) );
-		PlatformUI.getWorkbench().getHelpSystem().setHelp( getShell(), ICDebugHelpContextIds.REGISTER_GROUP );
-        Composite composite = new Composite( parent, SWT.NONE );
+	protected Control createDialogArea(Composite parent) {
+		getShell().setText(ActionMessages.getString("RegisterGroupDialog.5")); //$NON-NLS-1$
+		setTitle(ActionMessages.getString("RegisterGroupDialog.6")); //$NON-NLS-1$
+		//	setTitleImage( CDebugImages.get( CDebugImages.IMG_WIZBAN_REGISTER_GROUP ) );
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), ICDebugHelpContextIds.REGISTER_GROUP);
+		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = Math.max( fNameField.getNumberOfControls(), fListField.getNumberOfControls() );
-		layout.marginHeight = convertVerticalDLUsToPixels( IDialogConstants.VERTICAL_MARGIN );
-		layout.marginWidth = convertHorizontalDLUsToPixels( IDialogConstants.HORIZONTAL_MARGIN );
-		composite.setLayout( layout );
-		composite.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-		Dialog.applyDialogFont( composite );
-		PixelConverter converter = new PixelConverter( composite );
-		new Separator().doFillIntoGrid( composite, layout.numColumns, converter.convertHeightInCharsToPixels( 1 ) );
-		fNameField.doFillIntoGrid( composite, layout.numColumns );
-		fNameField.getTextControl( null ).selectAll();
-		new Separator().doFillIntoGrid( composite, layout.numColumns, converter.convertHeightInCharsToPixels( 1 ) );
-		fListField.doFillIntoGrid( composite, layout.numColumns + 1 );
-		LayoutUtil.setHorizontalSpan( fListField.getLabelControl( null ), layout.numColumns );
-		LayoutUtil.setHeigthHint( fListField.getListControl( null ), convertWidthInCharsToPixels( 30 ) );
-		LayoutUtil.setHorizontalGrabbing( fListField.getListControl( null ) );
-		setMessage( null );
+		layout.numColumns = Math.max(fNameField.getNumberOfControls(), fListField.getNumberOfControls());
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Dialog.applyDialogFont(composite);
+		PixelConverter converter = new PixelConverter(composite);
+		new Separator().doFillIntoGrid(composite, layout.numColumns, converter.convertHeightInCharsToPixels(1));
+		fNameField.doFillIntoGrid(composite, layout.numColumns);
+		fNameField.getTextControl(null).selectAll();
+		new Separator().doFillIntoGrid(composite, layout.numColumns, converter.convertHeightInCharsToPixels(1));
+		fListField.doFillIntoGrid(composite, layout.numColumns + 1);
+		LayoutUtil.setHorizontalSpan(fListField.getLabelControl(null), layout.numColumns);
+		LayoutUtil.setHeigthHint(fListField.getListControl(null), convertWidthInCharsToPixels(30));
+		LayoutUtil.setHorizontalGrabbing(fListField.getListControl(null));
+		setMessage(null);
 		return composite;
 	}
 
 	protected void update() {
-		setErrorMessage( null );
+		setErrorMessage(null);
 		String name = fNameField.getText().trim();
-		if ( name.length() == 0 ) {
-			setErrorMessage( ActionMessages.getString( "RegisterGroupDialog.7" ) ); //$NON-NLS-1$
+		if (name.length() == 0) {
+			setErrorMessage(ActionMessages.getString("RegisterGroupDialog.7")); //$NON-NLS-1$
 		}
-		getButton( IDialogConstants.OK_ID ).setEnabled( name.length() > 0 );
+		getButton(IDialogConstants.OK_ID).setEnabled(name.length() > 0);
 	}
 
 	@Override
@@ -155,7 +157,7 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 		super.okPressed();
 		fName = fNameField.getText().trim();
 		List<IRegisterDescriptor> elements = fListField.getCheckedElements();
-		fDescriptors = elements.toArray( new IRegisterDescriptor[elements.size()] );
+		fDescriptors = elements.toArray(new IRegisterDescriptor[elements.size()]);
 	}
 
 	public String getName() {

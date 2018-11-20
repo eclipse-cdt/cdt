@@ -33,47 +33,47 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 
 public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
-    private final ICPPASTBaseSpecifier base;
+	private final ICPPASTBaseSpecifier base;
 	private IType baseClass;
 	private boolean inheritedConstructorsSource;
 
-    public CPPBaseClause(ICPPASTBaseSpecifier base) {
-        this.base = base;
-    }
+	public CPPBaseClause(ICPPASTBaseSpecifier base) {
+		this.base = base;
+	}
 
-    @Override
+	@Override
 	public IBinding getBaseClass() {
-		IType type= getBaseClassType();
+		IType type = getBaseClassType();
 		type = getNestedType(type, TDEF);
 		if (type instanceof IBinding)
 			return (IBinding) type;
 		return null;
-    }
+	}
 
-    @Override
-    public IType getBaseClassType() {
+	@Override
+	public IType getBaseClassType() {
 		if (baseClass == null) {
 			ICPPASTNameSpecifier nameSpec = base.getNameSpecifier();
-	    	IBinding b = nameSpec.resolveBinding();
-	    	if (b instanceof IProblemBinding) {
-	    		baseClass =  new CPPClassType.CPPClassTypeProblem(nameSpec, ((IProblemBinding) b).getID());
-	    	} else if (!(b instanceof IType)) {
-	    		baseClass =  new CPPClassType.CPPClassTypeProblem(nameSpec, ISemanticProblem.BINDING_NO_CLASS);
-	    	} else {
-	    		baseClass= (IType) b;
-	    		IType check= getNestedType(baseClass, TDEF);
-	    		if (!(check instanceof ICPPClassType || check instanceof ICPPUnknownType)) {
-	    			baseClass = new CPPClassType.CPPClassTypeProblem(nameSpec, ISemanticProblem.BINDING_NO_CLASS);
-	    		}
-	    	}
-	    	if (base.isPackExpansion()) {
-	    		baseClass = new CPPParameterPackType(baseClass);
-	    	}
+			IBinding b = nameSpec.resolveBinding();
+			if (b instanceof IProblemBinding) {
+				baseClass = new CPPClassType.CPPClassTypeProblem(nameSpec, ((IProblemBinding) b).getID());
+			} else if (!(b instanceof IType)) {
+				baseClass = new CPPClassType.CPPClassTypeProblem(nameSpec, ISemanticProblem.BINDING_NO_CLASS);
+			} else {
+				baseClass = (IType) b;
+				IType check = getNestedType(baseClass, TDEF);
+				if (!(check instanceof ICPPClassType || check instanceof ICPPUnknownType)) {
+					baseClass = new CPPClassType.CPPClassTypeProblem(nameSpec, ISemanticProblem.BINDING_NO_CLASS);
+				}
+			}
+			if (base.isPackExpansion()) {
+				baseClass = new CPPParameterPackType(baseClass);
+			}
 		}
 		return baseClass;
-    }
+	}
 
-    @Override
+	@Override
 	public int getVisibility() {
 		int vis = base.getVisibility();
 
@@ -81,13 +81,13 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 			ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) base.getParent();
 			vis = compSpec.getKey() == ICPPClassType.k_class ? ICPPBase.v_private : ICPPBase.v_public;
 		}
-        return vis;
-    }
+		return vis;
+	}
 
-    @Override
+	@Override
 	public boolean isVirtual() {
-        return base.isVirtual();
-    }
+		return base.isVirtual();
+	}
 
 	@Override
 	public boolean isInheritedConstructorsSource() {
@@ -105,14 +105,14 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 
 	@Override
 	public ICPPBase clone() {
-        ICPPBase t = null;
-   		try {
-            t = (ICPPBase) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen.
-        }
-        return t;
-    }
+		ICPPBase t = null;
+		try {
+			t = (ICPPBase) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen.
+		}
+		return t;
+	}
 
 	@Override
 	public void setBaseClass(IBinding cls) {

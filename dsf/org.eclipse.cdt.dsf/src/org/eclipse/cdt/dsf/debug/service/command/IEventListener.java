@@ -23,11 +23,11 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
  */
 @ConfinedToDsfExecutor("")
 public interface IEventListener {
-    /**
-     * Notifies that the given asynchronous output was received from the 
-     * debugger.
-     * @param output output that was received from the debugger.  Format
-     * of the output data is debugger specific.
-     */
-    public void eventReceived(Object output);
+	/**
+	 * Notifies that the given asynchronous output was received from the 
+	 * debugger.
+	 * @param output output that was received from the debugger.  Format
+	 * of the output data is debugger specific.
+	 */
+	public void eventReceived(Object output);
 }

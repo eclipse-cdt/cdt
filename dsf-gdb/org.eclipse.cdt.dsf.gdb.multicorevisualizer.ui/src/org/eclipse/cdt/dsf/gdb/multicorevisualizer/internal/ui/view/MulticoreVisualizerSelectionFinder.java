@@ -32,15 +32,12 @@ import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
 
-
 /** 
 * Debug view tree walker that finds elements to select
 * based on selection obtained from the multicore visualizer.
 */
 @SuppressWarnings("restriction") // allow access to internal interfaces
-public class MulticoreVisualizerSelectionFinder
-	extends DebugViewTreeWalker
-{
+public class MulticoreVisualizerSelectionFinder extends DebugViewTreeWalker {
 	// --- members ---
 
 	/** Selection item(s) we're currently looking for. */
@@ -49,12 +46,10 @@ public class MulticoreVisualizerSelectionFinder
 	/** Result we've found, if any. */
 	protected Set<Object> m_result = null;
 
-
 	// --- constructors/destructors ---
 
 	/** Constructor */
-	public MulticoreVisualizerSelectionFinder()
-	{
+	public MulticoreVisualizerSelectionFinder() {
 	}
 
 	/** Dispose method */
@@ -70,8 +65,7 @@ public class MulticoreVisualizerSelectionFinder
 	 *  (E.g. the IDMVMContext for a VisualizerThread.
 	 *  Returns null if no match is found.
 	 */
-	public ISelection findSelection(ISelection selection)
-	{
+	public ISelection findSelection(ISelection selection) {
 		m_selection = SelectionUtils.getSelectedObjects(selection);
 
 		m_result = new HashSet<Object>();
@@ -85,8 +79,7 @@ public class MulticoreVisualizerSelectionFinder
 	 *  and false if they can be skipped.
 	 */
 	@Override
-	public boolean processElement(TreePath path)
-	{
+	public boolean processElement(TreePath path) {
 		boolean result = true;
 
 		Object element = getElement(path);
@@ -96,28 +89,22 @@ public class MulticoreVisualizerSelectionFinder
 			int pid = getPID(context);
 			int tid = getTID(context);
 
-			if (isThreadContext(context))
-			{
+			if (isThreadContext(context)) {
 				for (Object o : m_selection) {
 					if (o instanceof VisualizerThread) {
 						VisualizerThread thread = (VisualizerThread) o;
 						// The Debug view model uses the GDB thread, to we need to use that one from the Visualizer model
-						if (thread.getPID() == pid && thread.getGDBTID() == tid)
-						{
+						if (thread.getPID() == pid && thread.getGDBTID() == tid) {
 							m_result.add(element);
 						}
 					}
 				}
-			}
-			else if (context instanceof IFrameDMContext)
-			{
+			} else if (context instanceof IFrameDMContext) {
 				// FIXME: if we have frame[0] under a selected thread,
 				// select that stack frame instead of the thread
-				if (isThreadFrameZero(context))
-				{
+				if (isThreadFrameZero(context)) {
 					IDMVMContext threadContext = (IDMVMContext) path.getParentPath().getLastSegment();
-					if (m_result.contains(threadContext))
-					{
+					if (m_result.contains(threadContext)) {
 						m_result.remove(threadContext);
 						m_result.add(element);
 					}
@@ -127,49 +114,40 @@ public class MulticoreVisualizerSelectionFinder
 
 		return result;
 	}
-	
+
 	/** Returns PID for specified debug context. */
-	public static int getPID(IDMContext context)
-	{
-		IMIProcessDMContext processContext =
-				DMContexts.getAncestorOfType(context, IMIProcessDMContext.class);
-		int pid = (processContext == null) ? 0 : 
-			Integer.parseInt(processContext.getProcId());
+	public static int getPID(IDMContext context) {
+		IMIProcessDMContext processContext = DMContexts.getAncestorOfType(context, IMIProcessDMContext.class);
+		int pid = (processContext == null) ? 0 : Integer.parseInt(processContext.getProcId());
 		return pid;
 	}
 
 	/** Returns TID for specified debug context. */
-	public static int getTID(IDMContext context)
-	{
-		IMIExecutionDMContext execContext =
-				DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-        int tid = 0;
-        if (execContext != null) {
-            try {
-                tid = Integer.parseInt(execContext.getThreadId());
-            } catch (NumberFormatException e) {
-                // Unable to resolve thread id
-                assert false : "The thread id does not convert to an integer: " + execContext.getThreadId(); //$NON-NLS-1$
-            }
-        }
+	public static int getTID(IDMContext context) {
+		IMIExecutionDMContext execContext = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		int tid = 0;
+		if (execContext != null) {
+			try {
+				tid = Integer.parseInt(execContext.getThreadId());
+			} catch (NumberFormatException e) {
+				// Unable to resolve thread id
+				assert false : "The thread id does not convert to an integer: " + execContext.getThreadId(); //$NON-NLS-1$
+			}
+		}
 
 		return tid;
 	}
 
 	/** Returns true if specified context represents a thread. */
-	public static boolean isThreadContext(IDMContext context)
-	{
+	public static boolean isThreadContext(IDMContext context) {
 		// TODO: is there a more elegant way to express this?
-		return
-			context instanceof IMIExecutionDMContext &&
-			context.getParents().length >= 2 &&
-			(context.getParents()[0] instanceof IThreadDMContext ||
-			 context.getParents()[1] instanceof IThreadDMContext);
+		return context instanceof IMIExecutionDMContext && context.getParents().length >= 2
+				&& (context.getParents()[0] instanceof IThreadDMContext
+						|| context.getParents()[1] instanceof IThreadDMContext);
 	}
-	
+
 	/** Returns true if context represents the topmost (0th) frame under a thread. */
-	public static boolean isThreadFrameZero(IDMContext context)
-	{
+	public static boolean isThreadFrameZero(IDMContext context) {
 		// TODO: is there a more elegant way to express this?
 		String value = context.toString();
 		return (value != null && value.endsWith(".frame[0]")); //$NON-NLS-1$

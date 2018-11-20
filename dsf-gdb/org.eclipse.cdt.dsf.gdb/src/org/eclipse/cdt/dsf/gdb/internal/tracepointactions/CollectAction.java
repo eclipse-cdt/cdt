@@ -53,7 +53,7 @@ public class CollectAction extends AbstractTracepointAction {
 	private static final String COLLECT_STRING_ATTR = "collectString"; //$NON-NLS-1$
 	private static final String COLLECT_AS_STRING_ATTR = "collectAsString"; //$NON-NLS-1$
 	private static final String COLLECT_AS_STRING_LIMIT_ATTR = "collectAsStringLimit"; //$NON-NLS-1$
-	
+
 	private String fCollectString = ""; //$NON-NLS-1$
 	/** Indicates if we should ask GDB to collect character pointers as strings */
 	private boolean fCharPtrAsStrings;
@@ -62,7 +62,7 @@ public class CollectAction extends AbstractTracepointAction {
 	 * Null will indicate that no limit is to be used.
 	 * This value should be non-negative. */
 	private Integer fCharPtrAsStringsLimit;
-	
+
 	@Override
 	public String getDefaultName() {
 		return MessagesForTracepointActions.TracepointActions_Untitled_Collect;
@@ -71,7 +71,7 @@ public class CollectAction extends AbstractTracepointAction {
 	public String getCollectString() {
 		return fCollectString;
 	}
-	
+
 	public void setCollectString(String str) {
 		fCollectString = str;
 	}
@@ -135,7 +135,8 @@ public class CollectAction extends AbstractTracepointAction {
 			// Store the different attributes of this collect action
 			rootElement.setAttribute(COLLECT_STRING_ATTR, fCollectString);
 			rootElement.setAttribute(COLLECT_AS_STRING_ATTR, Boolean.toString(fCharPtrAsStrings));
-			rootElement.setAttribute(COLLECT_AS_STRING_LIMIT_ATTR, fCharPtrAsStringsLimit == null ? "" : fCharPtrAsStringsLimit.toString()); //$NON-NLS-1$
+			rootElement.setAttribute(COLLECT_AS_STRING_LIMIT_ATTR,
+					fCharPtrAsStringsLimit == null ? "" : fCharPtrAsStringsLimit.toString()); //$NON-NLS-1$
 
 			doc.appendChild(rootElement);
 
@@ -161,8 +162,8 @@ public class CollectAction extends AbstractTracepointAction {
 	@Override
 	public String getSummary() {
 		// Return the exact format that will be sent to GDB.
-		
-		StringBuilder collectCmd = new StringBuilder("collect ");  //$NON-NLS-1$
+
+		StringBuilder collectCmd = new StringBuilder("collect "); //$NON-NLS-1$
 		if (fCharPtrAsStrings) {
 			collectCmd.append("/s"); //$NON-NLS-1$
 			if (fCharPtrAsStringsLimit != null) {
@@ -174,7 +175,7 @@ public class CollectAction extends AbstractTracepointAction {
 		}
 		// Finally, actually add what to collect
 		collectCmd.append(fCollectString);
-		
+
 		return collectCmd.toString();
 	}
 
@@ -191,17 +192,18 @@ public class CollectAction extends AbstractTracepointAction {
 			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(new InputSource(new StringReader(data))).getDocumentElement();
-			
+
 			fCollectString = root.getAttribute(COLLECT_STRING_ATTR);
-			if (fCollectString == null) fCollectString = ""; //$NON-NLS-1$
-			
+			if (fCollectString == null)
+				fCollectString = ""; //$NON-NLS-1$
+
 			String asStrings = root.getAttribute(COLLECT_AS_STRING_ATTR);
 			if (asStrings != null) {
 				fCharPtrAsStrings = Boolean.valueOf(asStrings);
 			} else {
 				fCharPtrAsStrings = false;
 			}
-			
+
 			fCharPtrAsStringsLimit = null;
 			String asStringsLimit = root.getAttribute(COLLECT_AS_STRING_LIMIT_ATTR);
 			if (asStringsLimit != null) {
@@ -210,12 +212,12 @@ public class CollectAction extends AbstractTracepointAction {
 				} catch (NumberFormatException e) {
 					// leave as null to disable
 				}
-			} 
+			}
 		} catch (Exception e) {
 			GdbPlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return getSummary();

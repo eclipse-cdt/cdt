@@ -29,15 +29,15 @@ public class CDTViewerDragAdapter extends DelegatingDragAdapter {
 	public CDTViewerDragAdapter(StructuredViewer viewer, TransferDragSourceListener[] listeners) {
 		super(listeners);
 		Assert.isNotNull(viewer);
-		fViewer= viewer;
+		fViewer = viewer;
 	}
-	
+
 	@Override
 	public void dragStart(DragSourceEvent event) {
-		IStructuredSelection selection= (IStructuredSelection)fViewer.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
 		if (selection.isEmpty()) {
-			event.doit= false;
-			return; 
+			event.doit = false;
+			return;
 		}
 		super.dragStart(event);
 	}

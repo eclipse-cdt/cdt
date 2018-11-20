@@ -46,19 +46,19 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 	private Text prefixTxt;
 
 	public static final String PAGE_ID = "org.eclipse.cdt.build.crossgcc.setcCrossCommandWizardPage"; //$NON-NLS-1$
-	
+
 	public static final String CROSS_PROJECT_NAME = "crossProjectName"; //$NON-NLS-1$
 	public static final String CROSS_COMMAND_PREFIX = "crossCommandPrefix"; //$NON-NLS-1$
 	public static final String CROSS_COMMAND_PATH = "crossCommandPath"; //$NON-NLS-1$
-	
+
 	// Note: The shared defaults keys don't have "cross" in them because we want to keep
 	// compatibility with defaults that were saved when it used to be a template
 	static final String SHARED_DEFAULTS_PREFIX_KEY = "prefix";
 	static final String SHARED_DEFAULTS_PATH_KEY = "path";
-	
+
 	public SetCrossCommandWizardPage() {
 		pageID = PAGE_ID;
-		
+
 		MBSCustomPageManager.addPageProperty(PAGE_ID, CROSS_COMMAND_PATH, ""); //$NON-NLS-1$
 		MBSCustomPageManager.addPageProperty(PAGE_ID, CROSS_COMMAND_PREFIX, ""); //$NON-NLS-1$
 	}
@@ -77,14 +77,14 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 
 	public void createControl(Composite parent) {
 		composite = new Composite(parent, SWT.NULL);
-		
+
 		composite.setLayout(new GridLayout(3, false));
 		GridData layoutData = new GridData();
 		composite.setLayoutData(layoutData);
-		
+
 		Label prefixLbl = new Label(composite, SWT.NONE);
 		prefixLbl.setText(Messages.SetCrossCommandWizardPage_prefix);
-		
+
 		prefixTxt = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		prefixTxt.setLayoutData(layoutData);
@@ -94,15 +94,15 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 			updatePrefixProperty();
 		}
 		prefixTxt.addModifyListener(new ModifyListener() {
-			
+
 			public void modifyText(ModifyEvent e) {
 				updatePrefixProperty();
 			}
 		});
-		
+
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(Messages.SetCrossCommandWizardPage_path);
-		
+
 		pathTxt = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		String crossCommandPath = SharedDefaults.getInstance().getSharedDefaultsMap().get(SHARED_DEFAULTS_PATH_KEY);
 		if (crossCommandPath != null) {
@@ -112,16 +112,16 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		pathTxt.setLayoutData(layoutData);
 		pathTxt.addModifyListener(new ModifyListener() {
-			
+
 			public void modifyText(ModifyEvent e) {
 				updatePathProperty();
 			}
 		});
-		
+
 		Button button = new Button(composite, SWT.NONE);
 		button.setText(Messages.SetCrossCommandWizardPage_browse);
 		button.addSelectionListener(new SelectionListener() {
-			
+
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
@@ -136,7 +136,7 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		layoutData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
 		button.setLayoutData(layoutData);
 	}
-	
+
 	public Control getControl() {
 		return composite;
 	}
@@ -179,11 +179,10 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		}
 		composite.setVisible(visible);
 	}
-	
+
 	public void dispose() {
 	}
 
-	
 	/**
 	 * MBSCustomPageManager and properties are used to pass things to SetCrossCommandOperation 
 	 */
@@ -199,7 +198,8 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 		IWizardPage[] pages = getWizard().getPages();
 		for (IWizardPage wizardPage : pages) {
 			if (wizardPage instanceof WizardNewProjectCreationPage) {
-				MBSCustomPageManager.addPageProperty(PAGE_ID, CROSS_PROJECT_NAME, ((WizardNewProjectCreationPage) wizardPage).getProjectName());
+				MBSCustomPageManager.addPageProperty(PAGE_ID, CROSS_PROJECT_NAME,
+						((WizardNewProjectCreationPage) wizardPage).getProjectName());
 				break;
 			}
 		}

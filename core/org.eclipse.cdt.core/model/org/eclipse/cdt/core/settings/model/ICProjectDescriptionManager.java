@@ -63,7 +63,7 @@ public interface ICProjectDescriptionManager {
 	 * the user is working through the new project dialog...) This flag doesn't
 	 * affect whether a description should or shouldn't be created.
 	 *
- 	 * @see #GET_CREATE_DESCRIPTION
+	 * @see #GET_CREATE_DESCRIPTION
 	 * @see ICProjectDescription#isCdtProjectCreating()
 	 * @since 5.1
 	 */
@@ -76,7 +76,7 @@ public interface ICProjectDescriptionManager {
 	 * and returns a writable project description which is either empty or a copy of the previous configuration description
 	 * if loadIfExists == true.
 	 * @see #createProjectDescription(IProject, boolean, boolean)
- 	 * @throws CoreException if the Project doesn't exist, or the storage couldn't be found
+	 * @throws CoreException if the Project doesn't exist, or the storage couldn't be found
 	 */
 	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException;
 
@@ -95,7 +95,8 @@ public interface ICProjectDescriptionManager {
 	 * @return {@link ICProjectDescription}
 	 * @throws CoreException if the Project doesn't exist, or the storage couldn't be found
 	 */
-	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating) throws CoreException;
+	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating)
+			throws CoreException;
 
 	/**
 	 * This method is called to save/apply the project description
@@ -123,7 +124,8 @@ public interface ICProjectDescriptionManager {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException;
+	void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor)
+			throws CoreException;
 
 	/**
 	 *
@@ -133,7 +135,8 @@ public interface ICProjectDescriptionManager {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException;
+	void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor)
+			throws CoreException;
 
 	/**
 	 * returns the project description associated with this project or null if the project does not contain the
@@ -257,7 +260,8 @@ public interface ICProjectDescriptionManager {
 	 * @param monitor
 	 * @return {@code true} if new {@code prefs} differ from the old ones, i.e. preferences changed
 	 */
-	boolean setProjectDescriptionWorkspacePreferences(ICProjectDescriptionWorkspacePreferences prefs, boolean updateProjects, IProgressMonitor monitor);
+	boolean setProjectDescriptionWorkspacePreferences(ICProjectDescriptionWorkspacePreferences prefs,
+			boolean updateProjects, IProgressMonitor monitor);
 
 	/**
 	 * forces the external settings providers of the specified IDs to be rescanned

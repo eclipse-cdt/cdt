@@ -36,29 +36,28 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListArgumentsInfo;
  * means that both names and values of the arguments are printed.
  * 
  */
-public class MIStackListArguments extends MICommand<MIStackListArgumentsInfo> 
-{
-    public MIStackListArguments(IMIExecutionDMContext execDmc, boolean showValues) {
-        super(execDmc, "-stack-list-arguments", new String[] { showValues ? "1" : "0" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+public class MIStackListArguments extends MICommand<MIStackListArgumentsInfo> {
+	public MIStackListArguments(IMIExecutionDMContext execDmc, boolean showValues) {
+		super(execDmc, "-stack-list-arguments", new String[] { showValues ? "1" : "0" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
-    public MIStackListArguments(IFrameDMContext frameDmc, boolean showValues) {
-        super(frameDmc, "-stack-list-arguments", new String[] { showValues ? "1" : "0" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+	public MIStackListArguments(IFrameDMContext frameDmc, boolean showValues) {
+		super(frameDmc, "-stack-list-arguments", new String[] { showValues ? "1" : "0" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
-    /** @since 5.5 */
-    public MIStackListArguments(IFrameDMContext frameDmc, boolean showValues, int low, int high) {
-        super(frameDmc, "-stack-list-arguments",  //$NON-NLS-1$
-                        new String[] { showValues ? "1" : "0", Integer.toString(low), Integer.toString(high)}); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-    
-    public MIStackListArguments(IMIExecutionDMContext execDmc, boolean showValues, int low, int high) {
-        super(execDmc, "-stack-list-arguments",  //$NON-NLS-1$
-        		new String[] {showValues ? "1" : "0", Integer.toString(low), Integer.toString(high)}); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-    
-    @Override
-    public MIStackListArgumentsInfo getResult(MIOutput out) {
-        return new MIStackListArgumentsInfo(out);
-    }
+	/** @since 5.5 */
+	public MIStackListArguments(IFrameDMContext frameDmc, boolean showValues, int low, int high) {
+		super(frameDmc, "-stack-list-arguments", //$NON-NLS-1$
+				new String[] { showValues ? "1" : "0", Integer.toString(low), Integer.toString(high) }); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public MIStackListArguments(IMIExecutionDMContext execDmc, boolean showValues, int low, int high) {
+		super(execDmc, "-stack-list-arguments", //$NON-NLS-1$
+				new String[] { showValues ? "1" : "0", Integer.toString(low), Integer.toString(high) }); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	@Override
+	public MIStackListArgumentsInfo getResult(MIOutput out) {
+		return new MIStackListArgumentsInfo(out);
+	}
 }

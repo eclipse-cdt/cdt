@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +21,12 @@ import org.eclipse.cdt.core.model.ICElement;
 
 public abstract class Parent extends CElement {
 
-	public Parent (ICElement parent, String name, int type) {
-		super (parent, name, type);
+	public Parent(ICElement parent, String name, int type) {
+		super(parent, name, type);
 	}
 
 	// members
-	
+
 	/**
 	 * Adds a child to the current element.
 	 * Implementations override this method to support children
@@ -45,7 +44,7 @@ public abstract class Parent extends CElement {
 		getElementInfo().removeChild(member);
 	}
 
-	public void removeChildren () throws CModelException {
+	public void removeChildren() throws CModelException {
 		getElementInfo().removeChildren();
 	}
 
@@ -53,7 +52,7 @@ public abstract class Parent extends CElement {
 	 * Gets the children of this element.
 	 * Returns null if the element does not support children
 	 * Implementations override this method to support children
-	 */		
+	 */
 	public ICElement[] getChildren() throws CModelException {
 		CElementInfo info = getElementInfo();
 		if (info != null)
@@ -71,7 +70,7 @@ public abstract class Parent extends CElement {
 		int size = children.length;
 		ArrayList<ICElement> list = new ArrayList<ICElement>(size);
 		for (int i = 0; i < size; ++i) {
-			CElement elt = (CElement)children[i];
+			CElement elt = (CElement) children[i];
 			if (elt.getElementType() == type) {
 				list.add(elt);
 			}
@@ -79,7 +78,7 @@ public abstract class Parent extends CElement {
 		return list;
 	}
 
-	public boolean hasChildren () {
+	public boolean hasChildren() {
 		try {
 			return getElementInfo().hasChildren();
 		} catch (CModelException e) {
@@ -87,7 +86,7 @@ public abstract class Parent extends CElement {
 		}
 	}
 
-	protected void setChanged () {
+	protected void setChanged() {
 		try {
 			getElementInfo().setChanged();
 		} catch (CModelException e) {
@@ -95,7 +94,7 @@ public abstract class Parent extends CElement {
 		}
 	}
 
-	protected boolean hasChanged () {
+	protected boolean hasChanged() {
 		try {
 			return getElementInfo().hasChanged();
 		} catch (CModelException e) {

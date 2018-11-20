@@ -34,17 +34,17 @@ public class LanguageVerifierTests extends TestCase {
 	 * see Bug 417852
 	 */
 	public void testConcurrentExceptionInLanguageVerifier() throws Exception {
-		
+
 		WorkspaceLanguageConfiguration config = new WorkspaceLanguageConfiguration();
-		
+
 		config.addWorkspaceMapping("foo", "bar");
 		config.addWorkspaceMapping("foo2", "bar2");
-		
+
 		Map<String, ILanguage> availableLanguages = new HashMap<String, ILanguage>();
-		
+
 		availableLanguages.put("foo", null);
 		availableLanguages.put("foo3", null);
-		
+
 		LanguageVerifier.removeMissingLanguages(config, availableLanguages);
 	}
 }

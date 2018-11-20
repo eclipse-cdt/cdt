@@ -37,16 +37,16 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization implemen
 	 * the record).
 	 */
 	protected static final int ANNOTATION1 = PDOMCPPFunctionSpecialization.RECORD_SIZE; // byte
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPMethodSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 1;
-	
-	public PDOMCPPMethodSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, 
+
+	public PDOMCPPMethodSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method,
 			PDOMBinding specialized) throws CoreException {
-		super(linkage, parent, method, specialized);		
+		super(linkage, parent, method, specialized);
 		Database db = getDB();
 
 		byte annotation = PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
@@ -66,7 +66,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization implemen
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_METHOD_SPECIALIZATION;
 	}
-	
+
 	@Override
 	public boolean isDestructor() {
 		return PDOMCPPAnnotations.isDestructor(getByte(record + ANNOTATION1));
@@ -97,7 +97,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization implemen
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
-	
+
 	@Override
 	public boolean isExternC() {
 		return false;
@@ -112,7 +112,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization implemen
 	public int getVisibility() {
 		return PDOMCPPAnnotations.getVisibility(getAnnotations());
 	}
-	
+
 	@Override
 	public IType[] getExceptionSpecification(IASTNode point) {
 		if (isImplicit()) {

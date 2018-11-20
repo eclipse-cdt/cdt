@@ -74,14 +74,14 @@ import org.junit.runners.Parameterized;
 public class MIMemoryTest extends BaseParametrizedTestCase {
 	private static final String EXEC_NAME = "MemoryTestApp.exe";
 
-	private DsfSession          fSession;
-	private DsfServicesTracker  fServicesTracker;
-	private IMemoryDMContext    fMemoryDmc;
-	private MIRunControl        fRunControl;
-	private IMemory             fMemoryService;
-	private IExpressions        fExpressionService;
-	private int 				fWordSize = 1 /* Default */;
-	private ByteOrder 			fByteOrder;
+	private DsfSession fSession;
+	private DsfServicesTracker fServicesTracker;
+	private IMemoryDMContext fMemoryDmc;
+	private MIRunControl fRunControl;
+	private IMemory fMemoryService;
+	private IExpressions fExpressionService;
+	private int fWordSize = 1 /* Default */;
+	private ByteOrder fByteOrder;
 
 	// Keeps track of the MemoryChangedEvents
 	private final int BLOCK_SIZE = 256;
@@ -96,41 +96,39 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 	// Housekeeping stuff
 	// ========================================================================
 
-
-
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
 
-	    fSession = getGDBLaunch().getSession();
-	    fMemoryDmc = (IMemoryDMContext)SyncUtil.getContainerContext();
-	    assert(fMemoryDmc != null);
+		fSession = getGDBLaunch().getSession();
+		fMemoryDmc = (IMemoryDMContext) SyncUtil.getContainerContext();
+		assert (fMemoryDmc != null);
 
-	    Runnable runnable = new Runnable() {
-            @Override
+		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
-       	    // Get a reference to the memory service
-        		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-        		assert(fServicesTracker != null);
+				// Get a reference to the memory service
+				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+				assert (fServicesTracker != null);
 
-        		fRunControl = fServicesTracker.getService(MIRunControl.class);
-        		assert(fRunControl != null);
+				fRunControl = fServicesTracker.getService(MIRunControl.class);
+				assert (fRunControl != null);
 
-        		fMemoryService = fServicesTracker.getService(IMemory.class);
-        		assert(fMemoryService != null);
+				fMemoryService = fServicesTracker.getService(IMemory.class);
+				assert (fMemoryService != null);
 
-        		fExpressionService = fServicesTracker.getService(IExpressions.class);
-        		assert(fExpressionService != null);
+				fExpressionService = fServicesTracker.getService(IExpressions.class);
+				assert (fExpressionService != null);
 
-        		fSession.addServiceEventListener(MIMemoryTest.this, null);
-        		fBaseAddress = null;
-        		clearEventCounters();
+				fSession.addServiceEventListener(MIMemoryTest.this, null);
+				fBaseAddress = null;
+				clearEventCounters();
 
 				fWordSize = SyncUtil.readAddressableSize(fMemoryDmc);
 				fByteOrder = SyncUtil.getMemoryByteOrder(fMemoryDmc);
-            }
-        };
-        fSession.getExecutor().submit(runnable).get();
+			}
+		};
+		fSession.getExecutor().submit(runnable).get();
 	}
 
 	@Override
@@ -161,62 +159,61 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 	// Helper Functions
 	// ========================================================================
 
-	 /* ------------------------------------------------------------------------
-	 * eventDispatched
-	 * ------------------------------------------------------------------------
-	 * Processes MemoryChangedEvents.
-	 * First checks if the memory block base address was set so the individual
-	 * test can control if it wants to verify the event(s).
-	 * ------------------------------------------------------------------------
-	 * @param e The MemoryChangedEvent
-	 * ------------------------------------------------------------------------
-	 */
-	 @DsfServiceEventHandler
-	 public void eventDispatched(IMemoryChangedEvent e) {
-		 synchronized(fMemoryChangedEventCount) {
-			 fMemoryChangedEventCount++;
-		 }
-		 IAddress[] addresses = e.getAddresses();
-		 for (int i = 0; i < addresses.length; i++) {
-			 int offset = Math.abs(addresses[i].distanceTo(fBaseAddress).intValue());
-			 if (offset < BLOCK_SIZE)
-				 synchronized(fMemoryAddressesChanged) {
-					 fMemoryAddressesChanged[offset] = true;
-				 }
-		 }
-	 }
+	/* ------------------------------------------------------------------------
+	* eventDispatched
+	* ------------------------------------------------------------------------
+	* Processes MemoryChangedEvents.
+	* First checks if the memory block base address was set so the individual
+	* test can control if it wants to verify the event(s).
+	* ------------------------------------------------------------------------
+	* @param e The MemoryChangedEvent
+	* ------------------------------------------------------------------------
+	*/
+	@DsfServiceEventHandler
+	public void eventDispatched(IMemoryChangedEvent e) {
+		synchronized (fMemoryChangedEventCount) {
+			fMemoryChangedEventCount++;
+		}
+		IAddress[] addresses = e.getAddresses();
+		for (int i = 0; i < addresses.length; i++) {
+			int offset = Math.abs(addresses[i].distanceTo(fBaseAddress).intValue());
+			if (offset < BLOCK_SIZE)
+				synchronized (fMemoryAddressesChanged) {
+					fMemoryAddressesChanged[offset] = true;
+				}
+		}
+	}
 
-	 // Clears the counters
-	 private void clearEventCounters() {
-		 synchronized(fMemoryChangedEventCount) {
-			 fMemoryChangedEventCount = 0;
-		 }
-		 synchronized(fMemoryAddressesChanged) {
-			 for (int i = 0; i < BLOCK_SIZE; i++)
-				 fMemoryAddressesChanged[i] = false;
-		 }
-	 }
+	// Clears the counters
+	private void clearEventCounters() {
+		synchronized (fMemoryChangedEventCount) {
+			fMemoryChangedEventCount = 0;
+		}
+		synchronized (fMemoryAddressesChanged) {
+			for (int i = 0; i < BLOCK_SIZE; i++)
+				fMemoryAddressesChanged[i] = false;
+		}
+	}
 
-	 // Returns the total number of events received
-	 private int getEventCount() {
-		 int count;
-		 synchronized(fMemoryChangedEventCount) {
-			 count = fMemoryChangedEventCount;
-		 }
-		 return count;
-	 }
+	// Returns the total number of events received
+	private int getEventCount() {
+		int count;
+		synchronized (fMemoryChangedEventCount) {
+			count = fMemoryChangedEventCount;
+		}
+		return count;
+	}
 
-	 // Returns the number of distinct addresses reported
-	 private int getAddressCount() {
-		 int count = 0;
-		 synchronized(fMemoryAddressesChanged) {
-			 for (int i = 0; i < BLOCK_SIZE; i++)
-				 if (fMemoryAddressesChanged[i])
-					 count++;
-		 }
-		 return count;
-	 }
-
+	// Returns the number of distinct addresses reported
+	private int getAddressCount() {
+		int count = 0;
+		synchronized (fMemoryAddressesChanged) {
+			for (int i = 0; i < BLOCK_SIZE; i++)
+				if (fMemoryAddressesChanged[i])
+					count++;
+		}
+		return count;
+	}
 
 	private byte[] valueToBytes(int val) {
 		ByteBuffer buff = ByteBuffer.allocate(fWordSize);
@@ -237,21 +234,20 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		}
 	}
 
-	 /* ------------------------------------------------------------------------
-	 * evaluateExpression
-	 * ------------------------------------------------------------------------
-	 * Invokes the ExpressionService to evaluate an expression. In theory, we
-	 * shouldn't rely on another service to test this one but we need a way to
-	 * access a variable from the test application in order verify that the
-	 * memory operations (read/write) are working properly.
-	 * ------------------------------------------------------------------------
-	 * @param expression Expression to resolve
-	 * @return Resolved expression
-	 * @throws InterruptedException
-	 * ------------------------------------------------------------------------
-	 */
-	private IAddress evaluateExpression(IDMContext ctx, String expression) throws Throwable
-	{
+	/* ------------------------------------------------------------------------
+	* evaluateExpression
+	* ------------------------------------------------------------------------
+	* Invokes the ExpressionService to evaluate an expression. In theory, we
+	* shouldn't rely on another service to test this one but we need a way to
+	* access a variable from the test application in order verify that the
+	* memory operations (read/write) are working properly.
+	* ------------------------------------------------------------------------
+	* @param expression Expression to resolve
+	* @return Resolved expression
+	* @throws InterruptedException
+	* ------------------------------------------------------------------------
+	*/
+	private IAddress evaluateExpression(IDMContext ctx, String expression) throws Throwable {
 		IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
 		return new Addr64(SyncUtil.getExpressionValue(expressionDMC, IFormattedValues.HEX_FORMAT));
 	}
@@ -385,7 +381,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -456,7 +452,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the array is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		int count = 1;
@@ -494,7 +490,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		int count = BLOCK_SIZE;
@@ -541,7 +537,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -583,9 +579,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Error message for new -data-write-memory-bytes command
 		String expectedStr2 = "Could not write memory";
 		expectedException.expect(ExecutionException.class);
-		expectedException.expectMessage(anyOf(
-				containsString(expectedStr1),
-				containsString(expectedStr2)));
+		expectedException.expectMessage(anyOf(containsString(expectedStr1), containsString(expectedStr2)));
 
 		// Perform the test
 		try {
@@ -606,7 +600,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -636,7 +630,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -696,7 +690,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -706,8 +700,8 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
-		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<>(
-				fSession, IMemoryChangedEvent.class);
+		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
+				IMemoryChangedEvent.class);
 
 		// Perform the test
 		for (int i = 0; i < count; i++) {
@@ -748,14 +742,14 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		int count = BLOCK_SIZE;
 		byte[] buffer;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
-		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<>(
-				fSession, IMemoryChangedEvent.class);
+		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
+				IMemoryChangedEvent.class);
 
 		// Perform the test
 		for (int offset = 0; offset < count; offset++) {
@@ -795,7 +789,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		int count = BLOCK_SIZE;
@@ -842,7 +836,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -885,9 +879,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Error message for new -data-write-memory-bytes command
 		String expectedStr2 = "Could not write memory";
 		expectedException.expect(ExecutionException.class);
-		expectedException.expectMessage(anyOf(
-				containsString(expectedStr1),
-				containsString(expectedStr2)));
+		expectedException.expectMessage(anyOf(containsString(expectedStr1), containsString(expectedStr2)));
 
 		// Perform the test
 		try {
@@ -908,7 +900,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -938,7 +930,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -968,7 +960,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -1049,7 +1041,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -1065,7 +1057,8 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Ensure that the memory is zeroed
-		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, patternRepetitionCount * patternLength);
+		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize,
+				patternRepetitionCount * patternLength);
 		MemoryByteBuffer memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
 		for (int i = 0; i < (patternRepetitionCount * patternLength); i++) {
 			assertThat(memBuf.getNextWord(), is(0L));
@@ -1099,7 +1092,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		int maxPatternRepetitionCount = 64;
@@ -1115,7 +1108,8 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Ensure that the memory is zeroed
-		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, maxPatternRepetitionCount * patternLength);
+		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize,
+				maxPatternRepetitionCount * patternLength);
 		MemoryByteBuffer memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
 		for (int i = 0; i < (maxPatternRepetitionCount * patternLength); i++) {
 			assertThat(memBuf.getNextWord(), is(0L));
@@ -1148,7 +1142,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Run to the point where the array is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
@@ -1158,8 +1152,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 
 		// Send many read queries
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			readQueries[offset] = new MemoryReadQuery(fMemoryService,
-					fMemoryDmc, fBaseAddress, offset, fWordSize, 1);
+			readQueries[offset] = new MemoryReadQuery(fMemoryService, fMemoryDmc, fBaseAddress, offset, fWordSize, 1);
 			fMemoryService.getExecutor().submit(readQueries[offset]);
 		}
 
@@ -1171,14 +1164,14 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		}
 
 		// Write asynchronously
-		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<IMemoryChangedEvent>(
-				fSession, IMemoryChangedEvent.class);
+		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<IMemoryChangedEvent>(fSession,
+				IMemoryChangedEvent.class);
 		MemoryWriteQuery writeQueries[] = new MemoryWriteQuery[BLOCK_SIZE];
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			byte[] block = valueToBytes(offset);
 
-			writeQueries[offset] = new MemoryWriteQuery(fMemoryService,
-					fMemoryDmc, fBaseAddress, offset, fWordSize, 1, block);
+			writeQueries[offset] = new MemoryWriteQuery(fMemoryService, fMemoryDmc, fBaseAddress, offset, fWordSize, 1,
+					block);
 			fMemoryService.getExecutor().submit(writeQueries[offset]);
 		}
 
@@ -1195,8 +1188,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		// Verify asynchronously that all bytes are set
 		// Send many read queries
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			readQueries[offset] = new MemoryReadQuery(fMemoryService,
-					fMemoryDmc, fBaseAddress, offset, fWordSize, 1);
+			readQueries[offset] = new MemoryReadQuery(fMemoryService, fMemoryDmc, fBaseAddress, offset, fWordSize, 1);
 			fMemoryService.getExecutor().submit(readQueries[offset]);
 		}
 
@@ -1278,8 +1270,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		private int fWordSize;
 		private int fCount;
 
-		public MemoryReadQuery(IMemory fMemoryService,
-				IMemoryDMContext memoryDmc, IAddress baseAddress, int offset,
+		public MemoryReadQuery(IMemory fMemoryService, IMemoryDMContext memoryDmc, IAddress baseAddress, int offset,
 				int wordSize, int count) {
 			this.fMemoryService = fMemoryService;
 			this.fMemoryDmc = memoryDmc;
@@ -1291,8 +1282,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 
 		@Override
 		protected void execute(DataRequestMonitor<MemoryByte[]> rm) {
-			fMemoryService.getMemory(fMemoryDmc, fBaseAddress, fOffset,
-					fWordSize, fCount, rm);
+			fMemoryService.getMemory(fMemoryDmc, fBaseAddress, fOffset, fWordSize, fCount, rm);
 		}
 	}
 
@@ -1306,8 +1296,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		private int fCount;
 		private byte[] fBuffer;
 
-		public MemoryWriteQuery(IMemory fMemoryService,
-				IMemoryDMContext memoryDmc, IAddress baseAddress, int offset,
+		public MemoryWriteQuery(IMemory fMemoryService, IMemoryDMContext memoryDmc, IAddress baseAddress, int offset,
 				int wordSize, int count, byte[] buffer) {
 			this.fMemoryService = fMemoryService;
 			this.fMemoryDmc = memoryDmc;
@@ -1320,8 +1309,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 
 		@Override
 		protected void execute(DataRequestMonitor<Void> rm) {
-			fMemoryService.setMemory(fMemoryDmc, fBaseAddress, fOffset,
-					fWordSize, fCount, fBuffer, rm);
+			fMemoryService.setMemory(fMemoryDmc, fBaseAddress, fOffset, fWordSize, fCount, fBuffer, rm);
 		}
 	}
 }

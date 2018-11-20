@@ -47,7 +47,7 @@ public class StringTextStore implements ITextStore {
 		if (length == fText.length()) {
 			return fText;
 		}
-		return new String(fText.substring(offset, offset+length));
+		return new String(fText.substring(offset, offset + length));
 	}
 
 	/* (non-Javadoc)

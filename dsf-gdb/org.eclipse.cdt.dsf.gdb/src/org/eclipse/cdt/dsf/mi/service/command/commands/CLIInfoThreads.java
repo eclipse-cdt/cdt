@@ -15,8 +15,6 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
-
-
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -29,13 +27,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class CLIInfoThreads extends CLICommand<CLIInfoThreadsInfo> {
 
-    public CLIInfoThreads(IContainerDMContext ctx) {
+	public CLIInfoThreads(IContainerDMContext ctx) {
 		super(ctx, "info threads"); //$NON-NLS-1$
 	}
 
 	@Override
 	public CLIInfoThreadsInfo getResult(MIOutput output) {
-		return (CLIInfoThreadsInfo)getMIInfo(output);
+		return (CLIInfoThreadsInfo) getMIInfo(output);
 	}
 
 	public MIInfo getMIInfo(MIOutput out) {

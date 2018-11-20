@@ -30,8 +30,7 @@ import org.eclipse.cdt.ui.newui.ManageConfigSelector;
 /**
  * Action which lets to manage (add/remove etc.) build configurations of the project.
  */
-public class ManageConfigsAction
-implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
+public class ManageConfigsAction implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 	IProject[] obs = null;
 
 	@Override
@@ -39,7 +38,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		if (!selection.isEmpty()) {
 			// case for context menu
 			if (selection instanceof StructuredSelection) {
-				obs = ManageConfigSelector.getProjects(((StructuredSelection)selection).toArray());
+				obs = ManageConfigSelector.getProjects(((StructuredSelection) selection).toArray());
 				action.setEnabled(ManageConfigSelector.getManager(obs) != null);
 				return;
 			}
@@ -55,15 +54,26 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 	}
 
 	@Override
-	public void dispose() { obs = null; }
+	public void dispose() {
+		obs = null;
+	}
 
 	// doing nothing
 	@Override
-	public void init(IWorkbenchWindow window) { }
+	public void init(IWorkbenchWindow window) {
+	}
+
 	@Override
-	public Menu getMenu(Menu parent) { return null; }
+	public Menu getMenu(Menu parent) {
+		return null;
+	}
+
 	@Override
-	public Menu getMenu(Control parent) { return null; }
+	public Menu getMenu(Control parent) {
+		return null;
+	}
+
 	@Override
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+	}
 }

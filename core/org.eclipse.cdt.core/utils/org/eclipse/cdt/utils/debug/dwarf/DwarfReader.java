@@ -49,26 +49,21 @@ import org.eclipse.core.runtime.Path;
 public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptionsFinder {
 
 	// These are sections that need be parsed to get the source file list.
-	final static String[] DWARF_SectionsToParse = { 
-		DWARF_DEBUG_INFO, 
-		DWARF_DEBUG_LINE,
-		DWARF_DEBUG_ABBREV, 
-		DWARF_DEBUG_STR, // this is optional. Some compilers don't generate it.
-		DWARF_DEBUG_MACRO, };
-	
-	final static String[] DWARF_ALT_SectionsToParse = { 
-		DWARF_DEBUG_STR, 
-		DWARF_DEBUG_MACRO };
+	final static String[] DWARF_SectionsToParse = { DWARF_DEBUG_INFO, DWARF_DEBUG_LINE, DWARF_DEBUG_ABBREV,
+			DWARF_DEBUG_STR, // this is optional. Some compilers don't generate it.
+			DWARF_DEBUG_MACRO, };
 
-	private final Collection<String>	m_fileCollection = new HashSet<String>();
-	private final Map<Long, String>  m_stmtFileMap = new HashMap<Long, String>();
+	final static String[] DWARF_ALT_SectionsToParse = { DWARF_DEBUG_STR, DWARF_DEBUG_MACRO };
+
+	private final Collection<String> m_fileCollection = new HashSet<String>();
+	private final Map<Long, String> m_stmtFileMap = new HashMap<Long, String>();
 	private final Map<String, ArrayList<String>> m_compileOptionsMap = new HashMap<String, ArrayList<String>>();
-	private String[] 	m_fileNames = null;
-	private boolean		m_parsed = false;
-	private boolean		m_macros_parsed = false;
-	private final ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();
-	private long			m_parsedLineTableSize = 0;
-		
+	private String[] m_fileNames = null;
+	private boolean m_parsed = false;
+	private boolean m_macros_parsed = false;
+	private final ArrayList<Integer> m_parsedLineTableOffsets = new ArrayList<Integer>();
+	private long m_parsedLineTableSize = 0;
+
 	public DwarfReader(String file) throws IOException {
 		super(file);
 	}
@@ -80,7 +75,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	/**
 	 * @since 5.1
 	 */
-	public DwarfReader(PE exe) throws IOException  {
+	public DwarfReader(PE exe) throws IOException {
 		super(exe);
 	}
 
@@ -93,9 +88,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 		IPath debugInfoPath = new Path(exe.getFilename());
 		Elf.Section[] sections = exe.getSections();
-		
+
 		boolean have_build_id = false;
-		
+
 		// Look for a special GNU build-id note which means the debug data resides in a separate
 		// file with a name based on the build-id.
 		for (Section section : sections) {
@@ -145,7 +140,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				}
 			}
 		}
-		
+
 		if (!have_build_id) {
 			// No build-id.  Look for a .gnu_debuglink section which will have the name of the debug info file
 			Elf.Section gnuDebugLink = exe.getSectionByName(DWARF_GNU_DEBUGLINK);
@@ -195,7 +190,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 			}
 		}
-		
+
 		// Read in sections (and only the sections) we care about.
 		//
 		for (Section section : sections) {
@@ -233,8 +228,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					e.printStackTrace();
 					CCorePlugin.log(e);
 				}
-			} 
-			else {
+			} else {
 				for (String element : DWARF_SectionsToParse) {
 					if (name.equals(element)) {
 						// catch out of memory exceptions which might happen trying to
@@ -250,7 +244,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				}
 			}
 		}
-		
+
 		// Don't print during parsing.
 		printEnabled = false;
 		m_parsed = false;
@@ -288,15 +282,14 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	 * Parse line table data of a compilation unit to get names of all source files
 	 * that contribute to the compilation unit. 
 	 */
-	void parseSourceInCULineInfo(
-			String cuCompDir,	// compilation directory of the CU 
-			int cuStmtList) 	// offset of the CU line table in .debug_line section 
+	void parseSourceInCULineInfo(String cuCompDir, // compilation directory of the CU 
+			int cuStmtList) // offset of the CU line table in .debug_line section 
 	{
 		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE);
 		if (data != null) {
 			try {
 				data.position(cuStmtList);
-				
+
 				/* Read line table header:
 				 * 
 				 *  total_length:				4/12 bytes (excluding itself)
@@ -310,26 +303,25 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				 *  opcode_base:				1
 				 *  standard_opcode_lengths:	(value of opcode_base)
 				 */
-				
+
 				// Remember the CU line tables we've parsed.
 				Integer cuOffset = Integer.valueOf(cuStmtList);
-				
+
 				boolean dwarf64Bit = false;
-				if (! m_parsedLineTableOffsets.contains(cuOffset)) {
+				if (!m_parsedLineTableOffsets.contains(cuOffset)) {
 					m_parsedLineTableOffsets.add(cuOffset);
 
 					// Note the length does not including the "length" field(s) itself.
 					InitialLengthValue length = readInitialLengthField(data);
 					dwarf64Bit = length.offsetSize == 8;
 					m_parsedLineTableSize += length.length + (dwarf64Bit ? 12 : 4);
-				}
-				else {
+				} else {
 					// Compiler like ARM RVCT may produce several CUs for the
 					// same source files.
 					return;
 				}
-				
-				short version = read_2_bytes(data);	
+
+				short version = read_2_bytes(data);
 				// Skip the following till "opcode_base"
 				short skip_bytes = 8;
 				if (version >= 4)
@@ -342,37 +334,37 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 				// Read in directories.
 				//
-				ArrayList<String>	dirList = new ArrayList<String>();
+				ArrayList<String> dirList = new ArrayList<String>();
 
 				// Put the compilation directory of the CU as the first dir
 				dirList.add(cuCompDir);
-				
-				String 			str, fileName;
-				
+
+				String str, fileName;
+
 				while (true) {
 					str = readString(data);
 					if (str.length() == 0)
 						break;
 					// If the directory is relative, append it to the CU dir
 					IPath dir = new Path(str);
-					if(!dir.isAbsolute())
+					if (!dir.isAbsolute())
 						dir = new Path(cuCompDir).append(str);
 					dirList.add(dir.toString());
 				}
-				
+
 				// Read file names
 				//
-				long	leb128;
+				long leb128;
 				while (true) {
 					fileName = readString(data);
-					if (fileName.length() == 0)	// no more file entry
+					if (fileName.length() == 0) // no more file entry
 						break;
-					
+
 					// dir index
 					leb128 = read_unsigned_leb128(data);
-					
-					addSourceFile(dirList.get((int)leb128), fileName);
-					
+
+					addSourceFile(dirList.get((int) leb128), fileName);
+
 					// Skip the followings
 					//
 					// modification time
@@ -395,12 +387,11 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	 * not happen. But that case does exist, hence this workaround. 
 	 * .................. LWang. 08/24/07
 	 */
-	private void getSourceFilesFromDebugLineSection()
-	{
+	private void getSourceFilesFromDebugLineSection() {
 		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE);
-		if (data == null) 
+		if (data == null)
 			return;
-		
+
 		int sectionSize = data.capacity();
 		int minHeaderSize = 16;
 
@@ -408,7 +399,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		// yet by parseSourceInCULineInfo().
 		if (m_parsedLineTableSize >= sectionSize - minHeaderSize)
 			return;
-		
+
 		// The .debug_line section contains a list of line tables
 		// for compile_units. We'll iterate through all line tables
 		// in the section.
@@ -426,23 +417,22 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		 * opcode_base:				1
 		 * standard_opcode_lengths: (value of opcode_base)		 */
 
-		int lineTableStart = 0;	// offset in the .debug_line section
-		
+		int lineTableStart = 0; // offset in the .debug_line section
+
 		try {
 			while (lineTableStart < sectionSize - minHeaderSize) {
 				data.position(lineTableStart);
 
 				Integer currLineTableStart = Integer.valueOf(lineTableStart);
-				
+
 				// Read length of the line table for one compile unit
 				// Note the length does not including the "length" field(s) itself.
 				InitialLengthValue sectionLength = readInitialLengthField(data);
 
-
 				// Record start of next CU line table
 				boolean dwarf64Bit = sectionLength.offsetSize == 8;
-				lineTableStart += (int)(sectionLength.length + (dwarf64Bit ? 12 : 4));
-				
+				lineTableStart += (int) (sectionLength.length + (dwarf64Bit ? 12 : 4));
+
 				m_parsedLineTableSize += sectionLength.length + (dwarf64Bit ? 12 : 4);
 
 				// According to Dwarf standard, the "tableLength" should cover the
@@ -454,35 +444,31 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				// How to determine if that type of padding exists ? 
 				// I don't have a 100% safe way. But following hacking seems
 				// good enough in practice.........08/26/07
-				if (lineTableStart < sectionSize - minHeaderSize && 
-						(lineTableStart & 0x3) != 0) 
-				{
+				if (lineTableStart < sectionSize - minHeaderSize && (lineTableStart & 0x3) != 0) {
 					int savedPosition = data.position();
 					data.position(lineTableStart);
-					
+
 					long ltLength = dwarf64Bit ? read_8_bytes(data) : read_4_bytes(data);
-					
+
 					int dwarfVer = read_2_bytes(data);
 					int minInstLengh = data.get(data.position() + (dwarf64Bit ? 8 : 4));
-					
-					boolean dataValid = 
-						ltLength > minHeaderSize && 
-						ltLength < 16*64*1024 &&   // One source file has that much line data ? 
-						dwarfVer > 0 &&	dwarfVer < 5 &&  // ver 5 is still draft at present.
-						minInstLengh > 0 && minInstLengh <= 8;
-						
-					if (! dataValid)	// padding exists !
-						lineTableStart = (lineTableStart+3) & ~0x3;
-					
+
+					boolean dataValid = ltLength > minHeaderSize && ltLength < 16 * 64 * 1024 && // One source file has that much line data ? 
+							dwarfVer > 0 && dwarfVer < 5 && // ver 5 is still draft at present.
+							minInstLengh > 0 && minInstLengh <= 8;
+
+					if (!dataValid) // padding exists !
+						lineTableStart = (lineTableStart + 3) & ~0x3;
+
 					data.position(savedPosition);
 				}
-				
+
 				if (m_parsedLineTableOffsets.contains(currLineTableStart))
 					// current line table has already been parsed, skip it.
 					continue;
 
 				short version = read_2_bytes(data);
-				
+
 				// Skip following fields till "opcode_base"
 				short skip_bytes = 8;
 				if (version >= 4)
@@ -501,7 +487,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 				// first dir should be TAG_comp_dir from CU, which we don't have here.
 				dirList.add(""); //$NON-NLS-1$
-				
+
 				while (true) {
 					str = readString(data);
 					if (str.length() == 0)
@@ -543,9 +529,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 			m_fileCollection.clear();
 
 			getSourceFilesFromDebugInfoSection();
-			
+
 			getSourceFilesFromDebugLineSection();
-			
+
 			m_parsed = true;
 
 			m_fileNames = new String[m_fileCollection.size()];
@@ -573,19 +559,18 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		return fullName;
 	}
 
-	private String addSourceFile(String dir, String name)
-	{
+	private String addSourceFile(String dir, String name) {
 		if (name == null || name.length() == 0)
 			return null;
-		
-		if (name.charAt(0) == '<')	//  don't count the entry "<internal>" from GCCE compiler
+
+		if (name.charAt(0) == '<') //  don't count the entry "<internal>" from GCCE compiler
 			return null;
-		
+
 		String fullName = name;
-		
+
 		IPath dirPa = new Path(dir);
 		IPath pa = new Path(name);
-		
+
 		// Combine dir & name if needed.
 		if (!pa.isAbsolute() && dir.length() > 0)
 			pa = dirPa.append(pa);
@@ -593,23 +578,24 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		// This convert the path to canonical path (but not necessarily absolute, which
 		// is different from java.io.File.getCanonicalPath()).
 		fullName = pa.toOSString();
-		
+
 		if (!m_fileCollection.contains(fullName))
 			m_fileCollection.add(fullName);
-		
+
 		return fullName;
 	}
-	
+
 	// Override parent: only handle TAG_Compile_Unit.
 	@Override
-	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List<Dwarf.AttributeValue> list) {
+	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry,
+			List<Dwarf.AttributeValue> list) {
 		int tag = (int) entry.tag;
 		switch (tag) {
-			case DwarfConstants.DW_TAG_compile_unit :
-				processCompileUnit(requestor, list);
-				break;
-			default:
-				break;
+		case DwarfConstants.DW_TAG_compile_unit:
+			processCompileUnit(requestor, list);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -618,38 +604,38 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	// Argument "requestor" is ignored.
 	@Override
 	void processCompileUnit(IDebugEntryRequestor requestor, List<AttributeValue> list) {
-		
+
 		String cuName, cuCompDir;
-		int		stmtList = -1;
-		
+		int stmtList = -1;
+
 		cuName = cuCompDir = ""; //$NON-NLS-1$
-		
+
 		for (int i = 0; i < list.size(); i++) {
 			AttributeValue av = list.get(i);
 			try {
-				int name = (int)av.attribute.name;
-				switch(name) {
-					case DwarfConstants.DW_AT_name:
-						cuName = (String)av.value;
-						break;
-					case DwarfConstants.DW_AT_comp_dir:
-						cuCompDir = (String)av.value;
-						break;
-					case DwarfConstants.DW_AT_stmt_list:
-						stmtList = ((Number)av.value).intValue();
-						break;
-					default:
-						break;
+				int name = (int) av.attribute.name;
+				switch (name) {
+				case DwarfConstants.DW_AT_name:
+					cuName = (String) av.value;
+					break;
+				case DwarfConstants.DW_AT_comp_dir:
+					cuCompDir = (String) av.value;
+					break;
+				case DwarfConstants.DW_AT_stmt_list:
+					stmtList = ((Number) av.value).intValue();
+					break;
+				default:
+					break;
 				}
 			} catch (ClassCastException e) {
 			}
 		}
 
 		addSourceFileWithStmt(cuCompDir, cuName, stmtList);
-		if (stmtList > -1)	// this CU has "stmt_list" attribute
+		if (stmtList > -1) // this CU has "stmt_list" attribute
 			parseSourceInCULineInfo(cuCompDir, stmtList);
 	}
-	
+
 	/**
 	 * @since 5.2
 	 */
@@ -662,19 +648,19 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		private int numArgs;
 		private final boolean offset_size_8;
 		ArrayList<Integer> argTypes;
-		
-		public OpcodeInfo (boolean offset_size_8) {
+
+		public OpcodeInfo(boolean offset_size_8) {
 			this.offset_size_8 = offset_size_8;
 		}
-		
-		public void setNumArgs (int numArgs) {
+
+		public void setNumArgs(int numArgs) {
 			this.numArgs = numArgs;
 		}
-		
+
 		public void addArgType(int argType) {
 			argTypes.add(Integer.valueOf(argType));
 		}
-		
+
 		public void readPastEntry(ByteBuffer data) {
 			for (int i = 0; i < numArgs; ++i) {
 				int argType = argTypes.get(i).intValue();
@@ -703,27 +689,27 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				case DwarfConstants.DW_FORM_block: {
 					try {
 						long off = read_signed_leb128(data);
-						data.position((int)(data.position() + off));
+						data.position((int) (data.position() + off));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
-				break;
+					break;
 				case DwarfConstants.DW_FORM_block1: {
 					int off = data.get();
 					data.position(data.position() + off + 1);
 				}
-				break;
+					break;
 				case DwarfConstants.DW_FORM_block2: {
 					int off = data.getShort();
 					data.position(data.position() + off + 2);
 				}
-				break;
+					break;
 				case DwarfConstants.DW_FORM_block4: {
 					int off = data.getInt();
 					data.position(data.position() + off + 4);
 				}
-				break;
+					break;
 				case DwarfConstants.DW_FORM_string:
 					while (data.get() != 0) {
 						// loop until we find 0 byte
@@ -742,7 +728,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 			}
 		}
 	}
-	
+
 	// Convert a macro to its command line form.
 	private String getCommandLineMacro(String macro) {
 		String commandLineMacro = "-D" + macro; //$NON-NLS-1$
@@ -765,14 +751,14 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		if (data == null)
 			return;
 
-		HashMap <Long, ArrayList<String>> t_macros = new HashMap<Long, ArrayList<String>>();
-		HashMap <Long, ArrayList<String>> t_alt_macros = new HashMap<Long, ArrayList<String>>();
-		
+		HashMap<Long, ArrayList<String>> t_macros = new HashMap<Long, ArrayList<String>>();
+		HashMap<Long, ArrayList<String>> t_alt_macros = new HashMap<Long, ArrayList<String>>();
+
 		// Parse the macro section, looking for command-line macros meant for compiling files (i.e.
 		// not internal macro definitions in headers or C/C++ files.  Keep track of any forward
 		// references to fix-up later when we have a complete list of command-line macros.
 		parseMacroSection(data, str, altstr, fixupList, fixupAltList, "=FIXUP=", DEBUG, t_macros); //$NON-NLS-1$
-       
+
 		// Check if there is an alternate macro section.  If there is, parse the alternate section, but any references
 		// found there should be considered referring to the alternate string and macro sections.
 		// All forward reference fix-ups should be put on the alternate fix-up list.
@@ -781,10 +767,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				System.out.println("Processing Alternate Macro Section"); //$NON-NLS-1$
 			parseMacroSection(altdata, altstr, altstr, fixupAltList, fixupAltList, "=FIXUPALT=", DEBUG, t_alt_macros); //$NON-NLS-1$
 		}
-			
+
 		// Fix up all forward references from transparent includes
 		fixupMacros(fixupList, "=FIXUP=", DEBUG, t_macros); //$NON-NLS-1$
-		
+
 		// Fix up all forward references from transparent alt includes
 		if (DEBUG)
 			System.out.println("Fix up forward references in alternate macro section"); //$NON-NLS-1$
@@ -794,7 +780,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	// Fix up forward references made by transparent includes now that a complete macro list has been retrieved.
 	private void fixupMacros(Set<String> fixupList, String fixupMarker, boolean DEBUG,
 			HashMap<Long, ArrayList<String>> t_macros) {
-		for (String name: fixupList) {
+		for (String name : fixupList) {
 			ArrayList<String> macros = m_compileOptionsMap.get(name);
 			for (int i = 0; i < macros.size(); ++i) {
 				String macroLine = macros.get(i);
@@ -810,16 +796,15 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					i += insertMacros.size();
 				}
 			}
-			m_compileOptionsMap.put(name,  macros); // replace updated list
+			m_compileOptionsMap.put(name, macros); // replace updated list
 		}
 	}
 
 	// Parse a macro section, looking for command-line macros that are used as flags to compile source files.
 	// Keep track of any forward references to macros not yet defined in the file.  We will later
 	// fix-up these references when we have seen all command-line macros for the file.
-	private void parseMacroSection(ByteBuffer data, ByteBuffer str, ByteBuffer altstr,
-			Set<String> fixupList, Set<String> fixupAltList, String fixupMarker, boolean DEBUG,
-			HashMap<Long, ArrayList<String>> t_macros) {
+	private void parseMacroSection(ByteBuffer data, ByteBuffer str, ByteBuffer altstr, Set<String> fixupList,
+			Set<String> fixupAltList, String fixupMarker, boolean DEBUG, HashMap<Long, ArrayList<String>> t_macros) {
 		byte op;
 		while (data.hasRemaining()) {
 			try {
@@ -829,7 +814,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				boolean offset_size_8;
 				long lt_offset = -1;
 				String fileName = null;
-				
+
 				HashMap<Integer, OpcodeInfo> opcodeInfos = null;
 
 				if (DEBUG)
@@ -858,7 +843,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 						int opcode = data.get();
 						long numArgs = read_unsigned_leb128(data);
-						info.setNumArgs((int)numArgs);
+						info.setNumArgs((int) numArgs);
 						for (int j = 0; j < numArgs; ++j) {
 							int argType = data.get();
 							info.addArgType(argType);
@@ -892,16 +877,16 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							if (DEBUG)
 								System.out.println(" DW_MACRO_start_file - lineno: " + lineno + " filenum: " //$NON-NLS-1$ //$NON-NLS-2$
 										+ filenum + " " + fileName); //$NON-NLS-1$
-						else if (DEBUG)
-							System.out.println(" DW_MACRO_start_file - lineno: " + lineno + " filenum: " //$NON-NLS-1$ //$NON-NLS-2$
-									+ filenum);
+							else if (DEBUG)
+								System.out.println(" DW_MACRO_start_file - lineno: " + lineno + " filenum: " //$NON-NLS-1$ //$NON-NLS-2$
+										+ filenum);
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_end_file: {
 						if (DEBUG)
 							System.out.println(" DW_MACRO_end_file"); //$NON-NLS-1$
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_define: {
 						long lineno;
 						String string;
@@ -913,7 +898,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							System.out.println(" DW_MACRO_define - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
 									+ string);
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_undef: {
 						long lineno;
 						String macro;
@@ -923,13 +908,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							System.out.println(" DW_MACRO_undef - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
 									+ macro);
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_define_indirect: {
 						long lineno;
 						long offset;
 						lineno = read_signed_leb128(data);
 						offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
-						str.position((int)offset);
+						str.position((int) offset);
 						String macro = readString(str);
 						if (lineno == 0)
 							macros.add(getCommandLineMacro(macro));
@@ -937,13 +922,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							System.out.println(" DW_MACRO_define_indirect - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
 									+ macro);
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_define_indirect_alt: {
 						long lineno;
 						long offset;
 						lineno = read_signed_leb128(data);
 						offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
-						altstr.position((int)offset);
+						altstr.position((int) offset);
 						String macro = readString(altstr);
 						if (lineno == 0)
 							macros.add(getCommandLineMacro(macro));
@@ -951,33 +936,33 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							System.out.println(" DW_MACRO_define_indirect_alt - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
 									+ macro);
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_undef_indirect: {
 						long lineno;
 						long offset;
 						String macro;
 						lineno = read_signed_leb128(data);
 						offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
-						str.position((int)offset);
+						str.position((int) offset);
 						macro = readString(str);
 						if (DEBUG)
 							System.out.println(" DW_MACRO_undef_indirect - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
 									+ macro);
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_undef_indirect_alt: {
 						long lineno;
 						long offset;
 						String macro;
 						lineno = read_signed_leb128(data);
 						offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
-						altstr.position((int)offset);
+						altstr.position((int) offset);
 						macro = readString(altstr);
 						if (DEBUG)
 							System.out.println(" DW_MACRO_undef_indirect_alt - lineno : " + lineno + " macro : " //$NON-NLS-1$ //$NON-NLS-2$
 									+ macro);
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_transparent_include: {
 						long offset;
 						offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
@@ -990,11 +975,11 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 								System.out.println("Adding fixup for offset: " + offset + " for file: " + fileName); //$NON-NLS-1$ //$NON-NLS-2$
 							fixupList.add(fileName);
 						}
-							
+
 						if (DEBUG)
 							System.out.println(" DW_MACRO_transparent_include - offset : " + offset); //$NON-NLS-1$
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_transparent_include_alt: {
 						long offset;
 						offset = (offset_size_8 ? read_8_bytes(data) : read_4_bytes(data));
@@ -1004,30 +989,31 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 								System.out.println("Adding alt fixup for offset: " + offset + " for file: " + fileName); //$NON-NLS-1$ //$NON-NLS-2$
 							fixupAltList.add(fileName);
 						}
-							
+
 						if (DEBUG)
 							System.out.println(" DW_MACRO_transparent_include - offset : " + offset); //$NON-NLS-1$
 					}
-					break;
+						break;
 					case DwarfConstants.DW_MACRO_end: {
 						if (lt_offset < 0) {
 							if (DEBUG)
-								System.out.println("creating transparent include macros for offset: " + original_position); //$NON-NLS-1$
+								System.out.println(
+										"creating transparent include macros for offset: " + original_position); //$NON-NLS-1$
 							t_macros.put(Long.valueOf(original_position), macros);
 						}
 						done = true;
 					}
-					break;
+						break;
 					default: {
 						if (opcodeInfos != null) {
 							OpcodeInfo info = opcodeInfos.get(op);
 							info.readPastEntry(data);
 						}
 					}
-					break;
+						break;
 					}
 				}
-			}  catch (IOException e) {
+			} catch (IOException e) {
 				// do nothing
 			}
 		}
@@ -1048,12 +1034,12 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 			getCommandMacrosFromMacroSection();
 			m_macros_parsed = true;
 		}
-		ArrayList<String>macros = m_compileOptionsMap.get(fileName);
+		ArrayList<String> macros = m_compileOptionsMap.get(fileName);
 		if (macros == null)
 			return ""; //$NON-NLS-1$
-		
+
 		StringBuilder sb = new StringBuilder();
-		for (String option: macros) {
+		for (String option : macros) {
 			sb.append(option);
 			sb.append(" "); //$NON-NLS-1$
 		}

@@ -34,16 +34,15 @@ public class SimpleMapPersistableFactory implements IElementFactory {
 		// Must be the same id as the one used in the plugin.xml file
 		return "org.eclipse.cdt.dsf.ui.simpleMapPersistableFactory"; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public IAdaptable createElement(IMemento memento) {
 		try {
 			SimpleMapPersistable<Object> x = new SimpleMapPersistable<>(memento);
 			return x;
-        } catch (CoreException e) {
-            DsfUIPlugin.log(new Status(
-                IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Cannot restore persistable." , e)); //$NON-NLS-1$
-        }
+		} catch (CoreException e) {
+			DsfUIPlugin.log(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Cannot restore persistable.", e)); //$NON-NLS-1$
+		}
 		return null;
 	}
 }

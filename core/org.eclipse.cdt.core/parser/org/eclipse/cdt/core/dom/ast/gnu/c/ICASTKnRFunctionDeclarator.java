@@ -76,7 +76,7 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
 	 * @param name <code>IASTName</code>
 	 */
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name);
-	
+
 	/**
 	 * @since 5.1
 	 */

@@ -29,28 +29,28 @@ public abstract class IndexAction extends Action {
 
 	final protected IndexView indexView;
 	final protected TreeViewer viewer;
-	
+
 	protected IndexAction(IndexView view, TreeViewer viewer) {
 		super();
-		this.indexView= view;
+		this.indexView = view;
 		this.viewer = viewer;
 	}
 
 	protected IndexAction(IndexView view, TreeViewer viewer, String text) {
 		super(text);
-		this.indexView= view;
+		this.indexView = view;
 		this.viewer = viewer;
 	}
 
 	protected IndexAction(IndexView view, TreeViewer viewer, String text, ImageDescriptor image) {
 		super(text, image);
-		this.indexView= view;
+		this.indexView = view;
 		this.viewer = viewer;
 	}
 
 	protected IndexAction(IndexView view, TreeViewer viewer, String text, int style) {
 		super(text, style);
-		this.indexView= view;
+		this.indexView = view;
 		this.viewer = viewer;
 	}
 

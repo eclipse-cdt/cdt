@@ -25,41 +25,41 @@ import org.eclipse.jface.action.Action;
 public class JumpToAddressAction extends Action {
 
 	DisassemblyPart fDisassemblyPart = null;
-	
+
 	public JumpToAddressAction(DisassemblyPart disassemblyPart) {
 		fDisassemblyPart = disassemblyPart;
 	}
-	
-	@Override
-	public void run() {	
-		AddressBarContributionItem addressBar = fDisassemblyPart.getAddressBar();
-		if (addressBar!=null && addressBar.isEnabled() && fDisassemblyPart.isSuspended()) {
-        	String locationTxt = addressBar.getText();        	
-        	        	
-        	if (locationTxt==null || locationTxt.trim().length()==0)
-        		return;
-        	
-        	locationTxt = locationTxt.trim();
-        	
-        	if (locationTxt.equals(DisassemblyMessages.Disassembly_GotoLocation_initial_text)) {
-        		fDisassemblyPart.gotoActiveFrameByUser();
-        		return;
-        	}
 
-        	BigInteger address = fDisassemblyPart.eval(locationTxt, false);
+	@Override
+	public void run() {
+		AddressBarContributionItem addressBar = fDisassemblyPart.getAddressBar();
+		if (addressBar != null && addressBar.isEnabled() && fDisassemblyPart.isSuspended()) {
+			String locationTxt = addressBar.getText();
+
+			if (locationTxt == null || locationTxt.trim().length() == 0)
+				return;
+
+			locationTxt = locationTxt.trim();
+
+			if (locationTxt.equals(DisassemblyMessages.Disassembly_GotoLocation_initial_text)) {
+				fDisassemblyPart.gotoActiveFrameByUser();
+				return;
+			}
+
+			BigInteger address = fDisassemblyPart.eval(locationTxt, false);
 			if (address.compareTo(BigInteger.ZERO) < 0) {
 				addressBar.setWarningIconVisible(true);
-			} else {        				
+			} else {
 				fDisassemblyPart.gotoLocationByUser(address, locationTxt);
 				addressBar.setWarningIconVisible(false);
 			}
-		}		
+		}
 	}
-	
+
 	protected void activateDisassemblyContext() {
-		fDisassemblyPart.activateDisassemblyContext();		
+		fDisassemblyPart.activateDisassemblyContext();
 	}
-	
+
 	protected void deactivateDisassemblyContext() {
 		fDisassemblyPart.deactivateDisassemblyContext();
 	}

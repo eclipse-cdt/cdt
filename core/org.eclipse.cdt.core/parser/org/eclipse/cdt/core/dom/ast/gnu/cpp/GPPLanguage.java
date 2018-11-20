@@ -40,8 +40,10 @@ import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
  * Concrete ILanguage implementation for the DOM C++ parser.
  */
 public class GPPLanguage extends AbstractCLikeLanguage {
-	protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION= GPPScannerExtensionConfiguration.getInstance();
-	protected static final GPPParserExtensionConfiguration CPP_GNU_PARSER_EXTENSION= GPPParserExtensionConfiguration.getInstance();
+	protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION = GPPScannerExtensionConfiguration
+			.getInstance();
+	protected static final GPPParserExtensionConfiguration CPP_GNU_PARSER_EXTENSION = GPPParserExtensionConfiguration
+			.getInstance();
 	public static final String ID = CCorePlugin.PLUGIN_ID + ".g++"; //$NON-NLS-1$
 
 	/** 
@@ -58,11 +60,11 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 	public static final int GNU_LATEST_VERSION_MINOR = 7;
 
 	private static final GPPLanguage DEFAULT_INSTANCE = new GPPLanguage();
-	
+
 	public static GPPLanguage getDefault() {
 		return DEFAULT_INSTANCE;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
@@ -71,12 +73,12 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	@Override
 	public String getId() {
 		return ID;
 	}
-	
+
 	@Override
 	public int getLinkageID() {
 		return ILinkage.CPP_LINKAGE_ID;
@@ -110,18 +112,21 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 	}
 
 	@Override
-	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService, IIndex index) {
+	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
+			IIndex index) {
 		return new GNUCPPSourceParser(scanner, parserMode, logService, getParserExtensionConfiguration(), index);
 	}
 
 	@Override
-	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService, IIndex index,
-			int options, IParserSettings settings) {
-		GNUCPPSourceParser parser = new GNUCPPSourceParser(scanner, parserMode, logService, getParserExtensionConfiguration(), index);
+	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
+			IIndex index, int options, IParserSettings settings) {
+		GNUCPPSourceParser parser = new GNUCPPSourceParser(scanner, parserMode, logService,
+				getParserExtensionConfiguration(), index);
 		if (settings != null) {
 			int maximumTrivialExpressions = settings.getMaximumTrivialExpressionsInAggregateInitializers();
-			if (maximumTrivialExpressions >= 0 && (options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
-					parser.setMaximumTrivialExpressionsInAggregateInitializers(maximumTrivialExpressions);
+			if (maximumTrivialExpressions >= 0
+					&& (options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
+				parser.setMaximumTrivialExpressionsInAggregateInitializers(maximumTrivialExpressions);
 			}
 		}
 		return parser;

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
-
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
@@ -33,8 +32,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
  */
 public class GCCBuildCommandParser extends AbstractBuildCommandParser implements ILanguageSettingsEditableProvider {
 	@SuppressWarnings("nls")
-	static final AbstractOptionParser[] optionParsers = {
-			new IncludePathOptionParser("-I\\s*([\"'])(.*)\\1", "$2"),
+	static final AbstractOptionParser[] optionParsers = { new IncludePathOptionParser("-I\\s*([\"'])(.*)\\1", "$2"),
 			new IncludePathOptionParser("-I\\s*([^\\s\"']*)", "$1"),
 			new IncludePathOptionParser("-isystem\\s*([\"'])(.*)\\1", "$2"),
 			new IncludePathOptionParser("-isystem\\s*([^\\s\"']*)", "$1"),
@@ -74,7 +72,8 @@ public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 	 * Error Parser which allows highlighting of output lines matching the patterns of this parser.
 	 * Intended for better troubleshooting experience.
 	 */
-	public static class GCCBuildCommandPatternHighlighter extends AbstractBuildCommandParser.AbstractBuildCommandPatternHighlighter {
+	public static class GCCBuildCommandPatternHighlighter
+			extends AbstractBuildCommandParser.AbstractBuildCommandPatternHighlighter {
 		// ID of the parser taken from the existing extension point
 		private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$
 
@@ -91,7 +90,7 @@ public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 			that.setId(getId());
 			that.setName(getName());
 			for (RegexErrorPattern pattern : getPatterns()) {
-				that.addPattern((RegexErrorPattern)pattern.clone());
+				that.addPattern((RegexErrorPattern) pattern.clone());
 			}
 			return that;
 		}

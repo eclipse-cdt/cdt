@@ -20,16 +20,13 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 public interface IUPCASTDeclSpecifier extends ICASTDeclSpecifier {
 
 	public static final ASTNodeProperty BLOCK_SIZE_EXPRESSION = new ASTNodeProperty(
-		"IUPCASTDeclSpecifier.BLOCK_SIZE_EXPRESSION - IUPCASTDeclSpecifier block size expression"); //$NON-NLS-1$
-
+			"IUPCASTDeclSpecifier.BLOCK_SIZE_EXPRESSION - IUPCASTDeclSpecifier block size expression"); //$NON-NLS-1$
 
 	public static final int rt_unspecified = 0;
 
 	public static final int rt_strict = 1;
 
 	public static final int rt_relaxed = 2;
-
-
 
 	public static final int sh_not_shared = 0;
 
@@ -41,24 +38,17 @@ public interface IUPCASTDeclSpecifier extends ICASTDeclSpecifier {
 
 	public static final int sh_shared_constant_expression = 4;
 
-
-
 	public int getReferenceType();
 
 	public void setReferenceType(int referenceType);
-
-
 
 	public int getSharedQualifier();
 
 	public void setSharedQualifier(int shared);
 
-
-
 	public IASTExpression getBlockSizeExpression();
 
 	public void setBlockSizeExpression(IASTExpression expr);
-
 
 	@Override
 	public IUPCASTDeclSpecifier copy();

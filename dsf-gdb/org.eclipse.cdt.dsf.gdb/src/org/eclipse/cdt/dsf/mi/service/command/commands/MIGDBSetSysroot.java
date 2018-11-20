@@ -22,10 +22,9 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * @since 1.1
  *
  */
-public class MIGDBSetSysroot extends MIGDBSet
-{
+public class MIGDBSetSysroot extends MIGDBSet {
 	public MIGDBSetSysroot(ICommandControlDMContext ctx, String path) {
-		super(ctx, new String[] {"sysroot", path}, x-> new MINoChangeAdjustable(x));//$NON-NLS-1$
+		super(ctx, new String[] { "sysroot", path }, x -> new MINoChangeAdjustable(x));//$NON-NLS-1$
 	}
 
 	// Using /dev/null is the recommended way to disable sysroot

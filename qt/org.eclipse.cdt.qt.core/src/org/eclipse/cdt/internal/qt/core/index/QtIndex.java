@@ -42,8 +42,8 @@ public abstract class QtIndex {
 		try {
 			Object index = project.getSessionProperty(Activator.QTINDEX_PROP_NAME);
 			if (index instanceof QtIndex)
-				return (QtIndex)index;
-		} catch(CoreException e) {
+				return (QtIndex) index;
+		} catch (CoreException e) {
 			Activator.log(e);
 		}
 
@@ -54,7 +54,7 @@ public abstract class QtIndex {
 
 		try {
 			project.setSessionProperty(Activator.QTINDEX_PROP_NAME, index);
-		} catch( CoreException e ) {
+		} catch (CoreException e) {
 			Activator.log(e);
 		}
 

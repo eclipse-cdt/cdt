@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class WizardDefaultsTab extends AbstractCPropertyTab {
 
-    private Button show_sup;
-    private Button show_oth;
+	private Button show_sup;
+	private Button show_oth;
 
 	@Override
 	public void createControls(Composite parent) {
@@ -41,12 +41,12 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
 		usercomp.setLayout(new GridLayout(1, false));
 
 		show_sup = new Button(usercomp, SWT.CHECK);
-        show_sup.setText(Messages.WizardDefaultsTab_0); 
-        show_sup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		show_sup.setText(Messages.WizardDefaultsTab_0);
+		show_sup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_oth = new Button(usercomp, SWT.CHECK);
-        show_oth.setText(Messages.WizardDefaultsTab_1); 
-        show_oth.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		show_oth.setText(Messages.WizardDefaultsTab_1);
+		show_oth.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));
 		show_oth.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS));
@@ -57,7 +57,7 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOSUPP, !show_sup.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_OTHERS, show_oth.getSelection());
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		show_sup.setSelection(true);
@@ -65,9 +65,15 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
 	}
 
 	@Override
-	protected void performApply(ICResourceDescription src, ICResourceDescription dst) { performOK(); }
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
+		performOK();
+	}
+
 	@Override
-	protected void updateData(ICResourceDescription cfg) {} // Do nothing. Data is read once after creation
+	protected void updateData(ICResourceDescription cfg) {
+	} // Do nothing. Data is read once after creation
+
 	@Override
-	protected void updateButtons() {} // Do nothing. No buttons to update.
+	protected void updateButtons() {
+	} // Do nothing. No buttons to update.
 }

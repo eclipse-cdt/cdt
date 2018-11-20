@@ -87,7 +87,6 @@ public class SynchronizedStorageElement implements ICStorageElement {
 		return fLock;
 	}
 
-
 	@Override
 	public void clear() {
 		synchronized (fLock) {
@@ -103,8 +102,7 @@ public class SynchronizedStorageElement implements ICStorageElement {
 	}
 
 	@Override
-	public ICStorageElement createCopy() throws UnsupportedOperationException,
-			CoreException {
+	public ICStorageElement createCopy() throws UnsupportedOperationException, CoreException {
 		synchronized (fLock) {
 			return synchronizedElement(fEl.createCopy());
 		}
@@ -114,7 +112,7 @@ public class SynchronizedStorageElement implements ICStorageElement {
 	public boolean equals(ICStorageElement other) {
 		synchronized (fLock) {
 			if (other instanceof SynchronizedStorageElement)
-				other = ((SynchronizedStorageElement)other).fEl;
+				other = ((SynchronizedStorageElement) other).fEl;
 			return fEl.equals(other);
 		}
 	}
@@ -164,8 +162,7 @@ public class SynchronizedStorageElement implements ICStorageElement {
 	@Override
 	public ICStorageElement getParent() {
 		synchronized (fLock) {
-			if (fEl.getParent() == null ||
-					fEl.getParent() instanceof SynchronizedStorageElement)
+			if (fEl.getParent() == null || fEl.getParent() instanceof SynchronizedStorageElement)
 				return fEl.getParent();
 			return new SynchronizedStorageElement(fEl.getParent(), fLock);
 		}
@@ -193,8 +190,7 @@ public class SynchronizedStorageElement implements ICStorageElement {
 	}
 
 	@Override
-	public ICStorageElement importChild(ICStorageElement el)
-			throws UnsupportedOperationException {
+	public ICStorageElement importChild(ICStorageElement el) throws UnsupportedOperationException {
 		synchronized (fLock) {
 			return new SynchronizedStorageElement(el.importChild(el), fLock);
 		}
@@ -211,7 +207,7 @@ public class SynchronizedStorageElement implements ICStorageElement {
 	public void removeChild(ICStorageElement el) {
 		synchronized (fLock) {
 			if (el instanceof SynchronizedStorageElement)
-				el = ((SynchronizedStorageElement)el).fEl;
+				el = ((SynchronizedStorageElement) el).fEl;
 			fEl.removeChild(el);
 		}
 	}

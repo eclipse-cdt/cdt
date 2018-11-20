@@ -43,17 +43,18 @@ public class TracepointGlobalActionsList extends Composite {
 	private Table table;
 	private TracepointActionsList clientList;
 	private boolean isSubAction;
-	
+
 	// When dealing with a "while-stepping" action, we deal with a "child" global
 	// list, and must keep track of the parent global list, to properly update it.
 	// This field will be null when the this class represents the parent class itself.
 	private TracepointGlobalActionsList parentGlobalList;
 
-	public TracepointGlobalActionsList(Composite parent, int style, boolean useAttachButton, TracepointGlobalActionsList parentList, boolean isSub) {
+	public TracepointGlobalActionsList(Composite parent, int style, boolean useAttachButton,
+			TracepointGlobalActionsList parentList, boolean isSub) {
 		super(parent, style);
 		isSubAction = isSub;
 		parentGlobalList = parentList;
-		
+
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 5;
 		setLayout(gridLayout);
@@ -64,6 +65,7 @@ public class TracepointGlobalActionsList extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				HandleEditButton();
@@ -91,7 +93,8 @@ public class TracepointGlobalActionsList extends Composite {
 		ArrayList<ITracepointAction> actions = TracepointActionManager.getInstance().getActions();
 
 		for (ITracepointAction element : actions) {
-			if (isSubAction && element instanceof WhileSteppingAction) continue;
+			if (isSubAction && element instanceof WhileSteppingAction)
+				continue;
 			final TableItem tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setText(0, element.getName());
 			tableItem.setText(1, element.getTypeName());
@@ -133,7 +136,7 @@ public class TracepointGlobalActionsList extends Composite {
 		deleteButton = new Button(this, SWT.NONE);
 		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		deleteButton.setText(MessagesForTracepointActions.TracepointActions_Delete);
-		
+
 		updateButtons();
 	}
 
@@ -176,7 +179,7 @@ public class TracepointGlobalActionsList extends Composite {
 		}
 		updateButtons();
 	}
-	
+
 	void removeAction(ITracepointAction action) {
 		TableItem[] currentItems = table.getItems();
 		for (int i = 0; i < currentItems.length; i++) {
@@ -188,7 +191,7 @@ public class TracepointGlobalActionsList extends Composite {
 				break;
 			}
 		}
-		updateButtons();	
+		updateButtons();
 	}
 
 	protected void HandleEditButton() {
@@ -219,11 +222,11 @@ public class TracepointGlobalActionsList extends Composite {
 		TracepointActionDialog dialog = new TracepointActionDialog(this.getShell(), null, this, isSubAction);
 		int result = dialog.open();
 		if (result == Window.OK) {
-			ITracepointAction action = (ITracepointAction)dialog.getTracepointAction();
+			ITracepointAction action = (ITracepointAction) dialog.getTracepointAction();
 			action.setName(dialog.getActionName());
 			TracepointActionManager.getInstance().addAction(action);
 			addAction(action);
-			
+
 			if (parentGlobalList != null) {
 				assert isSubAction;
 				// Update the parent list also
@@ -239,7 +242,7 @@ public class TracepointGlobalActionsList extends Composite {
 		tableItem.setText(2, action.getSummary());
 		tableItem.setData(action);
 	}
-	
+
 	public void updateButtons() {
 		TableItem[] selectedItems = table.getSelection();
 		if (attachButton != null)
@@ -247,7 +250,7 @@ public class TracepointGlobalActionsList extends Composite {
 		deleteButton.setEnabled(selectedItems.length > 0);
 		editButton.setEnabled(selectedItems.length == 1);
 	}
-	
+
 	/**
 	 * Register client list to be notified of changes to actions.
 	 * @param actionsList
@@ -255,7 +258,7 @@ public class TracepointGlobalActionsList extends Composite {
 	void setClientList(TracepointActionsList actionsList) {
 		clientList = actionsList;
 	}
-	
+
 	/**
 	 * Update the appearance of given action.
 	 * @param action

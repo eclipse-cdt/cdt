@@ -44,8 +44,8 @@ public class CContext extends TranslationUnitContext {
 	 * @param completionLength the length of the context
 	 * @param translationUnit the translation unit represented by the document
 	 */
-	public CContext(TemplateContextType type, IDocument document, int completionOffset,
-			int completionLength, ITranslationUnit translationUnit) {
+	public CContext(TemplateContextType type, IDocument document, int completionOffset, int completionLength,
+			ITranslationUnit translationUnit) {
 		super(type, document, completionOffset, completionLength, translationUnit);
 	}
 
@@ -57,8 +57,8 @@ public class CContext extends TranslationUnitContext {
 	 * @param completionPosition the completion position within the document
 	 * @param translationUnit the translation unit (may be <code>null</code>).
 	 */
-	public CContext(TemplateContextType type, IDocument document,
-			Position completionPosition, ITranslationUnit translationUnit) {
+	public CContext(TemplateContextType type, IDocument document, Position completionPosition,
+			ITranslationUnit translationUnit) {
 		super(type, document, completionPosition, translationUnit);
 	}
 
@@ -68,10 +68,10 @@ public class CContext extends TranslationUnitContext {
 			return super.getStart();
 
 		try {
-			IDocument document= getDocument();
+			IDocument document = getDocument();
 
-			int start= getCompletionOffset();
-			int end= getCompletionOffset() + getCompletionLength();
+			int start = getCompletionOffset();
+			int end = getCompletionOffset() + getCompletionLength();
 
 			while (start != 0 && isUnicodeIdentifierPartOrPoundSign(document.getChar(start - 1)))
 				start--;
@@ -80,11 +80,11 @@ public class CContext extends TranslationUnitContext {
 				start++;
 
 			if (start == end)
-				start= getCompletionOffset();	
+				start = getCompletionOffset();
 
-			return start;	
+			return start;
 		} catch (BadLocationException e) {
-			return super.getStart();	
+			return super.getStart();
 		}
 	}
 
@@ -94,37 +94,37 @@ public class CContext extends TranslationUnitContext {
 			return super.getEnd();
 
 		try {
-			IDocument document= getDocument();
+			IDocument document = getDocument();
 
-			int start= getCompletionOffset();
-			int end= getCompletionOffset() + getCompletionLength();
+			int start = getCompletionOffset();
+			int end = getCompletionOffset() + getCompletionLength();
 
 			while (start != end && Character.isWhitespace(document.getChar(end - 1)))
 				end--;
 
-			return end;	
+			return end;
 		} catch (BadLocationException e) {
 			return super.getEnd();
-		}		
+		}
 	}
-	
+
 	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		if (!canEvaluate(template))
 			return null;
 
-		TemplateTranslator translator= new TemplateTranslator();
-		TemplateBuffer buffer= translator.translate(template.getPattern());
+		TemplateTranslator translator = new TemplateTranslator();
+		TemplateBuffer buffer = translator.translate(template.getPattern());
 
 		getContextType().resolve(buffer, this);
 
-		IPreferenceStore prefs= CUIPlugin.getDefault().getPreferenceStore();
-		boolean useCodeFormatter= prefs.getBoolean(PreferenceConstants.TEMPLATES_USE_CODEFORMATTER);			
+		IPreferenceStore prefs = CUIPlugin.getDefault().getPreferenceStore();
+		boolean useCodeFormatter = prefs.getBoolean(PreferenceConstants.TEMPLATES_USE_CODEFORMATTER);
 
-		ICProject project= getCProject();
+		ICProject project = getCProject();
 		int indentationLevel = isReadOnly() ? 0 : getIndentationLevel();
-		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()),
-				indentationLevel, useCodeFormatter, project);
+		CFormatter formatter = new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()), indentationLevel,
+				useCodeFormatter, project);
 		formatter.format(buffer, this);
 
 		return buffer;

@@ -33,9 +33,7 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-
 public class MakefileReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
-
 
 	private ITextEditor fEditor;
 	private IWorkingCopyManager fManager;
@@ -44,12 +42,12 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy, IRecon
 	private IReconcilingParticipant fMakefileReconcilingParticipant;
 
 	public MakefileReconcilingStrategy(MakefileEditor editor) {
-		fOutliner= editor.getOutlinePage();
-		fEditor= editor;
-		fManager= MakeUIPlugin.getDefault().getWorkingCopyManager();
-		fDocumentProvider= MakeUIPlugin.getDefault().getMakefileDocumentProvider();
+		fOutliner = editor.getOutlinePage();
+		fEditor = editor;
+		fManager = MakeUIPlugin.getDefault().getWorkingCopyManager();
+		fDocumentProvider = MakeUIPlugin.getDefault().getMakefileDocumentProvider();
 		if (fEditor instanceof IReconcilingParticipant) {
-			fMakefileReconcilingParticipant= (IReconcilingParticipant)fEditor;
+			fMakefileReconcilingParticipant = (IReconcilingParticipant) fEditor;
 		}
 
 	}
@@ -60,7 +58,6 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy, IRecon
 	@Override
 	public void setDocument(IDocument document) {
 	}
-
 
 	/**
 	 * @see IReconcilingStrategy#reconcile(IRegion)
@@ -100,7 +97,7 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy, IRecon
 				//
 			}
 		}
- 	}
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
@@ -116,6 +113,6 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy, IRecon
 	@Override
 	public void initialReconcile() {
 		// no need to reconcile initially
-//		reconcile();
+		//		reconcile();
 	}
 }

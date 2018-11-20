@@ -26,8 +26,10 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
  */
 public class AppearanceAwareLabelProvider extends CUILabelProvider implements IPropertyChangeListener {
 
-	public final static long DEFAULT_TEXTFLAGS= CElementLabels.M_PARAMETER_TYPES | CElementLabels.PROJECT_POST_QUALIFIED | CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
-	public final static int DEFAULT_IMAGEFLAGS= CElementImageProvider.OVERLAY_ICONS;
+	public final static long DEFAULT_TEXTFLAGS = CElementLabels.M_PARAMETER_TYPES
+			| CElementLabels.PROJECT_POST_QUALIFIED | CElementLabels.F_APP_TYPE_SIGNATURE
+			| CElementLabels.M_APP_RETURNTYPE;
+	public final static int DEFAULT_IMAGEFLAGS = CElementImageProvider.OVERLAY_ICONS;
 
 	/**
 	 * Constructor for AppearanceAwareLabelProvider.
@@ -38,11 +40,11 @@ public class AppearanceAwareLabelProvider extends CUILabelProvider implements IP
 
 	/**
 	 * Creates a labelProvider with DEFAULT_TEXTFLAGS and DEFAULT_IMAGEFLAGS
-	 */	
+	 */
 	public AppearanceAwareLabelProvider() {
 		this(DEFAULT_TEXTFLAGS, DEFAULT_IMAGEFLAGS);
 	}
-	
+
 	/*
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */

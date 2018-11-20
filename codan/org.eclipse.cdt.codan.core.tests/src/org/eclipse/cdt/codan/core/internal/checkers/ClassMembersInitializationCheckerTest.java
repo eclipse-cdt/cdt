@@ -35,7 +35,8 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	}
 
 	private void disableSkipConstructorsWithFCalls() {
-		setPreferenceValue(ClassMembersInitializationChecker.ER_ID, ClassMembersInitializationChecker.PARAM_SKIP, false);
+		setPreferenceValue(ClassMembersInitializationChecker.ER_ID, ClassMembersInitializationChecker.PARAM_SKIP,
+				false);
 	}
 
 	public void checkMultiErrorsOnLine(int line, int count) {
@@ -457,7 +458,6 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
-
 	// class A {
 	//   int a;
 	//   A(int a) { setA(a); }  // 1 warning for: a.
@@ -472,7 +472,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	public void testUsingMethodsInConstructorWithoutPreference() throws Exception {
 		disableSkipConstructorsWithFCalls();
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(3,4);
+		checkErrorLines(3, 4);
 	}
 
 	// class A;
@@ -490,7 +490,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	public void testUsingConstMethodsInConstructorWithoutPreference() throws Exception {
 		disableSkipConstructorsWithFCalls();
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(8,9,10,11);
+		checkErrorLines(8, 9, 10, 11);
 	}
 
 	// @file:test.h

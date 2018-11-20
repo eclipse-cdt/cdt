@@ -23,10 +23,10 @@ public class LanguageMappingLinkListener implements Listener {
 
 	private static final String WORKSPACE_PREFERENCE_PAGE = "org.eclipse.cdt.ui.preferences.LanguageMappings"; //$NON-NLS-1$
 	private static final String PROJECT_PROPERTY_PAGE = "org.eclipse.cdt.ui.projectLanguageMappings"; //$NON-NLS-1$
-	
+
 	private static final String WORKSPACE_LINK = "workspace"; //$NON-NLS-1$
 	private static final String PROJECT_LINK = "project"; //$NON-NLS-1$
-	
+
 	private Shell fShell;
 	private IAdaptable fElement;
 

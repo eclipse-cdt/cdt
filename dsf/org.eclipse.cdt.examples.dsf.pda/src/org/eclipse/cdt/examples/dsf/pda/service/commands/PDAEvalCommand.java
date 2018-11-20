@@ -37,12 +37,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAEvalCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAEvalCommand(PDAThreadDMContext thread, String operation) {
-        super(thread, "eval " + thread.getID() + " " + operation);
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAEvalCommand(PDAThreadDMContext thread, String operation) {
+		super(thread, "eval " + thread.getID() + " " + operation);
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

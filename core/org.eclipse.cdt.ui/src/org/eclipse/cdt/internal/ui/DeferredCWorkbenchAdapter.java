@@ -44,7 +44,7 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter implements IDef
 			return;
 		}
 		collector.add(children, monitor);
-	    collector.done();
+		collector.done();
 	}
 
 	/*
@@ -64,6 +64,6 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter implements IDef
 	 */
 	@Override
 	public ISchedulingRule getRule(final Object object) {
-    	return fCElement.getResource();
+		return fCElement.getResource();
 	}
 }

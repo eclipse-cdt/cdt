@@ -16,7 +16,7 @@ public interface ITokenConstants {
 	int EOF = 0;
 	/** end of line */
 	int EOL = 1;
-	
+
 	/** an open parenthesis */
 	int LPAREN = 2;
 	/** a close parenthesis */
@@ -36,7 +36,7 @@ public interface ITokenConstants {
 	int M4_STRING = 21;
 	/** an m4 comment (as determined by changecomment, NOT dnl) */
 	int M4_COMMENT = 22;
-	
+
 	/** the sh 'if' token */
 	int SH_IF = 40;
 	/** the sh 'then' token */
@@ -47,7 +47,7 @@ public interface ITokenConstants {
 	int SH_ELIF = 43;
 	/** the sh 'fi' token */
 	int SH_FI = 44;
-	
+
 	/** the sh 'while' token */
 	int SH_WHILE = 45;
 	/** the sh 'for' token */
@@ -61,7 +61,7 @@ public interface ITokenConstants {
 	/** the sh 'done' token */
 	int SH_DONE = 50;
 	/** the sh 'case' token */
-	
+
 	int SH_CASE = 51;
 	/** the sh 'in' token */
 	int SH_IN = 52;
@@ -72,7 +72,7 @@ public interface ITokenConstants {
 
 	/** the sh '$' token */
 	int SH_DOLLAR = 60;
-	
+
 	/** the sh '{' token */
 	int SH_LBRACE = 61;
 	/** the sh '}' token */
@@ -81,7 +81,7 @@ public interface ITokenConstants {
 	int SH_LBRACKET = 63;
 	/** the sh ']' token */
 	int SH_RBRACKET = 64;
-	
+
 	/** the sh '<<' token */
 	int SH_HERE = 65;
 	/** the sh '<<-' token */
@@ -92,6 +92,5 @@ public interface ITokenConstants {
 	int SH_STRING_SINGLE = 68;
 	/** an sh backtick-quoted string */
 	int SH_STRING_BACKTICK = 69;
-
 
 }

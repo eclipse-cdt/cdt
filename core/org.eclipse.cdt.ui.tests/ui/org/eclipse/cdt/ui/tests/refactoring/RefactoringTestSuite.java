@@ -35,17 +35,10 @@ import org.eclipse.cdt.ui.tests.refactoring.utils.UtilTestSuite;
  * @author Emanuel Graf
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	UtilTestSuite.class,
-	RenameRegressionTests.class,
-	ExtractFunctionRefactoringTest.class,
-	ExtractConstantRefactoringTest.class,
-	HideMethodRefactoringTest.class,
-	GenerateGettersAndSettersTest.class,
-	ImplementMethodRefactoringTest.class,
-	ExtractLocalVariableRefactoringTest.class,
-	ToggleRefactoringTest.class,
-	IncludesTestSuite.class,
+@Suite.SuiteClasses({ UtilTestSuite.class, RenameRegressionTests.class, ExtractFunctionRefactoringTest.class,
+		ExtractConstantRefactoringTest.class, HideMethodRefactoringTest.class, GenerateGettersAndSettersTest.class,
+		ImplementMethodRefactoringTest.class, ExtractLocalVariableRefactoringTest.class, ToggleRefactoringTest.class,
+		IncludesTestSuite.class,
 
 })
 public class RefactoringTestSuite {

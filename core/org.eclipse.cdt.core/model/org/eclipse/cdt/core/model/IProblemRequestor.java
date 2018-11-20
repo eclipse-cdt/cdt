@@ -22,12 +22,12 @@ import org.eclipse.cdt.core.parser.IProblem;
  */
 
 public interface IProblemRequestor {
-	
+
 	/**
 	 * Notification of a Java problem.
 	 * 
 	 * @param problem IProblem - The discovered Java problem.
-	 */	
+	 */
 	void acceptProblem(IProblem problem);
 
 	/**

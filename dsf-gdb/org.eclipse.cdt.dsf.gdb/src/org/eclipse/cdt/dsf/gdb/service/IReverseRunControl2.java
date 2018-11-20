@@ -21,13 +21,13 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 /** @since 5.0 */
 public interface IReverseRunControl2 extends IReverseRunControl {
 
-    /**
-     * Get the reverse debugging method.
-     */
-    void getReverseTraceMethod(ICommandControlDMContext context, DataRequestMonitor<ReverseDebugMethod> rm);
+	/**
+	 * Get the reverse debugging method.
+	 */
+	void getReverseTraceMethod(ICommandControlDMContext context, DataRequestMonitor<ReverseDebugMethod> rm);
 
-    /**
-     * Change reverse debugging method based on the method parameter.
-     */
-    void enableReverseMode(ICommandControlDMContext context, ReverseDebugMethod traceMethod, RequestMonitor rm);
+	/**
+	 * Change reverse debugging method based on the method parameter.
+	 */
+	void enableReverseMode(ICommandControlDMContext context, ReverseDebugMethod traceMethod, RequestMonitor rm);
 }

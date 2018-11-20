@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.jface.action.IAction;
@@ -45,7 +45,7 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 		return fModule;
 	}
 
-	private void setModule( ICModule module ) {
+	private void setModule(ICModule module) {
 		fModule = module;
 	}
 
@@ -53,7 +53,7 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
-	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fTargetPart = targetPart;
 	}
 
@@ -61,26 +61,27 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
-		PropertyDialogAction propertyAction = new PropertyDialogAction( getActivePart().getSite(), new ISelectionProvider() {
+	public void run(IAction action) {
+		PropertyDialogAction propertyAction = new PropertyDialogAction(getActivePart().getSite(),
+				new ISelectionProvider() {
 
-			@Override
-			public void addSelectionChangedListener( ISelectionChangedListener listener ) {
-			}
+					@Override
+					public void addSelectionChangedListener(ISelectionChangedListener listener) {
+					}
 
-			@Override
-			public ISelection getSelection() {
-				return new StructuredSelection( getModule() );
-			}
+					@Override
+					public ISelection getSelection() {
+						return new StructuredSelection(getModule());
+					}
 
-			@Override
-			public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
-			}
+					@Override
+					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+					}
 
-			@Override
-			public void setSelection( ISelection selection ) {
-			}
-		} );
+					@Override
+					public void setSelection(ISelection selection) {
+					}
+				});
 		propertyAction.run();
 	}
 
@@ -88,17 +89,17 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void selectionChanged( IAction action, ISelection selection ) {
-		if ( selection instanceof IStructuredSelection ) {
-			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof ICModule ) {
-				action.setEnabled( true );
-				setModule( (ICModule)element );
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			Object element = ((IStructuredSelection) selection).getFirstElement();
+			if (element instanceof ICModule) {
+				action.setEnabled(true);
+				setModule((ICModule) element);
 				return;
 			}
 		}
-		action.setEnabled( false );
-		setModule( null );
+		action.setEnabled(false);
+		setModule(null);
 	}
 
 	protected IWorkbenchPart getActivePart() {

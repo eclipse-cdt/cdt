@@ -41,7 +41,7 @@ public interface IASTExpressionStatement extends IASTStatement {
 	 * @param expression
 	 */
 	public void setExpression(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

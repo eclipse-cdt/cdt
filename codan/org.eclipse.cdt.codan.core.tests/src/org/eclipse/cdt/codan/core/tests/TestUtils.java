@@ -65,7 +65,8 @@ public class TestUtils {
 		if (plugin != null) {
 			URL resource = plugin.getBundle().getResource(srcRoot + "/" + classFile);
 			if (resource == null)
-				throw new IOException("Cannot find file " + srcRoot + "/" + classFile + " in bundle " + plugin.getBundle().getBundleId());
+				throw new IOException("Cannot find file " + srcRoot + "/" + classFile + " in bundle "
+						+ plugin.getBundle().getBundleId());
 			st = resource.openStream();
 		} else {
 			st = clazz.getResourceAsStream("/" + classFile);

@@ -152,7 +152,8 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		} catch (InterruptedException e) {
 			return;
 		} catch (InvocationTargetException e) {
-			MakeUIPlugin.logException(e, MakeUIPlugin.getResourceString("UpdateMakeProjectAction.exception.error"), MakeUIPlugin.getResourceString("UpdateMakeProjectAction.eception.message")); //$NON-NLS-1$ //$NON-NLS-2$
+			MakeUIPlugin.logException(e, MakeUIPlugin.getResourceString("UpdateMakeProjectAction.exception.error"), //$NON-NLS-1$
+					MakeUIPlugin.getResourceString("UpdateMakeProjectAction.eception.message")); //$NON-NLS-1$
 		}
 	}
 
@@ -214,10 +215,8 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 			for (int i = 0; i < project.length; i++) {
 				// remove old builder
 				project[i].refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(monitor, 1));
-				MakeProjectNature.removeFromBuildSpec(
-					project[i],
-					MakeCorePlugin.OLD_BUILDER_ID,
-					new SubProgressMonitor(monitor, 1));
+				MakeProjectNature.removeFromBuildSpec(project[i], MakeCorePlugin.OLD_BUILDER_ID,
+						new SubProgressMonitor(monitor, 1));
 
 				// convert .cdtproject
 				CCorePlugin.getDefault().mapCProjectOwner(project[i], MakeCorePlugin.MAKE_PROJECT_ID, true);
@@ -254,7 +253,8 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 					project[i].setPersistentProperty(qName[j], null);
 				}
 
-				IProgressMonitor subMon = new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+				IProgressMonitor subMon = new SubProgressMonitor(monitor, 1,
+						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 				project[i].accept(new TargetConvertVisitor(subMon), 0);
 				monitor.worked(1);
 			}

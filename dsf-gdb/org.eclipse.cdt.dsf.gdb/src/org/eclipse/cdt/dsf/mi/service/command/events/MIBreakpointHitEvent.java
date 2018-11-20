@@ -46,69 +46,70 @@ import org.eclipse.debug.core.model.IBreakpoint;
 @Immutable
 public class MIBreakpointHitEvent extends MIStoppedEvent {
 
-    private String bkptno;
+	private String bkptno;
 
-    /** @since 5.0 */
-    protected MIBreakpointHitEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String bkptno) {
-        super(ctx, token, results, frame);
-        this.bkptno = bkptno;
-    }
+	/** @since 5.0 */
+	protected MIBreakpointHitEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame,
+			String bkptno) {
+		super(ctx, token, results, frame);
+		this.bkptno = bkptno;
+	}
 
-    /** @since 5.0 */
-    public String getNumber() {
-        return bkptno;
-    }
-    
-    @ConfinedToDsfExecutor("")    
-    public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
-       String bkptno = ""; //$NON-NLS-1$
+	/** @since 5.0 */
+	public String getNumber() {
+		return bkptno;
+	}
 
-       for (int i = 0; i < results.length; i++) {
-           String var = results[i].getVariable();
-           MIValue value = results[i].getMIValue();
-           String str = ""; //$NON-NLS-1$
-           if (value != null && value instanceof MIConst) {
-               str = ((MIConst)value).getString();
-           }
+	@ConfinedToDsfExecutor("")
+	public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
+		String bkptno = ""; //$NON-NLS-1$
 
-           if (var.equals("bkptno")) { //$NON-NLS-1$
-               try {
-                   bkptno = str.trim();
-               } catch (NumberFormatException e) {
-               }
-           }
-       }
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue value = results[i].getMIValue();
+			String str = ""; //$NON-NLS-1$
+			if (value != null && value instanceof MIConst) {
+				str = ((MIConst) value).getString();
+			}
 
-       // We might be here because of a catchpoint hit; in gdb >= 7.0,
-       // catchpoints are reported as breakpoints. Unfortunately, there's
-       // nothing in the stopped event indicating it's a catchpoint, and unlike
+			if (var.equals("bkptno")) { //$NON-NLS-1$
+				try {
+					bkptno = str.trim();
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+
+		// We might be here because of a catchpoint hit; in gdb >= 7.0,
+		// catchpoints are reported as breakpoints. Unfortunately, there's
+		// nothing in the stopped event indicating it's a catchpoint, and unlike
 		// gdb < 7.0, there are no stream records that tell us so. The only way
 		// to determine it's a catchpoint is to map the gdb breakpoint number
 		// back to the CBreakpoint (platform) object.
-       IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
-       if (bpsTarget != null) {
-    	   MIBreakpointDMContext bkpt = new MIBreakpointDMContext(dmc.getSessionId(), new IDMContext[] {bpsTarget}, bkptno);
-    	   DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), dmc.getSessionId());
-    	   try {
-	    	   MIBreakpointsManager bkptMgr = tracker.getService(MIBreakpointsManager.class);
-	    	   if (bkptMgr != null) {
-		    	   IBreakpoint platformBkpt = bkptMgr.findPlatformBreakpoint(bkpt);
-		    	   if (platformBkpt instanceof CEventBreakpoint) {
-		    		   try {
-		    			   String eventTypeID = ((CEventBreakpoint)platformBkpt).getEventType();
-		    			   String gdbKeyword = GdbCatchpoints.eventToGdbCatchpointKeyword(eventTypeID);
-		    			   return MICatchpointHitEvent.parse(dmc, token, results, bkptno, gdbKeyword);
-		    		   } catch (DebugException e) {
-		    		   }
-		    	   }
-	    	   }
-    	   }
-    	   finally {
-    		   tracker.dispose();
-    	   }
-       }
+		IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
+		if (bpsTarget != null) {
+			MIBreakpointDMContext bkpt = new MIBreakpointDMContext(dmc.getSessionId(), new IDMContext[] { bpsTarget },
+					bkptno);
+			DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), dmc.getSessionId());
+			try {
+				MIBreakpointsManager bkptMgr = tracker.getService(MIBreakpointsManager.class);
+				if (bkptMgr != null) {
+					IBreakpoint platformBkpt = bkptMgr.findPlatformBreakpoint(bkpt);
+					if (platformBkpt instanceof CEventBreakpoint) {
+						try {
+							String eventTypeID = ((CEventBreakpoint) platformBkpt).getEventType();
+							String gdbKeyword = GdbCatchpoints.eventToGdbCatchpointKeyword(eventTypeID);
+							return MICatchpointHitEvent.parse(dmc, token, results, bkptno, gdbKeyword);
+						} catch (DebugException e) {
+						}
+					}
+				}
+			} finally {
+				tracker.dispose();
+			}
+		}
 
-       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
-       return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
-    }
+		MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+		return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
+	}
 }

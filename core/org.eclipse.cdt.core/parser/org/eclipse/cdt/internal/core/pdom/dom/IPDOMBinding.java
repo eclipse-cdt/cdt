@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.IPDOMNode;
@@ -30,7 +30,7 @@ public interface IPDOMBinding extends IPDOMNode, IIndexFragmentBinding {
 	 * Returns the database record for this binding.
 	 */
 	long getRecord();
-	
+
 	/**
 	 * Returns the linkage of the binding.
 	 */

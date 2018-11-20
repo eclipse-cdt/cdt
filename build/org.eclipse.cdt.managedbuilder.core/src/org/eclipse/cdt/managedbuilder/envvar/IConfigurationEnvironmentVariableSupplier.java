@@ -38,7 +38,8 @@ public interface IConfigurationEnvironmentVariableSupplier {
 	 * @return The reference to the IBuildEnvironmentVariable interface representing
 	 *    the variable of a given name or {@code null} if the variable is not defined.
 	 */
-	IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration, IEnvironmentVariableProvider provider);
+	IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
+			IEnvironmentVariableProvider provider);
 
 	/**
 	 * @param configuration - configuration.
@@ -57,4 +58,3 @@ public interface IConfigurationEnvironmentVariableSupplier {
 	 */
 	IBuildEnvironmentVariable[] getVariables(IConfiguration configuration, IEnvironmentVariableProvider provider);
 }
-

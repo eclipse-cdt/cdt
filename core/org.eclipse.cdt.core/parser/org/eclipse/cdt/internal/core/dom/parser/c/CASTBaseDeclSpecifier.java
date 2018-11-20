@@ -20,125 +20,123 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-
 /**
  * @author jcamelon
  */
 public abstract class CASTBaseDeclSpecifier extends ASTAttributeOwner
 		implements ICASTDeclSpecifier, IASTAmbiguityParent {
 
-    protected int storageClass;
-    protected boolean isConst;
-    protected boolean isVolatile;
-    protected boolean isRestrict;
-    protected boolean isInline;
-    protected IASTAlignmentSpecifier[] alignmentSpecifiers =
-    		IASTAlignmentSpecifier.EMPTY_ALIGNMENT_SPECIFIER_ARRAY;
+	protected int storageClass;
+	protected boolean isConst;
+	protected boolean isVolatile;
+	protected boolean isRestrict;
+	protected boolean isInline;
+	protected IASTAlignmentSpecifier[] alignmentSpecifiers = IASTAlignmentSpecifier.EMPTY_ALIGNMENT_SPECIFIER_ARRAY;
 
 	@Override
 	public boolean isRestrict() {
-        return isRestrict;
-    }
+		return isRestrict;
+	}
 
-    @Override
+	@Override
 	public int getStorageClass() {
-        return storageClass;
-    }
+		return storageClass;
+	}
 
-    @Override
+	@Override
 	public boolean isConst() {
-        return isConst;
-    }
+		return isConst;
+	}
 
-    @Override
+	@Override
 	public boolean isVolatile() {
-        return isVolatile;
-    }
+		return isVolatile;
+	}
 
-    @Override
+	@Override
 	public boolean isInline() {
-        return isInline;
-    }
+		return isInline;
+	}
 
-    @Override
-    public IASTAlignmentSpecifier[] getAlignmentSpecifiers() {
-    	return alignmentSpecifiers;
-    }
+	@Override
+	public IASTAlignmentSpecifier[] getAlignmentSpecifiers() {
+		return alignmentSpecifiers;
+	}
 
-    @Override
+	@Override
 	public void setStorageClass(int storageClass) {
-        assertNotFrozen();
-        this.storageClass = storageClass;
-    }
+		assertNotFrozen();
+		this.storageClass = storageClass;
+	}
 
-    @Override
+	@Override
 	public void setConst(boolean value) {
-        assertNotFrozen();
-        this.isConst = value;
-    }
+		assertNotFrozen();
+		this.isConst = value;
+	}
 
-    @Override
+	@Override
 	public void setVolatile(boolean value) {
-        assertNotFrozen();
-        this.isVolatile = value;
-    }
+		assertNotFrozen();
+		this.isVolatile = value;
+	}
 
-    @Override
+	@Override
 	public void setRestrict(boolean value) {
-        assertNotFrozen();
-        this.isRestrict = value;
-    }
+		assertNotFrozen();
+		this.isRestrict = value;
+	}
 
-    @Override
+	@Override
 	public void setInline(boolean value) {
-        assertNotFrozen();
-        this.isInline = value;
-    }
+		assertNotFrozen();
+		this.isInline = value;
+	}
 
-    @Override
-    public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers) {
-    	assertNotFrozen();
-    	for (IASTAlignmentSpecifier specifier : alignmentSpecifiers) {
-    		specifier.setParent(this);
-    		specifier.setPropertyInParent(ALIGNMENT_SPECIFIER);
-    	}
-    	this.alignmentSpecifiers = alignmentSpecifiers;
-    }
+	@Override
+	public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers) {
+		assertNotFrozen();
+		for (IASTAlignmentSpecifier specifier : alignmentSpecifiers) {
+			specifier.setParent(this);
+			specifier.setPropertyInParent(ALIGNMENT_SPECIFIER);
+		}
+		this.alignmentSpecifiers = alignmentSpecifiers;
+	}
 
-    protected <T extends CASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
-    	copy.storageClass = storageClass;
-    	copy.isConst = isConst;
-    	copy.isVolatile = isVolatile;
-    	copy.isRestrict = isRestrict;
-    	copy.isInline = isInline;
-    	copy.alignmentSpecifiers = new IASTAlignmentSpecifier[alignmentSpecifiers.length];
-    	for (int i = 0; i < alignmentSpecifiers.length; ++i) {
-    		copy.alignmentSpecifiers[i] = alignmentSpecifiers[i].copy(style);
-    		copy.alignmentSpecifiers[i].setParent(copy);
-    	}
+	protected <T extends CASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
+		copy.storageClass = storageClass;
+		copy.isConst = isConst;
+		copy.isVolatile = isVolatile;
+		copy.isRestrict = isRestrict;
+		copy.isInline = isInline;
+		copy.alignmentSpecifiers = new IASTAlignmentSpecifier[alignmentSpecifiers.length];
+		for (int i = 0; i < alignmentSpecifiers.length; ++i) {
+			copy.alignmentSpecifiers[i] = alignmentSpecifiers[i].copy(style);
+			copy.alignmentSpecifiers[i].setParent(copy);
+		}
 		return super.copy(copy, style);
-    }
+	}
 
-    protected boolean visitAlignmentSpecifiers(ASTVisitor visitor) {
-    	for (IASTAlignmentSpecifier specifier : alignmentSpecifiers) {
-    		if (!specifier.accept(visitor)) {
-    			return false;
-    		}
-    	}
-    	return true;
-    }
+	protected boolean visitAlignmentSpecifiers(ASTVisitor visitor) {
+		for (IASTAlignmentSpecifier specifier : alignmentSpecifiers) {
+			if (!specifier.accept(visitor)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    @Override
-    public void replace(IASTNode child, IASTNode other) {
-    	if (child instanceof IASTAlignmentSpecifier && other instanceof IASTAlignmentSpecifier) {
-    		for (int i = 0; i < alignmentSpecifiers.length; ++i) {
-    			if (alignmentSpecifiers[i] == child) {
-    				alignmentSpecifiers[i] = (IASTAlignmentSpecifier) other;
-    				other.setParent(child.getParent());
-    				other.setPropertyInParent(child.getPropertyInParent());
-    				return;
-    			}
-    		}
-    	}
-    }
+	@Override
+	public void replace(IASTNode child, IASTNode other) {
+		if (child instanceof IASTAlignmentSpecifier && other instanceof IASTAlignmentSpecifier) {
+			for (int i = 0; i < alignmentSpecifiers.length; ++i) {
+				if (alignmentSpecifiers[i] == child) {
+					alignmentSpecifiers[i] = (IASTAlignmentSpecifier) other;
+					other.setParent(child.getParent());
+					other.setPropertyInParent(child.getPropertyInParent());
+					return;
+				}
+			}
+		}
+	}
 }

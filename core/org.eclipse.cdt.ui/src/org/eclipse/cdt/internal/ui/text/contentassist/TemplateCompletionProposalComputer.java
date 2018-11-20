@@ -53,51 +53,56 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 	 * Default constructor is required (executable extension).
 	 */
 	public TemplateCompletionProposalComputer() {
-		TemplateContextType contextType= CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(CContextType.ID);
+		TemplateContextType contextType = CUIPlugin.getDefault().getTemplateContextRegistry()
+				.getContextType(CContextType.ID);
 		if (contextType == null) {
-			contextType= new CContextType();
+			contextType = new CContextType();
 			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(contextType);
 		}
-		fCTemplateEngine= new TemplateEngine(contextType);
-		contextType= CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(CommentContextType.ID);
+		fCTemplateEngine = new TemplateEngine(contextType);
+		contextType = CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(CommentContextType.ID);
 		if (contextType == null) {
-			contextType= new CommentContextType();
+			contextType = new CommentContextType();
 			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(contextType);
 		}
-		fCommentTemplateEngine= new TemplateEngine(contextType);
-		contextType= CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(DocCommentContextType.ID);
+		fCommentTemplateEngine = new TemplateEngine(contextType);
+		contextType = CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(DocCommentContextType.ID);
 		if (contextType == null) {
-			contextType= new DocCommentContextType();
+			contextType = new DocCommentContextType();
 			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(contextType);
 		}
-		fDocCommentTemplateEngine= new TemplateEngine(contextType);
+		fDocCommentTemplateEngine = new TemplateEngine(contextType);
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
-		ITextViewer viewer= context.getViewer();
-		int offset= context.getInvocationOffset();
-		TemplateEngine engine= null;
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
+		ITextViewer viewer = context.getViewer();
+		int offset = context.getInvocationOffset();
+		TemplateEngine engine = null;
 		try {
-			String partition= TextUtilities.getContentType(viewer.getDocument(), ICPartitions.C_PARTITIONING, offset, true);
-			if (partition.equals(ICPartitions.C_MULTI_LINE_COMMENT) || partition.equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
-				engine= fCommentTemplateEngine;
-			} else if (partition.equals(ICPartitions.C_MULTI_LINE_DOC_COMMENT) || partition.equals(ICPartitions.C_SINGLE_LINE_DOC_COMMENT)) {
-				engine= fDocCommentTemplateEngine;
+			String partition = TextUtilities.getContentType(viewer.getDocument(), ICPartitions.C_PARTITIONING, offset,
+					true);
+			if (partition.equals(ICPartitions.C_MULTI_LINE_COMMENT)
+					|| partition.equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
+				engine = fCommentTemplateEngine;
+			} else if (partition.equals(ICPartitions.C_MULTI_LINE_DOC_COMMENT)
+					|| partition.equals(ICPartitions.C_SINGLE_LINE_DOC_COMMENT)) {
+				engine = fDocCommentTemplateEngine;
 			} else {
 				if (isValidContext(context)) {
-					engine= fCTemplateEngine;
+					engine = fCTemplateEngine;
 				}
 			}
 		} catch (BadLocationException x) {
 			return Collections.emptyList();
 		}
-		
+
 		if (engine != null && context instanceof CContentAssistInvocationContext) {
-			CContentAssistInvocationContext cContext= (CContentAssistInvocationContext)context;
+			CContentAssistInvocationContext cContext = (CContentAssistInvocationContext) context;
 			ITranslationUnit tUnit = cContext.getTranslationUnit();
 			if (tUnit == null) {
 				return Collections.emptyList();
@@ -105,7 +110,7 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 			engine.reset();
 			engine.complete(viewer, offset, tUnit);
 
-			List<ICompletionProposal> result= engine.getResults();
+			List<ICompletionProposal> result = engine.getResults();
 
 			return result;
 		}
@@ -119,16 +124,17 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 	 * @return <code>false</code> if the given invocation context looks like a field reference
 	 */
 	private boolean isValidContext(ContentAssistInvocationContext context) {
-		CHeuristicScanner scanner= new CHeuristicScanner(context.getDocument());
-		int start= context.getInvocationOffset();
-		return !scanner.looksLikeFieldReferenceBackward(start, Math.max(0, start-100));
+		CHeuristicScanner scanner = new CHeuristicScanner(context.getDocument());
+		int start = context.getInvocationOffset();
+		return !scanner.looksLikeFieldReferenceBackward(start, Math.max(0, start - 100));
 	}
 
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		return Collections.emptyList();
 	}
 

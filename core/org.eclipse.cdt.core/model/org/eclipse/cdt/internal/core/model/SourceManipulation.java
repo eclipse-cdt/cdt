@@ -44,7 +44,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 * An empty array of Strings
 	 */
 	protected static final String[] fgEmptyStrings = {};
-	private boolean fIsActive= true;
+	private boolean fIsActive = true;
 	private short fIndex;
 
 	public SourceManipulation(ICElement parent, String name, int type) {
@@ -55,20 +55,20 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 * @see ISourceManipulation
 	 */
 	@Override
-	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
-			IProgressMonitor monitor) throws CModelException {
+	public void copy(ICElement container, ICElement sibling, String rename, boolean force, IProgressMonitor monitor)
+			throws CModelException {
 		if (container == null) {
 			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
-		ICElement[] elements= new ICElement[] {this};
-		ICElement[] containers= new ICElement[] {container};
-		ICElement[] siblings= null;
+		ICElement[] elements = new ICElement[] { this };
+		ICElement[] containers = new ICElement[] { container };
+		ICElement[] siblings = null;
 		if (sibling != null) {
-			siblings= new ICElement[] {sibling};
+			siblings = new ICElement[] { sibling };
 		}
-		String[] renamings= null;
+		String[] renamings = null;
 		if (rename != null) {
-			renamings= new String[] {rename};
+			renamings = new String[] { rename };
 		}
 		getCModel().copy(elements, containers, siblings, renamings, force, monitor);
 	}
@@ -78,7 +78,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 */
 	@Override
 	public void delete(boolean force, IProgressMonitor monitor) throws CModelException {
-		ICElement[] elements = new ICElement[] {this};
+		ICElement[] elements = new ICElement[] { this };
 		getCModel().delete(elements, force, monitor);
 	}
 
@@ -86,20 +86,20 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 * @see ISourceManipulation
 	 */
 	@Override
-	public void move(ICElement container, ICElement sibling, String rename, boolean force,
-		IProgressMonitor monitor) throws CModelException {
+	public void move(ICElement container, ICElement sibling, String rename, boolean force, IProgressMonitor monitor)
+			throws CModelException {
 		if (container == null) {
 			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
-		ICElement[] elements= new ICElement[] {this};
-		ICElement[] containers= new ICElement[] {container};
-		ICElement[] siblings= null;
+		ICElement[] elements = new ICElement[] { this };
+		ICElement[] containers = new ICElement[] { container };
+		ICElement[] siblings = null;
 		if (sibling != null) {
-			siblings= new ICElement[] {sibling};
+			siblings = new ICElement[] { sibling };
 		}
-		String[] renamings= null;
+		String[] renamings = null;
 		if (rename != null) {
-			renamings= new String[] {rename};
+			renamings = new String[] { rename };
 		}
 		getCModel().move(elements, containers, siblings, renamings, force, monitor);
 	}
@@ -112,9 +112,9 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		if (name == null) {
 			throw new IllegalArgumentException("element.nullName"); //$NON-NLS-1$
 		}
-		ICElement[] elements= new ICElement[] {this};
-		ICElement[] dests= new ICElement[] {this.getParent()};
-		String[] renamings= new String[] {name};
+		ICElement[] elements = new ICElement[] { this };
+		ICElement[] dests = new ICElement[] { this.getParent() };
+		String[] renamings = new String[] { name };
 		getCModel().rename(elements, dests, renamings, force, monitor);
 	}
 
@@ -147,8 +147,8 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	@Override
 	public IOpenable getOpenableParent() {
 		ICElement current = getParent();
-		while (current != null){
-			if (current instanceof IOpenable){
+		while (current != null) {
+			if (current instanceof IOpenable) {
 				return (IOpenable) current;
 			}
 			current = current.getParent();
@@ -186,7 +186,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new SourceManipulationInfo(this);
 	}
 
@@ -194,7 +194,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		return (SourceManipulationInfo) getElementInfo();
 	}
 
-	public boolean isIdentical(SourceManipulation other) throws CModelException{
+	public boolean isIdentical(SourceManipulation other) throws CModelException {
 		return this.equals(other)
 				&& (this.getSourceManipulationInfo().hasSameContentsAs(other.getSourceManipulationInfo()));
 	}
@@ -203,8 +203,9 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 * @see CElement#generateInfos
 	 */
 	@Override
-	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor pm) throws CModelException {
-		Openable openableParent = (Openable)getOpenableParent();
+	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor pm)
+			throws CModelException {
+		Openable openableParent = (Openable) getOpenableParent();
 		if (openableParent == null) {
 			return;
 		}
@@ -247,119 +248,118 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	@Override
 	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
-			case CEM_SOURCEELEMENT:
-				if (!memento.hasMoreTokens()) return this;
-				token= memento.nextToken();
-				// element name
-				final String elementName;
-				if (token.charAt(0) != CEM_ELEMENTTYPE) {
-					elementName= token;
-					if (!memento.hasMoreTokens()) return null;
-					token= memento.nextToken();
-				} else {
-					// anonymous
-					elementName= ""; //$NON-NLS-1$
-				}
-				// element type
-				if (token.charAt(0) != CEM_ELEMENTTYPE || !memento.hasMoreTokens()) {
+		case CEM_SOURCEELEMENT:
+			if (!memento.hasMoreTokens())
+				return this;
+			token = memento.nextToken();
+			// element name
+			final String elementName;
+			if (token.charAt(0) != CEM_ELEMENTTYPE) {
+				elementName = token;
+				if (!memento.hasMoreTokens())
 					return null;
-				}
-				String typeString= memento.nextToken();
-				int elementType;
-				try {
-					elementType= Integer.parseInt(typeString);
-				} catch (NumberFormatException nfe) {
-					CCorePlugin.log(nfe);
-					return null;
-				}
-				token= null;
-				// optional: parameters
-				String[] mementoParams= {};
-				if (memento.hasMoreTokens()) {
-					List<String> params= new ArrayList<String>();
-					do {
-						token= memento.nextToken();
-						if (token.charAt(0) != CEM_PARAMETER) {
+				token = memento.nextToken();
+			} else {
+				// anonymous
+				elementName = ""; //$NON-NLS-1$
+			}
+			// element type
+			if (token.charAt(0) != CEM_ELEMENTTYPE || !memento.hasMoreTokens()) {
+				return null;
+			}
+			String typeString = memento.nextToken();
+			int elementType;
+			try {
+				elementType = Integer.parseInt(typeString);
+			} catch (NumberFormatException nfe) {
+				CCorePlugin.log(nfe);
+				return null;
+			}
+			token = null;
+			// optional: parameters
+			String[] mementoParams = {};
+			if (memento.hasMoreTokens()) {
+				List<String> params = new ArrayList<String>();
+				do {
+					token = memento.nextToken();
+					if (token.charAt(0) != CEM_PARAMETER) {
+						break;
+					}
+					if (!memento.hasMoreTokens()) {
+						params.add(""); //$NON-NLS-1$
+						token = null;
+						break;
+					}
+					params.add(memento.nextToken());
+					token = null;
+				} while (memento.hasMoreTokens());
+				mementoParams = params.toArray(new String[params.size()]);
+			}
+			CElement element = null;
+			ICElement[] children;
+			try {
+				children = getChildren();
+			} catch (CModelException exc) {
+				CCorePlugin.log(exc);
+				return null;
+			}
+			switch (elementType) {
+			case ICElement.C_FUNCTION:
+			case ICElement.C_FUNCTION_DECLARATION:
+			case ICElement.C_METHOD:
+			case ICElement.C_METHOD_DECLARATION:
+			case ICElement.C_TEMPLATE_FUNCTION:
+			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+			case ICElement.C_TEMPLATE_METHOD:
+			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
+				for (ICElement element2 : children) {
+					if (elementType == element2.getElementType() && elementName.equals(element2.getElementName())) {
+						assert element2 instanceof IFunctionDeclaration;
+						String[] functionParams = ((IFunctionDeclaration) element2).getParameterTypes();
+						if (Arrays.equals(functionParams, mementoParams)) {
+							element = (CElement) element2;
 							break;
 						}
-						if (!memento.hasMoreTokens()) {
-							params.add(""); //$NON-NLS-1$
-							token= null;
-							break;
-						}
-						params.add(memento.nextToken());
-						token= null;
-					} while (memento.hasMoreTokens());
-					mementoParams= params.toArray(new String[params.size()]);
-				}
- 				CElement element= null;
-				ICElement[] children;
-				try {
-					children= getChildren();
-				} catch (CModelException exc) {
-					CCorePlugin.log(exc);
-					return null;
-				}
-				switch (elementType) {
-				case ICElement.C_FUNCTION:
-				case ICElement.C_FUNCTION_DECLARATION:
-				case ICElement.C_METHOD:
-				case ICElement.C_METHOD_DECLARATION:
-				case ICElement.C_TEMPLATE_FUNCTION:
-				case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
-				case ICElement.C_TEMPLATE_METHOD:
-				case ICElement.C_TEMPLATE_METHOD_DECLARATION:
-					for (ICElement element2 : children) {
-							if (elementType == element2.getElementType()
-									&& elementName.equals(element2.getElementName())) {
-								assert element2 instanceof IFunctionDeclaration;
-								String[] functionParams= ((IFunctionDeclaration)element2).getParameterTypes();
-								if (Arrays.equals(functionParams, mementoParams)) {
-									element= (CElement) element2;
-									break;
-								}
-							}
-						}
-					break;
-				case ICElement.C_TEMPLATE_CLASS:
-				case ICElement.C_TEMPLATE_STRUCT:
-				case ICElement.C_TEMPLATE_UNION:
-					for (ICElement element2 : children) {
-							if (elementType == element2.getElementType()
-									&& elementName.equals(element2.getElementName())) {
-								assert element2 instanceof ITemplate;
-								String[] templateParams= ((ITemplate)element2).getTemplateParameterTypes();
-								if (Arrays.equals(templateParams, mementoParams)) {
-									element= (CElement) element2;
-									break;
-								}
-							}
-						}
-					break;
-				default:
-					for (ICElement element2 : children) {
-							if (elementType == element2.getElementType()
-									&& elementName.equals(element2.getElementName())) {
-								element= (CElement) element2;
-								break;
-							}
-						}
-					break;
-				}
-				if (element != null) {
-					if (token != null) {
-						return element.getHandleFromMemento(token, memento);
-					} else {
-						return element.getHandleFromMemento(memento);
 					}
 				}
+				break;
+			case ICElement.C_TEMPLATE_CLASS:
+			case ICElement.C_TEMPLATE_STRUCT:
+			case ICElement.C_TEMPLATE_UNION:
+				for (ICElement element2 : children) {
+					if (elementType == element2.getElementType() && elementName.equals(element2.getElementName())) {
+						assert element2 instanceof ITemplate;
+						String[] templateParams = ((ITemplate) element2).getTemplateParameterTypes();
+						if (Arrays.equals(templateParams, mementoParams)) {
+							element = (CElement) element2;
+							break;
+						}
+					}
+				}
+				break;
+			default:
+				for (ICElement element2 : children) {
+					if (elementType == element2.getElementType() && elementName.equals(element2.getElementName())) {
+						element = (CElement) element2;
+						break;
+					}
+				}
+				break;
+			}
+			if (element != null) {
+				if (token != null) {
+					return element.getHandleFromMemento(token, memento);
+				} else {
+					return element.getHandleFromMemento(memento);
+				}
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public void getHandleMemento(StringBuilder buff) {
-		((CElement)getParent()).getHandleMemento(buff);
+		((CElement) getParent()).getHandleMemento(buff);
 		buff.append(getHandleMementoDelimiter());
 		escapeMementoName(buff, getElementName());
 		buff.append(CEM_ELEMENTTYPE);
@@ -382,11 +382,11 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	}
 
 	public void setActive(boolean active) {
-		fIsActive= active;
+		fIsActive = active;
 	}
 
 	public void setIndex(int i) {
-		fIndex= (short) i;
+		fIndex = (short) i;
 	}
 
 	@Override

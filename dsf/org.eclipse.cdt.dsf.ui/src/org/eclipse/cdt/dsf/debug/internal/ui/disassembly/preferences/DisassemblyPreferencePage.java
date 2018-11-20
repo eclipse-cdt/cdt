@@ -49,19 +49,15 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 	private ModifyListener fNumberFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
-			numberFieldChanged((Text)e.widget);
+			numberFieldChanged((Text) e.widget);
 		}
 	};
 	private Combo fAddressFormatCombo;
 	private Combo fOpcodeFormatCombo;
-	private final static String[] fcRadixItems = {
-		DisassemblyMessages.DisassemblyPreferencePage_radix_octal,
-		DisassemblyMessages.DisassemblyPreferencePage_radix_decimal,
-		DisassemblyMessages.DisassemblyPreferencePage_radix_hexadecimal,
-	};
-	private final static int[] fcRadixValues = {
-		8, 10, 16
-	};
+	private final static String[] fcRadixItems = { DisassemblyMessages.DisassemblyPreferencePage_radix_octal,
+			DisassemblyMessages.DisassemblyPreferencePage_radix_decimal,
+			DisassemblyMessages.DisassemblyPreferencePage_radix_hexadecimal, };
+	private final static int[] fcRadixValues = { 8, 10, 16 };
 
 	/**
 	 * Create the Disassembly preference page.
@@ -77,7 +73,8 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDisassemblyHelpContextIds.DISASSEMBLY_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				IDisassemblyHelpContextIds.DISASSEMBLY_PREFERENCE_PAGE);
 	}
 
 	/* (non-Javadoc)
@@ -143,15 +140,15 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 	}
 
 	private Combo addComboBox(Composite parent, String label, String key, String[] items) {
-		Label labelControl= new Label(parent, SWT.NONE);
+		Label labelControl = new Label(parent, SWT.NONE);
 		labelControl.setText(label);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent = 0;
 		gd.horizontalSpan = 2;
 		labelControl.setLayoutData(gd);
 
 		Combo combo = new Combo(parent, SWT.READ_ONLY);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		combo.setLayoutData(gd);
 		combo.setItems(items);
 		combo.setData(key);
@@ -160,16 +157,17 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		return combo;
 	}
 
-	protected Text addTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
+	protected Text addTextField(Composite composite, String label, String key, int textLimit, int indentation,
+			boolean isNumber) {
 		return getTextControl(addLabelledTextField(composite, label, key, textLimit, indentation, isNumber));
 	}
 
-//	private static Label getLabelControl(Control[] labelledTextField){
-//		return (Label)labelledTextField[0];
-//	}
+	//	private static Label getLabelControl(Control[] labelledTextField){
+	//		return (Label)labelledTextField[0];
+	//	}
 
-	private static Text getTextControl(Control[] labelledTextField){
-		return (Text)labelledTextField[1];
+	private static Text getTextControl(Control[] labelledTextField) {
+		return (Text) labelledTextField[1];
 	}
 
 	/**
@@ -178,16 +176,17 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 	 *  - second element is of type <code>Text</code>
 	 * Use <code>getLabelControl</code> and <code>getTextControl</code> to get the 2 controls.
 	 */
-	private Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
-		Label labelControl= new Label(composite, SWT.NONE);
+	private Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit,
+			int indentation, boolean isNumber) {
+		Label labelControl = new Label(composite, SWT.NONE);
 		labelControl.setText(label);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indentation;
 		labelControl.setLayoutData(gd);
 
-		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
+		Text textControl = new Text(composite, SWT.BORDER | SWT.SINGLE);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
 		textControl.setTextLimit(textLimit);
 		textControl.setData(key);
@@ -196,7 +195,7 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 			textControl.addModifyListener(fNumberFieldListener);
 		}
 
-		return new Control[]{labelControl, textControl};
+		return new Control[] { labelControl, textControl };
 	}
 
 	/* (non-Javadoc)
@@ -207,18 +206,19 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		IPreferenceStore store = getPreferenceStore();
 		for (Iterator<Button> iter = fCheckBoxes.iterator(); iter.hasNext();) {
 			Button btn = iter.next();
-			store.setValue((String)btn.getData(), btn.getSelection());
+			store.setValue((String) btn.getData(), btn.getSelection());
 		}
 		for (Iterator<Text> iter = fNumberFields.iterator(); iter.hasNext();) {
 			Text field = iter.next();
-			store.setValue((String)field.getData(), Long.decode(field.getText()).longValue());
+			store.setValue((String) field.getData(), Long.decode(field.getText()).longValue());
 		}
 		for (Iterator<Combo> iter = fComboBoxes.iterator(); iter.hasNext();) {
 			Combo combo = iter.next();
-			store.setValue((String)combo.getData(), fcRadixValues[combo.getSelectionIndex()]);
+			store.setValue((String) combo.getData(), fcRadixValues[combo.getSelectionIndex()]);
 		}
 		return super.performOk();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -227,16 +227,16 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		IPreferenceStore store = getPreferenceStore();
 		for (Iterator<Button> iter = fCheckBoxes.iterator(); iter.hasNext();) {
 			Button btn = iter.next();
-			btn.setSelection(store.getDefaultBoolean((String)btn.getData()));
+			btn.setSelection(store.getDefaultBoolean((String) btn.getData()));
 		}
 		for (Iterator<Text> iter = fNumberFields.iterator(); iter.hasNext();) {
 			Text field = iter.next();
-			long value = store.getDefaultLong((String)field.getData());
-			field.setText("0x"+Long.toHexString(value)); //$NON-NLS-1$
+			long value = store.getDefaultLong((String) field.getData());
+			field.setText("0x" + Long.toHexString(value)); //$NON-NLS-1$
 		}
 		for (Iterator<Combo> iter = fComboBoxes.iterator(); iter.hasNext();) {
 			Combo combo = iter.next();
-			int value = store.getDefaultInt((String)combo.getData());
+			int value = store.getDefaultInt((String) combo.getData());
 			for (int i = 0; i < fcRadixValues.length; i++) {
 				if (fcRadixValues[i] == value) {
 					combo.select(i);
@@ -245,6 +245,7 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		}
 		super.performDefaults();
 	}
+
 	/**
 	 * Initialize widget values from preference store.
 	 */
@@ -252,16 +253,16 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		IPreferenceStore store = getPreferenceStore();
 		for (Iterator<Button> iter = fCheckBoxes.iterator(); iter.hasNext();) {
 			Button btn = iter.next();
-			btn.setSelection(store.getBoolean((String)btn.getData()));
+			btn.setSelection(store.getBoolean((String) btn.getData()));
 		}
 		for (Iterator<Text> iter = fNumberFields.iterator(); iter.hasNext();) {
 			Text field = iter.next();
-			long value = store.getLong((String)field.getData());
-			field.setText("0x"+Long.toHexString(value)); //$NON-NLS-1$
+			long value = store.getLong((String) field.getData());
+			field.setText("0x" + Long.toHexString(value)); //$NON-NLS-1$
 		}
 		for (Iterator<Combo> iter = fComboBoxes.iterator(); iter.hasNext();) {
 			Combo combo = iter.next();
-			int value = store.getInt((String)combo.getData());
+			int value = store.getInt((String) combo.getData());
 			for (int i = 0; i < fcRadixValues.length; i++) {
 				if (fcRadixValues[i] == value) {
 					combo.select(i);
@@ -282,7 +283,7 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 			} else {
 				setErrorMessage(null);
 			}
-		} catch(NumberFormatException nfe) {
+		} catch (NumberFormatException nfe) {
 			setErrorMessage(DisassemblyMessages.DisassemblyPreferencePage_error_not_a_number);
 		}
 	}

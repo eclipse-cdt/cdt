@@ -14,6 +14,7 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import org.eclipse.cdt.launch.ui.CMainTab2;
+
 /**
  * A launch configuration tab that displays and edits project and main type name launch
  * configuration attributes.
@@ -30,9 +31,9 @@ public class CMainTab extends CMainTab2 {
 		super(flags);
 	}
 
-    @Override
-    public String getId() {
-    	// Return the old id as to be backwards compatible
-        return "org.eclipse.cdt.dsf.gdb.launch.mainTab"; //$NON-NLS-1$
-    }
+	@Override
+	public String getId() {
+		// Return the old id as to be backwards compatible
+		return "org.eclipse.cdt.dsf.gdb.launch.mainTab"; //$NON-NLS-1$
+	}
 }

@@ -24,13 +24,13 @@ public class TemplateEngine2 extends TemplateEngine {
 	 * Project type for new templates. Default if not set in extension.
 	 */
 	public static final String NEW_TEMPLATE = "newTemplate"; //$NON-NLS-1$
-	
+
 	public static TemplateEngine2 getDefault() {
-		return (TemplateEngine2)TemplateEngine.getDefault();
+		return (TemplateEngine2) TemplateEngine.getDefault();
 	}
 
 	public TemplateCategory getCategory(String id) {
 		return categoryMap.get(id);
 	}
-	
+
 }

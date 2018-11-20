@@ -39,15 +39,14 @@ public class ToggleStrategyFactory {
 			return new ToggleFromInHeaderToImplementationStrategy(context);
 		throw new NotSupportedException(Messages.ToggleStrategyFactory_UnsupportedSituation);
 	}
-	
+
 	private boolean isinHeaderSituation() {
-		return (context.getDefinition() != null) 
-			&& (context.getDefinitionAST().isHeaderUnit());
+		return (context.getDefinition() != null) && (context.getDefinitionAST().isHeaderUnit());
 	}
 
 	private boolean isInClassSituation() {
-		return (context.getDeclaration() == null) && 
-			(ASTQueries.findAncestorWithType(context.getDefinition(), IASTCompositeTypeSpecifier.class) != null);
+		return (context.getDeclaration() == null)
+				&& (ASTQueries.findAncestorWithType(context.getDefinition(), IASTCompositeTypeSpecifier.class) != null);
 	}
 
 	private boolean isTemplateSituation() {

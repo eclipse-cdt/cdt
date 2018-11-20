@@ -21,7 +21,8 @@ public class CaseBreakQuickFixFallthroughAttributeTest extends QuickFixTestCase 
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		wasEnabled = (boolean) getPreference(CaseBreakChecker.ER_ID, CaseBreakChecker.PARAM_ENABLE_FALLTHROUGH_QUICKFIX).getValue();
+		wasEnabled = (boolean) getPreference(CaseBreakChecker.ER_ID, CaseBreakChecker.PARAM_ENABLE_FALLTHROUGH_QUICKFIX)
+				.getValue();
 		setPreferenceValue(CaseBreakChecker.ER_ID, CaseBreakChecker.PARAM_ENABLE_FALLTHROUGH_QUICKFIX, true);
 	}
 

@@ -67,8 +67,8 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 	}
 
 	@Override
-	public ITargetPlatform createTargetPlatform(ITargetPlatform superClass,
-			String Id, String name, boolean isExtensionElement) {
+	public ITargetPlatform createTargetPlatform(ITargetPlatform superClass, String Id, String name,
+			boolean isExtensionElement) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -110,8 +110,7 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 	}
 
 	@Override
-	public IBuilder createBuilder(IBuilder superClass, String Id, String name,
-			boolean isExtensionElement) {
+	public IBuilder createBuilder(IBuilder superClass, String Id, String name, boolean isExtensionElement) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -129,8 +128,7 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 	}
 
 	@Override
-	public ITool createTool(ITool superClass, String Id, String name,
-			boolean isExtensionElement) {
+	public ITool createTool(ITool superClass, String Id, String name, boolean isExtensionElement) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -311,8 +309,7 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 
 	private String id = null;
 
-	public void setID(String id)
-	{
+	public void setID(String id) {
 		this.id = id;
 	}
 
@@ -366,7 +363,7 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public String getDefaultLanguageSettingsProviderIds() {
 		// TODO Auto-generated method stub

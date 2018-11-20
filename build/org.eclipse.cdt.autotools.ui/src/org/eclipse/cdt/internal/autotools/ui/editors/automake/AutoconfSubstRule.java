@@ -23,7 +23,7 @@ public class AutoconfSubstRule implements IPredicateRule {
 	private IToken token;
 	private char[][] fLineDelimiters;
 	private char[][] fSortedLineDelimiters;
-	
+
 	private static class DecreasingCharArrayLengthComparator implements Comparator<Object> {
 		@Override
 		public int compare(Object o1, Object o2) {
@@ -31,32 +31,32 @@ public class AutoconfSubstRule implements IPredicateRule {
 		}
 	}
 
-	private Comparator<Object> fLineDelimiterComparator= new DecreasingCharArrayLengthComparator();
+	private Comparator<Object> fLineDelimiterComparator = new DecreasingCharArrayLengthComparator();
 
 	public AutoconfSubstRule(IToken token) {
 		this.token = token;
 	}
-	
+
 	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
-		char[][] originalDelimiters= scanner.getLegalLineDelimiters();
-		int count= originalDelimiters.length;
+		char[][] originalDelimiters = scanner.getLegalLineDelimiters();
+		int count = originalDelimiters.length;
 		if (fLineDelimiters == null || originalDelimiters.length != count) {
-			fSortedLineDelimiters= new char[count][];
+			fSortedLineDelimiters = new char[count][];
 		} else {
-			while (count > 0 && fLineDelimiters[count-1] == originalDelimiters[count-1])
+			while (count > 0 && fLineDelimiters[count - 1] == originalDelimiters[count - 1])
 				count--;
 		}
 		if (count != 0) {
-			fLineDelimiters= originalDelimiters;
+			fLineDelimiters = originalDelimiters;
 			System.arraycopy(fLineDelimiters, 0, fSortedLineDelimiters, 0, fLineDelimiters.length);
 			Arrays.sort(fSortedLineDelimiters, fLineDelimiterComparator);
 		}
-		
+
 		int c;
 		boolean okToScan = resume;
 		int charCount = 0;
-		
+
 		if (!resume) {
 			// Not resuming.  Verify first char is '@'.
 			c = scanner.read();
@@ -65,7 +65,7 @@ public class AutoconfSubstRule implements IPredicateRule {
 				okToScan = true;
 			}
 		}
-		
+
 		if (okToScan) {
 			// We want to make sure we have a valid id (not @@) or (@_@).  When
 			// we resume, we have no choice but to assume it is valid so far.
@@ -75,21 +75,19 @@ public class AutoconfSubstRule implements IPredicateRule {
 				if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {
 					// A valid id has some alphabetic character in it.
 					isId = true;
-				}
-				else if (c >= '0' && c <= '9' || c == '_') {
+				} else if (c >= '0' && c <= '9' || c == '_') {
 					; // continue
-				}
-				else if (c == '@' && isId)
+				} else if (c == '@' && isId)
 					return getSuccessToken();
 				else
 					break;
 				++charCount;
 			}
 		}
-		
+
 		for (int i = 0; i < charCount; ++i)
 			scanner.unread();
-		
+
 		return Token.UNDEFINED;
 	}
 

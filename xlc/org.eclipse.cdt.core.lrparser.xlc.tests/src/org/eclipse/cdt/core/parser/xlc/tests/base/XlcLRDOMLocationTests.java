@@ -24,11 +24,11 @@ public class XlcLRDOMLocationTests extends LRDOMLocationTests {
 	public static TestSuite suite() {
 		return suite(XlcLRDOMLocationTests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

@@ -38,8 +38,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 
 	public NewProjectCreationPage(String name) {
 		super(name);
-		data= new HashMap<String, String>();
-		this.setDescription(Messages.getString("NewProjectCreationPage.3"));	 //$NON-NLS-1$
+		data = new HashMap<String, String>();
+		this.setDescription(Messages.getString("NewProjectCreationPage.3")); //$NON-NLS-1$
 	}
 
 	@Override
@@ -47,8 +47,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 		String projName = super.getProjectName().trim();
 		data.put("projectName", projName); //$NON-NLS-1$
 		data.put("baseName", getBaseName(projName)); //$NON-NLS-1$
-		data.put("baseNameUpper", getBaseName(projName).toUpperCase() ); //$NON-NLS-1$
-		data.put("baseNameLower", getBaseName(projName).toLowerCase() ); //$NON-NLS-1$
+		data.put("baseNameUpper", getBaseName(projName).toUpperCase()); //$NON-NLS-1$
+		data.put("baseNameLower", getBaseName(projName).toLowerCase()); //$NON-NLS-1$
 		data.put("location", super.getLocationPath().toPortableString()); //$NON-NLS-1$
 		return data;
 	}
@@ -100,13 +100,15 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 		}
 
 		if (baseName.length() > 31) {
-			return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, projectName + ERROR_SUFFIX_TOO_LONG, null);
+			return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR,
+					projectName + ERROR_SUFFIX_TOO_LONG, null);
 		}
 
 		for (int i = 1, l = baseName.length(); i < l; i++) {
 			char c = baseName.charAt(i);
 			if (!Character.isLetterOrDigit(c) && c != '_' && c != ' ') {
-				return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, projectName + ERROR_SUFFIX, null);
+				return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, projectName + ERROR_SUFFIX,
+						null);
 			}
 		}
 
@@ -119,7 +121,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 	 */
 	@Override
 	public void setNextPage(IWizardPage next) {
-		this.next= next;
+		this.next = next;
 	}
 
 	/*
@@ -128,7 +130,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 	 */
 	@Override
 	public IWizardPage getNextPage() {
-		if(next != null) {
+		if (next != null) {
 			return next;
 		}
 		return super.getNextPage();

@@ -49,12 +49,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * @since 1.0
  */
 @ConfinedToDsfExecutor("")
-public interface IVMNode extends IElementContentProvider
-{
-    /**
-     * Retrieves the view model provider that this node is configured with.
-     */
-    public IVMProvider getVMProvider();
+public interface IVMNode extends IElementContentProvider {
+	/**
+	 * Retrieves the view model provider that this node is configured with.
+	 */
+	public IVMProvider getVMProvider();
 
 	/**
 	 * Returns a set of IModelDelta delta flags that indicate how elements of
@@ -76,7 +75,7 @@ public interface IVMNode extends IElementContentProvider
 	 * @see #buildDelta(Object, VMDelta, int, RequestMonitor)
 	 * @see IModelDelta
 	 */
-    public int getDeltaFlags(Object event);
+	public int getDeltaFlags(Object event);
 
 	/**
 	 * Builds model delta information based on the given event.
@@ -113,27 +112,27 @@ public interface IVMNode extends IElementContentProvider
 	 *            Return token, which notifies the caller that the calculation
 	 *            is complete.
 	 */
-    public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor);
+	public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor);
 
-    /**
-     * Retrieves the view model elements for the given data model event.  This method 
-     * is optional and it allows the view model provider to optimize event processing
-     * by avoiding the need to retrieve all possible elements for the given node.
-     * </p>
-     * For example:  If a threads node implementation is given a thread stopped event in 
-     * this method, and the stopped event included a reference to the thread.  Then
-     * the implementation should create a view model context for that thread and return it
-     * here.
-     *   
-     * @param parentDelta The parent delta in the processing of this event.
-     * @param event The event to check for the data model object.
-     * @param Request monitor for the array of elements corresponding to the 
-     * given event.
-     */
-    public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm);
+	/**
+	 * Retrieves the view model elements for the given data model event.  This method 
+	 * is optional and it allows the view model provider to optimize event processing
+	 * by avoiding the need to retrieve all possible elements for the given node.
+	 * </p>
+	 * For example:  If a threads node implementation is given a thread stopped event in 
+	 * this method, and the stopped event included a reference to the thread.  Then
+	 * the implementation should create a view model context for that thread and return it
+	 * here.
+	 *   
+	 * @param parentDelta The parent delta in the processing of this event.
+	 * @param event The event to check for the data model object.
+	 * @param Request monitor for the array of elements corresponding to the 
+	 * given event.
+	 */
+	public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm);
 
-    /**
-     * Releases the resources held by this node.
-     */
-    public void dispose();
+	/**
+	 * Releases the resources held by this node.
+	 */
+	public void dispose();
 }

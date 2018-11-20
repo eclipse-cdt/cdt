@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Intel Corporation - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.core.autotools.ui.internal;
 
@@ -27,7 +27,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */

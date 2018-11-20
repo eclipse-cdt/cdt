@@ -19,12 +19,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPMethodSpecialization extends CompositeCPPFunctionSpecialization
-		implements ICPPMethod {
+public class CompositeCPPMethodSpecialization extends CompositeCPPFunctionSpecialization implements ICPPMethod {
 	public CompositeCPPMethodSpecialization(ICompositesFactory cf, ICPPMethod method) {
 		super(cf, method);
 	}
-	
+
 	@Override
 	public boolean isDestructor() {
 		return ((ICPPMethod) rbinding).isDestructor();

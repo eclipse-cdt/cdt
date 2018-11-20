@@ -29,5 +29,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public interface IMakefileValidator {
 	public abstract void setMarkerGenerator(IMarkerGenerator errorHandler);
+
 	public abstract void checkFile(IFile file, IProgressMonitor monitor);
 }

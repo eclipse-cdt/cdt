@@ -11,7 +11,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.internal.core.indexer;
 
 import org.eclipse.cdt.core.model.ILanguage;
@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.model.ILanguage;
  * @since 4.0
  */
 public interface ILanguageMapper {
-	
+
 	/**
 	 * Returns the language of a file.
 	 * @param file - path of the file

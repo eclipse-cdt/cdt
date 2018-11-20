@@ -40,18 +40,19 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
  */
 public class TemplateInstanceUtil {
 
-	public static ICPPTemplateParameterMap getTemplateParameterMap(ICompositesFactory cf, ICPPTemplateInstance rbinding) {
-		ICPPTemplateParameterMap preresult= rbinding.getTemplateParameterMap();
-		Integer[] keys= preresult.getAllParameterPositions();
-		CPPTemplateParameterMap result= new CPPTemplateParameterMap(keys.length);
+	public static ICPPTemplateParameterMap getTemplateParameterMap(ICompositesFactory cf,
+			ICPPTemplateInstance rbinding) {
+		ICPPTemplateParameterMap preresult = rbinding.getTemplateParameterMap();
+		Integer[] keys = preresult.getAllParameterPositions();
+		CPPTemplateParameterMap result = new CPPTemplateParameterMap(keys.length);
 
 		try {
 			for (Integer key : keys) {
-				ICPPTemplateArgument arg= preresult.getArgument(key);
+				ICPPTemplateArgument arg = preresult.getArgument(key);
 				if (arg != null) {
 					result.put(key, convert(cf, arg));
 				} else {
-					ICPPTemplateArgument[] pack= preresult.getPackExpansion(key);
+					ICPPTemplateArgument[] pack = preresult.getPackExpansion(key);
 					result.put(key, convert(cf, pack));
 				}
 			}
@@ -65,27 +66,28 @@ public class TemplateInstanceUtil {
 		return convert(cf, rbinding.getTemplateArguments());
 	}
 
-	public static ICPPTemplateArgument[] getTemplateArguments(ICompositesFactory cf, ICPPPartialSpecialization rbinding) {
+	public static ICPPTemplateArgument[] getTemplateArguments(ICompositesFactory cf,
+			ICPPPartialSpecialization rbinding) {
 		return convert(cf, rbinding.getTemplateArguments());
 	}
 
 	public static IBinding getSpecializedBinding(ICompositesFactory cf, IIndexBinding rbinding) {
-		IBinding preresult= ((ICPPSpecialization) rbinding).getSpecializedBinding();
+		IBinding preresult = ((ICPPSpecialization) rbinding).getSpecializedBinding();
 		return cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}
 
 	public static ICPPTemplateDefinition getTemplateDefinition(ICompositesFactory cf, IIndexBinding rbinding) {
-		ICPPTemplateDefinition preresult= ((ICPPTemplateInstance)rbinding).getTemplateDefinition();
-		return (ICPPTemplateDefinition) cf.getCompositeBinding((IIndexFragmentBinding)preresult);
+		ICPPTemplateDefinition preresult = ((ICPPTemplateInstance) rbinding).getTemplateDefinition();
+		return (ICPPTemplateDefinition) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}
 
 	public static ICPPTemplateArgument[] convert(ICompositesFactory cf, ICPPTemplateArgument[] arguments) {
 		if (arguments == null)
 			return null;
 		try {
-			ICPPTemplateArgument[] result= new ICPPTemplateArgument[arguments.length];
+			ICPPTemplateArgument[] result = new ICPPTemplateArgument[arguments.length];
 			for (int i = 0; i < arguments.length; i++) {
-				result[i]= convert(cf, arguments[i]);
+				result[i] = convert(cf, arguments[i]);
 			}
 			return result;
 		} catch (DOMException e) {
@@ -99,7 +101,7 @@ public class TemplateInstanceUtil {
 			return null;
 		if (arg.isTypeValue()) {
 			final IType typeValue = arg.getTypeValue();
-			IType t= cf.getCompositeType(typeValue);
+			IType t = cf.getCompositeType(typeValue);
 			if (t != typeValue) {
 				return new CPPTemplateTypeArgument(t);
 			}
@@ -114,9 +116,9 @@ public class TemplateInstanceUtil {
 	}
 
 	public static ICPPTemplateParameter[] convert(ICompositesFactory cf, ICPPTemplateParameter[] preResult) {
-		ICPPTemplateParameter[] result= new ICPPTemplateParameter[preResult.length];
-		for (int i= 0; i < result.length; i++) {
-			result[i]= (ICPPTemplateParameter) cf.getCompositeBinding((IIndexFragmentBinding) preResult[i]);
+		ICPPTemplateParameter[] result = new ICPPTemplateParameter[preResult.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = (ICPPTemplateParameter) cf.getCompositeBinding((IIndexFragmentBinding) preResult[i]);
 		}
 		return result;
 	}

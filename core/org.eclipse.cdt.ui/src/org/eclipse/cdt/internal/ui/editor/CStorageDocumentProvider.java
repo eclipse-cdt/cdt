@@ -27,7 +27,7 @@ import org.eclipse.ui.editors.text.StorageDocumentProvider;
  * CStorageDocumentProvider
  */
 public class CStorageDocumentProvider extends StorageDocumentProvider {
-	
+
 	/**
 	 * 
 	 */
@@ -49,7 +49,7 @@ public class CStorageDocumentProvider extends StorageDocumentProvider {
 	@Override
 	protected void setupDocument(Object element, IDocument document) {
 		if (document != null) {
-			CTextTools tools= CUIPlugin.getDefault().getTextTools();
+			CTextTools tools = CUIPlugin.getDefault().getTextTools();
 			tools.setupCDocument(document);
 		}
 	}

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
@@ -24,15 +24,15 @@ public interface IASTImageLocation extends IASTFileLocation {
 	/**
 	 * The image is part of the code that has not been modified by the preprocessor.
 	 */
-	final int REGULAR_CODE= 1;
+	final int REGULAR_CODE = 1;
 	/** 
 	 * The image is part of a macro definition and was introduced by some macro expansion.
 	 */
-	final int MACRO_DEFINITION= 2;
+	final int MACRO_DEFINITION = 2;
 	/**
 	 * The image is part of an argument of an explicit macro expansion.
 	 */
-	final int ARGUMENT_TO_MACRO_EXPANSION= 3;
+	final int ARGUMENT_TO_MACRO_EXPANSION = 3;
 
 	/**
 	 * Returns the kind of image-location, one of {@link #REGULAR_CODE}, {@link #MACRO_DEFINITION}

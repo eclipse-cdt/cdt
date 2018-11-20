@@ -29,9 +29,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * @author Mirko Stocker
  */
 public class ImplementMethodWizard extends RefactoringWizard {
-   private final ImplementMethodRefactoring refactoring;
-   private Map<MethodToImplementConfig, ParameterNamesInputPage> pagesMap =
-		   new HashMap<MethodToImplementConfig, ParameterNamesInputPage>();
+	private final ImplementMethodRefactoring refactoring;
+	private Map<MethodToImplementConfig, ParameterNamesInputPage> pagesMap = new HashMap<MethodToImplementConfig, ParameterNamesInputPage>();
 
 	public ImplementMethodWizard(ImplementMethodRefactoring refactoring) {
 		super(refactoring, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
@@ -51,7 +50,7 @@ public class ImplementMethodWizard extends RefactoringWizard {
 			}
 		}
 	}
-	
+
 	public ParameterNamesInputPage getPageForConfig(MethodToImplementConfig config) {
 		return pagesMap.get(config);
 	}
@@ -70,7 +69,7 @@ public class ImplementMethodWizard extends RefactoringWizard {
 		for (ParameterNamesInputPage parameterNamesInputPage : pagesMap.values()) {
 			isOnePreviewJobRunning |= parameterNamesInputPage.cancelPreviewJob();
 		}
-		
+
 		// There are good chances that one job is still running, show a progress bar to the user,
 		// join everything.
 		if (isOnePreviewJobRunning) {

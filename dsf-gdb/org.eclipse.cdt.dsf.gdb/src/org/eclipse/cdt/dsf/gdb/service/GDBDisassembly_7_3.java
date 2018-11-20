@@ -59,11 +59,8 @@ public class GDBDisassembly_7_3 extends MIDisassembly implements IDisassembly3 {
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-		register(new String[] { IDisassembly.class.getName(),
-								IDisassembly2.class.getName(),
-								IDisassembly3.class.getName(),
-								MIDisassembly.class.getName(),
-								GDBDisassembly_7_3.class.getName() },
+		register(new String[] { IDisassembly.class.getName(), IDisassembly2.class.getName(),
+				IDisassembly3.class.getName(), MIDisassembly.class.getName(), GDBDisassembly_7_3.class.getName() },
 				new Hashtable<String, String>());
 
 		rm.done();
@@ -73,90 +70,72 @@ public class GDBDisassembly_7_3 extends MIDisassembly implements IDisassembly3 {
 	// IDisassembly3
 	// /////////////////////////////////////////////////////////////////////////
 	@Override
-	public void getInstructions(IDisassemblyDMContext context,
-			BigInteger startAddress, BigInteger endAddress,
-			DataRequestMonitor<IInstruction[]> drm) 
-	{
+	public void getInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			DataRequestMonitor<IInstruction[]> drm) {
 		// Ask for opCodes by default
 		getInstructions(context, startAddress, endAddress, true, drm);
 	}
 
 	@Override
-	public void getInstructions(IDisassemblyDMContext context, String filename,
-			int linenum, int lines,
-			DataRequestMonitor<IInstruction[]> drm)
-	{
+	public void getInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines,
+			DataRequestMonitor<IInstruction[]> drm) {
 		// Ask for opCodes by default
 		getInstructions(context, filename, linenum, lines, true, drm);
 	}
 
 	@Override
-	public void getMixedInstructions(IDisassemblyDMContext context,
-			BigInteger startAddress, BigInteger endAddress,
-			DataRequestMonitor<IMixedInstruction[]> drm)
-	{
+	public void getMixedInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			DataRequestMonitor<IMixedInstruction[]> drm) {
 		// Ask for opCodes by default
 		getMixedInstructions(context, startAddress, endAddress, true, drm);
 	}
 
 	@Override
-	public void getMixedInstructions(IDisassemblyDMContext context,
-			String filename, int linenum, int lines,
-			DataRequestMonitor<IMixedInstruction[]> drm)
-	{
+	public void getMixedInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines,
+			DataRequestMonitor<IMixedInstruction[]> drm) {
 		// Ask for opCodes by default
 		getMixedInstructions(context, filename, linenum, lines, true, drm);
 	}
-	
+
 	@Override
-	public void getInstructions(IDisassemblyDMContext context,
-			BigInteger startAddress, BigInteger endAddress, boolean opCodes,
-			DataRequestMonitor<IInstruction[]> drm) 
-	{
+	public void getInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			boolean opCodes, DataRequestMonitor<IInstruction[]> drm) {
 		getInstructions(context, startAddress, endAddress,
-						opCodes ? MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY_OPCODES : 
-								  MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY,
-						drm);
+				opCodes ? MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY_OPCODES
+						: MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY,
+				drm);
 	}
 
 	@Override
-	public void getInstructions(IDisassemblyDMContext context, String filename,
-			int linenum, int lines, boolean opCodes,
-			DataRequestMonitor<IInstruction[]> drm)
-	{
+	public void getInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines, boolean opCodes,
+			DataRequestMonitor<IInstruction[]> drm) {
 		getInstructions(context, filename, linenum, lines,
-						opCodes ? MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY_OPCODES : 
-								  MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY,
-						drm);
+				opCodes ? MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY_OPCODES
+						: MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY,
+				drm);
 	}
 
 	@Override
-	public void getMixedInstructions(IDisassemblyDMContext context,
-			BigInteger startAddress, BigInteger endAddress, boolean opCodes,
-			DataRequestMonitor<IMixedInstruction[]> drm)
-	{
+	public void getMixedInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			boolean opCodes, DataRequestMonitor<IMixedInstruction[]> drm) {
 		getMixedInstructions(context, startAddress, endAddress,
-							 opCodes ? MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED_OPCODES : 
-									   MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED,
-							 drm);
+				opCodes ? MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED_OPCODES
+						: MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED,
+				drm);
 	}
 
 	@Override
-	public void getMixedInstructions(IDisassemblyDMContext context,
-			String filename, int linenum, int lines, boolean opCodes,
-			DataRequestMonitor<IMixedInstruction[]> drm)
-	{
-		getMixedInstructions(context, filename, linenum, lines, 
-							 opCodes ? MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED_OPCODES : 
-									   MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED,
-							 drm);
+	public void getMixedInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines,
+			boolean opCodes, DataRequestMonitor<IMixedInstruction[]> drm) {
+		getMixedInstructions(context, filename, linenum, lines,
+				opCodes ? MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED_OPCODES
+						: MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED,
+				drm);
 	}
 
 	@Override
-	public void alignOpCodeAddress(IDisassemblyDMContext context,
-			BigInteger address, DataRequestMonitor<BigInteger> drm) 
-	{
-		drm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
+	public void alignOpCodeAddress(IDisassemblyDMContext context, BigInteger address,
+			DataRequestMonitor<BigInteger> drm) {
+		drm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 	}
 }

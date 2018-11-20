@@ -82,7 +82,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 
 	private final static String REGISTER_PREFIX = "$"; //$NON-NLS-1$
 	private final static String GLOB_EXPRESSION_PREFIX = "="; //$NON-NLS-1$
-	
+
 	/**
 	 * This regular expression describes the supported content of an array index range.
 	 * Valid range formats are are numbers, possibly separated by - and/or ,.  
@@ -114,7 +114,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		protected IExpressionDMContext getExprDelegate() {
 			return fExprDelegate;
 		}
-		
+
 		@Override
 		public String getExpression() {
 			return fExprDelegate.getExpression();
@@ -124,23 +124,25 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		public String getSessionId() {
 			return fExprDelegate.getSessionId();
 		}
-		
+
 		@Override
 		public IDMContext[] getParents() {
 			return fExprDelegate.getParents();
 		};
-		
+
 		@Override
 		public <T> T getAdapter(Class<T> adapterType) {
 			return fExprDelegate.getAdapter(adapterType);
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj) return true;
-			if (!(obj instanceof ExpressionGroupDMC)) return false;
-			
-			return ((ExpressionGroupDMC)obj).fExprDelegate.equals(fExprDelegate);
+			if (this == obj)
+				return true;
+			if (!(obj instanceof ExpressionGroupDMC))
+				return false;
+
+			return ((ExpressionGroupDMC) obj).fExprDelegate.equals(fExprDelegate);
 		}
 
 		@Override
@@ -153,7 +155,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 			return "Group: " + getExprDelegate().toString(); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * The model data interface for expression-groups
 	 */
@@ -163,11 +165,11 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 
 		public ExpressionGroupDMData(String expr, int numChildren) {
 			assert expr != null;
-			
-            fRelativeExpression = expr;
-            fNumChildren = numChildren;
+
+			fRelativeExpression = expr;
+			fNumChildren = numChildren;
 		}
-		
+
 		@Override
 		public String getName() {
 			return fRelativeExpression;
@@ -207,30 +209,32 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		public boolean hasChildren() {
 			return fNumChildren > 0;
 		}
-		
+
 		@Override
 		public boolean equals(Object other) {
-			if (this == other) return true;
-			if (!(other instanceof ExpressionGroupDMData)) return false;
-			return fRelativeExpression.equals(((ExpressionGroupDMData)other).fRelativeExpression);
+			if (this == other)
+				return true;
+			if (!(other instanceof ExpressionGroupDMData))
+				return false;
+			return fRelativeExpression.equals(((ExpressionGroupDMData) other).fRelativeExpression);
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return fRelativeExpression.hashCode();
 		}
-		
+
 		@Override
 		public String toString() {
 			return "ExprGroup: " + fRelativeExpression; //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * The base expression service to which we delegate all non-expression-group logic.
 	 */
 	private IMIExpressions fDelegate;
-	
+
 	public GDBPatternMatchingExpressions(DsfSession session, IMIExpressions delegate) {
 		super(session);
 		fDelegate = delegate;
@@ -238,12 +242,12 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 
 	@Override
 	public void initialize(final RequestMonitor requestMonitor) {
-		super.initialize(
-				new ImmediateRequestMonitor(requestMonitor) { 
-					@Override
-					public void handleSuccess() {
-						doInitialize(requestMonitor);
-					}});
+		super.initialize(new ImmediateRequestMonitor(requestMonitor) {
+			@Override
+			public void handleSuccess() {
+				doInitialize(requestMonitor);
+			}
+		});
 	}
 
 	private void doInitialize(final RequestMonitor requestMonitor) {
@@ -253,12 +257,11 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 
 		// We must first register this service to let the original
 		// expression service know that it should not register itself.
-		register(new String[] { IExpressions.class.getName(), 
-								IExpressions2.class.getName(),
-								IExpressions3.class.getName(),
-								IMIExpressions.class.getName() }, 
-				 new Hashtable<String, String>());
-		
+		register(
+				new String[] { IExpressions.class.getName(), IExpressions2.class.getName(),
+						IExpressions3.class.getName(), IMIExpressions.class.getName() },
+				new Hashtable<String, String>());
+
 		// Second, we initialize the delegate so it can perform its duties
 		fDelegate.initialize(requestMonitor);
 	}
@@ -282,7 +285,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	@Override
 	public IExpressionDMContext createExpression(IDMContext ctx, String expression) {
 		IExpressionDMContext expressionDmc = fDelegate.createExpression(ctx, expression);
-		
+
 		if (isExpressionGroup(expression)) {
 			return new ExpressionGroupDMC(expressionDmc);
 		} else {
@@ -294,25 +297,25 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	public ICastedExpressionDMContext createCastedExpression(IExpressionDMContext context, CastInfo castInfo) {
 		// Cannot cast an expression-group
 		assert (!(context instanceof IExpressionGroupDMContext));
-		
+
 		return fDelegate.createCastedExpression(context, castInfo);
 	}
 
 	@Override
-	public void getExpressionDataExtension(final IExpressionDMContext dmc, final DataRequestMonitor<IExpressionDMDataExtension> rm) {
+	public void getExpressionDataExtension(final IExpressionDMContext dmc,
+			final DataRequestMonitor<IExpressionDMDataExtension> rm) {
 		if (dmc instanceof IExpressionGroupDMContext) {
 			getSubExpressionCount(dmc, new ImmediateDataRequestMonitor<Integer>(rm) {
 				@Override
 				protected void handleSuccess() {
-					rm.done(new ExpressionGroupDMData(((IExpressionGroupDMContext)dmc).getExpression(), getData()));
+					rm.done(new ExpressionGroupDMData(((IExpressionGroupDMContext) dmc).getExpression(), getData()));
 				}
 			});
-    		return;
-    	}
-		
+			return;
+		}
+
 		fDelegate.getExpressionDataExtension(dmc, rm);
 	}
-
 
 	@Override
 	public void getExpressionData(final IExpressionDMContext dmc, final DataRequestMonitor<IExpressionDMData> rm) {
@@ -320,12 +323,12 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 			getSubExpressionCount(dmc, new ImmediateDataRequestMonitor<Integer>(rm) {
 				@Override
 				protected void handleSuccess() {
-					rm.done(new ExpressionGroupDMData(((IExpressionGroupDMContext)dmc).getExpression(), getData()));
+					rm.done(new ExpressionGroupDMData(((IExpressionGroupDMContext) dmc).getExpression(), getData()));
 				}
 			});
-    		return;
-    	}
-		
+			return;
+		}
+
 		fDelegate.getExpressionData(dmc, rm);
 	}
 
@@ -333,69 +336,75 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	public void getExpressionAddressData(IExpressionDMContext dmc, DataRequestMonitor<IExpressionDMAddress> rm) {
 		// An expression-group does not have an address
 		if (dmc instanceof IExpressionGroupDMContext) {
-    		rm.done(new IExpressionDMLocation() {
+			rm.done(new IExpressionDMLocation() {
 				@Override
 				public IAddress getAddress() {
 					return IExpressions.IExpressionDMLocation.INVALID_ADDRESS;
 				}
+
 				@Override
 				public int getSize() {
 					return 0;
 				}
+
 				@Override
 				public String getLocation() {
 					return ""; //$NON-NLS-1$
 				}
-    		});
-    		return;
-    	}
-		
+			});
+			return;
+		}
+
 		fDelegate.getExpressionAddressData(dmc, rm);
 	}
 
 	@Override
 	public void getSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor<IExpressionDMContext[]> rm) {
 		if (exprCtx instanceof IExpressionGroupDMContext) {
-			matchExpressionGroup((IExpressionGroupDMContext)exprCtx, -1, -1, rm);
+			matchExpressionGroup((IExpressionGroupDMContext) exprCtx, -1, -1, rm);
 		} else {
 			fDelegate.getSubExpressions(exprCtx, rm);
 		}
 	}
 
 	@Override
-	public void getSubExpressions(IExpressionDMContext exprCtx, int startIndex, int length, DataRequestMonitor<IExpressionDMContext[]> rm) {
+	public void getSubExpressions(IExpressionDMContext exprCtx, int startIndex, int length,
+			DataRequestMonitor<IExpressionDMContext[]> rm) {
 		if (exprCtx instanceof IExpressionGroupDMContext) {
-			matchExpressionGroup((IExpressionGroupDMContext)exprCtx, startIndex, length, rm);
+			matchExpressionGroup((IExpressionGroupDMContext) exprCtx, startIndex, length, rm);
 		} else {
-			fDelegate.getSubExpressions(exprCtx, startIndex, length, rm);	
+			fDelegate.getSubExpressions(exprCtx, startIndex, length, rm);
 		}
 	}
 
 	@Override
 	public void getSubExpressionCount(IExpressionDMContext dmc, final DataRequestMonitor<Integer> rm) {
 		if (dmc instanceof IExpressionGroupDMContext) {
-			matchExpressionGroup((IExpressionGroupDMContext)dmc, -1, -1, new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
-				@Override
-				protected void handleSuccess() {
-					rm.done(getData().length);
-				}
-			});
+			matchExpressionGroup((IExpressionGroupDMContext) dmc, -1, -1,
+					new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
+						@Override
+						protected void handleSuccess() {
+							rm.done(getData().length);
+						}
+					});
 		} else {
 			fDelegate.getSubExpressionCount(dmc, rm);
 		}
 	}
 
 	@Override
-	public void getSubExpressionCount(IExpressionDMContext dmc, int maxNumberOfChildren, final DataRequestMonitor<Integer> rm) {
+	public void getSubExpressionCount(IExpressionDMContext dmc, int maxNumberOfChildren,
+			final DataRequestMonitor<Integer> rm) {
 		if (dmc instanceof IExpressionGroupDMContext) {
 			// No need to worry about maxNumberOfChildren for the case of an expression-group, since there won't be
 			// a very large amount of them.
-			matchExpressionGroup((IExpressionGroupDMContext)dmc, -1, -1, new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
-				@Override
-				protected void handleSuccess() {
-					rm.done(getData().length);
-				}
-			});
+			matchExpressionGroup((IExpressionGroupDMContext) dmc, -1, -1,
+					new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
+						@Override
+						protected void handleSuccess() {
+							rm.done(getData().length);
+						}
+					});
 		} else {
 			fDelegate.getSubExpressionCount(dmc, maxNumberOfChildren, rm);
 		}
@@ -410,29 +419,29 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	public void canWriteExpression(IExpressionDMContext dmc, DataRequestMonitor<Boolean> rm) {
 		// An expression-group's value cannot be modified
 		if (dmc instanceof IExpressionGroupDMContext) {
-    		rm.done(false);
-    		return;
-    	}
-		
-		fDelegate.canWriteExpression(dmc, rm);	
+			rm.done(false);
+			return;
+		}
+
+		fDelegate.canWriteExpression(dmc, rm);
 	}
 
 	@Override
 	public void writeExpression(IExpressionDMContext dmc, String expressionValue, String formatId, RequestMonitor rm) {
 		// An expression-group's value cannot be modified
 		assert !(dmc instanceof IExpressionGroupDMContext);
-		fDelegate.writeExpression(dmc, expressionValue, formatId, rm);	
+		fDelegate.writeExpression(dmc, expressionValue, formatId, rm);
 	}
 
 	@Override
 	public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm) {
 		// For an expression-group, we only show the NATURAL format
 		if (dmc instanceof IExpressionGroupDMContext) {
-    		rm.done(new String[] { IFormattedValues.NATURAL_FORMAT });
-    		return;
-    	}
-		
-		fDelegate.getAvailableFormats(dmc, rm);	
+			rm.done(new String[] { IFormattedValues.NATURAL_FORMAT });
+			return;
+		}
+
+		fDelegate.getAvailableFormats(dmc, rm);
 	}
 
 	@Override
@@ -442,7 +451,8 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	}
 
 	@Override
-	public void getFormattedExpressionValue(FormattedValueDMContext dmc, final DataRequestMonitor<FormattedValueDMData> rm) {
+	public void getFormattedExpressionValue(FormattedValueDMContext dmc,
+			final DataRequestMonitor<FormattedValueDMData> rm) {
 		IExpressionGroupDMContext exprGroup = DMContexts.getAncestorOfType(dmc, IExpressionGroupDMContext.class);
 		if (exprGroup != null) {
 			getSubExpressionCount(exprGroup, new ImmediateDataRequestMonitor<Integer>(rm) {
@@ -451,7 +461,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 					int numChildren = getData();
 					String value;
 					if (numChildren == 0) {
-						value = Messages.NoMatches;	
+						value = Messages.NoMatches;
 					} else if (numChildren == 1) {
 						value = MessageFormat.format(Messages.UniqueMatch, numChildren);
 					} else {
@@ -460,31 +470,31 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 					rm.done(new FormattedValueDMData(value));
 				}
 			});
-    		return;
-    	}
-		
+			return;
+		}
+
 		fDelegate.getFormattedExpressionValue(dmc, rm);
 	}
 
 	@Override
-	public void safeToAskForAllSubExpressions(IExpressionDMContext dmc,	DataRequestMonitor<Boolean> rm) {
+	public void safeToAskForAllSubExpressions(IExpressionDMContext dmc, DataRequestMonitor<Boolean> rm) {
 		// Always safe to ask for all sub-expression of an expression-group, 
 		// since we don't expect large amounts of children
 		if (dmc instanceof IExpressionGroupDMContext) {
-    		rm.done(true);
-    		return;
-    	}
-		
+			rm.done(true);
+			return;
+		}
+
 		fDelegate.safeToAskForAllSubExpressions(dmc, rm);
 	}
 
 	@Override
 	public void flushCache(IDMContext context) {
 		if (fDelegate instanceof ICachingService) {
-			((ICachingService)fDelegate).flushCache(context);		
+			((ICachingService) fDelegate).flushCache(context);
 		}
 	}
-	
+
 	/** 
 	 * Verify if we are dealing with an expression-group.
 	 * @param expr The expression to verify
@@ -500,16 +510,16 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		// and after the regex, which achieves what we want.
 		// Note that checking if (expr.split(regex) > 1), will not notice
 		// an expression that has a separator only at the end.
-		if (expr.matches(".*" + EXPRESSION_GROUP_SEPARATORS_REGEXP +".*")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (expr.matches(".*" + EXPRESSION_GROUP_SEPARATORS_REGEXP + ".*")) { //$NON-NLS-1$ //$NON-NLS-2$
 			// We are dealing with a group of expressions.
 			// It may not be a valid one, but it is one nonetheless.
 			return true;
 		}
-		
+
 		// Not a list.  Check if we are dealing with a glob-pattern.
 		return isGlobExpression(expr);
 	}
-	
+
 	/**
 	 * Verify if we are dealing with a glob-pattern.
 	 * We support the expression '*' which will match all local variables
@@ -536,7 +546,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 
 		return false;
 	}
-	
+
 	/**
 	 * Verify if the glob-pattern represents a register.
 	 * 
@@ -552,7 +562,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Verify if the glob-pattern should be handled as an array index range.
 	 * When dealing with variables (on contrast to registers), the [] will
@@ -576,7 +586,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		if (openBracketIndex < 1) {
 			return false;
 		}
-		
+
 		// We don't support any characters after the closing bracket
 		// since we don't support any operations on an expression-group.
 		if (!expr.endsWith("]")) { //$NON-NLS-1$
@@ -585,20 +595,20 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 
 		// We have a match for a variable which uses brackets.
 		// Check if the indices are integer ranges (using - or commas).
-	    try {
-	    	Pattern pattern = Pattern.compile(ARRAY_INDEX_RANGE_REGEXP, Pattern.CASE_INSENSITIVE);
-	    	Matcher matcher = pattern.matcher(expr.substring(openBracketIndex+1, expr.length()-1));
-	    	if (!matcher.find()) {
-	    		return false;
-	    	}
-	    } catch(Exception e) {
-	    	// If the user put an invalid pattern, we just ignore it
-	    	return false;
-	    }
-	    
+		try {
+			Pattern pattern = Pattern.compile(ARRAY_INDEX_RANGE_REGEXP, Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(expr.substring(openBracketIndex + 1, expr.length() - 1));
+			if (!matcher.find()) {
+				return false;
+			}
+		} catch (Exception e) {
+			// If the user put an invalid pattern, we just ignore it
+			return false;
+		}
+
 		return true;
 	}
-	
+
 	/**
 	 * Split the expression-group into a list of individual expression strings. 
 	 */
@@ -617,7 +627,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		}
 		return expressions;
 	}
-	
+
 	/**
 	 * Find all expressions that match the specified expression-group.
 	 * This method retains the order of the expressions in the expression-group, to show them
@@ -629,125 +639,131 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	 * @param length The length of the range of matches (-1 means all matches)
 	 * @param rm RequestMonitor that will contain the range of found matches.
 	 */
-	protected void matchExpressionGroup(final IExpressionGroupDMContext exprGroupDmc, int startIndex, int length, 
-			                            final DataRequestMonitor<IExpressionDMContext[]> rm) {
+	protected void matchExpressionGroup(final IExpressionGroupDMContext exprGroupDmc, int startIndex, int length,
+			final DataRequestMonitor<IExpressionDMContext[]> rm) {
 		// First separate the group into different expressions.
 		// We need to create a new list, as we will modify it during our processing.
 		final List<String> exprList = new ArrayList<String>(splitExpressionsInGroup(exprGroupDmc));
 
 		// List to store the final result, which is all the sub-expressions of this group
-      	final ArrayList<IExpressionDMContext> subExprList = new ArrayList<IExpressionDMContext>();
-      	
-      	final int startIndex1 = (startIndex < 0) ? 0 : startIndex;
-      	final int length1 = (length < 0) ? Integer.MAX_VALUE : length;
+		final ArrayList<IExpressionDMContext> subExprList = new ArrayList<IExpressionDMContext>();
 
-      	matchExpressionList(exprList, subExprList, exprGroupDmc, new ImmediateRequestMonitor(rm) {
-      		@Override
-      		protected void handleSuccess() {
-        		// It would be nice to allow identical elements, so that the user
-        		// can control their positioning.  For example, the pattern $eax, $*, would show
-        		// the $eax first, followed by all other registers sorted alphabetically.  In that case
-        		// $eax will be shown again within $*, but that would be ok.
-        		// However, the platform does not handle the same element being there twice.
-        		// Not only does selecting the element jump back and forth between the duplicates,
-        		// but children of duplicated elements are not always right.  Because of this, we
-        		// remove all duplicates here.
-        		LinkedHashSet<IExpressionDMContext> uniqueSubExprSet = new LinkedHashSet<IExpressionDMContext>(subExprList);
-        		subExprList.clear();
-        		subExprList.addAll(uniqueSubExprSet);
+		final int startIndex1 = (startIndex < 0) ? 0 : startIndex;
+		final int length1 = (length < 0) ? Integer.MAX_VALUE : length;
 
-      			// Extract the range of interest from the final list
+		matchExpressionList(exprList, subExprList, exprGroupDmc, new ImmediateRequestMonitor(rm) {
+			@Override
+			protected void handleSuccess() {
+				// It would be nice to allow identical elements, so that the user
+				// can control their positioning.  For example, the pattern $eax, $*, would show
+				// the $eax first, followed by all other registers sorted alphabetically.  In that case
+				// $eax will be shown again within $*, but that would be ok.
+				// However, the platform does not handle the same element being there twice.
+				// Not only does selecting the element jump back and forth between the duplicates,
+				// but children of duplicated elements are not always right.  Because of this, we
+				// remove all duplicates here.
+				LinkedHashSet<IExpressionDMContext> uniqueSubExprSet = new LinkedHashSet<IExpressionDMContext>(
+						subExprList);
+				subExprList.clear();
+				subExprList.addAll(uniqueSubExprSet);
+
+				// Extract the range of interest from the final list
 				int endIndex = Math.min(startIndex1 + length1, subExprList.size());
 				List<IExpressionDMContext> subExprRangeList = subExprList.subList(startIndex1, endIndex);
-				IExpressionDMContext[] subExprRange = subExprRangeList.toArray(new IExpressionDMContext[subExprRangeList.size()]);
-      			rm.done(subExprRange);
-      		}
-      	});      	
+				IExpressionDMContext[] subExprRange = subExprRangeList
+						.toArray(new IExpressionDMContext[subExprRangeList.size()]);
+				rm.done(subExprRange);
+			}
+		});
 	}
-	
+
 	/** 
 	 * We use this recursive method to serialize the request for matches.  Once one request is done,
 	 * we create a new one.  This allows us to guarantee that the resulting matches will
 	 * be ordered in the same way every time.
 	 */
-	private void matchExpressionList(final List<String> exprList, final List<IExpressionDMContext> subExprList, final IDMContext parentDmc,
-			                         final RequestMonitor rm) {
-    	// We've finished parsing the list
-    	if (exprList.isEmpty()) {
-    		rm.done();
-    		return;
-    	}
-      			
-    	// Remove the next element from the list and process it.  We handle glob-pattern matching if needed
-    	// and sort the result alphabetically in that case.
-    	String expr = exprList.remove(0);
+	private void matchExpressionList(final List<String> exprList, final List<IExpressionDMContext> subExprList,
+			final IDMContext parentDmc, final RequestMonitor rm) {
+		// We've finished parsing the list
+		if (exprList.isEmpty()) {
+			rm.done();
+			return;
+		}
 
-    	IExpressionDMContext exprDmc = createExpression(parentDmc, expr);
-    	if (exprDmc instanceof IExpressionGroupDMContext) {
-     		matchGlobExpression((IExpressionGroupDMContext)exprDmc, new ImmediateDataRequestMonitor<List<IExpressionDMContext>>(rm) {
-    			@Override
-    			protected void handleSuccess() {
-    				List<IExpressionDMContext> matches = getData();
-    				// Sort the matches to be more user-friendly
-    				Collections.sort(matches, new Comparator<IExpressionDMContext>() {
-    					@Override
-    					public int compare(IExpressionDMContext o1, IExpressionDMContext o2) {
-    						// For elements of the same array, we need to sort by index
-    						if (isArrayPattern(o1.getExpression()) && isArrayPattern(o2.getExpression())) {
-    							// Extract the array names and the array indices specification.
-    							// The regex used will remove both [ and ]
-    							String[] arrayExprParts1 = o1.getExpression().split("[\\[\\]]"); //$NON-NLS-1$
-    							assert arrayExprParts1 != null && arrayExprParts1.length == 2;
+		// Remove the next element from the list and process it.  We handle glob-pattern matching if needed
+		// and sort the result alphabetically in that case.
+		String expr = exprList.remove(0);
 
-    							String[] arrayExprParts2 = o2.getExpression().split("[\\[\\]]"); //$NON-NLS-1$
-    							assert arrayExprParts2 != null && arrayExprParts2.length == 2;
+		IExpressionDMContext exprDmc = createExpression(parentDmc, expr);
+		if (exprDmc instanceof IExpressionGroupDMContext) {
+			matchGlobExpression((IExpressionGroupDMContext) exprDmc,
+					new ImmediateDataRequestMonitor<List<IExpressionDMContext>>(rm) {
+						@Override
+						protected void handleSuccess() {
+							List<IExpressionDMContext> matches = getData();
+							// Sort the matches to be more user-friendly
+							Collections.sort(matches, new Comparator<IExpressionDMContext>() {
+								@Override
+								public int compare(IExpressionDMContext o1, IExpressionDMContext o2) {
+									// For elements of the same array, we need to sort by index
+									if (isArrayPattern(o1.getExpression()) && isArrayPattern(o2.getExpression())) {
+										// Extract the array names and the array indices specification.
+										// The regex used will remove both [ and ]
+										String[] arrayExprParts1 = o1.getExpression().split("[\\[\\]]"); //$NON-NLS-1$
+										assert arrayExprParts1 != null && arrayExprParts1.length == 2;
 
-    							// Compare array names
-    							if (arrayExprParts1[0].compareTo(arrayExprParts2[0]) == 0) {
-    								// We are dealing with the same array
-    								try {
-    									int arrayIndex1 = Integer.parseInt(arrayExprParts1[1]);
-    									int arrayIndex2 = Integer.parseInt(arrayExprParts2[1]);
+										String[] arrayExprParts2 = o2.getExpression().split("[\\[\\]]"); //$NON-NLS-1$
+										assert arrayExprParts2 != null && arrayExprParts2.length == 2;
 
-    									if (arrayIndex1 == arrayIndex2) return 0;
-    									if (arrayIndex1 > arrayIndex2) return 1;
-    									return -1;
-    								} catch (NumberFormatException e) {
-    									// Invalid array index.  Fall-back to sorting lexically.
-    								}
-    							}
-    						}
-    						return o1.getExpression().compareTo(o2.getExpression());
-    					}
-    				});
+										// Compare array names
+										if (arrayExprParts1[0].compareTo(arrayExprParts2[0]) == 0) {
+											// We are dealing with the same array
+											try {
+												int arrayIndex1 = Integer.parseInt(arrayExprParts1[1]);
+												int arrayIndex2 = Integer.parseInt(arrayExprParts2[1]);
 
-    				subExprList.addAll(matches);
-    	    		// Match the next expression from the list
-    	    		matchExpressionList(exprList, subExprList, parentDmc, rm);
-    			}
-    		});
-    	} else {
-    		// Just a normal expression
-    		subExprList.add(exprDmc);
-    		// Match the next expression from the list
-    		matchExpressionList(exprList, subExprList, parentDmc, rm);
-    	}
-    }
-	
+												if (arrayIndex1 == arrayIndex2)
+													return 0;
+												if (arrayIndex1 > arrayIndex2)
+													return 1;
+												return -1;
+											} catch (NumberFormatException e) {
+												// Invalid array index.  Fall-back to sorting lexically.
+											}
+										}
+									}
+									return o1.getExpression().compareTo(o2.getExpression());
+								}
+							});
+
+							subExprList.addAll(matches);
+							// Match the next expression from the list
+							matchExpressionList(exprList, subExprList, parentDmc, rm);
+						}
+					});
+		} else {
+			// Just a normal expression
+			subExprList.add(exprDmc);
+			// Match the next expression from the list
+			matchExpressionList(exprList, subExprList, parentDmc, rm);
+		}
+	}
+
 	/**
 	 * Find all expressions that match the specified glob-pattern.
 	 * 
 	 * @param exprDmc The expression context for which we want the matches (sub-expressions)
 	 * @param rm RequestMonitor that will contain the unsorted matches.
 	 */
-	protected void matchGlobExpression(final IExpressionGroupDMContext exprDmc, final DataRequestMonitor<List<IExpressionDMContext>> rm) {
+	protected void matchGlobExpression(final IExpressionGroupDMContext exprDmc,
+			final DataRequestMonitor<List<IExpressionDMContext>> rm) {
 		String fullExpr = exprDmc.getExpression().trim();
 
 		if (fullExpr.startsWith(GLOB_EXPRESSION_PREFIX)) {
 			// Strip the leading '=' and any extra spaces
 			fullExpr = fullExpr.substring(1).trim();
 		}
-		
+
 		if (isRegisterPattern(fullExpr)) {
 			matchRegisters(exprDmc, rm);
 		} else {
@@ -760,8 +776,8 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 				matchArrays(exprDmc, new ImmediateDataRequestMonitor<List<IExpressionDMContext>>(rm) {
 					@Override
 					protected void handleSuccess() {
-						final List<IExpressionDMContext> exprList = 
-								getData() != null ? getData() : new ArrayList<IExpressions.IExpressionDMContext>();
+						final List<IExpressionDMContext> exprList = getData() != null ? getData()
+								: new ArrayList<IExpressions.IExpressionDMContext>();
 						matchLocals(exprDmc, new ImmediateDataRequestMonitor<List<IExpressionDMContext>>(rm) {
 							@Override
 							protected void handleSuccess() {
@@ -783,33 +799,34 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	 * @param globDmc The glob-expression context for which we want the matches (sub-expressions)
 	 * @param rm RequestMonitor that will contain the unsorted matches.
 	 */
-	protected void matchRegisters(final IExpressionGroupDMContext globDmc, final DataRequestMonitor<List<IExpressionDMContext>> rm) {
+	protected void matchRegisters(final IExpressionGroupDMContext globDmc,
+			final DataRequestMonitor<List<IExpressionDMContext>> rm) {
 		final IRegisters2 registerService = getServicesTracker().getService(IRegisters2.class);
 		if (registerService == null) {
-			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Register service unavailable", null)); //$NON-NLS-1$
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Register service unavailable", //$NON-NLS-1$
+					null));
 			return;
 		}
 
 		final IContainerDMContext contDmc = DMContexts.getAncestorOfType(globDmc, IContainerDMContext.class);
-		
-		registerService.getRegisters(
-				new CompositeDMContext(new IDMContext[] { contDmc, globDmc } ), 
+
+		registerService.getRegisters(new CompositeDMContext(new IDMContext[] { contDmc, globDmc }),
 				new ImmediateDataRequestMonitor<IRegisterDMContext[]>(rm) {
 					@Override
 					protected void handleSuccess() {
 						assert getData() instanceof MIRegisterDMC[];
 						ArrayList<IExpressionDMContext> matches = new ArrayList<IExpressionDMContext>();
-						
+
 						String fullExpr = globDmc.getExpression().trim();
-                		if (fullExpr.startsWith(GLOB_EXPRESSION_PREFIX)) {
-                			// Strip the leading '=' and any extra spaces
-                			fullExpr = fullExpr.substring(1).trim();
-                		}
-                		
-						for (MIRegisterDMC register : (MIRegisterDMC[])getData()) {
+						if (fullExpr.startsWith(GLOB_EXPRESSION_PREFIX)) {
+							// Strip the leading '=' and any extra spaces
+							fullExpr = fullExpr.substring(1).trim();
+						}
+
+						for (MIRegisterDMC register : (MIRegisterDMC[]) getData()) {
 							String potentialMatch = REGISTER_PREFIX + register.getName();
 							if (globMatches(fullExpr, potentialMatch)) {
-								matches.add(createExpression(globDmc, potentialMatch)); 
+								matches.add(createExpression(globDmc, potentialMatch));
 							}
 						}
 
@@ -817,21 +834,22 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 					}
 				});
 	}
-	
+
 	/**
 	 * Find all local variables that match the specified glob-pattern.
 	 * 
 	 * @param globDmc The glob-expression context for which we want the matches (sub-expressions)
 	 * @param rm RequestMonitor that will contain the unsorted matches.
 	 */
-	protected void matchLocals(final IExpressionGroupDMContext globDmc, final DataRequestMonitor<List<IExpressionDMContext>> rm) {
-		
+	protected void matchLocals(final IExpressionGroupDMContext globDmc,
+			final DataRequestMonitor<List<IExpressionDMContext>> rm) {
+
 		final IStack stackService = getServicesTracker().getService(IStack.class);
 		if (stackService == null) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Stack service unavailable", null)); //$NON-NLS-1$
 			return;
 		}
-		
+
 		IFrameDMContext frameCtx = DMContexts.getAncestorOfType(globDmc, IFrameDMContext.class);
 		if (frameCtx == null) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Stack frame unavailable", null)); //$NON-NLS-1$
@@ -841,68 +859,72 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		stackService.getLocals(frameCtx, new ImmediateDataRequestMonitor<IVariableDMContext[]>(rm) {
 			@Override
 			protected void handleSuccess() {
-                IVariableDMContext[] localsDMCs = getData();               
-                final IVariableDMData[] localsDMData = new IVariableDMData[localsDMCs.length];
+				IVariableDMContext[] localsDMCs = getData();
+				final IVariableDMData[] localsDMData = new IVariableDMData[localsDMCs.length];
 
-                final CountingRequestMonitor varNameCRM = new CountingRequestMonitor(getExecutor(), rm) {
-                    @Override
-                    public void handleSuccess() {
-                        ArrayList<IExpressionDMContext> matches = new ArrayList<IExpressionDMContext>(localsDMData.length);
-                        
-                		String fullExpr = globDmc.getExpression().trim();
-                		if (fullExpr.startsWith(GLOB_EXPRESSION_PREFIX)) {
-                			// Strip the leading '=' and any extra spaces
-                			fullExpr = fullExpr.substring(1).trim();
-                		}
-                		
-                        for (IVariableDMData localDMData : localsDMData) {
+				final CountingRequestMonitor varNameCRM = new CountingRequestMonitor(getExecutor(), rm) {
+					@Override
+					public void handleSuccess() {
+						ArrayList<IExpressionDMContext> matches = new ArrayList<IExpressionDMContext>(
+								localsDMData.length);
+
+						String fullExpr = globDmc.getExpression().trim();
+						if (fullExpr.startsWith(GLOB_EXPRESSION_PREFIX)) {
+							// Strip the leading '=' and any extra spaces
+							fullExpr = fullExpr.substring(1).trim();
+						}
+
+						for (IVariableDMData localDMData : localsDMData) {
 							String potentialMatch = localDMData.getName();
 							if (globMatches(fullExpr, potentialMatch)) {
 								matches.add(createExpression(globDmc, potentialMatch));
 							}
-                        }
-                        
-                        rm.done(matches);
-                    }
-                };
-                
-                // Get all the names of the variables
-                int count = 0;
-				for (int index=0; index < localsDMCs.length; index++) {
+						}
+
+						rm.done(matches);
+					}
+				};
+
+				// Get all the names of the variables
+				int count = 0;
+				for (int index = 0; index < localsDMCs.length; index++) {
 					final int finalIndex = index;
-                    stackService.getVariableData(localsDMCs[finalIndex], new ImmediateDataRequestMonitor<IVariableDMData>(varNameCRM) {
-                            @Override
-                            public void handleSuccess() {
-                                localsDMData[finalIndex] = getData();
-                                varNameCRM.done();
-                            }
-                    });
-                    
-                    count++;
-                }		
-                varNameCRM.setDoneCount(count);
+					stackService.getVariableData(localsDMCs[finalIndex],
+							new ImmediateDataRequestMonitor<IVariableDMData>(varNameCRM) {
+								@Override
+								public void handleSuccess() {
+									localsDMData[finalIndex] = getData();
+									varNameCRM.done();
+								}
+							});
+
+					count++;
+				}
+				varNameCRM.setDoneCount(count);
 			}
 		});
 	}
+
 	/**
 	 * Find all arrays elements that match the specified glob-pattern.
 	 * 
 	 * @param globDmc The glob-expression context for which we want the matches (sub-expressions)
 	 * @param rm RequestMonitor that will contain the unsorted matches.
 	 */
-	protected void matchArrays(final IExpressionGroupDMContext globDmc, final DataRequestMonitor<List<IExpressionDMContext>> rm) {
+	protected void matchArrays(final IExpressionGroupDMContext globDmc,
+			final DataRequestMonitor<List<IExpressionDMContext>> rm) {
 		final IStack stackService = getServicesTracker().getService(IStack.class);
 		if (stackService == null) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Stack service unavailable", null)); //$NON-NLS-1$
 			return;
 		}
-		
+
 		IFrameDMContext frameCtx = DMContexts.getAncestorOfType(globDmc, IFrameDMContext.class);
 		if (frameCtx == null) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Stack frame unavailable", null)); //$NON-NLS-1$
 			return;
 		}
-		
+
 		String fullExpr = globDmc.getExpression().trim();
 		if (fullExpr.startsWith(GLOB_EXPRESSION_PREFIX)) {
 			// Strip the leading '=' and any extra spaces
@@ -915,100 +937,99 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		assert arrayExprParts != null && arrayExprParts.length == 2;
 
 		if (arrayExprParts == null || arrayExprParts.length < 2) {
-			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Error parsing array expression", null)); //$NON-NLS-1$
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Error parsing array expression", //$NON-NLS-1$
+					null));
 			return;
 		}
-		
+
 		final String arrayName = arrayExprParts[0].trim();
 		final String arrayIndexSpec = arrayExprParts[1].trim();
 
 		stackService.getLocals(frameCtx, new ImmediateDataRequestMonitor<IVariableDMContext[]>(rm) {
 			@Override
 			protected void handleSuccess() {
-                IVariableDMContext[] localsDMCs = getData();               
-                final IVariableDMData[] localsDMData = new IVariableDMData[localsDMCs.length];
+				IVariableDMContext[] localsDMCs = getData();
+				final IVariableDMData[] localsDMData = new IVariableDMData[localsDMCs.length];
 
-                final CountingRequestMonitor varNameCRM = new CountingRequestMonitor(getExecutor(), rm) {
-                    @Override
-                    public void handleSuccess() {
-                    	final ArrayList<IExpressionDMContext> matches = new ArrayList<IExpressionDMContext>();
-                    	final CountingRequestMonitor elementMatchesCRM = new CountingRequestMonitor(getExecutor(), rm) {
-                    		@Override
-                    		public void handleSuccess() {
-                    			rm.done(matches);
-                    		}
-                    	};
+				final CountingRequestMonitor varNameCRM = new CountingRequestMonitor(getExecutor(), rm) {
+					@Override
+					public void handleSuccess() {
+						final ArrayList<IExpressionDMContext> matches = new ArrayList<IExpressionDMContext>();
+						final CountingRequestMonitor elementMatchesCRM = new CountingRequestMonitor(getExecutor(), rm) {
+							@Override
+							public void handleSuccess() {
+								rm.done(matches);
+							}
+						};
 
-                    	int count = 0;
-                    	for (IVariableDMData localDMData : localsDMData) {
-                    		final String potentialMatch = localDMData.getName();
+						int count = 0;
+						for (IVariableDMData localDMData : localsDMData) {
+							final String potentialMatch = localDMData.getName();
 
-                    		if (globMatches(arrayName, potentialMatch)) {
-                    			// We have a variable that matches the name part of the array.
-                    			// Let's create the matching elements if that variable is an array.
-                    			createPotentialArrayMatches(createExpression(globDmc, potentialMatch), arrayIndexSpec,
-                    					                    new ImmediateDataRequestMonitor<List<IExpressionDMContext>>(elementMatchesCRM){
-                    				@Override
-                    				protected void handleSuccess() {
-                    					if (getData() != null) {
-                    						matches.addAll(getData());
-                    					}
-                    					elementMatchesCRM.done();
-                    				}
-                    			});
+							if (globMatches(arrayName, potentialMatch)) {
+								// We have a variable that matches the name part of the array.
+								// Let's create the matching elements if that variable is an array.
+								createPotentialArrayMatches(createExpression(globDmc, potentialMatch), arrayIndexSpec,
+										new ImmediateDataRequestMonitor<List<IExpressionDMContext>>(elementMatchesCRM) {
+											@Override
+											protected void handleSuccess() {
+												if (getData() != null) {
+													matches.addAll(getData());
+												}
+												elementMatchesCRM.done();
+											}
+										});
 
-                    			count++;
-                    		}
-                    	}
-                    	elementMatchesCRM.setDoneCount(count);
-                    }
-                };
-                
-                // Get all the names of the variables
-                int count = 0;
-				for (int index=0; index < localsDMCs.length; index++) {
+								count++;
+							}
+						}
+						elementMatchesCRM.setDoneCount(count);
+					}
+				};
+
+				// Get all the names of the variables
+				int count = 0;
+				for (int index = 0; index < localsDMCs.length; index++) {
 					final int finalIndex = index;
-                    stackService.getVariableData(localsDMCs[finalIndex], new ImmediateDataRequestMonitor<IVariableDMData>(varNameCRM) {
-                            @Override
-                            public void handleSuccess() {
-                                localsDMData[finalIndex] = getData();
-                                varNameCRM.done();
-                            }
-                    });
-                    
-                    count++;
-                }		
-                varNameCRM.setDoneCount(count);
+					stackService.getVariableData(localsDMCs[finalIndex],
+							new ImmediateDataRequestMonitor<IVariableDMData>(varNameCRM) {
+								@Override
+								public void handleSuccess() {
+									localsDMData[finalIndex] = getData();
+									varNameCRM.done();
+								}
+							});
+
+					count++;
+				}
+				varNameCRM.setDoneCount(count);
 			}
 		});
 	}
-	
+
 	/**
 	 * Creates requested array elements if exprDmc is indeed an array.
 	 * 
 	 * @param exprDmc The potential array expression to be used
 	 * @param indexSpec The specification of the element indices
 	 * @param rm The list of created element expressions.  
-     *           If exprDmc is not an array, the list will be empty but not null.
+	 *           If exprDmc is not an array, the list will be empty but not null.
 	 */
-	protected void createPotentialArrayMatches(final IExpressionDMContext exprDmc, final String indexSpec, 
-			                                   final DataRequestMonitor<List<IExpressionDMContext>> rm) {
+	protected void createPotentialArrayMatches(final IExpressionDMContext exprDmc, final String indexSpec,
+			final DataRequestMonitor<List<IExpressionDMContext>> rm) {
 		// We check if the variable is an array or not.  If it is an array,
 		// we create the elements based on the specified indices.
 		// If it is not an array, we don't need to handle it in this method
 		getExpressionData(exprDmc, new ImmediateDataRequestMonitor<IExpressionDMData>(rm) {
 			@Override
 			protected void handleCompleted() {
-				boolean isArray = 
-						isSuccess() && 
-						getData().getBasicType().equals(IExpressionDMData.BasicType.array);
+				boolean isArray = isSuccess() && getData().getBasicType().equals(IExpressionDMData.BasicType.array);
 
-            	final ArrayList<IExpressionDMContext> elements = new ArrayList<IExpressionDMContext>();
+				final ArrayList<IExpressionDMContext> elements = new ArrayList<IExpressionDMContext>();
 
 				if (isArray) {
 					// we must now create the elements based on the indices
-					List<IExpressionDMContext> indicesDmcs = 
-							createArrayIndicesExpression(exprDmc, indexSpec);
+					List<IExpressionDMContext> indicesDmcs = createArrayIndicesExpression(exprDmc, indexSpec);
 					if (indicesDmcs != null) {
 						elements.addAll(indicesDmcs);
 					}
@@ -1032,24 +1053,24 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	 *         could be a valid expression (i.e., the index 3-2=1 in this case)
 	 */
 	protected List<IExpressionDMContext> createArrayIndicesExpression(IExpressionDMContext arrayDmc, String indexSpec) {
-        ArrayList<IExpressionDMContext> expressionDMCs = new ArrayList<IExpressionDMContext>();
-        String arrayName = arrayDmc.getExpression();
-        IDMContext parentDmc = arrayDmc.getParents()[0];
-        
+		ArrayList<IExpressionDMContext> expressionDMCs = new ArrayList<IExpressionDMContext>();
+		String arrayName = arrayDmc.getExpression();
+		IDMContext parentDmc = arrayDmc.getParents()[0];
+
 		// First split the indexRange by comma
 		String[] ranges = indexSpec.split(","); //$NON-NLS-1$
-		
+
 		for (String range : ranges) {
 			// Get rid of any useless spaces
 			range = range.trim();
-					
+
 			// Try to split the range with the - separator
 			String[] rangeNumbers = range.split("-");//$NON-NLS-1$
 			if (rangeNumbers.length == 2) {
 				try {
 					int lowIndex = Integer.parseInt(rangeNumbers[0]);
 					int highIndex = Integer.parseInt(rangeNumbers[1]);
-					
+
 					if (lowIndex <= highIndex) {
 						for (int i = lowIndex; i <= highIndex; i++) {
 							expressionDMCs.add(createExpression(parentDmc, arrayName + "[" + i + "]")); //$NON-NLS-1$ //$NON-NLS-2$						
@@ -1061,13 +1082,13 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 					// Ignore and fall back on using range as-is below
 				}
 			}
-			
+
 			// Leave range as-is, which could be a single digit, or some non-expected expression
 			expressionDMCs.add(createExpression(parentDmc, arrayName + "[" + range + "]")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return expressionDMCs;
 	}
-	
+
 	/**
 	 * Verify if the potentialMatch variable matches the glob-pattern.
 	 * 
@@ -1079,95 +1100,95 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 		// Convert the glob-pattern into java regex to do the matching
 
 		boolean inBrackets = false;
-	    char[] patternArray = globPattern.toCharArray();
-	    char[] resultArray = new char[patternArray.length * 2 + 2];
-	    int pos = 0;
+		char[] patternArray = globPattern.toCharArray();
+		char[] resultArray = new char[patternArray.length * 2 + 2];
+		int pos = 0;
 
-	    // Must match from the very beginning
-	    resultArray[pos++] = '^';
+		// Must match from the very beginning
+		resultArray[pos++] = '^';
 		for (int i = 0; i < patternArray.length; i++) {
-		    switch(patternArray[i]) {
-		    	case '?':
-		    		if (inBrackets) {
-		    			resultArray[pos++] = '?';
-		    		} else {
-		    			resultArray[pos++] = '.';
-		    		}
-		    		break;
-		    		
-		    	case '*':
-		    		if (!inBrackets) {
-		    			resultArray[pos++] = '.';
-		    		}
-		    		resultArray[pos++] = '*';
-		    		break;
-		    		
-		    	case '-':
-		    		if (!inBrackets) {
-		    			resultArray[pos++] = '\\';
-		    		}
-	    			resultArray[pos++] = '-';
-		    		break;
+			switch (patternArray[i]) {
+			case '?':
+				if (inBrackets) {
+					resultArray[pos++] = '?';
+				} else {
+					resultArray[pos++] = '.';
+				}
+				break;
 
-		    	case '[':
-		    		inBrackets = true;
-		    		resultArray[pos++] = '[';
+			case '*':
+				if (!inBrackets) {
+					resultArray[pos++] = '.';
+				}
+				resultArray[pos++] = '*';
+				break;
 
-		    		if (i < patternArray.length - 1) {
-		    			switch (patternArray[i+1]) {
-		    			case '!':
-		    			case '^':
-		    				resultArray[pos++] = '^';
-		    				i++;
-		    				break;
+			case '-':
+				if (!inBrackets) {
+					resultArray[pos++] = '\\';
+				}
+				resultArray[pos++] = '-';
+				break;
 
-		    			case ']':
-		    				resultArray[pos++] = ']';
-		    				i++;
-		    				break;
-		    			}
-		    		}
-		    		break;
+			case '[':
+				inBrackets = true;
+				resultArray[pos++] = '[';
 
-		    	case ']':
-		    		resultArray[pos++] = ']';
-		    		inBrackets = false;
-		    		break;
+				if (i < patternArray.length - 1) {
+					switch (patternArray[i + 1]) {
+					case '!':
+					case '^':
+						resultArray[pos++] = '^';
+						i++;
+						break;
 
-		    	case '\\':
-		    		if (i == 0 && patternArray.length > 1 && patternArray[1] == '~') {
-		    			resultArray[pos++] = '~';
-		    			++i;
-		    		} else {
-		    			resultArray[pos++] = '\\';
-		    			if (i < patternArray.length - 1 && "*?[]".indexOf(patternArray[i+1]) != -1) { //$NON-NLS-1$
-		    				resultArray[pos++] = patternArray[++i];
-		    			} else {
-		    				resultArray[pos++] = '\\';
-		    			}
-		    		}
-		    		break;
+					case ']':
+						resultArray[pos++] = ']';
+						i++;
+						break;
+					}
+				}
+				break;
 
-		    	default:
-		    		// We must escape characters that are not digits or arrays
-		    		// specifically, "^$.{}()+|<>"
-		    		if (!Character.isLetterOrDigit(patternArray[i])) {
-		    			resultArray[pos++] = '\\';
-		    		}
-		    		resultArray[pos++] = patternArray[i];
-		    		break;
-		    }
+			case ']':
+				resultArray[pos++] = ']';
+				inBrackets = false;
+				break;
+
+			case '\\':
+				if (i == 0 && patternArray.length > 1 && patternArray[1] == '~') {
+					resultArray[pos++] = '~';
+					++i;
+				} else {
+					resultArray[pos++] = '\\';
+					if (i < patternArray.length - 1 && "*?[]".indexOf(patternArray[i + 1]) != -1) { //$NON-NLS-1$
+						resultArray[pos++] = patternArray[++i];
+					} else {
+						resultArray[pos++] = '\\';
+					}
+				}
+				break;
+
+			default:
+				// We must escape characters that are not digits or arrays
+				// specifically, "^$.{}()+|<>"
+				if (!Character.isLetterOrDigit(patternArray[i])) {
+					resultArray[pos++] = '\\';
+				}
+				resultArray[pos++] = patternArray[i];
+				break;
+			}
 		}
 		// Must match until the very end
-	    resultArray[pos++] = '$';
+		resultArray[pos++] = '$';
 
-	    try {
-	    	Pattern pattern = Pattern.compile(new String(resultArray, 0, pos), Pattern.CASE_INSENSITIVE);
-	    	Matcher matcher = pattern.matcher(potentialMatch);
-	    	return matcher.find();
-	    } catch(Exception e) {
-	    	// If the user put an invalid pattern, we just ignore it
-	    	return false;
-	    }
+		try {
+			Pattern pattern = Pattern.compile(new String(resultArray, 0, pos), Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(potentialMatch);
+			return matcher.find();
+		} catch (Exception e) {
+			// If the user put an invalid pattern, we just ignore it
+			return false;
+		}
 	}
 }

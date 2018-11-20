@@ -53,7 +53,7 @@ public class ClassTests extends PDOMTestBase {
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("classTests");
-			pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
+			pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		}
 		pdom.acquireReadLock();
 	}
@@ -74,7 +74,7 @@ public class ClassTests extends PDOMTestBase {
 		assertNotNull(findMethod(Bmethods, "bf"));
 		ICPPMethod Bf = findMethod(Bmethods, "f");
 		assertNotNull(Bf);
-		IName [] Bf_refs = pdom.findNames(Bf, IIndex.FIND_REFERENCES);
+		IName[] Bf_refs = pdom.findNames(Bf, IIndex.FIND_REFERENCES);
 		assertEquals(1, Bf_refs.length);
 		IASTFileLocation loc = Bf_refs[0].getFileLocation();
 		assertEquals(offset("class.cpp", "b.f()") + 2, loc.getNodeOffset());
@@ -92,7 +92,7 @@ public class ClassTests extends PDOMTestBase {
 	public void testNested() throws Exception {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"), false, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(1, bindings.length);
-		ICPPClassType NestedA = (ICPPClassType)bindings[0];
+		ICPPClassType NestedA = (ICPPClassType) bindings[0];
 		ICPPClassType[] nested = NestedA.getNestedClasses();
 		assertEquals(1, nested.length);
 		ICPPClassType NestedB = nested[0];
@@ -119,8 +119,8 @@ public class ClassTests extends PDOMTestBase {
 		bindings = ns.find("testRef", null);
 		assertEquals(1, bindings.length);
 		IName[] refs = pdom.findNames(bindings[0], IIndex.FIND_REFERENCES);
-//		for (int i = 0; i < refs.length; ++i)
-//			System.out.println(refs[i].getFileLocation().getNodeOffset());
+		//		for (int i = 0; i < refs.length; ++i)
+		//			System.out.println(refs[i].getFileLocation().getNodeOffset());
 		assertEquals(5, refs.length);
 	}
 
@@ -158,10 +158,10 @@ public class ClassTests extends PDOMTestBase {
 		IName[] decls = pdom.findNames(bindings[1], IIndex.FIND_DECLARATIONS_DEFINITIONS);
 		assertEquals(2, decls.length);
 		IASTFileLocation loc = decls[0].getFileLocation();
-		assertEquals(offset("constructor.cpp","Class1(int num);"), loc.getNodeOffset()); //character offset
+		assertEquals(offset("constructor.cpp", "Class1(int num);"), loc.getNodeOffset()); //character offset
 
 		loc = decls[1].getFileLocation();
-		assertEquals(offset("constructor.cpp","Class1::Class1") + 8, loc.getNodeOffset()); //character offset
+		assertEquals(offset("constructor.cpp", "Class1::Class1") + 8, loc.getNodeOffset()); //character offset
 
 		/* Member initialization */
 		bindings = pdom.findBindings(Pattern.compile("number"), false, IndexFilter.ALL, npm());
@@ -172,11 +172,11 @@ public class ClassTests extends PDOMTestBase {
 		loc = refs[0].getFileLocation();
 		assertEquals(offset("constructor.cpp", "number(num)"), loc.getNodeOffset()); //character offset
 
-		assertEquals(bindings[0], ((PDOMName)refs[0]).getBinding());
+		assertEquals(bindings[0], ((PDOMName) refs[0]).getBinding());
 	}
 
 	public void testAbsenceOfDefaultConstructorWhenExplicitNonDefaultPresentA() throws Exception {
-		IndexFilter JUST_CONSTRUCTORS= new IndexFilter() {
+		IndexFilter JUST_CONSTRUCTORS = new IndexFilter() {
 			@Override
 			public boolean acceptBinding(IBinding binding) {
 				return binding instanceof ICPPConstructor;
@@ -188,7 +188,7 @@ public class ClassTests extends PDOMTestBase {
 	}
 
 	public void testAbsenceOfDefaultConstructorWhenExplicitNonDefaultPresentB() throws Exception {
-		IndexFilter JUST_CONSTRUCTORS= new IndexFilter() {
+		IndexFilter JUST_CONSTRUCTORS = new IndexFilter() {
 			@Override
 			public boolean acceptBinding(IBinding binding) {
 				return binding instanceof ICPPConstructor;
@@ -200,26 +200,26 @@ public class ClassTests extends PDOMTestBase {
 	}
 
 	public void testClassScope_bug185408() throws Exception {
-		char[][] name= {"B".toCharArray(), "bf".toCharArray()};
-		IBinding[] bindings= pdom.findBindings(name, IndexFilter.ALL, npm());
+		char[][] name = { "B".toCharArray(), "bf".toCharArray() };
+		IBinding[] bindings = pdom.findBindings(name, IndexFilter.ALL, npm());
 		assertEquals(1, bindings.length);
-		IScope classScope= bindings[0].getScope();
+		IScope classScope = bindings[0].getScope();
 
 		assertTrue(classScope instanceof ICPPClassScope);
-		bindings= classScope.find("bf", null);
-		ICPPMethod method= extractSingleMethod(bindings);
+		bindings = classScope.find("bf", null);
+		ICPPMethod method = extractSingleMethod(bindings);
 		assertEquals("B", method.getQualifiedName()[0]);
 
-		bindings= classScope.find("f", null);
-		method= extractSingleMethod(bindings);
+		bindings = classScope.find("f", null);
+		method = extractSingleMethod(bindings);
 		assertEquals("A", method.getQualifiedName()[0]);
 
-		bindings= classScope.find("B", null);
-		ICPPClassType classType= extractSingleClass(bindings);
+		bindings = classScope.find("B", null);
+		ICPPClassType classType = extractSingleClass(bindings);
 		assertEquals("B", classType.getQualifiedName()[0]);
 
-		bindings= classScope.find("A", null);
-		classType= extractSingleClass(bindings);
+		bindings = classScope.find("A", null);
+		classType = extractSingleClass(bindings);
 		assertEquals("A", classType.getQualifiedName()[0]);
 	}
 
@@ -236,7 +236,7 @@ public class ClassTests extends PDOMTestBase {
 	}
 
 	public void testFinalClass() throws Exception {
-		char[][] name = {"E".toCharArray()};
+		char[][] name = { "E".toCharArray() };
 		IBinding[] bindings = pdom.findBindings(name, IndexFilter.ALL, npm());
 		assertEquals(1, bindings.length);
 		assertInstance(bindings[0], ICPPClassType.class);

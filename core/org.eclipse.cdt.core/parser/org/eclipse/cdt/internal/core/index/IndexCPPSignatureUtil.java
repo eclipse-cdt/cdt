@@ -73,7 +73,7 @@ public class IndexCPPSignatureUtil {
 			final IFunctionType ftype = function.getType();
 			buffer.append(getFunctionParameterString(ftype));
 			if (binding instanceof ICPPTemplateDefinition) {
-				ICPPTemplateDefinition tdef= (ICPPTemplateDefinition) binding;
+				ICPPTemplateDefinition tdef = (ICPPTemplateDefinition) binding;
 				appendTemplateParameters(tdef.getTemplateParameters(), buffer);
 				ASTTypeUtil.appendType(ftype.getReturnType(), true, buffer);
 			}
@@ -94,7 +94,7 @@ public class IndexCPPSignatureUtil {
 		return buffer.toString();
 	}
 
-	private static void appendTemplateParameters(ICPPTemplateParameter[] tpars,	StringBuilder buffer) {
+	private static void appendTemplateParameters(ICPPTemplateParameter[] tpars, StringBuilder buffer) {
 		buffer.append('<');
 		for (ICPPTemplateParameter tpar : tpars) {
 			appendTemplateParameter(tpar, buffer);
@@ -136,7 +136,7 @@ public class IndexCPPSignatureUtil {
 		}
 		StringBuilder result = new StringBuilder();
 		result.append('(');
-		for (int i= 0; i < types.length; i++) {
+		for (int i = 0; i < types.length; i++) {
 			if (i > 0) {
 				result.append(',');
 			}
@@ -172,8 +172,8 @@ public class IndexCPPSignatureUtil {
 	 */
 	public static int compareSignatures(IBinding a, IBinding b) {
 		try {
-			int siga= getSignature(a).hashCode();
-			int sigb= getSignature(b).hashCode();
+			int siga = getSignature(a).hashCode();
+			int sigb = getSignature(b).hashCode();
 			return siga < sigb ? -1 : siga > sigb ? 1 : 0;
 		} catch (CoreException | DOMException e) {
 			CCorePlugin.log(e);

@@ -30,7 +30,7 @@ public interface IConfigManager {
 	 *         is possible for these objects
 	 */
 	public boolean canManage(IProject[] obs);
-	
+
 	/**
 	 * Displays "Manage Configurations" dialog
 	 * 

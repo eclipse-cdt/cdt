@@ -44,9 +44,8 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 	private final String[] fTabLabels;
 	private IStatus fStatus = Status.OK_STATUS;
 
-	public TabConfigurationBlock(IStatusChangeListener context, IProject project,
-			OptionsConfigurationBlock[] tabs, String[] tabLabels,
-			IWorkbenchPreferenceContainer container) {
+	public TabConfigurationBlock(IStatusChangeListener context, IProject project, OptionsConfigurationBlock[] tabs,
+			String[] tabLabels, IWorkbenchPreferenceContainer container) {
 		super(context, project, getAllKeys(tabs), container);
 		if (tabLabels.length != tabs.length) {
 			throw new IllegalArgumentException("Number of labels doesn't match the number of tabs"); //$NON-NLS-1$
@@ -77,7 +76,7 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 
 	@Override
 	protected Control createContents(Composite parent) {
-		PixelConverter pixelConverter =  new PixelConverter(parent);
+		PixelConverter pixelConverter = new PixelConverter(parent);
 		final TabFolder folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
 		folder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -107,7 +106,7 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		return folder;		
+		return folder;
 	}
 
 	@Override

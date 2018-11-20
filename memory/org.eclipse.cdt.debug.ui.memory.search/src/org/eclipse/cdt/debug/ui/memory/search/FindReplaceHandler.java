@@ -28,36 +28,36 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 public class FindReplaceHandler extends AbstractHandler implements IHandler {
-    
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-    	IWorkbenchPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-    	if (part instanceof IMemoryRenderingSite) {
-    		IMemoryRenderingSite fView = (IMemoryRenderingSite) part;
-            ISelection selection = fView.getSite().getSelectionProvider().getSelection();
-            
-            if (selection instanceof IStructuredSelection) {
-                IStructuredSelection strucSel = (IStructuredSelection) selection;
-            
-                if (!strucSel.isEmpty()) {
-                    IMemoryBlock memBlock = null;
-                    Object obj = strucSel.getFirstElement();
-                    
-                    if (obj instanceof IMemoryRendering) {
-                        memBlock = ((IMemoryRendering) obj).getMemoryBlock();
-                    }
-                    else if (obj instanceof IMemoryBlock) {
-                        memBlock = (IMemoryBlock) obj;
-                    }
-                    
-                    if (memBlock instanceof IMemoryBlockExtension) {
-                    	FindReplaceDialog dialog = new FindReplaceDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                				(IMemoryBlockExtension) memBlock, fView, FindAction.getProperties(), null);
-                    	dialog.open();
-                    }
-                }
-            }
-    	}
-        
-        return null;
-    }
+
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IWorkbenchPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+		if (part instanceof IMemoryRenderingSite) {
+			IMemoryRenderingSite fView = (IMemoryRenderingSite) part;
+			ISelection selection = fView.getSite().getSelectionProvider().getSelection();
+
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection strucSel = (IStructuredSelection) selection;
+
+				if (!strucSel.isEmpty()) {
+					IMemoryBlock memBlock = null;
+					Object obj = strucSel.getFirstElement();
+
+					if (obj instanceof IMemoryRendering) {
+						memBlock = ((IMemoryRendering) obj).getMemoryBlock();
+					} else if (obj instanceof IMemoryBlock) {
+						memBlock = (IMemoryBlock) obj;
+					}
+
+					if (memBlock instanceof IMemoryBlockExtension) {
+						FindReplaceDialog dialog = new FindReplaceDialog(
+								PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+								(IMemoryBlockExtension) memBlock, fView, FindAction.getProperties(), null);
+						dialog.open();
+					}
+				}
+			}
+		}
+
+		return null;
+	}
 }

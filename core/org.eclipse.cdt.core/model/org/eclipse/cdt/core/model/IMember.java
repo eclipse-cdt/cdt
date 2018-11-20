@@ -30,6 +30,6 @@ public interface IMember extends IDeclaration {
 	 * V_PRIVATE = 0 V_PROTECTED = 1 V_PUBLIC = 2
 	 * @return int
 	 */
-	public ASTAccessVisibility getVisibility() throws CModelException;	
-	
+	public ASTAccessVisibility getVisibility() throws CModelException;
+
 }

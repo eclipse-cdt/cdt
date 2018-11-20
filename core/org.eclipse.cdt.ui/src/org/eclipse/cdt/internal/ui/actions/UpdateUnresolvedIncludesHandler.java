@@ -21,7 +21,7 @@ package org.eclipse.cdt.internal.ui.actions;
  */
 public class UpdateUnresolvedIncludesHandler extends AbstractUpdateIndexHandler {
 	private final UpdateUnresolvedIncludesAction updateAction = new UpdateUnresolvedIncludesAction();
-	
+
 	@Override
 	public AbstractUpdateIndexAction getAction() {
 		return updateAction;

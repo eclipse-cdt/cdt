@@ -12,7 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.sourcelookup; 
+package org.eclipse.cdt.debug.core.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
- 
+
 /**
  * The source container for path mappings.
  */
@@ -39,7 +39,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	 * Unique identifier for the mapping source container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.mapping</code>).
 	 */
-	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapping";	//$NON-NLS-1$
+	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapping"; //$NON-NLS-1$
 
 	private String fName;
 	private ArrayList<MapEntrySourceContainer> fContainers;
@@ -106,16 +106,15 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 						if (objects.length == 1) {
 							return objects;
 						}
-						return new Object[]{ objects[0] };
+						return new Object[] { objects[0] };
 					}
 				}
 			} catch (CoreException e) {
 				if (single == null) {
 					single = e;
 				} else if (multiStatus == null) {
-					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(),
-							DebugPlugin.INTERNAL_ERROR, new IStatus[] { single.getStatus() },
-							SourceLookupMessages.MappingSourceContainer_0, null);
+					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR,
+							new IStatus[] { single.getStatus() }, SourceLookupMessages.MappingSourceContainer_0, null);
 					multiStatus.add(e.getStatus());
 				} else {
 					multiStatus.add(e.getStatus());
@@ -187,7 +186,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 		}
 		return copy;
 	}
-	
+
 	public void setName(String name) {
 		fName = name;
 	}

@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
@@ -29,12 +28,11 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.ILocationProvider;
 
-
 /**
  * An EditorInput for an external (non-workspace) file.
  */
 public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersistableElement {
-           
+
 	private IStorage externalFile;
 	private IResource markerResource;
 	private ITranslationUnit unit;
@@ -46,14 +44,14 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 			return true;
 		if (!(obj instanceof IStorageEditorInput))
 			return false;
-		IStorageEditorInput other = (IStorageEditorInput)obj;
+		IStorageEditorInput other = (IStorageEditorInput) obj;
 		try {
 			return externalFile.equals(other.getStorage());
 		} catch (CoreException exc) {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return externalFile.hashCode();
@@ -76,7 +74,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
+		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 		return registry.getImageDescriptor(externalFile.getFullPath().getFileExtension());
 	}
 
@@ -113,7 +111,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 	public ExternalEditorInput(ITranslationUnit unit, IStorage exFile) {
 		this(exFile, exFile.getFullPath());
 		this.unit = unit;
-		markerResource= unit.getCProject().getProject();
+		markerResource = unit.getCProject().getProject();
 	}
 
 	public ExternalEditorInput(IStorage exFile) {
@@ -124,14 +122,14 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 		externalFile = exFile;
 		this.location = location;
 	}
-	
+
 	/**
 	 * This constructor accepts the storage for the editor
 	 * and a reference to a resource which holds the markers for the external file.
 	 */
-	public ExternalEditorInput(IStorage exFile, IResource markerResource)  {
+	public ExternalEditorInput(IStorage exFile, IResource markerResource) {
 		this(exFile, exFile.getFullPath());
-		this.markerResource = markerResource ;
+		this.markerResource = markerResource;
 	}
 
 	/**
@@ -150,5 +148,5 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 	public void saveState(IMemento memento) {
 		ExternalEditorInputFactory.saveState(memento, this);
 	}
-	
+
 }

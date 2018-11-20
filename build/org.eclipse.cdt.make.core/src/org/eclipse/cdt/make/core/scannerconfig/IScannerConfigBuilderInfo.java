@@ -27,29 +27,38 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IScannerConfigBuilderInfo {
 	boolean isAutoDiscoveryEnabled();
+
 	void setAutoDiscoveryEnabled(boolean enabled) throws CoreException;
 
 	String getMakeBuilderConsoleParserId();
+
 	void setMakeBuilderConsoleParserId(String parserId) throws CoreException;
 
 	boolean isESIProviderCommandEnabled();
+
 	void setESIProviderCommandEnabled(boolean enabled) throws CoreException;
 
 	boolean isDefaultESIProviderCmd();
+
 	void setUseDefaultESIProviderCmd(boolean on) throws CoreException;
 
 	IPath getESIProviderCommand();
+
 	void setESIProviderCommand(IPath command) throws CoreException;
 
 	String getESIProviderArguments();
+
 	void setESIProviderArguments(String args) throws CoreException;
 
 	String getESIProviderConsoleParserId();
+
 	void setESIProviderConsoleParserId(String parserId) throws CoreException;
 
 	boolean isMakeBuilderConsoleParserEnabled();
+
 	void setMakeBuilderConsoleParserEnabled(boolean enabled) throws CoreException;
 
 	boolean isSIProblemGenerationEnabled();
+
 	void setSIProblemGenerationEnabled(boolean enabled) throws CoreException;
 }

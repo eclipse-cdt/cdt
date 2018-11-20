@@ -19,9 +19,10 @@ import org.eclipse.cdt.managedbuilder.internal.core.TargetPlatform;
 public class BuildTargetPlatformData extends CTargetPlatformData {
 	private TargetPlatform fTargetPlatform;
 
-	public BuildTargetPlatformData(TargetPlatform targetPlatform){
+	public BuildTargetPlatformData(TargetPlatform targetPlatform) {
 		fTargetPlatform = targetPlatform;
 	}
+
 	@Override
 	public String[] getBinaryParserIds() {
 		return fTargetPlatform.getBinaryParserList();

@@ -26,56 +26,57 @@ import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganize
  */
 public class BreakpointOrganizerVMContext extends AbstractVMContext implements IBreakpointContainer {
 
-    private final IAdaptable fCategory;
-    private final IBreakpoint[] fBreakpoints;
-    
-    public BreakpointOrganizerVMContext(BreakpointOrganizerVMNode vmNode, IAdaptable category, IBreakpoint[] breakpoints) {
-        super(vmNode);
-        fCategory = category;
-        fBreakpoints = breakpoints;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof BreakpointOrganizerVMContext &&
-            getVMNode().equals( ((BreakpointOrganizerVMContext)obj).getVMNode() ) &&
-            getOrganizer().equals( ((BreakpointOrganizerVMContext)obj).getOrganizer() ) &&
-            fCategory.equals(((BreakpointOrganizerVMContext)obj).fCategory); 
-    }
+	private final IAdaptable fCategory;
+	private final IBreakpoint[] fBreakpoints;
 
-    @Override
-    public int hashCode() {
-        return getOrganizer().hashCode() + getVMNode().hashCode() + fCategory.hashCode();
-    }
+	public BreakpointOrganizerVMContext(BreakpointOrganizerVMNode vmNode, IAdaptable category,
+			IBreakpoint[] breakpoints) {
+		super(vmNode);
+		fCategory = category;
+		fBreakpoints = breakpoints;
+	}
 
-    @Override
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof BreakpointOrganizerVMContext
+				&& getVMNode().equals(((BreakpointOrganizerVMContext) obj).getVMNode())
+				&& getOrganizer().equals(((BreakpointOrganizerVMContext) obj).getOrganizer())
+				&& fCategory.equals(((BreakpointOrganizerVMContext) obj).fCategory);
+	}
+
+	@Override
+	public int hashCode() {
+		return getOrganizer().hashCode() + getVMNode().hashCode() + fCategory.hashCode();
+	}
+
+	@Override
 	public IBreakpointOrganizer getOrganizer() {
-        return ((BreakpointOrganizerVMNode)getVMNode()).getOrganizer();
-    }
-    
-    @Override
+		return ((BreakpointOrganizerVMNode) getVMNode()).getOrganizer();
+	}
+
+	@Override
 	public IAdaptable getCategory() {
-        return fCategory;
-    }
-    
-    @Override
+		return fCategory;
+	}
+
+	@Override
 	public boolean contains(IBreakpoint breakpoint) {
-        for (IBreakpoint bp : fBreakpoints) {
-            if (bp.equals(breakpoint)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    @Override
+		for (IBreakpoint bp : fBreakpoints) {
+			if (bp.equals(breakpoint)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public IBreakpoint[] getBreakpoints() {
-        return fBreakpoints;
-    }
-    
-    @Override
-    public String toString() {
-        return fCategory.toString();
-    }
-    
+		return fBreakpoints;
+	}
+
+	@Override
+	public String toString() {
+		return fCategory.toString();
+	}
+
 }

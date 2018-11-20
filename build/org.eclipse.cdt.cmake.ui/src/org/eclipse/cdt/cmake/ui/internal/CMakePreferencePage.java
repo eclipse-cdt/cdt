@@ -188,7 +188,7 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 
 		filesToAdd.clear();
 		filesToRemove.clear();
-		
+
 		return true;
 	}
 

@@ -26,7 +26,8 @@ import org.eclipse.core.resources.IResource;
  */
 public class MockLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsProvider {
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
+			String languageId) {
 		return null;
 	}
 }

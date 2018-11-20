@@ -25,23 +25,31 @@ public interface IBasicType extends IType {
 	 * @since 5.2
 	 */
 	enum Kind {
-		eUnspecified, eVoid, eChar, eWChar, eInt, eFloat, eDouble,
-		eBoolean, eChar16, eChar32, /** @since 5.4 */ eNullPtr,
-		/** @since 5.5 */ eInt128, /** @since 5.5 */ eFloat128,
-		/** @since 5.10 */ eDecimal32, /** @since 5.10  */eDecimal64,
-		/** @since 5.10  */ eDecimal128;
+		eUnspecified, eVoid, eChar, eWChar, eInt, eFloat, eDouble, eBoolean, eChar16, eChar32,
+		/** @since 5.4 */
+		eNullPtr,
+		/** @since 5.5 */
+		eInt128,
+		/** @since 5.5 */
+		eFloat128,
+		/** @since 5.10 */
+		eDecimal32,
+		/** @since 5.10  */
+		eDecimal64,
+		/** @since 5.10  */
+		eDecimal128;
 	}
 
 	/** @since 5.2 */
-	final int IS_LONG     = 1;
+	final int IS_LONG = 1;
 	/** @since 5.2 */
-	final int IS_SHORT    = 1 << 1;
+	final int IS_SHORT = 1 << 1;
 	/** @since 5.2 */
-	final int IS_SIGNED   = 1 << 2;
+	final int IS_SIGNED = 1 << 2;
 	/** @since 5.2 */
 	final int IS_UNSIGNED = 1 << 3;
 	/** @since 5.2 */
-	final int IS_COMPLEX  = 1 << 4;
+	final int IS_COMPLEX = 1 << 4;
 	/** @since 5.2 */
 	final int IS_IMAGINARY = 1 << 5;
 	/** @since 5.2 */
@@ -49,7 +57,7 @@ public interface IBasicType extends IType {
 
 	/**
 	 * This returns the kind of basic type you are looking at. The type is
- 	 * then refined by qualifiers for signed/unsigned and short/long/long long.
+	 * then refined by qualifiers for signed/unsigned and short/long/long long.
 	 * @since 5.2
 	 */
 	Kind getKind();
@@ -61,9 +69,13 @@ public interface IBasicType extends IType {
 	int getModifiers();
 
 	public boolean isSigned();
+
 	public boolean isUnsigned();
+
 	public boolean isShort();
+
 	public boolean isLong();
+
 	/**
 	 * @since 5.2
 	 */

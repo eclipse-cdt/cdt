@@ -17,7 +17,7 @@ package org.eclipse.cdt.debug.internal.ui.dialogfields;
  * Change listener used by <code>DialogField</code>
  */
 public interface IDialogFieldListener {
-	
+
 	/**
 	 * The dialog field has changed.
 	 */

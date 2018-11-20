@@ -24,9 +24,9 @@ public interface IGDBTraceControl2 extends IGDBTraceControl {
 
 	/**
 	 * Stops the visualization of trace data.
-	 */	
+	 */
 	public void stopTraceVisualization(ITraceTargetDMContext context, RequestMonitor rm);
-	
+
 	/** 
 	 * Enables/disables the user of a circular trace buffer to collect trace data.
 	 */
@@ -37,13 +37,13 @@ public interface IGDBTraceControl2 extends IGDBTraceControl {
 	 * continue even if GDB disconnects from the target.
 	 */
 	public void setDisconnectedTracing(ITraceTargetDMContext context, boolean disconnectedTracing, RequestMonitor rm);
-	
+
 	/** 
 	 * Sets the name of the user that is performing tracing operations.
 	 * This name will be persisted during a disconnected tracing experiment.
 	 */
 	public void setTraceUser(ITraceTargetDMContext context, String userName, RequestMonitor rm);
-	
+
 	/** 
 	 * Sets some information about the tracing experiment.
 	 * This information will be persisted during a disconnected tracing experiment.

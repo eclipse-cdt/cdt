@@ -29,13 +29,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * instruction of the called function.
  * 
  */
-public class MIExecStep extends MICommand<MIInfo> 
-{
-    public MIExecStep(IExecutionDMContext dmc) {
-        this(dmc, 1);
-    }
+public class MIExecStep extends MICommand<MIInfo> {
+	public MIExecStep(IExecutionDMContext dmc) {
+		this(dmc, 1);
+	}
 
-    public MIExecStep(IExecutionDMContext dmc, int count) {
-        super(dmc, "-exec-step", new String[] { Integer.toString(count) }); //$NON-NLS-1$
-    }
+	public MIExecStep(IExecutionDMContext dmc, int count) {
+		super(dmc, "-exec-step", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+	}
 }

@@ -34,14 +34,14 @@ public interface IContentAssistMatcher {
 	 * @return Such a string.
 	 */
 	char[] getPrefixForBinarySearch();
-	
+
 	/**
 	 * @return If false, calling @{@link #match(char[])} can be skipped if a 
 	 *         name survived a binary search using the prefix returned by
 	 *         @{@link #getPrefixForBinarySearch()} as key.
 	 */
 	boolean matchRequiredAfterBinarySearch();
-	
+
 	/**
 	 * Matches the given name following the rules of content assist.
 	 * 

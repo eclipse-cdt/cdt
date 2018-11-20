@@ -26,21 +26,20 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
  * @author Emanuel Graf IFS
  *
  */
-public class ImplementMethodData implements ITreeContentProvider{
+public class ImplementMethodData implements ITreeContentProvider {
 
 	public ImplementMethodData() {
 	}
-
 
 	private List<MethodToImplementConfig> methodDeclarations;
 
 	public void setMethodDeclarations(List<IASTSimpleDeclaration> methodDeclarations) {
 		this.methodDeclarations = new ArrayList<MethodToImplementConfig>();
-		
+
 		for (IASTSimpleDeclaration declaration : methodDeclarations) {
 			this.methodDeclarations.add(new MethodToImplementConfig(declaration, new ParameterHandler(declaration)));
 		}
-		
+
 		// Only one declaration available, might as well check it
 		if (this.methodDeclarations.size() == 1) {
 			this.methodDeclarations.get(0).setChecked(true);
@@ -79,47 +78,47 @@ public class ImplementMethodData implements ITreeContentProvider{
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 	}
-	
+
 	public List<MethodToImplementConfig> getMethodsToImplement() {
 		List<MethodToImplementConfig> ret = new ArrayList<MethodToImplementConfig>();
 		for (MethodToImplementConfig config : methodDeclarations) {
-			if(config.isChecked()) {
+			if (config.isChecked()) {
 				ret.add(config);
 			}
 		}
 		return ret;
 	}
-	
+
 	public boolean needParameterInput() {
 		for (MethodToImplementConfig config : getMethodsToImplement()) {
-			if(config.getParaHandler().needsAdditionalArgumentNames())return true;
+			if (config.getParaHandler().needsAdditionalArgumentNames())
+				return true;
 		}
 		return false;
 	}
-	
+
 	public MethodToImplementConfig getNextConfigNeedingParameterNames(MethodToImplementConfig currentConfig) {
 		int i = 0;
 		List<MethodToImplementConfig> methodsToImplement = getMethodsToImplement();
-		for(;i < methodsToImplement.size();++i) {
-			if(currentConfig == methodsToImplement.get(i)) {
+		for (; i < methodsToImplement.size(); ++i) {
+			if (currentConfig == methodsToImplement.get(i)) {
 				++i;
 				break;
 			}
 		}
-		
-		for(;i < methodsToImplement.size();++i) {
-			if(methodsToImplement.get(i).getParaHandler().needsAdditionalArgumentNames()) {
+
+		for (; i < methodsToImplement.size(); ++i) {
+			if (methodsToImplement.get(i).getParaHandler().needsAdditionalArgumentNames()) {
 				return methodsToImplement.get(i);
 			}
 		}
 		return null;
 	}
 
-
 	public MethodToImplementConfig getFirstConfigNeedingParameterNames() {
 		List<MethodToImplementConfig> methodsToImplement = getMethodsToImplement();
 		for (MethodToImplementConfig config : methodsToImplement) {
-			if(config.getParaHandler().needsAdditionalArgumentNames()) {
+			if (config.getParaHandler().needsAdditionalArgumentNames()) {
 				return config;
 			}
 		}

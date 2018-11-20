@@ -38,7 +38,7 @@ import junit.framework.Test;
  * @author aferguso
  */
 public class BTreeTests extends BaseTestCase {
-	private static int DEBUG= 0;
+	private static int DEBUG = 0;
 	protected File dbFile;
 	protected Database db;
 	protected BTree btree;
@@ -65,7 +65,6 @@ public class BTreeTests extends BaseTestCase {
 		db.close();
 		dbFile.deleteOnExit();
 	}
-
 
 	public void testBySortedSetMirrorLite() throws Exception {
 		sortedMirrorTest(8);
@@ -136,8 +135,8 @@ public class BTreeTests extends BaseTestCase {
 		trialImp(seed, checkCorrectnessEachIteration, random, pInsert);
 	}
 
-	private void trialImp(int seed, final boolean checkCorrectnessEachIteration, Random random,
-			double pInsert) throws Exception {
+	private void trialImp(int seed, final boolean checkCorrectnessEachIteration, Random random, double pInsert)
+			throws Exception {
 		final int degree = 2 + random.nextInt(11);
 		final int nIterations = random.nextInt(100000);
 		final SortedSet expected = new TreeSet();
@@ -146,7 +145,7 @@ public class BTreeTests extends BaseTestCase {
 		init(degree);
 
 		if (DEBUG > 0)
-			System.out.print("\t " + seed + " " + (nIterations/1000) + "K: ");
+			System.out.print("\t " + seed + " " + (nIterations / 1000) + "K: ");
 		for (int i = 0; i < nIterations; i++) {
 			if (random.nextDouble() < pInsert) {
 				Integer value = random.nextInt(Integer.MAX_VALUE);
@@ -197,6 +196,7 @@ public class BTreeTests extends BaseTestCase {
 		final Iterator i = expected.iterator();
 		btree.accept(new IBTreeVisitor() {
 			int k;
+
 			@Override
 			public int compare(long record) throws CoreException {
 				return 0;
@@ -207,7 +207,7 @@ public class BTreeTests extends BaseTestCase {
 				if (record != 0) {
 					BTMockRecord btValue = new BTMockRecord(record, db);
 					if (i.hasNext()) {
-						Integer exp = ((Integer)i.next());
+						Integer exp = ((Integer) i.next());
 						assertEquals(msg + " Differ at index: " + k, btValue.intValue(), exp.intValue());
 						k++;
 					} else {

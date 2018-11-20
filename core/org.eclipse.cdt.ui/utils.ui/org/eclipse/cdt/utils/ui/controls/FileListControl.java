@@ -152,7 +152,8 @@ public class FileListControl {
 		 * @param validator
 		 * @param browseType
 		 */
-		public SelectPathInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator, int browseType) {
+		public SelectPathInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue,
+				IInputValidator validator, int browseType) {
 			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
 			this.type = browseType;
 		}
@@ -185,6 +186,7 @@ public class FileListControl {
 			getText().setText(getInitialValue(getValue()));
 			return area;
 		}
+
 		/**
 		 * Returns true if the value has been set by a browse dialog.
 		 */
@@ -210,8 +212,7 @@ public class FileListControl {
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 
-			if (((type == BROWSE_DIR) || (type == BROWSE_FILE)
-					) && (fWorkspaceSupport)) {
+			if (((type == BROWSE_DIR) || (type == BROWSE_FILE)) && (fWorkspaceSupport)) {
 
 				/* Browse button for workspace folders/files */
 				final Button workspaceButton = createButton(parent, 3, WORKSPACEBUTTON_NAME, false);
@@ -236,31 +237,32 @@ public class FileListControl {
 						currentPathText = currentPathText.replaceAll("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 						/* Resolve variables */
-						IStringVariableManager variableManager = VariablesPlugin.getDefault().getStringVariableManager();
+						IStringVariableManager variableManager = VariablesPlugin.getDefault()
+								.getStringVariableManager();
 
 						/* See if we can discover the project from the context *
 						 * and check whether the path must be resolved... */
 						IProject project = null;
 
-						if(contextInfo != null) {
+						if (contextInfo != null) {
 							try {
 								// Try to find the project
-								ICdtVariable var = SupplierBasedCdtVariableManager.getVariable(PROJECTNAME_VAR, contextInfo, true);
+								ICdtVariable var = SupplierBasedCdtVariableManager.getVariable(PROJECTNAME_VAR,
+										contextInfo, true);
 								if (var != null && var.getValueType() == ICdtVariable.VALUE_TEXT)
 									project = ResourcesPlugin.getWorkspace().getRoot().getProject(var.getStringValue());
 
 								// Try to resolve the currentPathText
-								IVariableSubstitutor varSubs = new SupplierBasedCdtVariableSubstitutor(contextInfo, "", "");  //$NON-NLS-1$//$NON-NLS-2$
-								currentPathText = CdtVariableResolver.resolveToString(currentPathText,
-										varSubs);
+								IVariableSubstitutor varSubs = new SupplierBasedCdtVariableSubstitutor(contextInfo, "", //$NON-NLS-1$
+										""); //$NON-NLS-1$
+								currentPathText = CdtVariableResolver.resolveToString(currentPathText, varSubs);
 
 							} catch (CdtVariableException e) {
 								// It's OK not to find the project... carry on as before
 							}
 						} else {
 							try {
-								currentPathText = variableManager.performStringSubstitution(currentPathText,
-										false);
+								currentPathText = variableManager.performStringSubstitution(currentPathText, false);
 							} catch (CoreException e) {
 								// ignore
 							}
@@ -275,8 +277,7 @@ public class FileListControl {
 								// rs will be null here, exception is throw is path is not absolute
 							}
 							if (rs == null || rs.length == 0)
-								resource = ResourceLookup.selectFileForLocation(new Path(currentPathText),
-										null);
+								resource = ResourceLookup.selectFileForLocation(new Path(currentPathText), null);
 							else
 								resource = rs[0];
 						}
@@ -286,29 +287,29 @@ public class FileListControl {
 						ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(),
 								new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 
-		                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-		                dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
+						dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+						dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 
-						if (type == BROWSE_DIR)	{
+						if (type == BROWSE_DIR) {
 							dialog.setInitialSelection(resource);
-							Class<?>[] filteredResources = {IContainer.class, IProject.class};
+							Class<?>[] filteredResources = { IContainer.class, IProject.class };
 							dialog.addFilter(new TypedCDTViewerFilter(filteredResources));
 							dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE);
-			                dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG);
+							dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG);
 						} else {
 							dialog.setInitialSelection(resource);
 							dialog.setValidator(new ISelectionStatusValidator() {
-							    @Override
+								@Override
 								public IStatus validate(Object[] selection) {
-							    	if (selection != null)
-						    			for (Object sel : selection)
-							    			if (!(sel instanceof IFile))
-							    				return new CDTStatusInfo(IStatus.ERROR, WORKSPACE_FILE_DIALOG_ERR);
-							    	return new CDTStatusInfo();
-							    }
+									if (selection != null)
+										for (Object sel : selection)
+											if (!(sel instanceof IFile))
+												return new CDTStatusInfo(IStatus.ERROR, WORKSPACE_FILE_DIALOG_ERR);
+									return new CDTStatusInfo();
+								}
 							});
 							dialog.setTitle(WORKSPACE_FILE_DIALOG_TITLE);
-			                dialog.setMessage(WORKSPACE_FILE_DIALOG_MSG);
+							dialog.setMessage(WORKSPACE_FILE_DIALOG_MSG);
 						}
 
 						/* Open dialog and process result.
@@ -326,7 +327,8 @@ public class FileListControl {
 									resource = (IResource) o;
 									if (resource.getProject().equals(project))
 										values[i++] = variableManager.generateVariableExpression(WORKSPACELOC_VAR,
-												PROJECTNAME_PATH.append(resource.getProjectRelativePath()).makeAbsolute().toString());
+												PROJECTNAME_PATH.append(resource.getProjectRelativePath())
+														.makeAbsolute().toString());
 									else
 										values[i++] = variableManager.generateVariableExpression(WORKSPACELOC_VAR,
 												resource.getFullPath().toString());
@@ -352,39 +354,39 @@ public class FileListControl {
 						String currentName;
 						String result;
 						switch (type) {
-							case BROWSE_DIR :
-								DirectoryDialog dialog = new DirectoryDialog(getParentShell(),
-										SWT.OPEN|SWT.APPLICATION_MODAL);
-								currentName = getText().getText();
-								if(currentName != null && currentName.trim().length() != 0) {
-									dialog.setFilterPath(currentName);
-								} else if(FileListControl.this.filterPath != null) {
-									dialog.setFilterPath(FileListControl.this.filterPath);
-								}
-								dialog.setMessage(FILESYSTEM_DIR_DIALOG_MSG);
-								result = dialog.open();
-								if(result != null) {
-									fSetByBrowseDialog = true;
-									getText().setText(result);
-								}
-								break;
-							case BROWSE_FILE:
-								FileDialog browseDialog = new FileDialog(getParentShell());
-								currentName = getText().getText();
-								if (currentName != null && currentName.trim().length() != 0) {
-									browseDialog.setFilterPath(currentName);
-								} else if (FileListControl.this.filterPath != null) {
-									browseDialog.setFilterPath(FileListControl.this.filterPath);
-								}
-								if (FileListControl.this.filterExtensions != null) {
-									browseDialog.setFilterExtensions(FileListControl.this.filterExtensions);
-								}
-								result = browseDialog.open();
-								if (result != null) {
-									fSetByBrowseDialog = true;
-									getText().setText(result);
-								}
-								break;
+						case BROWSE_DIR:
+							DirectoryDialog dialog = new DirectoryDialog(getParentShell(),
+									SWT.OPEN | SWT.APPLICATION_MODAL);
+							currentName = getText().getText();
+							if (currentName != null && currentName.trim().length() != 0) {
+								dialog.setFilterPath(currentName);
+							} else if (FileListControl.this.filterPath != null) {
+								dialog.setFilterPath(FileListControl.this.filterPath);
+							}
+							dialog.setMessage(FILESYSTEM_DIR_DIALOG_MSG);
+							result = dialog.open();
+							if (result != null) {
+								fSetByBrowseDialog = true;
+								getText().setText(result);
+							}
+							break;
+						case BROWSE_FILE:
+							FileDialog browseDialog = new FileDialog(getParentShell());
+							currentName = getText().getText();
+							if (currentName != null && currentName.trim().length() != 0) {
+								browseDialog.setFilterPath(currentName);
+							} else if (FileListControl.this.filterPath != null) {
+								browseDialog.setFilterPath(FileListControl.this.filterPath);
+							}
+							if (FileListControl.this.filterExtensions != null) {
+								browseDialog.setFilterExtensions(FileListControl.this.filterExtensions);
+							}
+							result = browseDialog.open();
+							if (result != null) {
+								fSetByBrowseDialog = true;
+								getText().setText(result);
+							}
+							break;
 						}
 					}
 				});
@@ -403,17 +405,19 @@ public class FileListControl {
 		private Clipboard clipboard;
 
 		public ClipboardList(Composite parent, int style) {
-			super (parent, style);
+			super(parent, style);
 		}
+
 		private String[] getClipboardContents() {
 			Clipboard cp = getClipboard();
-			String contents = (String)cp.getContents(TextTransfer.getInstance());
+			String contents = (String) cp.getContents(TextTransfer.getInstance());
 			if (contents != null) {
 				String[] arr = contents.split("\n"); //$NON-NLS-1$
 				return arr;
 			}
 			return new String[0];
 		}
+
 		public void copy() {
 			String[] toCopy = getSelection();
 			if (toCopy != null && toCopy.length > 0) {
@@ -421,15 +425,17 @@ public class FileListControl {
 				for (String item : toCopy)
 					sb.append(item.trim()).append("\n"); //$NON-NLS-1$
 				Clipboard cp = getClipboard();
-				cp.setContents(new Object[]{sb.toString().trim()}, new Transfer[] {TextTransfer.getInstance()});
+				cp.setContents(new Object[] { sb.toString().trim() }, new Transfer[] { TextTransfer.getInstance() });
 			}
 		}
+
 		public void cut() {
 			copy();
 			// Only remove from the list box if the cut was successful
 			if (Arrays.equals(getClipboardContents(), getSelection()))
 				removePressed();
 		}
+
 		public void paste() {
 			String[] pasteBuffer = getClipboardContents();
 			int i = getSelectionIndex();
@@ -439,6 +445,7 @@ public class FileListControl {
 					add(item.trim(), ++i);
 			checkNotificationNeeded();
 		}
+
 		public void undo() {
 			try {
 				operationHistory.undo(undoContext, null, null);
@@ -446,6 +453,7 @@ public class FileListControl {
 				CUIPlugin.log(e);
 			}
 		}
+
 		public void redo() {
 			try {
 				operationHistory.redo(undoContext, null, null);
@@ -453,35 +461,39 @@ public class FileListControl {
 				CUIPlugin.log(e);
 			}
 		}
+
 		private Clipboard getClipboard() {
 			if (clipboard == null)
 				clipboard = new Clipboard(Display.getDefault());
 			return clipboard;
 		}
+
 		@Override
 		public void dispose() {
 			super.dispose();
 			if (clipboard != null)
 				clipboard.dispose();
 		}
+
 		/**
 		 * Handle backspace / delete key
 		 */
 		public void delete() {
 			removePressed();
 		}
+
 		@Override
 		protected void checkSubclass() {
 			// We're adding action handlers, override...
 		}
 	}
 
-
 	/* Variable names */
 	/* See CdtMacroSupplier: used for making absolute paths relative if desired */
 	private static final String WORKSPACELOC_VAR = "workspace_loc"; //$NON-NLS-1$
 	private static final String PROJECTNAME_VAR = "ProjName"; //$NON-NLS-1$
-	private static final IPath PROJECTNAME_PATH = new Path(VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression(PROJECTNAME_VAR, null));
+	private static final IPath PROJECTNAME_PATH = new Path(
+			VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression(PROJECTNAME_VAR, null));
 
 	/* Names, messages and titles */
 	private static final String WORKSPACEBUTTON_NAME = Messages.FileListControl_button_workspace;
@@ -617,8 +629,7 @@ public class FileListControl {
 		form2.marginHeight = 0;
 		buttonPanel.setLayout(form2);
 		// toolbar
-		toolBar = new ToolBar(buttonPanel, SWT.HORIZONTAL | SWT.RIGHT
-				| SWT.FLAT);
+		toolBar = new ToolBar(buttonPanel, SWT.HORIZONTAL | SWT.RIGHT | SWT.FLAT);
 		// add toolbar item
 		addItem = new ToolItem(toolBar, SWT.PUSH);
 		addItem.setImage(IMG_ADD);
@@ -687,8 +698,8 @@ public class FileListControl {
 
 		// Add command handlers for undo to the control
 		try {
-			IFocusService fs = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-								.getActivePart().getSite().getService(IFocusService.class);
+			IFocusService fs = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart()
+					.getSite().getService(IFocusService.class);
 			fs.addFocusTracker(list, "org.eclipse.cdt.ui.FileListControl"); //$NON-NLS-1$
 		} catch (Exception e) {
 			// Any of the get* methods may return null. As this is in the UI constructor for this control
@@ -714,11 +725,11 @@ public class FileListControl {
 		checkNotificationNeeded();
 	}
 
-	public void addChangeListener(IFileListChangeListener listener){
+	public void addChangeListener(IFileListChangeListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeChangeListener(IFileListChangeListener listener){
+	public void removeChangeListener(IFileListChangeListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -731,9 +742,9 @@ public class FileListControl {
 	 *
 	 * At end of method oldValue.equals(list.getItems())
 	 */
-	public void checkNotificationNeeded(){
+	public void checkNotificationNeeded() {
 		final String items[] = getItems();
-		if(oldValue != null) {
+		if (oldValue != null) {
 			if (Arrays.equals(oldValue, items))
 				return;
 
@@ -741,6 +752,7 @@ public class FileListControl {
 			IUndoableOperation op = new AbstractOperation("") { //$NON-NLS-1$
 				final String[] previousValue = oldValue;
 				final String[] newValue = items;
+
 				@Override
 				public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 					list.setItems(previousValue);
@@ -748,6 +760,7 @@ public class FileListControl {
 					oldValue = previousValue;
 					return Status.OK_STATUS;
 				}
+
 				@Override
 				public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 					list.setItems(newValue);
@@ -755,6 +768,7 @@ public class FileListControl {
 					oldValue = newValue;
 					return Status.OK_STATUS;
 				}
+
 				@Override
 				public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 					return Status.CANCEL_STATUS;
@@ -769,9 +783,9 @@ public class FileListControl {
 			System.arraycopy(items, 0, oldValue = new String[items.length], 0, items.length);
 	}
 
-	public void notifyListeners(String oldVal[], String newVal[]){
-		for (IFileListChangeListener listener: listeners) {
-			listener.fileListChanged(this,oldVal,newVal);
+	public void notifyListeners(String oldVal[], String newVal[]) {
+		for (IFileListChangeListener listener : listeners) {
+			listener.fileListChanged(this, oldVal, newVal);
 		}
 	}
 
@@ -785,6 +799,7 @@ public class FileListControl {
 			list.setSelection(sel);
 		selectionChanged();
 	}
+
 	/**
 	 * Set default selection
 	 */
@@ -792,21 +807,24 @@ public class FileListControl {
 		if (list.getItemCount() > 0)
 			list.setSelection(0);
 	}
+
 	/**
 	 * removes all items from list control
 	 */
 	public void removeAll() {
-		if (list != null){
+		if (list != null) {
 			list.removeAll();
 			checkNotificationNeeded();
 		}
 	}
+
 	/**
 	 * get list items
 	 */
 	public String[] getItems() {
 		return list.getItems();
 	}
+
 	/**
 	 * Create selection listener for buttons
 	 */
@@ -831,6 +849,7 @@ public class FileListControl {
 			}
 		};
 	}
+
 	/**
 	 * Returns selection listener
 	 *
@@ -874,12 +893,13 @@ public class FileListControl {
 			String title = Messages.FileListControl_deletedialog_title;
 			delDir = MessageDialog.openQuestion(list.getShell(), title, quest);
 		}
-		if (delDir){
+		if (delDir) {
 			list.remove(list.getSelectionIndices());
 			checkNotificationNeeded();
 		}
 		selectionChanged();
 	}
+
 	/**
 	 * This method will be called when the move up button is pressed
 	 */
@@ -893,6 +913,7 @@ public class FileListControl {
 		checkNotificationNeeded();
 		selectionChanged();
 	}
+
 	/**
 	 * This method will be called when the move down button is pressed
 	 */
@@ -906,6 +927,7 @@ public class FileListControl {
 		checkNotificationNeeded();
 		selectionChanged();
 	}
+
 	/**
 	 * This method will be called when the edit button is pressed
 	 */
@@ -918,8 +940,7 @@ public class FileListControl {
 				 * IOption.BROWSE_FILE. Use simple input dialog otherwise.
 				 */
 				InputDialog dialog;
-				if ((browseType == BROWSE_DIR) ||
-						(browseType == BROWSE_FILE)) {
+				if ((browseType == BROWSE_DIR) || (browseType == BROWSE_FILE)) {
 
 					String title;
 					String message;
@@ -930,7 +951,8 @@ public class FileListControl {
 						title = FILE_TITLE_EDIT;
 						message = FILE_MSG;
 					}
-					dialog =  new SelectPathInputDialog(getListControl().getShell(), title, message, selItem, null, browseType);
+					dialog = new SelectPathInputDialog(getListControl().getShell(), title, message, selItem, null,
+							browseType);
 				} else {
 					String title = Messages.FileListControl_editdialog_title;
 					dialog = new InputDialog(null, title, compTitle, selItem, null);
@@ -946,10 +968,10 @@ public class FileListControl {
 					 * wants to.
 					 */
 					if (dialog instanceof SelectPathInputDialog) {
-						SelectPathInputDialog selDialog = (SelectPathInputDialog)dialog;
+						SelectPathInputDialog selDialog = (SelectPathInputDialog) dialog;
 						newItems = selDialog.getValues();
 						if (selDialog.isValueSetByBrowse())
-							for (int i = 0 ; i < newItems.length ; i++)
+							for (int i = 0; i < newItems.length; i++)
 								newItems[i] = doubleQuotePath(newItems[i]);
 					} else
 						newItems = new String[] { dialog.getValue() };
@@ -960,7 +982,7 @@ public class FileListControl {
 
 					// Replace the changed item & insert new items
 					list.setItem(index, newItems[0]);
-					for (int i = 1 ; i < newItems.length ; i++)
+					for (int i = 1; i < newItems.length; i++)
 						list.add(newItems[i], index + i);
 					checkNotificationNeeded();
 					selectionChanged();
@@ -981,6 +1003,7 @@ public class FileListControl {
 		moveDownItem.setEnabled(size > 1 && index >= 0 && index < size - 1 && selectionCount == 1);
 		editItem.setEnabled(selectionCount == 1);
 	}
+
 	/**
 	 * Returns List control
 	 */
@@ -1034,7 +1057,7 @@ public class FileListControl {
 	 * will be visible in the SelectPathInputDialog.
 	 * @param enable
 	 */
-	public void setWorkspaceSupport(boolean enable)	{
+	public void setWorkspaceSupport(boolean enable) {
 		fWorkspaceSupport = enable;
 	}
 
@@ -1043,7 +1066,7 @@ public class FileListControl {
 	 */
 	public void setContext(IVariableContextInfo info) {
 		contextInfo = info;
-		for(;info != null;info = info.getNext()){
+		for (; info != null; info = info.getNext()) {
 			/*
 			if(info.getContextType() == IBuildMacroProvider.CONTEXT_PROJECT){
 				IManagedProject mngProj = (IManagedProject)info.getContextData();
@@ -1078,14 +1101,15 @@ public class FileListControl {
 		}
 
 		// Prompt for value
-		SelectPathInputDialog dialog = new SelectPathInputDialog(getListControl().getShell(), title, message, initVal, null, browseType);
+		SelectPathInputDialog dialog = new SelectPathInputDialog(getListControl().getShell(), title, message, initVal,
+				null, browseType);
 		if (dialog.open() == Window.OK) {
 			input = dialog.getValues();
 
 			/* Double-quote (if required) the text if it is a directory or file */
 			if (input.length > 0) {
 				if (browseType == BROWSE_DIR || browseType == BROWSE_FILE)
-					for (int i = 0 ; i < input.length ; i++)
+					for (int i = 0; i < input.length; i++)
 						input[i] = doubleQuotePath(input[i]);
 			}
 		}
@@ -1093,11 +1117,11 @@ public class FileListControl {
 		return input;
 	}
 
-	public Label getLabelControl(){
+	public Label getLabelControl() {
 		return title;
 	}
 
-	public void setEnabled(boolean enabled){
+	public void setEnabled(boolean enabled) {
 		title.setEnabled(enabled);
 		toolBar.setEnabled(enabled);
 		list.setEnabled(enabled);
@@ -1110,7 +1134,7 @@ public class FileListControl {
 	 * @param pathName The path name to double-quote.
 	 * @return
 	 */
-	private String doubleQuotePath(String pathName)	{
+	private String doubleQuotePath(String pathName) {
 		/* Trim */
 		pathName = pathName.trim();
 
@@ -1120,7 +1144,7 @@ public class FileListControl {
 
 		/* Check for spaces, backslashes or macros */
 		int i = pathName.indexOf(" ") + pathName.indexOf("\\") //$NON-NLS-1$ //$NON-NLS-2$
-			+ pathName.indexOf("${"); //$NON-NLS-1$
+				+ pathName.indexOf("${"); //$NON-NLS-1$
 
 		/* If indexof didn't fail all three times, double-quote path */
 		if (i != -3) {

@@ -34,7 +34,6 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.cdt.ui.text.ITokenStore;
 
-
 /**
  * Maintains a pool of tokens identified by a String ID.
  * Supports styles per token.
@@ -45,11 +44,11 @@ public class TokenStore implements ITokenStore {
 	private IColorManager fColorManager;
 	private IPreferenceStore fPreferenceStore;
 
-	private Map<String, IToken> fTokenMap= new HashMap<String, IToken>();
+	private Map<String, IToken> fTokenMap = new HashMap<String, IToken>();
 	private String[] fPropertyNamesColor;
 
 	private boolean fNeedsLazyColorLoading;
-	
+
 	/**
 	 * Maintains tokens for a specified set of property keys. Automatically also
 	 * copes with bold, italic, strike-through and underlined versions of the key.
@@ -57,14 +56,14 @@ public class TokenStore implements ITokenStore {
 	 * @param store the {@link IPreferenceStore} to fetch property preferences from
 	 */
 	public TokenStore(IColorManager manager, IPreferenceStore store, String[] propertyNamesColor) {
-		fColorManager= manager;
-		fPreferenceStore= store;
-	
-		fPropertyNamesColor= propertyNamesColor;
+		fColorManager = manager;
+		fPreferenceStore = store;
 
-		fNeedsLazyColorLoading= Display.getCurrent() == null;
-		for (int i= 0; i < fPropertyNamesColor.length; i++) {			
-			if(fPropertyNamesColor[i].endsWith(PreferenceConstants.EDITOR_BOLD_SUFFIX)
+		fPropertyNamesColor = propertyNamesColor;
+
+		fNeedsLazyColorLoading = Display.getCurrent() == null;
+		for (int i = 0; i < fPropertyNamesColor.length; i++) {
+			if (fPropertyNamesColor[i].endsWith(PreferenceConstants.EDITOR_BOLD_SUFFIX)
 					|| fPropertyNamesColor[i].endsWith(PreferenceConstants.EDITOR_ITALIC_SUFFIX)
 					|| fPropertyNamesColor[i].endsWith(PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX)
 					|| fPropertyNamesColor[i].endsWith(PreferenceConstants.EDITOR_UNDERLINE_SUFFIX)) {
@@ -76,7 +75,7 @@ public class TokenStore implements ITokenStore {
 				addToken(fPropertyNamesColor[i]);
 		}
 	}
-	
+
 	/**
 	 * In the case where at the time of IToken construction, the Display was not
 	 * ready to construct colors. 
@@ -84,10 +83,10 @@ public class TokenStore implements ITokenStore {
 	@Override
 	public void ensureTokensInitialised() {
 		if (fNeedsLazyColorLoading && Display.getCurrent() != null) {
-			for (int i= 0; i < fPropertyNamesColor.length; i++) {
+			for (int i = 0; i < fPropertyNamesColor.length; i++) {
 				addToken(fPropertyNamesColor[i]);
 			}
-			fNeedsLazyColorLoading= false;
+			fNeedsLazyColorLoading = false;
 		}
 	}
 
@@ -97,7 +96,7 @@ public class TokenStore implements ITokenStore {
 
 	private void addToken(String colorKey) {
 		if (fColorManager != null && colorKey != null && fColorManager.getColor(colorKey) == null) {
-			RGB rgb= PreferenceConverter.getColor(fPreferenceStore, colorKey);
+			RGB rgb = PreferenceConverter.getColor(fPreferenceStore, colorKey);
 			fColorManager.unbindColor(colorKey);
 			fColorManager.bindColor(colorKey, rgb);
 		}
@@ -105,7 +104,7 @@ public class TokenStore implements ITokenStore {
 		if (!fNeedsLazyColorLoading)
 			fTokenMap.put(colorKey, new Token(createTextAttribute(colorKey, false)));
 		else {
-			Token token= ((Token)fTokenMap.get(colorKey));
+			Token token = ((Token) fTokenMap.get(colorKey));
 			if (token != null)
 				token.setData(createTextAttribute(colorKey, false));
 		}
@@ -123,16 +122,16 @@ public class TokenStore implements ITokenStore {
 	 * @since 3.0
 	 */
 	private TextAttribute createTextAttribute(String colorKey, boolean isNull) {
-		Color color= null;
+		Color color = null;
 		if (!isNull)
-			color= fColorManager.getColor(colorKey);
+			color = fColorManager.getColor(colorKey);
 
-		String boldKey= colorKey + PreferenceConstants.EDITOR_BOLD_SUFFIX;
-		String italicKey= colorKey + PreferenceConstants.EDITOR_ITALIC_SUFFIX;
-		String strikethroughKey= colorKey + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX;
-		String underlineKey= colorKey + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
-		
-		int style= fPreferenceStore.getBoolean(boldKey) ? SWT.BOLD : SWT.NORMAL;
+		String boldKey = colorKey + PreferenceConstants.EDITOR_BOLD_SUFFIX;
+		String italicKey = colorKey + PreferenceConstants.EDITOR_ITALIC_SUFFIX;
+		String strikethroughKey = colorKey + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX;
+		String underlineKey = colorKey + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
+
+		int style = fPreferenceStore.getBoolean(boldKey) ? SWT.BOLD : SWT.NORMAL;
 		if (fPreferenceStore.getBoolean(italicKey))
 			style |= SWT.ITALIC;
 
@@ -153,7 +152,7 @@ public class TokenStore implements ITokenStore {
 	public IToken getToken(String key) {
 		return getTokenInner(key);
 	}
-	
+
 	private Token getTokenInner(String key) {
 		ensureTokensInitialised();
 		return (Token) fTokenMap.get(key);
@@ -161,17 +160,17 @@ public class TokenStore implements ITokenStore {
 
 	private int indexOf(String property) {
 		if (property != null) {
-			int length= fPropertyNamesColor.length;
-			for (int i= 0; i < length; i++) {
+			int length = fPropertyNamesColor.length;
+			for (int i = 0; i < length; i++) {
 				if (property.startsWith(fPropertyNamesColor[i])) {
-					int pLength= property.length();
-					if(fPropertyNamesColor[i].length() < pLength) {
-						String end= property.substring(fPropertyNamesColor[i].length());
+					int pLength = property.length();
+					if (fPropertyNamesColor[i].length() < pLength) {
+						String end = property.substring(fPropertyNamesColor[i].length());
 						if (end.equals(PreferenceConstants.EDITOR_BOLD_SUFFIX)
-							|| end.equals(PreferenceConstants.EDITOR_ITALIC_SUFFIX)
-							|| end.equals(PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX)
-							|| end.equals(PreferenceConstants.EDITOR_UNDERLINE_SUFFIX)) {
-							return i;						
+								|| end.equals(PreferenceConstants.EDITOR_ITALIC_SUFFIX)
+								|| end.equals(PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX)
+								|| end.equals(PreferenceConstants.EDITOR_UNDERLINE_SUFFIX)) {
+							return i;
 						}
 					} else if (fPropertyNamesColor[i].equals(property)) {
 						return i;
@@ -197,14 +196,14 @@ public class TokenStore implements ITokenStore {
 	 */
 	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		String property= event.getProperty();
-		int i= indexOf(property);
+		String property = event.getProperty();
+		int i = indexOf(property);
 		if (property.startsWith(fPropertyNamesColor[i])) {
-			Token token= getTokenInner(fPropertyNamesColor[i]);
-			if(property.length() == fPropertyNamesColor[i].length()) {
+			Token token = getTokenInner(fPropertyNamesColor[i]);
+			if (property.length() == fPropertyNamesColor[i].length()) {
 				adaptToColorChange(token, event);
 			} else {
-				String end= property.substring(fPropertyNamesColor[i].length());				
+				String end = property.substring(fPropertyNamesColor[i].length());
 				if (end.equals(PreferenceConstants.EDITOR_BOLD_SUFFIX)) {
 					adaptToStyleChange(token, event, SWT.BOLD);
 				} else if (end.equals(PreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
@@ -219,51 +218,52 @@ public class TokenStore implements ITokenStore {
 	}
 
 	private void adaptToColorChange(Token token, PropertyChangeEvent event) {
-		RGB rgb= null;
+		RGB rgb = null;
 
-		Object value= event.getNewValue();
+		Object value = event.getNewValue();
 		if (value instanceof RGB)
-			rgb= (RGB) value;
+			rgb = (RGB) value;
 		else if (value instanceof String)
-			rgb= StringConverter.asRGB((String) value);
+			rgb = StringConverter.asRGB((String) value);
 
 		if (rgb != null) {
 
-			String property= event.getProperty();
-			Color color= fColorManager.getColor(property);
+			String property = event.getProperty();
+			Color color = fColorManager.getColor(property);
 
 			if ((color == null || !rgb.equals(color.getRGB()))) {
 				fColorManager.unbindColor(property);
 				fColorManager.bindColor(property, rgb);
 
-				color= fColorManager.getColor(property);
+				color = fColorManager.getColor(property);
 			}
 
-			Object data= token.getData();
+			Object data = token.getData();
 			if (data instanceof TextAttribute) {
-				TextAttribute oldAttr= (TextAttribute) data;
+				TextAttribute oldAttr = (TextAttribute) data;
 				token.setData(new TextAttribute(color, oldAttr.getBackground(), oldAttr.getStyle()));
 			}
 		}
 	}
 
 	private void adaptToStyleChange(Token token, PropertyChangeEvent event, int styleAttribute) {
-		boolean eventValue= false;
-		Object value= event.getNewValue();
+		boolean eventValue = false;
+		Object value = event.getNewValue();
 		if (value instanceof Boolean)
-			eventValue= ((Boolean) value).booleanValue();
+			eventValue = ((Boolean) value).booleanValue();
 		else if (IPreferenceStore.TRUE.equals(value))
-			eventValue= true;
+			eventValue = true;
 
-		Object data= token.getData();
+		Object data = token.getData();
 		if (data instanceof TextAttribute) {
-			TextAttribute oldAttr= (TextAttribute) data;
-			boolean activeValue= (oldAttr.getStyle() & styleAttribute) == styleAttribute;
+			TextAttribute oldAttr = (TextAttribute) data;
+			boolean activeValue = (oldAttr.getStyle() & styleAttribute) == styleAttribute;
 			if (activeValue != eventValue)
-				token.setData(new TextAttribute(oldAttr.getForeground(), oldAttr.getBackground(), eventValue ? oldAttr.getStyle() | styleAttribute : oldAttr.getStyle() & ~styleAttribute));
+				token.setData(new TextAttribute(oldAttr.getForeground(), oldAttr.getBackground(),
+						eventValue ? oldAttr.getStyle() | styleAttribute : oldAttr.getStyle() & ~styleAttribute));
 		}
 	}
-	
+
 	/**
 	 * Returns the preference store.
 	 *

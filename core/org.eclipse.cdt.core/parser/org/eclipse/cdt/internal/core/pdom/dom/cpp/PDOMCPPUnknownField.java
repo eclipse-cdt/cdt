@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -29,7 +29,7 @@ public class PDOMCPPUnknownField extends CPPUnknownField implements IIndexFragme
 
 	public PDOMCPPUnknownField(IIndexFragment frag, IType owner, char[] name) {
 		super(owner, name);
-		fFragment= frag;
+		fFragment = frag;
 	}
 
 	@Override
@@ -66,12 +66,12 @@ public class PDOMCPPUnknownField extends CPPUnknownField implements IIndexFragme
 	public long getBindingID() {
 		return 0;
 	}
-	
+
 	@Override
 	public IIndexFragmentBinding getOwner() {
 		return (IIndexFragmentBinding) super.getOwner();
 	}
-	
+
 	@Override
 	public IIndexScope getScope() {
 		try {

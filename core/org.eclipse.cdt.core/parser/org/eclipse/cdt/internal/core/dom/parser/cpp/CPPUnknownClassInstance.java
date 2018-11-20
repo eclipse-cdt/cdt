@@ -57,10 +57,10 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 		}
 
 		if (type instanceof ICPPUnknownMemberClassInstance) {
-			ICPPUnknownMemberClassInstance rhs= (ICPPUnknownMemberClassInstance) type;
+			ICPPUnknownMemberClassInstance rhs = (ICPPUnknownMemberClassInstance) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
-				ICPPTemplateArgument[] lhsArgs= getArguments();
-				ICPPTemplateArgument[] rhsArgs= rhs.getArguments();
+				ICPPTemplateArgument[] lhsArgs = getArguments();
+				ICPPTemplateArgument[] rhsArgs = rhs.getArguments();
 				if (lhsArgs != rhsArgs) {
 					if (lhsArgs == null || rhsArgs == null)
 						return false;
@@ -68,7 +68,7 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 					if (lhsArgs.length != rhsArgs.length)
 						return false;
 
-					for (int i= 0; i < lhsArgs.length; i++) {
+					for (int i = 0; i < lhsArgs.length; i++) {
 						if (!lhsArgs[i].isSameValue(rhsArgs[i]))
 							return false;
 					}
@@ -76,7 +76,7 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 				final IType lhsContainer = getOwnerType();
 				final IType rhsContainer = rhs.getOwnerType();
 				if (lhsContainer != null && rhsContainer != null) {
-					 return (lhsContainer.isSameType(rhsContainer));
+					return (lhsContainer.isSameType(rhsContainer));
 				}
 			}
 		}
@@ -85,7 +85,7 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE;
+		short firstBytes = ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE;
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getOwnerType());
 		buffer.putCharArray(getNameCharArray());
@@ -95,13 +95,14 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 		}
 	}
 
-	public static ICPPUnknownMemberClassInstance unmarshal(IIndexFragment fragment, short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		IType owner= buffer.unmarshalType();
+	public static ICPPUnknownMemberClassInstance unmarshal(IIndexFragment fragment, short firstBytes,
+			ITypeMarshalBuffer buffer) throws CoreException {
+		IType owner = buffer.unmarshalType();
 		char[] name = buffer.getCharArray();
-		int argcount= buffer.getInt();
+		int argcount = buffer.getInt();
 		ICPPTemplateArgument[] args = new ICPPTemplateArgument[argcount];
 		for (int i = 0; i < argcount; i++) {
-			args[i]= buffer.unmarshalTemplateArgument();
+			args[i] = buffer.unmarshalTemplateArgument();
 		}
 		return new PDOMCPPUnknownMemberClassInstance(fragment, owner, name, args);
 	}

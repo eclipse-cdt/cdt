@@ -41,7 +41,7 @@ public class CLICatchInfo extends MIInfo {
 			for (MIOOBRecord oob : out.getMIOOBRecords()) {
 				if (oob instanceof MIConsoleStreamOutput) {
 					// We are interested in the catchpoint info
-					fMiBreakpoint = parseCatchpoint(((MIConsoleStreamOutput)oob).getString().trim());
+					fMiBreakpoint = parseCatchpoint(((MIConsoleStreamOutput) oob).getString().trim());
 					if (fMiBreakpoint != null) {
 						return;
 					}

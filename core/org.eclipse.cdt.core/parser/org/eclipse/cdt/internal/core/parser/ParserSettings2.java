@@ -35,16 +35,12 @@ public class ParserSettings2 extends IParserSettings2.Default {
 	 * @param cProject The project from which the settings should be loaded, can be null.
 	 */
 	public ParserSettings2(ICProject cProject) {
-		this.limitTokensPerTU
-			= CCorePreferenceConstants.getPreference(
-					CCorePreferenceConstants.SCALABILITY_LIMIT_TOKENS_PER_TU,
-					cProject,
-					CCorePreferenceConstants.DEFAULT_SCALABILITY_LIMIT_TOKENS_PER_TU);
-		this.maxTokensPerTU
-			= CCorePreferenceConstants.getPreference(
-					CCorePreferenceConstants.SCALABILITY_MAXIMUM_TOKENS,
-					cProject,
-					CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TOKENS);
+		this.limitTokensPerTU = CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.SCALABILITY_LIMIT_TOKENS_PER_TU, cProject,
+				CCorePreferenceConstants.DEFAULT_SCALABILITY_LIMIT_TOKENS_PER_TU);
+		this.maxTokensPerTU = CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.SCALABILITY_MAXIMUM_TOKENS, cProject,
+				CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TOKENS);
 	}
 
 	/**

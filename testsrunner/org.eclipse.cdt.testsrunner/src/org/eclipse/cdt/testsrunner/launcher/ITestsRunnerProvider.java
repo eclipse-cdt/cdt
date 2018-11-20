@@ -18,7 +18,6 @@ import java.io.InputStream;
 import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 
-
 /**
  * The interface for a Tests Runner provider plug-in.
  * 
@@ -53,5 +52,5 @@ public interface ITestsRunnerProvider {
 	 * or in data stream
 	 */
 	public void run(ITestModelUpdater modelUpdater, InputStream inputStream) throws TestingException;
-	
+
 }

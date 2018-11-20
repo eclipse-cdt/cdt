@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.core.model;
 
-
 /**
  * Function template definition.
  * 

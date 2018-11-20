@@ -45,61 +45,41 @@ public class KindBasedStore<T> implements Cloneable {
 	private static final int INDEX_OUPUT_PATH = 7;
 	private static final int ALL_STORAGE_SIZE = 8;
 
-	public static final int ORED_LANG_ENTRY_KINDS =
-		ICLanguageSettingEntry.INCLUDE_PATH
-		| ICLanguageSettingEntry.INCLUDE_FILE
-		| ICLanguageSettingEntry.MACRO
-		| ICLanguageSettingEntry.MACRO_FILE
-		| ICLanguageSettingEntry.LIBRARY_PATH
-		| ICLanguageSettingEntry.LIBRARY_FILE;
+	public static final int ORED_LANG_ENTRY_KINDS = ICLanguageSettingEntry.INCLUDE_PATH
+			| ICLanguageSettingEntry.INCLUDE_FILE | ICLanguageSettingEntry.MACRO | ICLanguageSettingEntry.MACRO_FILE
+			| ICLanguageSettingEntry.LIBRARY_PATH | ICLanguageSettingEntry.LIBRARY_FILE;
 
-	public static final int ORED_ALL_ENTRY_KINDS =
-		ICLanguageSettingEntry.INCLUDE_PATH
-		| ICLanguageSettingEntry.INCLUDE_FILE
-		| ICLanguageSettingEntry.MACRO
-		| ICLanguageSettingEntry.MACRO_FILE
-		| ICLanguageSettingEntry.LIBRARY_PATH
-		| ICLanguageSettingEntry.LIBRARY_FILE
-		| ICLanguageSettingEntry.SOURCE_PATH
-		| ICLanguageSettingEntry.OUTPUT_PATH;
+	public static final int ORED_ALL_ENTRY_KINDS = ICLanguageSettingEntry.INCLUDE_PATH
+			| ICLanguageSettingEntry.INCLUDE_FILE | ICLanguageSettingEntry.MACRO | ICLanguageSettingEntry.MACRO_FILE
+			| ICLanguageSettingEntry.LIBRARY_PATH | ICLanguageSettingEntry.LIBRARY_FILE
+			| ICLanguageSettingEntry.SOURCE_PATH | ICLanguageSettingEntry.OUTPUT_PATH;
 
-	private static final int LANG_ENTRY_KINDS[] = new int[]{
-		ICLanguageSettingEntry.INCLUDE_PATH,
-		ICLanguageSettingEntry.INCLUDE_FILE,
-		ICLanguageSettingEntry.MACRO,
-		ICLanguageSettingEntry.MACRO_FILE,
-		ICLanguageSettingEntry.LIBRARY_PATH,
-		ICLanguageSettingEntry.LIBRARY_FILE,
-	};
+	private static final int LANG_ENTRY_KINDS[] = new int[] { ICLanguageSettingEntry.INCLUDE_PATH,
+			ICLanguageSettingEntry.INCLUDE_FILE, ICLanguageSettingEntry.MACRO, ICLanguageSettingEntry.MACRO_FILE,
+			ICLanguageSettingEntry.LIBRARY_PATH, ICLanguageSettingEntry.LIBRARY_FILE, };
 
-	private static final int ALL_ENTRY_KINDS[] = new int[]{
-		ICLanguageSettingEntry.INCLUDE_PATH,
-		ICLanguageSettingEntry.INCLUDE_FILE,
-		ICLanguageSettingEntry.MACRO,
-		ICLanguageSettingEntry.MACRO_FILE,
-		ICLanguageSettingEntry.LIBRARY_PATH,
-		ICLanguageSettingEntry.LIBRARY_FILE,
-		ICLanguageSettingEntry.SOURCE_PATH,
-		ICLanguageSettingEntry.OUTPUT_PATH,
-	};
+	private static final int ALL_ENTRY_KINDS[] = new int[] { ICLanguageSettingEntry.INCLUDE_PATH,
+			ICLanguageSettingEntry.INCLUDE_FILE, ICLanguageSettingEntry.MACRO, ICLanguageSettingEntry.MACRO_FILE,
+			ICLanguageSettingEntry.LIBRARY_PATH, ICLanguageSettingEntry.LIBRARY_FILE,
+			ICLanguageSettingEntry.SOURCE_PATH, ICLanguageSettingEntry.OUTPUT_PATH, };
 
-//	private static final int INEXISTENT_INDEX = -1;
+	//	private static final int INEXISTENT_INDEX = -1;
 
 	private Object[] fEntryStorage;
 
-	public KindBasedStore(){
+	public KindBasedStore() {
 		this(true);
 	}
 
-	public KindBasedStore(boolean langOnly){
-		if(langOnly)
+	public KindBasedStore(boolean langOnly) {
+		if (langOnly)
 			fEntryStorage = new Object[LANG_STORAGE_SIZE];
 		else
 			fEntryStorage = new Object[ALL_STORAGE_SIZE];
 	}
 
-	private int kindToIndex(int kind){
-		switch (kind){
+	private int kindToIndex(int kind) {
+		switch (kind) {
 		case ICSettingEntry.INCLUDE_PATH:
 			return INDEX_INCLUDE_PATH;
 		case ICSettingEntry.INCLUDE_FILE:
@@ -113,27 +93,27 @@ public class KindBasedStore<T> implements Cloneable {
 		case ICSettingEntry.LIBRARY_FILE:
 			return INDEX_LIBRARY_FILE;
 		case ICSettingEntry.SOURCE_PATH:
-			if(INDEX_SOURCE_PATH < fEntryStorage.length)
+			if (INDEX_SOURCE_PATH < fEntryStorage.length)
 				return INDEX_SOURCE_PATH;
 			break;
 		case ICSettingEntry.OUTPUT_PATH:
-			if(INDEX_OUPUT_PATH < fEntryStorage.length)
+			if (INDEX_OUPUT_PATH < fEntryStorage.length)
 				return INDEX_OUPUT_PATH;
 			break;
 		}
 		throw new IllegalArgumentException(UtilMessages.getString("KindBasedStore.0")); //$NON-NLS-1$
 	}
 
-	public static int[] getLanguageEntryKinds(){
+	public static int[] getLanguageEntryKinds() {
 		return LANG_ENTRY_KINDS.clone();
 	}
 
-	public static int[] getAllEntryKinds(){
+	public static int[] getAllEntryKinds() {
 		return ALL_ENTRY_KINDS.clone();
 	}
 
-	private int indexToKind(int index){
-		switch (index){
+	private int indexToKind(int index) {
+		switch (index) {
 		case INDEX_INCLUDE_PATH:
 			return ICSettingEntry.INCLUDE_PATH;
 		case INDEX_INCLUDE_FILE:
@@ -153,12 +133,13 @@ public class KindBasedStore<T> implements Cloneable {
 		}
 		throw new IllegalArgumentException(UtilMessages.getString("KindBasedStore.1")); //$NON-NLS-1$
 	}
+
 	@SuppressWarnings("unchecked")
-	public T get(int kind){
+	public T get(int kind) {
 		return (T) fEntryStorage[kindToIndex(kind)];
 	}
 
-	public T put(int kind, T object){
+	public T put(int kind, T object) {
 		int index = kindToIndex(kind);
 		@SuppressWarnings("unchecked")
 		T old = (T) fEntryStorage[index];
@@ -170,8 +151,8 @@ public class KindBasedStore<T> implements Cloneable {
 		int fIdex;
 		int fKind;
 
-		KindBasedInfo(int num, boolean isKind){
-			if(isKind){
+		KindBasedInfo(int num, boolean isKind) {
+			if (isKind) {
 				fIdex = kindToIndex(num);
 				fKind = num;
 			} else {
@@ -183,7 +164,7 @@ public class KindBasedStore<T> implements Cloneable {
 		@Override
 		public T getInfo() {
 			@SuppressWarnings("unchecked")
-			T info = (T)fEntryStorage[fIdex];
+			T info = (T) fEntryStorage[fIdex];
 			return info;
 		}
 
@@ -195,28 +176,28 @@ public class KindBasedStore<T> implements Cloneable {
 		@Override
 		public T setInfo(T newInfo) {
 			@SuppressWarnings("unchecked")
-			T old = (T)fEntryStorage[fIdex];
+			T old = (T) fEntryStorage[fIdex];
 			fEntryStorage[fIdex] = newInfo;
 			return old;
 		}
 
 	}
 
-	public IKindBasedInfo<T>[] getContents(){
+	public IKindBasedInfo<T>[] getContents() {
 		@SuppressWarnings("unchecked")
 		IKindBasedInfo<T> infos[] = new IKindBasedInfo[fEntryStorage.length];
-		for(int i = 0; i < fEntryStorage.length; i++){
+		for (int i = 0; i < fEntryStorage.length; i++) {
 			infos[i] = new KindBasedInfo(i, false);
 		}
 		return infos;
 	}
 
-	public IKindBasedInfo<T> getInfo(int kind){
+	public IKindBasedInfo<T> getInfo(int kind) {
 		return new KindBasedInfo(kind, true);
 	}
 
-	public void clear(){
-		for(int i = 0; i < fEntryStorage.length; i++){
+	public void clear() {
+		for (int i = 0; i < fEntryStorage.length; i++) {
 			fEntryStorage[i] = null;
 		}
 	}
@@ -225,13 +206,12 @@ public class KindBasedStore<T> implements Cloneable {
 	public Object clone() {
 		try {
 			@SuppressWarnings("unchecked")
-			KindBasedStore<T> clone = (KindBasedStore<T>)super.clone();
+			KindBasedStore<T> clone = (KindBasedStore<T>) super.clone();
 			clone.fEntryStorage = fEntryStorage.clone();
 			return clone;
 		} catch (CloneNotSupportedException e) {
 		}
 		return null;
 	}
-
 
 }

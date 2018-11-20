@@ -100,7 +100,8 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
+			IResource underlyingResource) throws CModelException {
 		return computeChildren(info, pm, underlyingResource);
 	}
 
@@ -137,7 +138,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 							ICElement celement = null;
 							if (child.isDirectory()) {
 								celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
-							} else if (child.isFile()){
+							} else if (child.isFile()) {
 								String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), name);
 								if (id != null) {
 									// TODO:  should use URI
@@ -204,7 +205,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 
 	@Override
 	public void getHandleMemento(StringBuilder buff) {
-		((CElement)getParent()).getHandleMemento(buff);
+		((CElement) getParent()).getHandleMemento(buff);
 	}
 
 	@Override

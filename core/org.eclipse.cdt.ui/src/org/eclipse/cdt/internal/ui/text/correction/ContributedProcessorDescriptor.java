@@ -41,29 +41,29 @@ public final class ContributedProcessorDescriptor {
 	private boolean fLastResult;
 	private final Set<String> fHandledMarkerTypes;
 
-	private static final String ID= "id"; //$NON-NLS-1$
-	private static final String CLASS= "class"; //$NON-NLS-1$
-	
-	private static final String HANDLED_MARKER_TYPES= "handledMarkerTypes"; //$NON-NLS-1$
-	private static final String MARKER_TYPE= "markerType"; //$NON-NLS-1$
-	
+	private static final String ID = "id"; //$NON-NLS-1$
+	private static final String CLASS = "class"; //$NON-NLS-1$
+
+	private static final String HANDLED_MARKER_TYPES = "handledMarkerTypes"; //$NON-NLS-1$
+	private static final String MARKER_TYPE = "markerType"; //$NON-NLS-1$
+
 	public ContributedProcessorDescriptor(IConfigurationElement element, boolean testMarkerTypes) {
-		fConfigurationElement= element;
-		fProcessorInstance= null;
-		fStatus= null; // undefined
+		fConfigurationElement = element;
+		fProcessorInstance = null;
+		fStatus = null; // undefined
 		if (fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT).length == 0) {
-			fStatus= Boolean.TRUE;
+			fStatus = Boolean.TRUE;
 		}
-		fHandledMarkerTypes= testMarkerTypes ? getHandledMarkerTypes(element) : null;
+		fHandledMarkerTypes = testMarkerTypes ? getHandledMarkerTypes(element) : null;
 	}
 
 	private Set<String> getHandledMarkerTypes(IConfigurationElement element) {
-		HashSet<String> map= new HashSet<String>(7);
-		IConfigurationElement[] children= element.getChildren(HANDLED_MARKER_TYPES);
+		HashSet<String> map = new HashSet<String>(7);
+		IConfigurationElement[] children = element.getChildren(HANDLED_MARKER_TYPES);
 		for (IConfigurationElement element2 : children) {
-			IConfigurationElement[] types= element2.getChildren(MARKER_TYPE);
+			IConfigurationElement[] types = element2.getChildren(MARKER_TYPE);
 			for (IConfigurationElement type : types) {
-				String attribute= type.getAttribute(ID);
+				String attribute = type.getAttribute(ID);
 				if (attribute != null) {
 					map.add(attribute);
 				}
@@ -76,9 +76,9 @@ public final class ContributedProcessorDescriptor {
 	}
 
 	public IStatus checkSyntax() {
-		IConfigurationElement[] children= fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
+		IConfigurationElement[] children = fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
 		if (children.length > 1) {
-			String id= fConfigurationElement.getAttribute(ID);
+			String id = fConfigurationElement.getAttribute(ID);
 			return new StatusInfo(IStatus.ERROR, "Only one < enablement > element allowed. Disabling " + id); //$NON-NLS-1$
 		}
 		return new StatusInfo(IStatus.OK, "Syntactically correct quick assist/fix processor"); //$NON-NLS-1$
@@ -89,36 +89,36 @@ public final class ContributedProcessorDescriptor {
 			return fStatus.booleanValue();
 		}
 
-		IConfigurationElement[] children= fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
+		IConfigurationElement[] children = fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
 		if (children.length == 1) {
 			try {
-				ExpressionConverter parser= ExpressionConverter.getDefault();
-				Expression expression= parser.perform(children[0]);
-				EvaluationContext evalContext= new EvaluationContext(null, cunit);
+				ExpressionConverter parser = ExpressionConverter.getDefault();
+				Expression expression = parser.perform(children[0]);
+				EvaluationContext evalContext = new EvaluationContext(null, cunit);
 				evalContext.addVariable("compilationUnit", cunit); //$NON-NLS-1$
-				ICProject cProject= cunit.getCProject();
-				String[] natures= cProject.getProject().getDescription().getNatureIds();
+				ICProject cProject = cunit.getCProject();
+				String[] natures = cProject.getProject().getDescription().getNatureIds();
 				evalContext.addVariable("projectNatures", Arrays.asList(natures)); //$NON-NLS-1$
-				fLastResult= !(expression.evaluate(evalContext) != EvaluationResult.TRUE);
+				fLastResult = !(expression.evaluate(evalContext) != EvaluationResult.TRUE);
 				return fLastResult;
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 			}
 		}
-		fStatus= Boolean.FALSE;
+		fStatus = Boolean.FALSE;
 		return false;
 	}
-	
+
 	public Object getProcessor(ITranslationUnit cunit) throws CoreException {
 		if (matches(cunit)) {
 			if (fProcessorInstance == null) {
-				fProcessorInstance= fConfigurationElement.createExecutableExtension(CLASS);
+				fProcessorInstance = fConfigurationElement.createExecutableExtension(CLASS);
 			}
 			return fProcessorInstance;
 		}
 		return null;
 	}
-	
+
 	public boolean canHandleMarkerType(String markerType) {
 		return fHandledMarkerTypes == null || fHandledMarkerTypes.contains(markerType);
 	}

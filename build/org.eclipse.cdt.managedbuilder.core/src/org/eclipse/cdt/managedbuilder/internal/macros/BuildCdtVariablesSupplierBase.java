@@ -21,15 +21,13 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 public abstract class BuildCdtVariablesSupplierBase implements IBuildMacroSupplier {
 
 	@Override
-	public abstract IBuildMacro getMacro(String macroName, int contextType,
-			Object contextData);
+	public abstract IBuildMacro getMacro(String macroName, int contextType, Object contextData);
 
 	@Override
 	public abstract IBuildMacro[] getMacros(int contextType, Object contextData);
 
 	@Override
-	public ICdtVariable getVariable(String macroName,
-			IMacroContextInfo context) {
+	public ICdtVariable getVariable(String macroName, IMacroContextInfo context) {
 		return getMacro(macroName, context.getContextType(), context.getContextData());
 	}
 
@@ -39,10 +37,9 @@ public abstract class BuildCdtVariablesSupplierBase implements IBuildMacroSuppli
 	}
 
 	@Override
-	public ICdtVariable getVariable(String macroName,
-			IVariableContextInfo context) {
-		if(context instanceof IMacroContextInfo){
-			IMacroContextInfo info = (IMacroContextInfo)context;
+	public ICdtVariable getVariable(String macroName, IVariableContextInfo context) {
+		if (context instanceof IMacroContextInfo) {
+			IMacroContextInfo info = (IMacroContextInfo) context;
 			return getMacro(macroName, info.getContextType(), info.getContextData());
 		}
 		return null;
@@ -50,8 +47,8 @@ public abstract class BuildCdtVariablesSupplierBase implements IBuildMacroSuppli
 
 	@Override
 	public ICdtVariable[] getVariables(IVariableContextInfo context) {
-		if(context instanceof IMacroContextInfo){
-			IMacroContextInfo info = (IMacroContextInfo)context;
+		if (context instanceof IMacroContextInfo) {
+			IMacroContextInfo info = (IMacroContextInfo) context;
 			return getMacros(info.getContextType(), info.getContextData());
 		}
 		return null;

@@ -60,12 +60,12 @@ public interface ICPathContainerPage extends IWizardPage {
 	 * <code>true</code>, the wizard will close.
 	 */
 	public boolean finish();
-	
+
 	/**	
 	 * @return the classpath entries created on the page. 
 	 */
 	public IPathEntry[] getContainerEntries();
-	
+
 	/**
 	 * Sets the path container entry to be edited or <code>null</code> 
 	 * if a new entry should be created.

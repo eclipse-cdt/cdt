@@ -90,9 +90,9 @@ public class EvalBinding extends CPPDependentEvaluation {
 	public EvalBinding(IBinding binding, IType type, IBinding templateDefinition) {
 		super(templateDefinition);
 		fParameterPosition = -1;
-		fBinding= binding;
-		fType= type;
-		fFixedType= type != null;
+		fBinding = binding;
+		fType = type;
+		fFixedType = type != null;
 	}
 
 	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type, IASTNode pointOfDefinition) {
@@ -103,8 +103,8 @@ public class EvalBinding extends CPPDependentEvaluation {
 		super(templateDefinition);
 		fParameterOwner = parameterOwner;
 		fParameterPosition = parameterPosition;
-		fType= type;
-		fFixedType= type != null;
+		fType = type;
+		fFixedType = type != null;
 	}
 
 	public IBinding getBinding() {
@@ -169,8 +169,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 	public int getTemplateParameterID() {
 		// No need to call getBinding method since fBinding cannot be null if the evaluation
 		// represents a template parameter.
-		return fBinding instanceof ICPPTemplateParameter ?
-				((ICPPTemplateParameter) fBinding).getParameterID() : -1;
+		return fBinding instanceof ICPPTemplateParameter ? ((ICPPTemplateParameter) fBinding).getParameterID() : -1;
 	}
 
 	public IType getFixedType() {
@@ -187,31 +186,31 @@ public class EvalBinding extends CPPDependentEvaluation {
 		return false;
 	}
 
- 	@Override
- 	public boolean isTypeDependent() {
+	@Override
+	public boolean isTypeDependent() {
 		if (!fCheckedIsTypeDependent) {
-			fCheckedIsTypeDependent= true;
-			fIsTypeDependent= computeIsTypeDependent();
+			fCheckedIsTypeDependent = true;
+			fIsTypeDependent = computeIsTypeDependent();
 		}
 		return fIsTypeDependent;
- 	}
+	}
 
 	private boolean computeIsTypeDependent() {
-		IType t= null;
+		IType t = null;
 		if (fFixedType) {
 			t = fType;
-		} else  {
+		} else {
 			IBinding binding = getBinding();
 			if (binding instanceof IEnumerator) {
-				t= ((IEnumerator) binding).getType();
+				t = ((IEnumerator) binding).getType();
 			} else if (binding instanceof ICPPTemplateNonTypeParameter) {
-				t= ((ICPPTemplateNonTypeParameter) binding).getType();
+				t = ((ICPPTemplateNonTypeParameter) binding).getType();
 			} else if (binding instanceof IVariable) {
 				t = ((IVariable) binding).getType();
 			} else if (binding instanceof ICPPUnknownBinding) {
 				return true;
 			} else if (binding instanceof IFunction) {
-				t= ((IFunction) binding).getType();
+				t = ((IFunction) binding).getType();
 			} else {
 				return false;
 			}
@@ -219,17 +218,17 @@ public class EvalBinding extends CPPDependentEvaluation {
 		return CPPTemplates.isDependentType(t);
 	}
 
- 	@Override
- 	public boolean isValueDependent() {
+	@Override
+	public boolean isValueDependent() {
 		if (!fCheckedIsValueDependent) {
-			fCheckedIsValueDependent= true;
-			fIsValueDependent= computeIsValueDependent();
+			fCheckedIsValueDependent = true;
+			fIsValueDependent = computeIsValueDependent();
 		}
 		return fIsValueDependent;
- 	}
+	}
 
- 	private boolean computeIsValueDependent() {
- 		// No need to call getBinding() since a function parameter never has an initial value.
+	private boolean computeIsValueDependent() {
+		// No need to call getBinding() since a function parameter never has an initial value.
 		if (fBinding instanceof IEnumerator) {
 			return IntegralValue.isDependentValue(((IEnumerator) fBinding).getValue());
 		}
@@ -258,9 +257,8 @@ public class EvalBinding extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return fBinding instanceof IEnumerator
-			|| fBinding instanceof ICPPFunction
-			|| (fBinding instanceof IVariable && isConstexprValue(((IVariable) fBinding).getInitialValue()));
+		return fBinding instanceof IEnumerator || fBinding instanceof ICPPFunction
+				|| (fBinding instanceof IVariable && isConstexprValue(((IVariable) fBinding).getInitialValue()));
 	}
 
 	@Override
@@ -272,14 +270,13 @@ public class EvalBinding extends CPPDependentEvaluation {
 		if (fBinding != null) {
 			return fBinding == o.fBinding;
 		}
-		return fParameterOwner == o.fParameterOwner
-			&& fParameterPosition == o.fParameterPosition;
+		return fParameterOwner == o.fParameterOwner && fParameterPosition == o.fParameterPosition;
 	}
-	
+
 	@Override
 	public IType getType() {
 		if (fType == null) {
-			fType= computeType();
+			fType = computeType();
 		}
 		return fType;
 	}
@@ -290,7 +287,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 			return ((IEnumerator) binding).getType();
 		}
 		if (binding instanceof ICPPTemplateNonTypeParameter) {
-			IType type= ((ICPPTemplateNonTypeParameter) binding).getType();
+			IType type = ((ICPPTemplateNonTypeParameter) binding).getType();
 			// If the binding is a non-type parameter pack, it must have been
 			// referenced from inside the expansion pattern of a pack expansion.
 			// In such a context, the type of the binding is the type of each
@@ -302,8 +299,8 @@ public class EvalBinding extends CPPDependentEvaluation {
 		if (binding instanceof IVariable) {
 			IType type = ((IVariable) binding).getType();
 			IASTNode point = CPPSemantics.getCurrentLookupPoint();
-			if (type instanceof IArrayType && ((IArrayType) type).getSize() == null &&
-					binding instanceof IIndexBinding && point != null) {
+			if (type instanceof IArrayType && ((IArrayType) type).getSize() == null && binding instanceof IIndexBinding
+					&& point != null) {
 				// Refine the type of the array variable by filling in missing size information.
 				// This may be necessary if the variable is declared outside of the current
 				// translation unit	without providing array size information, but is defined in
@@ -346,16 +343,15 @@ public class EvalBinding extends CPPDependentEvaluation {
 		if (isValueDependent())
 			return DependentValue.create(this);
 
-		IValue value= null;
+		IValue value = null;
 
 		if (fBinding instanceof ICPPVariable) {
-			ICPPEvaluation valueEval = EvalUtil.getVariableValue((ICPPVariable) fBinding,
-					new ActivationRecord());
+			ICPPEvaluation valueEval = EvalUtil.getVariableValue((ICPPVariable) fBinding, new ActivationRecord());
 			if (valueEval != null) {
 				value = valueEval.getValue();
 			}
 		} else if (fBinding instanceof IEnumerator) {
-			value= ((IEnumerator) fBinding).getValue();
+			value = ((IEnumerator) fBinding).getValue();
 		}
 		if (value == null)
 			value = IntegralValue.UNKNOWN;
@@ -365,10 +361,10 @@ public class EvalBinding extends CPPDependentEvaluation {
 
 	@Override
 	public ValueCategory getValueCategory() {
-        if (fBinding instanceof ICPPTemplateNonTypeParameter)
-        	return ValueCategory.PRVALUE;
+		if (fBinding instanceof ICPPTemplateNonTypeParameter)
+			return ValueCategory.PRVALUE;
 
-        // fBinding can be null only when the evaluation represents a function parameter.
+		// fBinding can be null only when the evaluation represents a function parameter.
 		if (fBinding instanceof IFunction || fBinding instanceof IVariable || fBinding == null) {
 			return ValueCategory.LVALUE;
 		}
@@ -401,18 +397,18 @@ public class EvalBinding extends CPPDependentEvaluation {
 				// If this happens, it's almost certainly a bug, but the severity
 				// is mitigated by returning a problem evaluation instead of just
 				// trying to cast to ICPPFunction and throwing a ClassCastException.
-				CCorePlugin.log("An EvalBinding had a parameter owner that could not be stored in the index");  //$NON-NLS-1$
+				CCorePlugin.log("An EvalBinding had a parameter owner that could not be stored in the index"); //$NON-NLS-1$
 				return EvalFixed.INCOMPLETE;
 			}
-			ICPPFunction parameterOwner= (ICPPFunction) paramOwnerBinding;
-			int parameterPosition= buffer.getInt();
-			IType type= buffer.unmarshalType();
-			IBinding templateDefinition= buffer.unmarshalBinding();
+			ICPPFunction parameterOwner = (ICPPFunction) paramOwnerBinding;
+			int parameterPosition = buffer.getInt();
+			IType type = buffer.unmarshalType();
+			IBinding templateDefinition = buffer.unmarshalBinding();
 			return new EvalBinding(parameterOwner, parameterPosition, type, templateDefinition);
 		} else {
-			IBinding binding= buffer.unmarshalBinding();
-			IType type= buffer.unmarshalType();
-			IBinding templateDefinition= buffer.unmarshalBinding();
+			IBinding binding = buffer.unmarshalBinding();
+			IType type = buffer.unmarshalType();
+			IBinding templateDefinition = buffer.unmarshalBinding();
 			return new EvalBinding(binding, type, templateDefinition);
 		}
 	}

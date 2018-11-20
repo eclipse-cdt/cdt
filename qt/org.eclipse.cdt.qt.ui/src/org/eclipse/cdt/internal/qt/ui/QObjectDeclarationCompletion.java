@@ -40,11 +40,11 @@ public class QObjectDeclarationCompletion {
 		context.setId(CContextType.ID);
 	}
 
-	public static Collection<ICompletionProposal> getProposals(ICEditorContentAssistInvocationContext ctx, IASTName name) {
+	public static Collection<ICompletionProposal> getProposals(ICEditorContentAssistInvocationContext ctx,
+			IASTName name) {
 
 		String token = name.getLastName().toString();
-		if (token.isEmpty()
-		 || !"class".startsWith(token))
+		if (token.isEmpty() || !"class".startsWith(token))
 			return null;
 
 		Position position = getPosition(ctx);
@@ -54,8 +54,9 @@ public class QObjectDeclarationCompletion {
 		TranslationUnitContext tuCtx = context.createContext(ctx.getDocument(), position, ctx.getTranslationUnit());
 		IRegion region = new Region(position.getOffset(), position.getLength());
 
-		Template template = new Template( "class", "QObject declaration", CContextType.ID, TEMPLATE, true);
-		return Collections.<ICompletionProposal>singletonList(new CTemplateProposal(template, tuCtx, region, Activator.getQtLogo()));
+		Template template = new Template("class", "QObject declaration", CContextType.ID, TEMPLATE, true);
+		return Collections.<ICompletionProposal>singletonList(
+				new CTemplateProposal(template, tuCtx, region, Activator.getQtLogo()));
 	}
 
 	private static Position getPosition(ICEditorContentAssistInvocationContext context) {

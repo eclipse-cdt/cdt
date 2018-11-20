@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.util;
 
-
 /**
  * Types implementing this interface can occupy a variable amount of space
  * in an LRUCache.  Cached items that do not implement this interface are

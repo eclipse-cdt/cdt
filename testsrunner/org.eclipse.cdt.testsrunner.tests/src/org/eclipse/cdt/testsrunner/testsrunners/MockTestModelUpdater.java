@@ -37,11 +37,11 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 	private class FakeTestItem implements ITestItem {
 
 		private String name = null;
-		
+
 		protected void unexpectedMethodCall() {
 			Assert.fail("Unexpected method call");
 		}
-		
+
 		@Override
 		public String getName() {
 			return name;
@@ -50,45 +50,69 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 		public void setName(String name) {
 			this.name = name;
 		}
-		
+
 		public void resetName() {
 			name = null;
 		}
-		
+
 		// Unimplemented methods
 		@Override
-		public Status getStatus()                { unexpectedMethodCall(); return null;  }
+		public Status getStatus() {
+			unexpectedMethodCall();
+			return null;
+		}
+
 		@Override
-		public int getTestingTime()              { unexpectedMethodCall(); return 0;     }
+		public int getTestingTime() {
+			unexpectedMethodCall();
+			return 0;
+		}
+
 		@Override
-		public ITestSuite getParent()            { unexpectedMethodCall(); return null;  }
+		public ITestSuite getParent() {
+			unexpectedMethodCall();
+			return null;
+		}
+
 		@Override
-		public boolean hasChildren()             { unexpectedMethodCall(); return false; }
+		public boolean hasChildren() {
+			unexpectedMethodCall();
+			return false;
+		}
+
 		@Override
-		public ITestItem[] getChildren()         { unexpectedMethodCall(); return null;  }
+		public ITestItem[] getChildren() {
+			unexpectedMethodCall();
+			return null;
+		}
+
 		@Override
-		public void visit(IModelVisitor visitor) { unexpectedMethodCall();               }
+		public void visit(IModelVisitor visitor) {
+			unexpectedMethodCall();
+		}
 	}
-	
+
 	private class FakeTestCase extends FakeTestItem implements ITestCase {
 		@Override
-		public ITestMessage[] getTestMessages()  { unexpectedMethodCall(); return null;  }
+		public ITestMessage[] getTestMessages() {
+			unexpectedMethodCall();
+			return null;
+		}
 	}
-	
+
 	private class FakeTestSuite extends FakeTestItem implements ITestSuite {
 	}
-	
-	
+
 	private class MethodInfo {
-		
+
 		private String methodName;
 		private Object[] args;
-		
+
 		MethodInfo(String methodName, Object[] args) {
 			this.methodName = methodName;
 			this.args = args;
 		}
-		
+
 		private String genArgs(String methodName, Object[] args) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(methodName);
@@ -114,8 +138,8 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 
 		public void check(String methodName, Object[] args) {
 			if (!this.methodName.equals(methodName)) {
-				Assert.failNotEquals("Unexpected method call. ", 
-						genArgs(this.methodName, this.args), genArgs(methodName, args));
+				Assert.failNotEquals("Unexpected method call. ", genArgs(this.methodName, this.args),
+						genArgs(methodName, args));
 			}
 			boolean compareFailed = (this.args.length != args.length);
 			if (!compareFailed) {
@@ -132,13 +156,12 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 				}
 			}
 			if (compareFailed) {
-				Assert.failNotEquals("Unexpected parameters of method "+this.methodName+"(). ", 
+				Assert.failNotEquals("Unexpected parameters of method " + this.methodName + "(). ",
 						genArgs(this.methodName, this.args), genArgs(methodName, args));
 			}
 		}
 	}
-	
-	
+
 	private LinkedList<MethodInfo> methodCalls = new LinkedList<MethodInfo>();
 	private boolean replayMode = false;
 	private Set<String> skippedMethods = new HashSet<String>();
@@ -146,8 +169,7 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 	// NOTE: Test suites nesting is not supported yet cause there is no need in it
 	private FakeTestSuite currentTestSuite = new FakeTestSuite();
 	private FakeTestCase currentTestCase = new FakeTestCase();
-	
-	
+
 	@Override
 	public void enterTestSuite(String name) {
 		genericImpl("enterTestSuite", name);
@@ -166,7 +188,6 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 		genericImpl("enterTestCase", name);
 		currentTestCase.setName(name);
 	}
-
 
 	@Override
 	public void setTestStatus(Status status) {
@@ -188,7 +209,7 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 	public void addTestMessage(String file, int line, Level level, String text) {
 		genericImpl("addTestMessage", file, line, level, text);
 	}
-	
+
 	@Override
 	public ITestSuite currentTestSuite() {
 		return currentTestSuite;
@@ -198,20 +219,20 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 	public ITestCase currentTestCase() {
 		return currentTestCase;
 	}
-	
+
 	public void skipCalls(String methodName) {
 		skippedMethods.add(methodName);
 	}
-	
+
 	public void replay() {
 		replayMode = true;
 	}
-	
+
 	private void genericImpl(String methodName, Object... args) {
 		if (!skippedMethods.contains(methodName)) {
 			if (replayMode) {
 				if (methodCalls.isEmpty()) {
-					Assert.fail("Unexpected method call "+methodName+"()");
+					Assert.fail("Unexpected method call " + methodName + "()");
 				} else {
 					methodCalls.pollFirst().check(methodName, args);
 				}

@@ -28,17 +28,19 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  */
 public interface ISourceLookup extends IDsfService {
 
-    public interface ISourceLookupDMContext extends IDMContext {}
-        
-    public interface ISourceLookupChangedDMEvent extends IDMEvent<ISourceLookupDMContext> {}
-    
-    /**
-     * Retrieves the host source object for given debugger path string.
-     */
-    void getSource(ISourceLookupDMContext ctx, String debuggerPath, DataRequestMonitor<Object> rm);
-    
-    /**
-     * Retrieves the debugger path string for given host source object.
-     */
-    void getDebuggerPath(ISourceLookupDMContext ctx, Object source, DataRequestMonitor<String> rm);
+	public interface ISourceLookupDMContext extends IDMContext {
+	}
+
+	public interface ISourceLookupChangedDMEvent extends IDMEvent<ISourceLookupDMContext> {
+	}
+
+	/**
+	 * Retrieves the host source object for given debugger path string.
+	 */
+	void getSource(ISourceLookupDMContext ctx, String debuggerPath, DataRequestMonitor<Object> rm);
+
+	/**
+	 * Retrieves the debugger path string for given host source object.
+	 */
+	void getDebuggerPath(ISourceLookupDMContext ctx, Object source, DataRequestMonitor<String> rm);
 }

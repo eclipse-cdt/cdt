@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
@@ -24,15 +24,15 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 public class CElementSet {
-	private Set<ICElement> fSet= new LinkedHashSet<ICElement>();
+	private Set<ICElement> fSet = new LinkedHashSet<ICElement>();
 	private int fHashCode;
-	
-	CElementSet( ICElement[] elements) {
+
+	CElementSet(ICElement[] elements) {
 		fSet.addAll(Arrays.asList(elements));
-		fHashCode= 0;
-        for (int i = 0; i < elements.length; i++) {
-        	fHashCode = 31*fHashCode + elements[i].hashCode();
-        }
+		fHashCode = 0;
+		for (int i = 0; i < elements.length; i++) {
+			fHashCode = 31 * fHashCode + elements[i].hashCode();
+		}
 	}
 
 	@Override
@@ -63,8 +63,8 @@ public class CElementSet {
 			if (fSet.size() != other.fSet.size()) {
 				return false;
 			}
-			for (Iterator<ICElement> iter = fSet.iterator(); iter.hasNext(); ) {
-				if (!other.fSet.contains(iter.next())) { 
+			for (Iterator<ICElement> iter = fSet.iterator(); iter.hasNext();) {
+				if (!other.fSet.contains(iter.next())) {
 					return false;
 				}
 			}
@@ -77,8 +77,8 @@ public class CElementSet {
 	}
 
 	public ICElement[] getElements(WorkingSetFilterUI filter) {
-		ArrayList<ICElement> result= new ArrayList<ICElement>(fSet.size());
-		for (Iterator<ICElement> iter = fSet.iterator(); iter.hasNext(); ) {
+		ArrayList<ICElement> result = new ArrayList<ICElement>(fSet.size());
+		for (Iterator<ICElement> iter = fSet.iterator(); iter.hasNext();) {
 			ICElement element = iter.next();
 			if (filter == null || filter.isPartOfWorkingSet(element)) {
 				result.add(element);

@@ -32,11 +32,10 @@ public interface ICPPASTNewExpression extends ICPPASTExpression, IASTImplicitNam
 	public static final ASTNodeProperty NEW_PLACEMENT = new ASTNodeProperty(
 			"ICPPASTNewExpression.NEW_PLACEMENT [IASTExpression]"); //$NON-NLS-1$
 
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty(
-			"ICPPASTNewExpression.TYPE_ID - [IASTTypeId]"); //$NON-NLS-1$
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("ICPPASTNewExpression.TYPE_ID - [IASTTypeId]"); //$NON-NLS-1$
 
 	public static final ASTNodeProperty NEW_INITIALIZER = new ASTNodeProperty(
-		"ICPPASTNewExpression.NEW_INITIALIZER - [IASTInitializer]"); //$NON-NLS-1$
+			"ICPPASTNewExpression.NEW_INITIALIZER - [IASTInitializer]"); //$NON-NLS-1$
 
 	/**
 	 * Is this a ::new expression?
@@ -55,7 +54,7 @@ public interface ICPPASTNewExpression extends ICPPASTExpression, IASTImplicitNam
 	 * @since 5.2
 	 */
 	public IASTInitializerClause[] getPlacementArguments();
-	
+
 	/**
 	 * Get the type Id. The type-id includes the optional array modifications.
 	 */
@@ -84,7 +83,7 @@ public interface ICPPASTNewExpression extends ICPPASTExpression, IASTImplicitNam
 	 */
 	@Override
 	public ICPPASTNewExpression copy(CopyStyle style);
-	
+
 	/**
 	 * Not allowed on frozen ast.
 	 */
@@ -112,7 +111,6 @@ public interface ICPPASTNewExpression extends ICPPASTExpression, IASTImplicitNam
 	 */
 	public void setInitializer(IASTInitializer init);
 
-
 	/**
 	 * @deprecated the id-expressions are part of the type-id.
 	 * @noreference This field is not intended to be referenced by clients.
@@ -134,14 +132,14 @@ public interface ICPPASTNewExpression extends ICPPASTExpression, IASTImplicitNam
 	 */
 	@Deprecated
 	public void addNewTypeIdArrayExpression(IASTExpression expression);
-	
+
 	/**
 	 * @deprecated Replaced by {@link #getPlacementArguments()}
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression getNewPlacement();
-	
+
 	/**
 	 * @deprecated Replaced by {@link #setPlacementArguments(IASTInitializerClause[])}
 	 * @noreference This method is not intended to be referenced by clients.

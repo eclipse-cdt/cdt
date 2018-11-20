@@ -23,17 +23,17 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
 
 public class CASTInactiveCompletionName extends CASTName implements IASTInactiveCompletionName {
 	private IASTTranslationUnit fAst;
-	
+
 	public CASTInactiveCompletionName(char[] name, IASTTranslationUnit ast) {
 		super(name);
 		fAst = ast;
 	}
-	
+
 	@Override
 	public IASTCompletionContext getCompletionContext() {
 		return this;
 	}
-	
+
 	@Override
 	public IBinding[] findBindings(IASTName name, boolean isPrefix) {
 		// 'name' (which is the same as 'this') is not hooked up to the AST, but it
@@ -45,7 +45,7 @@ public class CASTInactiveCompletionName extends CASTName implements IASTInactive
 		if (lookupScope == null) {
 			lookupScope = fAst.getScope();
 		}
-        IBinding[] result = null;
+		IBinding[] result = null;
 		try {
 			if (isPrefix) {
 				result = CVisitor.lookupPrefix(lookupScope, name);
@@ -53,7 +53,7 @@ public class CASTInactiveCompletionName extends CASTName implements IASTInactive
 				result = new IBinding[] { CVisitor.lookup(lookupScope, name) };
 			}
 		} catch (DOMException e) {
-        }
+		}
 		return ArrayUtil.trim(IBinding.class, result);
 	}
 }

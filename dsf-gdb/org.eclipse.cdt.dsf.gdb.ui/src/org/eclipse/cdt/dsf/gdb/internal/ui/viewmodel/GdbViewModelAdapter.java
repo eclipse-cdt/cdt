@@ -31,36 +31,35 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  */
 @ThreadSafe
-public class GdbViewModelAdapter extends AbstractDebugVMAdapter
-{
-    public GdbViewModelAdapter(DsfSession session, SteppingController controller) {
-        super(session, controller);
-        getSession().registerModelAdapter(IColumnPresentationFactory.class, this);
-    }    
+public class GdbViewModelAdapter extends AbstractDebugVMAdapter {
+	public GdbViewModelAdapter(DsfSession session, SteppingController controller) {
+		super(session, controller);
+		getSession().registerModelAdapter(IColumnPresentationFactory.class, this);
+	}
 
-    @Override
-    public void dispose() {
-        getSession().unregisterModelAdapter(IColumnPresentationFactory.class);
-        super.dispose();
-    }
-    
-    @Override
-    protected IVMProvider createViewModelProvider(IPresentationContext context) {
-        if ( IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId()) ) {
-            return new LaunchVMProvider(this, context, getSession()); 
-        } else if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId()) ) {
-            return new GdbVariableVMProvider(this, context, getSession());
-        } else if (IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId()) ) {
-            return new RegisterVMProvider(this, context, getSession());
-        } else if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId()) ) {
-            return new GdbExpressionVMProvider(this, context, getSession());
-        } else if (IDsfDebugUIConstants.ID_EXPRESSION_HOVER.equals(context.getId()) ) {
-            return new GdbExpressionVMProvider(this, context, getSession());
-        } else if (IDebugUIConstants.ID_MODULE_VIEW.equals(context.getId()) ) {
-            return new ModulesVMProvider(this, context, getSession());
-        } else if (IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(context.getId()) ) {
-            return new GdbBreakpointVMProvider(this, context, getSession());
-        }
-        return null;
-    }    
+	@Override
+	public void dispose() {
+		getSession().unregisterModelAdapter(IColumnPresentationFactory.class);
+		super.dispose();
+	}
+
+	@Override
+	protected IVMProvider createViewModelProvider(IPresentationContext context) {
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
+			return new LaunchVMProvider(this, context, getSession());
+		} else if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
+			return new GdbVariableVMProvider(this, context, getSession());
+		} else if (IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId())) {
+			return new RegisterVMProvider(this, context, getSession());
+		} else if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId())) {
+			return new GdbExpressionVMProvider(this, context, getSession());
+		} else if (IDsfDebugUIConstants.ID_EXPRESSION_HOVER.equals(context.getId())) {
+			return new GdbExpressionVMProvider(this, context, getSession());
+		} else if (IDebugUIConstants.ID_MODULE_VIEW.equals(context.getId())) {
+			return new ModulesVMProvider(this, context, getSession());
+		} else if (IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(context.getId())) {
+			return new GdbBreakpointVMProvider(this, context, getSession());
+		}
+		return null;
+	}
 }

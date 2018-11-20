@@ -111,11 +111,12 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 			}
 		}
 		if (exeFile == null) {
-			throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.PLUGIN_ID, InternalDebugCoreMessages.CoreBuildLaunchConfigDelegate_noBinaries));
+			throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.PLUGIN_ID,
+					InternalDebugCoreMessages.CoreBuildLaunchConfigDelegate_noBinaries));
 		}
 		return exeFile;
 	}
-	
+
 	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
 		// 1. Extract project from configuration

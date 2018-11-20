@@ -34,6 +34,7 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 	 */
 	interface GetMemorySpacesRequest extends IRequest {
 		String[] getMemorySpaces();
+
 		void setMemorySpaces(String[] memorySpaceIds);
 	}
 
@@ -66,9 +67,10 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 
 	interface DecodeResult {
 		String getMemorySpaceId();
+
 		String getExpression();
 	}
-	
+
 	/**
 	 * Provides the memory spaces available for the given debug context.
 	 * 
@@ -94,7 +96,8 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 	 * @throws DebugException
 	 *             if unable to retrieve the specified memory
 	 */
-	public IMemorySpaceAwareMemoryBlock getMemoryBlock(String expression, Object context, String memorySpaceID) throws DebugException;
+	public IMemorySpaceAwareMemoryBlock getMemoryBlock(String expression, Object context, String memorySpaceID)
+			throws DebugException;
 
 	/**
 	 * Return true if creating a memory block with a null memory space ID is NOT

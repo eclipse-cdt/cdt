@@ -38,17 +38,17 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding 
+public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 		implements ICPPTemplateTemplateParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType {
 	private ICPPScope unknownScope;
 
-	public CompositeCPPTemplateTemplateParameter(ICompositesFactory cf,	ICPPTemplateTemplateParameter binding) {
+	public CompositeCPPTemplateTemplateParameter(ICompositesFactory cf, ICPPTemplateTemplateParameter binding) {
 		super(cf, binding);
 	}
 
 	@Override
 	public IType getDefault() throws DOMException {
-		IType preresult= ((ICPPTemplateTemplateParameter) rbinding).getDefault();
+		IType preresult = ((ICPPTemplateTemplateParameter) rbinding).getDefault();
 		return cf.getCompositeType(preresult);
 	}
 
@@ -61,7 +61,7 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	public short getTemplateNestingLevel() {
 		return ((ICPPTemplateParameter) rbinding).getTemplateNestingLevel();
 	}
-	
+
 	@Override
 	public int getParameterID() {
 		return ((ICPPTemplateParameter) rbinding).getParameterID();
@@ -76,20 +76,21 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	public boolean isSameType(IType type) {
 		return ((IType) rbinding).isSameType(type);
 	}
-	
+
 	@Override
 	public Object clone() {
-		fail(); return null; 
+		fail();
+		return null;
 	}
 
 	@Override
 	public ICPPScope asScope() {
 		if (unknownScope == null) {
-			unknownScope= new CompositeCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
+			unknownScope = new CompositeCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
 		}
 		return unknownScope;
 	}
-	
+
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
@@ -158,7 +159,7 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
@@ -178,7 +179,7 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	public boolean isAnonymous() {
 		return false;
 	}
-	
+
 	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		return null;

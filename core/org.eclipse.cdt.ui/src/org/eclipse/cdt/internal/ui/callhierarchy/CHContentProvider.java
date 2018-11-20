@@ -60,7 +60,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	 */
 	public CHContentProvider(CHViewPart view, Display disp) {
 		super(disp);
-		fView= view;
+		fView = view;
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				}
 			}
 			if (parentElement instanceof ICHENode) {
-				return asyncComputeRoot(((ICHENode)parentElement).getRepresentedDeclaration());
+				return asyncComputeRoot(((ICHENode) parentElement).getRepresentedDeclaration());
 			}
 
 			if (parentElement instanceof ICElement) {
@@ -130,14 +130,14 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	private Object[] asyncComputeRoot(final ICElement input) throws CoreException, InterruptedException {
-		IIndex index= CCorePlugin.getIndexManager().getIndex(input.getCProject(), CallHierarchyUI.INDEX_SEARCH_OPTION);
+		IIndex index = CCorePlugin.getIndexManager().getIndex(input.getCProject(), CallHierarchyUI.INDEX_SEARCH_OPTION);
 		index.acquireReadLock();
 		try {
-			ICElement element= input;
-            if (CHQueries.isExternal(element)) {
-              ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
-              return new Object[] { new CHNode(null, tu, 0, element, -1) };
-            }
+			ICElement element = input;
+			if (CHQueries.isExternal(element)) {
+				ITranslationUnit tu = CModelUtil.getTranslationUnit(element);
+				return new Object[] { new CHNode(null, tu, 0, element, -1) };
+			}
 
 			if (!IndexUI.isIndexed(index, input)) {
 				getDisplay().asyncExec(new Runnable() {
@@ -147,8 +147,8 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 					}
 				});
 			} else {
-				element= IndexUI.attemptConvertionToHandle(index, input);
-				final ICElement finalElement= element;
+				element = IndexUI.attemptConvertionToHandle(index, input);
+				final ICElement finalElement = element;
 				getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
@@ -156,15 +156,16 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 					}
 				});
 			}
-			ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
+			ITranslationUnit tu = CModelUtil.getTranslationUnit(element);
 			if (!fComputeReferencedBy && element instanceof IMethod) {
-				IIndexName methodName= IndexUI.elementToName(index, element);
+				IIndexName methodName = IndexUI.elementToName(index, element);
 				if (methodName != null) {
-					IBinding methodBinding= index.findBinding(methodName);
+					IBinding methodBinding = index.findBinding(methodName);
 					if (methodBinding instanceof ICPPMethod) {
-						ICElement[] defs= CHQueries.findOverriders(index, (ICPPMethod) methodBinding);
+						ICElement[] defs = CHQueries.findOverriders(index, (ICPPMethod) methodBinding);
 						if (defs != null && defs.length > 0) {
-							return new Object[] { new CHMultiDefNode(null, tu, 0, defs, methodBinding.getLinkage().getLinkageID()) };
+							return new Object[] {
+									new CHMultiDefNode(null, tu, 0, defs, methodBinding.getLinkage().getLinkageID()) };
 						}
 					}
 				}
@@ -176,8 +177,9 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	private Object[] asyncronouslyComputeReferencedBy(CHNode parent) throws CoreException, InterruptedException {
-		ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
-		IIndex index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY);
+		ICProject[] scope = CoreModel.getDefault().getCModel().getCProjects();
+		IIndex index = CCorePlugin.getIndexManager().getIndex(scope,
+				IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY);
 		index.acquireReadLock();
 		try {
 			return CHQueries.findCalledBy(this, parent, index, NPM);
@@ -187,8 +189,9 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	private Object[] asyncronouslyComputeRefersTo(CHNode parent) throws CoreException, InterruptedException {
-		ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
-		IIndex index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY);
+		ICProject[] scope = CoreModel.getDefault().getCModel().getCProjects();
+		IIndex index = CCorePlugin.getIndexManager().getIndex(scope,
+				IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY);
 		index.acquireReadLock();
 		try {
 			return CHQueries.findCalls(this, parent, index, NPM);
@@ -206,17 +209,17 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	public void setWorkingSetFilter(WorkingSetFilterUI filterUI) {
-		fFilter= filterUI;
+		fFilter = filterUI;
 		recompute();
 	}
 
 	CHNode[] createNodes(CHNode node, CalledByResult result) throws CoreException {
-		ArrayList<CHNode> nodes= new ArrayList<CHNode>();
-		ICElement[] elements= result.getElements();
+		ArrayList<CHNode> nodes = new ArrayList<CHNode>();
+		ICElement[] elements = result.getElements();
 		for (ICElement element : elements) {
 			if (element != null) {
 				if (fFilter == null || fFilter.isPartOfWorkingSet(element)) {
-					IIndexName[] refs= result.getReferences(element);
+					IIndexName[] refs = result.getReferences(element);
 					if (refs != null && refs.length > 0) {
 						CHNode newNode = createRefbyNode(node, element, refs);
 						nodes.add(newNode);
@@ -228,18 +231,18 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	private CHNode createRefbyNode(CHNode parent, ICElement element, IIndexName[] refs) throws CoreException {
-		ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
+		ITranslationUnit tu = CModelUtil.getTranslationUnit(element);
 		final IIndexFile file = refs[0].getFile();
-		CHNode node= new CHNode(parent, tu, file.getTimestamp(), element, file.getLinkageID());
+		CHNode node = new CHNode(parent, tu, file.getTimestamp(), element, file.getLinkageID());
 		if (element instanceof IVariable || element instanceof IEnumerator) {
 			node.setInitializer(true);
 		}
-		boolean readAccess= false;
-		boolean writeAccess= false;
+		boolean readAccess = false;
+		boolean writeAccess = false;
 		for (IIndexName reference : refs) {
 			node.addReference(new CHReferenceInfo(reference.getNodeOffset(), reference.getNodeLength()));
-			readAccess= (readAccess || reference.isReadAccess());
-			writeAccess= (writeAccess || reference.isWriteAccess());
+			readAccess = (readAccess || reference.isReadAccess());
+			writeAccess = (writeAccess || reference.isWriteAccess());
 		}
 		node.setRWAccess(readAccess, writeAccess);
 		node.sortReferencesByOffset();
@@ -247,14 +250,14 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	CHNode[] createNodes(CHNode node, CallsToResult callsTo) throws CoreException {
-		ITranslationUnit tu= CModelUtil.getTranslationUnit(node.getRepresentedDeclaration());
-		ArrayList<CHNode> result= new ArrayList<CHNode>();
-		CElementSet[] elementSets= callsTo.getElementSets();
+		ITranslationUnit tu = CModelUtil.getTranslationUnit(node.getRepresentedDeclaration());
+		ArrayList<CHNode> result = new ArrayList<CHNode>();
+		CElementSet[] elementSets = callsTo.getElementSets();
 		for (CElementSet elementSet : elementSets) {
 			CElementSet set = elementSet;
 			if (!set.isEmpty()) {
-				IIndexName[] refs= callsTo.getReferences(set);
-				ICElement[] elements= set.getElements(fFilter);
+				IIndexName[] refs = callsTo.getReferences(set);
+				ICElement[] elements = set.getElements(fFilter);
 				if (elements.length > 0) {
 					CHNode childNode = createReftoNode(node, tu, elements, refs);
 					result.add(childNode);
@@ -264,26 +267,27 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		return result.toArray(new CHNode[result.size()]);
 	}
 
-	private CHNode createReftoNode(CHNode parent, ITranslationUnit tu, ICElement[] elements, IIndexName[] references) throws CoreException {
+	private CHNode createReftoNode(CHNode parent, ITranslationUnit tu, ICElement[] elements, IIndexName[] references)
+			throws CoreException {
 		assert elements.length > 0;
 
 		final IIndexFile file = references[0].getFile();
-		final long timestamp= file.getTimestamp();
-		final int linkageID= file.getLinkageID();
+		final long timestamp = file.getTimestamp();
+		final int linkageID = file.getLinkageID();
 
 		CHNode node;
 		if (elements.length == 1) {
-			node= new CHNode(parent, tu, timestamp, elements[0], linkageID);
+			node = new CHNode(parent, tu, timestamp, elements[0], linkageID);
 		} else {
-			node= new CHMultiDefNode(parent, tu, timestamp, elements, linkageID);
+			node = new CHMultiDefNode(parent, tu, timestamp, elements, linkageID);
 		}
 
-		boolean readAccess= false;
-		boolean writeAccess= false;
+		boolean readAccess = false;
+		boolean writeAccess = false;
 		for (IIndexName reference : references) {
 			node.addReference(new CHReferenceInfo(reference.getNodeOffset(), reference.getNodeLength()));
-			readAccess= (readAccess || reference.isReadAccess());
-			writeAccess= (writeAccess || reference.isWriteAccess());
+			readAccess = (readAccess || reference.isReadAccess());
+			writeAccess = (writeAccess || reference.isWriteAccess());
 		}
 		node.sortReferencesByOffset();
 		node.setRWAccess(readAccess, writeAccess);

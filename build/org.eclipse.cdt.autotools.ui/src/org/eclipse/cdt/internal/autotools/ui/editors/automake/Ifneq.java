@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 public class Ifneq extends Conditional {
 
 	public Ifneq(Directive parent, String cond) {

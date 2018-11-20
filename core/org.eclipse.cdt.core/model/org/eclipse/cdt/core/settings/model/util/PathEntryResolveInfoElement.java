@@ -20,29 +20,29 @@ import org.eclipse.cdt.core.model.IPathEntry;
 public class PathEntryResolveInfoElement {
 	private IPathEntry fRawEntry;
 	private IPathEntry[] fResolvedEntries;
-	
-	public PathEntryResolveInfoElement(IPathEntry rawEntry, IPathEntry resolvedEntry){
+
+	public PathEntryResolveInfoElement(IPathEntry rawEntry, IPathEntry resolvedEntry) {
 		fRawEntry = rawEntry;
-		if(resolvedEntry != null)
-			fResolvedEntries = new IPathEntry[]{resolvedEntry};
+		if (resolvedEntry != null)
+			fResolvedEntries = new IPathEntry[] { resolvedEntry };
 		else
 			fResolvedEntries = new IPathEntry[0];
 	}
 
-	public PathEntryResolveInfoElement(IPathEntry rawEntry, List<IPathEntry> resolvedList){
+	public PathEntryResolveInfoElement(IPathEntry rawEntry, List<IPathEntry> resolvedList) {
 		fRawEntry = rawEntry;
-		if(resolvedList != null){
+		if (resolvedList != null) {
 			fResolvedEntries = new IPathEntry[resolvedList.size()];
 			resolvedList.toArray(fResolvedEntries);
 		}
 	}
 
-	public IPathEntry getRawEntry(){
+	public IPathEntry getRawEntry() {
 		return fRawEntry;
 	}
-	
-	public IPathEntry[] getResolvedEntries(){
-		if(fResolvedEntries == null)
+
+	public IPathEntry[] getResolvedEntries() {
+		if (fResolvedEntries == null)
 			return new IPathEntry[0];
 		return fResolvedEntries.clone();
 	}

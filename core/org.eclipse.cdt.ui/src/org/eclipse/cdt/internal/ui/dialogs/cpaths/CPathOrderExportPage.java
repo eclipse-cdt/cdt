@@ -39,10 +39,10 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 public class CPathOrderExportPage extends CPathBasePage {
 
 	private ListDialogField<?> fCPathList;
-	
+
 	public CPathOrderExportPage(ListDialogField<?> cPathList) {
-		super(CPathEntryMessages.OrderExportsPage_title); 
-		setDescription(CPathEntryMessages.OrderExportsPage_description); 
+		super(CPathEntryMessages.OrderExportsPage_title);
+		setDescription(CPathEntryMessages.OrderExportsPage_description);
 		fCPathList = cPathList;
 	}
 
@@ -58,7 +58,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		setControl(composite);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fCPathList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fCPathList }, true);
 		LayoutUtil.setHorizontalGrabbing(fCPathList.getListControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
@@ -69,6 +69,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ORDER);
 	}
+
 	/*
 	 * @see BuildPathBasePage#getSelection
 	 */

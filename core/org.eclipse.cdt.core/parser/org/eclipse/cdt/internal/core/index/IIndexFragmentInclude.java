@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -22,7 +22,7 @@ public interface IIndexFragmentInclude extends IIndexInclude {
 	 * @since 4.0.1
 	 */
 	IIndexFragmentInclude[] EMPTY_FRAGMENT_INCLUDES_ARRAY = {};
-	
+
 	/**
 	 * Returns the fragment that owns this include.
 	 */

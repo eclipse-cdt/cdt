@@ -29,17 +29,17 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class CLIInfoBreak extends CLICommand<CLIInfoBreakInfo> {
 
-	private static final String INFO_BREAK = "info break";  //$NON-NLS-1$
-	
+	private static final String INFO_BREAK = "info break"; //$NON-NLS-1$
+
 	public CLIInfoBreak(IDMContext ctx) {
-        super(ctx, INFO_BREAK);
+		super(ctx, INFO_BREAK);
 	};
 
 	public CLIInfoBreak(IDMContext ctx, int bpReference) {
 		super(ctx, INFO_BREAK + Integer.toString(bpReference));
 	}
-	
-    @Override
+
+	@Override
 	public CLIInfoBreakInfo getResult(MIOutput MIresult) {
 		return new CLIInfoBreakInfo(MIresult);
 	}

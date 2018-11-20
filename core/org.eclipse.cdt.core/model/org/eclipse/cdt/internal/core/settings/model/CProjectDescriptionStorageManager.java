@@ -86,19 +86,19 @@ public class CProjectDescriptionStorageManager {
 
 	// TODO provide some UI to select this
 	/** Default project description Storage type */
-	private static final String DEFAULT_STORAGE_TYPE =  XmlProjectDescriptionStorage.STORAGE_TYPE_ID; //  XmlProjectDescriptionStorage2.STORAGE_TYPE_ID;
+	private static final String DEFAULT_STORAGE_TYPE = XmlProjectDescriptionStorage.STORAGE_TYPE_ID; //  XmlProjectDescriptionStorage2.STORAGE_TYPE_ID;
 	/** Default project description Storage version */
-	private static final Version DEFAULT_STORAGE_VERSION =   XmlProjectDescriptionStorage.STORAGE_DESCRIPTION_VERSION; // XmlProjectDescriptionStorage2.STORAGE_DESCRIPTION_VERSION;
+	private static final Version DEFAULT_STORAGE_VERSION = XmlProjectDescriptionStorage.STORAGE_DESCRIPTION_VERSION; // XmlProjectDescriptionStorage2.STORAGE_DESCRIPTION_VERSION;
 
 	/** Map of StorageType ID -> List of StorageTypes */
 	private volatile Map<String, List<CProjectDescriptionStorageTypeProxy>> storageTypeMap;
 	/** Map from IProject -> AbstractCProjectDescriptionStorage which is responsible for (de)serializing the project */
 	private ConcurrentHashMap<IProject, AbstractCProjectDescriptionStorage> fDescriptionStorageMap = new ConcurrentHashMap<IProject, AbstractCProjectDescriptionStorage>();
 
-
 	private volatile static CProjectDescriptionStorageManager instance;
 
-	private CProjectDescriptionStorageManager() {}
+	private CProjectDescriptionStorageManager() {
+	}
 
 	public static CProjectDescriptionStorageManager getInstance() {
 		if (instance == null) {
@@ -110,7 +110,6 @@ public class CProjectDescriptionStorageManager {
 		return instance;
 	}
 
-
 	/**
 	 * Return a AbstractCProjectDescriptionStorage for a particular project or
 	 * null if none were found and the default storage type wasn't found
@@ -119,7 +118,7 @@ public class CProjectDescriptionStorageManager {
 	 */
 	public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(IProject project) {
 		if (!project.isAccessible()) {
-			assert(!fDescriptionStorageMap.contains(project));
+			assert (!fDescriptionStorageMap.contains(project));
 			return null;
 		}
 		AbstractCProjectDescriptionStorage projStorage = fDescriptionStorageMap.get(project);
@@ -143,15 +142,16 @@ public class CProjectDescriptionStorageManager {
 	 * @param description
 	 * @throws CoreException on failure
 	 */
-	public void setProjectDescription(IProject project, ICProjectDescription description, int flags, IProgressMonitor monitor) throws CoreException {
+	public void setProjectDescription(IProject project, ICProjectDescription description, int flags,
+			IProgressMonitor monitor) throws CoreException {
 		AbstractCProjectDescriptionStorage storage = fDescriptionStorageMap.get(project);
 		if (storage == null)
-			throw ExceptionFactory.createCoreException("Can't set ProjectDescription before getProjectDescriptionStorage!"); //$NON-NLS-1$
+			throw ExceptionFactory
+					.createCoreException("Can't set ProjectDescription before getProjectDescriptionStorage!"); //$NON-NLS-1$
 		if (!storage.type.createsCProjectXMLFile())
 			writeProjectStorageType(project, storage.type);
 		storage.setProjectDescription(description, flags, monitor);
 	}
-
 
 	/**
 	 * Persist the type and version of this particular project description storage type
@@ -159,12 +159,14 @@ public class CProjectDescriptionStorageManager {
 	 * @param project
 	 * @param type
 	 */
-	private void writeProjectStorageType(IProject project, CProjectDescriptionStorageTypeProxy type) throws CoreException{
+	private void writeProjectStorageType(IProject project, CProjectDescriptionStorageTypeProxy type)
+			throws CoreException {
 		Document doc;
 		try {
 			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			// Set the version
-			ProcessingInstruction instruction = doc.createProcessingInstruction(ICProjectDescriptionStorageType.STORAGE_VERSION_NAME, type.version.toString());
+			ProcessingInstruction instruction = doc.createProcessingInstruction(
+					ICProjectDescriptionStorageType.STORAGE_VERSION_NAME, type.version.toString());
 			doc.appendChild(instruction);
 			// Set the type id
 			Element el = doc.createElement(ICProjectDescriptionStorageType.STORAGE_ROOT_ELEMENT_NAME);
@@ -203,7 +205,6 @@ public class CProjectDescriptionStorageManager {
 		}
 	}
 
-
 	/**
 	 * Given a project, this method attempts to discover the type of the storage
 	 * and return the AbstractCProjectDescriptionStorage responsible for loading it.
@@ -219,39 +220,44 @@ public class CProjectDescriptionStorageManager {
 		String storageTypeID = DEFAULT_STORAGE_TYPE;
 
 		InputStream stream = null;
-		try{
+		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			stream = getInputStreamForIFile(project, ICProjectDescriptionStorageType.STORAGE_FILE_NAME);
-			if(stream != null){
+			if (stream != null) {
 				Document doc = builder.parse(stream);
 				// Get the first element in the project file
 				Node rootElement = doc.getFirstChild();
 				if (rootElement.getNodeType() != Node.PROCESSING_INSTRUCTION_NODE)
-					throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.7")); //$NON-NLS-1$
+					throw ExceptionFactory
+							.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.7")); //$NON-NLS-1$
 				else
 					version = new Version(rootElement.getNodeValue());
 
 				// Now get the project root element (there should be only one)
 				NodeList nodes = doc.getElementsByTagName(ICProjectDescriptionStorageType.STORAGE_ROOT_ELEMENT_NAME);
 				if (nodes.getLength() == 0)
-					throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.9")); //$NON-NLS-1$
+					throw ExceptionFactory
+							.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.9")); //$NON-NLS-1$
 				Node node = nodes.item(0);
-				if(node.getNodeType() != Node.ELEMENT_NODE)
-					throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.10")); //$NON-NLS-1$
+				if (node.getNodeType() != Node.ELEMENT_NODE)
+					throw ExceptionFactory
+							.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.10")); //$NON-NLS-1$
 				// If we've got this far, then we're at least dealing with an old style project:
 				//  as this didn't use to provide a type, specify one explicitly
 				// Choose new style -- separated out storage modules by default as this is backwards compatible...
 				storageTypeID = XmlProjectDescriptionStorage2.STORAGE_TYPE_ID;
-				if (((Element)node).hasAttribute(ICProjectDescriptionStorageType.STORAGE_TYPE_ATTRIBUTE))
-					storageTypeID = ((Element)node).getAttribute(ICProjectDescriptionStorageType.STORAGE_TYPE_ATTRIBUTE);
+				if (((Element) node).hasAttribute(ICProjectDescriptionStorageType.STORAGE_TYPE_ATTRIBUTE))
+					storageTypeID = ((Element) node)
+							.getAttribute(ICProjectDescriptionStorageType.STORAGE_TYPE_ATTRIBUTE);
 			}
 		} catch (Exception e) {
 			// Catch all, if not found, we use the old-style defaults...
 		} finally {
-			if(stream != null){
+			if (stream != null) {
 				try {
 					stream.close();
-				} catch (IOException e) {}
+				} catch (IOException e) {
+				}
 			}
 		}
 
@@ -265,10 +271,10 @@ public class CProjectDescriptionStorageManager {
 		}
 
 		// No type found!
-		CCorePlugin.log("CProjectDescriptionStorageType: " + storageTypeID + "  for version: " + version + " not found!");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		CCorePlugin
+				.log("CProjectDescriptionStorageType: " + storageTypeID + "  for version: " + version + " not found!"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		return null;
 	}
-
 
 	private InputStream getInputStreamForIFile(IProject project, String name) throws CoreException {
 		IFile f = project.getFile(name);
@@ -289,7 +295,6 @@ public class CProjectDescriptionStorageManager {
 		}
 		throw ExceptionFactory.createCoreException("No project des file found..."); //$NON-NLS-1$
 	}
-
 
 	/*
 	 * Resource Change Callbacks
@@ -331,7 +336,6 @@ public class CProjectDescriptionStorageManager {
 		instance = null;
 	}
 
-
 	/**
 	 * Initialize the project description storage types
 	 */
@@ -339,7 +343,8 @@ public class CProjectDescriptionStorageManager {
 		if (storageTypeMap != null)
 			return;
 		Map<String, List<CProjectDescriptionStorageTypeProxy>> m = new HashMap<String, List<CProjectDescriptionStorageTypeProxy>>();
-        IExtensionPoint extpoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CPROJ_DESC_STORAGE_EXT_ID);
+		IExtensionPoint extpoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				CPROJ_DESC_STORAGE_EXT_ID);
 		for (IExtension extension : extpoint.getExtensions()) {
 			for (IConfigurationElement configEl : extension.getConfigurationElements()) {
 				if (configEl.getName().equalsIgnoreCase(CPROJ_STORAGE_TYPE)) {
@@ -397,9 +402,9 @@ public class CProjectDescriptionStorageManager {
 			// If resource exists, ensure it and children are writable
 			if (resource instanceof IFile) {
 				if (resource.getResourceAttributes().isReadOnly()) {
-				    IStatus result = resource.getWorkspace().validateEdit(new IFile[] { (IFile) resource }, null);
-				    if (!result.isOK())
-				        throw new CoreException(result);
+					IStatus result = resource.getWorkspace().validateEdit(new IFile[] { (IFile) resource }, null);
+					if (!result.isOK())
+						throw new CoreException(result);
 				}
 			} else if (resource instanceof IContainer) {
 				ResourceAttributes resAttr = resource.getResourceAttributes();
@@ -416,9 +421,9 @@ public class CProjectDescriptionStorageManager {
 				}
 				if (files.size() > 0) {
 					IFile[] filesToValidate = files.toArray(new IFile[files.size()]);
-				    IStatus result = resource.getWorkspace().validateEdit(filesToValidate, null);
-				    if (!result.isOK())
-				        throw new CoreException(result);
+					IStatus result = resource.getWorkspace().validateEdit(filesToValidate, null);
+					if (!result.isOK())
+						throw new CoreException(result);
 				}
 			}
 		}

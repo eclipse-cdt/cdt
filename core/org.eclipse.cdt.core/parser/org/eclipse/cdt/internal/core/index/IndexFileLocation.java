@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Andrew Ferguson (Symbian) - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import java.net.URI;
@@ -23,24 +23,24 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 public class IndexFileLocation implements IIndexFileLocation {
 	private final URI uri;
 	private final String fullPath;
-	
+
 	public IndexFileLocation(URI uri, String fullPath) {
 		if (uri == null)
 			throw new IllegalArgumentException();
 		this.uri = uri;
 		this.fullPath = fullPath;
 	}
-	
+
 	@Override
 	public String getFullPath() {
 		return fullPath;
 	}
-	
+
 	@Override
 	public URI getURI() {
 		return uri;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IIndexFileLocation) {
@@ -48,12 +48,12 @@ public class IndexFileLocation implements IIndexFileLocation {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return uri.hashCode();
 	}
-	
+
 	@Override
 	public String toString() {
 		if (fullPath == null) {

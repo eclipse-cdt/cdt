@@ -28,7 +28,7 @@ public interface ICdtVariableStatus extends IStatus {
 	 * is encountered while resolving macros in some expression 
 	 */
 	public static final int TYPE_MACRO_UNDEFINED = 1;
-	
+
 	/**
 	 * This type is used to present that two macros reference each other 
 	 */
@@ -69,22 +69,22 @@ public interface ICdtVariableStatus extends IStatus {
 	 * @return String
 	 */
 	public String getExpression();
-	
+
 	/**
 	 * returns the macro name referenced in the resolution string that caused this this status creation or null if none
 	 * @return String
 	 */
 	public String getReferencedMacroName();
-	
+
 	/**
 	 * returns the context type used in the operation
 	 * @return int
 	 */
-//	public int getContextType();
-	
+	//	public int getContextType();
+
 	/**
 	 * returns the context data used in the operation
 	 * @return Object
 	 */
-//	public Object getContextData();
+	//	public Object getContextData();
 }

@@ -22,7 +22,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public class DOMException extends Exception {
 	private static final long serialVersionUID = 0;
-	
+
 	IProblemBinding problemBinding;
 
 	/**

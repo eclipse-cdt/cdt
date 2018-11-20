@@ -19,67 +19,68 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CodeGeneration;
 
-
 public final class ConstructorMethodStub extends AbstractMethodStub {
-    private static String NAME = NewClassWizardMessages.NewClassCodeGeneration_stub_constructor_name; 
-    
-    public ConstructorMethodStub() {
-        this(ASTAccessVisibility.PUBLIC, false);
-    }
+	private static String NAME = NewClassWizardMessages.NewClassCodeGeneration_stub_constructor_name;
 
-    public ConstructorMethodStub(ASTAccessVisibility access, boolean isInline) {
-        super(NAME, access, false, isInline);
-    }
+	public ConstructorMethodStub() {
+		this(ASTAccessVisibility.PUBLIC, false);
+	}
 
-    @Override
-	public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
-        StringBuilder buf = new StringBuilder();
-        buf.append(className);
-        buf.append("()"); //$NON-NLS-1$
-    	if (fIsInline) {
-            buf.append('{');
-            buf.append(lineDelimiter);
-        	String body= CodeGeneration.getConstructorBodyContent(tu, className, null, lineDelimiter);
-        	if (body != null) {
-        		buf.append(body);
-                buf.append(lineDelimiter);
-        	}
-            buf.append('}');
-    	} else {
-    	    buf.append(";"); //$NON-NLS-1$
-    	}
-        return buf.toString();
-    }
+	public ConstructorMethodStub(ASTAccessVisibility access, boolean isInline) {
+		super(NAME, access, false, isInline);
+	}
 
-    @Override
-	public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
-        if (fIsInline) {
-            return ""; //$NON-NLS-1$
-        }
-        StringBuilder buf = new StringBuilder();
-        buf.append(className);
-        buf.append("::"); //$NON-NLS-1$
-        buf.append(className);
-        buf.append("()"); //$NON-NLS-1$
-        buf.append(lineDelimiter);
-        buf.append('{');
-        buf.append(lineDelimiter);
-    	String body= CodeGeneration.getConstructorBodyContent(tu, className, null, lineDelimiter);
-    	if (body != null) {
-    		buf.append(body);
-            buf.append(lineDelimiter);
-    	}
-        buf.append('}');
-        return buf.toString();
-    }
+	@Override
+	public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
+			String lineDelimiter) throws CoreException {
+		StringBuilder buf = new StringBuilder();
+		buf.append(className);
+		buf.append("()"); //$NON-NLS-1$
+		if (fIsInline) {
+			buf.append('{');
+			buf.append(lineDelimiter);
+			String body = CodeGeneration.getConstructorBodyContent(tu, className, null, lineDelimiter);
+			if (body != null) {
+				buf.append(body);
+				buf.append(lineDelimiter);
+			}
+			buf.append('}');
+		} else {
+			buf.append(";"); //$NON-NLS-1$
+		}
+		return buf.toString();
+	}
 
-    @Override
+	@Override
+	public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
+			String lineDelimiter) throws CoreException {
+		if (fIsInline) {
+			return ""; //$NON-NLS-1$
+		}
+		StringBuilder buf = new StringBuilder();
+		buf.append(className);
+		buf.append("::"); //$NON-NLS-1$
+		buf.append(className);
+		buf.append("()"); //$NON-NLS-1$
+		buf.append(lineDelimiter);
+		buf.append('{');
+		buf.append(lineDelimiter);
+		String body = CodeGeneration.getConstructorBodyContent(tu, className, null, lineDelimiter);
+		if (body != null) {
+			buf.append(body);
+			buf.append(lineDelimiter);
+		}
+		buf.append('}');
+		return buf.toString();
+	}
+
+	@Override
 	public boolean isConstructor() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean canModifyVirtual() {
-        return false;
-    }
+		return false;
+	}
 }

@@ -31,11 +31,11 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	 * Constructs an empty parameter map.
 	 */
 	public CPPTemplateParameterMap(int initialSize) {
-		fMap= new ObjectMap(initialSize);
+		fMap = new ObjectMap(initialSize);
 	}
 
 	public CPPTemplateParameterMap(CPPTemplateParameterMap other) {
-		fMap= (ObjectMap) other.fMap.clone();
+		fMap = (ObjectMap) other.fMap.clone();
 	}
 
 	/**
@@ -148,12 +148,12 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 			if (packSize != args.length)
 				return false;
 		} else if (object == null) {
-			args= new ICPPTemplateArgument[packSize];
+			args = new ICPPTemplateArgument[packSize];
 			fMap.put(paramID, args);
 		} else {
 			return false;
 		}
-		args[packOffset]= arg;
+		args[packOffset] = arg;
 		return true;
 	}
 
@@ -162,7 +162,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	 */
 	public void putAll(ICPPTemplateParameterMap map) {
 		if (map instanceof CPPTemplateParameterMap) {
-			final ObjectMap omap= ((CPPTemplateParameterMap) map).fMap;
+			final ObjectMap omap = ((CPPTemplateParameterMap) map).fMap;
 			for (int i = 0; i < omap.size(); i++) {
 				fMap.put(omap.keyAt(i), omap.getAt(i));
 			}
@@ -172,10 +172,10 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	}
 
 	public boolean addDeducedArgs(CPPTemplateParameterMap deducedMap) {
-		Integer[] keys= deducedMap.getAllParameterPositions();
+		Integer[] keys = deducedMap.getAllParameterPositions();
 		for (Integer key : keys) {
-			Object explicit= fMap.get(key);
-			Object deduced= deducedMap.fMap.get(key);
+			Object explicit = fMap.get(key);
+			Object deduced = deducedMap.fMap.get(key);
 			if (explicit == null) {
 				if (deduced instanceof ICPPTemplateArgument[]) {
 					for (ICPPTemplateArgument arg : (ICPPTemplateArgument[]) deduced) {
@@ -185,8 +185,8 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 				}
 				fMap.put(key, deduced);
 			} else if (explicit instanceof ICPPTemplateArgument[] && deduced instanceof ICPPTemplateArgument[]) {
-				ICPPTemplateArgument[] explicitPack= (ICPPTemplateArgument[]) explicit;
-				ICPPTemplateArgument[] deducedPack= (ICPPTemplateArgument[]) deduced;
+				ICPPTemplateArgument[] explicitPack = (ICPPTemplateArgument[]) explicit;
+				ICPPTemplateArgument[] deducedPack = (ICPPTemplateArgument[]) deduced;
 				if (deducedPack.length < explicitPack.length)
 					return false;
 				System.arraycopy(explicitPack, 0, deducedPack, 0, explicitPack.length);

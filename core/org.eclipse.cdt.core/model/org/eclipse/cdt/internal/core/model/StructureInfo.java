@@ -22,15 +22,15 @@ public class StructureInfo extends SourceManipulationInfo {
 	protected boolean isVolatile;
 	protected boolean isConst;
 
-	protected StructureInfo (CElement element) {
-		super(element);		
+	protected StructureInfo(CElement element) {
+		super(element);
 	}
 
-	protected String getTypeName(){
+	protected String getTypeName() {
 		return typeStr;
 	}
-	
-	protected void setTypeName(String type){
+
+	protected void setTypeName(String type) {
 		typeStr = type;
 	}
 

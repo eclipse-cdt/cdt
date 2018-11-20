@@ -21,19 +21,18 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
 public class FalseExpression implements IBooleanExpression {
-	public static final String NAME = "false"; 	//$NON-NLS-1$
+	public static final String NAME = "false"; //$NON-NLS-1$
 
 	public FalseExpression(IManagedConfigElement element) {
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
-			IOption option) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOption option) {
 		return false;
 	}
+
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
-			IOptionCategory category) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
 		return false;
 	}
 

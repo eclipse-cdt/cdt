@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-
 /**
  * Creates regular folder in the project.
  * @since 5.1
@@ -36,7 +35,8 @@ public class CreateFolder extends ProcessRunner {
 	 * @see org.eclipse.cdt.core.templateengine.process.ProcessRunner#process(org.eclipse.cdt.core.templateengine.TemplateCore, org.eclipse.cdt.core.templateengine.process.ProcessArgument[], java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		createFolder(args[0].getSimpleValue(), args[1].getSimpleValue(), monitor);
 	}
 
@@ -48,10 +48,11 @@ public class CreateFolder extends ProcessRunner {
 	 * @param monitor - progress monitor.
 	 * @throws ProcessFailureException if there is a problem with creating new folder.
 	 */
-	public static void createFolder(String projectName, String targetPath, IProgressMonitor monitor) throws ProcessFailureException {
+	public static void createFolder(String projectName, String targetPath, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		//If the targetPath is an empty string, there will be no folder to create.
 		// Also this is not an error. So just return gracefully.
-		if (targetPath == null || targetPath.length()==0) {
+		if (targetPath == null || targetPath.length() == 0) {
 			return;
 		}
 
@@ -64,7 +65,7 @@ public class CreateFolder extends ProcessRunner {
 		IPath path = new Path(targetPath);
 
 		try {
-			for (int i=1;i<=path.segmentCount();i++) {
+			for (int i = 1; i <= path.segmentCount(); i++) {
 				IFolder subfolder = projectHandle.getFolder(path.uptoSegment(i));
 				if (!subfolder.exists()) {
 					subfolder.create(true, true, monitor);

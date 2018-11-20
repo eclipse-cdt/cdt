@@ -37,7 +37,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.junit.Assert;
 
-
 public class ManagedBuildCoreTests extends TestCase {
 	private static IProjectType exeType;
 	private static IProjectType libType;
@@ -68,44 +67,40 @@ public class ManagedBuildCoreTests extends TestCase {
 		checkLibProjectType(libType);
 	}
 
-
 	/*
 	 * Do a sanity check on the testgnu exe project type.
 	 */
 	private void checkExeProjectType(IProjectType ptype) throws BuildException {
 		int i;
 		int expecectedNumConfigs = 2;
-		String[] expectedConfigName = {"Dbg", "Rel"};
+		String[] expectedConfigName = { "Dbg", "Rel" };
 		String expectedCleanCmd = "rm -rf";
 		String expectedParserId = "org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser";
 		String expectedOSList = "solaris,linux,hpux,aix,qnx";
 		int expectedSizeOSList = 5;
-		String[] expectedArchList = {"all"};
+		String[] expectedArchList = { "all" };
 		String expectedBinaryParser = "org.eclipse.cdt.core.ELF";
 		String expectedBinaryParser2 = "org.eclipse.cdt.core.PE";
-		String[] expectedPlatformName = {"Dbg Platform",
-		"Rel Platform"};
+		String[] expectedPlatformName = { "Dbg Platform", "Rel Platform" };
 		String expectedCommand = "make";
 		String expectedArguments = "-k";
-		String[] expectedBuilderName = {"Dbg Builder",
-		"Rel Builder"};
+		String[] expectedBuilderName = { "Dbg Builder", "Rel Builder" };
 		String expectedBuilderInfo = "org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator";
-		String[] expectedToolId1 = {"cdt.managedbuild.tool.testgnu.c.compiler.exe.debug",
-		"cdt.managedbuild.tool.testgnu.c.compiler.exe.release"};
+		String[] expectedToolId1 = { "cdt.managedbuild.tool.testgnu.c.compiler.exe.debug",
+				"cdt.managedbuild.tool.testgnu.c.compiler.exe.release" };
 		String expectedSuperToolId1 = "cdt.managedbuild.tool.testgnu.c.compiler";
 		String expectedSuperOutputFlag1 = "-o";
 		String expectedSuperGetToolCommand1 = "gcc";
-		String[] expectedSuperInputExt1 = {"c"};
-		String[] expectedSuperToolInterfaceExt1 = {"h"};
-		String[] expectedSuperToolOutputExt1 = {"o"};
+		String[] expectedSuperInputExt1 = { "c" };
+		String[] expectedSuperToolInterfaceExt1 = { "h" };
+		String[] expectedSuperToolOutputExt1 = { "o" };
 		String expectedOptionCategory1 = "testgnu.c.compiler.category.preprocessor";
-		String[] OptionId1 = {"testgnu.c.compiler.exe.debug.option.optimization.level",
-		"testgnu.c.compiler.exe.release.option.optimization.level"};
-		String[] expectedOptionIdValue1 = {"testgnu.c.optimization.level.none",
-		"testgnu.c.optimization.level.most"};
+		String[] OptionId1 = { "testgnu.c.compiler.exe.debug.option.optimization.level",
+				"testgnu.c.compiler.exe.release.option.optimization.level" };
+		String[] expectedOptionIdValue1 = { "testgnu.c.optimization.level.none", "testgnu.c.optimization.level.most" };
 		String expectedEnumList1 = "Posix.Optimize.None, Posix.Optimize.Optimize, Posix.Optimize.More, Posix.Optimize.Most";
 		int expectedSizeEnumList1 = 4;
-		String[] expectedOptionEnumCmd1arr = {"-O0", "-O3"};
+		String[] expectedOptionEnumCmd1arr = { "-O0", "-O3" };
 		String OptionId2 = "testgnu.c.compiler.option.debugging.other";
 		String expectedOptionIdName2 = "Posix.Debug.Other";
 		String OptionId3 = "testgnu.c.compiler.option.debugging.gprof";
@@ -130,7 +125,7 @@ public class ManagedBuildCoreTests extends TestCase {
 
 		// Loop over configurations
 		//
-		for (int iconfig=0; iconfig < configs.length; iconfig++) {
+		for (int iconfig = 0; iconfig < configs.length; iconfig++) {
 
 			// Verify configuration attributes
 			//
@@ -165,7 +160,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			assertEquals(builder.getCommand(), expectedCommand);
 			assertEquals(builder.getArguments(), expectedArguments);
 			assertEquals(builder.getName(), expectedBuilderName[iconfig]);
-			IConfigurationElement element = ((Builder)builder).getBuildFileGeneratorElement();
+			IConfigurationElement element = ((Builder) builder).getBuildFileGeneratorElement();
 			if (element != null) {
 				assertEquals(element.getAttribute(IBuilder.BUILDFILEGEN_ID), expectedBuilderInfo);
 			}
@@ -208,7 +203,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			//
 			option = tool.getOptionById(OptionId1[iconfig]);
 			assertTrue(option.isExtensionElement());
-			String optionDefaultValue = (String)option.getDefaultValue();
+			String optionDefaultValue = (String) option.getDefaultValue();
 			assertEquals(option.getValueType(), IOption.ENUMERATED);
 			assertEquals(optionDefaultValue, expectedOptionIdValue1[iconfig]);
 			String optionEnumCmd1 = option.getEnumCommand(optionDefaultValue);
@@ -218,7 +213,8 @@ public class ManagedBuildCoreTests extends TestCase {
 			for (i = 0; i < expectedEnumList1Tokens.length; ++i) {
 				expectedEnumList1arr.add(expectedEnumList1Tokens[i].trim());
 			}
-			assertTrue(Arrays.equals(option.getApplicableValues(), expectedEnumList1arr.toArray(new String[expectedSizeEnumList1])));
+			assertTrue(Arrays.equals(option.getApplicableValues(),
+					expectedEnumList1arr.toArray(new String[expectedSizeEnumList1])));
 
 			// Fetch the debug other option and verify
 			//
@@ -246,32 +242,29 @@ public class ManagedBuildCoreTests extends TestCase {
 	private void checkSoProjectType(IProjectType ptype) throws BuildException {
 		int i;
 		int expecectedNumConfigs = 2;
-		String[] expectedConfigName = {"Debug", "Release"};
+		String[] expectedConfigName = { "Debug", "Release" };
 		String expectedCleanCmd = "rm -rf";
 		String expectedParserId = "org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser";
 		String expectedArtifactExtension = "so";
 		String expectedOSList = "solaris,linux,hpux,aix,qnx";
 		int expectedSizeOSList = 5;
-		String[] expectedArchList = {"all"};
+		String[] expectedArchList = { "all" };
 		String expectedBinaryParser = "org.eclipse.cdt.core.ELF";
-		String[] expectedPlatformName = {"so Debug Platform",
-		"so Release Platform"};
+		String[] expectedPlatformName = { "so Debug Platform", "so Release Platform" };
 		String expectedCommand = "make";
 		String expectedArguments = "-k";
-		String[] expectedBuilderName = {"so Debug Builder",
-		"so Release Builder"};
+		String[] expectedBuilderName = { "so Debug Builder", "so Release Builder" };
 		String expectedScannerConfigDiscoveryProfileId = "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile";
-		String[] expectedToolChainName = {"so Debug ToolChain",
-		"so Release ToolChain"};
-		String[] expectedToolId1 = {"cdt.managedbuild.tool.testgnu.c.linker.so.debug",
-		"cdt.managedbuild.tool.testgnu.c.linker.so.release"};
+		String[] expectedToolChainName = { "so Debug ToolChain", "so Release ToolChain" };
+		String[] expectedToolId1 = { "cdt.managedbuild.tool.testgnu.c.linker.so.debug",
+				"cdt.managedbuild.tool.testgnu.c.linker.so.release" };
 		String expectedSuperToolId1 = "cdt.managedbuild.tool.testgnu.c.linker";
 		String expectedToolOutputPrefix = "lib";
-		String[] expectedToolOutput = {""};
+		String[] expectedToolOutput = { "" };
 		String expectedSuperOutputFlag1 = "-o";
 		String expectedSuperGetToolCommand1 = "gcc";
-		String[] expectedSuperInputExt1 = {"o"};
-		String[] expectedSuperToolOutputExt1 = {""};
+		String[] expectedSuperInputExt1 = { "o" };
+		String[] expectedSuperToolOutputExt1 = { "" };
 		String expectedOptionCategory1 = "testgnu.c.link.category.general";
 		String OptionId1A = "testgnu.c.link.option.libs";
 		String OptionId1B = "testgnu.c.link.option.paths";
@@ -307,7 +300,7 @@ public class ManagedBuildCoreTests extends TestCase {
 
 		// Loop over configurations
 		//
-		for (int iconfig=0; iconfig < configs.length; iconfig++) {
+		for (int iconfig = 0; iconfig < configs.length; iconfig++) {
 
 			// Verify configuration attributes
 			//
@@ -441,37 +434,35 @@ public class ManagedBuildCoreTests extends TestCase {
 	private void checkLibProjectType(IProjectType ptype) throws BuildException {
 		int i;
 		int expecectedNumConfigs = 2;
-		String[] expectedConfigName = {"Dbg", "Rel"};
+		String[] expectedConfigName = { "Dbg", "Rel" };
 		String expectedCleanCmd = "rm -rf";
 		String expectedParserId = "org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser";
 		String expectedArtifactExtension = "a";
 		String expectedOSList = "solaris,linux,hpux,aix,qnx";
 		int expectedSizeOSList = 5;
-		String[] expectedArchList = {"all"};
+		String[] expectedArchList = { "all" };
 		String expectedBinaryParser = "org.eclipse.cdt.core.ELF";
-		String[] expectedPlatformName = {"Dbg P",
-		"Rel P"};
+		String[] expectedPlatformName = { "Dbg P", "Rel P" };
 		String expectedCommand = "make";
 		String expectedArguments = "-k";
-		String[] expectedBuilderName = {"Dbg B",
-		"Rel B"};
+		String[] expectedBuilderName = { "Dbg B", "Rel B" };
 		String expectedScannerConfigDiscoveryProfileId = "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile";
-		String[] expectedToolId1 = {"cdt.managedbuild.tool.testgnu.cpp.compiler.lib.debug",
-		"cdt.managedbuild.tool.testgnu.cpp.compiler.lib.release"};
+		String[] expectedToolId1 = { "cdt.managedbuild.tool.testgnu.cpp.compiler.lib.debug",
+				"cdt.managedbuild.tool.testgnu.cpp.compiler.lib.release" };
 		String expectedSuperToolId1 = "cdt.managedbuild.tool.testgnu.cpp.compiler";
 		String expectedSuperOutputFlag1 = "-o";
 		String expectedSuperGetToolCommand1 = "g++";
-		String[] expectedSuperInputExt1 = {"c","C","cc","cxx","cpp"};
-		String[] expectedSuperToolInterfaceExt1 = {"h","H","hpp"};
-		String[] expectedSuperToolOutputExt1 = {"o"};
+		String[] expectedSuperInputExt1 = { "c", "C", "cc", "cxx", "cpp" };
+		String[] expectedSuperToolInterfaceExt1 = { "h", "H", "hpp" };
+		String[] expectedSuperToolOutputExt1 = { "o" };
 		String expectedOptionCategory1 = "testgnu.cpp.compiler.category.preprocessor";
-		String[] OptionId1 = {"testgnu.cpp.compiler.lib.debug.option.optimization.level",
-		"testgnu.cpp.compiler.lib.release.option.optimization.level"};
-		String[] expectedOptionIdValue1 = {"testgnu.cpp.compiler.optimization.level.none",
-		"testgnu.cpp.compiler.optimization.level.most"};
+		String[] OptionId1 = { "testgnu.cpp.compiler.lib.debug.option.optimization.level",
+				"testgnu.cpp.compiler.lib.release.option.optimization.level" };
+		String[] expectedOptionIdValue1 = { "testgnu.cpp.compiler.optimization.level.none",
+				"testgnu.cpp.compiler.optimization.level.most" };
 		String expectedEnumList1 = "Posix.Optimize.None, Posix.Optimize.Optimize, Posix.Optimize.More, Posix.Optimize.Most";
 		int expectedSizeEnumList1 = 4;
-		String[] expectedOptionEnumCmd1arr = {"-O0", "-O3"};
+		String[] expectedOptionEnumCmd1arr = { "-O0", "-O3" };
 
 		String OptionId2 = "testgnu.cpp.compiler.option.other.other";
 		String expectedOptionIdName2 = "OtherFlags";
@@ -498,7 +489,7 @@ public class ManagedBuildCoreTests extends TestCase {
 
 		// Loop over configurations
 		//
-		for (int iconfig=0; iconfig < configs.length; iconfig++) {
+		for (int iconfig = 0; iconfig < configs.length; iconfig++) {
 
 			// Verify configuration attributes
 			//
@@ -574,7 +565,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			//
 			option = tool.getOptionById(OptionId1[iconfig]);
 			assertTrue(option.isExtensionElement());
-			String optionDefaultValue = (String)option.getDefaultValue();
+			String optionDefaultValue = (String) option.getDefaultValue();
 			assertEquals(option.getValueType(), (IOption.ENUMERATED));
 			assertEquals(optionDefaultValue, (expectedOptionIdValue1[iconfig]));
 			String optionEnumCmd1 = option.getEnumCommand(optionDefaultValue);
@@ -585,7 +576,8 @@ public class ManagedBuildCoreTests extends TestCase {
 			for (i = 0; i < expectedEnumList1Tokens.length; ++i) {
 				expectedEnumList1arr.add(expectedEnumList1Tokens[i].trim());
 			}
-			assertTrue(Arrays.equals(option.getApplicableValues(), expectedEnumList1arr.toArray(new String[expectedSizeEnumList1])));
+			assertTrue(Arrays.equals(option.getApplicableValues(),
+					expectedEnumList1arr.toArray(new String[expectedSizeEnumList1])));
 
 			// Fetch the other flags option and verify
 			//
@@ -612,7 +604,8 @@ public class ManagedBuildCoreTests extends TestCase {
 	 * @throws Exception
 	 */
 	public void testTreeOptions() throws Exception {
-		IOption treeOption = ManagedBuildManager.getExtensionOption("cdt.managedbuild.tool.gnu.c.linker.test.tree.option");
+		IOption treeOption = ManagedBuildManager
+				.getExtensionOption("cdt.managedbuild.tool.gnu.c.linker.test.tree.option");
 		assertNotNull(treeOption);
 
 		// standard options
@@ -650,11 +643,12 @@ public class ManagedBuildCoreTests extends TestCase {
 
 		int size = children.length;
 		treeRoot.addChild("newID", "New Name");
-		assertEquals(size+1, treeRoot.getChildren().length);
+		assertEquals(size + 1, treeRoot.getChildren().length);
 		assertEquals("newID", treeRoot.getChild("New Name").getID());
 
 		// check tree only methods
-		IOption nonTreeOption = ManagedBuildManager.getExtensionOption("testgnu.c.compiler.exe.debug.option.debugging.level");
+		IOption nonTreeOption = ManagedBuildManager
+				.getExtensionOption("testgnu.c.compiler.exe.debug.option.debugging.level");
 		assertFalse(IOption.TREE == nonTreeOption.getValueType());
 		boolean exception = false;
 		try {
@@ -680,4 +674,3 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertEquals(true, option.isForScannerDiscovery());
 	}
 } // end class
-

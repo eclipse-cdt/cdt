@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.templateengine.TemplateInfo;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-
 /**
  * A wizard intending to show a choice of templates (@see org.eclipse.cdt.core.templateenginee.Template)
  * before switching to the pages driven by the chosen template should extend from TemplatesChoiceWizard.
@@ -65,18 +64,15 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		}
 	}
 
-	public String getListSelectionTitle()
-	{
+	public String getListSelectionTitle() {
 		return Messages.getString("TemplatesChoiceWizard.0"); //$NON-NLS-1$
 	}
 
-	public String getListSelectionDescription()
-	{
+	public String getListSelectionDescription() {
 		return Messages.getString("TemplatesChoiceWizard.1"); //$NON-NLS-1$
 	}
 
-	public String getListSelectionLabel()
-	{
+	public String getListSelectionLabel() {
 		return Messages.getString("TemplatesChoiceWizard.2"); //$NON-NLS-1$
 	}
 
@@ -86,10 +82,12 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 
 	protected abstract IWizardDataPage[] getPagesAfterTemplateSelection();
 
-	IWizardDataPage[] getPagesAfterTemplateSelectionWithExtraPages(Template template) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	IWizardDataPage[] getPagesAfterTemplateSelectionWithExtraPages(Template template)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		IWizardDataPage[] pages = getPagesAfterTemplateSelection();
 		TemplateInfo templateInfo = template.getTemplateInfo();
-		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo.getExtraPagesProvider();
+		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo
+				.getExtraPagesProvider();
 		if (extraPagesProvider != null) {
 			List<IWizardDataPage> pageList = new ArrayList<IWizardDataPage>(Arrays.asList(pages));
 			IWizardDataPage[] extraPages = extraPagesProvider.createAdditionalPages(this, workbench, selection);
@@ -99,9 +97,11 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		return pages;
 	}
 
-	IWizardDataPage[] getExtraCreatedPages(Template template) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	IWizardDataPage[] getExtraCreatedPages(Template template)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		TemplateInfo templateInfo = template.getTemplateInfo();
-		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo.getExtraPagesProvider();
+		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo
+				.getExtraPagesProvider();
 		if (extraPagesProvider != null) {
 			List<IWizardDataPage> pageList = new ArrayList<IWizardDataPage>();
 			IWizardDataPage[] extraPages = extraPagesProvider.getCreatedPages(this);
@@ -113,7 +113,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 
 	@Override
 	public boolean performFinish() {
-		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				finishPage(monitor);
@@ -124,7 +124,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 			getContainer().run(true, false, op);
 		} catch (InvocationTargetException e) {
 			return false;
-		} catch  (InterruptedException e) {
+		} catch (InterruptedException e) {
 			return false;
 		}
 		return true;
@@ -139,7 +139,8 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		}
 		if (DEBUG) {
 			String msg = Messages.getString("TemplatesChoiceWizard.3"); //$NON-NLS-1$
-			TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
+			TemplateEngineUIUtil.showStatusDialog(msg,
+					new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
 		}
 		return true;
 	}

@@ -46,9 +46,8 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 		}
 
 		int getReadWriteFlags(IASTName variable) {
-			return isCPP ?
-					CPPVariableReadWriteFlags.getReadWriteFlags(variable) :
-					CVariableReadWriteFlags.getReadWriteFlags(variable);
+			return isCPP ? CPPVariableReadWriteFlags.getReadWriteFlags(variable)
+					: CVariableReadWriteFlags.getReadWriteFlags(variable);
 		}
 
 		private String flagsToString(int flags) {
@@ -79,12 +78,12 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	}
 
 	protected AssertionHelper getCAssertionHelper() throws ParserException, IOException {
-		String code= getAboveComment();
+		String code = getAboveComment();
 		return new AssertionHelper(code, false);
 	}
 
 	protected AssertionHelper getCPPAssertionHelper() throws ParserException, IOException {
-		String code= getAboveComment();
+		String code = getAboveComment();
 		return new AssertionHelper(code, true);
 	}
 
@@ -218,7 +217,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 		a.assertReadWriteFlags("ap->m()", "ap", READ);
 		a.assertReadWriteFlags("(*ap).m()", "ap", READ);
 	}
-	
+
 	//	void variadic(...);
 	//	void test() {
 	//		int waldo;

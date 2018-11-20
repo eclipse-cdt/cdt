@@ -43,47 +43,50 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 		IPath[] name = new IPath[1];
 
 		//  Determine a default name from the input file name
-		String fileName = "default";	//$NON-NLS-1$
+		String fileName = "default"; //$NON-NLS-1$
 		if (primaryInputNames != null && primaryInputNames.length > 0) {
 			fileName = primaryInputNames[0].removeFileExtension().lastSegment();
-			if (fileName.startsWith("$(") && fileName.endsWith(")")) {	//$NON-NLS-1$ //$NON-NLS-2$
-				fileName = fileName.substring(2,fileName.length()-1);
+			if (fileName.startsWith("$(") && fileName.endsWith(")")) { //$NON-NLS-1$ //$NON-NLS-2$
+				fileName = fileName.substring(2, fileName.length() - 1);
 			}
 		}
 
 		//  If we are building a shared library, determine if the user has specified a name using the
 		//  soname option
 		boolean isSO = false;
-		String soName = "";	//$NON-NLS-1$
-		if (hasAncestor(tool, "cdt.managedbuild.tool.gnu.c.linker")) {	//$NON-NLS-1$
-			IOption optShared = tool.getOptionBySuperClassId("gnu.c.link.option.shared");	//$NON-NLS-1$
+		String soName = ""; //$NON-NLS-1$
+		if (hasAncestor(tool, "cdt.managedbuild.tool.gnu.c.linker")) { //$NON-NLS-1$
+			IOption optShared = tool.getOptionBySuperClassId("gnu.c.link.option.shared"); //$NON-NLS-1$
 			if (optShared != null) {
 				try {
 					isSO = optShared.getBooleanValue();
-				} catch (Exception e) {}
-			}
-			if (isSO) {
-				IOption optSOName = tool.getOptionBySuperClassId("gnu.c.link.option.soname");	//$NON-NLS-1$
-				if (optSOName != null) {
-					try {
-						soName = optSOName.getStringValue();
-					} catch (Exception e) {}
+				} catch (Exception e) {
 				}
 			}
-		} else
-		if (hasAncestor(tool, "cdt.managedbuild.tool.gnu.cpp.linker")) {	//$NON-NLS-1$
-			IOption optShared = tool.getOptionBySuperClassId("gnu.cpp.link.option.shared");	//$NON-NLS-1$
-			if (optShared != null) {
-				try {
-					isSO = optShared.getBooleanValue();
-				} catch (Exception e) {}
-			}
 			if (isSO) {
-				IOption optSOName = tool.getOptionBySuperClassId("gnu.cpp.link.option.soname");	//$NON-NLS-1$
+				IOption optSOName = tool.getOptionBySuperClassId("gnu.c.link.option.soname"); //$NON-NLS-1$
 				if (optSOName != null) {
 					try {
 						soName = optSOName.getStringValue();
-					} catch (Exception e) {}
+					} catch (Exception e) {
+					}
+				}
+			}
+		} else if (hasAncestor(tool, "cdt.managedbuild.tool.gnu.cpp.linker")) { //$NON-NLS-1$
+			IOption optShared = tool.getOptionBySuperClassId("gnu.cpp.link.option.shared"); //$NON-NLS-1$
+			if (optShared != null) {
+				try {
+					isSO = optShared.getBooleanValue();
+				} catch (Exception e) {
+				}
+			}
+			if (isSO) {
+				IOption optSOName = tool.getOptionBySuperClassId("gnu.cpp.link.option.soname"); //$NON-NLS-1$
+				if (optSOName != null) {
+					try {
+						soName = optSOName.getStringValue();
+					} catch (Exception e) {
+					}
 				}
 			}
 		}
@@ -110,19 +113,16 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 				config = (IConfiguration) toolParent;
 			else if (toolParent instanceof IToolChain) {
 				// must be a toolchain
-				config = ((IToolChain) toolParent)
-						.getParent();
+				config = ((IToolChain) toolParent).getParent();
 			}
 
 			else if (toolParent instanceof IResourceConfiguration) {
-				config = ((IResourceConfiguration) toolParent)
-						.getParent();
+				config = ((IResourceConfiguration) toolParent).getParent();
 			}
 
 			else {
 				// bad
-				throw new AssertionError(
-						ManagedMakeMessages.getResourceString("GnuLinkOutputNameProvider.0")); //$NON-NLS-1$
+				throw new AssertionError(ManagedMakeMessages.getResourceString("GnuLinkOutputNameProvider.0")); //$NON-NLS-1$
 			}
 
 			if (config != null) {
@@ -131,35 +131,24 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 
 				// if any input files have spaces in the name, then we must
 				// not use builder variables
-				for(int k = 0; k < primaryInputNames.length; k++)
-				{
-					if(primaryInputNames[k].toString().indexOf(" ") != -1) //$NON-NLS-1$
+				for (int k = 0; k < primaryInputNames.length; k++) {
+					if (primaryInputNames[k].toString().indexOf(" ") != -1) //$NON-NLS-1$
 						explicitRuleRequired = true;
 				}
 
 				try {
 
-					if(explicitRuleRequired)
-					{
-						outputPrefix = ManagedBuildManager
-						.getBuildMacroProvider()
-						.resolveValue(
-								outputPrefix,
-								"", //$NON-NLS-1$
+					if (explicitRuleRequired) {
+						outputPrefix = ManagedBuildManager.getBuildMacroProvider().resolveValue(outputPrefix, "", //$NON-NLS-1$
 								" ", //$NON-NLS-1$
-								IBuildMacroProvider.CONTEXT_CONFIGURATION,
-								config);
+								IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
 					}
 
 					else {
-					outputPrefix = ManagedBuildManager
-							.getBuildMacroProvider()
-							.resolveValueToMakefileFormat(
-									outputPrefix,
-									"", //$NON-NLS-1$
-									" ", //$NON-NLS-1$
-									IBuildMacroProvider.CONTEXT_CONFIGURATION,
-									config);
+						outputPrefix = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+								outputPrefix, "", //$NON-NLS-1$
+								" ", //$NON-NLS-1$
+								IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
 					}
 				}
 
@@ -184,7 +173,8 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 
 	protected boolean hasAncestor(ITool tool, String id) {
 		do {
-			if (id.equals(tool.getId())) return true;
+			if (id.equals(tool.getId()))
+				return true;
 		} while ((tool = tool.getSuperClass()) != null);
 		return false;
 	}

@@ -36,18 +36,18 @@ public abstract class ModulesAbstractDetailPane implements IDetailPane {
 	 * variables view) belongs to.
 	 */
 	private IWorkbenchPartSite fWorkbenchPartSite;
-	
+
 	/**
 	 * Map of actions. Keys are strings, values
 	 * are <code>IAction</code>.
 	 */
-	private Map<String,IAction> fActionMap = new HashMap<String,IAction>();
-	
+	private Map<String, IAction> fActionMap = new HashMap<String, IAction>();
+
 	/**
 	 * Collection to track actions that should be updated when selection occurs.
 	 */
 	private List<String> fSelectionActions = new ArrayList<String>();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
@@ -56,7 +56,7 @@ public abstract class ModulesAbstractDetailPane implements IDetailPane {
 		fWorkbenchPartSite = workbench;
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
@@ -79,7 +79,7 @@ public abstract class ModulesAbstractDetailPane implements IDetailPane {
 			fActionMap.put(actionID, action);
 		}
 	}
-	
+
 	/**
 	 * Adds the given action to the global action handler for the ViewSite.
 	 * A call to <code>updateActionBars()</code> must be called after changes
@@ -88,10 +88,10 @@ public abstract class ModulesAbstractDetailPane implements IDetailPane {
 	 * @param actionID The ID of the action
 	 * @param action The action to be set globally
 	 */
-	protected void setGlobalAction(String actionID, IAction action){
+	protected void setGlobalAction(String actionID, IAction action) {
 		getViewSite().getActionBars().setGlobalActionHandler(actionID, action);
 	}
-	
+
 	/**
 	 * Adds the given action to the list of actions that will be updated when
 	 * <code>updateSelectionDependentActions()</code> is called.  If the string 
@@ -99,10 +99,11 @@ public abstract class ModulesAbstractDetailPane implements IDetailPane {
 	 * 
 	 * @param actionID The ID of the action which should be updated
 	 */
-	protected void setSelectionDependantAction(String actionID){
-		if (actionID != null) fSelectionActions.add(actionID);
+	protected void setSelectionDependantAction(String actionID) {
+		if (actionID != null)
+			fSelectionActions.add(actionID);
 	}
-	
+
 	/**
 	 * Gets the action out of the map, casts it to an <code>IAction</code>
 	 * 
@@ -112,7 +113,7 @@ public abstract class ModulesAbstractDetailPane implements IDetailPane {
 	protected IAction getAction(String actionID) {
 		return fActionMap.get(actionID);
 	}
-	
+
 	/**
 	 * Calls the update method of the action with the given action ID.
 	 * The action must exist in the action map and must be an instance of
@@ -121,12 +122,12 @@ public abstract class ModulesAbstractDetailPane implements IDetailPane {
 	 * @param actionId The ID of the action to update
 	 */
 	protected void updateAction(String actionId) {
-		IAction action= getAction(actionId);
+		IAction action = getAction(actionId);
 		if (action instanceof IUpdate) {
 			((IUpdate) action).update();
 		}
 	}
-	
+
 	/**
 	 * Iterates through the list of selection dependent actions and 
 	 * updates them.  Use <code>setSelectionDependentAction(String actionID)</code>
@@ -135,20 +136,20 @@ public abstract class ModulesAbstractDetailPane implements IDetailPane {
 	 * before it can be updated by this method.
 	 */
 	protected void updateSelectionDependentActions() {
-		Iterator<String> iterator= fSelectionActions.iterator();
+		Iterator<String> iterator = fSelectionActions.iterator();
 		while (iterator.hasNext()) {
-			updateAction(iterator.next());		
+			updateAction(iterator.next());
 		}
 	}
-	
+
 	/**
 	 * Gets the view site for this view.  May be null if this detail pane
 	 * is not part of a view.
 	 * 
 	 * @return The site for this view or <code>null</code>
 	 */
-	protected  IViewSite getViewSite(){
-		if (fWorkbenchPartSite == null){
+	protected IViewSite getViewSite() {
+		if (fWorkbenchPartSite == null) {
 			return null;
 		} else {
 			return (IViewSite) fWorkbenchPartSite.getPart().getSite();
@@ -164,13 +165,13 @@ public abstract class ModulesAbstractDetailPane implements IDetailPane {
 	protected IWorkbenchPartSite getWorkbenchPartSite() {
 		return fWorkbenchPartSite;
 	}
-	
+
 	/**
 	 * Returns whether this detail pane is being displayed in a view with a workbench part site.
 	 * 
 	 * @return whether this detail pane is being displayed in a view with a workbench part site.
 	 */
-	protected boolean isInView(){
+	protected boolean isInView() {
 		return fWorkbenchPartSite != null;
 	}
 

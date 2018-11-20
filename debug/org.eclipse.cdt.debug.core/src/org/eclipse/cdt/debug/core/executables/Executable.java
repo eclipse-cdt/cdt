@@ -101,9 +101,8 @@ public class Executable extends PlatformObject {
 
 	@Override
 	public boolean equals(Object arg0) {
-		if (arg0 instanceof Executable)
-		{
-			Executable exe = (Executable)arg0;
+		if (arg0 instanceof Executable) {
+			Executable exe = (Executable) arg0;
 			return exe.getPath().equals(this.getPath());
 		}
 		return super.equals(arg0);
@@ -139,7 +138,7 @@ public class Executable extends PlatformObject {
 		this.project = project;
 		this.name = new File(path.toOSString()).getName();
 		this.resource = resource;
-		this.remappers = sourceFileRemappings;		
+		this.remappers = sourceFileRemappings;
 		remappedPaths = new HashMap<ITranslationUnit, String>();
 		sourceFiles = new ArrayList<ITranslationUnit>();
 		refreshSourceFiles = true;
@@ -169,7 +168,7 @@ public class Executable extends PlatformObject {
 				return (T) this.getProject();
 		return super.getAdapter(adapter);
 	}
-	
+
 	private String remapSourceFile(String filename) {
 		for (ISourceFileRemapping remapper : remappers) {
 			String remapped = remapper.remapSourceFile(this.getPath(), filename);
@@ -179,20 +178,21 @@ public class Executable extends PlatformObject {
 		}
 		return filename;
 	}
-	
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 6.0
 	 */
 	public synchronized ITranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null);
-		
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null);
+
 		if (!refreshSourceFiles && !remapSourceFiles) {
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "returning cached result");			 //$NON-NLS-1$
-			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
+			if (Trace.DEBUG_EXECUTABLES)
+				Trace.getTrace().trace(null, "returning cached result"); //$NON-NLS-1$
+			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]);
 		}
-		
+
 		// Try to get the list of source files used to build the binary from the
 		// symbol information.
 
@@ -204,8 +204,7 @@ public class Executable extends PlatformObject {
 
 		ICProject cproject = factory.create(project);
 
-		if (refreshSourceFiles)
-		{
+		if (refreshSourceFiles) {
 			symReaderSources = ExecutablesManager.getExecutablesManager().getSourceFiles(this, monitor);
 		}
 		if (symReaderSources != null && symReaderSources.length > 0) {
@@ -253,7 +252,8 @@ public class Executable extends PlatformObject {
 					if (sourceFile.exists())
 						wkspFile = sourceFile;
 					else {
-						IFile[] filesInWP = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(URIUtil.toURI(sourcePath));
+						IFile[] filesInWP = ResourcesPlugin.getWorkspace().getRoot()
+								.findFilesForLocationURI(URIUtil.toURI(sourcePath));
 						for (IFile fileInWP : filesInWP) {
 							if (fileInWP.isAccessible()) {
 								wkspFile = fileInWP;
@@ -276,7 +276,8 @@ public class Executable extends PlatformObject {
 						// Be careful not to convert a unix path like
 						// "/src/home" to "c:\source\home" on Windows. See
 						// bugzilla 297781
-						URI uri = (isNativeAbsPath && sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath) : URIUtil.toURI(filename, true);						
+						URI uri = (isNativeAbsPath && sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath)
+								: URIUtil.toURI(filename, true);
 						tu = new ExternalTranslationUnit(cproject, uri, id);
 					}
 
@@ -290,10 +291,10 @@ public class Executable extends PlatformObject {
 				}
 			}
 		}
-		
+
 		refreshSourceFiles = false;
 		remapSourceFiles = false;
-		return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
+		return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]);
 	}
 
 	/**
@@ -310,8 +311,9 @@ public class Executable extends PlatformObject {
 	 * @since 6.0
 	 */
 	public void setRefreshSourceFiles(boolean refreshSourceFiles) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, refreshSourceFiles);		
-				
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null, refreshSourceFiles);
+
 		this.refreshSourceFiles = refreshSourceFiles;
 	}
 
@@ -347,7 +349,8 @@ public class Executable extends PlatformObject {
 	 * @since 7.0
 	 */
 	public void setRemapSourceFiles(boolean remapSourceFiles) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, remapSourceFiles);		
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null, remapSourceFiles);
 		this.remapSourceFiles = remapSourceFiles;
 	}
 

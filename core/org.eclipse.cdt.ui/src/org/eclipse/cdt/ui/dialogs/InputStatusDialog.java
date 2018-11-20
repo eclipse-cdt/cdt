@@ -62,33 +62,33 @@ public class InputStatusDialog extends StatusDialog {
 	 */
 	private Text text;
 
-    /**
-     * Creates an input dialog with OK and Cancel buttons. Note that the dialog
-     * will have no visual representation (no widgets) until it is told to open.
-     * <p>
-     * Note that the <code>open</code> method blocks for input dialogs.
-     * </p>
-     *
-     * @param parentShell
-     *            the parent shell, or <code>null</code> to create a top-level
-     *            shell
-     * @param dialogTitle
-     *            the dialog title, or <code>null</code> if none
-     * @param dialogMessage
-     *            the dialog message, or <code>null</code> if none
-     * @param initialValue
-     *            the initial input value, or <code>null</code> if none
-     *            (equivalent to the empty string)
-     * @param validator
-     *            an input validator, or <code>null</code> if none
-     *            For a validator, following return statuses are recognized:
-     *            <li/>{@link Status#OK_STATUS} or any {@link IStatus#OK} to indicate no error.
-     *            <li/>{@link IStatus#ERROR} indicates an error.
-     *            <li/>{@link IStatus#WARNING} indicates a warning.
-     *            <li/>{@link IStatus#INFO} indicates an informational message
-     */
-	public InputStatusDialog(Shell parentShell, String dialogTitle, String dialogMessage,
-			String initialValue, IInputStatusValidator validator) {
+	/**
+	 * Creates an input dialog with OK and Cancel buttons. Note that the dialog
+	 * will have no visual representation (no widgets) until it is told to open.
+	 * <p>
+	 * Note that the <code>open</code> method blocks for input dialogs.
+	 * </p>
+	 *
+	 * @param parentShell
+	 *            the parent shell, or <code>null</code> to create a top-level
+	 *            shell
+	 * @param dialogTitle
+	 *            the dialog title, or <code>null</code> if none
+	 * @param dialogMessage
+	 *            the dialog message, or <code>null</code> if none
+	 * @param initialValue
+	 *            the initial input value, or <code>null</code> if none
+	 *            (equivalent to the empty string)
+	 * @param validator
+	 *            an input validator, or <code>null</code> if none
+	 *            For a validator, following return statuses are recognized:
+	 *            <li/>{@link Status#OK_STATUS} or any {@link IStatus#OK} to indicate no error.
+	 *            <li/>{@link IStatus#ERROR} indicates an error.
+	 *            <li/>{@link IStatus#WARNING} indicates a warning.
+	 *            <li/>{@link IStatus#INFO} indicates an informational message
+	 */
+	public InputStatusDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue,
+			IInputStatusValidator validator) {
 		super(parentShell);
 		this.title = dialogTitle;
 		if (dialogMessage == null) {
@@ -136,8 +136,8 @@ public class InputStatusDialog extends StatusDialog {
 
 		Label label = new Label(composite, SWT.WRAP);
 		label.setText(message);
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL
-				| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		label.setLayoutData(data);
 		label.setFont(parent.getFont());

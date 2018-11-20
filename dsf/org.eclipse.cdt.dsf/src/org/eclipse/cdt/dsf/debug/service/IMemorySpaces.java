@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Alain Lee and John Cortell
  * @since 2.1
  */
-public interface IMemorySpaces extends IDsfService{
+public interface IMemorySpaces extends IDsfService {
 
 	/**
 	 * A context that represents a particular memory space. Simple targets have
@@ -37,7 +37,7 @@ public interface IMemorySpaces extends IDsfService{
 	 * data, virtual, physical.
 	 */
 	public interface IMemorySpaceDMContext extends IMemoryDMContext {
-		
+
 		/**
 		 * The string-based handle used to refer to the memory space, as per
 		 * what's returned in
@@ -77,9 +77,10 @@ public interface IMemorySpaces extends IDsfService{
 	 *             if decoding and string is not in the expected format
 	 */
 	DecodeResult decodeAddress(String str) throws CoreException;
-	
+
 	interface DecodeResult {
 		String getMemorySpaceId();
+
 		String getExpression();
 	}
 
@@ -98,7 +99,7 @@ public interface IMemorySpaces extends IDsfService{
 	 *            memory space IDs. Never null, but may be empty.
 	 */
 	void getMemorySpaces(IDMContext context, final DataRequestMonitor<String[]> rm);
-	
+
 	/**
 	 * Return true if creating a memory block with a null memory space ID is NOT
 	 * supported. Some debuggers may not have the ability to infer the memory
@@ -107,23 +108,23 @@ public interface IMemorySpaces extends IDsfService{
 	 */
 	public boolean creatingBlockRequiresMemorySpaceID();
 
-    /**
-     * Provides the default memory space to be used in the given context.
-     * 
-     * @param ctx
-     *            a context which might <i>contain</i> one or more memory
-     *            spaces. Contexts that may be <i>associated</i> with a memory
-     *            space should not be passed in. E.g., an expression might be
-     *            associated with a memory space, but it does not contain memory
-     *            spaces, and is thus not an appropriate context for this
-     *            method.
-     * @param rm
-     *            the asynchronous data request monitor. Returns a memory space ID.
-     *            Never null, but may be empty.
-     * @since 2.7
-     */
-    default void getDefaultMemorySpace(IDMContext context, final DataRequestMonitor<String> rm) {
-        rm.setData(""); //$NON-NLS-1$
-        rm.done();
-    }
+	/**
+	 * Provides the default memory space to be used in the given context.
+	 * 
+	 * @param ctx
+	 *            a context which might <i>contain</i> one or more memory
+	 *            spaces. Contexts that may be <i>associated</i> with a memory
+	 *            space should not be passed in. E.g., an expression might be
+	 *            associated with a memory space, but it does not contain memory
+	 *            spaces, and is thus not an appropriate context for this
+	 *            method.
+	 * @param rm
+	 *            the asynchronous data request monitor. Returns a memory space ID.
+	 *            Never null, but may be empty.
+	 * @since 2.7
+	 */
+	default void getDefaultMemorySpace(IDMContext context, final DataRequestMonitor<String> rm) {
+		rm.setData(""); //$NON-NLS-1$
+		rm.done();
+	}
 }

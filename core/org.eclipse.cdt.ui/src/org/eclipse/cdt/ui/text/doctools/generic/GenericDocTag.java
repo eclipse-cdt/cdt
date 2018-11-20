@@ -19,24 +19,24 @@ package org.eclipse.cdt.ui.text.doctools.generic;
  */
 public class GenericDocTag {
 	protected final String name, description;
-	
+
 	/**
 	 * Create a tag
 	 * @param name
 	 * @param description
 	 */
 	public GenericDocTag(String name, String description) {
-		this.name= name;
-		this.description= description;
+		this.name = name;
+		this.description = description;
 	}
-	
+
 	/**
 	 * @return the tag name (without any prefix e.g. no at or backslash)
 	 */
 	public String getTagName() {
 		return name;
 	}
-	
+
 	/**
 	 * @return a human readable description of the tag. May be null.
 	 */

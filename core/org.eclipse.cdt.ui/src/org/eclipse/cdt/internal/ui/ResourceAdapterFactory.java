@@ -26,12 +26,10 @@ import org.eclipse.cdt.core.model.ICElement;
 
 public class ResourceAdapterFactory implements IAdapterFactory {
 
-	private static Class<?>[] PROPERTIES= new Class[] {
-		ICElement.class
-	};
+	private static Class<?>[] PROPERTIES = new Class[] { ICElement.class };
 
 	//private static CElementFactory celementFactory= new CElementFactory();
-	private static CoreModel celementFactory= CoreModel.getDefault();
+	private static CoreModel celementFactory = CoreModel.getDefault();
 
 	/**
 	 * @see IAdapterFactory#getAdapterList
@@ -46,17 +44,17 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 	public <T> T getAdapter(Object element, Class<T> key) {
 		if (ICElement.class.equals(key)) {
 			//try {
-				if (element instanceof IFile) {
-					return (T) celementFactory.create((IFile)element);
-				} else if (element instanceof IFolder) {
-					return (T) celementFactory.create((IFolder)element);
-				} else if (element instanceof IProject) {
-					return (T) celementFactory.create((IProject)element);
-				} else if (element instanceof IWorkspaceRoot) {
-					return (T) CoreModel.create((IWorkspaceRoot)element);
-				} else if (element instanceof IResource) {
-					return (T) celementFactory.create((IResource)element);
-				}
+			if (element instanceof IFile) {
+				return (T) celementFactory.create((IFile) element);
+			} else if (element instanceof IFolder) {
+				return (T) celementFactory.create((IFolder) element);
+			} else if (element instanceof IProject) {
+				return (T) celementFactory.create((IProject) element);
+			} else if (element instanceof IWorkspaceRoot) {
+				return (T) CoreModel.create((IWorkspaceRoot) element);
+			} else if (element instanceof IResource) {
+				return (T) celementFactory.create((IResource) element);
+			}
 			//} catch (CoreException e) {
 			//	CUIPlugin.getDefault().getLog().log(e.getStatus());
 			//}

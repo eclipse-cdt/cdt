@@ -52,14 +52,17 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	 */
 	protected static class Validator implements IContextInformationValidator, IContextInformationPresenter {
 		protected int fInstallOffset;
+
 		@Override
 		public boolean isContextInformationValid(int offset) {
 			return Math.abs(fInstallOffset - offset) < 5;
 		}
+
 		@Override
 		public void install(IContextInformation info, ITextViewer viewer, int offset) {
 			fInstallOffset = offset;
 		}
+
 		@Override
 		public boolean updatePresentation(int documentPosition, TextPresentation presentation) {
 			return false;
@@ -87,18 +90,19 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		private char closed;
 		private boolean found;
 		private String followingText;
+
 		public BracketHandler(String input) {
 			char firstChar = input.length() > 0 ? input.charAt(0) : 0;
 			open = firstChar == '{' ? '{' : '(';
 			closed = firstChar == '{' ? '}' : ')';
 			found = firstChar == open;
-			followingText = found ?  input.substring(1) : input;
+			followingText = found ? input.substring(1) : input;
 		}
 	}
 
 	public MakefileCompletionProcessor(IEditorPart editor) {
 		fEditor = editor;
-		fManager =  MakeUIPlugin.getDefault().getWorkingCopyManager();
+		fManager = MakeUIPlugin.getDefault().getWorkingCopyManager();
 	}
 
 	@Override
@@ -133,7 +137,8 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		return '$' + name;
 	}
 
-	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart, IAutomaticVariable[] autoVars) {
+	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart,
+			IAutomaticVariable[] autoVars) {
 		ArrayList<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>(autoVars.length);
 		String wordPartName = wordPart.getName();
 		BracketHandler bracket = new BracketHandler(wordPartName);
@@ -148,22 +153,18 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 				} else {
 					replacement = name;
 				}
-				CompletionProposal proposal = new CompletionProposal(
-						replacement,
-						wordPart.getOffset(),
-						partialName.length(),
-						replacement.length(),
-						imageAutomaticVariable,
+				CompletionProposal proposal = new CompletionProposal(replacement, wordPart.getOffset(),
+						partialName.length(), replacement.length(), imageAutomaticVariable,
 						macro(name, bracket) + " - " + autoVar.getValue().toString(), //$NON-NLS-1$
-						null,
-						autoVar.getValue().toString());
+						null, autoVar.getValue().toString());
 				proposalList.add(proposal);
 			}
 		}
 		return proposalList;
 	}
 
-	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart, IMacroDefinition[] macros) {
+	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart,
+			IMacroDefinition[] macros) {
 		ArrayList<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>(macros.length);
 
 		String wordPartName = wordPart.getName();
@@ -180,14 +181,8 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 					replacement = bracket.open + name + bracket.closed;
 				}
 				String displayString = name;
-				ICompletionProposal proposal = new CompletionProposal(
-						replacement,
-						wordPart.getOffset(),
-						partialName.length(),
-						replacement.length(),
-						imageVariable,
-						displayString,
-						null,
+				ICompletionProposal proposal = new CompletionProposal(replacement, wordPart.getOffset(),
+						partialName.length(), replacement.length(), imageVariable, displayString, null,
 						macro.getValue().toString());
 				proposalList.add(proposal);
 			}
@@ -195,7 +190,8 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		return proposalList;
 	}
 
-	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart, IBuiltinFunction[] builtinFuns) {
+	private ArrayList<ICompletionProposal> createCompletionProposals(WordPartDetector wordPart,
+			IBuiltinFunction[] builtinFuns) {
 		ArrayList<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>(builtinFuns.length);
 
 		String wordPartName = wordPart.getName();
@@ -213,15 +209,9 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			int indexComma = replacement.indexOf(',');
 			int cursorPosition = indexComma >= 0 ? indexComma : replacement.length() - 1;
 			if (name.startsWith(partialName)) {
-				ICompletionProposal proposal = new CompletionProposal(
-						replacement,
-						wordPart.getOffset(),
-						partialName.length(),
-						cursorPosition,
-						imageFunction,
-						"$" + bracket.open + name + bracket.closed, //$NON-NLS-1$
-						null,
-						builtinFun.getValue().toString());
+				ICompletionProposal proposal = new CompletionProposal(replacement, wordPart.getOffset(),
+						partialName.length(), cursorPosition, imageFunction, "$" + bracket.open + name + bracket.closed, //$NON-NLS-1$
+						null, builtinFun.getValue().toString());
 				proposalList.add(proposal);
 			}
 		}
@@ -236,15 +226,8 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			String name = target.getTarget().toString();
 			if (name.startsWith(partialName)) {
 				String replacement = name;
-				ICompletionProposal proposal = new CompletionProposal(
-						replacement,
-						wordPart.getOffset(),
-						partialName.length(),
-						replacement.length(),
-						imageTarget,
-						name,
-						null,
-						null);
+				ICompletionProposal proposal = new CompletionProposal(replacement, wordPart.getOffset(),
+						partialName.length(), replacement.length(), imageTarget, name, null, null);
 				proposalList.add(proposal);
 			}
 		}
@@ -266,7 +249,8 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 						String value = ((IMacroDefinition) statement).getValue().toString();
 						if (value != null && value.length() > 0) {
 							contextList.add(value);
-							contextInformationList.add(new ContextInformation(imageVariable, wordPart.getName(), value));
+							contextInformationList
+									.add(new ContextInformation(imageVariable, wordPart.getName(), value));
 						}
 					}
 				}
@@ -279,14 +263,16 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 						String value = ((IMacroDefinition) statement).getValue().toString();
 						if (value != null && value.length() > 0) {
 							contextList.add(value);
-							contextInformationList.add(new ContextInformation(imageAutomaticVariable, wordPart.getName(), value));
+							contextInformationList
+									.add(new ContextInformation(imageAutomaticVariable, wordPart.getName(), value));
 						}
 					}
 				}
 			}
 		}
 
-		IContextInformation[] result = contextInformationList.toArray(new IContextInformation[contextInformationList.size()]);
+		IContextInformation[] result = contextInformationList
+				.toArray(new IContextInformation[contextInformationList.size()]);
 		return result;
 	}
 

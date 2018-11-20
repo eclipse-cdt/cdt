@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.model.ICElement;
 public class ClosedProjectFilter extends ViewerFilter {
 	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
-		if (element instanceof ICElement) 
+		if (element instanceof ICElement)
 			return ((ICElement) element).getCProject().getProject().isOpen();
 		if (element instanceof IResource)
 			return ((IResource) element).getProject().isOpen();

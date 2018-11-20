@@ -33,7 +33,7 @@ public class BinaryParserConfig {
 		this.id = id;
 		this.ref = null;
 	}
-	
+
 	public BinaryParserConfig(ICConfigExtensionReference ref) {
 		this.ref = ref;
 		this.id = ref.getID();
@@ -47,7 +47,7 @@ public class BinaryParserConfig {
 		if (parser == null) {
 			AbstractCExtension cExtension = null;
 			IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(ref, "cextension", false); //$NON-NLS-1$
-			cExtension = (AbstractCExtension)el.createExecutableExtension("run"); //$NON-NLS-1$
+			cExtension = (AbstractCExtension) el.createExecutableExtension("run"); //$NON-NLS-1$
 			cExtension.setExtensionReference(ref);
 			cExtension.setProject(ref.getConfiguration().getProjectDescription().getProject());
 			parser = (IBinaryParser) cExtension;

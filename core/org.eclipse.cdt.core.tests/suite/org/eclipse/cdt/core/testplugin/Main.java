@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.testplugin;
 
 // copied from startup.jar. planned to be removed soon
 
-
 import java.io.File;
 import java.io.FileFilter;
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +25,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
 /**
  * Startup class for Eclipse. Creates a class loader using
  * supplied URL of platform installation, loads and calls
@@ -163,7 +163,8 @@ public class Main {
 	 */
 	protected Object basicRun(String[] args) throws Exception {
 		Class clazz = getBootLoader(bootLocation);
-		Method method = clazz.getDeclaredMethod("run", new Class[] { String.class, URL.class, String.class, String[].class });
+		Method method = clazz.getDeclaredMethod("run",
+				new Class[] { String.class, URL.class, String.class, String[].class });
 		try {
 			return method.invoke(clazz, new Object[] { application, pluginPathLocation, location, args });
 		} catch (InvocationTargetException e) {
@@ -221,7 +222,7 @@ public class Main {
 		String devBase = base.toExternalForm();
 		if (!inDevelopmentMode) {
 			url = new URL(devBase + "boot.jar");
-			return new URL[] {url};
+			return new URL[] { url };
 		}
 		String[] locations = getArrayFromList(devClassPath);
 		ArrayList result = new ArrayList(locations.length);
@@ -229,7 +230,7 @@ public class Main {
 			String spec = devBase + locations[i];
 			char lastChar = spec.charAt(spec.length() - 1);
 			if ((spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\')))
-				url = new URL (spec);
+				url = new URL(spec);
 			else
 				url = new URL(spec + "/");
 			//make sure URL exists before adding to path
@@ -239,7 +240,7 @@ public class Main {
 		url = new URL(devBase + "boot.jar");
 		if (new java.io.File(url.getFile()).exists())
 			result.add(url);
-		return (URL[])result.toArray(new URL[result.size()]);
+		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 
 	/**
@@ -256,7 +257,7 @@ public class Main {
 			url = new URL(base);
 			if (debug)
 				System.out.println("Boot URL: " + url.toExternalForm());
-			return new URL[] {url};	
+			return new URL[] { url };
 		}
 		// Create a URL based on the location of this class' code.
 		// strip off jar file and/or last directory to get 
@@ -266,15 +267,14 @@ public class Main {
 		String path = url.getFile();
 		if (path.endsWith(".jar"))
 			path = path.substring(0, path.lastIndexOf("/"));
-		else 
-			if (path.endsWith("/"))
-				path = path.substring(0, path.length() - 1);
+		else if (path.endsWith("/"))
+			path = path.substring(0, path.length() - 1);
 		if (inVAJ || inVAME) {
 			int ix = path.lastIndexOf("/");
 			path = path.substring(0, ix + 1);
 			path = path + PROJECT_NAME + "/";
 			url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
-			result = new URL[] {url};
+			result = new URL[] { url };
 		} else {
 			path = searchForPlugins(path);
 			path = searchForBoot(path);
@@ -285,7 +285,7 @@ public class Main {
 		if (debug) {
 			System.out.println("Boot URL:");
 			for (int i = 0; i < result.length; i++)
-				System.out.println("    " + result[i].toExternalForm());	
+				System.out.println("    " + result[i].toExternalForm());
 		}
 		return result;
 	}
@@ -305,10 +305,11 @@ public class Main {
 			if (test.exists())
 				return test.toString();
 			path = path.getParentFile();
-			path = (path == null || path.length() == 1)  ? null : path;
+			path = (path == null || path.length() == 1) ? null : path;
 		}
 		return "";
 	}
+
 	/**
 	 * Searches for a boot directory starting at a given location.  If one
 	 * is found then this location is returned; otherwise an empty string
@@ -339,16 +340,16 @@ public class Main {
 					if (maxVersion == null) {
 						result = boots[i].getAbsolutePath();
 						maxVersion = version;
-					} else
-						if (maxVersion.compareTo(version) == -1) {
-							result = boots[i].getAbsolutePath();
-							maxVersion = version;
-						}						
+					} else if (maxVersion.compareTo(version) == -1) {
+						result = boots[i].getAbsolutePath();
+						maxVersion = version;
+					}
 				}
 			}
 		}
 		if (result == null)
-			throw new RuntimeException("Could not find bootstrap code. Check location of boot plug-in or specify -boot.");
+			throw new RuntimeException(
+					"Could not find bootstrap code. Check location of boot plug-in or specify -boot.");
 		return result.replace(File.separatorChar, '/') + "/";
 	}
 
@@ -393,6 +394,7 @@ public class Main {
 		int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
 		System.exit(exitCode);
 	}
+
 	/**
 	 * Tears down the currently-displayed splash screen.
 	 */
@@ -442,7 +444,8 @@ public class Main {
 			// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
 			// simply enable development mode.  Otherwise, assume that that the following arg is
 			// actually some additional development time class path entries.  This will be processed below.
-			if (args[i].equalsIgnoreCase(DEV) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) {
+			if (args[i].equalsIgnoreCase(DEV)
+					&& ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) {
 				inDevelopmentMode = true;
 				// do not mark the arg as found so it will be passed through
 				continue;
@@ -455,7 +458,7 @@ public class Main {
 			}
 			// check for args with parameters. If we are at the last argument or if the next one
 			// has a '-' as the first character, then we can't have an arg with a parm so continue.
-			if (i == args.length - 1 || args[i + 1].startsWith("-")) 
+			if (i == args.length - 1 || args[i + 1].startsWith("-"))
 				continue;
 			String arg = args[++i];
 
@@ -538,7 +541,8 @@ public class Main {
 	 */
 	protected Object updateRun(String flag, String value, String[] args) throws Exception {
 		Class clazz = getUpdateLoader(bootLocation);
-		Method method = clazz.getDeclaredMethod("run", new Class[] { String.class, String.class, String.class, String[].class });
+		Method method = clazz.getDeclaredMethod("run",
+				new Class[] { String.class, String.class, String.class, String[].class });
 		try {
 			return method.invoke(clazz, new Object[] { flag, value, location, args });
 		} catch (InvocationTargetException e) {

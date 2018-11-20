@@ -26,18 +26,18 @@ import org.eclipse.cdt.internal.ui.editor.OverrideIndicatorManager.OverrideIndic
  */
 public class OverrideIndicatorTest extends AnnotationTestCase {
 	private Integer expectedAnnotationType;
-	
+
 	public OverrideIndicatorTest() {
 		super();
 		testedAnnotationId = OverrideIndicator.ANNOTATION_TYPE_ID;
 	}
-	
+
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		//enableProblems(NonVirtualDestructor.ER_ID);
 	}
-	
+
 	@Override
 	public boolean isCpp() {
 		return true;
@@ -49,11 +49,11 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 			if (expectedAnnotationType != null) {
 				OverrideIndicator oi = (OverrideIndicator) annotation;
 				return expectedAnnotationType == oi.getIndicationType();
-			}	
+			}
 		}
 		return true;
 	}
-	
+
 	protected void checkImplementsAnnotationLines(Object... args) {
 		expectedAnnotationType = OverrideIndicatorManager.ANNOTATION_IMPLEMENTS;
 		try {
@@ -88,7 +88,7 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 	// class B : public A {
 	//   virtual void vm() {};
 	// };
-	public void testSimpleImplementedAnnotation()  throws Exception{
+	public void testSimpleImplementedAnnotation() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkImplementsAnnotationLines(6);
 	}
@@ -100,7 +100,7 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 	// class B : public A {
 	//   virtual void vm() {};
 	// };
-	public void testSimpleOverridenAnnotation()  throws Exception{
+	public void testSimpleOverridenAnnotation() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkOverridesAnnotationLines(6);
 	}
@@ -112,11 +112,11 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 	// class B : public A {
 	//   void m(int param) {};
 	// };
-	public void testSimpleShadowedAnnotation()  throws Exception{
+	public void testSimpleShadowedAnnotation() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkShadowsAnnotationLines(6);
 	}
-	
+
 	// class A {
 	//   virtual void m(void) {};
 	// };
@@ -124,12 +124,12 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 	// class B : public A {
 	//   void m(int param) {};
 	// };
-	public void testShadowedVirtualAnnotation1()  throws Exception{
+	public void testShadowedVirtualAnnotation1() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		// Non-virtual shadowing virtual
 		checkShadowsAnnotationLines(6);
 	}
-	
+
 	// class A {
 	//   void m(void) {};
 	// };
@@ -137,12 +137,12 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 	// class B : public A {
 	//   virtual void m(int param) {};
 	// };
-	public void testShadowedVirtualAnnotation2()  throws Exception{
+	public void testShadowedVirtualAnnotation2() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		// Virtual shadowing non-virtual
 		checkShadowsAnnotationLines(6);
 	}
-	
+
 	// class A {
 	//   virtual void m(void) {};
 	// };
@@ -150,12 +150,12 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 	// class B : public A {
 	//   virtual void m(int param) {};
 	// };
-	public void testShadowedVirtualAnnotation3()  throws Exception{
+	public void testShadowedVirtualAnnotation3() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		// Virtual shadowing virtual
 		checkShadowsAnnotationLines(6);
 	}
-	
+
 	//	struct X {
 	//		virtual ~X();
 	//		virtual void foo() const;
@@ -168,7 +168,7 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 		// CV-qualifiers produce different overloads
 		checkShadowsAnnotationLines(6);
 	}
-	
+
 	//	struct X {
 	//		virtual ~X();
 	//		virtual void foo();
@@ -195,7 +195,7 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 	//   virtual void vm1(void) {};
 	//   virtual void vm2(void) {};
 	// };
-	public void testAnnotationsWithMultipleInheritance()  throws Exception{
+	public void testAnnotationsWithMultipleInheritance() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkImplementsAnnotationLines(11, 12);
 	}
@@ -213,7 +213,7 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 	//   virtual void vm1(void) {};
 	//   virtual void vm2(void) {};
 	// };
-	public void testAnnotationsWithMultipleInheritanceReverseOrder()  throws Exception{
+	public void testAnnotationsWithMultipleInheritanceReverseOrder() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkImplementsAnnotationLines(11, 12);
 	}
@@ -247,13 +247,13 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 	//   virtual void vm3(void) {};
 	//   virtual void vm4(void) {};
 	// };
-	public void testAnnotationsInClassHierarchy()  throws Exception{
+	public void testAnnotationsInClassHierarchy() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkShadowsAnnotationLines(23, 24);
 		checkImplementsAnnotationLines(25, 26);
 		checkOverridesAnnotationLines(27);
 	}
-	
+
 	//	struct Foo {
 	//	  virtual void waldo(int) = 0;
 	//	  virtual void waldo(float) = 0;

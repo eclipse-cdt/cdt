@@ -23,32 +23,30 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 
 public class CheckHolderExpression implements IBooleanExpression {
-	public static final String NAME = "checkHolder"; 	//$NON-NLS-1$
+	public static final String NAME = "checkHolder"; //$NON-NLS-1$
 
-	public static final String HOLDER_ID = "holderId"; 	//$NON-NLS-1$
+	public static final String HOLDER_ID = "holderId"; //$NON-NLS-1$
 
 	private String fHolderId;
 
-	public CheckHolderExpression(IManagedConfigElement element){
+	public CheckHolderExpression(IManagedConfigElement element) {
 		fHolderId = element.getAttribute(HOLDER_ID);
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
-			IOption option) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOption option) {
 		return evaluate(holder);
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
-			IOptionCategory category) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
 		return evaluate(holder);
 	}
 
 	private boolean evaluate(IHoldsOptions holder) {
-		if(fHolderId != null){
-			for(; holder != null; holder = getHolderSuperClass(holder)){
-				if(fHolderId.equals(holder.getId()))
+		if (fHolderId != null) {
+			for (; holder != null; holder = getHolderSuperClass(holder)) {
+				if (fHolderId.equals(holder.getId()))
 					return true;
 			}
 			return false;
@@ -56,11 +54,11 @@ public class CheckHolderExpression implements IBooleanExpression {
 		return true;
 	}
 
-	private IHoldsOptions getHolderSuperClass(IHoldsOptions holder){
-		if(holder instanceof ITool)
-			return ((ITool)holder).getSuperClass();
-		else if(holder instanceof IToolChain)
-			return ((IToolChain)holder).getSuperClass();
+	private IHoldsOptions getHolderSuperClass(IHoldsOptions holder) {
+		if (holder instanceof ITool)
+			return ((ITool) holder).getSuperClass();
+		else if (holder instanceof IToolChain)
+			return ((IToolChain) holder).getSuperClass();
 		return null;
 	}
 

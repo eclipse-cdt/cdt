@@ -19,5 +19,6 @@ package org.eclipse.cdt.core;
  */
 public interface IProcessInfo {
 	public int getPid();
+
 	public String getName();
 }

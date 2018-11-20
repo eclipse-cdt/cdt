@@ -97,12 +97,11 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 	// The data which was used to populate column selector menu
 	private OSData fMenuShownData = null;
 	private String fResourceClass = null;
-	
+
 	// Indicates that we've selected objects from different debug sessions.
 	boolean fMultiple = false;
 	// Indicates that we have selected object with a wrong type
 	boolean fWrongType = false;
-
 
 	// UI objects
 	private TableViewer fViewer;
@@ -128,8 +127,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		topLayout.marginHeight = 0;
 		parent.setLayout(topLayout);
 
-		fViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		fViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData viewerData = new GridData(GridData.FILL_BOTH);
 		viewerData.exclude = true;
 		fViewer.getControl().setLayoutData(viewerData);
@@ -150,9 +148,8 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 
 		fNothingLabel = new Link(fNothingLabelContainer, SWT.BORDER);
 		fNothingLabel.setText(Messages.OSView_4);
-		fNothingLabel.setBackground(fNothingLabel.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
-		fNothingLabel.addListener (SWT.Selection, new Listener () {
+		fNothingLabel.setBackground(fNothingLabel.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		fNothingLabel.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
 				if (event.text.equals("fetch")) //$NON-NLS-1$
@@ -189,34 +186,32 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		};
 		fRefreshAction.setText(Messages.OSView_3);
 		fRefreshAction.setToolTipText(Messages.OSView_3);
-        try {
-            Bundle bundle= Platform.getBundle("org.eclipse.ui"); //$NON-NLS-1$
-            URL url = bundle.getEntry("/"); //$NON-NLS-1$
-            url = new URL(url, "icons/full/elcl16/refresh_nav.png"); //$NON-NLS-1$
-            ImageDescriptor candidate = ImageDescriptor.createFromURL(url);
-            if (candidate != null && candidate.getImageData() != null) {
-                fRefreshAction.setImageDescriptor(candidate);
-            }
-        } catch (Exception e) {
-        }
-        bars.getToolBarManager().add(fRefreshAction);
-        bars.setGlobalActionHandler(ActionFactory.COPY.getId(), new CopyAction());
-        bars.updateActionBars();
+		try {
+			Bundle bundle = Platform.getBundle("org.eclipse.ui"); //$NON-NLS-1$
+			URL url = bundle.getEntry("/"); //$NON-NLS-1$
+			url = new URL(url, "icons/full/elcl16/refresh_nav.png"); //$NON-NLS-1$
+			ImageDescriptor candidate = ImageDescriptor.createFromURL(url);
+			if (candidate != null && candidate.getImageData() != null) {
+				fRefreshAction.setImageDescriptor(candidate);
+			}
+		} catch (Exception e) {
+		}
+		bars.getToolBarManager().add(fRefreshAction);
+		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), new CopyAction());
+		bars.updateActionBars();
 
-        createContextMenu();
+		createContextMenu();
 		getSite().setSelectionProvider(fViewer);
-		
 
-        setResourceClass(fResourceClassEditor.getResourceClassId());
+		setResourceClass(fResourceClassEditor.getResourceClassId());
 
 		setupContextListener();
 		DsfSession.addSessionEndedListener(this);
-		
 
 	}
 
 	private void createContextMenu() {
-		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
+		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			@Override
@@ -225,7 +220,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			}
 		});
-		Menu menu= menuMgr.createContextMenu(fViewer.getControl());
+		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
 		fViewer.getControl().setMenu(menu);
 
 		// register the context menu such that other plug-ins may contribute to it
@@ -234,8 +229,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 
 	private void setupContextListener() {
 		IDebugContextManager contextManager = DebugUITools.getDebugContextManager();
-		IDebugContextService contextService = contextManager
-				.getContextService(getSite().getWorkbenchWindow());
+		IDebugContextService contextService = contextManager.getContextService(getSite().getWorkbenchWindow());
 
 		fDebugContextListener = new IDebugContextListener() {
 
@@ -251,22 +245,21 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		contextService.addDebugContextListener(fDebugContextListener);
 		setDebugContext(contextService.getActiveContext());
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
 
 		IDebugContextManager contextManager = DebugUITools.getDebugContextManager();
-		IDebugContextService contextService = contextManager
-				.getContextService(getSite().getWorkbenchWindow());
+		IDebugContextService contextService = contextManager.getContextService(getSite().getWorkbenchWindow());
 		contextService.removeDebugContextListener(fDebugContextListener);
 
-		setDebugContext((ICommandControlDMContext)null);
+		setDebugContext((ICommandControlDMContext) null);
 		DsfSession.removeSessionEndedListener(this);
 	}
 
 	private void setDebugContext(ISelection s) {
-				
+
 		ICommandControlDMContext context = null;
 		fMultiple = false;
 		fWrongType = false;
@@ -278,15 +271,13 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 				context = getCommandControlContext(i.next());
 				if (context == null)
 					fWrongType = true;
-				
+
 				while (i.hasNext()) {
 					ICommandControlDMContext nextContext = getCommandControlContext(i.next());
 					if (nextContext == null)
 						fWrongType = true;
-					if (nextContext == null && context != null 
-						|| nextContext != null && context == null
-						|| nextContext != null && context != null && !nextContext.equals(context)) 
-					{
+					if (nextContext == null && context != null || nextContext != null && context == null
+							|| nextContext != null && context != null && !nextContext.equals(context)) {
 						context = null;
 						fMultiple = true;
 						break;
@@ -294,24 +285,24 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 				}
 			}
 		}
-		
+
 		setDebugContext(context);
 	}
 
 	private ICommandControlDMContext getCommandControlContext(Object obj) {
 		IDMContext context = null;
 		if (obj instanceof IDMVMContext)
-			context = ((IDMVMContext)obj).getDMContext();
+			context = ((IDMVMContext) obj).getDMContext();
 		else if (obj instanceof GdbLaunch) {
-			GdbLaunch l = (GdbLaunch)obj;
-			final DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), l.getSession().getId());
+			GdbLaunch l = (GdbLaunch) obj;
+			final DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(),
+					l.getSession().getId());
 			Query<IDMContext> contextQuery = new Query<IDMContext>() {
 				@Override
 				protected void execute(DataRequestMonitor<IDMContext> rm) {
 					ICommandControlService commandControl = tracker.getService(ICommandControlService.class);
 					tracker.dispose();
-					if (commandControl != null)
-					{
+					if (commandControl != null) {
 						rm.setData(commandControl.getContext());
 					}
 					rm.done();
@@ -326,21 +317,17 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		return DMContexts.getAncestorOfType(context, ICommandControlDMContext.class);
 	}
 
-	private void setDebugContext(ICommandControlDMContext context)
-	{
+	private void setDebugContext(ICommandControlDMContext context) {
 		DsfSession newSession = null;
 		SessionOSData newSessionData = null;
-		
-		if (context != null)
-		{
+
+		if (context != null) {
 			newSession = DsfSession.getSession(context.getSessionId());
 		}
-		
-		if (newSession != null)
-		{
+
+		if (newSession != null) {
 			newSessionData = fSessionDataCache.get(newSession.getId());
-			if (newSessionData == null)
-			{
+			if (newSessionData == null) {
 				newSessionData = new SessionOSData(newSession, context);
 				fSessionDataCache.put(newSession.getId(), newSessionData);
 
@@ -370,58 +357,56 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 
 	// Update UI to showing new session data. If this session data is already
 	// shown, does nothing.
-	private void update(SessionOSData newSessionData)
-	{
+	private void update(SessionOSData newSessionData) {
 		if (fViewer == null || fViewer.getControl() == null)
 			return;
 
 		if (fViewer.getControl().isDisposed())
 			return;
-				
-		if (newSessionData == null)
-		{	
+
+		if (newSessionData == null) {
 			fSessionData = null;
 			if (fMultiple)
 				hideTable(Messages.OSView_14);
 			else if (fWrongType)
 				hideTable(Messages.OSView_4);
-			else 
+			else
 				hideTable(Messages.OSView_15);
 			fResourceClassEditor.setEnabled(false);
 			fRefreshAction.setEnabled(false);
 			return;
 		}
-		
+
 		if (newSessionData != fSessionData) {
 			fSessionData = newSessionData;
 			updateSessionDataContents();
 		}
 	}
-	
+
 	// Update the UI according to actual content of fSessionData,
 	// which must be not null.
 	private void updateSessionDataContents() {
 		if (fSessionData == null)
 			return;
-		
+
 		if (fViewer == null || fViewer.getControl() == null)
 			return;
 
 		if (fViewer.getControl().isDisposed())
 			return;
 
-		boolean enable = fSessionData.canFetchData();	
+		boolean enable = fSessionData.canFetchData();
 		fRefreshAction.setEnabled(enable);
 		setResourceClass(fResourceClassEditor.updateClasses(fSessionData.getResourceClasses()));
 		fResourceClassEditor.setEnabled(enable);
-		
+
 		if (!fSessionData.osResourcesSupported()) {
 			fRefreshAction.setEnabled(false);
 			fResourceClassEditor.setEnabled(false);
 			hideTable(Messages.OSView_10);
 			return;
 		}
-		
+
 		if (fSessionData.waitingForSessionInitialization()) {
 			fRefreshAction.setEnabled(false);
 			fResourceClassEditor.setEnabled(false);
@@ -436,38 +421,30 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 			return;
 		}
 
-		if (getResourceClass() == null)
-		{
+		if (getResourceClass() == null) {
 			fRefreshAction.setEnabled(false);
 			fResourceClassEditor.setEnabled(true);
 			hideTable(Messages.OSView_5);
 			return;
 		}
-		
 
 		final OSData data = fSessionData.existingData(getResourceClass());
 
-		if (fSessionData.fetchingContent())
-		{
+		if (fSessionData.fetchingContent()) {
 			hideTable(Messages.OSView_6);
-		}
-		else if (data == null)
-		{
+		} else if (data == null) {
 			if (fSessionData.canFetchData())
 				hideTable(NLS.bind(Messages.OSView_7, FETCH_LINK_TAG));
 			else
 				hideTable(Messages.OSView_12);
-		}
-		else
-		{
+		} else {
 			SimpleDateFormat format = new SimpleDateFormat(Messages.OSView_8);
 			fRefreshAction.setToolTipText(format.format(fSessionData.timestamp(getResourceClass())));
-			if (data != fTableShownData)
-			{
+			if (data != fTableShownData) {
 				Job job = new UIJob(Messages.OSView_9) {
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						fTableShownData = data;						
+						fTableShownData = data;
 						populateTable(data);
 						showTable();
 						return Status.OK_STATUS;
@@ -476,9 +453,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 				};
 				job.setPriority(Job.INTERACTIVE);
 				job.schedule();
-			}
-			else
-			{
+			} else {
 				assert fViewer.getTable().getColumnCount() == data.getColumnCount();
 				showTable();
 			}
@@ -511,7 +486,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 
 	private void showTable() {
 		assert fTableShownData != null;
-		
+
 		fViewer.getControl().setVisible(true);
 		((GridData) fViewer.getControl().getLayoutData()).exclude = false;
 		fNothingLabelContainer.setVisible(false);
@@ -521,20 +496,18 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		populateViewMenu(fTableShownData);
 	}
 
-	private void populateTable(final OSData data)
-	{
+	private void populateTable(final OSData data) {
 		final Table table = fViewer.getTable();
 
 		while (table.getColumnCount() > 0)
 			table.getColumns()[0].dispose();
 
 		fColumnLayout = fColumnLayouts.get(getResourceClass());
-		if (fColumnLayout == null)
-		{
+		if (fColumnLayout == null) {
 			fColumnLayout = new ColumnLayout(getResourceClass());
 			fColumnLayouts.put(getResourceClass(), fColumnLayout);
 		}
-		
+
 		for (int i = 0; i < data.getColumnCount(); ++i) {
 			final String cn = data.getColumnName(i);
 			final TableColumn c = new TableColumn(table, SWT.LEFT);
@@ -572,35 +545,29 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		populateViewMenu(data);
 
 		int sortColumn = fColumnLayout.getSortColumn();
-		if (sortColumn < data.getColumnCount())
-		{
+		if (sortColumn < data.getColumnCount()) {
 			fComparator.configure(sortColumn, data);
 		}
 		fComparator.setDirection(fColumnLayout.getSortDirection());
 
 		fViewer.getTable().setEnabled(true);
 
-
-		if (fViewer.getContentProvider() == null)
-		{
-			ContentLabelProviderWrapper<OSData> wrapper =
-					new ContentLabelProviderWrapper<OSData>(data);
+		if (fViewer.getContentProvider() == null) {
+			ContentLabelProviderWrapper<OSData> wrapper = new ContentLabelProviderWrapper<OSData>(data);
 			fViewer.setContentProvider(wrapper);
 			fViewer.setLabelProvider(wrapper);
-		}
-		else
-		{
+		} else {
 			// Retarget current content/label providers in atomic fashion. See comments
 			// on ContentLabelProviderWrapper.
 			@SuppressWarnings("unchecked")
-			ContentLabelProviderWrapper<OSData> wrapper = (ContentLabelProviderWrapper<OSData>)fViewer.getContentProvider();
+			ContentLabelProviderWrapper<OSData> wrapper = (ContentLabelProviderWrapper<OSData>) fViewer
+					.getContentProvider();
 			wrapper.setData(data);
 		}
 		fViewer.setInput(getViewSite());
 		fViewer.getControl().setVisible(true);
 
-		for (int i = 0; i < fViewer.getTable().getColumnCount(); ++i)
-		{
+		for (int i = 0; i < fViewer.getTable().getColumnCount(); ++i) {
 			TableColumn col = fViewer.getTable().getColumns()[i];
 			String cn = col.getText();
 
@@ -609,16 +576,13 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 				table.setSortColumn(col);
 			}
 
-			if (fColumnLayout.getVisible(cn))
-			{
+			if (fColumnLayout.getVisible(cn)) {
 				int w = fColumnLayout.getWidth(cn);
 				if (w > 0)
 					col.setWidth(w);
 				else
 					col.pack();
-			}
-			else
-			{
+			} else {
 				col.setWidth(0);
 				col.setResizable(false);
 			}
@@ -628,10 +592,10 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 	private void populateViewMenu(final OSData data) {
 
 		assert data.getColumnCount() == fViewer.getTable().getColumnCount();
-		
+
 		if (data == fMenuShownData)
 			return;
-		
+
 		IActionBars bars = getViewSite().getActionBars();
 		bars.getMenuManager().setVisible(true);
 		bars.getMenuManager().removeAll();
@@ -666,26 +630,23 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 			bars.getMenuManager().add(a);
 		}
 		bars.updateActionBars();
-		
+
 		fMenuShownData = data;
 	}
 
-	class Comparator extends ViewerComparator
-	{
+	class Comparator extends ViewerComparator {
 		private int fColumn = 0;
 		private OSData fData;
 		private boolean fInteger = false;
 		private int fDirection = 1;
 
-		public void configure(int column, OSData data)
-		{
+		public void configure(int column, OSData data) {
 			fColumn = column;
 			fData = data;
 			fInteger = data.getColumnIsInteger(column);
 		}
 
-		public void setDirection(int direction)
-		{
+		public void setDirection(int direction) {
 			assert direction == 1 || direction == -1;
 			fDirection = direction;
 		}
@@ -694,13 +655,13 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		public int compare(Viewer viewer, Object xe1, Object xe2) {
 
 			String v1 = fData.getColumnText(xe1, fColumn);
-			String v2 = fData.getColumnText(xe2, fColumn);			
+			String v2 = fData.getColumnText(xe2, fColumn);
 			if (fInteger) {
 				Integer i1 = Integer.parseInt(v1);
 				Integer i2 = Integer.parseInt(v2);
-				return fDirection*(i1 - i2);
+				return fDirection * (i1 - i2);
 			} else {
-				return fDirection*(v1.compareTo(v2));
+				return fDirection * (v1.compareTo(v2));
 			}
 		}
 	};
@@ -723,7 +684,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 	private void setResourceClass(String resourceClass) {
 		fResourceClass = resourceClass;
 	}
-	
+
 	/**
 	 * @return currently debug context for which resources are displayed
 	 */

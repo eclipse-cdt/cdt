@@ -36,7 +36,6 @@ public class PathEntryVariableChangeEvent extends EventObject {
 	/** Event type constant (value = 3) that denotes a variable deletion. */
 	public final static int VARIABLE_DELETED = 3;
 
-
 	/**
 	 * The name of the changed variable.
 	 */
@@ -79,7 +78,7 @@ public class PathEntryVariableChangeEvent extends EventObject {
 	 */
 	@Override
 	public String toString() {
-		String[] typeStrings = {"VARIABLE_CHANGED", "VARIABLE_CREATED", "VARIABLE_DELETED"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String[] typeStrings = { "VARIABLE_CHANGED", "VARIABLE_CREATED", "VARIABLE_DELETED" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		StringBuilder sb = new StringBuilder(getClass().getName());
 		sb.append("[variable = "); //$NON-NLS-1$
 		sb.append(variableName);

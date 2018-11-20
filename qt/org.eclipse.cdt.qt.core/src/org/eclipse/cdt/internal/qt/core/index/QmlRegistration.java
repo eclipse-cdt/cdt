@@ -74,8 +74,7 @@ public class QmlRegistration implements IQmlRegistration {
 
 	@Override
 	public IQObject getQObject() {
-		if (qObject == null
-		 && ownerName != null)
+		if (qObject == null && ownerName != null)
 			qObject = qtIndex.findQObject(ownerName);
 		return qObject;
 	}

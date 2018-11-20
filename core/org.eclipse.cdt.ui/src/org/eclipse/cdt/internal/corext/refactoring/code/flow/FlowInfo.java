@@ -24,62 +24,67 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 
 public abstract class FlowInfo {
 	// Return statement handling.
-	protected static final int NOT_POSSIBLE=	0;
-	protected static final int UNDEFINED= 		1;
-	protected static final int NO_RETURN= 		2;
-	protected static final int PARTIAL_RETURN= 	3;
-	protected static final int VOID_RETURN= 	4;
-	protected static final int VALUE_RETURN=	5;
-	protected static final int THROW=			6;
+	protected static final int NOT_POSSIBLE = 0;
+	protected static final int UNDEFINED = 1;
+	protected static final int NO_RETURN = 2;
+	protected static final int PARTIAL_RETURN = 3;
+	protected static final int VOID_RETURN = 4;
+	protected static final int VALUE_RETURN = 5;
+	protected static final int THROW = 6;
 
 	// Local access handling.
-	public static final int UNUSED=				1 << 0;
-	public static final int READ= 				1 << 1;
-	public static final int READ_POTENTIAL=		1 << 2;
-	public static final int WRITE= 				1 << 3;
-	public static final int WRITE_POTENTIAL=    1 << 4;
-	public static final int UNKNOWN= 			1 << 5;
+	public static final int UNUSED = 1 << 0;
+	public static final int READ = 1 << 1;
+	public static final int READ_POTENTIAL = 1 << 2;
+	public static final int WRITE = 1 << 3;
+	public static final int WRITE_POTENTIAL = 1 << 4;
+	public static final int UNKNOWN = 1 << 5;
 
 	// Table to merge access modes for condition statements (e.g branch[x] || branch[y]).
-	private static final int[][] ACCESS_MODE_CONDITIONAL_TABLE= {
-	/*	  					  UNUSED		   READ			    READ_POTENTIAL   WRITE			  WRITE_POTENTIAL  UNKNOWN */
-	/* UNUSED */			{ UNUSED,		   READ_POTENTIAL,  READ_POTENTIAL,  WRITE_POTENTIAL, WRITE_POTENTIAL, UNKNOWN },
-	/* READ */				{ READ_POTENTIAL,  READ,			READ_POTENTIAL,  UNKNOWN,		  UNKNOWN,         UNKNOWN },
-	/* READ_POTENTIAL */	{ READ_POTENTIAL,  READ_POTENTIAL,  READ_POTENTIAL,  UNKNOWN,		  UNKNOWN,         UNKNOWN },
-	/* WRITE */				{ WRITE_POTENTIAL, UNKNOWN,			UNKNOWN,		 WRITE,			  WRITE_POTENTIAL, UNKNOWN },
-	/* WRITE_POTENTIAL */   { WRITE_POTENTIAL, UNKNOWN,			UNKNOWN,		 WRITE_POTENTIAL, WRITE_POTENTIAL, UNKNOWN },
-	/* UNKNOWN */ 			{ UNKNOWN, 		   UNKNOWN,			UNKNOWN,		 UNKNOWN, 		  UNKNOWN,		   UNKNOWN }
-	};
+	private static final int[][] ACCESS_MODE_CONDITIONAL_TABLE = {
+			/*	  					  UNUSED		   READ			    READ_POTENTIAL   WRITE			  WRITE_POTENTIAL  UNKNOWN */
+			/* UNUSED */ { UNUSED, READ_POTENTIAL, READ_POTENTIAL, WRITE_POTENTIAL, WRITE_POTENTIAL, UNKNOWN },
+			/* READ */ { READ_POTENTIAL, READ, READ_POTENTIAL, UNKNOWN, UNKNOWN, UNKNOWN },
+			/* READ_POTENTIAL */ { READ_POTENTIAL, READ_POTENTIAL, READ_POTENTIAL, UNKNOWN, UNKNOWN, UNKNOWN },
+			/* WRITE */ { WRITE_POTENTIAL, UNKNOWN, UNKNOWN, WRITE, WRITE_POTENTIAL, UNKNOWN },
+			/* WRITE_POTENTIAL */ { WRITE_POTENTIAL, UNKNOWN, UNKNOWN, WRITE_POTENTIAL, WRITE_POTENTIAL, UNKNOWN },
+			/* UNKNOWN */ { UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN } };
 
 	// Table to change access mode if there is an open branch statement
-	private static final int[] ACCESS_MODE_OPEN_BRANCH_TABLE= {
-	/*	UNUSED	READ			READ_POTENTIAL  WRITE				WRITE_POTENTIAL  UNKNOWN */
-		UNUSED,	READ_POTENTIAL,	READ_POTENTIAL,	WRITE_POTENTIAL,	WRITE_POTENTIAL, UNKNOWN
-	};
+	private static final int[] ACCESS_MODE_OPEN_BRANCH_TABLE = {
+			/*	UNUSED	READ			READ_POTENTIAL  WRITE				WRITE_POTENTIAL  UNKNOWN */
+			UNUSED, READ_POTENTIAL, READ_POTENTIAL, WRITE_POTENTIAL, WRITE_POTENTIAL, UNKNOWN };
 
 	// Table to merge return modes for condition statements (y: fReturnKind, x: other.fReturnKind)
 	private static final int[][] RETURN_KIND_CONDITIONAL_TABLE = {
-	/* 						  NOT_POSSIBLE		UNDEFINED		NO_RETURN		PARTIAL_RETURN	VOID_RETURN		VALUE_RETURN	THROW */
-	/* NOT_POSSIBLE */		{ NOT_POSSIBLE,		NOT_POSSIBLE,	NOT_POSSIBLE, 	NOT_POSSIBLE,	NOT_POSSIBLE,	NOT_POSSIBLE,	NOT_POSSIBLE	},
-	/* UNDEFINED */			{ NOT_POSSIBLE,		UNDEFINED,		NO_RETURN,		PARTIAL_RETURN, VOID_RETURN,	VALUE_RETURN,	THROW 			},
-	/* NO_RETURN */			{ NOT_POSSIBLE,		NO_RETURN,		NO_RETURN,		PARTIAL_RETURN,	PARTIAL_RETURN, PARTIAL_RETURN, NO_RETURN 		},
-	/* PARTIAL_RETURN */	{ NOT_POSSIBLE,		PARTIAL_RETURN,	PARTIAL_RETURN,	PARTIAL_RETURN, PARTIAL_RETURN, PARTIAL_RETURN, PARTIAL_RETURN	},
-	/* VOID_RETURN */		{ NOT_POSSIBLE,		VOID_RETURN,	PARTIAL_RETURN,	PARTIAL_RETURN, VOID_RETURN,	NOT_POSSIBLE,	VOID_RETURN		},
-	/* VALUE_RETURN */		{ NOT_POSSIBLE,		VALUE_RETURN,	PARTIAL_RETURN, PARTIAL_RETURN, NOT_POSSIBLE,	VALUE_RETURN,	VALUE_RETURN	},
-	/* THROW */				{ NOT_POSSIBLE,		THROW,			NO_RETURN,		PARTIAL_RETURN, VOID_RETURN,	VALUE_RETURN,	THROW			}
-	};
+			/* 						  NOT_POSSIBLE		UNDEFINED		NO_RETURN		PARTIAL_RETURN	VOID_RETURN		VALUE_RETURN	THROW */
+			/* NOT_POSSIBLE */ { NOT_POSSIBLE, NOT_POSSIBLE, NOT_POSSIBLE, NOT_POSSIBLE, NOT_POSSIBLE, NOT_POSSIBLE,
+					NOT_POSSIBLE },
+			/* UNDEFINED */ { NOT_POSSIBLE, UNDEFINED, NO_RETURN, PARTIAL_RETURN, VOID_RETURN, VALUE_RETURN, THROW },
+			/* NO_RETURN */ { NOT_POSSIBLE, NO_RETURN, NO_RETURN, PARTIAL_RETURN, PARTIAL_RETURN, PARTIAL_RETURN,
+					NO_RETURN },
+			/* PARTIAL_RETURN */ { NOT_POSSIBLE, PARTIAL_RETURN, PARTIAL_RETURN, PARTIAL_RETURN, PARTIAL_RETURN,
+					PARTIAL_RETURN, PARTIAL_RETURN },
+			/* VOID_RETURN */ { NOT_POSSIBLE, VOID_RETURN, PARTIAL_RETURN, PARTIAL_RETURN, VOID_RETURN, NOT_POSSIBLE,
+					VOID_RETURN },
+			/* VALUE_RETURN */ { NOT_POSSIBLE, VALUE_RETURN, PARTIAL_RETURN, PARTIAL_RETURN, NOT_POSSIBLE, VALUE_RETURN,
+					VALUE_RETURN },
+			/* THROW */ { NOT_POSSIBLE, THROW, NO_RETURN, PARTIAL_RETURN, VOID_RETURN, VALUE_RETURN, THROW } };
 
 	// Table to merge return modes for sequential statements (y: fReturnKind, x: other.fReturnKind)
 	private static final int[][] RETURN_KIND_SEQUENTIAL_TABLE = {
-	/* 						  NOT_POSSIBLE		UNDEFINED		NO_RETURN		PARTIAL_RETURN	VOID_RETURN		VALUE_RETURN	THROW */
-	/* NOT_POSSIBLE */		{ NOT_POSSIBLE,		NOT_POSSIBLE,	NOT_POSSIBLE, 	NOT_POSSIBLE,	NOT_POSSIBLE,	NOT_POSSIBLE,	NOT_POSSIBLE	},
-	/* UNDEFINED */			{ NOT_POSSIBLE,		UNDEFINED,		NO_RETURN,		PARTIAL_RETURN,	VOID_RETURN,	VALUE_RETURN,	THROW			},
-	/* NO_RETURN */			{ NOT_POSSIBLE,		NO_RETURN,		NO_RETURN,		PARTIAL_RETURN,	VOID_RETURN,	VALUE_RETURN,	THROW			},
-	/* PARTIAL_RETURN */	{ NOT_POSSIBLE,		PARTIAL_RETURN,	PARTIAL_RETURN,	PARTIAL_RETURN,	VOID_RETURN,	VALUE_RETURN,	VALUE_RETURN	},
-	/* VOID_RETURN */		{ NOT_POSSIBLE,		VOID_RETURN,	VOID_RETURN,	PARTIAL_RETURN,	VOID_RETURN,	NOT_POSSIBLE,	NOT_POSSIBLE	},
-	/* VALUE_RETURN */		{ NOT_POSSIBLE,		VALUE_RETURN,	VALUE_RETURN,	PARTIAL_RETURN,	NOT_POSSIBLE,	VALUE_RETURN,	NOT_POSSIBLE	},
-	/* THROW */				{ NOT_POSSIBLE,		THROW,			THROW,			VALUE_RETURN,	VOID_RETURN,	VALUE_RETURN,	THROW			}
-	};
+			/* 						  NOT_POSSIBLE		UNDEFINED		NO_RETURN		PARTIAL_RETURN	VOID_RETURN		VALUE_RETURN	THROW */
+			/* NOT_POSSIBLE */ { NOT_POSSIBLE, NOT_POSSIBLE, NOT_POSSIBLE, NOT_POSSIBLE, NOT_POSSIBLE, NOT_POSSIBLE,
+					NOT_POSSIBLE },
+			/* UNDEFINED */ { NOT_POSSIBLE, UNDEFINED, NO_RETURN, PARTIAL_RETURN, VOID_RETURN, VALUE_RETURN, THROW },
+			/* NO_RETURN */ { NOT_POSSIBLE, NO_RETURN, NO_RETURN, PARTIAL_RETURN, VOID_RETURN, VALUE_RETURN, THROW },
+			/* PARTIAL_RETURN */ { NOT_POSSIBLE, PARTIAL_RETURN, PARTIAL_RETURN, PARTIAL_RETURN, VOID_RETURN,
+					VALUE_RETURN, VALUE_RETURN },
+			/* VOID_RETURN */ { NOT_POSSIBLE, VOID_RETURN, VOID_RETURN, PARTIAL_RETURN, VOID_RETURN, NOT_POSSIBLE,
+					NOT_POSSIBLE },
+			/* VALUE_RETURN */ { NOT_POSSIBLE, VALUE_RETURN, VALUE_RETURN, PARTIAL_RETURN, NOT_POSSIBLE, VALUE_RETURN,
+					NOT_POSSIBLE },
+			/* THROW */ { NOT_POSSIBLE, THROW, THROW, VALUE_RETURN, VOID_RETURN, VALUE_RETURN, THROW } };
 
 	protected static final String UNLABELED = "@unlabeled"; //$NON-NLS-1$
 
@@ -92,18 +97,18 @@ public abstract class FlowInfo {
 	}
 
 	protected FlowInfo(int returnKind) {
-		fReturnKind= returnKind;
+		fReturnKind = returnKind;
 	}
 
 	//---- General Helpers ----------------------------------------------------------
 
 	protected void assignExecutionFlow(FlowInfo right) {
-		fReturnKind= right.fReturnKind;
-		fBranches= right.fBranches;
+		fReturnKind = right.fReturnKind;
+		fBranches = right.fBranches;
 	}
 
 	protected void assignAccessMode(FlowInfo right) {
-		fAccessModes= right.fAccessModes;
+		fAccessModes = right.fAccessModes;
 	}
 
 	protected void assign(FlowInfo right) {
@@ -124,7 +129,7 @@ public abstract class FlowInfo {
 	//---- Return Kind ------------------------------------------------------------------
 
 	public void setNoReturn() {
-		fReturnKind= NO_RETURN;
+		fReturnKind = NO_RETURN;
 	}
 
 	public boolean isUndefined() {
@@ -169,7 +174,7 @@ public abstract class FlowInfo {
 		if (fBranches != null) {
 			fBranches.remove(makeString(label));
 			if (fBranches.isEmpty())
-				fBranches= null;
+				fBranches = null;
 		}
 	}
 
@@ -184,26 +189,26 @@ public abstract class FlowInfo {
 	//---- Execution flow -------------------------------------------------------------------
 
 	private void mergeExecutionFlowSequential(FlowInfo otherInfo) {
-		int other= otherInfo.fReturnKind;
+		int other = otherInfo.fReturnKind;
 		if (branches() && other == VALUE_RETURN)
-			other= PARTIAL_RETURN;
-		fReturnKind= RETURN_KIND_SEQUENTIAL_TABLE[fReturnKind][other];
+			other = PARTIAL_RETURN;
+		fReturnKind = RETURN_KIND_SEQUENTIAL_TABLE[fReturnKind][other];
 		mergeBranches(otherInfo);
 	}
 
 	private void mergeExecutionFlowConditional(FlowInfo otherInfo) {
-		fReturnKind= RETURN_KIND_CONDITIONAL_TABLE[fReturnKind][otherInfo.fReturnKind];
+		fReturnKind = RETURN_KIND_CONDITIONAL_TABLE[fReturnKind][otherInfo.fReturnKind];
 		mergeBranches(otherInfo);
 	}
 
 	private void mergeBranches(FlowInfo otherInfo) {
-		fBranches= mergeSets(fBranches, otherInfo.fBranches);
+		fBranches = mergeSets(fBranches, otherInfo.fBranches);
 	}
 
 	private static <T> Set<T> mergeSets(Set<T> thisSet, Set<T> otherSet) {
 		if (otherSet != null) {
 			if (thisSet == null) {
-				thisSet= otherSet;
+				thisSet = otherSet;
 			} else {
 				for (T element : otherSet) {
 					thisSet.add(element);
@@ -227,9 +232,9 @@ public abstract class FlowInfo {
 	public Set<IVariable> get(FlowContext context, int mode) {
 		if (fAccessModes == null)
 			return Collections.emptySet();
-		Set<IVariable> result= new HashSet<IVariable>(fAccessModes.length);
-		for (int i= 0; i < fAccessModes.length; i++) {
-			int accessMode= fAccessModes[i];
+		Set<IVariable> result = new HashSet<IVariable>(fAccessModes.length);
+		for (int i = 0; i < fAccessModes.length; i++) {
+			int accessMode = fAccessModes[i];
 			if ((accessMode & mode) != 0)
 				result.add(context.getLocalFromIndex(i));
 		}
@@ -247,10 +252,10 @@ public abstract class FlowInfo {
 	 * 	<code>False</code> otherwise
 	 */
 	public boolean hasAccessMode(FlowContext context, IVariable local, int mode) {
-		boolean unusedMode= (mode & UNUSED) != 0;
+		boolean unusedMode = (mode & UNUSED) != 0;
 		if (fAccessModes == null && unusedMode)
 			return true;
-		int index= context.getIndexFromLocal(local);
+		int index = context.getIndexFromLocal(local);
 		if (index == -1)
 			return unusedMode;
 		return (fAccessModes[index] & mode) != 0;
@@ -266,7 +271,7 @@ public abstract class FlowInfo {
 	public int getAccessMode(FlowContext context, IVariable local) {
 		if (fAccessModes == null)
 			return UNUSED;
-		int index= context.getIndexFromLocal(local);
+		int index = context.getIndexFromLocal(local);
 		if (index == -1)
 			return UNUSED;
 		return fAccessModes[index];
@@ -277,31 +282,31 @@ public abstract class FlowInfo {
 	}
 
 	protected void clearAccessMode(IVariable binding, FlowContext context) {
-		if (fAccessModes == null)	// All are unused
+		if (fAccessModes == null) // All are unused
 			return;
 		int index = context.getIndexFromLocal(binding);
 		if (index >= 0)
-			fAccessModes[index]= UNUSED;
+			fAccessModes[index] = UNUSED;
 	}
 
 	protected void mergeAccessModeSequential(FlowInfo otherInfo, FlowContext context) {
 		if (!context.considerAccessMode())
 			return;
 
-		int[] others= otherInfo.fAccessModes;
-		if (others == null)	// others are all unused. So nothing to do
+		int[] others = otherInfo.fAccessModes;
+		if (others == null) // others are all unused. So nothing to do
 			return;
 
 		// Must not consider return kind since a return statement can't control execution flow
 		// inside a method. It always leaves the method.
 		if (branches()) {
-			for (int i= 0; i < others.length; i++) {
-				others[i]= ACCESS_MODE_OPEN_BRANCH_TABLE[getIndex(others[i])];
+			for (int i = 0; i < others.length; i++) {
+				others[i] = ACCESS_MODE_OPEN_BRANCH_TABLE[getIndex(others[i])];
 			}
 		}
 
-		if (fAccessModes == null) {	// all current variables are unused
-			fAccessModes= others;
+		if (fAccessModes == null) { // all current variables are unused
+			fAccessModes = others;
 			return;
 		}
 
@@ -315,48 +320,48 @@ public abstract class FlowInfo {
 	}
 
 	private void handleComputeReturnValues(int[] others) {
-		for (int i= 0; i < fAccessModes.length; i++) {
-			int accessmode= fAccessModes[i];
-			int othermode= others[i];
+		for (int i = 0; i < fAccessModes.length; i++) {
+			int accessmode = fAccessModes[i];
+			int othermode = others[i];
 			if (accessmode == WRITE)
 				continue;
 			if (accessmode == WRITE_POTENTIAL) {
 				if (othermode == WRITE)
-					fAccessModes[i]= WRITE;
+					fAccessModes[i] = WRITE;
 				continue;
 			}
 
 			if (others[i] != UNUSED)
-				fAccessModes[i]= othermode;
+				fAccessModes[i] = othermode;
 		}
 	}
 
 	private void handleComputeArguments(int[] others) {
-		for (int i= 0; i < fAccessModes.length; i++) {
-			int accessMode= fAccessModes[i];
-			int otherMode= others[i];
+		for (int i = 0; i < fAccessModes.length; i++) {
+			int accessMode = fAccessModes[i];
+			int otherMode = others[i];
 			if (accessMode == UNUSED) {
-				fAccessModes[i]= otherMode;
+				fAccessModes[i] = otherMode;
 			} else if (accessMode == WRITE_POTENTIAL && (otherMode == READ || otherMode == READ_POTENTIAL)) {
 				// Read always supersedes a potential write even if the read is potential as well
 				// (we have to consider the potential read as an argument then).
-				fAccessModes[i]= otherMode;
+				fAccessModes[i] = otherMode;
 			} else if (accessMode == WRITE_POTENTIAL && otherMode == WRITE) {
-				fAccessModes[i]= WRITE;
+				fAccessModes[i] = WRITE;
 			}
 		}
 	}
 
 	private void handleMergeValues(int[] others) {
-		for (int i= 0; i < fAccessModes.length; i++) {
-			fAccessModes[i]= ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][getIndex(others[i])];
+		for (int i = 0; i < fAccessModes.length; i++) {
+			fAccessModes[i] = ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][getIndex(others[i])];
 		}
 	}
 
 	protected void createAccessModeArray(FlowContext context) {
-		fAccessModes= new int[context.getArrayLength()];
-		for (int i= 0; i < fAccessModes.length; i++) {
-			fAccessModes[i]= UNUSED;
+		fAccessModes = new int[context.getArrayLength()];
+		for (int i = 0; i < fAccessModes.length; i++) {
+			fAccessModes[i] = UNUSED;
 		}
 	}
 
@@ -364,24 +369,24 @@ public abstract class FlowInfo {
 		if (!context.considerAccessMode())
 			return;
 
-		int[] others= otherInfo.fAccessModes;
+		int[] others = otherInfo.fAccessModes;
 		// first access
 		if (fAccessModes == null) {
 			if (others != null) {
-				fAccessModes= others;
+				fAccessModes = others;
 			} else {
 				createAccessModeArray(context);
 			}
 			return;
 		} else {
 			if (others == null) {
-				int index_unused= getIndex(UNUSED);
-				for (int i= 0; i < fAccessModes.length; i++) {
-					fAccessModes[i]= ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][index_unused];
+				int index_unused = getIndex(UNUSED);
+				for (int i = 0; i < fAccessModes.length; i++) {
+					fAccessModes[i] = ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][index_unused];
 				}
 			} else {
-				for (int i= 0; i < fAccessModes.length; i++) {
-					fAccessModes[i]= ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][getIndex(others[i])];
+				for (int i = 0; i < fAccessModes.length; i++) {
+					fAccessModes[i] = ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][getIndex(others[i])];
 				}
 			}
 		}
@@ -389,7 +394,7 @@ public abstract class FlowInfo {
 
 	protected void mergeEmptyCondition(FlowContext context) {
 		if (fReturnKind == VALUE_RETURN || fReturnKind == VOID_RETURN)
-			fReturnKind= PARTIAL_RETURN;
+			fReturnKind = PARTIAL_RETURN;
 
 		if (!context.considerAccessMode())
 			return;
@@ -399,29 +404,27 @@ public abstract class FlowInfo {
 			return;
 		}
 
-		int index_unused= getIndex(UNUSED);
-		for (int i= 0; i < fAccessModes.length; i++) {
-			fAccessModes[i]= ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][index_unused];
+		int index_unused = getIndex(UNUSED);
+		for (int i = 0; i < fAccessModes.length; i++) {
+			fAccessModes[i] = ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][index_unused];
 		}
 	}
 
 	private static int getIndex(int accessMode) {
-		 switch (accessMode) {
-		 	case UNUSED:
-		 		return 0;
-		 	case READ:
-		 		return 1;
-		 	case READ_POTENTIAL:
-		 		return 2;
-		 	case WRITE:
-		 		return 3;
-		 	case WRITE_POTENTIAL:
-		 		return 4;
-		 	case UNKNOWN:
-		 		return 5;
-		 }
-		 return -1;
+		switch (accessMode) {
+		case UNUSED:
+			return 0;
+		case READ:
+			return 1;
+		case READ_POTENTIAL:
+			return 2;
+		case WRITE:
+			return 3;
+		case WRITE_POTENTIAL:
+			return 4;
+		case UNKNOWN:
+			return 5;
+		}
+		return -1;
 	}
 }
-
-

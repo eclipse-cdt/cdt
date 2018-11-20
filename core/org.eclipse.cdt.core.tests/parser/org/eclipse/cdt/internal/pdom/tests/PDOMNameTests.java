@@ -43,14 +43,16 @@ public class PDOMNameTests extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		cproject= CProjectHelper.createCCProject("PDOMNameTest" + System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER);
+		cproject = CProjectHelper.createCCProject("PDOMNameTest" + System.currentTimeMillis(), "bin",
+				IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		if (cproject != null) {
-			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 		super.tearDown();
 	}
@@ -58,8 +60,10 @@ public class PDOMNameTests extends BaseTestCase {
 	public void testExternalReferences() throws Exception {
 		IProject project = cproject.getProject();
 		// Use enum because this uses a different NodeType in C++ and C.
-		TestSourceReader.createFile(project, "file.cpp", "enum E_cpp { e_cpp }; extern E_cpp func_cpp() { func_cpp(); return e_cpp; }");
-		TestSourceReader.createFile(project, "file.c", "enum E_c { e_c }; extern enum E_c func_c() { func_c(); return e_c; }");
+		TestSourceReader.createFile(project, "file.cpp",
+				"enum E_cpp { e_cpp }; extern E_cpp func_cpp() { func_cpp(); return e_cpp; }");
+		TestSourceReader.createFile(project, "file.c",
+				"enum E_c { e_c }; extern enum E_c func_c() { func_c(); return e_c; }");
 
 		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
@@ -68,7 +72,8 @@ public class PDOMNameTests extends BaseTestCase {
 		PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireWriteLock(null);
 		try {
-			IIndexBinding[] bindings = pdom.findBindings(new char[][]{"E_cpp".toCharArray()}, IndexFilter.ALL, npm());
+			IIndexBinding[] bindings = pdom.findBindings(new char[][] { "E_cpp".toCharArray() }, IndexFilter.ALL,
+					npm());
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof PDOMBinding);
 
@@ -77,7 +82,7 @@ public class PDOMNameTests extends BaseTestCase {
 			assertNotNull(name_cpp);
 			assertSame(binding_cpp.getLinkage(), name_cpp.getLinkage());
 
-			bindings = pdom.findBindings(new char[][]{"E_c".toCharArray()}, IndexFilter.ALL, npm());
+			bindings = pdom.findBindings(new char[][] { "E_c".toCharArray() }, IndexFilter.ALL, npm());
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof PDOMBinding);
 
@@ -180,7 +185,7 @@ public class PDOMNameTests extends BaseTestCase {
 		IPDOMIterator<PDOMName> extRefs = binding.getExternalReferences();
 		assertNotNull(extRefs);
 		int count = 0;
-		for( ; extRefs.hasNext(); extRefs.next())
+		for (; extRefs.hasNext(); extRefs.next())
 			++count;
 		return count;
 	}

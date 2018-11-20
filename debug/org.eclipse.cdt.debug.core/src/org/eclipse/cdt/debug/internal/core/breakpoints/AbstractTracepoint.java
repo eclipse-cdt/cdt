@@ -45,8 +45,8 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 	 * @param add
 	 * @throws CoreException
 	 */
-	public AbstractTracepoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+	public AbstractTracepoint(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
+		super(resource, attributes, add);
 	}
 
 	/*(non-Javadoc)
@@ -54,7 +54,7 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 	 */
 	@Override
 	public int getLineNumber() throws CoreException {
-		return ensureMarker().getAttribute( IMarker.LINE_NUMBER, -1 );
+		return ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 	}
 
 	/*(non-Javadoc)
@@ -62,7 +62,7 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 	 */
 	@Override
 	public int getCharStart() throws CoreException {
-		return ensureMarker().getAttribute( IMarker.CHAR_START, -1 );
+		return ensureMarker().getAttribute(IMarker.CHAR_START, -1);
 	}
 
 	/*(non-Javadoc)
@@ -70,7 +70,7 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 	 */
 	@Override
 	public int getCharEnd() throws CoreException {
-		return ensureMarker().getAttribute( IMarker.CHAR_END, -1 );
+		return ensureMarker().getAttribute(IMarker.CHAR_END, -1);
 	}
 
 	/* (non-Javadoc)
@@ -78,27 +78,27 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 	 */
 	@Override
 	public String getAddress() throws CoreException {
-		return ensureMarker().getAttribute( ICLineBreakpoint.ADDRESS, "" ); //$NON-NLS-1$
+		return ensureMarker().getAttribute(ICLineBreakpoint.ADDRESS, ""); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICLineBreakpoint#getFileName()
 	 */
 	@Override
 	public String getFileName() throws CoreException {
-		String fileName = ensureMarker().getAttribute( ICBreakpoint.SOURCE_HANDLE, "" ); //$NON-NLS-1$
-		IPath path = new Path( fileName );
-		return ( path.isValidPath( fileName ) ) ? path.lastSegment() : null;
+		String fileName = ensureMarker().getAttribute(ICBreakpoint.SOURCE_HANDLE, ""); //$NON-NLS-1$
+		IPath path = new Path(fileName);
+		return (path.isValidPath(fileName)) ? path.lastSegment() : null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICLineBreakpoint#getFunction()
 	 */
 	@Override
 	public String getFunction() throws CoreException {
-		return ensureMarker().getAttribute( ICLineBreakpoint.FUNCTION, "" ); //$NON-NLS-1$
+		return ensureMarker().getAttribute(ICLineBreakpoint.FUNCTION, ""); //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICBreakpoint#isConditional()
@@ -107,30 +107,30 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 	public boolean isConditional() throws CoreException {
 		return (super.isConditional() || getPassCount() > 0);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICLineBreakpoint#setAddress(java.lang.String)
 	 */
 	@Override
-	public void setAddress( String address ) throws CoreException {
-		setAttribute( ICLineBreakpoint.ADDRESS, address );
+	public void setAddress(String address) throws CoreException {
+		setAttribute(ICLineBreakpoint.ADDRESS, address);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICLineBreakpoint#setFunction(java.lang.String)
 	 */
 	@Override
-	public void setFunction( String function ) throws CoreException {
-		setAttribute( ICLineBreakpoint.FUNCTION, function );
+	public void setFunction(String function) throws CoreException {
+		setAttribute(ICLineBreakpoint.FUNCTION, function);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICTracepoint#getPassCount()
 	 */
 	@Override
 	public int getPassCount() throws CoreException {
-		return ensureMarker().getAttribute( PASS_COUNT, 0 );
+		return ensureMarker().getAttribute(PASS_COUNT, 0);
 	}
 
 	/*
@@ -138,8 +138,8 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 	 * @see org.eclipse.cdt.debug.core.ICTracepoint#setPassCount(int)
 	 */
 	@Override
-	public void setPassCount( int passCount ) throws CoreException {
-		setAttribute( PASS_COUNT, passCount );
-		setAttribute( IMarker.MESSAGE, getMarkerMessage() );
+	public void setPassCount(int passCount) throws CoreException {
+		setAttribute(PASS_COUNT, passCount);
+		setAttribute(IMarker.MESSAGE, getMarkerMessage());
 	}
 }

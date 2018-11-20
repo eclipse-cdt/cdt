@@ -18,31 +18,30 @@ import java.util.Iterator;
 
 import org.eclipse.jface.text.source.IAnnotationModel;
 
-
 /**
  * Filters problems based on their types.
  */
 public class ProblemAnnotationIterator implements Iterator<IProblemAnnotation> {
-			
+
 	private Iterator<?> fIterator;
 	private IProblemAnnotation fNext;
-	
+
 	public ProblemAnnotationIterator(IAnnotationModel model) {
-		fIterator= model.getAnnotationIterator();
+		fIterator = model.getAnnotationIterator();
 		skip();
 	}
-	
+
 	private void skip() {
 		while (fIterator.hasNext()) {
-			Object next= fIterator.next();
+			Object next = fIterator.next();
 			if (next instanceof IProblemAnnotation) {
-				fNext= (IProblemAnnotation) next;
+				fNext = (IProblemAnnotation) next;
 				return;
 			}
 		}
-		fNext= null;
+		fNext = null;
 	}
-	
+
 	/*
 	 * @see Iterator#hasNext()
 	 */
@@ -71,5 +70,3 @@ public class ProblemAnnotationIterator implements Iterator<IProblemAnnotation> {
 		throw new UnsupportedOperationException();
 	}
 }
-
-

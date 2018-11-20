@@ -39,9 +39,9 @@ public class ToStringSorter {
 	private void quickSort(int left, int right) {
 		int originalLeft = left;
 		int originalRight = right;
-		int midIndex =  (left + right) >>> 1;
+		int midIndex = (left + right) >>> 1;
 		String midToString = this.sortedStrings[midIndex];
-		
+
 		do {
 			while (compare(this.sortedStrings[left], midToString))
 				left++;
@@ -58,7 +58,7 @@ public class ToStringSorter {
 				right--;
 			}
 		} while (left <= right);
-		
+
 		if (originalLeft < right)
 			quickSort(originalLeft, right);
 		if (left < originalRight)
@@ -73,7 +73,7 @@ public class ToStringSorter {
 		int size = unSortedObjects.length;
 		this.sortedObjects = new Object[size];
 		this.sortedStrings = new String[size];
-		
+
 		//copy the array so can return a new sorted collection  
 		System.arraycopy(unSortedObjects, 0, this.sortedObjects, 0, size);
 		System.arraycopy(unsortedStrings, 0, this.sortedStrings, 0, size);

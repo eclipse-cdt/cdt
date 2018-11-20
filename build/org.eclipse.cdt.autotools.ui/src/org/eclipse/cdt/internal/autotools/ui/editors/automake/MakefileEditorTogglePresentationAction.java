@@ -19,7 +19,6 @@ import org.eclipse.cdt.internal.autotools.ui.MakeUIMessages;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
-
 /**
  */
 public class MakefileEditorTogglePresentationAction extends TextEditorAction {
@@ -35,7 +34,7 @@ public class MakefileEditorTogglePresentationAction extends TextEditorAction {
 
 	@Override
 	public void run() {
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		editor.resetHighlightRange();
 		boolean show = editor.showsHighlightRangeOnly();
 		setChecked(!show);

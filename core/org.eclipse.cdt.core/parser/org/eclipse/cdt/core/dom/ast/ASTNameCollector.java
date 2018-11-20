@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 import java.util.ArrayList;
@@ -26,24 +26,24 @@ import org.eclipse.core.runtime.Assert;
  */
 public final class ASTNameCollector extends ASTVisitor {
 	private final char[] fName;
-	private final ArrayList<IASTName> fFound= new ArrayList<>(4);
+	private final ArrayList<IASTName> fFound = new ArrayList<>(4);
 
 	/**
 	 * Constructs a name collector for the given name.
 	 */
 	public ASTNameCollector(char[] name) {
 		Assert.isNotNull(name);
-		fName= name;
+		fName = name;
 		shouldVisitNames = true;
 	}
-	
+
 	/**
 	 * Constructs a name collector for the given name.
 	 */
 	public ASTNameCollector(String name) {
 		this(name.toCharArray());
 	}
-	
+
 	@Override
 	public int visit(IASTName name) {
 		if (name != null && !(name instanceof ICPPASTQualifiedName) && !(name instanceof ICPPASTTemplateId)) {

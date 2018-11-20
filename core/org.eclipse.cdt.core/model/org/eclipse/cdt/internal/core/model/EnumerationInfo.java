@@ -13,12 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-public class EnumerationInfo extends VariableInfo{
-
+public class EnumerationInfo extends VariableInfo {
 
 	protected EnumerationInfo(CElement element) {
 		super(element);
 	}
-	
-	
+
 }

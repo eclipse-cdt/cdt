@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
+class ResourceChangeHandler2 extends ResourceChangeHandlerBase {
 	private class RcMoveHandler implements IResourceMoveHandler {
 
 		@Override
@@ -56,12 +56,12 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 
 		@Override
 		public boolean handleResourceMove(IResource fromRc, IResource toRc) {
-			switch(fromRc.getType()){
+			switch (fromRc.getType()) {
 			case IResource.PROJECT:
 				IProject fromProject = fromRc.getProject();
 				IProject toProject = toRc.getProject();
-				ManagedBuildInfo info = (ManagedBuildInfo)ManagedBuildManager.getBuildInfo(fromProject, false);
-				if(info != null){
+				ManagedBuildInfo info = (ManagedBuildInfo) ManagedBuildManager.getBuildInfo(fromProject, false);
+				if (info != null) {
 					info.updateOwner(toRc);
 					ManagedBuildManager.updateLoaddedInfo(fromProject, toProject, info);
 				}
@@ -71,7 +71,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 
 		@Override
 		public boolean handleResourceRemove(IResource rc) {
-			switch(rc.getType()){
+			switch (rc.getType()) {
 			case IResource.PROJECT:
 				IProject project = rc.getProject();
 				sendClose(project);
@@ -85,22 +85,21 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 	}
 
 	@Override
-	protected IResourceMoveHandler createResourceMoveHandler(
-			IResourceChangeEvent event) {
+	protected IResourceMoveHandler createResourceMoveHandler(IResourceChangeEvent event) {
 		return new RcMoveHandler();
 	}
 
-	public void sendClose(IProject project){
-		sendClose(ManagedBuildManager.getBuildInfo(project,false));
+	public void sendClose(IProject project) {
+		sendClose(ManagedBuildManager.getBuildInfo(project, false));
 	}
 
-	private void sendClose(IManagedBuildInfo info){
-		if(info != null){
+	private void sendClose(IManagedBuildInfo info) {
+		if (info != null) {
 			IManagedProject managedProj = info.getManagedProject();
 			if (managedProj != null) {
 				IConfiguration cfgs[] = managedProj.getConfigurations();
 
-				for(int i = 0; i < cfgs.length; i++)
+				for (int i = 0; i < cfgs.length; i++)
 					ManagedBuildManager.performValueHandlerEvent(cfgs[i], IManagedOptionValueHandler.EVENT_CLOSE, true);
 			}
 		}
@@ -109,7 +108,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 	private static class Visitor implements IResourceDeltaVisitor {
 		private Set<IProject> fProjSet;
 
-		Visitor(Set<IProject> projSet){
+		Visitor(Set<IProject> projSet) {
 			fProjSet = projSet;
 		}
 
@@ -121,17 +120,17 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 				return true;
 			case IResource.PROJECT:
 				int flags = delta.getFlags();
-				if((flags & IResourceDelta.DESCRIPTION) == IResourceDelta.DESCRIPTION){
+				if ((flags & IResourceDelta.DESCRIPTION) == IResourceDelta.DESCRIPTION) {
 					IProject project = rc.getProject();
 					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-					if(info != null && info.isValid() && info.getManagedProject() != null){
+					if (info != null && info.isValid() && info.getManagedProject() != null) {
 						IProjectDescription eDes = project.getDescription();
 						IConfiguration[] cfgs = info.getManagedProject().getConfigurations();
 						String natureIds[] = eDes.getNatureIds();
-						for(int i = 0; i < cfgs.length; i++){
+						for (int i = 0; i < cfgs.length; i++) {
 							String cachedIds[] = ConfigurationDataProvider.getNaturesIdsUsedOnCache(cfgs[i]);
-							if(checkNaturesNeedUpdate(cachedIds, natureIds)){
-								if(fProjSet == null)
+							if (checkNaturesNeedUpdate(cachedIds, natureIds)) {
+								if (fProjSet == null)
 									fProjSet = new HashSet<IProject>();
 
 								fProjSet.add(project);
@@ -146,14 +145,14 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 			}
 		}
 
-		Set<IProject> getProjSet(){
+		Set<IProject> getProjSet() {
 			return fProjSet;
 		}
 
 	}
 
-	private static boolean checkNaturesNeedUpdate(String[] oldIds, String[] newIds){
-		if(oldIds == null)
+	private static boolean checkNaturesNeedUpdate(String[] oldIds, String[] newIds) {
+		if (oldIds == null)
 			return true;
 
 		Set<String> oldSet = new HashSet<String>(Arrays.asList(oldIds));
@@ -161,10 +160,8 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 		Set<String> newSet = new HashSet<String>(Arrays.asList(newIds));
 		oldSet.removeAll(newSet);
 		newSet.removeAll(oldSetCopy);
-		if(oldSet.contains(CProjectNature.C_NATURE_ID)
-				|| oldSet.contains(CCProjectNature.CC_NATURE_ID)
-				|| newSet.contains(CProjectNature.C_NATURE_ID)
-				|| newSet.contains(CCProjectNature.CC_NATURE_ID))
+		if (oldSet.contains(CProjectNature.C_NATURE_ID) || oldSet.contains(CCProjectNature.CC_NATURE_ID)
+				|| newSet.contains(CProjectNature.C_NATURE_ID) || newSet.contains(CCProjectNature.CC_NATURE_ID))
 			return true;
 
 		return false;
@@ -174,10 +171,10 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 	public void resourceChanged(IResourceChangeEvent event) {
 		super.resourceChanged(event);
 
-		switch(event.getType()){
+		switch (event.getType()) {
 		case IResourceChangeEvent.POST_CHANGE:
 			IResourceDelta delta = event.getDelta();
-			if(delta != null){
+			if (delta != null) {
 				Visitor visitor = new Visitor(null);
 				try {
 					delta.accept(visitor);
@@ -189,14 +186,14 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 		}
 	}
 
-	private void postProcess(final Set<IProject> projSet){
-		if(projSet == null || projSet.size() == 0)
+	private void postProcess(final Set<IProject> projSet) {
+		if (projSet == null || projSet.size() == 0)
 			return;
 
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = wsp.getRoot();
 
-		Job job = new Job(ManagedMakeMessages.getString("ResourceChangeHandler2.0")){ //$NON-NLS-1$
+		Job job = new Job(ManagedMakeMessages.getString("ResourceChangeHandler2.0")) { //$NON-NLS-1$
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {

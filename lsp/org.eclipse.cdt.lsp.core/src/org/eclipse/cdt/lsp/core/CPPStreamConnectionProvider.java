@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 
-
 public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider {
 
 	public static final String ID = "org.eclipse.lsp4e.languages.cpp"; //$NON-NLS-1$
@@ -53,7 +52,7 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 			throw new UnsupportedOperationException("Unsupported Language Server"); //$NON-NLS-1$
 		}
 		File defaultLSLocation = getDefaultLSLocation(store.getString(PreferenceConstants.P_SERVER_CHOICE));
-		if(defaultLSLocation != null) {
+		if (defaultLSLocation != null) {
 			store.setDefault(PreferenceConstants.P_SERVER_PATH, defaultLSLocation.getAbsolutePath());
 		}
 		File languageServerLocation = getLanguageServerLocation();
@@ -129,9 +128,9 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 
 	static File getDefaultLSLocation(String selectedLanguageServer) {
 		String res = null;
-		String[] command = new String[] {"/bin/bash", "-c", "which " + selectedLanguageServer}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String[] command = new String[] { "/bin/bash", "-c", "which " + selectedLanguageServer }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			command = new String[] {"cmd", "/c", "where " + selectedLanguageServer}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			command = new String[] { "cmd", "/c", "where " + selectedLanguageServer }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		BufferedReader reader = null;
 		try {
@@ -156,4 +155,3 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 		return null;
 	}
 }
-

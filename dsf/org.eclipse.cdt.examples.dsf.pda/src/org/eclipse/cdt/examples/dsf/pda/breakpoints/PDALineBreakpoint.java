@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LineBreakpoint;
 
-
 /**
  * PDA line breakpoint
  * <p>
@@ -33,7 +32,7 @@ import org.eclipse.debug.core.model.LineBreakpoint;
  * </p>
  */
 public class PDALineBreakpoint extends LineBreakpoint {
-	
+
 	/**
 	 * Default constructor is required for the breakpoint manager
 	 * to re-create persisted breakpoints. After instantiating a breakpoint,
@@ -42,7 +41,7 @@ public class PDALineBreakpoint extends LineBreakpoint {
 	 */
 	public PDALineBreakpoint() {
 	}
-	
+
 	/**
 	 * Constructs a line breakpoint on the given resource at the given
 	 * line number. The line number is 1-based (i.e. the first line of a
@@ -62,12 +61,13 @@ public class PDALineBreakpoint extends LineBreakpoint {
 				marker.setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
 				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 				marker.setAttribute(IBreakpoint.ID, getModelIdentifier());
-				marker.setAttribute(IMarker.MESSAGE, "Line Breakpoint: " + resource.getName() + " [line: " + lineNumber + "]");
+				marker.setAttribute(IMarker.MESSAGE,
+						"Line Breakpoint: " + resource.getName() + " [line: " + lineNumber + "]");
 			}
 		};
 		run(getMarkerRule(resource), runnable);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IBreakpoint#getModelIdentifier()
 	 */
@@ -75,7 +75,7 @@ public class PDALineBreakpoint extends LineBreakpoint {
 	public String getModelIdentifier() {
 		return PDAPlugin.ID_PDA_DEBUG_MODEL;
 	}
-	
+
 	/**
 	 * Returns whether this breakpoint is a run-to-line breakpoint
 	 * 
@@ -84,5 +84,5 @@ public class PDALineBreakpoint extends LineBreakpoint {
 	public boolean isRunToLineBreakpoint() {
 		return false;
 	}
-    
+
 }

@@ -24,11 +24,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 
 public interface ISourceFilesProvider {
-	
+
 	public static final int LOW_PRIORITY = 25;
 	public static final int NORMAL_PRIORITY = 50;
 	public static final int HIGH_PRIORITY = 75;
-	
+
 	/**
 	 * Gets the priority to be used for this executable.
 	 * The priority is used by the Executables Manager when multiple ISourceFilesProviders are available.
@@ -39,7 +39,7 @@ public interface ISourceFilesProvider {
 	 * @return the priority level to be used for this ISourceFilesProvider
 	 */
 	int getPriority(Executable executable);
-	
+
 	/**
 	 * Returns a list of source files used by an executable.
 	 * @param executable

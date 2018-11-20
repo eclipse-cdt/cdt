@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 
-
 /**
  * TODO maybe rename to IC99InternalScope or something else.
  * 
@@ -27,8 +26,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICScope;
 public interface IC99Scope extends ICScope {
 
 	void setParent(IScope parent);
-	
+
 	void setPhysicalNode(IASTNode node);
-	
+
 	void setScopeName(IName name);
 }

@@ -22,8 +22,8 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  * @since 7.0
  */
 public class ReverseStepOverCommandHandler extends DebugCommandHandler {
-    @Override
-    protected Class<?> getCommandType() {
-        return IReverseStepOverHandler.class;
-    }
+	@Override
+	protected Class<?> getCommandType() {
+		return IReverseStepOverHandler.class;
+	}
 }

@@ -13,18 +13,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.xlc;
 
-
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 
 public class XlcCPPScannerExtensionConfiguration extends GPPScannerExtensionConfiguration {
 
 	private static XlcCPPScannerExtensionConfiguration instance;
-	
-	
-	private XlcCPPScannerExtensionConfiguration() {}
-	
+
+	private XlcCPPScannerExtensionConfiguration() {
+	}
+
 	public static synchronized XlcCPPScannerExtensionConfiguration getInstance() {
-		if(instance == null)
+		if (instance == null)
 			instance = new XlcCPPScannerExtensionConfiguration();
 		return instance;
 	}
@@ -36,6 +35,6 @@ public class XlcCPPScannerExtensionConfiguration extends GPPScannerExtensionConf
 
 	@Override
 	public char[] supportAdditionalNumericLiteralSuffixes() {
-        return "dflij".toCharArray(); //$NON-NLS-1$
-    }
+		return "dflij".toCharArray(); //$NON-NLS-1$
+	}
 }

@@ -28,7 +28,6 @@ import org.eclipse.ui.actions.RenameResourceAction;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
-
 /**
  * The ResourceNavigatorRenameAction is the rename action used by the
  * ResourceNavigator that also allows updating after rename.
@@ -36,6 +35,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  */
 public class CViewRenameAction extends RenameResourceAction {
 	private TreeViewer viewer;
+
 	/**
 	 * Create a ResourceNavigatorRenameAction and use the tree of the supplied viewer
 	 * for editing.
@@ -46,11 +46,10 @@ public class CViewRenameAction extends RenameResourceAction {
 	@Deprecated
 	public CViewRenameAction(Shell shell, TreeViewer treeViewer) {
 		super(shell, treeViewer.getTree());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(
-			this,
-			ICHelpContextIds.RENAME_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.RENAME_ACTION);
 		this.viewer = treeViewer;
 	}
+
 	/**
 	 * Create a ResourceNavigatorRenameAction and use the tree of the supplied viewer
 	 * for editing.
@@ -59,9 +58,7 @@ public class CViewRenameAction extends RenameResourceAction {
 	 */
 	public CViewRenameAction(IShellProvider shellProvider, TreeViewer treeViewer) {
 		super(shellProvider, treeViewer.getTree());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(
-			this,
-			ICHelpContextIds.RENAME_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.RENAME_ACTION);
 		this.viewer = treeViewer;
 	}
 
@@ -78,6 +75,7 @@ public class CViewRenameAction extends RenameResourceAction {
 				this.viewer.setSelection(new StructuredSelection(newResource), true);
 		}
 	}
+
 	/**
 	* Handle the key release
 	*/

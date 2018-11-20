@@ -49,22 +49,22 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	private ICElement[] fMoveData;
 	private ICElement[] fCopyData;
 
-	private static final long DROP_TIME_DIFF_TRESHOLD= 150;
+	private static final long DROP_TIME_DIFF_TRESHOLD = 150;
 
 	public SelectionTransferDropAdapter(StructuredViewer viewer) {
 		super(viewer, DND.FEEDBACK_SCROLL | DND.FEEDBACK_EXPAND);
 	}
 
 	//---- TransferDropTargetListener interface ---------------------------------------
-	
+
 	@Override
 	public Transfer getTransfer() {
 		return LocalSelectionTransfer.getTransfer();
 	}
-	
+
 	@Override
 	public boolean isEnabled(DropTargetEvent event) {
-		Object target= event.item != null ? event.item.getData() : null;
+		Object target = event.item != null ? event.item.getData() : null;
 		if (target == null) {
 			return false;
 		}
@@ -72,117 +72,121 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	}
 
 	//---- Actual DND -----------------------------------------------------------------
-	
+
 	@Override
 	public void dragEnter(DropTargetEvent event) {
 		clear();
 		super.dragEnter(event);
 	}
-	
+
 	@Override
 	public void dragLeave(DropTargetEvent event) {
 		clear();
 		super.dragLeave(event);
 	}
-	
+
 	private void clear() {
 		fElements = null;
 		fMoveData = null;
 		fCopyData = null;
 	}
-	
+
 	@Override
 	public void validateDrop(Object target, DropTargetEvent event, int operation) {
-		event.detail= DND.DROP_NONE;
-		
-		if (tooFast(event)) { 
+		event.detail = DND.DROP_NONE;
+
+		if (tooFast(event)) {
 			return;
 		}
-		
+
 		initializeSelection();
-				
+
 		try {
-			switch(operation) {
-				case DND.DROP_DEFAULT:
-					event.detail= handleValidateDefault(target, event); 
-					break;
-				case DND.DROP_COPY:
-					event.detail= handleValidateCopy(target, event);
-					break;
-				case DND.DROP_MOVE:
-					event.detail= handleValidateMove(target, event);
-					break;
-				case DND.DROP_LINK:
-					event.detail= handleValidateLink(target, event);
-					break;
+			switch (operation) {
+			case DND.DROP_DEFAULT:
+				event.detail = handleValidateDefault(target, event);
+				break;
+			case DND.DROP_COPY:
+				event.detail = handleValidateCopy(target, event);
+				break;
+			case DND.DROP_MOVE:
+				event.detail = handleValidateMove(target, event);
+				break;
+			case DND.DROP_LINK:
+				event.detail = handleValidateLink(target, event);
+				break;
 			}
-		} catch (CModelException e){
-			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_message); 
-			event.detail= DND.DROP_NONE;
-		}	
+		} catch (CModelException e) {
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title,
+					CViewMessages.SelectionTransferDropAdapter_error_message);
+			event.detail = DND.DROP_NONE;
+		}
 	}
 
-	protected void initializeSelection(){
+	protected void initializeSelection() {
 		if (fElements != null) {
 			return;
 		}
-		ISelection s= LocalSelectionTransfer.getTransfer().getSelection();
+		ISelection s = LocalSelectionTransfer.getTransfer().getSelection();
 		if (!(s instanceof IStructuredSelection)) {
 			return;
 		}
-		fElements = ((IStructuredSelection)s).toList();
+		fElements = ((IStructuredSelection) s).toList();
 	}
-	
+
 	private boolean tooFast(DropTargetEvent event) {
-		return Math.abs(LocalSelectionTransfer.getTransfer().getSelectionSetTime() - (event.time & 0xFFFFFFFFL)) < DROP_TIME_DIFF_TRESHOLD;
-	}	
+		return Math.abs(LocalSelectionTransfer.getTransfer().getSelectionSetTime()
+				- (event.time & 0xFFFFFFFFL)) < DROP_TIME_DIFF_TRESHOLD;
+	}
 
 	@Override
 	public void drop(Object target, DropTargetEvent event) {
 		try {
-			switch(event.detail) {
-				case DND.DROP_MOVE:
-					handleDropMove(target, event);
-					break;
-				case DND.DROP_COPY:
-					handleDropCopy(target, event);
-					break;
-				case DND.DROP_LINK:
-					handleDropLink(target, event);
-					break;
+			switch (event.detail) {
+			case DND.DROP_MOVE:
+				handleDropMove(target, event);
+				break;
+			case DND.DROP_COPY:
+				handleDropCopy(target, event);
+				break;
+			case DND.DROP_LINK:
+				handleDropLink(target, event);
+				break;
 			}
-		} catch (CModelException e){
-			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_message); 
-		} catch(InvocationTargetException e) {
-			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_exception); 
+		} catch (CModelException e) {
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title,
+					CViewMessages.SelectionTransferDropAdapter_error_message);
+		} catch (InvocationTargetException e) {
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title,
+					CViewMessages.SelectionTransferDropAdapter_error_exception);
 		} catch (InterruptedException e) {
 			//ok
 		} finally {
 			// The drag source listener must not perform any operation
 			// since this drop adapter did the remove of the source even
 			// if we moved something.
-			event.detail= DND.DROP_NONE;
+			event.detail = DND.DROP_NONE;
 		}
 	}
-	
+
 	private int handleValidateDefault(Object target, DropTargetEvent event) throws CModelException {
 		if (target == null) {
 			return DND.DROP_NONE;
-		}	
-		return handleValidateMove(target, event);	
+		}
+		return handleValidateMove(target, event);
 	}
-	
+
 	private int handleValidateMove(Object target, DropTargetEvent event) throws CModelException {
 		if (target == null || fElements.contains(target)) {
 			return DND.DROP_NONE;
 		}
 		if (fMoveData == null) {
-			ICElement[] cElements= getCElements(fElements);
+			ICElement[] cElements = getCElements(fElements);
 			if (cElements != null && cElements.length > 0) {
 				fMoveData = cElements;
 			}
 		}
-		
+
 		if (!canMoveElements()) {
 			return DND.DROP_NONE;
 		}
@@ -192,7 +196,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 		}
 		return DND.DROP_NONE;
 	}
-	
+
 	private boolean canMoveElements() {
 		if (fMoveData != null) {
 			return hasCommonParent(fMoveData);
@@ -209,7 +213,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 					if (p != null) {
 						return false;
 					}
-				} else if (!parent.equals(p)){
+				} else if (!parent.equals(p)) {
 					return false;
 				}
 			}
@@ -223,12 +227,13 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	private int handleValidateLink(Object target, DropTargetEvent event) {
 		return DND.DROP_NONE;
 	}
-	
-	private void handleDropMove(final Object target, DropTargetEvent event) throws CModelException, InvocationTargetException, InterruptedException{
-		final ICElement[] cElements= getCElements(fElements);
-		
+
+	private void handleDropMove(final Object target, DropTargetEvent event)
+			throws CModelException, InvocationTargetException, InterruptedException {
+		final ICElement[] cElements = getCElements(fElements);
+
 		if (target instanceof ICElement) {
-			ICElement cTarget = (ICElement)target;
+			ICElement cTarget = (ICElement) target;
 			ICElement parent = cTarget;
 			boolean isTargetTranslationUnit = cTarget instanceof ITranslationUnit;
 			if (!isTargetTranslationUnit) {
@@ -260,39 +265,40 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 		}
 	}
 
-	private int handleValidateCopy(Object target, DropTargetEvent event) throws CModelException{
+	private int handleValidateCopy(Object target, DropTargetEvent event) throws CModelException {
 		if (target == null) {
 			return DND.DROP_NONE;
 		}
 
 		if (fCopyData == null) {
-			ICElement[] cElements= getCElements(fElements);
+			ICElement[] cElements = getCElements(fElements);
 			if (cElements != null && cElements.length > 0) {
-				fCopyData= cElements;
+				fCopyData = cElements;
 			}
 		}
-		
+
 		if (!canCopyElements())
-			return DND.DROP_NONE;	
+			return DND.DROP_NONE;
 
 		if (target instanceof ISourceReference) {
 			return DND.DROP_COPY;
 		}
-		return DND.DROP_NONE;					
+		return DND.DROP_NONE;
 	}
-			
+
 	private boolean canCopyElements() {
 		if (fCopyData != null) {
 			return hasCommonParent(fCopyData);
 		}
 		return false;
-	}		
-	
-	private void handleDropCopy(final Object target, DropTargetEvent event) throws CModelException, InvocationTargetException, InterruptedException{
-		final ICElement[] cElements= getCElements(fElements);
+	}
+
+	private void handleDropCopy(final Object target, DropTargetEvent event)
+			throws CModelException, InvocationTargetException, InterruptedException {
+		final ICElement[] cElements = getCElements(fElements);
 
 		if (target instanceof ICElement) {
-			ICElement cTarget = (ICElement)target;
+			ICElement cTarget = (ICElement) target;
 			ICElement parent = cTarget;
 			boolean isTargetTranslationUnit = cTarget instanceof ITranslationUnit;
 			if (!isTargetTranslationUnit) {
@@ -329,14 +335,14 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	}
 
 	public void run(IRunnableWithProgress runnable) throws InterruptedException, InvocationTargetException {
-		IRunnableContext context= new ProgressMonitorDialog(getShell());
+		IRunnableContext context = new ProgressMonitorDialog(getShell());
 		context.run(true, true, runnable);
 	}
 
 	public static ICElement[] getCElements(List<?> elements) {
-		List<ICElement> resources= new ArrayList<ICElement>(elements.size());
-		for (Iterator<?> iter= elements.iterator(); iter.hasNext();) {
-			Object element= iter.next();
+		List<ICElement> resources = new ArrayList<ICElement>(elements.size());
+		for (Iterator<?> iter = elements.iterator(); iter.hasNext();) {
+			Object element = iter.next();
 			if (element instanceof ITranslationUnit) {
 				continue;
 			}

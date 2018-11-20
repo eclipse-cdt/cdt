@@ -60,7 +60,7 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 	static final String STORAGE_FOLDER_NAME = ".csettings"; //$NON-NLS-1$
 	/** Element providing the name of the external C Element file */
 	public static final String EXTERNAL_CELEMENT_KEY = "externalCElementFile"; //$NON-NLS-1$
-	private static final String ID = "id";	//$NON-NLS-1$
+	private static final String ID = "id"; //$NON-NLS-1$
 
 	/** Override the description version, we support version '5.0' files */
 	@SuppressWarnings("hiding")
@@ -109,7 +109,8 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 		} catch (CoreException e) {
 			// STORAGE_FOLDER_NAME doesn't exist... or something went wrong during reload
 			if (project.getFolder(STORAGE_FOLDER_NAME).exists())
-				CCorePlugin.log("XmlProjectDescriptionStorage2: Problem checking for external modification: " + e.getMessage()); //$NON-NLS-1$
+				CCorePlugin.log(
+						"XmlProjectDescriptionStorage2: Problem checking for external modification: " + e.getMessage()); //$NON-NLS-1$
 		}
 		return needReload[0];
 	}
@@ -119,8 +120,10 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 	 * @see org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage#createStorage(org.eclipse.core.resources.IContainer, java.lang.String, boolean, boolean, boolean)
 	 */
 	@Override
-	protected final InternalXmlStorageElement createStorage(IContainer container, String fileName, boolean reCreate, boolean createEmptyIfNotFound, boolean readOnly) throws CoreException {
-		InternalXmlStorageElement el = super.createStorage(container, fileName, reCreate, createEmptyIfNotFound, readOnly);
+	protected final InternalXmlStorageElement createStorage(IContainer container, String fileName, boolean reCreate,
+			boolean createEmptyIfNotFound, boolean readOnly) throws CoreException {
+		InternalXmlStorageElement el = super.createStorage(container, fileName, reCreate, createEmptyIfNotFound,
+				readOnly);
 
 		Queue<ICStorageElement> nodesToCheck = new LinkedList<ICStorageElement>();
 		nodesToCheck.addAll(Arrays.asList(el.getChildren()));
@@ -137,11 +140,10 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 			try {
 				// Found -- load the Document pointed to (allows multiple layers of indirection if need be)
 				InternalXmlStorageElement el2 = createStorage(project.getFolder(STORAGE_FOLDER_NAME),
-																	currEl.getAttribute(EXTERNAL_CELEMENT_KEY),
-																	reCreate, createEmptyIfNotFound, readOnly);
+						currEl.getAttribute(EXTERNAL_CELEMENT_KEY), reCreate, createEmptyIfNotFound, readOnly);
 				// Update the modification stamp
-				modificationMap.put(currEl.getAttribute(EXTERNAL_CELEMENT_KEY),
-						getModificationStamp(project.getFolder(STORAGE_FOLDER_NAME).getFile(currEl.getAttribute(EXTERNAL_CELEMENT_KEY))));
+				modificationMap.put(currEl.getAttribute(EXTERNAL_CELEMENT_KEY), getModificationStamp(
+						project.getFolder(STORAGE_FOLDER_NAME).getFile(currEl.getAttribute(EXTERNAL_CELEMENT_KEY))));
 
 				ICStorageElement currParent = currEl.getParent();
 				// Get the storageModule element in the new Document
@@ -191,7 +193,7 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 			Queue<ICStorageElement> configStorages = new LinkedList<ICStorageElement>();
 			configStorages.addAll(Arrays.asList(el.getChildren()));
 			while (!configStorages.isEmpty()) {
-				InternalXmlStorageElement iEl = (InternalXmlStorageElement)configStorages.remove();
+				InternalXmlStorageElement iEl = (InternalXmlStorageElement) configStorages.remove();
 
 				// If not a stroageModule element, the just add children ...
 				// e.g. configuration element...
@@ -201,11 +203,12 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 				}
 
 				// Persist this storage Element fileName = configurationID_moduleID
-				String storageId = ((Element)iEl.fElement.getParentNode()).getAttribute(ID) + "_" //$NON-NLS-1$
-								  + iEl.getAttribute(XmlStorage.MODULE_ID_ATTRIBUTE);
+				String storageId = ((Element) iEl.fElement.getParentNode()).getAttribute(ID) + "_" //$NON-NLS-1$
+						+ iEl.getAttribute(XmlStorage.MODULE_ID_ATTRIBUTE);
 
 				// create a dummy storage for the element <cproject> held
-				InternalXmlStorageElement newEl = createStorage(project.getFolder(STORAGE_FOLDER_NAME), storageId, false, true, false);
+				InternalXmlStorageElement newEl = createStorage(project.getFolder(STORAGE_FOLDER_NAME), storageId,
+						false, true, false);
 				newEl.importChild(copyElement(iEl, false));
 				externalStorageElements.put(storageId, newEl);
 

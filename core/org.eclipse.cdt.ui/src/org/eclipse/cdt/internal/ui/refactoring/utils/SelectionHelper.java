@@ -41,12 +41,12 @@ public class SelectionHelper {
 
 	public static Region getRegion(ISelection selection) {
 		if (selection instanceof ITextSelection) {
-			final ITextSelection txtSelection= (ITextSelection) selection;
+			final ITextSelection txtSelection = (ITextSelection) selection;
 			return new Region(txtSelection.getOffset(), txtSelection.getLength());
 		}
 		return null;
 	}
-	
+
 	public static IASTSimpleDeclaration findFirstSelectedDeclaration(final IRegion textSelection,
 			IASTTranslationUnit translationUnit) {
 		final Container<IASTSimpleDeclaration> container = new Container<>();
@@ -55,10 +55,11 @@ public class SelectionHelper {
 			{
 				shouldVisitDeclarations = true;
 			}
+
 			@Override
 			public int visit(IASTDeclaration declaration) {
-				if (declaration instanceof IASTSimpleDeclaration &&
-						doesNodeOverlapWithRegion(declaration, textSelection)) {
+				if (declaration instanceof IASTSimpleDeclaration
+						&& doesNodeOverlapWithRegion(declaration, textSelection)) {
 					container.setObject((IASTSimpleDeclaration) declaration);
 				}
 				return super.visit(declaration);
@@ -67,11 +68,11 @@ public class SelectionHelper {
 
 		return container.getObject();
 	}
-	
+
 	public static boolean doesNodeOverlapWithRegion(IASTNode node, IRegion region) {
 		return doRegionsOverlap(getNodeSpan(node), region);
 	}
-	
+
 	public static boolean isNodeInsideRegion(IASTNode node, IRegion region) {
 		return isRegionInside(getNodeSpan(node), region);
 	}
@@ -82,8 +83,7 @@ public class SelectionHelper {
 	private static boolean isRegionInside(IRegion region1, IRegion region2) {
 		int offset1 = region1.getOffset();
 		int offset2 = region2.getOffset();
-		return offset1 >= offset2 &&
-				offset1 + region1.getLength() <= offset2 + region2.getLength();
+		return offset1 >= offset2 && offset1 + region1.getLength() <= offset2 + region2.getLength();
 	}
 
 	/**
@@ -92,8 +92,7 @@ public class SelectionHelper {
 	private static boolean doRegionsOverlap(IRegion region1, IRegion region2) {
 		int offset1 = region1.getOffset();
 		int offset2 = region2.getOffset();
-		return offset1 + region1.getLength() >= offset2 &&
-				offset1 <= offset2 + region2.getLength();
+		return offset1 + region1.getLength() >= offset2 && offset1 <= offset2 + region2.getLength();
 	}
 
 	public static boolean isNodeInsideSelection(IASTNode node, IRegion selection) {

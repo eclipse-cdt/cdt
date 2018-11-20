@@ -37,11 +37,12 @@ import org.eclipse.core.runtime.Preferences;
  * @author vhirsl
  */
 public final class ScannerConfigProfileManager {
-	public static final String SI_PROFILE_SIMPLE_ID = "ScannerConfigurationDiscoveryProfile";	//$NON-NLS-1$
-	public static final String PER_PROJECT_PROFILE_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCStandardMakePerProjectProfile"; //$NON-NLS-1$
+	public static final String SI_PROFILE_SIMPLE_ID = "ScannerConfigurationDiscoveryProfile"; //$NON-NLS-1$
+	public static final String PER_PROJECT_PROFILE_ID = MakeCorePlugin.getUniqueIdentifier()
+			+ ".GCCStandardMakePerProjectProfile"; //$NON-NLS-1$
 	public static final String NULL_PROFILE_ID = "";//$NON-NLS-1$
 	public static final String DEFAULT_SI_PROFILE_ID = NULL_PROFILE_ID;
-	
+
 	private final Map<IProject, Map<InfoContext, Object>> projectToProfileInstanceMap;
 	private List<String> profileIds;
 	private List<String> contextAwareProfileIds;
@@ -53,6 +54,7 @@ public final class ScannerConfigProfileManager {
 	private ScannerConfigProfileManager() {
 		projectToProfileInstanceMap = new HashMap<IProject, Map<InfoContext, Object>>();
 	}
+
 	private static final ScannerConfigProfileManager instance = new ScannerConfigProfileManager();
 
 	public static ScannerConfigProfileManager getInstance() {
@@ -64,7 +66,7 @@ public final class ScannerConfigProfileManager {
 		try {
 			IScannerConfigBuilderInfo2Set container = createScannerConfigBuildInfo2Set(project);
 			IScannerConfigBuilderInfo2 buildInfo = container.getInfo(context);
-			if(buildInfo == null)
+			if (buildInfo == null)
 				buildInfo = container.getInfo(new InfoContext(project));
 			profileId = buildInfo.getSelectedProfileId();
 		} catch (CoreException e) {
@@ -85,24 +87,24 @@ public final class ScannerConfigProfileManager {
 	public void addProfile(IProject project, InfoContext context, ScannerConfigProfile profile) {
 		getProfileMap(project, true).put(context, profile);
 	}
-	
-	private Map<InfoContext, Object> getProfileMap(IProject project, boolean create){
+
+	private Map<InfoContext, Object> getProfileMap(IProject project, boolean create) {
 		synchronized (fLock) {
 			Map<InfoContext, Object> map = projectToProfileInstanceMap.get(project);
-			if(map == null && create){
+			if (map == null && create) {
 				map = new HashMap<InfoContext, Object>();
 				projectToProfileInstanceMap.put(project, map);
 			}
 			return Collections.synchronizedMap(map);
 		}
 	}
-	
-	public void handleProjectRemoved(IProject project){
+
+	public void handleProjectRemoved(IProject project) {
 		synchronized (fLock) {
 			projectToProfileInstanceMap.remove(project);
 		}
 	}
-	
+
 	/**
 	 * @param profileId - if null, get the one associated with the project
 	 * @return the scannerConfigProfile instance for a project.
@@ -114,30 +116,32 @@ public final class ScannerConfigProfileManager {
 	public SCProfileInstance getSCProfileInstance(IProject project, InfoContext context, String profileId) {
 
 		// if not specified read from .project file
-        if (profileId == NULL_PROFILE_ID) {
-            profileId = getProfileId(project, context);
-        }
+		if (profileId == NULL_PROFILE_ID) {
+			profileId = getProfileId(project, context);
+		}
 		synchronized (fLock) {
-	        // is the project's profile already loaded?
-	        Map<InfoContext, Object> map = getProfileMap(project, true);
-	        SoftReference<SCProfileInstance> profileInstanceReference = (SoftReference<SCProfileInstance>) map.get(context);
-	        SCProfileInstance profileInstance = profileInstanceReference != null ? profileInstanceReference.get() : null;
-	        
-	        if (profileInstance == null || !profileInstance.getProfile().getId().equals(profileId)) {
-	            profileInstance = new SCProfileInstance(project, context, getSCProfileConfiguration(profileId));
-	            map.put(context, new SoftReference<SCProfileInstance>(profileInstance));
-	        }
-	        return profileInstance;
+			// is the project's profile already loaded?
+			Map<InfoContext, Object> map = getProfileMap(project, true);
+			SoftReference<SCProfileInstance> profileInstanceReference = (SoftReference<SCProfileInstance>) map
+					.get(context);
+			SCProfileInstance profileInstance = profileInstanceReference != null ? profileInstanceReference.get()
+					: null;
+
+			if (profileInstance == null || !profileInstance.getProfile().getId().equals(profileId)) {
+				profileInstance = new SCProfileInstance(project, context, getSCProfileConfiguration(profileId));
+				map.put(context, new SoftReference<SCProfileInstance>(profileInstance));
+			}
+			return profileInstance;
 		}
 	}
 
-    public SCProfileInstance getSCProfileInstance(String profileId) {
-        SCProfileInstance profileInstance = null;
-        if (profileId != NULL_PROFILE_ID) {
-            profileInstance = new SCProfileInstance(null, getSCProfileConfiguration(profileId));
-        }
-        return profileInstance;
-    }
+	public SCProfileInstance getSCProfileInstance(String profileId) {
+		SCProfileInstance profileInstance = null;
+		if (profileId != NULL_PROFILE_ID) {
+			profileInstance = new SCProfileInstance(null, getSCProfileConfiguration(profileId));
+		}
+		return profileInstance;
+	}
 
 	/**
 	 * @param profileId - if null, get the default one
@@ -155,8 +159,8 @@ public final class ScannerConfigProfileManager {
 		synchronized (fLock) {
 			if (profileIds == null) {
 				profileIds = new ArrayList<String>();
-				IExtensionPoint extension = Platform.getExtensionRegistry().
-						getExtensionPoint(MakeCorePlugin.PLUGIN_ID, ScannerConfigProfileManager.SI_PROFILE_SIMPLE_ID);
+				IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.PLUGIN_ID,
+						ScannerConfigProfileManager.SI_PROFILE_SIMPLE_ID);
 				if (extension != null) {
 					IExtension[] extensions = extension.getExtensions();
 					for (int i = 0; i < extensions.length; ++i) {
@@ -166,25 +170,25 @@ public final class ScannerConfigProfileManager {
 				}
 			}
 		}
-		return Collections.unmodifiableList(profileIds);	
+		return Collections.unmodifiableList(profileIds);
 	}
-	
+
 	/**
 	 * @return the list of profile IDs supported for this context
 	 */
-	public List<String> getProfileIds(InfoContext context){
-		if(context.isDefaultContext() || context.getProject() == null)
+	public List<String> getProfileIds(InfoContext context) {
+		if (context.isDefaultContext() || context.getProject() == null)
 			return getProfileIds();
-		
+
 		synchronized (fLock) {
-			if(contextAwareProfileIds == null){
+			if (contextAwareProfileIds == null) {
 				contextAwareProfileIds = new ArrayList<String>();
 				List<String> all = getProfileIds();
 
-				for(int i = 0; i < all.size(); i++){
+				for (int i = 0; i < all.size(); i++) {
 					String id = all.get(i);
 					ScannerConfigProfile profile = getSCProfileConfiguration(id);
-					if(profile.supportsContext())
+					if (profile.supportsContext())
 						contextAwareProfileIds.add(id);
 				}
 			}
@@ -198,49 +202,55 @@ public final class ScannerConfigProfileManager {
 	public static String getDefaultSIProfileId() {
 		return DEFAULT_SI_PROFILE_ID;
 	}
-	
+
 	/**
-     * Set selectedProfile to profileId 
+	 * Set selectedProfile to profileId 
 	 */
-    public static IScannerConfigBuilderInfo2 createScannerConfigBuildInfo2(IProject project, String profileId) throws CoreException {
+	public static IScannerConfigBuilderInfo2 createScannerConfigBuildInfo2(IProject project, String profileId)
+			throws CoreException {
 		return ScannerConfigInfoFactory2.create(project, profileId);
 	}
 
-    /**
-     * Use stored selectedProfile
-     */
-    public static IScannerConfigBuilderInfo2 createScannerConfigBuildInfo2(IProject project) throws CoreException {
-        return ScannerConfigInfoFactory2.create(project, ScannerConfigProfileManager.NULL_PROFILE_ID);
-    }
-    
-    public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(IProject project) throws CoreException {
-        return ScannerConfigInfoFactory2.createInfoSet(project, ScannerConfigProfileManager.NULL_PROFILE_ID);
-    }
+	/**
+	 * Use stored selectedProfile
+	 */
+	public static IScannerConfigBuilderInfo2 createScannerConfigBuildInfo2(IProject project) throws CoreException {
+		return ScannerConfigInfoFactory2.create(project, ScannerConfigProfileManager.NULL_PROFILE_ID);
+	}
 
-    public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(IProject project, String profileId) throws CoreException {
-        return ScannerConfigInfoFactory2.createInfoSet(project, profileId);
-    }
+	public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(IProject project)
+			throws CoreException {
+		return ScannerConfigInfoFactory2.createInfoSet(project, ScannerConfigProfileManager.NULL_PROFILE_ID);
+	}
 
-    public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(Preferences prefs, boolean useDefaults) throws CoreException {
-    	return ScannerConfigInfoFactory2.createInfoSet(prefs, ScannerConfigProfileManager.NULL_PROFILE_ID, useDefaults);
-    }
+	public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(IProject project, String profileId)
+			throws CoreException {
+		return ScannerConfigInfoFactory2.createInfoSet(project, profileId);
+	}
 
-    public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(Preferences prefs, String profileId, boolean useDefaults) throws CoreException {
-        return ScannerConfigInfoFactory2.createInfoSet(prefs, profileId, useDefaults);
-    }
+	public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(Preferences prefs, boolean useDefaults)
+			throws CoreException {
+		return ScannerConfigInfoFactory2.createInfoSet(prefs, ScannerConfigProfileManager.NULL_PROFILE_ID, useDefaults);
+	}
+
+	public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(Preferences prefs, String profileId,
+			boolean useDefaults) throws CoreException {
+		return ScannerConfigInfoFactory2.createInfoSet(prefs, profileId, useDefaults);
+	}
 
 	/**
-     * Set selectedProfile to profileId 
+	 * Set selectedProfile to profileId 
 	 */
-    public static IScannerConfigBuilderInfo2 createScannerConfigBuildInfo2(Preferences prefs, String profileId, boolean useDefaults) {
+	public static IScannerConfigBuilderInfo2 createScannerConfigBuildInfo2(Preferences prefs, String profileId,
+			boolean useDefaults) {
 		return ScannerConfigInfoFactory2.create(prefs, profileId, useDefaults);
 	}
 
-    /**
-     * Use stored selectedProfile
-     */
-    public static IScannerConfigBuilderInfo2 createScannerConfigBuildInfo2(Preferences prefs, boolean useDefaults) {
-        return ScannerConfigInfoFactory2.create(prefs, ScannerConfigProfileManager.NULL_PROFILE_ID, useDefaults);
-    }
+	/**
+	 * Use stored selectedProfile
+	 */
+	public static IScannerConfigBuilderInfo2 createScannerConfigBuildInfo2(Preferences prefs, boolean useDefaults) {
+		return ScannerConfigInfoFactory2.create(prefs, ScannerConfigProfileManager.NULL_PROFILE_ID, useDefaults);
+	}
 
 }

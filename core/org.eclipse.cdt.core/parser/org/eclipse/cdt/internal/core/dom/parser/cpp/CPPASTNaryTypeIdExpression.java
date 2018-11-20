@@ -67,9 +67,12 @@ public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTy
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitExpressions) {
 			switch (action.visit(this)) {
-				case ASTVisitor.PROCESS_ABORT: return false;
-				case ASTVisitor.PROCESS_SKIP: return true;
-				default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 

@@ -15,6 +15,7 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+
 /**
  *
  *     -gdb-set solib-absolute-prefix PATH
@@ -24,7 +25,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 public class MIGDBSetSolibAbsolutePrefix extends MIGDBSet {
 
 	public MIGDBSetSolibAbsolutePrefix(ICommandControlDMContext ctx, String prefix) {
-		super(ctx, new String[] {"solib-absolute-prefix", prefix}, x-> new MINoChangeAdjustable(x)); //$NON-NLS-1$
+		super(ctx, new String[] { "solib-absolute-prefix", prefix }, x -> new MINoChangeAdjustable(x)); //$NON-NLS-1$
 	}
 
 }

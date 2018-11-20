@@ -36,7 +36,7 @@ public class CSourceNotFoundElement {
 	public CSourceNotFoundElement(IAdaptable element, ILaunchConfiguration launch, String file) {
 		this.element = element;
 		this.launch = launch;
-		
+
 		// client assumes empty string rather than null
 		this.file = file != null ? file : ""; //$NON-NLS-1$
 	}

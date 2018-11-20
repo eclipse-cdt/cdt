@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -29,46 +29,47 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
 
 public class SelectionProviderMediator implements ISelectionProvider {
-	private Map<Control, ISelectionProvider> fProviders= new HashMap<Control, ISelectionProvider>();
+	private Map<Control, ISelectionProvider> fProviders = new HashMap<Control, ISelectionProvider>();
 	private ISelectionProvider fActiveProvider = null;
 	private ISelectionChangedListener fSelectionChangedListener;
 	private FocusListener fFocusListener;
 
-    private ListenerList<ISelectionChangedListener> fListenerList= new ListenerList<>();
+	private ListenerList<ISelectionChangedListener> fListenerList = new ListenerList<>();
 
 	public SelectionProviderMediator() {
-		fSelectionChangedListener= event -> onSelectionChanged(event);
+		fSelectionChangedListener = event -> onSelectionChanged(event);
 		fFocusListener = new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
 				onFocusGained(e);
 			}
+
 			@Override
 			public void focusLost(FocusEvent e) {
 			}
 		};
 	}
 
-    @Override
+	@Override
 	final public void addSelectionChangedListener(ISelectionChangedListener listener) {
-    	fListenerList.add(listener);
-    }
+		fListenerList.add(listener);
+	}
 
-    @Override
+	@Override
 	final public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-    	fListenerList.remove(listener);
-    }
+		fListenerList.remove(listener);
+	}
 
 	final protected void fireSelectionChanged() {
 		if (!fListenerList.isEmpty()) {
-			SelectionChangedEvent event= new SelectionChangedEvent(this, getSelection());
-			
+			SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
+
 			for (ISelectionChangedListener listener : fListenerList) {
 				listener.selectionChanged(event);
 			}
 		}
 	}
-	    
+
 	public void addViewer(Viewer viewer) {
 		addSelectionProvider(viewer.getControl(), viewer);
 	}
@@ -87,6 +88,7 @@ public class SelectionProviderMediator implements ISelectionProvider {
 		}
 		return StructuredSelection.EMPTY;
 	}
+
 	// overrider
 	@Override
 	public void setSelection(ISelection selection) {
@@ -96,9 +98,9 @@ public class SelectionProviderMediator implements ISelectionProvider {
 	}
 
 	protected void onFocusGained(FocusEvent e) {
-		ISelectionProvider provider= fProviders.get(e.widget);
+		ISelectionProvider provider = fProviders.get(e.widget);
 		if (provider != null) {
-			fActiveProvider= provider;
+			fActiveProvider = provider;
 			fireSelectionChanged();
 		}
 	}

@@ -66,7 +66,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	 * Cache of the addressable sizes for each memory context. 
 	 */
 	private Map<IMemoryDMContext, Integer> fAddressableSizes = new HashMap<IMemoryDMContext, Integer>();
-	
+
 	/**
 	 * Cache of the endianness for each memory context. 
 	 */
@@ -89,51 +89,39 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	private void doInitialize(final RequestMonitor requestMonitor) {
 		fCommandControl = getServicesTracker().getService(IGDBControl.class);
 		getSession().addServiceEventListener(this, null);
-		register(
-			new String[] { 
-				IMemory.class.getName(),
-				MIMemory.class.getName(),
-				IGDBMemory.class.getName(),
-				IGDBMemory2.class.getName(),
-				GDBMemory.class.getName(),
-			},
-			new Hashtable<String, String>());
+		register(new String[] { IMemory.class.getName(), MIMemory.class.getName(), IGDBMemory.class.getName(),
+				IGDBMemory2.class.getName(), GDBMemory.class.getName(), }, new Hashtable<String, String>());
 		requestMonitor.done();
 	}
 
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
 		unregister();
-    	getSession().removeServiceEventListener(this);
-    	fAddressableSizes.clear();
+		getSession().removeServiceEventListener(this);
+		fAddressableSizes.clear();
 		fAddressSizes.clear();
 		super.shutdown(requestMonitor);
 	}
 
 	@Override
-	protected void readMemoryBlock(final IDMContext dmc, IAddress address, 
-		long offset, int word_size, int word_count, final DataRequestMonitor<MemoryByte[]> drm) {
-		super.readMemoryBlock(
-			dmc, 
-			address, 
-			offset, 
-			word_size, 
-			word_count, 
-			new DataRequestMonitor<MemoryByte[]>(ImmediateExecutor.getInstance(), drm) {
-				@Override
-				protected void handleSuccess() {
-					IMemoryDMContext memDmc = DMContexts.getAncestorOfType(dmc, IMemoryDMContext.class);
-					if (memDmc != null) {
-						boolean bigEndian = isBigEndian(memDmc);
-						for (MemoryByte b : getData()) {
-							b.setBigEndian(bigEndian);
-							b.setEndianessKnown(true);
+	protected void readMemoryBlock(final IDMContext dmc, IAddress address, long offset, int word_size, int word_count,
+			final DataRequestMonitor<MemoryByte[]> drm) {
+		super.readMemoryBlock(dmc, address, offset, word_size, word_count,
+				new DataRequestMonitor<MemoryByte[]>(ImmediateExecutor.getInstance(), drm) {
+					@Override
+					protected void handleSuccess() {
+						IMemoryDMContext memDmc = DMContexts.getAncestorOfType(dmc, IMemoryDMContext.class);
+						if (memDmc != null) {
+							boolean bigEndian = isBigEndian(memDmc);
+							for (MemoryByte b : getData()) {
+								b.setBigEndian(bigEndian);
+								b.setEndianessKnown(true);
+							}
 						}
+						drm.setData(getData());
+						drm.done();
 					}
-					drm.setData(getData());
-					drm.done();
-				}
-			});
+				});
 	}
 
 	@Override
@@ -146,56 +134,55 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 
 			// Need a global here as getSteps() can be called more than once.
 			private Step[] steps = null;
-			private void determineSteps()
-			{
-				ArrayList<Step> stepsList = new ArrayList<Step>();
-				
-				if (fAddressSizes.get(memContext) == null) {
-					stepsList.add(
-							new Step() {
-								// store original language
-								@Override
-								public void execute(final RequestMonitor requestMonitor) {
-									fCommandControl.queueCommand(
-										fCommandControl.getCommandFactory().createMIGDBShowLanguage(memContext),
-										new ImmediateDataRequestMonitor<MIGDBShowLanguageInfo>(requestMonitor) {
-											@Override
-											protected void handleCompleted() {
-												if (isSuccess()) {
-													originalLanguage = getData().getLanguage();
-												} else {
-													abortLanguageSteps = true;
-												}
-												requestMonitor.done();
-											}
-										});
-								}
-							});
-					stepsList.add(
-							new Step() {
-								// switch to c language
-								@Override
-								public void execute(final RequestMonitor requestMonitor) {
-									if (abortLanguageSteps) {
-										requestMonitor.done();
-										return;
-									}
 
-									fCommandControl.queueCommand(
-											fCommandControl.getCommandFactory().createMIGDBSetLanguage(memContext, MIGDBShowLanguageInfo.C),
-											new ImmediateDataRequestMonitor<MIInfo>(requestMonitor) {
-												@Override
-												protected void handleCompleted() {
-													if (!isSuccess()) {
-														abortLanguageSteps = true;
-													}
-													// Accept failure
-													requestMonitor.done();
-												}
-											});
-								}
-							});
-					
+			private void determineSteps() {
+				ArrayList<Step> stepsList = new ArrayList<Step>();
+
+				if (fAddressSizes.get(memContext) == null) {
+					stepsList.add(new Step() {
+						// store original language
+						@Override
+						public void execute(final RequestMonitor requestMonitor) {
+							fCommandControl.queueCommand(
+									fCommandControl.getCommandFactory().createMIGDBShowLanguage(memContext),
+									new ImmediateDataRequestMonitor<MIGDBShowLanguageInfo>(requestMonitor) {
+										@Override
+										protected void handleCompleted() {
+											if (isSuccess()) {
+												originalLanguage = getData().getLanguage();
+											} else {
+												abortLanguageSteps = true;
+											}
+											requestMonitor.done();
+										}
+									});
+						}
+					});
+					stepsList.add(new Step() {
+						// switch to c language
+						@Override
+						public void execute(final RequestMonitor requestMonitor) {
+							if (abortLanguageSteps) {
+								requestMonitor.done();
+								return;
+							}
+
+							fCommandControl.queueCommand(
+									fCommandControl.getCommandFactory().createMIGDBSetLanguage(memContext,
+											MIGDBShowLanguageInfo.C),
+									new ImmediateDataRequestMonitor<MIInfo>(requestMonitor) {
+										@Override
+										protected void handleCompleted() {
+											if (!isSuccess()) {
+												abortLanguageSteps = true;
+											}
+											// Accept failure
+											requestMonitor.done();
+										}
+									});
+						}
+					});
+
 					stepsList.add(new Step() {
 						// Run this step even if the language commands where aborted, but accept failures.
 						// Resolve Addressable and Address size
@@ -210,93 +197,95 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 										//Preserve the addressable size per context
 										fAddressableSizes.put(memContext, minAddressableInOctets);
 									}
-									
-									readAddressSize(memContext, new ImmediateDataRequestMonitor<Integer>(requestMonitor) {
-										@Override
-										protected void handleCompleted() {
-											if (isSuccess()) {
-												//Preserve the address size per context
-												fAddressSizes.put(memContext, getData());
-											}
 
-											// Accept failures
-											requestMonitor.done();
-										}
-									});
+									readAddressSize(memContext,
+											new ImmediateDataRequestMonitor<Integer>(requestMonitor) {
+												@Override
+												protected void handleCompleted() {
+													if (isSuccess()) {
+														//Preserve the address size per context
+														fAddressSizes.put(memContext, getData());
+													}
+
+													// Accept failures
+													requestMonitor.done();
+												}
+											});
 								}
 							});
 						}
 					});
-					
-					stepsList.add(
-							new Step() {
-								// restore original language
-								@Override
-								public void execute(final RequestMonitor requestMonitor) {
-									if (abortLanguageSteps) {
-										requestMonitor.done();
-										return;
-									}
 
-									fCommandControl.queueCommand(
-										fCommandControl.getCommandFactory().createMIGDBSetLanguage(memContext, originalLanguage),
-										new ImmediateDataRequestMonitor<MIInfo>(requestMonitor) {
-											@Override
-											protected void handleCompleted() {
-												if (!isSuccess()) {
-													// If we are unable to set the original language back things could be bad.
-													// Let's try setting it to "auto" as a fall back. Log the situation as info.
-													GdbPlugin.log(getStatus());
-													
-													fCommandControl.queueCommand(
-															fCommandControl.getCommandFactory().createMIGDBSetLanguage(memContext, MIGDBShowLanguageInfo.AUTO),
-															new ImmediateDataRequestMonitor<MIInfo>(requestMonitor) {
-																@Override
-																protected void handleCompleted() {
-																	if (!isSuccess()) {
-																		// This error could be bad because we've changed the language to C
-																		// but are unable to switch it back. Log the error.
-																		// If the language happens to be C anyway, everything will
-																		// continue to work, which is why we don't abort the sequence
-																		// (which would cause the entire session to fail).
-																		GdbPlugin.log(getStatus());
+					stepsList.add(new Step() {
+						// restore original language
+						@Override
+						public void execute(final RequestMonitor requestMonitor) {
+							if (abortLanguageSteps) {
+								requestMonitor.done();
+								return;
+							}
+
+							fCommandControl
+									.queueCommand(
+											fCommandControl.getCommandFactory().createMIGDBSetLanguage(memContext,
+													originalLanguage),
+											new ImmediateDataRequestMonitor<MIInfo>(requestMonitor) {
+												@Override
+												protected void handleCompleted() {
+													if (!isSuccess()) {
+														// If we are unable to set the original language back things could be bad.
+														// Let's try setting it to "auto" as a fall back. Log the situation as info.
+														GdbPlugin.log(getStatus());
+
+														fCommandControl.queueCommand(
+																fCommandControl.getCommandFactory()
+																		.createMIGDBSetLanguage(memContext,
+																				MIGDBShowLanguageInfo.AUTO),
+																new ImmediateDataRequestMonitor<MIInfo>(
+																		requestMonitor) {
+																	@Override
+																	protected void handleCompleted() {
+																		if (!isSuccess()) {
+																			// This error could be bad because we've changed the language to C
+																			// but are unable to switch it back. Log the error.
+																			// If the language happens to be C anyway, everything will
+																			// continue to work, which is why we don't abort the sequence
+																			// (which would cause the entire session to fail).
+																			GdbPlugin.log(getStatus());
+																		}
+																		// Accept failure
+																		requestMonitor.done();
 																	}
-																	// Accept failure
-																	requestMonitor.done();
-																}
-															});
-												} else {
-													requestMonitor.done();
+																});
+													} else {
+														requestMonitor.done();
+													}
 												}
-											}
-										});
-								}
-							});
-					
+											});
+						}
+					});
+
 				}
 
 				if (fIsBigEndian.get(memContext) == null) {
-					stepsList.add(
-						new Step() {
-							// read endianness
-							@Override
-							public void execute(final RequestMonitor requestMonitor) {
-								readEndianness(
-										memContext, 
-										new ImmediateDataRequestMonitor<Boolean>(requestMonitor) {
-											@Override
-											protected void handleCompleted() {
-												if (isSuccess()) {
-													fIsBigEndian.put(memContext, getData());
-												}
-												// Accept failure
-												requestMonitor.done();
-											}
-										});
+					stepsList.add(new Step() {
+						// read endianness
+						@Override
+						public void execute(final RequestMonitor requestMonitor) {
+							readEndianness(memContext, new ImmediateDataRequestMonitor<Boolean>(requestMonitor) {
+								@Override
+								protected void handleCompleted() {
+									if (isSuccess()) {
+										fIsBigEndian.put(memContext, getData());
+									}
+									// Accept failure
+									requestMonitor.done();
 								}
 							});
+						}
+					});
 				}
-				
+
 				steps = stepsList.toArray(new Step[stepsList.size()]);
 			}
 
@@ -342,7 +331,8 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 		Boolean isBigEndian = fIsBigEndian.get(context);
 		assert isBigEndian != null;
 		if (isBigEndian == null) {
-    		GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Endianness was never initialized for " + context)); //$NON-NLS-1$
+			GdbPlugin.log(
+					new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Endianness was never initialized for " + context)); //$NON-NLS-1$
 			return false;
 		}
 		return isBigEndian.booleanValue();
@@ -362,23 +352,22 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 		IExpressions exprService = getServicesTracker().getService(IExpressions.class);
 		IExpressionDMContext exprContext = exprService.createExpression(memContext, "sizeof (void*)"); //$NON-NLS-1$
 		CommandFactory commandFactory = fCommandControl.getCommandFactory();
-		fCommandControl.queueCommand(
-			commandFactory.createMIDataEvaluateExpression(exprContext),
-			new DataRequestMonitor<MIDataEvaluateExpressionInfo>(ImmediateExecutor.getInstance(), drm) {
-				@Override
-				protected void handleSuccess() {
-					try {
-						// 'sizeof' returns number of bytes (aka 'chars'). 
-						// Multiply with byte size in octets to get storage required to hold a pointer.
-						Integer ptrBytes = Integer.decode(getData().getValue());
-						drm.setData(ptrBytes * getAddressableSize(memContext));
+		fCommandControl.queueCommand(commandFactory.createMIDataEvaluateExpression(exprContext),
+				new DataRequestMonitor<MIDataEvaluateExpressionInfo>(ImmediateExecutor.getInstance(), drm) {
+					@Override
+					protected void handleSuccess() {
+						try {
+							// 'sizeof' returns number of bytes (aka 'chars'). 
+							// Multiply with byte size in octets to get storage required to hold a pointer.
+							Integer ptrBytes = Integer.decode(getData().getValue());
+							drm.setData(ptrBytes * getAddressableSize(memContext));
+						} catch (NumberFormatException e) {
+							drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+									String.format("Invalid address size: %s", getData().getValue()))); //$NON-NLS-1$
+						}
+						drm.done();
 					}
-					catch(NumberFormatException e) {
-						drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, String.format("Invalid address size: %s", getData().getValue()))); //$NON-NLS-1$
-					}
-					drm.done();
-				}
-			});
+				});
 	}
 
 	/**
@@ -386,9 +375,9 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	 * This is then resolved by retrieving a hex representation of -1 casted to the size of a "char"
 	 * e.g. from GDB command line 
 	 *    > p/x (char)-1
-     *    > $7 = 0xffff 
-     *    
-     * Since two hex characters are representing one octet, for the above example this method should return 2
+	 *    > $7 = 0xffff 
+	 *    
+	 * Since two hex characters are representing one octet, for the above example this method should return 2
 	 * @since 4.4
 	 * 
 	 */
@@ -397,27 +386,25 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 		//e.g. when using a remote launch.  
 		// Using MI directly is a possibility although there is no way to specify the required output format to hex. 
 		CommandFactory commandFactory = fCommandControl.getCommandFactory();
-		fCommandControl.queueCommand(
-			commandFactory.createCLIAddressableSize(memContext),
-			new DataRequestMonitor<CLIAddressableSizeInfo>(ImmediateExecutor.getInstance(), drm) {
-				@Override
-				protected void handleSuccess() {
-					drm.setData(Integer.valueOf(getData().getAddressableSize()));
-					drm.done();
-				}
-			});
+		fCommandControl.queueCommand(commandFactory.createCLIAddressableSize(memContext),
+				new DataRequestMonitor<CLIAddressableSizeInfo>(ImmediateExecutor.getInstance(), drm) {
+					@Override
+					protected void handleSuccess() {
+						drm.setData(Integer.valueOf(getData().getAddressableSize()));
+						drm.done();
+					}
+				});
 	}
-	
+
 	protected void readEndianness(IMemoryDMContext memContext, final DataRequestMonitor<Boolean> drm) {
 		CommandFactory commandFactory = fCommandControl.getCommandFactory();
-		fCommandControl.queueCommand(
-			commandFactory.createCLIShowEndian(memContext),
-			new DataRequestMonitor<CLIShowEndianInfo>(ImmediateExecutor.getInstance(), drm) {
-				@Override
-				protected void handleSuccess() {
-					drm.setData(Boolean.valueOf(getData().isBigEndian()));
-					drm.done();
-				}
-			});
+		fCommandControl.queueCommand(commandFactory.createCLIShowEndian(memContext),
+				new DataRequestMonitor<CLIShowEndianInfo>(ImmediateExecutor.getInstance(), drm) {
+					@Override
+					protected void handleSuccess() {
+						drm.setData(Boolean.valueOf(getData().isBigEndian()));
+						drm.done();
+					}
+				});
 	}
 }

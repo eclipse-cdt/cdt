@@ -52,8 +52,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fDefaultOptions= DefaultCodeFormatterOptions.getDefaultSettings().getMap();
-		fOptions= new HashMap<String, Object>(fDefaultOptions);
+		fDefaultOptions = DefaultCodeFormatterOptions.getDefaultSettings().getMap();
+		fOptions = new HashMap<String, Object>(fDefaultOptions);
 	}
 
 	@Override
@@ -62,15 +62,15 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	protected void assertFormatterResult() throws Exception {
-		CharSequence[] contents= getContentsForTest(2);
-		String before= contents[0].toString();
-		String expected= contents[1].toString();
+		CharSequence[] contents = getContentsForTest(2);
+		String before = contents[0].toString();
+		String expected = contents[1].toString();
 		assertFormatterResult(before, expected);
 	}
 
 	private void assertFormatterResult(String original, String expected) throws BadLocationException {
-		IDocument document= new Document(original);
-		TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, original, 0,
+		IDocument document = new Document(original);
+		TextEdit edit = CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, original, 0,
 				TextUtilities.getDefaultLineDelimiter(document), fOptions);
 		assertNotNull(edit);
 		edit.apply(document);
@@ -242,7 +242,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();
 	}
-	
+
 	//void test() {
 	//if (1000000 + 2000000 < 3000000 + 4000000 && 5000000 + 6000000 <= 7000000) {
 	// // comment
@@ -966,7 +966,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
-    //namespace ns1 {
+	//namespace ns1 {
 	//namespace ns2 {
 	//void foo() {
 	//    int x;// comment
@@ -977,7 +977,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}// namespace ns2
 	//}// namespace ns1
 
-    //namespace ns1 {
+	//namespace ns1 {
 	//namespace ns2 {
 	//void foo() {
 	//    int x;  // comment
@@ -990,7 +990,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testLineCommentMinDistanceFromCode() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT, "2");
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT, DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT,
+				DefaultCodeFormatterConstants.FALSE);
 		assertFormatterResult();
 	}
 
@@ -1476,7 +1477,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//MY_MACRO(abcdefghijklmnopqrstuvwxyz,25,"very very very very very very very very very very long text");
 	//namespace ns {
 	//MY_MACRO(abcdefghijklmnopqrstuvwxyz,25,"very very very very very very very very very very long text");
-    //}
+	//}
 
 	//#define MY_MACRO(a, b, c)
 	//
@@ -1485,7 +1486,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//namespace ns {
 	//MY_MACRO(abcdefghijklmnopqrstuvwxyz, 25,
 	//        "very very very very very very very very very very long text");
-    //}
+	//}
 	public void testFunctionStyleMacro_1() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();
@@ -1545,8 +1546,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	}
 	//}
 	public void testSpaceBeforeSemicolonInFor_Bug242232() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON_IN_FOR,
-				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON_IN_FOR, CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
 
@@ -1768,7 +1768,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//};
 	public void testConstructorInitializer_2() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST,
+		fOptions.put(
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST,
 				CCorePlugin.INSERT);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONSTRUCTOR_INITIALIZER_LIST,
 				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_INDENT_ON_COLUMN | Alignment.M_FORCE));
@@ -1849,11 +1850,14 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//void foo() throw ( E1, E2 );
 	public void testWhitespaceOptionsForExceptionSpecification_Bug243567() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION,
+		fOptions.put(
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION,
 				CCorePlugin.INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION,
+		fOptions.put(
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION,
 				CCorePlugin.INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_EXCEPTION_SPECIFICATION,
+		fOptions.put(
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_EXCEPTION_SPECIFICATION,
 				CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
@@ -2020,19 +2024,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	public void testFormatGeneratedClass_Bug272006() throws Exception {
-		String original = 
-			"class \u5927\u5927\u5927\u5927\n" + 
-			"{\n" + 
-			"public:\n" + 
-			"	\u5927\u5927\u5927\u5927();\n" + 
-			"	virtual ~\u5927\u5927\u5927\u5927();\n" + 
-			"};\n";
-		String expected = 
-			"class \u5927\u5927\u5927\u5927 {\n" + 
-			"public:\n" + 
-			"	\u5927\u5927\u5927\u5927();\n" + 
-			"	virtual ~\u5927\u5927\u5927\u5927();\n" + 
-			"};\n";
+		String original = "class \u5927\u5927\u5927\u5927\n" + "{\n" + "public:\n" + "	\u5927\u5927\u5927\u5927();\n"
+				+ "	virtual ~\u5927\u5927\u5927\u5927();\n" + "};\n";
+		String expected = "class \u5927\u5927\u5927\u5927 {\n" + "public:\n" + "	\u5927\u5927\u5927\u5927();\n"
+				+ "	virtual ~\u5927\u5927\u5927\u5927();\n" + "};\n";
 		assertFormatterResult(original, expected);
 	}
 
@@ -2271,8 +2266,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//		{ 1, 2, 3, 4 }
 	//};
 	public void testKeepWrappedLines_Bug322776() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES,
-				DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, DefaultCodeFormatterConstants.FALSE);
 		assertFormatterResult();
 	}
 
@@ -2294,8 +2288,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	z();
 	//}
 	public void testKeepWrappedLines_Bug322776_2() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES,
-				DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, DefaultCodeFormatterConstants.FALSE);
 		assertFormatterResult();
 	}
 
@@ -2348,7 +2341,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    variable5 =
 	//            10000000 < 2000000 ?
 	//                    3000000 + 4000000 + 5000000 + 6000000 : 7000000;
-    //}
+	//}
 	public void testConditionalExpression() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();
@@ -2374,7 +2367,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();
 	}
-	
+
 	//// Breaking at '<=' is preferred to breaking at '+'.
 	//bool x = 1000000 + 2000000 + 3000000 + 4000000 <= 5000000 + 6000000 + 7000000 + 8000000;
 
@@ -2550,7 +2543,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int variable_with_a_long_name, another_variable_with_a_long_name;
 	//
 	//void test() {
-    //stream << (variable_with_a_long_name + another_variable_with_a_long_name) * variable_with_a_long_name <<
+	//stream << (variable_with_a_long_name + another_variable_with_a_long_name) * variable_with_a_long_name <<
 	//"01234567890123456789";
 	//}
 
@@ -2759,7 +2752,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT, "80");
 		assertFormatterResult();
 	}
-	
+
 	//void foo() {
 	//	int i;
 	//	for (i = 0; i < 10; i++) {
@@ -2776,7 +2769,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testForLoopKnR_Bug351399() throws Exception {
 		assertFormatterResult();
 	}
-	
+
 	//void foo() {
 	//	int i;
 	//	for (i = 0; i < 10; i++) {
@@ -2871,8 +2864,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	public void testBackslashUInPreprocessorDirective_Bug350433() throws Exception {
-		String before= "#include \"test\\udp.h\"\n";
-		String expected= before;
+		String before = "#include \"test\\udp.h\"\n";
+		String expected = before;
 		assertFormatterResult(before, expected);
 	}
 
@@ -2896,7 +2889,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	//void f(int p0 ,... ){}
-	
+
 	//void f(int p0, ...) {
 	//}
 	public void testEllipsisInFunctionDefinition_Bug350689() throws Exception {
@@ -3006,7 +2999,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testDoWhileInMacro_Bug359658() throws Exception {
 		assertFormatterResult();
 	}
-	
+
 	//#define macro(x) NS::convert(x)
 	//namespace NS {
 	//int convert(int arg) {
@@ -3016,7 +3009,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int main() {
 	//int i = macro(42);
 	//}
-	
+
 	//#define macro(x) NS::convert(x)
 	//namespace NS {
 	//int convert(int arg) {
@@ -3035,8 +3028,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 		String expected = before;
 		assertFormatterResult(before, expected);
 	}
-	
-	
+
 	//int abcde = 100; // line 1 of comment
 	//				 // line 2 of comment
 
@@ -3047,7 +3039,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 				DefaultCodeFormatterConstants.TRUE);
 		assertFormatterResult();
 	}
-	
+
 	//int abcde = 100; // line 1 of comment
 	//				 // line 2 of comment
 
@@ -3141,7 +3133,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//Tpl<Tpl<Tpl<Tpl<int>>>>tpl4_int { };
 	//Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>>tpl5_int { };
 	//Tpl<Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>>>tpl6_int { };
-	
+
 	//template<typename T>
 	//struct Tpl {
 	//};
@@ -3163,7 +3155,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//Tpl<Tpl<Tpl<Tpl<int>>>>tpl4_int { };
 	//Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>>tpl5_int { };
 	//Tpl<Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>>>tpl6_int { };
-	
+
 	//template<typename T>
 	//struct Tpl {
 	//};
@@ -3185,7 +3177,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//Tpl<Tpl<Tpl<Tpl<int>>> >tpl4_int { };
 	//Tpl<Tpl<Tpl<Tpl<Tpl<int>> >> >tpl5_int { };
 	//Tpl<Tpl<Tpl<Tpl<Tpl<Tpl<int>>> >> >tpl6_int { };
-	
+
 	//template<typename T>
 	//struct Tpl {
 	//};
@@ -3302,7 +3294,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testIfInitStatementFormat_3() throws Exception {
 		assertFormatterResult();
 	}
-	
+
 	//void foo() {
 	//	if (constexpr bool k = true;k) {
 	//	}
@@ -3447,7 +3439,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	}
 	//}
 	public void testAttributedSwitchCompoundStatement_Bug535263_2() throws Exception {
-		assertFormatterResult();		
+		assertFormatterResult();
 	}
 
 	//void f() {

@@ -18,14 +18,14 @@ import java.util.Map;
 
 public class ThreadLocalMap {
 	private ThreadLocal<Map<Object, Object>> fLocal = new ThreadLocal<Map<Object, Object>>();
-	
-	public Object get(Object key){
+
+	public Object get(Object key) {
 		Map<Object, Object> map = getMap(false);
 		return map != null ? map.get(key) : null;
 	}
 
-	public void set(Object key, Object value){
-		if(value == null)
+	public void set(Object key, Object value) {
+		if (value == null)
 			clear(key);
 		else {
 			Map<Object, Object> map = getMap(true);
@@ -33,18 +33,18 @@ public class ThreadLocalMap {
 		}
 	}
 
-	public void clear(Object key){
+	public void clear(Object key) {
 		Map<Object, Object> map = getMap(false);
-		if(map != null){
+		if (map != null) {
 			map.remove(key);
 		}
-//		if(map == null)
-//			fLocal.set(null);
+		//		if(map == null)
+		//			fLocal.set(null);
 	}
 
-	private Map<Object, Object> getMap(boolean create){
+	private Map<Object, Object> getMap(boolean create) {
 		Map<Object, Object> map = fLocal.get();
-		if(map == null && create){
+		if (map == null && create) {
 			map = new HashMap<Object, Object>();
 			fLocal.set(map);
 		}

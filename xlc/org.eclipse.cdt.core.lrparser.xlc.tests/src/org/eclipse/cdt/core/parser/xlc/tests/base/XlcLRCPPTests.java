@@ -25,17 +25,18 @@ public class XlcLRCPPTests extends LRCPPTests {
 	public static TestSuite suite() {
 		return suite(XlcLRCPPTests.class);
 	}
+
 	//CDT_70_FIX_FROM_50-#9
 	public void testStaticAssertions_294730() throws Exception {
-		String code= getAboveComment();
+		String code = getAboveComment();
 		code = code.replaceAll("static_assert", "__static_assert");
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

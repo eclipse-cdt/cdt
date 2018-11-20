@@ -25,62 +25,62 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
  */
 public class CorrectCaseTest extends TestCase {
 
-	public CorrectCaseTest(){
+	public CorrectCaseTest() {
 		super("Check Correct Identifier"); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public void runTest() {
 		IdentifierResult result;
-		
+
 		result = IdentifierHelper.checkIdentifierName("A"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("Z"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("a"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("z"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("_"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("_A"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("_Z"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("_a"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("_z"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("__"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("_0"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("_9"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("Aaaa"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("Zaaa"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("aaaa"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("zaaa"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
-		
+
 		result = IdentifierHelper.checkIdentifierName("_aaa"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.VALID == result.getResult());
 

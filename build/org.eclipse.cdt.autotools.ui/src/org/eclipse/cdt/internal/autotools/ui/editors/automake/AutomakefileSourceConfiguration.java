@@ -27,40 +27,38 @@ import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+public class AutomakefileSourceConfiguration extends MakefileSourceConfiguration {
 
-public class AutomakefileSourceConfiguration extends
-		MakefileSourceConfiguration {
-	
 	AutomakeEditor editor;
 	AutomakefileCodeScanner codeScanner;
 	AutomakeTextHover amHover;
-	
+
 	/**
 	 * Constructor for MakeConfiguration
 	 */
 	public AutomakefileSourceConfiguration(IPreferenceStore preferenceStore) {
 		super(preferenceStore, null);
 	}
-	
+
 	public AutomakefileSourceConfiguration(IPreferenceStore preferenceStore, AutomakeEditor editor) {
 		super(preferenceStore, editor);
 		this.editor = editor;
 	}
-	
+
 	public AutomakefileCodeScanner getAutomakeCodeScanner() {
 		if (null == codeScanner)
 			codeScanner = new AutomakefileCodeScanner();
 		return codeScanner;
 
 	}
-	
+
 	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		if (amHover == null)
 			amHover = new AutomakeTextHover(editor);
 		return amHover;
 	}
-	
+
 	/**
 	 * @param event
 	 */
@@ -69,7 +67,7 @@ public class AutomakefileSourceConfiguration extends
 		AutomakefileCodeScanner scanner = getAutomakeCodeScanner();
 		scanner.adaptToPreferenceChange(event);
 	}
-	
+
 	/**
 	 * @param event
 	 * @return
@@ -79,7 +77,7 @@ public class AutomakefileSourceConfiguration extends
 		AutomakefileCodeScanner scanner = getAutomakeCodeScanner();
 		return scanner.affectsBehavior(event);
 	}
-	
+
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer v) {
 
@@ -89,23 +87,28 @@ public class AutomakefileSourceConfiguration extends
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (editor != null && editor.isEditable()) {
-			MonoReconciler reconciler= new MonoReconciler(new AutomakefileReconcilingStrategy(editor), false);
+			MonoReconciler reconciler = new MonoReconciler(new AutomakefileReconcilingStrategy(editor), false);
 			reconciler.setDelay(1000);
 			reconciler.setProgressMonitor(new NullProgressMonitor());
 			return reconciler;
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant = new ContentAssistant();
 		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor), IDocument.DEFAULT_CONTENT_TYPE);
-		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor), MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
-		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor), MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
-		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor), MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
-		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor), MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
-		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor), MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
+		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor),
+				MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
+		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor),
+				MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
+		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor),
+				MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
+		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor),
+				MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
+		assistant.setContentAssistProcessor(new AutomakeCompletionProcessor(editor),
+				MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
 
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);

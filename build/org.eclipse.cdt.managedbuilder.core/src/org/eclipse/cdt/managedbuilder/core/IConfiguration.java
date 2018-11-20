@@ -39,20 +39,21 @@ import org.eclipse.core.runtime.IPath;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesContainer, IOptionalBuildObjectPropertiesContainer {
-	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
-	public static final String CLEAN_COMMAND = "cleanCommand";	//$NON-NLS-1$
-    public static final String PREBUILD_STEP = "prebuildStep";      //$NON-NLS-1$
-    public static final String POSTBUILD_STEP = "postbuildStep";    //$NON-NLS-1$
-    public static final String PREANNOUNCEBUILD_STEP = "preannouncebuildStep";      //$NON-NLS-1$
-    public static final String POSTANNOUNCEBUILD_STEP = "postannouncebuildStep";    //$NON-NLS-1$
+public interface IConfiguration
+		extends IBuildObject, IBuildObjectPropertiesContainer, IOptionalBuildObjectPropertiesContainer {
+	public static final String ARTIFACT_NAME = "artifactName"; //$NON-NLS-1$
+	public static final String CLEAN_COMMAND = "cleanCommand"; //$NON-NLS-1$
+	public static final String PREBUILD_STEP = "prebuildStep"; //$NON-NLS-1$
+	public static final String POSTBUILD_STEP = "postbuildStep"; //$NON-NLS-1$
+	public static final String PREANNOUNCEBUILD_STEP = "preannouncebuildStep"; //$NON-NLS-1$
+	public static final String POSTANNOUNCEBUILD_STEP = "postannouncebuildStep"; //$NON-NLS-1$
 	// Schema element names
-	public static final String CONFIGURATION_ELEMENT_NAME = "configuration";	//$NON-NLS-1$
-	public static final String ERROR_PARSERS = "errorParsers";	//$NON-NLS-1$
+	public static final String CONFIGURATION_ELEMENT_NAME = "configuration"; //$NON-NLS-1$
+	public static final String ERROR_PARSERS = "errorParsers"; //$NON-NLS-1$
 	/** @since 8.1 */
 	public static final String LANGUAGE_SETTINGS_PROVIDERS = "languageSettingsProviders"; //$NON-NLS-1$
-	public static final String EXTENSION = "artifactExtension";	//$NON-NLS-1$
-	public static final String PARENT = "parent";	//$NON-NLS-1$
+	public static final String EXTENSION = "artifactExtension"; //$NON-NLS-1$
+	public static final String PARENT = "parent"; //$NON-NLS-1$
 
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 
@@ -62,11 +63,9 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 */
 	public static final String OPTIONAL_BUILD_PROPERTIES = "optionalBuildProperties"; //$NON-NLS-1$
 	public static final String BUILD_ARTEFACT_TYPE = "buildArtefactType"; //$NON-NLS-1$
-	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
+	public static final String IS_SYSTEM = "isSystem"; //$NON-NLS-1$
 
 	public static final String SOURCE_ENTRIES = "sourceEntries"; //$NON-NLS-1$
-
-
 
 	/**
 	 * Returns the description of the configuration.
@@ -128,34 +127,34 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	public String getBuildCommand();
 
 	/**
-     * Returns the prebuild step command
-     *
-     * @return String
-     */
-    public String getPrebuildStep();
+	 * Returns the prebuild step command
+	 *
+	 * @return String
+	 */
+	public String getPrebuildStep();
 
-    /**
-     * Returns the postbuild step command
-     *
-     * @return String
-     */
-    public String getPostbuildStep();
+	/**
+	 * Returns the postbuild step command
+	 *
+	 * @return String
+	 */
+	public String getPostbuildStep();
 
-    /**
-     * Returns the display string associated with the prebuild step
-     *
-     * @return String
-     */
-    public String getPreannouncebuildStep();
+	/**
+	 * Returns the display string associated with the prebuild step
+	 *
+	 * @return String
+	 */
+	public String getPreannouncebuildStep();
 
-    /**
-     * Returns the display string associated with the postbuild step
-     *
-     * @return String
-     */
-    public String getPostannouncebuildStep();
+	/**
+	 * Returns the display string associated with the postbuild step
+	 *
+	 * @return String
+	 */
+	public String getPostannouncebuildStep();
 
-    /**
+	/**
 	 * Answers the OS-specific command to remove files created by the build
 	 * of this configuration.
 	 *
@@ -380,28 +379,28 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	public void setBuildCommand(String command);
 
 	/**
-     * Sets the prebuild step for the receiver to the value in the argument.
-     */
-    public void setPrebuildStep(String step);
+	 * Sets the prebuild step for the receiver to the value in the argument.
+	 */
+	public void setPrebuildStep(String step);
 
-    /**
-     * Sets the postbuild step for the receiver to the value in the argument.
-     */
-    public void setPostbuildStep(String step);
+	/**
+	 * Sets the postbuild step for the receiver to the value in the argument.
+	 */
+	public void setPostbuildStep(String step);
 
-    /**
-     * Sets the prebuild step display string for the receiver to the value in the argument.
-     */
-    public void setPreannouncebuildStep(String announceStep);
+	/**
+	 * Sets the prebuild step display string for the receiver to the value in the argument.
+	 */
+	public void setPreannouncebuildStep(String announceStep);
 
-    /**
-     * Sets the postbuild step display string for the receiver to the value in the argument.
-     */
-    public void setPostannouncebuildStep(String announceStep);
+	/**
+	 * Sets the postbuild step display string for the receiver to the value in the argument.
+	 */
+	public void setPostannouncebuildStep(String announceStep);
 
-    /**
+	/**
 	 * Sets the command used to clean the outputs of this configuration.
-     * @param command - the command to clean outputs
+	 * @param command - the command to clean outputs
 	 */
 	public void setCleanCommand(String command);
 
@@ -434,8 +433,7 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
 	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
-	public IOption setOption(IHoldsOptions parent, IOption option, boolean value)
-		throws BuildException;
+	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException;
 
 	/**
 	 * Sets the value of a string option for this configuration.
@@ -449,8 +447,7 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
 	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
-	public IOption setOption(IHoldsOptions parent, IOption option, String value)
-		throws BuildException;
+	public IOption setOption(IHoldsOptions parent, IOption option, String value) throws BuildException;
 
 	/**
 	 * Sets the value of a list option for this configuration.
@@ -464,8 +461,7 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
 	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
-	public IOption setOption(IHoldsOptions parent, IOption option, String[] value)
-		throws BuildException;
+	public IOption setOption(IHoldsOptions parent, IOption option, String[] value) throws BuildException;
 
 	/**
 	 * Sets the rebuild state in this configuration.
@@ -512,7 +508,6 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 * @return boolean
 	 */
 	public boolean isTemporary();
-
 
 	/**
 	 * Returns whether this configuration requires a full rebuild
@@ -594,8 +589,8 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 
 	String getOutputFlag(String outputExt);
 
-	IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags,
-			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation );
+	IManagedCommandLineInfo generateToolCommandLineInfo(String sourceExtension, String[] flags, String outputFlag,
+			String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation);
 
 	String[] getUserObjects(String extension);
 

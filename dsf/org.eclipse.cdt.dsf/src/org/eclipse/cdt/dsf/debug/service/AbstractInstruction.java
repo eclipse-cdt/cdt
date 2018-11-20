@@ -23,15 +23,15 @@ import java.math.BigInteger;
  * @since 2.2
  */
 public abstract class AbstractInstruction implements IInstructionWithSize, IInstructionWithRawOpcodes {
-    /*
-     * @see org.eclipse.cdt.dsf.debug.service.IInstructionWithSize#getSize()
-     */
-    @Override
-    public Integer getSize() {
-        // unknown size
-        return null;
-    }
-    
+	/*
+	 * @see org.eclipse.cdt.dsf.debug.service.IInstructionWithSize#getSize()
+	 */
+	@Override
+	public Integer getSize() {
+		// unknown size
+		return null;
+	}
+
 	/**
 	 * @since 2.5
 	 */

@@ -53,14 +53,14 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 
 	@Override
 	public void run() {
-		IWorkingCopy currentUnit= getWorkingCopy();
+		IWorkingCopy currentUnit = getWorkingCopy();
 		if (currentUnit == null) {
 			return;
 		}
-		ITranslationUnit partnerUnit= computePartnerFile(currentUnit);
+		ITranslationUnit partnerUnit = computePartnerFile(currentUnit);
 		if (partnerUnit != null) {
-			fgLastSourceUnit= currentUnit.getOriginalElement();
-			fgLastPartnerUnit= partnerUnit;
+			fgLastSourceUnit = currentUnit.getOriginalElement();
+			fgLastPartnerUnit = partnerUnit;
 			try {
 				EditorUtility.openInEditor(partnerUnit);
 			} catch (PartInitException exc) {
@@ -76,8 +76,8 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		if (editor == null) {
 			return null;
 		}
-		IEditorInput input= editor.getEditorInput();
-		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
+		IEditorInput input = editor.getEditorInput();
+		IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
 		return manager.getWorkingCopy(input);
 	}
 
@@ -97,9 +97,9 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		if (fgLastPartnerUnit != null) {
 			final ITranslationUnit originalUnit;
 			if (tUnit instanceof IWorkingCopy) {
-				originalUnit= ((IWorkingCopy)tUnit).getOriginalElement();
+				originalUnit = ((IWorkingCopy) tUnit).getOriginalElement();
 			} else {
-				originalUnit= tUnit;
+				originalUnit = tUnit;
 			}
 			if (originalUnit.getTranslationUnit().equals(fgLastPartnerUnit)) {
 				if (fgLastSourceUnit.exists()) {

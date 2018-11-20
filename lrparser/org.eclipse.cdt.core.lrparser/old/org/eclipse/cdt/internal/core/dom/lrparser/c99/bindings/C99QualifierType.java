@@ -24,9 +24,8 @@ public class C99QualifierType implements ICQualifierType, ITypeContainer {
 	private boolean isRestrict;
 	private boolean isConst;
 	private boolean isVolatile;
-	
+
 	private IType type;
-	
 
 	public C99QualifierType() {
 	}
@@ -81,23 +80,21 @@ public class C99QualifierType implements ICQualifierType, ITypeContainer {
 
 	@Override
 	public boolean isSameType(IType t) {
-		if(t == this)
+		if (t == this)
 			return true;
-		
+
 		if (t instanceof ICQualifierType) {
 
 			ICQualifierType pointerType = (ICQualifierType) t;
-			if(pointerType.isConst() == isConst &&
-			   pointerType.isRestrict() == isRestrict &&
-			   pointerType.isVolatile() == isVolatile) {
+			if (pointerType.isConst() == isConst && pointerType.isRestrict() == isRestrict
+					&& pointerType.isVolatile() == isVolatile) {
 				return type.isSameType(pointerType.getType());
 			}
 
 		}
 		return false;
 	}
-	
-	
+
 	@Override
 	public C99QualifierType clone() {
 		try {

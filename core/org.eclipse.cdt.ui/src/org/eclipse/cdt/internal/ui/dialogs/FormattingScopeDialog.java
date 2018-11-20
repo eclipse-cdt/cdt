@@ -51,13 +51,10 @@ public class FormattingScopeDialog extends StatusDialog {
 
 		createLabel(composite, Messages.FormattingScopeDialog_message);
 		int indent = converter.convertHorizontalDLUsToPixels(8);
-		fScopeFileRadio =
-				createRadioButton(composite, Messages.FormattingScopeDialog_format_file, indent);
-		fScopeStatementRadio =
-				createRadioButton(composite, Messages.FormattingScopeDialog_format_statement, indent);
+		fScopeFileRadio = createRadioButton(composite, Messages.FormattingScopeDialog_format_file, indent);
+		fScopeStatementRadio = createRadioButton(composite, Messages.FormattingScopeDialog_format_statement, indent);
 		createLabel(composite, ""); // Separator //$NON-NLS-1$
-		fDoNotAskAgainCheckBox =
-				createCheckBox(composite, Messages.FormattingScopeDialog_do_not_ask_again);
+		fDoNotAskAgainCheckBox = createCheckBox(composite, Messages.FormattingScopeDialog_do_not_ask_again);
 
 		String scope = preferenceStore.getString(PreferenceConstants.FORMATTING_SCOPE_FOR_EMPTY_SELECTION);
 		if (PreferenceConstants.FORMATTING_SCOPE_DOCUMENT.equals(scope)) {
@@ -65,14 +62,14 @@ public class FormattingScopeDialog extends StatusDialog {
 		} else {
 			fScopeStatementRadio.setSelection(true);
 		}
-	    applyDialogFont(composite);
+		applyDialogFont(composite);
 		return composite;
 	}
 
 	@Override
 	protected void okPressed() {
-		String scope = fScopeFileRadio.getSelection() ?
-				PreferenceConstants.FORMATTING_SCOPE_DOCUMENT : PreferenceConstants.FORMATTING_SCOPE_STATEMENT; 
+		String scope = fScopeFileRadio.getSelection() ? PreferenceConstants.FORMATTING_SCOPE_DOCUMENT
+				: PreferenceConstants.FORMATTING_SCOPE_STATEMENT;
 		preferenceStore.setValue(PreferenceConstants.FORMATTING_SCOPE_FOR_EMPTY_SELECTION, scope);
 		if (fDoNotAskAgainCheckBox.getSelection()) {
 			preferenceStore.setValue(PreferenceConstants.FORMATTING_CONFIRM_SCOPE_FOR_EMPTY_SELECTION, false);

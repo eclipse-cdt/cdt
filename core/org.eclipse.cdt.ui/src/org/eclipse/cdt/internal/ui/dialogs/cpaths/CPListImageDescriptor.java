@@ -23,13 +23,13 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 public class CPListImageDescriptor extends CompositeImageDescriptor {
 
 	/** Flag to render the waring adornment */
-	public final static int WARNING=			0x1;
+	public final static int WARNING = 0x1;
 
 	/** Flag to render the inherited adornment */
-	public final static int ERROR=				0x2;
+	public final static int ERROR = 0x2;
 
 	/** Flag to render the inherited adornment */
-	public final static int PATH_INHERIT=		0x4;
+	public final static int PATH_INHERIT = 0x4;
 
 	private ImageDescriptor fBaseImage;
 	private int flags;
@@ -91,23 +91,23 @@ public class CPListImageDescriptor extends CompositeImageDescriptor {
 	 * Add any overlays to the image as specified in the flags.
 	 */
 	protected void drawOverlays() {
-		Point size= getSize();
+		Point size = getSize();
 		ImageData data = null;
-		int x= getSize().x;
+		int x = getSize().x;
 		if ((flags & PATH_INHERIT) == PATH_INHERIT) {
 			data = CPluginImages.DESC_OVR_PATH_INHERIT.getImageData(100);
 			drawImage(data, x, 0);
 		}
-		x= 0;
+		x = 0;
 		if ((flags & ERROR) != 0) {
 			data = CPluginImages.DESC_OVR_ERROR.getImageData(100);
 			drawImage(data, x, size.y - data.height);
-			x+= data.width;
+			x += data.width;
 		}
 		if ((flags & WARNING) != 0) {
 			data = CPluginImages.DESC_OVR_WARNING.getImageData(100);
 			drawImage(data, x, size.y - data.height);
-			x+= data.width;
+			x += data.width;
 		}
 	}
 

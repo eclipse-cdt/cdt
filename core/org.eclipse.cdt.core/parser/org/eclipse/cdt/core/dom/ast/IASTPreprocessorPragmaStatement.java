@@ -26,7 +26,7 @@ public interface IASTPreprocessorPragmaStatement extends IASTPreprocessorStateme
 	 * Returns the pragma message.
 	 */
 	public char[] getMessage();
-	
+
 	/**
 	 * Returns whether this uses the pragma operator syntax, e.g: <code>_Pragma("once")</code>
 	 * @since 5.2

@@ -33,7 +33,7 @@ class ParserState {
 
 	public int[] parserLocationStack;
 	public int[] undoStack;
-	
+
 	// Error recovery
 	public int[] locationStack;
 	public int repair_token;
@@ -42,7 +42,7 @@ class ParserState {
 	 * The number of trial actions that have been executed since the last backtrackable point was encountered.
 	 */
 	public int trialActionCount;
-	
+
 	/**
 	 * A stack that contains the number of trial actions that were executed at different backtrackable points.
 	 */
@@ -81,7 +81,8 @@ class ParserState {
 	}
 
 	public void reallocateStateStack() {
-		int old_stack_length = (stateStack == null ? 0 : stateStack.length), stack_length = old_stack_length + STACK_INCREMENT;
+		int old_stack_length = (stateStack == null ? 0 : stateStack.length),
+				stack_length = old_stack_length + STACK_INCREMENT;
 		if (stateStack == null)
 			stateStack = new int[stack_length];
 		else
@@ -101,13 +102,12 @@ class ParserState {
 
 			actionStack[0] = 0;
 			undoStack = new int[stateStack.length];
-			
+
 			locationStack[0] = start_token_index;
-			
+
 			parserLocationStack = new int[stateStack.length];
 			parserLocationStack[0] = start_token_index;
-			
-			
+
 		} else if (this.actionStack.length < stateStack.length) {
 			int old_length = this.actionStack.length;
 
@@ -117,8 +117,7 @@ class ParserState {
 		}
 		return;
 	}
-	
-	
+
 	@SuppressWarnings("nls")
 	public void dumpState() {
 		System.out.print(curtok);
@@ -130,7 +129,7 @@ class ParserState {
 		dump(parserLocationStack, stateStackTop);
 		System.out.println();
 	}
-	
+
 	@SuppressWarnings("nls")
 	private void dump(int[] array, int limit) {
 		System.out.print("[");

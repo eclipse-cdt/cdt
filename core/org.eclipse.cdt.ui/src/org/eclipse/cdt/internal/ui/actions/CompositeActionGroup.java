@@ -23,10 +23,10 @@ import org.eclipse.ui.actions.ActionGroup;
 public class CompositeActionGroup extends ActionGroup {
 
 	private ActionGroup[] fGroups;
-	
+
 	public CompositeActionGroup() {
 	}
-	
+
 	public CompositeActionGroup(ActionGroup[] groups) {
 		setGroups(groups);
 	}
@@ -34,32 +34,32 @@ public class CompositeActionGroup extends ActionGroup {
 	protected void setGroups(ActionGroup[] groups) {
 		Assert.isTrue(fGroups == null);
 		Assert.isNotNull(groups);
-		fGroups= groups;		
+		fGroups = groups;
 	}
-		
+
 	public ActionGroup get(int index) {
 		if (fGroups == null)
 			return null;
 		return fGroups[index];
 	}
-	
+
 	public void addGroup(ActionGroup group) {
 		if (fGroups == null) {
-			fGroups= new ActionGroup[] { group };
+			fGroups = new ActionGroup[] { group };
 		} else {
-			ActionGroup[] newGroups= new ActionGroup[fGroups.length + 1];
+			ActionGroup[] newGroups = new ActionGroup[fGroups.length + 1];
 			System.arraycopy(fGroups, 0, newGroups, 0, fGroups.length);
-			newGroups[fGroups.length]= group;
-			fGroups= newGroups;
+			newGroups[fGroups.length] = group;
+			fGroups = newGroups;
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
 		if (fGroups == null)
 			return;
-		for (int i= 0; i < fGroups.length; i++) {
+		for (int i = 0; i < fGroups.length; i++) {
 			fGroups[i].dispose();
 		}
 	}
@@ -69,7 +69,7 @@ public class CompositeActionGroup extends ActionGroup {
 		super.fillActionBars(actionBars);
 		if (fGroups == null)
 			return;
-		for (int i= 0; i < fGroups.length; i++) {
+		for (int i = 0; i < fGroups.length; i++) {
 			fGroups[i].fillActionBars(actionBars);
 		}
 	}
@@ -79,7 +79,7 @@ public class CompositeActionGroup extends ActionGroup {
 		super.fillContextMenu(menu);
 		if (fGroups == null)
 			return;
-		for (int i= 0; i < fGroups.length; i++) {
+		for (int i = 0; i < fGroups.length; i++) {
 			fGroups[i].fillContextMenu(menu);
 		}
 	}
@@ -89,7 +89,7 @@ public class CompositeActionGroup extends ActionGroup {
 		super.setContext(context);
 		if (fGroups == null)
 			return;
-		for (int i= 0; i < fGroups.length; i++) {
+		for (int i = 0; i < fGroups.length; i++) {
 			fGroups[i].setContext(context);
 		}
 	}
@@ -99,7 +99,7 @@ public class CompositeActionGroup extends ActionGroup {
 		super.updateActionBars();
 		if (fGroups == null)
 			return;
-		for (int i= 0; i < fGroups.length; i++) {
+		for (int i = 0; i < fGroups.length; i++) {
 			fGroups[i].updateActionBars();
 		}
 	}

@@ -30,7 +30,7 @@ public abstract class AbstractSinglePage extends AbstractPage {
 	 */
 	@Override
 	public abstract void createWidgets(Composite c);
-	
+
 	/**
 	 * Implement this method to perform apply:
 	 * copy all data affected by this page 
@@ -40,50 +40,50 @@ public abstract class AbstractSinglePage extends AbstractPage {
 	 */
 	protected abstract void performApply(ICResourceDescription src, ICResourceDescription dst);
 
-    /**
-     * Rewrite this method to handle configuration change
-     * Do not forget to call super.cfgChanged(_cfgd); 
-     */
+	/**
+	 * Rewrite this method to handle configuration change
+	 * Do not forget to call super.cfgChanged(_cfgd); 
+	 */
 	@Override
 	protected void cfgChanged(ICConfigurationDescription _cfgd) {
 		super.cfgChanged(_cfgd);
-	//	if (displayedConfig) {
-			// update widgets according to getResDesc() values   
-	//	}
+		//	if (displayedConfig) {
+		// update widgets according to getResDesc() values   
+		//	}
 	}
 
 	/**
 	 * Usually, this method needs not to be rewritten
 	 */
-    @Override
+	@Override
 	public boolean performCancel() {
-	//	if (! noContentOnPage && displayedConfig) {
-			// do nothing in most cases
-	//	}
-        return true;
-    }
-    
-    /**
-     * Rewrite this method to restore default 
-     * values in current ResourceDescription
-     */
+		//	if (! noContentOnPage && displayedConfig) {
+		// do nothing in most cases
+		//	}
+		return true;
+	}
+
+	/**
+	 * Rewrite this method to restore default 
+	 * values in current ResourceDescription
+	 */
 	@Override
 	public void performDefaults() {
-	//	if (! noContentOnPage && displayedConfig) {
-			// do something with getResDesc() fields
-	//	}
+		//	if (! noContentOnPage && displayedConfig) {
+		// do something with getResDesc() fields
+		//	}
 	}
-    
+
 	/**
 	 * Usually, this method needs not to be rewritten
 	 */
-    @Override
+	@Override
 	public boolean performOk() {
-		if (! noContentOnPage && displayedConfig) {
+		if (!noContentOnPage && displayedConfig) {
 			// do nothing in most cases
 		}
-    	return super.performOk();
-    }
+		return super.performOk();
+	}
 
 	/**
 	 * 
@@ -100,8 +100,10 @@ public abstract class AbstractSinglePage extends AbstractPage {
 	 * No need to rewrite
 	 */
 	@Override
-	protected boolean isSingle() { return true; }
-	
+	protected boolean isSingle() {
+		return true;
+	}
+
 	/**
 	 * Call to "foreach" does not really matter, since we have not tabs
 	 * But we intercept this call to perform other operations (apply). 
@@ -109,7 +111,7 @@ public abstract class AbstractSinglePage extends AbstractPage {
 	@Override
 	protected void forEach(int m, Object data) {
 		if (m == ICPropertyTab.APPLY)
-			performApply(getResDesc(), (ICResourceDescription)data);
+			performApply(getResDesc(), (ICResourceDescription) data);
 	}
 
 }

@@ -70,11 +70,11 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	public EvalFunctionSet(CPPFunctionSet set, boolean qualified, boolean addressOf, IType impliedObjectType,
 			IBinding templateDefinition) {
 		super(templateDefinition);
-		fFunctionSet= set;
-		fQualified= qualified;
-		fAddressOf= addressOf;
-		fImpliedObjectType= impliedObjectType;
-		fName= null;
+		fFunctionSet = set;
+		fQualified = qualified;
+		fAddressOf = addressOf;
+		fImpliedObjectType = impliedObjectType;
+		fName = null;
 	}
 
 	public EvalFunctionSet(char[] name, boolean qualified, boolean addressOf, IASTNode pointOfDefinition) {
@@ -83,11 +83,11 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 
 	public EvalFunctionSet(char[] name, boolean qualified, boolean addressOf, IBinding templateDefinition) {
 		super(templateDefinition);
-		fFunctionSet= null;
-		fQualified= qualified;
-		fAddressOf= addressOf;
-		fImpliedObjectType= null;
-		fName= name;
+		fFunctionSet = null;
+		fQualified = qualified;
+		fAddressOf = addressOf;
+		fImpliedObjectType = null;
+		fName = name;
 	}
 
 	public CPPFunctionSet getFunctionSet() {
@@ -169,7 +169,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		EvalFunctionSet o = (EvalFunctionSet) other;
 		return fFunctionSet.equals(o.fFunctionSet);
 	}
-	
+
 	@Override
 	public IType getType() {
 		return new FunctionSetType(fFunctionSet, fAddressOf);
@@ -186,10 +186,10 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	}
 
 	// Descriptive names for flags used during serialization.
-	private final static short FLAG_ADDRESS_OF        = ITypeMarshalBuffer.FLAG1;
-	private final static short FLAG_HAS_FUNCTION_SET  = ITypeMarshalBuffer.FLAG2;
+	private final static short FLAG_ADDRESS_OF = ITypeMarshalBuffer.FLAG1;
+	private final static short FLAG_HAS_FUNCTION_SET = ITypeMarshalBuffer.FLAG2;
 	private final static short FLAG_HAS_TEMPLATE_ARGS = ITypeMarshalBuffer.FLAG3;
-	private final static short FLAG_QUALIFIED         = ITypeMarshalBuffer.FLAG4;
+	private final static short FLAG_QUALIFIED = ITypeMarshalBuffer.FLAG4;
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
@@ -225,29 +225,29 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean qualified= (firstBytes & FLAG_QUALIFIED) != 0;
-		final boolean addressOf= (firstBytes & FLAG_ADDRESS_OF) != 0;
+		final boolean qualified = (firstBytes & FLAG_QUALIFIED) != 0;
+		final boolean addressOf = (firstBytes & FLAG_ADDRESS_OF) != 0;
 		if ((firstBytes & FLAG_HAS_FUNCTION_SET) != 0) {
-			int bindingCount= buffer.getInt();
-			ICPPFunction[] bindings= new ICPPFunction[bindingCount];
+			int bindingCount = buffer.getInt();
+			ICPPFunction[] bindings = new ICPPFunction[bindingCount];
 			for (int i = 0; i < bindings.length; i++) {
-				bindings[i]= (ICPPFunction) buffer.unmarshalBinding();
+				bindings[i] = (ICPPFunction) buffer.unmarshalBinding();
 			}
-			ICPPTemplateArgument[] args= null;
+			ICPPTemplateArgument[] args = null;
 			if ((firstBytes & FLAG_HAS_TEMPLATE_ARGS) != 0) {
-				int len= buffer.getInt();
+				int len = buffer.getInt();
 				args = new ICPPTemplateArgument[len];
 				for (int i = 0; i < args.length; i++) {
-					args[i]= buffer.unmarshalTemplateArgument();
+					args[i] = buffer.unmarshalTemplateArgument();
 				}
 			}
-			IType impliedObjectType= buffer.unmarshalType();
-			IBinding templateDefinition= buffer.unmarshalBinding();
+			IType impliedObjectType = buffer.unmarshalType();
+			IBinding templateDefinition = buffer.unmarshalBinding();
 			return new EvalFunctionSet(new CPPFunctionSet(bindings, args, null), qualified, addressOf,
 					impliedObjectType, templateDefinition);
 		} else {
 			char[] name = buffer.getCharArray();
-			IBinding templateDefinition= buffer.unmarshalBinding();
+			IBinding templateDefinition = buffer.unmarshalBinding();
 			return new EvalFunctionSet(name, qualified, addressOf, templateDefinition);
 		}
 	}
@@ -279,7 +279,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 			ICPPClassSpecialization ownerClass = (ICPPClassSpecialization) owner;
 			functions = new ICPPFunction[originalFunctions.length];
 			for (int i = 0; i < originalFunctions.length; i++) {
-				functions[i] = (ICPPFunction) ownerClass.specializeMember(originalFunctions[i]); 
+				functions[i] = (ICPPFunction) ownerClass.specializeMember(originalFunctions[i]);
 			}
 		}
 		// No need to instantiate the implied object type. An EvalFunctioNSet should only be created
@@ -311,8 +311,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 			data = new LookupData(fName, null, point);
 		} else {
 			functions = fFunctionSet.getBindings();
-			data = new LookupData(functions[0].getNameCharArray(), fFunctionSet.getTemplateArguments(),
-					point);
+			data = new LookupData(functions[0].getNameCharArray(), fFunctionSet.getTemplateArguments(), point);
 			data.foundItems = functions;
 		}
 		data.setFunctionArguments(false, args);

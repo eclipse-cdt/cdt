@@ -53,17 +53,17 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			switch (delta.getKind()) {
-				case IResourceDelta.ADDED:
-					// Handle added resource
-					processResourceDelta(resource, monitor);
-					break;
-				case IResourceDelta.REMOVED:
-					// Handle removed resource
-					break;
-				case IResourceDelta.CHANGED:
-					// Handle changed resource
-					processResourceDelta(resource, monitor);
-					break;
+			case IResourceDelta.ADDED:
+				// Handle added resource
+				processResourceDelta(resource, monitor);
+				break;
+			case IResourceDelta.REMOVED:
+				// Handle removed resource
+				break;
+			case IResourceDelta.CHANGED:
+				// Handle changed resource
+				processResourceDelta(resource, monitor);
+				break;
 			}
 			// Return true to continue visiting children.
 			return true;
@@ -123,7 +123,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 
 	@Override
 	public void processResource(IResource resource, IProgressMonitor monitor, CheckerLaunchMode mode, Object model) {
-		if (!enabled) return;
+		if (!enabled)
+			return;
 		if (model != null) {
 			if (mode == CheckerLaunchMode.RUN_AS_YOU_TYPE)
 				CodanRunner.runInEditor(model, resource, monitor);

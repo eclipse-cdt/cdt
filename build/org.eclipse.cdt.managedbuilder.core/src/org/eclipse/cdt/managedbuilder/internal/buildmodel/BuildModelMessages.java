@@ -21,8 +21,7 @@ import java.util.ResourceBundle;
 public class BuildModelMessages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildModelMessages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private BuildModelMessages() {
 	}
@@ -30,7 +29,7 @@ public class BuildModelMessages {
 	public static String getString(String key) {
 		return getResourceString(key);
 	}
-	
+
 	public static String getResourceString(String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);

@@ -34,5 +34,3 @@ class GenericConditionalFlowInfo extends FlowInfo {
 		mergeAccessModeConditional(info, context);
 	}
 }
-
-

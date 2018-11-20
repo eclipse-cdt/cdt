@@ -19,7 +19,7 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
  * Interface of an object participating in reconciling.
  */
 public interface IReconcilingParticipant {
-	
+
 	/**
 	 * Called after reconciling has been finished.
 	 */

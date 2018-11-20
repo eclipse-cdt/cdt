@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
-
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblySelection;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection;
 import org.eclipse.core.runtime.ListenerList;
@@ -38,7 +37,7 @@ class DisassemblySelectionProvider implements ISelectionProvider {
 	private final ListenerList<ISelectionChangedListener> fListenerList = new ListenerList<>(ListenerList.IDENTITY);
 	private final ISelectionChangedListener fListener = event -> fireSelectionChanged(event);
 	private final DisassemblyPart fPart;
-	
+
 	DisassemblySelectionProvider(DisassemblyPart disassemblyPart) {
 		fPart = disassemblyPart;
 		fPart.getTextViewer().getSelectionProvider().addSelectionChangedListener(fListener);
@@ -53,12 +52,12 @@ class DisassemblySelectionProvider implements ISelectionProvider {
 
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		fListenerList.add(listener);			
+		fListenerList.add(listener);
 	}
 
 	@Override
 	public ISelection getSelection() {
-		final ISourceViewer textViewer= fPart.getTextViewer();
+		final ISourceViewer textViewer = fPart.getTextViewer();
 		ISelectionProvider provider = textViewer.getSelectionProvider();
 		if (provider != null) {
 			return new DisassemblySelection((ITextSelection) provider.getSelection(), fPart);

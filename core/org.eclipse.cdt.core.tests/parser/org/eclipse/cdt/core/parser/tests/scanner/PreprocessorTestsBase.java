@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
 import java.io.IOException;
@@ -69,8 +69,9 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	protected void initializeScanner(String input, ParserLanguage lang) throws IOException {
 		initializeScanner(getContent(input), lang, ParserMode.COMPLETE_PARSE, new ScannerInfo());
 	}
-	
-	protected void initializeScanner(String input, ParserLanguage lang, IScannerExtensionConfiguration scannerConfig) throws IOException {
+
+	protected void initializeScanner(String input, ParserLanguage lang, IScannerExtensionConfiguration scannerConfig)
+			throws IOException {
 		initializeScanner(getContent(input), lang, ParserMode.COMPLETE_PARSE, new ScannerInfo(), scannerConfig);
 	}
 
@@ -79,24 +80,26 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		return FileContent.create("<test-code>", input.toCharArray());
 	}
 
-	protected void initializeScanner(FileContent input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo) throws IOException {
+	protected void initializeScanner(FileContent input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo)
+			throws IOException {
 		initializeScanner(input, lang, mode, scannerInfo, null);
 	}
-	
-	protected void initializeScanner(FileContent input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo, IScannerExtensionConfiguration scannerConfig) throws IOException {
-		IncludeFileContentProvider readerFactory= FileCodeReaderFactory.getInstance();
+
+	protected void initializeScanner(FileContent input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo,
+			IScannerExtensionConfiguration scannerConfig) throws IOException {
+		IncludeFileContentProvider readerFactory = FileCodeReaderFactory.getInstance();
 		//IScannerExtensionConfiguration scannerConfig;
-	
+
 		if (scannerConfig == null) {
-		    if (lang == ParserLanguage.C) {
-		    	scannerConfig= GCCScannerExtensionConfiguration.getInstance();
-		    } else {
-		    	scannerConfig= GPPScannerExtensionConfiguration.getInstance(scannerInfo);
-		    }
+			if (lang == ParserLanguage.C) {
+				scannerConfig = GCCScannerExtensionConfiguration.getInstance();
+			} else {
+				scannerConfig = GPPScannerExtensionConfiguration.getInstance(scannerInfo);
+			}
 		}
-	    
-		fScanner= new CPreprocessor(input, scannerInfo, lang, NULL_LOG, scannerConfig, readerFactory);
-		fLocationResolver= fScanner.getLocationMap();
+
+		fScanner = new CPreprocessor(input, scannerInfo, lang, NULL_LOG, scannerConfig, readerFactory);
+		fLocationResolver = fScanner.getLocationMap();
 	}
 
 	protected void initializeScanner() throws Exception {
@@ -109,15 +112,17 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 
 	protected IASTTranslationUnit parse(ParserLanguage lang) {
 		assertNotNull("The scanner needs to be initialized before parsing the code.", fScanner);
-		if (lang == ParserLanguage.C) {	
-			return new GNUCSourceParser(fScanner,  ParserMode.COMPLETE_PARSE, NULL_LOG, GCCParserExtensionConfiguration.getInstance()).parse();
+		if (lang == ParserLanguage.C) {
+			return new GNUCSourceParser(fScanner, ParserMode.COMPLETE_PARSE, NULL_LOG,
+					GCCParserExtensionConfiguration.getInstance()).parse();
 		}
-		return new GNUCPPSourceParser(fScanner, ParserMode.COMPLETE_PARSE, NULL_LOG, GPPParserExtensionConfiguration.getInstance()).parse();
+		return new GNUCPPSourceParser(fScanner, ParserMode.COMPLETE_PARSE, NULL_LOG,
+				GPPParserExtensionConfiguration.getInstance()).parse();
 	}
 
 	protected StringBuilder[] getTestContent(int sections) throws IOException {
-		return TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
+		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser", getClass(),
+				getName(), sections);
 	}
 
 	protected String getAboveComment() throws IOException {
@@ -125,22 +130,22 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	}
 
 	protected void fullyTokenize() throws Exception {
-		try	{
+		try {
 			for (;;) {
-				IToken t= fScanner.nextToken();
+				IToken t = fScanner.nextToken();
 			}
 		} catch (EndOfFileException e) {
 		}
 	}
 
 	protected void validateToken(int tokenType) throws Exception {
-		IToken t= fScanner.nextToken();
+		IToken t = fScanner.nextToken();
 		assertEquals(tokenType, t.getType());
 	}
 
 	protected void validateToken(int tokenType, String image) throws Exception {
 		try {
-			IToken t= fScanner.nextToken();
+			IToken t = fScanner.nextToken();
 			assertEquals(tokenType, t.getType());
 			assertEquals(image, t.getImage());
 		} catch (EndOfFileException e) {
@@ -163,19 +168,19 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	protected void validateLString(String expectedImage) throws Exception {
 		validateToken(IToken.tLSTRING, "L\"" + expectedImage + "\"");
 	}
-	
+
 	protected void validateUTF16String(String expectedImage) throws Exception {
 		validateToken(IToken.tUTF16STRING, "u\"" + expectedImage + "\"");
 	}
-	
+
 	protected void validateUTF32String(String expectedImage) throws Exception {
 		validateToken(IToken.tUTF32STRING, "U\"" + expectedImage + "\"");
 	}
-	
+
 	protected void validateUserDefinedLiteralString(String expectedImage, String expectedSuffix) throws Exception {
 		validateToken(IToken.tUSER_DEFINED_STRING_LITERAL, "\"" + expectedImage + "\"" + expectedSuffix);
 	}
-	
+
 	protected void validateChar(String expectedImage) throws Exception {
 		validateToken(IToken.tCHAR, "'" + expectedImage + "'");
 	}
@@ -183,24 +188,24 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	protected void validateWideChar(String expectedImage) throws Exception {
 		validateToken(IToken.tLCHAR, "L'" + expectedImage + "'");
 	}
-	
+
 	protected void validateUTF16Char(String expectedImage) throws Exception {
 		validateToken(IToken.tUTF16CHAR, "u'" + expectedImage + "'");
 	}
-	
+
 	protected void validateUTF32Char(String expectedImage) throws Exception {
 		validateToken(IToken.tUTF32CHAR, "U'" + expectedImage + "'");
 	}
-	
+
 	protected void validateFloatingPointLiteral(String expectedImage) throws Exception {
 		validateToken(IToken.tFLOATINGPT, expectedImage);
 	}
 
 	protected void validateEOF() throws Exception {
 		try {
-			IToken t= fScanner.nextToken();
+			IToken t = fScanner.nextToken();
 			fail("superfluous token " + t);
-		} catch(EndOfFileException e) {
+		} catch (EndOfFileException e) {
 		}
 	}
 
@@ -226,9 +231,9 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	protected void validateProblemCount(int count) throws Exception {
 		assertEquals(count, fLocationResolver.getScannerProblems().length);
 	}
-	
+
 	protected void validateProblem(int idx, int problemID, String detail) throws Exception {
-		IASTProblem problem= fLocationResolver.getScannerProblems()[idx];
+		IASTProblem problem = fLocationResolver.getScannerProblems()[idx];
 		assertEquals(problemID, problem.getID());
 		if (detail != null) {
 			assertEquals(detail, problem.getArguments()[0]);

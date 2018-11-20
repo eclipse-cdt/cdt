@@ -15,8 +15,7 @@ package org.eclipse.cdt.managedbuilder.internal.buildproperties;
 
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 
-
-public class BuildPropertyValue extends PropertyBase implements IBuildPropertyValue{
+public class BuildPropertyValue extends PropertyBase implements IBuildPropertyValue {
 	BuildPropertyValue(String id, String name) {
 		super(id, name);
 	}

@@ -27,12 +27,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDARegistersCommand extends AbstractPDACommand<PDARegistersCommandResult> {
 
-    public PDARegistersCommand(PDAThreadDMContext context, String group) {
-        super(context, "registers " + group);
-    }
-    
-    @Override
-    public PDARegistersCommandResult createResult(String resultText) {
-        return new PDARegistersCommandResult(resultText);
-    }
+	public PDARegistersCommand(PDAThreadDMContext context, String group) {
+		super(context, "registers " + group);
+	}
+
+	@Override
+	public PDARegistersCommandResult createResult(String resultText) {
+		return new PDARegistersCommandResult(resultText);
+	}
 }

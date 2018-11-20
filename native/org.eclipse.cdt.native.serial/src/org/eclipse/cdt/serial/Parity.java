@@ -18,25 +18,18 @@ package org.eclipse.cdt.serial;
  */
 public enum Parity {
 
-	None,
-	Even,
-	Odd;
+	None, Even, Odd;
 
-	private static final String[] strings = {
-		"None", //$NON-NLS-1$
-		"Even", //$NON-NLS-1$
-		"Odd" //$NON-NLS-1$
+	private static final String[] strings = { "None", //$NON-NLS-1$
+			"Even", //$NON-NLS-1$
+			"Odd" //$NON-NLS-1$
 	};
 
 	public static String[] getStrings() {
 		return strings;
 	}
 
-	private static final Parity[] parities = {
-		None,
-		Even,
-		Odd
-	};
+	private static final Parity[] parities = { None, Even, Odd };
 
 	public static Parity fromStringIndex(int index) {
 		return parities[index];

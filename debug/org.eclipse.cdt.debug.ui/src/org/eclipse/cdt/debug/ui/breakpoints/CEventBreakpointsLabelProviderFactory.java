@@ -52,7 +52,7 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 
 					for (ICBreakpointsUIContribution con : bscs) {
 						Object attValue = breakpoint.getMarker().getAttribute(con.getId());
-						
+
 						if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
 							if (!Arrays.asList(con.getPossibleValues()).contains(attValue))
 								continue;
@@ -93,7 +93,7 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 		 */
 		@Override
 		public Image getImage(Object element) {
- 
+
 			return null;
 		}
 	};
@@ -102,8 +102,8 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 		int ignoreCount = breakpoint.getIgnoreCount();
 		if (ignoreCount > 0) {
 			label.append(' ');
-			label.append(MessageFormat.format(
-					DebugCoreMessages.getString("CDebugUtils.3"), new Object[] { Integer.toString(ignoreCount) })); //$NON-NLS-1$
+			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.3"), //$NON-NLS-1$
+					new Object[] { Integer.toString(ignoreCount) }));
 		}
 		return label;
 	}
@@ -112,13 +112,13 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 		String condition = breakpoint.getCondition();
 		if (condition != null && condition.length() > 0) {
 			buffer.append(' ');
-			buffer.append(MessageFormat
-					.format(DebugCoreMessages.getString("CDebugUtils.4"), new Object[] { condition })); //$NON-NLS-1$
+			buffer.append(
+					MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.4"), new Object[] { condition })); //$NON-NLS-1$
 		}
 	}
 
 	private static IElementLabelProvider fElementLabelProvider = new BreakpointLabelProvider();
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {

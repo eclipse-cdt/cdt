@@ -18,16 +18,16 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 public abstract class CFolderData extends CResourceData {
 
 	protected CFolderData() {
-		
+
 	}
 
 	@Override
-	public final int getType(){
+	public final int getType() {
 		return ICSettingBase.SETTING_FOLDER;
 	}
-	
+
 	public abstract CLanguageData[] getLanguageDatas();
-	
+
 	public abstract CLanguageData createLanguageDataForContentTypes(String languageId, String cTypesIds[]);
 
 	public abstract CLanguageData createLanguageDataForExtensions(String languageId, String extensions[]);

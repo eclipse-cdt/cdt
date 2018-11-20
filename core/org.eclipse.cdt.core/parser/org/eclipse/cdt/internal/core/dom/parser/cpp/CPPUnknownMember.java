@@ -32,16 +32,16 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents a binding that is unknown because it depends on template arguments.
  */
-public class CPPUnknownMember extends CPPUnknownBinding	implements ICPPUnknownMember, ISerializableType {
-    protected final IType fOwner;
+public class CPPUnknownMember extends CPPUnknownBinding implements ICPPUnknownMember, ISerializableType {
+	protected final IType fOwner;
 
-    protected CPPUnknownMember(IType owner, char[] name) {
-        super(name);
-        if (owner instanceof ICPPClassTemplate) {
-        	owner= CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner);
-        }
-        fOwner= owner;
-    }
+	protected CPPUnknownMember(IType owner, char[] name) {
+		super(name);
+		if (owner instanceof ICPPClassTemplate) {
+			owner = CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner);
+		}
+		fOwner = owner;
+	}
 
 	@Override
 	public IBinding getOwner() {
@@ -57,7 +57,7 @@ public class CPPUnknownMember extends CPPUnknownBinding	implements ICPPUnknownMe
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= ITypeMarshalBuffer.UNKNOWN_MEMBER;
+		short firstBytes = ITypeMarshalBuffer.UNKNOWN_MEMBER;
 		if (this instanceof ICPPField) {
 			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		} else if (this instanceof ICPPMethod) {
@@ -69,8 +69,9 @@ public class CPPUnknownMember extends CPPUnknownBinding	implements ICPPUnknownMe
 		buffer.putCharArray(getNameCharArray());
 	}
 
-	public static IBinding unmarshal(IIndexFragment fragment, short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		IType owner= buffer.unmarshalType();
+	public static IBinding unmarshal(IIndexFragment fragment, short firstBytes, ITypeMarshalBuffer buffer)
+			throws CoreException {
+		IType owner = buffer.unmarshalType();
 		char[] name = buffer.getCharArray();
 		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
 			return new PDOMCPPUnknownField(fragment, owner, name);

@@ -29,15 +29,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListLocalsInfo;
  * prints also their values.
  * 
  */
-public class MIStackListLocals extends MICommand<MIStackListLocalsInfo> 
-{
-	
-    public MIStackListLocals(IFrameDMContext frameCtx, boolean printValues) {
-        super(frameCtx, "-stack-list-locals", new String[] { printValues ? "1" : "0" } );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+public class MIStackListLocals extends MICommand<MIStackListLocalsInfo> {
 
-    @Override
-    public MIStackListLocalsInfo getResult(MIOutput out) {
-        return new MIStackListLocalsInfo(out);
-    }
+	public MIStackListLocals(IFrameDMContext frameCtx, boolean printValues) {
+		super(frameCtx, "-stack-list-locals", new String[] { printValues ? "1" : "0" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	@Override
+	public MIStackListLocalsInfo getResult(MIOutput out) {
+		return new MIStackListLocalsInfo(out);
+	}
 }

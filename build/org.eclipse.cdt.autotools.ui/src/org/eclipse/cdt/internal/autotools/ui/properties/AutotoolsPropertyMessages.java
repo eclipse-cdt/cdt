@@ -38,6 +38,6 @@ public class AutotoolsPropertyMessages {
 		} catch (NullPointerException e) {
 			return '#' + key + '#';
 		}
-	}	
+	}
 
 }

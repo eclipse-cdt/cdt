@@ -50,7 +50,6 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	private static final String VALUE_FOLDER_SCOPE = "per-folder"; //$NON-NLS-1$
 	private static final String VALUE_PROJECT_SCOPE = "per-project"; //$NON-NLS-1$
 
-
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
 
 	/**
@@ -65,13 +64,12 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	/** "\"foo\"" */
 	private static final String QUOTE_BSLASH_QUOTE = "(\"\\\\\".*?\\\\\"\")"; //$NON-NLS-1$
 
-	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"'\\\\]*(\\s*(" + QUOTE +"|" + QUOTE_BSLASH_QUOTE + "|" + BSLASH_QUOTE + "|" + SINGLE_QUOTE + "|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$<
+	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"'\\\\]*(\\s*(" + QUOTE + "|" //$NON-NLS-1$//$NON-NLS-2$
+			+ QUOTE_BSLASH_QUOTE + "|" + BSLASH_QUOTE + "|" + SINGLE_QUOTE + "|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$<
 	private static final int OPTION_GROUP = 0;
 
 	public enum ResourceScope {
-		FILE,
-		FOLDER,
-		PROJECT,
+		FILE, FOLDER, PROJECT,
 	}
 
 	/**
@@ -79,14 +77,14 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 */
 	@SuppressWarnings("nls")
 	private static final String[] COMPILER_COMMAND_PATTERN_TEMPLATES = {
-		"${COMPILER_PATTERN}.*\\s" + "()([^'\"\\s]*\\.${EXTENSIONS_PATTERN})(\\s.*)?[\r\n]*", // compiling unquoted file
-		"${COMPILER_PATTERN}.*\\s" + "(['\"])(.*\\.${EXTENSIONS_PATTERN})\\${COMPILER_GROUPS+1}(\\s.*)?[\r\n]*" // compiling quoted file
+			"${COMPILER_PATTERN}.*\\s" + "()([^'\"\\s]*\\.${EXTENSIONS_PATTERN})(\\s.*)?[\r\n]*", // compiling unquoted file
+			"${COMPILER_PATTERN}.*\\s" + "(['\"])(.*\\.${EXTENSIONS_PATTERN})\\${COMPILER_GROUPS+1}(\\s.*)?[\r\n]*" // compiling quoted file
 	};
 	private static final int FILE_GROUP = 2;
 
 	// cached value from properties, do not need to use in equals() and hashCode()
 	private ResourceScope resourceScope = null;
-	
+
 	// Used to handle line continuations in the build output.
 	private String partialLine;
 
@@ -117,7 +115,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	@SuppressWarnings("nls")
 	private String getCompilerPatternExtended() {
 		String compilerPattern = getCompilerPattern();
-		return "\\s*\"?("+LEADING_PATH_PATTERN+")?(" + compilerPattern + ")\"?";
+		return "\\s*\"?(" + LEADING_PATH_PATTERN + ")?(" + compilerPattern + ")\"?";
 	}
 
 	/**
@@ -205,8 +203,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 */
 	private String makePattern(String template) {
 		@SuppressWarnings("nls")
-		String pattern = template
-				.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())
+		String pattern = template.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())
 				.replace("${EXTENSIONS_PATTERN}", getPatternFileExtensions())
 				.replace("${COMPILER_GROUPS+1}", Integer.toString(countGroups(getCompilerPatternExtended()) + 1));
 		return pattern;
@@ -240,7 +237,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		Matcher optionMatcher = OPTIONS_PATTERN.matcher(line);
 		while (optionMatcher.find()) {
 			String option = optionMatcher.group(OPTION_GROUP);
-			if (option!=null) {
+			if (option != null) {
 				options.add(option);
 			}
 		}
@@ -266,29 +263,29 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			processLine(partialLine);
 			partialLine = null;
 		}
-		
+
 		serializeLanguageSettingsInBackground();
 		super.shutdown();
 	}
-	
+
 	@Override
 	public boolean processLine(String line) {
 		line = handleLineContinuation(line);
 		return super.processLine(line);
 	}
-	
+
 	/**
 	 * Handle line continuations ('\' at the end of a line, indicating that the next line is a
 	 * continuation of this one).
 	 */
 	private String handleLineContinuation(String line) {
-		if (line == null) 
+		if (line == null)
 			return null;
 
 		// If the character preceding the '\' is also '\', it's not a line continuation - 
 		// the first '\' escapes the second.
-		if (line.length() > 0 && line.charAt(line.length() - 1) == '\\' &&
-				(line.length() == 1 || line.charAt(line.length() - 2) != '\\')) {
+		if (line.length() > 0 && line.charAt(line.length() - 1) == '\\'
+				&& (line.length() == 1 || line.charAt(line.length() - 2) != '\\')) {
 			// Line ends in line continuation - save it for later.
 			String fragment = line.substring(0, line.length() - 1);
 			if (partialLine == null) {
@@ -296,7 +293,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			} else {
 				partialLine += fragment;
 			}
-			return null;  // line will not be processed now
+			return null; // line will not be processed now
 		} else if (partialLine != null) {
 			// Line doesn't end in continuation but previous lines did - use their contents.
 			line = partialLine + line;
@@ -310,7 +307,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 * of this parser. Intended for better troubleshooting experience.
 	 * Implementers are supposed to add the error parser via extension point {@code org.eclipse.cdt.core.ErrorParser}.
 	 */
-	protected static abstract class AbstractBuildCommandPatternHighlighter extends RegexErrorParser implements IErrorParser2 {
+	protected static abstract class AbstractBuildCommandPatternHighlighter extends RegexErrorParser
+			implements IErrorParser2 {
 		/**
 		 * Constructor.
 		 * @param parserId - build command parser ID specified in the extension {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
@@ -324,13 +322,15 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		 * @param parserId - language settings provider (the build command parser) ID.
 		 */
 		protected void init(String parserId) {
-			AbstractBuildCommandParser buildCommandParser = (AbstractBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(parserId, false);
+			AbstractBuildCommandParser buildCommandParser = (AbstractBuildCommandParser) LanguageSettingsManager
+					.getExtensionProviderCopy(parserId, false);
 			if (buildCommandParser != null) {
 				for (String template : COMPILER_COMMAND_PATTERN_TEMPLATES) {
 					String pattern = buildCommandParser.makePattern(template);
-					String fileExpr = "$"+buildCommandParser.adjustFileGroup(); //$NON-NLS-1$
+					String fileExpr = "$" + buildCommandParser.adjustFileGroup(); //$NON-NLS-1$
 					String descExpr = "$0"; //$NON-NLS-1$
-					addPattern(new RegexErrorPattern(pattern, fileExpr, null, descExpr, null, IMarkerGenerator.SEVERITY_WARNING, true));
+					addPattern(new RegexErrorPattern(pattern, fileExpr, null, descExpr, null,
+							IMarkerGenerator.SEVERITY_WARNING, true));
 				}
 			}
 		}
@@ -340,6 +340,5 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			return KEEP_LONGLINES;
 		}
 	}
-
 
 }

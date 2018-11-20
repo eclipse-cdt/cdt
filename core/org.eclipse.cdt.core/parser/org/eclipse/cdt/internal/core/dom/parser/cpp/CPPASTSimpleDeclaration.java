@@ -26,8 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclarat
 /**
  * @author jcamelon
  */
-public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner
-		implements IASTSimpleDeclaration, ICPPExecutionOwner {
+public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IASTSimpleDeclaration, ICPPExecutionOwner {
 	private IASTDeclarator[] declarators;
 	private int declaratorsPos = -1;
 	private IASTDeclSpecifier declSpecifier;

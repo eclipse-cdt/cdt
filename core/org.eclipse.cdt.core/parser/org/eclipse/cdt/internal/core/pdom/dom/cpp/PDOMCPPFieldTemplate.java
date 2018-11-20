@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class PDOMCPPFieldTemplate extends PDOMCPPVariableTemplate implements ICPPFieldTemplate {
 	protected static final int FIELD_POSITION_OFFSET = PDOMCPPVariableTemplate.RECORD_SIZE; // 2 bytes 1-based
-	
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = FIELD_POSITION_OFFSET + 2;
 
@@ -41,7 +41,7 @@ public class PDOMCPPFieldTemplate extends PDOMCPPVariableTemplate implements ICP
 	public PDOMCPPFieldTemplate(PDOMLinkage pdomLinkage, long record) {
 		super(pdomLinkage, record);
 	}
-	
+
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_FIELD_TEMPLATE;

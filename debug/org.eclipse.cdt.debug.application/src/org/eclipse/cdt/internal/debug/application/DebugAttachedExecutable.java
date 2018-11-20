@@ -51,7 +51,6 @@ public class DebugAttachedExecutable {
 	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$ 
 	private static final String DEBUG_PROJECT_ID = "org.eclipse.cdt.debug"; //$NON-NLS-1$
 
-
 	public DebugAttachedExecutable() {
 	}
 
@@ -61,13 +60,14 @@ public class DebugAttachedExecutable {
 
 	// Create a new project that doesn't already exist.  Use the base project name and add
 	// a numerical suffix as needed.
-	private static IProject createCProjectForExecutable(String projectName) throws OperationCanceledException, CoreException {
+	private static IProject createCProjectForExecutable(String projectName)
+			throws OperationCanceledException, CoreException {
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject newProjectHandle = workspace.getRoot().getProject(projectName);
 
 		int projectSuffix = 2;
-		while (newProjectHandle.exists()){						
+		while (newProjectHandle.exists()) {
 			newProjectHandle = workspace.getRoot().getProject(projectName + projectSuffix);
 			projectSuffix++;
 		}
@@ -89,9 +89,8 @@ public class DebugAttachedExecutable {
 	 * @throws CoreException
 	 * @throws InterruptedException
 	 */
-	public static ILaunchConfiguration createLaunchConfig(IProgressMonitor monitor,
-			String buildLog)
-					throws CoreException, InterruptedException {
+	public static ILaunchConfiguration createLaunchConfig(IProgressMonitor monitor, String buildLog)
+			throws CoreException, InterruptedException {
 		return createLaunchConfig(monitor, buildLog, null);
 	}
 
@@ -104,9 +103,8 @@ public class DebugAttachedExecutable {
 	 * @throws CoreException
 	 * @throws InterruptedException
 	 */
-	public static ILaunchConfiguration createLaunchConfig(IProgressMonitor monitor,
-			String buildLog, String pid)
-					throws CoreException, InterruptedException {
+	public static ILaunchConfiguration createLaunchConfig(IProgressMonitor monitor, String buildLog, String pid)
+			throws CoreException, InterruptedException {
 		ILaunchConfiguration config = null;
 		String defaultProjectName = "Executables"; //$NON-NLS-1$
 
@@ -116,18 +114,14 @@ public class DebugAttachedExecutable {
 		monitor.worked(3);
 		File buildLogFile = null;
 
-		final ICProjectDescriptionManager projDescManager = CCorePlugin
-				.getDefault().getProjectDescriptionManager();
+		final ICProjectDescriptionManager projDescManager = CCorePlugin.getDefault().getProjectDescriptionManager();
 
-		ICProjectDescription projectDescription = projDescManager
-				.getProjectDescription(project,
-						ICProjectDescriptionManager.GET_WRITABLE);
+		ICProjectDescription projectDescription = projDescManager.getProjectDescription(project,
+				ICProjectDescriptionManager.GET_WRITABLE);
 
 		monitor.subTask(Messages.SetLanguageProviders);
-		final ICConfigurationDescription ccd = projectDescription
-				.getActiveConfiguration();
-		String[] langProviderIds = ((ILanguageSettingsProvidersKeeper) ccd)
-				.getDefaultLanguageSettingsProvidersIds();
+		final ICConfigurationDescription ccd = projectDescription.getActiveConfiguration();
+		String[] langProviderIds = ((ILanguageSettingsProvidersKeeper) ccd).getDefaultLanguageSettingsProvidersIds();
 		boolean found = false;
 		for (int i = 0; i < langProviderIds.length; ++i) {
 			if (langProviderIds[i].equals(GCC_BUILTIN_PROVIDER_ID)) {
@@ -138,8 +132,7 @@ public class DebugAttachedExecutable {
 		// Look for the GCC builtin LanguageSettingsProvider id.  If it isn't already
 		// there, add it.
 		if (!found) {
-			langProviderIds = Arrays.copyOf(langProviderIds,
-					langProviderIds.length + 1);
+			langProviderIds = Arrays.copyOf(langProviderIds, langProviderIds.length + 1);
 			langProviderIds[langProviderIds.length - 1] = GCC_BUILTIN_PROVIDER_ID;
 		}
 		found = false;
@@ -151,8 +144,7 @@ public class DebugAttachedExecutable {
 		}
 		// Look for our macro parser provider id.  If it isn't added already, do so now.
 		if (!found) {
-			langProviderIds = Arrays.copyOf(langProviderIds,
-					langProviderIds.length + 1);
+			langProviderIds = Arrays.copyOf(langProviderIds, langProviderIds.length + 1);
 			langProviderIds[langProviderIds.length - 1] = GCC_COMPILE_OPTIONS_PROVIDER_ID;
 		}
 
@@ -169,8 +161,7 @@ public class DebugAttachedExecutable {
 				}
 				// Look for our macro parser provider id.  If it isn't added already, do so now.
 				if (!found) {
-					langProviderIds = Arrays.copyOf(langProviderIds,
-							langProviderIds.length + 1);
+					langProviderIds = Arrays.copyOf(langProviderIds, langProviderIds.length + 1);
 					langProviderIds[langProviderIds.length - 1] = GCC_BUILD_OPTIONS_PROVIDER_ID;
 				}
 			}
@@ -181,30 +172,25 @@ public class DebugAttachedExecutable {
 				.createLanguageSettingsProviders(langProviderIds);
 
 		// Update the providers for the configuration.
-		((ILanguageSettingsProvidersKeeper) ccd)
-		.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) ccd).setLanguageSettingProviders(providers);
 
 		monitor.worked(1);
 
 		// Update the project description.
-		projDescManager.setProjectDescription(project,
-				projectDescription);
-
+		projDescManager.setProjectDescription(project, projectDescription);
 
 		// Serialize the language settings for the project now in case we don't run a
 		// language settings provider which will do this in shutdown.
-		ICProjectDescription projDescReadOnly = projDescManager
-				.getProjectDescription(project,
-						false);
+		ICProjectDescription projDescReadOnly = projDescManager.getProjectDescription(project, false);
 		LanguageSettingsManager.serializeLanguageSettings(projDescReadOnly);
 
 		monitor.worked(1);
 
-		if (buildLogFile != null)	
+		if (buildLogFile != null)
 			// We need to parse the build log to get compile options.  We need to lock the
 			// workspace when we do this so we don't have multiple copies of GCCBuildOptionsParser
 			// LanguageSettingsProvider and we end up filling in the wrong one.
-			project.getWorkspace().run(new BuildOptionsParser(project, buildLogFile), 
+			project.getWorkspace().run(new BuildOptionsParser(project, buildLogFile),
 					ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
 
 		//					System.out.println("about to close all editors");
@@ -235,23 +221,18 @@ public class DebugAttachedExecutable {
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType = getLaunchConfigType();
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(
-					null,
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null,
 					getLaunchManager().generateLaunchConfigurationName("CDT_DBG_ATTACH")); //$NON-NLS-1$
 
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH);
-			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-					"Executables"); //$NON-NLS-1$
-			wc.setAttribute(
-					ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
-					(String) null);
+			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "Executables"); //$NON-NLS-1$
+			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 
 			if (pid != null) {
-				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID,
-						Integer.valueOf(pid));
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, Integer.valueOf(pid));
 			}
-			
+
 			if (save) {
 				config = wc.doSave();
 			} else {

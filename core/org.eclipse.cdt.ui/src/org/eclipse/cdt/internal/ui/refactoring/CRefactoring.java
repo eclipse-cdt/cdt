@@ -69,7 +69,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
  * AST creation, condition checking, change generating, and selection handling.
  */
 public abstract class CRefactoring extends Refactoring {
-	protected String name = Messages.Refactoring_name; 
+	protected String name = Messages.Refactoring_name;
 	protected final ICProject project;
 	protected final ITranslationUnit tu;
 	protected Region selectedRegion;
@@ -79,14 +79,14 @@ public abstract class CRefactoring extends Refactoring {
 
 	public CRefactoring(ICElement element, ISelection selection, ICProject project) {
 		this.project = project;
-		this.initStatus= new RefactoringStatus();
+		this.initStatus = new RefactoringStatus();
 		if (!(element instanceof ISourceReference)) {
 			tu = null;
 			initStatus.addFatalError(Messages.Refactoring_SelectionNotValid);
 			return;
 		}
 
-		ISourceReference sourceRef= (ISourceReference) element;
+		ISourceReference sourceRef = (ISourceReference) element;
 		tu = CModelUtil.toWorkingCopy(sourceRef.getTranslationUnit());
 
 		if (selection instanceof ITextSelection) {
@@ -112,19 +112,19 @@ public abstract class CRefactoring extends Refactoring {
 		SubMonitor progress = SubMonitor.convert(pm, Messages.CRefactoring_checking_final_conditions, 12);
 
 		try {
-			CheckConditionsContext context= new CheckConditionsContext();
+			CheckConditionsContext context = new CheckConditionsContext();
 			context.add(new ValidateEditChecker(getValidationContext()));
 			ResourceChangeChecker resourceChecker = new ResourceChangeChecker();
 			IResourceChangeDescriptionFactory deltaFactory = resourceChecker.getDeltaFactory();
 			context.add(resourceChecker);
-	
+
 			RefactoringStatus result = checkFinalConditions(progress.split(8), context);
 			if (result.hasFatalError())
 				return result;
-	
+
 			modificationCollector = new ModificationCollector(deltaFactory);
 			collectModifications(progress.split(2), modificationCollector);
-	
+
 			result.merge(context.check(progress.split(2)));
 			return result;
 		} finally {
@@ -144,7 +144,7 @@ public abstract class CRefactoring extends Refactoring {
 		if (isProgressMonitorCanceled(sm, initStatus)) {
 			return initStatus;
 		}
-		sm.subTask(Messages.Refactoring_PM_LoadTU); 
+		sm.subTask(Messages.Refactoring_PM_LoadTU);
 		IASTTranslationUnit ast = getAST(tu, sm);
 		if (ast == null) {
 			initStatus.addError(NLS.bind(Messages.Refactoring_ParsingError, tu.getPath()));
@@ -153,17 +153,17 @@ public abstract class CRefactoring extends Refactoring {
 		if (isProgressMonitorCanceled(sm, initStatus)) {
 			return initStatus;
 		}
-		sm.subTask(Messages.Refactoring_PM_CheckTU); 
+		sm.subTask(Messages.Refactoring_PM_CheckTU);
 		checkAST(ast);
 		sm.worked(2);
-		sm.subTask(Messages.Refactoring_PM_InitRef); 
+		sm.subTask(Messages.Refactoring_PM_InitRef);
 		sm.done();
 		return initStatus;
 	}
 
 	protected static boolean isProgressMonitorCanceled(IProgressMonitor sm, RefactoringStatus status) {
 		if (sm.isCanceled()) {
-			status.addFatalError(Messages.Refactoring_CanceledByUser); 
+			status.addFatalError(Messages.Refactoring_CanceledByUser);
 			return true;
 		}
 		return false;
@@ -204,7 +204,7 @@ public abstract class CRefactoring extends Refactoring {
 
 	protected boolean checkAST(IASTTranslationUnit ast) {
 		ProblemFinder problemFinder = new ProblemFinder(initStatus);
-		ast.accept(problemFinder);		
+		ast.accept(problemFinder);
 		return problemFinder.hasProblem();
 	}
 
@@ -218,9 +218,9 @@ public abstract class CRefactoring extends Refactoring {
 
 			@Override
 			public int visit(IASTName name) {
-				if (name.isPartOfTranslationUnitFile() &&
-						SelectionHelper.doesNodeOverlapWithRegion(name, selectedRegion) &&
-						!(name instanceof ICPPASTQualifiedName)) {
+				if (name.isPartOfTranslationUnitFile()
+						&& SelectionHelper.doesNodeOverlapWithRegion(name, selectedRegion)
+						&& !(name instanceof ICPPASTQualifiedName)) {
 					names.add(name);
 				}
 				return super.visit(name);
@@ -232,7 +232,7 @@ public abstract class CRefactoring extends Refactoring {
 	private class ProblemFinder extends ASTVisitor {
 		private boolean problemFound = false;
 		private final RefactoringStatus status;
-		
+
 		public ProblemFinder(RefactoringStatus status) {
 			this.status = status;
 		}
@@ -289,7 +289,7 @@ public abstract class CRefactoring extends Refactoring {
 
 		private void addWarningToState() {
 			if (!problemFound) {
-				status.addWarning(Messages.Refactoring_CompileErrorInTU); 
+				status.addWarning(Messages.Refactoring_CompileErrorInTU);
 				problemFound = true;
 			}
 		}

@@ -43,7 +43,8 @@ public class CoreBuildLocalRunLaunchDelegate extends CoreBuildLaunchConfigDelega
 			Process process = builder.start();
 			DebugPlugin.newProcess(launch, process, exeFile.getPath().lastSegment());
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.PLUGIN_ID, InternalDebugCoreMessages.CoreBuildLocalRunLaunchDelegate_ErrorLaunching, e));
+			throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.PLUGIN_ID,
+					InternalDebugCoreMessages.CoreBuildLocalRunLaunchDelegate_ErrorLaunching, e));
 		}
 	}
 

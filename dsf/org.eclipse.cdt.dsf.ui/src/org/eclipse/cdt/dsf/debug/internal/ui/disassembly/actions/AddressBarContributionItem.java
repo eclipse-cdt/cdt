@@ -81,8 +81,7 @@ public class AddressBarContributionItem extends ContributionItem {
 	 *            the tooltip of the warning label if it ever becomes visible.
 	 *            May be null.
 	 */
-	public void createAddressBox(ToolBar parent, int width, String initialText,
-			String warningText) {
+	public void createAddressBox(ToolBar parent, int width, String initialText, String warningText) {
 		this.width = width;
 		this.initialText = initialText;
 		this.lastText = initialText;
@@ -108,8 +107,8 @@ public class AddressBarContributionItem extends ContributionItem {
 		Control box = internalCreateAddressBox(parent);
 		item.setControl(box);
 		item.setWidth(width);
-		
-		enableAddressBox(action.isEnabled());		
+
+		enableAddressBox(action.isEnabled());
 	}
 
 	/**
@@ -186,9 +185,8 @@ public class AddressBarContributionItem extends ContributionItem {
 
 		warningLabel = new Label(top, SWT.NONE);
 
-		warningImage = AbstractUIPlugin
-				.imageDescriptorFromPlugin(
-						DsfUIPlugin.PLUGIN_ID, "icons/address_warning.gif").createImage(); //$NON-NLS-1$
+		warningImage = AbstractUIPlugin.imageDescriptorFromPlugin(DsfUIPlugin.PLUGIN_ID, "icons/address_warning.gif") //$NON-NLS-1$
+				.createImage();
 		warningLabel.setImage(warningImage);
 		warningLabel.setToolTipText(warningText);
 		setWarningIconVisible(false);
@@ -209,27 +207,21 @@ public class AddressBarContributionItem extends ContributionItem {
 
 				@Override
 				public void keyReleased(KeyEvent e) {
-					if (e.stateMask == SWT.CTRL
-							&& (((char) e.keyCode) == 'c' || ((char) e.keyCode) == 'C')) {
+					if (e.stateMask == SWT.CTRL && (((char) e.keyCode) == 'c' || ((char) e.keyCode) == 'C')) {
 						String selection = null;
 
 						Point selectionPoint = addressBox.getSelection();
 						if (selectionPoint.x == selectionPoint.y)
 							return;
 
-						selection = addressBox.getText().substring(
-								selectionPoint.x, selectionPoint.y);
+						selection = addressBox.getText().substring(selectionPoint.x, selectionPoint.y);
 
-						if ((selection != null)
-								&& (!(selection.trim().length() == 0))) {
+						if ((selection != null) && (!(selection.trim().length() == 0))) {
 							Clipboard clipboard = null;
 							try {
-								clipboard = new Clipboard(addressBox
-										.getDisplay());
-								clipboard.setContents(
-										new Object[] { selection },
-										new Transfer[] { TextTransfer
-												.getInstance() });
+								clipboard = new Clipboard(addressBox.getDisplay());
+								clipboard.setContents(new Object[] { selection },
+										new Transfer[] { TextTransfer.getInstance() });
 							} finally {
 								if (clipboard != null)
 									clipboard.dispose();
@@ -243,12 +235,12 @@ public class AddressBarContributionItem extends ContributionItem {
 			@Override
 			public void focusGained(FocusEvent e) {
 				// [nmehregani] bugzilla 297387: 'Home' shouldn't jump to PC address when focus is on location combo box
-				if (action instanceof JumpToAddressAction) 
-					((JumpToAddressAction)action).deactivateDisassemblyContext();				
+				if (action instanceof JumpToAddressAction)
+					((JumpToAddressAction) action).deactivateDisassemblyContext();
 				// end 297387
-				
+
 				lastText = addressBox.getText();
-				
+
 				// Erase the guide text when the focus is gained.
 				if (lastText.trim().equals(initialText))
 					addressBox.setText(""); //$NON-NLS-1$
@@ -260,10 +252,10 @@ public class AddressBarContributionItem extends ContributionItem {
 			@Override
 			public void focusLost(FocusEvent e) {
 				// [nmehregani] bugzilla 297387: 'Home' shouldn't jump to PC address when focus is on location combo box
-				if (action instanceof JumpToAddressAction) 
-					((JumpToAddressAction)action).activateDisassemblyContext();				
+				if (action instanceof JumpToAddressAction)
+					((JumpToAddressAction) action).activateDisassemblyContext();
 				// end 297387
-				
+
 				// Re-insert the last text when the focus is lost and the text
 				// field is empty.
 				if (addressBox.getText().trim().length() == 0)
@@ -298,8 +290,7 @@ public class AddressBarContributionItem extends ContributionItem {
 						}
 					}
 
-					if ((!bExist) && (addressBox.getText() != null)
-							&& (!(addressBox.getText().trim().length() == 0)))
+					if ((!bExist) && (addressBox.getText() != null) && (!(addressBox.getText().trim().length() == 0)))
 						addressBox.add(addressBox.getText());
 				}
 			}
@@ -319,8 +310,7 @@ public class AddressBarContributionItem extends ContributionItem {
 			}
 		});
 
-		addressBox.setLayoutData(new GridData(GridData.FILL,
-				GridData.BEGINNING, true, false));
+		addressBox.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 		return top;
 	}
 

@@ -74,7 +74,7 @@ public class QPropertyExpansion {
 	static {
 		StringBuilder regexBuilder = new StringBuilder();
 		regexBuilder.append("^(?:Q_PROPERTY\\s*\\()?\\s*(.*?)(\\s+)(?:");
-		for(IQProperty.Attribute attr : IQProperty.Attribute.values()) {
+		for (IQProperty.Attribute attr : IQProperty.Attribute.values()) {
 			if (attr.ordinal() > 0)
 				regexBuilder.append('|');
 			regexBuilder.append("(?:");
@@ -92,6 +92,7 @@ public class QPropertyExpansion {
 	private static class Identifier {
 		public final int start;
 		public final String ident;
+
 		public Identifier(int start, String ident) {
 			this.start = start;
 			this.ident = ident;
@@ -159,15 +160,14 @@ public class QPropertyExpansion {
 		int closingParen = scanner.findClosingPeer(openingParen, upperBound, '(', ')');
 
 		// This expansion is not applicable if the assistant was invoked after the closing paren.
-		if (closingParen != CHeuristicScanner.NOT_FOUND
-		 && context.getInvocationOffset() > scanner.getPosition())
+		if (closingParen != CHeuristicScanner.NOT_FOUND && context.getInvocationOffset() > scanner.getPosition())
 			return null;
 
 		try {
 			if (closingParen != CHeuristicScanner.NOT_FOUND)
 				expansion = doc.get(openingParen, closingParen - openingParen);
 			else
-				expansion = doc.get(openingParen, context.getInvocationOffset() - openingParen );
+				expansion = doc.get(openingParen, context.getInvocationOffset() - openingParen);
 		} catch (BadLocationException e) {
 			Activator.log(e);
 		}
@@ -200,15 +200,15 @@ public class QPropertyExpansion {
 			type = CPPVisitor.createType(typeId);
 
 			IASTDeclarator declarator = typeId.getAbstractDeclarator();
-			if (declarator != null
-			 && declarator.getName() != null)
+			if (declarator != null && declarator.getName() != null)
 				name = declarator.getName().toString();
 		}
 
 		return new QPropertyExpansion(expansion, endOfTypeName, cursor, type, name, prevIdentifier, currIdentifier);
 	}
 
-	private QPropertyExpansion(String expansion, int startOfAttrs, int cursor, IType type, String name, Identifier prev, Identifier curr) {
+	private QPropertyExpansion(String expansion, int startOfAttrs, int cursor, IType type, String name, Identifier prev,
+			Identifier curr) {
 		this.expansion = expansion;
 		this.startOfAttrs = startOfAttrs;
 		this.cursor = cursor;
@@ -245,19 +245,43 @@ public class QPropertyExpansion {
 			this.attribute = attribute;
 
 			// Give attribute proposals the same order as the Qt documentation.
-			switch(attribute) {
-			case READ:       this.relevance = 11; break;
-			case WRITE:      this.relevance = 10; break;
-			case RESET:      this.relevance =  9; break;
-			case NOTIFY:     this.relevance =  8; break;
-			case REVISION:   this.relevance =  7; break;
-			case DESIGNABLE: this.relevance =  6; break;
-			case SCRIPTABLE: this.relevance =  5; break;
-			case STORED:     this.relevance =  4; break;
-			case USER:       this.relevance =  3; break;
-			case CONSTANT:   this.relevance =  2; break;
-			case FINAL:      this.relevance =  1; break;
-			default:		 this.relevance =  0; break;
+			switch (attribute) {
+			case READ:
+				this.relevance = 11;
+				break;
+			case WRITE:
+				this.relevance = 10;
+				break;
+			case RESET:
+				this.relevance = 9;
+				break;
+			case NOTIFY:
+				this.relevance = 8;
+				break;
+			case REVISION:
+				this.relevance = 7;
+				break;
+			case DESIGNABLE:
+				this.relevance = 6;
+				break;
+			case SCRIPTABLE:
+				this.relevance = 5;
+				break;
+			case STORED:
+				this.relevance = 4;
+				break;
+			case USER:
+				this.relevance = 3;
+				break;
+			case CONSTANT:
+				this.relevance = 2;
+				break;
+			case FINAL:
+				this.relevance = 1;
+				break;
+			default:
+				this.relevance = 0;
+				break;
 			}
 		}
 
@@ -265,7 +289,8 @@ public class QPropertyExpansion {
 
 			// Attributes without values propose only their own identifier.
 			if (!attribute.hasValue)
-				return new CCompletionProposal(attribute.identifier, context.getInvocationOffset(), 0, Activator.getQtLogo(), attribute.identifier + " - Q_PROPERTY declaration parameter", relevance);
+				return new CCompletionProposal(attribute.identifier, context.getInvocationOffset(), 0,
+						Activator.getQtLogo(), attribute.identifier + " - Q_PROPERTY declaration parameter", relevance);
 
 			// Otherwise create a template where the content depends on the type of the attribute's parameter.
 			String display = attribute.identifier + ' ' + attribute.paramName;
@@ -281,7 +306,8 @@ public class QPropertyExpansion {
 		}
 	}
 
-	private static ICompletionProposal templateProposal(String contextId, ICEditorContentAssistInvocationContext context, String display, String replacement, int relevance) {
+	private static ICompletionProposal templateProposal(String contextId,
+			ICEditorContentAssistInvocationContext context, String display, String replacement, int relevance) {
 		Template template = new Template(display, "Q_PROPERTY declaration parameter", contextId, replacement, true);
 
 		TemplateContextType ctxType = new CContextType();
@@ -323,16 +349,15 @@ public class QPropertyExpansion {
 		// for from that unspecified list.
 
 		List<Attribute> unspecifiedAttributes = new ArrayList<Attribute>();
-		for(IQProperty.Attribute attr : IQProperty.Attribute.values()) {
-			if (attr.hasValue
-			 && (prevIdentifier != null && attr.identifier.equals(prevIdentifier.ident))) {
+		for (IQProperty.Attribute attr : IQProperty.Attribute.values()) {
+			if (attr.hasValue && (prevIdentifier != null && attr.identifier.equals(prevIdentifier.ident))) {
 
-				Collection<QPropertyAttributeProposal> attrProposals = QPropertyAttributeProposal.buildProposals(attr, context, type, name);
+				Collection<QPropertyAttributeProposal> attrProposals = QPropertyAttributeProposal.buildProposals(attr,
+						context, type, name);
 				if (attrProposals != null) {
 					List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
-					for(QPropertyAttributeProposal value : attrProposals)
-						if (prefix == null
-						 || value.getIdentifier().startsWith(prefix))
+					for (QPropertyAttributeProposal value : attrProposals)
+						if (prefix == null || value.getIdentifier().startsWith(prefix))
 							proposals.add(value.createProposal(prefix, context.getInvocationOffset()));
 					return proposals;
 				}
@@ -341,16 +366,15 @@ public class QPropertyExpansion {
 			}
 
 			if (prefix != null) {
-				if (attr.identifier.startsWith(prefix)
-				 &&(!expansion.matches(".*\\s+" + attr.identifier + "\\s+.*")
-					||attr.identifier.equals(currIdentifier.ident)))
+				if (attr.identifier.startsWith(prefix) && (!expansion.matches(".*\\s+" + attr.identifier + "\\s+.*")
+						|| attr.identifier.equals(currIdentifier.ident)))
 					unspecifiedAttributes.add(new Attribute(attr));
 			} else if (!expansion.matches(".*\\s+" + attr.identifier + "\\s+.*"))
 				unspecifiedAttributes.add(new Attribute(attr));
 		}
 
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
-		for(Attribute attr : unspecifiedAttributes) {
+		for (Attribute attr : unspecifiedAttributes) {
 			ICompletionProposal proposal = attr.getProposal(contextId, context);
 			if (proposal != null)
 				proposals.add(proposal);
@@ -378,8 +402,8 @@ public class QPropertyExpansion {
 				return null;
 			int end = scanner.getPosition();
 
-			return new Identifier(begin,  doc.get(begin, end - begin));
-		} catch(BadLocationException e) {
+			return new Identifier(begin, doc.get(begin, end - begin));
+		} catch (BadLocationException e) {
 			Activator.log(e);
 		}
 		return null;

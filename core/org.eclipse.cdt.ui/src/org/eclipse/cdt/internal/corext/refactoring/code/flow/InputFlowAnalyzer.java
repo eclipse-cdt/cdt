@@ -52,8 +52,8 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 
 		public LoopReentranceVisitor(FlowContext context, Selection selection, IASTNode loopNode) {
 			super(context);
-			this.selection= selection;
-			this.loopNode= loopNode;
+			this.selection = selection;
+			this.loopNode = loopNode;
 		}
 
 		@Override
@@ -84,7 +84,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 		public int leave(IASTDoStatement node) {
 			if (skipNode(node))
 				return PROCESS_SKIP;
-			DoWhileFlowInfo info= createDoWhile();
+			DoWhileFlowInfo info = createDoWhile();
 			setFlowInfo(node, info);
 			info.mergeAction(getFlowInfo(node.getBody()), fFlowContext);
 			// No need to merge the condition. It was already considered by the InputFlowAnalyzer.
@@ -96,10 +96,10 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 		public int leave(ICPPASTRangeBasedForStatement node) {
 			if (skipNode(node))
 				return PROCESS_SKIP;
-			FlowInfo paramInfo= getFlowInfo(node.getDeclaration());
-			FlowInfo expressionInfo= getFlowInfo(node.getInitializerClause());
-			FlowInfo actionInfo= getFlowInfo(node.getBody());
-			RangeBasedForFlowInfo forInfo= createRangeBasedFor();
+			FlowInfo paramInfo = getFlowInfo(node.getDeclaration());
+			FlowInfo expressionInfo = getFlowInfo(node.getInitializerClause());
+			FlowInfo actionInfo = getFlowInfo(node.getBody());
+			RangeBasedForFlowInfo forInfo = createRangeBasedFor();
 			setFlowInfo(node, forInfo);
 			// If the for statement is the outermost loop then we only have to consider
 			// the action. The parameter and expression are only evaluated once.
@@ -120,11 +120,11 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 		public int leave(IASTForStatement node) {
 			if (skipNode(node))
 				return PROCESS_SKIP;
-			FlowInfo initInfo= createSequential(node.getInitializerStatement());
-			FlowInfo conditionInfo= getFlowInfo(node.getConditionExpression());
-			FlowInfo incrementInfo= createSequential(node.getIterationExpression());
-			FlowInfo actionInfo= getFlowInfo(node.getBody());
-			ForFlowInfo forInfo= createFor();
+			FlowInfo initInfo = createSequential(node.getInitializerStatement());
+			FlowInfo conditionInfo = getFlowInfo(node.getConditionExpression());
+			FlowInfo incrementInfo = createSequential(node.getIterationExpression());
+			FlowInfo actionInfo = getFlowInfo(node.getBody());
+			ForFlowInfo forInfo = createFor();
 			setFlowInfo(node, forInfo);
 			// The for statement is the outermost loop. In this case we only have
 			// to consider the increment, condition and action.
@@ -139,7 +139,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 				// the outer loop. Then we have to consider initializations, condition and action.
 				// For a conditional flow info that means:
 				// (initializations | increments) & condition & action.
-				GenericConditionalFlowInfo initIncr= new GenericConditionalFlowInfo();
+				GenericConditionalFlowInfo initIncr = new GenericConditionalFlowInfo();
 				initIncr.merge(initInfo, fFlowContext);
 				initIncr.merge(incrementInfo, fFlowContext);
 				forInfo.mergeAccessModeSequential(initIncr, fFlowContext);
@@ -199,7 +199,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 			}
 			if (lastGotoStatement == null)
 				return PROCESS_CONTINUE;
-				
+
 			GotoLoopRegion newRegion = new GotoLoopRegion(labelStatement, lastGotoStatement);
 			boolean gaps = false;
 			for (int i = 0; i < gotoRegions.length; i++) {
@@ -245,14 +245,14 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 
 		public GotoReentranceVisitor(FlowContext context, Selection selection, GotoLoopRegion loopRegion) {
 			super(context);
-			this.selection= selection;
+			this.selection = selection;
 			this.loopRegion = loopRegion;
 		}
 
 		@Override
 		protected boolean traverseNode(IASTNode node) {
-			return !selection.covers(node) && !isBefore(node, loopRegion.firstLabelStatement) &&
-					!isBefore(loopRegion.lastGotoStatement, node);
+			return !selection.covers(node) && !isBefore(node, loopRegion.firstLabelStatement)
+					&& !isBefore(loopRegion.lastGotoStatement, node);
 		}
 
 		@Override
@@ -274,9 +274,9 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 
 	public InputFlowAnalyzer(FlowContext context, Selection selection, boolean doLoopReentrance) {
 		super(context);
-		fSelection= selection;
+		fSelection = selection;
 		Assert.isNotNull(fSelection);
-		fDoLoopReentrance= doLoopReentrance;
+		fDoLoopReentrance = doLoopReentrance;
 	}
 
 	public FlowInfo perform(IASTFunctionDefinition node) {
@@ -287,7 +287,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 			GotoLoopRegion[] gotoRegions = gotoAnalyzer.getGotoRegions();
 			for (GotoLoopRegion loopRegion : gotoRegions) {
 				if (fSelection.coveredBy(loopRegion)) {
-					GenericSequentialFlowInfo info= createSequential();
+					GenericSequentialFlowInfo info = createSequential();
 					info.merge(getFlowInfo(node), fFlowContext);
 					fGotoReentranceVisitor = new GotoReentranceVisitor(fFlowContext, fSelection, loopRegion);
 					FlowInfo gotoInfo = fGotoReentranceVisitor.process(node);
@@ -343,7 +343,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 
 	private void createLoopReentranceVisitor(IASTNode node) {
 		if (fLoopReentranceVisitor == null && fDoLoopReentrance && fSelection.coveredBy(node)) {
-			fLoopReentranceVisitor= new LoopReentranceVisitor(fFlowContext, fSelection, node);
+			fLoopReentranceVisitor = new LoopReentranceVisitor(fFlowContext, fSelection, node);
 		}
 	}
 
@@ -351,11 +351,11 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 	public int leave(IASTConditionalExpression node) {
 		if (skipNode(node))
 			return PROCESS_SKIP;
-		IASTExpression thenPart= node.getPositiveResultExpression();
-		IASTExpression elsePart= node.getNegativeResultExpression();
-		if ((thenPart != null && fSelection.coveredBy(thenPart)) ||
-				(elsePart != null && fSelection.coveredBy(elsePart))) {
-			GenericSequentialFlowInfo info= createSequential();
+		IASTExpression thenPart = node.getPositiveResultExpression();
+		IASTExpression elsePart = node.getNegativeResultExpression();
+		if ((thenPart != null && fSelection.coveredBy(thenPart))
+				|| (elsePart != null && fSelection.coveredBy(elsePart))) {
+			GenericSequentialFlowInfo info = createSequential();
 			setFlowInfo(node, info);
 			leaveConditional(info, node.getLogicalConditionExpression(), new IASTNode[] { thenPart, elsePart });
 			return PROCESS_SKIP;
@@ -374,11 +374,11 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 	public int leave(IASTIfStatement node) {
 		if (skipNode(node))
 			return PROCESS_SKIP;
-		IASTStatement thenPart= node.getThenClause();
-		IASTStatement elsePart= node.getElseClause();
-		if ((thenPart != null && fSelection.coveredBy(thenPart)) ||
-				(elsePart != null && fSelection.coveredBy(elsePart))) {
-			GenericSequentialFlowInfo info= createSequential();
+		IASTStatement thenPart = node.getThenClause();
+		IASTStatement elsePart = node.getElseClause();
+		if ((thenPart != null && fSelection.coveredBy(thenPart))
+				|| (elsePart != null && fSelection.coveredBy(elsePart))) {
+			GenericSequentialFlowInfo info = createSequential();
 			setFlowInfo(node, info);
 			leaveConditional(info, node.getConditionExpression(), new IASTNode[] { thenPart, elsePart });
 			return PROCESS_SKIP;
@@ -404,12 +404,12 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 	public int leave(IASTSwitchStatement node) {
 		if (skipNode(node))
 			return PROCESS_SKIP;
-		SwitchData data= createSwitchData(node);
-		IRegion[] ranges= data.getRanges();
-		for (int i= 0; i < ranges.length; i++) {
-			IRegion range= ranges[i];
+		SwitchData data = createSwitchData(node);
+		IRegion[] ranges = data.getRanges();
+		for (int i = 0; i < ranges.length; i++) {
+			IRegion range = ranges[i];
 			if (fSelection.coveredBy(range)) {
-				GenericSequentialFlowInfo info= createSequential();
+				GenericSequentialFlowInfo info = createSequential();
 				setFlowInfo(node, info);
 				info.merge(getFlowInfo(node.getControllerExpression()), fFlowContext);
 				info.merge(data.getInfo(i), fFlowContext);
@@ -442,7 +442,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 			return;
 
 		fLoopReentranceVisitor.process(node);
-		GenericSequentialFlowInfo info= createSequential();
+		GenericSequentialFlowInfo info = createSequential();
 		info.merge(getFlowInfo(node), fFlowContext);
 		info.merge(fLoopReentranceVisitor.getFlowInfo(node), fFlowContext);
 		setFlowInfo(node, info);

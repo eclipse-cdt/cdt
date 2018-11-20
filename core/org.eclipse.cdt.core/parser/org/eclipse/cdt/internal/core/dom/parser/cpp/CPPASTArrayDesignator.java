@@ -24,9 +24,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * Implementation of array designator.
  */
 public class CPPASTArrayDesignator extends ASTNode implements ICPPASTArrayDesignator, IASTAmbiguityParent {
-    private ICPPASTExpression expression;
+	private ICPPASTExpression expression;
 
-    public CPPASTArrayDesignator() {
+	public CPPASTArrayDesignator() {
 	}
 
 	public CPPASTArrayDesignator(ICPPASTExpression exp) {
@@ -45,29 +45,32 @@ public class CPPASTArrayDesignator extends ASTNode implements ICPPASTArrayDesign
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public ICPPASTExpression getSubscriptExpression() {
-        return expression;
-    }
+		return expression;
+	}
 
-    @Override
+	@Override
 	public void setSubscriptExpression(ICPPASTExpression value) {
-        assertNotFrozen();
-        expression = value;
-        if (value != null) {
-        	value.setParent(this);
-        	value.setPropertyInParent(SUBSCRIPT_EXPRESSION);
-        }
-    }
+		assertNotFrozen();
+		expression = value;
+		if (value != null) {
+			value.setParent(this);
+			value.setPropertyInParent(SUBSCRIPT_EXPRESSION);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDesignators) {
+		if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 		if (expression != null && !expression.accept(action))
 			return false;
@@ -76,14 +79,14 @@ public class CPPASTArrayDesignator extends ASTNode implements ICPPASTArrayDesign
 			return false;
 
 		return true;
-    }
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == expression) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            expression = (ICPPASTExpression) other;
-        }
-    }
+		if (child == expression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			expression = (ICPPASTExpression) other;
+		}
+	}
 }

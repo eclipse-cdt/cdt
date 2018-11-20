@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -22,7 +21,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
-
 /**
  * Bundle of all images used by the C plugin.
  * 
@@ -30,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ManagedBuilderUIImages {
-	
+
 	// The plugin registry
 	private static ImageRegistry imageRegistry = new ImageRegistry();
 
@@ -38,16 +36,15 @@ public class ManagedBuilderUIImages {
 	private static URL iconBaseURL = null;
 	static {
 		iconBaseURL = Platform.getBundle(ManagedBuilderUIPlugin.getUniqueIdentifier()).getEntry("icons/"); //$NON-NLS-1$
-	}	
+	}
 
-	private static final String NAME_PREFIX= ManagedBuilderUIPlugin.getUniqueIdentifier() + '.';
-	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
+	private static final String NAME_PREFIX = ManagedBuilderUIPlugin.getUniqueIdentifier() + '.';
+	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
 
-	public static final String T_BUILD= "elcl16/"; //$NON-NLS-1$
+	public static final String T_BUILD = "elcl16/"; //$NON-NLS-1$
 	// list icons dir
-	public static final String T_LIST= "elcl16/"; //$NON-NLS-1$
-	public static final String T_OBJ= "obj16/"; //$NON-NLS-1$
-
+	public static final String T_LIST = "elcl16/"; //$NON-NLS-1$
+	public static final String T_OBJ = "obj16/"; //$NON-NLS-1$
 
 	// For the managed build images
 	public static final String IMG_BUILD_CONFIG = NAME_PREFIX + "build_configs.gif"; //$NON-NLS-1$
@@ -66,7 +63,7 @@ public class ManagedBuilderUIImages {
 	public static final ImageDescriptor DESC_BUILD_TOOL = createManaged(T_BUILD, IMG_BUILD_TOOL);
 	public static final String IMG_BUILD_CAT = NAME_PREFIX + "config-category.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_CAT = createManaged(T_BUILD, IMG_BUILD_CAT);
-	
+
 	// new images 
 	public static final String IMG_READ_ONLY = NAME_PREFIX + "read_only.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_READ_ONLY = createManaged(T_OBJ, IMG_READ_ONLY);
@@ -74,7 +71,7 @@ public class ManagedBuilderUIImages {
 	public static final ImageDescriptor DESC_EDITABLE = createManaged(T_OBJ, IMG_EDITABLE);
 	public static final String IMG_BUILT_IN = NAME_PREFIX + "built_in.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILT_IN = createManaged(T_OBJ, IMG_BUILT_IN);
-	
+
 	// refresh policy tab
 	/**
 	 * @since 8.0
@@ -100,24 +97,24 @@ public class ManagedBuilderUIImages {
 	 * @since 8.0
 	 */
 	public static final ImageDescriptor DESC_FILE_FOLDER_OBJ = createManaged(T_OBJ, IMG_FILE_FOLDER_OBJ);
-	
-	
+
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}
-	
+
 	private static ImageDescriptor createManaged(ImageRegistry registry, String prefix, String name) {
-		ImageDescriptor result= ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
+		ImageDescriptor result = ImageDescriptor
+				.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
 		registry.put(name, result);
 		return result;
 	}
-	
+
 	public static Image get(String key) {
 		return imageRegistry.get(key);
 	}
-	
+
 	private static URL makeIconFileURL(String prefix, String name) {
-		StringBuilder buffer= new StringBuilder(prefix);
+		StringBuilder buffer = new StringBuilder(prefix);
 		buffer.append(name);
 		try {
 			return new URL(iconBaseURL, buffer.toString());
@@ -126,7 +123,7 @@ public class ManagedBuilderUIImages {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Helper method to access the image registry from the JavaPlugin class.
 	 */

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IStatus;
  */
 
 public class CUIException extends CoreException {
-	
+
 	/**
 	 * Comment for <code>serialVersionUID</code>
 	 */
@@ -31,5 +31,5 @@ public class CUIException extends CoreException {
 
 	public CUIException(IStatus status) {
 		super(status);
-	}	
+	}
 }

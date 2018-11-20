@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 
-
 public class OpenIncludeBrowserAction extends SelectionDispatchAction {
 
 	private ITextEditor fEditor;
@@ -35,23 +34,24 @@ public class OpenIncludeBrowserAction extends SelectionDispatchAction {
 		setText(IBMessages.OpenIncludeBrowserAction_label);
 		setToolTipText(IBMessages.OpenIncludeBrowserAction_tooltip);
 	}
-	
+
 	public OpenIncludeBrowserAction(ITextEditor editor) {
 		this(editor.getSite());
-		fEditor= editor;
-		setEnabled(fEditor != null && CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput()) != null);
+		fEditor = editor;
+		setEnabled(fEditor != null
+				&& CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput()) != null);
 	}
 
 	@Override
 	public void run(ITextSelection sel) {
 		IncludeBrowserUI.open(fEditor, sel);
 	}
-	
+
 	@Override
 	public void run(IStructuredSelection selection) {
 		if (!selection.isEmpty()) {
-			Object selectedObject= selection.getFirstElement();
-			ICElement elem= getAdapter(selectedObject, ICElement.class);
+			Object selectedObject = selection.getFirstElement();
+			ICElement elem = getAdapter(selectedObject, ICElement.class);
 			if (elem != null) {
 				IncludeBrowserUI.open(getSite().getWorkbenchWindow(), elem);
 			}
@@ -61,20 +61,19 @@ public class OpenIncludeBrowserAction extends SelectionDispatchAction {
 	@Override
 	public void selectionChanged(ITextSelection sel) {
 	}
-			
+
 	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			setEnabled(false);
 			return;
 		}
-		
-		Object selectedObject= selection.getFirstElement();
-		ICElement elem= getAdapter(selectedObject, ICElement.class);
+
+		Object selectedObject = selection.getFirstElement();
+		ICElement elem = getAdapter(selectedObject, ICElement.class);
 		if (elem != null) {
 			setEnabled(isValidElement(elem));
-		}
-		else {
+		} else {
 			setEnabled(false);
 		}
 	}
@@ -92,7 +91,7 @@ public class OpenIncludeBrowserAction extends SelectionDispatchAction {
 			return (T) object;
 		}
 		if (object instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable) object;
+			IAdaptable adaptable = (IAdaptable) object;
 			return adaptable.getAdapter(desiredClass);
 		}
 		return null;

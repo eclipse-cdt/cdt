@@ -30,9 +30,9 @@ import org.eclipse.core.resources.IResource;
 @Deprecated
 public interface IConfigurationV2 extends IBuildObject {
 	// Schema element names
-	public static final String CONFIGURATION_ELEMENT_NAME = "configuration";	//$NON-NLS-1$
-	public static final String TOOLREF_ELEMENT_NAME = "toolReference";	//$NON-NLS-1$
-	public static final String PARENT = "parent";	//$NON-NLS-1$
+	public static final String CONFIGURATION_ELEMENT_NAME = "configuration"; //$NON-NLS-1$
+	public static final String TOOLREF_ELEMENT_NAME = "toolReference"; //$NON-NLS-1$
+	public static final String PARENT = "parent"; //$NON-NLS-1$
 
 	/**
 	 * Projects have C or CC natures. Tools can specify a filter so they are not 
@@ -44,22 +44,22 @@ public interface IConfigurationV2 extends IBuildObject {
 	 * for the specified project
 	 */
 	ITool[] getFilteredTools(IProject project);
-	
+
 	/**
 	 * @return the resource that owns the project that owns the configuration.
 	 */
 	public IResource getOwner();
-	
+
 	/**
 	 * @return the configuration that this configuration is based on. 
 	 */
 	public IConfigurationV2 getParent();
-	
+
 	/**
 	 * @return the target for this configuration.
 	 */
 	public ITarget getTarget();
-	
+
 	/**
 	 * Answers the <code>ITool</code> in the receiver with the same 
 	 * id as the argument, or <code>null</code>. 
@@ -68,14 +68,14 @@ public interface IConfigurationV2 extends IBuildObject {
 	 * @return ITool
 	 */
 	public ITool getToolById(String id);
-	
+
 	/**
 	 * Returns the tools that are used in this configuration.
 	 * 
 	 * @return ITool[]
 	 */
 	public ITool[] getTools();
-	
+
 	/**
 	 * @return the tool references that are children of this configuration.
 	 */
@@ -116,8 +116,7 @@ public interface IConfigurationV2 extends IBuildObject {
 	 * @param option The option to change.
 	 * @param value The value to apply to the option.
 	 */
-	public void setOption(IOption option, boolean value) 
-		throws BuildException;	
+	public void setOption(IOption option, boolean value) throws BuildException;
 
 	/**
 	 * Sets the value of a string option for this configuration.
@@ -125,17 +124,15 @@ public interface IConfigurationV2 extends IBuildObject {
 	 * @param option The option that will be effected by change.
 	 * @param value The value to apply to the option.
 	 */
-	public void setOption(IOption option, String value)
-		throws BuildException;
-	
+	public void setOption(IOption option, String value) throws BuildException;
+
 	/**
 	 * Sets the value of a list option for this configuration.
 	 * 
 	 * @param option The option to change.
 	 * @param value The values to apply to the option.
 	 */
-	public void setOption(IOption option, String[] value)
-		throws BuildException;
+	public void setOption(IOption option, String[] value) throws BuildException;
 
 	/**
 	 * Sets the rebuild state in the receiver. 

@@ -29,10 +29,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
  * Represents a literal
  */
 public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpression {
-    private int kind;
-    private char[] value = CharArrayUtils.EMPTY;
+	private int kind;
+	private char[] value = CharArrayUtils.EMPTY;
 
-    public CASTLiteralExpression() {
+	public CASTLiteralExpression() {
 	}
 
 	public CASTLiteralExpression(int kind, char[] value) {
@@ -53,49 +53,55 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 
 	@Override
 	public int getKind() {
-        return kind;
-    }
+		return kind;
+	}
 
-    @Override
+	@Override
 	public void setKind(int value) {
-        assertNotFrozen();
-        kind = value;
-    }
+		assertNotFrozen();
+		kind = value;
+	}
 
-    @Override
+	@Override
 	public char[] getValue() {
-    	return value;
-    }
+		return value;
+	}
 
-    @Override
+	@Override
 	public void setValue(char[] value) {
-        assertNotFrozen();
-    	this.value= value;
-    }
+		assertNotFrozen();
+		this.value = value;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        return new String(value);
-    }
+		return new String(value);
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public IType getExpressionType() {
@@ -125,16 +131,18 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 	}
 
 	private IType classifyTypeOfFloatLiteral() {
-		final char[] lit= getValue();
-		final int len= lit.length;
-		IBasicType.Kind kind= IBasicType.Kind.eDouble;
-		int flags= 0;
+		final char[] lit = getValue();
+		final int len = lit.length;
+		IBasicType.Kind kind = IBasicType.Kind.eDouble;
+		int flags = 0;
 		if (len > 0) {
 			switch (lit[len - 1]) {
-			case 'f': case 'F':
-				kind= Kind.eFloat;
+			case 'f':
+			case 'F':
+				kind = Kind.eFloat;
 				break;
-			case 'l': case 'L':
+			case 'l':
+			case 'L':
 				flags |= IBasicType.IS_LONG;
 				break;
 			}
@@ -144,12 +152,12 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 	}
 
 	private IType classifyTypeOfIntLiteral() {
-		int makelong= 0;
-		boolean unsigned= false;
+		int makelong = 0;
+		boolean unsigned = false;
 
-		final char[] lit= getValue();
-		for (int i= lit.length - 1; i >= 0; i--) {
-			final char c= lit[i];
+		final char[] lit = getValue();
+		for (int i = lit.length - 1; i >= 0; i--) {
+			final char c = lit[i];
 			if (!(c > 'f' && c <= 'z') && !(c > 'F' && c <= 'Z')) {
 				break;
 			}
@@ -165,7 +173,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 			}
 		}
 
-		int flags= 0;
+		int flags = 0;
 		if (unsigned) {
 			flags |= IBasicType.IS_UNSIGNED;
 		}
@@ -178,20 +186,19 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		return new CBasicType(IBasicType.Kind.eInt, flags, this);
 	}
 
-
-    /**
-     * @deprecated, use {@link #setValue(char[])}, instead.
-     */
-    @Override
+	/**
+	 * @deprecated, use {@link #setValue(char[])}, instead.
+	 */
+	@Override
 	@Deprecated
 	public void setValue(String value) {
-        assertNotFrozen();
-        this.value = value.toCharArray();
-    }
+		assertNotFrozen();
+		this.value = value.toCharArray();
+	}
 
-    /**
-     * @deprecated use {@link #CASTLiteralExpression(int, char[])}, instead.
-     */
+	/**
+	 * @deprecated use {@link #CASTLiteralExpression(int, char[])}, instead.
+	 */
 	@Deprecated
 	public CASTLiteralExpression(int kind, String value) {
 		this(kind, value.toCharArray());

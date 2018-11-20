@@ -31,14 +31,14 @@ public class MakeProjectNature implements IProjectNature {
 
 	public static void addNature(IProject project, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = project.getDescription();
-		String[] prevNatures= description.getNatureIds();
-		for (int i= 0; i < prevNatures.length; i++) {
+		String[] prevNatures = description.getNatureIds();
+		for (int i = 0; i < prevNatures.length; i++) {
 			if (NATURE_ID.equals(prevNatures[i]))
 				return;
 		}
-		String[] newNatures= new String[prevNatures.length + 1];
+		String[] newNatures = new String[prevNatures.length + 1];
 		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length]= NATURE_ID;
+		newNatures[prevNatures.length] = NATURE_ID;
 		description.setNatureIds(newNatures);
 		project.setDescription(description, monitor);
 	}
@@ -111,7 +111,8 @@ public class MakeProjectNature implements IProjectNature {
 	/**
 		* Removes the given builder from the build spec for the given project.
 		*/
-	public static void removeFromBuildSpec(IProject project, String builderID, IProgressMonitor mon) throws CoreException {
+	public static void removeFromBuildSpec(IProject project, String builderID, IProgressMonitor mon)
+			throws CoreException {
 		IProjectDescription description = project.getDescription();
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
@@ -136,24 +137,30 @@ public class MakeProjectNature implements IProjectNature {
 	@Override
 	public void configure() throws CoreException {
 		addBuildSpec();
-		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
+		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(),
+				MakeBuilder.BUILDER_ID, false);
 		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(getProject(), MakeBuilder.BUILDER_ID);
-		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
-		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
+		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS,
+				info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
+		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
+				info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
 
 		projectInfo.setUseDefaultBuildCmd(info.isDefaultBuildCmd());
 		projectInfo.setStopOnError(info.isStopOnError());
 
 		projectInfo.setAutoBuildEnable(info.isAutoBuildEnable());
-		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "")); //$NON-NLS-1$
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO,
+				info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "")); //$NON-NLS-1$
 
 		projectInfo.setIncrementalBuildEnable(info.isIncrementalBuildEnabled());
-		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, "")); //$NON-NLS-1$
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL,
+				info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, "")); //$NON-NLS-1$
 
 		projectInfo.setFullBuildEnable(info.isIncrementalBuildEnabled());
 
 		projectInfo.setCleanBuildEnable(info.isCleanBuildEnabled());
-		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, "")); //$NON-NLS-1$
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN,
+				info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, "")); //$NON-NLS-1$
 
 		projectInfo.setErrorParsers(info.getErrorParsers());
 		projectInfo.setAppendEnvironment(info.appendEnvironment());

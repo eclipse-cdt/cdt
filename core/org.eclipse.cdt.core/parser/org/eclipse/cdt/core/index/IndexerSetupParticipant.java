@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -44,7 +44,7 @@ public abstract class IndexerSetupParticipant {
 	public final void notifyIndexerSetup(ICProject project) {
 		CCoreInternals.getPDOMManager().notifyIndexerSetup(this, project);
 	}
-	
+
 	/**
 	 * Call-back that tells the implementor that a project has passed all setup participants
 	 * and therefore it is actually initialized.

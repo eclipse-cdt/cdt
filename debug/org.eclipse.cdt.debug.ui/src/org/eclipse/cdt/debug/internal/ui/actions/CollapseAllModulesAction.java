@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.ui.IDebugView;
@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionDelegate;
- 
+
 /**
  * The delegate for the "Collapse All" action of the Modules view.
  */
@@ -33,21 +33,21 @@ public class CollapseAllModulesAction extends ActionDelegate implements IViewAct
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	@Override
-	public void init( IViewPart view ) {
-		Assert.isLegal( view instanceof IDebugView );
-		fView = (IDebugView)view;
+	public void init(IViewPart view) {
+		Assert.isLegal(view instanceof IDebugView);
+		fView = (IDebugView) view;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
+	public void run(IAction action) {
 		Viewer viewer = getView().getViewer();
-		if ( viewer instanceof TreeViewer ) {
-			viewer.getControl().setRedraw( false );
-			((TreeViewer)viewer).collapseAll();
-			viewer.getControl().setRedraw( true );
+		if (viewer instanceof TreeViewer) {
+			viewer.getControl().setRedraw(false);
+			((TreeViewer) viewer).collapseAll();
+			viewer.getControl().setRedraw(true);
 		}
 	}
 

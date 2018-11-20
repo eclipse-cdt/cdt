@@ -24,11 +24,10 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
-
 public class LexicalSortingAction extends Action {
-	
-	private static final String ACTION_NAME= "LexicalSortingAction"; //$NON-NLS-1$
-	
+
+	private static final String ACTION_NAME = "LexicalSortingAction"; //$NON-NLS-1$
+
 	private final ViewerComparator fSorter;
 	private final TreeViewer fTreeViewer;
 	private final String fStoreKey;
@@ -39,35 +38,35 @@ public class LexicalSortingAction extends Action {
 
 	public LexicalSortingAction(TreeViewer treeViewer, String storeKeySuffix) {
 		super(CUIPlugin.getResourceString(ACTION_NAME + ".label")); //$NON-NLS-1$
-		
+
 		setDescription(CUIPlugin.getResourceString(ACTION_NAME + ".description")); //$NON-NLS-1$
 		setToolTipText(CUIPlugin.getResourceString(ACTION_NAME + ".tooltip")); //$NON-NLS-1$
-	
-		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ALPHA_SORTING);
-	
-		fTreeViewer= treeViewer;
-		fSorter= new CElementSorter();
-		fStoreKey= ACTION_NAME + storeKeySuffix;
 
-		boolean checked= CUIPlugin.getDefault().getDialogSettings().getBoolean(fStoreKey);
+		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ALPHA_SORTING);
+
+		fTreeViewer = treeViewer;
+		fSorter = new CElementSorter();
+		fStoreKey = ACTION_NAME + storeKeySuffix;
+
+		boolean checked = CUIPlugin.getDefault().getDialogSettings().getBoolean(fStoreKey);
 		valueChanged(checked, false);
 	}
-	
+
 	@Override
 	public void run() {
 		valueChanged(isChecked(), true);
 	}
-	
+
 	private void valueChanged(boolean on, boolean store) {
 		setChecked(on);
 		fTreeViewer.setComparator(on ? fSorter : null);
-		
-		String key= ACTION_NAME + ".tooltip" + (on ? ".on" : ".off"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		String key = ACTION_NAME + ".tooltip" + (on ? ".on" : ".off"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setToolTipText(CUIPlugin.getResourceString(key));
-		
+
 		if (store) {
 			CUIPlugin.getDefault().getDialogSettings().put(fStoreKey, on);
 		}
 	}
-	
+
 }

@@ -74,71 +74,71 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	/**
 	 * Pop-up menu: id of the source sub menu (value <code>org.eclipse.cdt.ui.source.menu</code>).
 	 */
-	public static final String MENU_ID= "org.eclipse.cdt.ui.source.menu"; //$NON-NLS-1$
+	public static final String MENU_ID = "org.eclipse.cdt.ui.source.menu"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: id of the organize group of the source sub menu (value
 	 * <code>organizeGroup</code>).
 	 */
-	public static final String GROUP_ORGANIZE= "organizeGroup";  //$NON-NLS-1$
+	public static final String GROUP_ORGANIZE = "organizeGroup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: id of the generate group of the source sub menu (value
 	 * <code>generateGroup</code>).
 	 */
-	public static final String GROUP_GENERATE= "generateGroup";  //$NON-NLS-1$
+	public static final String GROUP_GENERATE = "generateGroup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: id of the code group of the source sub menu (value
 	 * <code>codeGroup</code>).
 	 */
-	public static final String GROUP_CODE= "codeGroup";  //$NON-NLS-1$
+	public static final String GROUP_CODE = "codeGroup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: id of the externalize group of the source sub menu (value
 	 * <code>externalizeGroup</code>).
 	 */
-	private static final String GROUP_EXTERNALIZE= "externalizeGroup"; //$NON-NLS-1$
+	private static final String GROUP_EXTERNALIZE = "externalizeGroup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: id of the comment group of the source sub menu (value
 	 * <code>commentGroup</code>).
 	 */
-	private static final String GROUP_COMMENT= "commentGroup"; //$NON-NLS-1$
+	private static final String GROUP_COMMENT = "commentGroup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: id of the edit group of the source sub menu (value
 	 * <code>editGroup</code>).
 	 */
-	private static final String GROUP_EDIT= "editGroup"; //$NON-NLS-1$
+	private static final String GROUP_EDIT = "editGroup"; //$NON-NLS-1$
 
 	private CEditor fEditor;
 	private IWorkbenchSite fSite;
-	private String fGroupName= IContextMenuConstants.GROUP_REORGANIZE;
+	private String fGroupName = IContextMenuConstants.GROUP_REORGANIZE;
 	private List<ISelectionChangedListener> fRegisteredSelectionListeners;
-	private List<RefactoringAction> fRefactorActions= new ArrayList<RefactoringAction>();
+	private List<RefactoringAction> fRefactorActions = new ArrayList<RefactoringAction>();
 
 	private AddIncludeAction fAddInclude;
-//	private OverrideMethodsAction fOverrideMethods;
-//	private GenerateHashCodeEqualsAction fHashCodeEquals;
+	//	private OverrideMethodsAction fOverrideMethods;
+	//	private GenerateHashCodeEqualsAction fHashCodeEquals;
 	private GettersAndSettersAction fAddGetterSetter;
 	private ImplementMethodAction fImplementMethod;
-//	private AddDelegateMethodsAction fAddDelegateMethods;
-//	private AddUnimplementedConstructorsAction fAddUnimplementedConstructors;
-//	private GenerateNewConstructorUsingFieldsAction fGenerateConstructorUsingFields;
-//	private AddJavaDocStubAction fAddCppDocStub;
+	//	private AddDelegateMethodsAction fAddDelegateMethods;
+	//	private AddUnimplementedConstructorsAction fAddUnimplementedConstructors;
+	//	private GenerateNewConstructorUsingFieldsAction fGenerateConstructorUsingFields;
+	//	private AddJavaDocStubAction fAddCppDocStub;
 	private AddBookmarkAction fAddBookmark;
 	private AddTaskAction fAddTaskAction;
-//	private ExternalizeStringsAction fExternalizeStrings;
-//	private CleanUpAction fCleanUp;
-//
+	//	private ExternalizeStringsAction fExternalizeStrings;
+	//	private CleanUpAction fCleanUp;
+	//
 	private OrganizeIncludesAction fOrganizeIncludes;
-//	private SortMembersAction fSortMembers;
+	//	private SortMembersAction fSortMembers;
 	private SortLinesAction fSortLines;
 	private FormatAllAction fFormatAll;
-//	private CopyQualifiedNameAction fCopyQualifiedNameAction;
-//
-	private static final String QUICK_MENU_ID= "org.eclipse.cdt.ui.edit.text.c.source.quickMenu"; //$NON-NLS-1$
+	//	private CopyQualifiedNameAction fCopyQualifiedNameAction;
+	//
+	private static final String QUICK_MENU_ID = "org.eclipse.cdt.ui.edit.text.c.source.quickMenu"; //$NON-NLS-1$
 
 	private IHandlerActivation fQuickAccessHandlerActivation;
 	private IHandlerService fHandlerService;
@@ -153,72 +153,72 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public GenerateActionGroup(CEditor editor, String groupName) {
-		fSite= editor.getSite();
-		fSelectionProvider= fSite.getSelectionProvider();
-		fEditor= editor;
-		fGroupName= groupName;
+		fSite = editor.getSite();
+		fSelectionProvider = fSite.getSelectionProvider();
+		fEditor = editor;
+		fGroupName = groupName;
 
-		fAddInclude= new AddIncludeAction(editor);
+		fAddInclude = new AddIncludeAction(editor);
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 		editor.setAction("AddInclude", fAddInclude); //$NON-NLS-1$
 
-		fOrganizeIncludes= new OrganizeIncludesAction(editor);
+		fOrganizeIncludes = new OrganizeIncludesAction(editor);
 		fOrganizeIncludes.setActionDefinitionId(ICEditorActionDefinitionIds.ORGANIZE_INCLUDES);
 		editor.setAction("OrganizeIncludes", fOrganizeIncludes); //$NON-NLS-1$
 
-//		fSortMembers= new SortMembersAction(editor);
-//		fSortMembers.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_MEMBERS);
-//		editor.setAction("SortMembers", fSortMembers); //$NON-NLS-1$
+		//		fSortMembers= new SortMembersAction(editor);
+		//		fSortMembers.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_MEMBERS);
+		//		editor.setAction("SortMembers", fSortMembers); //$NON-NLS-1$
 
-		fSortLines= new SortLinesAction(editor);
+		fSortLines = new SortLinesAction(editor);
 		fSortLines.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_LINES);
 		editor.setAction("SortLines", fSortLines); //$NON-NLS-1$
 
-//		IAction pastAction= editor.getAction(ITextEditorActionConstants.PASTE);//IWorkbenchActionDefinitionIds.PASTE);
-//		fCopyQualifiedNameAction= new CopyQualifiedNameAction(editor, null, pastAction);
-//		fCopyQualifiedNameAction.setActionDefinitionId(CopyQualifiedNameAction.JAVA_EDITOR_ACTION_DEFINITIONS_ID);
-//		editor.setAction("CopyQualifiedName", fCopyQualifiedNameAction); //$NON-NLS-1$
-//
-//		fOverrideMethods= new OverrideMethodsAction(editor);
-//		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
-//		editor.setAction("OverrideMethods", fOverrideMethods); //$NON-NLS-1$
-//
-		fAddGetterSetter= new GettersAndSettersAction(editor);
+		//		IAction pastAction= editor.getAction(ITextEditorActionConstants.PASTE);//IWorkbenchActionDefinitionIds.PASTE);
+		//		fCopyQualifiedNameAction= new CopyQualifiedNameAction(editor, null, pastAction);
+		//		fCopyQualifiedNameAction.setActionDefinitionId(CopyQualifiedNameAction.JAVA_EDITOR_ACTION_DEFINITIONS_ID);
+		//		editor.setAction("CopyQualifiedName", fCopyQualifiedNameAction); //$NON-NLS-1$
+		//
+		//		fOverrideMethods= new OverrideMethodsAction(editor);
+		//		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
+		//		editor.setAction("OverrideMethods", fOverrideMethods); //$NON-NLS-1$
+		//
+		fAddGetterSetter = new GettersAndSettersAction(editor);
 		fAddGetterSetter.setActionDefinitionId(ICEditorActionDefinitionIds.GETTERS_AND_SETTERS);
 		editor.setAction("org.eclipse.cdt.ui.refactor.getters.and.setters", fAddGetterSetter); //$NON-NLS-1$
 
 		fImplementMethod = new ImplementMethodAction(editor);
 		fImplementMethod.setActionDefinitionId(ICEditorActionDefinitionIds.IMPLEMENT_METHOD);
 		editor.setAction("org.eclipse.cdt.ui.refactor.implement.method", fImplementMethod); //$NON-NLS-1$
-//
-//		fAddDelegateMethods= new AddDelegateMethodsAction(editor);
-//		fAddDelegateMethods.setActionDefinitionId(ICEditorActionDefinitionIds.CREATE_DELEGATE_METHODS);
-//		editor.setAction("AddDelegateMethods", fAddDelegateMethods); //$NON-NLS-1$
-//
-//		fAddUnimplementedConstructors= new AddUnimplementedConstructorsAction(editor);
-//		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONSTRUCTORS);
-//		editor.setAction("AddUnimplementedConstructors", fAddUnimplementedConstructors); //$NON-NLS-1$		
-//
-//		fGenerateConstructorUsingFields= new GenerateNewConstructorUsingFieldsAction(editor);
-//		fGenerateConstructorUsingFields.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_CONSTRUCTOR_USING_FIELDS);
-//		editor.setAction("GenerateConstructorUsingFields", fGenerateConstructorUsingFields); //$NON-NLS-1$
-//
-//		fHashCodeEquals= new GenerateHashCodeEqualsAction(editor);
-//		fHashCodeEquals.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_HASHCODE_EQUALS);
-//		editor.setAction("GenerateHashCodeEquals", fHashCodeEquals); //$NON-NLS-1$
-//
-//		fAddCppDocStub= new AddJavaDocStubAction(editor);
-//		fAddCppDocStub.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_JAVADOC_COMMENT);
-//		editor.setAction("AddJavadocComment", fAddCppDocStub); //$NON-NLS-1$
-//
-//		fCleanUp= new CleanUpAction(editor);
-//		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
-//		editor.setAction("CleanUp", fCleanUp); //$NON-NLS-1$
-//
-//		fExternalizeStrings= new ExternalizeStringsAction(editor);
-//		fExternalizeStrings.setActionDefinitionId(ICEditorActionDefinitionIds.EXTERNALIZE_STRINGS);
-//		editor.setAction("ExternalizeStrings", fExternalizeStrings); //$NON-NLS-1$
-//
+		//
+		//		fAddDelegateMethods= new AddDelegateMethodsAction(editor);
+		//		fAddDelegateMethods.setActionDefinitionId(ICEditorActionDefinitionIds.CREATE_DELEGATE_METHODS);
+		//		editor.setAction("AddDelegateMethods", fAddDelegateMethods); //$NON-NLS-1$
+		//
+		//		fAddUnimplementedConstructors= new AddUnimplementedConstructorsAction(editor);
+		//		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONSTRUCTORS);
+		//		editor.setAction("AddUnimplementedConstructors", fAddUnimplementedConstructors); //$NON-NLS-1$		
+		//
+		//		fGenerateConstructorUsingFields= new GenerateNewConstructorUsingFieldsAction(editor);
+		//		fGenerateConstructorUsingFields.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_CONSTRUCTOR_USING_FIELDS);
+		//		editor.setAction("GenerateConstructorUsingFields", fGenerateConstructorUsingFields); //$NON-NLS-1$
+		//
+		//		fHashCodeEquals= new GenerateHashCodeEqualsAction(editor);
+		//		fHashCodeEquals.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_HASHCODE_EQUALS);
+		//		editor.setAction("GenerateHashCodeEquals", fHashCodeEquals); //$NON-NLS-1$
+		//
+		//		fAddCppDocStub= new AddJavaDocStubAction(editor);
+		//		fAddCppDocStub.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_JAVADOC_COMMENT);
+		//		editor.setAction("AddJavadocComment", fAddCppDocStub); //$NON-NLS-1$
+		//
+		//		fCleanUp= new CleanUpAction(editor);
+		//		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
+		//		editor.setAction("CleanUp", fCleanUp); //$NON-NLS-1$
+		//
+		//		fExternalizeStrings= new ExternalizeStringsAction(editor);
+		//		fExternalizeStrings.setActionDefinitionId(ICEditorActionDefinitionIds.EXTERNALIZE_STRINGS);
+		//		editor.setAction("ExternalizeStrings", fExternalizeStrings); //$NON-NLS-1$
+		//
 		installQuickAccessAction();
 	}
 
@@ -260,13 +260,13 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	 * @since 5.4
 	 */
 	public GenerateActionGroup(IWorkbenchSite site, ISelectionProvider selectionProvider) {
-		fSite= site;
-		fSelectionProvider= selectionProvider == null ? fSite.getSelectionProvider() : selectionProvider;
-		ISelection selection= fSelectionProvider.getSelection();
+		fSite = site;
+		fSelectionProvider = selectionProvider == null ? fSite.getSelectionProvider() : selectionProvider;
+		ISelection selection = fSelectionProvider.getSelection();
 
-//		fOverrideMethods= new OverrideMethodsAction(site);
-//		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
-//
+		//		fOverrideMethods= new OverrideMethodsAction(site);
+		//		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
+		//
 		fAddGetterSetter = new GettersAndSettersAction();
 		fAddGetterSetter.setActionDefinitionId(ICEditorActionDefinitionIds.GETTERS_AND_SETTERS);
 		fAddGetterSetter.setSite(fSite);
@@ -277,57 +277,56 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		fImplementMethod.setSite(fSite);
 		fRefactorActions.add(fImplementMethod);
 
-//		fAddDelegateMethods= new AddDelegateMethodsAction(site);
-//		fAddDelegateMethods.setActionDefinitionId(ICEditorActionDefinitionIds.CREATE_DELEGATE_METHODS);
-//
-//		fAddUnimplementedConstructors= new AddUnimplementedConstructorsAction(site);
-//		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONSTRUCTORS);
-//		
-//		fGenerateConstructorUsingFields= new GenerateNewConstructorUsingFieldsAction(site);
-//		fGenerateConstructorUsingFields.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_CONSTRUCTOR_USING_FIELDS);
-//
-//		fHashCodeEquals= new GenerateHashCodeEqualsAction(site);
-//		fHashCodeEquals.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_HASHCODE_EQUALS);
-//
-//		fAddCppDocStub= new AddJavaDocStubAction(site);
-//		fAddCppDocStub.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_JAVADOC_COMMENT);
+		//		fAddDelegateMethods= new AddDelegateMethodsAction(site);
+		//		fAddDelegateMethods.setActionDefinitionId(ICEditorActionDefinitionIds.CREATE_DELEGATE_METHODS);
+		//
+		//		fAddUnimplementedConstructors= new AddUnimplementedConstructorsAction(site);
+		//		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONSTRUCTORS);
+		//		
+		//		fGenerateConstructorUsingFields= new GenerateNewConstructorUsingFieldsAction(site);
+		//		fGenerateConstructorUsingFields.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_CONSTRUCTOR_USING_FIELDS);
+		//
+		//		fHashCodeEquals= new GenerateHashCodeEqualsAction(site);
+		//		fHashCodeEquals.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_HASHCODE_EQUALS);
+		//
+		//		fAddCppDocStub= new AddJavaDocStubAction(site);
+		//		fAddCppDocStub.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_JAVADOC_COMMENT);
 
-		fAddBookmark= new AddBookmarkAction(site, true);
+		fAddBookmark = new AddBookmarkAction(site, true);
 		fAddBookmark.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK);
 
-		fAddTaskAction= new AddTaskAction(site);
+		fAddTaskAction = new AddTaskAction(site);
 		fAddTaskAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADD_TASK);
 
-//		fExternalizeStrings= new ExternalizeStringsAction(site);
-//		fExternalizeStrings.setActionDefinitionId(ICEditorActionDefinitionIds.EXTERNALIZE_STRINGS);
-//
-//		fOrganizeIncludes= new OrganizeIncludesAction(site);
-//		fOrganizeIncludes.setActionDefinitionId(ICEditorActionDefinitionIds.ORGANIZE_INCLUDES);
-//
-//		fSortMembers= new SortMembersAction(site);
-//		fSortMembers.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_MEMBERS);
-//
-		fFormatAll= new FormatAllAction(site);
+		//		fExternalizeStrings= new ExternalizeStringsAction(site);
+		//		fExternalizeStrings.setActionDefinitionId(ICEditorActionDefinitionIds.EXTERNALIZE_STRINGS);
+		//
+		//		fOrganizeIncludes= new OrganizeIncludesAction(site);
+		//		fOrganizeIncludes.setActionDefinitionId(ICEditorActionDefinitionIds.ORGANIZE_INCLUDES);
+		//
+		//		fSortMembers= new SortMembersAction(site);
+		//		fSortMembers.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_MEMBERS);
+		//
+		fFormatAll = new FormatAllAction(site);
 		fFormatAll.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
-//
-//		fCleanUp= new CleanUpAction(site);
-//		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
+		//
+		//		fCleanUp= new CleanUpAction(site);
+		//		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
 
-
-//		fOverrideMethods.update(selection);
-//		fAddDelegateMethods.update(selection);
-//		fAddUnimplementedConstructors.update(selection);
-//		fGenerateConstructorUsingFields.update(selection);
-//		fHashCodeEquals.update(selection);
-//		fAddCppDocStub.update(selection);
-//		fExternalizeStrings.update(selection);
-//		fFindNLSProblems.update(selection);
-//		fCleanUp.update(selection);
-//		fOrganizeIncludes.update(selection);
-//		fSortMembers.update(selection);
+		//		fOverrideMethods.update(selection);
+		//		fAddDelegateMethods.update(selection);
+		//		fAddUnimplementedConstructors.update(selection);
+		//		fGenerateConstructorUsingFields.update(selection);
+		//		fHashCodeEquals.update(selection);
+		//		fAddCppDocStub.update(selection);
+		//		fExternalizeStrings.update(selection);
+		//		fFindNLSProblems.update(selection);
+		//		fCleanUp.update(selection);
+		//		fOrganizeIncludes.update(selection);
+		//		fSortMembers.update(selection);
 		fFormatAll.update(selection);
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection)selection;
+			IStructuredSelection ss = (IStructuredSelection) selection;
 			fAddBookmark.selectionChanged(ss);
 			fAddTaskAction.selectionChanged(ss);
 		} else {
@@ -335,41 +334,41 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 			fAddTaskAction.setEnabled(false);
 		}
 
-//		registerSelectionListener(fSelectionProvider, fOverrideMethods);
-//		registerSelectionListener(fSelectionProvider, fAddDelegateMethods);
-//		registerSelectionListener(fSelectionProvider, fAddUnimplementedConstructors);
-//		registerSelectionListener(fSelectionProvider, fGenerateConstructorUsingFields);
-//		registerSelectionListener(fSelectionProvider, fHashCodeEquals);
-//		registerSelectionListener(fSelectionProvider, fAddCppDocStub);
+		//		registerSelectionListener(fSelectionProvider, fOverrideMethods);
+		//		registerSelectionListener(fSelectionProvider, fAddDelegateMethods);
+		//		registerSelectionListener(fSelectionProvider, fAddUnimplementedConstructors);
+		//		registerSelectionListener(fSelectionProvider, fGenerateConstructorUsingFields);
+		//		registerSelectionListener(fSelectionProvider, fHashCodeEquals);
+		//		registerSelectionListener(fSelectionProvider, fAddCppDocStub);
 		registerSelectionListener(fSelectionProvider, fAddBookmark);
-//		registerSelectionListener(fSelectionProvider, fExternalizeStrings);
-//		registerSelectionListener(fSelectionProvider, fFindNLSProblems);
-//		registerSelectionListener(fSelectionProvider, fOrganizeIncludes);
+		//		registerSelectionListener(fSelectionProvider, fExternalizeStrings);
+		//		registerSelectionListener(fSelectionProvider, fFindNLSProblems);
+		//		registerSelectionListener(fSelectionProvider, fOrganizeIncludes);
 		registerSelectionListener(fSelectionProvider, fFormatAll);
-//		registerSelectionListener(fSelectionProvider, fSortMembers);
+		//		registerSelectionListener(fSelectionProvider, fSortMembers);
 		registerSelectionListener(fSelectionProvider, fAddTaskAction);
-//		registerSelectionListener(fSelectionProvider, fCleanUp);
+		//		registerSelectionListener(fSelectionProvider, fCleanUp);
 
 		selectionChanged(new SelectionChangedEvent(fSelectionProvider, selection));
 		registerSelectionListener(fSelectionProvider, this);
 	}
 
 	private void installQuickAccessAction() {
-		fHandlerService= fSite.getService(IHandlerService.class);
+		fHandlerService = fSite.getService(IHandlerService.class);
 		if (fHandlerService != null) {
-			IHandler handler= new CDTQuickMenuCreator(fEditor) {
+			IHandler handler = new CDTQuickMenuCreator(fEditor) {
 				@Override
 				protected void fillMenu(IMenuManager menu) {
 					fillQuickMenu(menu);
 				}
 			}.createHandler();
-			fQuickAccessHandlerActivation= fHandlerService.activateHandler(QUICK_MENU_ID, handler);
+			fQuickAccessHandlerActivation = fHandlerService.activateHandler(QUICK_MENU_ID, handler);
 		}
 	}
 
 	private void registerSelectionListener(ISelectionProvider provider, ISelectionChangedListener listener) {
 		if (fRegisteredSelectionListeners == null)
-			fRegisteredSelectionListeners= new ArrayList<ISelectionChangedListener>(10);
+			fRegisteredSelectionListeners = new ArrayList<ISelectionChangedListener>(10);
 		provider.addSelectionChangedListener(listener);
 		fRegisteredSelectionListeners.add(listener);
 	}
@@ -401,13 +400,13 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		MenuManager subMenu= new MenuManager(ActionMessages.SourceMenu_label, MENU_ID);
+		MenuManager subMenu = new MenuManager(ActionMessages.SourceMenu_label, MENU_ID);
 		subMenu.setActionDefinitionId(QUICK_MENU_ID);
-		int added= 0;
+		int added = 0;
 		if (isEditorOwner()) {
-			added= fillEditorSubMenu(subMenu);
+			added = fillEditorSubMenu(subMenu);
 		} else {
-			added= fillViewSubMenu(subMenu);
+			added = fillViewSubMenu(subMenu);
 		}
 		if (added > 0)
 			menu.appendToGroup(fGroupName, subMenu);
@@ -422,60 +421,60 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	}
 
 	private int fillEditorSubMenu(IMenuManager source) {
-		int added= 0;
+		int added = 0;
 		source.add(new Separator(GROUP_COMMENT));
-		added+= addEditorAction(source, "ToggleComment"); //$NON-NLS-1$
-		added+= addEditorAction(source, "AddBlockComment"); //$NON-NLS-1$
-		added+= addEditorAction(source, "RemoveBlockComment"); //$NON-NLS-1$
-//		added+= addAction(source, fAddCppDocStub);
+		added += addEditorAction(source, "ToggleComment"); //$NON-NLS-1$
+		added += addEditorAction(source, "AddBlockComment"); //$NON-NLS-1$
+		added += addEditorAction(source, "RemoveBlockComment"); //$NON-NLS-1$
+		//		added+= addAction(source, fAddCppDocStub);
 		source.add(new Separator(GROUP_EDIT));
-		added+= addEditorAction(source, ITextEditorActionConstants.SHIFT_RIGHT);
-		added+= addEditorAction(source, ITextEditorActionConstants.SHIFT_LEFT);
-		added+= addEditorAction(source, "Indent"); //$NON-NLS-1$
-		added+= addEditorAction(source, "Format"); //$NON-NLS-1$
+		added += addEditorAction(source, ITextEditorActionConstants.SHIFT_RIGHT);
+		added += addEditorAction(source, ITextEditorActionConstants.SHIFT_LEFT);
+		added += addEditorAction(source, "Indent"); //$NON-NLS-1$
+		added += addEditorAction(source, "Format"); //$NON-NLS-1$
 		source.add(new Separator(GROUP_ORGANIZE));
-		added+= addAction(source, fAddInclude);
-		added+= addAction(source, fOrganizeIncludes);
-//		added+= addAction(source, fSortMembers);
-		added+= addAction(source, fSortLines);
-//		added+= addAction(source, fCleanUp);
+		added += addAction(source, fAddInclude);
+		added += addAction(source, fOrganizeIncludes);
+		//		added+= addAction(source, fSortMembers);
+		added += addAction(source, fSortLines);
+		//		added+= addAction(source, fCleanUp);
 		source.add(new Separator(GROUP_GENERATE));
-//		added+= addAction(source, fOverrideMethods);
-		added+= addAction(source, fAddGetterSetter);
-		added+= addAction(source, fImplementMethod);
-//		added+= addAction(source, fAddDelegateMethods);
-//		added+= addAction(source, fHashCodeEquals);
-//		added+= addAction(source, fGenerateConstructorUsingFields);
-//		added+= addAction(source, fAddUnimplementedConstructors);
+		//		added+= addAction(source, fOverrideMethods);
+		added += addAction(source, fAddGetterSetter);
+		added += addAction(source, fImplementMethod);
+		//		added+= addAction(source, fAddDelegateMethods);
+		//		added+= addAction(source, fHashCodeEquals);
+		//		added+= addAction(source, fGenerateConstructorUsingFields);
+		//		added+= addAction(source, fAddUnimplementedConstructors);
 		source.add(new Separator(GROUP_CODE));
 		source.add(new Separator(GROUP_EXTERNALIZE));
-//		added+= addAction(source, fExternalizeStrings);
+		//		added+= addAction(source, fExternalizeStrings);
 		return added;
 	}
 
 	private int fillViewSubMenu(IMenuManager source) {
-		int added= 0;
+		int added = 0;
 		source.add(new Separator(GROUP_COMMENT));
-//		added+= addAction(source, fAddCppDocStub);
+		//		added+= addAction(source, fAddCppDocStub);
 		source.add(new Separator(GROUP_EDIT));
-		added+= addAction(source, fFormatAll);
+		added += addAction(source, fFormatAll);
 		source.add(new Separator(GROUP_ORGANIZE));
-		added+= addAction(source, fAddInclude);
-		added+= addAction(source, fOrganizeIncludes);
-//		added+= addAction(source, fSortMembers);
-//		added+= addAction(source, fCleanUp);
+		added += addAction(source, fAddInclude);
+		added += addAction(source, fOrganizeIncludes);
+		//		added+= addAction(source, fSortMembers);
+		//		added+= addAction(source, fCleanUp);
 		source.add(new Separator(GROUP_GENERATE));
-//		added+= addAction(source, fOverrideMethods);
-		added+= addAction(source, fAddGetterSetter);
-		added+= addAction(source, fImplementMethod);
-//		added+= addAction(source, fAddDelegateMethods);
-//		added+= addAction(source, fHashCodeEquals);
-//		added+= addAction(source, fGenerateConstructorUsingFields);
-//		added+= addAction(source, fAddUnimplementedConstructors);
+		//		added+= addAction(source, fOverrideMethods);
+		added += addAction(source, fAddGetterSetter);
+		added += addAction(source, fImplementMethod);
+		//		added+= addAction(source, fAddDelegateMethods);
+		//		added+= addAction(source, fHashCodeEquals);
+		//		added+= addAction(source, fGenerateConstructorUsingFields);
+		//		added+= addAction(source, fAddUnimplementedConstructors);
 		source.add(new Separator(GROUP_CODE));
 		source.add(new Separator(GROUP_EXTERNALIZE));
-//		added+= addAction(source, fExternalizeStrings);
-//		added+= addAction(source, fFindNLSProblems);
+		//		added+= addAction(source, fExternalizeStrings);
+		//		added+= addAction(source, fFindNLSProblems);
 		return added;
 	}
 
@@ -485,46 +484,46 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	@Override
 	public void dispose() {
 		if (fRegisteredSelectionListeners != null) {
-			ISelectionProvider provider= fSelectionProvider;
-			for (Iterator<ISelectionChangedListener> iter= fRegisteredSelectionListeners.iterator(); iter.hasNext();) {
-				ISelectionChangedListener listener= iter.next();
+			ISelectionProvider provider = fSelectionProvider;
+			for (Iterator<ISelectionChangedListener> iter = fRegisteredSelectionListeners.iterator(); iter.hasNext();) {
+				ISelectionChangedListener listener = iter.next();
 				provider.removeSelectionChangedListener(listener);
 			}
 		}
 		if (fQuickAccessHandlerActivation != null && fHandlerService != null) {
 			fHandlerService.deactivateHandler(fQuickAccessHandlerActivation);
 		}
-		fEditor= null;
+		fEditor = null;
 		super.dispose();
 	}
 
 	private void setGlobalActionHandlers(IActionBars actionBar) {
 		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_INCLUDE, fAddInclude);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.OVERRIDE_METHODS, fOverrideMethods);
+		//		actionBar.setGlobalActionHandler(CdtActionConstants.OVERRIDE_METHODS, fOverrideMethods);
 		actionBar.setGlobalActionHandler(CdtActionConstants.GETTERS_AND_SETTERS, fAddGetterSetter);
 		actionBar.setGlobalActionHandler(CdtActionConstants.IMPLEMENT_METHOD, fImplementMethod);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_DELEGATE_METHODS, fAddDelegateMethods);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_CONSTRUCTOR_FROM_SUPERCLASS, fAddUnimplementedConstructors);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_CONSTRUCTOR_USING_FIELDS, fGenerateConstructorUsingFields);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_HASHCODE_EQUALS, fHashCodeEquals);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_CPP_DOC_COMMENT, fAddCppDocStub);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.EXTERNALIZE_STRINGS, fExternalizeStrings);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.CLEAN_UP, fCleanUp);
-//		TODO: actionBar.setGlobalActionHandler(CdtActionConstants.ORGANIZE_INCLUDES, fOrganizeIncludes);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.SORT_MEMBERS, fSortMembers);
+		//		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_DELEGATE_METHODS, fAddDelegateMethods);
+		//		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_CONSTRUCTOR_FROM_SUPERCLASS, fAddUnimplementedConstructors);
+		//		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_CONSTRUCTOR_USING_FIELDS, fGenerateConstructorUsingFields);
+		//		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_HASHCODE_EQUALS, fHashCodeEquals);
+		//		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_CPP_DOC_COMMENT, fAddCppDocStub);
+		//		actionBar.setGlobalActionHandler(CdtActionConstants.EXTERNALIZE_STRINGS, fExternalizeStrings);
+		//		actionBar.setGlobalActionHandler(CdtActionConstants.CLEAN_UP, fCleanUp);
+		//		TODO: actionBar.setGlobalActionHandler(CdtActionConstants.ORGANIZE_INCLUDES, fOrganizeIncludes);
+		//		actionBar.setGlobalActionHandler(CdtActionConstants.SORT_MEMBERS, fSortMembers);
 		if (!isEditorOwner()) {
 			// editor provides its own implementation of these actions.
 			actionBar.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), fAddBookmark);
 			actionBar.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), fAddTaskAction);
 			actionBar.setGlobalActionHandler(CdtActionConstants.FORMAT, fFormatAll);
 		} else {
-//			actionBar.setGlobalActionHandler(CopyQualifiedNameAction.ACTION_HANDLER_ID, fCopyQualifiedNameAction);
+			//			actionBar.setGlobalActionHandler(CopyQualifiedNameAction.ACTION_HANDLER_ID, fCopyQualifiedNameAction);
 		}
 	}
 
 	private int addAction(IMenuManager menu, IAction action) {
 		if (action instanceof IUpdate)
-			((IUpdate)action).update();
+			((IUpdate) action).update();
 		if (action != null && action.isEnabled()) {
 			menu.add(action);
 			return 1;
@@ -535,11 +534,11 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	private int addEditorAction(IMenuManager menu, String actionID) {
 		if (fEditor == null)
 			return 0;
-		IAction action= fEditor.getAction(actionID);
+		IAction action = fEditor.getAction(actionID);
 		if (action == null)
 			return 0;
 		if (action instanceof IUpdate)
-			((IUpdate)action).update();
+			((IUpdate) action).update();
 		if (action.isEnabled()) {
 			menu.add(action);
 			return 1;

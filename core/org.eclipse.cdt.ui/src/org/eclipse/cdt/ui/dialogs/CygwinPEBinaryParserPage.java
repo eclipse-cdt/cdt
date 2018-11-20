@@ -91,7 +91,8 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 				}
 			}
 			if (cext != null && cext.length > 0) {
-				IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
+				IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+						"BinaryParserPage"); //$NON-NLS-1$
 				IConfigurationElement[] infos = point.getConfigurationElements();
 				for (int i = 0; i < infos.length; i++) {
 					String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$
@@ -299,7 +300,6 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 				fCygPathCommandText.setText(res);
 			}
 		});
-
 
 		label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_nmCommand);
 		gd = new GridData();

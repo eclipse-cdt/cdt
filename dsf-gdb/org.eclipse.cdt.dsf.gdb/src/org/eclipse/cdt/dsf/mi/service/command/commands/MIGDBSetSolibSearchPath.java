@@ -21,15 +21,13 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  *     -gdb-set solib-search-path COLON-SEPARATED-PATH
  * 
  */
-public class MIGDBSetSolibSearchPath extends MIGDBSet 
-{
+public class MIGDBSetSolibSearchPath extends MIGDBSet {
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIGDBSetSolibSearchPath(ICommandControlDMContext ctx, String[] paths) {
-		super(ctx,
-			new String[] {"solib-search-path", concat(paths, System.getProperty("path.separator", ":"))}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			x-> new MINoChangeAdjustable(x));
+		super(ctx, new String[] { "solib-search-path", concat(paths, System.getProperty("path.separator", ":")) }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				x -> new MINoChangeAdjustable(x));
 	}
 
 	private static String concat(String[] paths, String sep) {

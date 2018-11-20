@@ -19,7 +19,6 @@ package org.eclipse.cdt.dsf.gdb;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 
-
 public class IGDBLaunchConfigurationConstants {
 
 	//
@@ -32,7 +31,7 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEV_SPEED = GdbPlugin.PLUGIN_ID + ".DEV_SPEED"; //$NON-NLS-1$
 	//
 	//
-	
+
 	//
 	// New to DSF GDB/MI
 	public static final String DEBUGGER_MODE_REMOTE = "remote"; //$NON-NLS-1$
@@ -71,7 +70,8 @@ public class IGDBLaunchConfigurationConstants {
 	 * Launch configuration attribute key. Boolean value to set the 'use shared library symbols for application' flag of the debugger.
 	 * @since 1.1
 	 */
-	public static final String ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP = GdbPlugin.PLUGIN_ID + ".USE_SOLIB_SYMBOLS_FOR_APP"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP = GdbPlugin.PLUGIN_ID
+			+ ".USE_SOLIB_SYMBOLS_FOR_APP"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a List (array of String) of directories for the search path of shared libraries.
@@ -88,7 +88,7 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 2.0
 	 */
 	public static final String ATTR_DEBUGGER_REVERSE = GdbPlugin.PLUGIN_ID + ".REVERSE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. String value to select reverse debugging method at launch time.
 	 * @since 5.0
@@ -101,14 +101,15 @@ public class IGDBLaunchConfigurationConstants {
 	 * 
 	 * @since 3.0
 	 */
-	public static final String ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND = GdbPlugin.PLUGIN_ID + ".UPDATE_THREADLIST_ON_SUSPEND"; //$NON-NLS-1$	
+	public static final String ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND = GdbPlugin.PLUGIN_ID
+			+ ".UPDATE_THREADLIST_ON_SUSPEND"; //$NON-NLS-1$	
 
 	/**         
 	 * Launch configuration attribute key. The value is a String specifying the type of post mortem launch.
 	 * @since 3.0
-	 */     
+	 */
 	public static final String ATTR_DEBUGGER_POST_MORTEM_TYPE = GdbPlugin.PLUGIN_ID + ".POST_MORTEM_TYPE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. Boolean value to set the 'detach-on-fork' GDB option.
 	 * When detach-on-fork is off, we will automatically attach to forked processes.  This will yield
@@ -130,7 +131,7 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 4.1
 	 */
 	public static final String ATTR_DEBUGGER_TRACEPOINT_MODE = GdbPlugin.PLUGIN_ID + ".TRACEPOINT_MODE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a String specifying the path of the executable 
 	 * on the target.
@@ -178,7 +179,7 @@ public class IGDBLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP.
-     * @since 1.1
+	 * @since 1.1
 	 */
 	public static final boolean DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT = false;
 
@@ -213,13 +214,13 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 3.0
 	 */
 	public static final boolean DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT = false;
-	
+
 	/**  
 	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
 	 * Indicates a core file.
 	 *   
 	 * @since 3.0                        
-	 */                                                 
+	 */
 	public static final String DEBUGGER_POST_MORTEM_CORE_FILE = "CORE_FILE"; //$NON-NLS-1$
 
 	/**
@@ -227,7 +228,7 @@ public class IGDBLaunchConfigurationConstants {
 	 * Indicates a trace data file.
 	 *      
 	 * @since 3.0 
-	 */     
+	 */
 	public static final String DEBUGGER_POST_MORTEM_TRACE_FILE = "TRACE_FILE"; //$NON-NLS-1$
 
 	/**  
@@ -235,7 +236,7 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 3.0
 	 */
 	public static final String DEBUGGER_POST_MORTEM_TYPE_DEFAULT = DEBUGGER_POST_MORTEM_CORE_FILE;
-	
+
 	/**  
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_DEBUG_ON_FORK.
 	 * @since 4.0
@@ -252,14 +253,14 @@ public class IGDBLaunchConfigurationConstants {
 	 * Possible attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
 	 * Indicates that only normal tracepoints should be used.
 	 * @since 4.1
-	 */                                                 
+	 */
 	public static final String DEBUGGER_TRACEPOINT_NORMAL_ONLY = "TP_NORMAL_ONLY"; //$NON-NLS-1$
 
 	/**  
 	 * Possible attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
 	 * Indicates that only fast tracepoints should be used.
 	 * @since 4.1
-	 */                                                 
+	 */
 	public static final String DEBUGGER_TRACEPOINT_FAST_ONLY = "TP_FAST_ONLY"; //$NON-NLS-1$
 
 	/**  
@@ -267,7 +268,7 @@ public class IGDBLaunchConfigurationConstants {
 	 * Indicates that normal tracepoints should be used whenever a fast tracepoint
 	 * cannot be inserted.
 	 * @since 4.1
-	 */                                                 
+	 */
 	public static final String DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL = "TP_FAST_THEN_NORMAL"; //$NON-NLS-1$
 
 	/**  
@@ -280,7 +281,7 @@ public class IGDBLaunchConfigurationConstants {
 	 * The default value of DebugPlugin.ATTR_PROCESS_FACTORY_ID.
 	 * @since 4.1
 	 */
-	 // Bug 210366
+	// Bug 210366
 	public static final String DEBUGGER_ATTR_PROCESS_FACTORY_ID_DEFAULT = "org.eclipse.cdt.dsf.gdb.GdbProcessFactory"; //$NON-NLS-1$
 
 	/**

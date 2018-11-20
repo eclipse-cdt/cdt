@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * nodes from the preprocessor tree.
  * @author dsteffle
  */
-public class ASTPreprocessorSelectionResult  {
+public class ASTPreprocessorSelectionResult {
 	IASTNode selectedNode = null;
 	int globalOffset = 0;
 
@@ -40,7 +40,6 @@ public class ASTPreprocessorSelectionResult  {
 	public int getGlobalOffset() {
 		return globalOffset;
 	}
-
 
 	public void setGlobalOffset(int globalOffset) {
 		this.globalOffset = globalOffset;

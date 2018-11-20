@@ -27,10 +27,10 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 public interface IGdbDebugPreferenceConstants {
 
 	/**
-     * Help prefixes.
-     */
-    public static final String PREFIX = GdbPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
-	
+	 * Help prefixes.
+	 */
+	public static final String PREFIX = GdbPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
+
 	/**
 	 * Boolean preference whether to enable GDB traces. Default is <code>true</code>. 
 	 */
@@ -66,13 +66,13 @@ public interface IGdbDebugPreferenceConstants {
 	 * @since 4.0
 	 */
 	public static final String PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS = "initialChildCountLimitForCollections"; //$NON-NLS-1$
-	
+
 	/**
 	 * The default command for gdb
 	 * @since 4.0
 	 */
 	public static final String PREF_DEFAULT_GDB_COMMAND = "defaultGdbCommand"; //$NON-NLS-1$
-	
+
 	/**
 	 * The default command file for gdb
 	 * @since 4.0
@@ -144,7 +144,7 @@ public interface IGdbDebugPreferenceConstants {
 	 * @since 4.1
 	 */
 	public static final String PREF_HIDE_RUNNING_THREADS = PREFIX + "hideRunningThreads"; //$NON-NLS-1$
-	
+
 	/**
 	 * Boolean preference whether to use the new behavior of the command 
 	 * "Show Breakpoints Supported by Selected Target" from the Breakpoints view.
@@ -171,16 +171,16 @@ public interface IGdbDebugPreferenceConstants {
 	 */
 	public static final String PREF_REVERSE_TRACE_METHOD_GDB_TRACE = "UseGdbTrace"; //$NON-NLS-1$
 
-	 /**
-	 * String preference controlling trace method used for hardware tracing.
-	 * @since 5.0
-	 */
+	/**
+	* String preference controlling trace method used for hardware tracing.
+	* @since 5.0
+	*/
 	public static final String PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE = "UseBranchTrace"; //$NON-NLS-1$
 
-	 /**
-	 * String preference controlling trace method used for hardware tracing.
-	 * @since 5.0
-	 */
+	/**
+	* String preference controlling trace method used for hardware tracing.
+	* @since 5.0
+	*/
 	public static final String PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE = "UseProcessorTrace"; //$NON-NLS-1$
 
 	/**

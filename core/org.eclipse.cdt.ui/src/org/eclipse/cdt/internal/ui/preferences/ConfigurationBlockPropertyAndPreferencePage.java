@@ -35,8 +35,8 @@ public abstract class ConfigurationBlockPropertyAndPreferencePage extends Proper
 
 	@Override
 	public void createControl(Composite parent) {
-		IWorkbenchPreferenceContainer container= (IWorkbenchPreferenceContainer) getContainer();
-		fConfigurationBlock= createConfigurationBlock(container);
+		IWorkbenchPreferenceContainer container = (IWorkbenchPreferenceContainer) getContainer();
+		fConfigurationBlock = createConfigurationBlock(container);
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpId());
 	}

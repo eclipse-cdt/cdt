@@ -69,7 +69,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * empty result if no elements are created, or if this
 	 * operation is not actually executed.
 	 */
-	protected static final ICElement[] fgEmptyResult= new ICElement[] {};
+	protected static final ICElement[] fgEmptyResult = new ICElement[] {};
 
 	/**
 	 * Collection of <code>ICElementDelta</code>s created by this operation.
@@ -78,18 +78,18 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * deltas. This collection is registered with the C Model notification
 	 * manager if the operation completes successfully.
 	 */
-	protected List<ICElementDelta> fDeltas= null;
+	protected List<ICElementDelta> fDeltas = null;
 
 	/**
 	 * The elements created by this operation - empty
 	 * until the operation actually creates elements.
 	 */
-	protected ICElement[] fResultElements= fgEmptyResult;
+	protected ICElement[] fResultElements = fgEmptyResult;
 
 	/**
 	 * The progress monitor passed into this operation
 	 */
-	protected IProgressMonitor fMonitor= null;
+	protected IProgressMonitor fMonitor = null;
 
 	/**
 	 * A flag indicating whether this operation is nested.
@@ -99,7 +99,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * Conflict resolution policy - by default do not force (fail on a conflict).
 	 */
-	protected boolean fForce= false;
+	protected boolean fForce = false;
 
 	/*
 	 * Whether the operation has modified resources, and thus whether resource
@@ -110,11 +110,11 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/*
 	 * A per thread stack of java model operations (PerThreadObject of ArrayList).
 	 */
-	protected final static ThreadLocal<ArrayList<CModelOperation>> operationStacks =
-			new ThreadLocal<ArrayList<CModelOperation>>();
+	protected final static ThreadLocal<ArrayList<CModelOperation>> operationStacks = new ThreadLocal<ArrayList<CModelOperation>>();
 
 	protected CModelOperation() {
 	}
+
 	/**
 	 * A common constructor for all C Model operations.
 	 */
@@ -127,7 +127,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected CModelOperation(ICElement[] elementsToProcess, ICElement[] parentElements) {
 		fElementsToProcess = elementsToProcess;
-		this.parentElements= parentElements;
+		this.parentElements = parentElements;
 	}
 
 	/**
@@ -135,8 +135,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected CModelOperation(ICElement[] elementsToProcess, ICElement[] parentElements, boolean force) {
 		fElementsToProcess = elementsToProcess;
-		this.parentElements= parentElements;
-		fForce= force;
+		this.parentElements = parentElements;
+		fForce = force;
 	}
 
 	/**
@@ -144,22 +144,22 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected CModelOperation(ICElement[] elements, boolean force) {
 		fElementsToProcess = elements;
-		fForce= force;
+		fForce = force;
 	}
 
 	/**
 	 * Common constructor for all C Model operations.
 	 */
 	protected CModelOperation(ICElement element) {
-		fElementsToProcess = new ICElement[]{element};
+		fElementsToProcess = new ICElement[] { element };
 	}
 
 	/**
 	 * A common constructor for all C Model operations.
 	 */
 	protected CModelOperation(ICElement element, boolean force) {
-		fElementsToProcess = new ICElement[]{element};
-		fForce= force;
+		fElementsToProcess = new ICElement[] { element };
+		fForce = force;
 	}
 
 	/**
@@ -179,11 +179,11 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected void addReconcileDelta(IWorkingCopy workingCopy, ICElementDelta delta) {
 		HashMap<IWorkingCopy, ICElementDelta> reconcileDeltas = CModelManager.getDefault().reconcileDeltas;
-		CElementDelta previousDelta = (CElementDelta)reconcileDeltas.get(workingCopy);
+		CElementDelta previousDelta = (CElementDelta) reconcileDeltas.get(workingCopy);
 		if (previousDelta != null) {
 			ICElementDelta[] children = delta.getAffectedChildren();
 			for (ICElementDelta element : children) {
-				CElementDelta child = (CElementDelta)element;
+				CElementDelta child = (CElementDelta) element;
 				previousDelta.insertDeltaTree(child.getElement(), child);
 			}
 		} else {
@@ -245,9 +245,9 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected ITranslationUnit getTranslationUnitFor(ICElement element) {
 		if (element instanceof ITranslationUnit) {
-			return (ITranslationUnit)element;
+			return (ITranslationUnit) element;
 		} else if (element instanceof ISourceReference) {
-			ISourceReference ref = (ISourceReference)element;
+			ISourceReference ref = (ISourceReference) element;
 			return ref.getTranslationUnit();
 		}
 		return null;
@@ -270,8 +270,9 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * Convenience method to create a file
 	 */
-	protected void createFile(IContainer folder, String name, InputStream contents, boolean force) throws CModelException {
-		IFile file= folder.getFile(new Path(name));
+	protected void createFile(IContainer folder, String name, InputStream contents, boolean force)
+			throws CModelException {
+		IFile file = folder.getFile(new Path(name));
 		try {
 			file.create(contents, force, getSubProgressMonitor(1));
 			this.hasModifiedResource = true;
@@ -284,7 +285,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * Convenience method to create a folder
 	 */
 	protected void createFolder(IContainer parentFolder, String name, boolean force) throws CModelException {
-		IFolder folder= parentFolder.getFolder(new Path(name));
+		IFolder folder = parentFolder.getFolder(new Path(name));
 		try {
 			// we should use true to create the file locally. Only VCM should use tru/false
 			folder.create(force, true, getSubProgressMonitor(1));
@@ -310,7 +311,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * Convenience method to delete resources
 	 */
 	protected void deleteResources(IResource[] resources, boolean force) throws CModelException {
-		if (resources == null || resources.length == 0) return;
+		if (resources == null || resources.length == 0)
+			return;
 		IProgressMonitor subProgressMonitor = getSubProgressMonitor(resources.length);
 		IWorkspace workspace = resources[0].getWorkspace();
 		try {
@@ -339,7 +341,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * @exception CModelException The operation has failed.
 	 */
 	protected void execute() throws CModelException {
-		ICModelStatus status= verify();
+		ICModelStatus status = verify();
 		if (status.isOK()) {
 			executeOperation();
 		} else {
@@ -367,7 +369,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			}
 		} catch (CoreException ce) {
 			if (ce instanceof CModelException) {
-				throw (CModelException)ce;
+				throw (CModelException) ce;
 			}
 			// translate the core exception to a c model exception
 			if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
@@ -461,7 +463,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	}
 
 	/**
- 	* Returns the <code>IWorkspace</code> this operation is working in, or
+	* Returns the <code>IWorkspace</code> this operation is working in, or
 	 * <code>null</code> if this operation has no elements to process.
 	 */
 	protected IWorkspace getWorkspace() {
@@ -514,7 +516,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	protected void moveResources(IResource[] resources, IPath destinationPath) throws CModelException {
 		IProgressMonitor subProgressMonitor = null;
 		if (fMonitor != null) {
-			subProgressMonitor = new SubProgressMonitor(fMonitor, resources.length, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+			subProgressMonitor = new SubProgressMonitor(fMonitor, resources.length,
+					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 		}
 		IWorkspace workspace = resources[0].getWorkspace();
 		try {
@@ -541,7 +544,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 		if (fDeltas != null && !fNested) {
 			// hook to ensure working copies remain consistent
 			//makeWorkingCopiesConsistent(fDeltas);
-			CModelManager manager= CModelManager.getDefault();
+			CModelManager manager = CModelManager.getDefault();
 			for (ICElementDelta delta : fDeltas) {
 				manager.registerCModelDelta(delta);
 			}
@@ -572,7 +575,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			if (size == 1) { // top level operation
 				operationStacks.set(null); // release reference (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=33927)
 			}
-			return stack.remove(size-1);
+			return stack.remove(size - 1);
 		} else {
 			return null;
 		}
@@ -602,7 +605,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
-		CModelManager manager= CModelManager.getDefault();
+		CModelManager manager = CModelManager.getDefault();
 		int previousDeltaCount = manager.fCModelDeltas.size();
 		pushOperation(this);
 		try {
@@ -638,8 +641,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 				run(monitor);
 			} else {
 				// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
-				getCModel().getUnderlyingResource().getWorkspace().run(
-						this, getSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
+				getCModel().getUnderlyingResource().getWorkspace().run(this, getSchedulingRule(),
+						IWorkspace.AVOID_UPDATE, monitor);
 			}
 		} catch (CoreException ce) {
 			if (ce instanceof CModelException) {

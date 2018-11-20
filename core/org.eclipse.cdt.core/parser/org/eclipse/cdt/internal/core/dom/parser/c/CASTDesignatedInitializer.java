@@ -31,11 +31,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * Implementation for designated initializers.
  */
 public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignatedInitializer, IASTAmbiguityParent {
-    private IASTInitializerClause rhs;
-    private ICASTDesignator[] designators;
-    private int designatorsPos = -1;
+	private IASTInitializerClause rhs;
+	private ICASTDesignator[] designators;
+	private int designatorsPos = -1;
 
-    public CASTDesignatedInitializer() {
+	public CASTDesignatedInitializer() {
 	}
 
 	public CASTDesignatedInitializer(IASTInitializerClause init) {
@@ -49,8 +49,7 @@ public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignate
 
 	@Override
 	public CASTDesignatedInitializer copy(CopyStyle style) {
-		CASTDesignatedInitializer copy =
-				new CASTDesignatedInitializer(rhs == null ? null : rhs.copy(style));
+		CASTDesignatedInitializer copy = new CASTDesignatedInitializer(rhs == null ? null : rhs.copy(style));
 		for (ICASTDesignator designator : getDesignators()) {
 			copy.addDesignator(designator == null ? null : designator.copy(style));
 		}
@@ -59,32 +58,32 @@ public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignate
 
 	@Override
 	public void addDesignator(ICASTDesignator designator) {
-        assertNotFrozen();
-    	if (designator != null) {
-    		designator.setParent(this);
-    		designator.setPropertyInParent(DESIGNATOR);
-    		designators = ArrayUtil.appendAt(ICASTDesignator.class, designators, ++designatorsPos, designator);
-    	}
-    }
+		assertNotFrozen();
+		if (designator != null) {
+			designator.setParent(this);
+			designator.setPropertyInParent(DESIGNATOR);
+			designators = ArrayUtil.appendAt(ICASTDesignator.class, designators, ++designatorsPos, designator);
+		}
+	}
 
-    @Override
+	@Override
 	public ICASTDesignator[] getDesignators() {
-        if (designators == null)
-        	return ICASTDesignatedInitializer.EMPTY_DESIGNATOR_ARRAY;
-        designators = ArrayUtil.trimAt(ICASTDesignator.class, designators, designatorsPos);
-        return designators;
-    }
+		if (designators == null)
+			return ICASTDesignatedInitializer.EMPTY_DESIGNATOR_ARRAY;
+		designators = ArrayUtil.trimAt(ICASTDesignator.class, designators, designatorsPos);
+		return designators;
+	}
 
-    @Override
+	@Override
 	public IASTInitializerClause getOperand() {
-        return rhs;
+		return rhs;
 	}
 
 	@Override
 	public void setOperand(IASTInitializerClause operand) {
-        assertNotFrozen();
-        this.rhs = operand;
-        if (rhs != null) {
+		assertNotFrozen();
+		this.rhs = operand;
+		if (rhs != null) {
 			rhs.setParent(this);
 			rhs.setPropertyInParent(OPERAND);
 		}
@@ -102,53 +101,60 @@ public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignate
 			init.setPropertyInParent(OPERAND);
 			return init;
 		}
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	@Deprecated
-    public void setOperandInitializer(IASTInitializer rhs) {
-    	if (rhs instanceof IASTEqualsInitializer) {
-    		setOperand(((IASTEqualsInitializer) rhs).getInitializerClause());
-    	} else if (rhs instanceof IASTInitializerClause) {
-    		setOperand((IASTInitializerClause) rhs);
-    	} else {
-    		setOperand(null);
-    	}
-    }
+	public void setOperandInitializer(IASTInitializer rhs) {
+		if (rhs instanceof IASTEqualsInitializer) {
+			setOperand(((IASTEqualsInitializer) rhs).getInitializerClause());
+		} else if (rhs instanceof IASTInitializerClause) {
+			setOperand((IASTInitializerClause) rhs);
+		} else {
+			setOperand(null);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitInitializers) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitInitializers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        ICASTDesignator[] ds = getDesignators();
-        for (int i = 0; i < ds.length; i++) {
-            if (!ds[i].accept(action))
-            	return false;
-        }
-        if (rhs != null && !rhs.accept(action)) return false;
-
-        if (action.shouldVisitInitializers) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-		    }
+		ICASTDesignator[] ds = getDesignators();
+		for (int i = 0; i < ds.length; i++) {
+			if (!ds[i].accept(action))
+				return false;
 		}
-        return true;
-    }
+		if (rhs != null && !rhs.accept(action))
+			return false;
 
-    @Override
+		if (action.shouldVisitInitializers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-    	if (child == rhs) {
-    		other.setPropertyInParent(child.getPropertyInParent());
-    		other.setParent(child.getParent());
-    		rhs = (IASTInitializerClause) other;
-    	}
-    }
+		if (child == rhs) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			rhs = (IASTInitializerClause) other;
+		}
+	}
 }

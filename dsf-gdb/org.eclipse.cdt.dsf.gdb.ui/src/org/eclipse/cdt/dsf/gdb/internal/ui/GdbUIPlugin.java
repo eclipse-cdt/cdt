@@ -47,16 +47,16 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static GdbUIPlugin plugin;
-	
-    private static BundleContext fgBundleContext; 
 
-    private static TracingConsoleManager fTracingConsoleManager;
-    private static GdbCliConsoleManager fGdbConsoleManager;
+	private static BundleContext fgBundleContext;
 
-    private static GdbDebugContextSyncManager fGdbSelectionSyncManager;
-    
-    private static IPreferenceStore fCorePreferenceStore;
-    
+	private static TracingConsoleManager fTracingConsoleManager;
+	private static GdbCliConsoleManager fGdbConsoleManager;
+
+	private static GdbDebugContextSyncManager fGdbSelectionSyncManager;
+
+	private static IPreferenceStore fCorePreferenceStore;
+
 	/**
 	 * The constructor
 	 */
@@ -68,17 +68,17 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void start(BundleContext context) throws Exception {
-        fgBundleContext = context;
+	public void start(BundleContext context) throws Exception {
+		fgBundleContext = context;
 		super.start(context);
 		plugin = this;
-		
+
 		fTracingConsoleManager = new TracingConsoleManager();
 		fTracingConsoleManager.startup();
-		
+
 		fGdbConsoleManager = new GdbCliConsoleManager();
 		fGdbConsoleManager.startup();
-		
+
 		fGdbSelectionSyncManager = new GdbDebugContextSyncManager();
 		fGdbSelectionSyncManager.startup();
 	}
@@ -88,7 +88,7 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 		fTracingConsoleManager.shutdown();
 		fGdbConsoleManager.shutdown();
 		fGdbSelectionSyncManager.shutdown();
@@ -96,13 +96,13 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		disposeAdapterSets();
 		plugin = null;
 		super.stop(context);
-        fgBundleContext = null;
+		fgBundleContext = null;
 	}
 
 	public static GdbCliConsoleManager getCliConsoleManager() {
 		return fGdbConsoleManager;
 	}
-	
+
 	public static GdbDebugContextSyncManager getGdbSelectionSyncManager() {
 		return fGdbSelectionSyncManager;
 	}
@@ -111,11 +111,11 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 	 * Dispose adapter sets for all launches.
 	 */
 	private void disposeAdapterSets() {
-        for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
-            if (launch instanceof GdbLaunch) {
-                GdbAdapterFactory.disposeAdapterSet(launch);
-            }
-        }
+		for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
+			if (launch instanceof GdbLaunch) {
+				GdbAdapterFactory.disposeAdapterSet(launch);
+			}
+		}
 	}
 
 	/**
@@ -127,25 +127,25 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
-    public static BundleContext getBundleContext() {
-        return fgBundleContext;
-    }
-    
+	public static BundleContext getBundleContext() {
+		return fgBundleContext;
+	}
+
 	/**
 	 * Returns the preference store for this UI plug-in.
 	 * It actually uses the preference store of the core plug-in.
 	 */
-    @Override
+	@Override
 	public IPreferenceStore getPreferenceStore() {
 		if (fCorePreferenceStore == null) {
 			fCorePreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, GdbPlugin.PLUGIN_ID);
 		}
 		return fCorePreferenceStore;
 	}
-	
-    /**
-     * copied from org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin
-     */
+
+	/**
+	 * copied from org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin
+	 */
 	private static Shell debugDialogShell;
 
 	public static Shell getShell() {
@@ -187,6 +187,7 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
+
 	/**
 	 * Logs an internal error with the specified message.
 	 * 
@@ -254,32 +255,32 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
 	 */
 	@Override
-	protected void initializeImageRegistry( ImageRegistry reg ) {
-		super.initializeImageRegistry( reg );
-		declareImages( reg );
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		super.initializeImageRegistry(reg);
+		declareImages(reg);
 	}
 
 	/**
-     * Returns an image descriptor for the image file at the given
-     * plug-in relative path
-     *
-     * @param path the path
-     * @return the image descriptor
-     */
-    public static ImageDescriptor getImageDescriptor(String path) {
-        return imageDescriptorFromPlugin(PLUGIN_ID, path);
-    }
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path
+	 *
+	 * @param path the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
 
-    public static Image getImage( String key ) {
-    	return getDefault().getImageRegistry().get( key );
-    }
+	public static Image getImage(String key) {
+		return getDefault().getImageRegistry().get(key);
+	}
 
-    private void declareImages( ImageRegistry reg ) {
-    	reg.put( IGdbUIConstants.IMG_WIZBAN_ADVANCED_TIMEOUT_SETTINGS, 
-    			getImageDescriptor( "icons/full/wizban/advtosettings_wiz.png" ) ); //$NON-NLS-1$
-    }
+	private void declareImages(ImageRegistry reg) {
+		reg.put(IGdbUIConstants.IMG_WIZBAN_ADVANCED_TIMEOUT_SETTINGS,
+				getImageDescriptor("icons/full/wizban/advtosettings_wiz.png")); //$NON-NLS-1$
+	}
 }

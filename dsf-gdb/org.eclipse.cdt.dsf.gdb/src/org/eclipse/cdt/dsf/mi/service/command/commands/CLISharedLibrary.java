@@ -27,7 +27,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * @since 4.6
  */
 public class CLISharedLibrary extends MIInterpreterExecConsole<MIInfo> {
-	private static final String SHARED_LIBRARY = "sharedlibrary";  //$NON-NLS-1$
+	private static final String SHARED_LIBRARY = "sharedlibrary"; //$NON-NLS-1$
 
 	public CLISharedLibrary(ISymbolDMContext ctx) {
 		super(ctx, SHARED_LIBRARY);

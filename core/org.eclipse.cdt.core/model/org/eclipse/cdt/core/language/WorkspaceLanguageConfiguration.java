@@ -24,12 +24,12 @@ import java.util.TreeMap;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class WorkspaceLanguageConfiguration {
-	
+
 	/**
 	 * Workspace-wide content type mappings.
 	 */
 	private Map<String, String> fMappings;
-	
+
 	/**
 	 * Creates a new <code>WorkspaceLanguageConfiguration</code> with no
 	 * language mappings defined.
@@ -37,7 +37,7 @@ public class WorkspaceLanguageConfiguration {
 	public WorkspaceLanguageConfiguration() {
 		fMappings = new TreeMap<String, String>();
 	}
-	
+
 	/**
 	 * Maps a content type id to a language id.
 	 * @param contentType
@@ -46,7 +46,7 @@ public class WorkspaceLanguageConfiguration {
 	public void addWorkspaceMapping(String contentType, String language) {
 		fMappings.put(contentType, language);
 	}
-	
+
 	/**
 	 * Removes the given content type mapping (if it exists).
 	 * @param contentType
@@ -54,7 +54,7 @@ public class WorkspaceLanguageConfiguration {
 	public void removeWorkspaceMapping(String contentType) {
 		fMappings.remove(contentType);
 	}
-	
+
 	/**
 	 * Replaces the existing language mappings with the given
 	 * mappings.  The given mappings should be between content type ids
@@ -64,7 +64,7 @@ public class WorkspaceLanguageConfiguration {
 	public void setWorkspaceMappings(Map<String, String> mappings) {
 		fMappings = new TreeMap<String, String>(mappings);
 	}
-	
+
 	/**
 	 * Returns a read-only copy of the workspace-wide language mappings.
 	 * @return a read-only copy of the workspace-wide language mappings.

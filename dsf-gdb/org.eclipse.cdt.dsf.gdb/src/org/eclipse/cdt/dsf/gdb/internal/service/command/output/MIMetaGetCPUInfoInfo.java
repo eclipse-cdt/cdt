@@ -31,7 +31,9 @@ public class MIMetaGetCPUInfoInfo implements ICommandResult {
 		fCoresInfo = info;
 	}
 
-	public ICoreInfo[] getInfo() { return fCoresInfo; }
+	public ICoreInfo[] getInfo() {
+		return fCoresInfo;
+	}
 
 	@Override
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {

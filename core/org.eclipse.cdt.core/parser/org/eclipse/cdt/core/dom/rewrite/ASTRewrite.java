@@ -85,16 +85,14 @@ public final class ASTRewrite {
 	private final NodeCommentMap fCommentMap;
 
 	private enum Operation {
-		insertBefore,
-		replace,
-		remove
+		insertBefore, replace, remove
 	}
 
 	private ASTRewrite(IASTNode root, ASTModificationStore modStore, ASTModification parentMod,
 			NodeCommentMap commentMap) {
-		fRoot= root;
-		fModificationStore= modStore;
-		fParentMod= parentMod;
+		fRoot = root;
+		fModificationStore = modStore;
+		fParentMod = parentMod;
 		fCommentMap = commentMap;
 	}
 
@@ -125,7 +123,7 @@ public final class ASTRewrite {
 	public final void remove(IASTNode node, TextEditGroup editGroup) {
 		checkBelongsToAST(node);
 		checkSupportedNode(node, Operation.remove);
-		ASTModification mod= new ASTModification(ModificationKind.REPLACE, node, null, editGroup);
+		ASTModification mod = new ASTModification(ModificationKind.REPLACE, node, null, editGroup);
 		fModificationStore.storeModification(fParentMod, mod);
 	}
 
@@ -150,7 +148,7 @@ public final class ASTRewrite {
 		checkBelongsToAST(node);
 		checkSupportedNode(node, Operation.replace);
 		checkSupportedNode(replacement, Operation.replace);
-		ASTModification mod= new ASTModification(ModificationKind.REPLACE, node, replacement, editGroup);
+		ASTModification mod = new ASTModification(ModificationKind.REPLACE, node, replacement, editGroup);
 		fModificationStore.storeModification(fParentMod, mod);
 		return new ASTRewrite(replacement, fModificationStore, mod, fCommentMap);
 	}
@@ -182,12 +180,12 @@ public final class ASTRewrite {
 
 		ASTModification mod;
 		if (insertionPoint == null) {
-			mod= new ASTModification(ModificationKind.APPEND_CHILD, parent, newNode, editGroup);
+			mod = new ASTModification(ModificationKind.APPEND_CHILD, parent, newNode, editGroup);
 		} else {
 			if (insertionPoint.getParent() != parent) {
 				throw new IllegalArgumentException();
 			}
-			mod= new ASTModification(ModificationKind.INSERT_BEFORE, insertionPoint, newNode, editGroup);
+			mod = new ASTModification(ModificationKind.INSERT_BEFORE, insertionPoint, newNode, editGroup);
 		}
 		ASTCommenter.addCommentsToMap(newNode.getTranslationUnit(), fCommentMap);
 		fModificationStore.storeModification(fParentMod, mod);
@@ -212,8 +210,7 @@ public final class ASTRewrite {
 		if (!(fRoot instanceof IASTTranslationUnit)) {
 			throw new IllegalArgumentException("This API can only be used for the root rewrite object."); //$NON-NLS-1$
 		}
-		return ASTRewriteAnalyzer.rewriteAST((IASTTranslationUnit) fRoot, fModificationStore,
-				fCommentMap);
+		return ASTRewriteAnalyzer.rewriteAST((IASTTranslationUnit) fRoot, fModificationStore, fCommentMap);
 	}
 
 	private void checkBelongsToAST(IASTNode node) {

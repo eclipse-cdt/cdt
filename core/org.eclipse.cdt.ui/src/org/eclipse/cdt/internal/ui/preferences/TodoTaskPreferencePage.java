@@ -35,17 +35,17 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 
 	public static final String PREF_ID = "org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage"; //$NON-NLS-1$
 	public static final String PROP_ID = "org.eclipse.cdt.ui.propertyPages.TodoTaskPreferencePage"; //$NON-NLS-1$
-	
+
 	private TodoTaskConfigurationBlock fConfigurationBlock;
 
 	public TodoTaskPreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
-		setDescription(PreferencesMessages.TodoTaskPreferencePage_description); 
-		
+		setDescription(PreferencesMessages.TodoTaskPreferencePage_description);
+
 		// only used when page is shown programatically
-		setTitle(PreferencesMessages.TodoTaskPreferencePage_title); 
+		setTitle(PreferencesMessages.TodoTaskPreferencePage_title);
 	}
-			
+
 	/*
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -53,9 +53,9 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 	public void createControl(Composite parent) {
 		IWorkbenchPreferenceContainer container = (IWorkbenchPreferenceContainer) getContainer();
 		fConfigurationBlock = new TodoTaskConfigurationBlock(getNewStatusChangedListener(), getProject(), container);
-		
+
 		super.createControl(parent);
-		
+
 		if (isProjectPreferencePage()) {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.TODO_TASK_PROPERTY_PAGE);
 		} else {
@@ -70,7 +70,7 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 	protected Control createPreferenceContent(Composite composite) {
 		return fConfigurationBlock.createContents(composite);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#hasProjectSpecificOptions(org.eclipse.core.resources.IProject)
 	 */
@@ -78,8 +78,7 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 	protected boolean hasProjectSpecificOptions(IProject project) {
 		return fConfigurationBlock.hasProjectSpecificOptions(project);
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPreferencePageID()
 	 */
@@ -87,14 +86,14 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 	protected String getPreferencePageId() {
 		return PREF_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPropertyPageID()
 	 */
 	@Override
 	protected String getPropertyPageId() {
-	//  TODO: Project specific settings are not supported yet.
-//		return PROP_ID;
+		//  TODO: Project specific settings are not supported yet.
+		//		return PROP_ID;
 		return null;
 	}
 
@@ -107,8 +106,8 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 		if (fConfigurationBlock != null) {
 			fConfigurationBlock.useProjectSpecificSettings(useProjectSpecificSettings);
 		}
-	}	
-			
+	}
+
 	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performDefaults()
 	 */
@@ -127,10 +126,10 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 	public boolean performOk() {
 		if (fConfigurationBlock != null && !fConfigurationBlock.performOk()) {
 			return false;
-		}	
+		}
 		return super.performOk();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performApply()
 	 */
@@ -140,7 +139,7 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 			fConfigurationBlock.performApply();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
@@ -151,7 +150,7 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 		}
 		super.dispose();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */

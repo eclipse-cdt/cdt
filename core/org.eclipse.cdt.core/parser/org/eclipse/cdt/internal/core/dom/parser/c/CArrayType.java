@@ -32,12 +32,12 @@ import org.eclipse.core.runtime.CoreException;
 
 public class CArrayType implements ICArrayType, ITypeContainer, ISerializableType {
 	IType type;
-    private IASTExpression sizeExpression;
-    private IValue value= IntegralValue.NOT_INITIALIZED;
-    private boolean isConst;
-    private boolean isVolatile;
-    private boolean isRestrict;
-    private boolean isStatic;
+	private IASTExpression sizeExpression;
+	private IValue value = IntegralValue.NOT_INITIALIZED;
+	private boolean isConst;
+	private boolean isVolatile;
+	private boolean isRestrict;
+	private boolean isStatic;
 	private boolean isVariableSized;
 
 	public CArrayType(IType type) {
@@ -45,38 +45,44 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 	}
 
 	public CArrayType(IType type, boolean isConst, boolean isVolatile, boolean isRestrict, IValue size) {
-		this.type= type;
-		this.isConst= isConst;
-		this.isVolatile= isVolatile;
-		this.isRestrict= isRestrict;
-		this.value= size;
+		this.type = type;
+		this.isConst = isConst;
+		this.isVolatile = isVolatile;
+		this.isRestrict = isRestrict;
+		this.value = size;
 	}
 
 	public void setIsStatic(boolean val) {
-		isStatic= val;
-	}
-	public void setIsVariableLength(boolean val) {
-		isVariableSized= val;
+		isStatic = val;
 	}
 
-    @Override
+	public void setIsVariableLength(boolean val) {
+		isVariableSized = val;
+	}
+
+	@Override
 	public boolean isSameType(IType obj) {
-        if (obj == this)
-            return true;
-        if (obj instanceof ITypedef)
-            return obj.isSameType(this);
-        if (obj instanceof ICArrayType) {
-        	ICArrayType at = (ICArrayType) obj;
-        	if (isConst() != at.isConst()) return false;
-			if (isRestrict() != at.isRestrict()) return false;
-			if (isStatic() != at.isStatic()) return false;
-			if (isVolatile() != at.isVolatile()) return false;
-			if (isVariableLength() != at.isVariableLength()) return false;
+		if (obj == this)
+			return true;
+		if (obj instanceof ITypedef)
+			return obj.isSameType(this);
+		if (obj instanceof ICArrayType) {
+			ICArrayType at = (ICArrayType) obj;
+			if (isConst() != at.isConst())
+				return false;
+			if (isRestrict() != at.isRestrict())
+				return false;
+			if (isStatic() != at.isStatic())
+				return false;
+			if (isVolatile() != at.isVolatile())
+				return false;
+			if (isVariableLength() != at.isVariableLength())
+				return false;
 
 			return at.getType().isSameType(type) && hasSameSize(at);
-        }
-    	return false;
-    }
+		}
+		return false;
+	}
 
 	private boolean hasSameSize(IArrayType rhs) {
 		IValue s1 = getSize();
@@ -95,16 +101,16 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 
 	@Override
 	public void setType(IType t) {
-	    this.type = t;
+		this.type = t;
 	}
 
 	public void setModifier(ICASTArrayModifier mod) {
-		isConst= mod.isConst();
-		isVolatile= mod.isVolatile();
-		isRestrict= mod.isRestrict();
-		isStatic= mod.isStatic();
-		isVariableSized= mod.isVariableSized();
-		sizeExpression= mod.getConstantExpression();
+		isConst = mod.isConst();
+		isVolatile = mod.isVolatile();
+		isRestrict = mod.isRestrict();
+		isStatic = mod.isStatic();
+		isVariableSized = mod.isVariableSized();
+		sizeExpression = mod.getConstantExpression();
 	}
 
 	@Override
@@ -132,32 +138,32 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		return isVariableSized;
 	}
 
-    @Override
+	@Override
 	public IValue getSize() {
-    	if (value != IntegralValue.NOT_INITIALIZED)
-    		return value;
+		if (value != IntegralValue.NOT_INITIALIZED)
+			return value;
 
-    	if (sizeExpression == null)
-    		return value= null;
+		if (sizeExpression == null)
+			return value = null;
 
-    	return value= ValueFactory.create(sizeExpression);
-    }
+		return value = ValueFactory.create(sizeExpression);
+	}
 
-    @Override
-    public boolean hasSize() {
-    	return value == IntegralValue.NOT_INITIALIZED ? sizeExpression != null : value != null;
-    }
+	@Override
+	public boolean hasSize() {
+		return value == IntegralValue.NOT_INITIALIZED ? sizeExpression != null : value != null;
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen
+		}
+		return t;
+	}
 
 	@Override
 	public String toString() {
@@ -167,21 +173,26 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes = ITypeMarshalBuffer.ARRAY_TYPE;
-		long nval= -1;
-		IValue val= null;
+		long nval = -1;
+		IValue val = null;
 
-		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
-		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG2;
-		if (isRestrict()) firstBytes |= ITypeMarshalBuffer.FLAG3;
-		if (isStatic()) firstBytes |= ITypeMarshalBuffer.FLAG4;
-		if (isVariableLength()) firstBytes |= ITypeMarshalBuffer.FLAG5;
+		if (isConst())
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile())
+			firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict())
+			firstBytes |= ITypeMarshalBuffer.FLAG3;
+		if (isStatic())
+			firstBytes |= ITypeMarshalBuffer.FLAG4;
+		if (isVariableLength())
+			firstBytes |= ITypeMarshalBuffer.FLAG5;
 
-		val= getSize();
+		val = getSize();
 		if (val != null) {
 			firstBytes |= ITypeMarshalBuffer.FLAG6;
-			Number num= val.numberValue();
+			Number num = val.numberValue();
 			if (num != null) {
-				nval= num.longValue();
+				nval = num.longValue();
 				if (nval >= 0) {
 					firstBytes |= ITypeMarshalBuffer.FLAG7;
 				}
@@ -197,17 +208,15 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		IValue value= null;
+		IValue value = null;
 		if ((firstBytes & ITypeMarshalBuffer.FLAG7) != 0) {
 			value = IntegralValue.create(buffer.getLong());
 		} else if ((firstBytes & ITypeMarshalBuffer.FLAG6) != 0) {
 			value = buffer.unmarshalValue();
 		}
-		IType nested= buffer.unmarshalType();
-		CArrayType result= new CArrayType(nested,
-				(firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
-				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0,
-				(firstBytes & ITypeMarshalBuffer.FLAG3) != 0, value);
+		IType nested = buffer.unmarshalType();
+		CArrayType result = new CArrayType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
+				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0, (firstBytes & ITypeMarshalBuffer.FLAG3) != 0, value);
 		result.setIsStatic((firstBytes & ITypeMarshalBuffer.FLAG4) != 0);
 		result.setIsVariableLength((firstBytes & ITypeMarshalBuffer.FLAG5) != 0);
 		return result;
@@ -215,7 +224,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 
 	@Override
 	@Deprecated
-    public IASTExpression getArraySizeExpression() {
-        return sizeExpression;
-    }
+	public IASTExpression getArraySizeExpression() {
+		return sizeExpression;
+	}
 }

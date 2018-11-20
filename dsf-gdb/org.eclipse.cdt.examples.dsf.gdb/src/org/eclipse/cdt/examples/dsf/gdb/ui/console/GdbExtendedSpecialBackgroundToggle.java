@@ -27,14 +27,14 @@ public class GdbExtendedSpecialBackgroundToggle extends Action {
 
 	private static final int SPECIAL_BACKGROUND_COLOR = SWT.COLOR_DARK_GREEN;
 	private TextConsole fConsole;
-	
+
 	public GdbExtendedSpecialBackgroundToggle(IConsole console) {
 		if (console instanceof TextConsole) {
-			fConsole = (TextConsole)console;
+			fConsole = (TextConsole) console;
 		} else {
 			setEnabled(false);
 		}
-		
+
 		setText(GdbExtendedConsoleMessages.Set_Special_Background);
 		setToolTipText(GdbExtendedConsoleMessages.Set_Special_Background_Tip);
 	}
@@ -45,9 +45,8 @@ public class GdbExtendedSpecialBackgroundToggle extends Action {
 		Color background = fConsole.getBackground();
 		if (background.equals(Display.getDefault().getSystemColor(SPECIAL_BACKGROUND_COLOR))) {
 			boolean enabled = Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
-					IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS,
-					false, null);
-			
+					IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS, false, null);
+
 			if (enabled) {
 				newColor = SWT.COLOR_BLACK;
 			} else {

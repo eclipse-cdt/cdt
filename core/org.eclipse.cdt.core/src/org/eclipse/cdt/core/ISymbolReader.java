@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface ISymbolReader {
 
 	String[] getSourceFiles();
-	
+
 	/**
 	 * Gets the source files from this symbol reader.
 	 *

@@ -28,9 +28,9 @@ public class PreprocessorFilter extends ViewerFilter {
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof DOMASTNodeLeaf) {
-			int flag = ((DOMASTNodeLeaf)element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_PREPROCESSOR;
+			int flag = ((DOMASTNodeLeaf) element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_PREPROCESSOR;
 			if (flag > 0) {
-				if (((DOMASTNodeLeaf)element).getNode() instanceof IASTPreprocessorStatement)
+				if (((DOMASTNodeLeaf) element).getNode() instanceof IASTPreprocessorStatement)
 					return false;
 
 				return true;

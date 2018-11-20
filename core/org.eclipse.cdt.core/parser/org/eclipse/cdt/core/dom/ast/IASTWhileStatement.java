@@ -31,7 +31,8 @@ public interface IASTWhileStatement extends IASTStatement {
 	 * {@code BODY} represents the relationship between an {@code IASTWhileStatement} and
 	 * it's nested {@code IASTStatement}.
 	 */
-	public static final ASTNodeProperty BODY = new ASTNodeProperty("IASTWhileStatement.BODY - IASTStatement (body) for IASTWhileStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty BODY = new ASTNodeProperty(
+			"IASTWhileStatement.BODY - IASTStatement (body) for IASTWhileStatement"); //$NON-NLS-1$
 
 	/**
 	 * Returns the condition on the while loop

@@ -25,8 +25,8 @@ public interface IASTDoStatement extends IASTStatement {
 	 * {@code IASTDoStatement} and its nested body
 	 * {@code IASTStatement}.
 	 */
-	public static final ASTNodeProperty BODY =
-			new ASTNodeProperty("IASTDoStatement.BODY - nested body for IASTDoStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty BODY = new ASTNodeProperty(
+			"IASTDoStatement.BODY - nested body for IASTDoStatement"); //$NON-NLS-1$
 
 	/**
 	 * {@code CONDITION} represents the relationship between a

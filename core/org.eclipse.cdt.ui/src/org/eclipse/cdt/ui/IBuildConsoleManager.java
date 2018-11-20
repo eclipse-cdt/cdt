@@ -28,18 +28,23 @@ public interface IBuildConsoleManager {
 	 *         and one Global
 	 */
 	IConsole getConsole(IProject project);
+
 	/**
 	 * @return the console associated with the specified project
 	 * @since 5.3
 	 */
 	IConsole getProjectConsole(IProject project);
+
 	/**
 	 * @param project
 	 * @return IDocument backing the console for the given project
 	 */
 	IDocument getConsoleDocument(IProject project);
+
 	IProject getLastBuiltProject();
+
 	void addConsoleListener(IBuildConsoleListener listener);
+
 	void removeConsoleListener(IBuildConsoleListener listener);
 
 }

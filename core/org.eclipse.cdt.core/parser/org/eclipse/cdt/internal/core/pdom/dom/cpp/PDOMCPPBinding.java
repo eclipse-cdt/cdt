@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE= PDOMBinding.RECORD_SIZE + 0;
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 0;
 
 	public PDOMCPPBinding(PDOMLinkage linkage, long record) {
 		super(linkage, record);
@@ -65,7 +65,7 @@ public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 	public final IIndexScope getScope() {
 		// The parent node in the binding hierarchy is the scope.
 		try {
-			IBinding parent= getParentBinding();
+			IBinding parent = getParentBinding();
 			while (parent != null) {
 				if (parent instanceof ICPPClassType) {
 					return (IIndexScope) ((ICPPClassType) parent).getCompositeScope();
@@ -76,7 +76,7 @@ public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 					if (enumeration.isScoped()) {
 						return (IIndexScope) enumeration.asScope();
 					}
-					parent= ((PDOMNamedNode) parent).getParentBinding();
+					parent = ((PDOMNamedNode) parent).getParentBinding();
 				} else if (parent instanceof IIndexScope) {
 					return (IIndexScope) parent;
 				} else {

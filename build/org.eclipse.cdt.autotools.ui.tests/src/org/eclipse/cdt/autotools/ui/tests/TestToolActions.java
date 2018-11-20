@@ -71,8 +71,8 @@ public class TestToolActions extends AbstractTest {
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		Pattern p = Pattern.compile(".*Invoking aclocal in.*" + projectName
-				+ ".*aclocal --help.*Usage: aclocal.*", Pattern.DOTALL);
+		Pattern p = Pattern.compile(".*Invoking aclocal in.*" + projectName + ".*aclocal --help.*Usage: aclocal.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// Verify we still don't have an aclocal.m4 file yet
 		f = new File(path.toOSString());
@@ -85,8 +85,7 @@ public class TestToolActions extends AbstractTest {
 		bot.button("OK").click();
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		p = Pattern.compile(".*Invoking aclocal in.*" + projectName
-				+ ".*aclocal.*", Pattern.DOTALL);
+		p = Pattern.compile(".*Invoking aclocal in.*" + projectName + ".*aclocal.*", Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// We need to wait until the aclocal.m4 file is created so
 		// sleep a bit and look for it...give up after 20 seconds
@@ -115,8 +114,7 @@ public class TestToolActions extends AbstractTest {
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		Pattern p = Pattern.compile(".*Invoking autoconf in.*" + projectName
-				+ ".*autoconf.*", Pattern.DOTALL);
+		Pattern p = Pattern.compile(".*Invoking autoconf in.*" + projectName + ".*autoconf.*", Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// We need to wait until the configure file is created so
 		// sleep a bit and look for it...give up after 20 seconds
@@ -134,13 +132,11 @@ public class TestToolActions extends AbstractTest {
 		// explorer menu directly from the configure.ac file.
 		assertTrue(f.delete());
 		enterProjectFolder();
-		clickVolatileContextMenu(
-				projectExplorer.bot().tree().select("configure.ac"),
-				"Invoke Autotools", "Invoke Autoconf");
+		clickVolatileContextMenu(projectExplorer.bot().tree().select("configure.ac"), "Invoke Autotools",
+				"Invoke Autoconf");
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		p = Pattern.compile(".*Invoking autoconf in.*" + projectName
-				+ ".*autoconf.*", Pattern.DOTALL);
+		p = Pattern.compile(".*Invoking autoconf in.*" + projectName + ".*autoconf.*", Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// We need to wait until the configure file is created so
 		// sleep a bit and look for it...give up after 20 seconds
@@ -181,8 +177,8 @@ public class TestToolActions extends AbstractTest {
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		Pattern p = Pattern.compile(".*Invoking automake in.*" + projectName
-				+ ".*automake --help.*Usage:.*", Pattern.DOTALL);
+		Pattern p = Pattern.compile(".*Invoking automake in.*" + projectName + ".*automake --help.*Usage:.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// Verify we still don't have Makefile.in files yet
 		f = new File(path.toOSString());
@@ -201,8 +197,8 @@ public class TestToolActions extends AbstractTest {
 		bot.button("OK").click();
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		p = Pattern.compile(".*Invoking automake in.*" + projectName
-				+ ".*automake --add-missing Makefile src/Makefile.*",
+		p = Pattern.compile(
+				".*Invoking automake in.*" + projectName + ".*automake --add-missing Makefile src/Makefile.*",
 				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// We need to wait until the Makefile.in files are created so
@@ -234,8 +230,9 @@ public class TestToolActions extends AbstractTest {
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		Pattern p = Pattern.compile(".*Invoking libtoolize in.*" + projectName
-				+ ".*libtoolize --help.*Usage: .*libtoolize.*", Pattern.DOTALL);
+		Pattern p = Pattern.compile(
+				".*Invoking libtoolize in.*" + projectName + ".*libtoolize --help.*Usage: .*libtoolize.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 
@@ -250,8 +247,9 @@ public class TestToolActions extends AbstractTest {
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		Pattern p = Pattern.compile(".*Invoking autoheader in.*" + projectName
-				+ ".*autoheader --help.*Usage:.*autoheader.*", Pattern.DOTALL);
+		Pattern p = Pattern.compile(
+				".*Invoking autoheader in.*" + projectName + ".*autoheader --help.*Usage:.*autoheader.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 
@@ -288,8 +286,9 @@ public class TestToolActions extends AbstractTest {
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		Pattern p = Pattern.compile(".*Invoking autoreconf in.*" + projectName
-				+ ".*autoreconf --help.*Usage: .*autoreconf.*", Pattern.DOTALL);
+		Pattern p = Pattern.compile(
+				".*Invoking autoreconf in.*" + projectName + ".*autoreconf --help.*Usage: .*autoreconf.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoreconf");
 		shell = bot.shell("Autoreconf Options");
@@ -299,14 +298,14 @@ public class TestToolActions extends AbstractTest {
 		// We need to wait until the Makefile.in file is created so
 		// sleep a bit and look for it
 		bot.sleep(5000);
-		
+
 		// Verify a number of generated files now exist
 		String[] fileList = { "Makefile.in", "src/Makefile.in", "configure", "config.sub" };
 		for (String name : fileList) {
 			f = new File(path.append(name).toOSString());
 			assertTrue("Missing: " + name, f.exists());
 		}
-		
+
 		String name = "config.status";
 		f = new File(path.append(name).toOSString());
 		assertTrue("Mistakenly found: " + name, !f.exists()); // shouldn't have run configure
@@ -434,8 +433,8 @@ public class TestToolActions extends AbstractTest {
 		SWTBotView consoleView = viewConsole("Autotools");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		Pattern p = Pattern.compile(".*Invoking aclocal in.*" + projectName
-				+ ".*automake --help.*Usage:.*automake.*", Pattern.DOTALL);
+		Pattern p = Pattern.compile(".*Invoking aclocal in.*" + projectName + ".*automake --help.*Usage:.*automake.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Automake");
@@ -446,8 +445,8 @@ public class TestToolActions extends AbstractTest {
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		p = Pattern.compile(".*Invoking automake in.*" + projectName
-				+ ".*autoconf --help.*Usage:.*autoconf.*", Pattern.DOTALL);
+		p = Pattern.compile(".*Invoking automake in.*" + projectName + ".*autoconf --help.*Usage:.*autoconf.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoheader");
@@ -458,8 +457,8 @@ public class TestToolActions extends AbstractTest {
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		p = Pattern.compile(".*Invoking autoheader in.*" + projectName
-				+ ".*autoreconf --help.*Usage:.*autoreconf.*", Pattern.DOTALL);
+		p = Pattern.compile(".*Invoking autoheader in.*" + projectName + ".*autoreconf --help.*Usage:.*autoreconf.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoreconf");
@@ -470,8 +469,8 @@ public class TestToolActions extends AbstractTest {
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		p = Pattern.compile(".*Invoking autoreconf in.*" + projectName
-				+ ".*libtoolize --help.*Usage:.*libtoolize.*", Pattern.DOTALL);
+		p = Pattern.compile(".*Invoking autoreconf in.*" + projectName + ".*libtoolize --help.*Usage:.*libtoolize.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Libtoolize");
@@ -482,8 +481,8 @@ public class TestToolActions extends AbstractTest {
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		// Verify we got some help output to the console
-		p = Pattern.compile(".*Invoking libtoolize in.*" + projectName
-				+ ".*aclocal --help.*Usage:.*aclocal.*", Pattern.DOTALL);
+		p = Pattern.compile(".*Invoking libtoolize in.*" + projectName + ".*aclocal --help.*Usage:.*aclocal.*",
+				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 

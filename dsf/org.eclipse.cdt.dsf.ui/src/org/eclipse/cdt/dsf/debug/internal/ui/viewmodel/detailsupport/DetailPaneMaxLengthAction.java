@@ -27,17 +27,17 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.0
  */
 public class DetailPaneMaxLengthAction extends Action {
-	
+
 	private Shell fDialogShell;
-	
-	public DetailPaneMaxLengthAction(Shell dialogShell){
+
+	public DetailPaneMaxLengthAction(Shell dialogShell) {
 		super(MessagesForDetailPane.PaneMaxLengthAction_MaxLength);
 		fDialogShell = dialogShell;
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDsfDebugHelpContextIds.DETAIL_PANE_MAX_LENGTH_ACTION);
-		
+
 	}
-	
+
 	@Override
 	public void run() {
 		DetailPaneMaxLengthDialog dialog = new DetailPaneMaxLengthDialog(fDialogShell);

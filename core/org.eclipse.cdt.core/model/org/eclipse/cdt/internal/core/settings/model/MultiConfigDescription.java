@@ -47,8 +47,7 @@ import org.eclipse.core.runtime.QualifiedName;
 /**
  * This class represents multi-configuration description holder
  */
-public class MultiConfigDescription extends MultiItemsHolder implements
-		ICMultiConfigDescription {
+public class MultiConfigDescription extends MultiItemsHolder implements ICMultiConfigDescription {
 
 	ICConfigurationDescription[] fCfgs = null;
 
@@ -68,8 +67,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#create(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ICConfigExtensionReference create(String extensionPoint,
-			String extension) throws CoreException {
+	public ICConfigExtensionReference create(String extensionPoint, String extension) throws CoreException {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiConfigDescription.create()"); //$NON-NLS-1$
 		throw new UnsupportedOperationException();
@@ -79,8 +77,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#createExternalSetting(java.lang.String[], java.lang.String[], java.lang.String[], org.eclipse.cdt.core.settings.model.ICSettingEntry[])
 	 */
 	@Override
-	public ICExternalSetting createExternalSetting(String[] languageIDs,
-			String[] contentTypeIds, String[] extensions,
+	public ICExternalSetting createExternalSetting(String[] languageIDs, String[] contentTypeIds, String[] extensions,
 			ICSettingEntry[] entries) throws WriteAccessException {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiConfigDescription.createExtSett()"); //$NON-NLS-1$
@@ -91,22 +88,21 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#createFileDescription(org.eclipse.core.runtime.IPath, org.eclipse.cdt.core.settings.model.ICResourceDescription)
 	 */
 	@Override
-	public ICFileDescription createFileDescription(IPath path,
-			ICResourceDescription base) throws CoreException,
-			WriteAccessException {
+	public ICFileDescription createFileDescription(IPath path, ICResourceDescription base)
+			throws CoreException, WriteAccessException {
 		if (DEBUG)
-			System.out.println("Bad multi access: MultiConfigDescription.createFileDesc()");		 //$NON-NLS-1$
+			System.out.println("Bad multi access: MultiConfigDescription.createFileDesc()"); //$NON-NLS-1$
 		return null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#createFolderDescription(org.eclipse.core.runtime.IPath, org.eclipse.cdt.core.settings.model.ICFolderDescription)
 	 */
 	@Override
-	public ICFolderDescription createFolderDescription(IPath path,
-			ICFolderDescription base) throws CoreException,
-			WriteAccessException {
+	public ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base)
+			throws CoreException, WriteAccessException {
 		if (DEBUG)
-			System.out.println("Bad multi access: MultiConfigDescription.createFolderDesc()");		 //$NON-NLS-1$
+			System.out.println("Bad multi access: MultiConfigDescription.createFolderDesc()"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -116,7 +112,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	@Override
 	public ICConfigExtensionReference[] get(String extensionPointID) {
 		if (DEBUG)
-			System.out.println("Bad multi access: MultiConfigDescription.get()");		 //$NON-NLS-1$
+			System.out.println("Bad multi access: MultiConfigDescription.get()"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -133,14 +129,14 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	@Override
 	public String[][] getErrorParserIDs() {
 		String[][] out = new String[fCfgs.length][];
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			out[i] = fCfgs[i].getBuildSetting().getErrorParserIDs();
 		return out;
 	}
 
 	@Override
 	public void setErrorParserIDs(String[] ids) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].getBuildSetting().setErrorParserIDs(ids);
 	}
 
@@ -176,9 +172,9 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	@Override
 	public CConfigurationStatus getConfigurationStatus() {
 		CConfigurationStatus st = null;
-		for (int i=1; i<fCfgs.length; i++) {
+		for (int i = 1; i < fCfgs.length; i++) {
 			st = fCfgs[0].getConfigurationStatus();
-			if (! st.isOK())
+			if (!st.isOK())
 				return st; // report error in any cfg
 		}
 		return st;
@@ -216,7 +212,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	@Override
 	public ICFileDescription[] getFileDescriptions() {
 		ArrayList<ICFileDescription> lst = new ArrayList<ICFileDescription>();
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			lst.addAll(Arrays.asList(fCfgs[i].getFileDescriptions()));
 		return lst.toArray(new ICFileDescription[lst.size()]);
 	}
@@ -227,7 +223,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	@Override
 	public ICFolderDescription[] getFolderDescriptions() {
 		ArrayList<ICFolderDescription> lst = new ArrayList<ICFolderDescription>();
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			lst.addAll(Arrays.asList(fCfgs[i].getFolderDescriptions()));
 		return lst.toArray(new ICFolderDescription[lst.size()]);
 	}
@@ -236,8 +232,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getLanguageSettingForFile(org.eclipse.core.runtime.IPath, boolean)
 	 */
 	@Override
-	public ICLanguageSetting getLanguageSettingForFile(IPath path,
-			boolean ignoreExludeStatus) {
+	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus) {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiConfigDescription.getLangSettForFile()"); //$NON-NLS-1$
 		return null;
@@ -251,8 +246,8 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		ICProjectDescription pd = fCfgs[0].getProjectDescription();
 		if (pd == null)
 			return null;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! pd.equals(fCfgs[i].getProjectDescription()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!pd.equals(fCfgs[i].getProjectDescription()))
 				return null; // Different projects !
 		return pd;
 	}
@@ -279,18 +274,18 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getResourceDescription(org.eclipse.core.runtime.IPath, boolean)
 	 */
 	@Override
-	public ICResourceDescription getResourceDescription(IPath path,
-			boolean isForFolder) {
+	public ICResourceDescription getResourceDescription(IPath path, boolean isForFolder) {
 		ArrayList<ICResourceDescription> lst = new ArrayList<ICResourceDescription>();
-		for (int i=0; i<fCfgs.length; i++) {
+		for (int i = 0; i < fCfgs.length; i++) {
 			ICResourceDescription rd = fCfgs[i].getResourceDescription(path, false);
-			if (! path.equals(rd.getPath()) ) {
+			if (!path.equals(rd.getPath())) {
 				try {
 					if (isForFolder)
-						rd = fCfgs[i].createFolderDescription(path, (ICFolderDescription)rd);
+						rd = fCfgs[i].createFolderDescription(path, (ICFolderDescription) rd);
 					else
 						rd = fCfgs[i].createFileDescription(path, rd);
-				} catch (CoreException e) {}
+				} catch (CoreException e) {
+				}
 			}
 			if (rd != null)
 				lst.add(rd);
@@ -300,11 +295,9 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		if (lst.size() == 1)
 			return lst.get(0);
 		if (isForFolder)
-			return new MultiFolderDescription(
-				lst.toArray(new ICFolderDescription[lst.size()]));
+			return new MultiFolderDescription(lst.toArray(new ICFolderDescription[lst.size()]));
 		else
-			return new MultiFileDescription(
-					lst.toArray(new ICFileDescription[lst.size()]));
+			return new MultiFileDescription(lst.toArray(new ICFileDescription[lst.size()]));
 	}
 
 	/* (non-Javadoc)
@@ -313,7 +306,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	@Override
 	public ICResourceDescription[] getResourceDescriptions() {
 		ArrayList<ICResourceDescription> lst = new ArrayList<ICResourceDescription>();
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			lst.addAll(Arrays.asList(fCfgs[i].getResourceDescriptions()));
 		return lst.toArray(new ICResourceDescription[lst.size()]);
 	}
@@ -324,7 +317,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	@Override
 	public ICFolderDescription getRootFolderDescription() {
 		ICFolderDescription[] rds = new ICFolderDescription[fCfgs.length];
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			rds[i] = fCfgs[i].getRootFolderDescription();
 		return new MultiFolderDescription(rds);
 	}
@@ -362,9 +355,9 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isActive() {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i].isActive())
-					return true;
+				return true;
 		return false;
 	}
 
@@ -373,9 +366,9 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isModified() {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			if (fCfgs[i].isModified())
-					return true;
+				return true;
 		return false;
 	}
 
@@ -392,7 +385,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public void remove(ICConfigExtensionReference ext) throws CoreException {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].remove(ext);
 	}
 
@@ -401,7 +394,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public void remove(String extensionPoint) throws CoreException {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].remove(extensionPoint);
 	}
 
@@ -409,9 +402,8 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#removeExternalSetting(org.eclipse.cdt.core.settings.model.ICExternalSetting)
 	 */
 	@Override
-	public void removeExternalSetting(ICExternalSetting setting)
-			throws WriteAccessException {
-		for (int i=0; i<fCfgs.length; i++)
+	public void removeExternalSetting(ICExternalSetting setting) throws WriteAccessException {
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].removeExternalSetting(setting);
 	}
 
@@ -420,7 +412,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public void removeExternalSettings() throws WriteAccessException {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].removeExternalSettings();
 	}
 
@@ -428,8 +420,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#removeResourceDescription(org.eclipse.cdt.core.settings.model.ICResourceDescription)
 	 */
 	@Override
-	public void removeResourceDescription(ICResourceDescription des)
-			throws CoreException, WriteAccessException {
+	public void removeResourceDescription(ICResourceDescription des) throws CoreException, WriteAccessException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -438,7 +429,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setActive() throws WriteAccessException {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setActive();
 	}
 
@@ -446,8 +437,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setConfigurationData(java.lang.String, org.eclipse.cdt.core.settings.model.extension.CConfigurationData)
 	 */
 	@Override
-	public void setConfigurationData(String buildSystemId,
-			CConfigurationData data) throws WriteAccessException {
+	public void setConfigurationData(String buildSystemId, CConfigurationData data) throws WriteAccessException {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiConfigDescription.getConfigurationData()"); //$NON-NLS-1$
 		throw new UnsupportedOperationException();
@@ -468,7 +458,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setExternalSettingsProviderIds(String[] ids) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setExternalSettingsProviderIds(ids);
 	}
 
@@ -487,7 +477,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setReferenceInfo(Map<String, String> refs) throws WriteAccessException {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setReferenceInfo(refs);
 	}
 
@@ -496,7 +486,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public void setSessionProperty(QualifiedName name, Object value) {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setSessionProperty(name, value);
 	}
 
@@ -504,9 +494,8 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setSourceEntries(org.eclipse.cdt.core.settings.model.ICSourceEntry[])
 	 */
 	@Override
-	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException,
-			WriteAccessException {
-		for (int i=0; i<fCfgs.length; i++)
+	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException, WriteAccessException {
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setSourceEntries(entries);
 	}
 
@@ -514,9 +503,8 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#updateExternalSettingsProviders(java.lang.String[])
 	 */
 	@Override
-	public void updateExternalSettingsProviders(String[] ids)
-			throws WriteAccessException {
-		for (int i=0; i<fCfgs.length; i++)
+	public void updateExternalSettingsProviders(String[] ids) throws WriteAccessException {
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].updateExternalSettingsProviders(ids);
 	}
 
@@ -560,8 +548,8 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		ICSettingContainer p = fCfgs[0].getParent();
 		if (p == null)
 			return null;
-		for (int i=1; i<fCfgs.length; i++)
-			if (! p.equals(fCfgs[i].getParent()))
+		for (int i = 1; i < fCfgs.length; i++)
+			if (!p.equals(fCfgs[i].getParent()))
 				return null;
 		return p;
 	}
@@ -572,7 +560,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	@Override
 	public int getType() {
 		int t = fCfgs[0].getType();
-		for (int i=1; i<fCfgs.length; i++)
+		for (int i = 1; i < fCfgs.length; i++)
 			if (t != fCfgs[i].getType())
 				return 0;
 		return t;
@@ -583,8 +571,8 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isReadOnly() {
-		for (int i=0; i<fCfgs.length; i++)
-			if (! fCfgs[i].isReadOnly())
+		for (int i = 0; i < fCfgs.length; i++)
+			if (!fCfgs[i].isReadOnly())
 				return false;
 		return true;
 	}
@@ -604,8 +592,8 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public boolean isValid() {
-		for (int i=0; i<fCfgs.length; i++)
-			if (! fCfgs[i].isValid())
+		for (int i = 0; i < fCfgs.length; i++)
+			if (!fCfgs[i].isValid())
 				return false;
 		return true;
 	}
@@ -614,8 +602,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingsStorage#getStorage(java.lang.String, boolean)
 	 */
 	@Override
-	public ICStorageElement getStorage(String id, boolean create)
-			throws CoreException {
+	public ICStorageElement getStorage(String id, boolean create) throws CoreException {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiConfigDescription.getStorage()"); //$NON-NLS-1$
 		return null;
@@ -625,7 +612,8 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingsStorage#getStorage(java.lang.String, boolean)
 	 */
 	@Override
-	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException {
+	public ICStorageElement importStorage(String id, ICStorageElement el)
+			throws UnsupportedOperationException, CoreException {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiConfigDescription.importStorage()"); //$NON-NLS-1$
 		return null;
@@ -636,7 +624,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	@Override
 	public void removeStorage(String id) throws CoreException {
-		for (int i=0; i<fCfgs.length; i++)
+		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].removeStorage(id);
 	}
 

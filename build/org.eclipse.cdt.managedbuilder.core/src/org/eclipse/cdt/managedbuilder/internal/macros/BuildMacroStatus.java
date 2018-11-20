@@ -24,21 +24,18 @@ import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableStatus;
  */
 public class BuildMacroStatus extends SupplierBasedCdtVariableStatus implements IBuildMacroStatus {
 
-	public BuildMacroStatus(int severity, int code, String message,
-			Throwable exception, String macroName, String expression,
-			String referencedName, IVariableContextInfo info) {
-		super(severity, code, message, exception, macroName, expression,
-				referencedName, info);
+	public BuildMacroStatus(int severity, int code, String message, Throwable exception, String macroName,
+			String expression, String referencedName, IVariableContextInfo info) {
+		super(severity, code, message, exception, macroName, expression, referencedName, info);
 	}
 
-	public BuildMacroStatus(int code, String macroName, String expression,
-			String referencedName, IVariableContextInfo info) {
+	public BuildMacroStatus(int code, String macroName, String expression, String referencedName,
+			IVariableContextInfo info) {
 		super(code, macroName, expression, referencedName, info);
 	}
 
-	public BuildMacroStatus(int code, String message, Throwable exception,
-			String macroName, String expression, String referencedName,
-			IVariableContextInfo info) {
+	public BuildMacroStatus(int code, String message, Throwable exception, String macroName, String expression,
+			String referencedName, IVariableContextInfo info) {
 		super(code, message, exception, macroName, expression, referencedName, info);
 	}
 
@@ -48,16 +45,16 @@ public class BuildMacroStatus extends SupplierBasedCdtVariableStatus implements 
 	@Override
 	public int getContextType() {
 		IMacroContextInfo info = getMacroContextInfo();
-		if(info != null){
+		if (info != null) {
 			return info.getContextType();
 		}
 		return 0;
 	}
 
-	private IMacroContextInfo getMacroContextInfo(){
+	private IMacroContextInfo getMacroContextInfo() {
 		IVariableContextInfo info = getVariableContextInfo();
-		if(info instanceof IMacroContextInfo)
-			return (IMacroContextInfo)info;
+		if (info instanceof IMacroContextInfo)
+			return (IMacroContextInfo) info;
 		return null;
 	}
 
@@ -67,7 +64,7 @@ public class BuildMacroStatus extends SupplierBasedCdtVariableStatus implements 
 	@Override
 	public Object getContextData() {
 		IMacroContextInfo info = getMacroContextInfo();
-		if(info != null){
+		if (info != null) {
 			return info.getContextData();
 		}
 		return null;

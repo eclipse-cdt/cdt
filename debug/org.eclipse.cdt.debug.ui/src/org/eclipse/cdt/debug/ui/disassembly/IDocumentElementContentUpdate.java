@@ -24,47 +24,47 @@ package org.eclipse.cdt.debug.ui.disassembly;
  */
 public interface IDocumentElementContentUpdate extends IDocumentUpdate {
 
-    /**
-     * Returns the line number associated with the base element. 
-     * Can be outside of the requested line interval.
-     * 
-     * @return line number associated with the element
-     */
-    public int getOriginalOffset();
+	/**
+	 * Returns the line number associated with the base element. 
+	 * Can be outside of the requested line interval.
+	 * 
+	 * @return line number associated with the element
+	 */
+	public int getOriginalOffset();
 
-    /**
-     * Returns the number of lines requested.
-     *  
-     * @return number of lines requested
-     */
-    public int getRequestedLineCount();
+	/**
+	 * Returns the number of lines requested.
+	 *  
+	 * @return number of lines requested
+	 */
+	public int getRequestedLineCount();
 
-    /**
-     * Sets the offset of the base element
-     * 
-     * @param offset offset of the base element
-     */
-    public void setOffset( int offset );
+	/**
+	 * Sets the offset of the base element
+	 * 
+	 * @param offset offset of the base element
+	 */
+	public void setOffset(int offset);
 
-    /**
-     * Sets the number of lines in this update request
-     * 
-     * @param lineCount number of lines
-     */
-    public void setLineCount( int lineCount );
+	/**
+	 * Sets the number of lines in this update request
+	 * 
+	 * @param lineCount number of lines
+	 */
+	public void setLineCount(int lineCount);
 
-    /**
-     * Adds a source element for the given line number
-     *  
-     * @param line line number
-     * @param element element to add
-     */
-    public void addElement( int line, Object element ) throws IndexOutOfBoundsException;
+	/**
+	 * Adds a source element for the given line number
+	 *  
+	 * @param line line number
+	 * @param element element to add
+	 */
+	public void addElement(int line, Object element) throws IndexOutOfBoundsException;
 
-    /**
-     * Indicates whether or not the element should be revealed
-     *  
-     * @return whether or not the element should be revealed
-     */
-    public boolean reveal();
+	/**
+	 * Indicates whether or not the element should be revealed
+	 *  
+	 * @return whether or not the element should be revealed
+	 */
+	public boolean reveal();
 }

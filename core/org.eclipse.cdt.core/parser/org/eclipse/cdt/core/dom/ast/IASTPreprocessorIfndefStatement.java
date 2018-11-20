@@ -32,7 +32,7 @@ public interface IASTPreprocessorIfndefStatement extends IASTPreprocessorStateme
 	 * Returns the condition of the ifndef-statement.
 	 */
 	public char[] getCondition();
-	
+
 	/**
 	 * Returns the macro reference, or <code>null</code> if the macro does not exist.
 	 */

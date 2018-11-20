@@ -102,22 +102,21 @@ public interface IScannerExtensionConfiguration {
 	 *         or <code>null</code> for no additional keywords.
 	 */
 	public CharArrayIntMap getAdditionalPreprocessorKeywords();
-	
-	
+
 	/**
-     * Support for UTF string literals.
-     *
+	 * Support for UTF string literals.
+	 *
 	 * @since 5.1
-     * @see "http://publib.boulder.ibm.com/infocenter/comphelp/v101v121/index.jsp?topic=/com.ibm.xlcpp101.aix.doc/language_ref/unicode_standard.html"
+	 * @see "http://publib.boulder.ibm.com/infocenter/comphelp/v101v121/index.jsp?topic=/com.ibm.xlcpp101.aix.doc/language_ref/unicode_standard.html"
 	 */
 	public boolean supportUTFLiterals();
-	
+
 	/**
-     * Support for C++ raw string literals.
+	 * Support for C++ raw string literals.
 	 * @since 5.5
 	 */
 	public boolean supportRawStringLiterals();
-		
+
 	/**
 	 * Support for User Defined Literals such as 123_suffix
 	 * @since 5.11

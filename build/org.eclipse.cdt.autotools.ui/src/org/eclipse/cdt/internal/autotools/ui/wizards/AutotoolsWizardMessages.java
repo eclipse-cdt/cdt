@@ -40,7 +40,7 @@ public class AutotoolsWizardMessages {
 	}
 
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), (Object[])args);
+		return MessageFormat.format(getResourceString(key), (Object[]) args);
 	}
 
 	public static String getResourceString(String key) {

@@ -68,11 +68,11 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 		public HighlightPosition(int offset, int length, String type) {
 			super(offset, length, type);
 		}
+
 		public HighlightPosition(IRegion region, String type) {
 			super(region.getOffset(), region.getLength(), type);
 		}
 	}
-
 
 	/** The line background painter */
 	private LineBackgroundPainter fLineBackgroundPainter;
@@ -87,7 +87,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	/** The editor this is installed on */
 	private CEditor fEditor;
 	/** The list of currently highlighted positions */
-	private List<Position> fInactiveCodePositions= Collections.emptyList();
+	private List<Position> fInactiveCodePositions = Collections.emptyList();
 	private IDocument fDocument;
 
 	/**
@@ -95,7 +95,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	 * @param highlightKey
 	 */
 	public InactiveCodeHighlighting(String highlightKey) {
-		fHighlightKey= highlightKey;
+		fHighlightKey = highlightKey;
 	}
 
 	/**
@@ -104,19 +104,20 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	private void scheduleJob() {
 		synchronized (fJobLock) {
 			if (fUpdateJob == null) {
-				fUpdateJob = new Job(CEditorMessages.InactiveCodeHighlighting_job) { 
+				fUpdateJob = new Job(CEditorMessages.InactiveCodeHighlighting_job) {
 					@Override
 					protected IStatus run(final IProgressMonitor monitor) {
 						IStatus result = Status.OK_STATUS;
 						if (fTranslationUnit != null) {
-							final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-							result= astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_IF_OPEN, monitor, new ASTCache.ASTRunnable() {
-								@Override
-								public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-									reconciled(ast, true, monitor);
-									return Status.OK_STATUS;
-								}
-							});
+							final ASTProvider astProvider = CUIPlugin.getDefault().getASTProvider();
+							result = astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_IF_OPEN, monitor,
+									new ASTCache.ASTRunnable() {
+										@Override
+										public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+											reconciled(ast, true, monitor);
+											return Status.OK_STATUS;
+										}
+									});
 						}
 						if (monitor.isCanceled()) {
 							result = Status.CANCEL_STATUS;
@@ -141,15 +142,15 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	public void install(CEditor editor, LineBackgroundPainter lineBackgroundPainter) {
 		assert fEditor == null;
 		assert editor != null && lineBackgroundPainter != null;
-		fEditor= editor;
-		fLineBackgroundPainter= lineBackgroundPainter;
-		ICElement cElement= fEditor.getInputCElement();
+		fEditor = editor;
+		fLineBackgroundPainter = lineBackgroundPainter;
+		ICElement cElement = fEditor.getInputCElement();
 		if (cElement instanceof ITranslationUnit) {
-			fTranslationUnit = (ITranslationUnit)cElement;
+			fTranslationUnit = (ITranslationUnit) cElement;
 		} else {
 			fTranslationUnit = null;
 		}
-		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		fDocument = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		fEditor.getViewer().addTextInputListener(this);
 		fEditor.addReconcileListener(this);
 	}
@@ -165,17 +166,17 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 		}
 		if (fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
 			fLineBackgroundPainter.removeHighlightPositions(fInactiveCodePositions);
-			fInactiveCodePositions= Collections.emptyList();
-			fLineBackgroundPainter= null;
+			fInactiveCodePositions = Collections.emptyList();
+			fLineBackgroundPainter = null;
 		}
 		if (fEditor != null) {
 			fEditor.removeReconcileListener(this);
 			if (fEditor.getViewer() != null) {
 				fEditor.getViewer().removeTextInputListener(this);
 			}
-			fEditor= null;
-			fTranslationUnit= null;
-			fDocument= null;
+			fEditor = null;
+			fTranslationUnit = null;
+			fDocument = null;
 		}
 	}
 
@@ -201,13 +202,13 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 		if (progressMonitor != null && progressMonitor.isCanceled()) {
 			return;
 		}
-		final List<Position> newInactiveCodePositions= collectInactiveCodePositions(ast);
+		final List<Position> newInactiveCodePositions = collectInactiveCodePositions(ast);
 		Runnable updater = new Runnable() {
 			@Override
 			public void run() {
 				if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
 					fLineBackgroundPainter.replaceHighlightPositions(fInactiveCodePositions, newInactiveCodePositions);
-					fInactiveCodePositions= newInactiveCodePositions;
+					fInactiveCodePositions = newInactiveCodePositions;
 				}
 			}
 		};
@@ -239,13 +240,13 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 		IASTPreprocessorStatement[] preprocStmts = translationUnit.getAllPreprocessorStatements();
 
 		for (IASTPreprocessorStatement statement : preprocStmts) {
-			IASTFileLocation floc= statement.getFileLocation();
+			IASTFileLocation floc = statement.getFileLocation();
 			if (floc == null || !fileName.equals(floc.getFileName())) {
 				// preprocessor directive is from a different file
 				continue;
 			}
 			if (statement instanceof IASTPreprocessorIfStatement) {
-				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
+				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement) statement;
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifStmt.taken()) {
 					if (!inInactiveCode) {
@@ -254,7 +255,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 					}
 				}
 			} else if (statement instanceof IASTPreprocessorIfdefStatement) {
-				IASTPreprocessorIfdefStatement ifdefStmt = (IASTPreprocessorIfdefStatement)statement;
+				IASTPreprocessorIfdefStatement ifdefStmt = (IASTPreprocessorIfdefStatement) statement;
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifdefStmt.taken()) {
 					if (!inInactiveCode) {
@@ -263,7 +264,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 					}
 				}
 			} else if (statement instanceof IASTPreprocessorIfndefStatement) {
-				IASTPreprocessorIfndefStatement ifndefStmt = (IASTPreprocessorIfndefStatement)statement;
+				IASTPreprocessorIfndefStatement ifndefStmt = (IASTPreprocessorIfndefStatement) statement;
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifndefStmt.taken()) {
 					if (!inInactiveCode) {
@@ -272,7 +273,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 					}
 				}
 			} else if (statement instanceof IASTPreprocessorElseStatement) {
-				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
+				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement) statement;
 				if (!elseStmt.taken() && !inInactiveCode) {
 					inactiveCodeStart = floc.getNodeOffset();
 					inInactiveCode = true;
@@ -282,7 +283,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
-				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement)statement;
+				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement) statement;
 				if (!elifStmt.taken() && !inInactiveCode) {
 					inactiveCodeStart = floc.getNodeOffset();
 					inInactiveCode = true;
@@ -299,8 +300,8 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 						positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, true, fHighlightKey));
 					}
 					inInactiveCode = wasInInactiveCode;
+				} catch (EmptyStackException e) {
 				}
-		 		catch( EmptyStackException e) {}
 			}
 		}
 		if (inInactiveCode) {
@@ -323,14 +324,14 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	 * @return a position aligned for background highlighting
 	 */
 	private HighlightPosition createHighlightPosition(int startOffset, int endOffset, boolean inclusive, String key) {
-		final IDocument document= fDocument;
+		final IDocument document = fDocument;
 		try {
 			if (document != null) {
-				int start= document.getLineOfOffset(startOffset);
-				int end= document.getLineOfOffset(endOffset);
-				startOffset= document.getLineOffset(start);
+				int start = document.getLineOfOffset(startOffset);
+				int end = document.getLineOfOffset(endOffset);
+				startOffset = document.getLineOffset(start);
 				if (!inclusive) {
-					endOffset= document.getLineOffset(end);
+					endOffset = document.getLineOffset(end);
 				}
 			}
 		} catch (BadLocationException x) {
@@ -338,7 +339,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 		}
 		return new HighlightPosition(startOffset, endOffset - startOffset, key);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 	 */
@@ -346,7 +347,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
 			fLineBackgroundPainter.removeHighlightPositions(fInactiveCodePositions);
-			fInactiveCodePositions= Collections.emptyList();
+			fInactiveCodePositions = Collections.emptyList();
 		}
 	}
 
@@ -355,7 +356,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	 */
 	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
-		fDocument= newInput;
+		fDocument = newInput;
 	}
 
 }

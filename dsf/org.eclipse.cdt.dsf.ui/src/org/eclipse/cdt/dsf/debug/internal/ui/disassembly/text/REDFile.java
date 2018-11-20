@@ -78,7 +78,7 @@ public final class REDFile {
 		if (file != null) {
 			try {
 				setFile(file);
-				fLength = (int)(fFile.length() / 2);
+				fLength = (int) (fFile.length() / 2);
 			} catch (IOException ioe) {
 				throw new Error(ioe);
 			}
@@ -86,7 +86,7 @@ public final class REDFile {
 	}
 
 	public REDFile() {
-		this((File)null, false);
+		this((File) null, false);
 	}
 
 	public REDFile(String name, boolean readonly) {
@@ -172,7 +172,7 @@ public final class REDFile {
 				fLength = 0;
 			} else {
 				try {
-					fLength = (int)(fFile.length() / 2);
+					fLength = (int) (fFile.length() / 2);
 				} catch (IOException e) {
 					fLength = 0;
 				}

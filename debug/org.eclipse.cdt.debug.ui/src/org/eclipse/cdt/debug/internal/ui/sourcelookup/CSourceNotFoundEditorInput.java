@@ -26,7 +26,7 @@ public class CSourceNotFoundEditorInput extends CommonSourceNotFoundEditorInput 
 	public String getName() {
 		Object artifact = getArtifact();
 		if (artifact instanceof CSourceNotFoundElement) {
-			String description = ((CSourceNotFoundElement)artifact).getDescription();
+			String description = ((CSourceNotFoundElement) artifact).getDescription();
 			if (description != null) {
 				return description;
 			}

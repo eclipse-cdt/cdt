@@ -37,15 +37,13 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 	 * Holds the virtual position and size of graphical object.
 	 * Position is relative to parent object
 	 */
-	protected Rectangle m_virtualBounds = new Rectangle(0,0,0,0);
+	protected Rectangle m_virtualBounds = new Rectangle(0, 0, 0, 0);
 
 	/** List of children objects contained in this one */
-	protected ArrayList<VirtualBoundsGraphicObject> m_childrenObjects =
-			new ArrayList<VirtualBoundsGraphicObject>();
+	protected ArrayList<VirtualBoundsGraphicObject> m_childrenObjects = new ArrayList<VirtualBoundsGraphicObject>();
 
 	/** Map of contained objects and their identifying labels. for quick look-up */
-	protected HashMap<String, VirtualBoundsGraphicObject> m_childrenObjectsMap =
-			new HashMap<String, VirtualBoundsGraphicObject>();
+	protected HashMap<String, VirtualBoundsGraphicObject> m_childrenObjectsMap = new HashMap<String, VirtualBoundsGraphicObject>();
 
 	/** Whether the container's boundaries should be drawn */
 	protected boolean m_drawContainerBounds = true;
@@ -61,7 +59,6 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 
 	/** Default for the margin in pixels */
 	protected static final int MARGIN_PIXELS_DEFAULT = 1;
-
 
 	// --- constructors/destructors ---
 
@@ -95,21 +92,15 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 		}
 	}
 
-
 	// --- Object methods ---
 
 	/** Returns string representation. */
 	@Override
 	public String toString() {
-		return String.format("Class: %s, Real bounds: %s, Virtual bounds: %s" +
-				", Draw container bounds: %s ",
-				this.getClass().getSimpleName(),
-				this.getBounds().toString(),
-				m_virtualBounds.toString(),
-				m_drawContainerBounds
-				);
+		return String.format("Class: %s, Real bounds: %s, Virtual bounds: %s" + ", Draw container bounds: %s ",
+				this.getClass().getSimpleName(), this.getBounds().toString(), m_virtualBounds.toString(),
+				m_drawContainerBounds);
 	}
-
 
 	// --- accessors ---
 
@@ -150,7 +141,6 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 
 	// --- methods ---
 
-
 	/**
 	 * Sets the absolute bounds (in pixels) of this container object. If it has
 	 * children objects, recursively set their absolute bounds.
@@ -169,7 +159,7 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 	@Override
 	public void setBounds(int x, int y, int w, int h) {
 		super.setBounds(x, y, w, h);
-		for(VirtualBoundsGraphicObject o : m_childrenObjects) {
+		for (VirtualBoundsGraphicObject o : m_childrenObjects) {
 			o.setBounds(virtualToRealBounds(o.getVirtualBounds()));
 		}
 	}
@@ -244,14 +234,12 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 		float ow = 0.0f;
 		float oh = 0.0f;
 
-		ox = (float) this.getBounds().x + childsVirtualBounds.x
-				* ( (float) this.getBounds().width / (this.getVirtualBounds().width) );
-		oy = (float) this.getBounds().y + childsVirtualBounds.y
-				* ( (float) this.getBounds().height / this.getVirtualBounds().height );
-		ow = ( (float) childsVirtualBounds.width
-				/ this.getVirtualBounds().width) * this.getBounds().width;
-		oh = ( (float) childsVirtualBounds.height
-				/ this.getVirtualBounds().height) * this.getBounds().height;
+		ox = (float) this.getBounds().x
+				+ childsVirtualBounds.x * ((float) this.getBounds().width / (this.getVirtualBounds().width));
+		oy = (float) this.getBounds().y
+				+ childsVirtualBounds.y * ((float) this.getBounds().height / this.getVirtualBounds().height);
+		ow = ((float) childsVirtualBounds.width / this.getVirtualBounds().width) * this.getBounds().width;
+		oh = ((float) childsVirtualBounds.height / this.getVirtualBounds().height) * this.getBounds().height;
 
 		// add margin
 		ox += m_childMargin;
@@ -265,7 +253,6 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 		return new Rectangle(Math.round(ox), Math.round(oy), Math.round(ow), Math.round(oh));
 	}
 
-
 	/** Add children graphical object in this container. Provided label can be used to later retrieve object */
 	public VirtualBoundsGraphicObject addChildObject(String label, VirtualBoundsGraphicObject obj) {
 		m_childrenObjects.add(obj);
@@ -278,7 +265,7 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 		ArrayList<VirtualBoundsGraphicObject> objs = new ArrayList<VirtualBoundsGraphicObject>();
 
 		for (VirtualBoundsGraphicObject o : this.getAllObjects(recurse)) {
-			if(type.isInstance(o) ) {
+			if (type.isInstance(o)) {
 				objs.add(o);
 			}
 		}
@@ -286,7 +273,7 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 	}
 
 	/** Searches recursively for a child object matching a label.
-     Returns null if object is not found */
+	 Returns null if object is not found */
 	public VirtualBoundsGraphicObject getObject(String label) {
 		return getObject(label, true);
 	}
@@ -296,9 +283,8 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 	public VirtualBoundsGraphicObject getObject(String label, boolean recurse) {
 		if (m_childrenObjectsMap.containsKey(label)) {
 			return m_childrenObjectsMap.get(label);
-		}
-		else if (recurse) {
-			for(VirtualBoundsGraphicObject o : m_childrenObjects) {
+		} else if (recurse) {
+			for (VirtualBoundsGraphicObject o : m_childrenObjects) {
 				if (o.getObject(label) != null) {
 					return o.getObject(label, true);
 				}
@@ -344,7 +330,6 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 		return false;
 	}
 
-
 	// --- paint methods ---
 
 	/**
@@ -370,8 +355,7 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 			if (isVisible()) {
 				paintContent(gc);
 			}
-		}
-		else {
+		} else {
 			// Paint decorations
 			if (isVisible() && hasDecorations()) {
 				paintDecorations(gc);
@@ -400,8 +384,7 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 		if (m_drawContainerBounds) {
 			if (isSelected() && m_selectedColor != null) {
 				gc.setForeground(m_selectedColor);
-			}
-			else {
+			} else {
 				gc.setForeground(m_foreground);
 			}
 			gc.setBackground(m_background);

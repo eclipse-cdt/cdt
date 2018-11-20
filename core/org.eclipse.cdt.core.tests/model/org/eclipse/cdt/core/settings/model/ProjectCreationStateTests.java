@@ -28,96 +28,97 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-public class ProjectCreationStateTests  extends BaseTestCase{
+public class ProjectCreationStateTests extends BaseTestCase {
 	private static final String PROJ_NAME_PREFIX = "ProjectCreationStateTests_";
 
 	private IProject p1, p2, p3, p4;
 	private Listener listener;
-	
+
 	private class Listener implements ICProjectDescriptionListener {
 		private boolean fIsCreationCompletedNotified;
 		private boolean fIsCreating;
 		private boolean fIsNotified;
 		private String fProjName;
-		
-		Listener(String projName){
+
+		Listener(String projName) {
 			init();
 			fProjName = projName;
 		}
-		
+
 		@Override
 		public void handleEvent(CProjectDescriptionEvent event) {
-			if(!event.getProject().getName().equals(fProjName))
+			if (!event.getProject().getName().equals(fProjName))
 				return;
 			fIsNotified = true;
 			boolean creating = event.getNewCProjectDescription().isCdtProjectCreating();
 			ICDescriptionDelta delta = event.getProjectDelta();
-			boolean notified = delta != null ? (delta.getChangeFlags() & ICDescriptionDelta.PROJECT_CREAION_COMPLETED) != 0 : false;
-			
-			if(creating)
+			boolean notified = delta != null
+					? (delta.getChangeFlags() & ICDescriptionDelta.PROJECT_CREAION_COMPLETED) != 0
+					: false;
+
+			if (creating)
 				assertTrue(fIsCreating);
-			if(notified)
+			if (notified)
 				assertFalse(fIsCreationCompletedNotified);
-			
+
 			fIsCreating = creating;
 			fIsCreationCompletedNotified = notified;
 		}
-		
-		void init(){
+
+		void init() {
 			fIsCreating = true;
 			fIsCreationCompletedNotified = false;
 			resetNotified();
 		}
-		
-		boolean isCreating(){
+
+		boolean isCreating() {
 			return fIsCreating;
 		}
-		
-		boolean isCreationCompletedNotified(){
+
+		boolean isCreationCompletedNotified() {
 			return fIsCreationCompletedNotified;
 		}
 
-		boolean isNotified(){
+		boolean isNotified() {
 			boolean notified = fIsNotified;
 			resetNotified();
 			return notified;
 		}
 
-		void resetNotified(){
+		void resetNotified() {
 			fIsNotified = false;
 		}
 
 	}
-	
+
 	public static TestSuite suite() {
 		return suite(ProjectCreationStateTests.class, "_");
 	}
 
 	@Override
 	protected void setUp() throws Exception {
-//		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
+		//		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
 	}
-	
-	private void initListener(String projName){
+
+	private void initListener(String projName) {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-		if(listener != null)
+		if (listener != null)
 			mngr.removeCProjectDescriptionListener(listener);
 		listener = new Listener(projName);
 		mngr.addCProjectDescriptionListener(listener, CProjectDescriptionEvent.APPLIED);
-		
+
 		assertFalse(listener.isNotified());
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
 
 	}
-	
+
 	public void testProjectCreatingState() throws Exception {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		String projName = PROJ_NAME_PREFIX + "a";
-		
+
 		initListener(projName);
-		
-		
+
 		ICProject cp1 = CProjectHelper.createNewStyleCProject(projName, IPDOMManager.ID_NO_INDEXER, true);
 		IProject project = cp1.getProject();
 		p1 = project;
@@ -125,7 +126,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
 		listener.resetNotified();
-		
+
 		ICProjectDescription des = mngr.getProjectDescription(project, false);
 		assertTrue(des.isCdtProjectCreating());
 		des = mngr.getProjectDescription(project, true);
@@ -133,7 +134,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isNotified());
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
-		
+
 		ICProjectDescription des2 = mngr.getProjectDescription(project, true);
 		des2.createConfiguration(CDataUtil.genId(null), CDataUtil.genId(null), des2.getConfigurations()[0]);
 		mngr.setProjectDescription(project, des2);
@@ -145,7 +146,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
 		listener.resetNotified();
-		
+
 		des.createConfiguration(CDataUtil.genId(null), CDataUtil.genId(null), des.getConfigurations()[0]);
 		des.setCdtProjectCreated();
 		des2.createConfiguration(CDataUtil.genId(null), CDataUtil.genId(null), des2.getConfigurations()[0]);
@@ -169,7 +170,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isNotified());
 		assertFalse(listener.isCreationCompletedNotified());
 		assertFalse(listener.isCreating());
-		
+
 		des2.createConfiguration(CDataUtil.genId(null), CDataUtil.genId(null), des2.getConfigurations()[0]);
 		mngr.setProjectDescription(project, des2);
 		assertTrue(listener.isNotified());
@@ -177,7 +178,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isCreating());
 		listener.resetNotified();
 	}
-	
+
 	public void testCreateProjectDescriptionForInexistingDes() throws Exception {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		String projName = PROJ_NAME_PREFIX + "b";
@@ -190,11 +191,10 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		project.create(null);
 		project.open(null);
 		CProjectHelper.addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
-		
+
 		assertFalse(listener.isNotified());
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
-
 
 		ICProjectDescription des = mngr.getProjectDescription(project, false);
 		assertNull(des);
@@ -210,7 +210,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isNotified());
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
-		
+
 		des = mngr.createProjectDescription(project, false);
 		assertFalse(des.isCdtProjectCreating());
 		des = mngr.getProjectDescription(project, false);
@@ -241,19 +241,17 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
 	}
-	
+
 	public void testCreateProjectDescriptionForCreatingDes() throws Exception {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		String projName = PROJ_NAME_PREFIX + "c";
-		
+
 		initListener(projName);
-		
-		
+
 		ICProject cp3 = CProjectHelper.createNewStyleCProject(projName, IPDOMManager.ID_NO_INDEXER, true);
 		IProject project = cp3.getProject();
 		p3 = project;
 
-		
 		assertTrue(listener.isNotified());
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
@@ -272,7 +270,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isNotified());
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
-		
+
 		des = mngr.createProjectDescription(project, false);
 		assertFalse(des.isCdtProjectCreating());
 		des = mngr.getProjectDescription(project, false);
@@ -303,19 +301,17 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isCreationCompletedNotified());
 		assertTrue(listener.isCreating());
 	}
-	
+
 	public void testCreateProjectDescriptionForCreatedDes() throws Exception {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		String projName = PROJ_NAME_PREFIX + "d";
-		
+
 		initListener(projName);
-		
-		
+
 		ICProject cp4 = CProjectHelper.createNewStyleCProject(projName, IPDOMManager.ID_NO_INDEXER, false);
 		IProject project = cp4.getProject();
 		p4 = project;
 
-		
 		assertTrue(listener.isNotified());
 		assertFalse(listener.isCreationCompletedNotified());
 		assertFalse(listener.isCreating());
@@ -334,7 +330,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isNotified());
 		assertFalse(listener.isCreationCompletedNotified());
 		assertFalse(listener.isCreating());
-		
+
 		des = mngr.createProjectDescription(project, false);
 		assertFalse(des.isCdtProjectCreating());
 		des = mngr.getProjectDescription(project, false);
@@ -366,40 +362,39 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		assertFalse(listener.isCreating());
 	}
 
-	
 	@Override
 	protected void tearDown() throws Exception {
-		if(listener != null){
+		if (listener != null) {
 			CoreModel.getDefault().getProjectDescriptionManager().removeCProjectDescriptionListener(listener);
 			listener = null;
 		}
 		try {
-			if(p1 != null){
+			if (p1 != null) {
 				p1.getProject().delete(true, null);
 				p1 = null;
 			}
-		} catch (CoreException e){
+		} catch (CoreException e) {
 		}
 		try {
-			if(p2 != null){
+			if (p2 != null) {
 				p2.getProject().delete(true, null);
 				p2 = null;
 			}
-		} catch (CoreException e){
+		} catch (CoreException e) {
 		}
 		try {
-			if(p3 != null){
+			if (p3 != null) {
 				p3.getProject().delete(true, null);
 				p3 = null;
 			}
-		} catch (CoreException e){
+		} catch (CoreException e) {
 		}
 		try {
-			if(p4 != null){
+			if (p4 != null) {
 				p4.getProject().delete(true, null);
 				p4 = null;
 			}
-		} catch (CoreException e){
+		} catch (CoreException e) {
 		}
 
 	}

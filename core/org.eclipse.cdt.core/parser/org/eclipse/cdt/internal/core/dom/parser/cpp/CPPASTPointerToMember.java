@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 
 public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPointerToMember {
 
-    private IASTName n;
+	private IASTName n;
 
-    public CPPASTPointerToMember() {
+	public CPPASTPointerToMember() {
 	}
 
 	public CPPASTPointerToMember(IASTName n) {
@@ -45,39 +45,40 @@ public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPoint
 
 	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        n = name;
-        if (name != null) {
+		assertNotFrozen();
+		n = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(NAME);
 		}
-    }
+	}
 
-
-    @Override
+	@Override
 	public IASTName getName() {
-        return n;
-    }
+		return n;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitPointerOperators) {
 			switch (action.visit(this)) {
-    		case ASTVisitor.PROCESS_ABORT : return false;
-    		case ASTVisitor.PROCESS_SKIP  : return true;
-    		}
-    	}
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			}
+		}
 		if (n != null && !n.accept(action))
 			return false;
 
 		if (action.shouldVisitPointerOperators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 		return true;
-    }
+	}
 
 	@Override
 	public int getRoleForName(IASTName name) {
-		if (name  == this.n)
+		if (name == this.n)
 			return r_reference;
 		return r_unclear;
 	}

@@ -61,7 +61,8 @@ import org.eclipse.core.runtime.Assert;
 public class CPPClassSpecialization extends CPPSpecialization
 		implements ICPPClassSpecialization, ICPPInternalClassTypeMixinHost {
 
-	public static class RecursionResolvingBinding extends ProblemBinding implements ICPPMember, IRecursionResolvingBinding {
+	public static class RecursionResolvingBinding extends ProblemBinding
+			implements ICPPMember, IRecursionResolvingBinding {
 		public static RecursionResolvingBinding createFor(IBinding original) {
 			IASTNode point = CPPSemantics.getCurrentLookupPoint();
 			if (original instanceof ICPPMethod)
@@ -137,7 +138,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		public ICPPFunctionType getDeclaredType() {
 			return new ProblemFunctionType(getID());
 		}
-		
+
 		@Override
 		public ICPPFunctionType getType() {
 			return new ProblemFunctionType(getID());
@@ -160,17 +161,16 @@ public class CPPClassSpecialization extends CPPSpecialization
 	}
 
 	private ICPPClassSpecializationScope specScope;
-	private ObjectMap specializationMap= ObjectMap.EMPTY_MAP;
+	private ObjectMap specializationMap = ObjectMap.EMPTY_MAP;
 	private ICPPBase[] bases;
-	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>() {
+	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<Set<IBinding>>() {
 		@Override
 		protected Set<IBinding> initialValue() {
 			return new HashSet<>();
 		}
 	};
 
-	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner,
-			ICPPTemplateParameterMap argumentMap) {
+	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner, ICPPTemplateParameterMap argumentMap) {
 		super(specialized, owner, argumentMap);
 	}
 
@@ -182,24 +182,24 @@ public class CPPClassSpecialization extends CPPSpecialization
 	@Override
 	public IBinding specializeMember(IBinding original) {
 		synchronized (this) {
-			IBinding result= (IBinding) specializationMap.get(original);
+			IBinding result = (IBinding) specializationMap.get(original);
 			if (result != null)
 				return result;
 		}
 
 		IBinding result;
-		Set<IBinding> recursionProtectionSet= fInProgress.get();
+		Set<IBinding> recursionProtectionSet = fInProgress.get();
 		if (!recursionProtectionSet.add(original))
 			return RecursionResolvingBinding.createFor(original);
 
 		try {
-			result= CPPTemplates.createSpecialization(this, original);
+			result = CPPTemplates.createSpecialization(this, original);
 		} finally {
 			recursionProtectionSet.remove(original);
 		}
 
 		synchronized (this) {
-			IBinding concurrent= (IBinding) specializationMap.get(original);
+			IBinding concurrent = (IBinding) specializationMap.get(original);
 			if (concurrent != null)
 				return concurrent;
 			if (specializationMap == ObjectMap.EMPTY_MAP)
@@ -221,11 +221,11 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier() {
-		IASTNode definition= getDefinition();
+		IASTNode definition = getDefinition();
 		if (definition != null) {
-			IASTNode node= definition;
+			IASTNode node = definition;
 			while (node instanceof IASTName)
-				node= node.getParent();
+				node = node.getParent();
 			if (node instanceof ICPPASTCompositeTypeSpecifier)
 				return (ICPPASTCompositeTypeSpecifier) node;
 		}
@@ -234,7 +234,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPBase[] getBases() {
-		ICPPClassSpecializationScope scope= getSpecializationScope();
+		ICPPClassSpecializationScope scope = getSpecializationScope();
 		if (scope == null) {
 			if (bases == null) {
 				bases = ClassTypeHelper.getBases(this);
@@ -253,7 +253,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPField[] getDeclaredFields() {
-		ICPPClassSpecializationScope scope= getSpecializationScope();
+		ICPPClassSpecializationScope scope = getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getDeclaredFields(this);
 
@@ -268,7 +268,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
-		ICPPClassSpecializationScope scope= getSpecializationScope();
+		ICPPClassSpecializationScope scope = getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getDeclaredMethods(this);
 
@@ -283,7 +283,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		ICPPClassSpecializationScope scope= getSpecializationScope();
+		ICPPClassSpecializationScope scope = getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getConstructors(this);
 
@@ -298,7 +298,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public IBinding[] getFriends() {
-		ICPPClassSpecializationScope scope= getSpecializationScope();
+		ICPPClassSpecializationScope scope = getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getFriends(this);
 
@@ -313,7 +313,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPClassType[] getNestedClasses() {
-		ICPPClassSpecializationScope scope= getSpecializationScope();
+		ICPPClassSpecializationScope scope = getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getNestedClasses(this);
 
@@ -325,16 +325,16 @@ public class CPPClassSpecialization extends CPPSpecialization
 	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		return getNestedClasses();
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		ICPPClassSpecializationScope scope = getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getUsingDeclarations(this);
-		
+
 		return scope.getUsingDeclarations();
 	}
-	
+
 	@Override
 	@Deprecated
 	public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
@@ -389,7 +389,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPClassScope getCompositeScope() {
-		final ICPPClassScope specScope= getSpecializationScope();
+		final ICPPClassScope specScope = getSpecializationScope();
 		if (specScope != null)
 			return specScope;
 
@@ -435,12 +435,12 @@ public class CPPClassSpecialization extends CPPSpecialization
 		if (getNameCharArray().length > 0)
 			return false;
 
-		ICPPASTCompositeTypeSpecifier spec= getCompositeTypeSpecifier();
+		ICPPASTCompositeTypeSpecifier spec = getCompositeTypeSpecifier();
 		if (spec == null) {
 			return getSpecializedBinding().isAnonymous();
 		}
 
-		IASTNode node= spec.getParent();
+		IASTNode node = spec.getParent();
 		if (node instanceof IASTSimpleDeclaration) {
 			if (((IASTSimpleDeclaration) node).getDeclarators().length == 0) {
 				return true;
@@ -451,8 +451,8 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	public static boolean isSameClassSpecialization(ICPPClassSpecialization t1, ICPPClassSpecialization t2) {
 		// Exclude class template specialization or class instance.
-		if (t2 instanceof ICPPTemplateInstance || t2 instanceof ICPPTemplateDefinition ||
-				t2 instanceof IProblemBinding) {
+		if (t2 instanceof ICPPTemplateInstance || t2 instanceof ICPPTemplateDefinition
+				|| t2 instanceof IProblemBinding) {
 			return false;
 		}
 
@@ -465,8 +465,8 @@ public class CPPClassSpecialization extends CPPSpecialization
 		// The argument map is not significant for comparing specializations, the map is
 		// determined by the owner of the specialization. This is different for instances,
 		// which have a separate implementation for isSameType().
-		final IBinding owner1= t1.getOwner();
-		final IBinding owner2= t2.getOwner();
+		final IBinding owner1 = t1.getOwner();
+		final IBinding owner2 = t2.getOwner();
 
 		// For a specialization that is not an instance the owner has to be a class-type.
 		if (!(owner1 instanceof ICPPClassType) || !(owner2 instanceof ICPPClassType))

@@ -39,36 +39,35 @@ public class DisassemblyToggleTracepointsTarget extends AbstractDisassemblyBreak
 	protected void createLineBreakpoint(String sourceHandle, IResource resource, int lineNumber) throws CoreException {
 		CDIDebugModel.createLineTracepoint(sourceHandle, resource, getBreakpointType(), lineNumber, true, 0, "", true); //$NON-NLS-1$
 	}
-	
+
 	@Override
-	protected void createLineBreakpointInteractive(IWorkbenchPart part, String sourceHandle, IResource resource, int lineNumber) 
-		throws CoreException 
-	{
+	protected void createLineBreakpointInteractive(IWorkbenchPart part, String sourceHandle, IResource resource,
+			int lineNumber) throws CoreException {
 		ICLineBreakpoint lineBp = CDIDebugModel.createBlankLineTracepoint();
 		Map<String, Object> attributes = new HashMap<String, Object>();
-		CDIDebugModel.setLineBreakpointAttributes(
-				attributes, sourceHandle, getBreakpointType(), lineNumber, true, 0, "" ); //$NON-NLS-1$
+		CDIDebugModel.setLineBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), lineNumber, true, 0,
+				""); //$NON-NLS-1$
 		openBreakpointPropertiesDialog(lineBp, part, resource, attributes);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.AbstractDisassemblyBreakpointsTarget#createAddressBreakpoint(org.eclipse.core.resources.IResource, org.eclipse.cdt.core.IAddress)
 	 */
 	@Override
 	protected void createAddressBreakpoint(IResource resource, IAddress address) throws CoreException {
-		CDIDebugModel.createAddressTracepoint(null, null, resource, getBreakpointType(), -1, address, true, 0, "", true); //$NON-NLS-1$
+		CDIDebugModel.createAddressTracepoint(null, null, resource, getBreakpointType(), -1, address, true, 0, "", //$NON-NLS-1$
+				true);
 	}
 
-    @Override
-    protected void createAddressBreakpointInteractive(IWorkbenchPart part, IResource resource, IAddress address) 
-        throws CoreException 
-    {
-        ICLineBreakpoint lineBp = CDIDebugModel.createBlankAddressTracepoint();
-        Map<String, Object> attributes = new HashMap<String, Object>();
-        CDIDebugModel.setAddressBreakpointAttributes(
-            attributes, null, null, getBreakpointType(), -1, address, true, 0, "" ); //$NON-NLS-1$
-        openBreakpointPropertiesDialog(lineBp, part, resource, attributes);
-    }
+	@Override
+	protected void createAddressBreakpointInteractive(IWorkbenchPart part, IResource resource, IAddress address)
+			throws CoreException {
+		ICLineBreakpoint lineBp = CDIDebugModel.createBlankAddressTracepoint();
+		Map<String, Object> attributes = new HashMap<String, Object>();
+		CDIDebugModel.setAddressBreakpointAttributes(attributes, null, null, getBreakpointType(), -1, address, true, 0,
+				""); //$NON-NLS-1$
+		openBreakpointPropertiesDialog(lineBp, part, resource, attributes);
+	}
 
 	protected int getBreakpointType() {
 		return ICBreakpointType.REGULAR;

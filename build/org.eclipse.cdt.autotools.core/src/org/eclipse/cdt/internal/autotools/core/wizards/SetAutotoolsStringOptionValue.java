@@ -43,13 +43,13 @@ public class SetAutotoolsStringOptionValue extends ProcessRunner {
 			workspace.setDescription(workspaceDesc);
 		} catch (CoreException e) {//ignore
 		}
-		
+
 		ProcessArgument[][] resourcePathObjects = args[1].getComplexArrayValue();
-		for(int i=0; i<resourcePathObjects.length; i++) {
+		for (int i = 0; i < resourcePathObjects.length; i++) {
 			ProcessArgument[] resourcePathObject = resourcePathObjects[i];
 			String id = resourcePathObject[0].getSimpleValue();
 			String value = resourcePathObject[1].getSimpleValue();
-				setOptionValue(projectHandle, id, value);
+			setOptionValue(projectHandle, id, value);
 		}
 
 		workspaceDesc.setAutoBuilding(autoBuilding);
@@ -58,16 +58,15 @@ public class SetAutotoolsStringOptionValue extends ProcessRunner {
 		} catch (CoreException e) {//ignore
 		}
 	}
-	
+
 	private void setOptionValue(IProject projectHandle, String id, String value) {
 
 		AutotoolsConfigurationManager.getInstance().syncConfigurations(projectHandle);
-		ICConfigurationDescription[] cfgds =
-			CoreModel.getDefault().getProjectDescription(projectHandle).getConfigurations();
+		ICConfigurationDescription[] cfgds = CoreModel.getDefault().getProjectDescription(projectHandle)
+				.getConfigurations();
 		if (cfgds != null && cfgds.length >= 1) {
-			IAConfiguration iaConfig =
-				AutotoolsConfigurationManager.getInstance().getConfiguration(projectHandle,
-						cfgds[0].getId());
+			IAConfiguration iaConfig = AutotoolsConfigurationManager.getInstance().getConfiguration(projectHandle,
+					cfgds[0].getId());
 			iaConfig.setOption(id, value);
 		}
 	}

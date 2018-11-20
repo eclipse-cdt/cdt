@@ -38,28 +38,28 @@ import org.eclipse.cdt.internal.ui.util.ViewerPane;
  * @author Emanuel Graf
  */
 public class CreateFileChangePreview implements IChangePreviewViewer {
-	
+
 	private static class CreateFileChangePane extends ViewerPane {
 		public CreateFileChangePane(Composite parent, int style) {
 			super(parent, style);
 		}
 	}
-	
+
 	private CreateFileChangePane control;
 	private SourceViewer srcViewer;
 	private CTextTools textTools;
-	
+
 	@Override
 	public void createControl(Composite parent) {
-		control =  new CreateFileChangePane(parent, SWT.BORDER | SWT.FLAT);
+		control = new CreateFileChangePane(parent, SWT.BORDER | SWT.FLAT);
 		Dialog.applyDialogFont(control);
-		srcViewer= new CSourceViewer(control, null, null, false,
+		srcViewer = new CSourceViewer(control, null, null, false,
 				SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION,
 				CUIPlugin.getDefault().getPreferenceStore());
 		textTools = CUIPlugin.getDefault().getTextTools();
-		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		CSourceViewerConfiguration configuration =
-				new CSourceViewerConfiguration(textTools.getColorManager(), store, null, textTools.getDocumentPartitioning());
+		IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
+		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(textTools.getColorManager(), store,
+				null, textTools.getDocumentPartitioning());
 		srcViewer.configure(configuration);
 		srcViewer.setEditable(false);
 		control.setContent(srcViewer.getControl());
@@ -73,7 +73,7 @@ public class CreateFileChangePreview implements IChangePreviewViewer {
 	@Override
 	public void setInput(ChangePreviewViewerInput input) {
 		Assert.isNotNull(input);
-		if(control != null) {
+		if (control != null) {
 			Change change = input.getChange();
 			if (change instanceof CreateFileChange) {
 				CreateFileChange createFileChange = (CreateFileChange) change;

@@ -42,7 +42,6 @@ public class TestMIGDBSetSysroot {
 		assertEquals("Wrong syntax for command", "-gdb-set sysroot /tmp/test with\"double quotes/\n",
 				setSysrootCommand.constructCommand());
 
-
 	}
 
 	private class TestContext implements ICommandControlDMContext {

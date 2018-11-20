@@ -45,4 +45,3 @@ class ForFlowInfo extends FlowInfo {
 		mergeSequential(info, context);
 	}
 }
-

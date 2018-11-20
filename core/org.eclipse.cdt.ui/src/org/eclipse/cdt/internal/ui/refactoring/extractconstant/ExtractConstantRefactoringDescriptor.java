@@ -36,19 +36,19 @@ public class ExtractConstantRefactoringDescriptor extends CRefactoringDescriptor
 	protected static final String NAME = "name"; //$NON-NLS-1$
 	protected static final String VISIBILITY = "visibility"; //$NON-NLS-1$
 	protected static final String REPLACE_ALL = "replaceAll"; //$NON-NLS-1$
-	
-	protected ExtractConstantRefactoringDescriptor(String project,
-			String description, String comment, Map<String, String> arguments) {
-		super(ExtractConstantRefactoring.ID, project, description, comment,
-				RefactoringDescriptor.MULTI_CHANGE, arguments);
+
+	protected ExtractConstantRefactoringDescriptor(String project, String description, String comment,
+			Map<String, String> arguments) {
+		super(ExtractConstantRefactoring.ID, project, description, comment, RefactoringDescriptor.MULTI_CHANGE,
+				arguments);
 	}
-	
+
 	@Override
 	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		ISelection selection = getSelection();
 		ICProject project = getCProject();
-		ExtractConstantRefactoring refactoring =
-				new ExtractConstantRefactoring(getTranslationUnit(), selection, project);
+		ExtractConstantRefactoring refactoring = new ExtractConstantRefactoring(getTranslationUnit(), selection,
+				project);
 		ExtractConstantInfo info = refactoring.getRefactoringInfo();
 		info.setName(arguments.get(NAME));
 		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(arguments.get(VISIBILITY)));

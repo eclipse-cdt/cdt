@@ -41,26 +41,25 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Binding for template type parameters in the index.
  */
-class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMemberOwner,
-		ICPPTemplateTypeParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType,
-		IPDOMCPPTemplateParameter {
+class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMemberOwner, ICPPTemplateTypeParameter,
+		ICPPUnknownBinding, ICPPUnknownType, IIndexType, IPDOMCPPTemplateParameter {
 	private static final int PACK_BIT = 1 << 31;
 
-	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE;	
+	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE;
 	private static final int MEMBERLIST = DEFAULT_TYPE + Database.TYPE_SIZE;
-	private static final int PARAMETERID= MEMBERLIST + Database.PTR_SIZE;
+	private static final int PARAMETERID = MEMBERLIST + Database.PTR_SIZE;
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PARAMETERID + 4;
-	
+
 	private PDOMCPPUnknownScope fUnknownScope; // No need for volatile, PDOMCPPUnknownScope protects its fields.
-	private int fCachedParamID= -1;
-	
-	public PDOMCPPTemplateTypeParameter(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateTypeParameter param) 
+	private int fCachedParamID = -1;
+
+	public PDOMCPPTemplateTypeParameter(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateTypeParameter param)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
-		
+
 		final Database db = getDB();
-		int id= param.getParameterID();
+		int id = param.getParameterID();
 		if (param.isParameterPack()) {
 			id |= PACK_BIT;
 		}
@@ -80,18 +79,18 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_TEMPLATE_TYPE_PARAMETER;
 	}
-	
+
 	@Override
 	public short getParameterPosition() {
 		return (short) getParameterID();
 	}
-	
+
 	@Override
 	public short getTemplateNestingLevel() {
 		readParamID();
-		return (short)(getParameterID() >> 16);
+		return (short) (getParameterID() >> 16);
 	}
-	
+
 	@Override
 	public boolean isParameterPack() {
 		readParamID();
@@ -103,15 +102,15 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		readParamID();
 		return fCachedParamID & ~PACK_BIT;
 	}
-	
+
 	private void readParamID() {
 		if (fCachedParamID == -1) {
 			try {
 				final Database db = getDB();
-				fCachedParamID= db.getInt(record + PARAMETERID);
+				fCachedParamID = db.getInt(record + PARAMETERID);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fCachedParamID= Integer.MAX_VALUE;
+				fCachedParamID = Integer.MAX_VALUE;
 			}
 		}
 	}
@@ -127,17 +126,17 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.accept(visitor);
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
 
-        if (!(type instanceof ICPPTemplateTypeParameter))
-        	return false;
-        
-        return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
+		if (!(type instanceof ICPPTemplateTypeParameter))
+			return false;
+
+		return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
 	}
 
 	@Override
@@ -149,25 +148,25 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		}
 		return null;
 	}
-		
+
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
-		IType d= getDefault();
+		IType d = getDefault();
 		if (d == null)
 			return null;
-		
+
 		return new CPPTemplateTypeArgument(d);
 	}
-	
+
 	@Override
-	public Object clone() { 
-		throw new UnsupportedOperationException(); 
+	public Object clone() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public ICPPScope asScope() {
 		if (fUnknownScope == null) {
-			fUnknownScope= new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
+			fUnknownScope = new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
 		}
 		return fUnknownScope;
 	}
@@ -175,9 +174,9 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	@Override
 	public void configure(ICPPTemplateParameter param) {
 		try {
-			ICPPTemplateArgument val= param.getDefaultValue();
+			ICPPTemplateArgument val = param.getDefaultValue();
 			if (val != null) {
-				IType dflt= val.getTypeValue();
+				IType dflt = val.getTypeValue();
 				if (dflt != null) {
 					getLinkage().storeType(record + DEFAULT_TYPE, dflt);
 				}
@@ -186,13 +185,13 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPTemplateTypeParameter) {
-			ICPPTemplateTypeParameter ttp= (ICPPTemplateTypeParameter) newBinding;
+			ICPPTemplateTypeParameter ttp = (ICPPTemplateTypeParameter) newBinding;
 			updateName(newBinding.getNameCharArray());
-			IType newDefault= null;
+			IType newDefault = null;
 			try {
 				newDefault = ttp.getDefault();
 			} catch (DOMException e) {
@@ -203,7 +202,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 			}
 		}
 	}
-	
+
 	@Override
 	public void forceDelete(PDOMLinkage linkage) throws CoreException {
 		getDBName().delete();

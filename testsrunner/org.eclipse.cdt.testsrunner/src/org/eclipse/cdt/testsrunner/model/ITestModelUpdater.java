@@ -28,20 +28,20 @@ public interface ITestModelUpdater {
 	 * @param name the name of the started test suite
 	 */
 	public void enterTestSuite(String name);
-	
+
 	/**
 	 * Specifies that the last test suite has been finished.
 	 * Automatically exists from the currently running test case (if any).
 	 */
 	public void exitTestSuite();
-	
+
 	/**
 	 * Specifies that a new test case has been started.
 	 * 
 	 * @param name the name of the started test case
 	 */
 	public void enterTestCase(String name);
-	
+
 	/**
 	 * Sets the status of the currently running test case.
 	 * The exception is thrown if no test case is running.
@@ -49,7 +49,7 @@ public interface ITestModelUpdater {
 	 * @param status new test status
 	 */
 	public void setTestStatus(ITestItem.Status status);
-	
+
 	/**
 	 * Sets the execution time of the currently running test case.
 	 * If the execution time has already been set, it will be overridden.
@@ -58,14 +58,14 @@ public interface ITestModelUpdater {
 	 * @param testingTime test execution time
 	 */
 	public void setTestingTime(int testingTime);
-	
+
 	/**
 	 * Specifies that the currently running test case has been finished.
 	 * The test execution time is set if Tests Runner provider plug-in 
 	 * requires time measurement.
 	 */
 	public void exitTestCase();
-	
+
 	/**
 	 * Add a new testing message connected to the currently running test case.
 	 * 
@@ -78,20 +78,19 @@ public interface ITestModelUpdater {
 	 * negative or 0 then message location will not be set.
 	 */
 	public void addTestMessage(String file, int line, ITestMessage.Level level, String text);
-	
-	
+
 	/**
 	 * Access the top most currently running test suite object.
 	 * 
 	 * @return top most test suite
 	 */
 	public ITestSuite currentTestSuite();
-	
+
 	/**
 	 * Access the currently running test case object.
 	 * 
 	 * @return top most test case
 	 */
 	public ITestCase currentTestCase();
-	
+
 }

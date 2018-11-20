@@ -34,7 +34,7 @@ public interface IDocCommentOwner {
 	 * extension point, the ID corresponds to that in plugin.xml. 
 	 */
 	String getID();
-	
+
 	/**
 	 * @return a non-null human-readable name for this comment owner. If contributed via plugin.xml
 	 * this name can be localized using the plug-in externalization mechanism.
@@ -45,7 +45,7 @@ public interface IDocCommentOwner {
 	 * @return a non-null {@link IDocCommentViewerConfiguration} suitable for a multi-line comment context
 	 */
 	IDocCommentViewerConfiguration getMultilineConfiguration();
-	
+
 	/**
 	 * @return a non-null {@link IDocCommentViewerConfiguration} suitable for a single-line comment context
 	 */

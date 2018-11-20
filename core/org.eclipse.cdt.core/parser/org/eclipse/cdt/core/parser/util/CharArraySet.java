@@ -23,46 +23,60 @@ public class CharArraySet extends CharTable {
 	/**
 	 * An empty immutable {@code CharArraySet}.
 	 */
-    public static final CharArraySet EMPTY_SET = new CharArraySet(0) {
-        @Override
-		public Object clone() { return this; }
-        @Override
-		public List<char[]> toList() { return Collections.emptyList(); }
-        @Override
-		public void put(char[] key) { throw new UnsupportedOperationException(); }
-        @Override
-		public void addAll(List<char[]> list) { throw new UnsupportedOperationException(); }
-        @Override
-		public void addAll(CharArraySet set) { throw new UnsupportedOperationException(); }
-    };
+	public static final CharArraySet EMPTY_SET = new CharArraySet(0) {
+		@Override
+		public Object clone() {
+			return this;
+		}
+
+		@Override
+		public List<char[]> toList() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public void put(char[] key) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void addAll(List<char[]> list) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void addAll(CharArraySet set) {
+			throw new UnsupportedOperationException();
+		}
+	};
 
 	public CharArraySet(int initialSize) {
 		super(initialSize);
 	}
-	
+
 	public void put(char[] key) {
 		addIndex(key);
 	}
-	
+
 	public void addAll(List<char[]> list) {
-	    if (list == null)
-	        return;
-	    
-	    int size = list.size();
-	    for (int i = 0; i < size; i++) {
-	        addIndex(list.get(i));
-	    }
+		if (list == null)
+			return;
+
+		int size = list.size();
+		for (int i = 0; i < size; i++) {
+			addIndex(list.get(i));
+		}
 	}
-	
+
 	public void addAll(CharArraySet set) {
-	    if (set == null)
-	        return;
-	    int size = set.size();
-	    for (int i = 0; i < size; i++) {
-	        addIndex(set.keyAt(i));
-	    }
+		if (set == null)
+			return;
+		int size = set.size();
+		for (int i = 0; i < size; i++) {
+			addIndex(set.keyAt(i));
+		}
 	}
-	
+
 	public final boolean remove(char[] key) {
 		int i = lookup(key);
 		if (i < 0)

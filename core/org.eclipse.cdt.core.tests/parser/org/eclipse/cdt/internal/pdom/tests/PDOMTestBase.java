@@ -66,10 +66,10 @@ public class PDOMTestBase extends BaseTestCase {
 	protected ICProject createProject(String folderName) throws CoreException {
 		return createProject(folderName, false);
 	}
-	
+
 	protected ICProject createProject(String folderName, final boolean cpp) throws CoreException {
 		final ICProject cprojects[] = new ICProject[1];
-		ModelJoiner mj= new ModelJoiner();
+		ModelJoiner mj = new ModelJoiner();
 		try {
 			// Create the project
 			projectName = "ProjTest_" + System.currentTimeMillis();
@@ -79,22 +79,24 @@ public class PDOMTestBase extends BaseTestCase {
 				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					// Create the project
-					ICProject cproject= cpp ? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
+					ICProject cproject = cpp
+							? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
 							: CProjectHelper.createCProject(projectName, null, IPDOMManager.ID_NO_INDEXER);
 
 					// Import the files at the root
-					ImportOperation importOp = new ImportOperation(cproject.getProject().getFullPath(),
-							rootDir, FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
-						@Override
-						public String queryOverwrite(String pathString) {
-							return IOverwriteQuery.ALL;
-						}
-					});
+					ImportOperation importOp = new ImportOperation(cproject.getProject().getFullPath(), rootDir,
+							FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
+								@Override
+								public String queryOverwrite(String pathString) {
+									return IOverwriteQuery.ALL;
+								}
+							});
 					importOp.setCreateContainerStructure(false);
 					try {
 						importOp.run(monitor);
 					} catch (Exception e) {
-						throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import interrupted", e));
+						throw new CoreException(
+								new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import interrupted", e));
 					}
 
 					cprojects[0] = cproject;
@@ -115,7 +117,7 @@ public class PDOMTestBase extends BaseTestCase {
 	}
 
 	protected int offset(String projectRelativePath, String lookfor) throws Exception, CoreException {
-		Path path= new Path(projectName + "/" + projectRelativePath);
+		Path path = new Path(projectName + "/" + projectRelativePath);
 		return TestSourceReader.indexOfInFile(lookfor, path);
 	}
 
@@ -127,7 +129,7 @@ public class PDOMTestBase extends BaseTestCase {
 		}
 		return pdom.findBindings(pattern, true, IndexFilter.ALL_DECLARED, PROGRESS);
 	}
-	
+
 	protected IBinding[] findQualifiedPossiblyImplicit(PDOM pdom, String name) throws CoreException {
 		String[] segments = name.split("::");
 		Pattern[] pattern = new Pattern[segments.length];
@@ -182,7 +184,7 @@ public class PDOMTestBase extends BaseTestCase {
 			assertEquals(0, count);
 		}
 	}
-	
+
 	protected void assertNameCount(PDOM pdom, IBinding binding, int options, int count) throws CoreException {
 		IName[] names = pdom.findNames(binding, options);
 		assertUniqueNameCount(names, count);
@@ -206,14 +208,16 @@ public class PDOMTestBase extends BaseTestCase {
 		assertTrue(c.isAssignableFrom(bindings[0].getClass()));
 	}
 
-	protected void assertCPPMemberVisibility(PDOM pdom, String name, int visibility) throws CoreException, DOMException {
+	protected void assertCPPMemberVisibility(PDOM pdom, String name, int visibility)
+			throws CoreException, DOMException {
 		IBinding[] bindings = findQualifiedName(pdom, name);
 		assertEquals(1, bindings.length);
 		ICPPMember member = (ICPPMember) bindings[0];
 		VisibilityAsserts.assertVisibility(visibility, member.getVisibility());
 	}
 
-	public static final void assertFunctionRefCount(PDOM pdom, Class[] args, IBinding[] bindingPool, int refCount) throws CoreException {
+	public static final void assertFunctionRefCount(PDOM pdom, Class[] args, IBinding[] bindingPool, int refCount)
+			throws CoreException {
 		IBinding[] bindings = findIFunctions(args, bindingPool);
 		assertEquals(1, bindings.length);
 		IName[] refs = pdom.findNames(bindings[0], IIndex.FIND_REFERENCES);
@@ -228,7 +232,7 @@ public class PDOMTestBase extends BaseTestCase {
 				IFunction function = (IFunction) binding;
 				IType[] candidate = function.getType().getParameterTypes();
 				boolean areEqual = candidate.length == paramTypes.length;
-				for (int j= 0; areEqual && j < paramTypes.length; j++) {
+				for (int j = 0; areEqual && j < paramTypes.length; j++) {
 					if (!paramTypes[j].isAssignableFrom(candidate[j].getClass())) {
 						areEqual = false;
 					}
@@ -245,7 +249,7 @@ public class PDOMTestBase extends BaseTestCase {
 		assertNotNull(o);
 		assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
 	}
-	
+
 	public static Pattern[] makePatternArray(String[] args) {
 		List preresult = new ArrayList();
 		for (String arg : args) {

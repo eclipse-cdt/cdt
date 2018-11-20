@@ -45,7 +45,7 @@ public abstract class CDTQuickMenuCreator extends QuickMenuCreator {
 	 * @param editor a Java editor, or <code>null</code> if none
 	 */
 	public CDTQuickMenuCreator(CEditor editor) {
-		fEditor= editor;
+		fEditor = editor;
 	}
 
 	@Override
@@ -56,20 +56,20 @@ public abstract class CDTQuickMenuCreator extends QuickMenuCreator {
 	}
 
 	private Point computeWordStart() {
-		ITextSelection selection= (ITextSelection)fEditor.getSelectionProvider().getSelection();
-		IRegion textRegion= CWordFinder.findWord(fEditor.getViewer().getDocument(), selection.getOffset());
+		ITextSelection selection = (ITextSelection) fEditor.getSelectionProvider().getSelection();
+		IRegion textRegion = CWordFinder.findWord(fEditor.getViewer().getDocument(), selection.getOffset());
 		if (textRegion == null)
 			return null;
 
-		IRegion widgetRegion= modelRange2WidgetRange(textRegion);
+		IRegion widgetRegion = modelRange2WidgetRange(textRegion);
 		if (widgetRegion == null)
 			return null;
 
-		int start= widgetRegion.getOffset();
+		int start = widgetRegion.getOffset();
 
-		StyledText styledText= fEditor.getViewer().getTextWidget();
-		Point result= styledText.getLocationAtOffset(start);
-		result.y+= styledText.getLineHeight(start);
+		StyledText styledText = fEditor.getViewer().getTextWidget();
+		Point result = styledText.getLocationAtOffset(start);
+		result.y += styledText.getLineHeight(start);
 
 		if (!styledText.getClientArea().contains(result))
 			return null;
@@ -77,17 +77,17 @@ public abstract class CDTQuickMenuCreator extends QuickMenuCreator {
 	}
 
 	private IRegion modelRange2WidgetRange(IRegion region) {
-		ISourceViewer viewer= fEditor.getViewer();
+		ISourceViewer viewer = fEditor.getViewer();
 		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5)viewer;
+			ITextViewerExtension5 extension = (ITextViewerExtension5) viewer;
 			return extension.modelRange2WidgetRange(region);
 		}
 
-		IRegion visibleRegion= viewer.getVisibleRegion();
-		int start= region.getOffset() - visibleRegion.getOffset();
-		int end= start + region.getLength();
+		IRegion visibleRegion = viewer.getVisibleRegion();
+		int start = region.getOffset() - visibleRegion.getOffset();
+		int end = start + region.getLength();
 		if (end > visibleRegion.getLength())
-			end= visibleRegion.getLength();
+			end = visibleRegion.getLength();
 
 		return new Region(start, end - start);
 	}

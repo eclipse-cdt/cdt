@@ -24,7 +24,7 @@ public class MacroHandle extends CElementHandle implements IMacro {
 
 	public MacroHandle(ITranslationUnit tu, IIndexMacro macro) {
 		super(tu, ICElement.C_MACRO, new String(macro.getName()));
-		fFunctionStyle= macro.isFunctionStyle();
+		fFunctionStyle = macro.isFunctionStyle();
 	}
 
 	@Override

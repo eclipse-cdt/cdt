@@ -11,12 +11,12 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.views.modules; 
+package org.eclipse.cdt.debug.internal.ui.views.modules;
 
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy;
- 
+
 /**
  * Default update for modules view.
  */
@@ -27,7 +27,7 @@ public class ModulesViewModelProxy extends EventHandlerModelProxy {
 	/** 
 	 * Constructor for ModulesViewModelProxy. 
 	 */
-	public ModulesViewModelProxy( IModuleRetrieval moduleRetrieval ) {
+	public ModulesViewModelProxy(IModuleRetrieval moduleRetrieval) {
 		super();
 		fModuleRetrieval = moduleRetrieval;
 	}
@@ -37,7 +37,7 @@ public class ModulesViewModelProxy extends EventHandlerModelProxy {
 	 */
 	@Override
 	protected DebugEventHandler[] createEventHandlers() {
-		return new DebugEventHandler[] { new ModulesViewEventHandler( this, fModuleRetrieval ) };
+		return new DebugEventHandler[] { new ModulesViewEventHandler(this, fModuleRetrieval) };
 	}
 
 	/* (non-Javadoc)

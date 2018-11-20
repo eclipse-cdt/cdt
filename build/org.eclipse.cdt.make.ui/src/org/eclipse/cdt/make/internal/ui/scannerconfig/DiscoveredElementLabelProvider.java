@@ -47,8 +47,8 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 	private ImageDescriptor fIncludeAndMacrosFileGroupIcon;
 	private ImageDescriptorRegistry fRegistry;
 
-	private final String DISABLED_LABEL = MakeUIPlugin.
-			getResourceString("ManageScannerConfigDialogCommon.discoveredGroup.annotation.disabled");//$NON-NLS-1$
+	private final String DISABLED_LABEL = MakeUIPlugin
+			.getResourceString("ManageScannerConfigDialogCommon.discoveredGroup.annotation.disabled");//$NON-NLS-1$
 
 	public DiscoveredElementLabelProvider() {
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
@@ -57,8 +57,8 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		fMacroGroupIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO);
 		fIncludeAndMacrosFileGroupIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDE);
 		fIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
-//        fQuoteIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_QUOTE_INCLUDES_FOLDER);
-        fIncludeAndMacrosFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
+		//        fQuoteIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_QUOTE_INCLUDES_FOLDER);
+		fIncludeAndMacrosFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
 		fMacroIcon = fMacroGroupIcon;
 	}
 
@@ -76,30 +76,31 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		}
 		return super.getImage(element);
 	}
+
 	private Image composeImage(DiscoveredElement elem) {
 		Image image = null;
 		switch (elem.getEntryKind()) {
-			case DiscoveredElement.PATHS_GROUP:
-				image = fRegistry.get(fIncludeGroupIcon);
-				break;
-			case DiscoveredElement.CONTAINER:
-				image = fRegistry.get(fContainerImage);
-				break;
-			case DiscoveredElement.INCLUDE_PATH:
-				image = fRegistry.get(fIncludeIcon);
-				break;
-			case DiscoveredElement.SYMBOLS_GROUP:
-			case DiscoveredElement.SYMBOL_DEFINITION:
-				image = fRegistry.get(fMacroIcon);
-				break;
-			case DiscoveredElement.INCLUDE_FILE:
-			case DiscoveredElement.MACROS_FILE:
-				image = fRegistry.get(fIncludeAndMacrosFileIcon);
-			    break;
-			case DiscoveredElement.INCLUDE_FILE_GROUP:
-			case DiscoveredElement.MACROS_FILE_GROUP:
-				image = fRegistry.get(fIncludeAndMacrosFileGroupIcon);
-				break;
+		case DiscoveredElement.PATHS_GROUP:
+			image = fRegistry.get(fIncludeGroupIcon);
+			break;
+		case DiscoveredElement.CONTAINER:
+			image = fRegistry.get(fContainerImage);
+			break;
+		case DiscoveredElement.INCLUDE_PATH:
+			image = fRegistry.get(fIncludeIcon);
+			break;
+		case DiscoveredElement.SYMBOLS_GROUP:
+		case DiscoveredElement.SYMBOL_DEFINITION:
+			image = fRegistry.get(fMacroIcon);
+			break;
+		case DiscoveredElement.INCLUDE_FILE:
+		case DiscoveredElement.MACROS_FILE:
+			image = fRegistry.get(fIncludeAndMacrosFileIcon);
+			break;
+		case DiscoveredElement.INCLUDE_FILE_GROUP:
+		case DiscoveredElement.MACROS_FILE_GROUP:
+			image = fRegistry.get(fIncludeAndMacrosFileGroupIcon);
+			break;
 		}
 		if (image != null && elem.isRemoved()) {
 			image = new DiscoveredElementImageDescriptor(image, true).createImage();
@@ -115,27 +116,27 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		if (element instanceof DiscoveredElement) {
 			DiscoveredElement elem = (DiscoveredElement) element;
 			switch (elem.getEntryKind()) {
-				case DiscoveredElement.PATHS_GROUP:
-					return CPathEntryMessages.CPElementLabelProvider_Includes;
-				case DiscoveredElement.SYMBOLS_GROUP:
-					return CPathEntryMessages.CPElementLabelProvider_PreprocessorSymbols;
-				case DiscoveredElement.INCLUDE_FILE_GROUP:
-					return CPathEntryMessages.CPElementLabelProvider_IncludeFiles;
-				case DiscoveredElement.MACROS_FILE_GROUP:
-					return CPathEntryMessages.CPElementLabelProvider_MacrosFiles;
-				case DiscoveredElement.CONTAINER:
-				case DiscoveredElement.INCLUDE_PATH:
-				case DiscoveredElement.SYMBOL_DEFINITION:
-				case DiscoveredElement.INCLUDE_FILE:
-				case DiscoveredElement.MACROS_FILE:
-					return elem.getEntry() + (elem.isRemoved() ? addAnnotation(DISABLED_LABEL) : "");	//$NON-NLS-1$
+			case DiscoveredElement.PATHS_GROUP:
+				return CPathEntryMessages.CPElementLabelProvider_Includes;
+			case DiscoveredElement.SYMBOLS_GROUP:
+				return CPathEntryMessages.CPElementLabelProvider_PreprocessorSymbols;
+			case DiscoveredElement.INCLUDE_FILE_GROUP:
+				return CPathEntryMessages.CPElementLabelProvider_IncludeFiles;
+			case DiscoveredElement.MACROS_FILE_GROUP:
+				return CPathEntryMessages.CPElementLabelProvider_MacrosFiles;
+			case DiscoveredElement.CONTAINER:
+			case DiscoveredElement.INCLUDE_PATH:
+			case DiscoveredElement.SYMBOL_DEFINITION:
+			case DiscoveredElement.INCLUDE_FILE:
+			case DiscoveredElement.MACROS_FILE:
+				return elem.getEntry() + (elem.isRemoved() ? addAnnotation(DISABLED_LABEL) : ""); //$NON-NLS-1$
 			}
 		}
 		return super.getText(element);
 	}
 
 	private String addAnnotation(String annotation) {
-		return " (" + annotation + ")";	//$NON-NLS-1$ //$NON-NLS-2$
+		return " (" + annotation + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -146,13 +147,13 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		if (element instanceof DiscoveredElement) {
 			DiscoveredElement elem = (DiscoveredElement) element;
 			switch (elem.getEntryKind()) {
-				case DiscoveredElement.INCLUDE_PATH:
-				case DiscoveredElement.SYMBOL_DEFINITION:
-				case DiscoveredElement.INCLUDE_FILE:
-				case DiscoveredElement.MACROS_FILE:
-					if (elem.isRemoved()) {
-						return inDirect;
-					}
+			case DiscoveredElement.INCLUDE_PATH:
+			case DiscoveredElement.SYMBOL_DEFINITION:
+			case DiscoveredElement.INCLUDE_FILE:
+			case DiscoveredElement.MACROS_FILE:
+				if (elem.isRemoved()) {
+					return inDirect;
+				}
 			}
 		}
 		return null;

@@ -23,26 +23,26 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
 public class CTestPlugin extends Plugin {
-	
+
 	private static CTestPlugin fgDefault;
-	
+
 	public CTestPlugin() {
-		fgDefault= this;
+		fgDefault = this;
 	}
-	
+
 	public static CTestPlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-	
+
 	public static File getFileInPlugin(IPath path) {
 		try {
-			URL url = getDefault().find(path,null);
-			if(url != null){
-				url= Platform.asLocalURL(url);
+			URL url = getDefault().find(path, null);
+			if (url != null) {
+				url = Platform.asLocalURL(url);
 				return new File(url.getFile());
 			}
 			return null;

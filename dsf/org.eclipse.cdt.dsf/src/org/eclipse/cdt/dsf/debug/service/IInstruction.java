@@ -28,34 +28,34 @@ import java.math.BigInteger;
  */
 public interface IInstruction {
 
-    /**
-     * @return the instruction address.
-     */
-    BigInteger getAdress();
-    
-    /**
-     * @return the function name.
-     */
-    String getFuntionName();
-    
-    /**
-     * @return the offset of this machine instruction
-     */
-    long getOffset();
+	/**
+	 * @return the instruction address.
+	 */
+	BigInteger getAdress();
 
-    /**
-     * @return the instruction.
-     */
-    String getInstruction();
-  
-    /**
-    * @return the opcode
-    */
-    String getOpcode();
+	/**
+	 * @return the function name.
+	 */
+	String getFuntionName();
 
-    /**
-    * @return any arguments to the instruction
-    */
-    String getArgs();
+	/**
+	 * @return the offset of this machine instruction
+	 */
+	long getOffset();
+
+	/**
+	 * @return the instruction.
+	 */
+	String getInstruction();
+
+	/**
+	* @return the opcode
+	*/
+	String getOpcode();
+
+	/**
+	* @return any arguments to the instruction
+	*/
+	String getArgs();
 
 }

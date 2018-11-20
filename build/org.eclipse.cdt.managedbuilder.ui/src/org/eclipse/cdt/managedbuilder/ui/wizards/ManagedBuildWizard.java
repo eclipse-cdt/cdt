@@ -37,12 +37,13 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ManagedBuildWizard extends AbstractCWizard {
 	private static final Image IMG = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CONTAINER);
-	public static final String OTHERS_LABEL = Messages.CNewWizard_0;  
-	
+	public static final String OTHERS_LABEL = Messages.CNewWizard_0;
+
 	/**
 	 * @since 5.1
 	 */
-	public static final String EMPTY_PROJECT = Messages.AbstractCWizard_0;  
+	public static final String EMPTY_PROJECT = Messages.AbstractCWizard_0;
+
 	/**
 	 * Creates and returns an array of items to be displayed 
 	 */
@@ -52,15 +53,17 @@ public class ManagedBuildWizard extends AbstractCWizard {
 		IBuildPropertyType bpt = bpm.getPropertyType(MBSWizardHandler.ARTIFACT);
 		IBuildPropertyValue[] vs = bpt.getSupportedValues();
 		Arrays.sort(vs, BuildListComparator.getInstance());
-		
+
 		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
 		// new style project types
-		for (int i=0; i<vs.length; i++) {
-			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(MBSWizardHandler.ARTIFACT, vs[i].getId(), false);
-			if (tcs == null || tcs.length == 0) continue;
+		for (int i = 0; i < vs.length; i++) {
+			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(MBSWizardHandler.ARTIFACT, vs[i].getId(),
+					false);
+			if (tcs == null || tcs.length == 0)
+				continue;
 			MBSWizardHandler h = new MBSWizardHandler(vs[i], parent, wizard);
-			for (int j=0; j<tcs.length; j++) {
-				if (isValid(tcs[j], supportedOnly, wizard)) 
+			for (int j = 0; j < tcs.length; j++) {
+				if (isValid(tcs[j], supportedOnly, wizard))
 					h.addTc(tcs[j]);
 			}
 			if (h.getToolChainsCount() > 0) {
@@ -73,40 +76,43 @@ public class ManagedBuildWizard extends AbstractCWizard {
 				items.add(entryDescriptor);
 			}
 		}
-		
+
 		// old style project types
 		EntryDescriptor oldsRoot = null;
 		SortedMap<String, IProjectType> sm = ManagedBuildManager.getExtensionProjectTypeMap();
 		for (String s : sm.keySet()) {
 			IProjectType pt = sm.get(s);
-			if (pt.isAbstract() || pt.isSystemObject()) continue;
-			if (supportedOnly && !pt.isSupported()) continue; // not supported
-			String nattr = pt.getNameAttribute(); 
-			if (nattr == null || nattr.length() == 0) continue; // new proj style 
+			if (pt.isAbstract() || pt.isSystemObject())
+				continue;
+			if (supportedOnly && !pt.isSupported())
+				continue; // not supported
+			String nattr = pt.getNameAttribute();
+			if (nattr == null || nattr.length() == 0)
+				continue; // new proj style 
 			MBSWizardHandler h = new MBSWizardHandler(pt, parent, wizard);
 			IToolChain[] tcs = ManagedBuildManager.getExtensionToolChains(pt);
-			for(int i = 0; i < tcs.length; i++){
+			for (int i = 0; i < tcs.length; i++) {
 				IToolChain t = tcs[i];
-				if(t.isSystemObject()) 
+				if (t.isSystemObject())
 					continue;
 				if (!isValid(t, supportedOnly, wizard))
 					continue;
-				
+
 				h.addTc(t);
 			}
-//			IConfiguration[] cfgs = pt.getConfigurations();
-//			if (cfgs == null || cfgs.length == 0) continue;
-//			IToolChain tc = null;
-//			for (int i=0; i<cfgs.length; i++) {
-//				if (cfgs[i].isSystemObject()) continue;
-//				IToolChain t = cfgs[i].getToolChain();
-//				if (isValid(t, supportedOnly, wizard)) {
-//					tc = t;
-//					break;
-//				}
-//			}
-//			if (tc ==  null) continue;
-//			h.addTc(tc);
+			//			IConfiguration[] cfgs = pt.getConfigurations();
+			//			if (cfgs == null || cfgs.length == 0) continue;
+			//			IToolChain tc = null;
+			//			for (int i=0; i<cfgs.length; i++) {
+			//				if (cfgs[i].isSystemObject()) continue;
+			//				IToolChain t = cfgs[i].getToolChain();
+			//				if (isValid(t, supportedOnly, wizard)) {
+			//					tc = t;
+			//					break;
+			//				}
+			//			}
+			//			if (tc ==  null) continue;
+			//			h.addTc(tc);
 
 			String pId = null;
 			if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS)) {

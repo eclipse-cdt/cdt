@@ -25,11 +25,12 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 public class GdbReverseStepIntoCommand extends GdbAbstractReverseStepCommand implements IReverseStepIntoHandler {
 	public GdbReverseStepIntoCommand(DsfSession session, DsfSteppingModeTarget steppingMode) {
 		super(session, steppingMode);
-	}    
+	}
 
 	@Override
 	protected final StepType getStepType() {
-		boolean instructionSteppingEnabled = getSteppingMode() != null && getSteppingMode().isInstructionSteppingEnabled();
+		boolean instructionSteppingEnabled = getSteppingMode() != null
+				&& getSteppingMode().isInstructionSteppingEnabled();
 		return instructionSteppingEnabled ? StepType.INSTRUCTION_STEP_INTO : StepType.STEP_INTO;
 	}
 }

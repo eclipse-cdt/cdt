@@ -46,23 +46,23 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod {
 
-    public CPPImplicitMethod(ICPPClassScope scope, char[] name, ICPPFunctionType type, ICPPParameter[] params,
-    		boolean isConstexpr) {
+	public CPPImplicitMethod(ICPPClassScope scope, char[] name, ICPPFunctionType type, ICPPParameter[] params,
+			boolean isConstexpr) {
 		super(name, scope, type, params, isConstexpr, false);
 	}
 
 	@Override
 	public int getVisibility() {
-		IASTDeclaration decl= getPrimaryDeclaration();
+		IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl == null) {
 			// 12.1-5, 12.8-10 Implicit constructors and assignment operators are public.
 			return ICPPASTVisibilityLabel.v_public;
 		}
 
-		IASTNode parent= decl.getParent();
+		IASTNode parent = decl.getParent();
 		while (parent instanceof ICPPASTTemplateDeclaration) {
-			decl= (ICPPASTTemplateDeclaration) parent;
-			parent= parent.getParent();
+			decl = (ICPPASTTemplateDeclaration) parent;
+			parent = parent.getParent();
 		}
 		if (parent instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
@@ -81,8 +81,8 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 				return ICPPASTVisibilityLabel.v_private;
 			}
 		}
-        return ICPPASTVisibilityLabel.v_public;
-    }
+		return ICPPASTVisibilityLabel.v_public;
+	}
 
 	@Override
 	public ICPPClassType getClassOwner() {
@@ -98,9 +98,9 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 					break;
 
 				IASTDeclaration decl = (IASTDeclaration) ASTQueries.findOutermostDeclarator(dtor).getParent();
-				IASTNode parent= decl.getParent();
+				IASTNode parent = decl.getParent();
 				while (parent instanceof ICPPASTTemplateDeclaration)
-					parent= parent.getParent();
+					parent = parent.getParent();
 				if (parent instanceof ICPPASTCompositeTypeSpecifier)
 					return decl;
 			}
@@ -109,8 +109,8 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		IFunctionType ftype = getType();
 		IType[] params = ftype.getParameterTypes();
 
-		ICPPASTCompositeTypeSpecifier compSpec =
-				(ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(getScope());
+		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal
+				.getPhysicalNodeOfScope(getScope());
 		if (compSpec == null) {
 			return null;
 		}
@@ -123,7 +123,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 			if (member instanceof IASTSimpleDeclaration) {
 				ds = ((IASTSimpleDeclaration) member).getDeclarators();
 			} else if (member instanceof IASTFunctionDefinition) {
-				ds = new IASTDeclarator[] {((IASTFunctionDefinition) member).getDeclarator()};
+				ds = new IASTDeclarator[] { ((IASTFunctionDefinition) member).getDeclarator() };
 			} else {
 				continue;
 			}
@@ -167,10 +167,10 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		return null;
 	}
 
-    @Override
+	@Override
 	public boolean isVirtual() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public boolean isDestructor() {
@@ -185,10 +185,10 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		return getPrimaryDeclaration() == null;
 	}
 
-    @Override
+	@Override
 	public boolean isExplicit() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public boolean isPureVirtual() {

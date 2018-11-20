@@ -67,9 +67,9 @@ public class MakeTargetTransferData {
 		 * @param useDefaultBuildCmd - make target useDefaultBuildCmd flag.
 		 * @param appendEnvironment - make target appendEnvironment flag.
 		 */
-		MakeTargetData(String name, boolean runAllBuilders, boolean appendProjectEnvironment,
-			String buildTarget, String buildCommand, String buildArguments, boolean stopOnError,
-			boolean useDefaultBuildCmd, boolean appendEnvironment) {
+		MakeTargetData(String name, boolean runAllBuilders, boolean appendProjectEnvironment, String buildTarget,
+				String buildCommand, String buildArguments, boolean stopOnError, boolean useDefaultBuildCmd,
+				boolean appendEnvironment) {
 
 			this.name = name;
 			this.runAllBuilders = runAllBuilders;
@@ -136,15 +136,11 @@ public class MakeTargetTransferData {
 	 * @param target - make target being added.
 	 */
 	public void addMakeTarget(IMakeTarget target) {
-		addMakeTarget(target.getName(),
-			target.runAllBuilders(),
-			target.appendProjectEnvironment(),
-			target.getBuildAttribute(IMakeTarget.BUILD_TARGET, ""), //$NON-NLS-1$
-			target.getBuildAttribute(IMakeTarget.BUILD_COMMAND, ""), //$NON-NLS-1$
-			target.getBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, ""), //$NON-NLS-1$
-			target.isStopOnError(),
-			target.isDefaultBuildCmd(),
-			target.appendEnvironment());
+		addMakeTarget(target.getName(), target.runAllBuilders(), target.appendProjectEnvironment(),
+				target.getBuildAttribute(IMakeTarget.BUILD_TARGET, ""), //$NON-NLS-1$
+				target.getBuildAttribute(IMakeTarget.BUILD_COMMAND, ""), //$NON-NLS-1$
+				target.getBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, ""), //$NON-NLS-1$
+				target.isStopOnError(), target.isDefaultBuildCmd(), target.appendEnvironment());
 	}
 
 	/**
@@ -160,13 +156,11 @@ public class MakeTargetTransferData {
 	 * @param useDefaultBuildCmd - make target useDefaultBuildCmd flag.
 	 * @param appendEnvironment - make target appendEnvironment flag.
 	 */
-	public void addMakeTarget(String name, boolean runAllBuilders,
-		boolean appendProjectEnvironment, String buildTarget, String buildCommand,
-		String buildArguments, boolean stopOnError, boolean useDefaultBuildCmd,
-		boolean appendEnvironment) {
-		makeTargetData.add(new MakeTargetData(name, runAllBuilders, appendProjectEnvironment,
-			buildTarget, buildCommand, buildArguments, stopOnError, useDefaultBuildCmd,
-			appendEnvironment));
+	public void addMakeTarget(String name, boolean runAllBuilders, boolean appendProjectEnvironment, String buildTarget,
+			String buildCommand, String buildArguments, boolean stopOnError, boolean useDefaultBuildCmd,
+			boolean appendEnvironment) {
+		makeTargetData.add(new MakeTargetData(name, runAllBuilders, appendProjectEnvironment, buildTarget, buildCommand,
+				buildArguments, stopOnError, useDefaultBuildCmd, appendEnvironment));
 	}
 
 	/**

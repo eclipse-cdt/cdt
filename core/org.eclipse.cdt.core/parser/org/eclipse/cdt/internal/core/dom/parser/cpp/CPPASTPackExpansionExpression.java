@@ -30,7 +30,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalPackExpansion;
 /**
  * Implementation of pack expansion expression.
  */
-public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPackExpansionExpression, IASTAmbiguityParent {
+public class CPPASTPackExpansionExpression extends ASTNode
+		implements ICPPASTPackExpansionExpression, IASTAmbiguityParent {
 	private IASTExpression fPattern;
 	private ICPPEvaluation fEvaluation;
 
@@ -42,7 +43,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 	public void setPattern(IASTExpression pattern) {
 		assertNotFrozen();
 
-		fPattern= pattern;
+		fPattern = pattern;
 		if (pattern != null) {
 			pattern.setParent(this);
 			pattern.setPropertyInParent(ICPPASTPackExpansionExpression.PATTERN);
@@ -75,7 +76,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 
 	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
+		return CPPEvaluation.getType(this);
 	}
 
 	@Override
@@ -95,28 +96,31 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 
 	@Override
 	public boolean accept(ASTVisitor visitor) {
-        if (visitor.shouldVisitExpressions) {
-		    switch (visitor.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default : break;
-	        }
+		if (visitor.shouldVisitExpressions) {
+			switch (visitor.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if (!fPattern.accept(visitor)) {
-        	return false;
-        }
-        if (visitor.shouldVisitExpressions && visitor.leave(this) == ASTVisitor.PROCESS_ABORT) {
-        	return false;
-        }
-        return true;
-    }
+		if (!fPattern.accept(visitor)) {
+			return false;
+		}
+		if (visitor.shouldVisitExpressions && visitor.leave(this) == ASTVisitor.PROCESS_ABORT) {
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == fPattern) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            fPattern = (IASTExpression) other;
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			fPattern = (IASTExpression) other;
 		}
 	}
 }

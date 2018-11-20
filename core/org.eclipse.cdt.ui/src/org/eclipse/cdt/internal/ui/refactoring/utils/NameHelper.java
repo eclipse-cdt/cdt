@@ -47,7 +47,7 @@ public class NameHelper {
 	public static boolean isValidLocalVariableName(String name) {
 		return localVariableRegexp.matcher(name).matches();
 	}
-	
+
 	public static boolean isKeyword(String name) {
 		CharArrayIntMap keywords = new CharArrayIntMap(0, -1);
 		Keywords.addKeywordsC(keywords);
@@ -55,7 +55,7 @@ public class NameHelper {
 		Keywords.addKeywordsPreprocessor(keywords);
 		return keywords.containsKey(name.toCharArray());
 	}
-	
+
 	/**
 	 * Constructs the fully qualified name from the given parameters. The file and offset parameters
 	 * are used to determine the namespace at the declaration position and the target namespace at
@@ -70,17 +70,17 @@ public class NameHelper {
 	 * @return the correct name for the target
 	 * @throws CoreException 
 	 */
-	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName,
-			ITranslationUnit declarationTu, int selectionOffset, ITranslationUnit insertFileTu,
-			int insertLocation, CRefactoringContext astCache) throws CoreException {
+	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName, ITranslationUnit declarationTu,
+			int selectionOffset, ITranslationUnit insertFileTu, int insertLocation, CRefactoringContext astCache)
+			throws CoreException {
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName(
 				(ICPPASTName) declaratorName.copy(CopyStyle.withLocations));
-		
-		ICPPASTName[] declarationNames =
-				NamespaceHelper.getSurroundingNamespace(declarationTu, selectionOffset, astCache);
-		ICPPASTName[] implementationNames =
-				NamespaceHelper.getSurroundingNamespace(insertFileTu, insertLocation, astCache);
-		
+
+		ICPPASTName[] declarationNames = NamespaceHelper.getSurroundingNamespace(declarationTu, selectionOffset,
+				astCache);
+		ICPPASTName[] implementationNames = NamespaceHelper.getSurroundingNamespace(insertFileTu, insertLocation,
+				astCache);
+
 		for (int i = 0; i < declarationNames.length; i++) {
 			if (i >= implementationNames.length) {
 				qname.addNameSpecifier(declarationNames[i]);
@@ -91,7 +91,7 @@ public class NameHelper {
 
 		return qname;
 	}
-	
+
 	public static String getTypeName(IASTParameterDeclaration parameter) {
 		IASTName name = parameter.getDeclarator().getName();
 		IBinding binding = name.resolveBinding();

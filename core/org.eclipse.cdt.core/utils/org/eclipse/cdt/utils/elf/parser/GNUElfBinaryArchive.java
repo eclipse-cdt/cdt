@@ -20,16 +20,15 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.core.runtime.IPath;
 
-
 public class GNUElfBinaryArchive extends ElfBinaryArchive {
 
 	public GNUElfBinaryArchive(IBinaryParser parser, IPath p) throws IOException {
 		super(parser, p);
 	}
-	
+
 	@Override
 	protected IBinaryObject[] createArchiveMembers(ARHeader[] headers) {
-		IBinaryObject[] result= new IBinaryObject[headers.length];
+		IBinaryObject[] result = new IBinaryObject[headers.length];
 		for (int i = 0; i < headers.length; i++) {
 			result[i] = new GNUElfBinaryObject(getBinaryParser(), getPath(), headers[i]);
 		}

@@ -33,11 +33,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class LanguageMappingChangeListener implements ILanguageMappingChangeListener {
 	private IIndexManager fManager;
-	
+
 	public LanguageMappingChangeListener(IIndexManager manager) {
 		fManager = manager;
 	}
-	
+
 	@Override
 	public void handleLanguageMappingChangeEvent(ILanguageMappingChangeEvent event) {
 		CModelManager manager = CModelManager.getDefault();
@@ -65,7 +65,7 @@ public class LanguageMappingChangeListener implements ILanguageMappingChangeList
 			ICProject cProject = manager.getCModel().getCProject(file);
 			ICElement element = manager.create(file, cProject);
 			try {
-				fManager.update(new ICElement[] {element}, IIndexManager.UPDATE_ALL);
+				fManager.update(new ICElement[] { element }, IIndexManager.UPDATE_ALL);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}

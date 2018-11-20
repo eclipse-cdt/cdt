@@ -316,7 +316,6 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 		assertExpectedResults();
 	}
 
-
 	//a.impl
 	//class A {};
 
@@ -470,8 +469,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//B b;
 	public void testIndirectHeaderExport() throws Exception {
 		HeaderSubstitutionMap headerMap = new HeaderSubstitutionMap("Test", false,
-				new IncludeMap(true, new String[] { "h2.h", "h3.h"}),
-				new IncludeMap(false));
+				new IncludeMap(true, new String[] { "h2.h", "h3.h" }), new IncludeMap(false));
 		getPreferenceStore().setValue(PreferenceConstants.INCLUDES_HEADER_SUBSTITUTION,
 				HeaderSubstitutionMap.serializeMaps(Collections.singletonList(headerMap)));
 		assertExpectedResults();
@@ -723,7 +721,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//class A;
 	//
 	//A& f();
-	
+
 	//h2.h
 	//struct A {
 	//  void m();

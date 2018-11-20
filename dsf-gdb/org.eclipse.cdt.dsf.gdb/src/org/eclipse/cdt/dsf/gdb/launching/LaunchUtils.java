@@ -68,8 +68,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class LaunchUtils {
-	
-   	/**
+
+	/**
 	 * Verify the following things about the project:
 	 * - is a valid project name given
 	 * - does the project exist
@@ -87,8 +87,8 @@ public class LaunchUtils {
 		if (cproject == null && !name.isEmpty()) {
 			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!proj.exists()) {
-				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
-						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), //$NON-NLS-1$
+						null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			} else if (!proj.isOpen()) {
 				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_is_closed", name), null, //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
@@ -98,40 +98,41 @@ public class LaunchUtils {
 		}
 		return cproject;
 	}
-	
+
 	/**
 	 * Verify that program name of the configuration can be found as a file.
 	 * 
 	 * @return Absolute path of the program location
 	 */
 	public static IPath verifyProgramPath(ILaunchConfiguration configuration, ICProject cproject) throws CoreException {
-		String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
+		String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+				(String) null);
 		if (programName == null) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
-				  ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
-        programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+		programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
 
-		IPath programPath = new Path(programName);    			 
+		IPath programPath = new Path(programName);
 		if (programPath.isEmpty()) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), null, //$NON-NLS-1$
-				  ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
-		
+
 		if (!programPath.isAbsolute() && cproject != null) {
 			// Find the specified program within the specified project
-   			IFile wsProgramPath = cproject.getProject().getFile(programPath);
-   			programPath = wsProgramPath.getLocation();
+			IFile wsProgramPath = cproject.getProject().getFile(programPath);
+			programPath = wsProgramPath.getLocation();
 		}
-		
+
 		if (!programPath.toFile().exists()) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
-				  new FileNotFoundException(
-						  LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found",  //$NON-NLS-1$ 
-						                                    programPath.toOSString())),
-				  ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+					new FileNotFoundException(
+							LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", //$NON-NLS-1$ 
+									programPath.toOSString())),
+					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
-		
+
 		return programPath;
 	}
 
@@ -141,13 +142,14 @@ public class LaunchUtils {
 	 * @return An object representing the binary file. 
 	 */
 	public static IBinaryObject verifyBinary(ILaunchConfiguration configuration, IPath exePath) throws CoreException {
-		ICProject cproject = getCProject(configuration); 
+		ICProject cproject = getCProject(configuration);
 		if (cproject != null) {
-			ICConfigExtensionReference[] parserRefs = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(cproject.getProject());
+			ICConfigExtensionReference[] parserRefs = CCorePlugin.getDefault()
+					.getDefaultBinaryParserExtensions(cproject.getProject());
 			for (ICConfigExtensionReference parserRef : parserRefs) {
 				try {
 					IBinaryParser parser = CoreModelUtil.getBinaryParser(parserRef);
-					IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
+					IBinaryObject exe = (IBinaryObject) parser.getBinary(exePath);
 					if (exe != null) {
 						return exe;
 					}
@@ -159,17 +161,17 @@ public class LaunchUtils {
 
 		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
 		try {
-			return (IBinaryObject)parser.getBinary(exePath);
+			return (IBinaryObject) parser.getBinary(exePath);
 		} catch (ClassCastException e) {
 		} catch (IOException e) {
 		}
-		
+
 		abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_is_not_a_recognized_executable"), //$NON-NLS-1$
-				  new FileNotFoundException(
-						  LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Program_is_not_a_recognized_executable",  //$NON-NLS-1$
-								  						    exePath.toOSString())),
-		          ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY);
-		
+				new FileNotFoundException(LaunchMessages.getFormattedString(
+						"AbstractCLaunchDelegate.Program_is_not_a_recognized_executable", //$NON-NLS-1$
+						exePath.toOSString())),
+				ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY);
+
 		return null;
 	}
 
@@ -187,9 +189,9 @@ public class LaunchUtils {
 	 */
 	private static void abort(String message, Throwable exception, int code) throws CoreException {
 		MultiStatus status = new MultiStatus(GdbPlugin.PLUGIN_ID, code, message, exception);
-		status.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, code, 
-				              exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
-				              exception));
+		status.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, code,
+				exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
+				exception));
 		throw new CoreException(status);
 	}
 
@@ -213,48 +215,49 @@ public class LaunchUtils {
 	}
 
 	private static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 	}
-	
-    public static IPath getGDBPath(ILaunchConfiguration configuration) {
+
+	public static IPath getGDBPath(ILaunchConfiguration configuration) {
 		String defaultGdbCommand = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
-                IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
-                IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT, null);
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
+				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT, null);
 
-        IPath retVal = new Path(defaultGdbCommand);
-        try {
-        	String gdb = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
-        	gdb = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(gdb, false);        	
-        	retVal = new Path(gdb);
-        } catch (CoreException e) {
-        }
-        return retVal;
-    }
+		IPath retVal = new Path(defaultGdbCommand);
+		try {
+			String gdb = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
+					defaultGdbCommand);
+			gdb = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(gdb, false);
+			retVal = new Path(gdb);
+		} catch (CoreException e) {
+		}
+		return retVal;
+	}
 
-    /**
-     * Find gdb version info from a string object which is supposed to
-     * contain output text of "gdb --version" command.
-     *   
-     * @param versionOutput 
-     * 		output text from "gdb --version" command .
-     * @return 
-     * 		String representation of version of gdb such as "6.8" on success;
-     *      empty string otherwise.
-     * @since 2.0
-     */
+	/**
+	 * Find gdb version info from a string object which is supposed to
+	 * contain output text of "gdb --version" command.
+	 *   
+	 * @param versionOutput 
+	 * 		output text from "gdb --version" command .
+	 * @return 
+	 * 		String representation of version of gdb such as "6.8" on success;
+	 *      empty string otherwise.
+	 * @since 2.0
+	 */
 	public static String getGDBVersionFromText(String versionOutput) {
-        String version = "";//$NON-NLS-1$
-        
+		String version = "";//$NON-NLS-1$
+
 		// These are the GDB version patterns I have seen up to now
 		// The pattern works for all of them extracting the version of 6.8.50.20080730
 		// GNU gdb 6.8.50.20080730
 		// GNU gdb (GDB) 6.8.50.20080730-cvs
 		// GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs
-        // GNU gdb (GDB) Fedora (7.0-3.fc12)
-        // GNU gdb Red Hat Linux (6.3.0.0-1.162.el4rh)
-        // GNU gdb (GDB) STMicroelectronics/Linux Base 7.4-71 [build Mar  1 2013]
+		// GNU gdb (GDB) Fedora (7.0-3.fc12)
+		// GNU gdb Red Hat Linux (6.3.0.0-1.162.el4rh)
+		// GNU gdb (GDB) STMicroelectronics/Linux Base 7.4-71 [build Mar  1 2013]
 
-        Pattern pattern = Pattern.compile(" gdb( \\(.*?\\))? (\\D* )*\\(?(\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
+		Pattern pattern = Pattern.compile(" gdb( \\(.*?\\))? (\\D* )*\\(?(\\d*(\\.\\d*)*)", Pattern.MULTILINE); //$NON-NLS-1$
 
 		Matcher matcher = pattern.matcher(versionOutput);
 		if (matcher.find()) {
@@ -267,9 +270,9 @@ public class LaunchUtils {
 			}
 		}
 
-        return version;
+		return version;
 	}
-	
+
 	/**
 	 * This method actually launches 'gdb --version' to determine the version
 	 * of the GDB that is being used.  This method should ideally be called
@@ -277,73 +280,76 @@ public class LaunchUtils {
 	 * 
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 * 
- 	 * @deprecated Replaced with {@link GdbLaunch#getGDBVersion()}
+	 * @deprecated Replaced with {@link GdbLaunch#getGDBVersion()}
 	 */
 	@Deprecated
-	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
-        String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$
-        
-        // Parse cmd to properly handle spaces and such things (bug 458499)
+	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {
+		String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$
+
+		// Parse cmd to properly handle spaces and such things (bug 458499)
 		String[] args = CommandLineUtil.argumentsToArray(cmd);
-        
-        Process process = null;
-        Job timeoutJob = null;
-        try {
-        	process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment(configuration));
 
-            // Start a timeout job to make sure we don't get stuck waiting for
-            // an answer from a gdb that is hanging
-            // Bug 376203
-        	final Process finalProc = process;
-            timeoutJob = new Job("GDB version timeout job") { //$NON-NLS-1$
-    			{ setSystem(true); }
-    			@Override
-    			protected IStatus run(IProgressMonitor arg) {
-    				// Took too long.  Kill the gdb process and 
-    				// let things clean up.
-    	        	finalProc.destroy();
-    				return Status.OK_STATUS;
-    			}
-    		};
-    		timeoutJob.schedule(10000);
+		Process process = null;
+		Job timeoutJob = null;
+		try {
+			process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment(configuration));
 
-        	String streamOutput = readStream(process.getInputStream());
+			// Start a timeout job to make sure we don't get stuck waiting for
+			// an answer from a gdb that is hanging
+			// Bug 376203
+			final Process finalProc = process;
+			timeoutJob = new Job("GDB version timeout job") { //$NON-NLS-1$
+				{
+					setSystem(true);
+				}
 
-        	String gdbVersion = getGDBVersionFromText(streamOutput);
-        	if (gdbVersion == null || gdbVersion.isEmpty()) {
-        		Exception detailedException = null;
-        		if (!streamOutput.isEmpty()) {
-        			// We got some output but couldn't parse it.  Make that output visible to the user in the error dialog.
-        			detailedException = new Exception("Unexpected output format: \n\n" + streamOutput);  //$NON-NLS-1$        		
-        		} else {
-        			// We got no output.  Check if we got something on the error stream.
-        			streamOutput = readStream(process.getErrorStream());
-        			if (!streamOutput.isEmpty()) {
-        				detailedException = new Exception(streamOutput);
-        			}
-        		}
-        		
-        		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
-        				"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$ 
-        				detailedException));
-        	}
-        	return gdbVersion;
-        } catch (IOException e) {
-        	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
-        			"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$
-        } finally {
-        	// If we get here we are obviously not stuck reading the stream so we can cancel the timeout job.
-        	// Note that it may already have executed, but that is not a problem.
-        	if (timeoutJob != null) {
-        		timeoutJob.cancel();
-        	}
+				@Override
+				protected IStatus run(IProgressMonitor arg) {
+					// Took too long.  Kill the gdb process and 
+					// let things clean up.
+					finalProc.destroy();
+					return Status.OK_STATUS;
+				}
+			};
+			timeoutJob.schedule(10000);
 
-        	if (process != null) {
-        		process.destroy();
-        	}
-        }
+			String streamOutput = readStream(process.getInputStream());
+
+			String gdbVersion = getGDBVersionFromText(streamOutput);
+			if (gdbVersion == null || gdbVersion.isEmpty()) {
+				Exception detailedException = null;
+				if (!streamOutput.isEmpty()) {
+					// We got some output but couldn't parse it.  Make that output visible to the user in the error dialog.
+					detailedException = new Exception("Unexpected output format: \n\n" + streamOutput); //$NON-NLS-1$        		
+				} else {
+					// We got no output.  Check if we got something on the error stream.
+					streamOutput = readStream(process.getErrorStream());
+					if (!streamOutput.isEmpty()) {
+						detailedException = new Exception(streamOutput);
+					}
+				}
+
+				throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+						"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$ 
+						detailedException));
+			}
+			return gdbVersion;
+		} catch (IOException e) {
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+					"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$
+		} finally {
+			// If we get here we are obviously not stuck reading the stream so we can cancel the timeout job.
+			// Note that it may already have executed, but that is not a problem.
+			if (timeoutJob != null) {
+				timeoutJob.cancel();
+			}
+
+			if (process != null) {
+				process.destroy();
+			}
+		}
 	}
-	
+
 	/**
 	 * Compares two version numbers.
 	 * Returns -1, 0, or 1 if v1 is less than, equal to, or greater than v2, respectively.
@@ -353,11 +359,12 @@ public class LaunchUtils {
 	 * @since 4.8
 	 */
 	public static int compareVersions(String v1, String v2) {
-		if (v1 == null || v2 == null) throw new NullPointerException();
-		
+		if (v1 == null || v2 == null)
+			throw new NullPointerException();
+
 		String[] v1Parts = v1.split("\\."); //$NON-NLS-1$
 		String[] v2Parts = v2.split("\\."); //$NON-NLS-1$
-		for (int i = 0; i < v1Parts.length && i < v2Parts.length; i++) {			
+		for (int i = 0; i < v1Parts.length && i < v2Parts.length; i++) {
 			try {
 				int v1PartValue = Integer.parseInt(v1Parts[i]);
 				int v2PartValue = Integer.parseInt(v2Parts[i]);
@@ -372,10 +379,10 @@ public class LaunchUtils {
 				continue;
 			}
 		}
-		
+
 		// If we get here is means the versions are still equal
 		// but there could be extra parts to examine
-		
+
 		if (v1Parts.length < v2Parts.length) {
 			// v2 has extra parts, which implies v1 is a lower version (e.g., v1 = 7.9 v2 = 7.9.1)
 			// unless each extra part is 0, in which case the two versions are equal (e.g., v1 = 7.9 v2 = 7.9.0)
@@ -416,78 +423,81 @@ public class LaunchUtils {
 	 * @throws IOException If an IOException happens when reading the stream
 	 */
 	private static String readStream(InputStream stream) throws IOException {
-        StringBuilder cmdOutput = new StringBuilder(200);
-        try {
-        	Reader r = new InputStreamReader(stream);
-        	BufferedReader reader = new BufferedReader(r);
-        	
-        	String line;
-        	while ((line = reader.readLine()) != null) {
-        		cmdOutput.append(line);
-        		cmdOutput.append('\n');
-        	}
-        	return cmdOutput.toString();
-        } finally {
-        	// Cleanup to avoid leaking pipes
-        	// Bug 345164
-        	if (stream != null) {
-				try { 
-					stream.close(); 
-				} catch (IOException e) {}
-        	}
-        }
+		StringBuilder cmdOutput = new StringBuilder(200);
+		try {
+			Reader r = new InputStreamReader(stream);
+			BufferedReader reader = new BufferedReader(r);
+
+			String line;
+			while ((line = reader.readLine()) != null) {
+				cmdOutput.append(line);
+				cmdOutput.append('\n');
+			}
+			return cmdOutput.toString();
+		} finally {
+			// Cleanup to avoid leaking pipes
+			// Bug 345164
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+				}
+			}
+		}
 	}
-        
+
 	public static boolean getIsAttach(ILaunchConfiguration config) {
-    	try {
-    		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
-    		if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-    			return false;
-    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
-    			return true;
-    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
-    			return false;
-    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
-    			return false;
-    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
-    		    return true;
-    	    }
-    	} catch (CoreException e) {    		
-    	}
-    	return false;
-    }
-	
+		try {
+			String debugMode = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+			if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+				return false;
+			} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+				return true;
+			} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
+				return false;
+			} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
+				return false;
+			} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
+				return true;
+			}
+		} catch (CoreException e) {
+		}
+		return false;
+	}
+
 	public static SessionType getSessionType(ILaunchConfiguration config) {
-    	try {
-    		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
-    		if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-    			return SessionType.LOCAL;
-    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
-    			return SessionType.LOCAL;
-    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
-    			return SessionType.CORE;
-    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
-    			return SessionType.REMOTE;
-    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
-    		    return SessionType.REMOTE;
-    	    } else {
-    	    	assert false : "Unexpected session-type attribute in launch config: " + debugMode;  //$NON-NLS-1$
-    	    }
-    	} catch (CoreException e) {    		
-    	}
-    	return SessionType.LOCAL;
-    }
-	
+		try {
+			String debugMode = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+			if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+				return SessionType.LOCAL;
+			} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+				return SessionType.LOCAL;
+			} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
+				return SessionType.CORE;
+			} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
+				return SessionType.REMOTE;
+			} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
+				return SessionType.REMOTE;
+			} else {
+				assert false : "Unexpected session-type attribute in launch config: " + debugMode; //$NON-NLS-1$
+			}
+		} catch (CoreException e) {
+		}
+		return SessionType.LOCAL;
+	}
+
 	/**
 	 * Gets the CDT environment from the CDT project's configuration referenced by the
 	 * launch
 	 * @since 3.0
- 	 * @deprecated Replaced with {@link GdbLaunch#getLaunchEnvironment()}
+	 * @deprecated Replaced with {@link GdbLaunch#getLaunchEnvironment()}
 	 */
 	@Deprecated
 	public static String[] getLaunchEnvironment(ILaunchConfiguration config) throws CoreException {
 		// Get the project
-		String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+		String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 		if (projectName == null) {
 			return null;
 		}
@@ -500,22 +510,22 @@ public class LaunchUtils {
 			return null;
 		}
 
-		ICProjectDescription projDesc =	CoreModel.getDefault().getProjectDescription(project, false);
+		ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, false);
 
 		// Not a CDT project?
 		if (projDesc == null) {
-		    return null;
+			return null;
 		}
 
 		String buildConfigID = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, ""); //$NON-NLS-1$
 		ICConfigurationDescription cfg = null;
 		if (buildConfigID.length() != 0) {
-		    cfg = projDesc.getConfigurationById(buildConfigID);
+			cfg = projDesc.getConfigurationById(buildConfigID);
 		}
 
 		// if configuration is null fall-back to active
 		if (cfg == null) {
-		    cfg = projDesc.getActiveConfiguration();
+			cfg = projDesc.getActiveConfiguration();
 		}
 
 		// Environment variables and inherited vars
@@ -541,16 +551,16 @@ public class LaunchUtils {
 		}
 
 		// Turn it into an envp format
-		List<String> strings= new ArrayList<String>(envMap.size());
+		List<String> strings = new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
-			StringBuilder buffer= new StringBuilder(entry.getKey());
+			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}
 
 		return strings.toArray(new String[strings.size()]);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the launch is meant to be in Non-Stop mode.
 	 * Returns <code>false</code> otherwise.
@@ -560,12 +570,12 @@ public class LaunchUtils {
 	public static boolean getIsNonStopMode(ILaunchConfiguration config) {
 		try {
 			return config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-					                   getIsNonStopModeDefault());
-    	} catch (CoreException e) {    		
-    	}
-    	return false;
-    }
-	
+					getIsNonStopModeDefault());
+		} catch (CoreException e) {
+		}
+		return false;
+	}
+
 	/**
 	 * Returns workspace-level default for the Non-Stop mode.
 	 * 
@@ -575,8 +585,8 @@ public class LaunchUtils {
 		return Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP,
 				IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT, null);
-    }
-	
+	}
+
 	/**
 	 * Returns workspace-level default for the stop at main option.
 	 * 
@@ -586,8 +596,8 @@ public class LaunchUtils {
 		return Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN,
 				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT, null);
-    }
-	
+	}
+
 	/**
 	 * Returns workspace-level default for the stop at main symbol.
 	 * 
@@ -597,8 +607,8 @@ public class LaunchUtils {
 		return Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL,
 				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, null);
-    }
-	
+	}
+
 	/**
 	 * Returns <code>true</code> if the launch is meant to be for post-mortem
 	 * tracing.  Returns <code>false</code> otherwise.
@@ -612,11 +622,11 @@ public class LaunchUtils {
 				String coreType = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
 						IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
 				return coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE);
-			} catch (CoreException e) {    		
+			} catch (CoreException e) {
 			}
 		}
-    	return false;
-    }
+		return false;
+	}
 
 	/**
 	 * Returns workspace-level default for the remote timeout enablement
@@ -626,7 +636,7 @@ public class LaunchUtils {
 		return Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED,
 				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_ENABLED_DEFAULT, null);
-    }
+	}
 
 	/**
 	 * Returns workspace-level default for the remote timeout value
@@ -636,6 +646,5 @@ public class LaunchUtils {
 		return Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_VALUE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_VALUE_DEFAULT, null);
-    }
+	}
 }
-

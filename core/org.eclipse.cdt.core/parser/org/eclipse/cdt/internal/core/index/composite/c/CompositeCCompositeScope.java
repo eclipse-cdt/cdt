@@ -33,7 +33,8 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 
 	@Override
 	public IBinding getBinding(char[] name) {
-		fail(); return null;
+		fail();
+		return null;
 	}
 
 	@Override
@@ -46,8 +47,9 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 		IBinding binding = ((ICompositeType) rbinding).getCompositeScope().getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
-	
-	@Override @Deprecated
+
+	@Override
+	@Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
@@ -57,19 +59,20 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 		IBinding[] bindings = ((ICompositeType) rbinding).getCompositeScope().getBindings(lookup);
 		return processUncertainBindings(bindings);
 	}
-	
+
 	@Override
 	public IBinding[] find(String name, IASTTranslationUnit tu) {
 		IBinding[] preresult = ((ICompositeType) rbinding).getCompositeScope().find(name, tu);
-		return processUncertainBindings(preresult);	
+		return processUncertainBindings(preresult);
 	}
-	
-	@Override @Deprecated
+
+	@Override
+	@Deprecated
 	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICompositeType) rbinding).getCompositeScope().find(name);
-		return processUncertainBindings(preresult);	
+		return processUncertainBindings(preresult);
 	}
-	
+
 	@Override
 	public IIndexBinding getScopeBinding() {
 		return (IIndexBinding) getCompositeType();

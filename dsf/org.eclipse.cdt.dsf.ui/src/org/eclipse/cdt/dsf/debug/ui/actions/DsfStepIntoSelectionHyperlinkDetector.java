@@ -62,7 +62,8 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 		 * @param stepIntoSelectionCommand
 		 * @param region
 		 */
-		public DsfStepIntoSelectionHyperlink(DsfSourceSelectionResolver selectionResolver, IDsfStepIntoSelection stepIntoSelectionCommand) {
+		public DsfStepIntoSelectionHyperlink(DsfSourceSelectionResolver selectionResolver,
+				IDsfStepIntoSelection stepIntoSelectionCommand) {
 			fSelection = selectionResolver.resolveSelection();
 			fStepIntoSelectionCommand = stepIntoSelectionCommand;
 			fSelectionResolver = selectionResolver;
@@ -89,7 +90,8 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 			final IExecutionDMContext dmc = resolveDebugContext();
 			if (fSelectionResolver.isSuccessful() && dmc != null) {
 				LineLocation location = fSelectionResolver.getLineLocation();
-				fStepIntoSelectionCommand.runToSelection(location.getFileName(), location.getLineNumber(), fSelectionResolver.getFunction(), dmc);
+				fStepIntoSelectionCommand.runToSelection(location.getFileName(), location.getLineNumber(),
+						fSelectionResolver.getFunction(), dmc);
 			} else {
 				String message = null;
 				if (dmc == null) {
@@ -103,7 +105,8 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 	}
 
 	@Override
-	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
+	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, final IRegion region,
+			boolean canShowMultipleHyperlinks) {
 		// Only valid in the context of a selection within the CEditor
 		ITextEditor editor = getAdapter(ITextEditor.class);
 		if (editor == null || region == null || !(editor instanceof CEditor))
@@ -126,9 +129,10 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 		}
 
 		IDsfStepIntoSelection stepIntoSelectionCommand = null;
-		IStepIntoSelectionHandler stepIntoSelectionHandler = (IStepIntoSelectionHandler) session.getModelAdapter(IStepIntoSelectionHandler.class);
+		IStepIntoSelectionHandler stepIntoSelectionHandler = (IStepIntoSelectionHandler) session
+				.getModelAdapter(IStepIntoSelectionHandler.class);
 		if (stepIntoSelectionHandler instanceof IDsfStepIntoSelection) {
-			stepIntoSelectionCommand = (IDsfStepIntoSelection)stepIntoSelectionHandler;
+			stepIntoSelectionCommand = (IDsfStepIntoSelection) stepIntoSelectionHandler;
 		} else {
 			return null;
 		}
@@ -152,13 +156,15 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 		ITextSelection selection = null;
 		if (editor != null) {
 			IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-			final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+			final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager()
+					.getWorkingCopy(editor.getEditorInput());
 
 			if (document != null && workingCopy != null) {
 				// Check partition type.
 				String partitionType;
 				try {
-					partitionType = TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, region.getOffset(), false);
+					partitionType = TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING,
+							region.getOffset(), false);
 					if (IDocument.DEFAULT_CONTENT_TYPE.equals(partitionType)) {
 						// Regular code i.e. Not a Preprocessor directive.
 						IRegion wregion = getIdentifier(document, region.getOffset(), workingCopy.getLanguage());
@@ -180,7 +186,8 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 	/**
 	 * Returns the identifier at the given offset, or {@code null} if the there is no identifier at the offset.
 	 */
-	private static IRegion getIdentifier(IDocument document, int offset, ILanguage language) throws BadLocationException {
+	private static IRegion getIdentifier(IDocument document, int offset, ILanguage language)
+			throws BadLocationException {
 		IRegion wordRegion = CWordFinder.findWord(document, offset);
 		if (wordRegion != null && wordRegion.getLength() > 0) {
 			String word = document.get(wordRegion.getOffset(), wordRegion.getLength());
@@ -203,7 +210,8 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 					return true;
 			}
 			for (String keyword : keywords.getPreprocessorKeywords()) {
-				if (keyword.charAt(0) == '#' && keyword.length() == word.length() + 1 && keyword.regionMatches(1, word, 0, word.length())) {
+				if (keyword.charAt(0) == '#' && keyword.length() == word.length() + 1
+						&& keyword.regionMatches(1, word, 0, word.length())) {
 					return true;
 				}
 			}

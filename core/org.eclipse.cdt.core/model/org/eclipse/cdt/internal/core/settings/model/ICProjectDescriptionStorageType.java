@@ -28,9 +28,9 @@ public interface ICProjectDescriptionStorageType {
 	/** The file name in which the storage type and version are stored */
 	public static final String STORAGE_FILE_NAME = ".cproject"; //$NON-NLS-1$
 	/** The document version attribute */
-	public static final String STORAGE_VERSION_NAME = "fileVersion";	//$NON-NLS-1$
+	public static final String STORAGE_VERSION_NAME = "fileVersion"; //$NON-NLS-1$
 	/** The root element in a .cproject file */
-	public static final String STORAGE_ROOT_ELEMENT_NAME = "cproject";	//$NON-NLS-1$
+	public static final String STORAGE_ROOT_ELEMENT_NAME = "cproject"; //$NON-NLS-1$
 	/** The document's storage type id attribute in the root element */
 	public static final String STORAGE_TYPE_ATTRIBUTE = "storage_type_id"; //$NON-NLS-1$
 
@@ -59,14 +59,15 @@ public interface ICProjectDescriptionStorageType {
 		 * @throws CoreException
 		 * @throws IllegalArgumentException
 		 */
-		public CProjectDescriptionStorageTypeProxy(IConfigurationElement el) throws CoreException, IllegalArgumentException {
-			this (el.getNamespaceIdentifier() + "." + getString(el, ATTR_ID, null), //$NON-NLS-1$
-				   getString(el, ATTR_NAME, null),
-				   (ICProjectDescriptionStorageType)el.createExecutableExtension(ATTR_CLASS),
-				   getVersion(el, ATTR_VERSION, null),
-				   getVersion(el, ATTR_MIN_VERSION, Version.emptyVersion),
-				   getVersion(el, ATTR_MAX_VERSION, Version.emptyVersion));
+		public CProjectDescriptionStorageTypeProxy(IConfigurationElement el)
+				throws CoreException, IllegalArgumentException {
+			this(el.getNamespaceIdentifier() + "." + getString(el, ATTR_ID, null), //$NON-NLS-1$
+					getString(el, ATTR_NAME, null),
+					(ICProjectDescriptionStorageType) el.createExecutableExtension(ATTR_CLASS),
+					getVersion(el, ATTR_VERSION, null), getVersion(el, ATTR_MIN_VERSION, Version.emptyVersion),
+					getVersion(el, ATTR_MAX_VERSION, Version.emptyVersion));
 		}
+
 		/**
 		 * Constructor verifies that version is in the range (min_version, max_version]
 		 * @param name
@@ -75,8 +76,8 @@ public interface ICProjectDescriptionStorageType {
 		 * @param min_version
 		 * @param max_version
 		 */
-		public CProjectDescriptionStorageTypeProxy(String id, String name, ICProjectDescriptionStorageType storageType, Version version,
-				Version min_version, Version max_version) {
+		public CProjectDescriptionStorageTypeProxy(String id, String name, ICProjectDescriptionStorageType storageType,
+				Version version, Version min_version, Version max_version) {
 			this.id = id;
 			this.name = name;
 			this.storageType = storageType;
@@ -90,6 +91,7 @@ public interface ICProjectDescriptionStorageType {
 				throw new IllegalArgumentException("CProjectDescriptionStorageType Version: " + version + //$NON-NLS-1$
 						" must be < that max_version: " + max_version); //$NON-NLS-1$
 		}
+
 		/** Indicates if this type is compatible with the provided version */
 		public boolean isCompatible(Version version) {
 			if (version.compareTo(max_version) > 0)
@@ -98,18 +100,22 @@ public interface ICProjectDescriptionStorageType {
 				return false;
 			return true;
 		}
+
 		@Override
 		public boolean createsCProjectXMLFile() {
 			return storageType.createsCProjectXMLFile();
 		}
+
 		@Override
-		public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type, IProject project, Version version) {
+		public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type,
+				IProject project, Version version) {
 			return storageType.getProjectDescriptionStorage(type, project, version);
 		}
 
-		private static Version getVersion(IConfigurationElement element, String id, Version defaultValue) throws IllegalArgumentException{
+		private static Version getVersion(IConfigurationElement element, String id, Version defaultValue)
+				throws IllegalArgumentException {
 			String value = element.getAttribute(id);
-			if (value==null)
+			if (value == null)
 				return defaultValue;
 			Version v;
 			try {
@@ -121,7 +127,8 @@ public interface ICProjectDescriptionStorageType {
 			return v;
 		}
 
-		private static String getString(IConfigurationElement element, String id, String defaultValue) throws IllegalArgumentException {
+		private static String getString(IConfigurationElement element, String id, String defaultValue)
+				throws IllegalArgumentException {
 			String val = element.getAttribute(id);
 			if (val != null)
 				return val;
@@ -130,7 +137,6 @@ public interface ICProjectDescriptionStorageType {
 			throw new IllegalArgumentException("Couldn't find value for extension attribute " + id); //$NON-NLS-1$
 		}
 	}
-
 
 	/**
 	 * Return a new storage instance to be for persisting / loading cproject descriptions
@@ -141,7 +147,8 @@ public interface ICProjectDescriptionStorageType {
 	 * 					on last save
 	 * @return AbstractCProjectDescriptionStorage
 	 */
-	public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type, IProject project, Version version);
+	public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type,
+			IProject project, Version version);
 
 	/**
 	 * Method indicating whether this project storage type writes a .cproject file.
@@ -154,7 +161,7 @@ public interface ICProjectDescriptionStorageType {
 	 * &lt;?fileVersion 4.0.0?&gt;
 	 * &lt;cproject storageType="storage_type_id"&gt; ....
 	 * &lt;/cproject&gt;
-     * </pre>
+	 * </pre>
 	 *
 	 * If this method returns false, then the CProjectDescriptionStorageType creates
 	 * a '.cproject' containing this data

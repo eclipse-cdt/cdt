@@ -29,7 +29,7 @@ public class CodeTemplateContext extends FileTemplateContext {
 
 	public CodeTemplateContext(String contextTypeId, ICProject project, String lineDelimiter) {
 		super(contextTypeId, lineDelimiter);
-		fProject= project;
+		fProject = project;
 	}
 
 	public ICProject getCProject() {
@@ -37,7 +37,7 @@ public class CodeTemplateContext extends FileTemplateContext {
 	}
 
 	public void setTranslationUnitVariables(ITranslationUnit tu) {
-		IFile file= (IFile) tu.getResource();
+		IFile file = (IFile) tu.getResource();
 		if (file != null) {
 			super.setResourceVariables(file);
 		}

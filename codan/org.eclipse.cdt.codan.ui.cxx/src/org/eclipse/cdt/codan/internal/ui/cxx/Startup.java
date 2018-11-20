@@ -41,7 +41,7 @@ public class Startup implements IStartup {
 				for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 					CodanPartListener.installOnWindow(window);
 				}
-				
+
 				// Install a window listener which will be notified of
 				// new windows opening, and install a part listener on them.
 				workbench.addWindowListener(new CodanWindowListener());

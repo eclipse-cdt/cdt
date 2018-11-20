@@ -35,21 +35,21 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
  * Implementation for names in C translation units.
  */
 public class CASTName extends ASTNode implements IASTName, IASTCompletionContext {
-    private final char[] name;
+	private final char[] name;
 
-    private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-    private IBinding binding;
+	private IBinding binding;
 
-    public CASTName(char[] name) {
-        this.name = name;
-    }
+	public CASTName(char[] name) {
+		this.name = name;
+	}
 
-    public CASTName() {
-        name = CharArrayUtils.EMPTY_CHAR_ARRAY;
-    }
+	public CASTName() {
+		name = CharArrayUtils.EMPTY_CHAR_ARRAY;
+	}
 
-    @Override
+	@Override
 	public CASTName copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -60,61 +60,61 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public IBinding resolveBinding() {
-        if (binding == null) {
-       		CVisitor.createBinding(this);
-        }
+		if (binding == null) {
+			CVisitor.createBinding(this);
+		}
 
-        return binding;
-    }
+		return binding;
+	}
 
-    @Override
+	@Override
 	public IBinding resolvePreBinding() {
-    	return resolveBinding();
-    }
+		return resolveBinding();
+	}
 
-    @Override
+	@Override
 	public IBinding getBinding() {
-        return binding;
-    }
+		return binding;
+	}
 
-    @Override
+	@Override
 	public IBinding getPreBinding() {
-        return binding;
-    }
+		return binding;
+	}
 
-    @Override
+	@Override
 	public IASTCompletionContext getCompletionContext() {
-        IASTNode node = getParent();
-    	while (node != null) {
-    		if (node instanceof IASTCompletionContext) {
-    			return (IASTCompletionContext) node;
-    		}
-    		node = node.getParent();
-    	}
-    	if (getLength() > 0) {
-    		return this;
-    	}
-    	return null;
-    }
+		IASTNode node = getParent();
+		while (node != null) {
+			if (node instanceof IASTCompletionContext) {
+				return (IASTCompletionContext) node;
+			}
+			node = node.getParent();
+		}
+		if (getLength() > 0) {
+			return this;
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public void setBinding(IBinding binding) {
-        this.binding = binding;
-    }
+		this.binding = binding;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        if (name == CharArrayUtils.EMPTY_CHAR_ARRAY)
-            return EMPTY_STRING;
-        return new String(name);
-    }
+		if (name == CharArrayUtils.EMPTY_CHAR_ARRAY)
+			return EMPTY_STRING;
+		return new String(name);
+	}
 
-    @Override
+	@Override
 	public char[] toCharArray() {
-        return name;
-    }
+		return name;
+	}
 
 	@Override
 	public char[] getSimpleID() {
@@ -126,89 +126,89 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 		return name;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitNames) {
-            switch (action.visit(this)) {
-            case ASTVisitor.PROCESS_ABORT:
-                return false;
-            case ASTVisitor.PROCESS_SKIP:
-                return true;
-            default:
-                break;
-            }
-        }
+		if (action.shouldVisitNames) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
 
-        if (action.shouldVisitNames) {
-            switch (action.leave(this)) {
-            case ASTVisitor.PROCESS_ABORT:
-                return false;
-            case ASTVisitor.PROCESS_SKIP:
-                return true;
-            default:
-                break;
-            }
-        }
-        return true;
-    }
+		if (action.shouldVisitNames) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public int getRoleOfName(boolean allowResolution) {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTInternalNameOwner) {
-        	return ((IASTInternalNameOwner) parent).getRoleForName(this, allowResolution);
-        }
-        if (parent instanceof IASTNameOwner) {
-            return ((IASTNameOwner) parent).getRoleForName(this);
-        }
-        return IASTNameOwner.r_unclear;
+		IASTNode parent = getParent();
+		if (parent instanceof IASTInternalNameOwner) {
+			return ((IASTInternalNameOwner) parent).getRoleForName(this, allowResolution);
+		}
+		if (parent instanceof IASTNameOwner) {
+			return ((IASTNameOwner) parent).getRoleForName(this);
+		}
+		return IASTNameOwner.r_unclear;
 	}
 
-    @Override
+	@Override
 	public boolean isDeclaration() {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTNameOwner) {
-            int role = ((IASTNameOwner) parent).getRoleForName(this);
-            switch (role) {
-            case IASTNameOwner.r_reference:
-            case IASTNameOwner.r_unclear:
-                return false;
-            default:
-                return true;
-            }
-        }
-        return false;
-    }
+		IASTNode parent = getParent();
+		if (parent instanceof IASTNameOwner) {
+			int role = ((IASTNameOwner) parent).getRoleForName(this);
+			switch (role) {
+			case IASTNameOwner.r_reference:
+			case IASTNameOwner.r_unclear:
+				return false;
+			default:
+				return true;
+			}
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isReference() {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTNameOwner) {
-            int role = ((IASTNameOwner) parent).getRoleForName(this);
-            switch (role) {
-            case IASTNameOwner.r_reference:
-                return true;
-            default:
-                return false;
-            }
-        }
-        return false;
-    }
+		IASTNode parent = getParent();
+		if (parent instanceof IASTNameOwner) {
+			int role = ((IASTNameOwner) parent).getRoleForName(this);
+			switch (role) {
+			case IASTNameOwner.r_reference:
+				return true;
+			default:
+				return false;
+			}
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isDefinition() {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTNameOwner) {
-            int role = ((IASTNameOwner) parent).getRoleForName(this);
-            switch (role) {
-            case IASTNameOwner.r_definition:
-                return true;
-            default:
-                return false;
-            }
-        }
-        return false;
-    }
+		IASTNode parent = getParent();
+		if (parent instanceof IASTNameOwner) {
+			int role = ((IASTNameOwner) parent).getRoleForName(this);
+			switch (role) {
+			case IASTNameOwner.r_definition:
+				return true;
+			default:
+				return false;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public ILinkage getLinkage() {
@@ -253,7 +253,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 					break;
 				}
 			} else {
-				bindings[i]= null;
+				bindings[i] = null;
 			}
 		}
 		return ArrayUtil.removeNulls(bindings);

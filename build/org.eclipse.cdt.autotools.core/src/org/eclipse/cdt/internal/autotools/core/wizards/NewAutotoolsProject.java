@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-
 /**
  * Creates a new Project in the workspace.
  */
@@ -48,19 +47,20 @@ public class NewAutotoolsProject extends ProcessRunner {
 	protected boolean savedAutoBuildingValue;
 	protected ProjectCreatedActions pca;
 	protected IManagedBuildInfo info;
-	
+
 	public NewAutotoolsProject() {
 		pca = new ProjectCreatedActions();
 	}
-	
+
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		String location = args[1].getSimpleValue();
 		String artifactExtension = args[2].getSimpleValue();
 		String isCProjectValue = args[3].getSimpleValue();
 		boolean isCProject = Boolean.valueOf(isCProjectValue).booleanValue();
-				
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 
 		try {
@@ -85,7 +85,7 @@ public class NewAutotoolsProject extends ProcessRunner {
 				info = pca.createProject(monitor, CCorePlugin.DEFAULT_INDEXER, isCProject);
 
 				AutotoolsNewProjectNature.addAutotoolsNature(project, monitor);
-				
+
 				// For each IConfiguration, create a corresponding Autotools Configuration
 				IConfiguration[] cfgs = pca.getConfigs();
 				for (int i = 0; i < cfgs.length; ++i) {
@@ -115,13 +115,13 @@ public class NewAutotoolsProject extends ProcessRunner {
 		workspaceDesc.setAutoBuilding(false);
 		workspace.setDescription(workspaceDesc);
 	}
-	
+
 	protected final void restoreAutoBuild(IWorkspace workspace) throws CoreException {
 		IWorkspaceDescription workspaceDesc = workspace.getDescription();
 		workspaceDesc.setAutoBuilding(savedAutoBuildingValue);
 		workspace.setDescription(workspaceDesc);
 	}
-	
+
 	/**
 	 * setOptionValue
 	 * @param config
@@ -134,7 +134,8 @@ public class NewAutotoolsProject extends ProcessRunner {
 			if (!option.isExtensionElement()) {
 				option.setValue(val);
 			} else {
-				IOption newOption = config.getToolChain().createOption(option, option.getId() + "." + ManagedBuildManager.getRandomNumber(), option.getName(), false); //$NON-NLS-1$
+				IOption newOption = config.getToolChain().createOption(option,
+						option.getId() + "." + ManagedBuildManager.getRandomNumber(), option.getName(), false); //$NON-NLS-1$
 				newOption.setValue(val);
 			}
 		}

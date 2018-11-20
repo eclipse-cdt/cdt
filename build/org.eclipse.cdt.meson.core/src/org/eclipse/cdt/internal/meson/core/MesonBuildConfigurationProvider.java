@@ -44,7 +44,8 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 	}
 
 	@Override
-	public synchronized ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
+	public synchronized ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name)
+			throws CoreException {
 		if (config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
 			IToolChain toolChain = null;
 
@@ -133,8 +134,7 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 		}
 
 		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, name, monitor);
-		MesonBuildConfiguration mesonConfig = new MesonBuildConfiguration(config, name, toolChain, file,
-				launchMode);
+		MesonBuildConfiguration mesonConfig = new MesonBuildConfiguration(config, name, toolChain, file, launchMode);
 		configManager.addBuildConfiguration(config, mesonConfig);
 		return mesonConfig;
 	}

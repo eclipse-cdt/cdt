@@ -44,12 +44,12 @@ public class ASTQueries {
 
 		NameSearch() {
 			super(false);
-			shouldVisitAmbiguousNodes= true;
-			shouldVisitNames= true;
+			shouldVisitAmbiguousNodes = true;
+			shouldVisitNames = true;
 		}
 
 		public void reset() {
-			fFound= false;
+			fFound = false;
 		}
 
 		public boolean foundName() {
@@ -58,13 +58,13 @@ public class ASTQueries {
 
 		@Override
 		public int visit(IASTName name) {
-			fFound= true;
+			fFound = true;
 			return PROCESS_ABORT;
 		}
 
 		@Override
 		public int visit(ASTAmbiguousNode node) {
-			IASTNode[] alternatives= node.getNodes();
+			IASTNode[] alternatives = node.getNodes();
 			for (IASTNode alt : alternatives) {
 				if (!alt.accept(this))
 					return PROCESS_ABORT;
@@ -72,7 +72,8 @@ public class ASTQueries {
 			return PROCESS_CONTINUE;
 		}
 	}
-	private static NameSearch NAME_SEARCH= new NameSearch();
+
+	private static NameSearch NAME_SEARCH = new NameSearch();
 
 	/**
 	 * Tests whether the given node can contain ast-names, suitable to be used before ambiguity
@@ -92,11 +93,11 @@ public class ASTQueries {
 	 * the given {@code declarator} itself.
 	 */
 	public static IASTDeclarator findOutermostDeclarator(IASTDeclarator declarator) {
-		IASTDeclarator outermost= null;
-		IASTNode candidate= declarator;
+		IASTDeclarator outermost = null;
+		IASTNode candidate = declarator;
 		while (candidate instanceof IASTDeclarator) {
-			outermost= (IASTDeclarator) candidate;
-			candidate= outermost.getParent();
+			outermost = (IASTDeclarator) candidate;
+			candidate = outermost.getParent();
 		}
 		return outermost;
 	}
@@ -106,10 +107,10 @@ public class ASTQueries {
 	 * the given {@code declarator} itself.
 	 */
 	public static IASTDeclarator findInnermostDeclarator(IASTDeclarator declarator) {
-		IASTDeclarator innermost= null;
+		IASTDeclarator innermost = null;
 		while (declarator != null) {
-			innermost= declarator;
-			declarator= declarator.getNestedDeclarator();
+			innermost = declarator;
+			declarator = declarator.getNestedDeclarator();
 		}
 		return innermost;
 	}
@@ -121,14 +122,12 @@ public class ASTQueries {
 		if (declarator == null)
 			return null;
 
-		IASTDeclarator result= findInnermostDeclarator(declarator);
-		while (result.getPointerOperators().length == 0
-				&& !(result instanceof IASTFieldDeclarator)
-				&& !(result instanceof IASTFunctionDeclarator)
-				&& !(result instanceof IASTArrayDeclarator)) {
-			final IASTNode parent= result.getParent();
+		IASTDeclarator result = findInnermostDeclarator(declarator);
+		while (result.getPointerOperators().length == 0 && !(result instanceof IASTFieldDeclarator)
+				&& !(result instanceof IASTFunctionDeclarator) && !(result instanceof IASTArrayDeclarator)) {
+			final IASTNode parent = result.getParent();
 			if (parent instanceof IASTDeclarator) {
-				result= (IASTDeclarator) parent;
+				result = (IASTDeclarator) parent;
 			} else {
 				return result;
 			}
@@ -159,9 +158,9 @@ public class ASTQueries {
 		if (functionDefinition == null)
 			return null;
 
-		IASTDeclarator dtor= findInnermostDeclarator(functionDefinition.getDeclarator());
+		IASTDeclarator dtor = findInnermostDeclarator(functionDefinition.getDeclarator());
 		if (dtor != null) {
-			IASTName name= dtor.getName();
+			IASTName name = dtor.getName();
 			if (name != null) {
 				return name.resolveBinding();
 			}
@@ -175,17 +174,17 @@ public class ASTQueries {
 	public static IASTDeclaration[] extractActiveDeclarations(IASTDeclaration[] allDeclarations, int size) {
 		IASTDeclaration[] active;
 		if (size == 0) {
-			active= IASTDeclaration.EMPTY_DECLARATION_ARRAY;
+			active = IASTDeclaration.EMPTY_DECLARATION_ARRAY;
 		} else {
-			active= new IASTDeclaration[size];
-			int j= 0;
+			active = new IASTDeclaration[size];
+			int j = 0;
 			for (int i = 0; i < size; i++) {
-				IASTDeclaration d= allDeclarations[i];
+				IASTDeclaration d = allDeclarations[i];
 				if (d.isActive()) {
-					active[j++]= d;
+					active[j++] = d;
 				}
 			}
-			active= ArrayUtil.trim(active, j);
+			active = ArrayUtil.trim(active, j);
 		}
 		return active;
 	}
@@ -232,51 +231,49 @@ public class ASTQueries {
 	}
 
 	private static class FindLabelsAction extends ASTVisitor {
-        public IASTLabelStatement[] labels = IASTLabelStatement.EMPTY_ARRAY;
+		public IASTLabelStatement[] labels = IASTLabelStatement.EMPTY_ARRAY;
 
-        public FindLabelsAction() {
-            shouldVisitStatements = true;
-        }
+		public FindLabelsAction() {
+			shouldVisitStatements = true;
+		}
 
-        @Override
+		@Override
 		public int visit(IASTStatement statement) {
-            if (statement instanceof IASTLabelStatement) {
-               labels = ArrayUtil.append(labels, (IASTLabelStatement) statement);
-            }
-            return PROCESS_CONTINUE;
-        }
+			if (statement instanceof IASTLabelStatement) {
+				labels = ArrayUtil.append(labels, (IASTLabelStatement) statement);
+			}
+			return PROCESS_CONTINUE;
+		}
 	}
 
 	protected static ILabel[] getLabels(IASTFunctionDefinition functionDefinition) {
-	    FindLabelsAction action = new FindLabelsAction();
+		FindLabelsAction action = new FindLabelsAction();
 
-        functionDefinition.accept(action);
+		functionDefinition.accept(action);
 
-	    ILabel[] result = ILabel.EMPTY_ARRAY;
-	    if (action.labels != null) {
-		    for (int i = 0; i < action.labels.length && action.labels[i] != null; i++) {
-		        IASTLabelStatement labelStatement = action.labels[i];
-		        IBinding binding = labelStatement.getName().resolveBinding();
-		        if (binding != null)
-		            result = ArrayUtil.append(result, (ILabel) binding);
-		    }
-	    }
-	    return ArrayUtil.trim(result);
+		ILabel[] result = ILabel.EMPTY_ARRAY;
+		if (action.labels != null) {
+			for (int i = 0; i < action.labels.length && action.labels[i] != null; i++) {
+				IASTLabelStatement labelStatement = action.labels[i];
+				IBinding binding = labelStatement.getName().resolveBinding();
+				if (binding != null)
+					result = ArrayUtil.append(result, (ILabel) binding);
+			}
+		}
+		return ArrayUtil.trim(result);
 	}
 
 	protected static IBinding resolveLabel(IASTName labelReference) {
 		char[] labelName = labelReference.toCharArray();
-		IASTFunctionDefinition functionDefinition =
-				findAncestorWithType(labelReference, IASTFunctionDefinition.class);
+		IASTFunctionDefinition functionDefinition = findAncestorWithType(labelReference, IASTFunctionDefinition.class);
 		if (functionDefinition != null) {
-            for (ILabel label : getLabels(functionDefinition)) {
-                if (CharArrayUtils.equals(label.getNameCharArray(), labelName)) {
-                    return label;
-                }
-            }
+			for (ILabel label : getLabels(functionDefinition)) {
+				if (CharArrayUtils.equals(label.getNameCharArray(), labelName)) {
+					return label;
+				}
+			}
 		}
-        // Label not found.
-        return new ProblemBinding(labelReference, IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND,
-        		labelName);
+		// Label not found.
+		return new ProblemBinding(labelReference, IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, labelName);
 	}
 }

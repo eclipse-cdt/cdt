@@ -28,14 +28,14 @@ public interface IVariable extends IBinding {
 	 * Returns the type of the variable
 	 */
 	public IType getType();
-	
+
 	/**
 	 * Returns the value for a variable with an initializer,
 	 * or <code>null</code> otherwise.
 	 * @since 5.1
 	 */
 	public IValue getInitialValue();
-	
+
 	/**
 	 * Returns whether this variable is declared static.
 	 */
@@ -45,12 +45,12 @@ public interface IVariable extends IBinding {
 	 * Returns whether this variable is declared extern.
 	 */
 	public boolean isExtern();
-	
+
 	/**
 	 * Returns whether this variable is an automatic variable.
 	 */
 	public boolean isAuto();
-	
+
 	/**
 	 * Returns whether this variable is declared register.
 	 */

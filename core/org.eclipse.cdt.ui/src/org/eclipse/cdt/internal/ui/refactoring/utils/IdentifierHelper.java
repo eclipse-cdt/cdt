@@ -45,18 +45,23 @@ public class IdentifierHelper {
 		}
 		if (isValidIdentifier(identifier)) {
 			if (isKeyword(identifier)) {
-				return new IdentifierResult(IdentifierResult.KEYWORD, NLS.bind(Messages.IdentifierHelper_isKeyword, identifier)); 
+				return new IdentifierResult(IdentifierResult.KEYWORD,
+						NLS.bind(Messages.IdentifierHelper_isKeyword, identifier));
 			}
-			return new IdentifierResult(IdentifierResult.VALID, NLS.bind(Messages.IdentifierHelper_isValid, identifier));
+			return new IdentifierResult(IdentifierResult.VALID,
+					NLS.bind(Messages.IdentifierHelper_isValid, identifier));
 		} else if (isLeadingADigit(identifier)) {
-			return new IdentifierResult(IdentifierResult.DIGIT_FIRST, NLS.bind(Messages.IdentifierHelper_leadingDigit, identifier)); 
+			return new IdentifierResult(IdentifierResult.DIGIT_FIRST,
+					NLS.bind(Messages.IdentifierHelper_leadingDigit, identifier));
 		} else if (identifier.length() == 0) {
-			return new IdentifierResult(IdentifierResult.EMPTY, Messages.IdentifierHelper_emptyIdentifier); 
+			return new IdentifierResult(IdentifierResult.EMPTY, Messages.IdentifierHelper_emptyIdentifier);
 		} else if (hasIllegalCharacters(identifier)) {
-			return new IdentifierResult(IdentifierResult.ILLEGAL_CHARACTER, NLS.bind(Messages.IdentifierHelper_illegalCharacter, identifier)); 
+			return new IdentifierResult(IdentifierResult.ILLEGAL_CHARACTER,
+					NLS.bind(Messages.IdentifierHelper_illegalCharacter, identifier));
 		}
-		
-		return new IdentifierResult(IdentifierResult.UNKNOWN, NLS.bind(Messages.IdentifierHelper_unidentifiedMistake, identifier)); 
+
+		return new IdentifierResult(IdentifierResult.UNKNOWN,
+				NLS.bind(Messages.IdentifierHelper_unidentifiedMistake, identifier));
 	}
 
 	private static boolean isKeyword(String identifier) {

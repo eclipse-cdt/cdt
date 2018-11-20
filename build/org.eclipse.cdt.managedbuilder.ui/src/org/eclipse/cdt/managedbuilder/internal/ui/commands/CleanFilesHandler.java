@@ -47,7 +47,7 @@ public class CleanFilesHandler extends AbstractResourceActionHandler {
 		List<IFile> selectedFiles = getSelectedBuildableFiles(event);
 		if (selectedFiles.isEmpty())
 			return null;
-		
+
 		CleanFilesJob job = new CleanFilesJob(selectedFiles);
 		job.schedule();
 		return null;
@@ -79,10 +79,9 @@ public class CleanFilesHandler extends AbstractResourceActionHandler {
 		// Fix for bug 139663.
 		// If build automatically is turned on, then this command should be turned off as
 		// it will trigger the auto build.
-	    IPreferencesService preferences = Platform.getPreferencesService();
+		IPreferencesService preferences = Platform.getPreferencesService();
 
-		if (preferences.getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_AUTO_BUILDING,
-				false, null)) {
+		if (preferences.getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_AUTO_BUILDING, false, null)) {
 			// Auto building is on - do not enable the command.
 			return false;
 		}
@@ -109,8 +108,7 @@ public class CleanFilesHandler extends AbstractResourceActionHandler {
 		if (!ManagedBuildManager.manages(project))
 			return false;
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
-		return buildInfo != null && buildInfo.isValid()
-				&& buildInfo.buildsFileType(resource.getFileExtension());
+		return buildInfo != null && buildInfo.isValid() && buildInfo.buildsFileType(resource.getFileExtension());
 	}
 
 	private static class CleanFilesJob extends Job {

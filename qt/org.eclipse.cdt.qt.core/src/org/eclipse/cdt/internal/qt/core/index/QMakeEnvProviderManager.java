@@ -47,8 +47,8 @@ public final class QMakeEnvProviderManager {
 	 */
 	private static List<QMakeEnvProviderDescriptor> loadDescriptors() {
 		List<QMakeEnvProviderDescriptor> descriptors = new ArrayList<QMakeEnvProviderDescriptor>();
-		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(Activator.ID, Activator.QMAKE_ENV_PROVIDER_EXT_POINT_NAME);
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(Activator.ID,
+				Activator.QMAKE_ENV_PROVIDER_EXT_POINT_NAME);
 		for (IConfigurationElement element : elements) {
 			descriptors.add(new QMakeEnvProviderDescriptor(element));
 		}
@@ -86,7 +86,7 @@ public final class QMakeEnvProviderManager {
 
 		public ConfigurationQMakeEnv(ICConfigurationDescription configuration) {
 			this.configuration = configuration;
-	    }
+		}
 
 		@Override
 		public void init() {
@@ -111,9 +111,11 @@ public final class QMakeEnvProviderManager {
 			IProject project = configuration.getProjectDescription().getProject();
 			IFile proFile = project != null ? project.getFile(project.getName() + PRO_FILE_SUFFIX) : null;
 
-			IEnvironmentVariable variable = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_VAR_QMAKE, configuration, true);
+			IEnvironmentVariable variable = CCorePlugin.getDefault().getBuildEnvironmentManager()
+					.getVariable(ENV_VAR_QMAKE, configuration, true);
 			String qmakeFilePath = variable != null ? variable.getValue() : null;
-			return new QMakeEnvInfo(proFile, qmakeFilePath, Collections.<String,String>emptyMap(), Collections.<IFile>emptyList());
+			return new QMakeEnvInfo(proFile, qmakeFilePath, Collections.<String, String>emptyMap(),
+					Collections.<IFile>emptyList());
 		}
 
 	}

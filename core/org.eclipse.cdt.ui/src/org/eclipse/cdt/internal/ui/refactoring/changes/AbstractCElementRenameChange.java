@@ -39,10 +39,10 @@ public abstract class AbstractCElementRenameChange extends ResourceChange {
 	protected AbstractCElementRenameChange(IPath resourcePath, String oldName, String newName, long stampToRestore) {
 		Assert.isNotNull(newName, "new name"); //$NON-NLS-1$
 		Assert.isNotNull(oldName, "old name"); //$NON-NLS-1$
-		fResourcePath= resourcePath;
-		fOldName= oldName;
-		fNewName= newName;
-		fStampToRestore= stampToRestore;
+		fResourcePath = resourcePath;
+		fOldName = oldName;
+		fNewName = newName;
+		fStampToRestore = stampToRestore;
 	}
 
 	protected abstract IPath createNewPath();
@@ -81,12 +81,12 @@ public abstract class AbstractCElementRenameChange extends ResourceChange {
 	public final Change perform(IProgressMonitor pm) throws CoreException {
 		try {
 			pm.beginTask(Messages.AbstractCElementRenameChange_renaming, 1);
-			IResource resource= getResource();
-			IPath newPath= createNewPath();
-			Change result= createUndoChange(resource.getModificationStamp());
+			IResource resource = getResource();
+			IPath newPath = createNewPath();
+			Change result = createUndoChange(resource.getModificationStamp());
 			doRename(new SubProgressMonitor(pm, 1));
 			if (fStampToRestore != IResource.NULL_STAMP) {
-				IResource newResource= ResourcesPlugin.getWorkspace().getRoot().findMember(newPath);
+				IResource newResource = ResourcesPlugin.getWorkspace().getRoot().findMember(newPath);
 				newResource.revertModificationStamp(fStampToRestore);
 			}
 			return result;

@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 public class WorkingSetPropertyTester extends PropertyTester {
 
 	private static final String P_HAS_C_PROJECTS = "hasCProjects"; //$NON-NLS-1$
-	
+
 	/**
 	 * Initializes me.
 	 */
@@ -46,38 +46,38 @@ public class WorkingSetPropertyTester extends PropertyTester {
 		if (P_HAS_C_PROJECTS.equals(property)) {
 			return hasCProjects(getWorkingSet(receiver));
 		}
-		
+
 		return false;
 	}
 
 	private IWorkingSet getWorkingSet(Object object) {
 		IWorkingSet result = null;
-		
+
 		if (object instanceof IWorkingSet) {
 			result = (IWorkingSet) object;
 		} else if (object instanceof IAdaptable) {
 			result = ((IAdaptable) object).getAdapter(IWorkingSet.class);
 		}
-		
+
 		return result;
 	}
-	
+
 	private boolean hasCProjects(IWorkingSet workingSet) {
 		boolean result = false;
-		
+
 		if (workingSet != null) {
 			IAdaptable[] members = workingSet.getElements();
-			
+
 			for (IAdaptable next : members) {
 				IProject project = next.getAdapter(IProject.class);
-				
+
 				if ((project != null) && CoreModel.hasCNature(project)) {
 					result = true;
 					break;
 				}
 			}
 		}
-		
+
 		return result;
 	}
 }

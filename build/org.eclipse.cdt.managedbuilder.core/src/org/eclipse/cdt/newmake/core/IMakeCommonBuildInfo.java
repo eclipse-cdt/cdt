@@ -19,7 +19,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -32,6 +31,7 @@ public interface IMakeCommonBuildInfo {
 	public final static String BUILD_ARGUMENTS = ARGS_PREFIX + ".build.arguments"; //$NON-NLS-1$
 
 	void setBuildAttribute(String name, String value) throws CoreException;
+
 	String getBuildAttribute(String name, String defaultValue);
 
 	IPath getBuildLocation();
@@ -43,7 +43,9 @@ public interface IMakeCommonBuildInfo {
 	void setBuildLocation(IPath location) throws CoreException;
 
 	boolean isStopOnError();
+
 	void setStopOnError(boolean on) throws CoreException;
+
 	boolean supportsStopOnError(boolean on);
 
 	/**
@@ -82,6 +84,7 @@ public interface IMakeCommonBuildInfo {
 	void setParallelBuildOn(boolean on) throws CoreException;
 
 	boolean isDefaultBuildCmd();
+
 	void setUseDefaultBuildCmd(boolean on) throws CoreException;
 
 	IPath getBuildCommand();
@@ -101,18 +104,23 @@ public interface IMakeCommonBuildInfo {
 	void setBuildArguments(String args) throws CoreException;
 
 	String[] getErrorParsers();
+
 	void setErrorParsers(String[] parsers) throws CoreException;
 
 	Map<String, String> getExpandedEnvironment() throws CoreException;
 
 	Map<String, String> getEnvironment();
+
 	void setEnvironment(Map<String, String> env) throws CoreException;
 
 	boolean appendEnvironment();
+
 	void setAppendEnvironment(boolean append) throws CoreException;
 
 	boolean isManagedBuildOn();
+
 	void setManagedBuildOn(boolean on) throws CoreException;
+
 	boolean supportsBuild(boolean managed);
 
 }

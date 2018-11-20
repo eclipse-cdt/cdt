@@ -24,8 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 /**
  * Implementation of field designator.
  */
-public class CPPASTFieldDesignator extends ASTNode
-		implements ICPPASTFieldDesignator, ICPPASTCompletionContext {
+public class CPPASTFieldDesignator extends ASTNode implements ICPPASTFieldDesignator, ICPPASTCompletionContext {
 	private IASTName name;
 
 	public CPPASTFieldDesignator() {
@@ -65,9 +64,12 @@ public class CPPASTFieldDesignator extends ASTNode
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
-				case ASTVisitor.PROCESS_ABORT: return false;
-				case ASTVisitor.PROCESS_SKIP: return true;
-				default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 		if (name != null && !name.accept(action))

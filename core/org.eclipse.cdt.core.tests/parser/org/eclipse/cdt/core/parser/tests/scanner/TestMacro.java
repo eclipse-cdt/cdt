@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -25,9 +25,9 @@ final class TestMacro implements IMacroBinding {
 	private String[] fParams;
 
 	public TestMacro(String name, String expansion, String[] params) {
-		fName= name;
-		fExpansion= expansion;
-		fParams= params;
+		fName = name;
+		fExpansion = expansion;
+		fParams = params;
 	}
 
 	@Override
@@ -70,9 +70,9 @@ final class TestMacro implements IMacroBinding {
 		if (fParams == null) {
 			return null;
 		}
-		char[][] result= new char[fParams.length][];
+		char[][] result = new char[fParams.length][];
 		for (int i = 0; i < result.length; i++) {
-			result[i]= fParams[i].toCharArray();
+			result[i] = fParams[i].toCharArray();
 		}
 		return result;
 	}

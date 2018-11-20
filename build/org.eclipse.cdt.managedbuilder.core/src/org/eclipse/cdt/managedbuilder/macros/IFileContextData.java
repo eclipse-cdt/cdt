@@ -23,19 +23,19 @@ import org.eclipse.core.runtime.IPath;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFileContextData {
-	
+
 	/**
 	 * Returns the input file location
 	 * @return IPath
 	 */
 	public IPath getInputFileLocation();
-	
+
 	/**
 	 * Returns the output file location
 	 * @return IPath
 	 */
 	public IPath getOutputFileLocation();
-	
+
 	/**
 	 * Returns the option context data
 	 * 

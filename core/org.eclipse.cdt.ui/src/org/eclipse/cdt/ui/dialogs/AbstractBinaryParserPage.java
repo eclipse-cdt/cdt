@@ -72,7 +72,8 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 	private void initializeParserPageMap() {
 		fParserPageMap = new HashMap<String, BinaryParserPageConfiguration>(5);
 
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+				"BinaryParserPage"); //$NON-NLS-1$
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getName().equals("parserPage")) { //$NON-NLS-1$
@@ -96,6 +97,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 		super.setVisible(visible);
 		handleBinaryParserChanged();
 	}
+
 	/**
 	 * Notification that the user changed the selection of the Binary Parser.
 	 */

@@ -114,7 +114,7 @@ import org.eclipse.core.runtime.IPath;
  */
 
 public interface IManagedDependencyCommands extends IManagedDependencyInfo {
-	
+
 	/**
 	 * Returns the list of generated dependency files.
 	 *   
@@ -128,34 +128,34 @@ public interface IManagedDependencyCommands extends IManagedDependencyInfo {
 	/**
 	 * Returns the command lines to be invoked before the normal tool invocation 
 	 * to calculate dependencies.
-     *
+	 *
 	 * @return String[]  This can be null or an empty array if no dependency 
 	 *                   generation command needs to be invoked before the normal 
 	 *                   tool invocation.
 	 */
 	public String[] getPreToolDependencyCommands();
-	
+
 	/**
 	 * Returns the command line options to be used to calculate dependencies.
 	 * The options are added to the normal tool invocation. 
-     *
+	 *
 	 * @return String[]  This can be null or an empty array if no additional 
 	 *                   arguments need to be added to the tool invocation.
 	 *         SHOULD THIS RETURN AN IOption[]?
 	 */
 	public String[] getDependencyCommandOptions();
 	//  IMPLEMENTATION NOTE:  This should be called from addRuleFromSource for both resconfig & non-resconfig
-	
+
 	/**
 	 * Returns the command lines to be invoked after the normal tool invocation  
 	 * to calculate dependencies.  
-     *
+	 *
 	 * @return String[]  This can be null or an empty array if no dependency 
 	 *                   generation commands needs to be invoked after the normal 
 	 *                   tool invocation
 	 */
 	public String[] getPostToolDependencyCommands();
-	
+
 	/**
 	 * Returns true if the command lines and/or options returned by this interface
 	 * are not specific to the particular source file, but are only specific to,
@@ -164,7 +164,7 @@ public interface IManagedDependencyCommands extends IManagedDependencyInfo {
 	 * and/or options are different than if the build context were the parent 
 	 * configuration.  This can be used by the build file generator in helping
 	 * to determine if a "pattern" (generic) rule can be used.
-     *
+	 *
 	 * @return boolean
 	 */
 	public boolean areCommandsGeneric();

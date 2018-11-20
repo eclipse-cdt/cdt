@@ -180,8 +180,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	@Override
 	public IStatus build(IProgressMonitor monitor) {
-		MultiStatus result = new MultiStatus(CUIPlugin.PLUGIN_ID, 0,
-				WorkingSetMessages.WSConfig_build_problems, null);
+		MultiStatus result = new MultiStatus(CUIPlugin.PLUGIN_ID, 0, WorkingSetMessages.WSConfig_build_problems, null);
 
 		List<IWorkingSetProjectConfiguration> toBuild = new java.util.ArrayList<IWorkingSetProjectConfiguration>(
 				getProjectConfigurations().size());
@@ -193,8 +192,8 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 			}
 		}
 
-		SubMonitor progress = SubMonitor.convert(monitor, NLS.bind(WorkingSetMessages.WSConfig_build_task,
-				getWorkingSet().getName()), toBuild.size());
+		SubMonitor progress = SubMonitor.convert(monitor,
+				NLS.bind(WorkingSetMessages.WSConfig_build_task, getWorkingSet().getName()), toBuild.size());
 
 		try {
 			for (IWorkingSetProjectConfiguration next : toBuild) {
@@ -297,8 +296,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	 * 
 	 * @since 6.0
 	 */
-	public static class Snapshot extends WorkingSetConfiguration implements
-			IWorkingSetConfiguration.ISnapshot {
+	public static class Snapshot extends WorkingSetConfiguration implements IWorkingSetConfiguration.ISnapshot {
 
 		private final boolean readOnly;
 		private final WorkspaceSnapshot workspace;
@@ -343,8 +341,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		 * @param workspace
 		 *            the current workspace snapshot
 		 */
-		protected Snapshot(IWorkingSetProxy workingSet, IWorkingSetConfiguration config,
-				WorkspaceSnapshot workspace) {
+		protected Snapshot(IWorkingSetProxy workingSet, IWorkingSetConfiguration config, WorkspaceSnapshot workspace) {
 			this(workingSet, workspace);
 
 			setName(config.getName());

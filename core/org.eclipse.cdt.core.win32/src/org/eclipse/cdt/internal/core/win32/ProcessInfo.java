@@ -27,7 +27,7 @@ public class ProcessInfo implements IProcessInfo {
 
 	int pid;
 	String name;
-	
+
 	public ProcessInfo(String pidString, String name) {
 		try {
 			pid = Integer.parseInt(pidString);
@@ -35,12 +35,12 @@ public class ProcessInfo implements IProcessInfo {
 		}
 		this.name = name;
 	}
-	
+
 	public ProcessInfo(int pid, String name) {
 		this.pid = pid;
 		this.name = name;
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.IProcessInfo#getName()
 	 */

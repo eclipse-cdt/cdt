@@ -17,15 +17,25 @@ import junit.framework.TestSuite;
 
 public class DoWhileStatementTests extends TestBase {
 	public static class NonIndexing extends DoWhileStatementTests {
-		public NonIndexing() {setStrategy(new NonIndexingTestStrategy());}
-		public static TestSuite suite() {return suite(NonIndexing.class);}
+		public NonIndexing() {
+			setStrategy(new NonIndexingTestStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(NonIndexing.class);
+		}
 	}
-	
+
 	public static class SingleProject extends DoWhileStatementTests {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true, false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(true, false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
-	
+
 	// constexpr int f(int n) {
 	//   int sum { 0 };
 	//   int i { 0 };
@@ -35,12 +45,12 @@ public class DoWhileStatementTests extends TestBase {
 	// 	 } while (i <= n);
 	//   return sum;
 	// }
-	
+
 	// constexpr int x = f(10);
 	public void testDoWhile() throws Exception {
 		assertEvaluationEquals(55);
 	}
-	
+
 	// constexpr int f() {
 	//   int sum { 0 };
 	//   do {
@@ -48,12 +58,12 @@ public class DoWhileStatementTests extends TestBase {
 	// 	 } while (true);
 	//   return sum;
 	// }
-	
+
 	// constexpr int x = f();
 	public void testDoWhileInfiniteLoop() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
-	
+
 	// constexpr int f() {
 	//   int sum { 0 };
 	//   do {
@@ -61,12 +71,12 @@ public class DoWhileStatementTests extends TestBase {
 	// 	 } while (true);
 	//   return sum;
 	// }
-	
+
 	// constexpr int x = f();
 	public void testDoWhileReturn() throws Exception {
 		assertEvaluationEquals(42);
 	}
-	
+
 	//	constexpr int f(int n) {
 	//	  int sum { 0 };
 	//	  do
@@ -74,12 +84,12 @@ public class DoWhileStatementTests extends TestBase {
 	//	  while(n > 0);
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f(10);
 	public void testDoWhileWithNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(10);
 	}
-	
+
 	//	constexpr int f(int n) {
 	//	  int sum { 0 };
 	//	  do
@@ -87,7 +97,7 @@ public class DoWhileStatementTests extends TestBase {
 	//	  while(n > 0);
 	//	  return sum;
 	//	}
-	
+
 	//	constexpr int x = f(10);
 	public void testDoWhileWithReturnInNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(42);

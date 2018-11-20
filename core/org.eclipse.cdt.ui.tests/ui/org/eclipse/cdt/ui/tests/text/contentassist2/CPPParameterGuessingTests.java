@@ -59,11 +59,10 @@ public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}
-	
+
 	protected static final int DEFAULT_FLAGS = IS_COMPLETION;
 
-	protected void assertParametersGuesses(Map<String, String[][]> expected)
-			throws Exception {
+	protected void assertParametersGuesses(Map<String, String[][]> expected) throws Exception {
 		assertContentAssistResults(getBuffer().length() - 1, 0, expected, DEFAULT_FLAGS, CompareType.REPLACEMENT);
 	}
 
@@ -73,8 +72,7 @@ public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 	//		piab(
 	public void testIndirectTypes() throws Exception {
 		Map<String, String[][]> resultsMap = new HashMap<>();
-		resultsMap.put("piab(a, b)", new String[][] { { "*aTypePtr", "bTypeObj" },
-				{ "bTypeObj" } });
+		resultsMap.put("piab(a, b)", new String[][] { { "*aTypePtr", "bTypeObj" }, { "bTypeObj" } });
 		assertParametersGuesses(resultsMap);
 	}
 
@@ -85,8 +83,7 @@ public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 	public void testOverloadedFunction() throws Exception {
 		Map<String, String[][]> resultsMap = new HashMap<>();
 		resultsMap.put("overload(x, a)", new String[][] { { "intVal" }, { "aTypeObj" } });
-		resultsMap.put("overload(x, aPtr)",
-				new String[][] { { "intVal" }, { "&aTypeObj" } });
+		resultsMap.put("overload(x, aPtr)", new String[][] { { "intVal" }, { "&aTypeObj" } });
 		assertParametersGuesses(resultsMap);
 	}
 
@@ -111,8 +108,8 @@ public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 	public void testOverloadedMethod() throws Exception {
 		Map<String, String[][]> resultsMap = new HashMap<>();
 		resultsMap.put("aMethod(c)", new String[][] { { "charX", "charY", "charZ" } });
-		resultsMap.put("aMethod(c, x)", new String[][] { { "charX", "charY", "charZ" },
-				{ "charX", "charY", "charZ" } });
+		resultsMap.put("aMethod(c, x)",
+				new String[][] { { "charX", "charY", "charZ" }, { "charX", "charY", "charZ" } });
 		assertParametersGuesses(resultsMap);
 	}
 
@@ -124,8 +121,8 @@ public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 	//		testParameter
 	public void testParameterNameMatching() throws Exception {
 		Map<String, String[][]> resultsMap = new HashMap<>();
-		resultsMap.put("testParameterNameMatching(lngName, shrt)", new String[][] {
-				{ "lng", "shrtNameMatch" }, { "lng", "shrtNameMatch" } });
+		resultsMap.put("testParameterNameMatching(lngName, shrt)",
+				new String[][] { { "lng", "shrtNameMatch" }, { "lng", "shrtNameMatch" } });
 		assertParametersGuesses(resultsMap);
 	}
 
@@ -137,8 +134,8 @@ public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 	public void testInsideConstructor() throws Exception {
 		Map<String, String[][]> resultsMap = new HashMap<>();
 		resultsMap.put("aMethod(c)", new String[][] { { "charX", "charY", "inCall" } });
-		resultsMap.put("aMethod(c, x)", new String[][] {
-				{ "charX", "charY", "inCall"}, { "charX", "charY", "inCall" } });
+		resultsMap.put("aMethod(c, x)",
+				new String[][] { { "charX", "charY", "inCall" }, { "charX", "charY", "inCall" } });
 		assertParametersGuesses(resultsMap);
 	}
 }

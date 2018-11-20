@@ -23,7 +23,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  * @since 4.4
  */
 public class GDBProcesses_7_4 extends GDBProcesses_7_3 {
-    
+
 	public GDBProcesses_7_4(DsfSession session) {
 		super(session);
 	}
@@ -31,20 +31,15 @@ public class GDBProcesses_7_4 extends GDBProcesses_7_3 {
 	/**
 	 * A container context that is not an IBreakpointsTargetDMContext.
 	 */
-	private static class GDBContainerDMC_7_4 extends MIContainerDMC 
-	implements IMemoryDMContext
-	{
+	private static class GDBContainerDMC_7_4 extends MIContainerDMC implements IMemoryDMContext {
 		public GDBContainerDMC_7_4(String sessionId, IProcessDMContext processDmc, String groupId) {
 			super(sessionId, processDmc, groupId);
 		}
 	}
-	
+
 	@Override
-    public IMIContainerDMContext createContainerContext(IProcessDMContext processDmc,
-    													String groupId) {
-    	return new GDBContainerDMC_7_4(getSession().getId(), processDmc, groupId);
-    }
-	
+	public IMIContainerDMContext createContainerContext(IProcessDMContext processDmc, String groupId) {
+		return new GDBContainerDMC_7_4(getSession().getId(), processDmc, groupId);
+	}
 
 }
-

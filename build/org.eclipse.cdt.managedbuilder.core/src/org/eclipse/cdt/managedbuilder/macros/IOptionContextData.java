@@ -32,7 +32,7 @@ public interface IOptionContextData {
 	 * @return IOption, could be {@code null}
 	 */
 	public IOption getOption();
-	
+
 	/**
 	 * Returns an option category
 	 * 
@@ -41,7 +41,7 @@ public interface IOptionContextData {
 	 * @since 8.0
 	 */
 	public IOptionCategory getOptionCategory();
-	
+
 	/**
 	 * Returns IBuildObject that represents the option holder. 
 	 * For the backward compatibility MBS will also support the cases 

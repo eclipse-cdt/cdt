@@ -41,9 +41,8 @@ public class MesonProjectGenerator extends FMProjectGenerator {
 
 	@Override
 	protected void initProjectDescription(IProjectDescription description) {
-		description
-				.setNatureIds(
-						new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, MesonNature.ID });
+		description.setNatureIds(
+				new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, MesonNature.ID });
 		ICommand command = description.newCommand();
 		CBuilder.setupBuilder(command);
 		description.setBuildSpec(new ICommand[] { command });

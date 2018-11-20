@@ -29,5 +29,5 @@ public interface ITestingSessionsManagerListener {
 	 * @param testingSession the activated testing session
 	 */
 	void sessionActivated(ITestingSession testingSession);
-	
+
 }

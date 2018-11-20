@@ -203,13 +203,14 @@ public class HeadlessBuilder implements IApplication {
 	/*
 	 *  Find all project build configurations that match the regular expression ("project/config")
 	 */
-	protected Map<IProject, Set<ICConfigurationDescription>> matchConfigurations(String regularExpression, IProject[] projectList, Map<IProject, Set<ICConfigurationDescription>> cfgMap) {
+	protected Map<IProject, Set<ICConfigurationDescription>> matchConfigurations(String regularExpression,
+			IProject[] projectList, Map<IProject, Set<ICConfigurationDescription>> cfgMap) {
 		try {
 			int separatorIndex = regularExpression.indexOf('/');
 
 			String projectRegEx;
 			String configRegEx;
-			if(separatorIndex == -1 || separatorIndex == regularExpression.length()-1) {
+			if (separatorIndex == -1 || separatorIndex == regularExpression.length() - 1) {
 				// build all configurations for this project
 				projectRegEx = regularExpression;
 				configRegEx = MATCH_ALL_CONFIGS;
@@ -224,27 +225,28 @@ public class HeadlessBuilder implements IApplication {
 			// Find the projects that match the regular expression
 			boolean projectMatched = false;
 			boolean configMatched = false;
-			for(IProject project : projectList) {
+			for (IProject project : projectList) {
 				Matcher projectMatcher = projectPattern.matcher(project.getName());
 
-				if(projectMatcher.matches()) {
+				if (projectMatcher.matches()) {
 					projectMatched = true;
 					// Find the configurations that match the regular expression
 					ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(project, false);
 					if (desc == null) {
-						System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + project.getName() + HeadlessBuildMessages.HeadlessBuilder_Not_CDT_Proj);
+						System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + project.getName()
+								+ HeadlessBuildMessages.HeadlessBuilder_Not_CDT_Proj);
 						continue;
 					}
 					ICConfigurationDescription[] cfgs = desc.getConfigurations();
 
-					for(ICConfigurationDescription cfg : cfgs) {
+					for (ICConfigurationDescription cfg : cfgs) {
 						Matcher cfgMatcher = configPattern.matcher(cfg.getName());
 
-						if(cfgMatcher.matches()) {
+						if (cfgMatcher.matches()) {
 							configMatched = true;
 							// Build this configuration for this project
 							Set<ICConfigurationDescription> set = cfgMap.get(project);
-							if(set == null)
+							if (set == null)
 								set = new HashSet<ICConfigurationDescription>();
 							set.add(cfg);
 							cfgMap.put(project, set);
@@ -253,12 +255,15 @@ public class HeadlessBuilder implements IApplication {
 				}
 			}
 			if (!projectMatched)
-				System.err.println(HeadlessBuildMessages.HeadlessBuilder_NoProjectMatched + regularExpression + HeadlessBuildMessages.HeadlessBuilder_Skipping2);
+				System.err.println(HeadlessBuildMessages.HeadlessBuilder_NoProjectMatched + regularExpression
+						+ HeadlessBuildMessages.HeadlessBuilder_Skipping2);
 			else if (!configMatched)
-				System.err.println(HeadlessBuildMessages.HeadlessBuilder_NoConfigMatched + regularExpression + HeadlessBuildMessages.HeadlessBuilder_Skipping2);
+				System.err.println(HeadlessBuildMessages.HeadlessBuilder_NoConfigMatched + regularExpression
+						+ HeadlessBuildMessages.HeadlessBuilder_Skipping2);
 		} catch (PatternSyntaxException e) {
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_RegExSyntaxError + e.toString());
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_Skipping + regularExpression + HeadlessBuildMessages.HeadlessBuilder_Quote);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_Skipping + regularExpression
+					+ HeadlessBuildMessages.HeadlessBuilder_Quote);
 		}
 		return cfgMap;
 	}
@@ -266,7 +271,8 @@ public class HeadlessBuilder implements IApplication {
 	/*
 	 *  Build the given configurations using the specified build type (FULL, CLEAN, INCREMENTAL)
 	 */
-	protected void buildConfigurations(Map<IProject, Set<ICConfigurationDescription>> projConfigs, final IProgressMonitor monitor, final int buildType) throws CoreException {
+	protected void buildConfigurations(Map<IProject, Set<ICConfigurationDescription>> projConfigs,
+			final IProgressMonitor monitor, final int buildType) throws CoreException {
 		for (Map.Entry<IProject, Set<ICConfigurationDescription>> entry : projConfigs.entrySet()) {
 			Set<ICConfigurationDescription> cfgDescs = entry.getValue();
 
@@ -304,7 +310,7 @@ public class HeadlessBuilder implements IApplication {
 
 				// Handle relative paths as relative to cwd
 				if (project_uri.getScheme() == null) {
-					String cwd = System.getProperty("user.dir");  //$NON-NLS-1$
+					String cwd = System.getProperty("user.dir"); //$NON-NLS-1$
 					p = new Path(cwd).addTrailingSeparator();
 					p = p.append(projURIStr);
 					project_uri = URIUtil.toURI(p);
@@ -317,7 +323,8 @@ public class HeadlessBuilder implements IApplication {
 
 			if (recurse) {
 				if (!EFS.getStore(project_uri).fetchInfo().exists()) {
-					System.err.println(HeadlessBuildMessages.HeadlessBuilder_Directory + project_uri + HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
+					System.err.println(HeadlessBuildMessages.HeadlessBuilder_Directory + project_uri
+							+ HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
 					return ERROR;
 				}
 				for (IFileStore info : EFS.getStore(project_uri).childStores(EFS.NONE, monitor)) {
@@ -333,7 +340,8 @@ public class HeadlessBuilder implements IApplication {
 			IFileStore fstore = EFS.getStore(project_uri).getChild(".project"); //$NON-NLS-1$
 			if (!fstore.fetchInfo().exists()) {
 				if (!recurse) {
-					System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + project_uri + HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
+					System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + project_uri
+							+ HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
 					return ERROR;
 				}
 				// .project not found; OK if we're not recursing
@@ -351,20 +359,23 @@ public class HeadlessBuilder implements IApplication {
 					project.open(monitor);
 					return OK;
 				}
-				System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + desc.getName() + HeadlessBuildMessages.HeadlessBuilder_already_exists_in_workspace);
+				System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + desc.getName()
+						+ HeadlessBuildMessages.HeadlessBuilder_already_exists_in_workspace);
 				return ERROR;
 			}
 			// Create and open the project
 			// Note that if the project exists directly under the workspace root, we can't #setLocationURI(...)
-			if (!URIUtil.equals(org.eclipse.core.runtime.URIUtil.append(
-								ResourcesPlugin.getWorkspace().getRoot().getLocationURI(),
-								org.eclipse.core.runtime.URIUtil.lastSegment(project_uri)), project_uri))
+			if (!URIUtil.equals(
+					org.eclipse.core.runtime.URIUtil.append(ResourcesPlugin.getWorkspace().getRoot().getLocationURI(),
+							org.eclipse.core.runtime.URIUtil.lastSegment(project_uri)),
+					project_uri))
 				desc.setLocationURI(project_uri);
 			else
 				project_uri = null;
 			// Check the URI is valid for a project in this workspace
 			if (!root.getWorkspace().validateProjectLocationURI(project, project_uri).equals(Status.OK_STATUS)) {
-				System.err.println(HeadlessBuildMessages.HeadlessBuilder_URI + project_uri + HeadlessBuildMessages.HeadlessBuilder_is_not_valid_in_workspace);
+				System.err.println(HeadlessBuildMessages.HeadlessBuilder_URI + project_uri
+						+ HeadlessBuildMessages.HeadlessBuilder_is_not_valid_in_workspace);
 				return ERROR;
 			}
 
@@ -374,7 +385,8 @@ public class HeadlessBuilder implements IApplication {
 			try {
 				if (in != null)
 					in.close();
-			} catch (IOException e2) { /* don't care */ }
+			} catch (IOException e2) {
+				/* don't care */ }
 		}
 		return OK;
 	}
@@ -435,12 +447,13 @@ public class HeadlessBuilder implements IApplication {
 			}
 
 			if (!root.isAccessible()) {
-				System.err.println(HeadlessBuildMessages.HeadlessBuilder_Workspace + root.getLocationURI().toString() + HeadlessBuildMessages.HeadlessBuilder_is_not_accessible);
+				System.err.println(HeadlessBuildMessages.HeadlessBuilder_Workspace + root.getLocationURI().toString()
+						+ HeadlessBuildMessages.HeadlessBuilder_is_not_accessible);
 				return ERROR;
 			}
 
 			// Handle user provided arguments
-			if (!getArguments((String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS)))
+			if (!getArguments((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS)))
 				return ERROR;
 
 			if (markerTypesDefault || markerTypesAll) {
@@ -535,7 +548,7 @@ public class HeadlessBuilder implements IApplication {
 
 					System.out.println(HeadlessBuildMessages.HeadlessBuilder_building_all);
 					root.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
-					for(IProject p : root.getProjects()) {
+					for (IProject p : root.getProjects()) {
 						buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(p);
 						if (printErrorMarkers) {
 							accumulateErrorMarkers(p, allBuildErrors);
@@ -547,7 +560,7 @@ public class HeadlessBuilder implements IApplication {
 						matchConfigurations(regEx, allProjects, configsToBuild);
 					// Build the list of configurations
 					buildConfigurations(configsToBuild, monitor, IncrementalProjectBuilder.FULL_BUILD);
-					for(IProject p : configsToBuild.keySet()) {
+					for (IProject p : configsToBuild.keySet()) {
 						buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(p);
 						if (printErrorMarkers) {
 							accumulateErrorMarkers(p, allBuildErrors);
@@ -639,7 +652,7 @@ public class HeadlessBuilder implements IApplication {
 	 *   -I          {include_path} additional include_path to add to tools
 	 *   -include    {include_file} additional include_file to pass to tools
 	 *   -D          {prepoc_define} addition preprocessor defines to pass to the tools
-  	 *   -E			 {var=value} replace/add value to environment variable when running all tools
+	 *   -E			 {var=value} replace/add value to environment variable when running all tools
 	 *   -Ea		 {var=value} append value to environment variable when running all tools
 	 *   -Ep		 {var=value} prepend value to environment variable when running all tools
 	 *   -Er         {var} remove/unset the given environment variable
@@ -677,11 +690,14 @@ public class HeadlessBuilder implements IApplication {
 						macroVal = macro.substring(macro.indexOf('=') + 1);
 						macro = macro.substring(0, macro.indexOf('='));
 					}
-					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(CDataUtil.createCMacroEntry(macro, macroVal, 0));
+					HeadlessBuilderExternalSettingsProvider.additionalSettings
+							.add(CDataUtil.createCMacroEntry(macro, macroVal, 0));
 				} else if ("-I".equals(args[i])) { //$NON-NLS-1$
-					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(CDataUtil.createCIncludePathEntry(args[++i], 0));
+					HeadlessBuilderExternalSettingsProvider.additionalSettings
+							.add(CDataUtil.createCIncludePathEntry(args[++i], 0));
 				} else if ("-include".equals(args[i])) { //$NON-NLS-1$
-					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(CDataUtil.createCIncludeFileEntry(args[++i], 0));
+					HeadlessBuilderExternalSettingsProvider.additionalSettings
+							.add(CDataUtil.createCIncludeFileEntry(args[++i], 0));
 				} else if ("-E".equals(args[i])) { //$NON-NLS-1$
 					addEnvironmentVariable(args[++i], IEnvironmentVariable.ENVVAR_REPLACE);
 				} else if ("-Ea".equals(args[i])) { //$NON-NLS-1$
@@ -718,7 +734,8 @@ public class HeadlessBuilder implements IApplication {
 			}
 		} catch (Exception e) {
 			// Print usage
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_invalid_argument + args != null ? Arrays.toString(args) : ""); //$NON-NLS-1$
+			System.err.println(
+					HeadlessBuildMessages.HeadlessBuilder_invalid_argument + args != null ? Arrays.toString(args) : ""); //$NON-NLS-1$
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_Error + e.getMessage());
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_import);
@@ -809,61 +826,62 @@ public class HeadlessBuilder implements IApplication {
 					savedToolOptionsSet.add(new SavedToolOption(tool.getId(), option.getId(), option.getValue()));
 					// Update the value of the tool option in a type-dependent manner
 					switch (option.getValueType()) {
-						case IOption.BOOLEAN:
-							boolean booleanValue = (Boolean) option.getDefaultValue();
-							if (toolOption.operation != ToolOption.REMOVE)
+					case IOption.BOOLEAN:
+						boolean booleanValue = (Boolean) option.getDefaultValue();
+						if (toolOption.operation != ToolOption.REMOVE)
 							booleanValue = Boolean.parseBoolean(toolOption.value);
-							ManagedBuildManager.setOption(configuration, tool, option, booleanValue);
+						ManagedBuildManager.setOption(configuration, tool, option, booleanValue);
+						break;
+					case IOption.STRING_LIST:
+					case IOption.INCLUDE_PATH:
+					case IOption.PREPROCESSOR_SYMBOLS:
+					case IOption.LIBRARIES:
+					case IOption.OBJECTS:
+					case IOption.INCLUDE_FILES:
+					case IOption.LIBRARY_PATHS:
+					case IOption.LIBRARY_FILES:
+					case IOption.MACRO_FILES:
+					case IOption.UNDEF_INCLUDE_PATH:
+					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+					case IOption.UNDEF_INCLUDE_FILES:
+					case IOption.UNDEF_LIBRARY_PATHS:
+					case IOption.UNDEF_LIBRARY_FILES:
+					case IOption.UNDEF_MACRO_FILES:
+						List<String> listValue = new ArrayList<String>();
+						switch (toolOption.operation) {
+						case ToolOption.APPEND:
+							listValue.addAll((List<String>) option.getValue());
+							listValue.addAll(Arrays.asList(toolOption.value.split(","))); //$NON-NLS-1$
 							break;
-						case IOption.STRING_LIST:
-						case IOption.INCLUDE_PATH:
-						case IOption.PREPROCESSOR_SYMBOLS:
-						case IOption.LIBRARIES:
-						case IOption.OBJECTS:
-						case IOption.INCLUDE_FILES:
-						case IOption.LIBRARY_PATHS:
-						case IOption.LIBRARY_FILES:
-						case IOption.MACRO_FILES:
-						case IOption.UNDEF_INCLUDE_PATH:
-						case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
-						case IOption.UNDEF_INCLUDE_FILES:
-						case IOption.UNDEF_LIBRARY_PATHS:
-						case IOption.UNDEF_LIBRARY_FILES:
-						case IOption.UNDEF_MACRO_FILES:
-							List<String> listValue = new ArrayList<String>();
-							switch (toolOption.operation) {
-								case ToolOption.APPEND:
-									listValue.addAll((List<String>) option.getValue());
-									listValue.addAll(Arrays.asList(toolOption.value.split(","))); //$NON-NLS-1$
-									break;
-								case ToolOption.PREPEND:
-									listValue.addAll(Arrays.asList(toolOption.value.split(","))); //$NON-NLS-1$
-									listValue.addAll((List<String>) option.getValue());
-									break;
-								case ToolOption.REMOVE:
-									listValue = (List<String>) option.getDefaultValue();
-									break;
-								default:
-									listValue = Arrays.asList(toolOption.value.split(",")); //$NON-NLS-1$
-									break;
-							}
-							ManagedBuildManager.setOption(configuration, tool, option, listValue == null ? new String[0] : listValue.toArray(new String[listValue.size()]));
+						case ToolOption.PREPEND:
+							listValue.addAll(Arrays.asList(toolOption.value.split(","))); //$NON-NLS-1$
+							listValue.addAll((List<String>) option.getValue());
 							break;
-						default: // IOption.ENUMERATED, IOption.STRING
-							String stringValue = toolOption.value;
-							switch (toolOption.operation) {
-								case ToolOption.APPEND:
-									stringValue = option.getValue() + stringValue;
-									break;
-								case ToolOption.PREPEND:
-									stringValue = stringValue + option.getValue();
-									break;
-								case ToolOption.REMOVE:
-									stringValue = (String) option.getDefaultValue();
-									break;
-							}
-							ManagedBuildManager.setOption(configuration, tool, option, stringValue);
+						case ToolOption.REMOVE:
+							listValue = (List<String>) option.getDefaultValue();
 							break;
+						default:
+							listValue = Arrays.asList(toolOption.value.split(",")); //$NON-NLS-1$
+							break;
+						}
+						ManagedBuildManager.setOption(configuration, tool, option,
+								listValue == null ? new String[0] : listValue.toArray(new String[listValue.size()]));
+						break;
+					default: // IOption.ENUMERATED, IOption.STRING
+						String stringValue = toolOption.value;
+						switch (toolOption.operation) {
+						case ToolOption.APPEND:
+							stringValue = option.getValue() + stringValue;
+							break;
+						case ToolOption.PREPEND:
+							stringValue = stringValue + option.getValue();
+							break;
+						case ToolOption.REMOVE:
+							stringValue = (String) option.getDefaultValue();
+							break;
+						}
+						ManagedBuildManager.setOption(configuration, tool, option, stringValue);
+						break;
 					}
 				}
 			}

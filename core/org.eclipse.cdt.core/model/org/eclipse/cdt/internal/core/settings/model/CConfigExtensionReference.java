@@ -56,7 +56,7 @@ public class CConfigExtensionReference implements ICConfigExtensionReference {
 			return true;
 		}
 		if (obj instanceof CConfigExtensionReference) {
-			CConfigExtensionReference ext = (CConfigExtensionReference)obj;
+			CConfigExtensionReference ext = (CConfigExtensionReference) obj;
 			if (ext.fExtPoint.equals(fExtPoint) && ext.fId.equals(fId)) {
 				return true;
 			}

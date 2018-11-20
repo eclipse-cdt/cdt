@@ -33,48 +33,47 @@ public class CHNode implements IAdaptable {
 	private CHNode fParent;
 	private ICElement fRepresentedDecl;
 	private ITranslationUnit fFileOfReferences;
-    private List<CHReferenceInfo> fReferences;
+	private List<CHReferenceInfo> fReferences;
 
-    protected int fHashCode;
-    private long fTimestamp;
-    private boolean fIsRecursive;
+	protected int fHashCode;
+	private long fTimestamp;
+	private boolean fIsRecursive;
 	private boolean fIsInitializer;
 	private boolean fIsReadAccess;
 	private boolean fIsWriteAccess;
 	private final int fLinkageID;
 
-    /**
-     * Creates a new node for the include browser
-     */
-    public CHNode(CHNode parent, ITranslationUnit fileOfReferences, long timestamp, ICElement decl,
-    		int linkageID) {
-        fParent= parent;
-        fFileOfReferences= fileOfReferences;
-        fReferences= Collections.emptyList();
-        fRepresentedDecl= decl;
-        fIsRecursive= computeIsRecursive(fParent, decl);
-        fHashCode= computeHashCode();
-        fTimestamp= timestamp;
-        fLinkageID= linkageID;
-    }
+	/**
+	 * Creates a new node for the include browser
+	 */
+	public CHNode(CHNode parent, ITranslationUnit fileOfReferences, long timestamp, ICElement decl, int linkageID) {
+		fParent = parent;
+		fFileOfReferences = fileOfReferences;
+		fReferences = Collections.emptyList();
+		fRepresentedDecl = decl;
+		fIsRecursive = computeIsRecursive(fParent, decl);
+		fHashCode = computeHashCode();
+		fTimestamp = timestamp;
+		fLinkageID = linkageID;
+	}
 
 	private int computeHashCode() {
-        int hashCode= 1;
-        if (fParent != null) {
-            hashCode= fParent.hashCode() * 31;
-        }
-        if (fRepresentedDecl != null) {
-        	hashCode+= fRepresentedDecl.hashCode();
-        }
-        return hashCode;
-    }
+		int hashCode = 1;
+		if (fParent != null) {
+			hashCode = fParent.hashCode() * 31;
+		}
+		if (fRepresentedDecl != null) {
+			hashCode += fRepresentedDecl.hashCode();
+		}
+		return hashCode;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return fHashCode;
-    }
+		return fHashCode;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof CHNode)) {
 			return false;
@@ -86,32 +85,32 @@ public class CHNode implements IAdaptable {
 		}
 
 		return Objects.equals(fRepresentedDecl, rhs.fRepresentedDecl);
-    }
+	}
 
-    private boolean computeIsRecursive(CHNode parent, ICElement decl) {
-        if (parent == null || decl == null) {
-            return false;
-        }
-        if (decl.equals(parent.fRepresentedDecl)) {
-            return true;
-        }
-        return computeIsRecursive(parent.fParent, decl);
-    }
+	private boolean computeIsRecursive(CHNode parent, ICElement decl) {
+		if (parent == null || decl == null) {
+			return false;
+		}
+		if (decl.equals(parent.fRepresentedDecl)) {
+			return true;
+		}
+		return computeIsRecursive(parent.fParent, decl);
+	}
 
 	/**
-     * Returns the parent node or <code>null</code> for the root node.
-     */
-    public CHNode getParent() {
-        return fParent;
-    }
+	 * Returns the parent node or <code>null</code> for the root node.
+	 */
+	public CHNode getParent() {
+		return fParent;
+	}
 
-    public int getLinkageID() {
-    	return fLinkageID;
-    }
+	public int getLinkageID() {
+		return fLinkageID;
+	}
 
 	public boolean isRecursive() {
-        return fIsRecursive;
-    }
+		return fIsRecursive;
+	}
 
 	public int getReferenceCount() {
 		return fReferences.size();
@@ -134,8 +133,7 @@ public class CHNode implements IAdaptable {
 	}
 
 	public boolean isVariableOrEnumerator() {
-		return fRepresentedDecl instanceof IVariableDeclaration ||
-			fRepresentedDecl instanceof IEnumerator;
+		return fRepresentedDecl instanceof IVariableDeclaration || fRepresentedDecl instanceof IEnumerator;
 	}
 
 	public int getFirstReferenceOffset() {
@@ -145,10 +143,10 @@ public class CHNode implements IAdaptable {
 	public void addReference(CHReferenceInfo info) {
 		switch (fReferences.size()) {
 		case 0:
-			fReferences= Collections.singletonList(info);
+			fReferences = Collections.singletonList(info);
 			return;
 		case 1:
-			fReferences= new ArrayList<CHReferenceInfo>(fReferences);
+			fReferences = new ArrayList<CHReferenceInfo>(fReferences);
 			break;
 		}
 		fReferences.add(info);
@@ -190,8 +188,8 @@ public class CHNode implements IAdaptable {
 	}
 
 	public void setRWAccess(boolean readAccess, boolean writeAccess) {
-		fIsReadAccess= readAccess;
-		fIsWriteAccess= writeAccess;
+		fIsReadAccess = readAccess;
+		fIsWriteAccess = writeAccess;
 	}
 
 	public boolean isReadAccess() {

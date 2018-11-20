@@ -22,15 +22,13 @@ public class UnhandledASTModificationException extends RuntimeException {
 	public UnhandledASTModificationException(ASTModification illegalModification) {
 		this.illegalModification = illegalModification;
 	}
-	
+
 	@Override
 	public String getMessage() {
 		StringBuilder message = new StringBuilder();
 		message.append("Tried to "). //$NON-NLS-1$
-				append(illegalModification.getKind().name()).
-				append(" on "). //$NON-NLS-1$
-				append(illegalModification.getTargetNode()).
-				append(" with "). //$NON-NLS-1$
+				append(illegalModification.getKind().name()).append(" on "). //$NON-NLS-1$
+				append(illegalModification.getTargetNode()).append(" with "). //$NON-NLS-1$
 				append(illegalModification.getNewNode());
 		return message.toString();
 	}

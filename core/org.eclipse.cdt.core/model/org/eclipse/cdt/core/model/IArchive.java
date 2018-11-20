@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * An IArchive represents a group of files combined  into  a
  * single file(the Archive), for example 'libXX.a'.
@@ -24,7 +23,7 @@ package org.eclipse.cdt.core.model;
 public interface IArchive extends ICElement, IParent, IOpenable {
 	/**
 	 * Return the binaries contain in the archive.
- 	 * It does not actually extract the files.
+	 * It does not actually extract the files.
 	 */
 	public IBinary[] getBinaries() throws CModelException;
 }

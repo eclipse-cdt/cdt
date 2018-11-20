@@ -178,7 +178,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * @since 4.6
 	 * @deprecated Replaced by getDebuggerCommandLine()
 	 */
-    @Deprecated
+	@Deprecated
 	protected String[] getGDBCommandLineArray() {
 		// The goal here is to keep options to an absolute minimum.
 		// All configuration should be done in the final launch sequence
@@ -187,10 +187,10 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		String cmd = getGDBPath().toOSString() + " --interpreter" + //$NON-NLS-1$
 		// We currently work with MI version 2. Don't use just 'mi' because it
 		// points to the latest MI version, while we want mi2 specifically.
-		" mi2" + //$NON-NLS-1$
-		// Don't read the gdbinit file here. It is read explicitly in
-		// the LaunchSequence to make it easier to customize.
-		" --nx"; //$NON-NLS-1$
+				" mi2" + //$NON-NLS-1$
+				// Don't read the gdbinit file here. It is read explicitly in
+				// the LaunchSequence to make it easier to customize.
+				" --nx"; //$NON-NLS-1$
 
 		// Parse to properly handle spaces and such things (bug 458499)
 		return CommandLineUtil.argumentsToArray(cmd);
@@ -201,29 +201,29 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * Allow subclass to override.
 	 * @since 5.2
 	 */
-    // This method replaces getGDBCommandLineArray() because we need
-    // to override it for GDB 7.12 even if an extender has overridden
-    // getGDBCommandLineArray().
-    // Here is the scenario:
-    //   An extender has overridden getGDBCommandLineArray() to launch
-    //   GDB in MI mode but with extra parameters.  Once GDBBackend_7_12
-    //   is released, the extender may likely point their extension to
-    //   GDBBackend_7_12 instead of GDBBackend (which will even happen
-    //   automatically if the extender extends GDBBackend_HEAD).
-    //   In such a case, they would override the changes in 
-    //   GDBBackend_7_12.getGDBCommandLineArray() and the debug session
-    //   is likely to fail since with GDBBackend_7_12, we launch GDB
-    //   in CLI mode.
-    //
-    //   Instead, we use getDebuggerCommandLine() and override that method in
-    //   GDBBackend_7_12.  That way an extender will not override it
-    //   without noticing (since it didn't exist before).  Then we can call
-    //   the overridden getGDBCommandLineArray() and work with that to
-    //   make it work with the new way to launch GDB of GDBBackend_7_12
-    //
-    // Note that we didn't name this method getGDBCommandLine() because
-    // this name had been used in CDT 8.8 and could still be part of
-    // extenders' code.
+	// This method replaces getGDBCommandLineArray() because we need
+	// to override it for GDB 7.12 even if an extender has overridden
+	// getGDBCommandLineArray().
+	// Here is the scenario:
+	//   An extender has overridden getGDBCommandLineArray() to launch
+	//   GDB in MI mode but with extra parameters.  Once GDBBackend_7_12
+	//   is released, the extender may likely point their extension to
+	//   GDBBackend_7_12 instead of GDBBackend (which will even happen
+	//   automatically if the extender extends GDBBackend_HEAD).
+	//   In such a case, they would override the changes in 
+	//   GDBBackend_7_12.getGDBCommandLineArray() and the debug session
+	//   is likely to fail since with GDBBackend_7_12, we launch GDB
+	//   in CLI mode.
+	//
+	//   Instead, we use getDebuggerCommandLine() and override that method in
+	//   GDBBackend_7_12.  That way an extender will not override it
+	//   without noticing (since it didn't exist before).  Then we can call
+	//   the overridden getGDBCommandLineArray() and work with that to
+	//   make it work with the new way to launch GDB of GDBBackend_7_12
+	//
+	// Note that we didn't name this method getGDBCommandLine() because
+	// this name had been used in CDT 8.8 and could still be part of
+	// extenders' code.
 	protected String[] getDebuggerCommandLine() {
 		// Call the old method in case it was overridden
 		return getGDBCommandLineArray();
@@ -532,7 +532,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 				}
 
 				try {
-                    fProcess = launchGDBProcess();
+					fProcess = launchGDBProcess();
 
 					// Need to do this on the executor for thread-safety
 					getExecutor().submit(new DsfRunnable() {
@@ -624,9 +624,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 					if (jobThread != null) {
 						jobThread.interrupt();
 					}
-					
+
 					destroy();
-					
+
 					requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 							DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
 					requestMonitor.done();

@@ -68,6 +68,7 @@ class FindIASTNameDialog extends Dialog {
 	private static final String NAME_NOT_FOUND = "Name not found."; //$NON-NLS-1$
 	private static final String FIND_NEXT_LABEL = "Find Next"; //$NON-NLS-1$
 	private static final String FIND_IASTNAME_LABEL = "Find IASTName:"; //$NON-NLS-1$
+
 	/**
 	 * Updates the find replace dialog on activation changes.
 	 */
@@ -77,8 +78,8 @@ class FindIASTNameDialog extends Dialog {
 		 */
 		@Override
 		public void shellActivated(ShellEvent e) {
-			String oldText= fFindField.getText(); // XXX workaround for 10766
-			List<String> oldList= new ArrayList<String>();
+			String oldText = fFindField.getText(); // XXX workaround for 10766
+			List<String> oldList = new ArrayList<String>();
 			oldList.addAll(fFindHistory);
 
 			readConfiguration();
@@ -88,19 +89,19 @@ class FindIASTNameDialog extends Dialog {
 			updateCombo(fFindField, fFindHistory);
 			if (!fFindHistory.equals(oldList) && !fFindHistory.isEmpty())
 				fFindField.setText((String) fFindHistory.get(0));
-			else 
+			else
 				fFindField.setText(oldText);
 			if (findFieldHadFocus())
 				fFindField.setSelection(new Point(0, fFindField.getText().length()));
 			fFindField.addModifyListener(fFindModifyListener);
 
-			fActiveShell= (Shell)e.widget;
+			fActiveShell = (Shell) e.widget;
 			updateButtonState();
-			
+
 			if (findFieldHadFocus() && getShell() == fActiveShell && !fFindField.isDisposed())
 				fFindField.setFocus();
 		}
-		
+
 		/**
 		 * Returns <code>true</code> if the find field had focus,
 		 * <code>false</code> if it did not.
@@ -120,26 +121,26 @@ class FindIASTNameDialog extends Dialog {
 			 */
 			return fGiveFocusToFindField || okToUse(fFindField) && fFindField.isFocusControl();
 		}
-		
+
 		/*
 		 * @see ShellListener#shellDeactivated(ShellEvent)
 		 */
 		@Override
 		public void shellDeactivated(ShellEvent e) {
-			fGiveFocusToFindField= fFindField.isFocusControl();
+			fGiveFocusToFindField = fFindField.isFocusControl();
 
 			storeSettings();
 
-//			fGlobalRadioButton.setSelection(true);
-//			fSelectedRangeRadioButton.setSelection(false);
-			fUseSelectedLines= false;
+			//			fGlobalRadioButton.setSelection(true);
+			//			fSelectedRangeRadioButton.setSelection(false);
+			fUseSelectedLines = false;
 
 			if (fTarget != null && (fTarget instanceof IFindReplaceTargetExtension))
 				((IFindReplaceTargetExtension) fTarget).setScope(null);
-			
-			fOldScope= null;
 
-			fActiveShell= null;			
+			fOldScope = null;
+
+			fActiveShell = null;
 			updateButtonState();
 		}
 	}
@@ -155,30 +156,32 @@ class FindIASTNameDialog extends Dialog {
 		@Override
 		public void modifyText(ModifyEvent e) {
 			searchTextChanged = true;
-			
+
 			if (isIncrementalSearch() && !isRegExSearchAvailableAndChecked()) {
-				if (fFindField.getText().equals(BLANK_STRING) && fTarget != null) { 
+				if (fFindField.getText().equals(BLANK_STRING) && fTarget != null) {
 					// empty selection at base location
-					int offset= fIncrementalBaseLocation.x;
+					int offset = fIncrementalBaseLocation.x;
 
-					if (isForwardSearch() && !fNeedsInitialFindBeforeReplace || !isForwardSearch() && fNeedsInitialFindBeforeReplace)
-						offset= offset + fIncrementalBaseLocation.y;
+					if (isForwardSearch() && !fNeedsInitialFindBeforeReplace
+							|| !isForwardSearch() && fNeedsInitialFindBeforeReplace)
+						offset = offset + fIncrementalBaseLocation.y;
 
-					fNeedsInitialFindBeforeReplace= false;
-					findAndSelect(offset, BLANK_STRING, isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch(), isRegExSearchAvailableAndChecked()); 
+					fNeedsInitialFindBeforeReplace = false;
+					findAndSelect(offset, BLANK_STRING, isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch(),
+							isRegExSearchAvailableAndChecked());
 				} else {
 					performSearch(false);
 				}
 			}
-			
+
 			updateButtonState();
 		}
 	}
 
 	/** The size of the dialogs search history. */
-	private static final int HISTORY_SIZE= 5;
+	private static final int HISTORY_SIZE = 5;
 
-	protected boolean searchTextChanged=false; 
+	protected boolean searchTextChanged = false;
 	private Point fLocation;
 	private Point fIncrementalBaseLocation;
 	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit, fGlobalInit, fIncrementalInit;
@@ -201,8 +204,8 @@ class FindIASTNameDialog extends Dialog {
 	private Shell fParentShell;
 	private Shell fActiveShell;
 
-	private final ActivationListener fActivationListener= new ActivationListener();
-	private final ModifyListener fFindModifyListener= new FindModifyListener();
+	private final ActivationListener fActivationListener = new ActivationListener();
+	private final ModifyListener fFindModifyListener = new FindModifyListener();
 
 	private Label fStatusLabel;
 	private Button fForwardRadioButton, fGlobalRadioButton, fSelectedRangeRadioButton;
@@ -213,7 +216,7 @@ class FindIASTNameDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private Button fIsRegExCheckBox;
-	
+
 	private Button fFindNextButton;
 	Combo fFindField, fReplaceField;
 	private Rectangle fDialogPositionInit;
@@ -235,35 +238,35 @@ class FindIASTNameDialog extends Dialog {
 	 * the dialog is activated, <code>false</code> otherwise.
 	 * @since 3.0
 	 */
-	private boolean fGiveFocusToFindField= true;
-	
+	private boolean fGiveFocusToFindField = true;
+
 	/**
 	 * Creates a new dialog with the given shell as parent.
 	 * @param parentShell the parent shell
 	 */
 	public FindIASTNameDialog(Shell parentShell, IFindReplaceTarget target) {
 		super(parentShell);
-		
-		fParentShell= null;
+
+		fParentShell = null;
 		updateTarget(target, false);
 
-		fDialogPositionInit= null;
-		fFindHistory= new ArrayList<String>(HISTORY_SIZE - 1);
+		fDialogPositionInit = null;
+		fFindHistory = new ArrayList<String>(HISTORY_SIZE - 1);
 
-		fWrapInit= false;
-		fCaseInit= false;
-		fIsRegExInit= false;
-		fWholeWordInit= false;
-		fIncrementalInit= false;
-		fGlobalInit= true;
-		fForwardInit= true;
+		fWrapInit = false;
+		fCaseInit = false;
+		fIsRegExInit = false;
+		fWholeWordInit = false;
+		fIncrementalInit = false;
+		fGlobalInit = true;
+		fForwardInit = true;
 
 		readConfiguration();
-		
+
 		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
 		setBlockOnOpen(false);
 	}
-	
+
 	/**
 	 * Returns this dialog's parent shell.
 	 * @return the dialog's parent shell
@@ -272,7 +275,7 @@ class FindIASTNameDialog extends Dialog {
 	public Shell getParentShell() {
 		return super.getParentShell();
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if control can be used.
 	 *
@@ -282,32 +285,32 @@ class FindIASTNameDialog extends Dialog {
 	private boolean okToUse(Control control) {
 		return control != null && !control.isDisposed();
 	}
-	
+
 	@Override
 	public void create() {
 		super.create();
-		
-		Shell shell= getShell();
+
+		Shell shell = getShell();
 		shell.addShellListener(fActivationListener);
 		if (fLocation != null)
 			shell.setLocation(fLocation);
-		
+
 		// set help context
-//		WorkbenchHelp.setHelp(shell, IAbstractTextEditorHelpContextIds.FIND_REPLACE_DIALOG);
+		//		WorkbenchHelp.setHelp(shell, IAbstractTextEditorHelpContextIds.FIND_REPLACE_DIALOG);
 
 		// fill in combo contents
 		fFindField.removeModifyListener(fFindModifyListener);
 		updateCombo(fFindField, fFindHistory);
 		fFindField.addModifyListener(fFindModifyListener);
-//		updateCombo(fReplaceField, fReplaceHistory);
+		//		updateCombo(fReplaceField, fReplaceHistory);
 
 		// get find string
 		initFindStringFromSelection();
-		
+
 		// set dialog position
 		if (fDialogPositionInit != null)
 			shell.setBounds(fDialogPositionInit);
-		
+
 		shell.setText(FIND_IASTNAME_LABEL);
 		// shell.setImage(null);
 	}
@@ -319,33 +322,33 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the button section
 	 */
 	private Composite createButtonSection(Composite parent) {
-		Composite panel= new Composite(parent, SWT.NULL);		
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 1;
+		Composite panel = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
 		panel.setLayout(layout);
-		
-		fFindNextButton= makeButton(panel, FIND_NEXT_LABEL, 102, true, new SelectionAdapter() { 
+
+		fFindNextButton = makeButton(panel, FIND_NEXT_LABEL, 102, true, new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fTarget instanceof FindIASTNameTarget && searchTextChanged) {
-					((FindIASTNameTarget)fTarget).clearMatchingNames();
+					((FindIASTNameTarget) fTarget).clearMatchingNames();
 					searchTextChanged = false;
 				}
-				
+
 				if (isIncrementalSearch() && !isRegExSearchAvailableAndChecked())
 					initIncrementalBaseLocation();
 
-				fNeedsInitialFindBeforeReplace= false;
+				fNeedsInitialFindBeforeReplace = false;
 				performSearch();
 				updateFindHistory();
 				fFindNextButton.setFocus();
 			}
 		});
 		setGridData(fFindNextButton, GridData.FILL, true, GridData.FILL, false);
-		
+
 		return panel;
 	}
-	
+
 	/**
 	 * Creates the options configuration section of the find replace dialog.
 	 *
@@ -354,50 +357,50 @@ class FindIASTNameDialog extends Dialog {
 	 */
 	private Composite createConfigPanel(Composite parent) {
 
-		Composite panel= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 1;
+		Composite panel = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
 		panel.setLayout(layout);
 
-		Composite directionGroup= createDirectionGroup(panel);
+		Composite directionGroup = createDirectionGroup(panel);
 		setGridData(directionGroup, GridData.FILL, true, GridData.FILL, false);
 
-		Composite optionsGroup= createOptionsGroup(panel);
+		Composite optionsGroup = createOptionsGroup(panel);
 		setGridData(optionsGroup, GridData.FILL, true, GridData.FILL, false);
-		GridData data= (GridData) optionsGroup.getLayoutData();
-		data.horizontalSpan= 2;
+		GridData data = (GridData) optionsGroup.getLayoutData();
+		data.horizontalSpan = 2;
 		optionsGroup.setLayoutData(data);
 
 		return panel;
 	}
-	
+
 	@Override
 	protected Control createContents(Composite parent) {
-		Composite panel= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 1;
-		layout.makeColumnsEqualWidth= true;
+		Composite panel = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.makeColumnsEqualWidth = true;
 		panel.setLayout(layout);
 
-		Composite inputPanel= createInputPanel(panel);
+		Composite inputPanel = createInputPanel(panel);
 		setGridData(inputPanel, GridData.FILL, true, GridData.CENTER, false);
 
-		Composite configPanel= createConfigPanel(panel);
+		Composite configPanel = createConfigPanel(panel);
 		setGridData(configPanel, GridData.FILL, true, GridData.CENTER, true);
-		
-		Composite buttonPanelB= createButtonSection(panel);
+
+		Composite buttonPanelB = createButtonSection(panel);
 		setGridData(buttonPanelB, GridData.FILL, true, GridData.CENTER, false);
-		
-		Composite statusBar= createStatusAndCloseButton(panel);
+
+		Composite statusBar = createStatusAndCloseButton(panel);
 		setGridData(statusBar, GridData.FILL, true, GridData.CENTER, false);
-		
+
 		updateButtonState();
-		
+
 		applyDialogFont(panel);
-		
+
 		return panel;
 	}
-	
+
 	/**
 	 * Creates the direction defining part of the options defining section
 	 * of the find replace dialog.
@@ -406,19 +409,19 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the direction defining part
 	 */
 	private Composite createDirectionGroup(Composite parent) {
-		Composite panel= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;
+		Composite panel = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		panel.setLayout(layout);
 
-		Group group= new Group(panel, SWT.SHADOW_ETCHED_IN);
+		Group group = new Group(panel, SWT.SHADOW_ETCHED_IN);
 		group.setText("Direction"); //$NON-NLS-1$
-		GridLayout groupLayout= new GridLayout();
+		GridLayout groupLayout = new GridLayout();
 		group.setLayout(groupLayout);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		SelectionListener selectionListener= new SelectionListener() {
+		SelectionListener selectionListener = new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (isIncrementalSearch() && !isRegExSearchAvailableAndChecked())
@@ -430,12 +433,12 @@ class FindIASTNameDialog extends Dialog {
 			}
 		};
 
-		fForwardRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
+		fForwardRadioButton = new Button(group, SWT.RADIO | SWT.LEFT);
 		fForwardRadioButton.setText("Forward"); //$NON-NLS-1$
 		setGridData(fForwardRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
 		fForwardRadioButton.addSelectionListener(selectionListener);
 
-		Button backwardRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
+		Button backwardRadioButton = new Button(group, SWT.RADIO | SWT.LEFT);
 		backwardRadioButton.setText("Backward"); //$NON-NLS-1$
 		setGridData(backwardRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
 		backwardRadioButton.addSelectionListener(selectionListener);
@@ -458,27 +461,25 @@ class FindIASTNameDialog extends Dialog {
 		if (fTarget == null || !(fTarget instanceof IFindReplaceTargetExtension))
 			return;
 
-		IFindReplaceTargetExtension extensionTarget= (IFindReplaceTargetExtension) fTarget;
+		IFindReplaceTargetExtension extensionTarget = (IFindReplaceTargetExtension) fTarget;
 
 		if (selectedLines) {
 			IRegion scope;
 			if (fOldScope == null) {
-				Point lineSelection= extensionTarget.getLineSelection();
-				scope= new Region(lineSelection.x, lineSelection.y);
+				Point lineSelection = extensionTarget.getLineSelection();
+				scope = new Region(lineSelection.x, lineSelection.y);
 			} else {
-				scope= fOldScope;
-				fOldScope= null;
+				scope = fOldScope;
+				fOldScope = null;
 			}
 
-			int offset= isForwardSearch()
-				? scope.getOffset() 
-				: scope.getOffset() + scope.getLength();					
+			int offset = isForwardSearch() ? scope.getOffset() : scope.getOffset() + scope.getLength();
 
-			extensionTarget.setSelection(offset, 0);					
+			extensionTarget.setSelection(offset, 0);
 			extensionTarget.setScope(scope);
 		} else {
-			fOldScope= extensionTarget.getScope();
-			extensionTarget.setScope(null);			
+			fOldScope = extensionTarget.getScope();
+			extensionTarget.setScope(null);
 		}
 	}
 
@@ -490,16 +491,16 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the input panel
 	 */
 	private Composite createInputPanel(Composite parent) {
-		Composite panel= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
+		Composite panel = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 		panel.setLayout(layout);
 
-		Label findLabel= new Label(panel, SWT.LEFT);
+		Label findLabel = new Label(panel, SWT.LEFT);
 		findLabel.setText("Find Name:"); //$NON-NLS-1$
 		setGridData(findLabel, GridData.BEGINNING, false, GridData.CENTER, false);
 
-		fFindField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
+		fFindField = new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
 		setGridData(fFindField, GridData.FILL, true, GridData.CENTER, false);
 		fFindField.addModifyListener(fFindModifyListener);
 
@@ -514,21 +515,21 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the options group
 	 */
 	private Composite createOptionsGroup(Composite parent) {
-		Composite panel= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;
+		Composite panel = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		panel.setLayout(layout);
 
-		Group group= new Group(panel, SWT.SHADOW_NONE);
-		group.setText(OPTIONS_LABEL); 
-		GridLayout groupLayout= new GridLayout();
-		groupLayout.numColumns= 2;
-		groupLayout.makeColumnsEqualWidth= true;		
+		Group group = new Group(panel, SWT.SHADOW_NONE);
+		group.setText(OPTIONS_LABEL);
+		GridLayout groupLayout = new GridLayout();
+		groupLayout.numColumns = 2;
+		groupLayout.makeColumnsEqualWidth = true;
 		group.setLayout(groupLayout);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		SelectionListener selectionListener= new SelectionListener() {
+		SelectionListener selectionListener = new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				storeSettings();
@@ -539,22 +540,22 @@ class FindIASTNameDialog extends Dialog {
 			}
 		};
 
-		fCaseCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fCaseCheckBox.setText(CASE_SENSITIVE_LABEL); 
+		fCaseCheckBox = new Button(group, SWT.CHECK | SWT.LEFT);
+		fCaseCheckBox.setText(CASE_SENSITIVE_LABEL);
 		setGridData(fCaseCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fCaseCheckBox.setSelection(fCaseInit);
 		fCaseCheckBox.addSelectionListener(selectionListener);
 
-		fWholeWordCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fWholeWordCheckBox.setText(WHOLE_WORD_LABEL); 
+		fWholeWordCheckBox = new Button(group, SWT.CHECK | SWT.LEFT);
+		fWholeWordCheckBox.setText(WHOLE_WORD_LABEL);
 		setGridData(fWholeWordCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fWholeWordCheckBox.setSelection(fWholeWordInit);
 		fWholeWordCheckBox.addSelectionListener(selectionListener);
 
-		fIsRegExCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fIsRegExCheckBox.setText(REGULAR_EXPRESSIONS_LABEL); 
+		fIsRegExCheckBox = new Button(group, SWT.CHECK | SWT.LEFT);
+		fIsRegExCheckBox.setText(REGULAR_EXPRESSIONS_LABEL);
 		setGridData(fIsRegExCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
-		((GridData)fIsRegExCheckBox.getLayoutData()).horizontalSpan= 2;
+		((GridData) fIsRegExCheckBox.getLayoutData()).horizontalSpan = 2;
 		fIsRegExCheckBox.setSelection(fIsRegExInit);
 		fIsRegExCheckBox.addSelectionListener(new SelectionAdapter() {
 			/*
@@ -562,10 +563,10 @@ class FindIASTNameDialog extends Dialog {
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean newState= fIsRegExCheckBox.getSelection();
+				boolean newState = fIsRegExCheckBox.getSelection();
 				if (fTarget instanceof FindIASTNameTarget)
-					((FindIASTNameTarget)fTarget).clearMatchingNames();
-				
+					((FindIASTNameTarget) fTarget).clearMatchingNames();
+
 				updateButtonState();
 				storeSettings();
 			}
@@ -578,14 +579,14 @@ class FindIASTNameDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fTarget instanceof FindIASTNameTarget)
-					((FindIASTNameTarget)fTarget).clearMatchingNames();
-				
+					((FindIASTNameTarget) fTarget).clearMatchingNames();
+
 				updateButtonState();
 			}
 		});
 		return panel;
 	}
-	
+
 	/**
 	 * Creates the status and close section of the dialog.
 	 *
@@ -593,18 +594,18 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the status and close button
 	 */
 	private Composite createStatusAndCloseButton(Composite parent) {
-		Composite panel= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;		
+		Composite panel = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		panel.setLayout(layout);
 
-		fStatusLabel= new Label(panel, SWT.LEFT);
+		fStatusLabel = new Label(panel, SWT.LEFT);
 		setGridData(fStatusLabel, GridData.FILL, true, GridData.CENTER, false);
 
-		String label= "Close"; //$NON-NLS-1$
-		Button closeButton= createButton(panel, 101, label, false);
+		String label = "Close"; //$NON-NLS-1$
+		Button closeButton = createButton(panel, 101, label, false);
 		setGridData(closeButton, GridData.END, false, GridData.END, false);
 
 		return panel;
@@ -615,7 +616,7 @@ class FindIASTNameDialog extends Dialog {
 		if (buttonID == 101)
 			close();
 	}
-	
+
 	// ------- action invocation ---------------------------------------
 
 	/**
@@ -632,14 +633,15 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the occurrence of the find string following the options or <code>-1</code> if nothing found
 	 * @since 3.0
 	 */
-	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
+	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive,
+			boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
 		if (forwardSearch) {
 			if (wrapSearch) {
-				int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
+				int index = findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
 				if (index == -1) {
 					if (okToUse(getShell()) && !isIncrementalSearch())
 						getShell().getDisplay().beep();
-					index= findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
+					index = findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
 				}
 				return index;
 			}
@@ -648,17 +650,17 @@ class FindIASTNameDialog extends Dialog {
 
 		// backward
 		if (wrapSearch) {
-			int index= findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
+			int index = findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
 			if (index == -1) {
 				if (okToUse(getShell()) && !isIncrementalSearch())
 					getShell().getDisplay().beep();
-				index= findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
+				index = findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
 			}
 			return index;
 		}
 		return findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
 	}
-	
+
 	/**
 	 * Searches for a string starting at the given offset and using the specified search
 	 * directives. If a string has been found it is selected and its start offset is 
@@ -673,9 +675,11 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the position of the specified string, or -1 if the string has not been found
 	 * @since 3.0
 	 */
-	private int findAndSelect(int offset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
+	private int findAndSelect(int offset, String findString, boolean forwardSearch, boolean caseSensitive,
+			boolean wholeWord, boolean regExSearch) {
 		if (fTarget instanceof IFindReplaceTargetExtension3)
-			return ((IFindReplaceTargetExtension3)fTarget).findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			return ((IFindReplaceTargetExtension3) fTarget).findAndSelect(offset, findString, forwardSearch,
+					caseSensitive, wholeWord, regExSearch);
 		return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
 	}
 
@@ -695,13 +699,13 @@ class FindIASTNameDialog extends Dialog {
 	 */
 	Point replaceSelection(String replaceString, boolean regExReplace) {
 		if (fTarget instanceof IFindReplaceTargetExtension3)
-			((IFindReplaceTargetExtension3)fTarget).replaceSelection(replaceString, regExReplace);
+			((IFindReplaceTargetExtension3) fTarget).replaceSelection(replaceString, regExReplace);
 		else
 			fTarget.replaceSelection(replaceString);
-		
+
 		return fTarget.getSelection();
 	}
-	
+
 	/**
 	 * Returns whether the specified search string can be found using the given options.
 	 * 
@@ -716,27 +720,29 @@ class FindIASTNameDialog extends Dialog {
 	 * 
 	 * @since 3.0
 	 */
-	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean regExSearch) {
+	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch,
+			boolean wholeWord, boolean incremental, boolean regExSearch) {
 		if (fTarget == null)
 			return false;
 
-		Point r= null;
+		Point r = null;
 		if (incremental)
-			r= fIncrementalBaseLocation;
+			r = fIncrementalBaseLocation;
 		else
-			r= fTarget.getSelection();
+			r = fTarget.getSelection();
 
-		int findReplacePosition= r.x;
+		int findReplacePosition = r.x;
 		if (forwardSearch && !fNeedsInitialFindBeforeReplace || !forwardSearch && fNeedsInitialFindBeforeReplace)
 			findReplacePosition += r.y;
 
-		fNeedsInitialFindBeforeReplace= false;
+		fNeedsInitialFindBeforeReplace = false;
 
-		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord, regExSearch);
+		int index = findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord,
+				regExSearch);
 
 		if (index != -1)
 			return true;
-		
+
 		return false;
 	}
 
@@ -749,7 +755,7 @@ class FindIASTNameDialog extends Dialog {
 			return getShell().getBounds();
 		return fDialogPositionInit;
 	}
-	
+
 	/**
 	 * Returns the dialog's history.
 	 * @return the dialog's history
@@ -768,9 +774,9 @@ class FindIASTNameDialog extends Dialog {
 		if (okToUse(fFindField)) {
 			return fFindField.getText();
 		}
-		return BLANK_STRING; 
+		return BLANK_STRING;
 	}
-	
+
 	// ------- init / close ---------------------------------------
 
 	/**
@@ -778,9 +784,9 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the selection of the target
 	 */
 	private String getSelectionString() {
-		String selection= fTarget.getSelectionText();
+		String selection = fTarget.getSelectionText();
 		if (selection != null && selection.length() > 0) {
-			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
+			int[] info = TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
 			if (info[0] > 0)
 				return selection.substring(0, info[0]);
 			else if (info[0] == -1)
@@ -788,7 +794,7 @@ class FindIASTNameDialog extends Dialog {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
@@ -797,7 +803,7 @@ class FindIASTNameDialog extends Dialog {
 		handleDialogClose();
 		return super.close();
 	}
-	
+
 	/**
 	 * Removes focus changed listener from browser and stores settings for re-open.
 	 */
@@ -806,14 +812,14 @@ class FindIASTNameDialog extends Dialog {
 		if (okToUse(fFindField)) {
 			fFindField.removeModifyListener(fFindModifyListener);
 		}
-		
+
 		if (fParentShell != null) {
 			fParentShell.removeShellListener(fActivationListener);
-			fParentShell= null;
+			fParentShell = null;
 		}
-		
+
 		getShell().removeShellListener(fActivationListener);
-		
+
 		// store current settings in case of re-open
 		storeSettings();
 
@@ -821,9 +827,9 @@ class FindIASTNameDialog extends Dialog {
 			((IFindReplaceTargetExtension) fTarget).endSession();
 
 		// prevent leaks
-		fActiveShell= null;
-		fTarget= null;
-		
+		fActiveShell = null;
+		fTarget = null;
+
 	}
 
 	/**
@@ -833,30 +839,30 @@ class FindIASTNameDialog extends Dialog {
 	private void writeSelection() {
 		if (fTarget == null)
 			return;
-		String selection= fTarget.getSelectionText();
+		String selection = fTarget.getSelectionText();
 		if (selection == null)
-			selection= BLANK_STRING; 
+			selection = BLANK_STRING;
 
-		IDialogSettings s= getDialogSettings();
+		IDialogSettings s = getDialogSettings();
 		s.put("selection", selection); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Stores the current state in the dialog settings.
 	 * @since 2.0
 	 */
 	private void storeSettings() {
-		fDialogPositionInit= getDialogBoundaries();
-		fWrapInit= isWrapSearch();
-		fWholeWordInit= isWholeWordSetting();
-		fCaseInit= isCaseSensitiveSearch();
-		fIsRegExInit= isRegExSearch();
-		fIncrementalInit= isIncrementalSearch();
-		fForwardInit= isForwardSearch();
+		fDialogPositionInit = getDialogBoundaries();
+		fWrapInit = isWrapSearch();
+		fWholeWordInit = isWholeWordSetting();
+		fCaseInit = isCaseSensitiveSearch();
+		fIsRegExInit = isRegExSearch();
+		fIncrementalInit = isIncrementalSearch();
+		fForwardInit = isForwardSearch();
 
-		writeConfiguration();		
+		writeConfiguration();
 	}
-	
+
 	/**
 	 * Initializes the string to search for and the appropriate
 	 * text inout field based on the selection found in the
@@ -864,7 +870,7 @@ class FindIASTNameDialog extends Dialog {
 	 */
 	private void initFindStringFromSelection() {
 		if (fTarget != null && okToUse(fFindField)) {
-			String selection= getSelectionString();
+			String selection = getSelectionString();
 			fFindField.removeModifyListener(fFindModifyListener);
 			if (selection != null) {
 				fFindField.setText(selection);
@@ -872,14 +878,14 @@ class FindIASTNameDialog extends Dialog {
 					useSelectedLines(true);
 					fGlobalRadioButton.setSelection(false);
 					fSelectedRangeRadioButton.setSelection(true);
-					fUseSelectedLines= true;
+					fUseSelectedLines = true;
 				}
 			} else {
-				if (BLANK_STRING.equals(fFindField.getText())) { 
+				if (BLANK_STRING.equals(fFindField.getText())) {
 					if (fFindHistory.size() > 0)
 						fFindField.setText((String) fFindHistory.get(0));
 					else
-						fFindField.setText(BLANK_STRING); 
+						fFindField.setText(BLANK_STRING);
 				}
 			}
 			fFindField.setSelection(new Point(0, fFindField.getText().length()));
@@ -893,14 +899,14 @@ class FindIASTNameDialog extends Dialog {
 	 */
 	private void initIncrementalBaseLocation() {
 		if (fTarget != null && isIncrementalSearch() && !isRegExSearchAvailableAndChecked()) {
-			fIncrementalBaseLocation= fTarget.getSelection();
+			fIncrementalBaseLocation = fTarget.getSelection();
 		} else {
-			fIncrementalBaseLocation= new Point(0, 0);	
+			fIncrementalBaseLocation = new Point(0, 0);
 		}
 	}
 
 	// ------- history ---------------------------------------
-		
+
 	/**
 	 * Retrieves and returns the option case sensitivity from the appropriate check box.
 	 * @return <code>true</code> if case sensitive
@@ -970,7 +976,8 @@ class FindIASTNameDialog extends Dialog {
 	 * @return <code>true</code> if the search is restricted to whole words
 	 */
 	private boolean isWholeWordSearch() {
-		return isWholeWordSetting() && !isRegExSearchAvailableAndChecked() && (okToUse(fWholeWordCheckBox) ? fWholeWordCheckBox.isEnabled() : true);
+		return isWholeWordSetting() && !isRegExSearchAvailableAndChecked()
+				&& (okToUse(fWholeWordCheckBox) ? fWholeWordCheckBox.isEnabled() : true);
 	}
 
 	/**
@@ -1006,7 +1013,7 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the new button
 	 */
 	private Button makeButton(Composite parent, String label, int id, boolean dfltButton, SelectionListener listener) {
-		Button b= createButton(parent, id, label, dfltButton);
+		Button b = createButton(parent, id, label, dfltButton);
 		b.addSelectionListener(listener);
 		return b;
 	}
@@ -1016,15 +1023,15 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the status line manager of the active editor
 	 */
 	private IEditorStatusLine getStatusLineManager() {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null)
 			return null;
 
-		IWorkbenchPage page= window.getActivePage();
+		IWorkbenchPage page = window.getActivePage();
 		if (page == null)
 			return null;
-			
-		IEditorPart editor= page.getActiveEditor();
+
+		IEditorPart editor = page.getActiveEditor();
 		if (editor == null)
 			return null;
 
@@ -1045,9 +1052,9 @@ class FindIASTNameDialog extends Dialog {
 		else
 			fStatusLabel.setForeground(null);
 
-		IEditorStatusLine statusLine= getStatusLineManager();
+		IEditorStatusLine statusLine = getStatusLineManager();
 		if (statusLine != null)
-			statusLine.setMessage(error, message, null);	
+			statusLine.setMessage(error, message, null);
 
 		if (error)
 			getShell().getDisplay().beep();
@@ -1075,7 +1082,7 @@ class FindIASTNameDialog extends Dialog {
 	private void performSearch() {
 		performSearch(isIncrementalSearch() && !isRegExSearchAvailableAndChecked());
 	}
-	
+
 	/**
 	 * Locates the user's findString in the text of the target.
 	 * 
@@ -1086,17 +1093,20 @@ class FindIASTNameDialog extends Dialog {
 
 		if (mustInitIncrementalBaseLocation)
 			initIncrementalBaseLocation();
-		
-		String findString= getFindString();
+
+		String findString = getFindString();
 
 		if (findString != null && findString.length() > 0) {
 
 			try {
-				boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());
+				boolean somethingFound = findNext(findString, isForwardSearch(), isCaseSensitiveSearch(),
+						isWrapSearch(), isWholeWordSearch(),
+						isIncrementalSearch() && !isRegExSearchAvailableAndChecked(),
+						isRegExSearchAvailableAndChecked());
 				if (somethingFound) {
-					statusMessage(BLANK_STRING); 
+					statusMessage(BLANK_STRING);
 				} else {
-					statusMessage(NAME_NOT_FOUND); 
+					statusMessage(NAME_NOT_FOUND);
 				}
 			} catch (PatternSyntaxException ex) {
 				statusError(ex.getLocalizedMessage());
@@ -1107,9 +1117,9 @@ class FindIASTNameDialog extends Dialog {
 		writeSelection();
 		updateButtonState();
 	}
-	
+
 	// ------- UI creation ---------------------------------------
-	
+
 	/**
 	 * Attaches the given layout specification to the <code>component</code>.
 	 * 
@@ -1119,12 +1129,13 @@ class FindIASTNameDialog extends Dialog {
 	 * @param verticalAlignment vertical alignment
 	 * @param grabExcessVerticalSpace grab excess vertical space
 	 */
-	private void setGridData(Control component, int horizontalAlignment, boolean grabExcessHorizontalSpace, int verticalAlignment, boolean grabExcessVerticalSpace) {
-		GridData gd= new GridData();
-		gd.horizontalAlignment= horizontalAlignment;
-		gd.grabExcessHorizontalSpace= grabExcessHorizontalSpace;
-		gd.verticalAlignment= verticalAlignment;
-		gd.grabExcessVerticalSpace= grabExcessVerticalSpace;
+	private void setGridData(Control component, int horizontalAlignment, boolean grabExcessHorizontalSpace,
+			int verticalAlignment, boolean grabExcessVerticalSpace) {
+		GridData gd = new GridData();
+		gd.horizontalAlignment = horizontalAlignment;
+		gd.grabExcessHorizontalSpace = grabExcessHorizontalSpace;
+		gd.verticalAlignment = verticalAlignment;
+		gd.grabExcessVerticalSpace = grabExcessVerticalSpace;
 		component.setLayoutData(gd);
 	}
 
@@ -1135,17 +1146,17 @@ class FindIASTNameDialog extends Dialog {
 	 */
 	private void updateButtonState() {
 		if (okToUse(getShell()) && okToUse(fFindNextButton)) {
-			boolean enable= fTarget != null && (fActiveShell == fParentShell || fActiveShell == getShell());
-			String str= getFindString();
-			boolean findString= str != null && str.length() > 0;
-			
-			boolean wholeWord= isWord(str) && !isRegExSearchAvailableAndChecked();
+			boolean enable = fTarget != null && (fActiveShell == fParentShell || fActiveShell == getShell());
+			String str = getFindString();
+			boolean findString = str != null && str.length() > 0;
+
+			boolean wholeWord = isWord(str) && !isRegExSearchAvailableAndChecked();
 			fWholeWordCheckBox.setEnabled(wholeWord);
 
 			fFindNextButton.setEnabled(enable && findString);
 		}
 	}
-	
+
 	/**
 	 * Tests whether each character in the given
 	 * string is a letter.
@@ -1157,14 +1168,14 @@ class FindIASTNameDialog extends Dialog {
 	private boolean isWord(String str) {
 		if (str == null || str.length() == 0)
 			return false;
-		
-		for (int i= 0; i < str.length(); i++) {
+
+		for (int i = 0; i < str.length(); i++) {
 			if (!Character.isJavaIdentifierPart(str.charAt(i)))
 				return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Updates the given combo with the given content.
 	 * @param combo combo to be updated
@@ -1172,7 +1183,7 @@ class FindIASTNameDialog extends Dialog {
 	 */
 	private void updateCombo(Combo combo, List<String> content) {
 		combo.removeAll();
-		for (int i= 0; i < content.size(); i++) {
+		for (int i = 0; i < content.size(); i++) {
 			combo.add(content.get(i).toString());
 		}
 	}
@@ -1196,8 +1207,8 @@ class FindIASTNameDialog extends Dialog {
 	 * @param history to be put into the combo
 	 */
 	private void updateHistory(Combo combo, List<String> history) {
-		String findString= combo.getText();
-		int index= history.indexOf(findString);
+		String findString = combo.getText();
+		int index = history.indexOf(findString);
 		if (index != 0) {
 			if (index != -1) {
 				history.remove(index);
@@ -1207,7 +1218,7 @@ class FindIASTNameDialog extends Dialog {
 			combo.setText(findString);
 		}
 	}
-	
+
 	/**
 	 * Updates this dialog because of a different target.
 	 * @param target the new target
@@ -1215,37 +1226,37 @@ class FindIASTNameDialog extends Dialog {
 	 * @since 2.0
 	 */
 	public void updateTarget(IFindReplaceTarget target, boolean isTargetEditable) {
-		fNeedsInitialFindBeforeReplace= true;
-		
+		fNeedsInitialFindBeforeReplace = true;
+
 		if (target != fTarget) {
 			if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
 				((IFindReplaceTargetExtension) fTarget).endSession();
 
-			fTarget= target;
+			fTarget = target;
 			if (target != null)
-				fIsTargetSupportingRegEx= target instanceof IFindReplaceTargetExtension3;
+				fIsTargetSupportingRegEx = target instanceof IFindReplaceTargetExtension3;
 
 			if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension) {
 				((IFindReplaceTargetExtension) fTarget).beginSession();
 
-				fGlobalInit= true;
+				fGlobalInit = true;
 				fGlobalRadioButton.setSelection(fGlobalInit);
 				fSelectedRangeRadioButton.setSelection(!fGlobalInit);
-				fUseSelectedLines= !fGlobalInit;
+				fUseSelectedLines = !fGlobalInit;
 			}
 		}
 
 		if (okToUse(fIsRegExCheckBox))
 			fIsRegExCheckBox.setEnabled(fIsTargetSupportingRegEx);
-	
+
 		if (okToUse(fWholeWordCheckBox))
 			fWholeWordCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
-		
+
 		if (okToUse(fIncrementalCheckBox))
 			fIncrementalCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
 
 		// see pr 51073
-		fGiveFocusToFindField= true;
+		fGiveFocusToFindField = true;
 	}
 
 	/** 
@@ -1256,19 +1267,19 @@ class FindIASTNameDialog extends Dialog {
 	@Override
 	public void setParentShell(Shell shell) {
 		if (shell != fParentShell) {
-			
+
 			if (fParentShell != null)
 				fParentShell.removeShellListener(fActivationListener);
-							
-			fParentShell= shell;
+
+			fParentShell = shell;
 			fParentShell.addShellListener(fActivationListener);
 		}
-		
-		fActiveShell= shell;
+
+		fActiveShell = shell;
 	}
-	
+
 	//--------------- configuration handling --------------
-	
+
 	/**
 	 * Returns the dialog settings object used to share state
 	 * between several find/replace dialogs.
@@ -1276,64 +1287,64 @@ class FindIASTNameDialog extends Dialog {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
-		fDialogSettings= settings.getSection(getClass().getName());
+		IDialogSettings settings = TextEditorPlugin.getDefault().getDialogSettings();
+		fDialogSettings = settings.getSection(getClass().getName());
 		if (fDialogSettings == null)
-			fDialogSettings= settings.addNewSection(getClass().getName());
+			fDialogSettings = settings.addNewSection(getClass().getName());
 		return fDialogSettings;
 	}
-	
+
 	/**
 	 * Initializes itself from the dialog settings with the same state
 	 * as at the previous invocation.
 	 */
 	private void readConfiguration() {
-		IDialogSettings s= getDialogSettings();
+		IDialogSettings s = getDialogSettings();
 
 		try {
-			int x= s.getInt("x"); //$NON-NLS-1$
-			int y= s.getInt("y"); //$NON-NLS-1$
-			fLocation= new Point(x, y);
+			int x = s.getInt("x"); //$NON-NLS-1$
+			int y = s.getInt("y"); //$NON-NLS-1$
+			fLocation = new Point(x, y);
 		} catch (NumberFormatException e) {
-			fLocation= null;
+			fLocation = null;
 		}
-			
-		fWrapInit= s.getBoolean("wrap"); //$NON-NLS-1$
-		fCaseInit= s.getBoolean("casesensitive"); //$NON-NLS-1$
-		fWholeWordInit= s.getBoolean("wholeword"); //$NON-NLS-1$
-		fIncrementalInit= s.getBoolean("incremental"); //$NON-NLS-1$
-		fIsRegExInit= s.getBoolean("isRegEx"); //$NON-NLS-1$
-		
-		String[] findHistory= s.getArray("findhistory"); //$NON-NLS-1$
+
+		fWrapInit = s.getBoolean("wrap"); //$NON-NLS-1$
+		fCaseInit = s.getBoolean("casesensitive"); //$NON-NLS-1$
+		fWholeWordInit = s.getBoolean("wholeword"); //$NON-NLS-1$
+		fIncrementalInit = s.getBoolean("incremental"); //$NON-NLS-1$
+		fIsRegExInit = s.getBoolean("isRegEx"); //$NON-NLS-1$
+
+		String[] findHistory = s.getArray("findhistory"); //$NON-NLS-1$
 		if (findHistory != null) {
-			List<String> history= getFindHistory();
+			List<String> history = getFindHistory();
 			history.clear();
-			for (int i= 0; i < findHistory.length; i++) {
+			for (int i = 0; i < findHistory.length; i++) {
 				history.add(findHistory[i]);
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Stores its current configuration in the dialog store.
 	 */
 	private void writeConfiguration() {
-		IDialogSettings s= getDialogSettings();
+		IDialogSettings s = getDialogSettings();
 
-		Point location= getShell().getLocation();
+		Point location = getShell().getLocation();
 		s.put("x", location.x); //$NON-NLS-1$
 		s.put("y", location.y); //$NON-NLS-1$
-		
+
 		s.put("wrap", fWrapInit); //$NON-NLS-1$
 		s.put("casesensitive", fCaseInit); //$NON-NLS-1$
 		s.put("wholeword", fWholeWordInit); //$NON-NLS-1$
 		s.put("incremental", fIncrementalInit); //$NON-NLS-1$
 		s.put("isRegEx", fIsRegExInit); //$NON-NLS-1$
-		List<String> history= getFindHistory();
+		List<String> history = getFindHistory();
 		while (history.size() > 8) {
 			history.remove(8);
 		}
-		String[] names= new String[history.size()];
+		String[] names = new String[history.size()];
 		history.toArray(names);
 		s.put("findhistory", names); //$NON-NLS-1$
 	}

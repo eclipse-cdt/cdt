@@ -24,8 +24,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems(
-				UnusedSymbolInFileScopeChecker.ER_UNUSED_VARIABLE_DECLARATION_ID,
+		enableProblems(UnusedSymbolInFileScopeChecker.ER_UNUSED_VARIABLE_DECLARATION_ID,
 				UnusedSymbolInFileScopeChecker.ER_UNUSED_FUNCTION_DECLARATION_ID,
 				UnusedSymbolInFileScopeChecker.ER_UNUSED_STATIC_FUNCTION_ID);
 	}

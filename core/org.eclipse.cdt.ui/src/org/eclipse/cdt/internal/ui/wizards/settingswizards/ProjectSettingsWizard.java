@@ -25,25 +25,24 @@ public abstract class ProjectSettingsWizard extends Wizard {
 
 	private ProjectSettingsWizardPage mainPage;
 	private IStructuredSelection selection;
-	
-	public abstract ProjectSettingsWizardPage getPage(); 
+
+	public abstract ProjectSettingsWizardPage getPage();
 
 	private boolean finishedPressed;
-	
-	
+
 	@Override
 	public void addPages() {
 		super.addPages();
 		mainPage = getPage();
-		
+
 		// happens if the user invoked the wizard by right clicking on a project element
-		if(selection != null) {
+		if (selection != null) {
 			final Object firstElement = selection.getFirstElement();
 			if (firstElement instanceof IProject) {
-				mainPage.setInitialProject((IProject)firstElement);
+				mainPage.setInitialProject((IProject) firstElement);
 			}
 		}
-		
+
 		addPage(mainPage);
 	}
 
@@ -52,16 +51,14 @@ public abstract class ProjectSettingsWizard extends Wizard {
 		finishedPressed = true;
 		return mainPage.finish();
 	}
-	
+
 	public boolean isFinishedPressed() {
 		return finishedPressed;
 	}
-	
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 		setNeedsProgressMonitor(true);
 	}
-	
-	
+
 }

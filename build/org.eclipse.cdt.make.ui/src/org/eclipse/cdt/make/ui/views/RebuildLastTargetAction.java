@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
-
-
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.actions.BuildLastTargetAction;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -28,17 +26,17 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RebuildLastTargetAction extends SelectionListenerAction {
-	
+
 	public RebuildLastTargetAction() {
 		super(MakeUIPlugin.getResourceString("BuildLastTargetAction.label")); //$NON-NLS-1$
-		
+
 		setToolTipText(MakeUIPlugin.getResourceString("BuildLastTargetAction.tooltip")); //$NON-NLS-1$		
 		setEnabled(false);
 	}
-	
+
 	@Override
 	public void run() {
-		final BuildLastTargetAction buildAction= new BuildLastTargetAction();
+		final BuildLastTargetAction buildAction = new BuildLastTargetAction();
 		buildAction.selectionChanged(null, this.getStructuredSelection());
 
 		if (buildAction.isEnabled()) {

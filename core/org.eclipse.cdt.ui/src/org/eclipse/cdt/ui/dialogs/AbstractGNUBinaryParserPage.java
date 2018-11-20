@@ -111,7 +111,8 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 
 	private void initializeParserId() {
 		if (parserID == null) {
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+					"BinaryParserPage"); //$NON-NLS-1$
 			IConfigurationElement[] infos = point.getConfigurationElements();
 			for (int i = 0; i < infos.length; i++) {
 				String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$
@@ -122,7 +123,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 					return;
 				}
 			}
-			parserID = "";	//$NON-NLS-1$
+			parserID = ""; //$NON-NLS-1$
 		}
 	}
 

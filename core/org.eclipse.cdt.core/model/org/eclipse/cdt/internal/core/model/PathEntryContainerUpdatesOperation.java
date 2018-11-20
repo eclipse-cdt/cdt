@@ -31,7 +31,8 @@ public class PathEntryContainerUpdatesOperation extends CModelOperation {
 	IPathEntryContainerExtension container;
 	PathEntryContainerChanged[] events;
 
-	public PathEntryContainerUpdatesOperation(IPathEntryContainerExtension container, PathEntryContainerChanged[] events) {
+	public PathEntryContainerUpdatesOperation(IPathEntryContainerExtension container,
+			PathEntryContainerChanged[] events) {
 		super(CModelManager.getDefault().getCModel());
 		this.container = container;
 		this.events = events;
@@ -56,7 +57,7 @@ public class PathEntryContainerUpdatesOperation extends CModelOperation {
 				// Sanity check the container __must__ be set on the project.
 				boolean foundContainer = false;
 				IPathEntryContainer[] containers = pathEntryManager.getPathEntryContainers(celement.getCProject());
-				for (int k = 0 ; k < containers.length; ++k) {
+				for (int k = 0; k < containers.length; ++k) {
 					if (containers[k].getPath().equals(container.getPath())) {
 						foundContainer = true;
 						break;
@@ -68,7 +69,7 @@ public class PathEntryContainerUpdatesOperation extends CModelOperation {
 				// remove the element info caching.
 				if (celement instanceof IOpenable) {
 					try {
-						((IOpenable)celement).close();
+						((IOpenable) celement).close();
 						// Make sure we clear the cache on the project too
 						if (!(celement instanceof ICProject)) {
 							celement.getCProject().close();
@@ -77,11 +78,11 @@ public class PathEntryContainerUpdatesOperation extends CModelOperation {
 						// ignore.
 					}
 				}
-				int flag =0;
+				int flag = 0;
 				if (event.isIncludeChange()) {
 					flag |= ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
-				} 
-                if (event.isMacroChange()) {
+				}
+				if (event.isMacroChange()) {
 					flag |= ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
 				}
 				CElementDelta delta = new CElementDelta(celement.getCModel());

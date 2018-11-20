@@ -41,12 +41,23 @@ import junit.framework.TestSuite;
 public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase {
 
 	public static class SingleProject extends IndexCBindingResolutionTest {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
+
 	public static class ProjectWithDepProj extends IndexCBindingResolutionTest {
-		public ProjectWithDepProj() {setStrategy(new ReferencedProject(false));}
-		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
+		public ProjectWithDepProj() {
+			setStrategy(new ReferencedProject(false));
+		}
+
+		public static TestSuite suite() {
+			return suite(ProjectWithDepProj.class);
+		}
 	}
 
 	public static void addTests(TestSuite suite) {
@@ -69,17 +80,17 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		IBinding b1 = getBindingFromASTName("g;", 1);
 
 		assertInstance(b0, IVariable.class);
-		IVariable v0= (IVariable) b0;
+		IVariable v0 = (IVariable) b0;
 		assertInstance(v0.getType(), IPointerType.class);
-		IPointerType p0= (IPointerType) v0.getType();
+		IPointerType p0 = (IPointerType) v0.getType();
 		assertInstance(p0.getType(), IFunctionType.class);
-		IFunctionType f0= (IFunctionType) p0.getType();
+		IFunctionType f0 = (IFunctionType) p0.getType();
 		assertInstance(f0.getReturnType(), IBasicType.class);
 		assertEquals(1, f0.getParameterTypes().length);
 		assertInstance(f0.getParameterTypes()[0], IBasicType.class);
 
 		assertInstance(b1, IFunction.class);
-		IFunctionType f1= ((IFunction)b1).getType();
+		IFunctionType f1 = ((IFunction) b1).getType();
 		assertInstance(f1.getReturnType(), IBasicType.class);
 		assertEquals(1, f1.getParameterTypes().length);
 		assertInstance(f1.getParameterTypes()[0], IBasicType.class);
@@ -163,15 +174,14 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		assertInstance(b4, ITypedef.class);
 
 		assertInstance(b5, ITypedef.class);
-		ITypedef t5= (ITypedef) b5;
+		ITypedef t5 = (ITypedef) b5;
 		assertInstance(t5.getType(), ICompositeType.class);
-		assertEquals(ICompositeType.k_struct, ((ICompositeType)t5.getType()).getKey());
+		assertEquals(ICompositeType.k_struct, ((ICompositeType) t5.getType()).getKey());
 
 		assertInstance(b6, ITypedef.class);
-		ITypedef t6= (ITypedef) b6;
+		ITypedef t6 = (ITypedef) b6;
 		assertInstance(t6.getType(), IEnumeration.class);
 	}
-
 
 	// typedef struct S {int a;} S;
 	// typedef enum E {A,B} E;
@@ -185,12 +195,12 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		IBinding b2 = getBindingFromASTName("E *e", 1);
 
 		assertInstance(b1, ITypedef.class);
-		ITypedef t1= (ITypedef) b1;
+		ITypedef t1 = (ITypedef) b1;
 		assertInstance(t1.getType(), ICompositeType.class);
-		assertEquals(ICompositeType.k_struct, ((ICompositeType)t1.getType()).getKey());
+		assertEquals(ICompositeType.k_struct, ((ICompositeType) t1.getType()).getKey());
 
 		assertInstance(b2, ITypedef.class);
-		ITypedef t2= (ITypedef) b2;
+		ITypedef t2 = (ITypedef) b2;
 		assertInstance(t2.getType(), IEnumeration.class);
 	}
 
@@ -228,66 +238,67 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	//    b6->z = 13;
 	// }
 	public void testFieldReference() throws Exception {
-		IBinding b01 = getBindingFromASTName("b1;",2);
+		IBinding b01 = getBindingFromASTName("b1;", 2);
 		assertVariable(b01, "b1", ICompositeType.class, "U");
-		IBinding b02 = getBindingFromASTName("b2;",2);
+		IBinding b02 = getBindingFromASTName("b2;", 2);
 		assertVariable(b02, "b2", ICompositeType.class, "S");
-		IBinding b03 = getBindingFromASTName("b3 =",2);
+		IBinding b03 = getBindingFromASTName("b3 =", 2);
 		assertVariable(b03, "b3", IPointerType.class, null);
-		assertTypeContainer(((IVariable)b03).getType(), null, IPointerType.class, ICompositeType.class, "U");
-		IBinding b04 = getBindingFromASTName("b4 =",2);
+		assertTypeContainer(((IVariable) b03).getType(), null, IPointerType.class, ICompositeType.class, "U");
+		IBinding b04 = getBindingFromASTName("b4 =", 2);
 		assertVariable(b04, "b4", IPointerType.class, null);
-		assertTypeContainer(((IVariable)b04).getType(), null, IPointerType.class, ICompositeType.class, "S");
-		IBinding b05 = getBindingFromASTName("b5;",2);
+		assertTypeContainer(((IVariable) b04).getType(), null, IPointerType.class, ICompositeType.class, "S");
+		IBinding b05 = getBindingFromASTName("b5;", 2);
 		assertVariable(b05, "b5", ITypedef.class, null);
-		assertTypeContainer(((IVariable)b05).getType(), null, ITypedef.class, ICompositeType.class, "S");
-		IBinding b06 = getBindingFromASTName("b6 =",2);
+		assertTypeContainer(((IVariable) b05).getType(), null, ITypedef.class, ICompositeType.class, "S");
+		IBinding b06 = getBindingFromASTName("b6 =", 2);
 		assertVariable(b06, "b6", IPointerType.class, null);
-		assertTypeContainer(((IVariable)b06).getType(), null, IPointerType.class, ITypedef.class, "TS");
-		assertTypeContainer(((IPointerType)((IVariable)b06).getType()).getType(), null, ITypedef.class, ICompositeType.class, "S");
-		IBinding b07 = getBindingFromASTName("x = 0",1);
+		assertTypeContainer(((IVariable) b06).getType(), null, IPointerType.class, ITypedef.class, "TS");
+		assertTypeContainer(((IPointerType) ((IVariable) b06).getType()).getType(), null, ITypedef.class,
+				ICompositeType.class, "S");
+		IBinding b07 = getBindingFromASTName("x = 0", 1);
 		assertVariable(b07, "x", IBasicType.class, null);
-		IBinding b08 = getBindingFromASTName("y = 1",1);
+		IBinding b08 = getBindingFromASTName("y = 1", 1);
 		assertVariable(b08, "y", IBasicType.class, null);
-		IBinding b09 = getBindingFromASTName("x = 0",1);
+		IBinding b09 = getBindingFromASTName("x = 0", 1);
 		assertVariable(b09, "x", IBasicType.class, null);
-		IBinding b10 = getBindingFromASTName("y = 1",1);
+		IBinding b10 = getBindingFromASTName("y = 1", 1);
 		assertVariable(b08, "y", IBasicType.class, null);
-		IBinding b11 = getBindingFromASTName("u.x = 2",1);
+		IBinding b11 = getBindingFromASTName("u.x = 2", 1);
 		assertVariable(b11, "u", ICompositeType.class, "U");
-		IBinding b12 = getBindingFromASTName("x = 2",1);
+		IBinding b12 = getBindingFromASTName("x = 2", 1);
 		assertVariable(b12, "x", IBasicType.class, null);
-		IBinding b13 = getBindingFromASTName("u.y = 3",1);
+		IBinding b13 = getBindingFromASTName("u.y = 3", 1);
 		assertVariable(b13, "u", ICompositeType.class, "U");
-		IBinding b14 = getBindingFromASTName("y = 3",1);
+		IBinding b14 = getBindingFromASTName("y = 3", 1);
 		assertVariable(b08, "y", IBasicType.class, null);
-		IBinding b15 = getBindingFromASTName("x = 4",1);
+		IBinding b15 = getBindingFromASTName("x = 4", 1);
 		assertVariable(b15, "x", IBasicType.class, null);
-		IBinding b16 = getBindingFromASTName("y = 5",1);
+		IBinding b16 = getBindingFromASTName("y = 5", 1);
 		assertVariable(b16, "y", IBasicType.class, null);
-		IBinding b17 = getBindingFromASTName("u.x = 6",1);
+		IBinding b17 = getBindingFromASTName("u.x = 6", 1);
 		assertVariable(b17, "u", ICompositeType.class, "U");
-		IBinding b18 = getBindingFromASTName("x = 6",1);
+		IBinding b18 = getBindingFromASTName("x = 6", 1);
 		assertVariable(b18, "x", IBasicType.class, null);
-		IBinding b19 = getBindingFromASTName("u.y = 7",1);
+		IBinding b19 = getBindingFromASTName("u.y = 7", 1);
 		assertVariable(b19, "u", ICompositeType.class, "U");
-		IBinding b20 = getBindingFromASTName("y = 7",1);
+		IBinding b20 = getBindingFromASTName("y = 7", 1);
 		assertVariable(b20, "y", IBasicType.class, null);
-		IBinding b21 = getBindingFromASTName("z = 8",1);
+		IBinding b21 = getBindingFromASTName("z = 8", 1);
 		assertVariable(b21, "z", IBasicType.class, null);
-		IBinding b22 = getBindingFromASTName("x = 9",1);
+		IBinding b22 = getBindingFromASTName("x = 9", 1);
 		assertVariable(b22, "x", IBasicType.class, null);
-		IBinding b23 = getBindingFromASTName("y = 10",1);
+		IBinding b23 = getBindingFromASTName("y = 10", 1);
 		assertVariable(b23, "y", IBasicType.class, null);
-		IBinding b24 = getBindingFromASTName("u.x = 11",1);
+		IBinding b24 = getBindingFromASTName("u.x = 11", 1);
 		assertVariable(b24, "u", ICompositeType.class, "U");
-		IBinding b25 = getBindingFromASTName("x = 11",1);
+		IBinding b25 = getBindingFromASTName("x = 11", 1);
 		assertVariable(b25, "x", IBasicType.class, null);
-		IBinding b26 = getBindingFromASTName("u.y = 12",1);
+		IBinding b26 = getBindingFromASTName("u.y = 12", 1);
 		assertVariable(b26, "u", ICompositeType.class, "U");
-		IBinding b27 = getBindingFromASTName("y = 12",1);
+		IBinding b27 = getBindingFromASTName("y = 12", 1);
 		assertVariable(b27, "y", IBasicType.class, null);
-		IBinding b28 = getBindingFromASTName("z = 13",1);
+		IBinding b28 = getBindingFromASTName("z = 13", 1);
 		assertVariable(b28, "z", IBasicType.class, null);
 	}
 
@@ -379,26 +390,26 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	// int* c= &b;
 	// enum X {e0, e4=4, e5, e2=2, e3};
 
-    // void ref() {
-    // a; b; c; e0; e2; e3; e4; e5;
-    // }
+	// void ref() {
+	// a; b; c; e0; e2; e3; e4; e5;
+	// }
 	public void testValues() throws Exception {
-		IVariable v= (IVariable) getBindingFromASTName("a;", 1);
+		IVariable v = (IVariable) getBindingFromASTName("a;", 1);
 		checkValue(v.getInitialValue(), -4);
-		v= (IVariable) getBindingFromASTName("b;", 1);
+		v = (IVariable) getBindingFromASTName("b;", 1);
 		checkValue(v.getInitialValue(), 0);
-		v= (IVariable) getBindingFromASTName("c;", 1);
+		v = (IVariable) getBindingFromASTName("c;", 1);
 		assertNull(v.getInitialValue().numberValue());
 
-		IEnumerator e= (IEnumerator) getBindingFromASTName("e0", 2);
+		IEnumerator e = (IEnumerator) getBindingFromASTName("e0", 2);
 		checkValue(e.getValue(), 0);
-		e= (IEnumerator) getBindingFromASTName("e2", 2);
+		e = (IEnumerator) getBindingFromASTName("e2", 2);
 		checkValue(e.getValue(), 2);
-		e= (IEnumerator) getBindingFromASTName("e3", 2);
+		e = (IEnumerator) getBindingFromASTName("e3", 2);
 		checkValue(e.getValue(), 3);
-		e= (IEnumerator) getBindingFromASTName("e4", 2);
+		e = (IEnumerator) getBindingFromASTName("e4", 2);
 		checkValue(e.getValue(), 4);
-		e= (IEnumerator) getBindingFromASTName("e5", 2);
+		e = (IEnumerator) getBindingFromASTName("e5", 2);
 		checkValue(e.getValue(), 5);
 	}
 

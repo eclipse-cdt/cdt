@@ -29,17 +29,17 @@ public class InfoStatusHandler implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	@Override
-	public Object handleStatus( IStatus status, Object source ) throws CoreException {
-		if ( status != null && source != null && source instanceof IDebugTarget ) {
-			final String title = ((IDebugTarget)source).getName();
+	public Object handleStatus(IStatus status, Object source) throws CoreException {
+		if (status != null && source != null && source instanceof IDebugTarget) {
+			final String title = ((IDebugTarget) source).getName();
 			final String message = status.getMessage();
-			CDebugUIPlugin.getStandardDisplay().asyncExec( new Runnable() {
+			CDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 
 				@Override
 				public void run() {
-					MessageDialog.openInformation( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
+					MessageDialog.openInformation(CDebugUIPlugin.getActiveWorkbenchShell(), title, message);
 				}
-			} );
+			});
 		}
 		return null;
 	}

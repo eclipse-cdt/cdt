@@ -40,7 +40,7 @@ public interface IProblemLocation {
 	 * @return The marker type of the problem.
 	 */
 	String getMarkerType();
-	
+
 	/**
 	 * Returns the id of problem. Note that problem ids are defined per problem marker type.
 	 *

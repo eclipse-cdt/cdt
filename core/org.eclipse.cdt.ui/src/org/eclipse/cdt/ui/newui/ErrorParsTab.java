@@ -75,7 +75,6 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
-
 /**
  * This class represents Error Parser Tab in Project Properties or workspace Preferences
  *
@@ -90,14 +89,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	private static final int BUTTON_MOVEUP = 4;
 	private static final int BUTTON_MOVEDOWN = 5;
 
-	private static final String[] BUTTONS = new String[] {
-		ADD_STR,
-		EDIT_STR,
-		DEL_STR,
-		null,
-		MOVEUP_STR,
-		MOVEDOWN_STR,
-	};
+	private static final String[] BUTTONS = new String[] { ADD_STR, EDIT_STR, DEL_STR, null, MOVEUP_STR,
+			MOVEDOWN_STR, };
 	private static final String RESET_STR = Messages.ErrorParsTab_Reset;
 
 	private static final String OOPS = "OOPS"; //$NON-NLS-1$
@@ -145,27 +138,32 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				displaySelectedOptionPage();
 				updateButtons();
-		}});
+			}
+		});
 		fTableViewer = new CheckboxTableViewer(fTable);
 		fTableViewer.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
-				return (Object[])inputElement;
+				return (Object[]) inputElement;
 			}
+
 			@Override
-			public void dispose() {}
+			public void dispose() {
+			}
+
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
 		});
 		fTableViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof String) {
-					String id = (String)element;
+					String id = (String) element;
 					IErrorParserNamed errorParser = fAvailableErrorParsers.get(id);
-					if (errorParser!=null) {
+					if (errorParser != null) {
 						String name = errorParser.getName();
-						if (name!=null && name.length()>0) {
+						if (name != null && name.length() > 0) {
 							return name;
 						}
 					}
@@ -207,7 +205,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				saveChecked();
-			}});
+			}
+		});
 
 		// Buttons
 		Composite compositeButtons = new Composite(compositeSashForm, SWT.NONE);
@@ -227,17 +226,17 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		gd.horizontalSpan = 2;
 		fCompositeForOptionsPage.setLayoutData(gd);
 
-		sashForm.setWeights(new int[] {50, 50});
+		sashForm.setWeights(new int[] { 50, 50 });
 
 		// init data
 		ICResourceDescription resDecs = getResDesc();
-		fCfgDesc = resDecs!=null ? resDecs.getConfiguration() : null;
+		fCfgDesc = resDecs != null ? resDecs.getConfiguration() : null;
 		initMapParsers();
 		updateData(getResDesc());
 	}
 
 	private void initMapParsers() {
-		if (fExtensionErrorParsers==null) {
+		if (fExtensionErrorParsers == null) {
 			fExtensionErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
 			String[] idsExt = ErrorParserManager.getErrorParserExtensionIds();
 			for (String idExt : idsExt) {
@@ -254,10 +253,10 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		}
 
 		String ids[];
-		if (fCfgDesc!=null) {
+		if (fCfgDesc != null) {
 			ICConfigurationDescription srcCfgDesc = fCfgDesc.getConfiguration();
 			if (srcCfgDesc instanceof ICMultiConfigDescription) {
-				String[][] ss = ((ICMultiConfigDescription)srcCfgDesc).getErrorParserIDs();
+				String[][] ss = ((ICMultiConfigDescription) srcCfgDesc).getErrorParserIDs();
 				ids = CDTPrefUtil.getStrListForDisplay(ss);
 			} else {
 				ids = srcCfgDesc.getBuildSetting().getErrorParserIDs();
@@ -276,13 +275,14 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 	private void initializeOptionsPage(final String id) {
 		IErrorParserNamed errorParser = fAvailableErrorParsers.get(id);
-		if (errorParser!=null) {
+		if (errorParser != null) {
 			String name = errorParser.getName();
-			if (name!=null && name.length()>0) {
+			if (name != null && name.length() > 0) {
 				// RegexErrorParser has an Options page
 				if (errorParser instanceof RegexErrorParser) {
 					// allow to edit only for Build Settings Preference Page (where cfgd==null)
-					RegexErrorParserOptionPage optionsPage = new RegexErrorParserOptionPage((RegexErrorParser) errorParser, isErrorParsersEditable());
+					RegexErrorParserOptionPage optionsPage = new RegexErrorParserOptionPage(
+							(RegexErrorParser) errorParser, isErrorParsersEditable());
 					optionsPage.addListener(new Listener() {
 						@Override
 						public void handleEvent(Event event) {
@@ -305,10 +305,10 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			fCurrentOptionsPage.setVisible(false);
 
 		int pos = fTable.getSelectionIndex();
-		if (pos<0)
+		if (pos < 0)
 			return;
 
-		String parserId = (String)fTable.getItem(pos).getData();
+		String parserId = (String) fTable.getItem(pos).getData();
 		ICOptionPage optionsPage = fOptionsPageMap.get(parserId);
 		if (optionsPage != null) {
 			optionsPage.setVisible(true);
@@ -320,7 +320,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#buttonPressed(int)
 	 */
 	@Override
-	public void buttonPressed (int n) {
+	public void buttonPressed(int n) {
 		switch (n) {
 		case BUTTON_ADD:
 			addErrorParser();
@@ -346,13 +346,13 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	// Move item up / down
 	private void moveItem(boolean up) {
 		int n = fTable.getSelectionIndex();
-		if (n < 0 || (up && n == 0) || (!up && n+1 == fTable.getItemCount()))
+		if (n < 0 || (up && n == 0) || (!up && n + 1 == fTable.getItemCount()))
 			return;
 
-		String id = (String)fTableViewer.getElementAt(n);
+		String id = (String) fTableViewer.getElementAt(n);
 		boolean checked = fTableViewer.getChecked(id);
 		fTableViewer.remove(id);
-		n = up ? n-1 : n+1;
+		n = up ? n - 1 : n + 1;
 		fTableViewer.insert(id, n);
 		fTableViewer.setChecked(id, checked);
 		fTable.setSelection(n);
@@ -361,7 +361,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	}
 
 	private String makeId(String name) {
-		return CUIPlugin.PLUGIN_ID+'.'+name;
+		return CUIPlugin.PLUGIN_ID + '.' + name;
 	}
 
 	private void addErrorParser() {
@@ -371,8 +371,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 				StatusInfo status = new StatusInfo();
 				if (newText.trim().length() == 0) {
 					status.setError(Messages.ErrorParsTab_error_NonEmptyName);
-				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER)>=0) {
-					String message = MessageFormat.format( Messages.ErrorParsTab_error_IllegalCharacter,
+				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER) >= 0) {
+					String message = MessageFormat.format(Messages.ErrorParsTab_error_IllegalCharacter,
 							new Object[] { ErrorParserManager.ERROR_PARSER_DELIMITER });
 					status.setError(message);
 				} else if (fAvailableErrorParsers.containsKey(makeId(newText))) {
@@ -382,10 +382,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			}
 
 		};
-		InputStatusDialog addDialog = new InputStatusDialog(usercomp.getShell(),
-				Messages.ErrorParsTab_title_Add,
-				Messages.ErrorParsTab_label_EnterName,
-				Messages.ErrorParsTab_label_DefaultRegexErrorParserName,
+		InputStatusDialog addDialog = new InputStatusDialog(usercomp.getShell(), Messages.ErrorParsTab_title_Add,
+				Messages.ErrorParsTab_label_EnterName, Messages.ErrorParsTab_label_DefaultRegexErrorParserName,
 				inputValidator);
 		addDialog.setHelpAvailable(false);
 
@@ -397,7 +395,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 			fTableViewer.add(newId);
 			fTableViewer.setChecked(newId, true);
-			fTable.setSelection(fTable.getItemCount()-1);
+			fTable.setSelection(fTable.getItemCount() - 1);
 
 			initializeOptionsPage(newId);
 			displaySelectedOptionPage();
@@ -407,9 +405,9 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 	private void editErrorParser() {
 		int n = fTable.getSelectionIndex();
-		Assert.isTrue(n>=0);
+		Assert.isTrue(n >= 0);
 
-		String id = (String)fTableViewer.getElementAt(n);
+		String id = (String) fTableViewer.getElementAt(n);
 		IErrorParserNamed errorParser = fAvailableErrorParsers.get(id);
 
 		IInputStatusValidator inputValidator = new IInputStatusValidator() {
@@ -418,8 +416,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 				StatusInfo status = new StatusInfo();
 				if (newText.trim().length() == 0) {
 					status.setError(Messages.ErrorParsTab_error_NonEmptyName);
-				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER)>=0) {
-					String message = MessageFormat.format( Messages.ErrorParsTab_error_IllegalCharacter,
+				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER) >= 0) {
+					String message = MessageFormat.format(Messages.ErrorParsTab_error_IllegalCharacter,
 							new Object[] { ErrorParserManager.ERROR_PARSER_DELIMITER });
 					status.setError(message);
 				}
@@ -427,11 +425,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			}
 
 		};
-		InputStatusDialog addDialog = new InputStatusDialog(usercomp.getShell(),
-				Messages.ErrorParsTab_title_Edit,
-				Messages.ErrorParsTab_label_EnterName,
-				errorParser.getName(),
-				inputValidator);
+		InputStatusDialog addDialog = new InputStatusDialog(usercomp.getShell(), Messages.ErrorParsTab_title_Edit,
+				Messages.ErrorParsTab_label_EnterName, errorParser.getName(), inputValidator);
 		addDialog.setHelpAvailable(false);
 
 		if (addDialog.open() == Window.OK) {
@@ -445,7 +440,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		if (n < 0)
 			return;
 
-		String id = (String)fTableViewer.getElementAt(n);
+		String id = (String) fTableViewer.getElementAt(n);
 		if (fExtensionErrorParsers.containsKey(id)) {
 			// Reset
 			fAvailableErrorParsers.put(id, ErrorParserManager.getErrorParserExtensionCopy(id));
@@ -457,9 +452,9 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			fTableViewer.remove(id);
 
 			int last = fTable.getItemCount() - 1;
-			if (n>last)
+			if (n > last)
 				n = last;
-			if (n>=0)
+			if (n >= 0)
 				fTable.setSelection(n);
 
 			saveChecked();
@@ -472,8 +467,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	@Override
 	public void updateData(ICResourceDescription resDecs) {
 		ICConfigurationDescription oldCfgDesc = fCfgDesc;
-		fCfgDesc = resDecs!=null ? resDecs.getConfiguration() : null;
-		if (oldCfgDesc!=fCfgDesc) {
+		fCfgDesc = resDecs != null ? resDecs.getConfiguration() : null;
+		if (oldCfgDesc != fCfgDesc) {
 			initMapParsers();
 		}
 		displaySelectedOptionPage();
@@ -495,7 +490,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	private boolean isModified(String id) {
 		IErrorParserNamed errorParser = fAvailableErrorParsers.get(id);
 		IErrorParserNamed errorParserExt = fExtensionErrorParsers.get(id);
-		return ! errorParser.equals(errorParserExt);
+		return !errorParser.equals(errorParserExt);
 	}
 
 	/* (non-Javadoc)
@@ -507,7 +502,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		int count = fTable.getItemCount();
 		int last = count - 1;
 		boolean selected = pos >= 0 && pos <= last;
-		String id = (String)fTableViewer.getElementAt(pos);
+		String id = (String) fTableViewer.getElementAt(pos);
 
 		boolean isExtensionId = isExtensionId(id);
 		boolean canDelete = !isExtensionId && isErrorParsersEditable();
@@ -518,10 +513,9 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		buttonSetEnabled(BUTTON_ADD, isErrorParsersEditable());
 		buttonSetEnabled(BUTTON_EDIT, isErrorParsersEditable() && selected);
 		buttonSetEnabled(BUTTON_DELETE, (canDelete || canReset) && selected);
-		buttonSetEnabled(BUTTON_MOVEUP, selected && pos!=0);
-		buttonSetEnabled(BUTTON_MOVEDOWN, selected && pos!=last);
+		buttonSetEnabled(BUTTON_MOVEUP, selected && pos != 0);
+		buttonSetEnabled(BUTTON_MOVEDOWN, selected && pos != last);
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#performApply(org.eclipse.cdt.core.settings.model.ICResourceDescription, org.eclipse.cdt.core.settings.model.ICResourceDescription)
@@ -535,13 +529,13 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			ICConfigurationDescription dd = dst.getConfiguration();
 			String[] s = null;
 			if (sd instanceof ICMultiConfigDescription) {
-				String[][] ss = ((ICMultiConfigDescription)sd).getErrorParserIDs();
+				String[][] ss = ((ICMultiConfigDescription) sd).getErrorParserIDs();
 				s = CDTPrefUtil.getStrListForDisplay(ss);
 			} else {
 				s = sd.getBuildSetting().getErrorParserIDs();
 			}
 			if (dd instanceof ICMultiConfigDescription)
-				((ICMultiConfigDescription)dd).setErrorParserIDs(s);
+				((ICMultiConfigDescription) dd).setErrorParserIDs(s);
 			else
 				dd.getBuildSetting().setErrorParserIDs(s);
 			initMapParsers();
@@ -556,7 +550,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		informPages(true);
 
 		if (page.isForPrefs()) {
-			if (fCfgDesc==null) {
+			if (fCfgDesc == null) {
 				// Build Settings page
 				try {
 					List<IErrorParserNamed> errorParsersList = new ArrayList<IErrorParserNamed>(fTable.getItemCount());
@@ -574,7 +568,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 					System.arraycopy(checkedElements, 0, checkedErrorParserIds, 0, checkedElements.length);
 
 					ErrorParserManager.setDefaultErrorParserIds(checkedErrorParserIds);
-					ErrorParserManager.setUserDefinedErrorParsers(errorParsersList.toArray(new IErrorParserNamed[errorParsersList.size()]));
+					ErrorParserManager.setUserDefinedErrorParsers(
+							errorParsersList.toArray(new IErrorParserNamed[errorParsersList.size()]));
 				} catch (BackingStoreException e) {
 					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e);
 				} catch (CoreException e) {
@@ -586,13 +581,13 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	}
 
 	private void saveChecked() {
-		if (fCfgDesc!=null) {
+		if (fCfgDesc != null) {
 			Object[] objs = fTableViewer.getCheckedElements();
 			String[] ids = new String[objs.length];
 			System.arraycopy(objs, 0, ids, 0, objs.length);
 
 			if (fCfgDesc instanceof ICMultiConfigDescription)
-				((ICMultiConfigDescription)fCfgDesc).setErrorParserIDs(ids);
+				((ICMultiConfigDescription) fCfgDesc).setErrorParserIDs(ids);
 			else
 				fCfgDesc.getBuildSetting().setErrorParserIDs(ids);
 		}
@@ -613,7 +608,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	 *     not for Preference New CDT Project Wizard/Makefile Project.
 	 */
 	private boolean isErrorParsersEditable() {
-		return fCfgDesc==null;
+		return fCfgDesc == null;
 	}
 
 	/* (non-Javadoc)
@@ -623,8 +618,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	protected void performDefaults() {
 		if (isErrorParsersEditable()) {
 			// Must be Build Settings Preference Page
-			if (MessageDialog.openQuestion(usercomp.getShell(),
-					Messages.ErrorParsTab_title_ConfirmReset,
+			if (MessageDialog.openQuestion(usercomp.getShell(), Messages.ErrorParsTab_title_ConfirmReset,
 					Messages.ErrorParsTab_message_ConfirmReset)) {
 
 				try {
@@ -649,7 +643,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	private void informPages(boolean apply) {
 		Collection<ICOptionPage> pages = fOptionsPageMap.values();
 		for (ICOptionPage dynamicPage : pages) {
-			if (dynamicPage!=null && dynamicPage.isValid() && dynamicPage.getControl() != null) {
+			if (dynamicPage != null && dynamicPage.isValid() && dynamicPage.getControl() != null) {
 				try {
 					if (apply)
 						dynamicPage.performApply(new NullProgressMonitor());

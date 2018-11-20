@@ -33,63 +33,60 @@ public class ModificationStatus extends Status implements IModificationStatus {
 
 	public static final ModificationStatus OK = new ModificationStatus(IStatus.OK, "", null); //$NON-NLS-1$
 
-	ModificationStatus(String msg){
+	ModificationStatus(String msg) {
 		this(msg, null);
 	}
 
-	ModificationStatus(String msg, Throwable t){
+	ModificationStatus(String msg, Throwable t) {
 		this(IStatus.ERROR, msg, t);
 	}
 
-	ModificationStatus(int severity, String msg, Throwable t){
+	ModificationStatus(int severity, String msg, Throwable t) {
 		super(severity, ManagedBuilderCorePlugin.getUniqueIdentifier(), msg, t);
 		fToolConflicts = new ITool[0][];
 		fNonManagedBuildTools = new ITool[0];
 	}
 
-	ModificationStatus(Map<String, String> unsupportedRequiredProps,
-			Map<String, String> unsupportedProps,
-			Set<String> undefinedProps,
-			ITool[][] conflicts,
-			ITool nonMbsTools[]){
+	ModificationStatus(Map<String, String> unsupportedRequiredProps, Map<String, String> unsupportedProps,
+			Set<String> undefinedProps, ITool[][] conflicts, ITool nonMbsTools[]) {
 		super(IStatus.OK, ManagedBuilderCorePlugin.getUniqueIdentifier(), ""); //$NON-NLS-1$
 
 		int severity = IStatus.OK;
 		int flags = 0;
-		if(unsupportedRequiredProps != null && unsupportedRequiredProps.size() != 0){
+		if (unsupportedRequiredProps != null && unsupportedRequiredProps.size() != 0) {
 			fUnsupportedRequiredProperties.putAll(unsupportedRequiredProps);
 			fUnsupportedProperties.putAll(unsupportedRequiredProps);
 			flags |= REQUIRED_PROPS_NOT_SUPPORTED | PROPS_NOT_DEFINED;
 			severity = IStatus.ERROR;
 		}
 
-		if(unsupportedProps != null && unsupportedProps.size() != 0){
+		if (unsupportedProps != null && unsupportedProps.size() != 0) {
 			fUnsupportedProperties.putAll(unsupportedProps);
 			flags |= PROPS_NOT_SUPPORTED;
-			if(severity == IStatus.OK)
+			if (severity == IStatus.OK)
 				severity = IStatus.WARNING;
 		}
 
-		if(undefinedProps != null && undefinedProps.size() != 0){
+		if (undefinedProps != null && undefinedProps.size() != 0) {
 			fUndefinedProperties.addAll(undefinedProps);
 			flags |= PROPS_NOT_DEFINED;
-			if(severity == IStatus.OK)
+			if (severity == IStatus.OK)
 				severity = IStatus.WARNING;
 		}
 
-		if(conflicts != null && conflicts.length != 0){
+		if (conflicts != null && conflicts.length != 0) {
 			fToolConflicts = new ITool[conflicts.length][];
-			for(int i = 0; i < conflicts.length; i++){
+			for (int i = 0; i < conflicts.length; i++) {
 				fToolConflicts[i] = conflicts[i].clone();
 			}
 			flags |= TOOLS_CONFLICT;
-			if(severity == IStatus.OK)
+			if (severity == IStatus.OK)
 				severity = IStatus.WARNING;
 		} else {
 			fToolConflicts = new ITool[0][];
 		}
 
-		if(nonMbsTools != null && nonMbsTools.length != 0){
+		if (nonMbsTools != null && nonMbsTools.length != 0) {
 			fNonManagedBuildTools = nonMbsTools.clone();
 			flags |= TOOLS_DONT_SUPPORT_MANAGED_BUILD;
 			severity = IStatus.ERROR;
@@ -97,11 +94,11 @@ public class ModificationStatus extends Status implements IModificationStatus {
 			fNonManagedBuildTools = new ITool[0];
 		}
 
-		if(flags != 0){
+		if (flags != 0) {
 			setCode(flags);
 		}
 
-		if(severity != IStatus.OK){
+		if (severity != IStatus.OK) {
 			setSeverity(severity);
 		}
 
@@ -109,33 +106,33 @@ public class ModificationStatus extends Status implements IModificationStatus {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<String, String> getUnsupportedProperties(){
-		return (HashMap<String, String>)fUnsupportedProperties.clone();
+	public Map<String, String> getUnsupportedProperties() {
+		return (HashMap<String, String>) fUnsupportedProperties.clone();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<String, String> getUnsupportedRequiredProperties(){
-		return (HashMap<String, String>)fUnsupportedRequiredProperties.clone();
+	public Map<String, String> getUnsupportedRequiredProperties() {
+		return (HashMap<String, String>) fUnsupportedRequiredProperties.clone();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Set<String> getUndefinedProperties(){
-		return (HashSet<String>)fUndefinedProperties.clone();
+	public Set<String> getUndefinedProperties() {
+		return (HashSet<String>) fUndefinedProperties.clone();
 	}
 
 	@Override
-	public ITool[][] getToolsConflicts(){
+	public ITool[][] getToolsConflicts() {
 		ITool[][] copy = new ITool[fToolConflicts.length][];
-		for(int i = 0; i < fToolConflicts.length; i++){
+		for (int i = 0; i < fToolConflicts.length; i++) {
 			copy[i] = fToolConflicts[i].clone();
 		}
 		return copy;
 	}
 
 	@Override
-	public ITool[] getNonManagedBuildTools(){
+	public ITool[] getNonManagedBuildTools() {
 		return fNonManagedBuildTools.clone();
 	}
 }

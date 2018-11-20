@@ -67,8 +67,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected CRefactoring createRefactoring() {
-		refactoring = new ExtractFunctionRefactoring(getSelectedTranslationUnit(), getSelection(),
-				getCProject());
+		refactoring = new ExtractFunctionRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 		return refactoring;
 	}
 
@@ -288,7 +287,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//void main() {
 	//  /*$*/A a("");
 	//  a.m1();/*$$*/
-    //		A b(a); // nonstandard indent to check that it is preserved
+	//		A b(a); // nonstandard indent to check that it is preserved
 	//}
 	//====================
 	//class A {
@@ -306,7 +305,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//void main() {
 	//	A a = extracted();
-    //		A b(a); // nonstandard indent to check that it is preserved
+	//		A b(a); // nonstandard indent to check that it is preserved
 	//}
 	public void testLocalVariableDeclaration_3() throws Exception {
 		assertRefactoringSuccess();

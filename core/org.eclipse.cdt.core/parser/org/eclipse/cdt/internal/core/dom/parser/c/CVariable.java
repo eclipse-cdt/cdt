@@ -187,8 +187,7 @@ public class CVariable extends PlatformObject implements ICInternalBinding, IVar
 		if (dtor != null) {
 			IASTInitializer init = dtor.getInitializer();
 			if (init instanceof IASTEqualsInitializer) {
-				final IASTInitializerClause initClause = ((IASTEqualsInitializer) init)
-						.getInitializerClause();
+				final IASTInitializerClause initClause = ((IASTEqualsInitializer) init).getInitializerClause();
 				if (initClause instanceof IASTExpression) {
 					return ValueFactory.create((IASTExpression) initClause);
 				}

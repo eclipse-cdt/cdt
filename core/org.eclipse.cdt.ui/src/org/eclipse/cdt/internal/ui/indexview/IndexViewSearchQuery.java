@@ -41,16 +41,16 @@ public class IndexViewSearchQuery extends CSearchQuery {
 	private long fLastWrite;
 	private String fName;
 	private ICProject fProject;
-	
-	public IndexViewSearchQuery(ICElement[] scope, ICProject project, long pdomLastWrite,
-			IIndexBinding binding, String name, int flags) {
+
+	public IndexViewSearchQuery(ICElement[] scope, ICProject project, long pdomLastWrite, IIndexBinding binding,
+			String name, int flags) {
 		super(scope, flags);
-		fProject= project;
+		fProject = project;
 		fBinding = binding;
-		fLastWrite= pdomLastWrite;
-		fName= name;
+		fLastWrite = pdomLastWrite;
+		fName = name;
 	}
-	
+
 	@Override
 	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {

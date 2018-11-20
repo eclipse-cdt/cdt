@@ -49,7 +49,7 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 			try {
 				ar = new AR(getPath().toOSString());
 				AR.ARHeader[] headers = ar.getHeaders();
-				IBinaryObject[] bobjs= createArchiveMembers(headers);
+				IBinaryObject[] bobjs = createArchiveMembers(headers);
 				children.addAll(Arrays.asList(bobjs));
 			} catch (IOException e) {
 				//e.printStackTrace();
@@ -63,20 +63,20 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 	}
 
 	protected IBinaryObject[] createArchiveMembers(ARHeader[] headers) {
-		IBinaryObject[] result= new IBinaryObject[headers.length];
+		IBinaryObject[] result = new IBinaryObject[headers.length];
 		for (int i = 0; i < headers.length; i++) {
-			result[i]= new ElfBinaryObject(getBinaryParser(), getPath(), headers[i]);
+			result[i] = new ElfBinaryObject(getBinaryParser(), getPath(), headers[i]);
 		}
 		return result;
 	}
-	
+
 	/**
 	 * @deprecated use {@link ElfBinaryArchive#createArchiveMembers(ARHeader[])} 
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Deprecated
 	protected void addArchiveMembers(ARHeader[] headers, ArrayList children) {
-		IBinaryObject[] bobjs= createArchiveMembers(headers);
+		IBinaryObject[] bobjs = createArchiveMembers(headers);
 		children.addAll(Arrays.asList(bobjs));
 	}
 }

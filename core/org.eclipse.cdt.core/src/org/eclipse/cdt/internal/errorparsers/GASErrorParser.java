@@ -35,12 +35,12 @@ public class GASErrorParser implements IErrorParser {
 			int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 			String desc = line;
 			if (previous != null && previous.startsWith("Assembler")) { //$NON-NLS-1$
-				if (! line.startsWith("FATAL")) { //$NON-NLS-1$
-					int firstColon= line.indexOf(':');
+				if (!line.startsWith("FATAL")) { //$NON-NLS-1$
+					int firstColon = line.indexOf(':');
 					if (firstColon != -1) {
 						fileName = line.substring(0, firstColon);
 						desc = line.substring(firstColon + 1);
-						int secondColon= line.indexOf(':', firstColon + 1);
+						int secondColon = line.indexOf(':', firstColon + 1);
 						if (secondColon != -1) {
 							String lineNumber = line.substring(firstColon + 1, secondColon);
 							try {

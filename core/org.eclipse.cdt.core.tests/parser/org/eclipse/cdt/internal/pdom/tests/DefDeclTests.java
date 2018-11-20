@@ -54,7 +54,7 @@ public class DefDeclTests extends PDOMTestBase {
 
 	protected PDOM pdom;
 	protected ICProject cproject;
-	
+
 	public static Test suite() {
 		return suite(DefDeclTests.class);
 	}
@@ -77,7 +77,7 @@ public class DefDeclTests extends PDOMTestBase {
 	}
 
 	private IBinding findSingleBinding(String elName) throws CoreException {
-		IBinding[] binds = pdom.findBindings(Pattern.compile(elName), true,	IndexFilter.ALL, null);
+		IBinding[] binds = pdom.findBindings(Pattern.compile(elName), true, IndexFilter.ALL, null);
 		assertEquals(1, binds.length);
 		assertEquals(elName, binds[0].getName());
 		IBinding element = binds[0];
@@ -137,7 +137,7 @@ public class DefDeclTests extends PDOMTestBase {
 	 * @return first references or null of non
 	 * @throws CoreException
 	 */
-	private IName getFirstUsage(IBinding binding, int k, int flags)	throws CoreException {
+	private IName getFirstUsage(IBinding binding, int k, int flags) throws CoreException {
 		IName[] decls = pdom.findNames(binding, flags);
 		if (k >= 0)
 			assertEquals(k, decls.length);
@@ -156,7 +156,7 @@ public class DefDeclTests extends PDOMTestBase {
 		assertEquals(markLine, nodeLine);
 	}
 
-	private int getMarkLine(String mark, String fileName) throws Exception,	BadLocationException {
+	private int getMarkLine(String mark, String fileName) throws Exception, BadLocationException {
 		int markLine = getLineNumber(offset(fileName, mark), fileName);
 		return markLine;
 	}
@@ -175,7 +175,7 @@ public class DefDeclTests extends PDOMTestBase {
 	}
 
 	private IIndexFile getSingleFile(IIndexFileLocation ifl) throws CoreException {
-		IIndexFile[] files= pdom.getFiles(ILinkage.C_LINKAGE_ID, ifl);
+		IIndexFile[] files = pdom.getFiles(ILinkage.C_LINKAGE_ID, ifl);
 		assertEquals(1, files.length);
 		return files[0];
 	}
@@ -215,9 +215,11 @@ public class DefDeclTests extends PDOMTestBase {
 		assertEquals(2, binds.length);
 		assertTrue(binds[0].isFileLocal() != binds[1].isFileLocal());
 		if (binds[0].isFileLocal()) {
-			IIndexBinding b= binds[0]; binds[0]= binds[1]; binds[1]= b;
+			IIndexBinding b = binds[0];
+			binds[0] = binds[1];
+			binds[1] = b;
 		}
-			
+
 		assertEquals(elName, binds[0].getName());
 		checkDefinition(binds[0], "def" + "07", 0);
 		checkDeclaration(binds[0], "decl" + "07", 1);
@@ -233,25 +235,26 @@ public class DefDeclTests extends PDOMTestBase {
 	public void testStaticBindings_f08() throws Exception {
 		String elName = "foo" + "08";
 
-		IIndexFileLocation ifl= IndexLocationFactory.getIFL((ITranslationUnit) cproject.findElement(new Path("func.c")));
-		IIndexFile file= getSingleFile(ifl);
-		int offset= TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
-		IIndexName[] names= file.findNames(offset, 5);
+		IIndexFileLocation ifl = IndexLocationFactory
+				.getIFL((ITranslationUnit) cproject.findElement(new Path("func.c")));
+		IIndexFile file = getSingleFile(ifl);
+		int offset = TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
+		IIndexName[] names = file.findNames(offset, 5);
 		assertEquals(1, names.length);
-		
+
 		IBinding element = pdom.findBinding((IIndexFragmentName) names[0]);
 		assertEquals(elName, element.getName());
 		checkDefinition(element, "def" + "08", 1);
 		checkReference(element, "ref" + "08", 1);
 
 		// check the other file
-		ifl= IndexLocationFactory.getIFL((ITranslationUnit) cproject.findElement(new Path("second.c")));
-		file= getSingleFile(ifl);
-		offset= TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
-		names= file.findNames(offset, 5);
+		ifl = IndexLocationFactory.getIFL((ITranslationUnit) cproject.findElement(new Path("second.c")));
+		file = getSingleFile(ifl);
+		offset = TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
+		names = file.findNames(offset, 5);
 		assertEquals(1, names.length);
-		
-		element = pdom.findBinding((IIndexFragmentName)names[0]);
+
+		element = pdom.findBinding((IIndexFragmentName) names[0]);
 		assertEquals(elName, element.getName());
 		checkDefinition(element, "defS" + "08", 1);
 		checkReference(element, "refS" + "08", 1);
@@ -297,16 +300,16 @@ public class DefDeclTests extends PDOMTestBase {
 	public void testStructAndTypedef_t04() throws Exception {
 		String num = "_t04";
 		String elName = "type" + num;
-		
+
 		IBinding[] bindings = pdom.findBindings(Pattern.compile(elName), false, IndexFilter.ALL, null);
-		assertEquals(2,bindings.length);
-		
+		assertEquals(2, bindings.length);
+
 		IBinding typedef = bindings[0] instanceof ITypedef ? bindings[0] : bindings[1];
 		IBinding struct = bindings[0] instanceof ICompositeType ? bindings[0] : bindings[1];
-		
+
 		checkReference(typedef, "ref" + num, 1);
 		checkDefinition(typedef, "def" + num, 1);
-		
+
 		checkReference(struct, "refS" + num, 1);
 		checkDefinition(struct, "defS" + num, 1);
 	}

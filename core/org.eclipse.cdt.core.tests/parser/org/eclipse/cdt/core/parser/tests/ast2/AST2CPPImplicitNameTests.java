@@ -52,7 +52,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	}
 
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
-		String code= getAboveComment();
+		String code = getAboveComment();
 		return new AST2AssertionHelper(code, ParserLanguage.CPP);
 	}
 
@@ -104,7 +104,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  +p;
 	//	}
 	public void testBinaryExpressions() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -148,7 +148,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  *y; //2
 	//	}
 	public void testPointerDereference() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		ba.assertImplicitName("*x;", 1, ICPPFunction.class);
 		ba.assertNoImplicitName("*y; //2", 1);
 	}
@@ -166,7 +166,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  X* px2 = &y; // overloaded
 	//	}
 	public void testPointerToMember() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -227,7 +227,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  (++p1).x; //2
 	//	}
 	public void testUnaryPrefixAndPostfix() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		ba.assertImplicitName("++).x; //1", 2, ICPPFunction.class);
 		ba.assertImplicitName("++p1).x; //2", 2, ICPPMethod.class);
 	}
@@ -253,7 +253,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  test(a, b, c, d); // func
 	//	}
 	public void testCommaOperator1() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		// expression lists are used in function calls but they should not resolve to the comma operator
 		ba.assertNoImplicitName(", b, c, d); // func", 1);
 		ba.assertNoImplicitName(", c, d); // func", 1);
@@ -319,7 +319,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  x(1, 2); // 3
 	//	}
 	public void testFunctionCallOperator() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -360,7 +360,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  b = a; // should not resolve
 	//	}
 	public void testCopyAssignmentOperator() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		ba.assertNoImplicitName("= a;", 1);
 	}
 
@@ -378,7 +378,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  func(y[q]); //2
 	//	}
 	public void testArraySubscript() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -413,7 +413,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//    delete 1;
 	//	}
 	public void testDelete() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTImplicitName[] names = ba.getImplicitNames("delete x;", 6);
 		assertEquals(2, names.length);
 		IASTImplicitName destructor = names[0];
@@ -447,9 +447,9 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	    delete b;
 	//	}
 	public void testOverloadedDelete_Bug351547() throws Exception {
-		BindingAssertionHelper bh= getAssertionHelper();
-		IBinding m= bh.assertNonProblem("operator delete(void * a)", 15);
-		IBinding f= bh.assertNonProblem("operator delete(void * b)", 15);
+		BindingAssertionHelper bh = getAssertionHelper();
+		IBinding m = bh.assertNonProblem("operator delete(void * a)", 15);
+		IBinding f = bh.assertNonProblem("operator delete(void * b)", 15);
 
 		IASTImplicitName[] names = bh.getImplicitNames("delete a;", 6);
 		assertEquals(2, names.length);
@@ -474,9 +474,9 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	    B* b = new B;
 	//	}
 	public void testOverloadedNew_Bug354585() throws Exception {
-		BindingAssertionHelper bh= getAssertionHelper();
-		IBinding m= bh.assertNonProblem("operator new(size_t a)", 12);
-		IBinding f= bh.assertNonProblem("operator new(size_t b)", 12);
+		BindingAssertionHelper bh = getAssertionHelper();
+		IBinding m = bh.assertNonProblem("operator new(size_t a)", 12);
+		IBinding f = bh.assertNonProblem("operator new(size_t b)", 12);
 
 		IASTImplicitName[] names = bh.getImplicitNames("new A;", 3);
 		assertEquals(2, names.length);
@@ -512,7 +512,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//    int* p2 = new (5, 6) int[5];
 	//	}
 	public void testNew() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTImplicitName n1 = ba.assertImplicitName("new (nothrow) X", 3, ICPPFunction.class);
 		IASTImplicitName n2 = ba.assertImplicitName("new (nothrow) int", 3, ICPPFunction.class);
 		IASTImplicitName n3 = ba.assertImplicitName("new (5, 6) int", 3, ICPPFunction.class);
@@ -530,7 +530,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  throw;
 	//	}
 	public void testEmptyThrow() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		ba.assertNoImplicitName("throw;", 5);
 	}
 
@@ -559,7 +559,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	};
 	//	B C::t = 1;
 	public void testConstructorCall() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		ICPPConstructor ctor0 = ba.assertNonProblem("A()", 1, ICPPConstructor.class);
 		ICPPConstructor ctor1 = ba.assertNonProblem("A(int)", 1, ICPPConstructor.class);
@@ -596,7 +596,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//		}
 	//	}
 	public void testBuiltinOperators_294543() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		ICPPFunction op = ba.assertNonProblem("operator==", 0);
 		IASTImplicitName a = ba.assertImplicitName("==b", 2, ICPPFunction.class);
@@ -612,7 +612,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	    x = A().a;
 	//	}
 	public void testTemporaryDestruction() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("x = A().a");
 		assertEquals(1, names.length);
 		assertEquals("~A", names[0].resolveBinding().getName());
@@ -627,7 +627,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	    x = A();
 	//	}
 	public void testTemporaryNotCreatedWhenBoundToVariable() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("x = A()");
 		assertEquals(0, names.length);
 	}
@@ -640,7 +640,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//		return (new A())->a;
 	//	}
 	public void testTemporaryNotCreatesInNewExpression() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("(new A())->a");
 		assertEquals(0, names.length);
 	}
@@ -653,7 +653,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//		A& x = A();
 	//	}
 	public void testTemporaryBoundToReference() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("A()");
 		assertEquals(0, names.length);
 	}
@@ -670,7 +670,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  S s3;
 	//	}//1
 	public void testOrderOfDestruction() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
+		BindingAssertionHelper ba = getAssertionHelper();
 		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("}//1", 1);
 		assertEquals(3, names.length);
 		assertEquals("~S", names[0].resolveBinding().getName());

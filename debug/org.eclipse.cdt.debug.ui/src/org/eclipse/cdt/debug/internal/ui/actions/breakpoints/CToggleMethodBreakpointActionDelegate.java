@@ -36,23 +36,19 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CToggleMethodBreakpointActionDelegate extends CToggleBreakpointObjectActionDelegate {
 
-	protected void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection, Event event) 
-	    throws CoreException 
-	{
-	    if ((event.stateMask & SWT.MOD1) != 0 && 
-	        target instanceof IToggleBreakpointsTargetCExtension &&
-	        ((IToggleBreakpointsTargetCExtension)target).canCreateFunctionBreakpointInteractive(part, selection)) 
-	    {
-	        ((IToggleBreakpointsTargetCExtension)target).createFunctionBreakpointInteractive(part, selection);
-	    } 
-	    else {
-	        target.toggleMethodBreakpoints(part, selection);
-	    }
+	protected void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection,
+			Event event) throws CoreException {
+		if ((event.stateMask & SWT.MOD1) != 0 && target instanceof IToggleBreakpointsTargetCExtension
+				&& ((IToggleBreakpointsTargetCExtension) target).canCreateFunctionBreakpointInteractive(part,
+						selection)) {
+			((IToggleBreakpointsTargetCExtension) target).createFunctionBreakpointInteractive(part, selection);
+		} else {
+			target.toggleMethodBreakpoints(part, selection);
+		}
 	}
 
 	@Override
-	protected boolean canPerformAction(IToggleBreakpointsTarget target,
-			IWorkbenchPart part, ISelection selection) {
+	protected boolean canPerformAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection) {
 		return target.canToggleMethodBreakpoints(part, selection);
 	}
 }

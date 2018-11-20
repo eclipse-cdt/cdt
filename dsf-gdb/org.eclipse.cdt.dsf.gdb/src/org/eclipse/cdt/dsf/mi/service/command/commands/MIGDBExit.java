@@ -25,9 +25,8 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *  Exit GDB immediately.
  * 
  */
-public class MIGDBExit extends MICommand<MIInfo> 
-{
-    public MIGDBExit(IDMContext ctx) {
-        super(ctx, "-gdb-exit"); //$NON-NLS-1$
-    }
+public class MIGDBExit extends MICommand<MIInfo> {
+	public MIGDBExit(IDMContext ctx) {
+		super(ctx, "-gdb-exit"); //$NON-NLS-1$
+	}
 }

@@ -25,208 +25,206 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * An overlaying preference store.
  */
-class OverlayPreferenceStore  implements IPreferenceStore {
-	
-	
+class OverlayPreferenceStore implements IPreferenceStore {
+
 	public static final class TypeDescriptor {
 		TypeDescriptor() {
 		}
 	}
-	
-	public static final TypeDescriptor BOOLEAN= new TypeDescriptor();
-	public static final TypeDescriptor DOUBLE= new TypeDescriptor();
-	public static final TypeDescriptor FLOAT= new TypeDescriptor();
-	public static final TypeDescriptor INT= new TypeDescriptor();
-	public static final TypeDescriptor LONG= new TypeDescriptor();
-	public static final TypeDescriptor STRING= new TypeDescriptor();
-	
+
+	public static final TypeDescriptor BOOLEAN = new TypeDescriptor();
+	public static final TypeDescriptor DOUBLE = new TypeDescriptor();
+	public static final TypeDescriptor FLOAT = new TypeDescriptor();
+	public static final TypeDescriptor INT = new TypeDescriptor();
+	public static final TypeDescriptor LONG = new TypeDescriptor();
+	public static final TypeDescriptor STRING = new TypeDescriptor();
+
 	public static class OverlayKey {
-		
+
 		TypeDescriptor fDescriptor;
 		String fKey;
-		
+
 		public OverlayKey(TypeDescriptor descriptor, String key) {
-			fDescriptor= descriptor;
-			fKey= key;
+			fDescriptor = descriptor;
+			fKey = key;
 		}
 	}
-	
+
 	private class PropertyListener implements IPropertyChangeListener {
-				
+
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
-			OverlayKey key= findOverlayKey(event.getProperty());
+			OverlayKey key = findOverlayKey(event.getProperty());
 			if (key != null)
-				propagateProperty(fParent, key, fStore); 
+				propagateProperty(fParent, key, fStore);
 		}
 	}
-	
-	
+
 	IPreferenceStore fParent;
 	IPreferenceStore fStore;
 	private OverlayKey[] fOverlayKeys;
-	
+
 	private PropertyListener fPropertyListener;
-	
-	
+
 	public OverlayPreferenceStore(IPreferenceStore parent, OverlayKey[] overlayKeys) {
-		fParent= parent;
-		fOverlayKeys= overlayKeys;
-		fStore= new PreferenceStore();
+		fParent = parent;
+		fOverlayKeys = overlayKeys;
+		fStore = new PreferenceStore();
 	}
-	
+
 	OverlayKey findOverlayKey(String key) {
-		for (int i= 0; i < fOverlayKeys.length; i++) {
+		for (int i = 0; i < fOverlayKeys.length; i++) {
 			if (fOverlayKeys[i].fKey.equals(key))
 				return fOverlayKeys[i];
 		}
 		return null;
 	}
-	
+
 	private boolean covers(String key) {
 		return (findOverlayKey(key) != null);
 	}
-	
+
 	void propagateProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target) {
-		
+
 		if (orgin.isDefault(key.fKey)) {
 			if (!target.isDefault(key.fKey))
 				target.setToDefault(key.fKey);
 			return;
 		}
-		
-		TypeDescriptor d= key.fDescriptor;
+
+		TypeDescriptor d = key.fDescriptor;
 		if (BOOLEAN == d) {
-			
-			boolean originValue= orgin.getBoolean(key.fKey);
-			boolean targetValue= target.getBoolean(key.fKey);
+
+			boolean originValue = orgin.getBoolean(key.fKey);
+			boolean targetValue = target.getBoolean(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
-				
+
 		} else if (DOUBLE == d) {
-			
-			double originValue= orgin.getDouble(key.fKey);
-			double targetValue= target.getDouble(key.fKey);
+
+			double originValue = orgin.getDouble(key.fKey);
+			double targetValue = target.getDouble(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
-		
+
 		} else if (FLOAT == d) {
-			
-			float originValue= orgin.getFloat(key.fKey);
-			float targetValue= target.getFloat(key.fKey);
+
+			float originValue = orgin.getFloat(key.fKey);
+			float targetValue = target.getFloat(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
-				
+
 		} else if (INT == d) {
 
-			int originValue= orgin.getInt(key.fKey);
-			int targetValue= target.getInt(key.fKey);
+			int originValue = orgin.getInt(key.fKey);
+			int targetValue = target.getInt(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
 
 		} else if (LONG == d) {
 
-			long originValue= orgin.getLong(key.fKey);
-			long targetValue= target.getLong(key.fKey);
+			long originValue = orgin.getLong(key.fKey);
+			long targetValue = target.getLong(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
 
 		} else if (STRING == d) {
 
-			String originValue= orgin.getString(key.fKey);
-			String targetValue= target.getString(key.fKey);
+			String originValue = orgin.getString(key.fKey);
+			String targetValue = target.getString(key.fKey);
 			if (targetValue != null && originValue != null && !targetValue.equals(originValue))
 				target.setValue(key.fKey, originValue);
 
 		}
 	}
-	
+
 	public void propagate() {
-		for (int i= 0; i < fOverlayKeys.length; i++)
+		for (int i = 0; i < fOverlayKeys.length; i++)
 			propagateProperty(fStore, fOverlayKeys[i], fParent);
 	}
-	
-	private void loadProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target, boolean forceInitialization) {
-		TypeDescriptor d= key.fDescriptor;
+
+	private void loadProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target,
+			boolean forceInitialization) {
+		TypeDescriptor d = key.fDescriptor;
 		if (BOOLEAN == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, true);
 			target.setValue(key.fKey, orgin.getBoolean(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultBoolean(key.fKey));
-			
+
 		} else if (DOUBLE == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, 1.0D);
 			target.setValue(key.fKey, orgin.getDouble(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultDouble(key.fKey));
-			
+
 		} else if (FLOAT == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, 1.0F);
 			target.setValue(key.fKey, orgin.getFloat(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultFloat(key.fKey));
-			
+
 		} else if (INT == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, 1);
 			target.setValue(key.fKey, orgin.getInt(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultInt(key.fKey));
-			
+
 		} else if (LONG == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, 1L);
 			target.setValue(key.fKey, orgin.getLong(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultLong(key.fKey));
-			
+
 		} else if (STRING == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, "1"); //$NON-NLS-1$
 			target.setValue(key.fKey, orgin.getString(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultString(key.fKey));
-			
+
 		}
 	}
-	
+
 	public void load() {
-		for (int i= 0; i < fOverlayKeys.length; i++)
+		for (int i = 0; i < fOverlayKeys.length; i++)
 			loadProperty(fParent, fOverlayKeys[i], fStore, true);
 	}
-	
+
 	public void loadDefaults() {
-		for (int i= 0; i < fOverlayKeys.length; i++)
+		for (int i = 0; i < fOverlayKeys.length; i++)
 			setToDefault(fOverlayKeys[i].fKey);
 	}
-	
+
 	public void start() {
 		if (fPropertyListener == null) {
-			fPropertyListener= new PropertyListener();
+			fPropertyListener = new PropertyListener();
 			fParent.addPropertyChangeListener(fPropertyListener);
 		}
 	}
-	
+
 	public void stop() {
-		if (fPropertyListener != null)  {
+		if (fPropertyListener != null) {
 			fParent.removePropertyChangeListener(fPropertyListener);
-			fPropertyListener= null;
+			fPropertyListener = null;
 		}
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fStore.addPropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fStore.removePropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
 		fStore.firePropertyChangeEvent(name, oldValue, newValue);
@@ -236,7 +234,7 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 	public boolean contains(String name) {
 		return fStore.contains(name);
 	}
-	
+
 	@Override
 	public boolean getBoolean(String name) {
 		return fStore.getBoolean(name);

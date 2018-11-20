@@ -36,11 +36,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
  */
 public class CPPASTCompoundStatementExpression extends ASTNode
 		implements IGNUASTCompoundStatementExpression, ICPPASTExpression {
-    private IASTCompoundStatement fStatement;
-    private ICPPEvaluation fEval;
+	private IASTCompoundStatement fStatement;
+	private ICPPEvaluation fEval;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTCompoundStatementExpression() {
+	public CPPASTCompoundStatementExpression() {
 	}
 
 	public CPPASTCompoundStatementExpression(IASTCompoundStatement statement) {
@@ -54,25 +54,25 @@ public class CPPASTCompoundStatementExpression extends ASTNode
 
 	@Override
 	public CPPASTCompoundStatementExpression copy(CopyStyle style) {
-		CPPASTCompoundStatementExpression copy =
-				new CPPASTCompoundStatementExpression(fStatement == null ? null : fStatement.copy(style));
+		CPPASTCompoundStatementExpression copy = new CPPASTCompoundStatementExpression(
+				fStatement == null ? null : fStatement.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public IASTCompoundStatement getCompoundStatement() {
-        return fStatement;
-    }
+		return fStatement;
+	}
 
-    @Override
+	@Override
 	public void setCompoundStatement(IASTCompoundStatement statement) {
-        assertNotFrozen();
-        this.fStatement = statement;
-        if (statement != null) {
+		assertNotFrozen();
+		this.fStatement = statement;
+		if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(STATEMENT);
 		}
-    }
+	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
@@ -84,12 +84,12 @@ public class CPPASTCompoundStatementExpression extends ASTNode
 					if (st instanceof IASTExpressionStatement) {
 						IASTExpressionStatement exprStmt = (IASTExpressionStatement) st;
 						ICPPASTExpression expr = (ICPPASTExpression) exprStmt.getExpression();
-						fEval= new EvalCompoundStatementExpression(expr.getEvaluation(), this);
+						fEval = new EvalCompoundStatementExpression(expr.getEvaluation(), this);
 					}
 				}
 			}
 			if (fEval == null)
-				fEval= EvalFixed.INCOMPLETE;
+				fEval = EvalFixed.INCOMPLETE;
 		}
 		return fEval;
 	}
@@ -103,35 +103,41 @@ public class CPPASTCompoundStatementExpression extends ASTNode
 		return fImplicitDestructorNames;
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (fStatement != null && !fStatement.accept(action))
-        	return false;
+		if (fStatement != null && !fStatement.accept(action))
+			return false;
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-        	return false;
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-        	switch (action.leave(this)) {
-        		case ASTVisitor.PROCESS_ABORT: return false;
-        		case ASTVisitor.PROCESS_SKIP: return true;
-        		default: break;
-        	}
-        }
-        return true;
-    }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
+		return CPPEvaluation.getType(this);
 	}
 
 	@Override

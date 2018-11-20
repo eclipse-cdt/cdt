@@ -118,36 +118,36 @@ public interface ICElementDelta {
 	/**
 	 * A source entry added for this resource.
 	 */
-	public int F_ADDED_PATHENTRY_SOURCE =   0x0100;
+	public int F_ADDED_PATHENTRY_SOURCE = 0x0100;
 
 	/**
 	 * A source entry was remove for this resource.
 	 */
-	public int F_REMOVED_PATHENTRY_SOURCE =   0x0200;
+	public int F_REMOVED_PATHENTRY_SOURCE = 0x0200;
 
 	/**
 	 * A pathEntry Macro was added for this resource
 	 */
-	public int F_CHANGED_PATHENTRY_MACRO =    0x0400;
+	public int F_CHANGED_PATHENTRY_MACRO = 0x0400;
 
 	/**
 	 * A pathEntry Include was added for this resource
 	 */
-	public int F_CHANGED_PATHENTRY_INCLUDE =  0x0800;
+	public int F_CHANGED_PATHENTRY_INCLUDE = 0x0800;
 
 	/**
 	 * A pathEntry Library was added for this resource
 	 */
-	public int F_ADDED_PATHENTRY_LIBRARY =  0x01000;
+	public int F_ADDED_PATHENTRY_LIBRARY = 0x01000;
 
 	/**
 	 * A pathEntry Library was added for this resource
 	 */
-	public int F_REMOVED_PATHENTRY_LIBRARY =  0x02000;
+	public int F_REMOVED_PATHENTRY_LIBRARY = 0x02000;
 	/**
 	 * A pathEntry Project was added to the project.
 	 */
-	public int F_CHANGED_PATHENTRY_PROJECT =  0x04000;
+	public int F_CHANGED_PATHENTRY_PROJECT = 0x04000;
 
 	/**
 	 * Reordering of the path entries.
@@ -159,7 +159,7 @@ public interface ICElementDelta {
 	/**
 	 * Change flag indicating that a source jar has been attached to a binary jar.
 	 */
-	public int F_SOURCEATTACHED = 0x100000;   
+	public int F_SOURCEATTACHED = 0x100000;
 
 	/**
 	 * Change flag indicating that a source jar has been detached to a binary jar.

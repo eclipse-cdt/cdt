@@ -25,8 +25,8 @@ import org.eclipse.jface.text.ITextViewer;
  */
 public class CDoubleClickSelector implements ITextDoubleClickStrategy {
 
-	protected static char[] fgBrackets= {'{', '}', '(', ')', '[', ']', '<', '>'};
-	private CPairMatcher fPairMatcher= new CPairMatcher(fgBrackets);
+	protected static char[] fgBrackets = { '{', '}', '(', ')', '[', ']', '<', '>' };
+	private CPairMatcher fPairMatcher = new CPairMatcher(fgBrackets);
 
 	public CDoubleClickSelector() {
 		super();
@@ -37,18 +37,18 @@ public class CDoubleClickSelector implements ITextDoubleClickStrategy {
 	 */
 	@Override
 	public void doubleClicked(ITextViewer textViewer) {
-		int offset= textViewer.getSelectedRange().x;
+		int offset = textViewer.getSelectedRange().x;
 
 		if (offset < 0)
 			return;
 
-		IDocument document= textViewer.getDocument();
+		IDocument document = textViewer.getDocument();
 
-		IRegion region= fPairMatcher.match(document, offset);
+		IRegion region = fPairMatcher.match(document, offset);
 		if (region != null && region.getLength() >= 2) {
 			textViewer.setSelectedRange(region.getOffset() + 1, region.getLength() - 2);
 		} else {
-			region= selectWord(document, offset);
+			region = selectWord(document, offset);
 			if (region != null && region.getLength() > 0) {
 				textViewer.setSelectedRange(region.getOffset(), region.getLength());
 			}

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards;
 
-
 import java.net.URI;
 
 import org.eclipse.core.resources.IProject;
@@ -44,8 +43,9 @@ public interface ICDTCommonProjectWizard extends IWizard {
 	 * @return the project
 	 * @throws CoreException if project creation fails for any reason
 	 */
-	public IProject createIProject(final String name, final URI location, IProgressMonitor monitor) throws CoreException;
-	
+	public IProject createIProject(final String name, final URI location, IProgressMonitor monitor)
+			throws CoreException;
+
 	/**
 	 * Get the file content types supported by this project
 	 * 
@@ -66,7 +66,7 @@ public interface ICDTCommonProjectWizard extends IWizard {
 	 * @return array of languages
 	 */
 	public String[] getLanguageIDs();
-		
+
 	/**
 	 * Return the last project created by the call to getProject().
 	 * 
@@ -80,7 +80,7 @@ public interface ICDTCommonProjectWizard extends IWizard {
 	 * @return array of project natures
 	 */
 	public String[] getNatures();
-	
+
 	/**
 	 * Create and return the project specified by the wizard. Identical to calling
 	 * getProject(defaults, true)
@@ -89,7 +89,7 @@ public interface ICDTCommonProjectWizard extends IWizard {
 	 * @return the newly created project
 	 */
 	public IProject getProject(boolean defaults);
-	
+
 	/**
 	 * Create and return the project specified by the wizard.
 	 * 
@@ -100,7 +100,7 @@ public interface ICDTCommonProjectWizard extends IWizard {
 	 * @return the newly created project
 	 */
 	public IProject getProject(boolean defaults, boolean onFinish);
-	
+
 	/**
 	 * Can be used to pass a configuration element to update the perspective based 
 	 * on the current settings in the Workbench/Perspectives preference page via
@@ -111,6 +111,7 @@ public interface ICDTCommonProjectWizard extends IWizard {
 	 * @param data not used
 	 * @throws CoreException
 	 */
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException;
-	
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException;
+
 }

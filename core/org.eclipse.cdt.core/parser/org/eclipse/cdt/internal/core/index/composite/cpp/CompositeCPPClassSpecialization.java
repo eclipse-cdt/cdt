@@ -45,7 +45,7 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPClassSpecialization extends CompositeCPPClassType implements ICPPClassSpecialization {
 	private ObjectMap specializationMap;
-	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>() {
+	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<Set<IBinding>>() {
 		@Override
 		protected Set<IBinding> initialValue() {
 			return new HashSet<IBinding>();
@@ -65,10 +65,10 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	public ICPPClassType getSpecializedBinding() {
 		return (ICPPClassType) TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
 	}
-	
+
 	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		IBinding owner= getOwner();
+		IBinding owner = getOwner();
 		if (owner instanceof ICPPSpecialization) {
 			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 		}
@@ -78,23 +78,24 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	@Override
 	public IBinding specializeMember(IBinding original) {
 		if (specializationMap == null) {
-			final Object key= CPPCompositesFactory.createSpecializationKey(cf, rbinding);
-			final IIndexFragment frag= rbinding.getFragment();
-			Object cached= frag.getCachedResult(key);
-			if (cached != null) { 
-				specializationMap= (ObjectMap) cached;
+			final Object key = CPPCompositesFactory.createSpecializationKey(cf, rbinding);
+			final IIndexFragment frag = rbinding.getFragment();
+			Object cached = frag.getCachedResult(key);
+			if (cached != null) {
+				specializationMap = (ObjectMap) cached;
 			} else {
-				final ObjectMap newMap= new ObjectMap(2);
+				final ObjectMap newMap = new ObjectMap(2);
 				// In any fragment explicit specializations may be defined.
-				IIndexFragmentBinding[] frags= cf.findEquivalentBindings(rbinding);
+				IIndexFragmentBinding[] frags = cf.findEquivalentBindings(rbinding);
 				for (IIndexFragmentBinding fb : frags) {
 					if (fb instanceof ICPPClassType) {
 						final ICPPClassType[] nested = ((ICPPClassType) fb).getNestedClasses();
 						if (nested.length > 0) {
 							for (ICPPClassType ct : nested) {
-								if (ct instanceof ICPPClassSpecialization && 
-										!(ct.getCompositeScope() instanceof ICPPClassSpecializationScope)) {
-									ICPPClassSpecialization cspec= (ICPPClassSpecialization) cf.getCompositeBinding((IIndexFragmentBinding) ct);
+								if (ct instanceof ICPPClassSpecialization
+										&& !(ct.getCompositeScope() instanceof ICPPClassSpecializationScope)) {
+									ICPPClassSpecialization cspec = (ICPPClassSpecialization) cf
+											.getCompositeBinding((IIndexFragmentBinding) ct);
 									newMap.put(cspec.getSpecializedBinding(), cspec);
 								}
 							}
@@ -103,28 +104,28 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 						}
 					}
 				}
-				specializationMap= (ObjectMap) frag.putCachedResult(key, newMap, false);
+				specializationMap = (ObjectMap) frag.putCachedResult(key, newMap, false);
 			}
 		}
 		synchronized (specializationMap) {
-			IBinding result= (IBinding) specializationMap.get(original);
-			if (result != null) 
+			IBinding result = (IBinding) specializationMap.get(original);
+			if (result != null)
 				return result;
 		}
 
 		IBinding newSpec;
-		Set<IBinding> recursionProtectionSet= fInProgress.get();
+		Set<IBinding> recursionProtectionSet = fInProgress.get();
 		if (!recursionProtectionSet.add(original))
 			return RecursionResolvingBinding.createFor(original);
 
 		try {
-			newSpec= CPPTemplates.createSpecialization(this, original);
+			newSpec = CPPTemplates.createSpecialization(this, original);
 		} finally {
 			recursionProtectionSet.remove(original);
 		}
 
 		synchronized (specializationMap) {
-			IBinding oldSpec= (IBinding) specializationMap.put(original, newSpec);
+			IBinding oldSpec = (IBinding) specializationMap.put(original, newSpec);
 			if (oldSpec != null) {
 				specializationMap.put(original, oldSpec);
 				return oldSpec;
@@ -132,7 +133,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 		}
 		return newSpec;
 	}
-	
+
 	@Override
 	@Deprecated
 	public IBinding specializeMember(IBinding original, IASTNode point) {
@@ -141,7 +142,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPBase[] getBases() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getBases();
 		}
@@ -154,10 +155,10 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	public final ICPPBase[] getBases(IASTNode point) {
 		return getBases();
 	}
-	
+
 	@Override
 	public final ICPPConstructor[] getConstructors() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassScope) {
 			return ((ICPPClassScope) scope).getConstructors();
 		}
@@ -184,7 +185,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPMethod[] getDeclaredMethods() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
 		}
@@ -211,7 +212,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPField[] getDeclaredFields() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
 		}
@@ -238,7 +239,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final IBinding[] getFriends() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getFriends();
 		}
@@ -254,7 +255,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPClassType[] getNestedClasses() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
 		}
@@ -267,17 +268,17 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	public final ICPPClassType[] getNestedClasses(IASTNode point) {
 		return getNestedClasses();
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
-		IScope scope= getCompositeScope();
+		IScope scope = getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getUsingDeclarations();
 		}
 		ICPPUsingDeclaration[] result = ((ICPPClassType) rbinding).getUsingDeclarations();
 		return wrapBindings(result);
 	}
-	
+
 	@Override
 	@Deprecated
 	public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {

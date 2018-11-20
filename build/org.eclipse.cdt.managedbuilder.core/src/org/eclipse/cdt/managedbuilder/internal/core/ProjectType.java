@@ -43,8 +43,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Version;
 
-
-public class ProjectType extends BuildObject implements IProjectType, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
+public class ProjectType extends BuildObject
+		implements IProjectType, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	//private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
@@ -53,7 +53,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	private IProjectType superClass;
 	private String superClassId;
 	//  Parent and children
-	private List<Configuration> configList;	//  Configurations of this project type
+	private List<Configuration> configList; //  Configurations of this project type
 	private Map<String, IConfiguration> configMap;
 	//  Managed Build model attributes
 	private Boolean isAbstract;
@@ -71,7 +71,6 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 
 	BuildObjectProperties buildProperties;
 	OptionalBuildProperties optionalBuildProperties;
-
 
 	//  Miscellaneous
 	private boolean resolved = true;
@@ -100,10 +99,10 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		// Load the configuration children
 		IManagedConfigElement[] configs = element.getChildren(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 
-		String [] usedConfigNames = new String[configs.length];
+		String[] usedConfigNames = new String[configs.length];
 		IConfigurationNameProvider configurationNameProvder = getConfigurationNameProvider();
 
-		if (  configurationNameProvder != null ) {
+		if (configurationNameProvder != null) {
 			// Tool Integrator provided 'ConfigurationNameProvider' class
 			// to get configuration names dynamically based architecture, os, toolchain version etc.
 			for (int n = 0; n < configs.length; ++n) {
@@ -170,12 +169,12 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		superClassId = SafeStringInterner.safeIntern(element.getAttribute(SUPERCLASS));
 
 		String props = SafeStringInterner.safeIntern(element.getAttribute(BUILD_PROPERTIES));
-		if(props != null)
+		if (props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
 
 		String artType = SafeStringInterner.safeIntern(element.getAttribute(BUILD_ARTEFACT_TYPE));
-		if(artType != null){
-			if(buildProperties == null)
+		if (artType != null) {
+			if (buildProperties == null)
 				buildProperties = new BuildObjectProperties(this, this);
 
 			try {
@@ -185,37 +184,37 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 			}
 		}
 
-
 		// Get the unused children, if any
 		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(UNUSED_CHILDREN));
 
 		// isAbstract
-        String isAbs = element.getAttribute(IS_ABSTRACT);
-        if (isAbs != null){
-    		isAbstract = Boolean.parseBoolean(isAbs);
-        }
+		String isAbs = element.getAttribute(IS_ABSTRACT);
+		if (isAbs != null) {
+			isAbstract = Boolean.parseBoolean(isAbs);
+		}
 
 		// Is this a test project type
 		String isTestStr = element.getAttribute(IS_TEST);
-        if (isTestStr != null){
-    		isTest = Boolean.parseBoolean(isTestStr);
-        }
+		if (isTestStr != null) {
+			isTest = Boolean.parseBoolean(isTestStr);
+		}
 
 		// Store the configuration element IFF there is a configuration name provider defined
-		if (element.getAttribute(CONFIGURATION_NAME_PROVIDER) != null && element instanceof DefaultManagedConfigElement) {
-			configurationNameProviderElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		if (element.getAttribute(CONFIGURATION_NAME_PROVIDER) != null
+				&& element instanceof DefaultManagedConfigElement) {
+			configurationNameProviderElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
 
 		// Get the environmentVariableSupplier configuration element
 		String environmentVariableSupplier = element.getAttribute(PROJECT_ENVIRONMENT_SUPPLIER);
-		if(environmentVariableSupplier != null && element instanceof DefaultManagedConfigElement){
-			environmentVariableSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		if (environmentVariableSupplier != null && element instanceof DefaultManagedConfigElement) {
+			environmentVariableSupplierElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
 
 		// Get the buildMacroSupplier configuration element
 		String buildMacroSupplier = element.getAttribute(PROJECT_MACRO_SUPPLIER);
-		if(buildMacroSupplier != null && element instanceof DefaultManagedConfigElement){
-			buildMacroSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		if (buildMacroSupplier != null && element instanceof DefaultManagedConfigElement) {
+			buildMacroSupplierElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
 
 		// Get the 'convertToId' attribute if it is available
@@ -232,7 +231,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	@Override
 	public IConfiguration createConfiguration(IConfiguration parent, String id, String name) {
 		Configuration config = new Configuration(this, parent, id, name);
-//		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
+		//		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
 		return config;
 	}
 
@@ -261,12 +260,12 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		// Remove the specified configuration from the list and map
 		Iterator<Configuration> iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
-			 IConfiguration config = iter.next();
-			 if (config.getId().equals(id)) {
-			 	getConfigurationList().remove(config);
+			IConfiguration config = iter.next();
+			if (config.getId().equals(id)) {
+				getConfigurationList().remove(config);
 				getConfigurationMap().remove(id);
-			 	break;
-			 }
+				break;
+			}
 		}
 	}
 
@@ -274,7 +273,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 * Adds the Configuration to the Configuration list and map
 	 */
 	public void addConfiguration(Configuration configuration) {
-		if(!configuration.isTemporary()){
+		if (!configuration.isTemporary()) {
 			getConfigurationList().add(configuration);
 			getConfigurationMap().put(configuration.getId(), configuration);
 		}
@@ -312,10 +311,10 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	@Override
 	public String getName() {
 		String name = getNameAttribute();
-		if(name.length() == 0){
+		if (name.length() == 0) {
 			IBuildObjectProperties props = getBuildProperties();
 			IBuildProperty prop = props.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
-			if(prop != null)
+			if (prop != null)
 				name = prop.getValue().getName();
 		}
 		return name;
@@ -351,7 +350,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		if (isAbstract != null) {
 			return isAbstract.booleanValue();
 		} else {
-			return false;	// Note: no inheritance from superClass
+			return false; // Note: no inheritance from superClass
 		}
 	}
 
@@ -363,7 +362,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		if (unusedChildren != null) {
 			return unusedChildren;
 		} else
-			return EMPTY_STRING;	// Note: no inheritance from superClass
+			return EMPTY_STRING; // Note: no inheritance from superClass
 	}
 
 	/* (non-Javadoc)
@@ -412,34 +411,33 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 				superClass = ManagedBuildManager.getExtensionProjectType(superClassId);
 				if (superClass == null) {
 					// Report error
-					ManagedBuildManager.outputResolveError(
-							"superClass",	//$NON-NLS-1$
-							superClassId,
-							"projectType",	//$NON-NLS-1$
+					ManagedBuildManager.outputResolveError("superClass", //$NON-NLS-1$
+							superClassId, "projectType", //$NON-NLS-1$
 							getId());
 				}
 			}
 
 			// Add configurations from our superClass that are not overridden here
 			if (superClass != null) {
-			    ((ProjectType)superClass).resolveReferences();
-			    IConfiguration[] superConfigs = superClass.getConfigurations();
-			    for (int i = 0; i < superConfigs.length; i++) {
-			        String superId = superConfigs[i].getId();
+				((ProjectType) superClass).resolveReferences();
+				IConfiguration[] superConfigs = superClass.getConfigurations();
+				for (int i = 0; i < superConfigs.length; i++) {
+					String superId = superConfigs[i].getId();
 
-				    check: {
-					    IConfiguration[] currentConfigs = getConfigurations();
-				        for (int j = 0; j < currentConfigs.length; j++) {
-					        IConfiguration config = currentConfigs[j];
-					        while (config.getParent() != null) {
-					            if (config.getParent().getId().equals(superId)) break check;
-					            config = config.getParent();
-					        }
-				        }
-				        addConfiguration((Configuration)superConfigs[i]);
-				    } // end check
+					check: {
+						IConfiguration[] currentConfigs = getConfigurations();
+						for (int j = 0; j < currentConfigs.length; j++) {
+							IConfiguration config = currentConfigs[j];
+							while (config.getParent() != null) {
+								if (config.getParent().getId().equals(superId))
+									break check;
+								config = config.getParent();
+							}
+						}
+						addConfiguration((Configuration) superConfigs[i]);
+					} // end check
 
-			    }
+				}
 			}
 
 			// Call resolve references on any children
@@ -454,10 +452,10 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#isSupported()
 	 */
 	@Override
-	public boolean isSupported(){
+	public boolean isSupported() {
 		List<Configuration> configurationList = getConfigurationList();
 		for (Configuration current : configurationList) {
-			if(current.isSupported())
+			if (current.isSupported())
 				return true;
 		}
 		return false;
@@ -467,9 +465,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getConfigurationNameProviderElement()
 	 */
 	public IConfigurationElement getConfigurationNameProviderElement() {
-		if(configurationNameProviderElement == null){
-			if(superClass != null) {
-				ProjectType tmpSuperClass = (ProjectType)superClass;
+		if (configurationNameProviderElement == null) {
+			if (superClass != null) {
+				ProjectType tmpSuperClass = (ProjectType) superClass;
 				return tmpSuperClass.getConfigurationNameProviderElement();
 			}
 		}
@@ -498,10 +496,12 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		if (element != null) {
 			try {
 				if (element.getAttribute(CONFIGURATION_NAME_PROVIDER) != null) {
-					configurationNameProvider = (IConfigurationNameProvider) element.createExecutableExtension(CONFIGURATION_NAME_PROVIDER);
+					configurationNameProvider = (IConfigurationNameProvider) element
+							.createExecutableExtension(CONFIGURATION_NAME_PROVIDER);
 					return configurationNameProvider;
 				}
-			} catch (CoreException e) {}
+			} catch (CoreException e) {
+			}
 		}
 		return null;
 	}
@@ -511,21 +511,20 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 *
 	 * @return IConfigurationElement
 	 */
-	public IConfigurationElement getEnvironmentVariableSupplierElement(){
+	public IConfigurationElement getEnvironmentVariableSupplierElement() {
 		if (environmentVariableSupplierElement == null) {
 			if (superClass != null && superClass instanceof ProjectType) {
-				return ((ProjectType)superClass).getEnvironmentVariableSupplierElement();
+				return ((ProjectType) superClass).getEnvironmentVariableSupplierElement();
 			}
 		}
 		return environmentVariableSupplierElement;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getEnvironmentVariableSupplier()
 	 */
 	@Override
-	public IProjectEnvironmentVariableSupplier getEnvironmentVariableSupplier(){
+	public IProjectEnvironmentVariableSupplier getEnvironmentVariableSupplier() {
 		if (environmentVariableSupplier != null) {
 			return environmentVariableSupplier;
 		}
@@ -533,10 +532,12 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		if (element != null) {
 			try {
 				if (element.getAttribute(PROJECT_ENVIRONMENT_SUPPLIER) != null) {
-					environmentVariableSupplier = (IProjectEnvironmentVariableSupplier) element.createExecutableExtension(PROJECT_ENVIRONMENT_SUPPLIER);
+					environmentVariableSupplier = (IProjectEnvironmentVariableSupplier) element
+							.createExecutableExtension(PROJECT_ENVIRONMENT_SUPPLIER);
 					return environmentVariableSupplier;
 				}
-			} catch (CoreException e) {}
+			} catch (CoreException e) {
+			}
 		}
 		return null;
 	}
@@ -546,21 +547,20 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 *
 	 * @return IConfigurationElement
 	 */
-	public IConfigurationElement getBuildMacroSupplierElement(){
+	public IConfigurationElement getBuildMacroSupplierElement() {
 		if (buildMacroSupplierElement == null) {
 			if (superClass != null && superClass instanceof ProjectType) {
-				return ((ProjectType)superClass).getBuildMacroSupplierElement();
+				return ((ProjectType) superClass).getBuildMacroSupplierElement();
 			}
 		}
 		return buildMacroSupplierElement;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IProjectType#getBuildMacroSupplier()
 	 */
 	@Override
-	public IProjectBuildMacroSupplier getBuildMacroSupplier(){
+	public IProjectBuildMacroSupplier getBuildMacroSupplier() {
 		if (buildMacroSupplier != null) {
 			return buildMacroSupplier;
 		}
@@ -568,14 +568,15 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		if (element != null) {
 			try {
 				if (element.getAttribute(PROJECT_MACRO_SUPPLIER) != null) {
-					buildMacroSupplier = (IProjectBuildMacroSupplier) element.createExecutableExtension(PROJECT_MACRO_SUPPLIER);
+					buildMacroSupplier = (IProjectBuildMacroSupplier) element
+							.createExecutableExtension(PROJECT_MACRO_SUPPLIER);
 					return buildMacroSupplier;
 				}
-			} catch (CoreException e) {}
+			} catch (CoreException e) {
+			}
 		}
 		return null;
 	}
-
 
 	@Override
 	public String getConvertToId() {
@@ -590,10 +591,10 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return convertToId;
 	}
 
-
 	@Override
 	public void setConvertToId(String convertToId) {
-		if (convertToId == null && this.convertToId == null) return;
+		if (convertToId == null && this.convertToId == null)
+			return;
 		if (convertToId == null || this.convertToId == null || !convertToId.equals(this.convertToId)) {
 			this.convertToId = convertToId;
 		}
@@ -611,17 +612,17 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 
 		String convertToId = getConvertToId();
 		if ((convertToId == null) || (convertToId.isEmpty())) {
-				// It means there is no 'convertToId' attribute available and
-				// the project type is still actively
-				// supported by the tool integrator. So do nothing, just return
-				return true;
+			// It means there is no 'convertToId' attribute available and
+			// the project type is still actively
+			// supported by the tool integrator. So do nothing, just return
+			return true;
 		} else {
-				// In case the 'convertToId' attribute is available,
-				// it means that Tool integrator currently does not support this
-				// project type.
-				// Look for the converters available for this project type.
+			// In case the 'convertToId' attribute is available,
+			// it means that Tool integrator currently does not support this
+			// project type.
+			// Look for the converters available for this project type.
 
-				return getConverter(convertToId);
+			return getConverter(convertToId);
 		}
 
 	}
@@ -632,16 +633,15 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		String toId = null;
 
 		// Get the Converter Extension Point
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
-						"projectConverter"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
+				"org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
+				"projectConverter"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			// Get the extensions
 			IExtension[] extensions = extensionPoint.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				// Get the configuration elements of each extension
-				IConfigurationElement[] configElements = extensions[i]
-						.getConfigurationElements();
+				IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 				for (int j = 0; j < configElements.length; j++) {
 
 					IConfigurationElement element = configElements[j];
@@ -653,16 +653,13 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 						// Check whether the current converter can be used for
 						// the selected project type
 
-						if (fromId.equals(getId())
-								&& toId.equals(convertToId)) {
+						if (fromId.equals(getId()) && toId.equals(convertToId)) {
 							// If it matches
-							String mbsVersion = element
-									.getAttribute("mbsVersion"); //$NON-NLS-1$
-							Version currentMbsVersion = ManagedBuildManager
-									.getBuildInfoVersion();
+							String mbsVersion = element.getAttribute("mbsVersion"); //$NON-NLS-1$
+							Version currentMbsVersion = ManagedBuildManager.getBuildInfoVersion();
 
 							// set the converter element based on the MbsVersion
-							if (currentMbsVersion.compareTo(new Version(mbsVersion))>0) {
+							if (currentMbsVersion.compareTo(new Version(mbsVersion)) > 0) {
 								previousMbsVersionConversionElement = element;
 							} else {
 								currentMbsVersionConversionElement = element;
@@ -681,7 +678,6 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return false;
 	}
 
-
 	public IConfigurationElement getPreviousMbsVersionConversionElement() {
 		return previousMbsVersionConversionElement;
 	}
@@ -692,9 +688,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 
 	@Override
 	public IBuildObjectProperties getBuildProperties() {
-		if(buildProperties == null){
+		if (buildProperties == null) {
 			BuildObjectProperties parentProps = findBuildProperties();
-			if(parentProps != null)
+			if (parentProps != null)
 				buildProperties = new BuildObjectProperties(parentProps, this, this);
 			else
 				buildProperties = new BuildObjectProperties(this, this);
@@ -702,10 +698,10 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return buildProperties;
 	}
 
-	BuildObjectProperties findBuildProperties(){
-		if(buildProperties == null){
-			if(superClass != null){
-				return ((ProjectType)superClass).findBuildProperties();
+	BuildObjectProperties findBuildProperties() {
+		if (buildProperties == null) {
+			if (superClass != null) {
+				return ((ProjectType) superClass).findBuildProperties();
 			}
 			return null;
 		}
@@ -714,9 +710,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 
 	@Override
 	public IOptionalBuildProperties getOptionalBuildProperties() {
-		if(optionalBuildProperties == null){
+		if (optionalBuildProperties == null) {
 			OptionalBuildProperties parentProps = findOptionalBuildProperties();
-			if(parentProps != null)
+			if (parentProps != null)
 				optionalBuildProperties = new OptionalBuildProperties(parentProps);
 			else
 				optionalBuildProperties = new OptionalBuildProperties();
@@ -724,10 +720,10 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return optionalBuildProperties;
 	}
 
-	OptionalBuildProperties findOptionalBuildProperties(){
-		if(optionalBuildProperties == null){
-			if(superClass != null){
-				return ((ProjectType)superClass).findOptionalBuildProperties();
+	OptionalBuildProperties findOptionalBuildProperties() {
+		if (optionalBuildProperties == null) {
+			if (superClass != null) {
+				return ((ProjectType) superClass).findOptionalBuildProperties();
 			}
 			return null;
 		}
@@ -737,7 +733,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	@Override
 	public void propertiesChanged() {
 		List<Configuration> list = getConfigurationList();
-		for(int i = 0; i < list.size(); i++){
+		for (int i = 0; i < list.size(); i++) {
 			list.get(i).propertiesChanged();
 		}
 	}
@@ -746,16 +742,15 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return supportsType(type.getId());
 	}
 
-	public boolean supportsValue(IBuildPropertyType type,
-			IBuildPropertyValue value) {
+	public boolean supportsValue(IBuildPropertyType type, IBuildPropertyValue value) {
 		return supportsValue(type.getId(), value.getId());
 	}
 
 	@Override
 	public boolean supportsType(String typeId) {
 		List<Configuration> list = getConfigurationList();
-		for(int i = 0; i < list.size(); i++){
-			if(list.get(i).supportsType(typeId))
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).supportsType(typeId))
 				return true;
 		}
 		return false;
@@ -764,8 +759,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	@Override
 	public boolean supportsValue(String typeId, String valueId) {
 		List<Configuration> list = getConfigurationList();
-		for(int i = 0; i < list.size(); i++){
-			if(list.get(i).supportsValue(typeId, valueId))
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).supportsValue(typeId, valueId))
 				return true;
 		}
 		return false;
@@ -775,7 +770,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	public String[] getRequiredTypeIds() {
 		List<String> result = new ArrayList<String>();
 		List<Configuration> list = getConfigurationList();
-		for(int i = 0; i < list.size(); i++){
+		for (int i = 0; i < list.size(); i++) {
 			result.addAll(Arrays.asList((list.get(i)).getRequiredTypeIds()));
 		}
 		return result.toArray(new String[result.size()]);
@@ -785,7 +780,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	public String[] getSupportedTypeIds() {
 		List<String> result = new ArrayList<String>();
 		List<Configuration> list = getConfigurationList();
-		for(int i = 0; i < list.size(); i++){
+		for (int i = 0; i < list.size(); i++) {
 			result.addAll(Arrays.asList((list.get(i)).getSupportedTypeIds()));
 		}
 		return result.toArray(new String[result.size()]);
@@ -795,7 +790,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	public String[] getSupportedValueIds(String typeId) {
 		List<String> result = new ArrayList<String>();
 		List<Configuration> list = getConfigurationList();
-		for(int i = 0; i < list.size(); i++){
+		for (int i = 0; i < list.size(); i++) {
 			result.addAll(Arrays.asList((list.get(i)).getSupportedValueIds(typeId)));
 		}
 		return result.toArray(new String[result.size()]);
@@ -804,8 +799,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	@Override
 	public boolean requiresType(String typeId) {
 		List<Configuration> list = getConfigurationList();
-		for(int i = 0; i < list.size(); i++){
-			if(list.get(i).requiresType(typeId))
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).requiresType(typeId))
 				return true;
 		}
 		return false;
@@ -814,9 +809,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	@Override
 	public IBuildPropertyValue getBuildArtefactType() {
 		IBuildObjectProperties props = findBuildProperties();
-		if(props != null){
+		if (props != null) {
 			IBuildProperty prop = props.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
-			if(prop != null)
+			if (prop != null)
 				return prop.getValue();
 		}
 		return null;

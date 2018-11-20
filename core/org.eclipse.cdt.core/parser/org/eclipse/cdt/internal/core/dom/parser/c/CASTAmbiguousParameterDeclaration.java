@@ -32,44 +32,43 @@ import org.eclipse.core.runtime.Assert;
  */
 public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implements IASTAmbiguousParameterDeclaration {
 
-    private IASTParameterDeclaration[] paramDecls = new IASTParameterDeclaration[2];
-    private int declPos=-1;
+	private IASTParameterDeclaration[] paramDecls = new IASTParameterDeclaration[2];
+	private int declPos = -1;
 
-
-    public CASTAmbiguousParameterDeclaration(IASTParameterDeclaration... decls) {
+	public CASTAmbiguousParameterDeclaration(IASTParameterDeclaration... decls) {
 		for (IASTParameterDeclaration d : decls)
 			addParameterDeclaration(d);
 	}
 
 	@Override
 	public void addParameterDeclaration(IASTParameterDeclaration d) {
-        assertNotFrozen();
-    	if (d != null) {
-    		paramDecls = ArrayUtil.appendAt(IASTParameterDeclaration.class, paramDecls, ++declPos, d);
-    		d.setParent(this);
+		assertNotFrozen();
+		if (d != null) {
+			paramDecls = ArrayUtil.appendAt(IASTParameterDeclaration.class, paramDecls, ++declPos, d);
+			d.setParent(this);
 			d.setPropertyInParent(SUBDECLARATION);
-    	}
-    }
+		}
+	}
 
 	@Override
 	protected void beforeResolution() {
 		// populate containing scope, so that it will not be affected by the alternative branches.
-		IScope scope= CVisitor.getContainingScope(this);
+		IScope scope = CVisitor.getContainingScope(this);
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).populateCache();
 		}
 	}
 
-    @Override
+	@Override
 	public IASTParameterDeclaration[] getParameterDeclarations() {
-    	paramDecls = ArrayUtil.trimAt(IASTParameterDeclaration.class, paramDecls, declPos);
-        return paramDecls;
-    }
+		paramDecls = ArrayUtil.trimAt(IASTParameterDeclaration.class, paramDecls, declPos);
+		return paramDecls;
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getNodes() {
-        return getParameterDeclarations();
-    }
+		return getParameterDeclarations();
+	}
 
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
@@ -83,13 +82,13 @@ public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implemen
 
 	@Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
 	@Override
 	public void setDeclarator(IASTDeclarator declarator) {
-        assertNotFrozen();
+		assertNotFrozen();
 		Assert.isLegal(false);
 	}
 

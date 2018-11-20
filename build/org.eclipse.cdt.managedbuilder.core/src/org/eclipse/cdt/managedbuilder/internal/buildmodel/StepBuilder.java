@@ -51,24 +51,25 @@ public class StepBuilder implements IBuildModelBuilder {
 	private CommandBuilder fCommandBuilders[];
 	private IResourceRebuildStateContainer fRebuildStateContainer;
 
-	public StepBuilder(IBuildStep step, IResourceRebuildStateContainer rs){
+	public StepBuilder(IBuildStep step, IResourceRebuildStateContainer rs) {
 		this(step, null, rs);
 	}
 
-	public StepBuilder(IBuildStep step, IPath cwd, IResourceRebuildStateContainer rs){
+	public StepBuilder(IBuildStep step, IPath cwd, IResourceRebuildStateContainer rs) {
 		this(step, cwd, true, null, rs);
 	}
 
-	public StepBuilder(IBuildStep step, IPath cwd, boolean resumeOnErrs, GenDirInfo dirs, IResourceRebuildStateContainer rs){
+	public StepBuilder(IBuildStep step, IPath cwd, boolean resumeOnErrs, GenDirInfo dirs,
+			IResourceRebuildStateContainer rs) {
 		fStep = step;
 		fCWD = cwd;
 		fDirs = dirs;
 		fResumeOnErrs = resumeOnErrs;
 
-		if(fDirs == null)
+		if (fDirs == null)
 			fDirs = new GenDirInfo(fStep.getBuildDescription().getConfiguration());
 
-		if(fCWD == null)
+		if (fCWD == null)
 			fCWD = fStep.getBuildDescription().getDefaultBuildDirLocation();
 
 		fRebuildStateContainer = rs;
@@ -78,31 +79,27 @@ public class StepBuilder implements IBuildModelBuilder {
 	 * @see org.eclipse.cdt.managedbuilder.internal.builddescription.IBuildDescriptionBuilder#build(java.io.OutputStream, java.io.OutputStream, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public int build(OutputStream out, OutputStream err,
-			IProgressMonitor monitor){
+	public int build(OutputStream out, OutputStream err, IProgressMonitor monitor) {
 
-		monitor.beginTask("", getNumCommands());	//$NON-NLS-1$
-		monitor.subTask("");	//$NON-NLS-1$
+		monitor.beginTask("", getNumCommands()); //$NON-NLS-1$
+		monitor.subTask(""); //$NON-NLS-1$
 
 		int status = STATUS_OK;
 		CommandBuilder bs[] = getCommandBuilders();
-		if(bs.length > 0){
+		if (bs.length > 0) {
 			//TODO: monitor
 			createOutDirs(new NullProgressMonitor());
 
-			for(int i = 0;
-					i < bs.length
-						&& status != STATUS_CANCELLED
-						&& (fResumeOnErrs || status == STATUS_OK);
-					i++){
+			for (int i = 0; i < bs.length && status != STATUS_CANCELLED
+					&& (fResumeOnErrs || status == STATUS_OK); i++) {
 				CommandBuilder builder = bs[i];
-				switch(builder.build(out, err, new SubProgressMonitor(monitor, builder.getNumCommands()))){
+				switch (builder.build(out, err, new SubProgressMonitor(monitor, builder.getNumCommands()))) {
 				case STATUS_OK:
 					break;
 				case STATUS_CANCELLED:
 					status = STATUS_CANCELLED;
 				case STATUS_ERROR_BUILD:
-					if(status != STATUS_ERROR_LAUNCH)
+					if (status != STATUS_ERROR_LAUNCH)
 						status = STATUS_ERROR_BUILD;
 					break;
 				case STATUS_ERROR_LAUNCH:
@@ -118,11 +115,11 @@ public class StepBuilder implements IBuildModelBuilder {
 		return status;
 	}
 
-	protected int postProcess(int status, IProgressMonitor monitor){
-		if(status != STATUS_ERROR_LAUNCH){
+	protected int postProcess(int status, IProgressMonitor monitor) {
+		if (status != STATUS_ERROR_LAUNCH) {
 			refreshOutputs(monitor);
 		}
-		switch(status){
+		switch (status) {
 		case STATUS_OK:
 			clearRebuildState();
 			break;
@@ -136,8 +133,8 @@ public class StepBuilder implements IBuildModelBuilder {
 		return status;
 	}
 
-	private void clearRebuildState(){
-		if(fRebuildStateContainer == null)
+	private void clearRebuildState() {
+		if (fRebuildStateContainer == null)
 			return;
 
 		IBuildResource[] rcs = fStep.getOutputResources();
@@ -146,91 +143,89 @@ public class StepBuilder implements IBuildModelBuilder {
 		DescriptionBuilder.putAll(fRebuildStateContainer, rcs, 0, false);
 	}
 
-	protected void refreshOutputs(IProgressMonitor monitor){
-		if(fStep == fStep.getBuildDescription().getInputStep())
+	protected void refreshOutputs(IProgressMonitor monitor) {
+		if (fStep == fStep.getBuildDescription().getInputStep())
 			return;
 
 		IBuildResource rcs[] = fStep.getOutputResources();
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		for(int i = 0; i < rcs.length; i++){
+		for (int i = 0; i < rcs.length; i++) {
 			IPath path = rcs[i].getFullPath();
-			if(path != null){
+			if (path != null) {
 				IFile file = root.getFile(path);
 				try {
 					file.refreshLocal(IResource.DEPTH_ZERO, monitor);
 				} catch (CoreException e) {
-					if(DbgUtil.DEBUG){
-						DbgUtil.trace("failed to refresh resource " 	//$NON-NLS-1$
-								+ file.getFullPath()
-								+ ", error: " + e.getLocalizedMessage());	//$NON-NLS-1$
+					if (DbgUtil.DEBUG) {
+						DbgUtil.trace("failed to refresh resource " //$NON-NLS-1$
+								+ file.getFullPath() + ", error: " + e.getLocalizedMessage()); //$NON-NLS-1$
 					}
 				}
 			}
 		}
 	}
 
-	protected void cleanOutputs(IProgressMonitor monitor){
-		if(fStep == fStep.getBuildDescription().getInputStep())
+	protected void cleanOutputs(IProgressMonitor monitor) {
+		if (fStep == fStep.getBuildDescription().getInputStep())
 			return;
 
 		IBuildResource bRcs[] = fStep.getOutputResources();
-		for(int i = 0; i < bRcs.length; i++){
-			if(!bRcs[i].isProjectResource())
+		for (int i = 0; i < bRcs.length; i++) {
+			if (!bRcs[i].isProjectResource())
 				continue;
 
 			IResource rc = BuildDescriptionManager.findResourceForBuildResource(bRcs[i]);
-			if(rc != null){
+			if (rc != null) {
 				try {
 					rc.delete(true, monitor);
 				} catch (CoreException e) {
-					if(DbgUtil.DEBUG){
-						DbgUtil.trace("failed to delete resource " 	//$NON-NLS-1$
-								+ rc.getFullPath()
-								+ ", error: " + e.getLocalizedMessage());	//$NON-NLS-1$
+					if (DbgUtil.DEBUG) {
+						DbgUtil.trace("failed to delete resource " //$NON-NLS-1$
+								+ rc.getFullPath() + ", error: " + e.getLocalizedMessage()); //$NON-NLS-1$
 					}
 				}
 			}
 		}
 	}
 
-	protected void createOutDirs(IProgressMonitor monitor){
+	protected void createOutDirs(IProgressMonitor monitor) {
 		IBuildDescription des = fStep.getBuildDescription();
-		if(des != null && des.getInputStep() == fStep){
+		if (des != null && des.getInputStep() == fStep) {
 			IPath path = des.getDefaultBuildDirFullPath();
-			if(path != null){
+			if (path != null) {
 				fDirs.createIfProjectDir(path, monitor);
 			}
 		}
 
 		IBuildResource rcs[] = fStep.getOutputResources();
 
-		for(int i = 0; i < rcs.length; i++){
+		for (int i = 0; i < rcs.length; i++) {
 			fDirs.createDir(rcs[i], monitor);
 		}
 	}
 
 	public int getNumCommands() {
-		if(fNumCommands == -1){
+		if (fNumCommands == -1) {
 			CommandBuilder bs[] = getCommandBuilders();
 			fNumCommands = 0;
-			for(int i = 0; i < bs.length; i++){
+			for (int i = 0; i < bs.length; i++) {
 				fNumCommands += bs[i].getNumCommands();
 			}
 		}
 		return fNumCommands;
 	}
 
-	protected CommandBuilder[] getCommandBuilders(){
-		if(fCommandBuilders == null){
+	protected CommandBuilder[] getCommandBuilders() {
+		if (fCommandBuilders == null) {
 			IBuildCommand cmds[] = fStep.getCommands(fCWD, null, null, true);
-			if(cmds == null)
+			if (cmds == null)
 				fCommandBuilders = new CommandBuilder[0];
 			else {
 				fCommandBuilders = new CommandBuilder[cmds.length];
 				IConfiguration cfg = fStep.getBuildDescription().getConfiguration();
-				IProject project = (IProject)cfg.getOwner();
-				for(int i = 0; i < cmds.length; i++){
+				IProject project = (IProject) cfg.getOwner();
+				for (int i = 0; i < cmds.length; i++) {
 					fCommandBuilders[i] = new CommandBuilder(cmds[i], fRebuildStateContainer, project);
 				}
 			}

@@ -19,18 +19,18 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEnumeration extends IBinding, IType {
-    /**
-     * Returns an array of the IEnumerators declared in this enumeration
-     */
-    IEnumerator[] getEnumerators();
-    
-    /**
-	 * @since 5.2
+	/**
+	 * Returns an array of the IEnumerators declared in this enumeration
 	 */
-    long getMinValue();
+	IEnumerator[] getEnumerators();
 
-    /**
+	/**
 	 * @since 5.2
 	 */
-    long getMaxValue();
+	long getMinValue();
+
+	/**
+	 * @since 5.2
+	 */
+	long getMaxValue();
 }

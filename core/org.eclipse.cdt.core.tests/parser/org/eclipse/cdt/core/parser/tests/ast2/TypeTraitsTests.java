@@ -40,7 +40,7 @@ public class TypeTraitsTests extends AST2TestBase {
 	}
 
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
-		String code= getAboveComment();
+		String code = getAboveComment();
 		return new AST2AssertionHelper(code, true);
 	}
 

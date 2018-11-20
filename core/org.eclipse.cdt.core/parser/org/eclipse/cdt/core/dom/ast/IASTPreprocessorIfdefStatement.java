@@ -20,19 +20,19 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorIfdefStatement extends	IASTPreprocessorStatement {
+public interface IASTPreprocessorIfdefStatement extends IASTPreprocessorStatement {
 
 	/**
 	 * Returns whether this branch was taken.
 	 */
 	public boolean taken();
-	
+
 	/**
 	 * The condition of the ifdef-statement.
 	 * @return the condition
 	 */
 	public char[] getCondition();
-	
+
 	/**
 	 * Returns the macro reference, or <code>null</code> if the macro does not exist.
 	 */

@@ -53,8 +53,7 @@ public class FileScopeComposite extends Composite {
 		this.prefStore = new PreferenceStore();
 		IProblemPreference info = problem.getPreference();
 		FileScopeProblemPreference scopeIn = null;
-		if (info == null
-				|| (!(info instanceof MapProblemPreference))
+		if (info == null || (!(info instanceof MapProblemPreference))
 				|| ((scopeIn = (FileScopeProblemPreference) ((MapProblemPreference) info)
 						.getChildDescriptor(FileScopeProblemPreference.KEY)) == null)) {
 			Label label = new Label(this, 0);

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Structure extends StructureDeclaration implements  IStructure {
+public class Structure extends StructureDeclaration implements IStructure {
 	Map<String, ASTAccessVisibility> superClassesNames = new TreeMap<String, ASTAccessVisibility>();
 
 	public Structure(ICElement parent, int kind, String name) {
@@ -44,7 +44,7 @@ public class Structure extends StructureDeclaration implements  IStructure {
 		try {
 			IField[] fields = getFields();
 			for (IField field : fields) {
-				if (field.getElementName().equals(name)){
+				if (field.getElementName().equals(name)) {
 					return field;
 				}
 			}
@@ -66,7 +66,7 @@ public class Structure extends StructureDeclaration implements  IStructure {
 		try {
 			IMethodDeclaration[] methods = getMethods();
 			for (IMethodDeclaration method : methods) {
-				if (method.getElementName().equals(name)){
+				if (method.getElementName().equals(name)) {
 					return method;
 				}
 			}
@@ -86,12 +86,12 @@ public class Structure extends StructureDeclaration implements  IStructure {
 	}
 
 	@Override
-	public String[] getSuperClassesNames(){
+	public String[] getSuperClassesNames() {
 		return superClassesNames.keySet().toArray(new String[superClassesNames.keySet().size()]);
 	}
 
 	@Override
-	public ASTAccessVisibility getSuperClassAccess(String name){
+	public ASTAccessVisibility getSuperClassAccess(String name) {
 		return superClassesNames.get(name);
 	}
 

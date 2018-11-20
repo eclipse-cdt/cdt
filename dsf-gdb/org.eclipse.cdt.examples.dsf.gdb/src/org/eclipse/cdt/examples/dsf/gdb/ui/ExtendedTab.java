@@ -33,7 +33,7 @@ public class ExtendedTab extends CLaunchConfigurationTab {
 	public String getName() {
 		return "Extra"; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public String getId() {
 		return "org.eclipse.cdt.examples.dsf.gdb.extra"; //$NON-NLS-1$
@@ -43,7 +43,7 @@ public class ExtendedTab extends CLaunchConfigurationTab {
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);

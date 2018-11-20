@@ -55,8 +55,8 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 public class PathEntryUtil {
 	static final PathEntryManager manager = PathEntryManager.getDefault();
 	static final IMarker[] NO_MARKERS = new IMarker[0];
-	static final boolean VALIDATE_INCLUDE_ENTRIES = 
-			DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).getBoolean("validate_include_entries", true); //$NON-NLS-1$
+	static final boolean VALIDATE_INCLUDE_ENTRIES = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+			.getBoolean("validate_include_entries", true); //$NON-NLS-1$
 
 	private PathEntryUtil() {
 		super();
@@ -64,182 +64,183 @@ public class PathEntryUtil {
 
 	public static IPathEntry getExpandedPathEntry(IPathEntry entry, ICProject cproject) throws CModelException {
 		switch (entry.getEntryKind()) {
-			case IPathEntry.CDT_INCLUDE: {
-				IIncludeEntry includeEntry = (IIncludeEntry) entry;
-				IPath refPath = includeEntry.getBaseReference();
-				if (refPath != null && !refPath.isEmpty()) {
-					IPath includePath = includeEntry.getIncludePath();
-					if (refPath.isAbsolute()) {
-						IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
-						if (res != null && res.getType() == IResource.PROJECT) {
-							IProject project = (IProject)res;
-							if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
-								ICProject refCProject = CoreModel.getDefault().create(project);
-								if (refCProject != null) {
-									IPathEntry[] entries = manager.getResolvedPathEntries(refCProject);
-									for (IPathEntry pathEntry : entries) {
-										if (pathEntry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
-											IIncludeEntry refEntry = (IIncludeEntry) pathEntry;
-											if (refEntry.getIncludePath().equals(includePath)) {
-												IPath newBasePath = refEntry.getBasePath();
-												// If the includePath is relative, give a new base
-												// path if none.
-												if (!newBasePath.isAbsolute() && !includePath.isAbsolute()) {
-													IResource refRes;
-													if (!newBasePath.isEmpty()) {
-														refRes = cproject.getCModel().getWorkspace().getRoot().findMember(
-																newBasePath);
-													} else {
-														IPath refResPath = refEntry.getPath();
-														refRes = cproject.getCModel().getWorkspace().getRoot().findMember(
-																refResPath);
-													}
-													if (refRes != null) {
-														if (refRes.getType() == IResource.FILE) {
-															refRes = refRes.getParent();
-														}
-														newBasePath = refRes.getLocation().append(newBasePath);
-													}
+		case IPathEntry.CDT_INCLUDE: {
+			IIncludeEntry includeEntry = (IIncludeEntry) entry;
+			IPath refPath = includeEntry.getBaseReference();
+			if (refPath != null && !refPath.isEmpty()) {
+				IPath includePath = includeEntry.getIncludePath();
+				if (refPath.isAbsolute()) {
+					IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
+					if (res != null && res.getType() == IResource.PROJECT) {
+						IProject project = (IProject) res;
+						if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
+							ICProject refCProject = CoreModel.getDefault().create(project);
+							if (refCProject != null) {
+								IPathEntry[] entries = manager.getResolvedPathEntries(refCProject);
+								for (IPathEntry pathEntry : entries) {
+									if (pathEntry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+										IIncludeEntry refEntry = (IIncludeEntry) pathEntry;
+										if (refEntry.getIncludePath().equals(includePath)) {
+											IPath newBasePath = refEntry.getBasePath();
+											// If the includePath is relative, give a new base
+											// path if none.
+											if (!newBasePath.isAbsolute() && !includePath.isAbsolute()) {
+												IResource refRes;
+												if (!newBasePath.isEmpty()) {
+													refRes = cproject.getCModel().getWorkspace().getRoot()
+															.findMember(newBasePath);
+												} else {
+													IPath refResPath = refEntry.getPath();
+													refRes = cproject.getCModel().getWorkspace().getRoot()
+															.findMember(refResPath);
 												}
-												return CoreModel.newIncludeEntry(includeEntry.getPath(), newBasePath, includePath);
-											}
-										}
-									}
-								}
-							}
-						}
-					} else { // Container ref
-						IPathEntryContainer container = manager.getPathEntryContainer(refPath, cproject);
-						if (container != null) {
-							IPathEntry[] entries = container.getPathEntries();
-							for (IPathEntry pathEntry : entries) {
-								if (pathEntry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
-									IIncludeEntry refEntry = (IIncludeEntry) pathEntry;
-									if (refEntry.getIncludePath().equals(includePath)) {
-										IPath newBasePath = refEntry.getBasePath();
-										return CoreModel.newIncludeEntry(includeEntry.getPath(), newBasePath, includePath);
-									}
-								}
-							}
-						}
-					}
-				}
-				break;
-			}
-
-			case IPathEntry.CDT_MACRO: {
-				IMacroEntry macroEntry = (IMacroEntry) entry;
-				IPath refPath = macroEntry.getBaseReference();
-				if (refPath != null && !refPath.isEmpty()) {
-					String name = macroEntry.getMacroName();
-					if (refPath.isAbsolute()) {
-						IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
-						if (res != null && res.getType() == IResource.PROJECT) {
-							IProject project = (IProject)res;
-							if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
-								ICProject refCProject = CoreModel.getDefault().create(project);
-								if (refCProject != null) {
-									IPathEntry[] entries = manager.getResolvedPathEntries(refCProject);
-									for (IPathEntry pathEntry : entries) {
-										if (pathEntry.getEntryKind() == IPathEntry.CDT_MACRO) {
-											IMacroEntry refEntry = (IMacroEntry) pathEntry;
-											if (refEntry.getMacroName().equals(name)) {
-												String value = refEntry.getMacroValue();
-												return CoreModel.newMacroEntry(macroEntry.getPath(), name, value);
-											}
-										}
-									}
-								}
-							}
-						}
-					} else { // Container ref
-						IPathEntryContainer container = manager.getPathEntryContainer(refPath, cproject);
-						if (container != null) {
-							IPathEntry[] entries = container.getPathEntries();
-							for (IPathEntry pathEntry : entries) {
-								if (pathEntry.getEntryKind() == IPathEntry.CDT_MACRO) {
-									IMacroEntry refEntry = (IMacroEntry) pathEntry;
-									if (refEntry.getMacroName().equals(name)) {
-										String value = refEntry.getMacroValue();
-										return CoreModel.newMacroEntry(macroEntry.getPath(), name, value);
-									}
-								}
-							}
-						}
-					}
-				}
-				break;
-			}
-
-			case IPathEntry.CDT_LIBRARY: {
-				ILibraryEntry libEntry = (ILibraryEntry) entry;
-				IPath refPath = libEntry.getBaseReference();
-				if (refPath != null && !refPath.isEmpty()) {
-					IPath libraryPath = libEntry.getLibraryPath();
-					if (refPath.isAbsolute()) {
-						IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
-						if (res != null && res.getType() == IResource.PROJECT) {
-							IProject project = (IProject)res;
-							if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
-								ICProject refCProject = CoreModel.getDefault().create(project);
-								if (refCProject != null) {
-									IPathEntry[] entries = manager.getResolvedPathEntries(refCProject);
-									for (IPathEntry pathEntry : entries) {
-										if (pathEntry.getEntryKind() == IPathEntry.CDT_LIBRARY) {
-											ILibraryEntry refEntry = (ILibraryEntry) pathEntry;
-											if (refEntry.getLibraryPath().equals(libraryPath)) {
-												IPath newBasePath = refEntry.getBasePath();
-												// If the libraryPath is
-												// relative give a new basepath
-												// if none
-												if (!newBasePath.isAbsolute() && !libraryPath.isAbsolute()) {
-													IResource refRes;
-													if (!newBasePath.isEmpty()) {
-														refRes = cproject.getCModel().getWorkspace().getRoot().findMember(
-																newBasePath);
-													} else {
-														IPath refResPath = refEntry.getPath();
-														refRes = cproject.getCModel().getWorkspace().getRoot().findMember(
-																refResPath);
+												if (refRes != null) {
+													if (refRes.getType() == IResource.FILE) {
+														refRes = refRes.getParent();
 													}
-													if (refRes != null) {
-														if (refRes.getType() == IResource.FILE) {
-															refRes = refRes.getParent();
-														}
-														newBasePath = refRes.getLocation().append(newBasePath);
-													}
+													newBasePath = refRes.getLocation().append(newBasePath);
 												}
-
-												return CoreModel.newLibraryEntry(entry.getPath(), newBasePath,
-														refEntry.getLibraryPath(), refEntry.getSourceAttachmentPath(),
-														refEntry.getSourceAttachmentRootPath(),
-														refEntry.getSourceAttachmentPrefixMapping(), false);
 											}
+											return CoreModel.newIncludeEntry(includeEntry.getPath(), newBasePath,
+													includePath);
 										}
 									}
 								}
 							}
 						}
-					} else { // Container ref
-						IPathEntryContainer container = manager.getPathEntryContainer(refPath, cproject);
-						if (container != null) {
-							IPathEntry[] entries = container.getPathEntries();
-							for (IPathEntry pathEntry : entries) {
-								if (pathEntry.getEntryKind() == IPathEntry.CDT_LIBRARY) {
-									ILibraryEntry refEntry = (ILibraryEntry) pathEntry;
-									if (refEntry.getPath().equals(libraryPath)) {
-										return CoreModel.newLibraryEntry(entry.getPath(), refEntry.getBasePath(),
-												refEntry.getLibraryPath(), refEntry.getSourceAttachmentPath(),
-												refEntry.getSourceAttachmentRootPath(),
-												refEntry.getSourceAttachmentPrefixMapping(), false);
-									}
+					}
+				} else { // Container ref
+					IPathEntryContainer container = manager.getPathEntryContainer(refPath, cproject);
+					if (container != null) {
+						IPathEntry[] entries = container.getPathEntries();
+						for (IPathEntry pathEntry : entries) {
+							if (pathEntry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+								IIncludeEntry refEntry = (IIncludeEntry) pathEntry;
+								if (refEntry.getIncludePath().equals(includePath)) {
+									IPath newBasePath = refEntry.getBasePath();
+									return CoreModel.newIncludeEntry(includeEntry.getPath(), newBasePath, includePath);
 								}
 							}
 						}
 					}
 				}
-				break;
 			}
+			break;
+		}
+
+		case IPathEntry.CDT_MACRO: {
+			IMacroEntry macroEntry = (IMacroEntry) entry;
+			IPath refPath = macroEntry.getBaseReference();
+			if (refPath != null && !refPath.isEmpty()) {
+				String name = macroEntry.getMacroName();
+				if (refPath.isAbsolute()) {
+					IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
+					if (res != null && res.getType() == IResource.PROJECT) {
+						IProject project = (IProject) res;
+						if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
+							ICProject refCProject = CoreModel.getDefault().create(project);
+							if (refCProject != null) {
+								IPathEntry[] entries = manager.getResolvedPathEntries(refCProject);
+								for (IPathEntry pathEntry : entries) {
+									if (pathEntry.getEntryKind() == IPathEntry.CDT_MACRO) {
+										IMacroEntry refEntry = (IMacroEntry) pathEntry;
+										if (refEntry.getMacroName().equals(name)) {
+											String value = refEntry.getMacroValue();
+											return CoreModel.newMacroEntry(macroEntry.getPath(), name, value);
+										}
+									}
+								}
+							}
+						}
+					}
+				} else { // Container ref
+					IPathEntryContainer container = manager.getPathEntryContainer(refPath, cproject);
+					if (container != null) {
+						IPathEntry[] entries = container.getPathEntries();
+						for (IPathEntry pathEntry : entries) {
+							if (pathEntry.getEntryKind() == IPathEntry.CDT_MACRO) {
+								IMacroEntry refEntry = (IMacroEntry) pathEntry;
+								if (refEntry.getMacroName().equals(name)) {
+									String value = refEntry.getMacroValue();
+									return CoreModel.newMacroEntry(macroEntry.getPath(), name, value);
+								}
+							}
+						}
+					}
+				}
+			}
+			break;
+		}
+
+		case IPathEntry.CDT_LIBRARY: {
+			ILibraryEntry libEntry = (ILibraryEntry) entry;
+			IPath refPath = libEntry.getBaseReference();
+			if (refPath != null && !refPath.isEmpty()) {
+				IPath libraryPath = libEntry.getLibraryPath();
+				if (refPath.isAbsolute()) {
+					IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
+					if (res != null && res.getType() == IResource.PROJECT) {
+						IProject project = (IProject) res;
+						if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
+							ICProject refCProject = CoreModel.getDefault().create(project);
+							if (refCProject != null) {
+								IPathEntry[] entries = manager.getResolvedPathEntries(refCProject);
+								for (IPathEntry pathEntry : entries) {
+									if (pathEntry.getEntryKind() == IPathEntry.CDT_LIBRARY) {
+										ILibraryEntry refEntry = (ILibraryEntry) pathEntry;
+										if (refEntry.getLibraryPath().equals(libraryPath)) {
+											IPath newBasePath = refEntry.getBasePath();
+											// If the libraryPath is
+											// relative give a new basepath
+											// if none
+											if (!newBasePath.isAbsolute() && !libraryPath.isAbsolute()) {
+												IResource refRes;
+												if (!newBasePath.isEmpty()) {
+													refRes = cproject.getCModel().getWorkspace().getRoot()
+															.findMember(newBasePath);
+												} else {
+													IPath refResPath = refEntry.getPath();
+													refRes = cproject.getCModel().getWorkspace().getRoot()
+															.findMember(refResPath);
+												}
+												if (refRes != null) {
+													if (refRes.getType() == IResource.FILE) {
+														refRes = refRes.getParent();
+													}
+													newBasePath = refRes.getLocation().append(newBasePath);
+												}
+											}
+
+											return CoreModel.newLibraryEntry(entry.getPath(), newBasePath,
+													refEntry.getLibraryPath(), refEntry.getSourceAttachmentPath(),
+													refEntry.getSourceAttachmentRootPath(),
+													refEntry.getSourceAttachmentPrefixMapping(), false);
+										}
+									}
+								}
+							}
+						}
+					}
+				} else { // Container ref
+					IPathEntryContainer container = manager.getPathEntryContainer(refPath, cproject);
+					if (container != null) {
+						IPathEntry[] entries = container.getPathEntries();
+						for (IPathEntry pathEntry : entries) {
+							if (pathEntry.getEntryKind() == IPathEntry.CDT_LIBRARY) {
+								ILibraryEntry refEntry = (ILibraryEntry) pathEntry;
+								if (refEntry.getPath().equals(libraryPath)) {
+									return CoreModel.newLibraryEntry(entry.getPath(), refEntry.getBasePath(),
+											refEntry.getLibraryPath(), refEntry.getSourceAttachmentPath(),
+											refEntry.getSourceAttachmentRootPath(),
+											refEntry.getSourceAttachmentPrefixMapping(), false);
+								}
+							}
+						}
+					}
+				}
+			}
+			break;
+		}
 
 		}
 		return entry;
@@ -252,87 +253,86 @@ public class PathEntryUtil {
 			entryPath = Path.EMPTY;
 		}
 		IPath resourcePath = (entryPath.isAbsolute()) ? entryPath : rpath.append(entryPath);
-	
+
 		IPathEntryVariableManager varManager = CCorePlugin.getDefault().getPathEntryVariableManager();
 		switch (entry.getEntryKind()) {
-			case IPathEntry.CDT_INCLUDE: {
-				IIncludeEntry include = (IIncludeEntry) entry;
+		case IPathEntry.CDT_INCLUDE: {
+			IIncludeEntry include = (IIncludeEntry) entry;
 
-				IPath basePath = include.getBasePath();
-				basePath = varManager.resolvePath(basePath);
+			IPath basePath = include.getBasePath();
+			basePath = varManager.resolvePath(basePath);
 
-				IPath includePath = include.getIncludePath();
-				includePath = varManager.resolvePath(includePath);
-				
-				return CoreModel.newIncludeEntry(resourcePath, basePath, includePath,
-						include.isSystemInclude(), include.getExclusionPatterns(), include.isExported());
-			}
-			case IPathEntry.CDT_INCLUDE_FILE: {
-				IIncludeFileEntry includeFile = (IIncludeFileEntry) entry;
+			IPath includePath = include.getIncludePath();
+			includePath = varManager.resolvePath(includePath);
 
-				IPath basePath = includeFile.getBasePath();
-				basePath = varManager.resolvePath(basePath);
+			return CoreModel.newIncludeEntry(resourcePath, basePath, includePath, include.isSystemInclude(),
+					include.getExclusionPatterns(), include.isExported());
+		}
+		case IPathEntry.CDT_INCLUDE_FILE: {
+			IIncludeFileEntry includeFile = (IIncludeFileEntry) entry;
 
-				IPath includeFilePath = includeFile.getIncludeFilePath();
-				includeFilePath = varManager.resolvePath(includeFilePath);
-				
-				return CoreModel.newIncludeFileEntry(resourcePath, basePath, Path.EMPTY, includeFilePath,
-						includeFile.getExclusionPatterns(), includeFile.isExported());
-			}
-			case IPathEntry.CDT_LIBRARY: {
-				ILibraryEntry library = (ILibraryEntry) entry;
+			IPath basePath = includeFile.getBasePath();
+			basePath = varManager.resolvePath(basePath);
 
-				IPath basePath = library.getBasePath();
-				basePath = varManager.resolvePath(basePath);
+			IPath includeFilePath = includeFile.getIncludeFilePath();
+			includeFilePath = varManager.resolvePath(includeFilePath);
 
-				IPath libraryPath = library.getLibraryPath();
-				libraryPath = varManager.resolvePath(libraryPath);
+			return CoreModel.newIncludeFileEntry(resourcePath, basePath, Path.EMPTY, includeFilePath,
+					includeFile.getExclusionPatterns(), includeFile.isExported());
+		}
+		case IPathEntry.CDT_LIBRARY: {
+			ILibraryEntry library = (ILibraryEntry) entry;
 
-				IPath sourceAttachmentPath = library.getSourceAttachmentPath();
-				sourceAttachmentPath = varManager.resolvePath(sourceAttachmentPath);
+			IPath basePath = library.getBasePath();
+			basePath = varManager.resolvePath(basePath);
 
-				IPath sourceAttachmentRootPath = library.getSourceAttachmentRootPath();
-				sourceAttachmentRootPath = varManager.resolvePath(sourceAttachmentRootPath);
+			IPath libraryPath = library.getLibraryPath();
+			libraryPath = varManager.resolvePath(libraryPath);
 
-				IPath sourceAttachmentPrefixMapping = library.getSourceAttachmentPrefixMapping();
-				sourceAttachmentPrefixMapping = varManager.resolvePath(sourceAttachmentPrefixMapping);
+			IPath sourceAttachmentPath = library.getSourceAttachmentPath();
+			sourceAttachmentPath = varManager.resolvePath(sourceAttachmentPath);
 
-				return CoreModel.newLibraryEntry(resourcePath, basePath, libraryPath,
-						sourceAttachmentPath, sourceAttachmentRootPath,
-						sourceAttachmentPrefixMapping, library.isExported());
-			}
-			case IPathEntry.CDT_MACRO: {
-				IMacroEntry macro = (IMacroEntry) entry;
-				return CoreModel.newMacroEntry(resourcePath, macro.getMacroName(), macro.getMacroValue(),
-						macro.getExclusionPatterns(), macro.isExported());
-			}
-			case IPathEntry.CDT_MACRO_FILE: {
-				IMacroFileEntry macroFile = (IMacroFileEntry) entry;
+			IPath sourceAttachmentRootPath = library.getSourceAttachmentRootPath();
+			sourceAttachmentRootPath = varManager.resolvePath(sourceAttachmentRootPath);
 
-				IPath basePath = macroFile.getBasePath();
-				basePath = varManager.resolvePath(basePath);
+			IPath sourceAttachmentPrefixMapping = library.getSourceAttachmentPrefixMapping();
+			sourceAttachmentPrefixMapping = varManager.resolvePath(sourceAttachmentPrefixMapping);
 
-				IPath macroFilePath = macroFile.getMacroFilePath();
-				macroFilePath = varManager.resolvePath(macroFilePath);
-				
-				return CoreModel.newMacroFileEntry(resourcePath, basePath, Path.EMPTY, macroFilePath,
-						macroFile.getExclusionPatterns(), macroFile.isExported());
-			}
-			case IPathEntry.CDT_OUTPUT: {
-				IOutputEntry out = (IOutputEntry) entry;
-				return CoreModel.newOutputEntry(resourcePath, out.getExclusionPatterns());
-			}
-			case IPathEntry.CDT_PROJECT: {
-				IProjectEntry projEntry = (IProjectEntry) entry;
-				return CoreModel.newProjectEntry(projEntry.getPath(), projEntry.isExported());
-			}
-			case IPathEntry.CDT_SOURCE: {
-				ISourceEntry source = (ISourceEntry) entry;
-				return CoreModel.newSourceEntry(resourcePath, source.getExclusionPatterns());
-			}
-			case IPathEntry.CDT_CONTAINER: {
-				return CoreModel.newContainerEntry(entry.getPath(), entry.isExported());
-			}
+			return CoreModel.newLibraryEntry(resourcePath, basePath, libraryPath, sourceAttachmentPath,
+					sourceAttachmentRootPath, sourceAttachmentPrefixMapping, library.isExported());
+		}
+		case IPathEntry.CDT_MACRO: {
+			IMacroEntry macro = (IMacroEntry) entry;
+			return CoreModel.newMacroEntry(resourcePath, macro.getMacroName(), macro.getMacroValue(),
+					macro.getExclusionPatterns(), macro.isExported());
+		}
+		case IPathEntry.CDT_MACRO_FILE: {
+			IMacroFileEntry macroFile = (IMacroFileEntry) entry;
+
+			IPath basePath = macroFile.getBasePath();
+			basePath = varManager.resolvePath(basePath);
+
+			IPath macroFilePath = macroFile.getMacroFilePath();
+			macroFilePath = varManager.resolvePath(macroFilePath);
+
+			return CoreModel.newMacroFileEntry(resourcePath, basePath, Path.EMPTY, macroFilePath,
+					macroFile.getExclusionPatterns(), macroFile.isExported());
+		}
+		case IPathEntry.CDT_OUTPUT: {
+			IOutputEntry out = (IOutputEntry) entry;
+			return CoreModel.newOutputEntry(resourcePath, out.getExclusionPatterns());
+		}
+		case IPathEntry.CDT_PROJECT: {
+			IProjectEntry projEntry = (IProjectEntry) entry;
+			return CoreModel.newProjectEntry(projEntry.getPath(), projEntry.isExported());
+		}
+		case IPathEntry.CDT_SOURCE: {
+			ISourceEntry source = (ISourceEntry) entry;
+			return CoreModel.newSourceEntry(resourcePath, source.getExclusionPatterns());
+		}
+		case IPathEntry.CDT_CONTAINER: {
+			return CoreModel.newContainerEntry(entry.getPath(), entry.isExported());
+		}
 		}
 		return entry;
 	}
@@ -343,7 +343,7 @@ public class PathEntryUtil {
 		for (IPathEntry entry : entries) {
 			if (entry != null) {
 				if (entrySet.contains(entry)) {
-					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, 
+					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
 							MessageFormat.format(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry"), //$NON-NLS-1$
 									entry, entry.getPath()));
 				} else {
@@ -357,7 +357,8 @@ public class PathEntryUtil {
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
 			for (int i = 0; i < dups.size(); ++i) {
-				StringBuilder errMesg = new StringBuilder(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
+				StringBuilder errMesg = new StringBuilder(
+						CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
 				cmodelStatus[i] = new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 			}
 			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
@@ -368,7 +369,8 @@ public class PathEntryUtil {
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
 			for (int i = 0; i < dups.size(); ++i) {
-				StringBuilder errMesg = new StringBuilder(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
+				StringBuilder errMesg = new StringBuilder(
+						CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
 				cmodelStatus[i] = new CModelStatus(ICModelStatusConstants.NAME_COLLISION, errMesg.toString());
 			}
 			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
@@ -390,7 +392,7 @@ public class PathEntryUtil {
 					int otherKind = otherEntry.getEntryKind();
 					IPath otherPath = otherEntry.getPath();
 					if (entry != otherEntry && (otherKind == IPathEntry.CDT_SOURCE)) {
-						char[][] exclusionPatterns = ((ISourceEntry)otherEntry).fullExclusionPatternChars();
+						char[][] exclusionPatterns = ((ISourceEntry) otherEntry).fullExclusionPatternChars();
 						if (otherPath.isPrefixOf(entryPath) && !otherPath.equals(entryPath)
 								&& !CoreModelUtil.isExcluded(entryPath.append("*"), exclusionPatterns)) { //$NON-NLS-1$
 
@@ -405,7 +407,7 @@ public class PathEntryUtil {
 							} else {
 								StringBuilder errMesg = new StringBuilder(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
-								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString()); 
+								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 							}
 						}
 					}
@@ -420,86 +422,84 @@ public class PathEntryUtil {
 			boolean recurseInContainers) {
 		IProject project = cProject.getProject();
 		IPath path = entry.getPath();
-		if (entry.getEntryKind() != IPathEntry.CDT_PROJECT &&
-				entry.getEntryKind() != IPathEntry.CDT_CONTAINER
+		if (entry.getEntryKind() != IPathEntry.CDT_PROJECT && entry.getEntryKind() != IPathEntry.CDT_CONTAINER
 				&& entry.getEntryKind() != IPathEntry.CDT_OUTPUT) {
 			if (!isValidWorkspacePath(project, path)) {
-				return new CModelStatus(
-						ICModelStatusConstants.INVALID_PATHENTRY,
-						CoreModelMessages.getFormattedString("PathEntryManager.0", new Object[]{ path.toOSString(), ((PathEntry) entry).getKindString()})); //$NON-NLS-1$
+				return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, CoreModelMessages.getFormattedString(
+						"PathEntryManager.0", new Object[] { path.toOSString(), ((PathEntry) entry).getKindString() })); //$NON-NLS-1$
 			}
 		}
 
 		switch (entry.getEntryKind()) {
-			case IPathEntry.CDT_INCLUDE: {
-				if (VALIDATE_INCLUDE_ENTRIES) {
-					IIncludeEntry include = (IIncludeEntry) entry;
-					IPath includePath = include.getFullIncludePath();
-					if (!isValidExternalPath(includePath)) {
-						return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-								CoreModelMessages.getFormattedString("PathEntryManager.2", includePath.toOSString())); //$NON-NLS-1$
-					}
-					if (!isValidBasePath(include.getBasePath())) {
-						return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-								CoreModelMessages.getFormattedString("PathEntryManager.1", includePath.toOSString()));  //$NON-NLS-1$
-					}
+		case IPathEntry.CDT_INCLUDE: {
+			if (VALIDATE_INCLUDE_ENTRIES) {
+				IIncludeEntry include = (IIncludeEntry) entry;
+				IPath includePath = include.getFullIncludePath();
+				if (!isValidExternalPath(includePath)) {
+					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
+							CoreModelMessages.getFormattedString("PathEntryManager.2", includePath.toOSString())); //$NON-NLS-1$
 				}
-				break;
+				if (!isValidBasePath(include.getBasePath())) {
+					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
+							CoreModelMessages.getFormattedString("PathEntryManager.1", includePath.toOSString())); //$NON-NLS-1$
+				}
 			}
-			case IPathEntry.CDT_LIBRARY: {
-				ILibraryEntry library = (ILibraryEntry) entry;
-				if (checkSourceAttachment) {
-					IPath sourceAttach = library.getSourceAttachmentPath();
-					if (sourceAttach != null) {
-						if (!sourceAttach.isAbsolute()) {
-							if (!isValidWorkspacePath(project, sourceAttach) || !isValidExternalPath(sourceAttach)) {
-								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-										CoreModelMessages.getFormattedString("PathEntryManager.3", sourceAttach.toOSString())); //$NON-NLS-1$
-							}
+			break;
+		}
+		case IPathEntry.CDT_LIBRARY: {
+			ILibraryEntry library = (ILibraryEntry) entry;
+			if (checkSourceAttachment) {
+				IPath sourceAttach = library.getSourceAttachmentPath();
+				if (sourceAttach != null) {
+					if (!sourceAttach.isAbsolute()) {
+						if (!isValidWorkspacePath(project, sourceAttach) || !isValidExternalPath(sourceAttach)) {
+							return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, CoreModelMessages
+									.getFormattedString("PathEntryManager.3", sourceAttach.toOSString())); //$NON-NLS-1$
 						}
 					}
 				}
-				IPath libraryPath = library.getFullLibraryPath();
-				if (!isValidExternalPath(libraryPath)) {
-					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getFormattedString("PathEntryManager.4", libraryPath.toOSString())); //$NON-NLS-1$
-				}
-				if (!isValidBasePath(library.getBasePath())) {
-					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getFormattedString("PathEntryManager.7",libraryPath.toOSString()));  //$NON-NLS-1$
-				}
-				break;
 			}
-			case IPathEntry.CDT_PROJECT: {
-				IProjectEntry projEntry = (IProjectEntry) entry;
-				path = projEntry.getPath();
-				IProject reqProject = project.getWorkspace().getRoot().getProject(path.segment(0));
-				if (!reqProject.isAccessible()) {
-					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getString("PathEntryManager.5")); //$NON-NLS-1$
-				}
-				if (! (CoreModel.hasCNature(reqProject) || CoreModel.hasCCNature(reqProject))) {
-					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getString("PathEntryManager.6")); //$NON-NLS-1$
-				}
-				break;
+			IPath libraryPath = library.getFullLibraryPath();
+			if (!isValidExternalPath(libraryPath)) {
+				return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
+						CoreModelMessages.getFormattedString("PathEntryManager.4", libraryPath.toOSString())); //$NON-NLS-1$
 			}
-			case IPathEntry.CDT_CONTAINER:
-				if (recurseInContainers) {
-					try {
-						IPathEntryContainer cont = manager.getPathEntryContainer((IContainerEntry) entry, cProject);
-						IPathEntry[] contEntries = cont.getPathEntries();
-						for (IPathEntry contEntrie : contEntries) {
-							ICModelStatus status = validatePathEntry(cProject, contEntrie, checkSourceAttachment, false);
-							if (!status.isOK()) {
-								return status;
-							}
+			if (!isValidBasePath(library.getBasePath())) {
+				return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
+						CoreModelMessages.getFormattedString("PathEntryManager.7", libraryPath.toOSString())); //$NON-NLS-1$
+			}
+			break;
+		}
+		case IPathEntry.CDT_PROJECT: {
+			IProjectEntry projEntry = (IProjectEntry) entry;
+			path = projEntry.getPath();
+			IProject reqProject = project.getWorkspace().getRoot().getProject(path.segment(0));
+			if (!reqProject.isAccessible()) {
+				return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
+						CoreModelMessages.getString("PathEntryManager.5")); //$NON-NLS-1$
+			}
+			if (!(CoreModel.hasCNature(reqProject) || CoreModel.hasCCNature(reqProject))) {
+				return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
+						CoreModelMessages.getString("PathEntryManager.6")); //$NON-NLS-1$
+			}
+			break;
+		}
+		case IPathEntry.CDT_CONTAINER:
+			if (recurseInContainers) {
+				try {
+					IPathEntryContainer cont = manager.getPathEntryContainer((IContainerEntry) entry, cProject);
+					IPathEntry[] contEntries = cont.getPathEntries();
+					for (IPathEntry contEntrie : contEntries) {
+						ICModelStatus status = validatePathEntry(cProject, contEntrie, checkSourceAttachment, false);
+						if (!status.isOK()) {
+							return status;
 						}
-					} catch (CModelException e) {
-						return new CModelStatus(e);
 					}
+				} catch (CModelException e) {
+					return new CModelStatus(e);
 				}
-				break;
+			}
+			break;
 		}
 		return CModelStatus.VERIFIED_OK;
 	}
@@ -572,10 +572,12 @@ public class PathEntryUtil {
 		int severity = code2Severity(status);
 		try {
 			IMarker marker = project.createMarker(ICModelMarker.PATHENTRY_PROBLEM_MARKER);
-			marker.setAttributes(new String[]{IMarker.MESSAGE, IMarker.SEVERITY, IMarker.LOCATION,
-					ICModelMarker.PATHENTRY_FILE_FORMAT,}, new Object[]{status.getMessage(), Integer.valueOf(severity), "pathentry",//$NON-NLS-1$
-					"false",//$NON-NLS-1$
-			});
+			marker.setAttributes(
+					new String[] { IMarker.MESSAGE, IMarker.SEVERITY, IMarker.LOCATION,
+							ICModelMarker.PATHENTRY_FILE_FORMAT, },
+					new Object[] { status.getMessage(), Integer.valueOf(severity), "pathentry", //$NON-NLS-1$
+							"false",//$NON-NLS-1$
+					});
 		} catch (CoreException e) {
 			// could not create marker: cannot do much
 			//e.printStackTrace();
@@ -603,7 +605,8 @@ public class PathEntryUtil {
 	public static IMarker[] getPathEntryProblemMarkers(IProject project) {
 
 		try {
-			IMarker[] markers = project.findMarkers(ICModelMarker.PATHENTRY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+			IMarker[] markers = project.findMarkers(ICModelMarker.PATHENTRY_PROBLEM_MARKER, false,
+					IResource.DEPTH_ZERO);
 			if (markers != null) {
 				return markers;
 			}
@@ -639,17 +642,17 @@ public class PathEntryUtil {
 	public static int code2Severity(ICModelStatus status) {
 		int severity;
 		switch (status.getCode()) {
-			case ICModelStatusConstants.INVALID_PATHENTRY:
-				severity = IMarker.SEVERITY_WARNING;
-				break;
+		case ICModelStatusConstants.INVALID_PATHENTRY:
+			severity = IMarker.SEVERITY_WARNING;
+			break;
 
-			case ICModelStatusConstants.INVALID_PATH:
-				severity = IMarker.SEVERITY_WARNING;
-				break;
+		case ICModelStatusConstants.INVALID_PATH:
+			severity = IMarker.SEVERITY_WARNING;
+			break;
 
-			default:
-				severity = IMarker.SEVERITY_ERROR;
-				break;
+		default:
+			severity = IMarker.SEVERITY_ERROR;
+			break;
 		}
 
 		return severity;

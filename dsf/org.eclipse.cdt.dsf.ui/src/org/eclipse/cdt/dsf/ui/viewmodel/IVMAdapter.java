@@ -30,21 +30,20 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvi
  */
 @ThreadSafe
 public interface IVMAdapter
-    extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory, IViewerInputProvider 
-{
-    /**
-     * Returns the View Model Provider that is registered for the given presentation
-     * context.  Returns <code>null</code> if there is none.
-     */
-    public IVMProvider getVMProvider(IPresentationContext presentationContext);
+		extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory, IViewerInputProvider {
+	/**
+	 * Returns the View Model Provider that is registered for the given presentation
+	 * context.  Returns <code>null</code> if there is none.
+	 */
+	public IVMProvider getVMProvider(IPresentationContext presentationContext);
 
-    /**
-     * Retrieves the currently active VM providers in this adapter.
-     * 
-     * @return array of VM providers
-     * 
-     * @since 2.0
-     */
-    public IVMProvider[] getActiveProviders();
+	/**
+	 * Retrieves the currently active VM providers in this adapter.
+	 * 
+	 * @return array of VM providers
+	 * 
+	 * @since 2.0
+	 */
+	public IVMProvider[] getActiveProviders();
 
 }

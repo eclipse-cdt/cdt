@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,6 +53,7 @@ public class TargetBuild {
 	public static final String LAST_TARGET = "lastTarget"; //$NON-NLS-1$
 	/** @since 7.1 */
 	public static final String LAST_TARGET_CONTAINER = "lastTargetContainer"; //$NON-NLS-1$
+
 	/**
 	 * Causes all editors to save any modified resources depending on the user's preference.
 	 */
@@ -98,7 +98,7 @@ public class TargetBuild {
 
 	static private void runWithProgressDialog(Shell shell, Job job) {
 		IProgressService service = PlatformUI.getWorkbench().getProgressService();
-		service.showInDialog(shell,job);
+		service.showInDialog(shell, job);
 	}
 
 	static public void buildTargets(Shell shell, final IMakeTarget[] targets) {
@@ -109,9 +109,9 @@ public class TargetBuild {
 		Job targetJob = new Job(MakeUIPlugin.getResourceString("TargetBuild.backgroundTask.name")) { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, 
+				SubMonitor subMonitor = SubMonitor.convert(monitor,
 						MakeUIPlugin.getResourceString("TargetBuild.monitor.beginTask"), //$NON-NLS-1$
-						targets.length); 
+						targets.length);
 				try {
 					for (int i = 0; i < targets.length; i++) {
 						final IMakeTarget target = targets[i];

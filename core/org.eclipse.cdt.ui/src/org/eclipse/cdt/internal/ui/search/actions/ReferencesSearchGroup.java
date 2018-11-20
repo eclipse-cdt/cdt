@@ -40,13 +40,13 @@ public class ReferencesSearchGroup extends ActionGroup {
 	private IWorkbenchSite fSite;
 
 	public ReferencesSearchGroup(IWorkbenchSite site) {
-		fFindRefsAction= new FindRefsAction(site);
+		fFindRefsAction = new FindRefsAction(site);
 		fFindRefsAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_REFS);
 		fFindRefsProjectAction = new FindRefsProjectAction(site);
 		fFindRefsProjectAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_REFS_PROJECT);
 		fFindRefsInWorkingSetAction = new FindRefsInWorkingSetAction(site, null);
 		fFindRefsInWorkingSetAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_REFS_WORKING_SET);
-		fSite=site;
+		fSite = site;
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 	public ReferencesSearchGroup(CEditor editor) {
 		fEditor = editor;
 
-		fFindRefsAction= new FindRefsAction(editor);
+		fFindRefsAction = new FindRefsAction(editor);
 		fFindRefsAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_REFS);
 		editor.setAction(ICEditorActionDefinitionIds.FIND_REFS, fFindRefsAction);
 		fFindRefsProjectAction = new FindRefsProjectAction(editor);
@@ -78,7 +78,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 
 		IMenuManager refsMenu = new MenuManager(CSearchMessages.group_references, IContextMenuConstants.GROUP_SEARCH);
 
-		if (fEditor != null){
+		if (fEditor != null) {
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, refsMenu);
 		} else {
 			incomingMenu.appendToGroup(IContextMenuConstants.GROUP_SEARCH, refsMenu);
@@ -105,16 +105,18 @@ public class ReferencesSearchGroup extends ActionGroup {
 	}
 
 	private FindAction[] getWorkingSetActions() {
-		ArrayList<FindAction> actions= new ArrayList<FindAction>(CSearchUtil.LRU_WORKINGSET_LIST_SIZE);
+		ArrayList<FindAction> actions = new ArrayList<FindAction>(CSearchUtil.LRU_WORKINGSET_LIST_SIZE);
 
-		Iterator<IWorkingSet[]> iter= CSearchUtil.getLRUWorkingSets().iterator();
+		Iterator<IWorkingSet[]> iter = CSearchUtil.getLRUWorkingSets().iterator();
 		while (iter.hasNext()) {
-			IWorkingSet[] workingSets= iter.next();
+			IWorkingSet[] workingSets = iter.next();
 			FindAction action;
 			if (fEditor != null)
-				action= new WorkingSetFindAction(fEditor, new FindRefsInWorkingSetAction(fEditor, workingSets), CSearchUtil.toString(workingSets));
+				action = new WorkingSetFindAction(fEditor, new FindRefsInWorkingSetAction(fEditor, workingSets),
+						CSearchUtil.toString(workingSets));
 			else
-				action= new WorkingSetFindAction(fSite, new FindRefsInWorkingSetAction(fSite, workingSets), CSearchUtil.toString(workingSets));
+				action = new WorkingSetFindAction(fSite, new FindRefsInWorkingSetAction(fSite, workingSets),
+						CSearchUtil.toString(workingSets));
 
 			actions.add(action);
 		}
@@ -127,9 +129,9 @@ public class ReferencesSearchGroup extends ActionGroup {
 	 */
 	@Override
 	public void dispose() {
-		fFindRefsAction= null;
-		fFindRefsProjectAction=null;
-		fFindRefsInWorkingSetAction= null;
+		fFindRefsAction = null;
+		fFindRefsProjectAction = null;
+		fFindRefsInWorkingSetAction = null;
 		super.dispose();
 	}
 }

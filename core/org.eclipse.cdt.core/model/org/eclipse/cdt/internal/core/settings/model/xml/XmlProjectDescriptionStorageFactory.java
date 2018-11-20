@@ -25,7 +25,8 @@ import org.osgi.framework.Version;
 public class XmlProjectDescriptionStorageFactory implements ICProjectDescriptionStorageType {
 
 	@Override
-	public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type, IProject project, Version version) {
+	public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type,
+			IProject project, Version version) {
 		return new XmlProjectDescriptionStorage(type, project, version);
 	}
 

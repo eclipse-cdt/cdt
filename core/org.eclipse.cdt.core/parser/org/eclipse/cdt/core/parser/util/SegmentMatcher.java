@@ -33,12 +33,12 @@ public class SegmentMatcher {
 
 	/** The regular expression for a segment match. */
 	private final Pattern regexp;
-	
+
 	/** The minimum length any name must have in order to match. */
 	private final int minNameLength;
 
 	private final boolean singleSegment;
-	
+
 	/**
 	 * @param pattern
 	 *            The camel case or underscore pattern.
@@ -58,7 +58,7 @@ public class SegmentMatcher {
 			int lengthOfFirstSegment = 0;
 			char currentChar;
 			int segmentCount = 0;
-			
+
 			// Translate each segment
 			while (i < pattern.length) {
 
@@ -132,21 +132,21 @@ public class SegmentMatcher {
 					}
 				}
 				regexpBuffer.append(".*"); //$NON-NLS-1$
-				
+
 				if (segmentCount == 0) {
 					lengthOfFirstSegment = i;
 				}
-				
+
 				++segmentCount;
 			}
-			
+
 			regexp = Pattern.compile(regexpBuffer.toString());
 			singleSegment = (segmentCount == 1);
 			prefixForMatching = pattern;
-			
+
 			// The first segment is also the binary search prefix
 			prefixForBinarySearch = CharArrayUtils.extract(pattern, 0, lengthOfFirstSegment);
-			
+
 			minNameLength = pattern.length;
 		}
 	}
@@ -189,20 +189,20 @@ public class SegmentMatcher {
 		if (name == null) {
 			return false;
 		}
-		
+
 		if (name.length < minNameLength) {
 			return false;
 		}
-						
+
 		if (regexp == null) {
 			return true;
 		}
-		
+
 		Matcher matcher = regexp.matcher(String.valueOf(name));
-		
+
 		return matcher.find();
 	}
-	
+
 	/**
 	 * Matches pattern to name by prefix and segment matching. If you have to match
 	 * against the same pattern repeatedly, create a {@link SegmentMatcher} instead
@@ -227,7 +227,7 @@ public class SegmentMatcher {
 	public char[] getPrefixForBinarySearch() {
 		return prefixForBinarySearch;
 	}
-	
+
 	/**
 	 * @return If false, calling @{@link #match(char[])} can be skipped if a 
 	 *         name survived a binary search using the prefix returned by

@@ -14,7 +14,7 @@
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
 public class AutoconfUntilElement extends AutoconfElement {
-	
+
 	public AutoconfUntilElement() {
 		super("until"); //$NON-NLS-1$
 	}

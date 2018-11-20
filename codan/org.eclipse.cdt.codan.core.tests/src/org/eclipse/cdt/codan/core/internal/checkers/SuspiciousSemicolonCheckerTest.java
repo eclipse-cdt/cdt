@@ -171,7 +171,8 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	//	        ;
 	// }
 	public void testIfElse() throws Exception {
-		setPreferenceValue(SuspiciousSemicolonChecker.ER_ID, SuspiciousSemicolonChecker.PARAM_ALFTER_ELSE, Boolean.TRUE);
+		setPreferenceValue(SuspiciousSemicolonChecker.ER_ID, SuspiciousSemicolonChecker.PARAM_ALFTER_ELSE,
+				Boolean.TRUE);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3, 5);
 	}

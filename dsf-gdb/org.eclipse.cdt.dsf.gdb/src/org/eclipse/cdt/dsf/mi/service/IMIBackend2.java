@@ -23,8 +23,8 @@ import java.io.InputStream;
 
 public interface IMIBackend2 extends IMIBackend {
 
-    /**
-     * Returns the backend error stream.
-     */
-    public InputStream getMIErrorStream();
+	/**
+	 * Returns the backend error stream.
+	 */
+	public InputStream getMIErrorStream();
 }

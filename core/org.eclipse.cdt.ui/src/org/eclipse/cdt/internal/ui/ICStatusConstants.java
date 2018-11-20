@@ -23,9 +23,9 @@ public interface ICStatusConstants {
 
 	// C UI status constants start at 10000 to make sure that we don't
 	// collide with resource and c model constants.
-	
-	public static final int INTERNAL_ERROR= 10001;
-	
+
+	public static final int INTERNAL_ERROR = 10001;
+
 	/**
 	 * Status constant indicating that an exception occurred on
 	 * storing or loading templates.
@@ -36,13 +36,13 @@ public interface ICStatusConstants {
 	 * Status constant indicating that an validateEdit call has changed the
 	 * content of a file on disk.
 	 */
-	public static final int VALIDATE_EDIT_CHANGED_CONTENT= 10003;
-	
+	public static final int VALIDATE_EDIT_CHANGED_CONTENT = 10003;
+
 	/**
 	 * Status constant indicating that a <tt>ChangeAbortException</tt> has been
 	 * caught.
- 	 */
-	public static final int CHANGE_ABORTED= 10004;
+	 */
+	public static final int CHANGE_ABORTED = 10004;
 
 	/**
 	 * Status constant indicating that an exception occurred while
@@ -56,5 +56,5 @@ public interface ICStatusConstants {
 	 * 
 	 * @since 5.1
 	 */
-	public static final int EDITOR_CHANGED_REGION_CALCULATION= 10006;
+	public static final int EDITOR_CHANGED_REGION_CALCULATION = 10006;
 }

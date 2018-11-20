@@ -11,13 +11,13 @@
  * Contributors:
  *     Freescale Semiconductor - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
- 
+
 /**
  * An adapter for a "move to line" operation.
  */
@@ -31,7 +31,7 @@ public interface IMoveToLineTarget {
 	 * @param target suspended element to perform the "resume at line" action on
 	 * @throws CoreException if unable to perform the action 
 	 */
-	public void moveToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException;
+	public void moveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException;
 
 	/**
 	 * Returns whether a move to line operation can be performed on the given
@@ -42,5 +42,5 @@ public interface IMoveToLineTarget {
 	 * @param target suspended element to perform the "resume at line" action on
 	 * @throws CoreException if unable to perform the action 
 	 */
-	public boolean canMoveToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target );
+	public boolean canMoveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target);
 }

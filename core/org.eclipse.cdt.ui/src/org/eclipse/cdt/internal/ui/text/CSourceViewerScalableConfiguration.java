@@ -30,29 +30,29 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
  * Configuration for an <code>SourceViewer</code> which shows C/C++ code.
  * It turns off some editor features when scalability mode options are enabled.
  */
-public class CSourceViewerScalableConfiguration extends
-		CSourceViewerConfiguration {
+public class CSourceViewerScalableConfiguration extends CSourceViewerConfiguration {
 
-	public CSourceViewerScalableConfiguration(
-			IColorManager colorManager, IPreferenceStore preferenceStore,
+	public CSourceViewerScalableConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore,
 			ITextEditor editor, String partitioning) {
 		super(colorManager, preferenceStore, editor, partitioning);
 	}
-	
+
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		if (((CEditor)getEditor()).isEnableScalablilityMode() && fPreferenceStore.getBoolean(PreferenceConstants.SCALABILITY_RECONCILER))
-    		return null;
+		if (((CEditor) getEditor()).isEnableScalablilityMode()
+				&& fPreferenceStore.getBoolean(PreferenceConstants.SCALABILITY_RECONCILER))
+			return null;
 		return super.getReconciler(sourceViewer);
 	}
-	
+
 	/**
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
-    @Override
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-    	if (((CEditor)getEditor()).isEnableScalablilityMode() && fPreferenceStore.getBoolean(PreferenceConstants.SCALABILITY_SYNTAX_COLOR))
-    		return null;
+		if (((CEditor) getEditor()).isEnableScalablilityMode()
+				&& fPreferenceStore.getBoolean(PreferenceConstants.SCALABILITY_SYNTAX_COLOR))
+			return null;
 		return super.getPresentationReconciler(sourceViewer);
 	}
 }

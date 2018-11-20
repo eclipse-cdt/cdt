@@ -32,28 +32,28 @@ import org.eclipse.core.runtime.CoreException;
 public class EvalNaryTypeId extends CPPDependentEvaluation {
 	private final Operator fOperator;
 	private final IType[] fOperands;
-	
+
 	private boolean fCheckedValueDependent;
 	private boolean fIsValueDependent;
-	
+
 	public EvalNaryTypeId(Operator operator, IType[] operands, IASTNode pointOfDefinition) {
 		this(operator, operands, findEnclosingTemplate(pointOfDefinition));
 	}
-	
+
 	public EvalNaryTypeId(Operator operator, IType[] operands, IBinding templateDefinition) {
 		super(templateDefinition);
 		fOperator = operator;
 		fOperands = operands;
 	}
-	
+
 	public Operator getOperator() {
 		return fOperator;
 	}
-	
+
 	public IType[] getOperands() {
 		return fOperands;
 	}
-	
+
 	@Override
 	public boolean isInitializerList() {
 		return false;
@@ -93,10 +93,9 @@ public class EvalNaryTypeId extends CPPDependentEvaluation {
 			return false;
 		}
 		EvalNaryTypeId o = (EvalNaryTypeId) other;
-		return fOperator == o.fOperator
-			&& areEquivalentTypes(fOperands, o.fOperands);
+		return fOperator == o.fOperator && areEquivalentTypes(fOperands, o.fOperands);
 	}
-	
+
 	@Override
 	public IType getType() {
 		switch (fOperator) {
@@ -112,7 +111,7 @@ public class EvalNaryTypeId extends CPPDependentEvaluation {
 		if (isValueDependent()) {
 			return DependentValue.create(this);
 		}
-		
+
 		return ValueFactory.evaluateNaryTypeIdExpression(fOperator, fOperands, getTemplateDefinition());
 	}
 
@@ -131,8 +130,7 @@ public class EvalNaryTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(ActivationRecord record,
-			ConstexprEvaluationContext context) {
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		return this;
 	}
 
@@ -140,8 +138,7 @@ public class EvalNaryTypeId extends CPPDependentEvaluation {
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		int result = 0;
 		for (int i = 0; i < fOperands.length; i++) {
-			result = CPPTemplates.combinePackSize(result, 
-					CPPTemplates.determinePackSize(fOperands[i], tpMap));
+			result = CPPTemplates.combinePackSize(result, CPPTemplates.determinePackSize(fOperands[i], tpMap));
 		}
 		return result;
 	}

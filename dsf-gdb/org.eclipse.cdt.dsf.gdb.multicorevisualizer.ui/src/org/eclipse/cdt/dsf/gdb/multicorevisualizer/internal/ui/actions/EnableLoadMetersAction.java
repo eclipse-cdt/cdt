@@ -25,21 +25,20 @@ public class EnableLoadMetersAction extends VisualizerAction {
 
 	/** Visualizer instance we're associated with. */
 	MulticoreVisualizer m_visualizer = null;
-	
+
 	boolean m_enabled = false;
 
 	/** Constructor */
 	public EnableLoadMetersAction(boolean enable) {
 		m_enabled = enable;
 		setText(getTextToDisplay());
-		setDescription(MulticoreVisualizerUIPlugin.getString(
-				"MulticoreVisualizer.actions.EnableLoadMeter.description")); //$NON-NLS-1$
+		setDescription(
+				MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.EnableLoadMeter.description")); //$NON-NLS-1$
 	}
 
 	/** Dispose method. */
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		m_visualizer = null;
 		super.dispose();
 	}
@@ -47,22 +46,17 @@ public class EnableLoadMetersAction extends VisualizerAction {
 	// --- init methods ---
 
 	/** Initializes this action for the specified view. */
-	public void init(MulticoreVisualizer visualizer)
-	{
+	public void init(MulticoreVisualizer visualizer) {
 		m_visualizer = visualizer;
 	}
 
-
 	// --- methods ---
-	
+
 	private String getTextToDisplay() {
-		if(m_enabled) {
-			return MulticoreVisualizerUIPlugin.getString(
-					"MulticoreVisualizer.actions.EnableLoadMeter.Disable.text"); //$NON-NLS-1$
-		}
-		else {
-			return MulticoreVisualizerUIPlugin.getString(
-					"MulticoreVisualizer.actions.EnableLoadMeter.Enable.text"); //$NON-NLS-1$
+		if (m_enabled) {
+			return MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.EnableLoadMeter.Disable.text"); //$NON-NLS-1$
+		} else {
+			return MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.EnableLoadMeter.Enable.text"); //$NON-NLS-1$
 		}
 	}
 
@@ -71,10 +65,10 @@ public class EnableLoadMetersAction extends VisualizerAction {
 	public void run() {
 		if (m_visualizer != null) {
 			// toggle enabled state
-			m_enabled = !m_enabled;	
+			m_enabled = !m_enabled;
 			m_visualizer.enableLoadMeters(m_enabled);
 			m_visualizer.refresh();
-			
+
 			setText(getTextToDisplay());
 		}
 	}

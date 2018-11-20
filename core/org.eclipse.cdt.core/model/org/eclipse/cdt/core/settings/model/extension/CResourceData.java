@@ -21,21 +21,21 @@ public abstract class CResourceData extends CDataObject {
 	}
 
 	public abstract IPath getPath();
-	
-//	public abstract boolean isExcluded();
 
-	public abstract void setPath(IPath path) ;
-	
-//	public abstract void setExcluded(boolean excluded);
-	
+	//	public abstract boolean isExcluded();
+
+	public abstract void setPath(IPath path);
+
+	//	public abstract void setExcluded(boolean excluded);
+
 	public abstract boolean hasCustomSettings();
-	
+
 	/**
 	 * Intended for debugging purpose only.
 	 */
 	@Override
 	@SuppressWarnings("nls")
 	public String toString() {
-		return "path="+getPath() + ", " + super.toString();
+		return "path=" + getPath() + ", " + super.toString();
 	}
 }

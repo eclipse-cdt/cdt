@@ -132,80 +132,87 @@ public class CHelpProviderTester {
 	}
 
 	private class FunctionSummary implements IFunctionSummary {
-        private String fName = "Name";
-        private String fReturnType = "ReturnType";
-        private String fPrototype = "Prototype";
-        private String fSummary = "Summary";
-        private String fSynopsis = "Synopsis";
-        private IRequiredInclude[] incs = new IRequiredInclude[] { new RequiredInclude("dummy.h")};
-        private class RequiredInclude implements IRequiredInclude {
-        	private String include;
+		private String fName = "Name";
+		private String fReturnType = "ReturnType";
+		private String fPrototype = "Prototype";
+		private String fSummary = "Summary";
+		private String fSynopsis = "Synopsis";
+		private IRequiredInclude[] incs = new IRequiredInclude[] { new RequiredInclude("dummy.h") };
 
-        	public RequiredInclude (String file) {
-        		include = file;
-        	}
+		private class RequiredInclude implements IRequiredInclude {
+			private String include;
 
-        	@Override
+			public RequiredInclude(String file) {
+				include = file;
+			}
+
+			@Override
 			public String getIncludeName() {
-        		return include;
-        	}
+				return include;
+			}
 
-        	@Override
+			@Override
 			public boolean isStandard() {
-        		return true;
-        	}
-        }
+				return true;
+			}
+		}
 
-        public FunctionSummary(ICHelpBook helpBook, String string, String providerID) {
-        	fName = string;
-        	fSummary = generateHelpString(helpBook, string, providerID);
-        }
+		public FunctionSummary(ICHelpBook helpBook, String string, String providerID) {
+			fName = string;
+			fSummary = generateHelpString(helpBook, string, providerID);
+		}
 
-        public class FunctionPrototypeSummary implements IFunctionPrototypeSummary {
-            @Override
+		public class FunctionPrototypeSummary implements IFunctionPrototypeSummary {
+			@Override
 			public String getName() {
-            	return fName;
-            }
-            @Override
+				return fName;
+			}
+
+			@Override
 			public String getReturnType() {
-            	return fReturnType;
-            }
-            @Override
+				return fReturnType;
+			}
+
+			@Override
 			public String getArguments() {
-            	return fPrototype;
-            }
-            @Override
+				return fPrototype;
+			}
+
+			@Override
 			public String getPrototypeString(boolean namefirst) {
-                if (true == namefirst) {
-                    return fName + " (" + fPrototype + ") " + fReturnType;
-                } else {
-                    return fReturnType + " " + fName + " (" + fPrototype + ")";
-                }
-            }
-        }
+				if (true == namefirst) {
+					return fName + " (" + fPrototype + ") " + fReturnType;
+				} else {
+					return fReturnType + " " + fName + " (" + fPrototype + ")";
+				}
+			}
+		}
 
-        @Override
+		@Override
 		public String getName() {
-        	return fName;
-        }
-        @Override
-		public String getNamespace() {
-        	return "dummy namespace";
-        }
-        @Override
-		public String getDescription() {
-        	return fSummary;
-        }
-        @Override
-		public IFunctionPrototypeSummary getPrototype() {
-        	return new FunctionPrototypeSummary();
-        }
+			return fName;
+		}
 
-        @Override
+		@Override
+		public String getNamespace() {
+			return "dummy namespace";
+		}
+
+		@Override
+		public String getDescription() {
+			return fSummary;
+		}
+
+		@Override
+		public IFunctionPrototypeSummary getPrototype() {
+			return new FunctionPrototypeSummary();
+		}
+
+		@Override
 		public IRequiredInclude[] getIncludes() {
-        	return incs;
-        }
-    }
+			return incs;
+		}
+	}
 
 	private static String generateHelpString(ICHelpBook helpBook, String name, String providerID) {
 		Properties props = new Properties();
@@ -264,8 +271,8 @@ public class CHelpProviderTester {
 	}
 
 	public boolean onlyTestInfoProvidersAvailable() {
-		IConfigurationElement configElements[] = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				CUIPlugin.PLUGIN_ID, CHelpSettings.CONTRIBUTION_EXTENSION);
+		IConfigurationElement configElements[] = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(CUIPlugin.PLUGIN_ID, CHelpSettings.CONTRIBUTION_EXTENSION);
 		int numExts = 0;
 		for (int i = 0; i < configElements.length; i++) {
 			String id = configElements[i].getAttribute("id");
@@ -307,12 +314,15 @@ public class CHelpProviderTester {
 		return books;
 	}
 
-	private void checkResponse(CHelpProviderTester data[], ICHelpInvocationContext context, String name, boolean allBooksResponded) {
+	private void checkResponse(CHelpProviderTester data[], ICHelpInvocationContext context, String name,
+			boolean allBooksResponded) {
 		CHelpBookDescriptor bookDes[] = CHelpProviderManager.getDefault().getCHelpBookDescriptors(context);
 		for (int i = 0; i < data.length; i++) {
 			CHelpProviderTester tester = data[i];
-			Assert.assertTrue("the name passed to CHelpProvider (" + tester.getRequestedName()
-					+ ") differs prom tha name passed to manager (" + name + ")", name.equals(tester.getRequestedName()));
+			Assert.assertTrue(
+					"the name passed to CHelpProvider (" + tester.getRequestedName()
+							+ ") differs prom tha name passed to manager (" + name + ")",
+					name.equals(tester.getRequestedName()));
 			String bookTitle = tester.getBookTitle();
 			int j = 0;
 			for (; j < bookDes.length; j++) {

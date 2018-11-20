@@ -29,7 +29,7 @@ public class Activator extends Plugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -53,7 +53,7 @@ public class Activator extends Plugin {
 		plugin = null;
 		super.stop(context);
 	}
-	
+
 	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 
@@ -63,7 +63,7 @@ public class Activator extends Plugin {
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * Logs an internal error with the specified throwable
 	 * 

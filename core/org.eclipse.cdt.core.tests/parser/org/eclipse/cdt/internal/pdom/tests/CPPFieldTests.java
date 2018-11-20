@@ -41,7 +41,7 @@ public class CPPFieldTests extends PDOMTestBase {
 	public static Test suite() {
 		return suite(CPPFieldTests.class);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		project = createProject("fieldTests");
@@ -53,64 +53,65 @@ public class CPPFieldTests extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
-			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 	}
 
 	public void testFieldDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "Class1::c1a", 1);
 	}
-	
+
 	public void testFieldDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "Class1::c1a", 1);
 	}
-	
+
 	public void testFieldReferences() throws Exception {
 		assertReferenceCount(pdom, "Class1::c1a", 4);
 	}
-	
+
 	public void testInheritedFieldDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "Class2::c1a", 0);
 	}
-	
+
 	public void testInheritedFieldDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "Class2::c1a", 0);
 	}
-	
+
 	public void testInheritedFieldReferences() throws Exception {
 		assertReferenceCount(pdom, "Class2::c1a", 0);
 	}
-	
+
 	public void testDefaultPrivateField() throws Exception {
 		assertCPPMemberVisibility(pdom, "Class1::defaultField", ICPPMember.v_private);
 	}
-	
+
 	public void testPrivateField() throws Exception {
 		assertCPPMemberVisibility(pdom, "Class1::privateField", ICPPMember.v_private);
 	}
-	
+
 	public void testProtectedField() throws Exception {
 		assertCPPMemberVisibility(pdom, "Class1::protectedField", ICPPMember.v_protected);
 	}
-	
+
 	public void testPublicField() throws Exception {
 		assertCPPMemberVisibility(pdom, "Class1::publicField", ICPPMember.v_public);
 	}
-	
+
 	public void testMutableField() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::mutableField");
 		assertEquals(1, bindings.length);
 		ICPPField field = (ICPPField) bindings[0];
 		assertTrue(field.isMutable());
 	}
-	
+
 	public void testStaticField() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::staticField");
 		assertEquals(1, bindings.length);
 		ICPPField field = (ICPPField) bindings[0];
 		assertTrue(field.isStatic());
 	}
-	
+
 	public void testIntField() throws Exception {
 		assertFieldType(pdom, "Class1::c1a", IBasicType.t_int);
 	}

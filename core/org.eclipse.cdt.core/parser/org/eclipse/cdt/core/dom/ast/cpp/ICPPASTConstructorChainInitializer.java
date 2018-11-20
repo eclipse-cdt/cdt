@@ -31,8 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTConstructorChainInitializer extends IASTInitializer, ICPPASTPackExpandable,
-		IASTNameOwner {
+public interface ICPPASTConstructorChainInitializer extends IASTInitializer, ICPPASTPackExpandable, IASTNameOwner {
 	public static final ICPPASTConstructorChainInitializer[] EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY = new ICPPASTConstructorChainInitializer[0];
 
 	public static final ASTNodeProperty MEMBER_ID = new ASTNodeProperty(
@@ -74,7 +73,7 @@ public interface ICPPASTConstructorChainInitializer extends IASTInitializer, ICP
 	 * @since 5.2
 	 */
 	public void setInitializer(IASTInitializer initializer);
-	
+
 	/**
 	 * @deprecated Replaced by {@link #getInitializer()}.
 	 * @noreference This method is not intended to be referenced by clients.

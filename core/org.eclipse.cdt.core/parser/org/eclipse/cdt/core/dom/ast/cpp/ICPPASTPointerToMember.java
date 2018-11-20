@@ -45,7 +45,7 @@ public interface ICPPASTPointerToMember extends IASTPointer, IASTNameOwner {
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getName();
-	
+
 	/**
 	 * @since 5.1
 	 */

@@ -36,12 +36,11 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * @since 3.0
  */
-public class FetchMoreChildrenAction extends AbstractVMProviderActionDelegate
-		implements IObjectActionDelegate {
+public class FetchMoreChildrenAction extends AbstractVMProviderActionDelegate implements IObjectActionDelegate {
 
 	private ISelection selection;
-	
-    @Override
+
+	@Override
 	public void run(IAction action) {
 		IncompleteChildrenVMC incompleteChildrenVmc = getIncompleteChildrenVMC();
 
@@ -57,7 +56,7 @@ public class FetchMoreChildrenAction extends AbstractVMProviderActionDelegate
 				final FetchMoreChildrenEvent fetchMoreChildrenEvent = new FetchMoreChildrenEvent(exprCtx, path);
 				final AbstractVMProvider vmProvider = (AbstractVMProvider) getVMProvider();
 				vmProvider.getExecutor().execute(new DsfRunnable() {
-	                @Override
+					@Override
 					public void run() {
 						vmProvider.handleEvent(fetchMoreChildrenEvent);
 					}
@@ -66,19 +65,19 @@ public class FetchMoreChildrenAction extends AbstractVMProviderActionDelegate
 		}
 	}
 
-    @Override
-    public void init(IViewPart view) {
-        super.init(view);
+	@Override
+	public void init(IViewPart view) {
+		super.init(view);
 		updateEnablement();
-    }
-    
-    @Override
-    public void debugContextChanged(DebugContextEvent event) {
-        super.debugContextChanged(event);
-		updateEnablement();
-    }
+	}
 
-    @Override
+	@Override
+	public void debugContextChanged(DebugContextEvent event) {
+		super.debugContextChanged(event);
+		updateEnablement();
+	}
+
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		super.selectionChanged(action, selection);
 		this.selection = selection;
@@ -94,17 +93,17 @@ public class FetchMoreChildrenAction extends AbstractVMProviderActionDelegate
 		getAction().setEnabled(enabled);
 	}
 
-    @Override
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		if (targetPart instanceof IViewPart) {
 			init((IViewPart) targetPart);
 		}
 	}
-	
+
 	private IncompleteChildrenVMC getIncompleteChildrenVMC() {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
-			
+
 			if (ss.size() == 1) {
 				// Only single selection is supported.
 				Object selectedObject = ss.getFirstElement();
@@ -113,7 +112,7 @@ public class FetchMoreChildrenAction extends AbstractVMProviderActionDelegate
 				}
 			}
 		}
-		
+
 		return null;
 	}
 }

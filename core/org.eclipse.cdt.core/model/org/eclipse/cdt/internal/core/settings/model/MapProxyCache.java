@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.settings.model.extension.CDataObject;
 public class MapProxyCache implements IProxyCache {
 	private HashMap<String, CDataProxy> fMap;
 
-	private HashMap<String, CDataProxy> getMap(boolean create){
-		if(fMap == null && create)
+	private HashMap<String, CDataProxy> getMap(boolean create) {
+		if (fMap == null && create)
 			fMap = new HashMap<String, CDataProxy>();
 		return fMap;
 	}
@@ -32,7 +32,7 @@ public class MapProxyCache implements IProxyCache {
 	@Override
 	public CDataProxy[] getCachedProxies() {
 		Map<String, CDataProxy> map = getMap(false);
-		if(map != null){
+		if (map != null) {
 			Collection<CDataProxy> c = map.values();
 			return c.toArray(new CDataProxy[c.size()]);
 		}
@@ -42,7 +42,7 @@ public class MapProxyCache implements IProxyCache {
 	@Override
 	public CDataProxy getCachedProxy(String id) {
 		Map<String, CDataProxy> map = getMap(false);
-		if(map != null)
+		if (map != null)
 			return map.get(id);
 		return null;
 	}
@@ -50,7 +50,7 @@ public class MapProxyCache implements IProxyCache {
 	@Override
 	public void removeCachedProxy(String id) {
 		Map<String, CDataProxy> map = getMap(false);
-		if(map != null)
+		if (map != null)
 			map.remove(id);
 	}
 
@@ -67,7 +67,7 @@ public class MapProxyCache implements IProxyCache {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<String, CDataProxy> getCachedProxiesMap() {
-		return (Map<String, CDataProxy>)getMap(true).clone();
+		return (Map<String, CDataProxy>) getMap(true).clone();
 	}
 
 	@Override
@@ -83,4 +83,3 @@ public class MapProxyCache implements IProxyCache {
 	public void reuseProxies(List<CDataObject> dataList, Map<String, CDataProxy> freeProxyMap) {
 	}
 }
-

@@ -34,21 +34,21 @@ public class CygPath {
 	private final Process cygpath;
 	private final BufferedReader stdout;
 	private final BufferedWriter stdin;
-	private boolean fSpaceIsSeparator= false;
+	private boolean fSpaceIsSeparator = false;
 
 	public CygPath(String command) throws IOException {
 		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			// Don't run this on non-windows platforms
 			throw new IOException("Not Windows"); //$NON-NLS-1$
-		String[] args = {command, "--windows", "--file", "-"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String[] args = { command, "--windows", "--file", "-" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		cygpath = Runtime.getRuntime().exec(args);
 		stdin = new BufferedWriter(new OutputStreamWriter(cygpath.getOutputStream()));
 		stdout = new BufferedReader(new InputStreamReader(cygpath.getInputStream()));
 		try {
-			String test= getFileName("a b"); //$NON-NLS-1$
+			String test = getFileName("a b"); //$NON-NLS-1$
 			if ("a".equals(test)) { //$NON-NLS-1$
 				// Bug 298615: This version seems to treat space as a separator
-				fSpaceIsSeparator= true;
+				fSpaceIsSeparator = true;
 				// Read off second part
 				stdout.readLine();
 			}
@@ -80,7 +80,7 @@ public class CygPath {
 		}
 
 		// Clear everything from stdout
-		while(stdout.ready()) {
+		while (stdout.ready()) {
 			stdout.read();
 		}
 		stdin.write(name + "\n"); //$NON-NLS-1$
@@ -108,7 +108,7 @@ public class CygPath {
 		Process cygPath = null;
 		BufferedReader reader = null;
 		try {
-			cygPath = Runtime.getRuntime().exec(new String[]{"cygpath", "-w", path}); //$NON-NLS-1$ //$NON-NLS-2$
+			cygPath = Runtime.getRuntime().exec(new String[] { "cygpath", "-w", path }); //$NON-NLS-1$ //$NON-NLS-2$
 			reader = new BufferedReader(new InputStreamReader(cygPath.getInputStream()));
 			String newPath = reader.readLine();
 			IPath ipath;

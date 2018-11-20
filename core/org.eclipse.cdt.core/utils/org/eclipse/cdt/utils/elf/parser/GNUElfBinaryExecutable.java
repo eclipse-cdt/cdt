@@ -18,10 +18,8 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.core.runtime.IPath;
 
-
 public class GNUElfBinaryExecutable extends GNUElfBinaryObject implements IBinaryExecutable {
 
-	
 	public GNUElfBinaryExecutable(IBinaryParser parser, IPath p) {
 		super(parser, p, IBinaryFile.EXECUTABLE);
 	}

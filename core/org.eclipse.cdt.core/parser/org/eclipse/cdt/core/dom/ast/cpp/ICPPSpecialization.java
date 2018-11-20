@@ -30,9 +30,9 @@ public interface ICPPSpecialization extends ICPPBinding {
 	/**
 	 * Return the binding that this specialization specializes.
 	 * @return the original binding that this is a specialization of
-	 */ 
+	 */
 	public IBinding getSpecializedBinding();
-	
+
 	/**
 	 * Returns the mapping of template parameters to values.
 	 * @since 5.1

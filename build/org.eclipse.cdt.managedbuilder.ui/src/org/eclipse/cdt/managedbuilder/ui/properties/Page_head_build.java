@@ -21,5 +21,7 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
  */
 public class Page_head_build extends AbstractPage {
 	@Override
-	protected boolean isSingle() { return false; }
+	protected boolean isSingle() {
+		return false;
+	}
 }

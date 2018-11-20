@@ -55,16 +55,16 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	private int fIndex;
 
 	public CElementHandle(ICElement parent, int type, String name) {
-		fParent= parent;
-		fType= type;
+		fParent = parent;
+		fType = type;
 		// Anonymous types are assigned a name in the index, we undo this here.
 		if (name.length() > 0 && name.charAt(0) == '{') {
-			fName= ""; //$NON-NLS-1$
-			fIndex= name.hashCode();
+			fName = ""; //$NON-NLS-1$
+			fIndex = name.hashCode();
 		} else {
-			fName= name;
+			fName = name;
 		}
-		fRegion= new Region(0, 0);
+		fRegion = new Region(0, 0);
 	}
 
 	@Override
@@ -86,22 +86,23 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	}
 
 	public void setRangeOfID(IRegion region, long timestamp) {
-		fRegion= region;
-		fTimestamp= timestamp;
+		fRegion = region;
+		fTimestamp = timestamp;
 	}
 
 	@Override
 	public ISourceRange getSourceRange() throws CModelException {
-		IRegion region= fRegion;
-		ITranslationUnit tu= getTranslationUnit();
+		IRegion region = fRegion;
+		ITranslationUnit tu = getTranslationUnit();
 		if (tu != null) {
-			IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, fTimestamp);
+			IPositionConverter converter = CCorePlugin.getPositionTrackerManager().findPositionConverter(tu,
+					fTimestamp);
 			if (converter != null) {
-				region= converter.historicToActual(region);
+				region = converter.historicToActual(region);
 			}
 		}
-		int startpos= region.getOffset();
-		int length= region.getLength();
+		int startpos = region.getOffset();
+		int length = region.getLength();
 		return new SourceRange(startpos, length);
 	}
 
@@ -112,14 +113,13 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 
 	@Override
 	public ITranslationUnit getTranslationUnit() {
-		ICElement parent= fParent;
+		ICElement parent = fParent;
 		do {
 			if (parent instanceof ITranslationUnit) {
 				return (ITranslationUnit) parent;
 			}
-			parent= parent.getParent();
-		}
-		while (parent != null);
+			parent = parent.getParent();
+		} while (parent != null);
 		return null;
 	}
 
@@ -192,13 +192,15 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return false;
 	}
 
-	public void copy(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor) throws CModelException {
+	public void copy(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor)
+			throws CModelException {
 	}
 
 	public void delete(boolean force, IProgressMonitor monitor) throws CModelException {
 	}
 
-	public void move(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor) throws CModelException {
+	public void move(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor)
+			throws CModelException {
 	}
 
 	public void rename(String name, boolean replace, IProgressMonitor monitor) throws CModelException {
@@ -280,11 +282,11 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	}
 
 	protected String[] extractParameterTypes(IFunction func) {
-		IParameter[] params= func.getParameters();
-		String[] parameterTypes= new String[params.length];
+		IParameter[] params = func.getParameters();
+		String[] parameterTypes = new String[params.length];
 		for (int i = 0; i < params.length; i++) {
 			IParameter param = params[i];
-			parameterTypes[i]= ASTTypeUtil.getType(param.getType(), false);
+			parameterTypes[i] = ASTTypeUtil.getType(param.getType(), false);
 		}
 		if (parameterTypes.length == 1 && parameterTypes[0].equals("void")) { //$NON-NLS-1$
 			return EMPTY_STRING_ARRAY;
@@ -294,7 +296,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 
 	protected ASTAccessVisibility getVisibility(IBinding binding) {
 		if (binding instanceof ICPPMember) {
-			ICPPMember member= (ICPPMember) binding;
+			ICPPMember member = (ICPPMember) binding;
 			switch (member.getVisibility()) {
 			case ICPPMember.v_private:
 				return ASTAccessVisibility.PRIVATE;
@@ -312,7 +314,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	 */
 	@Override
 	public String getHandleIdentifier() {
-		ICElement cModelElement= mapToModelElement();
+		ICElement cModelElement = mapToModelElement();
 		if (cModelElement != null) {
 			return cModelElement.getHandleIdentifier();
 		}
@@ -321,7 +323,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 
 	private ICElement mapToModelElement() {
 		try {
-			ISourceRange range= getSourceRange();
+			ISourceRange range = getSourceRange();
 			return getTranslationUnit().getElementAtOffset(range.getIdStartPos());
 		} catch (CModelException exc) {
 			return null;

@@ -19,13 +19,11 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTSimpleDeclSpecifier;
 
 @SuppressWarnings("restriction")
-public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
-		implements IUPCASTSimpleDeclSpecifier {
+public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implements IUPCASTSimpleDeclSpecifier {
 
 	private int referenceType;
 	private int sharedQualifier;
 	private IASTExpression blockSizeExpression;
-
 
 	public UPCASTSimpleDeclSpecifier() {
 	}
@@ -66,7 +64,7 @@ public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
-		if(expr != null) {
+		if (expr != null) {
 			expr.setParent(this);
 			expr.setPropertyInParent(BLOCK_SIZE_EXPRESSION);
 		}
@@ -82,26 +80,33 @@ public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 		this.sharedQualifier = shared;
 	}
 
-
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;
+		if (blockSizeExpression != null)
+			if (!blockSizeExpression.accept(action))
+				return false;
 
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 }

@@ -27,5 +27,5 @@ public interface ICPPAliasTemplate extends IType, ICPPTemplateDefinition {
 	/**
 	 * Returns the aliased type.
 	 */
-	public IType getType();	
+	public IType getType();
 }

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.update;
 
-
 /** 
  * Extension to the VM Update policy which allows the policy to control how to 
  * update missing property values in a dirty cache entry.
@@ -22,15 +21,15 @@ package org.eclipse.cdt.dsf.ui.viewmodel.update;
  */
 public interface IVMUpdatePolicyExtension extends IVMUpdatePolicy {
 
-    /**
-     * Determines whether the given dirty cache entry should have the given 
-     * missing property updated.  
-     *  
-     * @param entry The dirty cache entry that is missing the given requested 
-     * property. 
-     * @param property Property missing from cache.
-     * @return If <code>true</code> cache can update the given missing property
-     * in the dirty cache entry with data from the VM node.
-     */
-    public boolean canUpdateDirtyProperty(ICacheEntry entry, String property);
+	/**
+	 * Determines whether the given dirty cache entry should have the given 
+	 * missing property updated.  
+	 *  
+	 * @param entry The dirty cache entry that is missing the given requested 
+	 * property. 
+	 * @param property Property missing from cache.
+	 * @return If <code>true</code> cache can update the given missing property
+	 * in the dirty cache entry with data from the VM node.
+	 */
+	public boolean canUpdateDirtyProperty(ICacheEntry entry, String property);
 }

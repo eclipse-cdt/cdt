@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
 /**
@@ -29,7 +29,7 @@ public interface IInactiveCodeToken extends IToken {
 	 *         within code branches, otherwise.
 	 */
 	int getOldNesting();
-	
+
 	/**
 	 * @return {@code 0} for the end-token of the outermost branch (indicates that code in the
 	 *         translation-unit outside of any branches will follow). <br>

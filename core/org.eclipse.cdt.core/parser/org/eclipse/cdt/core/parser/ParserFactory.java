@@ -17,19 +17,18 @@ import java.util.Set;
 
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
-
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ParserFactory {
 	private static IParserLogService defaultLogService = new DefaultLogService();
-	
+
 	public static IParserLogService createDefaultLogService() {
 		return defaultLogService;
 	}
-	
+
 	public static Set<String> getKeywordSet(KeywordSetKey key, ParserLanguage language) {
-		return KeywordSets.getKeywords( key, language ); 
+		return KeywordSets.getKeywords(key, language);
 	}
 }

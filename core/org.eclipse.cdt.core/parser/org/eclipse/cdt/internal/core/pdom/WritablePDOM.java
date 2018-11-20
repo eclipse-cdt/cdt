@@ -50,8 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 public class WritablePDOM extends PDOM implements IWritableIndexFragment {
-	private boolean fClearedBecauseOfVersionMismatch= false;
-	private boolean fCreatedFromScratch= false;
+	private boolean fClearedBecauseOfVersionMismatch = false;
+	private boolean fCreatedFromScratch = false;
 	private ASTFilePathResolver fPathResolver;
 	private PDOMFile fileBeingUpdated;
 	private PDOMFile uncommittedFile;
@@ -68,11 +68,12 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	}
 
 	public void setASTFilePathResolver(ASTFilePathResolver resolver) {
-		fPathResolver= resolver;
+		fPathResolver = resolver;
 	}
 
 	@Override
-	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location, ISignificantMacros sigMacros) throws CoreException {
+	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location, ISignificantMacros sigMacros)
+			throws CoreException {
 		if (uncommittedKey != null && uncommittedKey.equals(new FileContentKey(linkageID, location, sigMacros)))
 			return uncommittedFile;
 
@@ -84,7 +85,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 			ISignificantMacros significantMacros) throws CoreException {
 		uncommittedKey = new FileContentKey(linkageID, location, significantMacros);
 		fileBeingUpdated = getFile(linkageID, location, significantMacros);
-		PDOMLinkage linkage= createLinkage(linkageID);
+		PDOMLinkage linkage = createLinkage(linkageID);
 		uncommittedFile = new PDOMFile(linkage, location, linkageID, significantMacros);
 		return uncommittedFile;
 	}
@@ -151,12 +152,12 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
 		pdomFile.addMacros(macros);
-		final ASTFilePathResolver origResolver= fPathResolver;
-		fPathResolver= pathResolver;
+		final ASTFilePathResolver origResolver = fPathResolver;
+		fPathResolver = pathResolver;
 		try {
 			pdomFile.addNames(names, lock);
 		} finally {
-			fPathResolver= origResolver;
+			fPathResolver = origResolver;
 		}
 		// Includes expose the temporary file in the index, we must not yield the lock beyond this point.
 		pdomFile.addIncludesTo(includes);
@@ -220,6 +221,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
+
 			@Override
 			public boolean visit(long record) throws CoreException {
 				PDOMFile file = PDOMFile.recreateFile(WritablePDOM.this, record);
@@ -293,7 +295,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		int bestScore = -1;
 		for (IIndexFile file : files) {
 			int score = file.getMacros().length * 2;
-			if (tu != null && TranslationUnit.isSourceFile(TranslationUnit.getParsedInContext(file), tu.getCProject().getProject()))
+			if (tu != null && TranslationUnit.isSourceFile(TranslationUnit.getParsedInContext(file),
+					tu.getCProject().getProject()))
 				score++;
 			if (score > bestScore) {
 				bestScore = score;
@@ -305,13 +308,14 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 	public PDOMFile getFileForASTNode(int linkageID, IASTNode node) throws CoreException {
 		if (fPathResolver != null && node != null) {
-			IASTFileLocation loc= node.getFileLocation();
+			IASTFileLocation loc = node.getFileLocation();
 			if (loc != null) {
-				IASTPreprocessorIncludeStatement owner= loc.getContextInclusionStatement();
-				ISignificantMacros sigMacros= owner != null ? owner.getSignificantMacros() : ISignificantMacros.NONE;
+				IASTPreprocessorIncludeStatement owner = loc.getContextInclusionStatement();
+				ISignificantMacros sigMacros = owner != null ? owner.getSignificantMacros() : ISignificantMacros.NONE;
 				if (sigMacros != null) {
 					IIndexFileLocation location = fPathResolver.resolveASTPath(loc.getFileName());
-					if (uncommittedKey != null && uncommittedKey.equals(new FileContentKey(linkageID, location, sigMacros)))
+					if (uncommittedKey != null
+							&& uncommittedKey.equals(new FileContentKey(linkageID, location, sigMacros)))
 						return fileBeingUpdated != null ? fileBeingUpdated : uncommittedFile;
 					return getBestFile(linkageID, location, node.getTranslationUnit().getOriginatingTranslationUnit());
 				}
@@ -328,8 +332,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		// Definitions in fileBeingUpdated will be removed when the file is committed, so look for
 		// a definition elsewhere.
 		for (PDOMName name = binding.getFirstDefinition(); name != null; name = name.getNextInBinding()) {
-			if (!fileBeingUpdated.getPDOM().equals(name.getPDOM()) ||
-					fileBeingUpdated.getRecord() != name.getFileRecord()) {
+			if (!fileBeingUpdated.getPDOM().equals(name.getPDOM())
+					|| fileBeingUpdated.getRecord() != name.getFileRecord()) {
 				return true;
 			}
 		}
@@ -338,20 +342,20 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 	@Override
 	protected boolean isCommitted(PDOMName name) throws CoreException {
-		return uncommittedFile == null || !uncommittedFile.getPDOM().equals(name.getPDOM()) ||
-				uncommittedFile.getRecord() != name.getFileRecord();
+		return uncommittedFile == null || !uncommittedFile.getPDOM().equals(name.getPDOM())
+				|| uncommittedFile.getRecord() != name.getFileRecord();
 	}
 
 	@Override
 	protected boolean isCommitted(PDOMMacro name) throws CoreException {
-		return uncommittedFile == null || !uncommittedFile.getPDOM().equals(name.getPDOM()) ||
-				uncommittedFile.getRecord() != name.getFileRecord();
+		return uncommittedFile == null || !uncommittedFile.getPDOM().equals(name.getPDOM())
+				|| uncommittedFile.getRecord() != name.getFileRecord();
 	}
 
 	@Override
 	protected boolean isCommitted(PDOMMacroReferenceName name) throws CoreException {
-		return uncommittedFile == null || !uncommittedFile.getPDOM().equals(name.getPDOM()) ||
-				uncommittedFile.getRecord() != name.getFileRecord();
+		return uncommittedFile == null || !uncommittedFile.getPDOM().equals(name.getPDOM())
+				|| uncommittedFile.getRecord() != name.getFileRecord();
 	}
 
 	@Override

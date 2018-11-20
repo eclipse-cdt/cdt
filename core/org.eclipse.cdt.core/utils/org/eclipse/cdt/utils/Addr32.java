@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.Messages;
 public class Addr32 implements IAddress, Serializable {
 
 	private static final long MAX_ADDR = 0xffffffffL;
-	
+
 	public static final Addr32 ZERO = new Addr32(0);
 	public static final Addr32 MAX = new Addr32(MAX_ADDR);
 
@@ -47,8 +47,8 @@ public class Addr32 implements IAddress, Serializable {
 		if (addrBytes.length != 4)
 			throw (new NumberFormatException("Invalid address array")); //$NON-NLS-1$
 		/* We should mask out sign bits to have correct value */
-		this.address = ( ( ((long)addrBytes[0]) << 24) & 0xFF000000L) + ( ( ((long)addrBytes[1]) << 16) & 0x00FF0000L)
-				+ ( ( ((long)addrBytes[2]) << 8) & 0x0000FF00L) + (addrBytes[3] & 0x000000FFL);
+		this.address = ((((long) addrBytes[0]) << 24) & 0xFF000000L) + ((((long) addrBytes[1]) << 16) & 0x00FF0000L)
+				+ ((((long) addrBytes[2]) << 8) & 0x0000FF00L) + (addrBytes[3] & 0x000000FFL);
 	}
 
 	public Addr32(long rawaddress) {
@@ -59,8 +59,7 @@ public class Addr32 implements IAddress, Serializable {
 		if (rawaddress > MAX_ADDR || rawaddress < 0) {
 			if (truncate) {
 				rawaddress &= MAX_ADDR; // truncate
-			}
-			else {
+			} else {
 				throw (new NumberFormatException(Messages.Addr_valueOutOfRange));
 			}
 		}
@@ -76,13 +75,13 @@ public class Addr32 implements IAddress, Serializable {
 	}
 
 	public Addr32(String addr, int radix) {
-		this (addr, radix, true);
+		this(addr, radix, true);
 	}
 
 	public Addr32(String addr, int radix, boolean truncate) {
 		this(Long.parseLong(addr, radix), truncate);
 	}
-	
+
 	@Override
 	public IAddress add(BigInteger offset) {
 		return new Addr32(this.address + offset.longValue());
@@ -97,7 +96,7 @@ public class Addr32 implements IAddress, Serializable {
 	public BigInteger getMaxOffset() {
 		return MAX_OFFSET;
 	}
-	
+
 	@Override
 	public BigInteger getValue() {
 		return BigInteger.valueOf(address);
@@ -113,8 +112,8 @@ public class Addr32 implements IAddress, Serializable {
 		if (!(other instanceof IAddress)) {
 			throw new IllegalArgumentException();
 		}
-		
-		return getValue().compareTo(((IAddress)other).getValue());
+
+		return getValue().compareTo(((IAddress) other).getValue());
 	}
 
 	@Override
@@ -143,14 +142,14 @@ public class Addr32 implements IAddress, Serializable {
 			return true;
 		if (!(x instanceof IAddress))
 			return false;
-		return getValue().equals(((IAddress)x).getValue());
+		return getValue().equals(((IAddress) x).getValue());
 	}
 
 	@Override
 	public int hashCode() {
-		return (int)(address ^ (address >> 32));
+		return (int) (address ^ (address >> 32));
 	}
-	
+
 	@Override
 	public String toHexAddressString() {
 		String addressString = Long.toString(address, 16);
@@ -163,7 +162,7 @@ public class Addr32 implements IAddress, Serializable {
 		sb.append(addressString);
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @since 5.4
 	 */
@@ -178,7 +177,7 @@ public class Addr32 implements IAddress, Serializable {
 		sb.append(addressString);
 		return sb.toString();
 	}
-	
+
 	@Override
 	public String toBinaryAddressString() {
 		String addressString = Long.toString(address, 2);

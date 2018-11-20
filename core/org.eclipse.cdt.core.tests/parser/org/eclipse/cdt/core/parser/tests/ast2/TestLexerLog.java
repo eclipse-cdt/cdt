@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.util.ArrayList;
@@ -19,12 +19,12 @@ import org.eclipse.cdt.internal.core.parser.scanner.AbstractCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
 
 public class TestLexerLog implements ILexerLog {
-	private ArrayList fComments= new ArrayList();
-	private ArrayList fProblems= new ArrayList();
+	private ArrayList fComments = new ArrayList();
+	private ArrayList fProblems = new ArrayList();
 	private String fInput;
-	
+
 	public void setInput(String input) {
-		fInput= input;
+		fInput = input;
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class TestLexerLog implements ILexerLog {
 	public String createString(int problemID, String image) {
 		return String.valueOf(problemID) + ":" + image;
 	}
-	
+
 	public void clear() {
 		fComments.clear();
 		fProblems.clear();

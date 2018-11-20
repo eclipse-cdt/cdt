@@ -10,11 +10,11 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.cdt.internal.core.dom.parser.ParserLogServiceWrapper;
- 
+
 public abstract class AbstractParserLogService implements IParserLogService {
 	/**
 	 * @since 5.4
@@ -24,7 +24,7 @@ public abstract class AbstractParserLogService implements IParserLogService {
 			return (AbstractParserLogService) log;
 		return new ParserLogServiceWrapper(log);
 	}
-	
+
 	@Override
 	public void traceLog(String message) {
 	}
@@ -36,7 +36,7 @@ public abstract class AbstractParserLogService implements IParserLogService {
 	public boolean isTracing(String traceOption) {
 		return isTracing();
 	}
-	
+
 	/**
 	 * @param traceOption an option as defined in the .options file.
 	 * @since 5.4
@@ -49,14 +49,14 @@ public abstract class AbstractParserLogService implements IParserLogService {
 	}
 
 	@Override
-	public boolean isTracing(){
+	public boolean isTracing() {
 		return false;
 	}
-	
+
 	public boolean isTracingExceptions() {
 		return false;
 	}
-	
+
 	public void traceException(Throwable th) {
 		if (isTracingExceptions()) {
 			th.printStackTrace();

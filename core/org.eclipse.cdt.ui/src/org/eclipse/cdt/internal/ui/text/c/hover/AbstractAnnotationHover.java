@@ -106,9 +106,9 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		public final ITextViewer viewer;
 
 		public AnnotationInfo(Annotation annotation, Position position, ITextViewer textViewer) {
-			this.annotation= annotation;
-			this.position= position;
-			this.viewer= textViewer;
+			this.annotation = annotation;
+			this.position = position;
+			this.viewer = textViewer;
 		}
 
 		/**
@@ -128,7 +128,8 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		 * @param infoControl the information control
 		 */
 		public void fillToolBar(ToolBarManager manager, IInformationControl infoControl) {
-			ConfigureAnnotationsAction configureAnnotationsAction= new ConfigureAnnotationsAction(annotation, infoControl);
+			ConfigureAnnotationsAction configureAnnotationsAction = new ConfigureAnnotationsAction(annotation,
+					infoControl);
 			manager.add(configureAnnotationsAction);
 		}
 	}
@@ -140,7 +141,8 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 	 * 
 	 * @since 5.0
 	 */
-	private static class AnnotationInformationControl extends AbstractInformationControl implements IInformationControlExtension2 {
+	private static class AnnotationInformationControl extends AbstractInformationControl
+			implements IInformationControlExtension2 {
 		private final DefaultMarkerAnnotationAccess fMarkerAnnotationAccess;
 		private Control fFocusControl;
 		private AnnotationInfo fInput;
@@ -148,18 +150,18 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 
 		public AnnotationInformationControl(Shell parentShell, String statusFieldText) {
 			super(parentShell, statusFieldText);
-			
-			fMarkerAnnotationAccess= new DefaultMarkerAnnotationAccess();
+
+			fMarkerAnnotationAccess = new DefaultMarkerAnnotationAccess();
 			create();
 		}
 
 		public AnnotationInformationControl(Shell parentShell, ToolBarManager toolBarManager) {
 			super(parentShell, toolBarManager);
-			
-			fMarkerAnnotationAccess= new DefaultMarkerAnnotationAccess();
+
+			fMarkerAnnotationAccess = new DefaultMarkerAnnotationAccess();
 			create();
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
 		 */
@@ -174,11 +176,11 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		@Override
 		public void setInput(Object input) {
 			Assert.isLegal(input instanceof AnnotationInfo);
-			fInput= (AnnotationInfo)input;
+			fInput = (AnnotationInfo) input;
 			disposeDeferredCreatedContent();
 			deferredCreateContent();
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
 		 */
@@ -186,7 +188,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		public boolean hasContents() {
 			return fInput != null;
 		}
-		
+
 		private AnnotationInfo getAnnotationInfo() {
 			return fInput;
 		}
@@ -210,13 +212,13 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 				disposeDeferredCreatedContent();
 			super.setVisible(visible);
 		}
-		
+
 		protected void disposeDeferredCreatedContent() {
-			Control[] children= fParent.getChildren();
+			Control[] children = fParent.getChildren();
 			for (Control element : children) {
 				element.dispose();
 			}
-			ToolBarManager toolBarManager= getToolBarManager();
+			ToolBarManager toolBarManager = getToolBarManager();
 			if (toolBarManager != null)
 				toolBarManager.removeAll();
 		}
@@ -226,30 +228,30 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		 */
 		@Override
 		protected void createContent(Composite parent) {
-			fParent= parent;
-			GridLayout layout= new GridLayout(1, false);
-			layout.verticalSpacing= 0;
-			layout.marginWidth= 0;
-			layout.marginHeight= 0;
+			fParent = parent;
+			GridLayout layout = new GridLayout(1, false);
+			layout.verticalSpacing = 0;
+			layout.marginWidth = 0;
+			layout.marginHeight = 0;
 			fParent.setLayout(layout);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControl#computeSizeHint()
 		 */
 		@Override
 		public Point computeSizeHint() {
-			Point preferedSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			Point preferedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
-			Point constrains= getSizeConstraints();
+			Point constrains = getSizeConstraints();
 			if (constrains == null)
 				return preferedSize;
 
-			Point constrainedSize= getShell().computeSize(constrains.x, SWT.DEFAULT, true);
-			
-			int width= Math.min(preferedSize.x, constrainedSize.x);
-			int height= Math.max(preferedSize.y, constrainedSize.y);
-			
+			Point constrainedSize = getShell().computeSize(constrains.x, SWT.DEFAULT, true);
+
+			int width = Math.min(preferedSize.x, constrainedSize.x);
+			int height = Math.max(preferedSize.y, constrainedSize.y);
+
 			return new Point(width, height);
 		}
 
@@ -258,7 +260,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		 * is called after the input has been set.
 		 */
 		protected void fillToolbar() {
-			ToolBarManager toolBarManager= getToolBarManager();
+			ToolBarManager toolBarManager = getToolBarManager();
 			if (toolBarManager == null)
 				return;
 			fInput.fillToolBar(toolBarManager, this);
@@ -271,11 +273,11 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		 */
 		protected void deferredCreateContent() {
 			fillToolbar();
-			
+
 			createAnnotationInformation(fParent, getAnnotationInfo().annotation);
 			setColorAndFont(fParent, fParent.getForeground(), fParent.getBackground(), JFaceResources.getDialogFont());
 
-			ICompletionProposal[] proposals= getAnnotationInfo().getCompletionProposals();
+			ICompletionProposal[] proposals = getAnnotationInfo().getCompletionProposals();
 			if (proposals.length > 0)
 				createCompletionProposalsControl(fParent, proposals);
 
@@ -286,9 +288,9 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 			control.setForeground(foreground);
 			control.setBackground(background);
 			control.setFont(font);
-			
+
 			if (control instanceof Composite) {
-				Control[] children= ((Composite) control).getChildren();
+				Control[] children = ((Composite) control).getChildren();
 				for (Control element : children) {
 					setColorAndFont(element, foreground, background, font);
 				}
@@ -296,18 +298,18 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		}
 
 		private void createAnnotationInformation(Composite parent, final Annotation annotation) {
-			Composite composite= new Composite(parent, SWT.NONE);
+			Composite composite = new Composite(parent, SWT.NONE);
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-			GridLayout layout= new GridLayout(2, false);
-			layout.marginHeight= 2;
-			layout.marginWidth= 2;
-			layout.horizontalSpacing= 0;
+			GridLayout layout = new GridLayout(2, false);
+			layout.marginHeight = 2;
+			layout.marginWidth = 2;
+			layout.horizontalSpacing = 0;
 			composite.setLayout(layout);
 
-			final Canvas canvas= new Canvas(composite, SWT.NO_FOCUS);
-			GridData gridData= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-			gridData.widthHint= 17;
-			gridData.heightHint= 16;
+			final Canvas canvas = new Canvas(composite, SWT.NO_FOCUS);
+			GridData gridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
+			gridData.widthHint = 17;
+			gridData.heightHint = 16;
 			canvas.setLayoutData(gridData);
 			canvas.addPaintListener(new PaintListener() {
 				@Override
@@ -317,34 +319,35 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 				}
 			});
 
-			StyledText text= new StyledText(composite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
-			GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
+			StyledText text = new StyledText(composite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
+			GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 			text.setLayoutData(data);
 			text.setText(annotation.getText());
 		}
 
 		private void createCompletionProposalsControl(Composite parent, ICompletionProposal[] proposals) {
-			Composite composite= new Composite(parent, SWT.NONE);
+			Composite composite = new Composite(parent, SWT.NONE);
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			GridLayout layout2= new GridLayout(1, false);
-			layout2.marginHeight= 0;
-			layout2.marginWidth= 0;
-			layout2.verticalSpacing= 2;
+			GridLayout layout2 = new GridLayout(1, false);
+			layout2.marginHeight = 0;
+			layout2.marginWidth = 0;
+			layout2.verticalSpacing = 2;
 			composite.setLayout(layout2);
 
-			Label separator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-			GridData gridData= new GridData(SWT.FILL, SWT.CENTER, true, false);
+			Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+			GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			separator.setLayoutData(gridData);
 
-			Label quickFixLabel= new Label(composite, SWT.NONE);
-			GridData layoutData= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-			layoutData.horizontalIndent= 4;
+			Label quickFixLabel = new Label(composite, SWT.NONE);
+			GridData layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+			layoutData.horizontalIndent = 4;
 			quickFixLabel.setLayoutData(layoutData);
 			String text;
 			if (proposals.length == 1) {
-				text= CHoverMessages.AbstractAnnotationHover_message_singleQuickFix;
+				text = CHoverMessages.AbstractAnnotationHover_message_singleQuickFix;
 			} else {
-				text= MessageFormat.format(CHoverMessages.AbstractAnnotationHover_message_multipleQuickFix, new Object[] {String.valueOf(proposals.length)});
+				text = MessageFormat.format(CHoverMessages.AbstractAnnotationHover_message_multipleQuickFix,
+						new Object[] { String.valueOf(proposals.length) });
 			}
 			quickFixLabel.setText(text);
 
@@ -353,68 +356,69 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		}
 
 		private void createCompletionProposalsList(Composite parent, ICompletionProposal[] proposals) {
-			final ScrolledComposite scrolledComposite= new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-			GridData gridData= new GridData(SWT.FILL, SWT.FILL, true, true);
+			final ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+			GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 			scrolledComposite.setLayoutData(gridData);
 			scrolledComposite.setExpandVertical(false);
 			scrolledComposite.setExpandHorizontal(false);
 
-			Composite composite= new Composite(scrolledComposite, SWT.NONE);
+			Composite composite = new Composite(scrolledComposite, SWT.NONE);
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			GridLayout layout= new GridLayout(3, false);
-			layout.verticalSpacing= 2;
+			GridLayout layout = new GridLayout(3, false);
+			layout.verticalSpacing = 2;
 			composite.setLayout(layout);
 
-			final Link[] links= new Link[proposals.length];
-			for (int i= 0; i < proposals.length; i++) {
-				Label indent= new Label(composite, SWT.NONE);
-				GridData gridData1= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-				gridData1.widthHint= 0;
+			final Link[] links = new Link[proposals.length];
+			for (int i = 0; i < proposals.length; i++) {
+				Label indent = new Label(composite, SWT.NONE);
+				GridData gridData1 = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+				gridData1.widthHint = 0;
 				indent.setLayoutData(gridData1);
 
-				links[i]= createCompletionProposalLink(composite, proposals[i]);
+				links[i] = createCompletionProposalLink(composite, proposals[i]);
 			}
 
 			scrolledComposite.setContent(composite);
-			setColorAndFont(scrolledComposite, parent.getForeground(), parent.getBackground(), JFaceResources.getDialogFont());
-			
-			Point contentSize= composite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			setColorAndFont(scrolledComposite, parent.getForeground(), parent.getBackground(),
+					JFaceResources.getDialogFont());
+
+			Point contentSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			composite.setSize(contentSize);
-			
-			Point constraints= getSizeConstraints();
+
+			Point constraints = getSizeConstraints();
 			if (constraints != null && contentSize.x < constraints.x) {
-				ScrollBar horizontalBar= scrolledComposite.getHorizontalBar();
-				
+				ScrollBar horizontalBar = scrolledComposite.getHorizontalBar();
+
 				int scrollBarHeight;
 				if (horizontalBar == null) {
-					Point scrollSize= scrolledComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					scrollBarHeight= scrollSize.y - contentSize.y;
+					Point scrollSize = scrolledComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					scrollBarHeight = scrollSize.y - contentSize.y;
 				} else {
-					scrollBarHeight= horizontalBar.getSize().y;
+					scrollBarHeight = horizontalBar.getSize().y;
 				}
-				gridData.heightHint= contentSize.y - scrollBarHeight;
+				gridData.heightHint = contentSize.y - scrollBarHeight;
 			}
 
-			fFocusControl= links[0];
-			for (int i= 0; i < links.length; i++) {
-				final int index= i;
-				final Link link= links[index];
+			fFocusControl = links[0];
+			for (int i = 0; i < links.length; i++) {
+				final int index = i;
+				final Link link = links[index];
 				link.addKeyListener(new KeyListener() {
 					@Override
 					public void keyPressed(KeyEvent e) {
 						switch (e.keyCode) {
-							case SWT.ARROW_DOWN:
-								if (index + 1 < links.length) {
-									links[index + 1].setFocus();
-								}
-								break;
-							case SWT.ARROW_UP:
-								if (index > 0) {
-									links[index - 1].setFocus();
-								}
-								break;
-							default:
-								break;
+						case SWT.ARROW_DOWN:
+							if (index + 1 < links.length) {
+								links[index + 1].setFocus();
+							}
+							break;
+						case SWT.ARROW_UP:
+							if (index > 0) {
+								links[index - 1].setFocus();
+							}
+							break;
+						default:
+							break;
 						}
 					}
 
@@ -426,13 +430,13 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 				link.addFocusListener(new FocusListener() {
 					@Override
 					public void focusGained(FocusEvent e) {
-						int currentPosition= scrolledComposite.getOrigin().y;
-						int hight= scrolledComposite.getSize().y;
-						int linkPosition= link.getLocation().y;
+						int currentPosition = scrolledComposite.getOrigin().y;
+						int hight = scrolledComposite.getSize().y;
+						int linkPosition = link.getLocation().y;
 
 						if (linkPosition < currentPosition) {
 							if (linkPosition < 10)
-								linkPosition= 0;
+								linkPosition = 0;
 
 							scrolledComposite.setOrigin(0, linkPosition);
 						} else if (linkPosition + 20 > currentPosition + hight) {
@@ -448,9 +452,9 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		}
 
 		private Link createCompletionProposalLink(Composite parent, final ICompletionProposal proposal) {
-			Label proposalImage= new Label(parent, SWT.NONE);
+			Label proposalImage = new Label(parent, SWT.NONE);
 			proposalImage.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-			Image image= proposal.getImage();
+			Image image = proposal.getImage();
 			if (image != null) {
 				proposalImage.setImage(image);
 
@@ -474,7 +478,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 				});
 			}
 
-			Link proposalLink= new Link(parent, SWT.WRAP);
+			Link proposalLink = new Link(parent, SWT.WRAP);
 			proposalLink.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 			proposalLink.setText("<a>" + proposal.getDisplayString() + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 			proposalLink.addSelectionListener(new SelectionAdapter() {
@@ -494,29 +498,29 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 			//Focus needs to be in the text viewer, otherwise linked mode does not work
 			dispose();
 
-			IRewriteTarget target= null;
+			IRewriteTarget target = null;
 			try {
-				IDocument document= viewer.getDocument();
+				IDocument document = viewer.getDocument();
 
 				if (viewer instanceof ITextViewerExtension) {
-					ITextViewerExtension extension= (ITextViewerExtension) viewer;
-					target= extension.getRewriteTarget();
+					ITextViewerExtension extension = (ITextViewerExtension) viewer;
+					target = extension.getRewriteTarget();
 				}
 
 				if (target != null)
 					target.beginCompoundChange();
 
 				if (p instanceof ICompletionProposalExtension2) {
-					ICompletionProposalExtension2 e= (ICompletionProposalExtension2) p;
+					ICompletionProposalExtension2 e = (ICompletionProposalExtension2) p;
 					e.apply(viewer, (char) 0, SWT.NONE, offset);
 				} else if (p instanceof ICompletionProposalExtension) {
-					ICompletionProposalExtension e= (ICompletionProposalExtension) p;
+					ICompletionProposalExtension e = (ICompletionProposalExtension) p;
 					e.apply(document, (char) 0, offset);
 				} else {
 					p.apply(document);
 				}
 
-				Point selection= p.getSelection(document);
+				Point selection = p.getSelection(document);
 				if (selection != null) {
 					viewer.setSelectedRange(selection.x, selection.y);
 					viewer.revealRange(selection.x, selection.y);
@@ -543,7 +547,6 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		}
 	}
 
-
 	/**
 	 * Hover control creator.
 	 *
@@ -553,9 +556,9 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		private final IInformationControlCreator fPresenterControlCreator;
 
 		public HoverControlCreator(IInformationControlCreator presenterControlCreator) {
-			fPresenterControlCreator= presenterControlCreator;
+			fPresenterControlCreator = presenterControlCreator;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 		 */
@@ -571,7 +574,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 				}
 			};
 		}
-		
+
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#canReuse(org.eclipse.jface.text.IInformationControl)
 		 */
@@ -586,7 +589,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Action to configure the annotation preferences.
 	 * 
@@ -599,8 +602,8 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 
 		public ConfigureAnnotationsAction(Annotation annotation, IInformationControl infoControl) {
 			super();
-			fAnnotation= annotation;
-			fInfoControl= infoControl;
+			fAnnotation = annotation;
+			fInfoControl = infoControl;
 			setImageDescriptor(CPluginImages.DESC_ELCL_CONFIGURE_ANNOTATIONS);
 			setDisabledImageDescriptor(CPluginImages.DESC_DLCL_CONFIGURE_ANNOTATIONS);
 			setToolTipText(CHoverMessages.AbstractAnnotationHover_action_configureAnnotationPreferences);
@@ -611,20 +614,22 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		 */
 		@Override
 		public void run() {
-			Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-			
-			Object data= null;
-			AnnotationPreference preference= getAnnotationPreference(fAnnotation);
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+
+			Object data = null;
+			AnnotationPreference preference = getAnnotationPreference(fAnnotation);
 			if (preference != null)
-				data= preference.getPreferenceLabel();
-			
+				data = preference.getPreferenceLabel();
+
 			fInfoControl.dispose(); //FIXME: should have protocol to hide, rather than dispose
-			PreferencesUtil.createPreferenceDialogOn(shell, "org.eclipse.ui.editors.preferencePages.Annotations", null, data).open(); //$NON-NLS-1$
+			PreferencesUtil
+					.createPreferenceDialogOn(shell, "org.eclipse.ui.editors.preferencePages.Annotations", null, data) //$NON-NLS-1$
+					.open();
 		}
 	}
 
-	private final IPreferenceStore fStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
-	private final DefaultMarkerAnnotationAccess fAnnotationAccess= new DefaultMarkerAnnotationAccess();
+	private final IPreferenceStore fStore = CUIPlugin.getDefault().getCombinedPreferenceStore();
+	private final DefaultMarkerAnnotationAccess fAnnotationAccess = new DefaultMarkerAnnotationAccess();
 	private final boolean fAllAnnotations;
 
 	/**
@@ -639,11 +644,11 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 	 * @since 5.0
 	 */
 	private IInformationControlCreator fPresenterControlCreator;
-	
+
 	public AbstractAnnotationHover(boolean allAnnotations) {
-		fAllAnnotations= allAnnotations;
+		fAllAnnotations = allAnnotations;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
@@ -661,12 +666,12 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		IPath path;
 		IAnnotationModel model;
 		if (textViewer instanceof ISourceViewer) {
-			path= null;
-			model= ((ISourceViewer)textViewer).getAnnotationModel();
+			path = null;
+			model = ((ISourceViewer) textViewer).getAnnotationModel();
 		} else {
 			// Get annotation model from file buffer manager
-			path= getEditorInputPath();
-			model= getAnnotationModel(path);
+			path = getEditorInputPath();
+			model = getAnnotationModel(path);
 		}
 		if (model == null)
 			return null;
@@ -675,32 +680,36 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 			@SuppressWarnings("rawtypes")
 			Iterator parent;
 			if (model instanceof IAnnotationModelExtension2)
-				parent= ((IAnnotationModelExtension2) model).getAnnotationIterator(hoverRegion.getOffset(), hoverRegion.getLength(), true, true);
+				parent = ((IAnnotationModelExtension2) model).getAnnotationIterator(hoverRegion.getOffset(),
+						hoverRegion.getLength(), true, true);
 			else
-				parent= model.getAnnotationIterator();
+				parent = model.getAnnotationIterator();
 			@SuppressWarnings("unchecked")
-			Iterator<Annotation> e= new CAnnotationIterator(parent, fAllAnnotations);
-			
-			int layer= -1;
-			Annotation annotation= null;
-			Position position= null;
-			while (e.hasNext()) {
-				Annotation a= e.next();
+			Iterator<Annotation> e = new CAnnotationIterator(parent, fAllAnnotations);
 
-				AnnotationPreference preference= getAnnotationPreference(a);
-				if (preference == null || !(preference.getTextPreferenceKey() != null && fStore.getBoolean(preference.getTextPreferenceKey()) || (preference.getHighlightPreferenceKey() != null && fStore.getBoolean(preference.getHighlightPreferenceKey()))))
+			int layer = -1;
+			Annotation annotation = null;
+			Position position = null;
+			while (e.hasNext()) {
+				Annotation a = e.next();
+
+				AnnotationPreference preference = getAnnotationPreference(a);
+				if (preference == null || !(preference.getTextPreferenceKey() != null
+						&& fStore.getBoolean(preference.getTextPreferenceKey())
+						|| (preference.getHighlightPreferenceKey() != null
+								&& fStore.getBoolean(preference.getHighlightPreferenceKey()))))
 					continue;
 
-				Position p= model.getPosition(a);
+				Position p = model.getPosition(a);
 
-				int l= fAnnotationAccess.getLayer(a);
+				int l = fAnnotationAccess.getLayer(a);
 
 				if (l > layer && p != null && p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
-					String msg= a.getText();
+					String msg = a.getText();
 					if (msg != null && msg.trim().length() > 0) {
-						layer= l;
-						annotation= a;
-						position= p;
+						layer = l;
+						annotation = a;
+						position = p;
 					}
 				}
 			}
@@ -710,7 +719,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		} finally {
 			try {
 				if (path != null) {
-					ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+					ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 					manager.disconnect(path, LocationKind.NORMALIZE, null);
 				}
 			} catch (CoreException e) {
@@ -732,7 +741,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (fHoverControlCreator == null)
-			fHoverControlCreator= new HoverControlCreator(getInformationPresenterControlCreator());
+			fHoverControlCreator = new HoverControlCreator(getInformationPresenterControlCreator());
 		return fHoverControlCreator;
 	}
 
@@ -743,7 +752,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		if (fPresenterControlCreator == null)
-			fPresenterControlCreator= new PresenterControlCreator();
+			fPresenterControlCreator = new PresenterControlCreator();
 		return fPresenterControlCreator;
 	}
 
@@ -751,10 +760,10 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		if (getEditor() == null)
 			return null;
 
-		IEditorInput input= getEditor().getEditorInput();
+		IEditorInput input = getEditor().getEditorInput();
 		if (input instanceof IStorageEditorInput) {
 			try {
-				return ((IStorageEditorInput)input).getStorage().getFullPath();
+				return ((IStorageEditorInput) input).getStorage().getFullPath();
 			} catch (CoreException e) {
 				CUIPlugin.log(e.getStatus());
 			}
@@ -766,7 +775,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		if (path == null)
 			return null;
 
-		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
 			manager.connect(path, LocationKind.NORMALIZE, null);
 		} catch (CoreException e) {
@@ -774,9 +783,9 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 			return null;
 		}
 
-		IAnnotationModel model= null;
+		IAnnotationModel model = null;
 		try {
-			model= manager.getTextFileBuffer(path, LocationKind.NORMALIZE).getAnnotationModel();
+			model = manager.getTextFileBuffer(path, LocationKind.NORMALIZE).getAnnotationModel();
 			return model;
 		} finally {
 			if (model == null) {

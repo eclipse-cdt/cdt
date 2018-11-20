@@ -28,38 +28,38 @@ public class CAnnotationIterator implements Iterator<Annotation> {
 	private Iterator<Annotation> fIterator;
 	private Annotation fNext;
 	private boolean fReturnAllAnnotations;
-	
+
 	/**
 	 * Returns a new CAnnotationIterator.
 	 * @param parent the parent iterator to iterate over annotations
 	 * @param returnAllAnnotations whether to return all annotations or just problem annotations
 	 */
 	public CAnnotationIterator(Iterator<Annotation> parent, boolean returnAllAnnotations) {
-		fReturnAllAnnotations= returnAllAnnotations;
-		fIterator= parent;
+		fReturnAllAnnotations = returnAllAnnotations;
+		fIterator = parent;
 		skip();
 	}
 
 	private void skip() {
 		while (fIterator.hasNext()) {
-			Annotation next= fIterator.next();
-			
+			Annotation next = fIterator.next();
+
 			if (next.isMarkedDeleted())
 				continue;
 
 			if (fReturnAllAnnotations || next instanceof ICAnnotation || isProblemMarkerAnnotation(next)) {
-				fNext= next;
+				fNext = next;
 				return;
 			}
 		}
-		fNext= null;
+		fNext = null;
 	}
 
 	private static boolean isProblemMarkerAnnotation(Annotation annotation) {
 		if (!(annotation instanceof MarkerAnnotation))
 			return false;
 		try {
-			return(((MarkerAnnotation)annotation).getMarker().isSubtypeOf(IMarker.PROBLEM));
+			return (((MarkerAnnotation) annotation).getMarker().isSubtypeOf(IMarker.PROBLEM));
 		} catch (CoreException e) {
 			return false;
 		}

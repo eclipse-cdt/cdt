@@ -34,13 +34,13 @@ class CSettingsRefInfo {
 	 *  From references container -> to concrete held settings */
 	private HashMap<CContainerRef, CRefSettingsHolder> fESHolderMap = new LinkedHashMap<CContainerRef, CRefSettingsHolder>();
 
-	CSettingsRefInfo(){
+	CSettingsRefInfo() {
 	}
 
 	CSettingsRefInfo(ICStorageElement el) {
 		for (ICStorageElement child : el.getChildren()) {
 			String name = child.getName();
-			if(CExternalSettingsHolder.ELEMENT_EXT_SETTINGS_CONTAINER.equals(name)) {
+			if (CExternalSettingsHolder.ELEMENT_EXT_SETTINGS_CONTAINER.equals(name)) {
 				CRefSettingsHolder h = new CRefSettingsHolder(child);
 				CContainerRef r = h.getContainerInfo();
 				fESHolderMap.put(r, h);
@@ -49,65 +49,65 @@ class CSettingsRefInfo {
 	}
 
 	@SuppressWarnings("unchecked")
-	CSettingsRefInfo(CSettingsRefInfo base){
-		fESHolderMap = (LinkedHashMap<CContainerRef, CRefSettingsHolder>)base.fESHolderMap.clone();
+	CSettingsRefInfo(CSettingsRefInfo base) {
+		fESHolderMap = (LinkedHashMap<CContainerRef, CRefSettingsHolder>) base.fESHolderMap.clone();
 		for (Map.Entry<CContainerRef, CRefSettingsHolder> e : fESHolderMap.entrySet()) {
 			CRefSettingsHolder h = e.getValue();
 			h = new CRefSettingsHolder(h);
 			e.setValue(h);
 		}
 	}
-	
-	CContainerRef[] getReferences(String factoryId){
+
+	CContainerRef[] getReferences(String factoryId) {
 		List<CContainerRef> list = new ArrayList<CContainerRef>();
 		for (CContainerRef r : fESHolderMap.keySet()) {
-			if(r.getFactoryId().equals(factoryId))
+			if (r.getFactoryId().equals(factoryId))
 				list.add(r);
 		}
 		return list.toArray(new CContainerRef[list.size()]);
 	}
 
-	CContainerRef[] getReferences(){
+	CContainerRef[] getReferences() {
 		return fESHolderMap.keySet().toArray(new CContainerRef[fESHolderMap.size()]);
 	}
 
-	CRefSettingsHolder get(CContainerRef cRef){
+	CRefSettingsHolder get(CContainerRef cRef) {
 		return fESHolderMap.get(cRef);
 	}
 
-	void serialize(ICStorageElement element){
+	void serialize(ICStorageElement element) {
 		for (CRefSettingsHolder h : fESHolderMap.values()) {
 			ICStorageElement child = element.createChild(CExternalSettingsHolder.ELEMENT_EXT_SETTINGS_CONTAINER);
 			h.serialize(child);
 		}
 	}
 
-	void put(CRefSettingsHolder holder){
+	void put(CRefSettingsHolder holder) {
 		fESHolderMap.put(holder.getContainerInfo(), holder);
 	}
-	
-	CRefSettingsHolder remove(CContainerRef cRef){
+
+	CRefSettingsHolder remove(CContainerRef cRef) {
 		return fESHolderMap.remove(cRef);
 	}
-	
-	CExternalSetting[] createExternalSettings(){
-		if(fESHolderMap.size() == 0)
+
+	CExternalSetting[] createExternalSettings() {
+		if (fESHolderMap.size() == 0)
 			return new CExternalSetting[0];
-		if(fESHolderMap.size() == 1)
+		if (fESHolderMap.size() == 1)
 			return fESHolderMap.values().iterator().next().getExternalSettings();
 		CExternalSettingsHolder holder = new CExternalSettingsHolder();
-		for(Iterator<CRefSettingsHolder> iter = fESHolderMap.values().iterator(); iter.hasNext();){
+		for (Iterator<CRefSettingsHolder> iter = fESHolderMap.values().iterator(); iter.hasNext();) {
 			CExternalSettingsHolder h = iter.next();
 			holder.setExternalSettings(h.getExternalSettings(), true);
 		}
 		return holder.getExternalSettings();
 	}
-	
-	ICSettingEntry[] getAllEntries(int kind){
+
+	ICSettingEntry[] getAllEntries(int kind) {
 		Map<EntryNameKey, ICSettingEntry> map = new LinkedHashMap<EntryNameKey, ICSettingEntry>();
 		for (CRefSettingsHolder h : fESHolderMap.values()) {
 			CExternalSetting[] settings = h.getExternalSettings();
-			for(int i = 0; i < settings.length; i++){
+			for (int i = 0; i < settings.length; i++) {
 				ICSettingEntry[] entries = settings[i].getEntries(kind);
 				CDataUtil.fillEntriesMapByNameKey(map, entries);
 			}

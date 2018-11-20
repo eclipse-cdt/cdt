@@ -26,8 +26,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *  (see the description of the DsfMIBreakList).
  */
 
-public class MIBreakCondition extends MICommand<MIInfo>
-{
+public class MIBreakCondition extends MICommand<MIInfo> {
 	/*
 	 * MICommand wraps a parameter with double quotes if it contains a space.
 	 * However, GDB does not want quotes around a condition.
@@ -41,9 +40,9 @@ public class MIBreakCondition extends MICommand<MIInfo>
 	 */
 	/** @since 5.0 */
 	public MIBreakCondition(IBreakpointsTargetDMContext ctx, String breakpoint, String condition) {
-        super(ctx, "-break-condition"); //$NON-NLS-1$
+		super(ctx, "-break-condition"); //$NON-NLS-1$
 
-        setParameters(new Adjustable[]{ new MIStandardParameterAdjustable(breakpoint),
-        		                        new MINoChangeAdjustable(condition) });
-    }
+		setParameters(new Adjustable[] { new MIStandardParameterAdjustable(breakpoint),
+				new MINoChangeAdjustable(condition) });
+	}
 }

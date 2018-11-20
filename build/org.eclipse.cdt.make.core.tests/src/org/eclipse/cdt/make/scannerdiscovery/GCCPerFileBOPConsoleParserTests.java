@@ -34,10 +34,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
 
 public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
-	private final static IMarkerGenerator MARKER_GENERATOR= new IMarkerGenerator() {
+	private final static IMarkerGenerator MARKER_GENERATOR = new IMarkerGenerator() {
 		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 		}
+
 		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 		}
@@ -56,8 +57,8 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCCProject("perfilescdtest", null);
-		fOutputParser= new GCCPerFileBOPConsoleParser();
+		fCProject = CProjectHelper.createCCProject("perfilescdtest", null);
+		fOutputParser = new GCCPerFileBOPConsoleParser();
 		final IProject project = fCProject.getProject();
 		fOutputParser.startup(project, project.getLocation(), fCollector, MARKER_GENERATOR);
 	}
@@ -77,45 +78,45 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 	public void testParsingIfStatement_bug197930() throws Exception {
 		fOutputParser.processLine("if gcc -g -O0 -I\"include abc\" -c impl/testmath.c; then ; fi"); //$NON-NLS-1$
 
-        List<?> cmds = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.COMPILER_COMMAND);
-        assertEquals(1, cmds.size());
-        CCommandDSC command= (CCommandDSC) cmds.get(0);
-        assertEquals("gcc", command.getCompilerName());
+		List<?> cmds = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.COMPILER_COMMAND);
+		assertEquals(1, cmds.size());
+		CCommandDSC command = (CCommandDSC) cmds.get(0);
+		assertEquals("gcc", command.getCompilerName());
 	}
 
 	public void testResolvingLinkedFolder_Bug213690() throws Exception {
-		File tempRoot= new File(System.getProperty("java.io.tmpdir"));
-		File tempDir= new File(tempRoot, "cdttest_213690").getCanonicalFile();
+		File tempRoot = new File(System.getProperty("java.io.tmpdir"));
+		File tempDir = new File(tempRoot, "cdttest_213690").getCanonicalFile();
 		tempDir.mkdir();
 		try {
-			IFolder linkedFolder= fCProject.getProject().getFolder("cdttest");
+			IFolder linkedFolder = fCProject.getProject().getFolder("cdttest");
 			linkedFolder.createLink(new Path(tempDir.toString()), IResource.ALLOW_MISSING_LOCAL, null);
-			fOutputParser.processLine("gcc -g -O0 -I\""+ tempDir.toString() + "\" -c test.c"); //$NON-NLS-1$
-	        List<?> cmds = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.COMPILER_COMMAND);
-	        assertEquals(1, cmds.size());
-	        CCommandDSC command= (CCommandDSC) cmds.get(0);
-	        List<?> includes= command.getIncludes();
-	        assertEquals(1, includes.size());
-	        assertEquals(tempDir.toString(), includes.get(0).toString());
+			fOutputParser.processLine("gcc -g -O0 -I\"" + tempDir.toString() + "\" -c test.c"); //$NON-NLS-1$
+			List<?> cmds = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.COMPILER_COMMAND);
+			assertEquals(1, cmds.size());
+			CCommandDSC command = (CCommandDSC) cmds.get(0);
+			List<?> includes = command.getIncludes();
+			assertEquals(1, includes.size());
+			assertEquals(tempDir.toString(), includes.get(0).toString());
 		} finally {
 			tempDir.delete();
 		}
 	}
 
 	public void testResolvingLinkedResourceArgument_Bug216945() throws Exception {
-		File tempRoot= new File(System.getProperty("java.io.tmpdir"));
-		File tempDir= new File(tempRoot, "cdttest_216945");
+		File tempRoot = new File(System.getProperty("java.io.tmpdir"));
+		File tempDir = new File(tempRoot, "cdttest_216945");
 		tempDir.mkdir();
-		File tempFile= null;
+		File tempFile = null;
 		try {
-			tempFile= new File(tempDir, "test.c");
+			tempFile = new File(tempDir, "test.c");
 			tempFile.createNewFile();
-			IFolder linkedFolder= fCProject.getProject().getFolder("cdttest");
+			IFolder linkedFolder = fCProject.getProject().getFolder("cdttest");
 			linkedFolder.createLink(new Path(tempDir.toString()), IResource.ALLOW_MISSING_LOCAL, null);
-			fOutputParser.processLine("gcc -g -O0 -c \""+ tempFile.toString() + "\""); //$NON-NLS-1$
-			IFile file= linkedFolder.getFile("test.c");
-	        List<?> cmds = fCollector.getCollectedScannerInfo(file, ScannerInfoTypes.COMPILER_COMMAND);
-	        assertEquals(1, cmds.size());
+			fOutputParser.processLine("gcc -g -O0 -c \"" + tempFile.toString() + "\""); //$NON-NLS-1$
+			IFile file = linkedFolder.getFile("test.c");
+			List<?> cmds = fCollector.getCollectedScannerInfo(file, ScannerInfoTypes.COMPILER_COMMAND);
+			assertEquals(1, cmds.size());
 		} finally {
 			if (tempFile != null) {
 				tempFile.delete();
@@ -125,20 +126,20 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 	}
 
 	public void testPwdInFilePath_Bug237958() throws Exception {
-		IFile file1= fCProject.getProject().getFile("Bug237958_1.c");
-		IFile file2= fCProject.getProject().getFile("Bug237958_2.c");
+		IFile file1 = fCProject.getProject().getFile("Bug237958_1.c");
+		IFile file2 = fCProject.getProject().getFile("Bug237958_2.c");
 		fOutputParser.processLine("gcc -g -DTEST1 -c `pwd`/Bug237958_1.c");
 		fOutputParser.processLine("gcc -DTEST2=12 -g -ggdb -Wall -c \"`pwd`/./Bug237958_2.c\"");
 
 		List<?> cmds = fCollector.getCollectedScannerInfo(file1, ScannerInfoTypes.COMPILER_COMMAND);
-		CCommandDSC cdsc= (CCommandDSC) cmds.get(0);
-		List<?> symbols= cdsc.getSymbols();
+		CCommandDSC cdsc = (CCommandDSC) cmds.get(0);
+		List<?> symbols = cdsc.getSymbols();
 		assertEquals(1, symbols.size());
 		assertEquals("TEST1=1", symbols.get(0).toString());
 
 		cmds = fCollector.getCollectedScannerInfo(file2, ScannerInfoTypes.COMPILER_COMMAND);
-		cdsc= (CCommandDSC) cmds.get(0);
-		symbols= cdsc.getSymbols();
+		cdsc = (CCommandDSC) cmds.get(0);
+		symbols = cdsc.getSymbols();
 		assertEquals(1, symbols.size());
 		assertEquals("TEST2=12", symbols.get(0).toString());
 	}

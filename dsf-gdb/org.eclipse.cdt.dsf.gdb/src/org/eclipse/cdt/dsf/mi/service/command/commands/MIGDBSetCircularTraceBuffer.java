@@ -24,6 +24,6 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
  */
 public class MIGDBSetCircularTraceBuffer extends MIGDBSet {
 	public MIGDBSetCircularTraceBuffer(ITraceTargetDMContext ctx, boolean useCircularTraceBuffer) {
-		super(ctx, new String[] {"circular-trace-buffer", useCircularTraceBuffer ? "on": "off"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		super(ctx, new String[] { "circular-trace-buffer", useCircularTraceBuffer ? "on" : "off" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

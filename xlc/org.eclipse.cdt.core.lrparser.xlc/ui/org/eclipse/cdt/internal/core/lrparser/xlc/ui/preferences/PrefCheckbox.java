@@ -19,33 +19,32 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-
 /**
  * A simple wrapper for a checkbox.
  *
  */
 class PrefCheckbox {
-	
+
 	private final XlcPref key;
 	private final Button button;
-	
+
 	PrefCheckbox(Composite parent, XlcPref prefKey, String label) {
 		button = ControlFactory.createCheckBox(parent, label);
 		key = prefKey;
 	}
-	
+
 	public XlcPref getKey() {
 		return key;
 	}
-	
+
 	public void setSelection(boolean selection) {
 		button.setSelection(selection);
 	}
-	
+
 	public boolean getSelection() {
 		return button.getSelection();
 	}
-	
+
 	public void setDefault() {
 		setSelection(Boolean.valueOf(XlcLanguagePreferences.getDefaultPreference(key)));
 	}

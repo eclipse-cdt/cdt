@@ -28,43 +28,41 @@ import org.eclipse.core.runtime.OperationCanceledException;
  */
 public final class MacroContainerPatternCollector implements IBTreeVisitor {
 	private final PDOMLinkage fLinkage;
-	
+
 	private final List<PDOMMacroContainer> macros = new ArrayList<PDOMMacroContainer>();
 	private final Pattern fPattern;
 	private final IProgressMonitor fMonitor;
-	private int fMonitorCheckCounter= 0;
+	private int fMonitorCheckCounter = 0;
 
-		
 	public MacroContainerPatternCollector(PDOMLinkage linkage, Pattern pattern, IProgressMonitor monitor) {
-		fLinkage= linkage;
-		fPattern= pattern;
-		fMonitor= monitor;
+		fLinkage = linkage;
+		fPattern = pattern;
+		fMonitor = monitor;
 	}
 
-	
 	@Override
 	final public int compare(long record) throws CoreException {
 		if (fMonitor != null)
 			checkCancelled();
 		return 0;
 	}
-	
+
 	@Override
 	final public boolean visit(long record) throws CoreException {
 		if (record == 0)
 			return true;
 
-		String name= PDOMNamedNode.getDBName(fLinkage.getDB(), record).getString();
+		String name = PDOMNamedNode.getDBName(fLinkage.getDB(), record).getString();
 		if (fPattern.matcher(name).matches()) {
 			macros.add(new PDOMMacroContainer(fLinkage, record));
 		}
 		return true; // look for more
 	}
-	
+
 	final public PDOMMacroContainer[] getMacroContainers() {
 		return macros.toArray(new PDOMMacroContainer[macros.size()]);
 	}
-	
+
 	private void checkCancelled() {
 		if (++fMonitorCheckCounter % 0x1000 == 0 && fMonitor.isCanceled()) {
 			throw new OperationCanceledException();

@@ -138,7 +138,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				if (entriesParent != null) {
 					overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_PARENT;
 				}
-			} else if (provider instanceof ILanguageSettingsBroadcastingProvider && (page.isForFile() || page.isForFolder())) {
+			} else if (provider instanceof ILanguageSettingsBroadcastingProvider
+					&& (page.isForFile() || page.isForFolder())) {
 				// Assuming that the default entries for a resource are always null.
 				// Using that for performance reasons. See note in performDefaults().
 				List<ICLanguageSettingEntry> entriesParent = provider.getSettingEntries(null, null, currentLanguageId);
@@ -199,7 +200,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				return (Object[]) parentElement;
 
 			if (parentElement instanceof ILanguageSettingsProvider) {
-				ILanguageSettingsProvider lsProvider = (ILanguageSettingsProvider)parentElement;
+				ILanguageSettingsProvider lsProvider = (ILanguageSettingsProvider) parentElement;
 				List<ICLanguageSettingEntry> entriesList = getSettingEntriesUpResourceTree(lsProvider);
 				if (entriesList == null) {
 					return null;
@@ -230,7 +231,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		@Override
 		public boolean hasChildren(Object element) {
 			Object[] children = getChildren(element);
-			return children!=null && children.length>0;
+			return children != null && children.length > 0;
 		}
 
 		@Override
@@ -247,7 +248,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 * Shortcut for getting the current resource for the property page.
 	 */
 	private IResource getResource() {
-		return (IResource)page.getElement();
+		return (IResource) page.getElement();
 	}
 
 	/**
@@ -274,7 +275,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				}
 			}
 			if (itemData instanceof ILanguageSettingsProvider) {
-				provider = (ILanguageSettingsProvider)itemData;
+				provider = (ILanguageSettingsProvider) itemData;
 			}
 		}
 
@@ -292,7 +293,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			TreeItem item = items[0];
 			Object itemData = item.getData();
 			if (itemData instanceof ICLanguageSettingEntry) {
-				entry = (ICLanguageSettingEntry)itemData;
+				entry = (ICLanguageSettingEntry) itemData;
 			}
 		}
 
@@ -308,7 +309,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private List<ICLanguageSettingEntry> getSettingEntriesUpResourceTree(ILanguageSettingsProvider provider) {
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		IResource rc = getResource();
-		List<ICLanguageSettingEntry> entries = LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, cfgDescription, rc, currentLanguageId);
+		List<ICLanguageSettingEntry> entries = LanguageSettingsManager.getSettingEntriesUpResourceTree(provider,
+				cfgDescription, rc, currentLanguageId);
 		return entries;
 	}
 
@@ -331,7 +333,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
 				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 					String cfgId = cfgDescription.getId();
-					List<ILanguageSettingsProvider> initialProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+					List<ILanguageSettingsProvider> initialProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+							.getLanguageSettingProviders();
 					initialProvidersMap.put(cfgId, initialProviders);
 				}
 			}
@@ -417,7 +420,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				if (buttonIsEnabled(BUTTON_EDIT) && treeEntries.getSelection().length>0)
+				if (buttonIsEnabled(BUTTON_EDIT) && treeEntries.getSelection().length > 0)
 					buttonPressed(BUTTON_EDIT);
 			}
 		});
@@ -428,7 +431,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 * Create sash form.
 	 */
 	private void createSashForm() {
-		sashFormEntries = new SashForm(usercomp,SWT.HORIZONTAL);
+		sashFormEntries = new SashForm(usercomp, SWT.HORIZONTAL);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
@@ -467,7 +470,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		usercomp.setLayout(new GridLayout());
 		GridData gd = (GridData) usercomp.getLayoutData();
 		// Discourage settings entry table from trying to show all its items at once, see bug 264330
-		gd.heightHint =1;
+		gd.heightHint = 1;
 
 		if (page instanceof LanguageSettingsProvidersPage) {
 			masterPropertyPage = (LanguageSettingsProvidersPage) page;
@@ -589,7 +592,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 * Displays warning message - if any - for selected language settings entry.
 	 */
 	private void updateStatusLine() {
-		IStatus status=null;
+		IStatus status = null;
 		if (masterPropertyPage.isLanguageSettingsProvidersEnabled()) {
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			status = LanguageSettingsImages.getStatus(getSelectedEntry(), cfgDescription);
@@ -599,12 +602,14 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			boolean isAllowedEditing = provider instanceof ILanguageSettingsEditableProvider
 					&& LanguageSettingsProviderAssociationManager.isAllowedToEditEntries(provider);
 			if (provider != null && !isAllowedEditing) {
-				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, Messages.LanguageSettingsEntriesTab_Entries_Not_Editable);
+				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID,
+						Messages.LanguageSettingsEntriesTab_Entries_Not_Editable);
 			}
 		}
 		if (status == null || status == Status.OK_STATUS) {
 			if (treeLanguages.getItemCount() <= 0) {
-				status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, Messages.LanguageSettingsEntriesTab_Cannot_Determine_Languages);
+				status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+						Messages.LanguageSettingsEntriesTab_Cannot_Determine_Languages);
 			}
 		}
 		fStatusLine.setErrorStatus(status);
@@ -669,7 +674,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		for (TreeItem providerItem : providerItems) {
 			Object providerItemData = providerItem.getData();
 			if (providerItemData instanceof ILanguageSettingsProvider) {
-				ILanguageSettingsProvider provider = (ILanguageSettingsProvider)providerItemData;
+				ILanguageSettingsProvider provider = (ILanguageSettingsProvider) providerItemData;
 				if (provider.getId().equals(id)) {
 					return providerItem;
 				}
@@ -686,12 +691,12 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		for (TreeItem providerItem : providerItems) {
 			Object providerItemData = providerItem.getData();
 			if (providerItemData instanceof ILanguageSettingsProvider) {
-				ILanguageSettingsProvider provider = (ILanguageSettingsProvider)providerItemData;
+				ILanguageSettingsProvider provider = (ILanguageSettingsProvider) providerItemData;
 				if (provider.getId().equals(providerId)) {
 					TreeItem[] entryItems = providerItem.getItems();
 					for (TreeItem entryItem : entryItems) {
 						Object entryItemData = entryItem.getData();
-						if (entryItemData==entry)
+						if (entryItemData == entry)
 							return entryItem;
 					}
 				}
@@ -729,7 +734,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			List<ICLanguageSettingEntry> entries = getEntriesShownToUser(provider);
 			ICLanguageSettingEntry selectedEntry = getSelectedEntry();
 			int pos = getExactIndex(entries, selectedEntry);
-			entries.add(pos+1, entry);
+			entries.add(pos + 1, entry);
 
 			saveEntries(provider, entries);
 			updateTreeForEntries(providerId, entry);
@@ -745,13 +750,15 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			IResource rc = getResource();
 			if (entries != null && rc != null) {
 				IContainer parent = rc instanceof IProject ? null : rc.getParent();
-				List<ICLanguageSettingEntry> parentEntries = LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, cfgDescription, parent, currentLanguageId);
+				List<ICLanguageSettingEntry> parentEntries = LanguageSettingsManager
+						.getSettingEntriesUpResourceTree(provider, cfgDescription, parent, currentLanguageId);
 				if (entries.equals(parentEntries)) {
 					// to use parent entries instead
 					entries = null;
 				}
 			}
-			((ILanguageSettingsEditableProvider)provider).setSettingEntries(cfgDescription, rc, currentLanguageId, entries);
+			((ILanguageSettingsEditableProvider) provider).setSettingEntries(cfgDescription, rc, currentLanguageId,
+					entries);
 		}
 	}
 
@@ -777,11 +784,12 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (selectedProvider instanceof ILanguageSettingsEditableProvider) {
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			ICLanguageSettingEntry selectedEntry = getSelectedEntry();
-			LanguageSettingEntryDialog addDialog = new LanguageSettingEntryDialog(usercomp.getShell(), cfgDescription, selectedEntry, true);
+			LanguageSettingEntryDialog addDialog = new LanguageSettingEntryDialog(usercomp.getShell(), cfgDescription,
+					selectedEntry, true);
 			if (addDialog.open()) {
 				ICLanguageSettingEntry settingEntry = addDialog.getEntries()[0];
 				if (settingEntry != null) {
-					selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider)selectedProvider);
+					selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider) selectedProvider);
 					addEntry(selectedProvider, settingEntry);
 				}
 			}
@@ -796,7 +804,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		List<ILanguageSettingsProvider> initialProviders = initialProvidersMap.get(cfgDescription.getId());
 		if (initialProviders.contains(provider)) {
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(
+					((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 			int pos = providers.indexOf(provider);
 			if (pos >= 0) {
 				try {
@@ -804,10 +813,10 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 					providers.set(pos, provider);
 					((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 				} catch (CloneNotSupportedException e) {
-					CUIPlugin.log("Internal Error: cannot clone provider "+provider.getId(), e); //$NON-NLS-1$
+					CUIPlugin.log("Internal Error: cannot clone provider " + provider.getId(), e); //$NON-NLS-1$
 				}
 			} else {
-				CUIPlugin.log("Internal Error: cannot find provider "+provider.getId(), new Exception()); //$NON-NLS-1$
+				CUIPlugin.log("Internal Error: cannot find provider " + provider.getId(), new Exception()); //$NON-NLS-1$
 			}
 		}
 		return provider;
@@ -819,11 +828,12 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private void performEdit(ILanguageSettingsProvider selectedProvider, ICLanguageSettingEntry selectedEntry) {
 		if (selectedProvider instanceof ILanguageSettingsEditableProvider && selectedEntry != null) {
 			ICConfigurationDescription cfgDecsription = getConfigurationDescription();
-			LanguageSettingEntryDialog editDialog = new LanguageSettingEntryDialog(usercomp.getShell(), cfgDecsription, selectedEntry);
+			LanguageSettingEntryDialog editDialog = new LanguageSettingEntryDialog(usercomp.getShell(), cfgDecsription,
+					selectedEntry);
 			if (editDialog.open()) {
 				ICLanguageSettingEntry newEntry = editDialog.getEntries()[0];
 				if (newEntry != null) {
-					selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider)selectedProvider);
+					selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider) selectedProvider);
 					replaceEntry(selectedProvider, selectedEntry, newEntry);
 				}
 			}
@@ -855,7 +865,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	/**
 	 * Replace provider's entry and update UI.
 	 */
-	private void replaceEntry(ILanguageSettingsProvider provider, ICLanguageSettingEntry oldEntry, ICLanguageSettingEntry newEntry) {
+	private void replaceEntry(ILanguageSettingsProvider provider, ICLanguageSettingEntry oldEntry,
+			ICLanguageSettingEntry newEntry) {
 		if (provider != null && oldEntry != null && newEntry != null) {
 			String providerId = provider.getId();
 
@@ -885,7 +896,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 */
 	private void performDelete(ILanguageSettingsProvider selectedProvider, ICLanguageSettingEntry selectedEntry) {
 		if (selectedProvider instanceof ILanguageSettingsEditableProvider) {
-			selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider)selectedProvider);
+			selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider) selectedProvider);
 			if (selectedEntry != null) {
 				deleteEntry(selectedProvider, selectedEntry);
 			} else {
@@ -907,7 +918,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			}
 			ICLanguageSettingEntry newEntry = CDataUtil.createEntry(entry, flags);
 			if (newEntry != null) {
-				provider = getWorkingCopy((ILanguageSettingsEditableProvider)provider);
+				provider = getWorkingCopy((ILanguageSettingsEditableProvider) provider);
 				replaceEntry(provider, entry, newEntry);
 			}
 		}
@@ -920,8 +931,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (provider instanceof ILanguageSettingsEditableProvider) {
 			List<ICLanguageSettingEntry> entries = getEntriesShownToUser(provider);
 			if (entries.size() > 0) {
-				provider = getWorkingCopy((ILanguageSettingsEditableProvider)provider);
-				for (int i = 0; i < entries.size() ; i++) {
+				provider = getWorkingCopy((ILanguageSettingsEditableProvider) provider);
+				for (int i = 0; i < entries.size(); i++) {
 					ICLanguageSettingEntry entry = entries.get(i);
 					int flags = entry.getFlags();
 					if (isExport) {
@@ -961,7 +972,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 			List<ICLanguageSettingEntry> entries = getEntriesShownToUser(provider);
 			int pos = getExactIndex(entries, entry);
-			int newPos = up ? pos-1 : pos+1;
+			int newPos = up ? pos - 1 : pos + 1;
 			Collections.swap(entries, pos, newPos);
 			saveEntries(provider, entries);
 
@@ -974,7 +985,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 */
 	private void performMoveUp(ILanguageSettingsProvider selectedProvider, ICLanguageSettingEntry selectedEntry) {
 		if (selectedEntry != null && (selectedProvider instanceof ILanguageSettingsEditableProvider)) {
-			selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider)selectedProvider);
+			selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider) selectedProvider);
 			moveEntry(selectedProvider, selectedEntry, true);
 		}
 	}
@@ -984,7 +995,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 */
 	private void performMoveDown(ILanguageSettingsProvider selectedProvider, ICLanguageSettingEntry selectedEntry) {
 		if (selectedEntry != null && (selectedProvider instanceof ILanguageSettingsEditableProvider)) {
-			selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider)selectedProvider);
+			selectedProvider = getWorkingCopy((ILanguageSettingsEditableProvider) selectedProvider);
 			moveEntry(selectedProvider, selectedEntry, false);
 		}
 	}
@@ -997,12 +1008,13 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		IResource rc = getResource();
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		if (rc != null && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			List<ILanguageSettingsProvider> cfgProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> cfgProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
 			for (ILanguageSettingsProvider cfgProvider : cfgProviders) {
 				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(cfgProvider);
 				if (rawProvider instanceof LanguageSettingsBaseProvider) {
 					// filter out providers incapable of providing entries for this language
-					List<String> languageIds = ((LanguageSettingsBaseProvider)rawProvider).getLanguageScope();
+					List<String> languageIds = ((LanguageSettingsBaseProvider) rawProvider).getLanguageScope();
 					if (languageIds != null && !languageIds.contains(currentLanguageId)) {
 						continue;
 					}
@@ -1070,14 +1082,15 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			// if no languages are defined keep null language as "Unspecified language"
 			languageIds.add(null);
 		}
-		
+
 		// Use a TreeMap to sort the languages by name.
 		// For each name we keep a list of ids in case of name overlap.
 		Map<String, List<String>> map = new TreeMap<String, List<String>>();
 		for (String langId : languageIds) {
 			ILanguage language = LanguageManager.getInstance().getLanguage(langId);
 
-			String langName = language != null ? language.getName() : Messages.LanguageSettingsEntriesTab_UnspecifiedLanguage;
+			String langName = language != null ? language.getName()
+					: Messages.LanguageSettingsEntriesTab_UnspecifiedLanguage;
 			if (langName == null || langName.length() == 0)
 				continue;
 			List<String> langIds = map.get(langName);
@@ -1087,7 +1100,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			}
 			langIds.add(langId);
 		}
-		
+
 		for (String langName : map.keySet()) {
 			List<String> langIds = map.get(langName);
 			for (String langId : langIds) {
@@ -1177,19 +1190,22 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 			boolean changed = false;
 			IResource rc = getResource();
-			List<ILanguageSettingsProvider> oldProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-			List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>(oldProviders.size());
+			List<ILanguageSettingsProvider> oldProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>(
+					oldProviders.size());
 
 			// clear entries for a given resource for all languages where applicable
-			providers:	for (ILanguageSettingsProvider provider : oldProviders) {
+			providers: for (ILanguageSettingsProvider provider : oldProviders) {
 				ILanguageSettingsEditableProvider providerCopy = null;
 				if (provider instanceof ILanguageSettingsEditableProvider) {
 					for (TreeItem langItems : treeLanguages.getItems()) {
-						String langId = (String)langItems.getData();
+						String langId = (String) langItems.getData();
 						if (provider.getSettingEntries(cfgDescription, rc, langId) != null) {
 							if (providerCopy == null) {
 								// copy providers to be able to "Cancel" in UI
-								providerCopy = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) provider, true);
+								providerCopy = LanguageSettingsManager
+										.getProviderCopy((ILanguageSettingsEditableProvider) provider, true);
 								if (providerCopy == null) {
 									continue providers;
 								}
@@ -1218,7 +1234,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			ICConfigurationDescription sd = srcRcDescription.getConfiguration();
 			ICConfigurationDescription dd = destRcDescription.getConfiguration();
 			if (sd instanceof ILanguageSettingsProvidersKeeper && dd instanceof ILanguageSettingsProvidersKeeper) {
-				List<ILanguageSettingsProvider> newProviders = ((ILanguageSettingsProvidersKeeper) sd).getLanguageSettingProviders();
+				List<ILanguageSettingsProvider> newProviders = ((ILanguageSettingsProvidersKeeper) sd)
+						.getLanguageSettingProviders();
 				((ILanguageSettingsProvidersKeeper) dd).setLanguageSettingProviders(newProviders);
 			}
 		}
@@ -1250,7 +1267,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				IResource rc = getResource();
 				if (rc instanceof IFile) {
 					try {
-						ILanguage language = LanguageManager.getInstance().getLanguageForFile((IFile)rc, null);
+						ILanguage language = LanguageManager.getInstance().getLanguageForFile((IFile) rc, null);
 						return language != null;
 					} catch (CoreException e) {
 						// who cares, not even logging

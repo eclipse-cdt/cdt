@@ -22,8 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICASTElaboratedTypeSpecifier extends
-		IASTElaboratedTypeSpecifier, ICASTDeclSpecifier {
+public interface ICASTElaboratedTypeSpecifier extends IASTElaboratedTypeSpecifier, ICASTDeclSpecifier {
 
 	/**
 	 * @since 5.1

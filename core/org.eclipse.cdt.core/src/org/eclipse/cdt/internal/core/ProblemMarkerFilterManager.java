@@ -59,7 +59,7 @@ public class ProblemMarkerFilterManager {
 	 * Last Problem Marker that was accepted.
 	 */
 	private Map<IResource, ProblemMarkerInfo> lastAcceptedProblemMarker = new HashMap<>();
-	
+
 	/**
 	 * Return singleton instance of ProblemMarkerFilterManager 
 	 * 
@@ -77,8 +77,7 @@ public class ProblemMarkerFilterManager {
 	 */
 	private ProblemMarkerFilterManager() {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IConfigurationElement[] extensions = reg
-				.getConfigurationElementsFor(CCorePlugin.PLUGIN_ID, EXTENSION_POINT);
+		IConfigurationElement[] extensions = reg.getConfigurationElementsFor(CCorePlugin.PLUGIN_ID, EXTENSION_POINT);
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement element = extensions[i];
 			ProblemMarkerFilterDesc filterDesc = new ProblemMarkerFilterDesc(element);
@@ -94,7 +93,7 @@ public class ProblemMarkerFilterManager {
 	public ProblemMarkerInfo getLastProblemMarker(IResource resource) {
 		return lastAcceptedProblemMarker.get(resource);
 	}
-	
+
 	/**
 	 * Called by {@link ErrorParserManager#addProblemMarker(ProblemMarkerInfo)} to filter out unnecessary problem markers 
 	 * 
@@ -113,8 +112,8 @@ public class ProblemMarkerFilterManager {
 			return true;
 		}
 		List<ProblemMarkerFilterDesc> enabledFilters = findEnabledFilters(project);
-		for (ProblemMarkerFilterDesc filterDesc: enabledFilters) {
-			if ( ! filterDesc.getFilter().acceptMarker(markerInfo) ) {
+		for (ProblemMarkerFilterDesc filterDesc : enabledFilters) {
+			if (!filterDesc.getFilter().acceptMarker(markerInfo)) {
 				return false;
 			}
 		}
@@ -133,8 +132,8 @@ public class ProblemMarkerFilterManager {
 			List<ProblemMarkerFilterDesc> result = filtersCache.get(project);
 			if (result == null) {
 				result = new ArrayList<ProblemMarkerFilterDesc>();
-				for (ProblemMarkerFilterDesc filterDesc: filters) {
-					if ( filterDesc.matches(project) ) {
+				for (ProblemMarkerFilterDesc filterDesc : filters) {
+					if (filterDesc.matches(project)) {
 						result.add(filterDesc);
 					}
 				}

@@ -59,7 +59,7 @@ public class NodeHelper {
 		} else if (parent instanceof CPPASTNamespaceDefinition) {
 			return ((CPPASTNamespaceDefinition) parent).getDeclarations();
 		}
-		return IASTDeclaration.EMPTY_DECLARATION_ARRAY; 
+		return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
 	}
 
 	public static IASTNode findFollowingNode(IASTNode currentNode) {
@@ -89,9 +89,10 @@ public class NodeHelper {
 		if (node1 == null || node2 == null) {
 			return false;
 		}
-		return node1.getNodeLocations()[0].getNodeOffset() == node2.getNodeLocations()[0].getNodeOffset() 
-			&& node1.getNodeLocations()[0].getNodeLength() == node2.getNodeLocations()[0].getNodeLength()
-			&& new Path(node1.getFileLocation().getFileName()).equals(new Path(node2.getFileLocation().getFileName()));
+		return node1.getNodeLocations()[0].getNodeOffset() == node2.getNodeLocations()[0].getNodeOffset()
+				&& node1.getNodeLocations()[0].getNodeLength() == node2.getNodeLocations()[0].getNodeLength()
+				&& new Path(node1.getFileLocation().getFileName())
+						.equals(new Path(node2.getFileLocation().getFileName()));
 	}
 
 	public static MethodContext findMethodContext(IASTNode node, CRefactoringContext refactoringContext,
@@ -118,9 +119,8 @@ public class NodeHelper {
 		return context;
 	}
 
-	private static void getMethodContexWithIndex(CRefactoringContext refactoringContext,
-			IASTTranslationUnit ast, IASTName name, MethodContext context, IProgressMonitor pm)
-			throws CoreException {
+	private static void getMethodContexWithIndex(CRefactoringContext refactoringContext, IASTTranslationUnit ast,
+			IASTName name, MethodContext context, IProgressMonitor pm) throws CoreException {
 		if (name instanceof ICPPASTQualifiedName) {
 			ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
 			context.setMethodQName(qname);
@@ -139,8 +139,7 @@ public class NodeHelper {
 		}
 		final IASTDeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		final IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
-		if ((declSpecifier instanceof ICPPASTDeclSpecifier)
-				&& ((ICPPASTDeclSpecifier) declSpecifier).isFriend()) {
+		if ((declSpecifier instanceof ICPPASTDeclSpecifier) && ((ICPPASTDeclSpecifier) declSpecifier).isFriend()) {
 			return false;
 		}
 		return declarators.length == 1 && declarators[0] instanceof ICPPASTFunctionDeclarator;

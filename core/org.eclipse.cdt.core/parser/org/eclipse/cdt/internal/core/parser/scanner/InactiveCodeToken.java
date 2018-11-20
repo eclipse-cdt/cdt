@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.parser.IInactiveCodeToken;
@@ -24,8 +24,8 @@ public class InactiveCodeToken extends Token implements IInactiveCodeToken {
 
 	InactiveCodeToken(int kind, int oldNesting, int newNesting, int offset) {
 		super(kind, null, offset, offset);
-		fOldNesting= oldNesting;
-		fNewNesting= newNesting;
+		fOldNesting = oldNesting;
+		fNewNesting = newNesting;
 	}
 
 	@Override

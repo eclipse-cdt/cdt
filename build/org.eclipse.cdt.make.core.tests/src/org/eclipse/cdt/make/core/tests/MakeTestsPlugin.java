@@ -25,7 +25,7 @@ public class MakeTestsPlugin extends Plugin {
 	private static MakeTestsPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	/**
 	 * The constructor.
 	 */

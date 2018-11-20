@@ -33,7 +33,7 @@ public class MemoryBlockRetrievalFactory implements IAdapterFactory {
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		IMemoryBlockRetrieval memRetrieval = null;
-		
+
 		if (adaptableObject instanceof IDMContext) {
 			if (adapterType.equals(IMemoryBlockRetrieval.class)) {
 				IAdaptable adaptable = (IAdaptable) adaptableObject;
@@ -42,12 +42,12 @@ public class MemoryBlockRetrievalFactory implements IAdapterFactory {
 						.getAdapter(IMemoryBlockRetrievalManager.class));
 				if (retrievalManager != null) {
 					//resolve the specific Memory Block Retrieval associated to the memory context of adaptableObject
-					memRetrieval = retrievalManager.getMemoryBlockRetrieval((IDMContext) adaptableObject);					
-				} 
+					memRetrieval = retrievalManager.getMemoryBlockRetrieval((IDMContext) adaptableObject);
+				}
 			}
 		}
-		
-		return (T)memRetrieval;
+
+		return (T) memRetrieval;
 	}
 
 	@Override

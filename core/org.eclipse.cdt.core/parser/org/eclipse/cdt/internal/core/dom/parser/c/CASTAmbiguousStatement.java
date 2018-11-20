@@ -31,12 +31,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 
 public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbiguousStatement {
-    private IASTStatement[] stmts = new IASTStatement[2];
-    private int stmtsPos= -1;
+	private IASTStatement[] stmts = new IASTStatement[2];
+	private int stmtsPos = -1;
 	private IScope fScope;
 	private IASTDeclaration fDeclaration;
 
-    public CASTAmbiguousStatement(IASTStatement... statements) {
+	public CASTAmbiguousStatement(IASTStatement... statements) {
 		for (IASTStatement s : statements)
 			addStatement(s);
 	}
@@ -45,7 +45,7 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 	protected void beforeResolution() {
 		// Populate containing scope, so that it will not be affected by the alternative
 		// branches.
-		fScope= CVisitor.getContainingScope(this);
+		fScope = CVisitor.getContainingScope(this);
 		if (fScope instanceof ICPPASTInternalScope) {
 			((ICPPASTInternalScope) fScope).populateCache();
 		}
@@ -71,35 +71,35 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 	@Override
 	protected void afterResolution(ASTVisitor resolver, IASTNode best) {
 		beforeAlternative(best);
-		fDeclaration= null;
-		fScope= null;
+		fDeclaration = null;
+		fScope = null;
 	}
 
 	@Override
 	public void addStatement(IASTStatement s) {
-        assertNotFrozen();
-    	if (s != null) {
-    		stmts = ArrayUtil.appendAt(IASTStatement.class, stmts, ++stmtsPos, s);
-    		s.setParent(this);
+		assertNotFrozen();
+		if (s != null) {
+			stmts = ArrayUtil.appendAt(IASTStatement.class, stmts, ++stmtsPos, s);
+			s.setParent(this);
 			s.setPropertyInParent(STATEMENT);
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public IASTStatement[] getStatements() {
-        stmts = ArrayUtil.trimAt(IASTStatement.class, stmts, stmtsPos);
-    	return stmts;
-    }
+		stmts = ArrayUtil.trimAt(IASTStatement.class, stmts, stmtsPos);
+		return stmts;
+	}
 
 	@Override
 	public IASTAttribute[] getAttributes() {
 		return IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
-    }
+	}
 
-    @Override
+	@Override
 	public void addAttribute(IASTAttribute attribute) {
 		throw new UnsupportedOperationException();
-    }
+	}
 
 	@Override
 	public IASTAttributeSpecifier[] getAttributeSpecifiers() {
@@ -111,10 +111,10 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 		throw new UnsupportedOperationException();
 	}
 
-    @Override
+	@Override
 	public IASTNode[] getNodes() {
-        return getStatements();
-    }
+		return getStatements();
+	}
 
 	@Override
 	public IASTStatement copy() {

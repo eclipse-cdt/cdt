@@ -39,7 +39,8 @@ public class BaseQtTestCase extends BaseTestCase {
 		if (obj != null)
 			return true;
 
-		System.err.println(getClass().getSimpleName() + '.' + getName() + ": could not find " + indexName + " in the index, continuing with other tests");
+		System.err.println(getClass().getSimpleName() + '.' + getName() + ": could not find " + indexName
+				+ " in the index, continuing with other tests");
 		return false;
 	}
 
@@ -54,7 +55,8 @@ public class BaseQtTestCase extends BaseTestCase {
 		ws.run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				ICProject cproject = CProjectHelper.createCProject(projectName, binFolderName, IPDOMManager.ID_FAST_INDEXER);
+				ICProject cproject = CProjectHelper.createCProject(projectName, binFolderName,
+						IPDOMManager.ID_FAST_INDEXER);
 				if (!cproject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
 					CProjectHelper.addNatureToProject(cproject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 					QtNature.addNature(cproject.getProject(), new NullProgressMonitor());
@@ -138,20 +140,20 @@ public class BaseQtTestCase extends BaseTestCase {
 	}
 
 	private static String[] getContentsForTest(Class<?> testCaseCls, int frames, int blocks) throws Exception {
-    	String callingMethod = Thread.currentThread().getStackTrace()[frames].getMethodName();
-    	CharSequence[] help= TestSourceReader.getContentsForTest(
-    			QtTestPlugin.getDefault().getBundle(), "src", testCaseCls, callingMethod, blocks);
-    	String[] result= new String[help.length];
-    	int i= 0;
-    	for (CharSequence buf : help) {
-			result[i++]= buf.toString();
+		String callingMethod = Thread.currentThread().getStackTrace()[frames].getMethodName();
+		CharSequence[] help = TestSourceReader.getContentsForTest(QtTestPlugin.getDefault().getBundle(), "src",
+				testCaseCls, callingMethod, blocks);
+		String[] result = new String[help.length];
+		int i = 0;
+		for (CharSequence buf : help) {
+			result[i++] = buf.toString();
 		}
-    	return result;
+		return result;
 	}
 
 	private String[] getContentsForTest(int blocks) throws Exception {
 		return getContentsForTest(getClass(), 4, blocks);
-    }
+	}
 
 	/*package*/ static String[] getContentsForTest(Class<?> testCaseCls, int blocks) throws Exception {
 		return getContentsForTest(testCaseCls, 4, blocks);
@@ -165,8 +167,8 @@ public class BaseQtTestCase extends BaseTestCase {
 	 * <li>loadComment must be called from a method that does not accept parameters</li>
 	 * </ol>
 	 */
-    protected void loadComment(String filename) throws Exception {
-		String[] contents= getContentsForTest(1);
+	protected void loadComment(String filename) throws Exception {
+		String[] contents = getContentsForTest(1);
 
 		// get the timestamp of the last change to the index
 		IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -179,31 +181,28 @@ public class BaseQtTestCase extends BaseTestCase {
 		// wait for the index to change
 		Thread.yield();
 		waitForIndexer(fCProject);
-		for(long stopAt = System.currentTimeMillis() + 3000;
-			System.currentTimeMillis() < stopAt && timestamp == indexManager.getIndex(fCProject).getLastWriteAccess();
-			Thread.sleep(100)) {
+		for (long stopAt = System.currentTimeMillis() + 3000; System.currentTimeMillis() < stopAt
+				&& timestamp == indexManager.getIndex(fCProject).getLastWriteAccess(); Thread.sleep(100)) {
 			waitForIndexer(fCProject);
 		}
 		assertNotSame(timestamp, indexManager.getIndex(fCProject).getLastWriteAccess());
 
-    }
+	}
 
-    /**
-     * A utility method for pausing the JUNIT code.  This is helpful when investigating the
-     * CDT indexer, which runs in a different job.  The idea is to use it only while debugging,
-     * and to change the value of the pause variable in the loop in order to continue.
-     */
+	/**
+	 * A utility method for pausing the JUNIT code.  This is helpful when investigating the
+	 * CDT indexer, which runs in a different job.  The idea is to use it only while debugging,
+	 * and to change the value of the pause variable in the loop in order to continue.
+	 */
 	protected static void pause() throws Exception {
 		String oldName = Thread.currentThread().getName();
 		Thread.currentThread().setName("*** JUNIT PAUSED ***");
-		try
-		{
+		try {
 			// pause = false
 			boolean pause = true;
-			do
-			{
+			do {
 				Thread.sleep(10000);
-			} while( pause );
+			} while (pause);
 
 		} finally {
 			Thread.currentThread().setName(oldName);

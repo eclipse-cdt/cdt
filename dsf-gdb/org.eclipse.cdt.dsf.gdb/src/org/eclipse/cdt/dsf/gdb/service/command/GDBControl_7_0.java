@@ -48,126 +48,129 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class GDBControl_7_0 extends GDBControl {
 
-    /**
-     * @since 3.0
-     */
-    public GDBControl_7_0(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
-    	super(session, true, config, factory);
-    }
+	/**
+	 * @since 3.0
+	 */
+	public GDBControl_7_0(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
+		super(session, true, config, factory);
+	}
 
 	@Override
 	protected Sequence getStartupSequence(RequestMonitor requestMonitor) {
-        final Sequence.Step[] initializeSteps = new Sequence.Step[] {
-                new CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
-                new CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
-                new CommandTimeoutStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
-                new ListFeaturesStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
-                new RegisterStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
-            };
+		final Sequence.Step[] initializeSteps = new Sequence.Step[] {
+				new CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
+				new CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
+				new CommandTimeoutStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
+				new ListFeaturesStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
+				new RegisterStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING), };
 
-        return new Sequence(getExecutor(), requestMonitor) {
-            @Override public Step[] getSteps() { return initializeSteps; }
-        };
+		return new Sequence(getExecutor(), requestMonitor) {
+			@Override
+			public Step[] getSteps() {
+				return initializeSteps;
+			}
+		};
 	}
 
 	@Override
 	protected Sequence getShutdownSequence(RequestMonitor requestMonitor) {
-        final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
-                new RegisterStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new ListFeaturesStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new CommandTimeoutStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
-            };
-        return new Sequence(getExecutor(), requestMonitor) {
-            @Override public Step[] getSteps() { return shutdownSteps; }
-        };
+		final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
+				new RegisterStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
+				new ListFeaturesStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
+				new CommandTimeoutStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
+				new CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
+				new CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN), };
+		return new Sequence(getExecutor(), requestMonitor) {
+			@Override
+			public Step[] getSteps() {
+				return shutdownSteps;
+			}
+		};
 	}
 
 	@Override
-	protected IEventProcessor createCLIEventProcessor(ICommandControlService connection, ICommandControlDMContext controlDmc) {
+	protected IEventProcessor createCLIEventProcessor(ICommandControlService connection,
+			ICommandControlDMContext controlDmc) {
 		return new CLIEventProcessor_7_0(connection, controlDmc);
 	}
 
 	@Override
-	protected IEventProcessor createMIRunControlEventProcessor(AbstractMIControl connection, ICommandControlDMContext controlDmc) {
+	protected IEventProcessor createMIRunControlEventProcessor(AbstractMIControl connection,
+			ICommandControlDMContext controlDmc) {
 		return new MIRunControlEventProcessor_7_0(connection, controlDmc);
 	}
-    
-    /** @since 5.1 */
-    protected void doListFeatures(final RequestMonitor requestMonitor) {
-    	queueCommand(
-    			getCommandFactory().createMIListFeatures(getContext()), 
-    			new DataRequestMonitor<MIListFeaturesInfo>(getExecutor(), requestMonitor) {
-    				@Override
-    				public void handleSuccess() {
-    					setFeatures(getData().getFeatures());					
-    					super.handleSuccess();
-    				}
-    			});
-    }
 
-    /** @since 5.1 */
-    protected void undoListFeatures(RequestMonitor requestMonitor) {
-    	requestMonitor.done();
-    }
-    
+	/** @since 5.1 */
+	protected void doListFeatures(final RequestMonitor requestMonitor) {
+		queueCommand(getCommandFactory().createMIListFeatures(getContext()),
+				new DataRequestMonitor<MIListFeaturesInfo>(getExecutor(), requestMonitor) {
+					@Override
+					public void handleSuccess() {
+						setFeatures(getData().getFeatures());
+						super.handleSuccess();
+					}
+				});
+	}
+
+	/** @since 5.1 */
+	protected void undoListFeatures(RequestMonitor requestMonitor) {
+		requestMonitor.done();
+	}
+
 	@Override
-	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes,
+			RequestMonitorWithProgress rm) {
 		return new FinalLaunchSequence_7_0(getSession(), attributes, rm);
 	}
-	
-    @Override
-	@DsfServiceEventHandler 
-    public void eventDispatched(ICommandControlShutdownDMEvent e) {
-        // Handle our "GDB Exited" event and stop processing commands.
-        stopCommandProcessing();
-    }
 
-    /** @since 3.0 */
-    @DsfServiceEventHandler 
-    public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
-    }
+	@Override
+	@DsfServiceEventHandler
+	public void eventDispatched(ICommandControlShutdownDMEvent e) {
+		// Handle our "GDB Exited" event and stop processing commands.
+		stopCommandProcessing();
+	}
 
-    
-    /** @since 4.0 */
-    protected class ListFeaturesStep extends InitializationShutdownStep {
-    	
-    	ListFeaturesStep(Direction direction) { 
+	/** @since 3.0 */
+	@DsfServiceEventHandler
+	public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
+	}
+
+	/** @since 4.0 */
+	protected class ListFeaturesStep extends InitializationShutdownStep {
+
+		ListFeaturesStep(Direction direction) {
 			super(direction);
-    	}
+		}
 
-    	@Override
-    	protected void initialize(final RequestMonitor requestMonitor) {
-    		doListFeatures(requestMonitor);
-    	}
+		@Override
+		protected void initialize(final RequestMonitor requestMonitor) {
+			doListFeatures(requestMonitor);
+		}
 
-    	@Override
-    	protected void shutdown(RequestMonitor requestMonitor) {            
-    		undoListFeatures(requestMonitor);
-    	}
-    }
+		@Override
+		protected void shutdown(RequestMonitor requestMonitor) {
+			undoListFeatures(requestMonitor);
+		}
+	}
 
-    /**
+	/**
 	 * @since 4.0
 	 */
 	@Override
 	public void enablePrettyPrintingForMIVariableObjects(RequestMonitor rm) {
-		queueCommand(
-				getCommandFactory().createMIEnablePrettyPrinting(getContext()),
+		queueCommand(getCommandFactory().createMIEnablePrettyPrinting(getContext()),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */
 	@Override
 	public void setPrintPythonErrors(boolean enabled, RequestMonitor rm) {
-		
-		String subCommand = "set python print-stack " + (enabled ? "on" : "off");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-		
-		queueCommand(
-				getCommandFactory().createCLIMaintenance(getContext(), subCommand),
+
+		String subCommand = "set python print-stack " + (enabled ? "on" : "off"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+
+		queueCommand(getCommandFactory().createCLIMaintenance(getContext(), subCommand),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 }

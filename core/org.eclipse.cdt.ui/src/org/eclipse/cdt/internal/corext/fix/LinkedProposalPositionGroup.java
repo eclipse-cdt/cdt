@@ -26,7 +26,6 @@ import org.eclipse.text.edits.TextEdit;
 
 import org.eclipse.cdt.core.dom.rewrite.ITrackedNodePosition;
 
-
 public class LinkedProposalPositionGroup {
 	/**
 	 * {@link LinkedProposalPositionGroup.PositionInformation} describes a position
@@ -36,99 +35,101 @@ public class LinkedProposalPositionGroup {
 	 */
 	public static abstract class PositionInformation {
 		public abstract int getOffset();
+
 		public abstract int getLength();
+
 		public abstract int getSequenceRank();
 	}
-	
+
 	public static class Proposal {
-		
+
 		private String fDisplayString;
 		private Image fImage;
 		private int fRelevance;
 
 		public Proposal(String displayString, Image image, int relevance) {
-			fDisplayString= displayString;
-			fImage= image;
-			fRelevance= relevance;
+			fDisplayString = displayString;
+			fImage = image;
+			fRelevance = relevance;
 		}
-		
+
 		public String getDisplayString() {
 			return fDisplayString;
 		}
-		
+
 		public Image getImage() {
 			return fImage;
 		}
-		
+
 		public int getRelevance() {
 			return fRelevance;
 		}
-				
+
 		public void setImage(Image image) {
-			fImage= image;
+			fImage = image;
 		}
-		
+
 		public String getAdditionalProposalInfo() {
 			return null;
 		}
-				
-		public TextEdit computeEdits(int offset, LinkedPosition position, char trigger, int stateMask, LinkedModeModel model) throws CoreException {
+
+		public TextEdit computeEdits(int offset, LinkedPosition position, char trigger, int stateMask,
+				LinkedModeModel model) throws CoreException {
 			return new ReplaceEdit(position.getOffset(), position.getLength(), fDisplayString);
 		}
-	}	
-	
+	}
+
 	public static PositionInformation createPositionInformation(ITrackedNodePosition pos, boolean isFirst) {
 		return new TrackedNodePosition(pos, isFirst);
 	}
-	
+
 	private static class TrackedNodePosition extends PositionInformation {
 		private final ITrackedNodePosition fPos;
 		private final boolean fIsFirst;
-		
+
 		public TrackedNodePosition(ITrackedNodePosition pos, boolean isFirst) {
-			fPos= pos;
-			fIsFirst= isFirst;
+			fPos = pos;
+			fIsFirst = isFirst;
 		}
 
 		@Override
 		public int getOffset() {
 			return fPos.getStartPosition();
 		}
-		
+
 		@Override
 		public int getLength() {
 			return fPos.getLength();
 		}
-		
+
 		@Override
 		public int getSequenceRank() {
 			return fIsFirst ? 0 : 1;
 		}
 	}
-	
+
 	private final String fGroupId;
 	private final List<PositionInformation> fPositions;
 	private final List<Proposal> fProposals;
-	
 
 	public LinkedProposalPositionGroup(String groupID) {
-		fGroupId= groupID;
-		fPositions= new ArrayList<PositionInformation>();
-		fProposals= new ArrayList<Proposal>();
+		fGroupId = groupID;
+		fPositions = new ArrayList<PositionInformation>();
+		fProposals = new ArrayList<Proposal>();
 	}
-	
+
 	public void addPosition(PositionInformation position) {
 		fPositions.add(position);
 	}
-	
+
 	public void addProposal(Proposal proposal) {
 		fProposals.add(proposal);
 	}
-	
+
 	public void addPosition(ITrackedNodePosition position, boolean isFirst) {
 		addPosition(createPositionInformation(position, isFirst));
 	}
-	
+
 	public void addProposal(String displayString, Image image, int relevance) {
 		addProposal(new Proposal(displayString, image, relevance));
 	}

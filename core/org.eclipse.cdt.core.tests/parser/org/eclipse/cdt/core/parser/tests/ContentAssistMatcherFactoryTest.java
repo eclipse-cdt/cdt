@@ -46,8 +46,7 @@ public class ContentAssistMatcherFactoryTest extends TestCase {
 
 	public void testCamelCaseMatcher() {
 		setShowCamelCaseMatches(true);
-		IContentAssistMatcher matcher = ContentAssistMatcherFactory
-				.getInstance().createMatcher("fB");
+		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher("fB");
 
 		assertEquals("f", String.valueOf(matcher.getPrefixForBinarySearch()));
 		assertTrue(matcher.matchRequiredAfterBinarySearch());
@@ -55,8 +54,7 @@ public class ContentAssistMatcherFactoryTest extends TestCase {
 
 	public void testPrefixMatcher() {
 		setShowCamelCaseMatches(true);
-		IContentAssistMatcher matcher = ContentAssistMatcherFactory
-				.getInstance().createMatcher("foo");
+		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher("foo");
 
 		assertEquals("foo", String.valueOf(matcher.getPrefixForBinarySearch()));
 		assertFalse(matcher.matchRequiredAfterBinarySearch());
@@ -67,7 +65,6 @@ public class ContentAssistMatcherFactoryTest extends TestCase {
 	}
 
 	private boolean match(String pattern, String name) {
-		return ContentAssistMatcherFactory.getInstance().match(
-				pattern.toCharArray(), name.toCharArray());
+		return ContentAssistMatcherFactory.getInstance().match(pattern.toCharArray(), name.toCharArray());
 	}
 }

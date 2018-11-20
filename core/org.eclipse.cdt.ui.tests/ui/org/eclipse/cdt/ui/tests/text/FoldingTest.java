@@ -49,7 +49,7 @@ public class FoldingTest extends FoldingTestBase {
 
 	@Override
 	protected void setUp() throws Exception {
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_ENABLED, true);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_STATEMENTS, true);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, true);
@@ -64,7 +64,7 @@ public class FoldingTest extends FoldingTestBase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_STATEMENTS);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED);
@@ -78,87 +78,38 @@ public class FoldingTest extends FoldingTestBase {
 
 	//
 	public void testInitialFolding() throws Exception {
-		PositionAndCollapsed[] actual= getFoldingPositions();
-		PositionAndCollapsed[] expected= new PositionAndCollapsed[] {
-				createPosition(0, 2, 1),
-				createPosition(4, 7),
-				createPosition(9, 12),
-				createPosition(10, 12),
-				createPosition(13, 14),
-				createPosition(15, 27),
-				createPosition(16, 26),
-				createPosition(17, 20),
-				createPosition(18, 20),
-				createPosition(21, 25),
-				createPosition(22, 24),
-				createPosition(29, 31, 30),
-				createPosition(34, 35),
-				createPosition(35, 40),
-				createPosition(36, 38),
-				createPosition(42, 46),
-				createPosition(48, 55),
-				createPosition(51, 53),
-				createPosition(57, 59),
-				createPosition(61, 63),
-				createPosition(65, 67),
-				createPosition(70, 104, 71),
-				createPosition(75, 76),
-				createPosition(77, 79),
-				createPosition(80, 82),
-				createPosition(83, 85),
-				createPosition(86, 94),
-				createPosition(87, 89),
-				createPosition(90, 91),
-				createPosition(92, 93),
-				createPosition(95, 97),
-				createPosition(99, 102),
-				createPosition(106, 110),
-				createPosition(113, 117, 115),
-				createPosition(119, 127),
-				createPosition(120, 122),
-				createPosition(123, 126),
-				createPosition(129, 130),
-			};
+		PositionAndCollapsed[] actual = getFoldingPositions();
+		PositionAndCollapsed[] expected = new PositionAndCollapsed[] { createPosition(0, 2, 1), createPosition(4, 7),
+				createPosition(9, 12), createPosition(10, 12), createPosition(13, 14), createPosition(15, 27),
+				createPosition(16, 26), createPosition(17, 20), createPosition(18, 20), createPosition(21, 25),
+				createPosition(22, 24), createPosition(29, 31, 30), createPosition(34, 35), createPosition(35, 40),
+				createPosition(36, 38), createPosition(42, 46), createPosition(48, 55), createPosition(51, 53),
+				createPosition(57, 59), createPosition(61, 63), createPosition(65, 67), createPosition(70, 104, 71),
+				createPosition(75, 76), createPosition(77, 79), createPosition(80, 82), createPosition(83, 85),
+				createPosition(86, 94), createPosition(87, 89), createPosition(90, 91), createPosition(92, 93),
+				createPosition(95, 97), createPosition(99, 102), createPosition(106, 110),
+				createPosition(113, 117, 115), createPosition(119, 127), createPosition(120, 122),
+				createPosition(123, 126), createPosition(129, 130), };
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}
-	
+
 	//
 	public void testToggleFolding_Bug186729() throws BadLocationException {
 		fEditor.getAction("FoldingToggle").run();
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);
 		fEditor.getAction("FoldingToggle").run();
 
-		PositionAndCollapsed[] actual= getFoldingPositions();
-		PositionAndCollapsed[] expected= new PositionAndCollapsed[] {
-				createPosition(0, 2, 1),
-				createPosition(4, 7),
-				createPosition(29, 31, 30),
-				createPosition(35, 40),
-				createPosition(42, 46),
-				createPosition(48, 55),
-				createPosition(51, 53),
-				createPosition(57, 59),
-				createPosition(61, 63),
-				createPosition(65, 67),
-				createPosition(70, 104, 71),
-				createPosition(75, 76),
-				createPosition(77, 79),
-				createPosition(80, 82),
-				createPosition(83, 85),
-				createPosition(86, 94),
-				createPosition(87, 89),
-				createPosition(90, 91),
-				createPosition(92, 93),
-				createPosition(95, 97),
-				createPosition(99, 102),
-				createPosition(106, 110),
-				createPosition(113, 117, 115),
-				createPosition(119, 127),
-				createPosition(120, 122),
-				createPosition(123, 126),
-			};
+		PositionAndCollapsed[] actual = getFoldingPositions();
+		PositionAndCollapsed[] expected = new PositionAndCollapsed[] { createPosition(0, 2, 1), createPosition(4, 7),
+				createPosition(29, 31, 30), createPosition(35, 40), createPosition(42, 46), createPosition(48, 55),
+				createPosition(51, 53), createPosition(57, 59), createPosition(61, 63), createPosition(65, 67),
+				createPosition(70, 104, 71), createPosition(75, 76), createPosition(77, 79), createPosition(80, 82),
+				createPosition(83, 85), createPosition(86, 94), createPosition(87, 89), createPosition(90, 91),
+				createPosition(92, 93), createPosition(95, 97), createPosition(99, 102), createPosition(106, 110),
+				createPosition(113, 117, 115), createPosition(119, 127), createPosition(120, 122),
+				createPosition(123, 126), };
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}
@@ -166,39 +117,29 @@ public class FoldingTest extends FoldingTestBase {
 	//
 	public void testToggleFoldingNoASTRequired() throws BadLocationException {
 		fEditor.getAction("FoldingToggle").run();
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_STATEMENTS, false);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);
 		fEditor.getAction("FoldingToggle").run();
 
-		PositionAndCollapsed[] actual= getFoldingPositions();
-		PositionAndCollapsed[] expected= new PositionAndCollapsed[] {
-				createPosition(0, 2, 1),
-				createPosition(4, 7),
-				createPosition(29, 31, 30),
-				createPosition(35, 40),
-				createPosition(42, 46),
-				createPosition(48, 55),
-				createPosition(51, 53),
-				createPosition(57, 59),
-				createPosition(61, 63),
-				createPosition(65, 67),
-				createPosition(70, 104, 71),
-				createPosition(106, 110),
-				createPosition(113, 117, 115),
-				createPosition(119, 127),
-			};
+		PositionAndCollapsed[] actual = getFoldingPositions();
+		PositionAndCollapsed[] expected = new PositionAndCollapsed[] { createPosition(0, 2, 1), createPosition(4, 7),
+				createPosition(29, 31, 30), createPosition(35, 40), createPosition(42, 46), createPosition(48, 55),
+				createPosition(51, 53), createPosition(57, 59), createPosition(61, 63), createPosition(65, 67),
+				createPosition(70, 104, 71), createPosition(106, 110), createPosition(113, 117, 115),
+				createPosition(119, 127), };
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 
 	private void assertNoKeyCollisions() {
-		ProjectionAnnotationModel model = (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+		ProjectionAnnotationModel model = (ProjectionAnnotationModel) fEditor
+				.getAdapter(ProjectionAnnotationModel.class);
 		assertNotNull(model);
 		int annotations = 0;
 		Set<Object> keys = new HashSet<>();
-		for (Iterator<Annotation> iter= model.getAnnotationIterator(); iter.hasNext(); ) {
-			Annotation ann= iter.next();
+		for (Iterator<Annotation> iter = model.getAnnotationIterator(); iter.hasNext();) {
+			Annotation ann = iter.next();
 			if (ann instanceof CProjectionAnnotation) {
 				++annotations;
 				System.out.println("key is: " + ((CProjectionAnnotation) ann).getElement());
@@ -208,7 +149,7 @@ public class FoldingTest extends FoldingTestBase {
 		}
 		assertEquals(annotations, keys.size());
 	}
-	
+
 	//	int func(const char*);
 	//
 	//	void foo() {
@@ -220,7 +161,7 @@ public class FoldingTest extends FoldingTestBase {
 	public void testStatementsSharingFirst32Chars_507138() throws BadLocationException {
 		assertNoKeyCollisions();
 	}
-	
+
 	//	bool func();
 	//
 	//	void foo() {
@@ -259,14 +200,9 @@ public class FoldingTest extends FoldingTestBase {
 			setDoctoolToDoxygen();
 		});
 
-		PositionAndCollapsed[] actual= getFoldingPositions();
-		PositionAndCollapsed[] expected= new PositionAndCollapsed[] {
-				createPosition(0, 2, 1),
-				createPosition(4, 5),
-				createPosition(8, 9),
-				createPosition(12, 14, 13),
-				createPosition(17, 19, 18),
-			};
+		PositionAndCollapsed[] actual = getFoldingPositions();
+		PositionAndCollapsed[] expected = new PositionAndCollapsed[] { createPosition(0, 2, 1), createPosition(4, 5),
+				createPosition(8, 9), createPosition(12, 14, 13), createPosition(17, 19, 18), };
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}

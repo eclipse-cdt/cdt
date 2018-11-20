@@ -48,7 +48,7 @@ public class ArduinoPreferences {
 			Activator.log(e);
 		}
 	}
-	
+
 	public static String getBoardUrls() {
 		return getPrefs().get(BOARD_URLS, defaultBoardUrls);
 	}
@@ -64,7 +64,7 @@ public class ArduinoPreferences {
 		}
 		return urlList.toArray(new URL[urlList.size()]);
 	}
-	
+
 	public static void setBoardUrls(String boardUrls) {
 		IEclipsePreferences prefs = getPrefs();
 		prefs.put(BOARD_URLS, boardUrls);

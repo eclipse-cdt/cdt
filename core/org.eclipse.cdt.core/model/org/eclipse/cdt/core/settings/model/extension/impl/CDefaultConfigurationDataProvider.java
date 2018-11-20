@@ -23,12 +23,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CDefaultConfigurationDataProvider extends CConfigurationDataProvider {
-	private static final String DEFAULT_STORAGE_ID = "defaultConfigurationDataProvider";  //$NON-NLS-1$
+	private static final String DEFAULT_STORAGE_ID = "defaultConfigurationDataProvider"; //$NON-NLS-1$
 
 	@Override
 	public CConfigurationData applyConfiguration(ICConfigurationDescription cfgDescription,
-			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
-			IProgressMonitor monitor) throws CoreException {
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData, IProgressMonitor monitor)
+			throws CoreException {
 
 		ICStorageElement el = getStorageElement(cfgDescription, true);
 		CDataSerializer serializer = getDataSerializer();
@@ -38,23 +38,24 @@ public class CDefaultConfigurationDataProvider extends CConfigurationDataProvide
 
 	@Override
 	public CConfigurationData createConfiguration(ICConfigurationDescription cfgDescription,
-			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData,
-			boolean clone, IProgressMonitor monitor) throws CoreException {
+			ICConfigurationDescription baseCfgDescription, CConfigurationData baseData, boolean clone,
+			IProgressMonitor monitor) throws CoreException {
 
 		CDataFactory factory = getDataFactory();
 		return factory.createConfigurationdata(cfgDescription.getId(), cfgDescription.getName(), baseData, clone);
 	}
 
 	@Override
-	public CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription, IProgressMonitor monitor) throws CoreException {
+	public CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription, IProgressMonitor monitor)
+			throws CoreException {
 		ICStorageElement el = getStorageElement(cfgDescription, false);
-		if(el != null) {
+		if (el != null) {
 			CDataSerializer serializer = getDataSerializer();
 			CDataFactory factory = getDataFactory();
 			try {
 				return serializer.loadConfigurationData(factory, el);
 			} catch (CoreException e) {
-				if(cfgDescription.isPreferenceConfiguration())
+				if (cfgDescription.isPreferenceConfiguration())
 					return createPreferenceConfig(factory);
 				throw e;
 			}
@@ -65,7 +66,8 @@ public class CDefaultConfigurationDataProvider extends CConfigurationDataProvide
 	}
 
 	@Override
-	public void removeConfiguration(ICConfigurationDescription cfgDescription, CConfigurationData data, IProgressMonitor monitor) {
+	public void removeConfiguration(ICConfigurationDescription cfgDescription, CConfigurationData data,
+			IProgressMonitor monitor) {
 		//do nothing
 	}
 
@@ -81,7 +83,8 @@ public class CDefaultConfigurationDataProvider extends CConfigurationDataProvide
 		return DEFAULT_STORAGE_ID;
 	}
 
-	protected ICStorageElement getStorageElement(ICConfigurationDescription cfgDescription, boolean create) throws CoreException {
+	protected ICStorageElement getStorageElement(ICConfigurationDescription cfgDescription, boolean create)
+			throws CoreException {
 		return cfgDescription.getStorage(getStorageId(), create);
 	}
 

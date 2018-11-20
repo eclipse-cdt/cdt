@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
  * Listeners can be registered in a <code>SelectionListenerWithASTManager</code>.
  */
 public interface ISelectionListenerWithAST {
-	
+
 	/**
 	 * Called when a selection has changed. The method is called in a post selection event in an background
 	 * thread.

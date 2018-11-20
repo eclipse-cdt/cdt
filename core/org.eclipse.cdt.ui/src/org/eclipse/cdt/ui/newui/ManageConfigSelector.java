@@ -55,13 +55,13 @@ public class ManageConfigSelector {
 		readMgrs();
 		if (mgrs == null)
 			return null;
-		for (int i=0; i<mgrs.length; i++) {
+		for (int i = 0; i < mgrs.length; i++) {
 			if (mgrs[i].canManage(obs))
 				return mgrs[i];
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Searches for IConfigManager which
 	 * can process given objects.
@@ -71,8 +71,8 @@ public class ManageConfigSelector {
 	 */
 	public static IConfigManager getManagerFor(Object[] obs) {
 		return getManager(getProjects(obs));
-	}		
-	
+	}
+
 	/**
 	 * Filters "raw" objects array
 	 * 
@@ -86,26 +86,25 @@ public class ManageConfigSelector {
 				IProject prj = null;
 				// Extract project from selection 
 				if (ob instanceof ICElement) { // for C/C++ view
-					prj = ((ICElement)ob).getCProject().getProject();
+					prj = ((ICElement) ob).getCProject().getProject();
 				} else if (ob instanceof IResource) { // for other views
-					prj = ((IResource)ob).getProject();
-				/* get project from Include folder elements */
+					prj = ((IResource) ob).getProject();
+					/* get project from Include folder elements */
 				} else if (ob instanceof IncludeRefContainer) {
-					ICProject fCProject = ((IncludeRefContainer)ob).getCProject();
+					ICProject fCProject = ((IncludeRefContainer) ob).getCProject();
 					if (fCProject != null)
 						prj = fCProject.getProject();
 				} else if (ob instanceof IncludeReferenceProxy) {
-					IncludeRefContainer irc = ((IncludeReferenceProxy)ob).getIncludeRefContainer();
+					IncludeRefContainer irc = ((IncludeReferenceProxy) ob).getIncludeRefContainer();
 					if (irc != null) {
 						ICProject fCProject = irc.getCProject();
 						if (fCProject != null)
 							prj = fCProject.getProject();
 					}
-				} 
+				}
 
-				if (prj == null || lst.contains(prj) ||
-					!CoreModel.getDefault().isNewStyleProject(prj))
-						continue;
+				if (prj == null || lst.contains(prj) || !CoreModel.getDefault().isNewStyleProject(prj))
+					continue;
 				lst.add(prj);
 			}
 		}
@@ -117,15 +116,15 @@ public class ManageConfigSelector {
 			return;
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
-		if (extensionPoint == null) 
+		if (extensionPoint == null)
 			return;
 
 		IExtension[] extensions = extensionPoint.getExtensions();
-		if (extensions == null) 
+		if (extensions == null)
 			return;
 
 		ArrayList<IConfigManager> list = new ArrayList<IConfigManager>();
-		for (int i = 0; i < extensions.length; ++i)	{
+		for (int i = 0; i < extensions.length; ++i) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int k = 0; k < elements.length; k++) {
 				if (elements[k].getName().equals(ELEMENT_NAME)) {

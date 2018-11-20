@@ -396,8 +396,8 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // resolution chooses Z::h(double)
 	// }
 	public void test3_4_3_2s2() throws Exception {
-		String[] problems= {"AB::x", "x", "AB::i", "i"};
-		parse(getAboveComment(), ParserLanguage.CPP, problems);  // qualified names are counted double, so 4
+		String[] problems = { "AB::x", "x", "AB::i", "i" };
+		parse(getAboveComment(), ParserLanguage.CPP, problems); // qualified names are counted double, so 4
 	}
 
 	// namespace A {
@@ -529,7 +529,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct Base::Datum; // error: Datum undefined
 	// struct Base::Data* pBase; // OK: refers to nested Data
 	public void test3_4_4s3() throws Exception {
-		String[] problems= {"::Glob", "Glob", "Base::Datum", "Datum"};
+		String[] problems = { "::Glob", "Glob", "Base::Datum", "Datum" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
@@ -799,15 +799,15 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//    new (int (*[10])());
 	// };
 	public void test5_3_4s3() throws Exception {
-		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-		IASTFunctionDefinition fdef= getDeclaration(tu, 0);
-		IASTExpression expr= getExpressionOfStatement(fdef, 0);
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTFunctionDefinition fdef = getDeclaration(tu, 0);
+		IASTExpression expr = getExpressionOfStatement(fdef, 0);
 		assertInstance(expr, ICPPASTNewExpression.class);
-		ICPPASTNewExpression newExpr= (ICPPASTNewExpression) expr;
+		ICPPASTNewExpression newExpr = (ICPPASTNewExpression) expr;
 
 		assertNull(newExpr.getNewPlacement());
 		assertNull(newExpr.getNewInitializer());
-		IASTTypeId typeid= newExpr.getTypeId();
+		IASTTypeId typeid = newExpr.getTypeId();
 		isTypeEqual(CPPVisitor.createType(typeid), "int (* [10])()");
 	}
 
@@ -821,37 +821,37 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test5_3_4s12() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=236856
 
-		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-		IASTFunctionDefinition fdef= getDeclaration(tu, 1);
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTFunctionDefinition fdef = getDeclaration(tu, 1);
 
 		// new T;
-		IASTExpression expr= getExpressionOfStatement(fdef, 0);
+		IASTExpression expr = getExpressionOfStatement(fdef, 0);
 		assertInstance(expr, ICPPASTNewExpression.class);
-		ICPPASTNewExpression newExpr= (ICPPASTNewExpression) expr;
+		ICPPASTNewExpression newExpr = (ICPPASTNewExpression) expr;
 		assertNull(newExpr.getNewPlacement());
 		assertNull(newExpr.getNewInitializer());
 		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int");
 
 		// new(2,f) T;
-		expr= getExpressionOfStatement(fdef, 1);
+		expr = getExpressionOfStatement(fdef, 1);
 		assertInstance(expr, ICPPASTNewExpression.class);
-		newExpr= (ICPPASTNewExpression) expr;
+		newExpr = (ICPPASTNewExpression) expr;
 		assertInstance(newExpr.getNewPlacement(), IASTExpressionList.class);
 		assertNull(newExpr.getNewInitializer());
 		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int");
 
 		// new T[5];
-		expr= getExpressionOfStatement(fdef, 2);
+		expr = getExpressionOfStatement(fdef, 2);
 		assertInstance(expr, ICPPASTNewExpression.class);
-		newExpr= (ICPPASTNewExpression) expr;
+		newExpr = (ICPPASTNewExpression) expr;
 		assertNull(newExpr.getNewPlacement());
 		assertNull(newExpr.getNewInitializer());
 		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int [5]");
 
 		// new (2,f) T[5];
-		expr= getExpressionOfStatement(fdef, 3);
+		expr = getExpressionOfStatement(fdef, 3);
 		assertInstance(expr, ICPPASTNewExpression.class);
-		newExpr= (ICPPASTNewExpression) expr;
+		newExpr = (ICPPASTNewExpression) expr;
 		assertInstance(newExpr.getNewPlacement(), IASTExpressionList.class);
 		assertNull(newExpr.getNewInitializer());
 		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int [5]");
@@ -1160,7 +1160,6 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-
 	// class complex { //
 	// };
 	// typedef int complex; // error: redefinition
@@ -1196,9 +1195,9 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // an ordinary member function, not a constructor
 	// } S;
 	public void test7_1_3s5b() throws Exception {
-		IASTTranslationUnit tu= parseWithErrors(getAboveComment(), ParserLanguage.CPP);
-		IASTCompositeTypeSpecifier comp= getCompositeType(tu, 0);
-		IASTDeclaration d= getDeclaration(comp, 0);
+		IASTTranslationUnit tu = parseWithErrors(getAboveComment(), ParserLanguage.CPP);
+		IASTCompositeTypeSpecifier comp = getCompositeType(tu, 0);
+		IASTDeclaration d = getDeclaration(comp, 0);
 		assertInstance(d, IASTProblemDeclaration.class);
 	}
 
@@ -1335,7 +1334,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// j++; // A::unique::j
 	// }
 	public void test7_3_1_1s1() throws Exception {
-		String[] problems= {"i"};
+		String[] problems = { "i" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
@@ -1659,7 +1658,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// i = 5; // illformed; neither i is visible
 	// }
 	public void test7_3_4s1() throws Exception {
-		String[] problems= {"i", "i"};
+		String[] problems = { "i", "i" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
@@ -1676,7 +1675,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// i = 7; // error: both M::i and N::i are visible
 	// }
 	public void test7_3_4s2a() throws Exception {
-		String[] problems= {"i"};
+		String[] problems = { "i" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
@@ -1701,7 +1700,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	// }
 	public void test7_3_4s2b() throws Exception {
-		String[] problems= {"k"};
+		String[] problems = { "k" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
@@ -1731,7 +1730,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f('a'); //OK: D::f(char)
 	// }
 	public void test7_3_4s5() throws Exception {
-		String[] problems= {"d1", "f"};
+		String[] problems = { "d1", "f" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
@@ -1855,16 +1854,16 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// S<int()> x; // typeid
 	// S<int(1)> y; // expression (illformed)
 	public void test8_2s4() throws Exception {
-		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 1);
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
 		assertInstance(col.getName(4), ICPPASTTemplateId.class);
-		assertInstance(((ICPPASTTemplateId)col.getName(4)).getTemplateArguments()[0], IASTTypeId.class);
+		assertInstance(((ICPPASTTemplateId) col.getName(4)).getTemplateArguments()[0], IASTTypeId.class);
 
 		final IASTName S_int_1 = col.getName(7);
 		assertInstance(S_int_1, ICPPASTTemplateId.class);
-		assertInstance(((ICPPASTTemplateId)S_int_1).getTemplateArguments()[0], IASTExpression.class);
+		assertInstance(((ICPPASTTemplateId) S_int_1).getTemplateArguments()[0], IASTExpression.class);
 		assertInstance(S_int_1.getBinding(), IProblemBinding.class);
 	}
 
@@ -1898,8 +1897,8 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 1);
 
-		BindingAssertionHelper ba= new AST2AssertionHelper(code, true);
-		IFunction f= ba.assertNonProblem("f", 1, IFunction.class);
+		BindingAssertionHelper ba = new AST2AssertionHelper(code, true);
+		IFunction f = ba.assertNonProblem("f", 1, IFunction.class);
 		isTypeEqual(f.getType(), "void (int (*)(C))");
 	}
 
@@ -1909,8 +1908,8 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test8_2s7b() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 0);
-		BindingAssertionHelper ba= new AST2AssertionHelper(code, true);
-		IFunction f= ba.assertNonProblem("h", 1, IFunction.class);
+		BindingAssertionHelper ba = new AST2AssertionHelper(code, true);
+		IFunction f = ba.assertNonProblem("h", 1, IFunction.class);
 		isTypeEqual(f.getType(), "void (int * (*)(C *))");
 	}
 
@@ -2261,7 +2260,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test8s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
-		
+
 	// void print(int a, int)
 	// {
 	// //printf("a = %d",a);
@@ -2397,7 +2396,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// demonstrate the rules with variable initialiation, but CDT doesn't
 	// currently issue problem bindings for variable initialization,
 	// so in the tests the examples are rewritten to use function calls.
-	
+
 	//	void f1(double);
 	//	void f2(double&);
 	//	void f3(const double&);
@@ -2653,10 +2652,10 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// y.g(); //error
 	// }
 	public void test9_3_2s4() throws Exception {
-		String[] problems= {"g"};
+		String[] problems = { "g" };
 		final String code = getAboveComment();
-		IASTTranslationUnit tu= parse(code, ParserLanguage.CPP, problems);
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, problems);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("g();", 1);
 		bh.assertProblem("g(); //error", 1);
 	}
@@ -3675,16 +3674,16 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test12_4s12() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, false, 0);
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
-		ICPPFunction dtor= bh.assertNonProblem("~B() {", 2);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+		ICPPFunction dtor = bh.assertNonProblem("~B() {", 2);
 
-		ICPPFunction d= bh.assertNonProblem("~B(); //1", 2);
+		ICPPFunction d = bh.assertNonProblem("~B(); //1", 2);
 		assertSame(dtor, d);
-		d= bh.assertNonProblem("~B(); //2", 2);
+		d = bh.assertNonProblem("~B(); //2", 2);
 		assertSame(dtor, d);
-		d= bh.assertNonProblem("~B_alias(); //3", 8);
+		d = bh.assertNonProblem("~B_alias(); //3", 8);
 		assertSame(dtor, d);
-		d= bh.assertNonProblem("~B(); //4", 2);
+		d = bh.assertNonProblem("~B(); //4", 2);
 		assertSame(dtor, d);
 
 		bh.assertProblem("~B_alias(); //5", 8);
@@ -4142,7 +4141,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int f (int) {  } // definition of f(int)
 	// int f (cInt) {  } // error: redefinition of f(int)
 	public void test12_8s3e() throws Exception {
-		String[] problems= {"f"};
+		String[] problems = { "f" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
@@ -4367,7 +4366,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// b.f(); //Calls X::f()
 	// }
 	public void test13_3_3_2s3b() throws Exception {
-		String[] problems= {"g"};
+		String[] problems = { "g" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
@@ -4687,7 +4686,6 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-
 	// void error(const char*);
 	// template<class T> class Array {
 	// T* v;
@@ -4740,8 +4738,6 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test14_5_2s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
-
-
 
 	// class B {
 	// virtual void f(int);
@@ -4951,6 +4947,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test14_5_6_1s1a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
+
 	// // file2.c
 	// template<class T>
 	// void f(T);
@@ -4969,12 +4966,12 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // Guaranteed to be different
 	// template <int I> void f/*3*/(A<I>, A<I+11>);
 	public void test14_5_6_1s8a() throws Exception {
-		final String content= getAboveComment();
-		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
-		BindingAssertionHelper bh= new AST2AssertionHelper(content, true);
-		ICPPFunctionTemplate f1= bh.assertNonProblem("f/*1*/", 1);
-		ICPPFunctionTemplate f2= bh.assertNonProblem("f/*2*/", 1);
-		ICPPFunctionTemplate f3= bh.assertNonProblem("f/*3*/", 1);
+		final String content = getAboveComment();
+		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
+		ICPPFunctionTemplate f1 = bh.assertNonProblem("f/*1*/", 1);
+		ICPPFunctionTemplate f2 = bh.assertNonProblem("f/*2*/", 1);
+		ICPPFunctionTemplate f3 = bh.assertNonProblem("f/*3*/", 1);
 		assertSame(f1, f2);
 		assertNotSame(f1, f3);
 	}
@@ -5000,11 +4997,11 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		b * a; // calls #1a
 	//	}
 	public void test14_5_6_2s3() throws Exception {
-		String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
-		IBinding op1= bh.assertNonProblem("operator*(R&)", -4);
-		IASTImplicitName name= bh.assertImplicitName("* a", 1, ICPPFunction.class);
-		ICPPTemplateInstance inst= (ICPPTemplateInstance) name.resolveBinding();
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+		IBinding op1 = bh.assertNonProblem("operator*(R&)", -4);
+		IASTImplicitName name = bh.assertImplicitName("* a", 1, ICPPFunction.class);
+		ICPPTemplateInstance inst = (ICPPTemplateInstance) name.resolveBinding();
 		ICPPSpecialization templateSpecialization = (ICPPSpecialization) inst.getTemplateDefinition();
 		assertSame(op1, templateSpecialization.getSpecializedBinding());
 	}
@@ -5242,11 +5239,11 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test14_6_2s2() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 0);
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
-		ICPPUnknownBinding unknown= bh.assertNonProblem("B<T>", 4);
-		unknown= bh.assertNonProblem("T::A", 4);
-		unknown= bh.assertNonProblem("B<T>::i", 7);
-		unknown= bh.assertNonProblem("j", 1);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+		ICPPUnknownBinding unknown = bh.assertNonProblem("B<T>", 4);
+		unknown = bh.assertNonProblem("T::A", 4);
+		unknown = bh.assertNonProblem("B<T>::i", 7);
+		unknown = bh.assertNonProblem("j", 1);
 	}
 
 	// typedef double A;
@@ -5257,13 +5254,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A a; // a has type double
 	// };
 	public void test14_6_2s3() throws Exception {
-		final String content= getAboveComment();
-		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
-		BindingAssertionHelper bh= new AST2AssertionHelper(content, true);
-		IVariable v= bh.assertNonProblem("a;", 1);
-		IType t= v.getType();
+		final String content = getAboveComment();
+		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
+		IVariable v = bh.assertNonProblem("a;", 1);
+		IType t = v.getType();
 		assertInstance(t, ITypedef.class);
-		t= ((ITypedef) t).getType();
+		t = ((ITypedef) t).getType();
 		assertInstance(t, IBasicType.class);
 		assertEquals(IBasicType.t_double, ((IBasicType) t).getType());
 	}
@@ -5282,12 +5279,12 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// Y<A> ya;
 	public void test14_6_2s4() throws Exception {
-		final String content= getAboveComment();
+		final String content = getAboveComment();
 		parse(content, ParserLanguage.CPP, true, 0);
-		BindingAssertionHelper bh= new AST2AssertionHelper(content, true);
-		IBinding b= bh.assertNonProblem("b;", 1);
+		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
+		IBinding b = bh.assertNonProblem("b;", 1);
 		assertEquals("Y", b.getOwner().getName());
-		b= bh.assertNonProblem("a = i", 1);
+		b = bh.assertNonProblem("a = i", 1);
 		assertNull(b.getOwner());
 	}
 
@@ -5565,7 +5562,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // with deduces templateargument of type int
 	// template<> void sort(Array<int>&);
 	public void test14_7_3s11() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0 );
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T1> class A {
@@ -5578,6 +5575,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test14_7_3s17() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
+
 	// template<class T> class X; // X is a class template
 	// template<> class X<int>;
 	// X<int>* p; // OK: pointer to declared class X<int>
@@ -5773,17 +5771,17 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f<int,char>(); // f<int,char>(0,0)
 	//	}
 	public void test14_8_2s5() throws Exception {
-		final String content= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(content, true);
+		final String content = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f(1, 'c')", 1);
+		inst = bh.assertNonProblem("f(1, 'c')", 1);
 		assertEquals("<int,char>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("f(1)", 1);
+		inst = bh.assertNonProblem("f(1)", 1);
 		assertEquals("<int,double>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		bh.assertProblem("f()", 1);
-		inst= bh.assertNonProblem("f<int>()", -2);
+		inst = bh.assertNonProblem("f<int>()", -2);
 		assertEquals("<int,double>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("f<int,char>()", -2);
+		inst = bh.assertNonProblem("f<int,char>()", -2);
 		assertEquals("<int,char>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -5803,8 +5801,8 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int I = f<int>(0);
 	// int j = f<void>(0); // invalid array
 	public void _test14_8_2s8b() throws Exception {
-		final String content= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(content, true);
+		final String content = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
 		bh.assertNonProblem("f<int>(0)", -3);
 		bh.assertProblem("f<void>(0)", -3);
 	}
@@ -5812,9 +5810,9 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template <class T> int f(typename T::B*);
 	// int i = f<int>(0);
 	public void test14_8_2s8c() throws Exception {
-		final String content= getAboveComment();
-		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 2);
-		BindingAssertionHelper bh= new AST2AssertionHelper(content, true);
+		final String content = getAboveComment();
+		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 2);
+		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
 		bh.assertProblem("f<", 1);
 		bh.assertProblem("f<int>", 6);
 	}
@@ -5840,8 +5838,8 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		h<D>(0); // The TT member of D is not a template
 	//	}
 	public void test14_8_2s8d() throws Exception {
-		final String content= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(content, true);
+		final String content = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
 		bh.assertProblem("f<A>", 0);
 		bh.assertProblem("f<B>", 0);
 		bh.assertProblem("g<C>", 0);
@@ -5853,7 +5851,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test14_8_2s8e() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 2);
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		bh.assertProblem("f<int>", 0);
 	}
 
@@ -5864,7 +5862,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	public void test14_8_2s8f() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 2);
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		bh.assertProblem("f<X>", 0);
 	}
 
@@ -5893,11 +5891,11 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		g({1,2,3}); // error: no argument deduced for T
 	//	}
 	public void test14_8_2_1s1a() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f({1,2,3})", 1);
+		inst = bh.assertNonProblem("f({1,2,3})", 1);
 		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		bh.assertProblem("f({1,\"asdf\"})", 1);
 		bh.assertProblem("g({1,2,3})", 1);
@@ -5911,13 +5909,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		g(x, y, z); // T1 is deduced to int; Types is deduced to float, int
 	//	}
 	public void test14_8_2_1s1b() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f(x, y, z)", 1);
+		inst = bh.assertNonProblem("f(x, y, z)", 1);
 		assertEquals("<int,float,const int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("g(x, y, z)", 1);
+		inst = bh.assertNonProblem("g(x, y, z)", 1);
 		assertEquals("<int,float,int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -5929,12 +5927,12 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	int n3 = g(i); // error: would call g<int>(const int&&), which
 	//	               // would bind an rvalue reference to an lvalue
 	public void test14_8_2_1s3() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f(i)", 1);
+		inst = bh.assertNonProblem("f(i)", 1);
 		assertEquals("<int &>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("f(0)", 1);
+		inst = bh.assertNonProblem("f(0)", 1);
 		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		bh.assertProblem("g(i)", 1);
 	}
@@ -5946,10 +5944,10 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	int g(char);
 	//	int i = f(g); // calls f(int (*)(int))
 	public void test14_8_2_1s7() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f(g)", 1);
+		inst = bh.assertNonProblem("f(g)", 1);
 		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -5960,10 +5958,10 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	char g(char);
 	//	int i = f(1, g); // calls f(int, int (*)(int))
 	public void test14_8_2_1s8() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f(1, g)", 1);
+		inst = bh.assertNonProblem("f(1, g)", 1);
 		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -5974,10 +5972,10 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	template <class T> T g(T);
 	//	int i = f(1, g); // calls f(int, int (*)(int))
 	public void test14_8_2_1s9() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f(1, g)", 1);
+		inst = bh.assertNonProblem("f(1, g)", 1);
 		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -6012,21 +6010,21 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	  g(Tuple<int>()); // calls #3
 	// }
 	public void test14_8_2_4s12() throws Exception {
-		final String code= getAboveComment();
+		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 0);
 
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
-		ICPPFunction g1= bh.assertNonProblem("g(Tuple<Types...>)", 1);
-		ICPPFunction g2= bh.assertNonProblem("g(Tuple<T1, Types...>)", 1);
-		ICPPFunction g3= bh.assertNonProblem("g(Tuple<T1, Types&...>)", 1);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+		ICPPFunction g1 = bh.assertNonProblem("g(Tuple<Types...>)", 1);
+		ICPPFunction g2 = bh.assertNonProblem("g(Tuple<T1, Types...>)", 1);
+		ICPPFunction g3 = bh.assertNonProblem("g(Tuple<T1, Types&...>)", 1);
 
-		ICPPTemplateInstance x= bh.assertNonProblem("g(Tuple<>())", 1);
+		ICPPTemplateInstance x = bh.assertNonProblem("g(Tuple<>())", 1);
 		assertSame(g1, x.getTemplateDefinition());
-		x= bh.assertNonProblem("g(Tuple<int, float>())", 1);
+		x = bh.assertNonProblem("g(Tuple<int, float>())", 1);
 		assertSame(g2, x.getTemplateDefinition());
-		x= bh.assertNonProblem("g(Tuple<int, float&>())", 1);
+		x = bh.assertNonProblem("g(Tuple<int, float&>())", 1);
 		assertSame(g3, x.getTemplateDefinition());
-		x= bh.assertNonProblem("g(Tuple<int>())", 1);
+		x = bh.assertNonProblem("g(Tuple<int>())", 1);
 		assertSame(g3, x.getTemplateDefinition());
 	}
 
@@ -6035,8 +6033,8 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	   g({1,2,3}); // error: no argument deduced for T
 	//  }
 	public void test14_8_2_5s5() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		bh.assertProblem("g({1,2,3})", 1);
 	}
 
@@ -6065,10 +6063,10 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(g3); //error: U could be char or float
 	//	}
 	public void test14_8_2_5s7b() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f(g1)", 1);
+		inst = bh.assertNonProblem("f(g1)", 1);
 		assertEquals("<int,float>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		bh.assertProblem("f(g2)", 1);
 		bh.assertProblem("f(g3)", 1);
@@ -6107,12 +6105,12 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(0); // calls f<int>(int&&), i.e., #2
 	//	}
 	public void test14_8_2_5s10() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f(i)", 1);
+		inst = bh.assertNonProblem("f(i)", 1);
 		assertEquals("<int &>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("f(0)", 1);
+		inst = bh.assertNonProblem("f(0)", 1);
 		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -6123,8 +6121,8 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// //T cannot be deduced
 	// }
 	public void test14_8_2_5s14() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		bh.assertProblem("f(v)", 1);
 	}
 
@@ -6141,17 +6139,17 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f3(v); //OK: i deduced to be 10
 	// }
 	public void test14_8_2_5s15() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f1(v)", 2);
+		inst = bh.assertNonProblem("f1(v)", 2);
 		assertEquals("<int20>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("f1<20>(v)", -3);
+		inst = bh.assertNonProblem("f1<20>(v)", -3);
 		assertEquals("<int20>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		bh.assertProblem("f2(v)", 2);
-		inst= bh.assertNonProblem("f2<10>(v)", -3);
+		inst = bh.assertNonProblem("f2<10>(v)", -3);
 		assertEquals("<int10>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("f3(v)", 2);
+		inst = bh.assertNonProblem("f3(v)", 2);
 		assertEquals("<int10>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -6166,13 +6164,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(a1, a2); // OK
 	//	}
 	public void test14_8_2_5s16a() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
 		bh.assertProblem("g(a1)", 1);
-		inst= bh.assertNonProblem("g<0>(a1)", -4);
+		inst = bh.assertNonProblem("g<0>(a1)", -4);
 		assertEquals("<int0>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("f(a1, a2)", 1);
+		inst = bh.assertNonProblem("f(a1, a2)", 1);
 		assertEquals("<int1>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -6199,7 +6197,6 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-
 	//	template<int i> class A {};
 	//	template<short s> void f(A<s>);
 	//	void k1() {
@@ -6214,13 +6211,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		g(b); // OK: cv-qualifiers are ignored on template parameter types
 	//	}
 	public void test14_8_2_5s17() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
 		bh.assertProblem("f(a)", 1);
-		inst= bh.assertNonProblem("f<1>(a)", -3);
+		inst = bh.assertNonProblem("f<1>(a)", -3);
 		assertEquals("<short int1>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("g(b)", 1);
+		inst = bh.assertNonProblem("g(b)", 1);
 		assertEquals("<short int1>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -6236,11 +6233,11 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(&foo); // error: type deduction fails because foo is a template
 	//	}
 	public void test14_8_2_5s18() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
 		bh.assertProblem("f(&g)", 1);
-		inst= bh.assertNonProblem("f(&h)", 1);
+		inst = bh.assertNonProblem("f(&h)", 1);
 		assertEquals("<char>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		bh.assertProblem("f(&foo)", 1);
 	}
@@ -6252,13 +6249,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f<int>(); // OK: call f<int>(5,7)
 	//	}
 	public void test14_8_2_5s19() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f(1)", 1);
+		inst = bh.assertNonProblem("f(1)", 1);
 		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		bh.assertProblem("f()", 1);
-		inst= bh.assertNonProblem("f<int>()", -2);
+		inst = bh.assertNonProblem("f<int>()", -2);
 		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -6300,18 +6297,18 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		// specialized than the variadic templates #1 and #2
 	//	}
 	public void test14_8_2_5s22() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
-		ICPPFunctionTemplate f1= bh.assertNonProblem("f(Args ... args)", 1);
-		ICPPFunctionTemplate f2= bh.assertNonProblem("f(T1 a1, Args ... args)", 1);
-		ICPPFunctionTemplate f3= bh.assertNonProblem("f(T1 a1, T2 a2)", 1);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+		ICPPFunctionTemplate f1 = bh.assertNonProblem("f(Args ... args)", 1);
+		ICPPFunctionTemplate f2 = bh.assertNonProblem("f(T1 a1, Args ... args)", 1);
+		ICPPFunctionTemplate f3 = bh.assertNonProblem("f(T1 a1, T2 a2)", 1);
 
 		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f()", 1);
+		inst = bh.assertNonProblem("f()", 1);
 		assertSame(f1, inst.getTemplateDefinition());
-		inst= bh.assertNonProblem("f(1, 2, 3)", 1);
+		inst = bh.assertNonProblem("f(1, 2, 3)", 1);
 		assertSame(f2, inst.getTemplateDefinition());
-		inst= bh.assertNonProblem("f(1, 2)", 1);
+		inst = bh.assertNonProblem("f(1, 2)", 1);
 		assertSame(f3, inst.getTemplateDefinition());
 	}
 
@@ -6813,7 +6810,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f(int);
 	// template<void (*pf)(int)> struct A {  };
 	// A<&f> a; // selects f(int)
-	public void test14_3_2s5() throws Exception  {
+	public void test14_3_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -6831,7 +6828,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// ac.f<>(1); //template
 	// }
 	public void test14_5_2s2() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);  //should be 0
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0); //should be 0
 	}
 
 	// template<class T1, class T2, int I> class A<T1, T2, I> { }; // error
@@ -6877,12 +6874,12 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template <int K, int L> A<K+L> f/*2*/(A<K>, A<L>); // same as #1
 	// template <int I, int J> A<I-J> f/*3*/(A<I>, A<J>); // different from #1
 	public void test14_5_6_1s5() throws Exception {
-		final String content= getAboveComment();
-		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
-		BindingAssertionHelper bh= new AST2AssertionHelper(content, true);
-		ICPPFunctionTemplate f1= bh.assertNonProblem("f/*1*/", 1);
-		ICPPFunctionTemplate f2= bh.assertNonProblem("f/*2*/", 1);
-		ICPPFunctionTemplate f3= bh.assertNonProblem("f/*3*/", 1);
+		final String content = getAboveComment();
+		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
+		ICPPFunctionTemplate f1 = bh.assertNonProblem("f/*1*/", 1);
+		ICPPFunctionTemplate f2 = bh.assertNonProblem("f/*2*/", 1);
+		ICPPFunctionTemplate f3 = bh.assertNonProblem("f/*3*/", 1);
 		assertSame(f1, f2);
 		assertNotSame(f1, f3);
 	}
@@ -6891,11 +6888,11 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template <int I, int J> void f/*1*/(A<I+J>); // #1
 	// template <int K, int L> void f/*2*/(A<K+L>); // same as #1
 	public void test14_5_6_1s6() throws Exception {
-		final String content= getAboveComment();
-		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
-		BindingAssertionHelper bh= new AST2AssertionHelper(content, true);
-		ICPPFunctionTemplate f1= bh.assertNonProblem("f/*1*/", 1);
-		ICPPFunctionTemplate f2= bh.assertNonProblem("f/*2*/", 1);
+		final String content = getAboveComment();
+		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
+		ICPPFunctionTemplate f1 = bh.assertNonProblem("f/*1*/", 1);
+		ICPPFunctionTemplate f2 = bh.assertNonProblem("f/*2*/", 1);
 		assertSame(f1, f2);
 	}
 
@@ -6927,7 +6924,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int (&ra)[3] = a; // ra refers to the array a
 	// ra[1] = i; // modifies a[1]
 	// }
-	public void test8_5_3s1()  throws Exception { // TODO raised bug 90648
+	public void test8_5_3s1() throws Exception { // TODO raised bug 90648
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -6939,7 +6936,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// this->A::operator=(s); // wellformed
 	// return *this;
 	// }
-	public void test12s1() throws Exception  {
+	public void test12s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -6960,7 +6957,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // C/B/D/A sublattice is fully constructed
 	// { }
 	// };
-	public void test12_7s2() throws Exception  {
+	public void test12_7s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -6996,7 +6993,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void g() {
 	// (int (*)(int))&f; // cast expression as selector
 	// }
-	public void test13_4s5a() throws Exception  { // bug 90674
+	public void test13_4s5a() throws Exception { // bug 90674
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
@@ -7032,9 +7029,9 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int ef(D&);
 	// int ff(X&);
 	public void test11_3s2() throws Exception { //bug 92793
-		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-		IASTCompositeTypeSpecifier D= getCompositeType(tu, 2);
-		IASTDeclaration accessDecl= getDeclaration(D, 2);
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTCompositeTypeSpecifier D = getCompositeType(tu, 2);
+		IASTDeclaration accessDecl = getDeclaration(D, 2);
 		assertInstance(accessDecl, ICPPASTUsingDeclaration.class);
 	}
 
@@ -7044,7 +7041,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int b = f(a);
 	// int c(b);
 	// }
-	public void test8_5s2() throws Exception  { // 90641
+	public void test8_5s2() throws Exception { // 90641
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -7066,7 +7063,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// f<int()>(); // int() is a typeid:call the first f()
 	// }
-	public void test14_3s2()  throws Exception {
+	public void test14_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 }

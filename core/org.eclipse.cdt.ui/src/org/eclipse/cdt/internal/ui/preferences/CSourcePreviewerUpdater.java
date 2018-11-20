@@ -27,7 +27,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 
-
 public class CSourcePreviewerUpdater {
 
 	/**
@@ -37,7 +36,8 @@ public class CSourcePreviewerUpdater {
 	 * @param configuration
 	 * @param store
 	 */
-	public CSourcePreviewerUpdater(SourceViewer viewer, CSourceViewerConfiguration configuration, IPreferenceStore store) {
+	public CSourcePreviewerUpdater(SourceViewer viewer, CSourceViewerConfiguration configuration,
+			IPreferenceStore store) {
 		registerPreviewer(viewer, configuration, store);
 	}
 
@@ -48,23 +48,24 @@ public class CSourcePreviewerUpdater {
 	 * @param configuration the configuration
 	 * @param preferenceStore the preference store
 	 */
-	static public void registerPreviewer(final SourceViewer viewer, final CSourceViewerConfiguration configuration, final IPreferenceStore preferenceStore) {
+	static public void registerPreviewer(final SourceViewer viewer, final CSourceViewerConfiguration configuration,
+			final IPreferenceStore preferenceStore) {
 		Assert.isNotNull(viewer);
 		Assert.isNotNull(configuration);
 		Assert.isNotNull(preferenceStore);
-		final IPropertyChangeListener fontChangeListener= new IPropertyChangeListener() {
+		final IPropertyChangeListener fontChangeListener = new IPropertyChangeListener() {
 			/*
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(PreferenceConstants.EDITOR_TEXT_FONT)) {
-					Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+					Font font = JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 					viewer.getTextWidget().setFont(font);
 				}
 			}
 		};
-		final IPropertyChangeListener propertyChangeListener= new IPropertyChangeListener() {
+		final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 			/*
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */

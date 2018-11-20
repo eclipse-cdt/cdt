@@ -34,69 +34,72 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * @since 1.0
  */
 public class LabelText extends LabelAttribute {
-    
-    public static final MessageFormat DEFAULT_MESSAGE = new MessageFormat(MessagesForProperties.DefaultLabelMessage_label);
-   
-    /**
-     * Message format used to generate the label text.
-     * 
-     */
-    private MessageFormat fMessageFormat;
-    
-    /**
-     * The property names needed for the message format.  The property values 
-     * corresponding to these names are given the the {@link MessageFormat#format(Object[], StringBuffer, java.text.FieldPosition)}
-     * method.  
-     */
-    private String[] fPropertyNames;
 
-    public LabelText() {
-        this(DEFAULT_MESSAGE, EMPTY_PROPERTY_NAMES_ARRAY);
-    }
+	public static final MessageFormat DEFAULT_MESSAGE = new MessageFormat(
+			MessagesForProperties.DefaultLabelMessage_label);
 
-    /**
-     * @since 2.0
-     * @param formatPattern
-     * @param propertyNames
-     */
-    public LabelText(String formatPattern, String[] propertyNames) {
-        this (new MessageFormat(formatPattern), propertyNames);
-    }
+	/**
+	 * Message format used to generate the label text.
+	 * 
+	 */
+	private MessageFormat fMessageFormat;
 
-    public LabelText(MessageFormat format, String[] propertyNames) {
-        fMessageFormat = format;
-        fPropertyNames = propertyNames;
-    }
-    
-    @Override
-    public String[] getPropertyNames() {
-        return fPropertyNames;
-    }
-    
-    public MessageFormat getMessageFormat() {
-        return fMessageFormat;
-    }
+	/**
+	 * The property names needed for the message format.  The property values 
+	 * corresponding to these names are given the the {@link MessageFormat#format(Object[], StringBuffer, java.text.FieldPosition)}
+	 * method.  
+	 */
+	private String[] fPropertyNames;
 
-    public void setMessageFormat(MessageFormat messageFormat) {
-        fMessageFormat = messageFormat;
-    }
+	public LabelText() {
+		this(DEFAULT_MESSAGE, EMPTY_PROPERTY_NAMES_ARRAY);
+	}
 
-    @Override
-    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
-        String[] propertyNames = getPropertyNames();
-        Object[] propertyValues = new Object[propertyNames.length];
-        for (int i = 0; i < propertyNames.length; i++) {
-            propertyValues[i] = getPropertyValue(propertyNames[i], status, properties); 
-        }
-        
-        try {
-            update.setLabel(getMessageFormat().format(propertyValues, new StringBuffer(), null).toString(), columnIndex);
-        } catch (IllegalArgumentException e) {
-            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, 0, "Failed formatting a message for column " + columnIndex + ", for update " + update, e)); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
-    
-    protected Object getPropertyValue(String propertyName, IStatus status, Map<String, Object> properties) {
-        return properties.get(propertyName);
-    }
+	/**
+	 * @since 2.0
+	 * @param formatPattern
+	 * @param propertyNames
+	 */
+	public LabelText(String formatPattern, String[] propertyNames) {
+		this(new MessageFormat(formatPattern), propertyNames);
+	}
+
+	public LabelText(MessageFormat format, String[] propertyNames) {
+		fMessageFormat = format;
+		fPropertyNames = propertyNames;
+	}
+
+	@Override
+	public String[] getPropertyNames() {
+		return fPropertyNames;
+	}
+
+	public MessageFormat getMessageFormat() {
+		return fMessageFormat;
+	}
+
+	public void setMessageFormat(MessageFormat messageFormat) {
+		fMessageFormat = messageFormat;
+	}
+
+	@Override
+	public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
+		String[] propertyNames = getPropertyNames();
+		Object[] propertyValues = new Object[propertyNames.length];
+		for (int i = 0; i < propertyNames.length; i++) {
+			propertyValues[i] = getPropertyValue(propertyNames[i], status, properties);
+		}
+
+		try {
+			update.setLabel(getMessageFormat().format(propertyValues, new StringBuffer(), null).toString(),
+					columnIndex);
+		} catch (IllegalArgumentException e) {
+			update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, 0,
+					"Failed formatting a message for column " + columnIndex + ", for update " + update, e)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	protected Object getPropertyValue(String propertyName, IStatus status, Map<String, Object> properties) {
+		return properties.get(propertyName);
+	}
 }

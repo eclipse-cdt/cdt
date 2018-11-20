@@ -36,12 +36,11 @@ public class TestCase extends TestItem implements ITestCase {
 	 */
 	private List<TestMessage> testMessages = new ArrayList<TestMessage>();
 
-	
 	public TestCase(String name, TestSuite parent) {
 		super(name, parent);
 		reset();
 	}
-	
+
 	@Override
 	public Status getStatus() {
 		return status;
@@ -56,7 +55,7 @@ public class TestCase extends TestItem implements ITestCase {
 	public TestMessage[] getTestMessages() {
 		return testMessages.toArray(new TestMessage[testMessages.size()]);
 	}
-	
+
 	@Override
 	public void visit(IModelVisitor visitor) {
 		visitor.visit(this);

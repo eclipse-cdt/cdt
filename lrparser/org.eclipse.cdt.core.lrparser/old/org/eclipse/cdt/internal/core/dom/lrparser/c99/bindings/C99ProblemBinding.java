@@ -19,17 +19,16 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 @SuppressWarnings("restriction")
 public class C99ProblemBinding extends ProblemBinding implements IProblemBinding {
 
-
 	public C99ProblemBinding(int messageId) {
 		super(null, messageId);
 	}
-	
+
 	public C99ProblemBinding(int messageId, String arg) {
 		super(null, messageId, arg.toCharArray());
 	}
-	
+
 	public static C99ProblemBinding badType() {
 		return new C99ProblemBinding(IProblemBinding.SEMANTIC_INVALID_TYPE);
 	}
-	
+
 }

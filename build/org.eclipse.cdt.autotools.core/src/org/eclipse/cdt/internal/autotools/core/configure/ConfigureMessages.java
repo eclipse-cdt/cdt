@@ -20,8 +20,7 @@ import java.util.ResourceBundle;
 public class ConfigureMessages {
 	private static final String BUNDLE_NAME = ConfigureMessages.class.getName();
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private ConfigureMessages() {
 	}
@@ -29,7 +28,7 @@ public class ConfigureMessages {
 	public static String getConfigureDescription(String name) {
 		return getString("Option.configure." + name); //$NON-NLS-11$
 	}
-	
+
 	public static String getConfigureTip(String name) {
 		return getString("Option.configure." + name + ".tip"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -37,6 +36,7 @@ public class ConfigureMessages {
 	public static String getParameter(String name) {
 		return getString("Option.configure." + name + ".parm"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	/**
 	 * Returns the string from the resource bundle,
 	 * or 'key' if not found.
@@ -51,7 +51,7 @@ public class ConfigureMessages {
 			return '!' + key + '!';
 		}
 	}
-	
+
 	/**
 	 * Returns the formatted string from the resource bundle,
 	 * or 'key' if not found.
@@ -61,7 +61,7 @@ public class ConfigureMessages {
 	 * @return the resource bundle message
 	 */
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), (Object[])args);
+		return MessageFormat.format(getString(key), (Object[]) args);
 	}
 
 }

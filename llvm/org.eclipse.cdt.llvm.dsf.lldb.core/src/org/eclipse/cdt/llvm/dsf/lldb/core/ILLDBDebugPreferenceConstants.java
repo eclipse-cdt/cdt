@@ -32,4 +32,3 @@ public interface ILLDBDebugPreferenceConstants {
 	 */
 	public static final String PREF_DEFAULT_STOP_AT_MAIN_SYMBOL = "defaultStopAtMainSymbol"; //$NON-NLS-1$
 }
-

@@ -63,8 +63,8 @@ public class RenameCSourceFolderChange extends Change {
 
 	@Override
 	public String getName() {
-		return NLS.bind(RenameMessages.RenameCSourceFolderChange_Name0,
-				oldFolderPath.lastSegment(), newFolderPath.lastSegment());
+		return NLS.bind(RenameMessages.RenameCSourceFolderChange_Name0, oldFolderPath.lastSegment(),
+				newFolderPath.lastSegment());
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class RenameCSourceFolderChange extends Change {
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (oldFolder.exists()) {
-			return RefactoringStatus.create(Status.OK_STATUS); 
+			return RefactoringStatus.create(Status.OK_STATUS);
 		} else {
 			return RefactoringStatus.create(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
 					NLS.bind(RenameMessages.RenameCSourceFolderChange_ErrorMsg, oldFolder.getName())));
@@ -87,7 +87,7 @@ public class RenameCSourceFolderChange extends Change {
 		IFolder newFolder = project.getFolder(newFolderPath.removeFirstSegments(1));
 		return new RenameCSourceFolderChange(newFolder, oldFolderPath);
 	}
-	
+
 	private void changeEntryInAllCfgs(ICProjectDescription des) throws WriteAccessException, CoreException {
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
 		for (ICConfigurationDescription cfg : cfgs) {
@@ -97,7 +97,7 @@ public class RenameCSourceFolderChange extends Change {
 		}
 		CCorePlugin.getDefault().setProjectDescription(project, des, false, new NullProgressMonitor());
 	}
-	
+
 	private ICSourceEntry[] renameSourceEntries(ICSourceEntry[] sourceEntries) {
 		Set<ICSourceEntry> set = new HashSet<>();
 		for (ICSourceEntry entry : sourceEntries) {
@@ -120,7 +120,7 @@ public class RenameCSourceFolderChange extends Change {
 					exclusionPatterns.add(pattern);
 				}
 			}
-			
+
 			return new CSourceEntry(sourceEntry.getValue(),
 					exclusionPatterns.toArray(new IPath[exclusionPatterns.size()]), sourceEntry.getFlags());
 		}

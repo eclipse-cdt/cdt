@@ -40,17 +40,19 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
  * Concrete ILanguage implementation for the DOM C parser.
  */
 public class GCCLanguage extends AbstractCLikeLanguage {
-	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION= GCCScannerExtensionConfiguration.getInstance();
-	protected static final GCCParserExtensionConfiguration C_GNU_PARSER_EXTENSION= GCCParserExtensionConfiguration.getInstance();
+	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = GCCScannerExtensionConfiguration
+			.getInstance();
+	protected static final GCCParserExtensionConfiguration C_GNU_PARSER_EXTENSION = GCCParserExtensionConfiguration
+			.getInstance();
 	// Must match the id in the extension
 	public static final String ID = CCorePlugin.PLUGIN_ID + ".gcc"; //$NON-NLS-1$ 
 
 	private static final GCCLanguage DEFAULT_INSTANCE = new GCCLanguage();
-	
+
 	public static GCCLanguage getDefault() {
 		return DEFAULT_INSTANCE;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
@@ -59,10 +61,10 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	@Override
 	public String getId() {
-		return ID; 
+		return ID;
 	}
 
 	@Override
@@ -95,18 +97,21 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 	}
 
 	@Override
-	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService, IIndex index) {
+	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
+			IIndex index) {
 		return new GNUCSourceParser(scanner, parserMode, logService, getParserExtensionConfiguration(), index);
 	}
 
 	@Override
-	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService, IIndex index,
-			int options, IParserSettings settings) {
-		GNUCSourceParser parser = new GNUCSourceParser(scanner, parserMode, logService, getParserExtensionConfiguration(), index);
+	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
+			IIndex index, int options, IParserSettings settings) {
+		GNUCSourceParser parser = new GNUCSourceParser(scanner, parserMode, logService,
+				getParserExtensionConfiguration(), index);
 		if (settings != null) {
 			int maximumTrivialExpressions = settings.getMaximumTrivialExpressionsInAggregateInitializers();
-			if (maximumTrivialExpressions >= 0 && (options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
-					parser.setMaximumTrivialExpressionsInAggregateInitializers(maximumTrivialExpressions);
+			if (maximumTrivialExpressions >= 0
+					&& (options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
+				parser.setMaximumTrivialExpressionsInAggregateInitializers(maximumTrivialExpressions);
 			}
 		}
 		return parser;

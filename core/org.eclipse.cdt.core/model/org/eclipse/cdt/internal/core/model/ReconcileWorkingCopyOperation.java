@@ -25,18 +25,18 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * Reconcile a working copy and signal the changes through a delta.
  */
 public class ReconcileWorkingCopyOperation extends CModelOperation {
-		
+
 	boolean forceProblemDetection;
 	boolean fComputeAST;
 	IASTTranslationUnit fAST;
-	
+
 	public ReconcileWorkingCopyOperation(ICElement workingCopy, boolean forceProblemDetection) {
 		this(workingCopy, false, forceProblemDetection);
 	}
 
 	public ReconcileWorkingCopyOperation(ICElement workingCopy, boolean computeAST, boolean forceProblemDetection) {
-		super(new ICElement[] {workingCopy});
-		fComputeAST= computeAST;
+		super(new ICElement[] { workingCopy });
+		fComputeAST = computeAST;
 		this.forceProblemDetection = forceProblemDetection;
 	}
 
@@ -46,36 +46,39 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 	 */
 	@Override
 	protected void executeOperation() throws CModelException {
-		if (fMonitor != null){
+		if (fMonitor != null) {
 			if (fMonitor.isCanceled())
 				throw new OperationCanceledException();
 			fMonitor.beginTask("element.reconciling", 10); //$NON-NLS-1$
 		}
-	
+
 		WorkingCopy workingCopy = getWorkingCopy();
 		boolean wasConsistent = workingCopy.isConsistent();
 		CElementDeltaBuilder deltaBuilder = null;
-	
+
 		try {
 			if (!wasConsistent || forceProblemDetection || fComputeAST) {
 				// create the delta builder (this remembers the current content of the tu)
 				deltaBuilder = new CElementDeltaBuilder(workingCopy);
-				
+
 				// update the element infos with the content of the working copy
-				fAST= workingCopy.makeConsistent(fComputeAST, fMonitor);
+				fAST = workingCopy.makeConsistent(fComputeAST, fMonitor);
 
 				deltaBuilder.buildDeltas();
 
 				// register the deltas
 				if (deltaBuilder.delta != null) {
-					if (!wasConsistent || forceProblemDetection || deltaBuilder.delta.getAffectedChildren().length > 0) {
+					if (!wasConsistent || forceProblemDetection
+							|| deltaBuilder.delta.getAffectedChildren().length > 0) {
 						addReconcileDelta(workingCopy, deltaBuilder.delta);
 					}
 				}
 			}
-			if (fMonitor != null) fMonitor.worked(2);
+			if (fMonitor != null)
+				fMonitor.worked(2);
 		} finally {
-			if (fMonitor != null) fMonitor.done();
+			if (fMonitor != null)
+				fMonitor.done();
 		}
 	}
 
@@ -83,7 +86,7 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 	 * Returns the working copy this operation is working on.
 	 */
 	protected WorkingCopy getWorkingCopy() {
-		return (WorkingCopy)getElementToProcess();
+		return (WorkingCopy) getElementToProcess();
 	}
 
 	/**

@@ -56,16 +56,17 @@ public class CPElementFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof CPElement) {
 			for (int i = 0; i < fKind.length; i++) {
-				if ( ((CPElement)element).getEntryKind() == fKind[i]) {
+				if (((CPElement) element).getEntryKind() == fKind[i]) {
 					if (fExcludes == null || !fExcludes.contains(element)) {
 						if (fExportedOnly == true) {
-							if ( !fShowInherited ) {
-								return ((CPElement)element).getInherited() == null && ((CPElement)element).isExported();
+							if (!fShowInherited) {
+								return ((CPElement) element).getInherited() == null
+										&& ((CPElement) element).isExported();
 							}
-							return ((CPElement)element).isExported();
+							return ((CPElement) element).isExported();
 						}
-						if ( !fShowInherited ) {
-							return ((CPElement)element).getInherited() == null;
+						if (!fShowInherited) {
+							return ((CPElement) element).getInherited() == null;
 						}
 						return true;
 					}
@@ -73,10 +74,10 @@ public class CPElementFilter extends ViewerFilter {
 			}
 		} else if (element instanceof IPathEntry) {
 			for (int i = 0; i < fKind.length; i++) {
-				if ( ((IPathEntry)element).getEntryKind() == fKind[i]) {
+				if (((IPathEntry) element).getEntryKind() == fKind[i]) {
 					if (fExcludes == null || !fExcludes.contains(element)) {
 						if (fExportedOnly == true) {
-							return ((IPathEntry)element).isExported();
+							return ((IPathEntry) element).isExported();
 						}
 						return true;
 					}
@@ -84,7 +85,7 @@ public class CPElementFilter extends ViewerFilter {
 			}
 		} else if (element instanceof CPElementGroup) {
 			for (int i = 0; i < fKind.length; i++) {
-				if ( ((CPElementGroup)element).getEntryKind() == fKind[i]) {
+				if (((CPElementGroup) element).getEntryKind() == fKind[i]) {
 					return true;
 				}
 			}

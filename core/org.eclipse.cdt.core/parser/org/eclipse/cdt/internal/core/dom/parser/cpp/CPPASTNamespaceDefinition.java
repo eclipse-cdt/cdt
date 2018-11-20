@@ -29,13 +29,13 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
  * Definition of a namespace.
  */
 public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements ICPPASTNamespaceDefinition {
-    private IASTName fName;
+	private IASTName fName;
 	private IASTDeclaration[] fAllDeclarations;
 	private IASTDeclaration[] fActiveDeclarations;
-    private int fLastDeclaration= -1;
-    private boolean fIsInline;
+	private int fLastDeclaration = -1;
+	private boolean fIsInline;
 
-    public CPPASTNamespaceDefinition() {
+	public CPPASTNamespaceDefinition() {
 	}
 
 	public CPPASTNamespaceDefinition(IASTName name) {
@@ -49,8 +49,7 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 
 	@Override
 	public CPPASTNamespaceDefinition copy(CopyStyle style) {
-		CPPASTNamespaceDefinition copy =
-				new CPPASTNamespaceDefinition(fName == null ? null : fName.copy(style));
+		CPPASTNamespaceDefinition copy = new CPPASTNamespaceDefinition(fName == null ? null : fName.copy(style));
 		copy.fIsInline = fIsInline;
 		for (IASTDeclaration declaration : getDeclarations()) {
 			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
@@ -60,23 +59,23 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 
 	@Override
 	public IASTName getName() {
-        return fName;
-    }
+		return fName;
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.fName = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.fName = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(NAMESPACE_NAME);
 		}
-    }
+	}
 
 	@Override
 	public void setIsInline(boolean isInline) {
 		assertNotFrozen();
-		fIsInline= isInline;
+		fIsInline = isInline;
 	}
 
 	@Override
@@ -90,16 +89,16 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 			decl.setParent(this);
 			decl.setPropertyInParent(OWNED_DECLARATION);
 			fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
-			fActiveDeclarations= null;
+			fActiveDeclarations = null;
 		}
 	}
 
 	@Override
 	public final IASTDeclaration[] getDeclarations() {
-		IASTDeclaration[] active= fActiveDeclarations;
+		IASTDeclaration[] active = fActiveDeclarations;
 		if (active == null) {
-			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fLastDeclaration+1);
-			fActiveDeclarations= active;
+			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fLastDeclaration + 1);
+			fActiveDeclarations = active;
 		}
 		return active;
 	}
@@ -107,25 +106,28 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 	@Override
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
+			fAllDeclarations = ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
 			return fAllDeclarations;
 		}
 		return getDeclarations();
 	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-	    return ((ICPPNamespace) fName.resolveBinding()).getNamespaceScope();
+		return ((ICPPNamespace) fName.resolveBinding()).getNamespaceScope();
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitNamespaces) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (!acceptByCPPAttributeSpecifiers(action))
@@ -137,7 +139,7 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 		if (!acceptByGCCAttributeSpecifiers(action))
 			return false;
 
-        IASTDeclaration [] decls = getDeclarations(action.includeInactiveNodes);
+		IASTDeclaration[] decls = getDeclarations(action.includeInactiveNodes);
 		for (IASTDeclaration decl : decls) {
 			if (!decl.accept(action))
 				return false;
@@ -146,8 +148,8 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 		if (action.shouldVisitNamespaces && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
@@ -156,7 +158,7 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 		return r_unclear;
 	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		assert child.isActive() == other.isActive();
 		for (int i = 0; i <= fLastDeclaration; ++i) {
@@ -164,10 +166,10 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 				other.setParent(child.getParent());
 				other.setPropertyInParent(child.getPropertyInParent());
 				fAllDeclarations[i] = (IASTDeclaration) other;
-				fActiveDeclarations= null;
+				fActiveDeclarations = null;
 				return;
 			}
 		}
 		super.replace(child, other);
-    }
+	}
 }

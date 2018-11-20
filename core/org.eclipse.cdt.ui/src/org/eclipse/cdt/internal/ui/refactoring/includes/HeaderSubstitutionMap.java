@@ -51,8 +51,8 @@ public class HeaderSubstitutionMap {
 		this.optionalSubstitutionMap = new IncludeMap(false);
 	}
 
-	public HeaderSubstitutionMap(String name, boolean cppOnly,
-			IncludeMap unconditionalSubstitutionMap, IncludeMap optionalSubstitutionMap) {
+	public HeaderSubstitutionMap(String name, boolean cppOnly, IncludeMap unconditionalSubstitutionMap,
+			IncludeMap optionalSubstitutionMap) {
 		this.name = name;
 		this.cppOnly = cppOnly;
 		this.unconditionalSubstitutionMap = unconditionalSubstitutionMap;
@@ -75,7 +75,7 @@ public class HeaderSubstitutionMap {
 
 	/**
 	 * Indicates that the header file {@code to} should be used instead of {@code from}.
-
+	
 	 * @param from The header file to be replaced. The header is represented by an include name
 	 *     optionally surrounded by double quotes or angle brackets. Angle brackets indicate
 	 *     a system include.
@@ -119,8 +119,10 @@ public class HeaderSubstitutionMap {
 		String name = memento.getString(TAG_NAME);
 		Boolean b = memento.getBoolean(TAG_CPP_ONLY);
 		boolean cppOnly = b != null && b.booleanValue();
-		IncludeMap unconditionalSubstitutionMap = IncludeMap.fromMemento(true, memento.getChild(TAG_UNCONDITIONAL_SUBSTITUTION_MAP));
-		IncludeMap optionalSubstitutionMap = IncludeMap.fromMemento(false, memento.getChild(TAG_OPTIONAL_SUBSTITUTION_MAP));
+		IncludeMap unconditionalSubstitutionMap = IncludeMap.fromMemento(true,
+				memento.getChild(TAG_UNCONDITIONAL_SUBSTITUTION_MAP));
+		IncludeMap optionalSubstitutionMap = IncludeMap.fromMemento(false,
+				memento.getChild(TAG_OPTIONAL_SUBSTITUTION_MAP));
 		// Remove potential redundant substitutions from optionalSubstitutionMap.
 		for (IncludeInfo header : unconditionalSubstitutionMap.getMap().keySet()) {
 			optionalSubstitutionMap.removeMapping(header);

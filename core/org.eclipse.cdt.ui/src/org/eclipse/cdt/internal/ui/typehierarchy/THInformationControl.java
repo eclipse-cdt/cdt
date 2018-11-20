@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Patrick Hofer [bug 325488]
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.Iterator;
@@ -54,14 +54,14 @@ public class THInformationControl extends AbstractInformationControl implements 
 	private TreeViewer fHierarchyTreeViewer;
 	private boolean fDisposed;
 	private KeyAdapter fKeyAdapter;
-	
+
 	public THInformationControl(Shell parent, int shellStyle, int treeStyle) {
 		super(parent, shellStyle, treeStyle, ICEditorActionDefinitionIds.OPEN_QUICK_TYPE_HIERARCHY, true);
 	}
 
 	private KeyAdapter getKeyAdapter() {
 		if (fKeyAdapter == null) {
-			fKeyAdapter= new KeyAdapter() {
+			fKeyAdapter = new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
 					int accelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(e);
@@ -72,7 +72,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 
 					for (Trigger trigger : triggers) {
 						if (trigger.equals(keyStroke)) {
-							e.doit= false;
+							e.doit = false;
 							toggleHierarchy();
 							return;
 						}
@@ -90,16 +90,16 @@ public class THInformationControl extends AbstractInformationControl implements 
 
 	@Override
 	protected Text createFilterText(Composite parent) {
-		Text text= super.createFilterText(parent);
+		Text text = super.createFilterText(parent);
 		text.addKeyListener(getKeyAdapter());
 		return text;
 	}
 
 	@Override
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
-		Display display= getShell().getDisplay();
-		fModel= new THHierarchyModel(this, display, true);
-		fHierarchyLabelProvider= new THLabelProvider(display, fModel);
+		Display display = getShell().getDisplay();
+		fModel = new THHierarchyModel(this, display, true);
+		fHierarchyLabelProvider = new THLabelProvider(display, fModel);
 		fHierarchyLabelProvider.setMarkImplementers(false);
 		fHierarchyTreeViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fHierarchyTreeViewer.setContentProvider(new THContentProvider());
@@ -111,7 +111,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 	}
 
 	protected void onOpenElement(ISelection selection) {
-		ICElement elem= (ICElement) getSelectedElement();
+		ICElement elem = (ICElement) getSelectedElement();
 		if (elem != null) {
 			try {
 				EditorOpener.open(CUIPlugin.getActivePage(), elem);
@@ -124,7 +124,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 	@Override
 	public void setInput(Object input) {
 		if (input instanceof ICElement[]) {
-			ICElement[] splitInput= (ICElement[]) input;
+			ICElement[] splitInput = (ICElement[]) input;
 			if (TypeHierarchyUI.isValidTypeInput(splitInput[0])) {
 				fModel.setInput(splitInput[0], splitInput[1]);
 				fHierarchyLabelProvider.setHideNonImplementers(splitInput[1] != null);
@@ -138,30 +138,27 @@ public class THInformationControl extends AbstractInformationControl implements 
 	protected void updateTitle() {
 		setTitleText(computeTitleText());
 	}
-	
+
 	private String computeTitleText() {
 		final ICElement input = fModel.getInput();
-		final ICElement member= fModel.getSelectedMember();
-		String elemName= member != null ? member.getElementName() : input.getElementName();
+		final ICElement member = fModel.getSelectedMember();
+		String elemName = member != null ? member.getElementName() : input.getElementName();
 		return NLS.bind(getFormatString(fModel.getHierarchyKind(), member != null), elemName);
 	}
-	
+
 	private String getFormatString(int hierarchyKind, boolean forMember) {
 		switch (hierarchyKind) {
 		case THHierarchyModel.SUB_TYPE_HIERARCHY:
-			return forMember
-					? Messages.THInformationControl_titleMemberInSubHierarchy
+			return forMember ? Messages.THInformationControl_titleMemberInSubHierarchy
 					: Messages.THInformationControl_titleSubHierarchy;
-			
+
 		case THHierarchyModel.SUPER_TYPE_HIERARCHY:
-			return forMember 
-					? Messages.THInformationControl_titleMemberInSuperHierarchy
+			return forMember ? Messages.THInformationControl_titleMemberInSuperHierarchy
 					: Messages.THInformationControl_titleSuperHierarchy;
-			
+
 		case THHierarchyModel.TYPE_HIERARCHY:
 		default:
-			return forMember 
-					? Messages.THInformationControl_titleMemberInHierarchy
+			return forMember ? Messages.THInformationControl_titleMemberInHierarchy
 					: Messages.THInformationControl_titleHierarchy;
 		}
 	}
@@ -173,12 +170,12 @@ public class THInformationControl extends AbstractInformationControl implements 
 
 	@Override
 	protected Object getSelectedElement() {
-		THNode node= selectionToNode(fHierarchyTreeViewer.getSelection());
+		THNode node = selectionToNode(fHierarchyTreeViewer.getSelection());
 		if (node != null) {
-			ICElement elem= node.getElement();
+			ICElement elem = node.getElement();
 			if (node.isImplementor()) {
 				fModel.onHierarchySelectionChanged(node);
-				ICElement melem= fModel.getSelectedMember();
+				ICElement melem = fModel.getSelectedMember();
 				if (melem != null) {
 					return melem;
 				}
@@ -190,9 +187,9 @@ public class THInformationControl extends AbstractInformationControl implements 
 
 	private THNode selectionToNode(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection) selection;
-			for (Iterator<?> iter = ss.iterator(); iter.hasNext(); ) {
-				Object cand= iter.next();
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			for (Iterator<?> iter = ss.iterator(); iter.hasNext();) {
+				Object cand = iter.next();
 				if (cand instanceof THNode) {
 					return (THNode) cand;
 				}
@@ -203,7 +200,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 
 	@Override
 	public void widgetDisposed(DisposeEvent event) {
-		fDisposed= true;
+		fDisposed = true;
 		super.widgetDisposed(event);
 	}
 
@@ -216,13 +213,13 @@ public class THInformationControl extends AbstractInformationControl implements 
 					fHierarchyLabelProvider.setHideNonImplementers(false);
 				}
 				fHierarchyTreeViewer.refresh();
-				THNode selection= fModel.getSelectionInHierarchy();
+				THNode selection = fModel.getSelectionInHierarchy();
 				if (selection != null) {
 					fHierarchyTreeViewer.setSelection(new StructuredSelection(selection));
 					fHierarchyTreeViewer.expandToLevel(selection, 2);
 				}
 				break;
-			}		
+			}
 		}
 	}
 
@@ -238,11 +235,11 @@ public class THInformationControl extends AbstractInformationControl implements 
 	@Override
 	protected String getStatusFieldText() {
 		TriggerSequence sequence = getInvokingCommandTriggerSequence();
-		String keyName= ""; //$NON-NLS-1$
+		String keyName = ""; //$NON-NLS-1$
 		if (sequence != null)
-			keyName= sequence.format();
+			keyName = sequence.format();
 
-		String message= ""; //$NON-NLS-1$
+		String message = ""; //$NON-NLS-1$
 		switch (fModel.getHierarchyKind()) {
 		case THHierarchyModel.TYPE_HIERARCHY:
 			message = Messages.THInformationControl_toggle_superTypeHierarchy_label;
@@ -259,13 +256,13 @@ public class THInformationControl extends AbstractInformationControl implements 
 		default:
 			break;
 		}
-		return MessageFormat.format(message, new Object[] {keyName} );
+		return MessageFormat.format(message, new Object[] { keyName });
 	}
 
 	@Override
 	protected void selectFirstMatch() {
-		Tree tree= fHierarchyTreeViewer.getTree();
-		Object element= findElement(tree.getItems());
+		Tree tree = fHierarchyTreeViewer.getTree();
+		Object element = findElement(tree.getItems());
 		if (element != null) {
 			fHierarchyTreeViewer.setSelection(new StructuredSelection(element), true);
 		} else {
@@ -297,21 +294,21 @@ public class THInformationControl extends AbstractInformationControl implements 
 		updateStatusFieldText();
 		updateTitle();
 	}
-	
+
 	private THNode findElement(TreeItem[] items) {
 		for (TreeItem item2 : items) {
-			Object item= item2.getData();
-			THNode element= null;
+			Object item = item2.getData();
+			THNode element = null;
 			if (item instanceof THNode) {
-				element= (THNode) item;
+				element = (THNode) item;
 				if (fStringMatcher == null)
 					return element;
-	
-				String label= fHierarchyLabelProvider.getText(element);
+
+				String label = fHierarchyLabelProvider.getText(element);
 				if (fStringMatcher.match(label))
 					return element;
 			}
-			element= findElement(item2.getItems());
+			element = findElement(item2.getItems());
 			if (element != null)
 				return element;
 		}

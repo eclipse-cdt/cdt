@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
 public class GDBJtagImages {
 
 	private static ImageRegistry imageRegistry = new ImageRegistry();
-	
+
 	private static URL iconBaseURL = Activator.getDefault().getBundle().getEntry("/icons/"); //$NON-NLS-1$
 
 	private static final String NAME_PREFIX = Activator.PLUGIN_ID + '.';
@@ -41,22 +41,23 @@ public class GDBJtagImages {
 	public static Image getDebuggerTabImage() {
 		return imageRegistry.get(IMG_VIEW_DEBUGGER_TAB);
 	}
-	
+
 	public static Image getStartupTabImage() {
 		return imageRegistry.get(IMG_VIEW_STARTUP_TAB);
 	}
-	
+
 	static {
 		createManaged(T_TABS, IMG_VIEW_DEBUGGER_TAB);
 		createManaged(T_TABS, IMG_VIEW_STARTUP_TAB);
 	}
-	
+
 	private static void createManaged(String prefix, String name) {
-		imageRegistry.put(name, ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX.length()))));
+		imageRegistry.put(name,
+				ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX.length()))));
 	}
 
 	private static URL makeIconFileURL(String prefix, String name) {
-		StringBuilder buffer= new StringBuilder(prefix);
+		StringBuilder buffer = new StringBuilder(prefix);
 		buffer.append(name);
 		try {
 			return new URL(iconBaseURL, buffer.toString());

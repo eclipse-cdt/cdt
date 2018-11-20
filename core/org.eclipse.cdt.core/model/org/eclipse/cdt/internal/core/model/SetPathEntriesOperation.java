@@ -30,10 +30,10 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class SetPathEntriesOperation extends CModelOperation {
 
-    /**
-     * An empty array of strings indicating that a project doesn't have any prerequesite projects.
-     */
-    static final String[] NO_PREREQUISITES = new String[0];
+	/**
+	 * An empty array of strings indicating that a project doesn't have any prerequesite projects.
+	 */
+	static final String[] NO_PREREQUISITES = new String[0];
 
 	IPathEntry[] oldResolvedEntries;
 	IPathEntry[] newRawEntries;
@@ -53,7 +53,7 @@ public class SetPathEntriesOperation extends CModelOperation {
 	protected void executeOperation() throws CModelException {
 		//	project reference updated - may throw an exception if unable to write .cdtproject file
 		updateProjectReferencesIfNecessary();
-		PathEntryManager mgr = PathEntryManager.getDefault();		
+		PathEntryManager mgr = PathEntryManager.getDefault();
 		hasModifiedResource = true;
 		mgr.saveRawPathEntries(cproject, newRawEntries);
 		done();
@@ -91,7 +91,7 @@ public class SetPathEntriesOperation extends CModelOperation {
 			Iterator<String> iter;
 			int newSize = newReferences.size();
 
-			checkIdentity : {
+			checkIdentity: {
 				if (oldReferences.size() == newSize) {
 					iter = newReferences.iterator();
 					while (iter.hasNext()) {

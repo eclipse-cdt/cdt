@@ -23,40 +23,35 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-public class FPRenderingPreferenceAction extends ActionDelegate implements IViewActionDelegate
-{
+public class FPRenderingPreferenceAction extends ActionDelegate implements IViewActionDelegate {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-     */
-    @Override
-    public void run(IAction action)
-    {
-        IPreferencePage page = new FPRenderingPreferencePage();
-        showPreferencePage("org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingPreferencePage", page); //$NON-NLS-1$
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
+	@Override
+	public void run(IAction action) {
+		IPreferencePage page = new FPRenderingPreferencePage();
+		showPreferencePage("org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingPreferencePage", page); //$NON-NLS-1$
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-     */
-    @Override
-    public void init(IViewPart view)
-    {
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 */
+	@Override
+	public void init(IViewPart view) {
+	}
 
-    protected void showPreferencePage(String id, IPreferencePage page)
-    {
-        BusyIndicator.showWhile(FPRenderingPlugin.getStandardDisplay(), new Runnable()
-        {
-            @Override
-            public void run()
-            {
-        		PreferencesUtil.createPreferenceDialogOn(FPRenderingPlugin.getShell(), id, new String[] { id }, null).open();
-            }
-        });
-    }
+	protected void showPreferencePage(String id, IPreferencePage page) {
+		BusyIndicator.showWhile(FPRenderingPlugin.getStandardDisplay(), new Runnable() {
+			@Override
+			public void run() {
+				PreferencesUtil.createPreferenceDialogOn(FPRenderingPlugin.getShell(), id, new String[] { id }, null)
+						.open();
+			}
+		});
+	}
 }

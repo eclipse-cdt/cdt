@@ -24,8 +24,8 @@ public interface IGdbUIConstants {
 	/**
 	 * Plug-in identifier (value <code>"org.eclipse.cdt.dsf.gdb.ui"</code>).
 	 */
-	public static final String PLUGIN_ID = GdbUIPlugin.PLUGIN_ID; 
-	
+	public static final String PLUGIN_ID = GdbUIPlugin.PLUGIN_ID;
+
 	/**  image identifier. */
 	public static final String IMG_WIZBAN_ADVANCED_TIMEOUT_SETTINGS = PLUGIN_ID + ".imageAdvancedTimeoutSettings"; //$NON-NLS-1$
 }

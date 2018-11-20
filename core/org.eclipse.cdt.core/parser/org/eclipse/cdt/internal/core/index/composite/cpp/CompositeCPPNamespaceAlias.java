@@ -27,16 +27,17 @@ class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPName
 
 	@Override
 	public IBinding[] getMemberBindings() {
-		IBinding[] result= ((ICPPNamespaceAlias) rbinding).getMemberBindings();
-		for (int i= 0; i < result.length; i++) {
-			result[i]= cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
+		IBinding[] result = ((ICPPNamespaceAlias) rbinding).getMemberBindings();
+		for (int i = 0; i < result.length; i++) {
+			result[i] = cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}
 
 	@Override
 	public ICPPNamespaceScope getNamespaceScope() {
-		return (ICPPNamespaceScope) cf.getCompositeScope((IIndexScope) ((ICPPNamespaceAlias) rbinding).getNamespaceScope());
+		return (ICPPNamespaceScope) cf
+				.getCompositeScope((IIndexScope) ((ICPPNamespaceAlias) rbinding).getNamespaceScope());
 	}
 
 	@Override

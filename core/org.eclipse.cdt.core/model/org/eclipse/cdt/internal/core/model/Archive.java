@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import java.util.Map;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
@@ -41,7 +40,7 @@ public class Archive extends Openable implements IArchive {
 	}
 
 	public Archive(ICElement parent, IPath path, IBinaryArchive ar) {
-		super (parent, path, ICElement.C_ARCHIVE);
+		super(parent, path, ICElement.C_ARCHIVE);
 		binaryArchive = ar;
 	}
 
@@ -67,12 +66,12 @@ public class Archive extends Openable implements IArchive {
 	}
 
 	protected ArchiveInfo getArchiveInfo() throws CModelException {
-		return (ArchiveInfo)getElementInfo();
+		return (ArchiveInfo) getElementInfo();
 	}
 
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
-		throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
+			IResource underlyingResource) throws CModelException {
 		return computeChildren(info, underlyingResource);
 	}
 
@@ -123,7 +122,7 @@ public class Archive extends Openable implements IArchive {
 	@Override
 	protected void closing(Object info) throws CModelException {
 		ICProject cproject = getCProject();
-		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(cproject);
+		CProjectInfo pinfo = (CProjectInfo) CModelManager.getDefault().peekAtInfo(cproject);
 		if (pinfo != null && pinfo.vLib != null) {
 			pinfo.vLib.removeChild(this);
 		}

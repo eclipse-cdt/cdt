@@ -208,7 +208,7 @@ public interface IBinaryParser extends IAdaptable {
 		 * @param offset
 		 */
 		int getLineNumber(long offset);
-		
+
 		/**
 		 * Return the binary object this symbol is from.
 		 */

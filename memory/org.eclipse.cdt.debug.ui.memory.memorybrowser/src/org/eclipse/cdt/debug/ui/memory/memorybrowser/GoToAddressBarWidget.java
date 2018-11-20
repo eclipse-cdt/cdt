@@ -44,13 +44,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
 public class GoToAddressBarWidget {
-	
+
 	/**
 	 * Character sequence that is unlikely to appear naturally in a recurring
 	 * debug context ID or memory space ID
 	 */
 	private static String SEPARATOR = "<seperator>";
-	
+
 	/**
 	 * At a minimum, the expression history is kept on a per launch
 	 * configuration basis. Where debug contexts (processes, in practice) can
@@ -61,51 +61,50 @@ public class GoToAddressBarWidget {
 	private Combo fExpression;
 	private ControlDecoration fEmptyExpression;
 	private ControlDecoration fWrongExpression;
-	
+
 	private Button fOKButton;
 	private Button fOKNewTabButton;
 	private Composite fComposite;
-	
+
 	protected static int ID_GO_NEW_TAB = 2000;
-	
+
 	private IStatus fExpressionStatus = Status.OK_STATUS;
-	
-    /**
+
+	/**
 	 * @param parent
 	 * @return
 	 */
-	public Control createControl(Composite parent)
-	{
+	public Control createControl(Composite parent) {
 		fComposite = new Composite(parent, SWT.NONE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fComposite, // FIXME 	
-					".GoToAddressComposite_context"); //$NON-NLS-1$
-				
+				".GoToAddressComposite_context"); //$NON-NLS-1$
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 6;
 		layout.makeColumnsEqualWidth = false;
 		layout.marginHeight = 0;
 		layout.marginLeft = 0;
 		fComposite.setLayout(layout);
-	
+
 		fExpression = createExpressionField(fComposite);
-		
+
 		fOKButton = new Button(fComposite, SWT.NONE);
 		fOKButton.setText(Messages.getString("GoToAddressBarWidget.Go")); //$NON-NLS-1$
 		fOKButton.setEnabled(false);
-		
+
 		fOKNewTabButton = new Button(fComposite, SWT.NONE);
 		fOKNewTabButton.setText(Messages.getString("GoToAddressBarWidget.NewTab")); //$NON-NLS-1$
 		fOKNewTabButton.setEnabled(false);
-		
+
 		return fComposite;
 	}
-	
+
 	/** The launch configuration attribute prefix used to persist expression history */
-	private final static String SAVED_EXPRESSIONS = "saved_expressions";  //$NON-NLS-1$
-	
-	private final static int MAX_SAVED_EXPRESSIONS = 15 ;
-	
-	private void addExpressionToHistoryPersistence( Object context, String expr, String memorySpace ) {
+	private final static String SAVED_EXPRESSIONS = "saved_expressions"; //$NON-NLS-1$
+
+	private final static int MAX_SAVED_EXPRESSIONS = 15;
+
+	private void addExpressionToHistoryPersistence(Object context, String expr, String memorySpace) {
 		/*
 		 * Get the saved expressions if any.
 		 * 
@@ -114,58 +113,52 @@ public class GoToAddressBarWidget {
 		 *     expression,expression,.....,expression
 		 */
 		ILaunch launch = getLaunch(context);
-		if(launch == null)
-		{
+		if (launch == null) {
 			return;
 		}
-		
+
 		String contextID = getRecurringContextID(context);
-		
+
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		String currentExpressions = "";
 		if (launchConfiguration != null) {
 			try {
 				ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
 				if (wc != null) {
-					currentExpressions = wc.getAttribute(getSaveExpressionKey(contextID,memorySpace), "");
-					
+					currentExpressions = wc.getAttribute(getSaveExpressionKey(contextID, memorySpace), "");
+
 					StringTokenizer st = new StringTokenizer(currentExpressions, ","); //$NON-NLS-1$
 					/*
 					 * Parse through the list creating an ordered array for display.
 					 */
 					ArrayList<String> list = new ArrayList<String>();
-					while(st.hasMoreElements())
-					{
+					while (st.hasMoreElements()) {
 						String expression = (String) st.nextElement();
 						list.add(expression);
 					}
-					if(!list.contains(expr))
-					{
+					if (!list.contains(expr)) {
 						list.add(expr);
-					
-						while(list.size() > MAX_SAVED_EXPRESSIONS)
-						{
+
+						while (list.size() > MAX_SAVED_EXPRESSIONS) {
 							list.remove(0);
 						}
-						
+
 						currentExpressions = "";
-						for ( int idx =0 ; idx < list.size(); idx ++ ) {
-							if(idx > 0)
-							{
+						for (int idx = 0; idx < list.size(); idx++) {
+							if (idx > 0) {
 								currentExpressions += ",";
 							}
 							currentExpressions += list.get(idx);
 						}
-						wc.setAttribute(getSaveExpressionKey(contextID,memorySpace), currentExpressions);					
+						wc.setAttribute(getSaveExpressionKey(contextID, memorySpace), currentExpressions);
 						wc.doSave();
 					}
-				}			
-			}
-			catch(CoreException e) {
+				}
+			} catch (CoreException e) {
 			}
 		}
 	}
-	
+
 	/**
 	 * Clear all expression history persisted in the launch configuration that
 	 * created the given debug context
@@ -175,15 +168,15 @@ public class GoToAddressBarWidget {
 	 *            context
 	 */
 	public void clearExpressionHistoryPersistence(Object context) {
-		if(context == null) {
+		if (context == null) {
 			return;
 		}
-		
+
 		ILaunch launch = getLaunch(context);
-		if(launch == null) {
+		if (launch == null) {
 			return;
 		}
-		
+
 		// We maintain history for every process this launch configuration has
 		// launched. And where memory spaces are involved, each space has its
 		// own history. Here we just wipe out the persistence of all processes
@@ -194,18 +187,17 @@ public class GoToAddressBarWidget {
 			try {
 				ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
 				if (wc != null) {
-					Map<?,?> attributes = wc.getAttributes();
+					Map<?, ?> attributes = wc.getAttributes();
 					Iterator<?> iterator = attributes.keySet().iterator();
 					while (iterator.hasNext()) {
-						String key = (String)iterator.next();
+						String key = (String) iterator.next();
 						if (key.startsWith(SAVED_EXPRESSIONS)) {
 							wc.removeAttribute(key);
 						}
 					}
 					wc.doSave();
 				}
-			}
-			catch(CoreException e) {
+			} catch (CoreException e) {
 				// Some unexpected snag working with the launch configuration
 				MemoryBrowserPlugin.log(e);
 			}
@@ -234,16 +226,17 @@ public class GoToAddressBarWidget {
 		 * 
 		 *     expression,expression,.....,expression
 		 */
-		
+
 		ILaunch launch = getLaunch(context);
-		if(launch == null) {
+		if (launch == null) {
 			return new String[0];
 		}
-		
+
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		String expressions = "";
 		if (launchConfiguration != null) {
-			expressions = launchConfiguration.getAttribute(getSaveExpressionKey(getRecurringContextID(context),memorySpace), "");
+			expressions = launchConfiguration
+					.getAttribute(getSaveExpressionKey(getRecurringContextID(context), memorySpace), "");
 		}
 
 		StringTokenizer st = new StringTokenizer(expressions, ","); //$NON-NLS-1$
@@ -251,12 +244,12 @@ public class GoToAddressBarWidget {
 		 * Parse through the list creating an ordered array for display.
 		 */
 		ArrayList<String> list = new ArrayList<String>();
-		while(st.hasMoreElements()) {
+		while (st.hasMoreElements()) {
 			list.add(st.nextToken());
 		}
 		return list.toArray(new String[list.size()]);
 	}
-	
+
 	/**
 	 * Populate the expression history combobox based on the history persisted
 	 * in the launch configuration for the given context and memory space (where
@@ -268,8 +261,7 @@ public class GoToAddressBarWidget {
 	 * @param memorySpace
 	 *            memory space ID; null if not applicable
 	 */
-	public void loadSavedExpressions(Object context, String memorySpace)
-	{
+	public void loadSavedExpressions(Object context, String memorySpace) {
 		try {
 			// Rebuild the combobox entries, but make sure we don't clear the
 			// (expression) field. It's an input field; don't trample anything
@@ -280,19 +272,17 @@ public class GoToAddressBarWidget {
 			// to set the current field value. So, if the current expression
 			// corresponds to an entry, we purge all the entries but that one.
 			String[] expressions = getSavedExpressions(context, memorySpace);
-			String currentExpression = fExpression.getText(); 
-			if (currentExpression.length() > 0)
-			{
+			String currentExpression = fExpression.getText();
+			if (currentExpression.length() > 0) {
 				int index = fExpression.indexOf(currentExpression);
-				if(index > 0) {
-					fExpression.remove(0, index-1);
+				if (index > 0) {
+					fExpression.remove(0, index - 1);
 				}
 				index = fExpression.indexOf(currentExpression);
 				if (fExpression.getItemCount() - index - 1 > 1) {
-					fExpression.remove(index+1, fExpression.getItemCount()-1);
-				}				
-			}
-			else {
+					fExpression.remove(index + 1, fExpression.getItemCount() - 1);
+				}
+			} else {
 				// No expression to trample. Use removeAll()
 				fExpression.removeAll();
 			}
@@ -306,31 +296,31 @@ public class GoToAddressBarWidget {
 			MemoryBrowserPlugin.log(e);
 		}
 	}
-	
+
 	public void addExpressionToHistory(Object context, String expr, String memorySpace) {
 		/*
 		 * Make sure it does not already exist, we do not want to show duplicates.
 		 */
-		if ( fExpression.indexOf(expr) == -1 ) {
+		if (fExpression.indexOf(expr) == -1) {
 			/*
 			 * Cap the size of the list.
 			 */
-			while ( fExpression.getItemCount() >= MAX_SAVED_EXPRESSIONS ) {
+			while (fExpression.getItemCount() >= MAX_SAVED_EXPRESSIONS) {
 				fExpression.remove(0);
 			}
-			
+
 			/*
 			 * Add the new expression to the combobox
 			 */
 			fExpression.add(expr);
-			
+
 		}
 		/*
 		 * Add it to the persistense database.
 		 */
 		addExpressionToHistoryPersistence(context, expr, memorySpace);
 	}
-	
+
 	/**
 	 * Clears the history of expressions for the given debug context, both in
 	 * the GUI and the persistence data
@@ -345,19 +335,19 @@ public class GoToAddressBarWidget {
 		 */
 		fExpression.removeAll();
 		fExpression.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		
+
 		/*
 		 * Clear the history persisted in the launch configuration
 		 */
 		clearExpressionHistoryPersistence(context);
-		
+
 		/*
 		 * Make sure the status image indicator shows OK.
 		 */
 		handleExpressionStatus(Status.OK_STATUS);
 	}
-	
-	private Combo createExpressionField(Composite parent){
+
+	private Combo createExpressionField(Composite parent) {
 		/*
 		 * Create the dropdown box for the editable expressions.
 		 */
@@ -367,62 +357,61 @@ public class GoToAddressBarWidget {
 				updateButtons();
 			}
 		});
-		
+
 		fEmptyExpression = new ControlDecoration(combo, SWT.LEFT | SWT.CENTER);
 		fEmptyExpression.setDescriptionText(Messages.getString("GoToAddressBarWidget.EnterExpressionMessage")); //$NON-NLS-1$
-		FieldDecoration fieldDec = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
+		FieldDecoration fieldDec = FieldDecorationRegistry.getDefault()
+				.getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
 		fEmptyExpression.setImage(fieldDec.getImage());
 
 		fWrongExpression = new ControlDecoration(combo, SWT.LEFT | SWT.TOP);
 		fieldDec = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 		fWrongExpression.setImage(fieldDec.getImage());
 		fWrongExpression.hide();
-		
+
 		// leave enough room for decorators
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalIndent = Math.max(fEmptyExpression.getImage().getBounds().width, fWrongExpression.getImage().getBounds().width);
+		data.horizontalIndent = Math.max(fEmptyExpression.getImage().getBounds().width,
+				fWrongExpression.getImage().getBounds().width);
 		combo.setLayoutData(data);
 		return combo;
 	}
-		
+
 	protected void updateButtons() {
 		boolean empty = getExpressionText().length() == 0;
-		
+
 		fOKNewTabButton.setEnabled(!empty);
 		fOKButton.setEnabled(!empty);
-		
-		if (empty) 
+
+		if (empty)
 			fEmptyExpression.show();
-		else 
-			fEmptyExpression.hide();
-		
-		if (fExpressionStatus.isOK())
-		    fWrongExpression.hide();
 		else
-		    fWrongExpression.show();
+			fEmptyExpression.hide();
+
+		if (fExpressionStatus.isOK())
+			fWrongExpression.hide();
+		else
+			fWrongExpression.show();
 	}
 
-	public int getHeight()
-	{
+	public int getHeight() {
 		int height = fComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		return height;
 	}
-	
-	public Button getButton(int id)
-	{
+
+	public Button getButton(int id) {
 		if (id == IDialogConstants.OK_ID)
 			return fOKButton;
 		if (id == ID_GO_NEW_TAB)
 			return fOKNewTabButton;
 		return null;
 	}
-	
+
 	/**
 	 * Get expression text
 	 * @return
 	 */
-	public String getExpressionText()
-	{
+	public String getExpressionText() {
 		return fExpression.getText().trim();
 	}
 
@@ -430,16 +419,14 @@ public class GoToAddressBarWidget {
 	 * Update expression text from the widget
 	 * @param text 
 	 */
-	public void setExpressionText(String text)
-	{
+	public void setExpressionText(String text) {
 		fExpression.setText(text);
 	}
 
-	public Combo getExpressionWidget()
-	{
+	public Combo getExpressionWidget() {
 		return fExpression;
 	}
-	
+
 	/**
 	 * decorate expression field according to the status
 	 * @param message
@@ -451,34 +438,31 @@ public class GoToAddressBarWidget {
 			fWrongExpression.setDescriptionText(message.getMessage());
 			fWrongExpression.show();
 		}
-		
+
 		fExpressionStatus = message;
 	}
-	
+
 	/**
 	 * Return the expression status
 	 * @return expression status
 	 */
-	public IStatus getExpressionStatus()
-    {
-        return fExpressionStatus;
-    }
-	
-    private ILaunch getLaunch(Object context)
-    {
-        IAdaptable adaptable = null;
-        ILaunch launch  = null;
-		if(context instanceof IAdaptable)
-		{
+	public IStatus getExpressionStatus() {
+		return fExpressionStatus;
+	}
+
+	private ILaunch getLaunch(Object context) {
+		IAdaptable adaptable = null;
+		ILaunch launch = null;
+		if (context instanceof IAdaptable) {
 			adaptable = (IAdaptable) context;
-			launch  = ((ILaunch) adaptable.getAdapter(ILaunch.class));
+			launch = ((ILaunch) adaptable.getAdapter(ILaunch.class));
 		}
-		
+
 		return launch;
-    	
-    }
-    
-    /**
+
+	}
+
+	/**
 	 * Get the identifier for the given context if it is a recurring one. See
 	 * {@link IRecurringDebugContext}
 	 * 
@@ -487,27 +471,26 @@ public class GoToAddressBarWidget {
 	 * @return the ID or UNKNOWN_CONTEXT_ID if the context is non-recurring or
 	 *         can't provide us its ID
 	 */
-    private String getRecurringContextID(Object context)
-    {
-    	String id = UNKNOWN_CONTEXT_ID;
+	private String getRecurringContextID(Object context) {
+		String id = UNKNOWN_CONTEXT_ID;
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
-			IRecurringDebugContext recurringDebugContext = (IRecurringDebugContext)adaptable.getAdapter(IRecurringDebugContext.class);
+			IRecurringDebugContext recurringDebugContext = (IRecurringDebugContext) adaptable
+					.getAdapter(IRecurringDebugContext.class);
 			if (recurringDebugContext != null) {
 				try {
 					id = recurringDebugContext.getContextID();
-				}
-				catch(DebugException e) {
+				} catch (DebugException e) {
 					// If the context can't give us the ID, just treat it as a
 					// non-recurring context
 				}
 			}
 		}
 		return id;
-    	
-    }
-    
-    /**
+
+	}
+
+	/**
 	 * Get a key that we can use to persist the expression history for the given
 	 * debug context and memory space (where applicable). The key is used within
 	 * the scope of a launch configuration.
@@ -519,13 +502,13 @@ public class GoToAddressBarWidget {
 	 *            a memory space identifier, or null if not applicable
 	 * @return they key which will be used to persist the expression history
 	 */
-    private String getSaveExpressionKey(String contextID, String memorySpace) {
-    	assert contextID.length() > 0;
-    	String key = SAVED_EXPRESSIONS + SEPARATOR + contextID;
-    	if (memorySpace != null && memorySpace.length() > 0) { 
-    		key += SEPARATOR + memorySpace;
-    	}
-    	return key;
-    }
+	private String getSaveExpressionKey(String contextID, String memorySpace) {
+		assert contextID.length() > 0;
+		String key = SAVED_EXPRESSIONS + SEPARATOR + contextID;
+		if (memorySpace != null && memorySpace.length() > 0) {
+			key += SEPARATOR + memorySpace;
+		}
+		return key;
+	}
 
 }

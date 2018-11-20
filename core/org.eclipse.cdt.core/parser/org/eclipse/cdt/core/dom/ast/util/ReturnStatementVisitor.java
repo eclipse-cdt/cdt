@@ -38,7 +38,7 @@ public abstract class ReturnStatementVisitor extends ASTVisitor {
 		shouldVisitExpressions = true;
 		this.fFunction = function;
 	}
-	
+
 	/**
 	 * Gets the function being visited. 
 	 */
@@ -51,7 +51,7 @@ public abstract class ReturnStatementVisitor extends ASTVisitor {
 	 * @param stmt the return statement that was encountered
 	 */
 	protected abstract void onReturnStatement(IASTReturnStatement stmt);
-	
+
 	@Override
 	public int visit(IASTDeclaration element) {
 		if (element != fFunction)

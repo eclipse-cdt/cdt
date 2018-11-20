@@ -20,22 +20,22 @@ import org.eclipse.cdt.internal.ui.wizards.filewizard.NewHeaderFileCreationWizar
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class NewHeaderFileCreationWizard extends AbstractFileCreationWizard {
-    
-    public NewHeaderFileCreationWizard() {
-        super();
-        setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEW_HEADERFILE);
-        setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
-        setWindowTitle(NewFileWizardMessages.NewHeaderFileCreationWizard_title); 
-    }
-    
-    /*
-     * @see Wizard#createPages
-     */
-    @Override
+
+	public NewHeaderFileCreationWizard() {
+		super();
+		setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEW_HEADERFILE);
+		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
+		setWindowTitle(NewFileWizardMessages.NewHeaderFileCreationWizard_title);
+	}
+
+	/*
+	 * @see Wizard#createPages
+	 */
+	@Override
 	public void addPages() {
-        super.addPages();
-        fPage = new NewHeaderFileCreationWizardPage();
-        addPage(fPage);
-        fPage.init(getSelection());
-    }
+		super.addPages();
+		fPage = new NewHeaderFileCreationWizardPage();
+		addPage(fPage);
+		fPage.init(getSelection());
+	}
 }

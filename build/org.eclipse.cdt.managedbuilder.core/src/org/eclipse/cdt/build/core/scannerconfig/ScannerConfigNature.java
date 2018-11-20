@@ -83,7 +83,7 @@ public class ScannerConfigNature implements IProjectNature {
 	 * @see IProjectNature#getProject
 	 */
 	@Override
-	public IProject getProject()  {
+	public IProject getProject() {
 		return fProject;
 	}
 
@@ -91,7 +91,7 @@ public class ScannerConfigNature implements IProjectNature {
 	 * @see IProjectNature#setProject
 	 */
 	@Override
-	public void setProject(IProject project)  {
+	public void setProject(IProject project) {
 		fProject = project;
 	}
 
@@ -151,8 +151,7 @@ public class ScannerConfigNature implements IProjectNature {
 			newCommands = new ICommand[oldCommands.length + 1];
 			System.arraycopy(oldCommands, 0, newCommands, 0, oldCommands.length);
 			newCommands[oldCommands.length] = newCommand;
-		}
-		else {
+		} else {
 			for (int i = 0; i < oldCommands.length; i++) {
 				if (oldCommands[i] == oldCommand) {
 					oldCommands[i] = newCommand;
@@ -170,69 +169,69 @@ public class ScannerConfigNature implements IProjectNature {
 	/**
 	 * @param project
 	 */
-//FIXME	public static void initializeDiscoveryOptions(IProject project) {
-//		try {
-//			IScannerConfigBuilderInfo2 scPrefInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
-//					ManagedBuilderCorePlugin.getDefault().getPluginPreferences(), false);
-//			String selectedProfile = scPrefInfo.getSelectedProfileId();
-//			IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
-//					project, selectedProfile);
-//
-//			scProjInfo.setAutoDiscoveryEnabled(scPrefInfo.isAutoDiscoveryEnabled());
-//			scProjInfo.setProblemReportingEnabled(scPrefInfo.isProblemReportingEnabled());
-//
-//			scProjInfo.setBuildOutputParserEnabled(scPrefInfo.isBuildOutputParserEnabled());
-//			scProjInfo.setBuildOutputFileActionEnabled(scPrefInfo.isBuildOutputFileActionEnabled());
-//			scProjInfo.setBuildOutputFilePath(scPrefInfo.getBuildOutputFilePath());
-//
-//			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(selectedProfile);
-//			List providerIdList = scPrefInfo.getProviderIdList();
-//			for (Iterator i = providerIdList.iterator(); i.hasNext();) {
-//				String providerId = (String) i.next();
-//
-//				scProjInfo.setProviderOutputParserEnabled(providerId, scPrefInfo.isProviderOutputParserEnabled(providerId));
-//				if (profile.getScannerInfoProviderElement(providerId).getProviderKind().equals(
-//						ScannerConfigProfile.ScannerInfoProvider.RUN)) {
-//					scProjInfo.setProviderRunCommand(providerId, scPrefInfo.getProviderRunCommand(providerId));
-//					scProjInfo.setProviderRunArguments(providerId, scPrefInfo.getProviderRunArguments(providerId));
-//				}
-//				else {
-//					scProjInfo.setProviderOpenFilePath(providerId, scPrefInfo.getProviderOpenFilePath(providerId));
-//				}
-//			}
-//			scProjInfo.save();
-//
-//			// the last step is to add discovered paths container
-//			ICProject cProject = CoreModel.getDefault().create(project);
-//			IPathEntry[] rawPathEntries = CoreModel.getRawPathEntries(cProject);
-//			boolean found = false;
-//			for (int i = 0; i < rawPathEntries.length; i++) {
-//				if (rawPathEntries[i].getEntryKind() == IPathEntry.CDT_CONTAINER) {
-//					IContainerEntry container = (IContainerEntry) rawPathEntries[i];
-//					if (container.getPath().equals(DiscoveredPathContainer.CONTAINER_ID)) {
-//						found = true;
-//						break;
-//					}
-//				}
-//			}
-//			if (!found) {
-//				IPathEntry[] newRawPathEntries = new IPathEntry[rawPathEntries.length + 1];
-//				System.arraycopy(rawPathEntries, 0, newRawPathEntries, 0, rawPathEntries.length);
-//				newRawPathEntries[rawPathEntries.length] = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
-//				CoreModel.setRawPathEntries(cProject, newRawPathEntries, null);
-//			}
-////			if (profile.getProfileScope().equals(ScannerConfigScope.PROJECT_SCOPE)) {
-////				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
-////						new DiscoveredPathContainer(project), null);
-////			}
-////			else {	// file scope
-////				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
-////						new PerFileDiscoveredPathContainer(project), null);
-////			}
-//		}
-//		catch (CoreException e) {
-//			ManagedBuilderCorePlugin.log(e);
-//		}
-//	}
+	//FIXME	public static void initializeDiscoveryOptions(IProject project) {
+	//		try {
+	//			IScannerConfigBuilderInfo2 scPrefInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
+	//					ManagedBuilderCorePlugin.getDefault().getPluginPreferences(), false);
+	//			String selectedProfile = scPrefInfo.getSelectedProfileId();
+	//			IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
+	//					project, selectedProfile);
+	//
+	//			scProjInfo.setAutoDiscoveryEnabled(scPrefInfo.isAutoDiscoveryEnabled());
+	//			scProjInfo.setProblemReportingEnabled(scPrefInfo.isProblemReportingEnabled());
+	//
+	//			scProjInfo.setBuildOutputParserEnabled(scPrefInfo.isBuildOutputParserEnabled());
+	//			scProjInfo.setBuildOutputFileActionEnabled(scPrefInfo.isBuildOutputFileActionEnabled());
+	//			scProjInfo.setBuildOutputFilePath(scPrefInfo.getBuildOutputFilePath());
+	//
+	//			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(selectedProfile);
+	//			List providerIdList = scPrefInfo.getProviderIdList();
+	//			for (Iterator i = providerIdList.iterator(); i.hasNext();) {
+	//				String providerId = (String) i.next();
+	//
+	//				scProjInfo.setProviderOutputParserEnabled(providerId, scPrefInfo.isProviderOutputParserEnabled(providerId));
+	//				if (profile.getScannerInfoProviderElement(providerId).getProviderKind().equals(
+	//						ScannerConfigProfile.ScannerInfoProvider.RUN)) {
+	//					scProjInfo.setProviderRunCommand(providerId, scPrefInfo.getProviderRunCommand(providerId));
+	//					scProjInfo.setProviderRunArguments(providerId, scPrefInfo.getProviderRunArguments(providerId));
+	//				}
+	//				else {
+	//					scProjInfo.setProviderOpenFilePath(providerId, scPrefInfo.getProviderOpenFilePath(providerId));
+	//				}
+	//			}
+	//			scProjInfo.save();
+	//
+	//			// the last step is to add discovered paths container
+	//			ICProject cProject = CoreModel.getDefault().create(project);
+	//			IPathEntry[] rawPathEntries = CoreModel.getRawPathEntries(cProject);
+	//			boolean found = false;
+	//			for (int i = 0; i < rawPathEntries.length; i++) {
+	//				if (rawPathEntries[i].getEntryKind() == IPathEntry.CDT_CONTAINER) {
+	//					IContainerEntry container = (IContainerEntry) rawPathEntries[i];
+	//					if (container.getPath().equals(DiscoveredPathContainer.CONTAINER_ID)) {
+	//						found = true;
+	//						break;
+	//					}
+	//				}
+	//			}
+	//			if (!found) {
+	//				IPathEntry[] newRawPathEntries = new IPathEntry[rawPathEntries.length + 1];
+	//				System.arraycopy(rawPathEntries, 0, newRawPathEntries, 0, rawPathEntries.length);
+	//				newRawPathEntries[rawPathEntries.length] = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
+	//				CoreModel.setRawPathEntries(cProject, newRawPathEntries, null);
+	//			}
+	////			if (profile.getProfileScope().equals(ScannerConfigScope.PROJECT_SCOPE)) {
+	////				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
+	////						new DiscoveredPathContainer(project), null);
+	////			}
+	////			else {	// file scope
+	////				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
+	////						new PerFileDiscoveredPathContainer(project), null);
+	////			}
+	//		}
+	//		catch (CoreException e) {
+	//			ManagedBuilderCorePlugin.log(e);
+	//		}
+	//	}
 
 }

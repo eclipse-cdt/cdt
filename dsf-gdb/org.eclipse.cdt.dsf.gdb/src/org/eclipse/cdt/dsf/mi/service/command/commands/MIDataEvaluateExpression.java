@@ -31,29 +31,28 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *If the expression contains spaces, it must be enclosed in double quotes.
  *
  */
-public class MIDataEvaluateExpression<V extends MIDataEvaluateExpressionInfo> extends MICommand<V> 
-{
-    /**
-     * @since 1.1
-     */
-    public MIDataEvaluateExpression(ICommandControlDMContext ctx, String expr) {
-        super(ctx, "-data-evaluate-expression", new String[]{expr}); //$NON-NLS-1$
-    }
+public class MIDataEvaluateExpression<V extends MIDataEvaluateExpressionInfo> extends MICommand<V> {
+	/**
+	 * @since 1.1
+	 */
+	public MIDataEvaluateExpression(ICommandControlDMContext ctx, String expr) {
+		super(ctx, "-data-evaluate-expression", new String[] { expr }); //$NON-NLS-1$
+	}
 
-    public MIDataEvaluateExpression(IMIExecutionDMContext execDmc, String expr) {
-        super(execDmc, "-data-evaluate-expression", new String[]{expr}); //$NON-NLS-1$
-    }
+	public MIDataEvaluateExpression(IMIExecutionDMContext execDmc, String expr) {
+		super(execDmc, "-data-evaluate-expression", new String[] { expr }); //$NON-NLS-1$
+	}
 
-    public MIDataEvaluateExpression(IFrameDMContext frameDmc, String expr) {
-        super(frameDmc, "-data-evaluate-expression", new String[]{expr}); //$NON-NLS-1$
-    }
+	public MIDataEvaluateExpression(IFrameDMContext frameDmc, String expr) {
+		super(frameDmc, "-data-evaluate-expression", new String[] { expr }); //$NON-NLS-1$
+	}
 
-    public MIDataEvaluateExpression(IExpressionDMContext exprDmc) {
-        super(exprDmc, "-data-evaluate-expression", new String[]{exprDmc.getExpression()}); //$NON-NLS-1$
-    }
+	public MIDataEvaluateExpression(IExpressionDMContext exprDmc) {
+		super(exprDmc, "-data-evaluate-expression", new String[] { exprDmc.getExpression() }); //$NON-NLS-1$
+	}
 
-    @Override
-    public MIDataEvaluateExpressionInfo getResult(MIOutput output) {
-        return new MIDataEvaluateExpressionInfo(output);
-    }
+	@Override
+	public MIDataEvaluateExpressionInfo getResult(MIOutput output) {
+		return new MIDataEvaluateExpressionInfo(output);
+	}
 }

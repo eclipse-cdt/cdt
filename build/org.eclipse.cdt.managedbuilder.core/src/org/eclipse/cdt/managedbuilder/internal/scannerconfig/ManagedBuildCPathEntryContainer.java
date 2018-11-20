@@ -57,13 +57,14 @@ import org.eclipse.core.runtime.Platform;
  * @since 2.0
  */
 public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
-    // Managed make per project scanner configuration discovery profile
-    public static final String MM_PP_DISCOVERY_PROFILE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".GCCManagedMakePerProjectProfile"; //$NON-NLS-1$
+	// Managed make per project scanner configuration discovery profile
+	public static final String MM_PP_DISCOVERY_PROFILE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier()
+			+ ".GCCManagedMakePerProjectProfile"; //$NON-NLS-1$
 
-	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
-	private static final String ERROR_HEADER = "PathEntryContainer error [";	//$NON-NLS-1$
-	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
-	private static final String TRACE_HEADER = "PathEntryContainer trace [";	//$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
+	private static final String ERROR_HEADER = "PathEntryContainer error ["; //$NON-NLS-1$
+	private static final String TRACE_FOOTER = "]: "; //$NON-NLS-1$
+	private static final String TRACE_HEADER = "PathEntryContainer trace ["; //$NON-NLS-1$
 
 	private ITarget defaultTarget;
 	private Vector<IPathEntry> entries;
@@ -101,8 +102,8 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			// Make sure the current entries do not contain a duplicate
 			for (IPathEntry entry : entries) {
 				if (entry.getEntryKind() == IPathEntry.CDT_MACRO) {
-					if (((IMacroEntry)entry).getMacroName().equals(macro) &&
-							((IMacroEntry)entry).getMacroValue().equals(value)) {
+					if (((IMacroEntry) entry).getMacroName().equals(macro)
+							&& ((IMacroEntry) entry).getMacroValue().equals(value)) {
 						add = false;
 						break;
 					}
@@ -126,17 +127,17 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		}
 	}
 
-	protected void calculateEntriesDynamically(final IProject project,
-                                               SCProfileInstance profileInstance,
-                                               final IScannerInfoCollector collector) {
+	protected void calculateEntriesDynamically(final IProject project, SCProfileInstance profileInstance,
+			final IScannerInfoCollector collector) {
 		// TODO Get the provider from the toolchain specification
 
-        final IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.
-                createScannerConfigBuildInfo2(ManagedBuilderCorePlugin.getDefault().getPluginPreferences(),
-                        profileInstance.getProfile().getId(), false);
-        List<String> providerIds = buildInfo.getProviderIdList();
-        for (final String providerId : providerIds) {
-	        final IExternalScannerInfoProvider esiProvider = profileInstance.createExternalScannerInfoProvider(providerId);
+		final IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
+				ManagedBuilderCorePlugin.getDefault().getPluginPreferences(), profileInstance.getProfile().getId(),
+				false);
+		List<String> providerIds = buildInfo.getProviderIdList();
+		for (final String providerId : providerIds) {
+			final IExternalScannerInfoProvider esiProvider = profileInstance
+					.createExternalScannerInfoProvider(providerId);
 
 			// Set the arguments for the provider
 
@@ -146,7 +147,8 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 					IProgressMonitor monitor = new NullProgressMonitor();
 					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 					IConfiguration config = info.getDefaultConfiguration();
-					IBuildEnvironmentVariable[] vars = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(config, true, true);
+					IBuildEnvironmentVariable[] vars = ManagedBuildManager.getEnvironmentVariableProvider()
+							.getVariables(config, true, true);
 					Properties env = new Properties();
 					if (vars != null)
 						for (int i = 0; i < vars.length; ++i)
@@ -162,7 +164,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 				}
 			};
 			Platform.run(runnable);
-        }
+		}
 	}
 
 	/* (non-Javadoc)
@@ -172,50 +174,51 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	public IPathEntry[] getPathEntries() {
 		info = (ManagedBuildInfo) ManagedBuildManager.getBuildInfo(project);
 		if (info == null) {
-			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information is null");	//$NON-NLS-1$
+			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information is null"); //$NON-NLS-1$
 			return entries.toArray(new IPathEntry[entries.size()]);
 		}
 		IConfiguration defaultConfig = info.getDefaultConfiguration();
 		if (defaultConfig == null) {
 			// The build information has not been loaded yet
-			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information has not been loaded yet");	//$NON-NLS-1$
+			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information has not been loaded yet"); //$NON-NLS-1$
 			return entries.toArray(new IPathEntry[entries.size()]);
 		}
 		// get the associated scanner config discovery profile id
-        String scdProfileId = ManagedBuildManager.getScannerInfoProfileId(defaultConfig);
-        IScannerInfoCollector collector = null;
-        SCProfileInstance profileInstance = null;
-        if (scdProfileId != null) {
+		String scdProfileId = ManagedBuildManager.getScannerInfoProfileId(defaultConfig);
+		IScannerInfoCollector collector = null;
+		SCProfileInstance profileInstance = null;
+		if (scdProfileId != null) {
 			// See if we can load a dynamic resolver
-        	//FIXME:
-        	InfoContext context = CfgScannerConfigProfileManager.createDefaultContext(project);
-	        profileInstance = ScannerConfigProfileManager.getInstance().
-	                getSCProfileInstance(project, context, scdProfileId);
-	        collector = profileInstance.createScannerInfoCollector();
-        }
-
-        synchronized(this) {
-		if (collector instanceof IManagedScannerInfoCollector) {
-            IManagedScannerInfoCollector mCollector = (IManagedScannerInfoCollector) collector;
-            mCollector.setProject(project);
-			ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries collected dynamically");	//$NON-NLS-1$
-			calculateEntriesDynamically((IProject)info.getOwner(), profileInstance, collector);
-			addEntries(info.getManagedBuildValues());
-			addIncludePaths(mCollector.getIncludePaths());
-			addDefinedSymbols(mCollector.getDefinedSymbols());
-		} else {
-			// If none supplied, use the built-ins
-			if (defaultConfig != null) {
-				addEntries(info.getManagedBuildValues());
-				addEntries(info.getManagedBuildBuiltIns());
-				ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries set using built-in definitions from " + defaultConfig.getName());	//$NON-NLS-1$
-			} else {
-				ManagedBuildCPathEntryContainer.outputError(project.getName(), "Configuration is null");	//$NON-NLS-1$
-				return entries.toArray(new IPathEntry[entries.size()]);
-			}
+			//FIXME:
+			InfoContext context = CfgScannerConfigProfileManager.createDefaultContext(project);
+			profileInstance = ScannerConfigProfileManager.getInstance().getSCProfileInstance(project, context,
+					scdProfileId);
+			collector = profileInstance.createScannerInfoCollector();
 		}
-		return entries.toArray(new IPathEntry[entries.size()]);
-        }  // end synchronized
+
+		synchronized (this) {
+			if (collector instanceof IManagedScannerInfoCollector) {
+				IManagedScannerInfoCollector mCollector = (IManagedScannerInfoCollector) collector;
+				mCollector.setProject(project);
+				ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries collected dynamically"); //$NON-NLS-1$
+				calculateEntriesDynamically((IProject) info.getOwner(), profileInstance, collector);
+				addEntries(info.getManagedBuildValues());
+				addIncludePaths(mCollector.getIncludePaths());
+				addDefinedSymbols(mCollector.getDefinedSymbols());
+			} else {
+				// If none supplied, use the built-ins
+				if (defaultConfig != null) {
+					addEntries(info.getManagedBuildValues());
+					addEntries(info.getManagedBuildBuiltIns());
+					ManagedBuildCPathEntryContainer.outputTrace(project.getName(),
+							"Path entries set using built-in definitions from " + defaultConfig.getName()); //$NON-NLS-1$
+				} else {
+					ManagedBuildCPathEntryContainer.outputError(project.getName(), "Configuration is null"); //$NON-NLS-1$
+					return entries.toArray(new IPathEntry[entries.size()]);
+				}
+			}
+			return entries.toArray(new IPathEntry[entries.size()]);
+		} // end synchronized
 	}
 
 	/* (non-Javadoc)
@@ -223,7 +226,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	 */
 	@Override
 	public String getDescription() {
-		return "CDT Managed Build Project";	//$NON-NLS-1$
+		return "CDT Managed Build Project"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -231,15 +234,19 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	 */
 	@Override
 	public IPath getPath() {
-		return new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER");	//$NON-NLS-1$
+		return new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER"); //$NON-NLS-1$
 	}
 
- 	private void addEntries(IPathEntry[] values) {
- 		if (values == null) return;
- 		for (int i=0; i<values.length; i++) {
- 			if (values[i] == null) continue;
- 			if (!entries.contains(values[i])) {	entries.add(values[i]); }
- 		}
- 	}
+	private void addEntries(IPathEntry[] values) {
+		if (values == null)
+			return;
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] == null)
+				continue;
+			if (!entries.contains(values[i])) {
+				entries.add(values[i]);
+			}
+		}
+	}
 
 }

@@ -90,9 +90,9 @@ public class LanguageSettingEntriesSerializer {
 		return list;
 	}
 
-	public static ICSettingEntry loadEntry(ICStorageElement el){
+	public static ICSettingEntry loadEntry(ICStorageElement el) {
 		int kind = stringToKind(el.getAttribute(ATTRIBUTE_KIND));
-		if(kind == 0)
+		if (kind == 0)
 			return null;
 
 		int flags = composeFlags(el.getAttribute(ATTRIBUTE_FLAGS));
@@ -103,7 +103,8 @@ public class LanguageSettingEntriesSerializer {
 		IPath[] exclusionPatterns = loadExclusions(el);
 		IPath srcPrefixMapping = loadPath(el, ATTRIBUTE_SOURCE_ATTACHMENT_PREFIX_MAPPING);
 
-		return CDataUtil.createEntry(kind, name, value, exclusionPatterns, flags, srcPath, srcRootPath, srcPrefixMapping);
+		return CDataUtil.createEntry(kind, name, value, exclusionPatterns, flags, srcPath, srcRootPath,
+				srcPrefixMapping);
 	}
 
 	private static IPath loadPath(ICStorageElement el, String attr) {
@@ -277,7 +278,7 @@ public class LanguageSettingEntriesSerializer {
 		if ((flags & ICLanguageSettingEntry.EXPORTED) != 0) {
 			if (buf.length() != 0)
 				buf.append(FLAGS_SEPARATOR);
-			
+
 			buf.append(EXPORTED);
 		}
 		return buf.toString();

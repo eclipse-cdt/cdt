@@ -29,26 +29,26 @@ public class MIVarUpdateInfo extends MIInfo {
 
 	public MIVarUpdateInfo(MIOutput record) {
 		super(record);
-        List<MIVarChange> aList = new ArrayList<MIVarChange>();
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord rr = out.getMIResultRecord();
-            if (rr != null) {
-                MIResult[] results =  rr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    if (var.equals("changelist")) { //$NON-NLS-1$
-                        MIValue value = results[i].getMIValue();
-                        if (value instanceof MITuple) {
-                            parseChangeList((MITuple)value, aList);
-                        } else if (value instanceof MIList) {
-                            parseChangeList((MIList)value, aList);
-                        }
-                    }
-                }
-            }
-        }
-        changeList = aList.toArray(new MIVarChange[aList.size()]);
+		List<MIVarChange> aList = new ArrayList<MIVarChange>();
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results = rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("changelist")) { //$NON-NLS-1$
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MITuple) {
+							parseChangeList((MITuple) value, aList);
+						} else if (value instanceof MIList) {
+							parseChangeList((MIList) value, aList);
+						}
+					}
+				}
+			}
+		}
+		changeList = aList.toArray(new MIVarChange[aList.size()]);
 	}
 
 	public MIVarChange[] getMIVarChanges() {
@@ -63,13 +63,13 @@ public class MIVarUpdateInfo extends MIInfo {
 		MIValue[] values = miList.getMIValues();
 		for (int i = 0; i < values.length; ++i) {
 			if (values[i] instanceof MITuple) {
-				parseChangeList((MITuple)values[i], aList);
+				parseChangeList((MITuple) values[i], aList);
 			} else if (values[i] instanceof MIList) {
-				parseChangeList((MIList)values[i], aList);
+				parseChangeList((MIList) values[i], aList);
 			}
 		}
-	} 
-	
+	}
+
 	/**
 	 * @since 3.0
 	 */
@@ -80,13 +80,11 @@ public class MIVarUpdateInfo extends MIInfo {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
 			if (value instanceof MITuple) {
-				parseChangeList((MITuple)value, aList);
-			}
-			else
-			{
+				parseChangeList((MITuple) value, aList);
+			} else {
 				String str = ""; //$NON-NLS-1$
 				if (value instanceof MIConst) {
-					str = ((MIConst)value).getString();
+					str = ((MIConst) value).getString();
 				}
 				if (var.equals("name")) { //$NON-NLS-1$
 					change = new MIVarChange(str);
@@ -131,20 +129,20 @@ public class MIVarUpdateInfo extends MIInfo {
 					}
 				} else if (var.equals("displayhint")) { //$NON-NLS-1$
 					if (change != null) {
-		            	change.setDisplayHint(new MIDisplayHint(str));
+						change.setDisplayHint(new MIDisplayHint(str));
 					}
 				}
 			}
 		}
 	}
-	
+
 	private void parseNewChildren(MIValue value, List<MIVar> aList) {
 		if (value instanceof MIList) {
-			MIValue[] children = ((MIList)value).getMIValues();
-			
+			MIValue[] children = ((MIList) value).getMIValues();
+
 			for (MIValue child : children) {
 				if (child instanceof MITuple) {
-					aList.add(new MIVar((MITuple)child));
+					aList.add(new MIVar((MITuple) child));
 				}
 			}
 		}

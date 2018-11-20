@@ -17,8 +17,6 @@ import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBCorePlugin;
 /**
  * Preference constants that are used in some ways by the LLDB launch
  * configuration.
- *
- * @noimplement This interface is not intended to be implemented by clients.
  */
 public class ILLDBLaunchConfigurationConstants {
 
